@@ -118,6 +118,10 @@ class ComposeObservePatcher(val context: JvmBackendContext) :
         irFile.transformChildrenVoid(this)
     }
 
+    private fun ResolvedCall<*>.isParameterless(): Boolean {
+        return dispatchReceiver != null && extensionReceiver != null && valueArguments.isEmpty()
+    }
+
     override fun visitFunction(declaration: IrFunction): IrStatement {
 
         super.visitFunction(declaration)
@@ -165,7 +169,14 @@ class ComposeObservePatcher(val context: JvmBackendContext) :
                 bindingContext.get(ComposeWritableSlices.RESTART_COMPOSER, descriptor)
 
             val oldBody = declaration.body
-            if (composerResolvedCall != null && oldBody != null) {
+            if (
+                composerResolvedCall != null &&
+                oldBody != null &&
+                // if getting the composer requires a parameter (like `<this>`), this code will
+                // currently fail. We should fix this similar to how ComposeCallTransformer solves
+                // this
+                composerResolvedCall.isParameterless()
+            ) {
                 val composerDescriptor =
                     composerResolvedCall.resultingDescriptor as PropertyDescriptor
                 val startRestartGroupDescriptor = getStartRestartGroup(composerDescriptor)

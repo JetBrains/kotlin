@@ -161,8 +161,16 @@ class ComposeEmitResolver(
         candidates: Collection<FunctionDescriptor>,
         getComposerCall: ResolvedCall<*>,
         name: Name,
-        context: ExpressionTypingContext
+        resolutionContext: ResolutionContext<*>
     ): List<ComposableEmitDescriptor> {
+        val context = ExpressionTypingContext.newContext(
+            resolutionContext.trace,
+            resolutionContext.scope,
+            resolutionContext.dataFlowInfo,
+            resolutionContext.expectedType,
+            resolutionContext.languageVersionSettings,
+            resolutionContext.dataFlowValueFactory
+        )
         val openTagExpr = call.calleeExpression ?: error("Expected calleeExpression")
 
         val tmpTraceAndCache = TemporaryTraceAndCache.create(

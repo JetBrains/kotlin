@@ -78,6 +78,116 @@ class ComposeCallResolverTests : AbstractCodegenTest() {
         """
     )
 
+    fun testComposableLambdaCall() = assertInterceptions(
+        """
+            import androidx.compose.*
+
+            @Composable
+            fun test(children: @Composable() () -> Unit) {
+                <call>children()
+            }
+        """
+    )
+
+    fun testComposableLambdaCallWithGenerics() = assertInterceptions(
+        """
+            import androidx.compose.*
+
+            @Composable fun <T> A(value: T, block: @Composable() (T) -> Unit) {
+                <call>block(value)
+            }
+
+            @Composable fun <T> B(
+                value: T,
+                block: @Composable() (@Composable() (T) -> Unit) -> Unit
+            ) {
+                <call>block({ })
+            }
+
+            @Composable
+            fun test() {
+                <call>A(123) { it ->
+                    println(it)
+                }
+                <call>B(123) { it ->
+                    <call>it(456)
+                }
+            }
+        """
+    )
+
+    fun testMethodInvocations() = assertInterceptions(
+        """
+            import androidx.compose.*
+
+            val x = Ambient.of<Int> { 123 }
+
+            @Composable
+            fun test() {
+                x.<call>Provider(456) {
+
+                }
+            }
+        """
+    )
+
+    fun testReceiverLambdaInvocation() = assertInterceptions(
+        """
+            import androidx.compose.*
+
+            class TextSpanScope internal constructor(val composer: ViewComposition)
+
+            class Root : Component() {
+                fun update() = composer.compose()
+                lateinit var scope: TextSpanScope
+                lateinit var compositionContext: CompositionContext
+                lateinit var composable: @Composable() TextSpanScope.() -> Unit
+                @Suppress("PLUGIN_ERROR")
+                override fun compose() {
+                    with(scope) {
+                        <call>composable()
+                    }
+                }
+            }
+        """
+    )
+
+    fun testReceiverLambda2() = assertInterceptions(
+        """
+            import androidx.compose.*
+
+            class DensityScope(val density: Density)
+
+            class Density
+
+            val DensityAmbient = Ambient.of<Density>()
+
+            fun ambientDensity() = effectOf<Density> { +ambient(DensityAmbient) }
+
+            @Composable
+            fun WithDensity(block: @Composable DensityScope.() -> Unit) {
+                DensityScope(+ambientDensity()).<call>block()
+            }
+        """
+    )
+
+    fun testInlineChildren() = assertInterceptions(
+        """
+            import androidx.compose.*
+            import android.widget.LinearLayout
+
+            @Composable
+            inline fun PointerInputWrapper(
+                crossinline children: @Composable() () -> Unit
+            ) {
+                // Hide the internals of PointerInputNode
+                <emit>LinearLayout {
+                    <call>children()
+                }
+            }
+        """
+    )
+
     private fun <T> setup(block: () -> T): T {
         return block()
     }

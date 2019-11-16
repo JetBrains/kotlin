@@ -33,13 +33,18 @@ import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.CandidateResolver
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
 import org.jetbrains.kotlin.resolve.calls.context.TemporaryTraceAndCache
 import org.jetbrains.kotlin.resolve.calls.model.DataFlowInfoForArgumentsImpl
+import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionMutableResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCallImpl
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.calls.tower.ImplicitScopeTower
@@ -49,21 +54,172 @@ import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.scopes.ResolutionScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.PackageQualifier
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
+
+typealias Candidate = NewResolutionOldInference.MyCandidate
+
+fun ComposableCandidate(
+    candidate: Candidate,
+    composerCall: ResolvedCall<*>,
+    composerMetadata: ComposerMetadata
+): Candidate {
+    val (eagerDiagnostics, resolvedCall) = candidate
+
+    if (resolvedCall !is VariableAsFunctionMutableResolvedCall) {
+        @Suppress("UNCHECKED_CAST")
+        return Candidate(
+            eagerDiagnostics = eagerDiagnostics,
+            resolvedCall = ComposableResolvedCall(
+                resolvedCall as MutableResolvedCall<FunctionDescriptor>, composerCall,
+                composerMetadata),
+            finalDiagnosticsComputation = null
+        )
+    }
+
+    val functionCall = ComposableResolvedCall(
+        resolvedCall.functionCall,
+        composerCall,
+        composerMetadata
+    )
+
+    val variableCall = resolvedCall.variableCall
+
+    val newCall = VariableAsFunctionResolvedCallImpl(functionCall, variableCall)
+
+    return Candidate(
+        eagerDiagnostics = eagerDiagnostics,
+        resolvedCall = newCall,
+        finalDiagnosticsComputation = null
+    )
+}
+
+class ComposableResolvedCall(
+    val underlying: MutableResolvedCall<FunctionDescriptor>,
+    val composerCall: ResolvedCall<*>,
+    val composerMetadata: ComposerMetadata
+) : MutableResolvedCall<FunctionDescriptor> by underlying {
+    private val composableCandidateDescriptor = ComposableFunctionDescriptor(
+        underlying.candidateDescriptor,
+        composerCall,
+        composerMetadata
+    )
+    override fun getCandidateDescriptor(): FunctionDescriptor = composableCandidateDescriptor
+    override fun getResultingDescriptor(): FunctionDescriptor {
+        return ComposableFunctionDescriptor(
+            underlying.resultingDescriptor,
+            composerCall,
+            composerMetadata
+        )
+    }
+}
 
 @Suppress("INVISIBLE_REFERENCE", "EXPERIMENTAL_IS_NOT_ENABLED")
 @UseExperimental(org.jetbrains.kotlin.extensions.internal.InternalNonStableExtensionPoints::class)
 open class ComposeCallResolutionInterceptorExtension : CallResolutionInterceptorExtension {
     override fun interceptCandidates(
-        candidates: Collection<NewResolutionOldInference.MyCandidate>,
+        candidates: Collection<Candidate>,
         context: BasicCallResolutionContext,
         candidateResolver: CandidateResolver,
         callResolver: CallResolver?,
         name: Name,
         kind: NewResolutionOldInference.ResolutionKind,
         tracing: TracingStrategy
-    ): Collection<NewResolutionOldInference.MyCandidate> {
-        return candidates
+    ): Collection<Candidate> {
+        val element = context.call.callElement as KtExpression
+        val project = element.project
+        if (callResolver == null) throw IllegalArgumentException("Call resolver must be non-null")
+
+        if (candidates.isEmpty()) return candidates
+        val bindingContext = context.trace.bindingContext
+        val call = context.call
+        val shouldIgnore = bindingContext[
+                ComposeWritableSlices.IGNORE_COMPOSABLE_INTERCEPTION,
+                call
+        ] ?: false
+
+        if (shouldIgnore) return candidates
+
+        val composables = mutableListOf<Candidate>()
+        val nonComposablesNonConstructors = mutableListOf<Candidate>()
+        val alreadyInterceptedCandidates = mutableListOf<Candidate>()
+        val constructors = mutableListOf<Candidate>()
+
+        var needToLookupComposer = false
+
+        for (candidate in candidates) {
+            val resolvedCall = candidate.resolvedCall
+            val candidateDescriptor = resolvedCall.candidateDescriptor
+            when {
+                candidateDescriptor is ComposableFunctionDescriptor -> {
+                    alreadyInterceptedCandidates.add(candidate)
+                }
+                candidateDescriptor is ComposableEmitDescriptor -> {
+                    alreadyInterceptedCandidates.add(candidate)
+                }
+                resolvedCall is VariableAsFunctionResolvedCall &&
+                resolvedCall.variableCall
+                    .candidateDescriptor
+                    .type
+                    .hasComposableAnnotation() -> {
+                    needToLookupComposer = true
+                    composables.add(candidate)
+                }
+                resolvedCall.candidateDescriptor.hasComposableAnnotation() -> {
+                    needToLookupComposer = true
+                    composables.add(candidate)
+                }
+                resolvedCall.candidateDescriptor is ConstructorDescriptor -> {
+                    needToLookupComposer = true
+                    constructors.add(candidate)
+                }
+                else -> nonComposablesNonConstructors.add(candidate)
+            }
+        }
+
+        // If none of the candidates are composable or constructors, then it's unnecessary for us
+        // to do any work at all, since it will never be anything we intercept
+        if (!needToLookupComposer) return candidates
+
+        val composableDescriptor = findComposableFunctionScope(context) ?: return candidates
+
+        val (composerCall, composer) = callResolver.findComposerCallAndDescriptor(context)
+            ?: return nonComposablesNonConstructors + constructors + alreadyInterceptedCandidates
+
+        val psiFactory = KtPsiFactory(project, markGenerated = false)
+
+        // If we made it this far, we need to check and see if the constructors qualify as emit
+        // calls instead of constructor calls.  First, we need to look at the composer to see
+        // what kinds of "emittables" it accepts.
+        // We cache the metadata into a writeable slice based on the descriptor
+        val composerMetadata = ComposerMetadata.getOrBuild(
+            composer,
+            callResolver,
+            psiFactory,
+            context
+        )
+
+        // TODO(lmr):
+        // We might decide there are some composers that are not "valid", ie, I shouldn't be able
+        // to call a composable if I just have `val composer = Unit` in scope... Right now we are
+        // just seeing if there are call descriptors. In the future, more validation might be
+        // warranted
+        val isValidComposer = composerMetadata.callDescriptors.isNotEmpty()
+
+        if (!isValidComposer) {
+            return nonComposablesNonConstructors + constructors + alreadyInterceptedCandidates
+        }
+
+        // Once we know we have a valid composer record the composer on the function descriptor
+        // for the restart transform
+        recordComposerRestartInfo(context.trace, composableDescriptor, composerCall)
+
+        // NOTE(lmr): I'm not implementing emittable interception here, since I believe it is not
+        // needed. So in this case we just pass constructors right through, untouched.
+        return nonComposablesNonConstructors +
+                constructors +
+                alreadyInterceptedCandidates +
+                composables.map {
+                    ComposableCandidate(it, composerCall, composerMetadata)
+                }
     }
 
     override fun interceptCandidates(
@@ -113,10 +269,136 @@ open class ComposeCallResolutionInterceptorExtension : CallResolutionInterceptor
         // to do any work at all, since it will never be anything we intercept
         if (!needToLookupComposer) return candidates
 
+        val composableDescriptor = findComposableFunctionScope(resolutionContext)
+            ?: return candidates
+
+        val (composerCall, composer) = callResolver.findComposerCallAndDescriptor(resolutionContext)
+            ?: return nonComposablesNonConstructors + constructors
+
+        val psiFactory = KtPsiFactory(project, markGenerated = false)
+
+        // If we made it this far, we need to check and see if the constructors qualify as emit
+        // calls instead of constructor calls.  First, we need to look at the composer to see
+        // what kinds of "emittables" it accepts.
+        // We cache the metadata into a writeable slice based on the descriptor
+        val composerMetadata = ComposerMetadata.getOrBuild(
+            composer,
+            callResolver,
+            psiFactory,
+            resolutionContext
+        )
+
+        // TODO(lmr):
+        // We might decide there are some composers that are not "valid", ie, I shouldn't be able
+        // to call a composable if I just have `val composer = Unit` in scope... Right now we are
+        // just seeing if there are call descriptors. In the future, more validation might be
+        // warranted
+        val isValidComposer = composerMetadata.callDescriptors.isNotEmpty()
+
+        if (!isValidComposer) {
+            return nonComposablesNonConstructors + constructors
+        }
+
+        // Once we know we have a valid composer record the composer on the function descriptor
+        // for the restart transform
+        recordComposerRestartInfo(resolutionContext.trace, composableDescriptor, composerCall)
+
+        // If there are no constructors, then all of the candidates are either composables or
+        // non-composable functions, and we follow normal resolution rules.
+        if (constructors.isEmpty()) {
+            // we wrap the composable descriptors into a ComposableFunctionDescriptor so we know
+            // to intercept it in the backend.
+            return nonComposablesNonConstructors + composables.map {
+                ComposableFunctionDescriptor(it, composerCall, composerMetadata)
+            }
+        }
+
+        val emittables = constructors.filter {
+            composerMetadata.isEmittable(it.returnType) && !it.returnType.isAbstract()
+        }
+        val hasEmittableCandidate = emittables.isNotEmpty()
+
+        // if none of the constructors are emittables, then all of the candidates are valid
+        if (!hasEmittableCandidate) {
+            return nonComposablesNonConstructors + constructors + composables.map {
+                ComposableFunctionDescriptor(it, composerCall, composerMetadata)
+            }
+        }
+
+        // since some of the constructors are emittables, we fall back to resolving using the
+        // emit resolver.
+        val emitResolver = ComposeEmitResolver(
+            callResolver,
+            project,
+            composerMetadata
+        )
+
+        val emitCandidates = emitResolver.resolveCandidates(
+            call,
+            emittables,
+            composerCall,
+            name,
+            resolutionContext
+        )
+
+        return nonComposablesNonConstructors +
+                composables.map {
+                    ComposableFunctionDescriptor(it, composerCall, composerMetadata)
+                } +
+                constructors.filter { !composerMetadata.isEmittable(it.returnType) } +
+                emitCandidates
+    }
+
+    private fun CallResolver.findComposerCallAndDescriptor(
+        context: BasicCallResolutionContext
+    ): Pair<ResolvedCall<*>, VariableDescriptor>? {
+        // use the call resolver to find any variable that would resolve with "composer" in scope.
+        var tmpComposerCall = resolveComposer(context)
+        var tmpComposer = tmpComposerCall?.resultingDescriptor as? VariableDescriptor
+
+        // If there is no composer in scope, then we decide to fall back to the
+        // androidx.compose.composer as a default. When we are properly threading the composer
+        // through the functions as parameters, this step should no longer be needed. This provides
+        // a better user experience currently though since users won't be required to import the
+        // composer into scope.
+        if (tmpComposer == null) {
+            tmpComposerCall = fallbackComposerCall(context)
+            tmpComposer = tmpComposerCall?.resultingDescriptor as? VariableDescriptor
+        }
+
+        val composerCall = tmpComposerCall ?: return null
+        val composer = tmpComposer ?: return null
+        return composerCall to composer
+    }
+
+    private fun recordComposerRestartInfo(
+        trace: BindingTrace,
+        descriptor: SimpleFunctionDescriptor,
+        composerCall: ResolvedCall<*>
+    ) {
+        if (trace.get(
+                ComposeWritableSlices.RESTART_COMPOSER_NEEDED,
+                descriptor
+            ) != false
+        ) {
+            trace.record(
+                ComposeWritableSlices.RESTART_COMPOSER_NEEDED,
+                descriptor,
+                false
+            )
+            trace.record(
+                ComposeWritableSlices.RESTART_COMPOSER, descriptor, composerCall)
+        }
+    }
+
+    private fun findComposableFunctionScope(
+        resolutionContext: BasicCallResolutionContext
+    ): SimpleFunctionDescriptor? {
+        val call = resolutionContext.call
         val temporaryTraceForComposeableCall =
             TemporaryTraceAndCache.create(
                 resolutionContext,
-                "trace to resolve composable call", element
+                "trace to resolve composable call", call.callElement as KtExpression
             )
 
         val composableAnnotationChecker =
@@ -155,129 +437,7 @@ open class ComposeCallResolutionInterceptorExtension : CallResolutionInterceptor
             }
             walker = try { walker.parent } catch (e: Throwable) { null }
         }
-        if (!isComposableContext) return candidates
-
-        // use the call resolver to find any variable that would resolve with "composer" in scope.
-        var tmpComposerCall = callResolver.resolveComposer(resolutionContext)
-        var tmpComposer = tmpComposerCall?.resultingDescriptor as? VariableDescriptor
-
-        // If there is no composer in scope, then we decide to fall back to the
-        // androidx.compose.composer as a default. When we are properly threading the composer
-        // through the functions as parameters, this step should no longer be needed. This provides
-        // a better user experience currently though since users won't be required to import the
-        // composer into scope.
-        if (tmpComposer == null) {
-            tmpComposerCall = callResolver.fallbackComposerCall(resolutionContext)
-            tmpComposer = tmpComposerCall?.resultingDescriptor as? VariableDescriptor
-        }
-
-        val composerCall = tmpComposerCall ?: return nonComposablesNonConstructors + constructors
-        val composer = tmpComposer ?: return nonComposablesNonConstructors + constructors
-
-        val psiFactory = KtPsiFactory(project, markGenerated = false)
-
-        // If we made it this far, we need to check and see if the constructors qualify as emit
-        // calls instead of constructor calls.  First, we need to look at the composer to see
-        // what kinds of "emittables" it accepts.
-        // We cache the metadata into a writeable slice based on the descriptor
-        val composerMetadata = ComposerMetadata.getOrBuild(
-            composer,
-            callResolver,
-            psiFactory,
-            resolutionContext
-        )
-
-        // TODO(lmr):
-        // We might decide there are some composers that are not "valid", ie, I shouldn't be able
-        // to call a composable if I just have `val composer = Unit` in scope... Right now we are
-        // just seeing if there are call descriptors. In the future, more validation might be
-        // warranted
-        val isValidComposer = composerMetadata.callDescriptors.isNotEmpty()
-
-        if (!isValidComposer) {
-            return nonComposablesNonConstructors + constructors
-        }
-
-        val context = ExpressionTypingContext.newContext(
-            resolutionContext.trace,
-            resolutionContext.scope,
-            resolutionContext.dataFlowInfo,
-            resolutionContext.expectedType,
-            resolutionContext.languageVersionSettings,
-            resolutionContext.dataFlowValueFactory
-        )
-
-        val temporaryForComposableCall = context.replaceTraceAndCache(
-            temporaryTraceForComposeableCall
-        )
-
-        // Once we know we have a valid composer record the composer on the function descriptor
-        // for the restart transform
-        val trace = temporaryTraceForComposeableCall.trace
-        if (composableDescriptor != null && trace.get(
-                ComposeWritableSlices.RESTART_COMPOSER_NEEDED,
-                composableDescriptor
-            ) != false) {
-            val recordingContext = TemporaryTraceAndCache.create(
-                context,
-                "trace to resolve composable restart group methods",
-                element
-            )
-            val recordingTrace = recordingContext.trace
-            recordingTrace.record(
-                ComposeWritableSlices.RESTART_COMPOSER_NEEDED,
-                composableDescriptor,
-                false
-            )
-            recordingTrace.record(
-                ComposeWritableSlices.RESTART_COMPOSER, composableDescriptor, composerCall)
-            recordingTrace.commit()
-        }
-
-        // If there are no constructors, then all of the candidates are either composables or
-        // non-composable functions, and we follow normal resolution rules.
-        if (constructors.isEmpty()) {
-            // we wrap the composable descriptors into a ComposableFunctionDescriptor so we know
-            // to intercept it in the backend.
-            return nonComposablesNonConstructors + composables.map {
-                ComposableFunctionDescriptor(it, composerCall, composerMetadata)
-            }
-        }
-
-        val emittables = constructors.filter {
-            composerMetadata.isEmittable(it.returnType) && !it.returnType.isAbstract()
-        }
-        val hasEmittableCandidate = emittables.isNotEmpty()
-
-        // if none of the constructors are emittables, then all of the candidates are valid
-        if (!hasEmittableCandidate) {
-            return nonComposablesNonConstructors + constructors + composables.map {
-                ComposableFunctionDescriptor(it, composerCall, composerMetadata)
-            }
-        }
-
-        // since some of the constructors are emittables, we fall back to resolving using the
-        // emit resolver.
-        val emitResolver = ComposeEmitResolver(
-            callResolver,
-            project,
-            composerMetadata
-        )
-
-        val emitCandidates = emitResolver.resolveCandidates(
-            call,
-            emittables,
-            composerCall,
-            name,
-            temporaryForComposableCall
-        )
-
-        return nonComposablesNonConstructors +
-                composables.map {
-                    ComposableFunctionDescriptor(it, composerCall, composerMetadata)
-                } +
-                constructors.filter { !composerMetadata.isEmittable(it.returnType) } +
-                emitCandidates
+        return if (isComposableContext) composableDescriptor else null
     }
 
     private fun CallResolver.fallbackComposerCall(

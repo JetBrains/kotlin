@@ -16,7 +16,11 @@
 
 package androidx.compose.plugins.kotlin
 
+import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices.COMPOSABLE_EMIT_DESCRIPTOR
+import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices.COMPOSABLE_FUNCTION_DESCRIPTOR
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
@@ -36,6 +40,7 @@ import org.jetbrains.kotlin.psi2ir.generators.getResolvedCall
 import org.jetbrains.kotlin.psi2ir.generators.pregenerateCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class ComposeSyntheticIrExtension : SyntheticIrExtension {
@@ -71,6 +76,9 @@ class ComposeSyntheticIrExtension : SyntheticIrExtension {
         )
     }
 
+    val ParameterDescriptor.containingFunction: FunctionDescriptor get() =
+        (this as DeclarationDescriptor).containingDeclaration as FunctionDescriptor
+
     override fun visitCallExpression(
         statementGenerator: StatementGenerator,
         element: KtCallExpression
@@ -83,6 +91,15 @@ class ComposeSyntheticIrExtension : SyntheticIrExtension {
         if (descriptor is ComposableFunctionDescriptor) {
             if (descriptor.isInline) {
                 return statementGenerator.visitCallExpressionWithoutInterception(element)
+            } else if (resolvedCall is VariableAsFunctionResolvedCall) {
+                val param = resolvedCall.variableCall.candidateDescriptor
+                if (
+                    param is ParameterDescriptor &&
+                    param.containingFunction.isInline &&
+                    InlineUtil.isInlineParameter(param)
+                ) {
+                    return statementGenerator.visitCallExpressionWithoutInterception(element)
+                }
             }
             return statementGenerator.visitComposableCall(descriptor, element)
         }
@@ -119,7 +136,9 @@ class ComposeSyntheticIrExtension : SyntheticIrExtension {
                 ),
                 visitCallExpressionWithoutInterception(expression)
             )
-        )
+        ).also {
+            context.irTrace.record(COMPOSABLE_EMIT_DESCRIPTOR, it, descriptor)
+        }
     }
 
     private fun StatementGenerator.visitComposableCall(
@@ -148,7 +167,9 @@ class ComposeSyntheticIrExtension : SyntheticIrExtension {
                 ),
                 visitCallExpressionWithoutInterception(expression)
             )
-        )
+        ).also {
+            context.irTrace.record(COMPOSABLE_FUNCTION_DESCRIPTOR, it, descriptor)
+        }
     }
 }
 
