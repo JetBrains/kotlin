@@ -136,7 +136,7 @@ rootProject.apply {
     from(rootProject.file("gradle/jps.gradle.kts"))
 }
 
-IdeVersionConfigurator.setCurrentIde(this)
+IdeVersionConfigurator.setCurrentIde(project)
 
 extra["versions.protobuf"] = "2.6.1"
 extra["versions.javax.inject"] = "1"
