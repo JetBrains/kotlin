@@ -10,7 +10,10 @@ import androidx.compose.plugins.kotlin.KtxNameConventions
 import androidx.compose.plugins.kotlin.ValidatedAssignment
 import androidx.compose.plugins.kotlin.ValidationType
 import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices
+import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices.COMPOSABLE_EMIT_DESCRIPTOR
+import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices.COMPOSABLE_FUNCTION_DESCRIPTOR
 import androidx.compose.plugins.kotlin.hasPivotalAnnotation
+import androidx.compose.plugins.kotlin.irTrace
 import androidx.compose.plugins.kotlin.isMarkedStable
 import androidx.compose.plugins.kotlin.isSpecialType
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
@@ -130,6 +133,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.isNullable
+import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 
 class ComposableCallTransformer(val context: JvmBackendContext) :
@@ -165,6 +169,7 @@ class ComposableCallTransformer(val context: JvmBackendContext) :
         val calculated = trace.get(ComposeWritableSlices.STABLE_TYPE, this)
         return if (calculated == null) {
             val isStable = !isError &&
+                    !isTypeParameter() &&
                     !isSpecialType &&
                     (
                             KotlinBuiltIns.isPrimitiveType(this) ||
@@ -205,6 +210,39 @@ class ComposableCallTransformer(val context: JvmBackendContext) :
             return super.visitBlock(expression)
         }
 
+        val descriptor = context.state.irTrace[COMPOSABLE_FUNCTION_DESCRIPTOR, expression]
+
+        if (descriptor != null) {
+            if (descriptor.isInline) return expression
+
+            val (composerCall, emitOrCall) = deconstructComposeBlock(expression)
+
+            val transformedComposerCall = composerCall.transformChildren()
+            val transformed = emitOrCall.transformChildren()
+
+            return context.createIrBuilder(declarationStack.last().symbol).irBlock {
+                +irComposableCall(transformedComposerCall, transformed, descriptor)
+            }
+        }
+
+        val emitDescriptor = context.state.irTrace[COMPOSABLE_EMIT_DESCRIPTOR, expression]
+
+        if (emitDescriptor != null) {
+            val (composerCall, emitOrCall) = deconstructComposeBlock(expression)
+            val transformedComposerCall = composerCall.transformChildren()
+            val transformed = emitOrCall.transformChildren()
+            return context.createIrBuilder(declarationStack.last().symbol).irBlock {
+                +irComposableEmit(transformedComposerCall, transformed, emitDescriptor)
+            }
+        }
+
+        error(
+            "Expected ComposableFunctionDescriptor or ComposableEmitDescriptor\n" +
+            "Found: $descriptor"
+        )
+    }
+
+    private fun deconstructComposeBlock(expression: IrBlock): Pair<IrCall, IrCall> {
         assert(expression.statements.size == 2)
         // the first statement should represent the call to get the composer
         // the second statement should represent the composable call or emit
@@ -229,28 +267,7 @@ class ComposableCallTransformer(val context: JvmBackendContext) :
                     second.statements.last() is IrCall -> second.statements.last() as IrCall
             else -> error("Couldn't find composable call in block")
         }
-
-        val descriptor = emitOrCall.descriptor
-
-        return when {
-            descriptor.isInline -> expression
-            descriptor is ComposableFunctionDescriptor -> {
-                val transformedComposerCall = composerCall.transformChildren()
-                val transformed = emitOrCall.transformChildren()
-
-                context.createIrBuilder(declarationStack.last().symbol).irBlock {
-                    +irComposableCall(transformedComposerCall, transformed, descriptor)
-                }
-            }
-            descriptor is ComposableEmitDescriptor -> {
-                val transformedComposerCall = composerCall.transformChildren()
-                val transformed = emitOrCall.transformChildren()
-                context.createIrBuilder(declarationStack.last().symbol).irBlock {
-                    +irComposableEmit(transformedComposerCall, transformed, descriptor)
-                }
-            }
-            else -> error("dont know what to do with $descriptor")
-        }
+        return composerCall to emitOrCall
     }
 
     private fun IrExpression.isReorderTemporaryVariable(): Boolean {
@@ -413,7 +430,7 @@ class ComposableCallTransformer(val context: JvmBackendContext) :
                     type = blockParameter.type.toIrType()
                 ) {
                     +irCall(
-                        callee = symbolTable.referenceFunction(descriptor.underlyingDescriptor),
+                        callee = symbolTable.referenceFunction(original.descriptor),
                         type = original.type
                     ).apply {
                         copyTypeArgumentsFrom(original)

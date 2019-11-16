@@ -234,10 +234,8 @@ class ComposeCallResolutionDiagnosticsTests : AbstractComposeDiagnosticsTest() {
                 lateinit var composable: @Composable() TextSpanScope.() -> Unit
                 @Suppress("PLUGIN_ERROR")
                 override fun compose() {
-                    with(scope.composer.composer) {
-                        startGroup(0)
-                        scope.composable()
-                        endGroup()
+                    with(scope) {
+                        composable()
                     }
                 }
             }

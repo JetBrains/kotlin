@@ -17,15 +17,57 @@
 package androidx.compose.plugins.kotlin
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.types.TypeSubstitutor
 
-class ComposableFunctionDescriptor(
-    val underlyingDescriptor: FunctionDescriptor,
-    val composerCall: ResolvedCall<*>,
+interface ComposableFunctionDescriptor : FunctionDescriptor {
+    val underlyingDescriptor: FunctionDescriptor
+    val composerCall: ResolvedCall<*>
     val composerMetadata: ComposerMetadata
-) : FunctionDescriptor by underlyingDescriptor {
+}
+
+fun ComposableFunctionDescriptor(
+    underlyingDescriptor: FunctionDescriptor,
+    composerCall: ResolvedCall<*>,
+    composerMetadata: ComposerMetadata
+): ComposableFunctionDescriptor {
+    return if (underlyingDescriptor is SimpleFunctionDescriptor) {
+        ComposableSimpleFunctionDescriptorImpl(
+            underlyingDescriptor,
+            composerCall,
+            composerMetadata
+        )
+    } else {
+        ComposableFunctionDescriptorImpl(
+            underlyingDescriptor,
+            composerCall,
+            composerMetadata
+        )
+    }
+}
+
+class ComposableFunctionDescriptorImpl(
+    override val underlyingDescriptor: FunctionDescriptor,
+    override val composerCall: ResolvedCall<*>,
+    override val composerMetadata: ComposerMetadata
+) : FunctionDescriptor by underlyingDescriptor, ComposableFunctionDescriptor {
+    override fun substitute(substitutor: TypeSubstitutor): FunctionDescriptor? {
+        return underlyingDescriptor.substitute(substitutor)?.let {
+            ComposableFunctionDescriptor(
+                underlyingDescriptor = it,
+                composerCall = composerCall,
+                composerMetadata = composerMetadata
+            )
+        }
+    }
+}
+
+class ComposableSimpleFunctionDescriptorImpl(
+    override val underlyingDescriptor: SimpleFunctionDescriptor,
+    override val composerCall: ResolvedCall<*>,
+    override val composerMetadata: ComposerMetadata
+) : SimpleFunctionDescriptor by underlyingDescriptor, ComposableFunctionDescriptor {
     override fun substitute(substitutor: TypeSubstitutor): FunctionDescriptor? {
         return underlyingDescriptor.substitute(substitutor)?.let {
             ComposableFunctionDescriptor(

@@ -43,6 +43,125 @@ import kotlin.reflect.KClass
 class ComposeCallLoweringTests : AbstractCodegenTest() {
 
     @Test
+    fun testComposableLambdaCall(): Unit = ensureSetup {
+        codegen(
+            """
+                import androidx.compose.*
+
+                @Composable
+                fun test(children: @Composable() () -> Unit) {
+                    children()
+                }
+            """
+        )
+    }
+
+    @Test
+    fun testComposableLambdaCallWithGenerics(): Unit = ensureSetup {
+        codegen(
+            """
+                import androidx.compose.*
+
+                @Composable fun <T> A(value: T, block: @Composable() (T) -> Unit) {
+                    block(value)
+                }
+
+                @Composable fun <T> B(
+                    value: T,
+                    block: @Composable() (@Composable() (T) -> Unit) -> Unit
+                ) {
+                    block({ })
+                }
+
+                @Composable
+                fun test() {
+                    A(123) { it ->
+                        println(it)
+                    }
+                    B(123) { it ->
+                        it(456)
+                    }
+                }
+            """
+        )
+    }
+
+    @Test
+    fun testMethodInvocations(): Unit = ensureSetup {
+        codegen(
+            """
+                import androidx.compose.*
+
+                val x = Ambient.of<Int> { 123 }
+
+                @Composable
+                fun test() {
+                    x.Provider(456) {
+
+                    }
+                }
+            """
+        )
+    }
+
+    @Test
+    fun testReceiverLambdaInvocation(): Unit = ensureSetup {
+        codegen(
+            """
+                import androidx.compose.*
+
+                class TextSpanScope internal constructor(val composer: ViewComposition)
+
+                @Composable fun TextSpanScope.Foo(children: @Composable TextSpanScope.() -> Unit) {
+                    children()
+                }
+            """
+        )
+    }
+
+    @Test
+    fun testReceiverLambda2(): Unit = ensureSetup {
+        codegen(
+            """
+                import androidx.compose.*
+
+                class DensityScope(val density: Density)
+
+                class Density
+
+                val DensityAmbient = Ambient.of<Density>()
+
+                fun ambientDensity() = effectOf<Density> { +ambient(DensityAmbient) }
+
+                @Composable
+                fun WithDensity(block: @Composable DensityScope.() -> Unit) {
+                    DensityScope(+ambientDensity()).block()
+                }
+            """
+        )
+    }
+
+    @Test
+    fun testInlineChildren(): Unit = ensureSetup {
+        codegen(
+            """
+                import androidx.compose.*
+                import android.widget.LinearLayout
+
+                @Composable
+                inline fun PointerInputWrapper(
+                    crossinline children: @Composable() () -> Unit
+                ) {
+                    // Hide the internals of PointerInputNode
+                    LinearLayout {
+                        children()
+                    }
+                }
+            """
+        )
+    }
+
+    @Test
     fun testNoComposerImport(): Unit = ensureSetup {
         codegenNoImports(
             """
