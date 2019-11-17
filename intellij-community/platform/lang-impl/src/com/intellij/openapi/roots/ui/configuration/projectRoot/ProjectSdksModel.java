@@ -261,7 +261,7 @@ public class ProjectSdksModel implements SdkModel {
                              ? ProjectBundle.message("sdk.configure.add.fromDisk.action", type.getPresentableName())
                              : ProjectBundle.message("sdk.configure.add.default.action", type.getPresentableName());
 
-      final AnAction addAction = new DumbAwareAction(addOnDiskText, null, type.getIconForAddAction()) {
+      AnAction addAction = new DumbAwareAction(addOnDiskText, null, type.getIconForAddAction()) {
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
           doAdd(parent, selectedSdk, type, updateTree);
@@ -283,7 +283,7 @@ public class ProjectSdksModel implements SdkModel {
     LOG.assertTrue(downloadExtension.supportsDownload(type));
     myModified = true;
 
-    downloadExtension.showDownloadUI(type,  this, parent, selectedSdk, sdk -> setupInstallableSdk(sdk, callback));
+    downloadExtension.showDownloadUI(type, this, parent, selectedSdk, sdk -> setupInstallableSdk(type, sdk, callback));
   }
 
   public void doAdd(@NotNull JComponent parent, @Nullable final Sdk selectedSdk, @NotNull final SdkType type, @NotNull final Consumer<? super Sdk> callback) {
@@ -302,14 +302,12 @@ public class ProjectSdksModel implements SdkModel {
   }
 
   @NotNull
-  @Override
   public Sdk createSdk(@NotNull SdkType type, @NotNull String home) {
     String newSdkName = SdkConfigurationUtil.createUniqueSdkName(type, home, myProjectSdks.values());
     return createSdkInternal(type, newSdkName, home);
   }
 
   @NotNull
-  @Override
   public Sdk createSdk(@NotNull SdkType type, @NotNull String suggestedName, @NotNull String home) {
     String newSdkName = SdkConfigurationUtil.createUniqueSdkName(suggestedName, myProjectSdks.values());
     return createSdkInternal(type, newSdkName, home);
@@ -324,10 +322,23 @@ public class ProjectSdksModel implements SdkModel {
     return newJdk;
   }
 
-  private void setupInstallableSdk(@NotNull Sdk newJdk, @Nullable Consumer<? super Sdk> callback) {
+  private void setupInstallableSdk(@NotNull SdkType type,
+                                   @NotNull SdkDownloadTask item,
+                                   @Nullable Consumer<? super Sdk> callback) {
     // we do not ask the SdkType to set up the SDK for us, instead, we return an incomplete SDK to the
     // model with an expectation it would be updated later on
-    doAdd(newJdk, callback);
+    String suggestedName = item.getSuggestedSdkName();
+    String homeDir = item.getPlannedHomeDir();
+    Sdk sdk = suggestedName == null
+              ? createSdk(type, homeDir)
+              : createSdk(type, suggestedName, homeDir);
+
+    SdkModificator modificator = sdk.getSdkModificator();
+    modificator.setVersionString(item.getPlannedVersion());
+    modificator.commitChanges();
+
+    SdkDownloadTracker.getInstance().registerSdkDownload(null, sdk, this, item);
+    doAdd(sdk, callback);
   }
 
   private void setupSdk(@NotNull Sdk newJdk, @Nullable Consumer<? super Sdk> callback) {

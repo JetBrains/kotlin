@@ -7,7 +7,6 @@ import com.intellij.openapi.projectRoots.SimpleJavaSdkType
 import com.intellij.testFramework.LightPlatformTestCase
 import org.junit.Assert
 import org.junit.Test
-import java.lang.Exception
 
 class ProjectSdksModelTest : LightPlatformTestCase() {
   private val model = ProjectSdksModel()
