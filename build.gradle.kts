@@ -25,6 +25,7 @@ buildscript {
 
     // a workaround for kotlin compiler classpath in kotlin project: sometimes gradle substitutes
     // kotlin-stdlib external dependency with local project :kotlin-stdlib in kotlinCompilerClasspath configuration.
+    // kotlin-stdlib external dependency with local project :kotlin-stdlib in kotlinCompilerClasspath configuration.
     // see also configureCompilerClasspath@
     val bootstrapCompilerClasspath by configurations.creating
 

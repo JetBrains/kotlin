@@ -138,28 +138,13 @@ object RuntimeAssertionsOnGenericTypeReturningFunctionsCallChecker : CallChecker
          * because `inferredReturnType` in this case will be flexible (nullable), too.
          */
 
-        if (resolvedCall !is VariableAsFunctionResolvedCall &&
-            unsubstitutedReturnType.isTypeParameter() &&
+        if (unsubstitutedReturnType.isTypeParameter() &&
             unsubstitutedReturnType.isNullable() &&
             !inferredReturnType.isNullable() &&
             resolvedCall.candidateDescriptor.name !in SPECIAL_FUNCTION_NAMES
         ) {
-            val y = resolvedCall.candidateDescriptor.annotations
-            val y1 = resolvedCall.candidateDescriptor.fqNameSafe
-            val y2 = resolvedCall.candidateDescriptor.containingDeclaration
-            val y3 = resolvedCall.candidateDescriptor.isEffectivelyPublicApi
-            val y4 = resolvedCall.candidateDescriptor.module
             val callElement = resolvedCall.call.callElement
             val assertionInfo = RuntimeAssertionInfo(needNotNullAssertion = true, message = callElement.textForRuntimeAssertionInfo)
-
-            if (resolvedCall is VariableAsFunctionResolvedCall) {
-                File("/Users/victor.petukhov/Desktop/untitled_folder/1.txt").appendText(resolvedCall.variableCall.candidateDescriptor.toString() + " +++|+++\n")
-            } else {
-                File("/Users/victor.petukhov/Desktop/untitled_folder/1.txt").appendText(resolvedCall.candidateDescriptor.toString() + "\n")
-            }
-            File("/Users/victor.petukhov/Desktop/untitled_folder/1.txt").appendText(unsubstitutedReturnType.toString() + ": " + inferredReturnType + "\n\n")
-
-            File("/Users/victor.petukhov/Desktop/untitled_folder/10.txt").appendText(" |")
 
             context.trace.record(
                 when (context.scope.kind) {

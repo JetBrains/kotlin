@@ -682,7 +682,7 @@ fun generateNullCheckOnCallSite(
     val assertionInfo = codegen.bindingContext.get(slice, callElement)
 
     if (assertionInfo?.needNotNullAssertion == true) {
-        codegen.v.dup()
-        codegen.v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "checkNotNull", "(Ljava/lang/Object;)V", false)
+//        codegen.v.dup()
+//        codegen.v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "checkNotNull", "(Ljava/lang/Object;)V", false)
     }
 }
