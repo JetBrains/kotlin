@@ -127,7 +127,6 @@ public class GenericInlineHandler {
         continue;
       }
       PsiElement refElement = ref.getElement();
-      LOG.assertTrue(refElement != null, ref.getClass().getName());
 
       final Language language = refElement.getLanguage();
       if (inliners.containsKey(language)) continue;
