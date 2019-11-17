@@ -5,42 +5,63 @@ import com.google.common.collect.Sets;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
-import com.intellij.openapi.progress.*;
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.progress.PerformInBackgroundOption;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.progress.util.ProgressIndicatorBase;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectBundle;
-import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkType;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.wm.ex.ProgressIndicatorEx;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class SdkDownloadTracker {
+  private static final Logger LOG = Logger.getInstance(SdkDownloadTracker.class);
+
   @NotNull
   public static SdkDownloadTracker getInstance() {
     return ApplicationManager.getApplication().getService(SdkDownloadTracker.class);
   }
 
-  private static final Key<PendingDownload> PENDING_DOWNLOAD_KEY = Key.create(PendingDownload.class.getName());
+  private final List<PendingDownload> myPendingTasks = new ArrayList<>();
 
-  public void registerSdkDownload(@Nullable Project project,
-                                  @NotNull Sdk originalSdk,
-                                  @NotNull ProjectSdksModel model,
+  @Nullable
+  private PendingDownload findTask(@NotNull Sdk sdk) {
+    for (PendingDownload task : myPendingTasks) {
+      if (task.myEditableSdks.contains(sdk)) {
+        return task;
+      }
+    }
+    return null;
+  }
+
+  public void registerEditableSdk(@NotNull Sdk original,
+                                  @NotNull Sdk editable) {
+    PendingDownload task = findTask(original);
+    if (task == null) return;
+
+    LOG.assertTrue(findTask(editable) == null, "Download is already running for the Sdk " + editable);
+    task.registerEditableSdk(editable);
+  }
+
+  public void registerSdkDownload(@NotNull Sdk originalSdk,
                                   @NotNull SdkDownloadTask item) {
     ApplicationManager.getApplication().assertIsDispatchThread();
+    LOG.assertTrue(findTask(originalSdk) == null, "Download is already running for the Sdk " + originalSdk);
 
-    PendingDownload pd = new PendingDownload(model, originalSdk, item);
-    originalSdk.putUserData(PENDING_DOWNLOAD_KEY, pd);
+    PendingDownload pd = new PendingDownload(originalSdk, item);
+    myPendingTasks.add(pd);
 
     SdkType type = (SdkType)originalSdk.getSdkType();
-    Task.Backgroundable task = new Task.Backgroundable(project,
+    Task.Backgroundable task = new Task.Backgroundable(null,
                                                        ProjectBundle.message("sdk.configure.downloading", type.getPresentableName()),
                                                        true,
                                                        PerformInBackgroundOption.ALWAYS_BACKGROUND) {
@@ -55,9 +76,10 @@ public class SdkDownloadTracker {
 
   /**
    * Checks if there is an activity for a given Sdk and subscribes a listeners if there is an activity
-   * @param sdk the Sdk instance that to check (it could be it's #clone())
-   * @param lifetime unsubscribe callback
-   * @param indicator progress indicator to deliver progress
+   *
+   * @param sdk                        the Sdk instance that to check (it could be it's #clone())
+   * @param lifetime                   unsubscribe callback
+   * @param indicator                  progress indicator to deliver progress
    * @param onDownloadCompleteCallback called once download is completed from ETD to update the UI
    * @return true if the given Sdk is downloading right now
    */
@@ -66,34 +88,37 @@ public class SdkDownloadTracker {
                                                 @NotNull ProgressIndicator indicator,
                                                 @NotNull Runnable onDownloadCompleteCallback) {
     ApplicationManager.getApplication().assertIsDispatchThread();
-    PendingDownload pd = sdk.getUserData(PENDING_DOWNLOAD_KEY);
+    PendingDownload pd = findTask(sdk);
     if (pd == null) return false;
-
-    if (pd.myIsCompleted.get()) {
-      sdk.putUserData(PENDING_DOWNLOAD_KEY, null);
-      //TODO[jo]: sanity re-setup could be done here, as long as it's completed, but not changed
-      return false;
-    }
 
     pd.tryRegisterListener(lifetime, indicator, onDownloadCompleteCallback);
     return true;
   }
 
-  private static class PendingDownload {
-    final ProjectSdksModel myModel;
-    final Sdk mySdk;
+  private class PendingDownload {
     final SdkDownloadTask myTask;
+
+    final Set<Sdk> myEditableSdks = Sets.newIdentityHashSet();
     final ProgressIndicatorBase myProgressIndicator = new ProgressIndicatorBase();
-    final AtomicBoolean myIsCompleted = new AtomicBoolean(false);
     final Set<Runnable> myCompleteListeners = Sets.newIdentityHashSet();
     final Set<Disposable> myDisposables = Sets.newIdentityHashSet();
 
-    private PendingDownload(@NotNull ProjectSdksModel model,
-                            @NotNull Sdk sdk,
+    private PendingDownload(@NotNull Sdk sdk,
                             @NotNull SdkDownloadTask task) {
-      myModel = model;
-      mySdk = sdk;
+      myEditableSdks.add(sdk);
       myTask = task;
+    }
+
+    public void registerEditableSdk(@NotNull Sdk editable) {
+      // there are many Sdk clones that are created
+      // along with the Project Structure model.
+      // Our goal is to keep track of all such objects to make
+      // sure we update all and refresh the UI once download is completed
+      //
+      // there is a chance we have here several unneeded objects,
+      // e.g. from the Project Structure dialog is shown several
+      // times. It's cheaper to ignore then to track
+      myEditableSdks.add(editable);
     }
 
     public void doDownload(@NotNull ProgressIndicator indicator) {
@@ -102,9 +127,10 @@ public class SdkDownloadTracker {
         myProgressIndicator.addStateDelegate((ProgressIndicatorEx)indicator);
         //TODO[jo]: handle exceptions
         myTask.doDownload(myProgressIndicator);
-      } finally {
+      }
+      finally {
         myProgressIndicator.removeStateDelegate((ProgressIndicatorEx)indicator);
-        ApplicationManager.getApplication().invokeLater(() -> dispose());
+        ApplicationManager.getApplication().invokeLater(this::onSdkDownloadCompleted);
       }
     }
 
@@ -131,36 +157,15 @@ public class SdkDownloadTracker {
       myDisposables.add(unsubscribe);
     }
 
-    public void dispose() {
+    public void onSdkDownloadCompleted() {
       ApplicationManager.getApplication().assertIsDispatchThread();
-      myIsCompleted.set(true);
 
-      // there are several possibilities where our initial Sdk instance
-      // could reach. We assume UserDataHolder is preserved between Sdk instance on #clone()
-      //
-      // 1. it could only be in the ProjectSdksModel (myModel)
-      //   => so the mySdk is a key,
-      //   => there is yet another editable clone
-      //   it's OK to patch both or the editable one
-      //   the first one would we registered in the ProjectJdkTable
-      //
-      // 2. the ProjectSdksModel (myModel) was reset,
-      //   => our mySdk is registered in the ProjectJdkTable (or is removed)
-      //      => we need to patch the registered one (mySdk)
-      //   => we still need to patch the cloned editable in the ProjectSdksModel (myModel)
-      //
-      // to summarize: we patch both Sdks, and check the ProjectJdkTable, just in case
       WriteAction.run(() -> {
-        Sdk modifiableSdk = myModel.getProjectSdks().get(mySdk);
-        if (modifiableSdk != null) {
-          setupOurSdkAndCleanTheState(modifiableSdk);
+        for (Sdk sdk : myEditableSdks) {
+          ((SdkType)sdk.getSdkType()).setupSdkPaths(sdk);
         }
 
-        setupOurSdkAndCleanTheState(mySdk);
-
-        for (Sdk jdk : ProjectJdkTable.getInstance().getAllJdks()) {
-          setupOurSdkAndCleanTheState(jdk);
-        }
+        myPendingTasks.remove(this);
 
         //free the WriteAction, thus non-blocking
         ApplicationManager.getApplication().invokeLater(() -> {
@@ -170,12 +175,6 @@ public class SdkDownloadTracker {
           }
         });
       });
-    }
-
-    private void setupOurSdkAndCleanTheState(@NotNull Sdk sdk) {
-      if (sdk.getUserData(PENDING_DOWNLOAD_KEY) != this) return;
-      ((SdkType)sdk.getSdkType()).setupSdkPaths(sdk);
-      sdk.putUserData(PENDING_DOWNLOAD_KEY, null);
     }
   }
 }

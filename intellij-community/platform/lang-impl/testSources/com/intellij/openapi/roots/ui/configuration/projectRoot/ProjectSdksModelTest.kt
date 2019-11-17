@@ -1,12 +1,20 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.roots.ui.configuration.projectRoot
 
+import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.application.WriteAction
-import com.intellij.openapi.projectRoots.ProjectJdkTable
-import com.intellij.openapi.projectRoots.SimpleJavaSdkType
+import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.progress.util.ProgressIndicatorUtils
+import com.intellij.openapi.projectRoots.*
+import com.intellij.testFramework.ExtensionTestUtil
 import com.intellij.testFramework.LightPlatformTestCase
+import kotlinx.coroutines.awaitAll
 import org.junit.Assert
 import org.junit.Test
+import java.util.function.Consumer
+import javax.swing.JComponent
+import javax.swing.JPanel
 
 class ProjectSdksModelTest : LightPlatformTestCase() {
   private val model = ProjectSdksModel()
@@ -55,5 +63,27 @@ class ProjectSdksModelTest : LightPlatformTestCase() {
         ProjectJdkTable.getInstance().removeJdk(sdk)
       }
     }
+  }
+
+  @Test
+  fun testDownloader() {
+    val task = object : SdkDownloadTask {
+      override fun getSuggestedSdkName() = "sdk-download"
+      override fun getPlannedHomeDir() = "mock"
+      override fun getPlannedVersion() = "1.2.3"
+      override fun doDownload(indicator: ProgressIndicator) {
+      }
+    }
+
+    model.setupInstallableSdk(sdkType, task) { sdk ->
+      println("Sdk ready $sdk")
+    }
+
+
+
+
+
+
+
   }
 }

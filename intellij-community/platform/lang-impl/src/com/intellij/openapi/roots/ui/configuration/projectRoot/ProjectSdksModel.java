@@ -80,7 +80,9 @@ public class ProjectSdksModel implements SdkModel {
     final Sdk[] projectSdks = ProjectJdkTable.getInstance().getAllJdks();
     for (Sdk sdk : projectSdks) {
       try {
-        myProjectSdks.put(sdk, (Sdk)sdk.clone());
+        Sdk editable = (Sdk)sdk.clone();
+        myProjectSdks.put(sdk, editable);
+        SdkDownloadTracker.getInstance().registerEditableSdk(sdk, editable);
       }
       catch (CloneNotSupportedException e) {
         LOG.error(e);
@@ -322,23 +324,25 @@ public class ProjectSdksModel implements SdkModel {
     return newJdk;
   }
 
-  private void setupInstallableSdk(@NotNull SdkType type,
-                                   @NotNull SdkDownloadTask item,
-                                   @Nullable Consumer<? super Sdk> callback) {
+  public void setupInstallableSdk(@NotNull SdkType type,
+                                  @NotNull SdkDownloadTask item,
+                                  @Nullable Consumer<? super Sdk> callback) {
     // we do not ask the SdkType to set up the SDK for us, instead, we return an incomplete SDK to the
     // model with an expectation it would be updated later on
     String suggestedName = item.getSuggestedSdkName();
     String homeDir = item.getPlannedHomeDir();
-    Sdk sdk = suggestedName == null
-              ? createSdk(type, homeDir)
-              : createSdk(type, suggestedName, homeDir);
+    Sdk sdk = createSdk(type, suggestedName, homeDir);
 
     SdkModificator modificator = sdk.getSdkModificator();
     modificator.setVersionString(item.getPlannedVersion());
     modificator.commitChanges();
 
-    SdkDownloadTracker.getInstance().registerSdkDownload(null, sdk, this, item);
-    doAdd(sdk, callback);
+    SdkDownloadTracker tracker = SdkDownloadTracker.getInstance();
+    tracker.registerSdkDownload(sdk, item);
+    Sdk editableSdk = doAddInternal(sdk, callback);
+    if (editableSdk != null) {
+      tracker.registerEditableSdk(sdk, editableSdk);
+    }
   }
 
   private void setupSdk(@NotNull Sdk newJdk, @Nullable Consumer<? super Sdk> callback) {
@@ -360,6 +364,11 @@ public class ProjectSdksModel implements SdkModel {
   }
 
   public void doAdd(@NotNull Sdk newSdk, @Nullable Consumer<? super Sdk> updateTree) {
+    doAddInternal(newSdk, updateTree);
+  }
+
+  @Nullable
+  private Sdk doAddInternal(@NotNull Sdk newSdk, @Nullable Consumer<? super Sdk> updateTree) {
     myModified = true;
     try {
       Sdk editableCopy = (Sdk)newSdk.clone();
@@ -368,9 +377,11 @@ public class ProjectSdksModel implements SdkModel {
         updateTree.consume(editableCopy);
       }
       mySdkEventsDispatcher.getMulticaster().sdkAdded(editableCopy);
+      return editableCopy;
     }
     catch (CloneNotSupportedException e) {
       LOG.error(e);
+      return null;
     }
   }
 
