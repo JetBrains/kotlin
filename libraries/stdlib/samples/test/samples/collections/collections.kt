@@ -338,11 +338,112 @@ class Collections {
     class Transformations {
 
         @Sample
+        fun associate() {
+            data class Person(val firstName: String, val lastName: String)
+
+            val computerScientists = listOf(Person("Grace", "Hopper"), Person("Edsger", "Dijkstra"), Person("Alan", "Turing"))
+
+            val byLastName = computerScientists.associate { it.lastName to it.firstName }
+
+            assertPrints(byLastName, "{Hopper=Grace, Dijkstra=Edsger, Turing=Alan}")
+        }
+
+        @Sample
+        fun associateBy() {
+            data class Person(val firstName: String, val lastName: String) {
+                override fun toString(): String = "$firstName $lastName"
+            }
+
+            val computerScientists = listOf(Person("Grace", "Hopper"), Person("Edsger", "Dijkstra"), Person("Alan", "Turing"))
+
+            val byLastName = computerScientists.associateBy { it.lastName }
+
+            assertPrints(byLastName.keys, "[Hopper, Dijkstra, Turing]")
+            assertPrints(byLastName.values, "[Grace Hopper, Edsger Dijkstra, Alan Turing]")
+        }
+
+        @Sample
+        fun associateByWithValueTransform() {
+            data class Person(val firstName: String, val lastName: String)
+
+            val computerScientists = listOf(Person("Grace", "Hopper"), Person("Edsger", "Dijkstra"), Person("Alan", "Turing"))
+
+            val byLastName = computerScientists.associateBy({ it.lastName }, { it.firstName })
+
+            assertPrints(byLastName, "{Hopper=Grace, Dijkstra=Edsger, Turing=Alan}")
+        }
+
+        @Sample
+        fun associateByTo() {
+            data class Person(val firstName: String, val lastName: String) {
+                override fun toString(): String = "$firstName $lastName"
+            }
+
+            val computerScientists = listOf(Person("Grace", "Hopper"), Person("Edsger", "Dijkstra"), Person("Alan", "Turing"))
+
+            val byLastName = mutableMapOf<String, Person>()
+            assertTrue(byLastName.isEmpty())
+
+            computerScientists.associateByTo(byLastName) { it.lastName }
+
+            assertTrue(byLastName.isNotEmpty())
+            assertPrints(byLastName.keys, "[Hopper, Dijkstra, Turing]")
+            assertPrints(byLastName.values, "[Grace Hopper, Edsger Dijkstra, Alan Turing]")
+        }
+
+        @Sample
+        fun associateByToWithValueTransform() {
+            data class Person(val firstName: String, val lastName: String)
+
+            val computerScientists = listOf(Person("Grace", "Hopper"), Person("Edsger", "Dijkstra"), Person("Alan", "Turing"))
+
+            val byLastName = mutableMapOf<String, String>()
+            assertTrue(byLastName.isEmpty())
+
+            computerScientists.associateByTo(byLastName, { it.lastName }, { it.firstName} )
+
+            assertTrue(byLastName.isNotEmpty())
+            assertPrints(byLastName, "{Hopper=Grace, Dijkstra=Edsger, Turing=Alan}")
+        }
+
+        @Sample
+        fun associateTo() {
+            data class Person(val firstName: String, val lastName: String)
+
+            val computerScientists = listOf(Person("Grace", "Hopper"), Person("Edsger", "Dijkstra"), Person("Alan", "Turing"))
+
+            val byLastName = mutableMapOf<String, String>()
+            assertTrue(byLastName.isEmpty())
+
+            computerScientists.associateTo(byLastName) { it.lastName to it.firstName }
+
+            assertTrue(byLastName.isNotEmpty())
+            assertPrints(byLastName, "{Hopper=Grace, Dijkstra=Edsger, Turing=Alan}")
+        }
+
+        @Sample
         fun associateWith() {
             val words = listOf("a", "abc", "ab", "def", "abcd")
             val withLength = words.associateWith { it.length }
             assertPrints(withLength.keys, "[a, abc, ab, def, abcd]")
             assertPrints(withLength.values, "[1, 3, 2, 3, 4]")
+        }
+
+        @Sample
+        fun associateWithTo() {
+            data class Person(val firstName: String, val lastName: String) {
+                override fun toString(): String = "$firstName $lastName"
+            }
+
+            val computerScientists = listOf(Person("Grace", "Hopper"), Person("Edsger", "Dijkstra"), Person("Alan", "Turing"))
+            val withLengthOfNames = mutableMapOf<Person, Int>()
+            assertTrue(withLengthOfNames.isEmpty())
+
+            computerScientists.associateWithTo(withLengthOfNames) { it.firstName.length + it.lastName.length }
+
+            assertTrue(withLengthOfNames.isNotEmpty())
+            assertPrints(withLengthOfNames.keys, "[Grace Hopper, Edsger Dijkstra, Alan Turing]")
+            assertPrints(withLengthOfNames.values, "[11, 14, 10]")
         }
 
         @Sample

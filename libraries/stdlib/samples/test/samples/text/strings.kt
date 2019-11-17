@@ -86,10 +86,77 @@ class Strings {
     }
 
     @Sample
+    fun associate() {
+        val string = "bonne journée"
+        // associate each character with its code
+        val result = string.associate { char -> char to char.toInt() }
+        // notice each letter occurs only once
+        assertPrints(result, "{b=98, o=111, n=110, e=101,  =32, j=106, u=117, r=114, é=233}")
+    }
+
+    @Sample
+    fun associateBy() {
+        val string = "bonne journée"
+        // associate each character by its code
+        val result = string.associateBy { char -> char.toInt() }
+        // notice each char code occurs only once
+        assertPrints(result, "{98=b, 111=o, 110=n, 101=e, 32= , 106=j, 117=u, 114=r, 233=é}")
+    }
+
+    @Sample
+    fun associateByWithValueTransform() {
+        val string = "bonne journée"
+        // associate each character by the code of its upper case equivalent and transform the character to upper case
+        val result = string.associateBy({ char -> char.toUpperCase().toInt() }, { char -> char.toUpperCase() })
+        // notice each char code occurs only once
+        assertPrints(result, "{66=B, 79=O, 78=N, 69=E, 32= , 74=J, 85=U, 82=R, 201=É}")
+    }
+
+    @Sample
+    fun associateByTo() {
+        val string = "bonne journée"
+        // associate each character by its code
+        val result = mutableMapOf<Int, Char>()
+        string.associateByTo(result) { char -> char.toInt() }
+        // notice each char code occurs only once
+        assertPrints(result, "{98=b, 111=o, 110=n, 101=e, 32= , 106=j, 117=u, 114=r, 233=é}")
+    }
+
+    @Sample
+    fun associateByToWithValueTransform() {
+        val string = "bonne journée"
+        // associate each character by the code of its upper case equivalent and transform the character to upper case
+        val result = mutableMapOf<Int, Char>()
+        string.associateByTo(result, { char -> char.toUpperCase().toInt() }, { char -> char.toUpperCase() })
+        // notice each char code occurs only once
+        assertPrints(result, "{66=B, 79=O, 78=N, 69=E, 32= , 74=J, 85=U, 82=R, 201=É}")
+    }
+
+    @Sample
+    fun associateTo() {
+        val string = "bonne journée"
+        // associate each character with its code
+        val result = mutableMapOf<Char, Int>()
+        string.associateTo(result) { char -> char to char.toInt() }
+        // notice each letter occurs only once
+        assertPrints(result, "{b=98, o=111, n=110, e=101,  =32, j=106, u=117, r=114, é=233}")
+    }
+
+    @Sample
     fun associateWith() {
         val string = "bonne journée"
         // associate each character with its code
         val result = string.associateWith { char -> char.toInt() }
+        // notice each letter occurs only once
+        assertPrints(result, "{b=98, o=111, n=110, e=101,  =32, j=106, u=117, r=114, é=233}")
+    }
+
+    @Sample
+    fun associateWithTo() {
+        val string = "bonne journée"
+        // associate each character with its code
+        val result = mutableMapOf<Char, Int>()
+        string.associateWithTo(result) { char -> char.toInt() }
         // notice each letter occurs only once
         assertPrints(result, "{b=98, o=111, n=110, e=101,  =32, j=106, u=117, r=114, é=233}")
     }

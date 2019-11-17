@@ -65,6 +65,169 @@ class Arrays {
     class Transformations {
 
         @Sample
+        fun associate() {
+            data class Person(val firstName: String, val lastName: String)
+
+            val computerScientists = arrayOf(Person("Grace", "Hopper"), Person("Edsger", "Dijkstra"), Person("Alan", "Turing"))
+
+            val byLastName = computerScientists.associate { it.lastName to it.firstName }
+
+            assertPrints(byLastName, "{Hopper=Grace, Dijkstra=Edsger, Turing=Alan}")
+        }
+
+        @Sample
+        fun associateArrayOfPrimitives() {
+            fun fib(n: Int): Int {
+                var current = 0
+                var next = 1
+                var sum: Int
+                if (n == 0)
+                    return current
+                for (i in 2..n) {
+                    sum = current + next
+                    current = next
+                    next = sum
+                }
+                return next
+            }
+
+            val numbers = intArrayOf(1, 2, 3, 4, 5)
+
+            val fibonacciNumbers = numbers.associate { it to fib(it) }
+
+            assertPrints(fibonacciNumbers, "{1=1, 2=1, 3=2, 4=3, 5=5}")
+        }
+
+        @Sample
+        fun associateBy() {
+            data class Person(val firstName: String, val lastName: String) {
+                override fun toString(): String = "$firstName $lastName"
+            }
+
+            val computerScientists = arrayOf(Person("Grace", "Hopper"), Person("Edsger", "Dijkstra"), Person("Alan", "Turing"))
+
+            val byLastName = computerScientists.associateBy { it.lastName }
+
+            assertPrints(byLastName.keys, "[Hopper, Dijkstra, Turing]")
+            assertPrints(byLastName.values, "[Grace Hopper, Edsger Dijkstra, Alan Turing]")
+        }
+
+        @Sample
+        fun associateArrayOfPrimitivesBy() {
+            val asciiValues = intArrayOf(65, 66, 67, 68, 69)
+
+            val byChar = asciiValues.associateBy { it.toChar() }
+
+            assertPrints(byChar, "{A=65, B=66, C=67, D=68, E=69}")
+        }
+
+        @Sample
+        fun associateByWithValueTransform() {
+            data class Person(val firstName: String, val lastName: String)
+
+            val computerScientists = arrayOf(Person("Grace", "Hopper"), Person("Edsger", "Dijkstra"), Person("Alan", "Turing"))
+
+            val byLastName = computerScientists.associateBy({ it.lastName }, { it.firstName })
+
+            assertPrints(byLastName, "{Hopper=Grace, Dijkstra=Edsger, Turing=Alan}")
+        }
+
+        @Sample
+        fun associateArrayOfPrimitivesByWithValueTransform() {
+            val asciiValues = intArrayOf(65, 66, 67, 68, 69)
+
+            val byCharToLowerCase = asciiValues.associateBy({ it.toChar() }, { (it + 32).toChar() })
+
+            assertPrints(byCharToLowerCase, "{A=a, B=b, C=c, D=d, E=e}")
+        }
+
+        @Sample
+        fun associateByTo() {
+            data class Person(val firstName: String, val lastName: String) {
+                override fun toString(): String = "$firstName $lastName"
+            }
+
+            val computerScientists = arrayOf(Person("Grace", "Hopper"), Person("Edsger", "Dijkstra"), Person("Alan", "Turing"))
+
+            val byLastName = mutableMapOf<String, Person>()
+            assertTrue(byLastName.isEmpty())
+
+            computerScientists.associateByTo(byLastName) { it.lastName }
+
+            assertTrue(byLastName.isNotEmpty())
+            assertPrints(byLastName.keys, "[Hopper, Dijkstra, Turing]")
+            assertPrints(byLastName.values, "[Grace Hopper, Edsger Dijkstra, Alan Turing]")
+        }
+
+        @Sample
+        fun associateArrayOfPrimitivesByTo() {
+            val asciiValues = intArrayOf(65, 66, 67, 68, 69)
+
+            val byChar = mutableMapOf<Char, Int>()
+            asciiValues.associateByTo(byChar) { it.toChar() }
+
+            assertPrints(byChar, "{A=65, B=66, C=67, D=68, E=69}")
+        }
+
+        @Sample
+        fun associateByToWithValueTransform() {
+            data class Person(val firstName: String, val lastName: String)
+
+            val computerScientists = arrayOf(Person("Grace", "Hopper"), Person("Edsger", "Dijkstra"), Person("Alan", "Turing"))
+
+            val byLastName = mutableMapOf<String, String>()
+            assertTrue(byLastName.isEmpty())
+
+            computerScientists.associateByTo(byLastName, { it.lastName }, { it.firstName} )
+
+            assertTrue(byLastName.isNotEmpty())
+            assertPrints(byLastName, "{Hopper=Grace, Dijkstra=Edsger, Turing=Alan}")
+        }
+
+        @Sample
+        fun associateArrayOfPrimitivesByToWithValueTransform() {
+            val asciiValues = intArrayOf(65, 66, 67, 68, 69)
+
+            val byChar = mutableMapOf<Char, Char>()
+            asciiValues.associateByTo(byChar, { it.toChar() }, { (it + 32).toChar() } )
+
+            assertPrints(byChar, "{A=a, B=b, C=c, D=d, E=e}")
+        }
+
+        @Sample
+        fun associateTo() {
+            data class Person(val firstName: String, val lastName: String)
+
+            val computerScientists = arrayOf(Person("Grace", "Hopper"), Person("Edsger", "Dijkstra"), Person("Alan", "Turing"))
+
+            val byLastName = mutableMapOf<String, String>()
+            assertTrue(byLastName.isEmpty())
+
+            computerScientists.associateTo(byLastName) { it.lastName to it.firstName }
+
+            assertTrue(byLastName.isNotEmpty())
+            assertPrints(byLastName, "{Hopper=Grace, Dijkstra=Edsger, Turing=Alan}")
+        }
+
+        @Sample
+        fun associateArrayOfPrimitivesTo() {
+            fun fib(n: Int, memo: MutableMap<Int, Int>): Int {
+                val fib = memo[n] ?: fib(n - 1, memo) + fib(n - 2, memo)
+                memo[n] = fib
+                return fib
+            }
+
+            val numbers = intArrayOf(22, 23, 24, 25, 26)
+
+            val fibonacciNumbers = mutableMapOf(0 to 0, 1 to 1)
+
+            numbers.associateTo(fibonacciNumbers) { it to fib(it, fibonacciNumbers) }
+
+            assertPrints(fibonacciNumbers[25], "75025")
+            assertPrints(fibonacciNumbers[26], "121393")
+        }
+
+        @Sample
         fun flattenArray() {
             val deepArray = arrayOf(
                 arrayOf(1),
