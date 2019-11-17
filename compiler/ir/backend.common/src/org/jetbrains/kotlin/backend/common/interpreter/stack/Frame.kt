@@ -6,35 +6,46 @@
 package org.jetbrains.kotlin.backend.common.interpreter.stack
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import java.util.NoSuchElementException
+import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
+import java.util.*
+
+data class Variable(val descriptor: DeclarationDescriptor, val state: State) {
+    override fun toString(): String {
+        val descriptorName = when (descriptor) {
+            is ReceiverParameterDescriptor -> descriptor.containingDeclaration.name.toString() + "::this"
+            else -> descriptor.name
+        }
+        return "Variable(descriptor=$descriptorName, state=$state)"
+    }
+}
 
 interface Frame {
-    fun addVar(state: State)
-    fun addAll(states: List<State>)
-    fun getVar(descriptor: DeclarationDescriptor): State
-    fun getAll(): List<State>
+    fun addVar(variable: Variable)
+    fun addAll(variables: List<Variable>)
+    fun getVariableState(variableDescriptor: DeclarationDescriptor): State
+    fun getAll(): List<Variable>
     fun contains(descriptor: DeclarationDescriptor): Boolean
 }
 
-class InterpreterFrame(val pool: MutableList<State> = mutableListOf()) : Frame {
-    override fun addVar(state: State) {
-        pool.add(state)
+class InterpreterFrame(val pool: MutableList<Variable> = mutableListOf()) : Frame {
+    override fun addVar(variable: Variable) {
+        pool.add(variable)
     }
 
-    override fun addAll(states: List<State>) {
-        pool.addAll(states)
+    override fun addAll(variables: List<Variable>) {
+        pool.addAll(variables)
     }
 
-    override fun getVar(descriptor: DeclarationDescriptor): State {
-        return pool.firstOrNull { it.isTypeOf(descriptor) }
-            ?: throw NoSuchElementException("Frame pool doesn't contains variable with descriptor $descriptor")
+    override fun getVariableState(variableDescriptor: DeclarationDescriptor): State {
+        return pool.firstOrNull { it.descriptor == variableDescriptor }?.state
+            ?: throw NoSuchElementException("Frame pool doesn't contains variable with descriptor $variableDescriptor")
     }
 
-    override fun getAll(): List<State> {
+    override fun getAll(): List<Variable> {
         return pool
     }
 
     override fun contains(descriptor: DeclarationDescriptor): Boolean {
-        return pool.any { it.isTypeOf(descriptor) }
+        return pool.any { it.descriptor == descriptor }
     }
 }

@@ -7,20 +7,18 @@ package org.jetbrains.kotlin.backend.common.interpreter
 
 import org.jetbrains.kotlin.backend.common.interpreter.stack.*
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.util.isFakeOverride
 import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrInterpreter : IrElementVisitor<State, Frame> {
     private val builtIns = DefaultBuiltIns.Instance
-    private val unit = Complex(builtIns.unit, mutableListOf())
-    private val any = Complex(builtIns.any, mutableListOf())
+    private val empty = EmptyState()
 
     fun interpret(expression: IrExpression): IrExpression {
         return visitExpression(expression, InterpreterFrame()).convertToIrExpression(expression)
@@ -50,26 +48,28 @@ class IrInterpreter : IrElementVisitor<State, Frame> {
     }
 
     override fun visitCall(expression: IrCall, data: Frame): State {
-        val newFrame = InterpreterFrame() // it is important firstly to add receiver, then arguments
+        val newFrame = InterpreterFrame()
         val valueParameters = convertValueParameters(expression, data)
 
-        if (expression.symbol.owner.isFakeOverride) {
-            expression.dispatchReceiver?.accept(this, data)?.let { newFrame.addVar(it) }
-            newFrame.addAll(valueParameters)
-            return calculateOverridden(expression.symbol, newFrame)
-        }
+        val dispatchReceiver = expression.dispatchReceiver?.accept(this, data)      // can be either Primitive or Complex
+        val extensionReceiver = expression.extensionReceiver?.accept(this, data)    // similarly
 
-        val dispatchReceiver = expression.dispatchReceiver?.accept(this, data)
-            ?.setDescriptor(expression.symbol.descriptor.dispatchReceiverParameter!!)
-        val extensionReceiver = expression.extensionReceiver?.accept(this, data)
-            ?.setDescriptor(expression.symbol.descriptor.extensionReceiverParameter!!)
-        (dispatchReceiver ?: extensionReceiver)?.also { newFrame.addVar(it) }
+        // it is important firstly to add receiver, then arguments
+        val receiverParameter = (expression.symbol.descriptor.dispatchReceiverParameter ?: expression.symbol.descriptor.extensionReceiverParameter)
+        when (val receiver = (dispatchReceiver ?: extensionReceiver)) {
+            // if receiver is complex then frame will contain receiver and its supers as raw list (not tree)
+            // this is necessary because it is hard to instantly say that receiver will be used; for example, in abstract methods
+            is Complex -> newFrame.addAll(receiver.getAllStates())
+            else -> receiver?.let { newFrame.addVar(Variable(receiverParameter!!, it)) }
+        }
         newFrame.addAll(valueParameters)
 
-        return if (expression.getBody() == null) {
-            calculateBuiltIns(expression.symbol.descriptor, newFrame).toIrConst(expression).toPrimitive()
-        } else {
-            expression.getBody()!!.accept(this, newFrame)
+        val irFunction = (dispatchReceiver as? Complex)?.getIrFunctionByName(expression.symbol.descriptor.name)
+        return when {
+            expression.isAbstract() -> calculateAbstract(irFunction, newFrame) //abstract check must be first
+            expression.isFakeOverridden() -> calculateOverridden(irFunction!!.symbol, newFrame)
+            expression.getBody() == null -> calculateBuiltIns(expression.symbol.descriptor, newFrame).toIrConst(expression).toPrimitive()
+            else -> expression.getBody()!!.accept(this, newFrame)
         }
     }
 
@@ -79,12 +79,16 @@ class IrInterpreter : IrElementVisitor<State, Frame> {
 
     private fun visitConstructor(constructor: IrFunctionAccessExpression, data: Frame): State {
         val newFrame = InterpreterFrame(convertValueParameters(constructor, data))
-        val obj = Complex((constructor.symbol.descriptor.containingDeclaration as ClassDescriptor).thisAsReceiverParameter, mutableListOf())
+        val obj = Complex(constructor.symbol.owner.parent as IrClass, mutableListOf())
         constructor.getBody()?.statements?.forEach {
             when (it) {
                 is IrDelegatingConstructorCall -> {
-                    obj.addSuperQualifier(visitDelegatingConstructorCall(it, newFrame) as Complex)
-                    newFrame.addVar(obj)
+                    val delegatingConstructorCall = visitDelegatingConstructorCall(it, newFrame)
+                    if (delegatingConstructorCall != empty) {
+                        val superObj = Variable(it.symbol.descriptor.containingDeclaration.thisAsReceiverParameter, delegatingConstructorCall)
+                        obj.addSuperQualifier(superObj)
+                    }
+                    newFrame.addVar(Variable(constructor.getThisAsReceiver(), obj))
                 }
                 else -> it.accept(this, newFrame)
             }
@@ -98,7 +102,7 @@ class IrInterpreter : IrElementVisitor<State, Frame> {
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: Frame): State {
         if (expression.symbol.descriptor.containingDeclaration.defaultType == builtIns.anyType) {
-            return any
+            return empty
         }
 
         return visitConstructor(expression, data)
@@ -113,7 +117,7 @@ class IrInterpreter : IrElementVisitor<State, Frame> {
         }
 
         // unreachable state; method must return inside forEach
-        return unit
+        return empty
     }
 
     override fun visitReturn(expression: IrReturn, data: Frame): State {
@@ -121,37 +125,37 @@ class IrInterpreter : IrElementVisitor<State, Frame> {
     }
 
     override fun visitSetField(expression: IrSetField, data: Frame): State {
-        val value = expression.value.accept(this, data).setDescriptor(expression.symbol.owner.descriptor)
+        val value = expression.value.accept(this, data)
         val receiver = (expression.receiver as IrDeclarationReference).symbol.descriptor
-        data.getVar(receiver).setState(value)
-        return unit
+        data.getVariableState(receiver).setState(Variable(expression.symbol.owner.descriptor, value))
+        return empty
     }
 
     override fun visitGetField(expression: IrGetField, data: Frame): State {
         val receiver = (expression.receiver as? IrDeclarationReference)?.symbol?.descriptor // receiver is null, for example, for top level fields
             ?: return expression.symbol.owner.initializer!!.expression.accept(this, data)
-        return data.getVar(receiver).getState(expression.symbol.descriptor).copy()
+        return data.getVariableState(receiver).getState(expression.symbol.descriptor).copy()
     }
 
     override fun visitGetValue(expression: IrGetValue, data: Frame): State {
-        return data.getVar(expression.symbol.descriptor).copy()
+        return data.getVariableState(expression.symbol.descriptor).copy()
     }
 
     override fun visitVariable(declaration: IrVariable, data: Frame): State {
-        val variable = declaration.initializer?.accept(this, data)?.setDescriptor(declaration.descriptor)
-        variable?.let { data.addVar(it) }
-        return unit
+        val variable = declaration.initializer?.accept(this, data)
+        variable?.let { data.addVar(Variable(declaration.descriptor, it)) }
+        return empty
     }
 
     override fun visitSetVariable(expression: IrSetVariable, data: Frame): State {
         if (data.contains(expression.symbol.descriptor)) {
-            val variable = data.getVar(expression.symbol.descriptor)
-            variable.setState(expression.value.accept(this, data))
+            val variable = data.getVariableState(expression.symbol.descriptor)
+            variable.setState(Variable(expression.symbol.descriptor, expression.value.accept(this, data)))
         } else {
-            val variable = expression.value.accept(this, data).setDescriptor(expression.symbol.descriptor)
-            data.addVar(variable)
+            val variable = expression.value.accept(this, data)
+            data.addVar(Variable(expression.symbol.descriptor, variable))
         }
-        return unit
+        return empty
     }
 
     override fun visitWhen(expression: IrWhen, data: Frame): State {
@@ -160,6 +164,6 @@ class IrInterpreter : IrElementVisitor<State, Frame> {
                 return it.result.accept(this, data)
             }
         }
-        return unit
+        return empty
     }
 }

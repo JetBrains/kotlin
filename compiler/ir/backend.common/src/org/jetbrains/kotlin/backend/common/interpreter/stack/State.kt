@@ -6,100 +6,100 @@
 package org.jetbrains.kotlin.backend.common.interpreter.stack
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrConst
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
+import org.jetbrains.kotlin.name.Name
+import java.util.*
 
 interface State {
     fun getState(descriptor: DeclarationDescriptor): State
-    fun setState(newState: State)
-    fun getDescriptor(): DeclarationDescriptor
-    fun setDescriptor(descriptor: DeclarationDescriptor): State
-    fun isTypeOf(descriptor: DeclarationDescriptor): Boolean
+    fun setState(newVar: Variable)
     fun copy(): State
 }
 
 class Primitive<T>(private var value: IrConst<T>) : State {
-    private lateinit var declarationDescriptor: DeclarationDescriptor
-
-    constructor(descriptor: DeclarationDescriptor, value: IrConst<T>) : this(value) {
-        declarationDescriptor = descriptor
-    }
-
     fun getIrConst(): IrConst<T> {
         return value
     }
 
     override fun getState(descriptor: DeclarationDescriptor): State {
-        return when (descriptor) {
-            this.declarationDescriptor -> this
-            else -> throw IllegalAccessException("Can't get descriptor $descriptor from $this")
-        }
+        throw UnsupportedOperationException("Only complex are allowed")
     }
 
-    override fun setState(newState: State) {
-        newState as? Primitive<T> ?: throw IllegalArgumentException("Cannot set $newState in current $this")
-        value = newState.value
-    }
-
-    override fun getDescriptor(): DeclarationDescriptor {
-        return declarationDescriptor
-    }
-
-    override fun setDescriptor(descriptor: DeclarationDescriptor): State {
-        declarationDescriptor = descriptor
-        return this
-    }
-
-    override fun isTypeOf(descriptor: DeclarationDescriptor): Boolean {
-        return declarationDescriptor == descriptor
+    override fun setState(newVar: Variable) {
+        newVar.state as? Primitive<T> ?: throw IllegalArgumentException("Cannot set $newVar in current $this")
+        value = newVar.state.value
     }
 
     override fun copy(): State {
-        return Primitive(declarationDescriptor, value)
+        return Primitive(value)
     }
 
     override fun toString(): String {
-        return "Primitive(varName='${declarationDescriptor.name}', value=${value.value})"
+        return "Primitive(value=${value.value})"
     }
 }
-class Complex(private var declarationDescriptor: DeclarationDescriptor, private val values: MutableList<State>) : State {
-    private val superQualifiers = mutableListOf<Complex>()
+class Complex(private var classOfObject: IrClass, private val values: MutableList<Variable>) : State {
+    fun addSuperQualifier(superObj: Variable) {
+        val superTypesList = getSuperTypes(classOfObject).map { it.descriptor.thisAsReceiverParameter }
+        (superObj.state as? Complex)?.values?.filter { superTypesList.contains(it.descriptor) }?.let { values += it }
+        values += superObj
+    }
 
-    public fun addSuperQualifier(superObj: Complex) {
-        superQualifiers += superObj.superQualifiers
-        superQualifiers += superObj
+    private fun getSuperTypes(descriptor: IrClass): List<IrClassSymbol> {
+        val superTypesList = descriptor.superTypes.mapNotNull { it.classOrNull }.toMutableList()
+        return superTypesList + superTypesList.flatMap { getSuperTypes(it.owner) }
+    }
+
+    fun getIrFunctionByName(name: Name): IrFunction {
+        return classOfObject.declarations.firstOrNull { it.descriptor.name == name } as? IrFunction
+            ?: throw NoSuchMethodException("Abstract method $name has not been implemented")
+    }
+
+    fun getAllStates(): List<Variable> {
+        val superTypesList = getSuperTypes(classOfObject).map { it.descriptor.thisAsReceiverParameter }
+        return values.filter { superTypesList.contains(it.descriptor) } + Variable(classOfObject.descriptor.thisAsReceiverParameter, this)
     }
 
     override fun getState(descriptor: DeclarationDescriptor): State {
-        return (values + superQualifiers).first { it.getDescriptor() == descriptor }
+        return values.firstOrNull { it.descriptor == descriptor }?.state
+            ?: throw NoSuchElementException("Complex object doesn't contains state with descriptor $descriptor")
     }
 
-    override fun setState(newState: State) {
-        val oldState = values.firstOrNull { it.getDescriptor() == newState.getDescriptor() }
-        if (oldState == null) {
-            values.add(newState)
-        } else {
-            values[values.indexOf(oldState)] = newState
+    override fun setState(newVar: Variable) {
+        when (val oldState = values.firstOrNull { it.descriptor == newVar.descriptor }) {
+            null -> values.add(newVar)                          // newVar isn't present in value list
+            else -> values[values.indexOf(oldState)] = newVar   // newVar already present
         }
     }
 
-    override fun getDescriptor(): DeclarationDescriptor {
-        return declarationDescriptor
-    }
-
-    override fun setDescriptor(descriptor: DeclarationDescriptor): State {
-        declarationDescriptor = descriptor
-        return this
-    }
-
-    override fun isTypeOf(descriptor: DeclarationDescriptor): Boolean {
-        return (superQualifiers + this).any { it.declarationDescriptor == descriptor }
-    }
-
     override fun copy(): State {
-        return Complex(declarationDescriptor, values).apply { this.superQualifiers += this@Complex.superQualifiers }
+        return Complex(classOfObject, values)
     }
 
     override fun toString(): String {
-        return "Complex(obj='$declarationDescriptor', super=$superQualifiers, values=$values)"
+        return "Complex(obj='${classOfObject.fqNameForIrSerialization}', values=$values)"
+    }
+}
+
+class EmptyState : State {
+    override fun getState(descriptor: DeclarationDescriptor): State {
+        throw UnsupportedOperationException("Get state is not supported in empty state object")
+    }
+
+    override fun setState(newVar: Variable) {
+        throw UnsupportedOperationException("Set state is not supported in empty state object")
+    }
+
+    override fun copy(): State {
+        throw UnsupportedOperationException("Copy method is not supported in empty state object")
+    }
+
+    override fun toString(): String {
+        return "EmptyState"
     }
 }
