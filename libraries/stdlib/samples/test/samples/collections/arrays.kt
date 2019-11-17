@@ -211,20 +211,27 @@ class Arrays {
 
         @Sample
         fun associateArrayOfPrimitivesTo() {
-            fun fib(n: Int, memo: MutableMap<Int, Int>): Int {
-                val fib = memo[n] ?: fib(n - 1, memo) + fib(n - 2, memo)
-                memo[n] = fib
-                return fib
+            fun fib(n: Int): Int {
+                var current = 0
+                var next = 1
+                var sum: Int
+                if (n == 0)
+                    return current
+                for (i in 2..n) {
+                    sum = current + next
+                    current = next
+                    next = sum
+                }
+                return next
             }
 
-            val numbers = intArrayOf(22, 23, 24, 25, 26)
+            val numbers = intArrayOf(1, 2, 3, 4, 5)
 
-            val fibonacciNumbers = mutableMapOf(0 to 0, 1 to 1)
+            val fibonacciNumbers = mutableMapOf<Int, Int>()
 
-            numbers.associateTo(fibonacciNumbers) { it to fib(it, fibonacciNumbers) }
+            numbers.associateTo(fibonacciNumbers) { it to fib(it) }
 
-            assertPrints(fibonacciNumbers[25], "75025")
-            assertPrints(fibonacciNumbers[26], "121393")
+            assertPrints(fibonacciNumbers, "{1=1, 2=1, 3=2, 4=3, 5=5}")
         }
 
         @Sample
