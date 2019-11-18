@@ -21,7 +21,8 @@
 }
 
 .white .keyword {
-    color: rgb(203, 159, 52);
+    color: #5f17ef;
+    font-weight: bold;
 }
 
 .white a.ref.selected {
