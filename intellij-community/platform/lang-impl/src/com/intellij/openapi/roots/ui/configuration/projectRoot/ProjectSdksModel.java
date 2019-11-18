@@ -158,7 +158,7 @@ public class ProjectSdksModel implements SdkModel {
         if (ArrayUtilRt.find(allJdks, projectJdk) == -1) {
           jdkTable.addJdk(projectJdk);
           jdkTable.updateJdk(projectJdk, myProjectSdks.get(projectJdk));
-          SdkDownloadTracker.getInstance().onSdkAddedToTheModel(projectJdk);
+          SdkDownloadTracker.getInstance().startSdkDownloadIfNeeded(projectJdk);
         }
       }
     });

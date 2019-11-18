@@ -4,6 +4,7 @@ package com.intellij.openapi.roots.ui.configuration.projectRoot;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.*;
@@ -59,7 +60,7 @@ public class SdkDownloadTracker {
     myPendingTasks.add(pd);
   }
 
-  public void onSdkAddedToTheModel(@NotNull Sdk sdkFromTable) {
+  public void startSdkDownloadIfNeeded(@NotNull Sdk sdkFromTable) {
     PendingDownload task = findTask(sdkFromTable);
     if (task == null) return;
 
@@ -87,12 +88,46 @@ public class SdkDownloadTracker {
     return true;
   }
 
+  // we need to track the "best" modality state to trigger SDK update on completion,
+  // while the current Project Structure dialog is shown. The ModalityState from our
+  // background task (ProgressManager.run) does not suite if the Project Structure dialog
+  // is re-open once again.
+  //
+  // We grab the modalityState from the {@link #tryRegisterDownloadingListener} call and
+  // see if that {@link ModalityState#dominates} the current modality state. In fact,
+  // it does call the method from the dialog setup, with NON_MODAL modality, which
+  // we would like to ignore.
+  private static class PendingDownloadModalityTracker {
+    @NotNull
+    private static ModalityState modality() {
+      return ApplicationManager.getApplication().getCurrentModalityState();
+    }
+
+    private ModalityState myModalityState = modality();
+
+    public synchronized void updateModality() {
+      ModalityState newModality = modality();
+      if (newModality != myModalityState && newModality.dominates(myModalityState)) {
+        myModalityState = newModality;
+      }
+    }
+
+    public synchronized void invokeLater(@NotNull Runnable r) {
+      ApplicationManager.getApplication().invokeLater(r, myModalityState);
+    }
+
+    public synchronized void invokeAndWait(@NotNull Runnable r) {
+      ApplicationManager.getApplication().invokeAndWait(r, myModalityState);
+    }
+  }
+
   private class PendingDownload {
     private final SdkDownloadTask myTask;
     private final Set<Sdk> myEditableSdks = Sets.newIdentityHashSet();
     private final ProgressIndicatorBase myProgressIndicator = new ProgressIndicatorBase();
     private final Set<Runnable> myCompleteListeners = Sets.newIdentityHashSet();
     private final Set<Disposable> myDisposables = Sets.newIdentityHashSet();
+    private final PendingDownloadModalityTracker myModalityTracker = new PendingDownloadModalityTracker();
 
     private boolean myIsDownloading = false;
 
@@ -120,6 +155,7 @@ public class SdkDownloadTracker {
       if (myIsDownloading) return;
       myIsDownloading = true;
 
+      myModalityTracker.updateModality();
       SdkType type = (SdkType)sdkFromTable.getSdkType();
       String message = ProjectBundle.message("sdk.configure.downloading", type.getPresentableName());
 
@@ -129,22 +165,28 @@ public class SdkDownloadTracker {
                                                          PerformInBackgroundOption.ALWAYS_BACKGROUND) {
         @Override
         public void run(@NotNull ProgressIndicator indicator) {
-          try {
-            // we need a progress indicator from the outside, to avoid race condition
-            // (progress may start with a delay, but UI would need a PI)
-            myProgressIndicator.addStateDelegate((ProgressIndicatorEx)indicator);
+          while (true) {
             try {
-              myTask.doDownload(myProgressIndicator);
-            } finally {
-              myProgressIndicator.removeStateDelegate((ProgressIndicatorEx)indicator);
+              // we need a progress indicator from the outside, to avoid race condition
+              // (progress may start with a delay, but UI would need a PI)
+              myProgressIndicator.addStateDelegate((ProgressIndicatorEx)indicator);
+              try {
+                myTask.doDownload(myProgressIndicator);
+              }
+              finally {
+                myProgressIndicator.removeStateDelegate((ProgressIndicatorEx)indicator);
+              }
+
+              onSdkDownloadCompleted(false);
+              return;
             }
-            ApplicationManager.getApplication().invokeLater(() -> onSdkDownloadCompleted(false));
-          } catch (Exception e) {
-            LOG.warn("SDK Download failed. " + e.getMessage(), e);
-            ApplicationManager.getApplication().invokeLater(() -> {
-              Messages.showErrorDialog(e.getMessage(), "SDK Download Failed");
-              ApplicationManager.getApplication().invokeLater(() -> onSdkDownloadCompleted(true));
-            });
+            catch (Exception e) {
+              LOG.warn("SDK Download failed. " + e.getMessage(), e);
+              myModalityTracker.invokeAndWait(() -> {
+                Messages.showErrorDialog(e.getMessage(), getTitle());
+              });
+              onSdkDownloadCompleted(true);
+            }
           }
         }
       };
@@ -156,6 +198,7 @@ public class SdkDownloadTracker {
                                  @NotNull ProgressIndicator uiIndicator,
                                  @NotNull Runnable completedCallback) {
       ApplicationManager.getApplication().assertIsDispatchThread();
+      myModalityTracker.updateModality();
 
       //there is no need to add yet another copy of the same component
       if (!myCompleteListeners.add(completedCallback)) return;
@@ -178,32 +221,37 @@ public class SdkDownloadTracker {
     }
 
     public void onSdkDownloadCompleted(boolean failed) {
-      ApplicationManager.getApplication().assertIsDispatchThread();
+      Runnable task = failed
+                      ? () -> dispose()
+                      : () -> {
+                        WriteAction.run(() -> {
+                          for (Sdk sdk : myEditableSdks) {
+                            try {
+                              ((SdkType)sdk.getSdkType()).setupSdkPaths(sdk);
+                            }
+                            catch (Exception e) {
+                              LOG.warn("Failed to setup Sdk " + sdk + ". " + e.getMessage(), e);
+                            }
+                          }
+                          dispose();
+                        });
+                      };
 
-      if (failed) {
-        dispose();
-        return;
-      }
-
-      WriteAction.run(() -> {
-        for (Sdk sdk : myEditableSdks) {
-          try {
-            ((SdkType)sdk.getSdkType()).setupSdkPaths(sdk);
-          }
-          catch (Exception e) {
-            LOG.warn("Failed to setup Sdk " + sdk + ". " + e.getMessage(), e);
-          }
-        }
-        dispose();
-      });
+      // we handle ModalityState explicitly to handle the case,
+      // when the next ProjectSettings dialog is shown, and we still want to
+      // notify all current viewers to reflect our SDK changes, thus we need
+      // it's newer ModalityState to invoke. Using ModalityState.any is not
+      // an option as we do update Sdk instances in the call
+      myModalityTracker.invokeLater(task);
     }
 
     private void dispose() {
       //free the WriteAction, thus non-blocking
-      ApplicationManager.getApplication().invokeLater(() -> {
+      myModalityTracker.invokeLater(() -> {
         myPendingTasks.remove(this);
-        myCompleteListeners.forEach(Runnable::run);
-        myDisposables.forEach(Disposable::dispose);
+        //collections may change from the callbacks
+        new ArrayList<>(myCompleteListeners).forEach(Runnable::run);
+        new ArrayList<>(myDisposables).forEach(Disposable::dispose);
       });
     }
   }
