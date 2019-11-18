@@ -13,6 +13,7 @@ import com.intellij.ide.projectView.impl.nodes.PsiFileNode;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.ide.util.treeView.NodeDescriptor;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
@@ -94,6 +95,8 @@ public class FavoritesTreeStructure extends ProjectTreeStructure {
       //  result.add(getEmptyScreen());
       //}
       return ArrayUtil.toObjectArray(result);
+    }
+    catch (ProcessCanceledException ignored) {
     }
     catch (Exception e) {
       LOGGER.error(e);
