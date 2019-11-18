@@ -159,7 +159,7 @@ class KotlinCoreEnvironment private constructor(
     private val packagePartProviders = mutableListOf<JvmPackagePartProvider>()
 
     private val classpathRootsResolver: ClasspathRootsResolver
-    private val initialRoots: List<JavaRoot>
+    private val initialRoots = ArrayList<JavaRoot>()
 
     val configuration: CompilerConfiguration = initialConfiguration.apply { setupJdkClasspathRoots(configFiles) }.copy()
 
@@ -217,7 +217,7 @@ class KotlinCoreEnvironment private constructor(
 
         val (initialRoots, javaModules) =
                 classpathRootsResolver.convertClasspathRoots(configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS))
-        this.initialRoots = initialRoots
+        this.initialRoots.addAll(initialRoots)
 
         if (!configuration.getBoolean(JVMConfigurationKeys.SKIP_RUNTIME_VERSION_CHECK) && messageCollector != null) {
             JvmRuntimeVersionsConsistencyChecker.checkCompilerClasspathConsistency(
@@ -347,8 +347,12 @@ class KotlinCoreEnvironment private constructor(
         // TODO: add new Java modules to CliJavaModuleResolver
         val newRoots = classpathRootsResolver.convertClasspathRoots(contentRoots).roots
 
-        for (packagePartProvider in packagePartProviders) {
-            packagePartProvider.addRoots(newRoots, configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY))
+        if (packagePartProviders.isEmpty()) {
+            initialRoots.addAll(newRoots)
+        } else {
+            for (packagePartProvider in packagePartProviders) {
+                packagePartProvider.addRoots(newRoots, configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY))
+            }
         }
 
         return rootsIndex.addNewIndexForRoots(newRoots)?.let { newIndex ->
