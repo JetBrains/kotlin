@@ -151,9 +151,10 @@ class PostponedArgumentsAnalyzer(
                 lambda.returnType.let(::substitute),
                 lambda.atom.returnTypeRef, // TODO: proper ref
                 checkerSink,
-                false,
-                false,
-                typeProvider
+                isReceiver = false,
+                isDispatch = false,
+                isSafeCall = false,
+                typeProvider = typeProvider
             )
 //            resolveKtPrimitive(
 //                c.getBuilder(), it, lambda.returnType.let(::substitute), diagnosticHolder, isReceiver = false

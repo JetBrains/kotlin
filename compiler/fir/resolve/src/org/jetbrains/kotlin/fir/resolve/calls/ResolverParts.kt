@@ -107,6 +107,7 @@ internal sealed class CheckReceivers : ResolutionStage() {
                     expectedTypeRef = explicitReceiverExpression.typeRef,
                     sink = sink,
                     isReceiver = true,
+                    isDispatch = this is Dispatch,
                     isSafeCall = callInfo.isSafeCall,
                     typeProvider = callInfo.typeProvider
                 )
@@ -120,6 +121,7 @@ internal sealed class CheckReceivers : ResolutionStage() {
                         expectedType = candidate.substitutor.substituteOrSelf(expectedReceiverType.type),
                         sink = sink,
                         isReceiver = true,
+                        isDispatch = this is Dispatch,
                         isSafeCall = callInfo.isSafeCall
                     )
                     sink.yield()

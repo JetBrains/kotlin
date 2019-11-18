@@ -34,6 +34,7 @@ fun Candidate.resolveArgumentExpression(
     expectedTypeRef: FirTypeRef,
     sink: CheckerSink,
     isReceiver: Boolean,
+    isDispatch: Boolean,
     isSafeCall: Boolean,
     typeProvider: (FirExpression) -> FirTypeRef?
 ) {
@@ -44,6 +45,7 @@ fun Candidate.resolveArgumentExpression(
             expectedType,
             sink,
             isReceiver,
+            isDispatch,
             isSafeCall,
             typeProvider
         )
@@ -55,6 +57,7 @@ fun Candidate.resolveArgumentExpression(
                     expectedType,
                     sink,
                     isReceiver,
+                    isDispatch,
                     isSafeCall,
                     typeProvider
                 )
@@ -67,6 +70,7 @@ fun Candidate.resolveArgumentExpression(
             expectedType,
             sink,
             isReceiver,
+            isDispatch,
             isSafeCall,
             typeProvider
         )
@@ -81,6 +85,7 @@ fun Candidate.resolveArgumentExpression(
             expectedTypeRef,
             sink,
             isReceiver,
+            isDispatch,
             isSafeCall,
             typeProvider
         )
@@ -91,10 +96,11 @@ fun Candidate.resolveArgumentExpression(
             expectedTypeRef,
             sink,
             isReceiver,
+            isDispatch,
             isSafeCall,
             typeProvider
         )
-        else -> resolvePlainExpressionArgument(csBuilder, argument, expectedType, sink, isReceiver, isSafeCall, typeProvider)
+        else -> resolvePlainExpressionArgument(csBuilder, argument, expectedType, sink, isReceiver, isDispatch, isSafeCall, typeProvider)
     }
 }
 
@@ -105,6 +111,7 @@ private fun Candidate.resolveBlockArgument(
     expectedTypeRef: FirTypeRef,
     sink: CheckerSink,
     isReceiver: Boolean,
+    isDispatch: Boolean,
     isSafeCall: Boolean,
     typeProvider: (FirExpression) -> FirTypeRef?
 ) {
@@ -115,9 +122,10 @@ private fun Candidate.resolveBlockArgument(
             block.typeRef.coneTypeUnsafe(),
             expectedType.type,
             SimpleConstraintSystemConstraintPosition,
-            false,
-            expectedType.type.withNullability(ConeNullability.NULLABLE),
-            sink
+            isReceiver = false,
+            isDispatch = false,
+            nullableExpectedType = expectedType.type.withNullability(ConeNullability.NULLABLE),
+            sink = sink
         )
         return
     }
@@ -129,6 +137,7 @@ private fun Candidate.resolveBlockArgument(
             expectedTypeRef,
             sink,
             isReceiver,
+            isDispatch,
             isSafeCall,
             typeProvider
         )
@@ -141,6 +150,7 @@ fun resolveSubCallArgument(
     expectedType: ConeKotlinType,
     sink: CheckerSink,
     isReceiver: Boolean,
+    isDispatch: Boolean,
     isSafeCall: Boolean,
     typeProvider: (FirExpression) -> FirTypeRef?
 ) {
@@ -150,12 +160,13 @@ fun resolveSubCallArgument(
         expectedType,
         sink,
         isReceiver,
+        isDispatch,
         isSafeCall,
         typeProvider
     )
     val type = sink.components.returnTypeCalculator.tryCalculateReturnType(candidate.symbol.firUnsafe()).coneTypeUnsafe<ConeKotlinType>()
     val argumentType = candidate.substitutor.substituteOrSelf(type)
-    resolvePlainArgumentType(csBuilder, argumentType, expectedType, sink, isReceiver, isSafeCall)
+    resolvePlainArgumentType(csBuilder, argumentType, expectedType, sink, isReceiver, isDispatch, isSafeCall)
 }
 
 fun resolvePlainExpressionArgument(
@@ -164,12 +175,13 @@ fun resolvePlainExpressionArgument(
     expectedType: ConeKotlinType?,
     sink: CheckerSink,
     isReceiver: Boolean,
+    isDispatch: Boolean,
     isSafeCall: Boolean,
     typeProvider: (FirExpression) -> FirTypeRef?
 ) {
     if (expectedType == null) return
     val argumentType = typeProvider(argument)?.coneTypeSafe<ConeKotlinType>() ?: return
-    resolvePlainArgumentType(csBuilder, argumentType, expectedType, sink, isReceiver, isSafeCall)
+    resolvePlainArgumentType(csBuilder, argumentType, expectedType, sink, isReceiver, isDispatch, isSafeCall)
 }
 
 fun resolvePlainArgumentType(
@@ -178,19 +190,20 @@ fun resolvePlainArgumentType(
     expectedType: ConeKotlinType,
     sink: CheckerSink,
     isReceiver: Boolean,
+    isDispatch: Boolean,
     isSafeCall: Boolean
 ) {
     val position = SimpleConstraintSystemConstraintPosition //TODO
 
     val nullableExpectedType = expectedType.withNullability(ConeNullability.NULLABLE)
     if (isReceiver && isSafeCall) {
-        if (!csBuilder.addSubtypeConstraintIfCompatible(argumentType, nullableExpectedType, position)) {
+        if (!isDispatch && !csBuilder.addSubtypeConstraintIfCompatible(argumentType, nullableExpectedType, position)) {
             sink.reportApplicability(CandidateApplicability.WRONG_RECEIVER) // TODO
         }
         return
     }
 
-    checkApplicabilityForArgumentType(csBuilder, argumentType, expectedType, position, isReceiver, nullableExpectedType, sink)
+    checkApplicabilityForArgumentType(csBuilder, argumentType, expectedType, position, isReceiver, isDispatch, nullableExpectedType, sink)
 }
 
 private fun checkApplicabilityForArgumentType(
@@ -199,9 +212,16 @@ private fun checkApplicabilityForArgumentType(
     expectedType: ConeKotlinType,
     position: SimpleConstraintSystemConstraintPosition,
     isReceiver: Boolean,
+    isDispatch: Boolean,
     nullableExpectedType: ConeKotlinType,
     sink: CheckerSink
 ) {
+    if (isReceiver && isDispatch) {
+        if (!expectedType.isNullable && argumentType.isMarkedNullable) {
+            sink.reportApplicability(CandidateApplicability.WRONG_RECEIVER)
+        }
+        return
+    }
     if (!csBuilder.addSubtypeConstraintIfCompatible(argumentType, expectedType, position)) {
         if (!isReceiver) {
             if (!csBuilder.addSubtypeConstraintIfCompatible(argumentType, nullableExpectedType, position)) {
@@ -235,6 +255,7 @@ internal fun Candidate.resolveArgument(
         parameter.returnTypeRef,
         sink,
         isReceiver,
+        false,
         isSafeCall,
         typeProvider
     )
