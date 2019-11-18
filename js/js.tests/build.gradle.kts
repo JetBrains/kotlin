@@ -6,7 +6,7 @@ import org.gradle.internal.os.OperatingSystem
 plugins {
     kotlin("jvm")
     id("jps-compatible")
-    id("com.moowork.node").version("1.2.0")
+    id("com.moowork.node")
     id("de.undercouch.download")
 }
 
