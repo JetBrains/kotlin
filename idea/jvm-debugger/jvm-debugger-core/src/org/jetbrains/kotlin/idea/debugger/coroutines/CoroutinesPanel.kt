@@ -31,7 +31,7 @@ import java.awt.event.KeyEvent
 import java.util.*
 
 /**
- * Actually added into ui in [CoroutinesDebugConfigurationExtension.registerCoroutinesPanel]
+ * Actually added into ui in [CoroutineXDebuggerManagerListener.registerCoroutinesPanel]
  * Some methods are copied from [com.intellij.debugger.ui.impl.ThreadsPanel]
  */
 class CoroutinesPanel(project: Project, stateManager: DebuggerStateManager) : DebuggerTreePanel(project, stateManager) {

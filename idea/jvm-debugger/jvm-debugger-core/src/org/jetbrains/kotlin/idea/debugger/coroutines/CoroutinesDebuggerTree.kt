@@ -39,6 +39,7 @@ import com.intellij.xdebugger.impl.XDebuggerManagerImpl
 import com.intellij.xdebugger.impl.ui.DebuggerUIUtil
 import com.sun.jdi.ClassType
 import javaslang.control.Either
+import org.jetbrains.kotlin.idea.debugger.AsyncStackTraceContext
 import org.jetbrains.kotlin.idea.debugger.KotlinCoroutinesAsyncStackTraceProvider
 import org.jetbrains.kotlin.idea.debugger.evaluate.ExecutionContext
 import java.awt.event.MouseEvent
@@ -241,7 +242,7 @@ class CoroutinesDebuggerTree(project: Project) : DebuggerTree(project) {
         val debugMetadataKtType = execContext
             .findClass("kotlin.coroutines.jvm.internal.DebugMetadataKt") as ClassType
         val vars = with(KotlinCoroutinesAsyncStackTraceProvider()) {
-            KotlinCoroutinesAsyncStackTraceProvider.AsyncStackTraceContext(
+            AsyncStackTraceContext(
                 execContext,
                 aMethod,
                 debugMetadataKtType
