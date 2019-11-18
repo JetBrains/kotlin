@@ -484,7 +484,8 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
         /// We assume that IR code that reaches us has been checked for correctness at the frontend.
         /// This function needs to single out those cases where Java accessibility rules differ from Kotlin's.
 
-        val declarationRaw = owner as IrDeclarationWithVisibility
+        val symbolOwner = owner
+        val declarationRaw = symbolOwner as IrDeclarationWithVisibility
         val declaration =
             (declarationRaw as? IrSimpleFunction)?.resolveFakeOverride()
                 ?: (declarationRaw as? IrField)?.resolveFakeOverride() ?: declarationRaw
@@ -494,6 +495,14 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
 
         // `internal` maps to public and requires no accessor.
         if (!withSuper && !declaration.visibility.isPrivate && !declaration.visibility.isProtected) return true
+
+        //`toArray` is always accessible cause mapped to public functions
+        if (symbolOwner is IrSimpleFunction && (symbolOwner.isNonGenericToArray() || symbolOwner.isGenericToArray(context))) {
+            val parent = symbolOwner.parent
+            if (parent is IrClass && parent.isCollectionSubClass()) {
+                return true
+            }
+        }
 
         // If local variables are accessible by Kotlin rules, they also are by Java rules.
         val symbolDeclarationContainer = (declaration.parent as? IrDeclarationContainer) as? IrElement ?: return true
