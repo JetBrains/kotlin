@@ -34,22 +34,22 @@
   @22:0..20 PROPERTY name:test4 visibility:public modality:FINAL [val]
     @22:10..20 FUN name:<get-test4> visibility:public modality:FINAL <> () returnType:kotlin.Int
       @22:18..20 BLOCK_BODY
-        @22:18..20 RETURN type=kotlin.Nothing from='public final fun <get-test4> (): kotlin.Int declared in test'
+        @22:20..20 RETURN type=kotlin.Nothing from='public final fun <get-test4> (): kotlin.Int declared in test'
           @22:18..20 CONST Int type=kotlin.Int value=42
   @25:0..26:14 PROPERTY name:test5 visibility:public modality:FINAL [val]
     @26:4..14 FUN name:<get-test5> visibility:public modality:FINAL <> () returnType:kotlin.Int
       @26:12..14 BLOCK_BODY
-        @26:12..14 RETURN type=kotlin.Nothing from='public final fun <get-test5> (): kotlin.Int declared in test'
+        @26:14..14 RETURN type=kotlin.Nothing from='public final fun <get-test5> (): kotlin.Int declared in test'
           @26:12..14 CONST Int type=kotlin.Int value=42
   @29:0..33:14 PROPERTY name:test6 visibility:public modality:FINAL [val]
     @33:4..14 FUN name:<get-test6> visibility:public modality:FINAL <> () returnType:kotlin.Int
       @33:12..14 BLOCK_BODY
-        @33:12..14 RETURN type=kotlin.Nothing from='public final fun <get-test6> (): kotlin.Int declared in test'
+        @33:14..14 RETURN type=kotlin.Nothing from='public final fun <get-test6> (): kotlin.Int declared in test'
           @33:12..14 CONST Int type=kotlin.Int value=42
   @36:0..40:14 PROPERTY name:test7 visibility:public modality:FINAL [val]
     @40:4..14 FUN name:<get-test7> visibility:public modality:FINAL <> () returnType:kotlin.Int
       @40:12..14 BLOCK_BODY
-        @40:12..14 RETURN type=kotlin.Nothing from='public final fun <get-test7> (): kotlin.Int declared in test'
+        @40:14..14 RETURN type=kotlin.Nothing from='public final fun <get-test7> (): kotlin.Int declared in test'
           @40:12..14 CONST Int type=kotlin.Int value=42
   @43:0..14 PROPERTY name:test8 visibility:public modality:FINAL [var]
     @43:0..14 FIELD PROPERTY_BACKING_FIELD name:test8 type:kotlin.Int visibility:private [static]

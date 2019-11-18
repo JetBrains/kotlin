@@ -49,25 +49,25 @@
       @23:14..24 FUN name:<get-test4> visibility:public modality:FINAL <> ($this:test.Test) returnType:kotlin.Int
         @23:14..24 VALUE_PARAMETER name:<this> type:test.Test
         @23:22..24 BLOCK_BODY
-          @23:22..24 RETURN type=kotlin.Nothing from='public final fun <get-test4> (): kotlin.Int declared in test.Test'
+          @23:24..24 RETURN type=kotlin.Nothing from='public final fun <get-test4> (): kotlin.Int declared in test.Test'
             @23:22..24 CONST Int type=kotlin.Int value=42
     @26:4..27:18 PROPERTY name:test5 visibility:public modality:FINAL [val]
       @27:8..18 FUN name:<get-test5> visibility:public modality:FINAL <> ($this:test.Test) returnType:kotlin.Int
         @27:8..18 VALUE_PARAMETER name:<this> type:test.Test
         @27:16..18 BLOCK_BODY
-          @27:16..18 RETURN type=kotlin.Nothing from='public final fun <get-test5> (): kotlin.Int declared in test.Test'
+          @27:18..18 RETURN type=kotlin.Nothing from='public final fun <get-test5> (): kotlin.Int declared in test.Test'
             @27:16..18 CONST Int type=kotlin.Int value=42
     @30:4..34:18 PROPERTY name:test6 visibility:public modality:FINAL [val]
       @34:8..18 FUN name:<get-test6> visibility:public modality:FINAL <> ($this:test.Test) returnType:kotlin.Int
         @34:8..18 VALUE_PARAMETER name:<this> type:test.Test
         @34:16..18 BLOCK_BODY
-          @34:16..18 RETURN type=kotlin.Nothing from='public final fun <get-test6> (): kotlin.Int declared in test.Test'
+          @34:18..18 RETURN type=kotlin.Nothing from='public final fun <get-test6> (): kotlin.Int declared in test.Test'
             @34:16..18 CONST Int type=kotlin.Int value=42
     @37:4..41:18 PROPERTY name:test7 visibility:public modality:FINAL [val]
       @41:8..18 FUN name:<get-test7> visibility:public modality:FINAL <> ($this:test.Test) returnType:kotlin.Int
         @38:8..41:18 VALUE_PARAMETER name:<this> type:test.Test
         @41:16..18 BLOCK_BODY
-          @41:16..18 RETURN type=kotlin.Nothing from='public final fun <get-test7> (): kotlin.Int declared in test.Test'
+          @41:18..18 RETURN type=kotlin.Nothing from='public final fun <get-test7> (): kotlin.Int declared in test.Test'
             @41:16..18 CONST Int type=kotlin.Int value=42
     @44:4..18 PROPERTY name:test8 visibility:public modality:FINAL [var]
       @44:4..18 FIELD PROPERTY_BACKING_FIELD name:test8 type:kotlin.Int visibility:private
