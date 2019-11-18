@@ -189,7 +189,9 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider(
                                 FirTypeParameterSymbol(),
                                 Variance.IN_VARIANCE,
                                 false
-                            )
+                            ).apply {
+                                bounds += session.builtinTypes.nullableAnyType
+                            }
                         })
                         typeParameters.add(
                             FirTypeParameterImpl(
@@ -199,7 +201,9 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider(
                                 FirTypeParameterSymbol(),
                                 Variance.OUT_VARIANCE,
                                 false
-                            )
+                            ).apply {
+                                bounds += session.builtinTypes.nullableAnyType
+                            }
                         )
                         val name = OperatorNameConventions.INVOKE
                         val status = FirDeclarationStatusImpl(Visibilities.PUBLIC, Modality.ABSTRACT).apply {
