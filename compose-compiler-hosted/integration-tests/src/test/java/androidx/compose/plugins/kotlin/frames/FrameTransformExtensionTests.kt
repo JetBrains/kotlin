@@ -255,6 +255,60 @@ class FrameTransformExtensionTests : AbstractCodegenTest() {
         }
     """)
 
+    // regression: 144668818
+    fun testModel_InitSection() = testFile("""
+        import androidx.compose.Model
+
+        @Model
+        class Ints {
+            var values: IntArray
+
+            init {
+                values = intArrayOf(1, 2, 3)
+            }
+        }
+
+        class Test {
+          fun test() {
+            val instance = frame { Ints() }
+            frame {
+              instance.values.size.expectEqual(3)
+              instance.values[0].expectEqual(1)
+              instance.values[1].expectEqual(2)
+              instance.values[2].expectEqual(3)
+            }
+            frame {
+              instance.values = intArrayOf(1, 2, 3, 4)
+            }
+            frame {
+              instance.values.size.expectEqual(4)
+              instance.values[0].expectEqual(1)
+              instance.values[1].expectEqual(2)
+              instance.values[2].expectEqual(3)
+              instance.values[3].expectEqual(4)
+            }
+          }
+        }
+    """)
+
+    // regression: 144668818
+    fun testModel_Initializers() = testFile("""
+        import androidx.compose.Model
+
+        @Model
+        class ABC(var a: Int, b: Int = a) { val c = a }
+
+        class Test {
+          fun test() {
+            val instance = frame { ABC(1) }
+            frame {
+              instance.a.expectEqual(1)
+              instance.c.expectEqual(1)
+            }
+          }
+        }
+    """)
+
     override fun helperFiles(): List<KtFile> = listOf(sourceFile("Helpers.kt",
         HELPERS
     ))
