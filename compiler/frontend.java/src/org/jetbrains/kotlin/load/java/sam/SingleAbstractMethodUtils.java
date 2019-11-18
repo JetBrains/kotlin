@@ -18,21 +18,18 @@ package org.jetbrains.kotlin.load.java.sam;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.FunctionTypesKt;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl;
-import org.jetbrains.kotlin.resolve.SamConversionResolver;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassConstructorDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor;
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaClassDescriptor;
+import org.jetbrains.kotlin.load.kotlin.sam.SamConversionResolverImplKt;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.name.SpecialNames;
-import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
+import org.jetbrains.kotlin.resolve.SamConversionResolver;
 import org.jetbrains.kotlin.resolve.jvm.JavaResolverUtils;
 import org.jetbrains.kotlin.types.*;
 
@@ -45,17 +42,6 @@ import static org.jetbrains.kotlin.types.Variance.IN_VARIANCE;
 
 public class SingleAbstractMethodUtils {
     private SingleAbstractMethodUtils() {
-    }
-
-    @NotNull
-    public static List<CallableMemberDescriptor> getAbstractMembers(@NotNull ClassDescriptor classDescriptor) {
-        List<CallableMemberDescriptor> abstractMembers = new ArrayList<>();
-        for (DeclarationDescriptor member : DescriptorUtils.getAllDescriptors(classDescriptor.getUnsubstitutedMemberScope())) {
-            if (member instanceof CallableMemberDescriptor && ((CallableMemberDescriptor) member).getModality() == Modality.ABSTRACT) {
-                abstractMembers.add((CallableMemberDescriptor) member);
-            }
-        }
-        return abstractMembers;
     }
 
     @Nullable
@@ -104,74 +90,12 @@ public class SingleAbstractMethodUtils {
     }
 
     @NotNull
-    public static SimpleType getFunctionTypeForAbstractMethod(
-            @NotNull FunctionDescriptor function,
-            boolean shouldConvertFirstParameterToDescriptor
-    ) {
-        KotlinType returnType = function.getReturnType();
-        assert returnType != null : "function is not initialized: " + function;
-        List<ValueParameterDescriptor> valueParameters = function.getValueParameters();
-        List<KotlinType> parameterTypes = new ArrayList<>(valueParameters.size());
-        List<Name> parameterNames = new ArrayList<>(valueParameters.size());
-
-        int startIndex = 0;
-        KotlinType receiverType = null;
-
-        if (shouldConvertFirstParameterToDescriptor && !function.getValueParameters().isEmpty()) {
-            receiverType = valueParameters.get(0).getType();
-            startIndex = 1;
-        }
-
-        for (int i = startIndex; i < valueParameters.size(); ++i) {
-            ValueParameterDescriptor parameter = valueParameters.get(i);
-            parameterTypes.add(parameter.getType());
-            parameterNames.add(function.hasSynthesizedParameterNames() ? SpecialNames.NO_NAME_PROVIDED : parameter.getName());
-        }
-
-        return FunctionTypesKt.createFunctionType(
-                DescriptorUtilsKt.getBuiltIns(function), Annotations.Companion.getEMPTY(),
-                receiverType, parameterTypes, parameterNames, returnType, function.isSuspend()
-        );
-    }
-
-    @Nullable
-    public static FunctionDescriptor getSingleAbstractMethodOrNull(@NotNull ClassDescriptor klass) {
-        // NB: this check MUST BE at start. Please do not touch until following to-do is resolved
-        // Otherwise android data binding can cause resolve re-entrance
-        // For details see KT-18687, KT-16149
-        // TODO: prevent resolve re-entrance on architecture level, or (alternatively) ask data binding owners not to do it
-        if (DescriptorUtilsKt.getFqNameSafe(klass).asString().endsWith(".databinding.DataBindingComponent")) {
-            return null;
-        }
-
-        if (klass instanceof JavaClassDescriptor) {
-            if (((JavaClassDescriptor) klass).isDefinitelyNotSamInterface()) {
-                return null;
-            }
-        } else if (!klass.isFun()) {
-            return null;
-        }
-
-        List<CallableMemberDescriptor> abstractMembers = getAbstractMembers(klass);
-        if (abstractMembers.size() == 1) {
-            CallableMemberDescriptor member = abstractMembers.get(0);
-            if (member instanceof SimpleFunctionDescriptor) {
-                return member.getTypeParameters().isEmpty()
-                       ? (FunctionDescriptor) member
-                       : null;
-            }
-        }
-
-        return null;
-    }
-
-    @NotNull
     public static SamConstructorDescriptor createSamConstructorFunction(
             @NotNull DeclarationDescriptor owner,
             @NotNull ClassDescriptor samInterface,
             @NotNull SamConversionResolver samResolver
     ) {
-        assert getSingleAbstractMethodOrNull(samInterface) != null : samInterface;
+        assert SamConversionResolverImplKt.getSingleAbstractMethodOrNull(samInterface) != null : samInterface;
 
         SamConstructorDescriptorImpl result = new SamConstructorDescriptorImpl(owner, samInterface);
 
@@ -235,9 +159,7 @@ public class SingleAbstractMethodUtils {
 
     public static boolean isSamClassDescriptor(@NotNull ClassDescriptor descriptor) {
         if (descriptor.isFun()) return true;
-        if (descriptor instanceof LazyJavaClassDescriptor &&
-            ((LazyJavaClassDescriptor) descriptor).getDefaultFunctionTypeForSamInterface() != null
-        ) return true;
+        if (descriptor instanceof LazyJavaClassDescriptor && descriptor.getDefaultFunctionTypeForSamInterface() != null) return true;
 
         return false;
     }

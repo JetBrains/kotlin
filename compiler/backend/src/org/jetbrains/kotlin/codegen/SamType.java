@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
 import org.jetbrains.kotlin.load.java.sam.SingleAbstractMethodUtils;
+import org.jetbrains.kotlin.load.kotlin.sam.SamConversionResolverImplKt;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
@@ -78,7 +79,7 @@ public class SamType {
 
     @NotNull
     public SimpleFunctionDescriptor getOriginalAbstractMethod() {
-        return (SimpleFunctionDescriptor) SingleAbstractMethodUtils.getAbstractMembers(getClassDescriptor()).get(0);
+        return (SimpleFunctionDescriptor) SamConversionResolverImplKt.getAbstractMembers(getClassDescriptor()).get(0);
     }
 
     @Override

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.resolve.SamConversionResolver
 import org.jetbrains.kotlin.load.java.sam.JvmSamConversionTransformer
-import org.jetbrains.kotlin.load.java.sam.SamConversionResolverImpl
+import org.jetbrains.kotlin.load.kotlin.sam.SamConversionResolverImpl
 import org.jetbrains.kotlin.resolve.PlatformConfiguratorBase
 import org.jetbrains.kotlin.resolve.checkers.BigFunctionTypeAvailabilityChecker
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
