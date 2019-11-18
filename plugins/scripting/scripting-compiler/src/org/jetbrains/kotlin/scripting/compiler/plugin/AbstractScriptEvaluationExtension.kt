@@ -23,7 +23,7 @@ import kotlin.script.experimental.host.toScriptSource
 
 abstract class AbstractScriptEvaluationExtension : ScriptEvaluationExtension {
 
-    abstract fun setupScriptConfiguration(configuration: CompilerConfiguration, sourcePath: String)
+    abstract fun setupScriptConfiguration(configuration: CompilerConfiguration)
 
     abstract fun createEnvironment(
         projectEnvironment: JavaCoreProjectEnvironment,
@@ -48,7 +48,7 @@ abstract class AbstractScriptEvaluationExtension : ScriptEvaluationExtension {
         }
         val sourcePath = arguments.freeArgs.first()
 
-        setupScriptConfiguration(configuration, sourcePath)
+        setupScriptConfiguration(configuration)
 
         val environment = createEnvironment(projectEnvironment, configuration)
 

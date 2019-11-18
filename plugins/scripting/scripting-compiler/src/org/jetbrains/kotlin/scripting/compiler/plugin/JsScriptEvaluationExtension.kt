@@ -42,7 +42,7 @@ fun loadScriptConfiguration(configuration: CompilerConfiguration) {
 
 class JsScriptEvaluationExtension : AbstractScriptEvaluationExtension() {
 
-    override fun setupScriptConfiguration(configuration: CompilerConfiguration, sourcePath: String) {
+    override fun setupScriptConfiguration(configuration: CompilerConfiguration) {
         loadScriptConfiguration(configuration)
     }
 

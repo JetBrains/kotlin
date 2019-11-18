@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.scripting.compiler.plugin
 import com.intellij.core.JavaCoreProjectEnvironment
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -27,8 +26,7 @@ class JvmCliScriptEvaluationExtension : AbstractScriptEvaluationExtension() {
         }
     }
 
-    override fun setupScriptConfiguration(configuration: CompilerConfiguration, sourcePath: String) {
-        configuration.addKotlinSourceRoot(sourcePath)
+    override fun setupScriptConfiguration(configuration: CompilerConfiguration) {
         configuration.put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
     }
 
