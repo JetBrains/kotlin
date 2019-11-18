@@ -35,7 +35,7 @@ import java.io.File
 import java.lang.Boolean.getBoolean
 
 private val wasmRuntimeKlib =
-    loadKlib("compiler/ir/serialization.js/build/wasmRuntime/klib")
+    loadKlib("libraries/stdlib/js-ir/build/wasmRuntime/klib")
 
 abstract class BasicWasmBoxTest(
     private val pathToTestDir: String,

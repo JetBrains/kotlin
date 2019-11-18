@@ -19,7 +19,6 @@ compileKotlin2Js {
     kotlinOptions.freeCompilerArgs = [
             "-Xallow-kotlin-package",
             "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
-            "-Xir-produce-klib-dir"
     ]
     kotlinOptions {
         moduleKind = "umd"
@@ -43,6 +42,11 @@ archivesBaseName = 'kotlin-test-js'
 
 jar {
     manifestAttributes(manifest, project, 'Test')
+    // Add JS IR version of kotlin-test
+    def irKlib = tasks.getByPath(":kotlin-stdlib-js-ir:generateKotlinTestKLib")
+    dependsOn(irKlib)
+    duplicatesStrategy DuplicatesStrategy.FAIL
+    from fileTree("${irKlib.outputs.files.singleFile.path}/klib")
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
