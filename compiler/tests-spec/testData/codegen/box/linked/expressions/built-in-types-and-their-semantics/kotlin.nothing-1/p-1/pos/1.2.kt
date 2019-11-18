@@ -4,17 +4,18 @@
  * KOTLIN CODEGEN BOX SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-213
- * PLACE: type-system, type-kinds, built-in-types, kotlin.nothing -> paragraph 1 -> sentence 1
- * NUMBER: 1
- * DESCRIPTION: todo
+ * PLACE: expressions, built-in-types-and-their-semantics, kotlin.nothing-1 -> paragraph 1 -> sentence 1
+ * NUMBER: 2
+ * DESCRIPTION:
  */
 
 fun box(): String {
-    val b : Nothing?= null
     try {
-        val a: Int = b!!
+        exit()
     } catch (e: NullPointerException) {
         return "OK"
     }
     return "NOK"
 }
+
+fun exit(): Nothing = null!!

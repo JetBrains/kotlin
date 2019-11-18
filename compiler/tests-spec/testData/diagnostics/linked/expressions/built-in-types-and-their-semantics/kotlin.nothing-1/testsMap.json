@@ -1,0 +1,14 @@
+{
+  "1": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 3,
+          "description": "check the type of jump expressions is Nothing and code placed on the left side of expression will never be executed",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}

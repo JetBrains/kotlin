@@ -4,7 +4,7 @@
       "2": [
         {
           "specVersion": "0.1-213",
-          "casesNumber": 1,
+          "casesNumber": 2,
           "description": "Check of Nothing type",
           "unexpectedBehaviour": false
         }
@@ -14,7 +14,7 @@
       "2": [
         {
           "specVersion": "0.1-213",
-          "casesNumber": 3,
+          "casesNumber": 2,
           "description": "Check of Nothing as a subtype of any type",
           "unexpectedBehaviour": false
         }
