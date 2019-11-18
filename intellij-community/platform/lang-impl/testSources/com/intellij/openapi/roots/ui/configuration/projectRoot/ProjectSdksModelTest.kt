@@ -51,7 +51,7 @@ class ProjectSdksModelTest : LightPlatformTestCase() {
       Assert.assertSame(foundSdk2, sdk)
     }
     finally {
-      WriteAction.runAndWait<Exception> {
+      WriteAction.run<Exception> {
         ProjectJdkTable.getInstance().removeJdk(sdk)
       }
     }
