@@ -1339,6 +1339,24 @@ public class MoveStatementTestGenerated extends AbstractMoveStatementTest {
         }
     }
 
+    @TestMetadata("idea/testData/codeInsight/moveUpDown/line")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Line extends AbstractMoveStatementTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTestLine, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInLine() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/codeInsight/moveUpDown/line"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("fileAnnotation.kt")
+        public void testFileAnnotation() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/line/fileAnnotation.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/codeInsight/moveUpDown/parametersAndArguments")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
