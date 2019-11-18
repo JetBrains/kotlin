@@ -89,8 +89,14 @@ class ImplicitDispatchReceiverValue(
     useSiteSession: FirSession,
     scopeSession: ScopeSession
 ) : ImplicitReceiverValue<FirClassSymbol<*>>(boundSymbol, type, useSiteSession, scopeSession) {
-    val implicitCompanionScope: FirScope? =
-        (boundSymbol.fir as? FirRegularClass)?.companionObject?.buildUseSiteMemberScope(useSiteSession, scopeSession)
+    val implicitCompanionScopes: List<FirScope> = run {
+        val klass = boundSymbol.fir as? FirRegularClass ?: return@run emptyList()
+        listOfNotNull(klass.companionObject?.buildUseSiteMemberScope(useSiteSession, scopeSession)) +
+                lookupSuperTypes(klass, lookupInterfaces = false, deep = true, useSiteSession = useSiteSession).mapNotNull {
+                    val superClass = (it as? ConeClassType)?.lookupTag?.toSymbol(useSiteSession)?.fir as? FirRegularClass
+                    superClass?.companionObject?.buildUseSiteMemberScope(useSiteSession, scopeSession)
+                }
+    }
 }
 
 class ImplicitExtensionReceiverValue(

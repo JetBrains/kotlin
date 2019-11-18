@@ -19,6 +19,12 @@ open class Protected {
 
         protected fun bar() {}
     }
+
+    protected companion object {
+        fun fromCompanion() {}
+
+        protected fun protectedFromCompanion() {}
+    }
 }
 
 class Derived : Protected() {
@@ -26,9 +32,12 @@ class Derived : Protected() {
         bar()
         Nested().foo()
         Nested().<!INAPPLICABLE_CANDIDATE!>bar<!>() // hidden
+
+        fromCompanion()
+        <!INAPPLICABLE_CANDIDATE!>protectedFromCompanion<!>()
     }
 
-    class NestedDerived : Nested() {
+    private class NestedDerived : Nested() {
         fun use() {
             bar()
         }

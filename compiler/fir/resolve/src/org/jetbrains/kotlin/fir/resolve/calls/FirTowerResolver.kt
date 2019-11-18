@@ -95,8 +95,8 @@ class FirTowerResolver(
                 )
             }
             if (implicitDispatchReceiverValue is ImplicitDispatchReceiverValue) {
-                val implicitCompanionScope = implicitDispatchReceiverValue.implicitCompanionScope
-                if (implicitCompanionScope != null) {
+                val implicitCompanionScopes = implicitDispatchReceiverValue.implicitCompanionScopes
+                for (implicitCompanionScope in implicitCompanionScopes) {
                     // Extension in companion
                     // class My {
                     //     companion object { fun My.foo() {} }
@@ -184,8 +184,8 @@ class FirTowerResolver(
                 towerDataConsumer.consume(TOWER_LEVEL, ScopeTowerLevel(session, components, implicitScope), group++)
             }
             if (implicitReceiverValue is ImplicitDispatchReceiverValue) {
-                val implicitCompanionScope = implicitReceiverValue.implicitCompanionScope
-                if (implicitCompanionScope != null) {
+                val implicitCompanionScopes = implicitReceiverValue.implicitCompanionScopes
+                for (implicitCompanionScope in implicitCompanionScopes) {
                     // Companion scope bound to implicit receiver scope
                     // class Outer {
                     //     companion object { val x = 0 }
