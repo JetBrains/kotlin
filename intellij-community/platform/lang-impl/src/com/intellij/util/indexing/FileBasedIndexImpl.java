@@ -1115,7 +1115,6 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
 
         final TIntArrayList filesSet = new TIntArrayList();
         iterateIndexableFiles(fileOrDir -> {
-          ProgressManager.checkCanceled();
           if (fileOrDir instanceof VirtualFileWithId) {
             filesSet.add(((VirtualFileWithId)fileOrDir).getId());
           }
