@@ -28,10 +28,10 @@ import java.util.List;
 
 @Service
 public final class ConcatenationInjectorManager extends SimpleModificationTracker {
-  public static final ProjectExtensionPointName<ConcatenationAwareInjector> CONCATENATION_INJECTOR_EP_NAME = new ProjectExtensionPointName<>("com.intellij.concatenationAwareInjector");
+  public static final ProjectExtensionPointName<ConcatenationAwareInjector> EP_NAME = new ProjectExtensionPointName<>("com.intellij.concatenationAwareInjector");
 
   public ConcatenationInjectorManager(@NotNull Project project) {
-    CONCATENATION_INJECTOR_EP_NAME.getPoint(project).addExtensionPointListener(new ExtensionPointListener<ConcatenationAwareInjector>() {
+    EP_NAME.getPoint(project).addExtensionPointListener(new ExtensionPointListener<ConcatenationAwareInjector>() {
       @Override
       public void extensionAdded(@NotNull ConcatenationAwareInjector injector, @NotNull PluginDescriptor pluginDescriptor) {
         registerConcatenationInjector(injector);
