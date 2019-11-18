@@ -221,6 +221,7 @@ public class ProjectSdksModel implements SdkModel {
     }
     if (projectJdk != null) {
       myProjectSdks.remove(projectJdk);
+      SdkDownloadTracker.getInstance().onSdkRemoved(projectJdk);
       mySdkEventsDispatcher.getMulticaster().beforeSdkRemove(projectJdk);
       myModified = true;
     }
