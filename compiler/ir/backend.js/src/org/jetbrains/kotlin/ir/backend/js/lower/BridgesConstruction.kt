@@ -13,10 +13,7 @@ import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
 import org.jetbrains.kotlin.backend.common.ir.isMethodOfAny
 import org.jetbrains.kotlin.backend.common.ir.isSuspend
-import org.jetbrains.kotlin.backend.common.lower.SpecialBridgeMethods
-import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.lower.irBlockBody
-import org.jetbrains.kotlin.backend.common.lower.irNot
+import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
@@ -67,7 +64,7 @@ class BridgesConstruction(val context: CommonBackendContext) : ClassLoweringPass
         if (function.isMethodOfAny())
             return
 
-        val (specialOverride: IrSimpleFunction?, specialOverrideValueGenerator) =
+        val (specialOverride: IrSimpleFunction?, specialOverrideInfo) =
             specialBridgeMethods.findSpecialWithOverride(function) ?: Pair(null, null)
 
         val specialOverrideSignature = specialOverride?.let { FunctionAndSignature(it) }
@@ -93,7 +90,7 @@ class BridgesConstruction(val context: CommonBackendContext) : ClassLoweringPass
 
             val bridge: IrDeclaration = when {
                 specialOverrideSignature == from ->
-                    createBridge(function, from.function, to.function, specialOverrideValueGenerator)
+                    createBridge(function, from.function, to.function, specialOverrideInfo)
 
                 else ->
                     createBridge(function, from.function, to.function, null)
@@ -109,7 +106,7 @@ class BridgesConstruction(val context: CommonBackendContext) : ClassLoweringPass
         function: IrSimpleFunction,
         bridge: IrSimpleFunction,
         delegateTo: IrSimpleFunction,
-        defaultValueGenerator: ((IrSimpleFunction) -> IrExpression)?
+        specialMethodInfo: SpecialMethodWithDefaultInfo?
     ): IrFunction {
 
         val origin =
@@ -144,12 +141,12 @@ class BridgesConstruction(val context: CommonBackendContext) : ClassLoweringPass
         }
 
         context.createIrBuilder(irFunction.symbol).irBlockBody(irFunction) {
-            if (defaultValueGenerator != null) {
-                irFunction.valueParameters.forEach {
+            if (specialMethodInfo != null) {
+                irFunction.valueParameters.take(specialMethodInfo.argumentsToCheck).forEach {
                     +irIfThen(
                         context.irBuiltIns.unitType,
                         irNot(irIs(irGet(it), delegateTo.valueParameters[it.index].type)),
-                        irReturn(defaultValueGenerator(irFunction))
+                        irReturn(specialMethodInfo.defaultValueGenerator(irFunction))
                     )
                 }
             }
