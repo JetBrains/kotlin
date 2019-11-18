@@ -102,6 +102,7 @@ include ":kotlin-build-common",
         ":compiler:ir.serialization.common",
         ":compiler:ir.serialization.jvm",
         ":compiler:ir.serialization.js",
+        ":kotlin-stdlib-js-ir",
         ":compiler:backend.js",
         ":compiler:backend.wasm",
         ":compiler:backend.jvm",
@@ -111,6 +112,7 @@ include ":kotlin-build-common",
         ":compiler:light-classes",
         ":compiler:cli",
         ":compiler:cli-js",
+        ":compiler:cli-js-klib",
         ":compiler:incremental-compilation-impl",
         ":compiler:android-tests",
         ":compiler:tests-common",
@@ -322,7 +324,6 @@ if (buildProperties.inJpsBuildIdeaSync) {
             ":kotlin-stdlib-common",
             ":kotlin-stdlib",
             ":kotlin-stdlib-js",
-            ":kotlin-stdlib-js-ir",
             ":kotlin-stdlib-jdk7",
             ":kotlin-stdlib-jdk8",
             ":kotlin-stdlib:samples",
@@ -338,7 +339,6 @@ if (buildProperties.inJpsBuildIdeaSync) {
     project(':kotlin-stdlib-common').projectDir = "$rootDir/libraries/stdlib/common" as File
     project(':kotlin-stdlib').projectDir = "$rootDir/libraries/stdlib/jvm" as File
     project(':kotlin-stdlib-js').projectDir = "$rootDir/libraries/stdlib/js-v1" as File
-    project(':kotlin-stdlib-js-ir').projectDir = "$rootDir/libraries/stdlib/js-ir" as File
     project(':kotlin-stdlib-jdk7').projectDir = "$rootDir/libraries/stdlib/jdk7" as File
     project(':kotlin-stdlib-jdk8').projectDir = "$rootDir/libraries/stdlib/jdk8" as File
     project(':kotlin-stdlib:samples').projectDir = "$rootDir/libraries/stdlib/samples" as File
@@ -375,6 +375,7 @@ project(':kotlin-preloader').projectDir = "$rootDir/compiler/preloader" as File
 project(':kotlin-build-common').projectDir = "$rootDir/build-common" as File
 project(':compiler:cli-common').projectDir = "$rootDir/compiler/cli/cli-common" as File
 project(':compiler:cli-js').projectDir = "$rootDir/compiler/cli/cli-js" as File
+project(':compiler:cli-js-klib').projectDir = "$rootDir/compiler/cli/cli-js-klib" as File
 project(':kotlin-runner').projectDir = "$rootDir/compiler/cli/cli-runner" as File
 project(':kotlin-daemon').projectDir = "$rootDir/compiler/daemon" as File
 project(':daemon-common').projectDir = "$rootDir/compiler/daemon/daemon-common" as File
@@ -393,6 +394,7 @@ project(':compiler:backend.jvm').projectDir = "$rootDir/compiler/ir/backend.jvm"
 project(':compiler:ir.serialization.common').projectDir = "$rootDir/compiler/ir/serialization.common" as File
 project(':compiler:ir.serialization.jvm').projectDir = "$rootDir/compiler/ir/serialization.jvm" as File
 project(':compiler:ir.serialization.js').projectDir = "$rootDir/compiler/ir/serialization.js" as File
+project(':kotlin-stdlib-js-ir').projectDir = "$rootDir/libraries/stdlib/js-ir" as File
 project(':kotlin-util-io').projectDir = "$rootDir/compiler/util-io" as File
 project(':kotlin-util-klib').projectDir = "$rootDir/compiler/util-klib" as File
 project(':kotlin-util-klib-metadata').projectDir = "$rootDir/compiler/util-klib-metadata" as File

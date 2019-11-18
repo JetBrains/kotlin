@@ -31,7 +31,7 @@ import kotlin.script.experimental.jvm.JsDependency
 fun loadScriptConfiguration(configuration: CompilerConfiguration) {
     val scriptConfiguration = ScriptCompilationConfiguration {
         baseClass("kotlin.Any")
-        dependencies.append(JsDependency("compiler/ir/serialization.js/build/fullRuntime/klib"))
+        dependencies.append(JsDependency("libraries/stdlib/js-ir/build/fullRuntime/klib"))
         platform.put("JS")
     }
     configuration.add(

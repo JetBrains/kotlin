@@ -55,6 +55,9 @@ pill {
 }
 
 val isTeamcityBuild = project.kotlinBuildProperties.isTeamcityBuild
+val includeStdlibJsIr by extra(
+    findProperty("include.stdlib.js.ir")?.let { it.toString().toBoolean() } ?: isTeamcityBuild
+)
 
 val configuredJdks: List<JdkId> =
     getConfiguredJdks().also {
@@ -259,7 +262,9 @@ val coreLibProjects = listOfNotNull(
     ":kotlin-stdlib",
     ":kotlin-stdlib-common",
     ":kotlin-stdlib-js",
-    ":kotlin-stdlib-js-ir",
+    // Exclude JS IR from core libs because it depends on local compiler build, which
+    // in turn depends on local JVM stdlib. It slows down library testing.
+    ":kotlin-stdlib-js-ir".takeIf { includeStdlibJsIr },
     ":kotlin-stdlib-jdk7",
     ":kotlin-stdlib-jdk8",
     ":kotlin-test:kotlin-test-common",

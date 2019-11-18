@@ -39,7 +39,7 @@ sourceSets {
 
 projectTest(parallel = true) {
     workingDir = rootDir
-    dependsOn(":compiler:ir.serialization.js:packFullRuntimeKLib")
+    dependsOn(":kotlin-stdlib-js-ir:packFullRuntimeKLib")
 }
 
 testsJar()

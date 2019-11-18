@@ -30,12 +30,13 @@ dependencies {
     testCompileOnly(project(":compiler:frontend"))
     testCompileOnly(project(":compiler:cli"))
     testCompileOnly(project(":compiler:cli-js"))
+    testCompileOnly(project(":compiler:cli-js-klib"))
     testCompileOnly(project(":compiler:util"))
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     testCompileOnly(intellijDep()) { includeJars("openapi", "idea", "idea_rt", "util") }
     testCompile(project(":compiler:backend.js"))
     testCompile(project(":compiler:backend.wasm"))
-    testCompile(projectTests(":compiler:ir.serialization.js"))
+    testCompile(project(":kotlin-stdlib-js-ir"))
     testCompile(project(":js:js.translator"))
     testCompile(project(":js:js.serializer"))
     testCompile(project(":js:js.dce"))
@@ -43,6 +44,15 @@ dependencies {
     testCompile(commonDep("junit:junit"))
     testCompile(projectTests(":kotlin-build-common"))
     testCompile(projectTests(":generators:test-generator"))
+
+    testCompile(intellijCoreDep()) { includeJars("intellij-core") }
+    testCompile(project(":compiler:frontend"))
+    testCompile(project(":compiler:cli"))
+    testCompile(project(":compiler:util"))
+
+    testRuntime(project(":kotlin-reflect"))
+    testRuntime(intellijDep()) { includeJars("picocontainer", "trove4j", "guava", "jdom", rootProject = rootProject) }
+
 
     val currentOs = OperatingSystem.current()
 
@@ -85,9 +95,9 @@ fun Test.setUpJsBoxTests(jsEnabled: Boolean, jsIrEnabled: Boolean) {
     dependsOn(":dist")
     if (jsEnabled) dependsOn(testJsRuntime)
     if (jsIrEnabled) {
-        dependsOn(":compiler:ir.serialization.js:generateFullRuntimeKLib")
-        dependsOn(":compiler:ir.serialization.js:generateReducedRuntimeKLib")
-        dependsOn(":compiler:ir.serialization.js:generateKotlinTestKLib")
+        dependsOn(":kotlin-stdlib-js-ir:generateFullRuntimeKLib")
+        dependsOn(":kotlin-stdlib-js-ir:generateReducedRuntimeKLib")
+        dependsOn(":kotlin-stdlib-js-ir:generateKotlinTestKLib")
     }
 
     exclude("org/jetbrains/kotlin/js/test/wasm/semantics/*")
@@ -207,7 +217,7 @@ val unzipJsShell by task<Copy> {
 
 projectTest("wasmTest", true) {
     dependsOn(unzipJsShell)
-    dependsOn(":compiler:ir.serialization.js:generateWasmRuntimeKLib")
+    dependsOn(":kotlin-stdlib-js-ir:generateWasmRuntimeKLib")
     include("org/jetbrains/kotlin/js/test/wasm/semantics/*")
     val jsShellExecutablePath = File(unzipJsShell.get().destinationDir, "js").absolutePath
     systemProperty("javascript.engine.path.SpiderMonkey", jsShellExecutablePath)

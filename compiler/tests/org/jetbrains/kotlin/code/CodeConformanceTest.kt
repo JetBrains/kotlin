@@ -93,7 +93,7 @@ class CodeConformanceTest : TestCase() {
             "libraries/tools/kotlin-source-map-loader/.gradle",
             "libraries/tools/kotlin-source-map-loader/lib",
             "buildSrc/prepare-deps/build",
-            "compiler/ir/serialization.js/build"
+            "libraries/stdlib/js-ir/build/"
         )
     }
 

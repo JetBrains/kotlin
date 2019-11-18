@@ -310,8 +310,6 @@ task libraryJarWithoutIr(type: Jar, dependsOn: compileJs) {
 }
 
 task libraryJarWithIr(type: Zip, dependsOn: libraryJarWithoutIr) {
-    def irStdlibJar = tasks.getByPath(":kotlin-stdlib-js-ir:jar")
-    dependsOn(irStdlibJar)
 
     archiveExtension = "jar"
     destinationDirectory = file("$buildDir/libs")
@@ -319,8 +317,10 @@ task libraryJarWithIr(type: Zip, dependsOn: libraryJarWithoutIr) {
     duplicatesStrategy DuplicatesStrategy.FAIL
 
     from zipTree(libraryJarWithoutIr.archiveFile)
-    from(zipTree(irStdlibJar.archiveFile)) {
-        exclude 'META-INF/*'
+    if (rootProject.includeStdlibJsIr) {
+        def irKlib = tasks.getByPath(":kotlin-stdlib-js-ir:generateFullRuntimeKLib")
+        dependsOn(irKlib)
+        from fileTree("${irKlib.outputs.files.singleFile.path}/klib")
     }
 }
 
@@ -370,7 +370,7 @@ task distSourcesJar(type: Jar) {
 
 
 artifacts {
-    runtime libraryJarWithIr
+    runtime libraryJarWithoutIr
     archives libraryJarWithIr
     archives sourcesJar
     sources sourcesJar

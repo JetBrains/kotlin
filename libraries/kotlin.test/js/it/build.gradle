@@ -32,7 +32,11 @@ task populateNodeModules(type: Copy, dependsOn: compileKotlin2Js) {
 
     from {
         configurations.nodeModules.collect {
-            zipTree(it.absolutePath).matching { include '*.js' }
+             // WORKAROUND: Some JS IR jars were absent and caused this task to fail.
+             // They don't contain .js thus we can skip them.
+             if (it.exists()) {
+                 zipTree(it.absolutePath).matching { include '*.js' }
+             }
         }
     }
 

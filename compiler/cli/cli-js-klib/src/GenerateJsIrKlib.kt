@@ -3,15 +3,16 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+// Internal CLI for building JS IR libraries
+
 package org.jetbrains.kotlin.ir.backend.js
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.GroupingMessageCollector
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
@@ -27,6 +28,10 @@ fun buildConfiguration(environment: KotlinCoreEnvironment, moduleName: String): 
     val runtimeConfiguration = environment.configuration.copy()
     runtimeConfiguration.put(CommonConfigurationKeys.MODULE_NAME, moduleName)
     runtimeConfiguration.put(JSConfigurationKeys.MODULE_KIND, ModuleKind.PLAIN)
+    runtimeConfiguration.put(
+        CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY,
+        PrintingMessageCollector(System.err, MessageRenderer.PLAIN_RELATIVE_PATHS, false)
+    )
 
     runtimeConfiguration.languageVersionSettings = LanguageVersionSettingsImpl(
         LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE,
@@ -95,7 +100,6 @@ private fun listOfKtFilesFrom(paths: List<String>): List<String> {
 }
 
 fun main(args: Array<String>) {
-
     val inputFiles = mutableListOf<String>()
     var outputPath: String? = null
     val dependencies = mutableListOf<String>()

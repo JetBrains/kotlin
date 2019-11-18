@@ -23,9 +23,9 @@ import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
 import java.io.File
 import java.lang.Boolean.getBoolean
 
-private val fullRuntimeKlib = "compiler/ir/serialization.js/build/fullRuntime/klib"
-private val defaultRuntimeKlib = "compiler/ir/serialization.js/build/reducedRuntime/klib"
-private val kotlinTestKLib = "compiler/ir/serialization.js/build/kotlin.test/klib"
+private val fullRuntimeKlib = "libraries/stdlib/js-ir/build/fullRuntime/klib"
+private val defaultRuntimeKlib = "libraries/stdlib/js-ir/build/reducedRuntime/klib"
+private val kotlinTestKLib = "libraries/stdlib/js-ir/build/kotlin.test/klib"
 
 abstract class BasicIrBoxTest(
     pathToTestDir: String,
