@@ -14,6 +14,7 @@ const karmaConfig = cfg.parseConfig(process.argv[2]);
 karmaConfig.singleRun = false;
 
 configureBrowsers(karmaConfig);
+fixMochaTimeout(karmaConfig);
 
 const Server = karma.Server;
 const server = new Server(karmaConfig, function (exitCode) {
@@ -87,9 +88,33 @@ function isDebuggableBrowser(browserName, config) {
 
     const port = parseInt(value.substring(prefix.length), 10);
     if (isNaN(port) || port !== 9222) {
-        console.warn(`Debugger expect 9222 port, but ${port} found`);
+        console.error(`Debugger expect 9222 port, but ${port} found`);
         return false;
     }
 
     return true;
+}
+
+function fixMochaTimeout(config) {
+    let client = config.client;
+    if (typeof client === 'undefined') {
+        config.client = client = {};
+    }
+    if (client === Object(client)) {
+        let mocha = client.mocha;
+        if (typeof mocha === 'undefined') {
+            client.mocha = mocha = {};
+        }
+        if (mocha === Object(mocha)) {
+            mocha.timeout = 0;
+        }
+        else {
+            console.error('config.client.mocha is not an object');
+            process.exit(1);
+        }
+    }
+    else {
+        console.error('config.client is not an object');
+        process.exit(1);
+    }
 }
