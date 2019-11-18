@@ -65,7 +65,7 @@ public class NewRunConfigurationPopup {
 
     @Override
     public ConfigurationFactory[] getConfigurationFactories() {
-      return new ConfigurationFactory[0];
+      return ConfigurationFactory.EMPTY_ARRAY;
     }
   };
 
