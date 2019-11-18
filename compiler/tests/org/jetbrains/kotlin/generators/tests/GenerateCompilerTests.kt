@@ -485,7 +485,17 @@ fun main(args: Array<String>) {
     testGroup(
         "compiler/tests", "compiler/testData",
         testRunnerMethodName = "runTestWithCustomIgnoreDirective",
-        additionalRunnerArguments = listOf("\"// IGNORE_BACKEND_MULTI_MODULE:\"")
+        additionalRunnerArguments = listOf("\"// IGNORE_BACKEND_FIR: \"")
+    ) {
+        testClass<AbstractFirBlackBoxCodegenTest> {
+            model("codegen/box", targetBackend = TargetBackend.JVM_IR, excludeDirs = listOf("oldLanguageVersions"))
+        }
+    }
+
+    testGroup(
+        "compiler/tests", "compiler/testData",
+        testRunnerMethodName = "runTestWithCustomIgnoreDirective",
+        additionalRunnerArguments = listOf("\"// IGNORE_BACKEND_MULTI_MODULE: \"")
     ) {
         testClass<AbstractCompileKotlinAgainstInlineKotlinTest> {
             model("codegen/boxInline", targetBackend = TargetBackend.JVM)
