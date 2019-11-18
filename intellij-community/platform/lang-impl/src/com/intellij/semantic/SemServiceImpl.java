@@ -3,6 +3,8 @@ package com.intellij.semantic;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.extensions.ExtensionNotApplicableException;
+import com.intellij.openapi.extensions.ExtensionPointListener;
+import com.intellij.openapi.extensions.PluginDescriptor;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.RecursionGuard;
@@ -38,6 +40,17 @@ public final class SemServiceImpl extends SemService {
   public SemServiceImpl(Project project) {
     myProject = project;
     myCVManager = CachedValuesManager.getManager(myProject);
+    SemContributor.EP_NAME.addExtensionPointListener(new ExtensionPointListener<SemContributorEP>() {
+      @Override
+      public void extensionAdded(@NotNull SemContributorEP extension, @NotNull PluginDescriptor pluginDescriptor) {
+        myProducers = null;
+      }
+
+      @Override
+      public void extensionRemoved(@NotNull SemContributorEP extension, @NotNull PluginDescriptor pluginDescriptor) {
+        myProducers = null;
+      }
+    }, project);
   }
 
   private MultiMap<SemKey<?>, NullableFunction<PsiElement, Collection<? extends SemElement>>> collectProducers() {
