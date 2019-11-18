@@ -88,6 +88,11 @@ sealed class StubOrigin {
             val container: ObjCContainer
     ) : StubOrigin()
 
+    class ObjCProperty(
+            val property: org.jetbrains.kotlin.native.interop.indexer.ObjCProperty,
+            val container: ObjCContainer
+    ) : StubOrigin()
+
     class ObjCClass(
             val clazz: org.jetbrains.kotlin.native.interop.indexer.ObjCClass
     ) : StubOrigin()
@@ -103,6 +108,10 @@ sealed class StubOrigin {
     class FunctionParameter(val parameter: Parameter) : StubOrigin()
 
     class Struct(val struct: StructDecl) : StubOrigin()
+
+    class Constant(val constantDef: ConstantDef): StubOrigin()
+
+    class Global(val global: GlobalDecl) : StubOrigin()
 }
 
 interface StubElementWithOrigin : StubIrElement {
@@ -178,7 +187,8 @@ class PropertyStub(
         val kind: Kind,
         val modality: MemberStubModality = MemberStubModality.FINAL,
         val receiverType: StubType? = null,
-        override val annotations: List<AnnotationStub> = emptyList()
+        override val annotations: List<AnnotationStub> = emptyList(),
+        val origin: StubOrigin
 ) : StubIrElement, AnnotationHolder {
     sealed class Kind {
         class Val(

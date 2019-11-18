@@ -13,16 +13,17 @@ internal class MacroConstantStubBuilder(
 ) : StubElementBuilder {
     override fun build(): List<StubIrElement> {
         val kotlinName = constant.name
+        val origin = StubOrigin.Constant(constant)
         val declaration = when (constant) {
             is IntegerConstantDef -> {
                 val literal = context.tryCreateIntegralStub(constant.type, constant.value) ?: return emptyList()
                 val kotlinType = context.mirror(constant.type).argType.toStubIrType()
                 when (context.platform) {
-                    KotlinPlatform.NATIVE -> PropertyStub(kotlinName, kotlinType, PropertyStub.Kind.Constant(literal))
+                    KotlinPlatform.NATIVE -> PropertyStub(kotlinName, kotlinType, PropertyStub.Kind.Constant(literal), origin = origin)
                     // No reason to make it const val with backing field on Kotlin/JVM yet:
                     KotlinPlatform.JVM -> {
                         val getter = PropertyAccessor.Getter.SimpleGetter(constant = literal)
-                        PropertyStub(kotlinName, kotlinType, PropertyStub.Kind.Val(getter))
+                        PropertyStub(kotlinName, kotlinType, PropertyStub.Kind.Val(getter), origin = origin)
                     }
                 }
             }
@@ -30,13 +31,13 @@ internal class MacroConstantStubBuilder(
                 val literal = context.tryCreateDoubleStub(constant.type, constant.value) ?: return emptyList()
                 val kotlinType = context.mirror(constant.type).argType.toStubIrType()
                 val getter = PropertyAccessor.Getter.SimpleGetter(constant = literal)
-                PropertyStub(kotlinName, kotlinType, PropertyStub.Kind.Val(getter))
+                PropertyStub(kotlinName, kotlinType, PropertyStub.Kind.Val(getter), origin = origin)
             }
             is StringConstantDef -> {
                 val literal = StringConstantStub(constant.value.quoteAsKotlinLiteral())
                 val kotlinType = KotlinTypes.string.toStubIrType()
                 val getter = PropertyAccessor.Getter.SimpleGetter(constant = literal)
-                PropertyStub(kotlinName, kotlinType, PropertyStub.Kind.Val(getter))
+                PropertyStub(kotlinName, kotlinType, PropertyStub.Kind.Val(getter), origin = origin)
             }
             else -> return emptyList()
         }
@@ -72,6 +73,7 @@ internal class StructStubBuilder(
                 val offset = field.offset / 8
                 val fieldRefType = context.mirror(field.type)
                 val unwrappedFieldType = field.type.unwrapTypedefs()
+                val origin = StubOrigin.None
                 if (unwrappedFieldType is ArrayType) {
                     val type = (fieldRefType as TypeMirror.ByValue).valueType
                     val annotations = if (platform == KotlinPlatform.JVM) {
@@ -83,7 +85,7 @@ internal class StructStubBuilder(
                     }
                     val kind = PropertyStub.Kind.Val(PropertyAccessor.Getter.ArrayMemberAt(offset))
                     // TODO: Should receiver be added?
-                    PropertyStub(field.name, type.toStubIrType(), kind, annotations = annotations)
+                    PropertyStub(field.name, type.toStubIrType(), kind, annotations = annotations, origin = origin)
                 } else {
                     val pointedType = fieldRefType.pointedType.toStubIrType()
                     val pointedTypeArgument = TypeArgumentStub(pointedType)
@@ -92,10 +94,10 @@ internal class StructStubBuilder(
                                 PropertyAccessor.Getter.MemberAt(offset, typeArguments = listOf(pointedTypeArgument), hasValueAccessor = true),
                                 PropertyAccessor.Setter.MemberAt(offset, typeArguments = listOf(pointedTypeArgument))
                         )
-                        PropertyStub(field.name, fieldRefType.argType.toStubIrType(), kind)
+                        PropertyStub(field.name, fieldRefType.argType.toStubIrType(), kind, origin = origin)
                     } else {
                         val kind = PropertyStub.Kind.Val(PropertyAccessor.Getter.MemberAt(offset, hasValueAccessor = false))
-                        PropertyStub(field.name, pointedType, kind)
+                        PropertyStub(field.name, pointedType, kind, origin = origin)
                     }
                 }
             } catch (e: Throwable) {
@@ -113,7 +115,7 @@ internal class StructStubBuilder(
             context.bridgeComponentsBuilder.getterToBridgeInfo[readBits] = BridgeGenerationInfo("", typeInfo)
             context.bridgeComponentsBuilder.setterToBridgeInfo[writeBits] = BridgeGenerationInfo("", typeInfo)
             val kind = PropertyStub.Kind.Var(readBits, writeBits)
-            PropertyStub(field.name, kotlinType.toStubIrType(), kind)
+            PropertyStub(field.name, kotlinType.toStubIrType(), kind, origin = StubOrigin.None)
         }
 
         val superClass = context.platform.getRuntimeType("CStructVar")
@@ -276,7 +278,8 @@ internal class EnumStubBuilder(
                     kotlinType.toStubIrType(),
                     kind,
                     MemberStubModality.FINAL,
-                    null
+                    null,
+                    origin = StubOrigin.None
             )
         }
         val container = SimpleStubContainer(
@@ -436,6 +439,7 @@ internal class GlobalStubBuilder(
     override fun build(): List<StubIrElement> {
         val mirror = context.mirror(global.type)
         val unwrappedType = global.type.unwrapTypedefs()
+        val origin = StubOrigin.Global(global)
 
         val kotlinType: KotlinType
         val kind: PropertyStub.Kind
@@ -490,7 +494,7 @@ internal class GlobalStubBuilder(
                 }
             }
         }
-        return listOf(PropertyStub(global.name, kotlinType.toStubIrType(), kind))
+        return listOf(PropertyStub(global.name, kotlinType.toStubIrType(), kind, origin = origin))
     }
 }
 

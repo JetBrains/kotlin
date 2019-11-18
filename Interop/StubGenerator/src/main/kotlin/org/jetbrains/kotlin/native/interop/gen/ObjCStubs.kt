@@ -574,7 +574,8 @@ private class ObjCPropertyStubBuilder(
             is ObjCClassOrProtocol -> null
             is ObjCCategory -> ClassifierStubType(context.getKotlinClassFor(container.clazz, isMeta = property.getter.isClass))
         }
-        return listOf(PropertyStub(property.name, kotlinType.toStubIrType(), kind, modality, receiver))
+        val origin = StubOrigin.ObjCProperty(property, container)
+        return listOf(PropertyStub(property.name, kotlinType.toStubIrType(), kind, modality, receiver, origin = origin))
     }
 }
 
