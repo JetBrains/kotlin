@@ -1,0 +1,5 @@
+FILE: main.kt
+    public final fun test(): R|kotlin/Unit| {
+        lval project: <ERROR TYPE REF: Unresolved name: PROJECT> = Q|PlatformDataKeys|.<Unresolved name: PROJECT>#
+        lval member: R|ft<kotlin/String, kotlin/String?>!| = R|/PlatformDataKeys.PlatformDataKeys|().R|/CommonDataKeys.MEMBER|
+    }
