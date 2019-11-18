@@ -5,35 +5,43 @@
 
 package org.jetbrains.kotlin.fir
 
+import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.fir.java.FirJavaModuleBasedSession
 import org.jetbrains.kotlin.fir.java.FirLibrarySession
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
+import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 
 fun createSession(
     environment: KotlinCoreEnvironment,
     sourceScope: GlobalSearchScope,
     librariesScope: GlobalSearchScope = GlobalSearchScope.notScope(sourceScope)
+) = createSession(environment.project, sourceScope, librariesScope, environment::createPackagePartProvider)
+
+fun createSession(
+    project: Project,
+    sourceScope: GlobalSearchScope,
+    librariesScope: GlobalSearchScope,
+    packagePartProvider: (GlobalSearchScope) -> PackagePartProvider
 ): FirSession {
     val moduleInfo = FirTestModuleInfo()
-    val project = environment.project
     val provider = FirProjectSessionProvider(project)
     return FirJavaModuleBasedSession(moduleInfo, provider, sourceScope).also {
-        createSessionForDependencies(provider, moduleInfo, librariesScope, environment)
+        createSessionForDependencies(project, provider, moduleInfo, librariesScope, packagePartProvider)
     }
 }
 
 private fun createSessionForDependencies(
+    project: Project,
     provider: FirProjectSessionProvider,
     moduleInfo: FirTestModuleInfo,
     librariesScope: GlobalSearchScope,
-    environment: KotlinCoreEnvironment
+    packagePartProvider: (GlobalSearchScope) -> PackagePartProvider
 ) {
     val dependenciesInfo = FirTestModuleInfo()
     moduleInfo.dependencies.add(dependenciesInfo)
     FirLibrarySession.create(
-        dependenciesInfo, provider, librariesScope, environment.project,
-        environment.createPackagePartProvider(librariesScope)
+        dependenciesInfo, provider, librariesScope, project, packagePartProvider(librariesScope)
     )
 }

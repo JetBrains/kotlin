@@ -769,7 +769,7 @@ public class KotlinTestUtils {
             catch (Throwable e) {
                 if (!isIgnored && AUTOMATICALLY_MUTE_FAILED_TESTS) {
                     String text = doLoadFile(testDataFile);
-                    String directive = InTextDirectivesUtils.IGNORE_BACKEND_DIRECTIVE_PREFIX + targetBackend.name() + "\n";
+                    String directive = ignoreDirective + targetBackend.name() + "\n";
 
                     String newText;
                     if (text.startsWith("// !")) {
@@ -808,7 +808,7 @@ public class KotlinTestUtils {
             if (isIgnored) {
                 if (AUTOMATICALLY_UNMUTE_PASSED_TESTS) {
                     String text = doLoadFile(testDataFile);
-                    String directive = InTextDirectivesUtils.IGNORE_BACKEND_DIRECTIVE_PREFIX + targetBackend.name();
+                    String directive = ignoreDirective + targetBackend.name();
                     String newText = Pattern.compile("^" + directive + "\n", Pattern.MULTILINE).matcher(text).replaceAll("");
                     if (!newText.equals(text)) {
                         System.err.println("\"" + directive + "\" was removed from \"" + testDataFile + "\"");
