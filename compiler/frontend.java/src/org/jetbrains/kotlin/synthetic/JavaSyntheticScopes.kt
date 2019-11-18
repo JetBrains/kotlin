@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.resolve.SamConversionResolver
+import org.jetbrains.kotlin.resolve.sam.SamConversionResolver
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScope
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes

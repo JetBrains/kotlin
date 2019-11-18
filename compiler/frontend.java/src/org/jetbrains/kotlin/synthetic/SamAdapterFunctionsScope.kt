@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.record
-import org.jetbrains.kotlin.resolve.SamConversionResolver
+import org.jetbrains.kotlin.resolve.sam.SamConversionResolver
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassConstructorDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor

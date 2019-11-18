@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations.Companion.EMPTY
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.SamConversionResolver
+import org.jetbrains.kotlin.resolve.sam.SamConversionResolver
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.storage.StorageManager

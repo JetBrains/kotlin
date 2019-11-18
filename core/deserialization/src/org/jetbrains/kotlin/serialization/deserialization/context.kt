@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
+import org.jetbrains.kotlin.resolve.sam.SamConversionResolver
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker

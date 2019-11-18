@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.load.java.sam
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
-import org.jetbrains.kotlin.resolve.SamConversionResolver
+import org.jetbrains.kotlin.resolve.sam.SamConversionResolver
 import org.jetbrains.kotlin.types.SimpleType
 
 object JavaBasedSamConversionResolver : SamConversionResolver {

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
+import org.jetbrains.kotlin.resolve.sam.SamConversionResolver
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.WrappedTypeFactory
 import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker

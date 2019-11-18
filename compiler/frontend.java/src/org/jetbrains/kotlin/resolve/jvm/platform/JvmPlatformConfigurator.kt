@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.container.PlatformExtensionsClashResolver
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.container.useInstance
-import org.jetbrains.kotlin.resolve.SamConversionResolver
+import org.jetbrains.kotlin.resolve.sam.SamConversionResolver
 import org.jetbrains.kotlin.load.java.sam.JvmSamConversionTransformer
 import org.jetbrains.kotlin.load.kotlin.sam.SamConversionResolverImpl
 import org.jetbrains.kotlin.resolve.PlatformConfiguratorBase
