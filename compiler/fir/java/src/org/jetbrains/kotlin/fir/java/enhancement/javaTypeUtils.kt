@@ -24,9 +24,7 @@ import org.jetbrains.kotlin.fir.java.toNotNullConeKotlinType
 import org.jetbrains.kotlin.fir.java.types.FirJavaTypeRef
 import org.jetbrains.kotlin.fir.references.impl.FirResolvedNamedReferenceImpl
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
-import org.jetbrains.kotlin.fir.resolve.constructType
-import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.resolve.toTypeProjection
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
@@ -81,7 +79,7 @@ private fun JavaType?.enhancePossiblyFlexible(
 ): FirResolvedTypeRef {
     val type = this
     val arguments = this?.typeArguments().orEmpty()
-    return when (type) {
+    val enhanced = when (type) {
         is JavaClassifierType -> {
             val lowerResult = type.enhanceInflexibleType(
                 session, javaTypeParameterStack, annotations, arguments, TypeComponentPosition.FLEXIBLE_LOWER, qualifiers, index
@@ -90,19 +88,29 @@ private fun JavaType?.enhancePossiblyFlexible(
                 session, javaTypeParameterStack, annotations, arguments, TypeComponentPosition.FLEXIBLE_UPPER, qualifiers, index
             )
 
-            FirResolvedTypeRefImpl(
-                source = null,
-                type = coneFlexibleOrSimpleType(session, lowerResult, upperResult)
-            ).apply {
-                this.annotations += annotations
+            coneFlexibleOrSimpleType(session, lowerResult, upperResult)
+        }
+        is JavaArrayType -> {
+            val baseEnhanced = type.toNotNullConeKotlinType(session, javaTypeParameterStack)
+
+            val upperBound = if (baseEnhanced.typeArguments.isNotEmpty()) {
+                val typeArgument = baseEnhanced.typeArguments.first() as ConeKotlinType
+                baseEnhanced.withArguments(arrayOf(ConeKotlinTypeProjectionOut(typeArgument)))
+            } else {
+                baseEnhanced
             }
+            ConeFlexibleType(
+                baseEnhanced,
+                upperBound.withNullability(ConeNullability.NULLABLE)
+            )
         }
         else -> {
-            val enhanced = type.toNotNullConeKotlinType(session, javaTypeParameterStack)
-            FirResolvedTypeRefImpl(source = null, type = enhanced).apply {
-                this.annotations += annotations
-            }
+            type.toNotNullConeKotlinType(session, javaTypeParameterStack)
         }
+    }
+
+    return FirResolvedTypeRefImpl(source = null, type = enhanced).apply {
+        this.annotations += annotations
     }
 }
 

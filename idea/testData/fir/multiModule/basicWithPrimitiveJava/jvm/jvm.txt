@@ -7,7 +7,7 @@ FILE: jvm.kt
         public final fun test(): R|kotlin/Unit| {
             lval res1: R|kotlin/Boolean| = this@R|/Some|.R|/Some.foo|(Int(1))
             lval res2: R|kotlin/Boolean| = this@R|/Some|.R|/Some.foo|(Int(1).R|kotlin/Int.unaryMinus|())
-            lval res3: R|kotlin/Array<ft<kotlin/String, kotlin/String?>!>| = this@R|/Some|.R|/Some.bar|(R|kotlin/intArrayOf|(Int(0), Int(2), Int(2).R|kotlin/Int.unaryMinus|()))
+            lval res3: R|ft<kotlin/Array<ft<kotlin/String, kotlin/String?>!>, kotlin/Array<out ft<kotlin/String, kotlin/String?>!>?>!| = this@R|/Some|.R|/Some.bar|(R|kotlin/intArrayOf|(Int(0), Int(2), Int(2).R|kotlin/Int.unaryMinus|()))
         }
 
     }

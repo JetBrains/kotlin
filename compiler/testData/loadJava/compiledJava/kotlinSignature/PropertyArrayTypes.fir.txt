@@ -1,9 +1,9 @@
 public open class PropertyArrayTypes<T> : R|kotlin/Any| {
-    public open field arrayOfArrays: R|kotlin/Array<ft<kotlin/Array<ft<kotlin/String, kotlin/String?>!>, kotlin/Array<ft<kotlin/String, kotlin/String?>!>?>!>|
+    public open field arrayOfArrays: R|ft<kotlin/Array<ft<kotlin/Array<ft<kotlin/String, kotlin/String?>!>, kotlin/Array<ft<kotlin/String, kotlin/String?>!>?>!>, kotlin/Array<out ft<kotlin/Array<ft<kotlin/String, kotlin/String?>!>, kotlin/Array<ft<kotlin/String, kotlin/String?>!>?>!>?>!|
 
-    public open field array: R|kotlin/Array<ft<kotlin/String, kotlin/String?>!>|
+    public open field array: R|ft<kotlin/Array<ft<kotlin/String, kotlin/String?>!>, kotlin/Array<out ft<kotlin/String, kotlin/String?>!>?>!|
 
-    public open field genericArray: R|kotlin/Array<ft<T, T?>!>|
+    public open field genericArray: R|ft<kotlin/Array<ft<T, T?>!>, kotlin/Array<out ft<T, T?>!>?>!|
 
     public constructor<T>(): R|test/PropertyArrayTypes<T>|
 

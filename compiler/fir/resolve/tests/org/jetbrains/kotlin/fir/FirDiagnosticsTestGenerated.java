@@ -255,6 +255,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/resolve/testData/resolve/arguments/invoke.kt");
         }
 
+        @TestMetadata("javaArrayVariance.kt")
+        public void testJavaArrayVariance() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/arguments/javaArrayVariance.kt");
+        }
+
         @TestMetadata("lambda.kt")
         public void testLambda() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/arguments/lambda.kt");
