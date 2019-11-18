@@ -11,10 +11,7 @@ import org.jetbrains.kotlin.backend.common.bridges.findAllReachableDeclarations
 import org.jetbrains.kotlin.backend.common.bridges.findConcreteSuperDeclaration
 import org.jetbrains.kotlin.backend.common.bridges.generateBridges
 import org.jetbrains.kotlin.backend.common.ir.*
-import org.jetbrains.kotlin.backend.common.lower.SpecialBridgeMethods
-import org.jetbrains.kotlin.backend.common.lower.allOverridden
-import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.lower.irNot
+import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
@@ -31,11 +28,15 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.descriptors.WrappedReceiverParameterDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedValueParameterDescriptor
+import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isInterface
@@ -85,15 +86,13 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
             return
         }
 
-
         val irClass = irFunction.parentAsClass
         val ourSignature = irFunction.getJvmSignature()
         val ourMethodName = ourSignature.name
 
-        val (specialOverride, specialOverrideValueGenerator) =
+        val (specialOverride, specialOverrideInfo) =
             specialBridgeMethods.findSpecialWithOverride(irFunction) ?: Pair(null, null)
         val specialOverrideSignature = specialOverride?.getJvmSignature()
-
 
         var targetForCommonBridges = irFunction
 
@@ -139,7 +138,7 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
             if (firstOverridden == null || firstOverriddenSignature!!.name != ourMethodName || getRenamedOverridden(firstOverridden) == null) {
                 addBridge(
                     irClass, targetForCommonBridges, renamer, signaturesToSkip,
-                    defaultValueGenerator = null,
+                    specialOverrideInfo = null,
                     isSpecial = true
                 )
             } else {
@@ -153,9 +152,15 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
         ) {
             addBridge(
                 irClass, targetForCommonBridges, specialOverride, signaturesToSkip,
-                specialOverrideValueGenerator,
+                specialOverrideInfo,
                 isSpecial = true
             )
+        }
+
+        // If there is an existing function that would conflict with a special bridge signature, insert the special bridge
+        // code directly as a prelude in the existing method.
+        if (!irFunction.isFakeOverride && specialOverride != null && specialOverrideSignature == ourSignature) {
+            irFunction.rewriteSpecialMethodBody(specialOverrideInfo!!)
         }
 
         val bridgeSignatures = generateBridges(
@@ -167,7 +172,7 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
             val method = bridgeSignature.from.source
             addBridge(
                 irClass, targetForCommonBridges, method, signaturesToSkip,
-                defaultValueGenerator = null,
+                specialOverrideInfo = null,
                 isSpecial = targetForCommonBridges.isCollectionStub()
             )
         }
@@ -178,14 +183,14 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
         target: IrSimpleFunction,
         method: IrSimpleFunction,
         signaturesToSkip: MutableSet<Method>,
-        defaultValueGenerator: ((IrSimpleFunction) -> IrExpression)?,
+        specialOverrideInfo: SpecialMethodWithDefaultInfo?,
         isSpecial: Boolean
     ) {
         val signature = method.getJvmSignature()
         if (signature in signaturesToSkip) return
 
         val bridge = createBridgeHeader(irClass, target, method, isSpecial = isSpecial, isSynthetic = !isSpecial)
-        bridge.createBridgeBody(target, defaultValueGenerator, isSpecial)
+        bridge.createBridgeBody(target, specialOverrideInfo, isSpecial)
         irClass.declarations.add(bridge)
 
         // For lambda classes, we move override from the `invoke` function to its bridge. This will allow us to avoid boxing
@@ -257,9 +262,61 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
         }
     }
 
+    private fun IrStatementsBuilder<IrBlockBody>.addParameterTypeCheck(
+        parameter: IrValueParameter,
+        type: IrType,
+        defaultValueGenerator: ((IrSimpleFunction) -> IrExpression),
+        function: IrSimpleFunction
+    ) {
+        +irIfThen(
+            context.irBuiltIns.unitType,
+            irNot(irIs(irGet(parameter), type)),
+            irReturn(defaultValueGenerator(function))
+        )
+    }
+
+    private fun IrSimpleFunction.rewriteSpecialMethodBody(specialOverrideInfo: SpecialMethodWithDefaultInfo) {
+        val argumentsToCheck = valueParameters.take(specialOverrideInfo.argumentsToCheck)
+        val shouldGenerateParameterChecks = argumentsToCheck.any { !it.type.isNullable() }
+        if (shouldGenerateParameterChecks) {
+            // Rewrite the body to check if arguments have wrong type. If so, return the default value, otherwise,
+            // use the existing function body.
+            context.createIrBuilder(symbol).run {
+                body = irBlockBody {
+                    // Change the parameter types to be Any? so that null checks are not generated. The checks
+                    // we insert here make them superfluous.
+                    val variableMap = mutableMapOf<IrValueParameter, IrValueParameter>()
+                    argumentsToCheck.forEach {
+                        val parameterType = it.type
+                        if (!parameterType.isNullable()) {
+                            val newParameter = it.copyTo(this@rewriteSpecialMethodBody, type = context.irBuiltIns.anyNType)
+                            variableMap.put(valueParameters[it.index], newParameter)
+                            valueParameters[it.index] = newParameter
+                            addParameterTypeCheck(
+                                newParameter,
+                                parameterType,
+                                specialOverrideInfo.defaultValueGenerator,
+                                this@rewriteSpecialMethodBody
+                            )
+                        }
+                    }
+
+                    // Map usages of rewritten parameters in old body to the new parameters and paste in the body after the explicit
+                    // null check.
+                    body?.transform(VariableRemapper(variableMap), null)
+                    if (body is IrExpressionBody) {
+                        +(body as IrExpressionBody).expression
+                    } else {
+                        (body as IrBlockBody).statements.forEach { +it }
+                    }
+                }
+            }
+        }
+    }
+
     private fun IrSimpleFunction.createBridgeBody(
         target: IrSimpleFunction,
-        defaultValueGenerator: ((IrSimpleFunction) -> IrExpression)?,
+        specialMethodInfo: SpecialMethodWithDefaultInfo?,
         isSpecial: Boolean,
         invokeStatically: Boolean = false
     ) {
@@ -270,12 +327,13 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
 
         context.createIrBuilder(symbol).run {
             body = irBlockBody {
-                if (defaultValueGenerator != null) {
-                    valueParameters.forEach {
-                        +irIfThen(
-                            context.irBuiltIns.unitType,
-                            irNot(irIs(irGet(it), maybeOrphanedTarget.valueParameters[it.index].type)),
-                            irReturn(defaultValueGenerator(this@createBridgeBody))
+                if (specialMethodInfo != null) {
+                    valueParameters.take(specialMethodInfo.argumentsToCheck).forEach {
+                        addParameterTypeCheck(
+                            it,
+                            maybeOrphanedTarget.valueParameters[it.index].type,
+                            specialMethodInfo.defaultValueGenerator,
+                            this@createBridgeBody
                         )
                     }
                 }
