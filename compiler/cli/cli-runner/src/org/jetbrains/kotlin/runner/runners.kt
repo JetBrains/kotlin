@@ -32,7 +32,7 @@ abstract class AbstractRunner : Runner {
 
     protected abstract fun createClassLoader(classpath: List<URL>): ClassLoader
 
-    override fun run(classpath: List<URL>, arguments: List<String>) {
+    override fun run(classpath: List<URL>, arguments: List<String>, compilerClasspath: List<URL>) {
         val classLoader = createClassLoader(classpath)
 
         val mainClass = try {
@@ -105,23 +105,58 @@ class JarRunner(private val path: String) : AbstractRunner() {
     }
 }
 
-class ReplRunner : Runner {
-    override fun run(classpath: List<URL>, arguments: List<String>) {
-        // TODO: run REPL instead
-        throw RunnerException("please specify at least one name or file to run")
+abstract class RunnerWithCompiler : Runner {
+
+    fun runCompiler(compilerClasspath: List<URL>, arguments: List<String>) {
+        val classLoader =
+            if (arguments.isEmpty()) RunnerWithCompiler::class.java.classLoader
+            else URLClassLoader(compilerClasspath.toTypedArray(), null)
+        val compilerClass = classLoader.loadClass("org.jetbrains.kotlin.cli.jvm.K2JVMCompiler")
+        val mainMethod = compilerClass.getMethod("main", Array<String>::class.java)
+        mainMethod.invoke(null, arguments.toTypedArray())
     }
 }
 
-class ScriptRunner(private val path: String) : Runner {
-    override fun run(classpath: List<URL>, arguments: List<String>) {
-        // TODO
-        throw RunnerException("running Kotlin scripts is not yet supported")
+private fun MutableList<String>.addClasspathArgIfNeeded(classpath: List<URL>) {
+    if (classpath.isNotEmpty()) {
+        add("-cp")
+        add(classpath.map {
+            if (it.protocol == "file") it.path
+            else it.toExternalForm()
+        }.joinToString(File.pathSeparator))
     }
 }
 
-class ExpressionRunner(private val code: String) : Runner {
-    override fun run(classpath: List<URL>, arguments: List<String>) {
-        // TODO
-        throw RunnerException("evaluating expressions is not yet supported")
+class ReplRunner : RunnerWithCompiler() {
+    override fun run(classpath: List<URL>, arguments: List<String>, compilerClasspath: List<URL>) {
+        val compilerArgs = ArrayList<String>()
+        compilerArgs.addClasspathArgIfNeeded(classpath)
+        runCompiler(compilerClasspath, compilerArgs)
+    }
+}
+
+class ScriptRunner(private val path: String) : RunnerWithCompiler() {
+    override fun run(classpath: List<URL>, arguments: List<String>, compilerClasspath: List<URL>) {
+        val compilerArgs = ArrayList<String>().apply {
+            addClasspathArgIfNeeded(classpath)
+            add("-script")
+            add(path)
+            addAll(arguments)
+        }
+        runCompiler(compilerClasspath, compilerArgs)
+    }
+}
+
+class ExpressionRunner(private val code: List<String>) : RunnerWithCompiler() {
+    override fun run(classpath: List<URL>, arguments: List<String>, compilerClasspath: List<URL>) {
+        val compilerArgs = ArrayList<String>().apply {
+            addClasspathArgIfNeeded(classpath)
+            code.forEach {
+                add("-expression")
+                add(it)
+            }
+            addAll(arguments)
+        }
+        runCompiler(compilerClasspath, compilerArgs)
     }
 }
