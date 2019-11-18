@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.backend.konan.descriptors.isFromInteropLibrary
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.util.UniqId
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 private class KonanDeclarationTable(
