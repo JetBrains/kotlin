@@ -21,11 +21,13 @@ import org.jetbrains.kotlin.backend.jvm.ir.isLambda
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -347,7 +349,18 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
         private fun createGetSignatureMethod(superFunction: IrSimpleFunction): IrSimpleFunction = buildOverride(superFunction).apply {
             body = context.createJvmIrBuilder(symbol, startOffset, endOffset).run {
                 irExprBody(irCall(backendContext.ir.symbols.signatureStringIntrinsic).apply {
-                    putValueArgument(0, irFunctionReference.deepCopyWithSymbols(symbol.owner))
+                    putValueArgument(
+                        0,
+                        //don't pass receivers otherwise LocalDeclarationLowering will create additional captured parameters
+                        IrFunctionReferenceImpl(
+                            UNDEFINED_OFFSET,
+                            UNDEFINED_OFFSET,
+                            irFunctionReference.type,
+                            irFunctionReference.symbol,
+                            0,
+                            null
+                        )
+                    )
                 })
             }
         }
