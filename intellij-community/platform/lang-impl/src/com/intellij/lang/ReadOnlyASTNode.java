@@ -24,6 +24,7 @@ import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.TreeTraversal;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,7 +32,11 @@ import java.util.List;
 
 /**
  * @author gregsh
+ *
+ * @deprecated Use PSI over a read-only {@link com.intellij.testFramework.ReadOnlyLightVirtualFile} instead.
  */
+@Deprecated
+@ApiStatus.ScheduledForRemoval(inVersion = "2020.1")
 public abstract class ReadOnlyASTNode extends UserDataHolderBase implements ASTNode {
 
   private final ReadOnlyASTNode myParent;

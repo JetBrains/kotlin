@@ -30,6 +30,7 @@ import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.CharTable;
 import com.intellij.util.Function;
 import com.intellij.util.concurrency.AtomicFieldUpdater;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -59,7 +60,11 @@ import java.util.List;
  *
  * @see com.intellij.lang.impl.PsiBuilderImpl
  * @see com.intellij.ide.util.treeView.smartTree.TreeElement
+ *
+ * @deprecated Use PSI over a read-only {@link com.intellij.testFramework.ReadOnlyLightVirtualFile} instead.
  */
+@Deprecated
+@ApiStatus.ScheduledForRemoval(inVersion = "2020.1")
 public class TraverserBasedASTNode<N> extends ReadOnlyASTNode {
 
   @NotNull
