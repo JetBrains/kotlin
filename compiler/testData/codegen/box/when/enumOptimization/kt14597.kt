@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 // CHECK_CASES_COUNT: function=box count=6
 // CHECK_IF_COUNT: function=box count=1
 

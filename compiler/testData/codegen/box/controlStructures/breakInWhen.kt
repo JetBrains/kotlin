@@ -1,4 +1,5 @@
 // !LANGUAGE: +AllowBreakAndContinueInsideWhen
+// IGNORE_BACKEND_FIR: JVM_IR
 
 fun testFor() {
     val xs = IntArray(10) { i -> i }

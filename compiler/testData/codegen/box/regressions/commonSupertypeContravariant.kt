@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 interface In<in E>
 
 class En<T> : In<T>

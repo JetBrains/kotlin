@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 class Provider<T>(val _value: T) {
     inline operator fun provideDelegate(thisRef: Any?, kProperty: Any) =
         Mut(_value)

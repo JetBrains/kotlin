@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 // KJS_WITH_FULL_RUNTIME
 public inline fun Int.times(body : () -> Unit) {
     var count = this;

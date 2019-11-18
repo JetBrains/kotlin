@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 typealias S = String
 
 typealias SF<T> = (T) -> S

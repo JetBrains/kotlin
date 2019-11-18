@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 sealed class Result {
     class Failure(val exception: Exception) : Result()
     class Success(val message: String) : Result()

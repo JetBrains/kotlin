@@ -1,4 +1,5 @@
 // !LANGUAGE: +NewInference
+// IGNORE_BACKEND_FIR: JVM_IR
 
 fun foo(s: String): Boolean {
     if (s != "kotlin") throw AssertionError(s)

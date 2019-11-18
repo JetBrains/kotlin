@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 // http://youtrack.jetbrains.com/issue/KT-2167
 
 enum class Season {

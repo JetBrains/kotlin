@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 interface FooTrait<T> {
     fun make(size: Int = 16) : T
 

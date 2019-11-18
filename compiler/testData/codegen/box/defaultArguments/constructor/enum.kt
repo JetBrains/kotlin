@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 enum class A(val a: Int = 1) {
   FIRST(),
   SECOND(2)

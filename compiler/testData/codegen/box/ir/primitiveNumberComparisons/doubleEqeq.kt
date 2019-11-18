@@ -1,4 +1,5 @@
 // !LANGUAGE: +ProperIeee754Comparisons
+// IGNORE_BACKEND_FIR: JVM_IR
 fun eqeq(x: Any, y: Any) =
         x is Double && y is Double && x == y
 

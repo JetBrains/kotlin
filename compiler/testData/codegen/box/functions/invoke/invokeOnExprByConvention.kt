@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 //KT-3217 Invoke convention after function invocation doesn't work
 //KT-2728 Can't compile A()()
 

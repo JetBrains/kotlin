@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 fun test(y: Array<in Array<String>>) {
     y[0] = kotlin.arrayOf("OK")
 }

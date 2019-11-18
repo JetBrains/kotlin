@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 class My {
     var my: String = "U"
         get() = { field }()

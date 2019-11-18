@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 fun foo(x: Int): String {
     return when (x) {
         2_147_483_647 -> "MAX"

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 interface B
 
 operator fun B.invoke(i: Int) = i

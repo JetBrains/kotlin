@@ -1,4 +1,5 @@
 // !LANGUAGE: +InlineClasses
+// IGNORE_BACKEND_FIR: JVM_IR
 
 inline class Result<T>(val a: Any?) {
     fun getOrThrow(): T = a as T

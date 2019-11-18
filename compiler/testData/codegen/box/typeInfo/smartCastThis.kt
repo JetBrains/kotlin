@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 package h
 
 open class A {

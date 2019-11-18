@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 class Test {
     var doubleStorage = "fail"
     var longStorage = "fail"

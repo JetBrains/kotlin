@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 
 open class Z<T, Y> {
     open fun test(p: T, z: Y): T {

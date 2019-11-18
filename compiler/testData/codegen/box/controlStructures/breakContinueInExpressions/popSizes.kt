@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 fun foo(x: Long, y: Int, z: Double, s: String) {}
 
 fun box(): String {

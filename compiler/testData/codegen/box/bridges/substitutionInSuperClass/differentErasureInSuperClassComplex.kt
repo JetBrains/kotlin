@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 public open class A<T> {
     fun foo(x: T) = "O"
     fun foo(x: A<T>) = "K"

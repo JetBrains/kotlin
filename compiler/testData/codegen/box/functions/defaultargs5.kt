@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 open abstract class B {
     abstract fun foo2(arg: Int = 239) : Int
 }

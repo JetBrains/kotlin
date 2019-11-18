@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 fun foo(p: Int?): Boolean {
     return M<Int>(p)?.nulled() == 1
 }

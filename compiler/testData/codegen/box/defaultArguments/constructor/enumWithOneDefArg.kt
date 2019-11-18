@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 enum class Foo(val a: Int = 1, val b: String) {
   B(2, "b"),
   C(b = "b")

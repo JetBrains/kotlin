@@ -1,4 +1,5 @@
 // !LANGUAGE: +ProperVisibilityForCompanionObjectInstanceField
+// IGNORE_BACKEND_FIR: JVM_IR
 
 inline fun <T> run(fn: () -> T) = fn()
 

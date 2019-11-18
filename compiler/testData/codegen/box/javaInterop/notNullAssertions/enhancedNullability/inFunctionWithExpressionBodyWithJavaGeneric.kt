@@ -1,4 +1,5 @@
 // !LANGUAGE: +StrictJavaNullabilityAssertions
+// IGNORE_BACKEND_FIR: JVM_IR
 // TARGET_BACKEND: JVM
 // SKIP_JDK6
 // See KT-8135

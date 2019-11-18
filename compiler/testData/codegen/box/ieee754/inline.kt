@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 inline fun less(a: Comparable<Double>, b: Double): Boolean {
     return a < b
 }

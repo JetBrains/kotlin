@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 interface A : Comparable<A>
 
 class B(val x: Int) : A {

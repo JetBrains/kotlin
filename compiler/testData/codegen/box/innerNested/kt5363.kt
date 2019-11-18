@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 class Outer {
     class Nested{
         fun foo(s: String) = s.extension()

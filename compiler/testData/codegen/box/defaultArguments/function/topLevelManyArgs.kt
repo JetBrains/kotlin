@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 fun foo(a: Int = 1,
         b: Int = 2,
         c: Int = 3,

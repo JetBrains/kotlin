@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 class Reluctant() {
      init {
         throw Exception("I'm not coming out")

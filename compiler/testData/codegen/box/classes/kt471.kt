@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 class MyNumber(val i: Int) {
     operator fun inc(): MyNumber = MyNumber(i+1)
 }

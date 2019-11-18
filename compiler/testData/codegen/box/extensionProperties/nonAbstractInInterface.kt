@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 interface I {
     val String.foo: String
         get() = this + ";" + bar()

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 fun Int.foo(a: Int = 1, b: String): Int {
     return a
 }

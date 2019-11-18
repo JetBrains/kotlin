@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 internal open class B<T>(val x: T, val y: T) {
     constructor(x: T): this(x, x)
     override fun toString() = "$x#$y"

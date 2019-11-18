@@ -1,4 +1,5 @@
 // !LANGUAGE: -AdditionalBuiltInsMembers
+// IGNORE_BACKEND_FIR: JVM_IR
 // SKIP_JDK6
 // TARGET_BACKEND: JVM
 // WITH_RUNTIME

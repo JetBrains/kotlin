@@ -1,4 +1,5 @@
 // !LANGUAGE: +InlineClasses
+// IGNORE_BACKEND_FIR: JVM_IR
 
 inline class Z(val x: Int) {
     fun test(y: Int = 42) = x + y

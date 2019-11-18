@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 // See also KT-7801
 class A
 

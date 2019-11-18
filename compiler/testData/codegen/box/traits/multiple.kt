@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 interface AL {
     fun get(index: Int) : Any? = null
 }

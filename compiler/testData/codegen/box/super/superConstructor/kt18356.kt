@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 open class Base(val addr: Long, val name: String)
 
 fun box(): String {

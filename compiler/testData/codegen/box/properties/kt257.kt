@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 class A<T>(var t: T) {}
 class B<R>(val r: R) {}
 

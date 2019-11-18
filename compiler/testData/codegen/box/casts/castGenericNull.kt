@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 fun <T> castToString(t: T) {
     t as String
 }

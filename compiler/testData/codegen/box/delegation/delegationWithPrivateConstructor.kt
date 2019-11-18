@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 class MyObject private constructor(val delegate: Interface) : Interface by delegate {
     constructor() : this(Delegate())
 }

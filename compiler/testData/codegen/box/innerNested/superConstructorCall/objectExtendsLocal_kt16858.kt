@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 open class A(val a: String, val b: Int)
 
 fun box(): String {

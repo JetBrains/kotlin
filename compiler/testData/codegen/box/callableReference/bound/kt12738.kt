@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 fun <T> get(t: T): () -> String {
     return t::toString
 }

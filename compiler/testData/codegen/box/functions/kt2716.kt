@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 package someTest
 
 public class Some private constructor(val v: String) {
