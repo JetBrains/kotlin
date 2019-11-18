@@ -104,8 +104,7 @@ public abstract class AbstractGotoSEContributor implements WeightedSearchEverywh
   @Nullable
   @Override
   public String getAdvertisement() {
-    boolean mightProduceIncompleteResults = DumbService.isDumb(myProject) && createModel(myProject).isIncompleteInDumbMode();
-    return mightProduceIncompleteResults ? "Results might be incomplete. The project is being indexed." : null;
+    return DumbService.isDumb(myProject) ? "Results might be incomplete. The project is being indexed." : null;
   }
 
   @NotNull
