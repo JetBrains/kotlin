@@ -17,9 +17,9 @@
 package com.intellij.packageDependencies;
 
 import com.intellij.analysis.AnalysisScopeBundle;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.progress.util.ProgressIndicatorUtils;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -110,7 +110,7 @@ public class FindDependencyUtil {
 
   private static int updateIndicator(final ProgressIndicator indicator, final int totalCount, int count, final PsiFile psiFile) {
     if (indicator != null) {
-      if (indicator.isCanceled()) throw new ProcessCanceledException();
+      ProgressIndicatorUtils.checkCancelledEvenWithPCEDisabled(indicator);
       indicator.setFraction(((double)++count) / totalCount);
       final VirtualFile virtualFile = psiFile.getVirtualFile();
       if (virtualFile != null) {
