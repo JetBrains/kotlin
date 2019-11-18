@@ -34,10 +34,10 @@ class ProjectTracker(private val project: Project) : ExternalSystemProjectTracke
 
   private val projectStates = ConcurrentHashMap<State.Id, State.Project>()
   private val projectDataMap = ConcurrentHashMap<ExternalSystemProjectId, ProjectData>()
-  private val isDisabled = AtomicBooleanProperty(ApplicationManager.getApplication().isHeadlessEnvironment)
+  private val isDisabled = AtomicBooleanProperty(ApplicationManager.getApplication().isUnitTestMode)
   private val initializationProperty = AtomicBooleanProperty(false)
-  private val projectChangeOperation = SuperCompoundParallelOperationTrace()
-  private val projectRefreshOperation = CompoundParallelOperationTrace<Long>()
+  private val projectChangeOperation = SuperCompoundParallelOperationTrace(debugName = "Project change operation")
+  private val projectRefreshOperation = CompoundParallelOperationTrace<String>(debugName = "Project refresh operation")
   private val dispatcher = MergingUpdateQueue("project tracker", AUTO_REPARSE_DELAY, false, ANY_COMPONENT, this)
 
   private fun createProjectChangesListener() =
@@ -53,7 +53,7 @@ class ProjectTracker(private val project: Project) : ExternalSystemProjectTracke
 
   private fun createProjectRefreshListener(projectData: ProjectData) =
     object : ExternalSystemProjectRefreshListener {
-      val id = currentTime()
+      val id = "ProjectTracker: ${projectData.projectAware.projectId.readableName}"
 
       override fun beforeProjectRefresh() {
         projectRefreshOperation.startOperation()
@@ -146,7 +146,7 @@ class ProjectTracker(private val project: Project) : ExternalSystemProjectTracke
 
     projectDataMap[projectId] = projectData
 
-    val id = currentTime()
+    val id = "ProjectSettingsTracker: ${projectData.projectAware.projectId.readableName}"
     settingsTracker.beforeApplyChanges { projectRefreshOperation.startTask(id) }
     settingsTracker.afterApplyChanges { projectRefreshOperation.finishTask(id) }
 
@@ -213,7 +213,7 @@ class ProjectTracker(private val project: Project) : ExternalSystemProjectTracke
   }
 
   @TestOnly
-  fun enableAutoImportInTests() {
+  override fun enableAutoImportInTests() {
     isDisabled.set(false)
   }
 
@@ -228,6 +228,7 @@ class ProjectTracker(private val project: Project) : ExternalSystemProjectTracke
     projectChangeOperation.beforeOperation { notificationAware.notificationExpire() }
     projectChangeOperation.afterOperation { scheduleChangeProcessing() }
     projectChangeOperation.afterOperation { LOG.debug("Project change finished") }
+    isDisabled.afterReset { scheduleProjectRefresh() }
     initializationProperty.afterSet { init() }
     projectRefreshOperation.afterOperation { initializationProperty.set() }
   }

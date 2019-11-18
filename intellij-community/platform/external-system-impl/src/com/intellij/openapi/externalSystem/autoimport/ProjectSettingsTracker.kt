@@ -46,7 +46,7 @@ class ProjectSettingsTracker(
 
   private val settingsFilesCRC = AtomicReference(emptyMap<String, Long>())
 
-  private val applyChangesOperation = SuperCompoundParallelOperationTrace()
+  private val applyChangesOperation = SuperCompoundParallelOperationTrace(debugName = "Apply changes operation")
 
   private fun calculateSettingsFilesCRC(): Map<String, Long> {
     val localFileSystem = LocalFileSystem.getInstance()
@@ -214,7 +214,7 @@ class ProjectSettingsTracker(
   }
 
   private inner class ProjectDocumentSettingsListener : DocumentListener {
-    private val bulkUpdateOperation = CompoundParallelOperationTrace<Document>()
+    private val bulkUpdateOperation = CompoundParallelOperationTrace<Document>(debugName = "Bulk document update operation")
     private val delegate = ProjectSettingsListener()
 
     private fun isExternalModification() =
@@ -286,7 +286,7 @@ class ProjectSettingsTracker(
             modificationType.set(null)
             status.markReverted(currentTime())
           }
-          else if (!applyChangesOperation.isOperationCompleted()) {
+          if (!applyChangesOperation.isOperationCompleted()) {
             modificationType.set(null)
             status.markDirty(currentTime())
           }
