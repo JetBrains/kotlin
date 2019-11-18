@@ -13,9 +13,10 @@ import com.intellij.internal.statistic.service.fus.collectors.UIEventId;
 import com.intellij.internal.statistic.service.fus.collectors.UIEventLogger;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorBundle;
+import com.intellij.openapi.fileEditor.impl.EditorWindowHolder;
 import com.intellij.openapi.keymap.Keymap;
 import com.intellij.openapi.keymap.KeymapManager;
 import com.intellij.openapi.keymap.KeymapUtil;
@@ -23,7 +24,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.ui.PopupHandler;
-import com.intellij.ui.awt.RelativePoint;
+import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
@@ -82,19 +83,21 @@ public class DaemonEditorPopup extends PopupHandler {
         component.showComponent(comp, d -> new Point(x - d.width, y));
       }
     });
-    actionGroup.addSeparator();
-    actionGroup.add(new ToggleAction(IdeBundle.message("checkbox.show.editor.preview.popup")) {
-      @Override
-      public boolean isSelected(@NotNull AnActionEvent e) {
-        return UISettings.getInstance().getShowEditorToolTip();
-      }
+    if (!UIUtil.uiParents(myEditor.getComponent(), false).filter(EditorWindowHolder.class).isEmpty()) {
+      actionGroup.addSeparator();
+      actionGroup.add(new ToggleAction(IdeBundle.message("checkbox.show.editor.preview.popup")) {
+        @Override
+        public boolean isSelected(@NotNull AnActionEvent e) {
+          return UISettings.getInstance().getShowEditorToolTip();
+        }
 
-      @Override
-      public void setSelected(@NotNull AnActionEvent e, boolean state) {
-        UISettings.getInstance().setShowEditorToolTip(state);
-        UISettings.getInstance().fireUISettingsChanged();
-      }
-    });
+        @Override
+        public void setSelected(@NotNull AnActionEvent e, boolean state) {
+          UISettings.getInstance().setShowEditorToolTip(state);
+          UISettings.getInstance().fireUISettingsChanged();
+        }
+      });
+    }
     ActionPopupMenu editorPopup = actionManager.createActionPopupMenu(ActionPlaces.RIGHT_EDITOR_GUTTER_POPUP, actionGroup);
     if (DaemonCodeAnalyzer.getInstance(myProject).isHighlightingAvailable(file)) {
       UIEventLogger.logUIEvent(UIEventId.DaemonEditorPopupInvoked);
