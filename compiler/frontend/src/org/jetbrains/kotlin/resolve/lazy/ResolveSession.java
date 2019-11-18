@@ -83,6 +83,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     private DelegationFilter delegationFilter;
     private WrappedTypeFactory wrappedTypeFactory;
     private PlatformDiagnosticSuppressor platformDiagnosticSuppressor;
+    private SamConversionResolver samConversionResolver;
 
     private final SyntheticResolveExtension syntheticResolveExtension;
 
@@ -148,6 +149,11 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     @Inject
     public void setPlatformDiagnosticSuppressor(@NotNull PlatformDiagnosticSuppressor platformDiagnosticSuppressor) {
         this.platformDiagnosticSuppressor = platformDiagnosticSuppressor;
+    }
+
+    @Inject
+    public void setSamConversionResolver(@NotNull SamConversionResolver samConversionResolver) {
+        this.samConversionResolver = samConversionResolver;
     }
 
     // Only calls from injectors expected
@@ -476,5 +482,11 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     @Override
     public NewKotlinTypeChecker getKotlinTypeChecker() {
         return kotlinTypeChecker;
+    }
+
+    @NotNull
+    @Override
+    public SamConversionResolver getSamConversionResolver() {
+        return samConversionResolver;
     }
 }

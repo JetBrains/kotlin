@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.descriptors.impl;
 import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -175,5 +176,16 @@ public abstract class AbstractClassDescriptor extends ModuleAwareClassDescriptor
     @Override
     public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
         return visitor.visitClassDescriptor(this, data);
+    }
+
+    @Nullable
+    @Override
+    public SimpleType getDefaultFunctionTypeForSamInterface() {
+        return null;
+    }
+
+    @Override
+    public boolean isDefinitelyNotSamInterface() {
+        return false;
     }
 }

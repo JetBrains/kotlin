@@ -638,6 +638,14 @@ open class WrappedClassDescriptor(
     override fun acceptVoid(visitor: DeclarationDescriptorVisitor<Void, Void>?) {
         visitor!!.visitClassDescriptor(this, null)
     }
+
+    override fun getDefaultFunctionTypeForSamInterface(): SimpleType? {
+        return owner.descriptor.defaultFunctionTypeForSamInterface
+    }
+
+    override fun isDefinitelyNotSamInterface(): Boolean {
+        return owner.descriptor.isDefinitelyNotSamInterface
+    }
 }
 
 class LazyTypeConstructor(
@@ -751,6 +759,10 @@ open class WrappedEnumEntryDescriptor(
     override fun acceptVoid(visitor: DeclarationDescriptorVisitor<Void, Void>?) {
         visitor!!.visitClassDescriptor(this, null)
     }
+
+    override fun getDefaultFunctionTypeForSamInterface(): SimpleType? = null
+
+    override fun isDefinitelyNotSamInterface() = true
 }
 
 

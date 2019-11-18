@@ -67,7 +67,8 @@ class LocalClassifierAnalyzer(
     private val languageVersionSettings: LanguageVersionSettings,
     private val delegationFilter: DelegationFilter,
     private val wrappedTypeFactory: WrappedTypeFactory,
-    private val kotlinTypeChecker: NewKotlinTypeChecker
+    private val kotlinTypeChecker: NewKotlinTypeChecker,
+    private val samConversionResolver: SamConversionResolver
 ) {
     fun processClassOrObject(
         scope: LexicalWritableScope?,
@@ -101,7 +102,8 @@ class LocalClassifierAnalyzer(
                 SyntheticResolveExtension.getInstance(project),
                 delegationFilter,
                 wrappedTypeFactory,
-                kotlinTypeChecker
+                kotlinTypeChecker,
+                samConversionResolver
             ),
             analyzerServices
         )
@@ -130,7 +132,8 @@ class LocalClassDescriptorHolder(
     val syntheticResolveExtension: SyntheticResolveExtension,
     val delegationFilter: DelegationFilter,
     val wrappedTypeFactory: WrappedTypeFactory,
-    val kotlinTypeChecker: NewKotlinTypeChecker
+    val kotlinTypeChecker: NewKotlinTypeChecker,
+    val samConversionResolver: SamConversionResolver
 ) {
     // We do not need to synchronize here, because this code is used strictly from one thread
     private var classDescriptor: ClassDescriptor? = null
@@ -171,6 +174,7 @@ class LocalClassDescriptorHolder(
                     override val delegationFilter: DelegationFilter = this@LocalClassDescriptorHolder.delegationFilter
                     override val wrappedTypeFactory: WrappedTypeFactory = this@LocalClassDescriptorHolder.wrappedTypeFactory
                     override val kotlinTypeChecker: NewKotlinTypeChecker = this@LocalClassDescriptorHolder.kotlinTypeChecker
+                    override val samConversionResolver: SamConversionResolver = this@LocalClassDescriptorHolder.samConversionResolver
                 },
                 containingDeclaration,
                 classOrObject.nameAsSafeName,

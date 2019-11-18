@@ -421,6 +421,17 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         return companionObjectDescriptor.invoke();
     }
 
+    @Nullable
+    @Override
+    public SimpleType getDefaultFunctionTypeForSamInterface() {
+        return c.getSamConversionResolver().resolveFunctionTypeIfSamInterface(this);
+    }
+
+    @Override
+    public boolean isDefinitelyNotSamInterface() {
+        return !isFun();
+    }
+
     @NotNull
     @ReadOnly
     public List<ClassDescriptor> getDescriptorsForExtraCompanionObjects() {

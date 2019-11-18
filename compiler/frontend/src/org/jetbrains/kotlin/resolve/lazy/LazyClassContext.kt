@@ -45,4 +45,5 @@ interface LazyClassContext {
     val delegationFilter: DelegationFilter
     val wrappedTypeFactory: WrappedTypeFactory
     val kotlinTypeChecker: NewKotlinTypeChecker
+    val samConversionResolver: SamConversionResolver
 }

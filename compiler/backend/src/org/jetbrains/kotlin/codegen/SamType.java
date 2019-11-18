@@ -72,11 +72,8 @@ public class SamType {
     @NotNull
     public KotlinType getKotlinFunctionType() {
         ClassDescriptor descriptor = getClassDescriptor();
-        if (descriptor instanceof JavaClassDescriptor) {
-            return ((JavaClassDescriptor) descriptor).getDefaultFunctionTypeForSamInterface();
-        }
-
-        return null;
+        //noinspection ConstantConditions
+        return descriptor.getDefaultFunctionTypeForSamInterface();
     }
 
     @NotNull

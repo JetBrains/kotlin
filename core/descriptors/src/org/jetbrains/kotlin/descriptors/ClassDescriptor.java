@@ -98,4 +98,14 @@ public interface ClassDescriptor extends ClassifierDescriptorWithTypeParameters,
     @NotNull
     @Override
     ClassDescriptor getOriginal();
+
+    // Use SingleAbstractMethodUtils.getFunctionTypeForSamInterface() where possible. This is only a fallback
+    @Nullable
+    SimpleType getDefaultFunctionTypeForSamInterface();
+
+    /**
+     * May return false even in case when the class is not SAM interface, but returns true only if it's definitely not a SAM.
+     * But it should work much faster than the exact check.
+     */
+    boolean isDefinitelyNotSamInterface();
 }
