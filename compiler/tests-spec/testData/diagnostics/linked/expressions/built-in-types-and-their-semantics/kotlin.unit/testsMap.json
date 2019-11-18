@@ -1,0 +1,14 @@
+{
+  "1": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 4,
+          "description": "Check of Unit type",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}

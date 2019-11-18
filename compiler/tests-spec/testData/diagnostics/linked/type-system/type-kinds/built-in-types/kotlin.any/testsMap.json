@@ -6,6 +6,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 13,
           "description": "The use of Boolean literals as the identifier (with backtick) in the class.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/type-system/introduction-1/p-8/pos/1.1.kt",
           "unexpectedBehaviour": false
         }
       ]
