@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.copy
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
@@ -54,7 +55,14 @@ class FirCallCompleter(
             if (call is FirExpression) {
                 call.resultType = typeRef
             }
-            return call
+            return if (call is FirFunctionCall) {
+                call.transformArguments(
+                    transformer,
+                    ResolutionMode.WithExpectedType(typeRef.resolvedTypeFromPrototype(session.builtinTypes.nullableAnyType.type))
+                ) as T
+            } else {
+                call
+            }
         }
         val candidate = call.candidate() ?: return call
         val initialSubstitutor = candidate.substitutor

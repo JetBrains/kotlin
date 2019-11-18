@@ -3,7 +3,7 @@ FILE: incorrectFunctionalType.kt
     fun <anonymous>(): R|kotlin/Unit| {
     }
     public final fun test(): R|kotlin/Unit| {
-        <Inapplicable(PARAMETER_MAPPING_ERROR): [/foo]>#(<L> = foo@fun <implicit>.<anonymous>(): R|kotlin/String| {
+        <Inapplicable(PARAMETER_MAPPING_ERROR): [/foo]>#(<L> = foo@fun <anonymous>(): R|kotlin/String| {
             this#.R|kotlin/plus|(<Unresolved name: it>#)
         }
         )

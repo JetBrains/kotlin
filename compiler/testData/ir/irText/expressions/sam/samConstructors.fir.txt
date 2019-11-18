@@ -24,7 +24,7 @@ FILE fqName:<root> fileName:/samConstructors.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test4 (): IrErrorType declared in <root>'
         ERROR_CALL 'Unresolved reference: <Unresolved name: Comparator>#' type=IrErrorType
-          FUN_EXPR type=IrErrorType origin=LAMBDA
+          FUN_EXPR type=kotlin.Function2<IrErrorType, IrErrorType, IrErrorType> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (a:IrErrorType, b:IrErrorType) returnType:IrErrorType
               VALUE_PARAMETER name:a index:0 type:IrErrorType
               VALUE_PARAMETER name:b index:1 type:IrErrorType

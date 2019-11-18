@@ -38,12 +38,12 @@ FILE: kotlinSam.kt
         }
         )
         R|/foo1|(R|<local>/f|)
-        <Inapplicable(INAPPLICABLE): [/foo2]>#(<L> = foo2@fun <implicit>.<anonymous>(x: <ERROR TYPE REF: Unsupported: implicit VP type>): R|kotlin/Boolean| {
+        <Inapplicable(INAPPLICABLE): [/foo2]>#(<L> = foo2@fun <anonymous>(x: R|class error: No type for parameter|): R|kotlin/Boolean| {
             >(R|<local>/x|, Int(1))
         }
         )
         <Inapplicable(INAPPLICABLE): [/foo2]>#(R|<local>/f|)
-        <Inapplicable(INAPPLICABLE): [/foo3]>#(<L> = foo3@fun <implicit>.<anonymous>(x: <ERROR TYPE REF: Unsupported: implicit VP type>): R|kotlin/Boolean| {
+        <Inapplicable(INAPPLICABLE): [/foo3]>#(<L> = foo3@fun <anonymous>(x: R|class error: No type for parameter|): R|kotlin/Boolean| {
             >(R|<local>/x|, Int(1))
         }
         )

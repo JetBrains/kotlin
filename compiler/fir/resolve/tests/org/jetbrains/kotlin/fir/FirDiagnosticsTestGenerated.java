@@ -270,6 +270,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/resolve/testData/resolve/arguments/lambdaInLambda2.kt");
         }
 
+        @TestMetadata("lambdaInUnresolvedCall.kt")
+        public void testLambdaInUnresolvedCall() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/arguments/lambdaInUnresolvedCall.kt");
+        }
+
         @TestMetadata("overloadByReceiver.kt")
         public void testOverloadByReceiver() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/arguments/overloadByReceiver.kt");
