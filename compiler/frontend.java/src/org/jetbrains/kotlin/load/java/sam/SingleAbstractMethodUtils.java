@@ -27,10 +27,10 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaClassConstructorDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor;
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaClassDescriptor;
-import org.jetbrains.kotlin.load.kotlin.sam.SamConversionResolverImplKt;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.sam.SamConversionResolver;
 import org.jetbrains.kotlin.resolve.jvm.JavaResolverUtils;
+import org.jetbrains.kotlin.resolve.sam.SamConversionResolverImplKt;
 import org.jetbrains.kotlin.types.*;
 
 import java.util.ArrayList;
