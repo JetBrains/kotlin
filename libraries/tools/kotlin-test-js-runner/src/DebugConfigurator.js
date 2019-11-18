@@ -86,3 +86,7 @@ export function fixMochaTimeout(config) {
         process.exit(1);
     }
 }
+
+export function fixBrowserActivityTimeout(config) {
+    config.browserNoActivityTimeout = null
+}

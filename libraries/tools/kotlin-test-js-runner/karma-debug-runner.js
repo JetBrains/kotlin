@@ -5,7 +5,7 @@
 
 'use strict';
 
-import {configureBrowsers, fixMochaTimeout} from "./src/DebugConfigurator";
+import {configureBrowsers, fixBrowserActivityTimeout, fixMochaTimeout} from "./src/DebugConfigurator";
 
 const karma = require('karma');
 
@@ -17,6 +17,7 @@ karmaConfig.singleRun = false;
 
 configureBrowsers(karmaConfig);
 fixMochaTimeout(karmaConfig);
+fixBrowserActivityTimeout(karmaConfig);
 
 const Server = karma.Server;
 const server = new Server(karmaConfig, function (exitCode) {

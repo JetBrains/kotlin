@@ -33,6 +33,13 @@ export default [
         }
     },
     {
+        input: './karma-debug-framework.js',
+        output: {
+            file: 'lib/karma-debug-framework.js',
+            format: 'cjs'
+        }
+    },
+    {
         input: './karma-kotlin-reporter.js',
         external: ['path', 'util'],
         output: {

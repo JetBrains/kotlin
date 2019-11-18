@@ -257,6 +257,22 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
     ): TCServiceMessagesTestExecutionSpec {
         if (debug) {
             config.singleRun = false
+
+            confJsWriters.add {
+                //language=ES6
+                it.appendln(
+                    """
+                        if (!config.plugins) {
+                            config.plugins = config.plugins || [];
+                            config.plugins.push('karma-*'); // default
+                        }
+                        
+                        config.plugins.push('kotlin-test-js-runner/karma-debug-framework.js');
+                    """.trimIndent()
+                )
+            }
+
+            config.frameworks.add("karma-kotlin-debug")
         }
 
         if (config.browsers.isEmpty()) {
