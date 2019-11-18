@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 interface TextField {
     fun getText(): String
     fun setText(text: String)

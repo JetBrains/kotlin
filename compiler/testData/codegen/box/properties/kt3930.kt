@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 public abstract class Foo {
     var isOpen = true
         private set

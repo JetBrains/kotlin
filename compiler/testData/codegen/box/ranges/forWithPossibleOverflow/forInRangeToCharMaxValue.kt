@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 const val M = Char.MAX_VALUE
 
 fun box(): String {

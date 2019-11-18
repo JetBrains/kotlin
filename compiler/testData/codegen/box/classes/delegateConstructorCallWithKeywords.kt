@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 open class A(val x: String) {
     constructor(`in`: String, y: String) : this(`in` + y)
 

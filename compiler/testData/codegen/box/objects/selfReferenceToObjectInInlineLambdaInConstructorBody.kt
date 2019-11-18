@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 object Test {
     fun ok() = "OK"
     val x = run { Test.ok() }

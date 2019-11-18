@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 //KT-2997 Automatically cast error (Array)
 
 fun foo(a: Any): Int {

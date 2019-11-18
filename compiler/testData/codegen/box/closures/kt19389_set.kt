@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 var result = "fail"
 
 public fun <T, R> myWith(receiver: T, block: T.() -> R): R {

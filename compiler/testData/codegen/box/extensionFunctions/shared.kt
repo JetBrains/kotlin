@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 infix fun <T> T.mustBe(t : T) {
     assert("$this must be $t") {this == t}
 }

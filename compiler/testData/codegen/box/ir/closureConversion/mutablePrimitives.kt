@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 fun testBoolean(v: Boolean): Boolean {
     var value = false
     fun setValue(v: Boolean) {

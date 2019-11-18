@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 class Foo(
     val width: Int,
     val height: Int,

@@ -1,8 +1,8 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 // TARGET_BACKEND: JVM
 // WITH_RUNTIME
 // WITH_COROUTINES
 // FULL_JDK
-
 import helpers.*
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*

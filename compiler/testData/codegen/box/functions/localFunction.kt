@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 fun IntRange.forEach(body : (Int) -> Unit) {
     for(i in this) {
         body(i)

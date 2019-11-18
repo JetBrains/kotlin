@@ -1,4 +1,5 @@
 // !LANGUAGE: +NewInference +MixedNamedArgumentsInTheirOwnPosition
+// IGNORE_BACKEND_FIR: JVM_IR
 
 fun foo(
     p1: Int = 1,

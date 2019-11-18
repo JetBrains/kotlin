@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 class Test {
     val Int.foo: String
         get() = "OK"

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 //KT-3189 Function invoke is called with no reason
 
 fun box(): String {

@@ -1,4 +1,5 @@
 // !LANGUAGE: +NewInference
+// IGNORE_BACKEND_FIR: JVM_IR
 
 class Recursive<T : Recursive<T>> : Generic<PlaceHolder<T>>, MainSupertype
 open class Simple<T> : Generic<T>, MainSupertype

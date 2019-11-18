@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 object A {
     private var r: Int = 1;
 

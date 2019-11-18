@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 fun t1() : Boolean {
     val s1 : String? = "sff"
     val s2 : String? = null

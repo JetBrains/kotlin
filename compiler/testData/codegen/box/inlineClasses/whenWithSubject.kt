@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 inline class InlineLong(val value: Long)
 inline val Number.toInlineLong get() = InlineLong(this.toLong())
 

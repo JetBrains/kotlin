@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 open class Z(val s: Int) {
     open fun a() {}
 }

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 interface R<T: Comparable<T>> {
     var value: T
 }

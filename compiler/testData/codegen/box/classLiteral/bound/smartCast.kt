@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 // KT-16291 Smart cast doesn't work when getting class of instance
 
 class Foo(val s: String) {

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 open class A<T : Number>(val t: T) {
     open fun foo(): T = t
 }

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 fun box(): String {
     A.Nested().nestedA()
     A.Nested().Inner().innerA()

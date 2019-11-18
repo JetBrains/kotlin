@@ -1,4 +1,5 @@
 // !LANGUAGE: +NewInference
+// IGNORE_BACKEND_FIR: JVM_IR
 // NewInference needed because of KT-26531
 
 fun Int.thisRef1() = fun () = this

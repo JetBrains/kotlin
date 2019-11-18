@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 public class MPair<out A> (
         public val first: A
 ) {

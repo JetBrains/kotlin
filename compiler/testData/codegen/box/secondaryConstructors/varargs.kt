@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 fun join(x: Array<out String>): String {
     var result = ""
     for (i in x) {

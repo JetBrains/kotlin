@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 class A {
   fun Double.foo(a: Double = 1.0): Double {
       return a

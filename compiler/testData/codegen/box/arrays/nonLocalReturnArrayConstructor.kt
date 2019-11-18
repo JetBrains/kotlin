@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 typealias ArrayS = Array<String>
 
 fun testArray() {

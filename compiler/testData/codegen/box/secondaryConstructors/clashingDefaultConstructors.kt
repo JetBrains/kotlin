@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 open class A(val x: String = "abc", val y: String = "efg") {
     constructor(x: String, y: String, z: Int): this(x, y + "#" + z.toString())
     

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 package test
 
 import test.C.E1

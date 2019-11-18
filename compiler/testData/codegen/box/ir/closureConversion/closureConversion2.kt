@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 fun <X : Any> foo(x: X): String {
     fun <Y : Any> bar(y: Y) =
             x.toString() + y.toString()

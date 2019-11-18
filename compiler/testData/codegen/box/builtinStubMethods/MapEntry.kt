@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 // TARGET_BACKEND: JVM
 
 class MyMapEntry<K, V>: Map.Entry<K, V> {

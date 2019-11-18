@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 interface A<T1> {
     fun <T2> T2.foo(x: T1): String
 }

@@ -1,4 +1,5 @@
 // !LANGUAGE: +ProperIeee754Comparisons
+// IGNORE_BACKEND_FIR: JVM_IR
 
 fun testF(x: Any) =
     when (x) {

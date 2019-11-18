@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 class Point(val x:Int, val y:Int) {
     fun mul() :  (scalar:Int)->Point  {
         return { scalar:Int -> Point(x * scalar, y * scalar) }

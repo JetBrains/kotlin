@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 fun box() : String {
     fun local(i: Int = 1) : Int {
         return i

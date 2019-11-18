@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 //KT-4656 Wrong capturing a function literal variable
 
 fun box(): String {

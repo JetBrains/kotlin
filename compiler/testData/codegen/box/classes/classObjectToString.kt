@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 // TODO: Enable for JS when it supports Java class library.
 // TARGET_BACKEND: JVM
 

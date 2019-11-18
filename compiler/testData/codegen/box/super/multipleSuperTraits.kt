@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 interface T1 {
     fun foo() = "O"
 }

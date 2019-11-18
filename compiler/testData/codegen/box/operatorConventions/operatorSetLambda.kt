@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 // See KT-14999
 
 object Obj {

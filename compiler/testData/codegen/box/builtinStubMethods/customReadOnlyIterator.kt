@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 class A : Collection<Char> {
     override val size: Int
         get() = throw UnsupportedOperationException()

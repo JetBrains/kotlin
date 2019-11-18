@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 fun foo(f: (Int) -> Int) = f(0)
 
 class Outer {

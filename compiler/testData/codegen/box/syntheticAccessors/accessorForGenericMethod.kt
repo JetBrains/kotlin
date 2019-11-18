@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 // FILE: test.kt
 import b.B
 

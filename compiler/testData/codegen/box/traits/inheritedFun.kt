@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 //KT-2206
 interface A {
     fun f():Int = 239

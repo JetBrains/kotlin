@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 val minus: Any = -0.0
 
 fun box(): String {

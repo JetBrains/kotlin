@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 class A {
     fun foo() {}
     fun bar(f: A.() -> Unit = {}) {}

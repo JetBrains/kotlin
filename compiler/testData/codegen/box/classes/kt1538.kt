@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 // KJS_WITH_FULL_RUNTIME
 data class Pair<First, Second>(val first: First, val second: Second)
 

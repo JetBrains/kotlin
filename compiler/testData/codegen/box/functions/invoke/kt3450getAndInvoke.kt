@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 //KT-3450 get and invoke are not parsed in one expression
 
 public class A(val s: String) {

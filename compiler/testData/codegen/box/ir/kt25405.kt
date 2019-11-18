@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 
 fun <T> tableView(init: Table<T>.() -> Unit) {
     Table<T>().init()

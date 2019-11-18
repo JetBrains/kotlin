@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 class MyQueue {
     fun poll(): String? =  null
 }

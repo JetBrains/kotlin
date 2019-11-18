@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 class LongR {
   operator fun contains(l : Long): Boolean = l == 5.toLong()
 }

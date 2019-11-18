@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 package mult_constructors_3_bug
 
 public open class Identifier() {

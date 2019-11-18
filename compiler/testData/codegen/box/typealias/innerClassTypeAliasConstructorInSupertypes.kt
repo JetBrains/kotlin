@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 class Outer(val x: String) {
     abstract inner class InnerBase
 

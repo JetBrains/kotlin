@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 open class SuperFoo {
     public fun bar(): String {
         if (this is Foo) {

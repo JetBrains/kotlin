@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 open class Foo {
     open fun foo(x: CharSequence = "O"): CharSequence = x
 }
