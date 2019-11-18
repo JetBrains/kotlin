@@ -133,7 +133,7 @@ public abstract interface Map<K, out V> : R|kotlin/Any| {
 
     public abstract fun containsValue(value: R|V|): R|kotlin/Boolean|
 
-    public abstract operator fun get(key: R|K|): R|V|
+    public abstract operator fun get(key: R|K|): R|V?|
 
     @R|kotlin/SinceKotlin|(version = String(1.1)) @R|kotlin/internal/PlatformDependent|() public open fun getOrDefault(key: R|K|, defaultValue: R|V|): R|V|
 
@@ -234,11 +234,11 @@ public abstract interface MutableListIterator<T> : R|kotlin/collections/ListIter
 public abstract interface MutableMap<K, V> : R|kotlin/collections/Map<K, V>| {
     public abstract fun clear(): R|kotlin/Unit|
 
-    public abstract fun put(key: R|K|, value: R|V|): R|V|
+    public abstract fun put(key: R|K|, value: R|V|): R|V?|
 
     public abstract fun putAll(from: R|kotlin/collections/Map<out K, V>|): R|kotlin/Unit|
 
-    public abstract fun remove(key: R|K|): R|V|
+    public abstract fun remove(key: R|K|): R|V?|
 
     @R|kotlin/SinceKotlin|(version = String(1.1)) @R|kotlin/internal/PlatformDependent|() public open fun remove(key: R|K|, value: R|V|): R|kotlin/Boolean|
 
@@ -297,3 +297,4 @@ public abstract class ShortIterator : R|kotlin/collections/Iterator<kotlin/Short
     public constructor(): R|kotlin/collections/ShortIterator|
 
 }
+

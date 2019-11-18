@@ -1,0 +1,4 @@
+FILE: nullableTypeParameter.kt
+    public final fun test(set: R|kotlin/collections/Set<kotlin/String?>|): R|kotlin/Unit| {
+        lval filtered: R|kotlin/collections/List<kotlin/String>| = R|<local>/set|.R|kotlin/collections/filterNotNull|<R|kotlin/String|>()
+    }

@@ -22,7 +22,7 @@ FILE fqName:<root> fileName:/builtinMap.kt
               block: FUN_EXPR type=kotlin.Function1<java.util.LinkedHashMap<K1 of <root>.plus, V1 of <root>.plus>, kotlin.Unit> origin=LAMBDA
                 FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                   BLOCK_BODY
-                    CALL 'public open fun put (p0: K1 of <root>.plus, p1: V1 of <root>.plus): V1 of <root>.plus declared in java.util.HashMap' type=V1 of <root>.plus origin=null
+                    CALL 'public open fun put (p0: K1 of <root>.plus, p1: V1 of <root>.plus): V1 of <root>.plus? declared in java.util.HashMap' type=V1 of <root>.plus? origin=null
                       $this: GET_VAR '<this>: java.util.HashMap declared in java.util.HashMap' type=java.util.HashMap<*, *> origin=null
                       p0: CALL 'public final fun <get-first> (): K1 of <root>.plus declared in kotlin.Pair' type=K1 of <root>.plus origin=null
                         $this: GET_VAR 'pair: kotlin.Pair<K1 of <root>.plus, V1 of <root>.plus> declared in <root>.plus' type=kotlin.Pair<K1 of <root>.plus, V1 of <root>.plus> origin=null

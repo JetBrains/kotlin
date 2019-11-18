@@ -116,7 +116,7 @@ class FirTypeDeserializer(
     fun simpleType(proto: ProtoBuf.Type): ConeLookupTagBasedType? {
 
         val constructor = typeSymbol(proto) ?: return null
-        if (constructor is ConeTypeParameterLookupTag) return ConeTypeParameterTypeImpl(constructor, isNullable = false)
+        if (constructor is ConeTypeParameterLookupTag) return ConeTypeParameterTypeImpl(constructor, isNullable = proto.nullable)
         if (constructor !is ConeClassLikeLookupTag) return null
 
         fun ProtoBuf.Type.collectAllArguments(): List<ProtoBuf.Type.Argument> =

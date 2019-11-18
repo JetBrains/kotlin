@@ -118,6 +118,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         runTest("compiler/fir/resolve/testData/resolve/stdlib/multipleImplicitReceivers.kt");
     }
 
+    @TestMetadata("nullableTypeParameter.kt")
+    public void testNullableTypeParameter() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/stdlib/nullableTypeParameter.kt");
+    }
+
     @TestMetadata("problems.kt")
     public void testProblems() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/stdlib/problems.kt");

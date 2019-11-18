@@ -1,5 +1,5 @@
 public open class WrongTypeParametersCount : R|kotlin/Any| {
-    public open fun <A, B> foo(p0: R|A|, p1: R|kotlin/collections/List<B>?|): R|kotlin/Unit|
+    public open fun <A, B> foo(p0: R|A?|, p1: R|kotlin/collections/List<B>?|): R|kotlin/Unit|
 
     public constructor(): R|test/WrongTypeParametersCount|
 
