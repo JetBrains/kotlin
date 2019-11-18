@@ -78,9 +78,16 @@ class CUrl(url: String, user: String? = null, password: String? = null, followLo
     val body = StringBuilder()
 
     fun fetch() {
-        val res = curl_easy_perform(curl)
-        if (res != CURLE_OK)
-            println("curl_easy_perform() failed: ${curl_easy_strerror(res)?.toKString()}")
+        memScoped {
+            val res = curl_easy_perform(curl)
+            if (res != CURLE_OK)
+                error("curl_easy_perform() failed: ${curl_easy_strerror(res)?.toKString()}")
+            val http_code = alloc<LongVar>()
+            curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, http_code.ptr)
+            if (http_code.value >= 400L) {
+                error("Error http code ${http_code.value}")
+            }
+        }
     }
 
     fun close() {

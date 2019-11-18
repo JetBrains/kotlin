@@ -5,30 +5,21 @@
 
 package org.jetbrains.kotlin
 
-import groovy.lang.Closure
-import org.gradle.api.Action
 import org.gradle.api.DefaultTask
-import org.gradle.api.Project
-import org.gradle.api.Task
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
-
-import com.ullink.slack.simpleslackapi.impl.SlackSessionFactory
 
 import org.jetbrains.report.json.*
 
 import java.io.FileInputStream
-import java.io.IOException
-import java.io.File
 import java.io.OutputStreamWriter
 import java.io.BufferedReader
 import java.io.InputStreamReader
-import java.util.concurrent.TimeUnit
 import java.net.HttpURLConnection
 import java.net.URL
-import java.util.Base64
 import java.util.Properties
 
+typealias performanceAdditionalResult = Triple<String, String, String>
 /**
  * Task to produce regressions report and send it to slack. Requires a report with current benchmarks result
  * and path to analyzer tool
@@ -49,7 +40,7 @@ open class BuildRegister : DefaultTask() {
     var bundleSize: Int? = null
 
     val buildInfoTokens: Int = 4
-    val frameworkInfoTokens: Int = 3
+    val additionalInfoTokens: Int = 3
     val compileTimeSamplesNumber: Int = 2
     val buildNumberTokens: Int = 3
     val performanceServer = "https://kotlin-native-perf-summary.labs.jb.gg"
@@ -78,6 +69,30 @@ open class BuildRegister : DefaultTask() {
                 response.toString()
             }
         }
+    }
+
+    fun getAdditionalInfo(analyzer: String, reportFile: String, alwaysExists: Boolean, benchmarkName: String,
+                          showedName: String = benchmarkName) :
+            performanceAdditionalResult? {
+        val output = arrayOf(analyzer, "summary", "--compile", "samples",
+                "--compile-samples", benchmarkName, "--codesize-samples", benchmarkName,
+                "--codesize-normalize", "artifactory:builds/goldenResults.csv", reportFile)
+                .runCommand()
+
+
+        val buildInfoParts = output.split(',')
+        if (buildInfoParts.size != additionalInfoTokens) {
+            val message = "Problems with getting summary information using $analyzer and $reportFile. $output"
+            if (!alwaysExists) {
+                println(message)
+                return null
+            }
+            error(message)
+        }
+        val (failures, compileTime, codeSize) = buildInfoParts.map { it.trim() }
+        val codeSizeInfo = "$showedName-$codeSize"
+        val compileTimeInfo = "$showedName-$compileTime"
+        return performanceAdditionalResult(failures, compileTimeInfo, codeSizeInfo)
     }
 
     @TaskAction
@@ -114,6 +129,7 @@ open class BuildRegister : DefaultTask() {
         }
 
         val (failures, executionTime, compileTime, codeSize) = buildInfoParts.map { it.trim() }
+        var failuresNumber = failures.toInt()
         // Add legends.
         val geometricMean = "Geometric Mean-"
         val executionTimeInfo = "$geometricMean$executionTime"
@@ -127,19 +143,35 @@ open class BuildRegister : DefaultTask() {
 
         // Collect framework run details.
         if (target == "MacOSX") {
-
-            val frameworkOutput = arrayOf("$analyzer", "summary", "--compile", "samples",
-                    "--compile-samples", "FrameworkBenchmarksAnalyzer", "--codesize-samples", "FrameworkBenchmarksAnalyzer",
-                    "--codesize-normalize", "artifactory:builds/goldenResults.csv", "$currentBenchmarksReportFile")
-                    .runCommand()
-
-            val buildInfoPartsFramework = frameworkOutput.split(',')
-            if (buildInfoPartsFramework.size != frameworkInfoTokens) {
-                error("Problems with getting summary information using $analyzer and $currentBenchmarksReportFile. $frameworkOutput")
+            val frameworkResults = getAdditionalInfo(analyzer, currentBenchmarksReportFile, true,
+                    "FrameworkBenchmarksAnalyzer")
+            frameworkResults?.let {
+                val (_, frameworkCompileTime, frameworkCodeSize) = it
+                codeSizeInfo += ";$frameworkCodeSize"
+                compileTimeInfo += ";$frameworkCompileTime"
             }
-            val (_, frameworkCompileTime, frameworkCodeSize) = buildInfoPartsFramework.map { it.trim() }
-            codeSizeInfo += ";FrameworkBenchmarksAnalyzer-$frameworkCodeSize"
-            compileTimeInfo += ";FrameworkBenchmarksAnalyzer-$frameworkCompileTime"
+
+            val spaceResults = getAdditionalInfo(analyzer,
+                    "artifactory:$buildNumber:$target:spaceFrameworkReport.json", false,
+                    "circlet_iosX64", "SpaceFramework_iosX64")
+            spaceResults?.let {
+                val (failures, frameworkCompileTime, frameworkCodeSize) = it
+                failuresNumber += failures.toInt()
+                codeSizeInfo += ";$frameworkCodeSize"
+                compileTimeInfo += ";$frameworkCompileTime"
+            }
+        }
+
+        if (target == "Linux") {
+            val coroutinesResults = getAdditionalInfo(analyzer,
+                    "artifactory:$buildNumber:$target:externalReport.json", false,
+                    "kotlinx.coroutines")
+            coroutinesResults?.let {
+                val (failures, libraryCompileTime, libraryCodeSize) = it
+                failuresNumber += failures.toInt()
+                codeSizeInfo += ";$libraryCodeSize"
+                compileTimeInfo += ";$libraryCompileTime"
+            }
         }
 
         val buildNumberParts = buildNumber.split("-")
@@ -156,7 +188,7 @@ open class BuildRegister : DefaultTask() {
             append("\"artifactoryApiKey\":\"$apiKey\",")
             append("\"target\": \"$target\",")
             append("\"buildType\": \"$buildType\",")
-            append("\"failuresNumber\": $failures,")
+            append("\"failuresNumber\": $failuresNumber,")
             append("\"executionTime\": \"$executionTimeInfo\",")
             append("\"compileTime\": \"$compileTimeInfo\",")
             append("\"codeSize\": \"$codeSizeInfo\",")

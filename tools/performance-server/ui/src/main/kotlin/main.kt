@@ -347,7 +347,7 @@ fun main(args: Array<String>) {
         bundleSize.add(it.bundleSize?.toInt()?. let { it / 1024 / 1024 })
     }
 
-    val sizeClassNames = arrayOf("ct-series-d", "ct-series-e")
+    val sizeClassNames = arrayOf("ct-series-e", "ct-series-f", "ct-series-g")
 
     // Draw charts.
     val execChart = Chartist.Line("#exec_chart", getChartData(labels, executionTime.values, stageToShow, buildsNumberToShow),
@@ -355,9 +355,9 @@ fun main(args: Array<String>) {
     val compileChart = Chartist.Line("#compile_chart", getChartData(labels, compileTime.values, stageToShow, buildsNumberToShow),
             getChartOptions(compileTime.keys.toTypedArray(), "Time, milliseconds"))
     val codeSizeChart = Chartist.Line("#codesize_chart", getChartData(labels, codeSize.values, stageToShow, buildsNumberToShow, sizeClassNames),
-            getChartOptions(codeSize.keys.toTypedArray(), "Normalized size", arrayOf("ct-series-3", "ct-series-4")))
+            getChartOptions(codeSize.keys.toTypedArray(), "Normalized size", arrayOf("ct-series-4", "ct-series-5", "ct-series-6")))
     val bundleSizeChart = Chartist.Line("#bundlesize_chart", getChartData(labels, listOf(bundleSize), stageToShow, buildsNumberToShow, sizeClassNames),
-            getChartOptions(arrayOf("Bundle size"), "Size, MB", arrayOf("ct-series-3")))
+            getChartOptions(arrayOf("Bundle size"), "Size, MB", arrayOf("ct-series-4")))
 
     // Tooltips and higlights.
     customizeChart(execChart, "exec_chart", js("$(\"#exec_chart\")"), builds, parameters)

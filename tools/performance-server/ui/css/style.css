@@ -48,14 +48,26 @@
   background-color: limegreen;
   border-color: limegreen;
 }
+
 .ct-legend .ct-series-3:before {
+  background-color: lightsalmon;
+  border-color: lightsalmon;
+}
+
+.ct-legend .ct-series-4:before {
   background-color: mediumorchid;
   border-color: mediumorchid;
 }
-.ct-legend .ct-series-4:before {
+.ct-legend .ct-series-5:before {
   background-color: navy;
   border-color: navy;
 }
+
+.ct-legend .ct-series-6:before {
+  background-color: darkcyan;
+  border-color: darkcyan;
+}
+
 .ct-legend .ct-series-5:before {
   background-color: #453d3f;
   border-color: #453d3f;
@@ -76,12 +88,24 @@
 .ct-series-d .ct-line,
 .ct-series-d .ct-point {
   /* Set the colour of this series line */
-  stroke: mediumorchid;
+  stroke: lightsalmon;
 }
 
 .ct-series-e .ct-line,
 .ct-series-e .ct-point {
   /* Set the colour of this series line */
+  stroke: mediumorchid;
+}
+
+.ct-series-f .ct-line,
+.ct-series-f .ct-point {
+  /* Set the colour of this series line */
   stroke: navy;
+}
+
+.ct-series-g .ct-line,
+.ct-series-g .ct-point {
+  /* Set the colour of this series line */
+  stroke: darkcyan;
 }
 .tooltip { pointer-events: none; }

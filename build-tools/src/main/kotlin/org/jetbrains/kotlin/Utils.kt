@@ -139,7 +139,7 @@ fun Array<String>.runCommand(workingDir: File = File("."),
                 .start().apply {
                     waitFor(timeoutAmount, timeoutUnit)
                 }.inputStream.bufferedReader().readText()
-    } catch (e: IOException) {
+    } catch (e: Exception) {
         error("Couldn't run command $this")
     }
 }
