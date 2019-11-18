@@ -1,12 +1,11 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.completion.settings
 
-import com.intellij.application.options.CodeCompletionOptionsCustomSection
 import com.intellij.completion.StatsCollectorBundle
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.options.BoundConfigurable
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.util.registry.Registry
+import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.layout.*
 
 class MLRankingConfigurable(private val supportedLanguages: List<String>)
@@ -15,6 +14,7 @@ class MLRankingConfigurable(private val supportedLanguages: List<String>)
 
   override fun createPanel(): DialogPanel {
     return panel {
+      var enableRankingCheckbox: CellBuilder<JBCheckBox>? = null
       titledRow(StatsCollectorBundle.message("ml.completion.settings.group")) {
         row {
           val enableRanking = checkBox(StatsCollectorBundle.message("ml.completion.enable"), settings::isRankingEnabled,
@@ -25,12 +25,16 @@ class MLRankingConfigurable(private val supportedLanguages: List<String>)
                 .enableIf(enableRanking.selected)
             }
           }
+          enableRankingCheckbox = enableRanking
         }
         val registry = Registry.get("completion.stats.show.ml.ranking.diff")
         row {
-          checkBox(StatsCollectorBundle.message("ml.completion.show.diff"),
-                   { registry.asBoolean() },
-                   { registry.setValue(it) })
+          enableRankingCheckbox?.let { enableRanking ->
+            checkBox(StatsCollectorBundle.message("ml.completion.show.diff"),
+                     { registry.asBoolean() },
+                     { registry.setValue(it) }).enableIf(enableRanking.selected)
+          }
+
         }
       }
     }
