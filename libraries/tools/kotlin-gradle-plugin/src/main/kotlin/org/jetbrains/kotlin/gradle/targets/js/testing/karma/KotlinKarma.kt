@@ -256,7 +256,6 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
         debug: Boolean
     ): TCServiceMessagesTestExecutionSpec {
         if (debug) {
-            config.client.mocha.timeout = "0"
             config.singleRun = false
         }
 
