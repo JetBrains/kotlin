@@ -56,6 +56,7 @@ object Fir2IrConverter {
         symbolTable: SymbolTable,
         builtIns: IrBuiltIns
     ) {
+        // TODO: provide StubGeneratorExtensions for correct lazy stub IR generation on JVM
         ExternalDependenciesGenerator(irModule.descriptor, symbolTable, builtIns).generateUnboundSymbolsAsDependencies()
     }
 }

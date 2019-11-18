@@ -16,34 +16,28 @@
 
 package org.jetbrains.kotlin.ir.util
 
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import kotlin.math.min
 
 class ExternalDependenciesGenerator(
     moduleDescriptor: ModuleDescriptor,
     val symbolTable: SymbolTable,
     val irBuiltIns: IrBuiltIns,
-    externalDeclarationOrigin: ((DeclarationDescriptor) -> IrDeclarationOrigin)? = null,
     private val deserializer: IrDeserializer? = null,
     irProviders: List<IrProvider> = emptyList(),
-    facadeClassGenerator: (DeserializedContainerSource) -> IrClass? = { null }
+    extensions: StubGeneratorExtensions = StubGeneratorExtensions.EMPTY
 ) {
     private val stubGenerator = DeclarationStubGenerator(
-        moduleDescriptor, symbolTable, irBuiltIns.languageVersionSettings, externalDeclarationOrigin,
-            listOfNotNull(deserializer) + irProviders, facadeClassGenerator
+        moduleDescriptor, symbolTable, irBuiltIns.languageVersionSettings, listOfNotNull(deserializer) + irProviders, extensions
     )
 
     fun generateUnboundSymbolsAsDependencies() {
         stubGenerator.unboundSymbolGeneration = true
         do {
             fun <T> haveNotStabilized(prev: ArrayList<T>, cur: Set<T>) =
-                    cur.isNotEmpty() && (prev.size != cur.size || prev.any { !cur.contains(it) })
+                cur.isNotEmpty() && (prev.size != cur.size || prev.any { !cur.contains(it) })
 
             val unboundClasses = ArrayList(symbolTable.unboundClasses)
             val unboundConstructors = ArrayList(symbolTable.unboundConstructors)
