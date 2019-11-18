@@ -28,6 +28,8 @@ interface MetadataExtensions {
 
     fun readTypeExtensions(v: KmTypeVisitor, proto: ProtoBuf.Type, c: ReadContext)
 
+    fun readTypeAliasExtensions(v: KmTypeAliasVisitor, proto: ProtoBuf.TypeAlias, c: ReadContext)
+
     fun writeClassExtensions(type: KmExtensionType, proto: ProtoBuf.Class.Builder, c: WriteContext): KmClassExtensionVisitor?
 
     fun writePackageExtensions(type: KmExtensionType, proto: ProtoBuf.Package.Builder, c: WriteContext): KmPackageExtensionVisitor?
@@ -50,6 +52,8 @@ interface MetadataExtensions {
 
     fun writeTypeExtensions(type: KmExtensionType, proto: ProtoBuf.Type.Builder, c: WriteContext): KmTypeExtensionVisitor?
 
+    fun writeTypeAliasExtensions(type: KmExtensionType, proto: ProtoBuf.TypeAlias.Builder, c: WriteContext): KmTypeAliasExtensionVisitor?
+
     fun createClassExtension(): KmClassExtension
 
     fun createPackageExtension(): KmPackageExtension
@@ -65,6 +69,8 @@ interface MetadataExtensions {
     fun createTypeParameterExtension(): KmTypeParameterExtension
 
     fun createTypeExtension(): KmTypeExtension
+
+    fun createTypeAliasExtension(): KmTypeAliasExtension
 
     companion object {
         val INSTANCES: List<MetadataExtensions> by lazy {

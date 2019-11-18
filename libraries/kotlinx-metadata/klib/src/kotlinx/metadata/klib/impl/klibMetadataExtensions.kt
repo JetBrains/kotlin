@@ -126,6 +126,14 @@ internal class KlibMetadataExtensions : MetadataExtensions {
         }
     }
 
+    override fun readTypeAliasExtensions(v: KmTypeAliasVisitor, proto: ProtoBuf.TypeAlias, c: ReadContext) {
+        val extension = v.visitExtensions(KlibTypeAliasExtensionVisitor.TYPE) as? KlibTypeAliasExtensionVisitor ?: return
+
+        proto.getExtension(KlibMetadataProtoBuf.typeAliasUniqId).let { descriptorUniqId ->
+            extension.visitUniqId(descriptorUniqId.readUniqId())
+        }
+    }
+
     override fun writeClassExtensions(type: KmExtensionType, proto: ProtoBuf.Class.Builder, c: WriteContext): KmClassExtensionVisitor? {
         if (type != KlibClassExtensionVisitor.TYPE) return null
         return object : KlibClassExtensionVisitor() {
@@ -324,6 +332,22 @@ internal class KlibMetadataExtensions : MetadataExtensions {
         }
     }
 
+    override fun writeTypeAliasExtensions(
+        type: KmExtensionType,
+        proto: ProtoBuf.TypeAlias.Builder,
+        c: WriteContext
+    ): KmTypeAliasExtensionVisitor? {
+        if (type != KlibTypeAliasExtensionVisitor.TYPE) return null
+        return object : KlibTypeAliasExtensionVisitor() {
+            override fun visitUniqId(uniqId: UniqId) {
+                proto.setExtension(
+                    KlibMetadataProtoBuf.typeAliasUniqId,
+                    uniqId.writeUniqId().build()
+                )
+            }
+        }
+    }
+
     override fun createClassExtension(): KmClassExtension =
         KlibClassExtension()
 
@@ -347,4 +371,7 @@ internal class KlibMetadataExtensions : MetadataExtensions {
 
     override fun createTypeExtension(): KmTypeExtension =
         KlibTypeExtension()
+
+    override fun createTypeAliasExtension(): KmTypeAliasExtension =
+        KlibTypeAliasExtension()
 }

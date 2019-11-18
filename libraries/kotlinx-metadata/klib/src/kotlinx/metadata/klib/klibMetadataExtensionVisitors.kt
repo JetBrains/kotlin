@@ -128,3 +128,15 @@ abstract class KlibModuleFragmentExtensionVisitor : KmModuleFragmentExtensionVis
         val TYPE = KmExtensionType(KlibModuleFragmentExtensionVisitor::class)
     }
 }
+
+abstract class KlibTypeAliasExtensionVisitor : KmTypeAliasExtensionVisitor {
+
+    abstract fun visitUniqId(uniqId: UniqId)
+
+    override val type: KmExtensionType
+        get() = TYPE
+
+    companion object {
+        val TYPE = KmExtensionType(KlibTypeAliasExtensionVisitor::class)
+    }
+}
