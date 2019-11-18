@@ -6,14 +6,12 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.progress.PerformInBackgroundOption;
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.progress.Task;
+import com.intellij.openapi.progress.*;
 import com.intellij.openapi.progress.util.ProgressIndicatorBase;
 import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkType;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.wm.ex.ProgressIndicatorEx;
 import org.jetbrains.annotations.NotNull;
@@ -59,19 +57,13 @@ public class SdkDownloadTracker {
 
     PendingDownload pd = new PendingDownload(originalSdk, item);
     myPendingTasks.add(pd);
+  }
 
-    SdkType type = (SdkType)originalSdk.getSdkType();
-    Task.Backgroundable task = new Task.Backgroundable(null,
-                                                       ProjectBundle.message("sdk.configure.downloading", type.getPresentableName()),
-                                                       true,
-                                                       PerformInBackgroundOption.ALWAYS_BACKGROUND) {
-      @Override
-      public void run(@NotNull ProgressIndicator indicator) {
-        pd.doDownload(indicator);
-      }
-    };
+  public void onSdkAddedToTheModel(@NotNull Sdk sdkFromTable) {
+    PendingDownload task = findTask(sdkFromTable);
+    if (task == null) return;
 
-    ProgressManager.getInstance().run(task);
+    task.startDownloadIfNeeded(sdkFromTable);
   }
 
   /**
@@ -91,17 +83,18 @@ public class SdkDownloadTracker {
     PendingDownload pd = findTask(sdk);
     if (pd == null) return false;
 
-    pd.tryRegisterListener(lifetime, indicator, onDownloadCompleteCallback);
+    pd.registerListener(lifetime, indicator, onDownloadCompleteCallback);
     return true;
   }
 
   private class PendingDownload {
-    final SdkDownloadTask myTask;
+    private final SdkDownloadTask myTask;
+    private final Set<Sdk> myEditableSdks = Sets.newIdentityHashSet();
+    private final ProgressIndicatorBase myProgressIndicator = new ProgressIndicatorBase();
+    private final Set<Runnable> myCompleteListeners = Sets.newIdentityHashSet();
+    private final Set<Disposable> myDisposables = Sets.newIdentityHashSet();
 
-    final Set<Sdk> myEditableSdks = Sets.newIdentityHashSet();
-    final ProgressIndicatorBase myProgressIndicator = new ProgressIndicatorBase();
-    final Set<Runnable> myCompleteListeners = Sets.newIdentityHashSet();
-    final Set<Disposable> myDisposables = Sets.newIdentityHashSet();
+    private boolean myIsDownloading = false;
 
     private PendingDownload(@NotNull Sdk sdk,
                             @NotNull SdkDownloadTask task) {
@@ -121,22 +114,47 @@ public class SdkDownloadTracker {
       myEditableSdks.add(editable);
     }
 
-    public void doDownload(@NotNull ProgressIndicator indicator) {
-      try {
-        //we need a progress indicator from the outside, to avoid race condition (progress may start with a delay, but UI would need a PI)
-        myProgressIndicator.addStateDelegate((ProgressIndicatorEx)indicator);
-        //TODO[jo]: handle exceptions
-        myTask.doDownload(myProgressIndicator);
-      }
-      finally {
-        myProgressIndicator.removeStateDelegate((ProgressIndicatorEx)indicator);
-        ApplicationManager.getApplication().invokeLater(this::onSdkDownloadCompleted);
-      }
+    public void startDownloadIfNeeded(@NotNull Sdk sdkFromTable) {
+      ApplicationManager.getApplication().assertIsDispatchThread();
+
+      if (myIsDownloading) return;
+      myIsDownloading = true;
+
+      SdkType type = (SdkType)sdkFromTable.getSdkType();
+      String message = ProjectBundle.message("sdk.configure.downloading", type.getPresentableName());
+
+      Task.Backgroundable task = new Task.Backgroundable(null,
+                                                         message,
+                                                         true,
+                                                         PerformInBackgroundOption.ALWAYS_BACKGROUND) {
+        @Override
+        public void run(@NotNull ProgressIndicator indicator) {
+          try {
+            // we need a progress indicator from the outside, to avoid race condition
+            // (progress may start with a delay, but UI would need a PI)
+            myProgressIndicator.addStateDelegate((ProgressIndicatorEx)indicator);
+            try {
+              myTask.doDownload(myProgressIndicator);
+            } finally {
+              myProgressIndicator.removeStateDelegate((ProgressIndicatorEx)indicator);
+            }
+            ApplicationManager.getApplication().invokeLater(() -> onSdkDownloadCompleted(false));
+          } catch (Exception e) {
+            LOG.warn("SDK Download failed. " + e.getMessage(), e);
+            ApplicationManager.getApplication().invokeLater(() -> {
+              Messages.showErrorDialog(e.getMessage(), "SDK Download Failed");
+              ApplicationManager.getApplication().invokeLater(() -> onSdkDownloadCompleted(true));
+            });
+          }
+        }
+      };
+
+      ProgressManager.getInstance().run(task);
     }
 
-    public void tryRegisterListener(@NotNull Disposable lifetime,
-                                    @NotNull ProgressIndicator uiIndicator,
-                                    @NotNull Runnable completedCallback) {
+    public void registerListener(@NotNull Disposable lifetime,
+                                 @NotNull ProgressIndicator uiIndicator,
+                                 @NotNull Runnable completedCallback) {
       ApplicationManager.getApplication().assertIsDispatchThread();
 
       //there is no need to add yet another copy of the same component
@@ -148,6 +166,8 @@ public class SdkDownloadTracker {
       Disposable unsubscribe = new Disposable() {
         @Override
         public void dispose() {
+          ApplicationManager.getApplication().assertIsDispatchThread();
+
           myProgressIndicator.removeStateDelegate((ProgressIndicatorEx)uiIndicator);
           myCompleteListeners.remove(completedCallback);
           myDisposables.remove(this);
@@ -157,23 +177,33 @@ public class SdkDownloadTracker {
       myDisposables.add(unsubscribe);
     }
 
-    public void onSdkDownloadCompleted() {
+    public void onSdkDownloadCompleted(boolean failed) {
       ApplicationManager.getApplication().assertIsDispatchThread();
+
+      if (failed) {
+        dispose();
+        return;
+      }
 
       WriteAction.run(() -> {
         for (Sdk sdk : myEditableSdks) {
-          ((SdkType)sdk.getSdkType()).setupSdkPaths(sdk);
-        }
-
-        myPendingTasks.remove(this);
-
-        //free the WriteAction, thus non-blocking
-        ApplicationManager.getApplication().invokeLater(() -> {
-          myCompleteListeners.forEach(it -> it.run());
-          for (Disposable disposable : myDisposables) {
-            Disposer.dispose(disposable);
+          try {
+            ((SdkType)sdk.getSdkType()).setupSdkPaths(sdk);
           }
-        });
+          catch (Exception e) {
+            LOG.warn("Failed to setup Sdk " + sdk + ". " + e.getMessage(), e);
+          }
+        }
+        dispose();
+      });
+    }
+
+    private void dispose() {
+      //free the WriteAction, thus non-blocking
+      ApplicationManager.getApplication().invokeLater(() -> {
+        myPendingTasks.remove(this);
+        myCompleteListeners.forEach(Runnable::run);
+        myDisposables.forEach(Disposable::dispose);
       });
     }
   }
