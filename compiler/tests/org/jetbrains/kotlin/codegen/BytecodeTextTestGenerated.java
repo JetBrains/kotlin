@@ -1580,6 +1580,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/defaultArguments/methodHandlerElimination.kt");
         }
 
+        @TestMetadata("noAccessorForDefault.kt")
+        public void testNoAccessorForDefault() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/defaultArguments/noAccessorForDefault.kt");
+        }
+
         @TestMetadata("noEmptyArray.kt")
         public void testNoEmptyArray() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/defaultArguments/noEmptyArray.kt");

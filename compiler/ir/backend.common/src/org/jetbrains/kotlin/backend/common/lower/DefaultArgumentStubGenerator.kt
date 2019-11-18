@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.descriptors.*
 import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
@@ -361,6 +363,7 @@ private fun IrFunction.generateDefaultsFunctionImpl(context: CommonBackendContex
                 isExternal = false
                 isPrimary = false
                 isExpect = false
+                visibility = Visibilities.PUBLIC
             }
         is IrSimpleFunction ->
             buildFunWithDescriptorForInlining(descriptor) {
@@ -370,6 +373,7 @@ private fun IrFunction.generateDefaultsFunctionImpl(context: CommonBackendContex
                 modality = Modality.FINAL
                 isExternal = false
                 isTailrec = false
+                visibility = Visibilities.PUBLIC
             }
         else -> throw IllegalStateException("Unknown function type")
     }
