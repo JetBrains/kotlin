@@ -259,10 +259,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     internal open fun compilerRunner(): GradleCompilerRunner =
         GradleCompilerRunner(this)
 
-    override fun compile() {
-        assert(false, { "unexpected call to compile()" })
-    }
-
     @TaskAction
     fun execute(inputs: IncrementalTaskInputs) {
         // If task throws exception, but its outputs are changed during execution,

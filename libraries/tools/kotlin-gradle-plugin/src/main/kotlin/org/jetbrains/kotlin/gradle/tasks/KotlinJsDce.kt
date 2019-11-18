@@ -63,8 +63,6 @@ open class KotlinJsDce : AbstractKotlinCompileTool<K2JSDceArguments>(), KotlinJs
 
     override fun findKotlinCompilerClasspath(project: Project): List<File> = findKotlinJsDceClasspath(project)
 
-    override fun compile() {}
-
     override fun keep(vararg fqn: String) {
         keep += fqn
     }

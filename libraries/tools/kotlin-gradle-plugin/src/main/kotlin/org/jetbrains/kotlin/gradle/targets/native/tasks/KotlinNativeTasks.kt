@@ -239,7 +239,7 @@ abstract class AbstractKotlinNativeCompile<T : KotlinCommonToolOptions> : Abstra
         buildCompilerArgs() + buildCommonArgs() + buildSourceArgs()
 
     @TaskAction
-    override fun compile() {
+    open fun compile() {
         val output = outputFile.get()
         output.parentFile.mkdirs()
         KonanCompilerRunner(project).run(buildArgs())
