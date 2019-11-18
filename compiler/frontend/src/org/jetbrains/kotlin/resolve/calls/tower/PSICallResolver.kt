@@ -94,7 +94,9 @@ class PSICallResolver(
         val scopeTower = ASTScopeTower(context)
         val resolutionCallbacks = createResolutionCallbacks(context)
 
-        println("Name: $name, args: ${kotlinCall.argumentsInParenthesis.joinToString()}")
+        if (name.asString() == "singleton") {
+            println("Name: $name, args: ${kotlinCall.argumentsInParenthesis.joinToString()}")
+        }
 
         val expectedType = calculateExpectedType(context)
         var result =

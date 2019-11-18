@@ -578,12 +578,14 @@ public class CallResolver {
         if (newInferenceEnabled && PSICallResolver.getDefaultResolutionKinds().contains(resolutionKind)) {
             assert resolutionTask.name != null;
             BindingContextUtilsKt.recordScope(context.trace, context.scope, context.call.getCalleeExpression());
+            System.out.println(Thread.currentThread().getId() + " HERE1");
             return PSICallResolver.runResolutionAndInference(context, resolutionTask.name, resolutionKind, tracing);
         }
 
         if (newInferenceEnabled && resolutionKind instanceof NewResolutionOldInference.ResolutionKind.GivenCandidates) {
             assert resolutionTask.givenCandidates != null;
             BindingContextUtilsKt.recordScope(context.trace, context.scope, context.call.getCalleeExpression());
+            System.out.println(Thread.currentThread().getId() + " HERE2");
             return PSICallResolver.runResolutionAndInferenceForGivenCandidates(context, resolutionTask.givenCandidates, tracing);
         }
 

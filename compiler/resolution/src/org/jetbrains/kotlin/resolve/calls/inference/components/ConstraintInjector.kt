@@ -151,7 +151,7 @@ class ConstraintInjector(
         fun runIsSubtypeOf(lowerType: KotlinTypeMarker, upperType: KotlinTypeMarker) {
             if (!AbstractTypeChecker.isSubtypeOf(this@TypeCheckerContext as AbstractTypeCheckerContext, lowerType, upperType)) {
                 // todo improve error reporting -- add information about base types
-                println("ERROR REPORTED: $lowerType, $upperType; position: ${position.initialConstraint.position}")
+                println("${Thread.currentThread().id} ERROR REPORTED: $lowerType, $upperType; position: ${position.initialConstraint.position}")
                 c.addError(NewConstraintError(lowerType, upperType, position))
             }
         }
