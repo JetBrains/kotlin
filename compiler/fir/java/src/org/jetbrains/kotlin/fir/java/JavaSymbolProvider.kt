@@ -11,11 +11,8 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
-import org.jetbrains.kotlin.fir.declarations.addDefaultBoundIfNecessary
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirTypeParameterImpl
-import org.jetbrains.kotlin.fir.declarations.visibility
 import org.jetbrains.kotlin.fir.generateValueOfFunction
 import org.jetbrains.kotlin.fir.generateValuesFunction
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
@@ -103,6 +100,7 @@ class JavaSymbolProvider(
                 useLazyNestedClassifierScope = regularClass is FirJavaClass,
                 existingNames = (regularClass as? FirJavaClass)?.existingNestedClassifierNames
             )
+            val wrappedDeclaredScope = wrapScopeWithJvmMapped(regularClass.classId, declaredScope, useSiteSession, scopeSession)
             val superTypeEnhancementScopes =
                 lookupSuperTypes(regularClass, lookupInterfaces = true, deep = false, useSiteSession = useSiteSession)
                     .mapNotNull { useSiteSuperType ->
@@ -119,7 +117,7 @@ class JavaSymbolProvider(
                     }
             JavaClassUseSiteMemberScope(
                 regularClass, useSiteSession,
-                JavaSuperTypeScope(regularClass, useSiteSession, superTypeEnhancementScopes), declaredScope
+                JavaSuperTypeScope(regularClass, useSiteSession, superTypeEnhancementScopes), wrappedDeclaredScope
             )
         }
     }

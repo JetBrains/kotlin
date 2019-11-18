@@ -73,17 +73,20 @@ fun FirClass<*>.buildUseSiteMemberScope(useSiteSession: FirSession, builder: Sco
     return symbolProvider.getClassUseSiteMemberScope(classId, useSiteSession, builder)
 }
 
-fun FirClass<*>.buildDefaultUseSiteMemberScope(useSiteSession: FirSession, builder: ScopeSession): FirScope {
-    return builder.getOrBuild(symbol, USE_SITE) {
+fun FirClass<*>.buildDefaultUseSiteMemberScope(useSiteSession: FirSession, scopeSession: ScopeSession): FirScope {
+    return scopeSession.getOrBuild(symbol, USE_SITE) {
 
         val declaredScope = declaredMemberScope(this)
+        val wrappedDeclaredScope = FirSymbolProvider.wrapScopeWithJvmMapped(
+            classId, declaredScope, useSiteSession, scopeSession
+        )
         val scopes = lookupSuperTypes(this, lookupInterfaces = true, deep = false, useSiteSession = useSiteSession)
             .mapNotNull { useSiteSuperType ->
                 if (useSiteSuperType is ConeClassErrorType) return@mapNotNull null
                 val symbol = useSiteSuperType.lookupTag.toSymbol(useSiteSession)
                 if (symbol is FirRegularClassSymbol) {
-                    val useSiteMemberScope = symbol.fir.buildUseSiteMemberScope(useSiteSession, builder)!!
-                    useSiteSuperType.wrapSubstitutionScopeIfNeed(useSiteSession, useSiteMemberScope, symbol.fir, builder)
+                    val useSiteMemberScope = symbol.fir.buildUseSiteMemberScope(useSiteSession, scopeSession)!!
+                    useSiteSuperType.wrapSubstitutionScopeIfNeed(useSiteSession, useSiteMemberScope, symbol.fir, scopeSession)
                 } else {
                     null
                 }
@@ -91,7 +94,7 @@ fun FirClass<*>.buildDefaultUseSiteMemberScope(useSiteSession: FirSession, build
         FirClassUseSiteMemberScope(
             useSiteSession,
             FirSuperTypeScope(useSiteSession, FirStandardOverrideChecker(useSiteSession), scopes),
-            declaredScope
+            wrappedDeclaredScope
         )
     }
 }

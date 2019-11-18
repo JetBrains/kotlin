@@ -6,11 +6,11 @@ public interface MyIterable<T> extends Iterable<T>
 interface UseIterable : MyIterable<String> {
     fun test() {
         val it = iterator()
-        val split = <!UNRESOLVED_REFERENCE!>spliterator<!>()
+        val split = spliterator()
     }
 }
 
 fun test(some: Iterable<String>) {
     val it = some.iterator()
-    val split = some.<!UNRESOLVED_REFERENCE!>spliterator<!>()
+    val split = some.spliterator()
 }

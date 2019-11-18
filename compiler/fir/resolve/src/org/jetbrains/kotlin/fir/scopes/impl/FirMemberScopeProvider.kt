@@ -9,13 +9,14 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.resolve.memberScopeProvider
+import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 class FirMemberScopeProvider : FirSessionComponent {
 
-    private val declaredMemberCache = mutableMapOf<FirClass<*>, FirClassDeclaredMemberScope>()
+    private val declaredMemberCache = mutableMapOf<FirClass<*>, FirScope>()
     private val nestedClassifierCache = mutableMapOf<FirClass<*>, FirNestedClassifierScope>()
     private val selfImportingCache = mutableMapOf<FqName, FirSelfImportingScope>()
 
@@ -23,7 +24,7 @@ class FirMemberScopeProvider : FirSessionComponent {
         klass: FirClass<*>,
         useLazyNestedClassifierScope: Boolean,
         existingNames: List<Name>?
-    ): FirClassDeclaredMemberScope {
+    ): FirScope {
         return declaredMemberCache.getOrPut(klass) {
             FirClassDeclaredMemberScope(klass, useLazyNestedClassifierScope, existingNames)
         }
@@ -47,7 +48,7 @@ fun declaredMemberScope(
     klass: FirClass<*>,
     useLazyNestedClassifierScope: Boolean = false,
     existingNames: List<Name>? = null
-): FirClassDeclaredMemberScope {
+): FirScope {
     return klass
         .session
         .memberScopeProvider

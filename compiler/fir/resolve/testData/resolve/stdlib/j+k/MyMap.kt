@@ -10,7 +10,7 @@ fun test(map: MyMap) {
     val otherResult = map.getOrDefault("key", "value")
     val anotherResult = map.<!UNRESOLVED_REFERENCE!>replace<!>("key", "value")
     // Java forEach
-    map.<!INAPPLICABLE_CANDIDATE!>forEach<!> { key, value ->
+    map.forEach { key, value ->
         println("$key: $value")
     }
     // Kotlin forEach
@@ -25,7 +25,7 @@ fun test(map: MutableMap<String, String>) {
     val otherResult = map.getOrDefault("key", "value")
     val anotherResult = map.<!UNRESOLVED_REFERENCE!>replace<!>("key", "value")
     // Java forEach
-    map.<!INAPPLICABLE_CANDIDATE!>forEach<!> { key, value ->
+    map.forEach { key, value ->
         println("$key: $value")
     }
     // Kotlin forEach
