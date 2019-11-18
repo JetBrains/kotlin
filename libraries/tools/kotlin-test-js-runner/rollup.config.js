@@ -26,9 +26,9 @@ export default [
         plugins: plugins()
     },
     {
-        input: './karma-debug.js',
+        input: './karma-debug-runner.js',
         output: {
-            file: 'lib/karma-debug.js',
+            file: 'lib/karma-debug-runner.js',
             format: 'cjs'
         }
     },

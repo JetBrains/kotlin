@@ -316,7 +316,7 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
         val karmaConfigAbsolutePath = karmaConfJs.absolutePath
         val args = if (debug) {
             listOf(
-                npmProject.require("kotlin-test-js-runner/karma-debug.js"),
+                npmProject.require("kotlin-test-js-runner/karma-debug-runner.js"),
                 karmaConfigAbsolutePath
             )
         } else {
