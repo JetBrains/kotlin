@@ -499,6 +499,8 @@ class KotlinExpressionMover : AbstractKotlinUpDownMover() {
                 return element
             }
 
+            if (getParentFileAnnotationEntry(element) != null) return null
+
             val movableElement = element.getParentOfTypesAndPredicate(
                 strict = false,
                 parentClasses = *MOVABLE_ELEMENT_CLASSES,

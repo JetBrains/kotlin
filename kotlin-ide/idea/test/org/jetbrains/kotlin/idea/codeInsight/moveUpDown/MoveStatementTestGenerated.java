@@ -1250,6 +1250,19 @@ public class MoveStatementTestGenerated extends AbstractMoveStatementTest {
     }
 
     @RunWith(JUnit3RunnerWithInners.class)
+    @TestMetadata("testData/codeInsight/moveUpDown/line")
+    public static class Line extends AbstractMoveStatementTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTestLine, this, testDataFilePath);
+        }
+
+        @TestMetadata("fileAnnotation.kt")
+        public void testFileAnnotation() throws Exception {
+            runTest("testData/codeInsight/moveUpDown/line/fileAnnotation.kt");
+        }
+    }
+
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/codeInsight/moveUpDown/parametersAndArguments")
     public static class ParametersAndArguments extends AbstractMoveStatementTest {
         private void runTest(String testDataFilePath) throws Exception {

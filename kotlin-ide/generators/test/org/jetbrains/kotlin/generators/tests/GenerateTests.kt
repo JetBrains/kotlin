@@ -422,6 +422,7 @@ private fun assembleWorkspace(): TWorkspace = workspace {
             model("codeInsight/moveUpDown/classBodyDeclarations", pattern = KT_OR_KTS, testMethodName = "doTestClassBodyDeclaration")
             model("codeInsight/moveUpDown/closingBraces", testMethodName = "doTestExpression")
             model("codeInsight/moveUpDown/expressions", pattern = KT_OR_KTS, testMethodName = "doTestExpression")
+            model("codeInsight/moveUpDown/line", testMethodName = "doTestLine")
             model("codeInsight/moveUpDown/parametersAndArguments", testMethodName = "doTestExpression")
             model("codeInsight/moveUpDown/trailingComma", testMethodName = "doTestExpressionWithTrailingComma")
         }

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.codeInsight.moveUpDown
 
 import com.intellij.codeInsight.editorActions.moveLeftRight.MoveElementLeftAction
 import com.intellij.codeInsight.editorActions.moveLeftRight.MoveElementRightAction
+import com.intellij.codeInsight.editorActions.moveUpDown.LineMover
 import com.intellij.codeInsight.editorActions.moveUpDown.MoveStatementDownAction
 import com.intellij.codeInsight.editorActions.moveUpDown.MoveStatementUpAction
 import com.intellij.codeInsight.editorActions.moveUpDown.StatementUpDownMover
@@ -38,6 +39,10 @@ abstract class AbstractMoveStatementTest : AbstractCodeMoverTest() {
 
     protected fun doTestExpressionWithTrailingComma(unused: String) {
         doTest(KotlinExpressionMover::class.java, true)
+    }
+
+    protected fun doTestLine(unused: String) {
+        doTest(LineMover::class.java)
     }
 
     private fun doTest(defaultMoverClass: Class<out StatementUpDownMover>, trailingComma: Boolean = false) {
