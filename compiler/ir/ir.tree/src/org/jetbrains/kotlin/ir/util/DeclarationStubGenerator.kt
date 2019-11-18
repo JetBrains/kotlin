@@ -37,7 +37,7 @@ class DeclarationStubGenerator(
     val symbolTable: SymbolTable,
     languageVersionSettings: LanguageVersionSettings,
     private val irProviders: List<IrProvider> = emptyList(),
-    private val extensions: StubGeneratorExtensions = StubGeneratorExtensions.EMPTY
+    val extensions: StubGeneratorExtensions = StubGeneratorExtensions.EMPTY
 ) {
     private val lazyTable = symbolTable.lazyWrapper
 

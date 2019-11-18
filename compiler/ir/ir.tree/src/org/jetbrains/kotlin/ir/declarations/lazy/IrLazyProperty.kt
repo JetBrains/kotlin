@@ -39,7 +39,7 @@ class IrLazyProperty(
     override val isFakeOverride: Boolean,
     stubGenerator: DeclarationStubGenerator,
     typeTranslator: TypeTranslator,
-    private val bindingContext: BindingContext? = null
+    bindingContext: BindingContext? = null
 ) :
     IrLazyDeclarationBase(startOffset, endOffset, origin, stubGenerator, typeTranslator),
     IrProperty {
@@ -72,11 +72,14 @@ class IrLazyProperty(
         symbol.bind(this)
     }
 
+    private val hasBackingField: Boolean =
+        descriptor.hasBackingField(bindingContext) || stubGenerator.extensions.isPropertyWithPlatformField(descriptor)
+
     override val descriptor: PropertyDescriptor
         get() = symbol.descriptor
 
     override var backingField: IrField? by lazyVar {
-        if (descriptor.hasBackingField(bindingContext)) {
+        if (hasBackingField) {
             stubGenerator.generateFieldStub(descriptor).apply {
                 correspondingPropertySymbol = this@IrLazyProperty.symbol
             }

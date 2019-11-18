@@ -87,4 +87,7 @@ class JvmStubGeneratorExtensions : StubGeneratorExtensions() {
             classNameOverride[it] = facadeName
         }
     }
+
+    override fun isPropertyWithPlatformField(descriptor: PropertyDescriptor): Boolean =
+        descriptor.hasJvmFieldAnnotation()
 }
