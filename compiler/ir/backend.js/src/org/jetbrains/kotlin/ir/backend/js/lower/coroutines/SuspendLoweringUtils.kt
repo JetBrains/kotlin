@@ -28,12 +28,12 @@ open class SuspendableNodesCollector(private val suspendableNodes: MutableSet<Ir
 
     private var hasSuspendableChildren = false
 
-    protected fun markNode(node: IrElement) {
+    private fun markNode(node: IrElement) {
         suspendableNodes += node
         hasSuspendableChildren = true
     }
 
-    protected fun isSuspendableNode(node: IrElement) = node in suspendableNodes
+    private fun isSuspendableNode(node: IrElement) = node in suspendableNodes
 
     override fun visitElement(element: IrElement) {
         val current = hasSuspendableChildren
@@ -51,9 +51,6 @@ open class SuspendableNodesCollector(private val suspendableNodes: MutableSet<Ir
             markNode(expression)
         }
     }
-}
-
-class SuspendedTerminatorsCollector(suspendableNodes: MutableSet<IrElement>) : SuspendableNodesCollector(suspendableNodes) {
 
     override fun visitBreakContinue(jump: IrBreakContinue) {
         if (isSuspendableNode(jump.loop)) {
@@ -71,12 +68,13 @@ class SuspendedTerminatorsCollector(suspendableNodes: MutableSet<IrElement>) : S
 }
 
 fun collectSuspendableNodes(function: IrBlock): MutableSet<IrElement> {
-
     val suspendableNodes = mutableSetOf<IrElement>()
-    // 1st: mark suspendable loops and tries
-    function.acceptVoid(SuspendableNodesCollector(suspendableNodes))
-    // 2nd: mark inner terminators
-    function.acceptVoid(SuspendedTerminatorsCollector(suspendableNodes))
+    var size: Int
+
+    do {
+        size = suspendableNodes.size
+        function.acceptVoid(SuspendableNodesCollector(suspendableNodes))
+    } while (size != suspendableNodes.size)
 
     return suspendableNodes
 }

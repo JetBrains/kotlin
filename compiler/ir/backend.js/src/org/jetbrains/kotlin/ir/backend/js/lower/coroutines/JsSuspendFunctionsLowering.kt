@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.ir.isSuspend
 import org.jetbrains.kotlin.backend.common.lower.AbstractSuspendFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.FinallyBlocksLowering
+import org.jetbrains.kotlin.backend.common.lower.ReturnableBlockTransformer
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.builders.*
@@ -51,7 +52,11 @@ class JsSuspendFunctionsLowering(ctx: JsIrBackendContext) : AbstractSuspendFunct
         transformingFunction: IrFunction,
         argumentToPropertiesMap: Map<IrValueParameter, IrField>
     ) {
-        val simplifiedFunction = transformingFunction.transform(FinallyBlocksLowering(context, context.dynamicType), null) as IrFunction
+        val returnableBlockTransformer = ReturnableBlockTransformer(context)
+        val finallyBlockTransformer = FinallyBlocksLowering(context, context.dynamicType)
+        val simplifiedFunction =
+            transformingFunction.transform(finallyBlockTransformer, null).transform(returnableBlockTransformer, null) as IrFunction
+
         val originalBody = simplifiedFunction.body as IrBlockBody
 
         val body = IrBlockImpl(
