@@ -592,7 +592,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
             }
             val receiverType = function.receiverTypeReference.convertSafe<FirTypeRef>()
             val firFunction = if (function.name == null) {
-                FirAnonymousFunctionImpl(function.toFirSourceElement(), session, returnType, receiverType, FirAnonymousFunctionSymbol())
+                FirAnonymousFunctionImpl(function.toFirSourceElement(), session, returnType, receiverType, FirAnonymousFunctionSymbol(), isLambda = false)
             } else {
                 val status = FirDeclarationStatusImpl(
                     if (function.isLocal) Visibilities.LOCAL else function.visibility,
@@ -636,7 +636,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
             val literalSource = literal.toFirSourceElement()
             val returnType = FirImplicitTypeRefImpl(literalSource)
             val receiverType = FirImplicitTypeRefImpl(literalSource)
-            return FirAnonymousFunctionImpl(literalSource, session, returnType, receiverType, FirAnonymousFunctionSymbol()).apply {
+            return FirAnonymousFunctionImpl(literalSource, session, returnType, receiverType, FirAnonymousFunctionSymbol(), isLambda = true).apply {
                 context.firFunctions += this
                 var destructuringBlock: FirExpression? = null
                 for (valueParameter in literal.valueParameters) {

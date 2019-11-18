@@ -32,8 +32,8 @@ FILE: safeCalls.kt
     }
     public final fun R|kotlin/Any?|.boo(b: R|kotlin/Boolean|): R|kotlin/Unit|
     public final fun test_5(x: R|A?|): R|kotlin/Unit| {
-        R|<local>/x|?.R|kotlin/let|<R|A|, R|kotlin/Unit|>(<L> = let@fun <anonymous>(it: R|A|): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
-            ^ Unit
+        R|<local>/x|?.R|kotlin/let|<R|A|, R|kotlin/Nothing|>(<L> = let@fun <anonymous>(it: R|A|): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+            ^test_5 Unit
         }
         )?.R|/boo|(R|<local>/x|.R|/A.bool|())
         R|<local>/x|.<Inapplicable(WRONG_RECEIVER): [/A.id]>#()

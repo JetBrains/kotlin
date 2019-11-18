@@ -32,8 +32,8 @@ FILE: returnValuesFromLambda.kt
         )
     }
     public final fun test_3(): R|kotlin/Unit| {
-        lval x: R|kotlin/Unit| = R|kotlin/run|<R|kotlin/Unit|>(<L> = run@fun <anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
-            ^ Unit
+        lval x: R|kotlin/Nothing| = R|kotlin/run|<R|kotlin/Nothing|>(<L> = run@fun <anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+            ^test_3 Unit
         }
         )
     }

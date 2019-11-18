@@ -195,44 +195,45 @@ digraph safeCalls_kt {
     subgraph cluster_12 {
       color=blue
       71 [label="Enter function anonymousFunction"];
-      72 [label="Jump: ^ Unit"];
+      72 [label="Jump: ^test_5 Unit"];
       73 [label="Stub" style="filled" fillcolor=gray];
-      74 [label="Exit function anonymousFunction"];
+      74 [label="Exit function anonymousFunction" style="filled" fillcolor=gray];
     }
-    75 [label="Function call: R|<local>/x|?.R|kotlin/let|<R|A|, R|kotlin/Unit|>(<L> = let@fun <anonymous>(it: R|A|): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
-    ^ Unit
+    75 [label="Function call: R|<local>/x|?.R|kotlin/let|<R|A|, R|kotlin/Nothing|>(<L> = let@fun <anonymous>(it: R|A|): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+    ^test_5 Unit
 }
-)"];
-    76 [label="Exit safe call"];
-    77 [label="Enter safe call"];
-    78 [label="Access variable R|<local>/x|"];
-    79 [label="Function call: R|<local>/x|.R|/A.bool|()"];
-    80 [label="Function call: R|<local>/x|?.R|kotlin/let|<R|A|, R|kotlin/Unit|>(<L> = let@fun <anonymous>(it: R|A|): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
-    ^ Unit
+)" style="filled" fillcolor=gray];
+    76 [label="Exit safe call" style="filled" fillcolor=gray];
+    77 [label="Enter safe call" style="filled" fillcolor=gray];
+    78 [label="Access variable R|<local>/x|" style="filled" fillcolor=gray];
+    79 [label="Function call: R|<local>/x|.R|/A.bool|()" style="filled" fillcolor=gray];
+    80 [label="Function call: R|<local>/x|?.R|kotlin/let|<R|A|, R|kotlin/Nothing|>(<L> = let@fun <anonymous>(it: R|A|): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+    ^test_5 Unit
 }
-)?.R|/boo|(R|<local>/x|.R|/A.bool|())"];
-    81 [label="Exit safe call"];
-    82 [label="Access variable R|<local>/x|"];
-    83 [label="Function call: R|<local>/x|.<Inapplicable(WRONG_RECEIVER): [/A.id]>#()"];
+)?.R|/boo|(R|<local>/x|.R|/A.bool|())" style="filled" fillcolor=gray];
+    81 [label="Exit safe call" style="filled" fillcolor=gray];
+    82 [label="Access variable R|<local>/x|" style="filled" fillcolor=gray];
+    83 [label="Function call: R|<local>/x|.<Inapplicable(WRONG_RECEIVER): [/A.id]>#()" style="filled" fillcolor=gray];
     84 [label="Exit function test_5" style="filled" fillcolor=red];
   }
 
   68 -> {69};
-  69 -> {70 76};
+  69 -> {70};
+  69 -> {76} [style=dotted];
   70 -> {71};
   71 -> {72};
-  72 -> {74};
+  72 -> {84};
   72 -> {73} [style=dotted];
   73 -> {74} [style=dotted];
-  74 -> {75};
-  75 -> {76};
-  76 -> {77 81};
-  77 -> {78};
-  78 -> {79};
-  79 -> {80};
-  80 -> {81};
-  81 -> {82};
-  82 -> {83};
-  83 -> {84};
+  74 -> {75} [style=dotted];
+  75 -> {76} [style=dotted];
+  76 -> {77 81} [style=dotted];
+  77 -> {78} [style=dotted];
+  78 -> {79} [style=dotted];
+  79 -> {80} [style=dotted];
+  80 -> {81} [style=dotted];
+  81 -> {82} [style=dotted];
+  82 -> {83} [style=dotted];
+  83 -> {84} [style=dotted];
 
 }

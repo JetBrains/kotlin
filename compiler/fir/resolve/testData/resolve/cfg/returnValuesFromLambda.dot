@@ -120,25 +120,27 @@ digraph returnValuesFromLambda_kt {
     subgraph cluster_10 {
       color=blue
       34 [label="Enter function anonymousFunction"];
-      35 [label="Jump: ^ Unit"];
+      35 [label="Jump: ^test_3 Unit"];
       36 [label="Stub" style="filled" fillcolor=gray];
-      37 [label="Exit function anonymousFunction"];
+      37 [label="Exit function anonymousFunction" style="filled" fillcolor=gray];
     }
-    38 [label="Function call: R|kotlin/run|<R|kotlin/Unit|>(<L> = run@fun <anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
-    ^ Unit
+    38 [label="Function call: R|kotlin/run|<R|kotlin/Nothing|>(<L> = run@fun <anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+    ^test_3 Unit
 }
-)"];
-    39 [label="Variable declaration: lval x: R|kotlin/Unit|"];
-    40 [label="Exit function test_3" style="filled" fillcolor=red];
+)" style="filled" fillcolor=gray];
+    39 [label="Stub" style="filled" fillcolor=gray];
+    40 [label="Variable declaration: lval x: R|kotlin/Nothing|" style="filled" fillcolor=gray];
+    41 [label="Exit function test_3" style="filled" fillcolor=red];
   }
 
   33 -> {34};
   34 -> {35};
-  35 -> {37};
+  35 -> {41};
   35 -> {36} [style=dotted];
   36 -> {37} [style=dotted];
-  37 -> {38};
-  38 -> {39};
-  39 -> {40};
+  37 -> {38} [style=dotted];
+  38 -> {41 39} [style=dotted];
+  39 -> {40} [style=dotted];
+  40 -> {41} [style=dotted];
 
 }

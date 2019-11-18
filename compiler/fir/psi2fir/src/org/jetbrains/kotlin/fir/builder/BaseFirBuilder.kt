@@ -105,8 +105,8 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
             this
         ).apply {
             target = FirFunctionTarget(labelName)
-            val lastFunction = context.firFunctions.lastOrNull()
             if (labelName == null) {
+                val lastFunction = context.firFunctions.lastOrNull { !(it is FirAnonymousFunction && it.isLambda) }
                 if (lastFunction != null) {
                     target.bind(lastFunction)
                 } else {

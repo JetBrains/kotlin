@@ -223,6 +223,11 @@ public class FirVisualizerForRawFirDataGenerated extends AbstractFirVisualizer {
             runTest("compiler/fir/psi2fir/testData/rawBuilder/expressions/lambda.kt");
         }
 
+        @TestMetadata("lambdaAndAnonymousFunction.kt")
+        public void testLambdaAndAnonymousFunction() throws Exception {
+            runTest("compiler/fir/psi2fir/testData/rawBuilder/expressions/lambdaAndAnonymousFunction.kt");
+        }
+
         @TestMetadata("locals.kt")
         public void testLocals() throws Exception {
             runTest("compiler/fir/psi2fir/testData/rawBuilder/expressions/locals.kt");

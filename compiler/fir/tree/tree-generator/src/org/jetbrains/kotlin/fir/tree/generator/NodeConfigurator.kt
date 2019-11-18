@@ -253,6 +253,7 @@ object NodeConfigurator : AbstractFieldConfigurator() {
             +field(invocationKindType, nullable = true, withReplace = true).apply {
                 isMutable = true
             }
+            +booleanField("isLambda")
         }
 
         typeParameter.configure {

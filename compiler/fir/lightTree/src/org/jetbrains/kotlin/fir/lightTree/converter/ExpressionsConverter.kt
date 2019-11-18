@@ -127,7 +127,7 @@ class ExpressionsConverter(
             }
         }
 
-        return FirAnonymousFunctionImpl(null, session, implicitType, implicitType, FirAnonymousFunctionSymbol()).apply {
+        return FirAnonymousFunctionImpl(null, session, implicitType, implicitType, FirAnonymousFunctionSymbol(), isLambda = true).apply {
             context.firFunctions += this
             var destructuringBlock: FirExpression? = null
             for (valueParameter in valueParameterList) {

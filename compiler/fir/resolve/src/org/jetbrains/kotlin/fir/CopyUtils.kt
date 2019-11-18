@@ -62,7 +62,7 @@ fun FirAnonymousFunction.copy(
     controlFlowGraphReference: FirControlFlowGraphReference = this.controlFlowGraphReference,
     invocationKind: InvocationKind? = this.invocationKind
 ): FirAnonymousFunction {
-    return FirAnonymousFunctionImpl(source, session, returnTypeRef, receiverTypeRef, symbol).apply {
+    return FirAnonymousFunctionImpl(source, session, returnTypeRef, receiverTypeRef, symbol, isLambda).apply {
         this.valueParameters.addAll(valueParameters)
         this.body = body
         this.annotations.addAll(annotations)
