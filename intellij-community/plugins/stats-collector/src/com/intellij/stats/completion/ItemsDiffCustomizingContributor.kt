@@ -7,11 +7,14 @@ import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
+import com.intellij.codeInsight.lookup.LookupManager
+import com.intellij.codeInsight.lookup.impl.LookupImpl
+import com.intellij.completion.settings.CompletionMLRankingSettings
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.registry.Registry
+import com.intellij.stats.storage.factors.LookupStorage
 import com.intellij.ui.JBColor
 import java.awt.Color
-import java.lang.ref.Reference
 import java.util.concurrent.atomic.AtomicInteger
 
 class ItemsDiffCustomizingContributor : CompletionContributor() {
@@ -20,7 +23,7 @@ class ItemsDiffCustomizingContributor : CompletionContributor() {
   }
 
   override fun fillCompletionVariants(parameters: CompletionParameters, result: CompletionResultSet) {
-    if (Registry.`is`("completion.stats.show.ml.ranking.diff")) {
+    if (shouldShowDiff(parameters)) {
       result.runRemainingContributors(parameters) {
         result.passResult(it.withLookupElement(MovedLookupElement(it.lookupElement)))
       }
@@ -28,6 +31,14 @@ class ItemsDiffCustomizingContributor : CompletionContributor() {
     else {
       super.fillCompletionVariants(parameters, result)
     }
+  }
+
+  private fun shouldShowDiff(parameters: CompletionParameters): Boolean {
+    if (!Registry.`is`("completion.stats.show.ml.ranking.diff")) return false
+    val mlRankingSettings = CompletionMLRankingSettings.getInstance()
+    if (!mlRankingSettings.isRankingEnabled) return false
+    val lookup = LookupManager.getActiveLookup(parameters.editor) as? LookupImpl ?: return false
+    return LookupStorage.get(lookup)?.model != null
   }
 
   private class MovedLookupElement(delegate: LookupElement) : LookupElementDecorator<LookupElement>(delegate) {
