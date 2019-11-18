@@ -48,8 +48,7 @@ class KtOCLightSymbol(
 
     override fun isSameSymbol(symbol: OCSymbol?, project: Project): Boolean {
         return symbol === this
-               || symbol is KtOCLazySymbol<*, *> && symbol.locateDefinition(project) == locateDefinition(project)
-               || symbol is KtSwiftLazySymbol<*, *> && symbol.locateDefinition(project) == locateDefinition(project)
-               || symbol is KtOCLightSymbol && symbol.locateDefinition(project) == locateDefinition(project)
+                || (symbol is KtLazySymbol<*, *> || symbol is KtOCLightSymbol)
+                && symbol.locateDefinition(project) == locateDefinition(project)
     }
 }
