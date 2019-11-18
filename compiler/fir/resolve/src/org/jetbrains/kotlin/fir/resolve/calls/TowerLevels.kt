@@ -221,15 +221,24 @@ class QualifiedReceiverTowerLevel(
         processor: TowerScopeLevel.TowerScopeLevelProcessor<T>
     ): ProcessorAction {
         val qualifiedReceiver = explicitReceiver?.explicitReceiverExpression as FirResolvedQualifier
-        val scope = FirExplicitSimpleImportingScope(
-            listOf(
-                FirResolvedImportImpl(
-                    FirImportImpl(null, FqName.topLevel(name), false, null),
-                    qualifiedReceiver.packageFqName,
-                    qualifiedReceiver.relativeClassFqName
+        val classId = qualifiedReceiver.classId
+        val scope = when {
+            token == TowerScopeLevel.Token.Objects || classId == null -> {
+                FirExplicitSimpleImportingScope(
+                    listOf(
+                        FirResolvedImportImpl(
+                            FirImportImpl(null, FqName.topLevel(name), false, null),
+                            qualifiedReceiver.packageFqName,
+                            qualifiedReceiver.relativeClassFqName
+                        )
+                    ), session, bodyResolveComponents.scopeSession
                 )
-            ), session, bodyResolveComponents.scopeSession
-        )
+            }
+            else -> {
+                session.firSymbolProvider.getClassUseSiteMemberScope(classId, session, bodyResolveComponents.scopeSession)
+                    ?: return ProcessorAction.NEXT
+            }
+        }
 
         val processorForCallables: (FirCallableSymbol<*>) -> ProcessorAction = {
             val fir = it.fir

@@ -5,8 +5,8 @@
 // FILE: CommonDataKeys.java
 
 public class CommonDataKeys {
-  public static final String PROJECT = "project";
-  public final String MEMBER = "member"
+    public static final String PROJECT = "project";
+    public final String MEMBER = "member"
 }
 
 // FILE: PlatformDataKeys.java
@@ -18,6 +18,6 @@ public class PlatformDataKeys extends CommonDataKeys {
 // FILE: main.kt
 
 fun test() {
-    val project = PlatformDataKeys.<!UNRESOLVED_REFERENCE!>PROJECT<!>
+    val project = PlatformDataKeys.PROJECT
     val member = PlatformDataKeys().MEMBER
 }
