@@ -35,7 +35,8 @@ fun assertException(body: () -> Unit) {
     try {
         body()
         throw AssertionError ("Test failed: no IndexOutOfBoundsException on wrong indices")
-    } catch (e: IndexOutOfBoundsException) {}
+    } catch (e: IndexOutOfBoundsException) {
+    } catch (e: IllegalArgumentException) {}
 }
 
 // Insert ===================================================================================================

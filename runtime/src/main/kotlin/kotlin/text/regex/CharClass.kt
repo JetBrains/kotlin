@@ -485,6 +485,7 @@ internal class CharClass(val ignoreCase: Boolean = false, negative: Boolean = fa
         }
     }
 
+    @UseExperimental(ExperimentalStdlibApi::class)
     override val instance: AbstractCharClass
         get() {
 
@@ -506,7 +507,7 @@ internal class CharClass(val ignoreCase: Boolean = false, negative: Boolean = fa
                         }
 
                         if (temp.length > 0)
-                            temp.deleteCharAt(temp.length - 1)
+                            temp.deleteAt(temp.length - 1)
 
                         return temp.toString()
                     }
@@ -518,6 +519,7 @@ internal class CharClass(val ignoreCase: Boolean = false, negative: Boolean = fa
             }
         }
 
+    @UseExperimental(ExperimentalStdlibApi::class)
     //for debugging purposes only
     override fun toString(): String {
         val temp = StringBuilder()
@@ -529,7 +531,7 @@ internal class CharClass(val ignoreCase: Boolean = false, negative: Boolean = fa
         }
 
         if (temp.length > 0)
-            temp.deleteCharAt(temp.length - 1)
+            temp.deleteAt(temp.length - 1)
 
         return temp.toString()
     }
