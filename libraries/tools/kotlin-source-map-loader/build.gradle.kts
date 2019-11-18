@@ -4,7 +4,7 @@ description = "Source Map Loader for Webpack"
 
 plugins {
     id("base")
-    id("com.moowork.node")
+    id("com.github.node-gradle.node")
 }
 
 val default = configurations.getByName(Dependency.DEFAULT_CONFIGURATION)

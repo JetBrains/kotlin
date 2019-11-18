@@ -1,5 +1,5 @@
 plugins {
-    id "com.moowork.node"
+    id "com.github.node-gradle.node"
 }
 
 description = 'Kotlin Standard Library for JS IR'

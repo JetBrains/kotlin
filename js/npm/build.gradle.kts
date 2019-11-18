@@ -1,7 +1,7 @@
 import com.moowork.gradle.node.npm.NpmTask
 
 plugins {
-  id("com.moowork.node")
+  id("com.github.node-gradle.node")
   base
 }
 
