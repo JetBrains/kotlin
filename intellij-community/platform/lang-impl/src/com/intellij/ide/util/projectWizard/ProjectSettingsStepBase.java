@@ -7,7 +7,6 @@ import com.intellij.icons.AllIcons;
 import com.intellij.ide.impl.ProjectUtil;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.application.TransactionGuard;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.project.DumbAware;
@@ -134,7 +133,7 @@ public class ProjectSettingsStepBase<T> extends AbstractActionWithPanel implemen
           if (dialog != null) {
             dialog.close(DialogWrapper.OK_EXIT_CODE);
           }
-          TransactionGuard.getInstance().submitTransactionAndWait(() -> myCallback.consume(ProjectSettingsStepBase.this, getPeer()));
+          myCallback.consume(ProjectSettingsStepBase.this, getPeer());
         }
       }
     };

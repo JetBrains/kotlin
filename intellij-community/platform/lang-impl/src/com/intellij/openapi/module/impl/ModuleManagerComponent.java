@@ -8,7 +8,6 @@ import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.TransactionGuard;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.module.Module;
@@ -129,7 +128,7 @@ public class ModuleManagerComponent extends ModuleManagerImpl {
   @Override
   protected void fireModulesAdded() {
     for (Module module : myModuleModel.getModules()) {
-      TransactionGuard.getInstance().submitTransactionAndWait(() -> fireModuleAddedInWriteAction((ModuleEx)module));
+      fireModuleAddedInWriteAction((ModuleEx)module);
     }
   }
 
