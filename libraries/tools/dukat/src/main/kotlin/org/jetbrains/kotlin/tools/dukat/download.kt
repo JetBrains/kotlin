@@ -101,6 +101,7 @@ private val urls = listOf(
     "https://www.w3.org/TR/animation-timing/" to "org.w3c.dom",
     "https://www.w3.org/TR/geometry-1/" to "org.w3c.dom",
     "https://www.w3.org/TR/cssom-view/" to "org.w3c.dom",
+    "https://www.w3.org/TR/touch-events/" to "org.w3c.dom",
     "https://www.w3.org/TR/uievents/" to "org.w3c.dom.events",
     "https://www.w3.org/TR/pointerevents/" to "org.w3c.dom.pointerevents",
 

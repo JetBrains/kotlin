@@ -3962,4 +3962,32 @@ CSSPseudoElement implements GeometryUtils;
 Document implements GeometryUtils;
 
 typedef (Text or Element or CSSPseudoElement or Document) GeometryNode;
+// Downloaded from https://www.w3.org/TR/touch-events/
+interface Touch {
+  readonly attribute long identifier;
+  readonly attribute EventTarget target;
+  readonly attribute long screenX;
+  readonly attribute long screenY;
+  readonly attribute long clientX;
+  readonly attribute long clientY;
+  readonly attribute long pageX;
+  readonly attribute long pageY;
+  };
+interface TouchList {
+  readonly attribute unsigned long length;
+  getter Touch? item (unsigned long index);
+  };
+interface TouchEvent : UIEvent {
+  readonly attribute TouchList touches;
+  readonly attribute TouchList targetTouches;
+  readonly attribute TouchList changedTouches;
+  readonly attribute boolean altKey;
+  readonly attribute boolean metaKey;
+  readonly attribute boolean ctrlKey;
+  readonly attribute boolean shiftKey;
+  };
+partial interface Document {
+  Touch createTouch (WindowProxy view, EventTarget target, long identifier, long pageX, long pageY, long screenX, long screenY);
+  TouchList createTouchList (Touch... touches);
+  };
 
