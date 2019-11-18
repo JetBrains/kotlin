@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
@@ -96,21 +95,12 @@ class IrSourceCompilerForInline(
         asmMethod: Method
     ): SMAPAndMethodNode {
         assert(callableDescriptor == callee.symbol.descriptor.original) { "Expected $callableDescriptor got ${callee.descriptor.original}" }
-        val irFunction = getFunctionToInline(jvmSignature, callDefault)
+        val irFunction = getFunctionToInline()
         return makeInlineNode(irFunction, FakeClassCodegen(irFunction, codegen.classCodegen), false)
     }
 
-    private fun getFunctionToInline(jvmSignature: JvmMethodSignature, callDefault: Boolean): IrFunction {
+    private fun getFunctionToInline(): IrFunction {
         val parent = callee.parentAsClass
-        if (callDefault) {
-            /*TODO: get rid of hack*/
-            return parent.declarations.filterIsInstance<IrFunction>().single {
-                it.descriptor.name.asString() == jvmSignature.asmMethod.name + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX &&
-                        codegen.context.methodSignatureMapper.mapSignatureSkipGeneric(callee).asmMethod.descriptor.startsWith(
-                            jvmSignature.asmMethod.descriptor.substringBeforeLast(')')
-                        )
-            }
-        }
 
         if (parent.fileParent.fileEntry is MultifileFacadeFileEntry) {
             codegen.context.multifileFacadeMemberToPartMember[callee]?.let { return it }

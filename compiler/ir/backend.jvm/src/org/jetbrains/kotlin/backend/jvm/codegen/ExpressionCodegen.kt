@@ -937,6 +937,14 @@ class ExpressionCodegen(
         }
     }
 
+    private fun IrFunction.resolveMultiFileFacades(): IrFunction {
+        //TODO: move to ResolveInlineCalls lower (now it's goes before generateMultifileFacadesPhase)
+        return if (origin == JvmLoweredDeclarationOrigin.MULTIFILE_BRIDGE) {
+            context.multifileFacadeMemberToPartMember[this]?.let { return it }
+            error("Function from a multi-file facade without the link to the function in the part: ${this.render()}")
+        } else this
+    }
+
     private fun getOrCreateCallGenerator(
         element: IrFunctionAccessExpression, data: BlockInfo, signature: JvmMethodSignature
     ): IrCallGenerator {
@@ -946,7 +954,7 @@ class ExpressionCodegen(
             return IrCallGenerator.DefaultCallGenerator
         }
 
-        val callee = element.symbol.owner
+        val callee = element.symbol.owner.resolveMultiFileFacades()
         val typeArgumentContainer = if (callee is IrConstructor) callee.parentAsClass else callee
         val typeArguments =
             if (element.typeArgumentsCount == 0) {
