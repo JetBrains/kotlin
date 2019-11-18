@@ -66,7 +66,8 @@ class DeserializerForClassfileDecompiler(
             packageFragmentProvider, ResolveEverythingToKotlinAnyLocalClassifierResolver(builtIns), LoggingErrorReporter(LOG),
             LookupTracker.DO_NOTHING, JavaFlexibleTypeDeserializer, emptyList(), notFoundClasses,
             ContractDeserializerImpl(configuration, storageManager),
-            extensionRegistryLite = JvmProtoBufUtil.EXTENSION_REGISTRY
+            extensionRegistryLite = JvmProtoBufUtil.EXTENSION_REGISTRY,
+            samConversionResolver = SamConversionResolverImpl(storageManager, samWithReceiverResolvers = emptyList())
         )
     }
 

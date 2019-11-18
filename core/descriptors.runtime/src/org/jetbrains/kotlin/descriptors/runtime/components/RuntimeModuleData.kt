@@ -29,13 +29,13 @@ import org.jetbrains.kotlin.load.java.AnnotationTypeQualifierResolver
 import org.jetbrains.kotlin.load.java.JavaClassesTracker
 import org.jetbrains.kotlin.load.java.components.JavaPropertyInitializerEvaluator
 import org.jetbrains.kotlin.load.java.components.JavaResolverCache
-import org.jetbrains.kotlin.resolve.sam.SamConversionResolver
 import org.jetbrains.kotlin.load.java.components.SignaturePropagator
 import org.jetbrains.kotlin.load.java.lazy.*
 import org.jetbrains.kotlin.load.java.typeEnhancement.SignatureEnhancement
 import org.jetbrains.kotlin.load.kotlin.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
+import org.jetbrains.kotlin.resolve.sam.SamConversionResolverImpl
 import org.jetbrains.kotlin.serialization.deserialization.ContractDeserializer
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
@@ -85,7 +85,7 @@ class RuntimeModuleData private constructor(
             val stdlibClassLoader = Unit::class.java.classLoader
             val builtinsProvider = JvmBuiltInsPackageFragmentProvider(
                 storageManager, ReflectKotlinClassFinder(stdlibClassLoader), module, notFoundClasses, builtIns.settings, builtIns.settings,
-                DeserializationConfiguration.Default, NewKotlinTypeChecker.Default
+                DeserializationConfiguration.Default, NewKotlinTypeChecker.Default, SamConversionResolverImpl(storageManager, emptyList())
             )
 
             module.setDependencies(module)
@@ -113,7 +113,7 @@ fun makeLazyJavaPackageFragmentFromClassLoaderProvider(
     val javaResolverComponents = JavaResolverComponents(
         storageManager, ReflectJavaClassFinder(classLoader), reflectKotlinClassFinder, deserializedDescriptorResolver,
         SignaturePropagator.DO_NOTHING, RuntimeErrorReporter, JavaResolverCache.EMPTY,
-        JavaPropertyInitializerEvaluator.DoNothing, SamConversionResolver.Empty, RuntimeSourceElementFactory,
+        JavaPropertyInitializerEvaluator.DoNothing, SamConversionResolverImpl(storageManager, emptyList()), RuntimeSourceElementFactory,
         singleModuleClassResolver, packagePartProvider, SupertypeLoopChecker.EMPTY, LookupTracker.DO_NOTHING, module,
         ReflectionTypes(module, notFoundClasses), annotationTypeQualifierResolver,
         SignatureEnhancement(annotationTypeQualifierResolver, Jsr305State.DISABLED),

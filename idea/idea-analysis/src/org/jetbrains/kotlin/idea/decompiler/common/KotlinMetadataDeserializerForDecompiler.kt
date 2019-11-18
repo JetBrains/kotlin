@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.sam.SamConversionResolverImpl
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
@@ -44,7 +45,8 @@ class KotlinMetadataDeserializerForDecompiler(
             ResolveEverythingToKotlinAnyLocalClassifierResolver(builtIns), LoggingErrorReporter(LOG),
             LookupTracker.DO_NOTHING, flexibleTypeDeserializer, emptyList(), notFoundClasses,
             ContractDeserializer.DEFAULT,
-            extensionRegistryLite = serializerProtocol.extensionRegistry
+            extensionRegistryLite = serializerProtocol.extensionRegistry,
+            samConversionResolver = SamConversionResolverImpl(storageManager, samWithReceiverResolvers = emptyList())
         )
     }
 

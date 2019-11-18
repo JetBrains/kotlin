@@ -49,7 +49,8 @@ class DeserializationComponents(
     val additionalClassPartsProvider: AdditionalClassPartsProvider = AdditionalClassPartsProvider.None,
     val platformDependentDeclarationFilter: PlatformDependentDeclarationFilter = PlatformDependentDeclarationFilter.All,
     val extensionRegistryLite: ExtensionRegistryLite,
-    val kotlinTypeChecker: NewKotlinTypeChecker = NewKotlinTypeChecker.Default
+    val kotlinTypeChecker: NewKotlinTypeChecker = NewKotlinTypeChecker.Default,
+    val samConversionResolver: SamConversionResolver
 ) {
     val classDeserializer: ClassDeserializer = ClassDeserializer(this)
 

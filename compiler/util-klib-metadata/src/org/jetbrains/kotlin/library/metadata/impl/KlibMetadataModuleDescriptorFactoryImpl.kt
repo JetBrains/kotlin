@@ -150,7 +150,8 @@ class KlibMetadataModuleDescriptorFactoryImpl(
             emptyList(),
             notFoundClasses,
             ContractDeserializerImpl(configuration, storageManager),
-            extensionRegistryLite = KlibMetadataSerializerProtocol.extensionRegistry
+            extensionRegistryLite = KlibMetadataSerializerProtocol.extensionRegistry,
+            samConversionResolver = SamConversionResolverImpl(storageManager, samWithReceiverResolvers = emptyList())
         )
 
         fragmentsToInitialize.forEach {

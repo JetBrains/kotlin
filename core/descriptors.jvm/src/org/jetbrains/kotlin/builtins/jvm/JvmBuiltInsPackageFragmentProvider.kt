@@ -28,7 +28,8 @@ class JvmBuiltInsPackageFragmentProvider(
     additionalClassPartsProvider: AdditionalClassPartsProvider,
     platformDependentDeclarationFilter: PlatformDependentDeclarationFilter,
     deserializationConfiguration: DeserializationConfiguration,
-    kotlinTypeChecker: NewKotlinTypeChecker
+    kotlinTypeChecker: NewKotlinTypeChecker,
+    samConversionResolver: SamConversionResolver
 ) : AbstractDeserializedPackageFragmentProvider(storageManager, finder, moduleDescriptor) {
     init {
         components = DeserializationComponents(
@@ -50,7 +51,8 @@ class JvmBuiltInsPackageFragmentProvider(
             ContractDeserializer.DEFAULT,
             additionalClassPartsProvider, platformDependentDeclarationFilter,
             BuiltInSerializerProtocol.extensionRegistry,
-            kotlinTypeChecker
+            kotlinTypeChecker,
+            samConversionResolver
         )
     }
 

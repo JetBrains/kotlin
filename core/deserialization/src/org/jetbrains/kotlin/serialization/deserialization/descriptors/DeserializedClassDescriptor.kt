@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.resolve.scopes.StaticScopeForKotlinEnum
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.types.AbstractClassTypeConstructor
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.refinement.TypeRefinement
@@ -171,6 +172,12 @@ class DeserializedClassDescriptor(
     override fun getSource() = sourceElement
 
     override fun getDeclaredTypeParameters() = c.typeDeserializer.ownTypeParameters
+
+    override fun getDefaultFunctionTypeForSamInterface(): SimpleType? {
+        return c.components.samConversionResolver.resolveFunctionTypeIfSamInterface(this)
+    }
+
+    override fun isDefinitelyNotSamInterface() = !isFun
 
     private inner class DeserializedClassTypeConstructor : AbstractClassTypeConstructor(c.storageManager) {
         private val parameters = c.storageManager.createLazyValue {
