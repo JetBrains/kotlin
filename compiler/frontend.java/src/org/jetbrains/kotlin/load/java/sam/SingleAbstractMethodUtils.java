@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl;
-import org.jetbrains.kotlin.load.java.components.SamConversionResolver;
+import org.jetbrains.kotlin.resolve.SamConversionResolver;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassConstructorDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor;
@@ -236,7 +236,7 @@ public class SingleAbstractMethodUtils {
         ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
         if (descriptor instanceof ClassDescriptor && ((ClassDescriptor) descriptor).isFun()) return true;
 
-        return getFunctionTypeForSamType(type, SamConversionResolver.JavaBasedSamConversionResolver.INSTANCE) != null;
+        return getFunctionTypeForSamType(type, JavaBasedSamConversionResolver.INSTANCE) != null;
     }
 
     public static boolean isSamAdapterNecessary(@NotNull FunctionDescriptor fun) {

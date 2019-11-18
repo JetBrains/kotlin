@@ -17,7 +17,8 @@
 package org.jetbrains.kotlin.load.java.sam
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.load.java.components.SamConversionResolver
+import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
+import org.jetbrains.kotlin.resolve.SamConversionResolver
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.SimpleType
 
@@ -33,5 +34,12 @@ class SamConversionResolverImpl(
             val shouldConvertFirstParameterToDescriptor = samWithReceiverResolvers.any { it.shouldConvertFirstSamParameterToReceiver(abstractMethod) }
             SingleAbstractMethodUtils.getFunctionTypeForAbstractMethod(abstractMethod, shouldConvertFirstParameterToDescriptor)
         }
+    }
+}
+
+object JavaBasedSamConversionResolver : SamConversionResolver {
+    override fun resolveFunctionTypeIfSamInterface(classDescriptor: ClassDescriptor): SimpleType? {
+        if (classDescriptor !is JavaClassDescriptor) return null
+        return classDescriptor.defaultFunctionTypeForSamInterface
     }
 }
