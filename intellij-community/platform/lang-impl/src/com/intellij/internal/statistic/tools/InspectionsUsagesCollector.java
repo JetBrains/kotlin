@@ -32,9 +32,9 @@ public class InspectionsUsagesCollector extends ProjectUsagesCollector {
   private static final Predicate<ScopeToolState> ENABLED = state -> !state.getTool().isEnabledByDefault() && state.isEnabled();
 
   private static final Predicate<ScopeToolState> DISABLED = state -> state.getTool().isEnabledByDefault() && !state.isEnabled();
-  private static final String SETTING_VALUE = "setting_value";
-  private static final String SETTING_TYPE = "setting_type";
-  private static final String SETTING_INDEX = "setting_index";
+  private static final String SETTING_VALUE = "option.value";
+  private static final String SETTING_TYPE = "option.type";
+  private static final String SETTING_INDEX = "option.index";
   private static final String INSPECTION_ID = "inspection_id";
 
   @NotNull
@@ -45,7 +45,7 @@ public class InspectionsUsagesCollector extends ProjectUsagesCollector {
 
   @Override
   public int getVersion() {
-    return 3;
+    return 4;
   }
 
   @NotNull
@@ -70,7 +70,7 @@ public class InspectionsUsagesCollector extends ProjectUsagesCollector {
 
   private static Collection<MetricEvent> getChangedSettingsEvents(InspectionToolWrapper<?, ?> tool,
                                                                   PluginInfo pluginInfo,
-                                                                  boolean enabled) {
+                                                                  boolean inspectionEnabled) {
     if (!isSafeToReport(pluginInfo)) return Collections.emptyList();
     Collection<MetricEvent> result = new ArrayList<>();
     String inspectionId = tool.getID();
@@ -84,7 +84,7 @@ public class InspectionsUsagesCollector extends ProjectUsagesCollector {
         // setting the index instead of name is here because name can contain sensitive data
         data.addData(SETTING_INDEX, i);
         data.addData(INSPECTION_ID, inspectionId);
-        data.addData("enabled", enabled);
+        data.addData("inspection.enabled", inspectionEnabled);
         data.addPluginInfo(pluginInfo);
         if (addSettingValue(settingValue, data)) {
           result.add(MetricEventFactoryKt.newMetric("setting.non.default.state", data));
