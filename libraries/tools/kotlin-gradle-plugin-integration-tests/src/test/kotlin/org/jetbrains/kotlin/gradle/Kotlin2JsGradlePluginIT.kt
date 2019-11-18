@@ -500,4 +500,33 @@ abstract class AbstractKotlin2JsGradlePluginIT(private val irBackend: Boolean) :
             assertSuccessful()
         }
     }
+
+    @Test
+    fun testBrowserDistribution() = with(Project("kotlin-js-browser-project", GradleVersionRequired.AtLeast("4.10.2"))) {
+        setupWorkingDir()
+        gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+        gradleSettingsScript().modify(::transformBuildScriptWithPluginsDsl)
+
+        build("build") {
+            assertSuccessful()
+
+            assertTasksExecuted(
+                ":app:processDceKotlinJs",
+                ":app:browserProductionWebpack"
+            )
+
+            assertFileExists("build/js/packages/kotlin-js-browser-base")
+            assertFileExists("build/js/packages/kotlin-js-browser-lib")
+            assertFileExists("build/js/packages/kotlin-js-browser-app")
+            assertFileExists("build/js/packages/kotlin-js-browser-app/kotlin-dce")
+
+            assertFileExists("build/js/packages/kotlin-js-browser-app/kotlin-dce/kotlin.js")
+            assertFileExists("build/js/packages/kotlin-js-browser-app/kotlin-dce/kotlin-js-browser-app.js")
+            assertFileExists("build/js/packages/kotlin-js-browser-app/kotlin-dce/kotlin-js-browser-lib.js")
+            assertFileExists("build/js/packages/kotlin-js-browser-app/kotlin-dce/kotlin-js-browser-base.js")
+
+            assertFileExists("app/build/distributions/app.js")
+            assertFileExists("app/build/distributions/app.js.map")
+        }
+    }
 }
