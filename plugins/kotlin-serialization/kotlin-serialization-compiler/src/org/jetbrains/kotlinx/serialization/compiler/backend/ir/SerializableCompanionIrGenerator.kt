@@ -57,11 +57,11 @@ class SerializableCompanionIrGenerator(
             )
         ) ?: return
         val annotationCtor = requireNotNull(annotationMarkerClass.unsubstitutedPrimaryConstructor?.let {
-            compilerContext.externalSymbols.referenceConstructor(it)
+            compilerContext.symbolTable.referenceConstructor(it)
         })
 
         val annotationType = annotationMarkerClass.defaultType.toIrType()
-        val irSerializableClass = compilerContext.externalSymbols.referenceClass(serializableDescriptor).owner
+        val irSerializableClass = compilerContext.symbolTable.referenceClass(serializableDescriptor).owner
         val annotationCtorCall = IrConstructorCallImpl.fromSymbolDescriptor(startOffset, endOffset, annotationType, annotationCtor).apply {
             val serializerType = serializer.toSimpleType(false)
             putValueArgument(

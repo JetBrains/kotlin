@@ -35,7 +35,7 @@ class SerializerForEnumsGenerator(
             IrGetValueImpl(startOffset, endOffset, saveFunc.dispatchReceiverParameter!!.symbol)
 
         val encoderClass = serializerDescriptor.getClassFromSerializationPackage(SerialEntityNames.ENCODER_CLASS)
-        val descriptorGetterSymbol = compilerContext.externalSymbols.referenceFunction(anySerialDescProperty?.getter!!)
+        val descriptorGetterSymbol = compilerContext.symbolTable.referenceFunction(anySerialDescProperty?.getter!!)
         val encodeEnum = encoderClass.referenceMethod(CallingConventions.encodeEnum)
         val serialDescGetter = irGet(descriptorGetterSymbol.owner.returnType, irThis(), descriptorGetterSymbol)
 
@@ -50,7 +50,7 @@ class SerializerForEnumsGenerator(
             IrGetValueImpl(startOffset, endOffset, loadFunc.dispatchReceiverParameter!!.symbol)
 
         val decoderClass = serializerDescriptor.getClassFromSerializationPackage(SerialEntityNames.DECODER_CLASS)
-        val descriptorGetterSymbol = compilerContext.externalSymbols.referenceFunction(anySerialDescProperty?.getter!!)
+        val descriptorGetterSymbol = compilerContext.symbolTable.referenceFunction(anySerialDescProperty?.getter!!)
         val decode = decoderClass.referenceMethod(CallingConventions.decodeEnum)
         val serialDescGetter = irGet(descriptorGetterSymbol.owner.returnType, irThis(), descriptorGetterSymbol)
 
@@ -58,11 +58,8 @@ class SerializerForEnumsGenerator(
         val getValues = irInvoke(dispatchReceiver = null, callee = valuesF.symbol)
 
         val arrayGet =
-            compilerContext.builtIns.array.unsubstitutedMemberScope.getContributedFunctions(
-                Name.identifier("get"),
-                NoLookupLocation.FROM_BACKEND
-            ).single()
-        val arrayGetSymbol = compilerContext.externalSymbols.referenceFunction(arrayGet)
+            compilerContext.builtIns.array.getFuncDesc("get").single()
+        val arrayGetSymbol = compilerContext.symbolTable.referenceFunction(arrayGet)
         val getValueByOrdinal =
             irInvoke(getValues, arrayGetSymbol, irInvoke(irGet(loadFunc.valueParameters[0]), decode, serialDescGetter))
         +irReturn(getValueByOrdinal)
@@ -75,7 +72,7 @@ class SerializerForEnumsGenerator(
         val serialDescForEnums = serializerDescriptor
             .getClassFromInternalSerializationPackage(SerialEntityNames.SERIAL_DESCRIPTOR_FOR_ENUM)
         val ctor =
-            compilerContext.externalSymbols.referenceConstructor(serialDescForEnums.unsubstitutedPrimaryConstructor!!)
+            compilerContext.symbolTable.referenceConstructor(serialDescForEnums.unsubstitutedPrimaryConstructor!!)
         return irInvoke(
             null, ctor,
             irString(serialName),

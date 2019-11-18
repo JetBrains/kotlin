@@ -46,7 +46,7 @@ class SerializableIrGenerator(
             val exceptionCtor =
                 serializableDescriptor.getClassFromSerializationPackage(MISSING_FIELD_EXC)
                     .unsubstitutedPrimaryConstructor!!
-            val exceptionCtorRef = compilerContext.externalSymbols.referenceConstructor(exceptionCtor)
+            val exceptionCtorRef = compilerContext.symbolTable.referenceConstructor(exceptionCtor)
             val exceptionType = exceptionCtor.returnType.toIrType()
 
             val serializableProperties = properties.serializableProperties
@@ -111,7 +111,7 @@ class SerializableIrGenerator(
     private fun IrBlockBodyBuilder.generateSuperNonSerializableCall(superClass: ClassDescriptor) {
         val suitableCtor = superClass.constructors.singleOrNull { it.valueParameters.size == 0 }
             ?: throw IllegalArgumentException("Non-serializable parent of serializable $serializableDescriptor must have no arg constructor")
-        val ctorRef = compilerContext.externalSymbols.referenceConstructor(suitableCtor)
+        val ctorRef = compilerContext.symbolTable.referenceConstructor(suitableCtor)
         val call = IrDelegatingConstructorCallImpl(
             startOffset,
             endOffset,
@@ -138,7 +138,7 @@ class SerializableIrGenerator(
         propertiesStart: Int
     ): Int {
         check(superClass.isInternalSerializable)
-        val superCtorRef = compilerContext.externalSymbols.serializableSyntheticConstructor(superClass)
+        val superCtorRef = compilerContext.symbolTable.serializableSyntheticConstructor(superClass)
         val superProperties = bindingContext.serializablePropertiesFor(superClass).serializableProperties
         val superSlots = superProperties.bitMaskSlotCount()
         val arguments = allValueParameters.subList(0, superSlots) +

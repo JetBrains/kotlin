@@ -44,16 +44,14 @@ abstract class Ir<out T : CommonBackendContext>(val context: T, val irModule: Ir
     open fun shouldGenerateHandlerParameterForDefaultBodyFun() = false
 }
 
-// Some symbols below are used in kotlin-native, so they can't be private
-@Suppress("MemberVisibilityCanBePrivate", "PropertyName")
-abstract class Symbols<out T : CommonBackendContext>(val context: T, private val symbolTable: ReferenceSymbolTable) {
-
-    protected val builtIns
-        get() = context.builtIns
-
+/**
+ * Symbols for builtins that are available without any context and are not specific to any backend
+ */
+open class BuiltinSymbolsBase(protected val builtIns: KotlinBuiltIns, private val symbolTable: ReferenceSymbolTable) {
     protected fun builtInsPackage(vararg packageNameSegments: String) =
-        context.builtIns.builtInsModule.getPackage(FqName.fromSegments(listOf(*packageNameSegments))).memberScope
+        builtIns.builtInsModule.getPackage(FqName.fromSegments(listOf(*packageNameSegments))).memberScope
 
+    // consider making this public so it can be used to easily locate stdlib functions from any place (in particular, plugins and lowerings)
     private fun getSimpleFunction(
         name: Name,
         vararg packageNameSegments: String = arrayOf("kotlin"),
@@ -74,16 +72,6 @@ abstract class Symbols<out T : CommonBackendContext>(val context: T, private val
      */
     open val externalSymbolTable: ReferenceSymbolTable
         get() = symbolTable
-
-    abstract val ThrowNullPointerException: IrFunctionSymbol
-    abstract val ThrowNoWhenBranchMatchedException: IrFunctionSymbol
-    abstract val ThrowTypeCastException: IrFunctionSymbol
-
-    abstract val ThrowUninitializedPropertyAccessException: IrSimpleFunctionSymbol
-
-    abstract val stringBuilder: IrClassSymbol
-
-    abstract val defaultConstructorMarker: IrClassSymbol
 
     val iterator = getClass(Name.identifier("Iterator"), "kotlin", "collections")
 
@@ -186,22 +174,6 @@ abstract class Symbols<out T : CommonBackendContext>(val context: T, private val
     val mutableIterator = symbolTable.referenceClass(builtIns.mutableIterator)
     val mutableListIterator = symbolTable.referenceClass(builtIns.mutableListIterator)
 
-    abstract val copyRangeTo: Map<ClassDescriptor, IrSimpleFunctionSymbol>
-
-    abstract val coroutineImpl: IrClassSymbol
-
-    abstract val coroutineSuspendedGetter: IrSimpleFunctionSymbol
-
-    abstract val getContinuation: IrSimpleFunctionSymbol
-
-    abstract val coroutineContextGetter: IrSimpleFunctionSymbol
-
-    abstract val suspendCoroutineUninterceptedOrReturn: IrSimpleFunctionSymbol
-
-    abstract val coroutineGetContext: IrSimpleFunctionSymbol
-
-    abstract val returnIfSuspended: IrSimpleFunctionSymbol
-
     private val binaryOperatorCache = mutableMapOf<Triple<Name, KotlinType, KotlinType>, IrSimpleFunctionSymbol>()
 
     fun getBinaryOperator(name: Name, lhsType: KotlinType, rhsType: KotlinType): IrSimpleFunctionSymbol {
@@ -250,6 +222,37 @@ abstract class Symbols<out T : CommonBackendContext>(val context: T, private val
                 KotlinBuiltIns.isStringOrNullableString(it.extensionReceiverParameter!!.type) && it.valueParameters.size == 1 &&
                 KotlinBuiltIns.isNullableAny(it.valueParameters.first().type)
     }
+}
+
+// Some symbols below are used in kotlin-native, so they can't be private
+@Suppress("MemberVisibilityCanBePrivate", "PropertyName")
+abstract class Symbols<out T : CommonBackendContext>(val context: T, symbolTable: ReferenceSymbolTable) :
+    BuiltinSymbolsBase(context.builtIns, symbolTable) {
+    abstract val ThrowNullPointerException: IrFunctionSymbol
+    abstract val ThrowNoWhenBranchMatchedException: IrFunctionSymbol
+    abstract val ThrowTypeCastException: IrFunctionSymbol
+
+    abstract val ThrowUninitializedPropertyAccessException: IrSimpleFunctionSymbol
+
+    abstract val stringBuilder: IrClassSymbol
+
+    abstract val defaultConstructorMarker: IrClassSymbol
+
+    abstract val copyRangeTo: Map<ClassDescriptor, IrSimpleFunctionSymbol>
+
+    abstract val coroutineImpl: IrClassSymbol
+
+    abstract val coroutineSuspendedGetter: IrSimpleFunctionSymbol
+
+    abstract val getContinuation: IrSimpleFunctionSymbol
+
+    abstract val coroutineContextGetter: IrSimpleFunctionSymbol
+
+    abstract val suspendCoroutineUninterceptedOrReturn: IrSimpleFunctionSymbol
+
+    abstract val coroutineGetContext: IrSimpleFunctionSymbol
+
+    abstract val returnIfSuspended: IrSimpleFunctionSymbol
 
     companion object {
         fun isLateinitIsInitializedPropertyGetter(symbol: IrFunctionSymbol): Boolean =

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.extensions
 
+import org.jetbrains.kotlin.backend.common.ir.BuiltinSymbolsBase
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
@@ -21,8 +22,9 @@ class IrPluginContext(
     val languageVersionSettings: LanguageVersionSettings,
     val symbolTable: SymbolTable,
     val typeTranslator: TypeTranslator,
-    override val irBuiltIns: IrBuiltIns
-): IrGeneratorContext()
+    override val irBuiltIns: IrBuiltIns,
+    val symbols: BuiltinSymbolsBase = BuiltinSymbolsBase(irBuiltIns.builtIns, symbolTable)
+) : IrGeneratorContext()
 
 interface IrGenerationExtension {
     companion object :
