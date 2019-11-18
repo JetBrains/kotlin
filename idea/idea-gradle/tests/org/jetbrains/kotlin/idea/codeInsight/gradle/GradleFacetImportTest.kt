@@ -988,7 +988,6 @@ class GradleFacetImportTest : GradleImportingTestCase() {
         TestCase.assertEquals("1.1", holder.settings.languageVersion)
     }
 
-    @Ignore //TODO enable this test after the Kotlin gradle plugin with required fixes is released
     @Test
     fun testImportCompilerArgumentsWithInvalidDependencies() {
         configureByFiles()
