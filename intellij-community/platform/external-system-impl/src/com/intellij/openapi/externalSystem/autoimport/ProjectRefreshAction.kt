@@ -55,4 +55,10 @@ class ProjectRefreshAction : AnAction() {
     }
     return iconManager.reloadIcon
   }
+
+  init {
+    templatePresentation.icon = DefaultExternalSystemIconProvider.reloadIcon
+    templatePresentation.text = ExternalSystemBundle.message("external.system.reload.notification.action.reload.text.empty")
+    templatePresentation.description = ExternalSystemBundle.message("external.system.reload.notification.action.reload.description.empty")
+  }
 }
