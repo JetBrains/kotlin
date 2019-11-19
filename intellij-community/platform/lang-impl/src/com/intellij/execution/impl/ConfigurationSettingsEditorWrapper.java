@@ -6,6 +6,7 @@ import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.WithoutOwnBeforeRunSteps;
 import com.intellij.execution.runners.ProgramRunner;
+import com.intellij.icons.AllIcons;
 import com.intellij.ide.DataManager;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.actionSystem.DataKey;
@@ -13,12 +14,16 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.HideableDecorator;
+import com.intellij.ui.RelativeFont;
 import com.intellij.ui.components.JBCheckBox;
+import com.intellij.ui.components.JBLabel;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 import java.awt.*;
 import java.util.List;
 
@@ -32,6 +37,10 @@ public class ConfigurationSettingsEditorWrapper extends SettingsEditor<RunnerAnd
 
   private JPanel myBeforeLaunchContainer;
   private JBCheckBox myIsAllowRunningInParallelCheckBox;
+  private JPanel myDisclaimerPanel;
+  private JLabel myTemplateLabel;
+  private JBLabel myDisclaimerLabel;
+  private JBLabel myCreateNewRCLabel;
   private final BeforeRunStepsPanel myBeforeRunStepsPanel;
 
   private final ConfigurationSettingsEditor myEditor;
@@ -77,6 +86,8 @@ public class ConfigurationSettingsEditorWrapper extends SettingsEditor<RunnerAnd
 
     myIsAllowRunningInParallelCheckBox.setSelected(settings.getConfiguration().isAllowRunningInParallel());
     myIsAllowRunningInParallelCheckBox.setVisible(settings.isTemplate() && settings.getFactory().getSingletonPolicy().isPolicyConfigurable());
+
+    myDisclaimerPanel.setVisible(settings.isTemplate());
   }
 
   @Override
@@ -158,5 +169,30 @@ public class ConfigurationSettingsEditorWrapper extends SettingsEditor<RunnerAnd
   @Override
   public void titleChanged(@NotNull String title) {
     myDecorator.setTitle(title);
+  }
+
+  private void createUIComponents() {
+    myTemplateLabel = new JLabel("Template", AllIcons.General.Warning, SwingConstants.LEADING);
+    RelativeFont.BOLD.install(myTemplateLabel);
+    myCreateNewRCLabel = new JBLabel() {
+      @NotNull
+      @Override
+      protected HyperlinkListener createHyperlinkListener() {
+        return new HyperlinkListener() {
+          @Override
+          public void hyperlinkUpdate(HyperlinkEvent e) {
+            if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+              RunConfigurationCreator creator =
+                DataManager.getInstance().getDataContext(myTemplateLabel).getData(RunConfigurationCreator.KEY);
+              if (creator != null) {
+                creator.createNewConfiguration(myEditor.getFactory().create().getFactory());
+              }
+            }
+          }
+        };
+      }
+    };
+    myCreateNewRCLabel.setCopyable(true);
+    myCreateNewRCLabel.setText("<html><body><a href=\"\">Create configuration</a></body></html>");
   }
 }
