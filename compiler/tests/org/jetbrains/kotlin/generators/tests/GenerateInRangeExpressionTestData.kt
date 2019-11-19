@@ -28,6 +28,7 @@ object GenerateInRangeExpressionTestData {
     }
 
     private fun PrintWriter.generateTestCaseBody(header: String, rangeExpressions: List<String>, elementExpressions: List<String>) {
+        println("// IGNORE_BACKEND_FIR: JVM_IR")
         println("// KJS_WITH_FULL_RUNTIME")
         println("// $PREAMBLE_MESSAGE")
         println("// WITH_RUNTIME")
