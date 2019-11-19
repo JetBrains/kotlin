@@ -18,6 +18,8 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.SmartPointerManager;
+import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.ui.ClickListener;
 import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.ui.LightColors;
@@ -72,9 +74,12 @@ public class FileLevelIntentionComponent extends EditorNotificationPanel {
     if (intentions != null && !intentions.isEmpty()) {
       myGearLabel.setIcon(AllIcons.General.GearPlain);
 
+      SmartPsiElementPointer<PsiFile> filePointer = SmartPointerManager.createPointer(psiFile);
       new ClickListener() {
         @Override
         public boolean onClick(@NotNull MouseEvent e, int clickCount) {
+          PsiFile psiFile = filePointer.getElement();
+          if (psiFile == null) return true;
           CachedIntentions cachedIntentions = new CachedIntentions(project, psiFile, editor);
           IntentionListStep step = new IntentionListStep(null, editor, psiFile, project, cachedIntentions);
           HighlightInfo.IntentionActionDescriptor descriptor = intentions.get(0).getFirst();
