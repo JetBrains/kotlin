@@ -127,8 +127,6 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
     }
 
     private fun useWebpack() {
-        createAdapterJs()
-
         requiredDependencies.add(versions.karmaWebpack)
         requiredDependencies.add(versions.webpack)
 
@@ -228,25 +226,26 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
         }
     }
 
-    private fun createAdapterJs() {
-        configurators.add {
-            val npmProject = compilation.npmProject
-            val file = it.nodeModulesToLoad
-                .map { npmProject.require(it) }
-                .single()
+    private fun createAdapterJs(
+        file: String,
+        debug: Boolean
+    ): File {
+        val npmProject = compilation.npmProject
 
-            val adapterJs = npmProject.dir.resolve("adapter-browser.js")
-            adapterJs.printWriter().use { writer ->
-                val karmaRunner = npmProject.require("kotlin-test-js-runner/kotlin-test-karma-runner.js")
-                // It is necessary for debugger attaching (--inspect-brk analogue)
+        val adapterJs = npmProject.dir.resolve("adapter-browser.js")
+        adapterJs.printWriter().use { writer ->
+            val karmaRunner = npmProject.require("kotlin-test-js-runner/kotlin-test-karma-runner.js")
+            // It is necessary for debugger attaching (--inspect-brk analogue)
+            if (debug) {
                 writer.println("debugger;")
-                writer.println("require(${karmaRunner.jsQuoted()})")
-
-                writer.println("module.exports = require(${file.jsQuoted()})")
             }
 
-            config.files.add(adapterJs.canonicalPath)
+            writer.println("require(${karmaRunner.jsQuoted()})")
+
+            writer.println("module.exports = require(${file.jsQuoted()})")
         }
+
+        return adapterJs
     }
 
     override fun createTestExecutionSpec(
@@ -255,6 +254,16 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
         nodeJsArgs: MutableList<String>,
         debug: Boolean
     ): TCServiceMessagesTestExecutionSpec {
+        val npmProject = compilation.npmProject
+
+        val file = task.nodeModulesToLoad
+            .map { npmProject.require(it) }
+            .single()
+
+        val adapterJs = createAdapterJs(file, debug)
+
+        config.files.add(adapterJs.canonicalPath)
+
         if (debug) {
             config.singleRun = false
 
@@ -286,8 +295,6 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
             stackTraceParser = ::parseNodeJsStackTraceAsJvm,
             ignoreOutOfRootNodes = true
         )
-
-        val npmProject = compilation.npmProject
 
         config.basePath = npmProject.nodeModulesDir.absolutePath
 
