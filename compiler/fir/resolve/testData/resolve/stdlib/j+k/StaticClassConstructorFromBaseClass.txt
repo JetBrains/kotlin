@@ -1,0 +1,14 @@
+FILE: User.kt
+    public final class User : R|AbstractClass| {
+        public constructor(): R|User| {
+            super<R|AbstractClass|>()
+        }
+
+        public final fun foo(): R|kotlin/Unit| {
+            lval sc: <ERROR TYPE REF: Unresolved name: StaticClass> = <Unresolved name: StaticClass>#()
+        }
+
+    }
+    public final fun test(): R|kotlin/Unit| {
+        Q|AbstractClass|.<Unresolved name: StaticClass>#()
+    }

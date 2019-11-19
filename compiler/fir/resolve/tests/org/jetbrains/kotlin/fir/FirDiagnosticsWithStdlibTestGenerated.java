@@ -466,6 +466,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
             runTest("compiler/fir/resolve/testData/resolve/stdlib/j+k/RawType.kt");
         }
 
+        @TestMetadata("StaticClassConstructorFromBaseClass.kt")
+        public void testStaticClassConstructorFromBaseClass() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/stdlib/j+k/StaticClassConstructorFromBaseClass.kt");
+        }
+
         @TestMetadata("StaticFromBaseClass.kt")
         public void testStaticFromBaseClass() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/stdlib/j+k/StaticFromBaseClass.kt");
