@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.idea.configuration.DependencySubstitute.NoSubstitute
 import org.jetbrains.kotlin.idea.configuration.DependencySubstitute.YesSubstitute
 import org.jetbrains.kotlin.idea.configuration.KotlinNativeLibraryNameUtil.buildIDELibraryName
 import org.jetbrains.kotlin.idea.inspections.gradle.findKotlinPluginVersion
-import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
 import org.jetbrains.kotlin.konan.library.lite.LiteKonanLibraryFacade
 import org.jetbrains.plugins.gradle.ExternalDependencyId
@@ -117,27 +116,33 @@ internal class KotlinNativeLibrariesDependencySubstitutor(
     )
 
     private val kotlinVersion: String? by lazy {
+        // first, try to figure out Kotlin plugin version by classpath (the default approach)
         val classpathData = buildClasspathData(gradleModule, resolverCtx)
-        val result = findKotlinPluginVersion(classpathData)
-        if (result == null) {
-            val message = """
-                    Unexpectedly can't obtain Kotlin Gradle plugin version for ${gradleModule.name} module.
-                    Build classpath is ${classpathData.classpathEntries.flatMap { it.classesFile }}.
-                    ${KotlinNativeLibrariesDependencySubstitutor::class.java.simpleName} will run in idle mode. No dependencies will be substituted.
+        val versionFromClasspath = findKotlinPluginVersion(classpathData)
 
-                    Hint: Please make sure that you have explicitly specified version of Kotlin Gradle plugin in `plugins { }` section.
-                    Example:
+        if (versionFromClasspath == null) {
+            // then, examine Kotlin MPP Gradle model
+            val versionFromModel = mppModel.targets
+                .asSequence()
+                .flatMap { it.compilations.asSequence() }
+                .mapNotNull { it.kotlinTaskProperties.pluginVersion?.takeIf(String::isNotBlank) }
+                .firstOrNull()
 
-                    plugins {
-                        kotlin("multiplatform") version "${bundledRuntimeVersion()}"
-                    }
-                """.trimIndent()
-            if (ApplicationManager.getApplication().isUnitTestMode)
-                LOG.warn(message)
-            else
-                LOG.error(message)
-        }
-        result
+            if (versionFromModel == null) {
+                LOG.warn(
+                    """
+                        Can't obtain Kotlin Gradle plugin version for ${gradleModule.name} module.
+                        Build classpath is ${classpathData.classpathEntries.flatMap { it.classesFile }}.
+                        ${KotlinMPPGradleModel::class.java.simpleName} is $mppModel.
+                        ${KotlinNativeLibrariesDependencySubstitutor::class.java.simpleName} will run in idle mode. No dependencies will be substituted.
+                    """.trimIndent()
+                )
+
+                null
+            } else
+                versionFromModel
+        } else
+            versionFromClasspath
     }
 
     private fun getFileCollectionDependencySubstitute(dependency: FileCollectionDependency): DependencySubstitute =
