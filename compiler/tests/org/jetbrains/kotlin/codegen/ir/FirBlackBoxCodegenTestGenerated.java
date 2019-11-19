@@ -6287,6 +6287,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
                 runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/doWhileStatement.kt", "kotlin.coroutines");
             }
 
+            @TestMetadata("doubleBreak.kt")
+            public void testDoubleBreak_1_3() throws Exception {
+                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/doubleBreak.kt", "kotlin.coroutines");
+            }
+
             @TestMetadata("finallyCatch.kt")
             public void testFinallyCatch_1_3() throws Exception {
                 runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/finallyCatch.kt", "kotlin.coroutines");
@@ -6345,6 +6350,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             @TestMetadata("throwFromCatch.kt")
             public void testThrowFromCatch_1_3() throws Exception {
                 runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/throwFromCatch.kt", "kotlin.coroutines");
+            }
+
+            @TestMetadata("throwFromFinally.kt")
+            public void testThrowFromFinally_1_3() throws Exception {
+                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/throwFromFinally.kt", "kotlin.coroutines");
             }
 
             @TestMetadata("throwInTryWithHandleResult.kt")
@@ -6683,6 +6693,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/coroutines/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
             }
 
+            @TestMetadata("boxUnboxInsideCoroutine.kt")
+            public void testBoxUnboxInsideCoroutine_1_3() throws Exception {
+                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/boxUnboxInsideCoroutine.kt", "kotlin.coroutines");
+            }
+
             @TestMetadata("bridgeGenerationCrossinline.kt")
             public void testBridgeGenerationCrossinline_1_3() throws Exception {
                 runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/bridgeGenerationCrossinline.kt", "kotlin.coroutines");
@@ -6691,6 +6706,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             @TestMetadata("bridgeGenerationNonInline.kt")
             public void testBridgeGenerationNonInline_1_3() throws Exception {
                 runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/bridgeGenerationNonInline.kt", "kotlin.coroutines");
+            }
+
+            @TestMetadata("interfaceDelegateWithInlineClass.kt")
+            public void testInterfaceDelegateWithInlineClass_1_3() throws Exception {
+                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/interfaceDelegateWithInlineClass.kt", "kotlin.coroutines");
             }
         }
 
