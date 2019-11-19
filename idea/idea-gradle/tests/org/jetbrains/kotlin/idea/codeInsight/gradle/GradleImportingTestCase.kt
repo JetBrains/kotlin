@@ -242,7 +242,7 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
                 it.isDirectory -> null
                 !it.name.endsWith(SUFFIX) -> {
                     var text = it.readText()
-                    properties?.forEach { key, value ->
+                    (properties ?: mapOf("kotlin_plugin_version" to LATEST_STABLE_GRADLE_PLUGIN_VERSION)).forEach { key, value ->
                         text = text.replace("{{${key}}}", value)
                     }
                     createProjectSubFile(it.path.substringAfter(rootDir.path + File.separator), text)
