@@ -25,7 +25,9 @@
   <extensions defaultExtensionNs="org.jetbrains.kotlin.native">
     <gradleLauncherProvider implementation="org.jetbrains.konan.gradle.execution.CLionGradleKonanLauncherProvider"/>
   </extensions>
+
   <extensions defaultExtensionNs="com.intellij">
+    <externalProjectDataService implementation="org.jetbrains.konan.gradle.CLionKonanProjectDataService"/>
     <directoryProjectGenerator implementation="org.jetbrains.konan.KonanGradleProjectGenerator"/>
     <projectTaskRunner implementation="org.jetbrains.konan.gradle.execution.GradleKonanProjectTaskRunner"/>
 

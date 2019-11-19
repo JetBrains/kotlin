@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.konan.gradle
@@ -16,7 +16,6 @@ import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsPr
 import com.intellij.openapi.externalSystem.service.project.manage.AbstractProjectDataService
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
-import com.intellij.util.PlatformUtils
 import com.intellij.util.execution.ParametersListUtil
 import com.jetbrains.konan.filterOutSystemEnvs
 import org.jetbrains.konan.gradle.KonanProjectResolver.Companion.KONAN_MODEL_KEY
@@ -28,7 +27,7 @@ import org.jetbrains.plugins.gradle.util.GradleConstants
 /**
  * @author Vladislav.Soroka
  */
-class KonanProjectDataService : AbstractProjectDataService<KonanModel, Module>() {
+class CLionKonanProjectDataService : AbstractProjectDataService<KonanModel, Module>() {
 
     override fun getTargetDataKey(): Key<KonanModel> = KONAN_MODEL_KEY
 
@@ -48,9 +47,7 @@ class KonanProjectDataService : AbstractProjectDataService<KonanModel, Module>()
         modelsProvider: IdeModelsProvider
     ) {
         if (projectData?.owner != GradleConstants.SYSTEM_ID) return
-        if (PlatformUtils.isCLion()) {
-            createRunConfigurations(project)
-        }
+        createRunConfigurations(project)
     }
 
     private fun createRunConfigurations(project: Project) {
