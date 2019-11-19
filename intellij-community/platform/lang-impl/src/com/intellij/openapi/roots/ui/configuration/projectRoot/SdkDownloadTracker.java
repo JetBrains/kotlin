@@ -67,8 +67,6 @@ public class SdkDownloadTracker implements Disposable {
 
   @Nullable
   private PendingDownload findTask(@NotNull Sdk sdk) {
-    ApplicationManager.getApplication().assertIsDispatchThread();
-
     for (PendingDownload task : myPendingTasks) {
       if (task.myEditableSdks.contains(sdk)) {
         return task;
@@ -79,6 +77,7 @@ public class SdkDownloadTracker implements Disposable {
 
   public void registerEditableSdk(@NotNull Sdk original,
                                   @NotNull Sdk editable) {
+    // This may happen in the background thread on a project open (JMM safe)
     PendingDownload task = findTask(original);
     if (task == null) return;
 
@@ -96,6 +95,8 @@ public class SdkDownloadTracker implements Disposable {
   }
 
   public void startSdkDownloadIfNeeded(@NotNull Sdk sdkFromTable) {
+    ApplicationManager.getApplication().assertIsDispatchThread();
+
     PendingDownload task = findTask(sdkFromTable);
     if (task == null) return;
 
