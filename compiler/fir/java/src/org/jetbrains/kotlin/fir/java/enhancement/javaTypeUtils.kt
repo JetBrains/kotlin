@@ -186,10 +186,11 @@ private fun FirTypeParameter.getErasedUpperBound(
         return firstUpperBound.withArguments(firstUpperBound.typeArguments.map { ConeStarProjection }.toTypedArray())
     }
 
-    val stopAt = potentiallyRecursiveTypeParameter ?: this
+    val alreadyVisited = mutableSetOf(potentiallyRecursiveTypeParameter, this)
     var current = (firstUpperBound as ConeTypeParameterType).lookupTag.typeParameterSymbol.fir
 
-    while (current != stopAt) {
+    while (current !in alreadyVisited) {
+        alreadyVisited += current
 
         val nextUpperBound = current.bounds.first().coneTypeUnsafe<ConeKotlinType>()
         if (nextUpperBound is ConeClassLikeType) {
