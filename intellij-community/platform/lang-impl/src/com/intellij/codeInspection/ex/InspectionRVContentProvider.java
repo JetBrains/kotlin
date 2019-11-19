@@ -121,7 +121,7 @@ public abstract class InspectionRVContentProvider {
           ProblemDescriptionNode problemDescriptionNode = (ProblemDescriptionNode)node;
           if (!problemDescriptionNode.isQuickFixAppliedFromView()) {
             final CommonProblemDescriptor descriptor = problemDescriptionNode.getDescriptor();
-            final QuickFix[] fixes = descriptor != null ? descriptor.getFixes() : null;
+            final QuickFix<?>[] fixes = descriptor != null ? descriptor.getFixes() : null;
             return fixes == null || fixes.length == 0;
           }
         }
@@ -143,9 +143,9 @@ public abstract class InspectionRVContentProvider {
     CommonProblemDescriptor[] descriptors = tree.getSelectedDescriptors();
     Map<String, FixAndOccurrences> result = new THashMap<>();
     for (CommonProblemDescriptor d : descriptors) {
-      QuickFix[] fixes = d.getFixes();
+      QuickFix<?>[] fixes = d.getFixes();
       if (fixes == null || fixes.length == 0) continue;
-      for (QuickFix fix : fixes) {
+      for (QuickFix<?> fix : fixes) {
         String familyName = fix.getFamilyName();
         FixAndOccurrences fixAndOccurrences = result.get(familyName);
         if (fixAndOccurrences == null) {
@@ -182,8 +182,8 @@ public abstract class InspectionRVContentProvider {
   }
 
   protected static void checkFixClass(InspectionToolPresentation presentation, QuickFix fix, LocalQuickFixWrapper quickFixAction) {
-    Class class1 = getFixClass(fix);
-    Class class2 = getFixClass(quickFixAction.getFix());
+    Class<?> class1 = getFixClass(fix);
+    Class<?> class2 = getFixClass(quickFixAction.getFix());
     if (!class1.equals(class2)) {
       String message = MessageFormat.format(
         "QuickFix-es with the same family name ({0}) should be the same class instances but actually are {1} and {2} instances. " +
@@ -293,11 +293,11 @@ public abstract class InspectionRVContentProvider {
                                                    @NotNull CommonProblemDescriptor[] descriptors) {
     Map<String, LocalQuickFixWrapper> result = null;
     for (CommonProblemDescriptor d : descriptors) {
-      QuickFix[] fixes = d.getFixes();
+      QuickFix<?>[] fixes = d.getFixes();
       if (fixes == null || fixes.length == 0) continue;
       if (result == null) {
         result = new HashMap<>();
-        for (QuickFix fix : fixes) {
+        for (QuickFix<?> fix : fixes) {
           if (fix == null) continue;
           result.put(fix.getFamilyName(), new LocalQuickFixWrapper(fix, presentation.getToolWrapper()));
         }
@@ -305,7 +305,7 @@ public abstract class InspectionRVContentProvider {
       else {
         for (String familyName : new ArrayList<>(result.keySet())) {
           boolean isFound = false;
-          for (QuickFix fix : fixes) {
+          for (QuickFix<?> fix : fixes) {
             if (fix == null) continue;
             if (familyName.equals(fix.getFamilyName())) {
               isFound = true;
@@ -333,7 +333,7 @@ public abstract class InspectionRVContentProvider {
     return result == null || result.isEmpty() ? QuickFixAction.EMPTY : result.values().toArray(QuickFixAction.EMPTY);
   }
 
-  private static Class getFixClass(QuickFix fix) {
+  private static Class<?> getFixClass(QuickFix<?> fix) {
     return fix instanceof ActionClassHolder ? ((ActionClassHolder)fix).getActionClass() : fix.getClass();
   }
 
