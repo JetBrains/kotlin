@@ -3,14 +3,14 @@
     "neg": {
       "3": [
         {
-          "specVersion": "0.1-155",
+          "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "When and lambda with expected type",
           "path": "compiler/testData/diagnostics/tests/when/whenAndLambdaWithExpectedType.kt",
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-155",
+          "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "No else returned from lambda expected int",
           "path": "compiler/testData/diagnostics/tests/when/NoElseReturnedFromLambdaExpectedInt.kt",
@@ -21,7 +21,7 @@
     "pos": {
       "1": [
         {
-          "specVersion": "0.1-155",
+          "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "Kt10439",
           "path": "compiler/testData/diagnostics/tests/when/kt10439.kt",
@@ -34,7 +34,7 @@
     "neg": {
       "3": [
         {
-          "specVersion": "0.1-155",
+          "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "When with nothing and lambdas",
           "path": "compiler/testData/diagnostics/tests/when/whenWithNothingAndLambdas.kt",

@@ -3,7 +3,7 @@
     "neg": {
       "1": [
         {
-          "specVersion": "0.1-155",
+          "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "When and lambda with expected type",
           "path": "compiler/testData/diagnostics/tests/when/whenAndLambdaWithExpectedType.kt",
@@ -14,7 +14,7 @@
     "pos": {
       "3": [
         {
-          "specVersion": "0.1-155",
+          "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "Kt10811",
           "path": "compiler/testData/diagnostics/tests/when/kt10811.kt",
