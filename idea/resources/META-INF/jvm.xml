@@ -54,12 +54,6 @@
                 text="Report as incompatible API">
         </action>
 
-        <action id="Kotlin.XDebugger.ToggleKotlinVariableView"
-                class="org.jetbrains.kotlin.idea.debugger.ToggleKotlinVariablesView"
-                text="Show Kotlin Variables Only">
-            <add-to-group group-id="XDebugger.Settings" relative-to-action="XDebugger.Inline" anchor="after"/>
-        </action>
-
         <group id="Kotlin.XDebugger.Actions">
             <action id="Kotlin.XDebugger.ToggleKotlinVariableView"
                     class="org.jetbrains.kotlin.idea.debugger.ToggleKotlinVariablesView"
