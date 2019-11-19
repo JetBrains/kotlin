@@ -467,7 +467,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: StringBuilder) {
             val coneType = resolvedTypeRef.type
             data.append(removeCurrentFilePackage(coneType.render()))
-            if (coneType is ConeAbbreviatedType) {
+            if (coneType is ConeClassLikeType) {
                 val original = coneType.directExpansionType(session)
                 original?.let { data.append(" /* = ${it.render()} */") }
             }

@@ -93,7 +93,7 @@ class ImplicitDispatchReceiverValue(
         val klass = boundSymbol.fir as? FirRegularClass ?: return@run emptyList()
         listOfNotNull(klass.companionObject?.buildUseSiteMemberScope(useSiteSession, scopeSession)) +
                 lookupSuperTypes(klass, lookupInterfaces = false, deep = true, useSiteSession = useSiteSession).mapNotNull {
-                    val superClass = (it as? ConeClassType)?.lookupTag?.toSymbol(useSiteSession)?.fir as? FirRegularClass
+                    val superClass = (it as? ConeClassLikeType)?.lookupTag?.toSymbol(useSiteSession)?.fir as? FirRegularClass
                     superClass?.companionObject?.buildUseSiteMemberScope(useSiteSession, scopeSession)
                 }
     }

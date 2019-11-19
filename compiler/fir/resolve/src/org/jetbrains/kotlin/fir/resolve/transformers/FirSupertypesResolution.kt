@@ -248,8 +248,8 @@ private class FirSupertypeResolverVisitor(
                     )
 
             val type = resolvedTypeRef.type
-            if (type is ConeAbbreviatedType) {
-                val expansionTypeAlias = type.abbreviationLookupTag.toSymbol(session)?.safeAs<FirTypeAliasSymbol>()?.fir
+            if (type is ConeClassLikeType) {
+                val expansionTypeAlias = type.lookupTag.toSymbol(session)?.safeAs<FirTypeAliasSymbol>()?.fir
                 if (expansionTypeAlias != null) {
                     visitTypeAlias(expansionTypeAlias)
                 }

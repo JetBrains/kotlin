@@ -18,11 +18,15 @@ import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirScope? {
     return when (this) {
         is ConeKotlinErrorType -> null
-        is ConeAbbreviatedType -> directExpansionType(useSiteSession)?.scope(useSiteSession, scopeSession)
         is ConeClassLikeType -> {
-            // TODO: for ConeClassLikeType they might be a type alias instead of a class
-            val fir = this.lookupTag.toSymbol(useSiteSession)?.fir as? FirClass<*> ?: return null
-            wrapSubstitutionScopeIfNeed(useSiteSession, fir.buildUseSiteMemberScope(useSiteSession, scopeSession)!!, fir, scopeSession)
+            val fullyExpandedType = fullyExpandedType(useSiteSession)
+            val fir = fullyExpandedType.lookupTag.toSymbol(useSiteSession)?.fir as? FirClass<*> ?: return null
+            fullyExpandedType.wrapSubstitutionScopeIfNeed(
+                useSiteSession,
+                fir.buildUseSiteMemberScope(useSiteSession, scopeSession)!!,
+                fir,
+                scopeSession
+            )
         }
         is ConeTypeParameterType -> {
             // TODO: support LibraryTypeParameterSymbol or get rid of it

@@ -109,14 +109,8 @@ abstract class ConeLookupTagBasedType : ConeKotlinType(), SimpleTypeMarker {
     abstract val lookupTag: ConeClassifierLookupTag
 }
 
-sealed class ConeClassLikeType : ConeLookupTagBasedType() {
+abstract class ConeClassLikeType : ConeLookupTagBasedType() {
     abstract override val lookupTag: ConeClassLikeLookupTag
-}
-
-abstract class ConeClassType : ConeClassLikeType()
-
-abstract class ConeAbbreviatedType : ConeClassLikeType() {
-    abstract val abbreviationLookupTag: ConeClassLikeLookupTag
 }
 
 open class ConeFlexibleType(val lowerBound: ConeKotlinType, val upperBound: ConeKotlinType) : ConeKotlinType(),

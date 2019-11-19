@@ -132,18 +132,10 @@ fun ConeClassLikeType.wrapSubstitutionScopeIfNeed(
     }
 }
 
-private tailrec fun ConeClassLikeType.computePartialExpansion(
+private fun ConeClassLikeType.computePartialExpansion(
     useSiteSession: FirSession,
     supertypeSupplier: SupertypeSupplier
-): ConeClassLikeType? {
-    return when (this) {
-        is ConeAbbreviatedType ->
-            directExpansionType(useSiteSession) {
-                supertypeSupplier.expansionForTypeAlias(it)
-            }?.computePartialExpansion(useSiteSession, supertypeSupplier)
-        else -> this
-    }
-}
+): ConeClassLikeType = fullyExpandedType(useSiteSession, supertypeSupplier::expansionForTypeAlias)
 
 private fun FirClassifierSymbol<*>.collectSuperTypes(
     list: MutableList<ConeClassLikeType>,

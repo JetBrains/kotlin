@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractImportingScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirExplicitSimpleImportingScope
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.ConeAbbreviatedType
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
 import org.jetbrains.kotlin.name.FqName
@@ -324,14 +323,13 @@ private fun FirScope.getFirstClassifierOrNull(name: Name): FirClassifierSymbol<*
 }
 
 private fun finalExpansionName(symbol: FirTypeAliasSymbol, session: FirSession): Name? {
-    return when (val expandedType = symbol.fir.expandedTypeRef.coneTypeUnsafe<ConeClassLikeType>()) {
-        is ConeAbbreviatedType ->
-            expandedType.abbreviationLookupTag.toSymbol(session)?.safeAs<FirTypeAliasSymbol>()?.let {
-                finalExpansionName(it, session)
-            }
-        else -> expandedType.lookupTag.classId.shortClassName
-    }
+    val expandedType = symbol.fir.expandedTypeRef.coneTypeUnsafe<ConeClassLikeType>()
+    val typeAliasSymbol = expandedType.lookupTag.toSymbol(session)?.safeAs<FirTypeAliasSymbol>()
 
+    return if (typeAliasSymbol != null)
+        finalExpansionName(typeAliasSymbol, session)
+    else
+        expandedType.lookupTag.classId.shortClassName
 }
 
 val SAM_PARAMETER_NAME = Name.identifier("block")

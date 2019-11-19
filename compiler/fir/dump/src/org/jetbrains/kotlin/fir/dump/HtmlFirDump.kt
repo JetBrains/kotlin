@@ -21,12 +21,17 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
-import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.directExpansionType
+import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolve.withNullability
+import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.resolve.diagnostics.FirAmbiguityError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.FirInapplicableCandidateError
-import org.jetbrains.kotlin.fir.symbols.*
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirTypePlaceholderProjection
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
@@ -635,8 +640,19 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
 
     private fun FlowContent.generate(type: ConeClassLikeType) {
         resolved {
-            symbolRef(type.lookupTag.toSymbol(session)) {
-                fqn(type.lookupTag.classId.relativeClassName)
+            when (val symbol = type.lookupTag.toSymbol(session)) {
+                is FirTypeAliasSymbol -> {
+                    symbolRef(symbol) {
+                        simpleName(type.lookupTag.name)
+                    }
+                    +" = "
+                    generate(type.directExpansionType(session) ?: ConeKotlinErrorType("No expansion for type-alias"))
+                }
+                else -> {
+                    symbolRef(symbol) {
+                        fqn(type.lookupTag.classId.relativeClassName)
+                    }
+                }
             }
         }
     }
@@ -720,13 +736,6 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         when (type) {
             is ConeClassErrorType -> error { +type.reason }
             is ConeClassLikeType -> generate(type)
-            is ConeAbbreviatedType -> resolved {
-                symbolRef(type.abbreviationLookupTag.toSymbol(session)) {
-                    simpleName(type.abbreviationLookupTag.name)
-                }
-                +" = "
-                generate(type.directExpansionType(session) ?: ConeKotlinErrorType("No expansion for type-alias"))
-            }
             is ConeTypeParameterType -> resolved {
                 symbolRef(type.lookupTag.toSymbol()) {
                     simpleName(type.lookupTag.name)

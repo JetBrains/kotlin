@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.componentArrayAccessor
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
-import org.jetbrains.kotlin.fir.diagnostics.FirStubDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.FirStubDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
@@ -31,7 +31,10 @@ import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
 import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.impl.*
+import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.FirErrorTypeRefImpl
+import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -60,11 +63,19 @@ fun ConeClassLikeLookupTag.toSymbol(useSiteSession: FirSession): FirClassLikeSym
     return firSymbolProvider.getSymbolByLookupTag(this)
 }
 
-fun ConeAbbreviatedType.directExpansionType(
+tailrec fun ConeClassLikeType.fullyExpandedType(
+    useSiteSession: FirSession,
+    expandedConeType: (FirTypeAlias) -> ConeClassLikeType? = FirTypeAlias::expandedConeType
+): ConeClassLikeType {
+    val directExpansionType = directExpansionType(useSiteSession, expandedConeType) ?: return this
+    return directExpansionType.fullyExpandedType(useSiteSession, expandedConeType)
+}
+
+fun ConeClassLikeType.directExpansionType(
     useSiteSession: FirSession,
     expandedConeType: (FirTypeAlias) -> ConeClassLikeType? = FirTypeAlias::expandedConeType
 ): ConeClassLikeType? {
-    val typeAlias = abbreviationLookupTag
+    val typeAlias = lookupTag
         .toSymbol(useSiteSession)
         ?.safeAs<FirTypeAliasSymbol>()?.fir ?: return null
 
@@ -73,7 +84,11 @@ fun ConeAbbreviatedType.directExpansionType(
     return mapTypeAliasArguments(typeAlias, this, resultType) as? ConeClassLikeType
 }
 
-private fun mapTypeAliasArguments(typeAlias: FirTypeAlias, abbreviatedType: ConeAbbreviatedType, resultingType: ConeClassLikeType): ConeKotlinType {
+private fun mapTypeAliasArguments(
+    typeAlias: FirTypeAlias,
+    abbreviatedType: ConeClassLikeType,
+    resultingType: ConeClassLikeType
+): ConeKotlinType {
     val typeAliasMap = typeAlias.typeParameters.map { it.symbol }.zip(abbreviatedType.typeArguments).toMap()
 
     val substitutor = object : AbstractConeSubstitutor() {
@@ -129,8 +144,8 @@ fun FirClassifierSymbol<*>.constructType(typeArguments: Array<ConeKotlinTypeProj
             ConeClassLikeTypeImpl(this.toLookupTag(), typeArguments, isNullable)
         }
         is FirTypeAliasSymbol -> {
-            ConeAbbreviatedTypeImpl(
-                abbreviationLookupTag = this.toLookupTag(),
+            ConeClassLikeTypeImpl(
+                this.toLookupTag(),
                 typeArguments = typeArguments,
                 isNullable = isNullable
             )
@@ -170,12 +185,7 @@ fun <T : ConeKotlinType> T.withNullability(nullability: ConeNullability): T {
 
     return when (this) {
         is ConeClassErrorType -> this
-        is ConeClassTypeImpl -> ConeClassTypeImpl(lookupTag, typeArguments, nullability.isNullable) as T
-        is ConeAbbreviatedTypeImpl -> ConeAbbreviatedTypeImpl(
-            abbreviationLookupTag,
-            typeArguments,
-            nullability.isNullable
-        ) as T
+        is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(lookupTag, typeArguments, nullability.isNullable) as T
         is ConeTypeParameterTypeImpl -> ConeTypeParameterTypeImpl(lookupTag, nullability.isNullable) as T
         is ConeFlexibleType -> ConeFlexibleType(lowerBound.withNullability(nullability), upperBound.withNullability(nullability)) as T
         is ConeTypeVariableType -> ConeTypeVariableType(nullability, lookupTag) as T
@@ -205,12 +215,7 @@ fun <T : ConeKotlinType> T.withArguments(arguments: Array<out ConeKotlinTypeProj
 
     return when (this) {
         is ConeClassErrorType -> this
-        is ConeClassTypeImpl -> ConeClassTypeImpl(lookupTag, arguments, nullability.isNullable) as T
-        is ConeAbbreviatedTypeImpl -> ConeAbbreviatedTypeImpl(
-            abbreviationLookupTag,
-            arguments,
-            nullability.isNullable
-        ) as T
+        is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(lookupTag, arguments, nullability.isNullable) as T
         is ConeDefinitelyNotNullType -> ConeDefinitelyNotNullType.create(original.withArguments(arguments)) as T
         else -> error("Not supported: $this: ${this.render()}")
     }
