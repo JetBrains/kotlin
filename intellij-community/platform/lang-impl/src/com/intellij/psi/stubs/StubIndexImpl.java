@@ -43,11 +43,13 @@ import com.intellij.util.io.DataOutputStream;
 import gnu.trove.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 
 @State(name = "FileBasedIndex", storages = {
@@ -373,8 +375,6 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
                                                                @NotNull final Processor<? super Psi> processor) {
     boolean dumb = DumbService.isDumb(project);
     IdIterator ids = getContainingIds(indexKey, key, project, idFilter, scope);
-    UpdatableIndex<Integer, SerializedStubTree, FileContent> stubUpdatingIndex = getStubUpdatingIndex();
-    if (stubUpdatingIndex == null) return true;
     PersistentFS fs = (PersistentFS)ManagingFS.getInstance();
     // already ensured up-to-date in getContainingIds() method
     try {
@@ -395,20 +395,11 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
         }
 
         StubIdList list = myCachedStubIds.get(indexKey).getValue().computeIfAbsent(new CompositeKey(key, id), __ -> {
-          try {
-            Map<Integer, SerializedStubTree> data = stubUpdatingIndex.getIndexedFileData(id);
-            LOG.assertTrue(data.size() == 1);
-            SerializedStubTree tree = data.values().iterator().next();
-            return tree.restoreIndexedStubs(SerializedStubTree.IDE_USED_EXTERNALIZER, indexKey, key);
-          }
-          catch (StorageException | IOException e) {
-            forceRebuild(e);
-            return null;
-          }
+          return myStubProcessingHelper.retrieveStubIdList(indexKey, key, file);
         });
         if (list == null) {
           LOG.error("StubUpdatingIndex & " + indexKey + " stub index mismatch. No stub index key is present");
-          return true;
+          continue;
         }
         if (!myStubProcessingHelper.processStubsInFile(project, file, list, processor, scope, requiredClass)) {
           return false;
@@ -423,6 +414,8 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
       else {
         throw e;
       }
+    } finally {
+      wipeProblematicFileIdsForParticularKeyAndStubIndex(indexKey, key);
     }
     return true;
   }
@@ -435,24 +428,25 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
   // Self repair for IDEA-181227, caused by (yet) unknown file event processing problem in indices
   // FileBasedIndex.requestReindex doesn't handle the situation properly because update requires old data that was lost
   private <Key> void wipeProblematicFileIdsForParticularKeyAndStubIndex(@NotNull StubIndexKey<Key, ?> indexKey,
-                                                                        @NotNull Key key,
-                                                                        @NotNull UpdatableIndex<Integer, SerializedStubTree, FileContent> stubUpdatingIndex) {
+                                                                        @NotNull Key key) {
     Set<VirtualFile> filesWithProblems = myStubProcessingHelper.takeAccumulatedFilesWithIndexProblems();
 
     if (filesWithProblems != null) {
+      LOG.info("data for " + indexKey.getName() + " will be wiped for a some files because of internal stub processing error");
       ((FileBasedIndexImpl)FileBasedIndex.getInstance()).runCleanupAction(() -> {
-        boolean locked = stubUpdatingIndex.getWriteLock().tryLock();
+        Lock writeLock = getIndex(indexKey).getWriteLock();
+        boolean locked = writeLock.tryLock();
         if (!locked) return; // nested indices invocation, can not cleanup without deadlock
         try {
-          Map<Key, StubIdList> artificialOldValues = new THashMap<>();
-          artificialOldValues.put(key, new StubIdList());
-
           for (VirtualFile file : filesWithProblems) {
-            updateIndex(indexKey, FileBasedIndex.getFileId(file), artificialOldValues, Collections.emptyMap());
+            updateIndex(indexKey,
+                        FileBasedIndex.getFileId(file),
+                        Collections.singletonMap(key, new StubIdList()),
+                        Collections.emptyMap());
           }
         }
         finally {
-          stubUpdatingIndex.getWriteLock().unlock();
+          writeLock.unlock();
         }
       });
     }
@@ -533,21 +527,16 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
       final TIntArrayList result = new TIntArrayList();
       IdFilter finalIdFilter = idFilter;
       myAccessValidator.validate(stubUpdatingIndexId, ()-> {
-        try {
-          // disable up-to-date check to avoid locks on attempt to acquire index write lock while holding at the same time the readLock for this index
-          return FileBasedIndexImpl.disableUpToDateCheckIn(() ->
-                                                             ConcurrencyUtil.withLock(stubUpdatingIndex.getReadLock(), () -> {
-                                                               return index.getData(dataKey).forEach((id, value) -> {
-                                                                 if (finalIdFilter == null || finalIdFilter.containsFileId(id)) {
-                                                                   result.add(id);
-                                                                 }
-                                                                 return true;
-                                                               });
-                                                             }));
-        }
-        finally {
-          wipeProblematicFileIdsForParticularKeyAndStubIndex(indexKey, dataKey, stubUpdatingIndex);
-        }
+        // disable up-to-date check to avoid locks on attempt to acquire index write lock while holding at the same time the readLock for this index
+        return FileBasedIndexImpl.disableUpToDateCheckIn(() ->
+                                                           ConcurrencyUtil.withLock(stubUpdatingIndex.getReadLock(), () -> {
+                                                             return index.getData(dataKey).forEach((id, value) -> {
+                                                               if (finalIdFilter == null || finalIdFilter.containsFileId(id)) {
+                                                                 result.add(id);
+                                                               }
+                                                               return true;
+                                                             });
+                                                           }));
       });
       return new IdIterator() {
         int cursor;
@@ -776,7 +765,7 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
     }
   }
 
-  private static UpdatableIndex<Integer, SerializedStubTree, FileContent> getStubUpdatingIndex() {
+  static UpdatableIndex<Integer, SerializedStubTree, FileContent> getStubUpdatingIndex() {
     return ((FileBasedIndexImpl)FileBasedIndex.getInstance()).getIndex(StubUpdatingIndex.INDEX_ID);
   }
 
@@ -801,5 +790,10 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
     public int hashCode() {
       return Objects.hash(key, fileId);
     }
+  }
+
+  @TestOnly
+  public boolean areAllProblemsProcessedInTheCurrentThread() {
+    return myStubProcessingHelper.areAllProblemsProcessedInTheCurrentThread();
   }
 }
