@@ -5,7 +5,10 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.cidr.lang.symbols.OCSymbol
 import org.jetbrains.konan.resolve.konan.KonanTarget
 import org.jetbrains.kotlin.analyzer.ModuleInfo
-import org.jetbrains.kotlin.backend.konan.objcexport.*
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportLazy
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportWarningCollector
+import org.jetbrains.kotlin.backend.konan.objcexport.Stub
+import org.jetbrains.kotlin.backend.konan.objcexport.createObjCExportLazy
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
@@ -25,8 +28,13 @@ class KtFileTranslator(val project: Project) {
     private fun createStubProvider(file: KtFile, target: KonanTarget): ObjCExportLazy {
         val configuration = object : ObjCExportLazy.Configuration {
             override val frameworkName: String get() = target.productModuleName
-            override fun getCompilerModuleName(moduleInfo: ModuleInfo): String = frameworkName //todo[medvedev] what should I return here???
-            override fun isIncluded(moduleInfo: ModuleInfo): Boolean = true //todo[medvedev] what should I return here???
+
+            override fun getCompilerModuleName(moduleInfo: ModuleInfo): String =
+                TODO() // no implementation in `KonanCompilerFrontendServices.kt` either
+
+            override fun isIncluded(moduleInfo: ModuleInfo): Boolean =
+                true // always return true in `KonanCompilerFrontendServices.kt` as well
+
             override val objcGenerics: Boolean get() = false
         }
 
