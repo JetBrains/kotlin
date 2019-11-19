@@ -16,6 +16,10 @@ open class ConeClassLikeTypeImpl(
     isNullable: Boolean
 ) : ConeClassLikeType() {
     override val nullability: ConeNullability = ConeNullability.create(isNullable)
+
+    // Cached expanded type and the relevant session
+    var cachedExpandedType: Pair<*, ConeClassLikeType>? = null
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
