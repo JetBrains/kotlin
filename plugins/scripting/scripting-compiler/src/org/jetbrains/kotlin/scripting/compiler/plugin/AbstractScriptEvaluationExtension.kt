@@ -55,7 +55,9 @@ abstract class AbstractScriptEvaluationExtension : ScriptEvaluationExtension {
         if (messageCollector.hasErrors()) return ExitCode.COMPILATION_ERROR
 
         val scriptFile = File(sourcePath)
-        if (scriptFile.isDirectory || !scriptDefinitionProvider.isScript(scriptFile)) {
+        val script = scriptFile.toScriptSource()
+
+        if (scriptFile.isDirectory || !scriptDefinitionProvider.isScript(script)) {
             val extensionHint =
                 if (configuration.get(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS)?.let { it.size == 1 && it.first().isDefault } == true) " (.kts)"
                 else ""
@@ -63,9 +65,7 @@ abstract class AbstractScriptEvaluationExtension : ScriptEvaluationExtension {
             return ExitCode.COMPILATION_ERROR
         }
 
-        val script = scriptFile.toScriptSource()
-
-        val definition = scriptDefinitionProvider.findDefinition(scriptFile) ?: scriptDefinitionProvider.getDefaultDefinition()
+        val definition = scriptDefinitionProvider.findDefinition(script) ?: scriptDefinitionProvider.getDefaultDefinition()
 
         val scriptArgs =
             if (arguments.freeArgs.isNotEmpty()) arguments.freeArgs.subList(1, arguments.freeArgs.size)
@@ -134,3 +134,4 @@ private fun ResultValue.Error.renderError(stream: PrintStream) {
         }
     }
 }
+
