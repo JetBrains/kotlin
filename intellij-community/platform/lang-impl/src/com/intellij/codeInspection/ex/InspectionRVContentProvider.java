@@ -296,7 +296,7 @@ public abstract class InspectionRVContentProvider {
       QuickFix<?>[] fixes = d.getFixes();
       if (fixes == null || fixes.length == 0) continue;
       if (result == null) {
-        result = new HashMap<>();
+        result = new LinkedHashMap<>();
         for (QuickFix<?> fix : fixes) {
           if (fix == null) continue;
           result.put(fix.getFamilyName(), new LocalQuickFixWrapper(fix, presentation.getToolWrapper()));
