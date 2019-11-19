@@ -1,5 +1,6 @@
 // EXPECTED_REACHABLE_NODES: 1291
 
+@JsExport
 object A {
     @JsName("js_f") fun f(x: Int) = "f($x)"
 

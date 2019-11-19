@@ -45,35 +45,9 @@ class ExportModelGenerator(val context: JsIrBackendContext) {
             }
         )
 
-    private fun getExportCandidate(declaration: IrDeclaration): IrDeclarationWithName? {
-        // Only actual public declarations with name can be exported
-        if (declaration !is IrDeclarationWithVisibility ||
-            declaration !is IrDeclarationWithName ||
-            declaration.visibility != Visibilities.PUBLIC ||
-            declaration.isExpect
-        ) {
-            return null
-        }
-
-        // Workaround to get property declarations instead of its lowered accessors.
-        if (declaration is IrSimpleFunction) {
-            val property = declaration.correspondingPropertySymbol?.owner
-            if (property != null) {
-                // Return property for getter accessors only to prevent
-                // returning it twice (for getter and setter) in the same scope
-                return if (property.getter == declaration)
-                    property
-                else
-                    null
-            }
-        }
-
-        return declaration
-    }
-
     private fun exportDeclaration(declaration: IrDeclaration): ExportedDeclaration? {
         val candidate = getExportCandidate(declaration) ?: return null
-        if (!shouldDeclarationBeExported(candidate)) return null
+        if (!shouldDeclarationBeExported(candidate, context)) return null
 
         return when (candidate) {
             is IrSimpleFunction -> exportFunction(candidate)
@@ -173,7 +147,7 @@ class ExportModelGenerator(val context: JsIrBackendContext) {
 
         for (declaration in klass.declarations) {
             val candidate = getExportCandidate(declaration) ?: continue
-            if (!shouldDeclarationBeExported(candidate)) continue
+            if (!shouldDeclarationBeExported(candidate, context)) continue
 
             when (candidate) {
                 is IrSimpleFunction ->
@@ -302,20 +276,6 @@ class ExportModelGenerator(val context: JsIrBackendContext) {
             else identifier
         }
 
-    private fun shouldDeclarationBeExported(declaration: IrDeclarationWithName): Boolean {
-        if (declaration.fqNameWhenAvailable in context.additionalExportedDeclarations)
-            return true
-
-        if (declaration.isJsExport())
-            return true
-
-        return when (val parent = declaration.parent) {
-            is IrDeclarationWithName -> shouldDeclarationBeExported(parent)
-            is IrAnnotationContainer -> parent.isJsExport()
-            else -> false
-        }
-    }
-
     private fun functionExportability(function: IrSimpleFunction): Exportability {
         if (function.isInline && function.typeParameters.any { it.isReified })
             return Exportability.Prohibited("Inline reified function")
@@ -352,6 +312,51 @@ sealed class Exportability {
 
 private val IrClassifierSymbol.isInterface
     get() = (owner as? IrClass)?.isInterface == true
+
+private fun getExportCandidate(declaration: IrDeclaration): IrDeclarationWithName? {
+    // Only actual public declarations with name can be exported
+    if (declaration !is IrDeclarationWithVisibility ||
+        declaration !is IrDeclarationWithName ||
+        declaration.visibility != Visibilities.PUBLIC ||
+        declaration.isExpect
+    ) {
+        return null
+    }
+
+    // Workaround to get property declarations instead of its lowered accessors.
+    if (declaration is IrSimpleFunction) {
+        val property = declaration.correspondingPropertySymbol?.owner
+        if (property != null) {
+            // Return property for getter accessors only to prevent
+            // returning it twice (for getter and setter) in the same scope
+            return if (property.getter == declaration)
+                property
+            else
+                null
+        }
+    }
+
+    return declaration
+}
+
+private fun shouldDeclarationBeExported(declaration: IrDeclarationWithName, context: JsIrBackendContext): Boolean {
+    if (declaration.fqNameWhenAvailable in context.additionalExportedDeclarations)
+        return true
+
+    if (declaration.isJsExport())
+        return true
+
+    return when (val parent = declaration.parent) {
+        is IrDeclarationWithName -> shouldDeclarationBeExported(parent, context)
+        is IrAnnotationContainer -> parent.isJsExport()
+        else -> false
+    }
+}
+
+fun IrDeclaration.isExported(context: JsIrBackendContext): Boolean {
+    val candidate = getExportCandidate(this) ?: return false
+    return shouldDeclarationBeExported(candidate, context)
+}
 
 private val reservedWords = setOf(
     "break",
