@@ -10,8 +10,10 @@ import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.extensions.ScriptEvaluationExtension
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
@@ -19,6 +21,7 @@ import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
 import java.io.File
 import java.io.PrintStream
 import kotlin.script.experimental.api.*
+import kotlin.script.experimental.host.StringScriptSource
 import kotlin.script.experimental.host.toScriptSource
 
 abstract class AbstractScriptEvaluationExtension : ScriptEvaluationExtension {
@@ -46,37 +49,59 @@ abstract class AbstractScriptEvaluationExtension : ScriptEvaluationExtension {
             messageCollector.report(CompilerMessageSeverity.ERROR, "Unable to process the script, scripting plugin is not configured")
             return ExitCode.COMPILATION_ERROR
         }
-        val sourcePath = arguments.freeArgs.first()
 
         setupScriptConfiguration(configuration)
+
+        val script = when {
+            arguments is K2JVMCompilerArguments && arguments.expressions != null -> {
+                StringScriptSource(arguments.expressions!!.joinToString("\n"), "script.kts")
+            }
+            arguments.script -> {
+                val scriptFile = File(arguments.freeArgs.first())
+                val script = scriptFile.toScriptSource()
+
+                if (scriptFile.isDirectory || !scriptDefinitionProvider.isScript(script)) {
+                    val extensionHint =
+                        if (configuration.get(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS)?.let { it.size == 1 && it.first().isDefault } == true) " (.kts)"
+                        else ""
+                    messageCollector.report(CompilerMessageSeverity.ERROR, "Specify path to the script file$extensionHint as the first argument")
+                    return ExitCode.COMPILATION_ERROR
+                }
+                script
+            }
+            else -> {
+                messageCollector.report(CompilerMessageSeverity.ERROR, "Illegal set of arguments: either -script or -expression arguments expected at this point")
+                return ExitCode.COMPILATION_ERROR
+            }
+        }
 
         val environment = createEnvironment(projectEnvironment, configuration)
 
         if (messageCollector.hasErrors()) return ExitCode.COMPILATION_ERROR
 
-        val scriptFile = File(sourcePath)
-        val script = scriptFile.toScriptSource()
-
-        if (scriptFile.isDirectory || !scriptDefinitionProvider.isScript(script)) {
-            val extensionHint =
-                if (configuration.get(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS)?.let { it.size == 1 && it.first().isDefault } == true) " (.kts)"
-                else ""
-            messageCollector.report(CompilerMessageSeverity.ERROR, "Specify path to the script file$extensionHint as the first argument")
-            return ExitCode.COMPILATION_ERROR
-        }
-
         val definition = scriptDefinitionProvider.findDefinition(script) ?: scriptDefinitionProvider.getDefaultDefinition()
 
+        val scriptCompilationConfiguration = definition.compilationConfiguration
+
         val scriptArgs =
-            if (arguments.freeArgs.isNotEmpty()) arguments.freeArgs.subList(1, arguments.freeArgs.size)
-            else emptyList<String>()
+            if (arguments.script) arguments.freeArgs.subList(1, arguments.freeArgs.size)
+            else arguments.freeArgs
 
         val evaluationConfiguration = definition.evaluationConfiguration.with {
             constructorArgs(scriptArgs.toTypedArray())
             platformEvaluationConfiguration()
 
         }
-        val scriptCompilationConfiguration = definition.compilationConfiguration
+        return doEval(script, scriptCompilationConfiguration, evaluationConfiguration, environment, messageCollector)
+    }
+
+    private fun doEval(
+        script: SourceCode,
+        scriptCompilationConfiguration: ScriptCompilationConfiguration,
+        evaluationConfiguration: ScriptEvaluationConfiguration,
+        environment: KotlinCoreEnvironment,
+        messageCollector: MessageCollector
+    ): ExitCode {
         val scriptCompiler = createScriptCompiler(environment)
 
         return runBlocking {

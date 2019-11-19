@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
 import org.jetbrains.kotlin.cli.common.arguments.Argument
-import org.jetbrains.kotlin.cli.common.arguments.ArgumentParseErrors
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -100,6 +99,7 @@ internal fun reportArgumentsIgnoredGenerally(
         K2JVMCompilerArguments::commonSources,
         K2JVMCompilerArguments::allWarningsAsErrors,
         K2JVMCompilerArguments::script,
+        K2JVMCompilerArguments::expressions,
         K2JVMCompilerArguments::scriptTemplates,
         K2JVMCompilerArguments::scriptResolverEnvironment,
         K2JVMCompilerArguments::disableStandardScript,

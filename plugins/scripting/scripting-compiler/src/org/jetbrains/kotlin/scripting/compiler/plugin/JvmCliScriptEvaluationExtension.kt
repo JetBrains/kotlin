@@ -13,7 +13,8 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmCompilerFromEnvironment
-import kotlin.script.experimental.api.*
+import kotlin.script.experimental.api.ScriptEvaluationConfiguration
+import kotlin.script.experimental.api.ScriptEvaluator
 import kotlin.script.experimental.jvm.BasicJvmScriptEvaluator
 import kotlin.script.experimental.jvm.baseClassLoader
 import kotlin.script.experimental.jvm.jvm
@@ -46,6 +47,6 @@ class JvmCliScriptEvaluationExtension : AbstractScriptEvaluationExtension() {
     }
 
     override fun isAccepted(arguments: CommonCompilerArguments): Boolean =
-        arguments is K2JVMCompilerArguments && arguments.script
+        arguments is K2JVMCompilerArguments && (arguments.script || arguments.expressions != null)
 }
 

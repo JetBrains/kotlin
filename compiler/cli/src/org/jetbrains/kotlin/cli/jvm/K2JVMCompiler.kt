@@ -35,9 +35,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentUtil
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
-import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.codegen.CompilationException
-import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -48,9 +46,7 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.modules.JavaRootPath
 import org.jetbrains.kotlin.utils.KotlinPaths
-import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
-import java.util.*
 
 class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
@@ -80,7 +76,9 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         configuration.configureStandardLibs(paths, arguments)
         configuration.configureAdvancedJvmOptions(arguments)
 
-        if (arguments.buildFile == null && !arguments.version  && !arguments.allowNoSourceFiles && (arguments.script || arguments.freeArgs.isEmpty())) {
+        if (arguments.buildFile == null && !arguments.version  && !arguments.allowNoSourceFiles &&
+            (arguments.script || arguments.expressions != null || arguments.freeArgs.isEmpty())) {
+
             // script or repl
             if (arguments.script && arguments.freeArgs.isEmpty()) {
                 messageCollector.report(ERROR, "Specify script source path to evaluate")
@@ -94,7 +92,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 )
             projectEnvironment.registerExtensionsFromPlugins(configuration)
 
-            if (arguments.script) {
+            if (arguments.script || arguments.expressions != null) {
                 val scriptingEvaluator = ScriptEvaluationExtension.getInstances(projectEnvironment.project).find { it.isAccepted(arguments) }
                 if (scriptingEvaluator == null) {
                     messageCollector.report(ERROR, "Unable to evaluate script, no scripting plugin loaded")

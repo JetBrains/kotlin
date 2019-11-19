@@ -46,6 +46,21 @@ class ScriptingWithCliCompilerTest {
         )
     }
 
+    @Test
+    fun testExpression() {
+        runWithK2JVMCompiler(
+            arrayOf(
+                "-expression",
+                "val x = 7; println(x * 6); for (arg in args) println(arg)",
+                "--",
+                "hi",
+                "there"
+            ),
+            listOf("42", "hi", "there")
+        )
+    }
+
+
     private fun getMainKtsClassPath(): List<File> {
         return listOf(
             File("dist/kotlinc/lib/kotlin-main-kts.jar").also {
