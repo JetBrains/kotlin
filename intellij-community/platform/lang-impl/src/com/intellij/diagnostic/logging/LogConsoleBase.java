@@ -14,7 +14,6 @@ import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -47,7 +46,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Reader;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 
@@ -62,7 +60,7 @@ public abstract class LogConsoleBase extends AdditionalTabComponent implements L
   private JComboBox myLogFilterCombo;
   private JPanel myTextFilterWrapper;
 
-  private boolean myDisposed;
+  private volatile boolean myDisposed;
   private ConsoleView myConsole;
   private final LightProcessHandler myProcessHandler = new LightProcessHandler();
   private ReaderThread myReaderThread;
@@ -271,17 +269,12 @@ public abstract class LogConsoleBase extends AdditionalTabComponent implements L
   public void dispose() {
     myModel.removeFilterListener(this);
     stopRunning(false);
-    synchronized (this) {
-      myDisposed = true;
-      if (myConsole != null) {
-        Disposer.dispose(myConsole);
-        myConsole = null;
-      }
-    }
-    if (myFilter != null) {
-      myFilter.dispose();
-      myFilter = null;
-    }
+    if (myDisposed) return;
+    myDisposed = true;
+    Disposer.dispose(myConsole);
+    myConsole = null;
+    myFilter.dispose();
+    myFilter = null;
     myOriginalDocument = null;
   }
 
@@ -306,22 +299,8 @@ public abstract class LogConsoleBase extends AdditionalTabComponent implements L
       else {
         try {
           final BufferedReader reader = readerThread.myReader;
-          List<String> lines = new ArrayList<>();
           while (reader.ready()) {
-            lines.add(reader.readLine());
-          }
-          if (!lines.isEmpty()) {
-            // If another thread holds the write lock and waits for the process termination
-            // (i.e. inside `processHandler.waitFor()`), then acquiring the read lock inside
-            // `ProcessListener.processTerminated` listener method will lead to a deadlock (IDEA-216297).
-            ApplicationManager.getApplication().executeOnPooledThread(() -> {
-              //ensure have read lock before requiring for sync, otherwise dispose() under write action would lead to deadlock
-              ReadAction.run(() -> {
-                for (String line : lines) {
-                  addMessage(line);
-                }
-              });
-            });
+            addMessage(reader.readLine());
           }
         }
         catch (IOException ignore) {}
@@ -330,7 +309,7 @@ public abstract class LogConsoleBase extends AdditionalTabComponent implements L
     }
   }
 
-  protected synchronized void addMessage(final String text) {
+  protected void addMessage(final String text) {
     if (myDisposed) return;
     if (text == null) return;
     if (myContentPreprocessor != null) {
@@ -418,7 +397,7 @@ public abstract class LogConsoleBase extends AdditionalTabComponent implements L
     ApplicationManager.getApplication().invokeLater(() -> computeSelectedLineAndFilter());
   }
 
-  private synchronized void computeSelectedLineAndFilter() {
+  private void computeSelectedLineAndFilter() {
     // we have to do this in dispatch thread, because ConsoleViewImpl can flush something to document otherwise
     myOriginalDocument = getOriginalDocument();
     if (myOriginalDocument != null) {
@@ -446,7 +425,7 @@ public abstract class LogConsoleBase extends AdditionalTabComponent implements L
     ApplicationManager.getApplication().executeOnPooledThread(() -> doFilter());
   }
 
-  private synchronized void doFilter() {
+  private void doFilter() {
     if (myDisposed) {
       return;
     }
@@ -514,7 +493,7 @@ public abstract class LogConsoleBase extends AdditionalTabComponent implements L
   }
 
   @Nullable
-  public synchronized ConsoleView getConsole() {
+  public ConsoleView getConsole() {
     return myConsole;
   }
 
@@ -525,7 +504,7 @@ public abstract class LogConsoleBase extends AdditionalTabComponent implements L
    */
 
   @NotNull
-  private synchronized ConsoleView getConsoleNotNull() {
+  private ConsoleView getConsoleNotNull() {
     final ConsoleView console = getConsole();
     assert console != null: "it looks like console has been disposed";
     return console;
@@ -557,7 +536,7 @@ public abstract class LogConsoleBase extends AdditionalTabComponent implements L
     return myTitle;
   }
 
-  public synchronized void clear() {
+  public void clear() {
     getConsoleNotNull().clear();
     myOriginalDocument = null;
   }
