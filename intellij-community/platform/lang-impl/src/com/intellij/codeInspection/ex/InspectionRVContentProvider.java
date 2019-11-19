@@ -20,7 +20,6 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.containers.TreeTraversal;
 import com.intellij.util.ui.tree.TreeUtil;
-import gnu.trove.THashMap;
 import one.util.streamex.StreamEx;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -141,7 +140,7 @@ public abstract class InspectionRVContentProvider {
     GlobalInspectionContextImpl context = tree.getContext();
     InspectionToolPresentation presentation = context.getPresentation(toolWrapper);
     CommonProblemDescriptor[] descriptors = tree.getSelectedDescriptors();
-    Map<String, FixAndOccurrences> result = new THashMap<>();
+    Map<String, FixAndOccurrences> result = new LinkedHashMap<>();
     for (CommonProblemDescriptor d : descriptors) {
       QuickFix<?>[] fixes = d.getFixes();
       if (fixes == null || fixes.length == 0) continue;
