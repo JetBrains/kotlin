@@ -105,6 +105,7 @@ sealed class StubOrigin {
 
     class Function(val function: FunctionDecl) : StubOrigin()
 
+    // TODO: Unused, remove.
     class FunctionParameter(val parameter: Parameter) : StubOrigin()
 
     class Struct(val struct: StructDecl) : StubOrigin()
@@ -112,6 +113,10 @@ sealed class StubOrigin {
     class Constant(val constantDef: ConstantDef): StubOrigin()
 
     class Global(val global: GlobalDecl) : StubOrigin()
+
+    class TypeDef(val typedefDef: TypedefDef) : StubOrigin()
+
+    class VarOf(val typeOrigin: StubOrigin) : StubOrigin()
 }
 
 interface StubElementWithOrigin : StubIrElement {
@@ -427,7 +432,8 @@ class EnumEntryStub(
 
 class TypealiasStub(
         val alias: Classifier,
-        val aliasee: StubType
+        val aliasee: StubType,
+        val origin: StubOrigin
 ) : StubIrElement {
 
     override fun <T, R> accept(visitor: StubIrVisitor<T, R>, data: T) =

@@ -235,26 +235,26 @@ internal class EnumStubBuilder(
     /**
      * Produces to [out] the Kotlin definitions for given enum which shouldn't be represented as Kotlin enum.
      */
-    private fun generateEnumAsConstants(e: EnumDef): List<StubIrElement> {
+    private fun generateEnumAsConstants(enumDef: EnumDef): List<StubIrElement> {
         // TODO: if this enum defines e.g. a type of struct field, then it should be generated inside the struct class
         //  to prevent name clashing
 
         val entries = mutableListOf<PropertyStub>()
         val typealiases = mutableListOf<TypealiasStub>()
 
-        val constants = e.constants.filter {
+        val constants = enumDef.constants.filter {
             // Macro "overrides" the original enum constant.
             it.name !in context.macroConstantsByName
         }
 
         val kotlinType: KotlinType
 
-        val baseKotlinType = context.mirror(e.baseType).argType
-        val meta = if (e.isAnonymous) {
+        val baseKotlinType = context.mirror(enumDef.baseType).argType
+        val meta = if (enumDef.isAnonymous) {
             kotlinType = baseKotlinType
-            StubContainerMeta(textAtStart = if (constants.isNotEmpty()) "// ${e.spelling}:" else "")
+            StubContainerMeta(textAtStart = if (constants.isNotEmpty()) "// ${enumDef.spelling}:" else "")
         } else {
-            val typeMirror = context.mirror(EnumType(e))
+            val typeMirror = context.mirror(EnumType(enumDef))
             if (typeMirror !is TypeMirror.ByValue) {
                 error("unexpected enum type mirror: $typeMirror")
             }
@@ -262,15 +262,16 @@ internal class EnumStubBuilder(
             val varTypeName = typeMirror.info.constructPointedType(typeMirror.valueType)
             val varTypeClassifier = typeMirror.pointedType.classifier
             val valueTypeClassifier = typeMirror.valueType.classifier
-            typealiases += TypealiasStub(varTypeClassifier, varTypeName.toStubIrType())
-            typealiases += TypealiasStub(valueTypeClassifier, baseKotlinType.toStubIrType())
+            val origin = StubOrigin.Enum(enumDef)
+            typealiases += TypealiasStub(varTypeClassifier, varTypeName.toStubIrType(), StubOrigin.VarOf(origin))
+            typealiases += TypealiasStub(valueTypeClassifier, baseKotlinType.toStubIrType(), origin)
 
             kotlinType = typeMirror.valueType
             StubContainerMeta()
         }
 
         for (constant in constants) {
-            val literal = context.tryCreateIntegralStub(e.baseType, constant.value) ?: continue
+            val literal = context.tryCreateIntegralStub(enumDef.baseType, constant.value) ?: continue
             val getter = PropertyAccessor.Getter.SimpleGetter(constant = literal)
             val kind = PropertyStub.Kind.Val(getter)
             entries += PropertyStub(
@@ -505,21 +506,21 @@ internal class TypedefStubBuilder(
     override fun build(): List<StubIrElement> {
         val mirror = context.mirror(Typedef(typedefDef))
         val baseMirror = context.mirror(typedefDef.aliased)
-
         val varType = mirror.pointedType.classifier
+        val origin = StubOrigin.TypeDef(typedefDef)
         return when (baseMirror) {
             is TypeMirror.ByValue -> {
                 val valueType = (mirror as TypeMirror.ByValue).valueType
                 val varTypeAliasee = mirror.info.constructPointedType(valueType)
                 val valueTypeAliasee = baseMirror.valueType
                 listOf(
-                        TypealiasStub(varType, varTypeAliasee.toStubIrType()),
-                        TypealiasStub(valueType.classifier, valueTypeAliasee.toStubIrType())
+                        TypealiasStub(varType, varTypeAliasee.toStubIrType(), StubOrigin.VarOf(origin)),
+                        TypealiasStub(valueType.classifier, valueTypeAliasee.toStubIrType(), origin)
                 )
             }
             is TypeMirror.ByRef -> {
                 val varTypeAliasee = baseMirror.pointedType
-                listOf(TypealiasStub(varType, varTypeAliasee.toStubIrType()))
+                listOf(TypealiasStub(varType, varTypeAliasee.toStubIrType(), origin))
             }
         }
     }
