@@ -157,9 +157,9 @@ public class AutoPopupControllerImpl extends AutoPopupController {
   public void waitForDelayedActions(long timeout, @NotNull TimeUnit unit) throws TimeoutException {
     long deadline = System.currentTimeMillis() + unit.toMillis(timeout);
     while (System.currentTimeMillis() < deadline) {
+      UIUtil.dispatchAllInvocationEvents();
       if (myAlarm.isEmpty()) return;
       LockSupport.parkNanos(10_000_000);
-      UIUtil.dispatchAllInvocationEvents();
     }
     throw new TimeoutException();
   }
