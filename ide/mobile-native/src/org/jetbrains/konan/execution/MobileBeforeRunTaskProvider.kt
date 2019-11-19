@@ -60,8 +60,8 @@ class MobileBeforeRunTaskProvider : BeforeRunTaskProvider<MobileBeforeRunTaskPro
         settings.externalProjectPath = projectData.externalProjectPath
         settings.executionName = name
         settings.taskNames = when (configuration) {
-            is MobileAppRunConfiguration -> listOf(":app:assemble")
-            is MobileTestRunConfiguration -> listOf(":app:assemble", ":app:assembleAndroidTest")
+            is MobileAppRunConfiguration -> listOf(":app:assembleDebug")
+            is MobileTestRunConfiguration -> listOf(":app:assembleDebug", ":app:assembleAndroidTest")
             else -> throw IllegalStateException()
         }
 
