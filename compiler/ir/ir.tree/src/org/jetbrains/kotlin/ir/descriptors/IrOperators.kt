@@ -55,6 +55,7 @@ class IrBuiltInOperator(
     }
 
     override val overriddenSymbols: MutableList<IrSimpleFunctionSymbol> = SmartList()
+    override var attributeOwnerId: IrAttributeContainer = this
     override val mangle: String get() = "operator#$name@$suffix"
 
     init {

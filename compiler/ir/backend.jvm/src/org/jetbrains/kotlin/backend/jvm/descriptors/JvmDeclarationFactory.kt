@@ -211,7 +211,7 @@ class JvmDeclarationFactory(
                 },
                 // Old backend doesn't generate ACC_FINAL on DefaultImpls methods.
                 modality = Modality.OPEN
-            )
+            ).also { it.copyAttributes(interfaceFun) }
         }
     }
 
