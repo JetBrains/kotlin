@@ -216,7 +216,9 @@ class CoroutinesDebuggerTree(project: Project) : DebuggerTree(project) {
             GlobalSearchScope.everythingScope(project)
         )
         val classFile = psiClass?.containingFile?.virtualFile
-        return XDebuggerUtil.getInstance().createPosition(classFile, frame.lineNumber)
+        // to convert to 0-based line number or '-1' to do not move
+        val lineNumber = if(frame.lineNumber > 0) frame.lineNumber - 1 else return null
+        return XDebuggerUtil.getInstance().createPosition(classFile,  lineNumber)
     }
 
     /**
