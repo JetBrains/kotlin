@@ -70,7 +70,6 @@ public class EnforcedPlainTextFileTypeManager implements ProjectManagerListener 
                             ProjectPlainTextFileTypeManager.getInstance(project).removeFile(file);
           if (changed) {
             ensureProjectFileUpToDate(project);
-            FileBasedIndex.getInstance().requestReindex(file);
           }
         }
       }
@@ -78,7 +77,7 @@ public class EnforcedPlainTextFileTypeManager implements ProjectManagerListener 
     });
   }
 
-  private void ensureProjectFileUpToDate(@NotNull Project project) {
+  void ensureProjectFileUpToDate(@NotNull Project project) {
     int i = ArrayUtil.indexOf(explicitlyMarkedProjects, project);
     ProjectPlainTextFileTypeManager projectPlainTextFileTypeManager = ProjectPlainTextFileTypeManager.getInstance(project);
     if (i == -1) {

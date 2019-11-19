@@ -18,6 +18,9 @@ package com.intellij.openapi.file.exclude;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.indexing.FileBasedIndex;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Rustam Vishnyakov
@@ -26,5 +29,15 @@ import com.intellij.openapi.project.Project;
 public class ProjectPlainTextFileTypeManager extends PersistentFileSetManager {
   public static ProjectPlainTextFileTypeManager getInstance(Project project) {
     return ServiceManager.getService(project, ProjectPlainTextFileTypeManager.class);
+  }
+
+  @Override
+  protected void onFileAdded(@NotNull VirtualFile file) {
+    FileBasedIndex.getInstance().requestReindex(file);
+  }
+
+  @Override
+  protected void onFileRemoved(@NotNull VirtualFile file) {
+    FileBasedIndex.getInstance().requestReindex(file);
   }
 }
