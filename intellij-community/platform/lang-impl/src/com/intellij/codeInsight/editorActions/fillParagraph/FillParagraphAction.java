@@ -10,32 +10,30 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * User : ktisha
- *
+ * <p>
  * Action to re-flow paragraph to fit right margin.
  * Glues paragraph and then splits into lines with appropriate length
- *
+ * <p>
  * The action came from Emacs users // PY-4775
  */
 public class FillParagraphAction extends BaseCodeInsightAction implements DumbAware {
-
   @NotNull
   @Override
   protected CodeInsightActionHandler getHandler() {
     return new Handler();
   }
-  private static class Handler implements CodeInsightActionHandler {
 
+  private static class Handler implements CodeInsightActionHandler {
     @Override
     public void invoke(@NotNull final Project project, @NotNull final Editor editor, @NotNull final PsiFile file) {
-
       ParagraphFillHandler paragraphFillHandler = LanguageFillParagraphExtension.INSTANCE.forLanguage(file.getLanguage());
 
-      final int offset = editor.getCaretModel().getOffset();
+      int offset = editor.getCaretModel().getOffset();
       PsiElement element = file.findElementAt(offset);
-      if (element != null && paragraphFillHandler != null && paragraphFillHandler.isAvailableForFile(file)
+      if (element != null
+          && paragraphFillHandler != null
+          && paragraphFillHandler.isAvailableForFile(file)
           && paragraphFillHandler.isAvailableForElement(element)) {
-
         paragraphFillHandler.performOnElement(element, editor);
       }
     }
@@ -43,9 +41,7 @@ public class FillParagraphAction extends BaseCodeInsightAction implements DumbAw
 
   @Override
   protected boolean isValidForFile(@NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file) {
-    final ParagraphFillHandler handler =
-      LanguageFillParagraphExtension.INSTANCE.forLanguage(file.getLanguage());
+    ParagraphFillHandler handler = LanguageFillParagraphExtension.INSTANCE.forLanguage(file.getLanguage());
     return handler != null && handler.isAvailableForFile(file);
   }
-
 }
