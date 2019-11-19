@@ -13,10 +13,8 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 
 // Returns Kotlin/Native home.
 fun getKotlinNativeHome(project: Project): String? {
-    val paths = mutableListOf<String>()
     forEachKonanProject(project) { konanModel, _, _ ->
-        paths.addIfNotNull(konanModel.kotlinNativeHome)
+        konanModel.kotlinNativeHome?.let { return it }
     }
-
-    return paths.firstOrNull()
+    return null
 }

@@ -46,11 +46,6 @@ class AppCodeGradleKonanExternalBuildProvider : XcodeExternalBuildProvider {
                                   .filter { it.isFramework }
                                   .mapNotNull { configuration.getWithTarget(it) })
 
-        val tasks = HashSet<String>()
-        forEachKonanProject(configuration.project) { _, moduleNode, _ ->
-            tasks.addAll(ExternalSystemApiUtil.findAll(moduleNode, ProjectKeys.TASK).map { it.data.name })
-        }
-
         return configurations.asSequence()
             .mapNotNull { it.getBuildSetting(BuildSettingNames.TARGET_NAME).string }
             .filterGradleTasks(taskName, configuration.project).toList()
@@ -67,10 +62,7 @@ class AppCodeGradleKonanExternalBuildProvider : XcodeExternalBuildProvider {
             else -> TODO()
         }
 
-        var rootPath: String? = null
-        forEachKonanProject(project) { _, _, rootProjectPath ->
-            rootPath = rootProjectPath
-        }
+        val rootPath = getKonanRootProjectPath(project)
 
         val frameworksToBuild = runReadAction {
             GradleBuildContext(
@@ -106,10 +98,19 @@ fun Sequence<String>.filterGradleTasks(taskName: String, project: Project): Sequ
     return this.map { targetName -> ":$targetName:$taskName" }.filter { task -> task in tasks }
 }
 
-private fun collectsGradleTasks(project: Project): HashSet<String> {
+private fun collectsGradleTasks(project: Project): Set<String> {
     val tasks = HashSet<String>()
     forEachKonanProject(project) { _, moduleNode, _ ->
-        tasks.addAll(ExternalSystemApiUtil.findAll(moduleNode, ProjectKeys.TASK).asSequence().map { it.data.name })
+        for (taskNode in ExternalSystemApiUtil.findAll(moduleNode, ProjectKeys.TASK)) {
+            tasks.add(taskNode.data.name)
+        }
     }
     return tasks
+}
+
+private fun getKonanRootProjectPath(project: Project): String? {
+    forEachKonanProject(project) { _, _, rootProjectPath ->
+        return rootProjectPath
+    }
+    return null
 }
