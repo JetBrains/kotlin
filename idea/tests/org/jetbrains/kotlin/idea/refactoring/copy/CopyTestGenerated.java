@@ -148,6 +148,11 @@ public class CopyTestGenerated extends AbstractCopyTest {
         runTest("idea/testData/refactoring/copy/copyMultipleFilesDifferentDirectoriesToNewDirectory/copyMultipleFilesDifferentDirectoriesToNewDirectory.test");
     }
 
+    @TestMetadata("copyMultipleFilesDirectoriesToNewDirectoryAsClassOrObject/copyMultipleFilesDifferentDirectoriesToNewDirectory.test")
+    public void testCopyMultipleFilesDirectoriesToNewDirectoryAsClassOrObject_CopyMultipleFilesDifferentDirectoriesToNewDirectory() throws Exception {
+        runTest("idea/testData/refactoring/copy/copyMultipleFilesDirectoriesToNewDirectoryAsClassOrObject/copyMultipleFilesDifferentDirectoriesToNewDirectory.test");
+    }
+
     @TestMetadata("copyMultipleFilesToNewDirectory/copyMultipleFilesToNewDirectory.test")
     public void testCopyMultipleFilesToNewDirectory_CopyMultipleFilesToNewDirectory() throws Exception {
         runTest("idea/testData/refactoring/copy/copyMultipleFilesToNewDirectory/copyMultipleFilesToNewDirectory.test");

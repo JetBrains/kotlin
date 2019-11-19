@@ -68,7 +68,7 @@ class CopyKotlinDeclarationsHandler : CopyHandlerDelegateBase() {
 
     private val copyFilesHandler by lazy { CopyFilesOrDirectoriesHandler() }
 
-    private fun getSourceFiles(elements: Array<out PsiElement>): Array<PsiElement>? {
+    private fun getSourceFiles(elements: Array<out PsiElement>): Array<PsiFileSystemItem>? {
         return elements
             .map { it.containingFile ?: it as? PsiFileSystemItem ?: return null }
             .toTypedArray()
@@ -243,7 +243,10 @@ class CopyKotlinDeclarationsHandler : CopyHandlerDelegateBase() {
         }
     }
 
-    private fun trackedCopyFiles(sourceFiles: Array<out PsiElement>, initialTargetDirectory: PsiDirectory?): Set<VirtualFile> {
+    private fun trackedCopyFiles(sourceFiles: Array<out PsiFileSystemItem>, initialTargetDirectory: PsiDirectory?): Set<VirtualFile> {
+
+        if (!copyFilesHandler.canCopy(sourceFiles)) return emptySet()
+
         val mapper = object : VirtualFileListener {
             val filesCopied = mutableSetOf<VirtualFile>()
 
@@ -267,11 +270,11 @@ class CopyKotlinDeclarationsHandler : CopyHandlerDelegateBase() {
         return mapper.filesCopied
     }
 
-    private fun doCopyFiles(filesToCopy: Array<out PsiElement>, initialTargetDirectory: PsiDirectory?) {
+    private fun doCopyFiles(filesToCopy: Array<out PsiFileSystemItem>, initialTargetDirectory: PsiDirectory?) {
 
         if (filesToCopy.isEmpty()) return
 
-        val project = filesToCopy.first().project
+        val project = filesToCopy[0].project
         val psiManager = PsiManager.getInstance(project)
 
         project.executeCommand(commandName) {
@@ -298,7 +301,9 @@ class CopyKotlinDeclarationsHandler : CopyHandlerDelegateBase() {
         if (elements.isEmpty()) return
 
         if (!canCopyDeclarations(elements)) {
-            return doCopyFiles(elements, defaultTargetDirectory)
+            getSourceFiles(elements)?.let {
+                return doCopyFiles(it, defaultTargetDirectory)
+            }
         }
 
         val elementsToCopy = elements.mapNotNull { it.getCopyableElement() }
