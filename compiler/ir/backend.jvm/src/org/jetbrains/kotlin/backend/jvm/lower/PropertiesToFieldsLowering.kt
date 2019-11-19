@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -22,6 +23,9 @@ import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.util.hasAnnotation
+import org.jetbrains.kotlin.ir.util.isObject
+import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME
@@ -72,8 +76,29 @@ class PropertiesToFieldsLowering(val context: CommonBackendContext) : IrElementT
         return accessor.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR && Visibilities.isPrivate(accessor.visibility)
     }
 
+    private val remappedFieldCache = mutableMapOf<IrField, IrField>()
+
+    private fun IrField.getRealBackingField(): IrField {
+        val irClass = resolveFakeOverride()!!.parent as? IrClass ?: return this
+        if ((irClass.isCompanion || (irClass.isObject && irClass.visibility != Visibilities.LOCAL)) && !isStatic) {
+            // This specific combination of circumstances means it's an imported @JvmField-annotated field.
+            // First of all, these are static. Second, if they are defined in a companion object, they are actually
+            // in its parent. TODO: apply structural lowerings to imported declarations & remove this hack.
+            return remappedFieldCache.getOrPut(this) {
+                buildField {
+                    updateFrom(this@getRealBackingField)
+                    name = this@getRealBackingField.name
+                    isStatic = true
+                }.apply {
+                    parent = if (irClass.isCompanion) irClass.parentAsClass else irClass
+                }
+            }
+        }
+        return this
+    }
+
     private fun substituteSetter(irProperty: IrProperty, expression: IrCall): IrExpression {
-        val backingField = irProperty.backingField!!
+        val backingField = irProperty.backingField!!.getRealBackingField()
         val receiver = expression.dispatchReceiver?.transform(this, null)
         val setExpr = IrSetFieldImpl(
             expression.startOffset,
@@ -89,7 +114,7 @@ class PropertiesToFieldsLowering(val context: CommonBackendContext) : IrElementT
     }
 
     private fun substituteGetter(irProperty: IrProperty, expression: IrCall): IrExpression {
-        val backingField = irProperty.backingField!!
+        val backingField = irProperty.backingField!!.getRealBackingField()
         val receiver = expression.dispatchReceiver?.transform(this, null)
         val getExpr = IrGetFieldImpl(
             expression.startOffset,
