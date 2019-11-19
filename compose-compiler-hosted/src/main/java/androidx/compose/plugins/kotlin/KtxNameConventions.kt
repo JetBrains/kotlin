@@ -6,6 +6,7 @@ object KtxNameConventions {
     val COMPOSER = Name.identifier("composer")
     val EMIT = Name.identifier("emit")
     val CALL = Name.identifier("call")
+    val EXPR = Name.identifier("expr")
     val JOINKEY = Name.identifier("joinKey")
     val STARTRESTARTGROUP = Name.identifier("startRestartGroup")
     val ENDRESTARTGROUP = Name.identifier("endRestartGroup")
