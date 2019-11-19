@@ -11,10 +11,9 @@ import com.intellij.openapi.editor.ex.util.EditorScrollingPositionKeeper;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiInvalidElementAccessException;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.psi.*;
 import com.intellij.psi.codeStyle.ChangedRangesInfo;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.util.IncorrectOperationException;
@@ -92,12 +91,14 @@ public class ReformatCodeProcessor extends AbstractLayoutCodeProcessor {
   protected FutureTask<Boolean> prepareTask(@NotNull final PsiFile file, final boolean processChangedTextOnly)
     throws IncorrectOperationException
   {
-    assertFileIsValid(file);
     return new FutureTask<>(() -> {
       FormattingProgressTask.FORMATTING_CANCELLED_FLAG.set(false);
       try {
+        PsiFile fileToProcess = ensureValid(file);
+        if (fileToProcess == null) return false;
+
         CharSequence before = null;
-        Document document = PsiDocumentManager.getInstance(myProject).getDocument(file);
+        Document document = PsiDocumentManager.getInstance(myProject).getDocument(fileToProcess);
         if (getInfoCollector() != null) {
           LOG.assertTrue(document != null);
           before = document.getImmutableCharSequence();
@@ -105,15 +106,15 @@ public class ReformatCodeProcessor extends AbstractLayoutCodeProcessor {
 
         EditorScrollingPositionKeeper.perform(document, true, () -> {
           if (processChangedTextOnly) {
-            ChangedRangesInfo info = FormatChangedTextUtil.getInstance().getChangedRangesInfo(file);
+            ChangedRangesInfo info = FormatChangedTextUtil.getInstance().getChangedRangesInfo(fileToProcess);
             if (info != null) {
-              assertFileIsValid(file);
-              CodeStyleManager.getInstance(myProject).reformatTextWithContext(file, info);
+              assertFileIsValid(fileToProcess);
+              CodeStyleManager.getInstance(myProject).reformatTextWithContext(fileToProcess, info);
             }
           }
           else {
-            Collection<TextRange> ranges = getRangesToFormat(file);
-            CodeStyleManager.getInstance(myProject).reformatText(file, ranges);
+            Collection<TextRange> ranges = getRangesToFormat(fileToProcess);
+            CodeStyleManager.getInstance(myProject).reformatText(fileToProcess, ranges);
           }
         });
 
@@ -131,6 +132,19 @@ public class ReformatCodeProcessor extends AbstractLayoutCodeProcessor {
         myRanges.clear();
       }
     });
+  }
+
+  @Nullable
+  private static PsiFile ensureValid(@NotNull PsiFile file) {
+    if (file.isValid()) return file;
+
+    VirtualFile virtualFile = file.getVirtualFile();
+    if (!virtualFile.isValid()) {
+      virtualFile = VirtualFileManager.getInstance().findFileByUrl(virtualFile.getUrl());
+      if (virtualFile == null) return null;
+    }
+
+    return file.getManager().findFile(virtualFile);
   }
 
   private static void assertFileIsValid(@NotNull PsiFile file) {
