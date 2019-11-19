@@ -1,0 +1,14 @@
+package
+
+public fun intVararg(/*0*/ vararg args: kotlin.Int /*kotlin.IntArray*/): kotlin.Unit
+public fun numberVararg(/*0*/ vararg args: kotlin.Number /*kotlin.Array<out kotlin.Number>*/): kotlin.Unit
+public fun stringVararg(/*0*/ vararg args: kotlin.String /*kotlin.Array<out kotlin.String>*/): kotlin.Unit
+public fun test(): kotlin.Unit
+public fun useIntArray(/*0*/ fn: (kotlin.Array<kotlin.Int>) -> kotlin.Unit): kotlin.Unit
+public fun useMixedStringArgs1(/*0*/ fn: (kotlin.String, kotlin.Array<kotlin.String>) -> kotlin.Unit): kotlin.Unit
+public fun useMixedStringArgs2(/*0*/ fn: (kotlin.Array<kotlin.String>, kotlin.String) -> kotlin.Unit): kotlin.Unit
+public fun useMixedStringArgs3(/*0*/ fn: (kotlin.String, kotlin.Array<kotlin.String>, kotlin.String) -> kotlin.Unit): kotlin.Unit
+public fun usePrimitiveIntArray(/*0*/ fn: (kotlin.IntArray) -> kotlin.Unit): kotlin.Unit
+public fun useStringArray(/*0*/ fn: (kotlin.Array<kotlin.String>) -> kotlin.Unit): kotlin.Unit
+public fun useStrings(/*0*/ fn: (kotlin.String, kotlin.String, kotlin.String) -> kotlin.Unit): kotlin.Unit
+public fun useTwoStringArrays(/*0*/ fn: (kotlin.Array<kotlin.String>, kotlin.Array<kotlin.String>) -> kotlin.Unit): kotlin.Unit

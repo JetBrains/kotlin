@@ -23545,6 +23545,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/varargs/varargOfNothing.kt");
             }
 
+            @TestMetadata("varargViewedAsArray.kt")
+            public void testVarargViewedAsArray() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/varargs/varargViewedAsArray.kt");
+            }
+
             @TestMetadata("varargsAndFunctionLiterals.kt")
             public void testVarargsAndFunctionLiterals() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/varargs/varargsAndFunctionLiterals.kt");

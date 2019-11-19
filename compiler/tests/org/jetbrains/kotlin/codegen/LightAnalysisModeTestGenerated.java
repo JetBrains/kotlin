@@ -2697,6 +2697,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/callableReference/varargAndDefaults/varargViewedAsArray.kt");
             }
 
+            @TestMetadata("varargViewedAsPrimitiveArray.kt")
+            public void testVarargViewedAsPrimitiveArray() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/varargAndDefaults/varargViewedAsPrimitiveArray.kt");
+            }
+
             @TestMetadata("varargWithDefaultValue.kt")
             public void testVarargWithDefaultValue() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/varargAndDefaults/varargWithDefaultValue.kt");
