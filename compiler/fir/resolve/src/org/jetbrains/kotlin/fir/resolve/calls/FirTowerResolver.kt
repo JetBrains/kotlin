@@ -46,7 +46,7 @@ class FirTowerResolver(
         // }
         towerDataConsumer.consume(
             TOWER_LEVEL,
-            MemberScopeTowerLevel(session, implicitReceiverValue, scopeSession = components.scopeSession),
+            MemberScopeTowerLevel(session, components, implicitReceiverValue, scopeSession = components.scopeSession),
             group++
         )
 
@@ -57,7 +57,7 @@ class FirTowerResolver(
 //        }
         towerDataConsumer.consume(
             TOWER_LEVEL,
-            MemberScopeTowerLevel(session, implicitReceiverValue, implicitReceiverValue, components.scopeSession),
+            MemberScopeTowerLevel(session, components, implicitReceiverValue, implicitReceiverValue, components.scopeSession),
             group++
         )
 
@@ -127,7 +127,8 @@ class FirTowerResolver(
                 towerDataConsumer.consume(
                     TOWER_LEVEL,
                     MemberScopeTowerLevel(
-                        session, scopeSession = components.scopeSession,
+                        session, components,
+                        scopeSession = components.scopeSession,
                         dispatchReceiver = implicitDispatchReceiverValue,
                         implicitExtensionReceiver = implicitReceiverValue
                     ),

@@ -86,6 +86,7 @@ abstract class SessionBasedTowerLevel(val session: FirSession) : TowerScopeLevel
 //     or given implicit or explicit receiver, otherwise
 class MemberScopeTowerLevel(
     session: FirSession,
+    val bodyResolveComponents: BodyResolveComponents,
     val dispatchReceiver: ReceiverValue,
     val implicitExtensionReceiver: ImplicitReceiverValue<*>? = null,
     val scopeSession: ScopeSession
@@ -128,7 +129,7 @@ class MemberScopeTowerLevel(
                 this.processPropertiesByName(name, symbol.cast())
             }
             TowerScopeLevel.Token.Functions -> processMembers(processor, explicitExtensionReceiver) { symbol ->
-                this.processFunctionsByName(name, symbol.cast())
+                this.processFunctionsAndConstructorsByName(name, session, bodyResolveComponents, symbol.cast())
             }
             TowerScopeLevel.Token.Objects -> processMembers(processor, explicitExtensionReceiver) { symbol ->
                 this.processClassifiersByName(name, symbol.cast())

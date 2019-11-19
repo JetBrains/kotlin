@@ -10,14 +10,16 @@ FILE fqName:<root> fileName:/javaConstructorWithTypeParameters.kt
         CONSTRUCTOR_CALL 'public constructor <init> (x1: X1 of <uninitialized parent>?) declared in <root>.J1' type=<root>.J1<kotlin.Int> origin=null
           <class: T1>: <none>
           x1: CONST Int type=kotlin.Int value=1
-  FUN name:test3 visibility:public modality:FINAL <> (j1:<root>.J1<kotlin.Any>) returnType:IrErrorType
+  FUN name:test3 visibility:public modality:FINAL <> (j1:<root>.J1<kotlin.Any>) returnType:<root>.J1.J2<kotlin.Int>
     VALUE_PARAMETER name:j1 index:0 type:<root>.J1<kotlin.Any>
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test3 (j1: <root>.J1<kotlin.Any>): IrErrorType declared in <root>'
-        ERROR_CALL 'Unresolved reference: <Unresolved name: J2>#' type=IrErrorType
-  FUN name:test4 visibility:public modality:FINAL <> (j1:<root>.J1<kotlin.Any>) returnType:IrErrorType
+      RETURN type=kotlin.Nothing from='public final fun test3 (j1: <root>.J1<kotlin.Any>): <root>.J1.J2<kotlin.Int> declared in <root>'
+        CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.J1.J2' type=<root>.J1.J2<kotlin.Int> origin=null
+          <class: T2>: <none>
+  FUN name:test4 visibility:public modality:FINAL <> (j1:<root>.J1<kotlin.Any>) returnType:<root>.J1.J2<kotlin.Int>
     VALUE_PARAMETER name:j1 index:0 type:<root>.J1<kotlin.Any>
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test4 (j1: <root>.J1<kotlin.Any>): IrErrorType declared in <root>'
-        ERROR_CALL 'Unresolved reference: <Unresolved name: J2>#' type=IrErrorType
-          CONST Int type=kotlin.Int value=1
+      RETURN type=kotlin.Nothing from='public final fun test4 (j1: <root>.J1<kotlin.Any>): <root>.J1.J2<kotlin.Int> declared in <root>'
+        CONSTRUCTOR_CALL 'public constructor <init> (x2: X2 of <uninitialized parent>?) declared in <root>.J1.J2' type=<root>.J1.J2<kotlin.Int> origin=null
+          <class: T2>: <none>
+          x2: CONST Int type=kotlin.Int value=1

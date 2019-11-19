@@ -37,13 +37,6 @@ class FirClassDeclaredMemberScope(klass: FirClass<*>, useLazyNestedClassifierSco
                     }
                     result.getOrPut(name) { mutableListOf() } += declaration.symbol
                 }
-                is FirRegularClass -> {
-                    for (nestedDeclaration in declaration.declarations) {
-                        if (nestedDeclaration is FirConstructor) {
-                            result.getOrPut(declaration.name) { mutableListOf() } += nestedDeclaration.symbol
-                        }
-                    }
-                }
             }
         }
         result

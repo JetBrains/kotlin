@@ -1,5 +1,5 @@
 FILE: nestedClassContructor.kt
-    public final class A : R|kotlin/Any| {
+    public open class A : R|kotlin/Any| {
         public constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
@@ -9,10 +9,44 @@ FILE: nestedClassContructor.kt
                 super<R|A|>()
             }
 
-            public final fun copy(): <ERROR TYPE REF: Ambiguity: B, [/A.B.B, /A.B.B]> {
-                ^copy <Ambiguity: B, [/A.B.B, /A.B.B]>#()
+            public final fun copy(): R|A.B| {
+                ^copy R|/A.B.B|()
             }
 
+        }
+
+        public open class C : R|kotlin/Any| {
+            public constructor(): R|A.C| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun copy(): R|A.C| {
+                ^copy R|/A.C.C|()
+            }
+
+        }
+
+    }
+    public final class D : R|A.C| {
+        public constructor(): R|D| {
+            super<R|A.C|>()
+        }
+
+        public final fun foo(): R|kotlin/Unit| {
+            lval a: R|A| = R|/A.A|()
+            lval ac: R|A.C| = Q|A|.R|/A.C.C|()
+            lval c: <ERROR TYPE REF: Unresolved name: C> = <Unresolved name: C>#()
+        }
+
+    }
+    public final class E : R|A| {
+        public constructor(): R|E| {
+            super<R|A|>()
+        }
+
+        public final fun foo(): R|kotlin/Unit| {
+            lval a: R|A| = R|/A.A|()
+            lval c: R|A.C| = R|/A.C.C|()
         }
 
     }

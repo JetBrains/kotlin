@@ -171,13 +171,14 @@ class ExplicitReceiverTowerDataConsumer<T : AbstractFirBasedSymbol<*>>(
         if (skipGroup(group, resultCollector)) return ProcessorAction.NEXT
         return when (kind) {
             TowerDataKind.EMPTY ->
-                MemberScopeTowerLevel(session, explicitReceiver, scopeSession = candidateFactory.bodyResolveComponents.scopeSession)
-                    .processElementsByName(
-                        token,
-                        name,
-                        explicitReceiver = null,
-                        processor = EmptyKindTowerProcessor(group)
-                    )
+                MemberScopeTowerLevel(
+                    session, resultCollector.components, explicitReceiver, scopeSession = candidateFactory.bodyResolveComponents.scopeSession
+                ).processElementsByName(
+                    token,
+                    name,
+                    explicitReceiver = null,
+                    processor = EmptyKindTowerProcessor(group)
+                )
             TowerDataKind.TOWER_LEVEL -> {
                 if (token == TowerScopeLevel.Token.Objects) return ProcessorAction.NEXT
                 towerScopeLevel.processElementsByName(

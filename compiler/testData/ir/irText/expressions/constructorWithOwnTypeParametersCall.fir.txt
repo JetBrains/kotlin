@@ -4,10 +4,11 @@ FILE fqName:<root> fileName:/constructorWithOwnTypeParametersCall.kt
       RETURN type=kotlin.Nothing from='public final fun testKotlin (): <root>.K1.K2<kotlin.String> declared in <root>'
         CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.K1.K2' type=<root>.K1.K2<kotlin.String> origin=null
           <class: T2>: <none>
-  FUN name:testJava visibility:public modality:FINAL <> () returnType:IrErrorType
+  FUN name:testJava visibility:public modality:FINAL <> () returnType:<root>.J1.J2<kotlin.Double>
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun testJava (): IrErrorType declared in <root>'
-        ERROR_CALL 'Unresolved reference: <Unresolved name: J2>#' type=IrErrorType
+      RETURN type=kotlin.Nothing from='public final fun testJava (): <root>.J1.J2<kotlin.Double> declared in <root>'
+        CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.J1.J2' type=<root>.J1.J2<kotlin.Double> origin=null
+          <class: X2>: <none>
   CLASS CLASS name:K1 modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.K1
     TYPE_PARAMETER name:T1 index:0 variance: superTypes:[]
