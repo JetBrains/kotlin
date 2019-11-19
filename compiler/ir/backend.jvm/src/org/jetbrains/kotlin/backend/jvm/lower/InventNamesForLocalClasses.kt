@@ -24,7 +24,9 @@ import org.jetbrains.org.objectweb.asm.Type
 val inventNamesForLocalClassesPhase = makeIrFilePhase<JvmBackendContext>(
     { context -> InventNamesForLocalClasses(context) },
     name = "InventNamesForLocalClasses",
-    description = "Invent names for local classes and anonymous objects"
+    description = "Invent names for local classes and anonymous objects",
+    // MainMethodGeneration introduces lambdas, needing names for their local classes.
+    prerequisite = setOf(mainMethodGenerationPhase)
 )
 
 class InventNamesForLocalClasses(private val context: JvmBackendContext) : FileLoweringPass {

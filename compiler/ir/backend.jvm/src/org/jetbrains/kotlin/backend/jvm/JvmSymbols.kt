@@ -19,10 +19,9 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.builders.declarations.*
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
@@ -607,6 +606,16 @@ class JvmSymbols(
 
     val enumValueOfFunction: IrSimpleFunctionSymbol =
         javaLangEnum.functionByName("valueOf")
+
+    val runSuspendFunction: IrSimpleFunctionSymbol =
+        buildFun {
+            name = Name.identifier("runSuspend")
+            origin = IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
+        }.apply {
+            parent = kotlinCoroutinesJvmInternalPackage
+            returnType = irBuiltIns.unitType
+            addValueParameter("block", getJvmSuspendFunctionClass(0).typeWith(continuationClass.typeWith(irBuiltIns.unitType), irBuiltIns.anyNType))
+        }.symbol
 }
 
 private fun IrClassSymbol.functionByName(name: String): IrSimpleFunctionSymbol =
