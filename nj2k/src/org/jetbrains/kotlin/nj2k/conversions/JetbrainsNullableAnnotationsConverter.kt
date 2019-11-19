@@ -21,14 +21,13 @@ class JetbrainsNullableAnnotationsConverter(context: NewJ2kConverterContext) : R
         for (annotation in element.annotationList.annotations) {
             val nullability = annotation.annotationNullability() ?: continue
             when (element) {
-                is JKVariable -> {
-                    annotationsToRemove += annotation
-                    element.type = JKTypeElement(element.type.type.updateNullability(nullability))
-                }
-                is JKMethod -> {
-                    annotationsToRemove += annotation
-                    element.returnType = JKTypeElement(element.returnType.type.updateNullability(nullability))
-                }
+                is JKVariable -> element.type
+                is JKMethod -> element.returnType
+                is JKTypeElement -> element
+                else -> null
+            }?.let { typeElement ->
+                annotationsToRemove += annotation
+                typeElement.type = typeElement.type.updateNullability(nullability)
             }
         }
         element.annotationList.annotations -= annotationsToRemove
