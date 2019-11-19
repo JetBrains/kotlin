@@ -23,5 +23,3 @@ abstract class ConeClassLikeLookupTag : ConeClassifierLookupTag() {
         get() = classId.shortClassName
 }
 
-abstract class ConeTypeAliasLookupTag : ConeClassLikeLookupTag()
-
