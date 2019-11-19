@@ -4,8 +4,6 @@ package com.intellij.codeInsight;
 import com.intellij.codeInsight.editorActions.SmartBackspaceMode;
 import com.intellij.configurationStore.XmlSerializer;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.application.Application;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
@@ -13,7 +11,6 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.DifferenceFilter;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.registry.Registry;
 import com.intellij.serialization.SerializationException;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.ReflectionUtil;
@@ -42,16 +39,6 @@ public class CodeInsightSettings implements PersistentStateComponent<Element>, C
 
   public static CodeInsightSettings getInstance() {
     return ServiceManager.getService(CodeInsightSettings.class);
-  }
-
-  public CodeInsightSettings() {
-    Application application = ApplicationManager.getApplication();
-    if (Registry.is("java.completion.argument.hints") ||
-        application != null && application.isInternal() && !application.isUnitTestMode() && Registry.is("java.completion.argument.hints.internal")) {
-      SHOW_PARAMETER_NAME_HINTS_ON_COMPLETION = true;
-      Registry.get("java.completion.argument.hints").setValue(false);
-      Registry.get("java.completion.argument.hints.internal").setValue(false);
-    }
   }
 
   public void addPropertyChangeListener(PropertyChangeListener listener, Disposable parentDisposable) {
