@@ -37,7 +37,8 @@ class FirJavaClass internal constructor(
     override val classKind: ClassKind,
     isTopLevel: Boolean,
     isStatic: Boolean,
-    internal val javaTypeParameterStack: JavaTypeParameterStack
+    internal val javaTypeParameterStack: JavaTypeParameterStack,
+    internal val existingNestedClassifierNames: List<Name>
 ) : FirPureAbstractElement(), FirRegularClass, FirModifiableClass<FirRegularClass> {
     override var status: FirDeclarationStatusImpl = FirDeclarationStatusImpl(visibility, modality)
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()

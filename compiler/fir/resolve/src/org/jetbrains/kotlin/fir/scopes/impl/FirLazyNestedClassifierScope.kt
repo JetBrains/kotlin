@@ -18,7 +18,8 @@ import org.jetbrains.kotlin.name.Name
 // (or make possible to calculate nested classifiers on-the-fly)
 class FirLazyNestedClassifierScope(
     val classId: ClassId,
-    session: FirSession
+    session: FirSession,
+    private val existingNames: List<Name>?
 ) : FirScope() {
 
     private val symbolProvider = session.firSymbolProvider
@@ -27,6 +28,9 @@ class FirLazyNestedClassifierScope(
         name: Name,
         processor: (FirClassifierSymbol<*>) -> ProcessorAction
     ): ProcessorAction {
+        if (existingNames != null && name !in existingNames) {
+            return ProcessorAction.NONE
+        }
         val child = classId.createNestedClassId(name)
         val symbol = symbolProvider.getClassLikeSymbolByFqName(child) ?: return ProcessorAction.NONE
 

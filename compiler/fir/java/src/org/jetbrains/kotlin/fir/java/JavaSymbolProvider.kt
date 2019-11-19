@@ -93,7 +93,11 @@ class JavaSymbolProvider(
         visitedSymbols: MutableSet<FirClassLikeSymbol<*>>
     ): JavaClassUseSiteMemberScope {
         return scopeSession.getOrBuild(regularClass.symbol, JAVA_USE_SITE) {
-            val declaredScope = declaredMemberScope(regularClass, useLazyNestedClassifierScope = regularClass is FirJavaClass)
+            val declaredScope = declaredMemberScope(
+                regularClass,
+                useLazyNestedClassifierScope = regularClass is FirJavaClass,
+                existingNames = (regularClass as? FirJavaClass)?.existingNestedClassifierNames
+            )
             val superTypeEnhancementScopes =
                 lookupSuperTypes(regularClass, lookupInterfaces = true, deep = false, useSiteSession = useSiteSession)
                     .mapNotNull { useSiteSuperType ->
@@ -184,7 +188,8 @@ class JavaSymbolProvider(
                     javaClass.visibility, javaClass.modality,
                     javaClass.classKind, isTopLevel = isTopLevel,
                     isStatic = javaClass.isStatic,
-                    javaTypeParameterStack = javaTypeParameterStack
+                    javaTypeParameterStack = javaTypeParameterStack,
+                    existingNestedClassifierNames = javaClass.innerClassNames.toList()
                 ).apply {
                     this.typeParameters += foundClass.typeParameters.convertTypeParameters(javaTypeParameterStack)
                     addAnnotationsFrom(this@JavaSymbolProvider.session, javaClass, javaTypeParameterStack)
