@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 open class Base
 class Derived: Base()
 operator fun Derived.inc(): Derived { return Derived() }

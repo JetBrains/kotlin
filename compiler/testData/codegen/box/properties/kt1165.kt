@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 public abstract class VirtualFile() {
     public abstract val size : Long
 }

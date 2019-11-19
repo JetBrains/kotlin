@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 fun box(): String {
     var aByte: Byte? = 0
     var bByte: Byte = 0

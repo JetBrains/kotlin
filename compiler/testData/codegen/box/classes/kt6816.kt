@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 public class CalculatorConstants(
         val id: Long = 0,
         val detour: Double = 0.0,
