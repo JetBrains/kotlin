@@ -15,6 +15,7 @@ val useAppCodeForCommon: Boolean by rootProject.extra
 
 val cidrVersion: String by rootProject.extra
 val cidrUnscrambledJarDir: File by rootProject.extra
+val kotlinNativeBackendVersion: String by rootProject.extra
 
 repositories {
     maven("https://repo.labs.intellij.net/intellij-proprietary-modules")
@@ -27,7 +28,7 @@ dependencies {
     compile(project(":kotlin-ultimate:ide:common-cidr-native"))
     compileOnly(fileTree(cidrUnscrambledJarDir) { include("**/*.jar") })
     if (!isStandaloneBuild || !useAppCodeForCommon) compileOnly("com.jetbrains.intellij.swift:swift:$cidrVersion") { isTransitive = false }
-    compileOnly(tc("Kotlin_KotlinNative_Master_KotlinNativeLinuxBundle:1.3.70-dev-13308:backend.native.jar"))
+    compileOnly(tc("Kotlin_KotlinNative_Master_KotlinNativeLinuxBundle:${kotlinNativeBackendVersion}:backend.native.jar"))
 
     if (!isStandaloneBuild) {
         val localDependencies = Class.forName("LocalDependenciesKt")

@@ -24,6 +24,7 @@ val mobilePluginZipPath: File by rootProject.extra
 val mobileCustomPluginRepoUrl: URL by rootProject.extra
 val clionJavaPluginDownloadUrl: URL? by rootProject.extra
 val clionCocoaCommonBinariesDir: File by rootProject.extra
+val kotlinNativeBackendVersion: String by rootProject.extra
 
 val ultimateTools: Map<String, Any> by rootProject.extensions
 val handleSymlink: (FileCopyDetails, File) -> Boolean by ultimateTools
@@ -49,8 +50,8 @@ dependencies {
     }
     runtime(project(":kotlin-ultimate:libraries:tools:apple-gradle-plugin-api")) { isTransitive = false }
     runtime("com.jetbrains.intellij.swift:swift:$clionVersion") { isTransitive = false }
-    runtime(tc("Kotlin_KotlinNative_Master_KotlinNativeLinuxBundle:1.3.70-dev-13308:backend.native.jar"))
-    runtime(tc("Kotlin_KotlinNative_Master_KotlinNativeLinuxBundle:1.3.70-dev-13308:konan.serializer.jar")) // required for backend.native
+    runtime(tc("Kotlin_KotlinNative_Master_KotlinNativeLinuxBundle:${kotlinNativeBackendVersion}:backend.native.jar"))
+    runtime(tc("Kotlin_KotlinNative_Master_KotlinNativeLinuxBundle:${kotlinNativeBackendVersion}:konan.serializer.jar")) // required for backend.native
 }
 
 val preparePluginXmlTask: Task = preparePluginXml(

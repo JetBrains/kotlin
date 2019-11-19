@@ -38,6 +38,7 @@ val appcodePluginZipPath: File by rootProject.extra
 val appcodeCustomPluginRepoUrl: URL by rootProject.extra
 val appcodeUseJavaPlugin: Boolean by rootProject.extra
 val appcodeJavaPluginDownloadUrl: URL? by rootProject.extra
+val kotlinNativeBackendVersion: String by rootProject.extra
 
 val cidrPlugin: Configuration by configurations.creating
 val cidrGradleTooling: Configuration by configurations.creating
@@ -48,8 +49,8 @@ dependencies {
     embedded(project(":kotlin-ultimate:ide:common-native")) { isTransitive = false }
     runtime(project(":kotlin-ultimate:ide:common-cidr-swift-native")) { isTransitive = false }
     embedded(project(":kotlin-ultimate:ide:appcode-native")) { isTransitive = false }
-    runtime(tc("Kotlin_KotlinNative_Master_KotlinNativeLinuxBundle:1.3.70-dev-13308:backend.native.jar"))
-    runtime(tc("Kotlin_KotlinNative_Master_KotlinNativeLinuxBundle:1.3.70-dev-13308:konan.serializer.jar")) // required for backend.native
+    runtime(tc("Kotlin_KotlinNative_Master_KotlinNativeLinuxBundle:${kotlinNativeBackendVersion}:backend.native.jar"))
+    runtime(tc("Kotlin_KotlinNative_Master_KotlinNativeLinuxBundle:${kotlinNativeBackendVersion}:konan.serializer.jar")) // required for backend.native
 }
 
 val copyRuntimeDeps: Task by tasks.creating(Copy::class) {
