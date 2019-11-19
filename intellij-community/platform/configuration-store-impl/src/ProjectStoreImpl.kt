@@ -166,7 +166,7 @@ open class ProjectWithModulesStoreImpl(project: Project) : ProjectStoreImpl(proj
       val saveSessions: MutableList<SaveSession> = SmartList()
       // commit components
       for (module in modules) {
-        val moduleStore = ModuleServiceManager.getService(module, IComponentStore::class.java) as ComponentStoreImpl
+        val moduleStore = ModuleServiceManager.getService(module, IComponentStore::class.java) as? ComponentStoreImpl ?: continue
         // collectSaveSessions is very cheap, so, do it in EDT
         val saveManager = moduleStore.createSaveSessionProducerManager()
         commitModuleComponents(moduleStore, saveManager, projectSaveSessionManager, isForceSavingAllSettings, errors)

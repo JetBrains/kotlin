@@ -7,6 +7,7 @@ import com.intellij.ide.plugins.IdeaPluginDescriptorImpl;
 import com.intellij.ide.plugins.PluginManagerCore;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.*;
+import com.intellij.openapi.components.impl.stores.IComponentStore;
 import com.intellij.openapi.components.impl.stores.ModuleStore;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
@@ -37,6 +38,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author max
@@ -45,7 +47,7 @@ public class ModuleImpl extends PlatformComponentManagerImpl implements ModuleEx
   private static final Logger LOG = Logger.getInstance(ModuleImpl.class);
 
   @NotNull private final Project myProject;
-  private final VirtualFilePointer myImlFilePointer;
+  @Nullable private final VirtualFilePointer myImlFilePointer;
   private volatile boolean isModuleAdded;
 
   private String myName;
@@ -53,7 +55,7 @@ public class ModuleImpl extends PlatformComponentManagerImpl implements ModuleEx
   private final ModuleScopeProvider myModuleScopeProvider;
 
   @ApiStatus.Internal
-  public ModuleImpl(@NotNull String name, @NotNull Project project, @NotNull String filePath) {
+  public ModuleImpl(@NotNull String name, @NotNull Project project, @Nullable String filePath) {
     super((PlatformComponentManagerImpl)project);
 
     getPicoContainer().registerComponentInstance(Module.class, this);
@@ -62,18 +64,23 @@ public class ModuleImpl extends PlatformComponentManagerImpl implements ModuleEx
     myModuleScopeProvider = new ModuleScopeProviderImpl(this);
 
     myName = name;
-    myImlFilePointer = VirtualFilePointerManager.getInstance().create(
-      VfsUtilCore.pathToUrl(filePath), this,
-      new VirtualFilePointerListener() {
-        @Override
-        public void validityChanged(@NotNull VirtualFilePointer[] pointers) {
-          VirtualFile file = myImlFilePointer.getFile();
-          if (file != null) {
-            ((ModuleStore)ServiceKt.getStateStore(ModuleImpl.this)).setPath(file.getPath(), false);
-            ModuleManager.getInstance(myProject).incModificationCount();
+    if (filePath != null) {
+      myImlFilePointer = VirtualFilePointerManager.getInstance().create(
+        VfsUtilCore.pathToUrl(filePath), this,
+        new VirtualFilePointerListener() {
+          @Override
+          public void validityChanged(@NotNull VirtualFilePointer[] pointers) {
+            VirtualFile file = myImlFilePointer.getFile();
+            if (file != null) {
+              ((ModuleStore)ServiceKt.getStateStore(ModuleImpl.this)).setPath(file.getPath(), false);
+              ModuleManager.getInstance(myProject).incModificationCount();
+            }
           }
-        }
-      });
+        });
+    }
+    else {
+      myImlFilePointer = null;
+    }
   }
 
   @Override
@@ -82,10 +89,21 @@ public class ModuleImpl extends PlatformComponentManagerImpl implements ModuleEx
     // because there are a lot of modules and no need to measure each one
     //noinspection unchecked
     registerComponents((List<IdeaPluginDescriptorImpl>)PluginManagerCore.getLoadedPlugins(), false);
+    if (!isPersistent()) {
+      registerService(IComponentStore.class,
+                      NonPersistentModuleStore.class,
+                      Objects.requireNonNull(PluginManagerCore.getPlugin(PluginManagerCore.CORE_ID),
+                                             "Could not find plugin by id: " + PluginManagerCore.CORE_ID),
+                      true);
+    }
     if (beforeComponentCreation != null) {
       beforeComponentCreation.run();
     }
     createComponents(null);
+  }
+
+  private boolean isPersistent() {
+    return myImlFilePointer != null;
   }
 
   @Override
@@ -133,6 +151,9 @@ public class ModuleImpl extends PlatformComponentManagerImpl implements ModuleEx
   @Override
   @Nullable
   public VirtualFile getModuleFile() {
+    if (myImlFilePointer == null) {
+      return null;
+    }
     return myImlFilePointer.getFile();
   }
 
@@ -148,6 +169,9 @@ public class ModuleImpl extends PlatformComponentManagerImpl implements ModuleEx
   @Override
   @NotNull
   public String getModuleFilePath() {
+    if (!isPersistent()) {
+      return "";
+    }
     return ServiceKt.getStateStore(this).getStorageManager().expandMacros(StoragePathMacros.MODULE_FILE);
   }
 

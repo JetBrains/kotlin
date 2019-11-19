@@ -7,12 +7,14 @@ import com.intellij.openapi.diagnostic.runAndLogException
 import com.intellij.openapi.module.Module
 import com.intellij.project.isDirectoryBased
 import com.intellij.util.io.exists
+import org.jetbrains.annotations.ApiStatus
 import java.nio.file.Paths
 import kotlin.streams.asSequence
 
 private val MODULE_FILE_STORAGE_ANNOTATION = FileStorageAnnotation(StoragePathMacros.MODULE_FILE, false)
 
-private open class ModuleStoreImpl(module: Module) : ModuleStoreBase() {
+@ApiStatus.Internal
+internal open class ModuleStoreImpl(module: Module) : ModuleStoreBase() {
   private val pathMacroManager = PathMacroManager.getInstance(module)
 
   override val project = module.project
