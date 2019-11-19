@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
+import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isInterface
@@ -323,8 +324,22 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
                     copyTypeParametersFrom(this@orphanedCopy)
                     this@orphanedCopy.dispatchReceiverParameter?.let { dispatchReceiverParameter = it.copyTo(this) }
                     this@orphanedCopy.extensionReceiverParameter?.let { extensionReceiverParameter = it.copyTo(this) }
+                    // Since we are removing overriddenSymbols, we need to explicitly box the parameter type for `remove(Int): Boolean`
+                    // by turning it into `remove(Int?): Boolean`. This is to make sure that the target is the right `remove`
+                    // method in the generated java bytecode.
+                    val makeParameterNullable = name.asString() == "remove" &&
+                            this@orphanedCopy.valueParameters.size == 1 &&
+                            this@orphanedCopy.valueParameters[0].type == context.irBuiltIns.intType
                     this@orphanedCopy.valueParameters.forEachIndexed { index, param ->
-                        valueParameters.add(index, param.copyTo(this))
+                        valueParameters.add(
+                            index,
+                            param.copyTo(this, type = if (makeParameterNullable) param.type.makeNullable() else param.type)
+                        )
+                    }
+                    // Since we are removing overridenSymbols, we need to explicitly box the return type for `removeAt(I)I` to
+                    // make sure that the target is the right `removeAt` method in the generate java bytecode.
+                    if (name.asString() == "removeAt") {
+                        returnType = this@orphanedCopy.returnType.makeNullable()
                     }
                     /* Do NOT copy overriddenSymbols */
                 }
