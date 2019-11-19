@@ -8,15 +8,15 @@ import org.jetbrains.kotlin.descriptors.SourceFile
 import org.jetbrains.kotlin.library.KotlinLibrary
 
 class DeserializedSourceFile(
-    val name_: String, val index: Int, val library: KotlinLibrary
+    val name_: String, val library: KotlinLibrary
 ) : SourceFile {
     override fun getName(): String? = name_
 
     override fun equals(other: Any?): Boolean {
-        return other is DeserializedSourceFile && library == other.library && index == other.index
+        return other is DeserializedSourceFile && library == other.library && name == other.name
     }
 
     override fun hashCode(): Int {
-        return library.hashCode() xor index
+        return library.hashCode() xor name.hashCode()
     }
 }
