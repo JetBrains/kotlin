@@ -513,6 +513,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         public void testStaticGenericMethod() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/stdlib/j+k/StaticGenericMethod.kt");
         }
+
+        @TestMetadata("typeParameterUse.kt")
+        public void testTypeParameterUse() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/stdlib/j+k/typeParameterUse.kt");
+        }
     }
 
     @TestMetadata("compiler/fir/resolve/testData/resolve/stdlib/problems")

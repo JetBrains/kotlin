@@ -241,7 +241,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext,
 
     override fun KotlinTypeMarker.mayBeTypeVariable(): Boolean {
         require(this is ConeKotlinType)
-        return this is ConeTypeVariableType
+        return this.typeConstructor() is ConeTypeVariableTypeConstructor
     }
 
     override fun CapturedTypeMarker.typeConstructorProjection(): TypeArgumentMarker {
