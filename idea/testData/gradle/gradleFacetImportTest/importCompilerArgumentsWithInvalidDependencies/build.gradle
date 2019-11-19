@@ -5,9 +5,6 @@ buildscript {
     repositories {
         mavenCentral()
         mavenLocal()
-        maven {
-            url 'https://dl.bintray.com/kotlin/kotlin-dev'
-        }
     }
 
     dependencies {
@@ -20,7 +17,6 @@ apply plugin: 'kotlin'
 repositories {
     mavenLocal()
     mavenCentral()
-    maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
 }
 
 dependencies {

@@ -53,9 +53,8 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.js.isJs
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.junit.Assert
-import org.junit.Ignore
-import org.junit.Test
+import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions
+import org.junit.*
 import java.util.*
 
 internal fun GradleImportingTestCase.facetSettings(moduleName: String) = KotlinFacet.get(getModule(moduleName))!!.configuration.settings
@@ -73,18 +72,6 @@ internal fun GradleImportingTestCase.getSourceRootInfos(moduleName: String): Lis
 }
 
 class GradleFacetImportTest : GradleImportingTestCase() {
-    private var isCreateEmptyContentRootDirectories = true
-
-    override fun setUp() {
-        super.setUp()
-        isCreateEmptyContentRootDirectories = currentExternalProjectSettings.isCreateEmptyContentRootDirectories
-        currentExternalProjectSettings.isCreateEmptyContentRootDirectories = true
-    }
-
-    override fun tearDown() {
-        currentExternalProjectSettings.isCreateEmptyContentRootDirectories = isCreateEmptyContentRootDirectories
-        super.tearDown()
-    }
 
     private fun assertSameKotlinSdks(vararg moduleNames: String) {
         val sdks = moduleNames.map { getModule(it).sdk!! }
@@ -311,8 +298,8 @@ class GradleFacetImportTest : GradleImportingTestCase() {
         importProject()
 
         with(facetSettings) {
-            Assert.assertEquals("1.1", languageLevel!!.versionString)
-            Assert.assertEquals("1.1", apiLevel!!.versionString)
+            Assert.assertEquals("1.3", languageLevel!!.versionString)
+            Assert.assertEquals("1.3", apiLevel!!.versionString)
             Assert.assertFalse(compilerArguments!!.autoAdvanceLanguageVersion)
             Assert.assertFalse(compilerArguments!!.autoAdvanceApiVersion)
             Assert.assertTrue(targetPlatform.isJs())
@@ -327,7 +314,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
         }
 
         with(testFacetSettings) {
-            Assert.assertEquals("1.1", languageLevel!!.versionString)
+            Assert.assertEquals("1.3", languageLevel!!.versionString)
             Assert.assertEquals("1.0", apiLevel!!.versionString)
             Assert.assertFalse(compilerArguments!!.autoAdvanceLanguageVersion)
             Assert.assertFalse(compilerArguments!!.autoAdvanceApiVersion)
@@ -343,7 +330,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
         }
 
         val rootManager = ModuleRootManager.getInstance(getModule("project_main"))
-        val stdlib = rootManager.orderEntries.filterIsInstance<LibraryOrderEntry>().single().library
+        val stdlib = rootManager.orderEntries.filterIsInstance<LibraryOrderEntry>().single { it.libraryName?.contains("js") ?: false }.library
         assertEquals(JSLibraryKind, (stdlib as LibraryEx).kind)
         assertTrue(stdlib.getFiles(OrderRootType.CLASSES).isNotEmpty())
 
@@ -351,7 +338,6 @@ class GradleFacetImportTest : GradleImportingTestCase() {
 
         Assert.assertEquals(
             listOf(
-                "file:///src/main/java" to SourceKotlinRootType,
                 "file:///src/main/kotlin" to SourceKotlinRootType,
                 "file:///src/main/resources" to ResourceKotlinRootType
             ),
@@ -359,7 +345,6 @@ class GradleFacetImportTest : GradleImportingTestCase() {
         )
         Assert.assertEquals(
             listOf(
-                "file:///src/test/java" to TestSourceKotlinRootType,
                 "file:///src/test/kotlin" to TestSourceKotlinRootType,
                 "file:///src/test/resources" to TestResourceKotlinRootType
             ),
@@ -375,8 +360,8 @@ class GradleFacetImportTest : GradleImportingTestCase() {
         importProject()
 
         with(facetSettings) {
-            Assert.assertEquals("1.1", languageLevel!!.versionString)
-            Assert.assertEquals("1.1", apiLevel!!.versionString)
+            Assert.assertEquals("1.3", languageLevel!!.versionString)
+            Assert.assertEquals("1.3", apiLevel!!.versionString)
             Assert.assertTrue(targetPlatform.isJs())
         }
 
@@ -391,7 +376,6 @@ class GradleFacetImportTest : GradleImportingTestCase() {
 
         Assert.assertEquals(
             listOf(
-                "file:///src/main/java" to SourceKotlinRootType,
                 "file:///src/main/kotlin" to SourceKotlinRootType,
                 "file:///src/main/resources" to ResourceKotlinRootType
             ),
@@ -399,7 +383,6 @@ class GradleFacetImportTest : GradleImportingTestCase() {
         )
         Assert.assertEquals(
             listOf(
-                "file:///src/test/java" to TestSourceKotlinRootType,
                 "file:///src/test/kotlin" to TestSourceKotlinRootType,
                 "file:///src/test/resources" to TestResourceKotlinRootType
             ),
@@ -413,8 +396,8 @@ class GradleFacetImportTest : GradleImportingTestCase() {
         importProject()
 
         with(facetSettings("project_myMain")) {
-            Assert.assertEquals("1.1", languageLevel!!.versionString)
-            Assert.assertEquals("1.1", apiLevel!!.versionString)
+            Assert.assertEquals("1.3", languageLevel!!.versionString)
+            Assert.assertEquals("1.3", apiLevel!!.versionString)
             Assert.assertTrue(targetPlatform.isJs())
             with(compilerArguments as K2JSCompilerArguments) {
                 Assert.assertEquals(true, sourceMap)
@@ -427,7 +410,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
         }
 
         with(facetSettings("project_myTest")) {
-            Assert.assertEquals("1.1", languageLevel!!.versionString)
+            Assert.assertEquals("1.3", languageLevel!!.versionString)
             Assert.assertEquals("1.0", apiLevel!!.versionString)
             Assert.assertTrue(targetPlatform.isJs())
             with(compilerArguments as K2JSCompilerArguments) {
@@ -444,7 +427,6 @@ class GradleFacetImportTest : GradleImportingTestCase() {
 
         Assert.assertEquals(
             listOf(
-                "file:///src/main/java" to SourceKotlinRootType,
                 "file:///src/main/kotlin" to SourceKotlinRootType,
                 "file:///src/main/resources" to ResourceKotlinRootType
             ),
@@ -452,7 +434,6 @@ class GradleFacetImportTest : GradleImportingTestCase() {
         )
         Assert.assertEquals(
             listOf(
-                "file:///src/test/java" to TestSourceKotlinRootType,
                 "file:///src/test/kotlin" to TestSourceKotlinRootType,
                 "file:///src/test/resources" to TestResourceKotlinRootType
             ),
@@ -505,8 +486,8 @@ class GradleFacetImportTest : GradleImportingTestCase() {
         importProject()
 
         with(facetSettings) {
-            Assert.assertEquals("1.1", languageLevel!!.versionString)
-            Assert.assertEquals("1.1", apiLevel!!.versionString)
+            Assert.assertEquals("1.3", languageLevel!!.versionString)
+            Assert.assertEquals("1.3", apiLevel!!.versionString)
             Assert.assertTrue(targetPlatform.isJs())
         }
 
@@ -517,7 +498,6 @@ class GradleFacetImportTest : GradleImportingTestCase() {
 
         Assert.assertEquals(
             listOf(
-                "file:///src/main/java" to SourceKotlinRootType,
                 "file:///src/main/kotlin" to SourceKotlinRootType,
                 "file:///src/main/resources" to ResourceKotlinRootType
             ),
@@ -525,7 +505,6 @@ class GradleFacetImportTest : GradleImportingTestCase() {
         )
         Assert.assertEquals(
             listOf(
-                "file:///src/test/java" to TestSourceKotlinRootType,
                 "file:///src/test/kotlin" to TestSourceKotlinRootType,
                 "file:///src/test/resources" to TestResourceKotlinRootType
             ),
@@ -534,6 +513,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
     }
 
     @Test
+    @TargetVersions("4.9")
     fun testCommonImportByPlatformPlugin() {
         configureByFiles()
         importProject()
@@ -567,6 +547,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
     }
 
     @Test
+    @TargetVersions("4.9")
     fun testCommonImportByPlatformPlugin_SingleModule() {
         configureByFiles()
         importProjectUsingSingeModulePerGradleProject()
@@ -629,14 +610,13 @@ class GradleFacetImportTest : GradleImportingTestCase() {
         importProject()
 
         with(facetSettings) {
-            Assert.assertEquals("1.1", languageLevel!!.versionString)
-            Assert.assertEquals("1.1", apiLevel!!.versionString)
+            Assert.assertEquals("1.3", languageLevel!!.versionString)
+            Assert.assertEquals("1.3", apiLevel!!.versionString)
             Assert.assertTrue(targetPlatform.isJs())
         }
 
         Assert.assertEquals(
             listOf(
-                "file:///src/main/java" to SourceKotlinRootType,
                 "file:///src/main/kotlin" to SourceKotlinRootType,
                 "file:///src/main/resources" to ResourceKotlinRootType
             ),
@@ -644,7 +624,6 @@ class GradleFacetImportTest : GradleImportingTestCase() {
         )
         Assert.assertEquals(
             listOf(
-                "file:///src/test/java" to TestSourceKotlinRootType,
                 "file:///src/test/kotlin" to TestSourceKotlinRootType,
                 "file:///src/test/resources" to TestResourceKotlinRootType
             ),
@@ -744,7 +723,6 @@ class GradleFacetImportTest : GradleImportingTestCase() {
         importProject()
 
         val kotlinFacet = KotlinFacet.get(getModule("project"))!!
-        Assert.assertTrue(kotlinFacet.configuration.settings.mergedCompilerArguments!!.progressiveMode)
     }
 
     @Test
@@ -1016,6 +994,16 @@ class GradleFacetImportTest : GradleImportingTestCase() {
                 }
                 Assert.assertNull("Configurator $configurator tells that ${moduleGroup.baseModule} can be configured", configurator)
             }
+        }
+    }
+
+    override fun importProject() {
+        val isCreateEmptyContentRootDirectories = currentExternalProjectSettings.isCreateEmptyContentRootDirectories
+        try {
+            currentExternalProjectSettings.isCreateEmptyContentRootDirectories = true
+            super.importProject()
+        } finally {
+            currentExternalProjectSettings.isCreateEmptyContentRootDirectories = isCreateEmptyContentRootDirectories
         }
     }
 
