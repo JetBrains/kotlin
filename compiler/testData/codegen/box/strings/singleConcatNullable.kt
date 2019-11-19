@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 fun f(s: String?): String {
     return "$s"
 }

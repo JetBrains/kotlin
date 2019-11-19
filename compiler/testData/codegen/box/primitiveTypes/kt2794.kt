@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 fun box () : String {
    val b = 4.toByte()
    val s = 5.toShort()

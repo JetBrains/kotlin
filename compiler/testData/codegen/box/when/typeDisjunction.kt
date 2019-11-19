@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 fun foo(s: Any): String {
     val x = when (s) {
         is String -> s
@@ -11,6 +10,3 @@ fun foo(s: Any): String {
 }
 
 fun box() = if (foo("OK") == "OK" && foo(42) == "42" && foo(true) == "") "OK" else "Fail"
-
-
-

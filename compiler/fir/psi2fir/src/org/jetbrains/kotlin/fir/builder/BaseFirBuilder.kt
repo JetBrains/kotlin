@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.lexer.KtTokens.OPEN_QUOTE
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtStringTemplateEntryWithExpression
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 import org.jetbrains.kotlin.psi.KtUnaryExpression
 import org.jetbrains.kotlin.resolve.constants.evaluate.*
@@ -289,7 +290,12 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
                 }
                 SHORT_STRING_TEMPLATE_ENTRY, LONG_STRING_TEMPLATE_ENTRY -> {
                     hasExpressions = true
-                    entry.convertTemplateEntry("Incorrect template argument")
+                    val firExpression = entry.convertTemplateEntry("Incorrect template argument")
+                    val source = firExpression.source
+                    FirFunctionCallImpl(source).apply {
+                        explicitReceiver = firExpression
+                        calleeReference = FirSimpleNamedReference(source, Name.identifier("toString"), candidateSymbol = null)
+                    }
                 }
                 else -> {
                     hasExpressions = true

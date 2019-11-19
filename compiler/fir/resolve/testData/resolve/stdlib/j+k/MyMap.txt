@@ -7,13 +7,13 @@ FILE: test.kt
         lval otherResult: R|kotlin/String| = R|<local>/map|.R|FakeOverride<kotlin/collections/Map.getOrDefault: R|kotlin/String|>|(String(key), String(value))
         lval anotherResult: <ERROR TYPE REF: Unresolved name: replace> = R|<local>/map|.<Unresolved name: replace>#(String(key), String(value))
         R|<local>/map|.<Inapplicable(INAPPLICABLE): [kotlin/collections/forEach]>#(<L> = forEach@fun <anonymous>(key: R|class error: No type for parameter|, value: R|class error: No type for parameter|): R|kotlin/Unit| {
-            R|kotlin/io/println|(<strcat>(R|<local>/key|, String(: ), R|<local>/value|))
+            R|kotlin/io/println|(<strcat>(R|<local>/key|.R|kotlin/toString|(), String(: ), R|<local>/value|.R|kotlin/toString|()))
         }
         )
         R|<local>/map|.R|kotlin/collections/forEach|<R|kotlin/String|, R|kotlin/String|>(<L> = forEach@fun <anonymous>(<destruct>: R|kotlin/collections/Map.Entry<kotlin/String, kotlin/String>|): R|kotlin/Unit| <kind=UNKNOWN>  {
             lval key: R|kotlin/String| = R|<local>/<destruct>|.R|kotlin/collections/component1|<R|kotlin/String|, R|kotlin/String|>()
             lval value: R|kotlin/String| = R|<local>/<destruct>|.R|kotlin/collections/component2|<R|kotlin/String|, R|kotlin/String|>()
-            R|kotlin/io/println|(<strcat>(R|<local>/key|, String(: ), R|<local>/value|))
+            R|kotlin/io/println|(<strcat>(R|<local>/key|.R|kotlin/Any.toString|(), String(: ), R|<local>/value|.R|kotlin/Any.toString|()))
         }
         )
     }
@@ -25,13 +25,13 @@ FILE: test.kt
         lval otherResult: R|kotlin/String| = R|<local>/map|.R|FakeOverride<kotlin/collections/Map.getOrDefault: R|kotlin/String|>|(String(key), String(value))
         lval anotherResult: <ERROR TYPE REF: Unresolved name: replace> = R|<local>/map|.<Unresolved name: replace>#(String(key), String(value))
         R|<local>/map|.<Inapplicable(INAPPLICABLE): [kotlin/collections/forEach]>#(<L> = forEach@fun <anonymous>(key: R|class error: No type for parameter|, value: R|class error: No type for parameter|): R|kotlin/Unit| {
-            R|kotlin/io/println|(<strcat>(R|<local>/key|, String(: ), R|<local>/value|))
+            R|kotlin/io/println|(<strcat>(R|<local>/key|.R|kotlin/toString|(), String(: ), R|<local>/value|.R|kotlin/toString|()))
         }
         )
         R|<local>/map|.R|kotlin/collections/forEach|<R|kotlin/String|, R|kotlin/String|>(<L> = forEach@fun <anonymous>(<destruct>: R|kotlin/collections/Map.Entry<kotlin/String, kotlin/String>|): R|kotlin/Unit| <kind=UNKNOWN>  {
             lval key: R|kotlin/String| = R|<local>/<destruct>|.R|kotlin/collections/component1|<R|kotlin/String|, R|kotlin/String|>()
             lval value: R|kotlin/String| = R|<local>/<destruct>|.R|kotlin/collections/component2|<R|kotlin/String|, R|kotlin/String|>()
-            R|kotlin/io/println|(<strcat>(R|<local>/key|, String(: ), R|<local>/value|))
+            R|kotlin/io/println|(<strcat>(R|<local>/key|.R|kotlin/Any.toString|(), String(: ), R|<local>/value|.R|kotlin/Any.toString|()))
         }
         )
     }

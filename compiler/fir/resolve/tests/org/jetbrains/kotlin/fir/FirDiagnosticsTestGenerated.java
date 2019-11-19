@@ -295,6 +295,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/resolve/testData/resolve/arguments/simple.kt");
         }
 
+        @TestMetadata("stringTemplates.kt")
+        public void testStringTemplates() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/arguments/stringTemplates.kt");
+        }
+
         @TestMetadata("tryInLambda.kt")
         public void testTryInLambda() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/arguments/tryInLambda.kt");

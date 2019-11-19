@@ -65,8 +65,10 @@ FILE fqName:<root> fileName:/constValInitializers.kt
     FIELD PROPERTY_BACKING_FIELD name:STR4 type:kotlin.String visibility:private [final,static]
       EXPRESSION_BODY
         STRING_CONCATENATION type=kotlin.String
-          CALL 'public final fun <get-STR1> (): kotlin.String declared in <root>' type=kotlin.String origin=null
-          CALL 'public final fun <get-STR2> (): kotlin.String declared in <root>' type=kotlin.String origin=null
+          CALL 'public open fun toString (): kotlin.String declared in kotlin.Any' type=kotlin.String origin=null
+            $this: CALL 'public final fun <get-STR1> (): kotlin.String declared in <root>' type=kotlin.String origin=null
+          CALL 'public open fun toString (): kotlin.String declared in kotlin.Any' type=kotlin.String origin=null
+            $this: CALL 'public final fun <get-STR2> (): kotlin.String declared in <root>' type=kotlin.String origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-STR4> visibility:public modality:FINAL <> () returnType:kotlin.String
       correspondingProperty: PROPERTY name:STR4 visibility:public modality:FINAL [const,val]
       BLOCK_BODY

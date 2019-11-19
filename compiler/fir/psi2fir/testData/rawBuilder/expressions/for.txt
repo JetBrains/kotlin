@@ -54,7 +54,7 @@ FILE: for.kt
             lval <destruct>: <implicit> = R|<local>/<iterator>|.next#()
             lval x: <implicit> = R|<local>/<destruct>|.component1()
             lval y: <implicit> = R|<local>/<destruct>|.component2()
-            println#(<strcat>(String(x = ), x#, String( y = ), y#))
+            println#(<strcat>(String(x = ), x#.toString#(), String( y = ), y#.toString#()))
         }
 
     }
