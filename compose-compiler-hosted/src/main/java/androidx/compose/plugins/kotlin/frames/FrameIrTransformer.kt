@@ -379,7 +379,7 @@ class FrameIrTransformer(val context: JvmBackendContext) :
             fun getRecord(thisSymbol: IrValueSymbol, thisType: IrType) =
                 toRecord(recordGetter(thisSymbol, thisType))
 
-            +initializer {
+            prepend(initializer {
                 // Create the initial state record
                 +syntheticSetField(
                     fieldReference, thisValue(), syntheticConstructorCall(
@@ -430,7 +430,7 @@ class FrameIrTransformer(val context: JvmBackendContext) :
                 ).apply {
                     putValueArgument(0, thisValue())
                 }
-            }
+            })
 
             // Replace property getter/setters with _readable/_writable calls (this,
             // indirectly, removes the backing field)
@@ -668,6 +668,11 @@ class IrClassBuilder(
     operator fun IrDeclaration.unaryPlus() {
         parent = irClass
         irClass.declarations.add(this)
+    }
+
+    fun prepend(declaration: IrDeclaration) {
+        declaration.parent = irClass
+        irClass.declarations.add(0, declaration)
     }
 
     fun addInterface(interfaceDescriptor: ClassDescriptor) {
