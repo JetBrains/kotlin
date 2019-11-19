@@ -15058,6 +15058,16 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/jvmField/constructorProperty.kt");
         }
 
+        @TestMetadata("fileOrder.kt")
+        public void testFileOrder() throws Exception {
+            runTest("compiler/testData/codegen/box/jvmField/fileOrder.kt");
+        }
+
+        @TestMetadata("fileOrderWithCopying.kt")
+        public void testFileOrderWithCopying() throws Exception {
+            runTest("compiler/testData/codegen/box/jvmField/fileOrderWithCopying.kt");
+        }
+
         @TestMetadata("initializersOrder.kt")
         public void testInitializersOrder() throws Exception {
             runTest("compiler/testData/codegen/box/jvmField/initializersOrder.kt");

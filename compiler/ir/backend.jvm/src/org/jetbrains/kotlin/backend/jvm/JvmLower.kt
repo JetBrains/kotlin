@@ -225,6 +225,7 @@ private val jvmFilePhases =
         propertyReferencePhase then
         constPhase then
         propertiesToFieldsPhase then
+        remapObjectFieldAccesses then
         propertiesPhase then
         renameFieldsPhase then
         anonymousObjectSuperConstructorPhase then

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.lower.IrLoweringContext
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmSymbols
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
+import org.jetbrains.kotlin.backend.jvm.descriptors.JvmDeclarationFactory
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.hasMangledParameters
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -152,14 +153,14 @@ fun IrExpression.isSmartcastFromHigherThanNullable(context: JvmBackendContext) =
             !this.argument.type.isSubtypeOf(type.makeNullable(), context.irBuiltIns)
 
 fun IrBody.replaceThisByStaticReference(
-    context: JvmBackendContext,
+    declarationFactory: JvmDeclarationFactory,
     irClass: IrClass,
     oldThisReceiverParameter: IrValueParameter
 ): IrBody =
     transform(object : IrElementTransformerVoid() {
         override fun visitGetValue(expression: IrGetValue): IrExpression {
             if (expression.symbol == oldThisReceiverParameter.symbol) {
-                val instanceField = context.declarationFactory.getPrivateFieldForObjectInstance(irClass)
+                val instanceField = declarationFactory.getPrivateFieldForObjectInstance(irClass)
                 return IrGetFieldImpl(
                     expression.startOffset,
                     expression.endOffset,
