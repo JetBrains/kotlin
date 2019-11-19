@@ -32,7 +32,6 @@ import com.intellij.psi.codeStyle.CodeStyleManager;
 import org.jetbrains.annotations.NotNull;
 
 public class EmacsStyleIndentAction extends BaseCodeInsightAction implements DumbAware {
-
   @NotNull
   @Override
   protected CodeInsightActionHandler getHandler() {
@@ -41,15 +40,13 @@ public class EmacsStyleIndentAction extends BaseCodeInsightAction implements Dum
 
   @Override
   protected boolean isValidForFile(@NotNull final Project project, @NotNull final Editor editor, @NotNull final PsiFile file) {
-    final PsiElement context = file.findElementAt(editor.getCaretModel().getOffset());
+    PsiElement context = file.findElementAt(editor.getCaretModel().getOffset());
     return context != null && LanguageFormatting.INSTANCE.forContext(context) != null;
   }
 
-  //----------------------------------------------------------------------
   private static class Handler implements CodeInsightActionHandler {
-
     @Override
-    public void invoke(@NotNull final Project project, @NotNull final Editor editor, @NotNull final PsiFile file) {
+    public void invoke(@NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file) {
       EmacsProcessingHandler emacsProcessingHandler = LanguageEmacsExtension.INSTANCE.forLanguage(file.getLanguage());
       if (emacsProcessingHandler != null) {
         EmacsProcessingHandler.Result result = emacsProcessingHandler.changeIndent(project, editor, file);
@@ -58,13 +55,13 @@ public class EmacsStyleIndentAction extends BaseCodeInsightAction implements Dum
         }
       }
 
-      final Document document = editor.getDocument();
+      Document document = editor.getDocument();
       int startLine = document.getLineNumber(editor.getSelectionModel().getSelectionStart());
       int endLine = document.getLineNumber(editor.getSelectionModel().getSelectionEnd());
       for (int line = startLine; line <= endLine; line++) {
-        final int lineStart = document.getLineStartOffset(line);
-        final CodeStyleManager codeStyleManager = CodeStyleManager.getInstance(project);
-        final int newPos = codeStyleManager.adjustLineIndent(file, lineStart);
+        int lineStart = document.getLineStartOffset(line);
+        CodeStyleManager codeStyleManager = CodeStyleManager.getInstance(project);
+        int newPos = codeStyleManager.adjustLineIndent(file, lineStart);
         if (startLine == endLine && editor.getCaretModel().getOffset() < newPos) {
           editor.getCaretModel().moveToOffset(newPos);
           editor.getSelectionModel().removeSelection();
