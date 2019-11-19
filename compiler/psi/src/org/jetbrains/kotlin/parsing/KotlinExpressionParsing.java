@@ -1261,7 +1261,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             else if (at(RBRACE)) {
                 break;
             }
-            else if (!myBuilder.newlineBeforeCurrentToken()) {
+            else if (!isScriptTopLevel && !myBuilder.newlineBeforeCurrentToken()) {
                 String severalStatementsError = "Unexpected tokens (use ';' to separate expressions on the same line)";
 
                 if (atSet(STATEMENT_NEW_LINE_QUICK_RECOVERY_SET)) {

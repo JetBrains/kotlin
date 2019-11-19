@@ -2607,6 +2607,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
                 runTest("compiler/testData/psi/script/manyAnnotationsOnFile.kts");
             }
 
+            @TestMetadata("OneLiner.kts")
+            public void testOneLiner() throws Exception {
+                runTest("compiler/testData/psi/script/OneLiner.kts");
+            }
+
             @TestMetadata("Shebang.kts")
             public void testShebang() throws Exception {
                 runTest("compiler/testData/psi/script/Shebang.kts");
