@@ -1,7 +1,7 @@
 FILE: exhaustiveness_enum.kt
-    public final enum class Enum : R|kotlin/Enum| {
+    public final enum class Enum : R|kotlin/Enum<Enum>| {
         private constructor(): R|Enum| {
-            super<R|kotlin/Enum|>()
+            super<R|kotlin/Enum<Enum>|>()
         }
 
         public final enum entry A : R|kotlin/Any| {

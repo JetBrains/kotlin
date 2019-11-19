@@ -28,9 +28,9 @@ FILE: qualifiedExpressions.kt
         }
 
     }
-    public final enum class E : R|kotlin/Enum| {
+    public final enum class E : R|kotlin/Enum<a/b/E>| {
         private constructor(): R|a/b/E| {
-            super<R|kotlin/Enum|>()
+            super<R|kotlin/Enum<a/b/E>|>()
         }
 
         public final enum entry entry : R|kotlin/Any| {

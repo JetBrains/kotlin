@@ -13,9 +13,9 @@ FILE: enum.kt
         }
 
     }
-    public final enum class SomeEnum : R|kotlin/Enum| {
+    public final enum class SomeEnum : R|kotlin/Enum<SomeEnum>| {
         private constructor(x: R|Some|): R|SomeEnum| {
-            super<R|kotlin/Enum|>()
+            super<R|kotlin/Enum<SomeEnum>|>()
         }
 
         public final val x: R|Some| = R|<local>/x|

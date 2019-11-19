@@ -1,7 +1,7 @@
 FILE: enumValues.kt
-    public final enum class MyEnum : R|kotlin/Enum| {
+    public final enum class MyEnum : R|kotlin/Enum<MyEnum>| {
         private constructor(): R|MyEnum| {
-            super<R|kotlin/Enum|>()
+            super<R|kotlin/Enum<MyEnum>|>()
         }
 
         public final enum entry FIRST : R|kotlin/Any| {
