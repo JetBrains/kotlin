@@ -23,8 +23,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class SdkDownloadTracker implements Disposable {
   private static final Logger LOG = Logger.getInstance(SdkDownloadTracker.class);
@@ -34,7 +36,7 @@ public class SdkDownloadTracker implements Disposable {
     return ApplicationManager.getApplication().getService(SdkDownloadTracker.class);
   }
 
-  private final List<PendingDownload> myPendingTasks = new ArrayList<>();
+  private final List<PendingDownload> myPendingTasks = new CopyOnWriteArrayList<>();
 
   public SdkDownloadTracker() {
     ApplicationManager.getApplication().getMessageBus()
@@ -53,7 +55,7 @@ public class SdkDownloadTracker implements Disposable {
   }
 
   public void onSdkRemoved(@NotNull Sdk sdk) {
-    ApplicationManager.getApplication().assertIsDispatchThread();
+    //can be executed in any thread too, JMM safe
 
     PendingDownload task = findTask(sdk);
     if (task == null) return;
@@ -68,7 +70,7 @@ public class SdkDownloadTracker implements Disposable {
   @Nullable
   private PendingDownload findTask(@NotNull Sdk sdk) {
     for (PendingDownload task : myPendingTasks) {
-      if (task.myEditableSdks.contains(sdk)) {
+      if (task.containsSdk(sdk)) {
         return task;
       }
     }
@@ -157,9 +159,28 @@ public class SdkDownloadTracker implements Disposable {
     }
   }
 
+  // synchronized newIdentityHashSet
+  // (Collections.synchronizedSet does not help the iterator)
+  private static class SdksSet {
+    final Set<Sdk> myEditableSdks = Sets.newIdentityHashSet();
+
+    synchronized void add(@NotNull Sdk sdk) {
+      myEditableSdks.add(sdk);
+    }
+
+    synchronized boolean contains(@NotNull Sdk sdk) {
+      return myEditableSdks.contains(sdk);
+    }
+
+    @NotNull
+    synchronized List<Sdk> copy() {
+      return new ArrayList<>(myEditableSdks);
+    }
+  }
+
   private static class PendingDownload {
     private final SdkDownloadTask myTask;
-    private final Set<Sdk> myEditableSdks = Sets.newIdentityHashSet();
+    private final SdksSet myEditableSdks = new SdksSet();
     private final ProgressIndicatorBase myProgressIndicator = new ProgressIndicatorBase();
     private final Set<Runnable> myCompleteListeners = Sets.newIdentityHashSet();
     private final Set<Disposable> myDisposables = Sets.newIdentityHashSet();
@@ -173,7 +194,14 @@ public class SdkDownloadTracker implements Disposable {
       myTask = task;
     }
 
+    boolean containsSdk(@NotNull Sdk sdk) {
+      // called from any thread
+      return myEditableSdks.contains(sdk);
+    }
+
     public void registerEditableSdk(@NotNull Sdk editable) {
+      // called from any thread
+      //
       // there are many Sdk clones that are created
       // along with the Project Structure model.
       // Our goal is to keep track of all such objects to make
@@ -205,6 +233,7 @@ public class SdkDownloadTracker implements Disposable {
             // we need a progress indicator from the outside, to avoid race condition
             // (progress may start with a delay, but UI would need a PI)
             myProgressIndicator.addStateDelegate((ProgressIndicatorEx)indicator);
+            myProgressIndicator.checkCanceled();
             try {
               myTask.doDownload(myProgressIndicator);
             }
@@ -260,7 +289,7 @@ public class SdkDownloadTracker implements Disposable {
                       ? () -> disposeNow()
                       : () -> {
                         WriteAction.run(() -> {
-                          for (Sdk sdk : myEditableSdks) {
+                          for (Sdk sdk : myEditableSdks.copy()) {
                             try {
                               ((SdkType)sdk.getSdkType()).setupSdkPaths(sdk);
                             }
@@ -268,7 +297,8 @@ public class SdkDownloadTracker implements Disposable {
                               LOG.warn("Failed to setup Sdk " + sdk + ". " + e.getMessage(), e);
                             }
                           }
-                          disposeLater();
+                          //free the WriteAction, thus non-blocking
+                          myModalityTracker.invokeLater(() -> disposeNow());
                         });
                       };
 
@@ -280,11 +310,6 @@ public class SdkDownloadTracker implements Disposable {
       myModalityTracker.invokeLater(task);
     }
 
-    private void disposeLater() {
-      //free the WriteAction, thus non-blocking
-      myModalityTracker.invokeLater(() -> disposeNow());
-    }
-
     private void disposeNow() {
       ApplicationManager.getApplication().assertIsDispatchThread();
       getInstance().removeTask(this);
@@ -294,11 +319,8 @@ public class SdkDownloadTracker implements Disposable {
     }
 
     public void cancel() {
-      ApplicationManager.getApplication().assertIsDispatchThread();
       myProgressIndicator.cancel();
-      if (!myIsDownloading) {
-        disposeNow();
-      }
+      myModalityTracker.invokeLater(() -> disposeNow());
     }
   }
 }
