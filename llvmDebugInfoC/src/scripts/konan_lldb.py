@@ -97,13 +97,15 @@ def select_provider(lldb_val, tip, internal_dict):
         else __FACTORY['object'](lldb_val, tip, internal_dict)
 
 class KonanHelperProvider(lldb.SBSyntheticValueProvider):
-    def __init__(self, valobj, amString):
+    def __init__(self, valobj, amString, internal_dict = []):
         self._target = lldb.debugger.GetSelectedTarget()
         self._process = self._target.GetProcess()
         self._valobj = valobj
         self._ptr = lldb_val_to_ptr(self._valobj)
         if amString:
             return
+        self._internal_dict = internal_dict.copy()
+        self._to_string_depth = TO_STRING_DEPTH if "to_string_depth" not in self._internal_dict.keys() else  self._internal_dict["to_string_depth"]
         if self._children_count == 0:
             self._children_count = evaluate("(int)Konan_DebugGetFieldCount({})".format(self._ptr)).signed
         self._children = []
@@ -142,6 +144,8 @@ class KonanHelperProvider(lldb.SBSyntheticValueProvider):
         return self._type_conversion[int(value_type)](address, str(self._children[index].name()))
 
     def _create_synthetic_child(self, address, name):
+        if self._to_string_depth == 0:
+           return None
         index = self.get_child_index(name)
         value = self._valobj.CreateChildAtOffset(str(name),
                                                  self._children[index].offset(),
@@ -249,7 +253,7 @@ class KonanObjectSyntheticProvider(KonanHelperProvider):
         else:
             self._children_count = 0
 
-        super(KonanObjectSyntheticProvider, self).__init__(valobj, False)
+        super(KonanObjectSyntheticProvider, self).__init__(valobj, False, internal_dict)
 
         if not tip in SYNTHETIC_OBJECT_LAYOUT_CACHE:
             SYNTHETIC_OBJECT_LAYOUT_CACHE[tip] = [
@@ -260,8 +264,6 @@ class KonanObjectSyntheticProvider(KonanHelperProvider):
             log(lambda : "TIP: {:#x} HIT".format(tip))
         self._children = SYNTHETIC_OBJECT_LAYOUT_CACHE[tip]
         self._values = [self._read_value(index) for index in range(self._children_count)]
-        self._internal_dict = internal_dict
-        self._to_string_depth = TO_STRING_DEPTH if "to_string_depth" not in self._internal_dict.keys() else  self._internal_dict["to_string_depth"]
 
 
     def _field_name(self, index):
@@ -304,7 +306,7 @@ class KonanObjectSyntheticProvider(KonanHelperProvider):
 class KonanArraySyntheticProvider(KonanHelperProvider):
     def __init__(self, valobj, internal_dict):
         self._children_count = 0
-        super(KonanArraySyntheticProvider, self).__init__(valobj, False)
+        super(KonanArraySyntheticProvider, self).__init__(valobj, False, internal_dict)
         if self._ptr is None:
             return
         valobj.SetSyntheticChildrenGenerated(True)
@@ -314,8 +316,7 @@ class KonanArraySyntheticProvider(KonanHelperProvider):
         offset = zerro_address - valobj.unsigned
         size = first_address - zerro_address
         self._children = [MemberLayout(str(x), type, offset + x * size) for x in range(self.num_children())]
-        self._values = [self._read_value(i) for i in range(self.cap_children_count())]
-        self._internal_dict = internal_dict
+        self._values = [self._read_value(i) for i in range(min(ARRAY_TO_STRING_LIMIT, self._children_count))]
 
 
     def cap_children_count(self):
