@@ -27773,6 +27773,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/vararg/kt796_797.kt");
         }
 
+        @TestMetadata("notInLastPosition.kt")
+        public void testNotInLastPosition() throws Exception {
+            runTest("compiler/testData/codegen/box/vararg/notInLastPosition.kt");
+        }
+
         @TestMetadata("singleAssignmentToVarargsInFunction.kt")
         public void testSingleAssignmentToVarargsInFunction() throws Exception {
             runTest("compiler/testData/codegen/box/vararg/singleAssignmentToVarargsInFunction.kt");
