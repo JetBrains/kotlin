@@ -142,6 +142,7 @@ public final class BuildManager implements Disposable {
     "BuildManager Auto-Make Trigger");
   private final Map<String, ProjectData> myProjectDataMap = Collections.synchronizedMap(new HashMap<>());
   private volatile int myFileChangeCounter;
+  private boolean myGeneratePortableCachesEnabled = false;
 
   private final BuildManagerPeriodicTask myAutoMakeTask = new BuildManagerPeriodicTask() {
     @Override
@@ -1155,7 +1156,8 @@ public final class BuildManager implements Disposable {
       }
     }
 
-    if (Registry.is("compiler.build.portable.caches")) {
+    // portable caches
+    if (isGeneratePortableCachesEnabled()) {
       //cmdLine.addParameter("-Didea.resizeable.file.truncate.on.close=true");
       cmdLine.addParameter("-Dkotlin.jps.non.caching.storage=true");
       cmdLine.addParameter("-Dorg.jetbrains.jps.portable.caches=true");
@@ -1407,6 +1409,15 @@ public final class BuildManager implements Disposable {
     if (myBuildProcessDebuggingEnabled) {
       cancelAllPreloadedBuilds();
     }
+  }
+
+  public boolean isGeneratePortableCachesEnabled() {
+    return myGeneratePortableCachesEnabled;
+  }
+
+  public void setGeneratePortableCachesEnabled(boolean generatePortableCachesEnabled) {
+    if (myGeneratePortableCachesEnabled != generatePortableCachesEnabled) clearState();
+    myGeneratePortableCachesEnabled = generatePortableCachesEnabled;
   }
 
   private abstract class BuildManagerPeriodicTask implements Runnable {
