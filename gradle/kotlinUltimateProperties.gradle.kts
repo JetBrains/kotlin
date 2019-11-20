@@ -132,7 +132,7 @@ val appcodePluginDir: File by rootProject.extra(artifactsForCidrDir.resolve("app
 val mobileMppPluginDir: File by rootProject.extra(artifactsForCidrDir.resolve("mobileMppPlugin/mobile-mpp"))
 val mobilePluginDir: File by rootProject.extra(artifactsForCidrDir.resolve("mobilePlugin/Mobile"))
 
-val useAppCodeForCommon = findProperty("useAppCodeForCommon").toBoolean()
+val useAppCodeForCommon: Boolean by rootProject.extra(findProperty("useAppCodeForCommon").toBoolean())
 val cidrVersion: String by rootProject.extra(if (useAppCodeForCommon) appcodeVersion else clionVersion)
 
 if (isStandaloneBuild) { // setup additional properties that are required only when running in standalone mode:
