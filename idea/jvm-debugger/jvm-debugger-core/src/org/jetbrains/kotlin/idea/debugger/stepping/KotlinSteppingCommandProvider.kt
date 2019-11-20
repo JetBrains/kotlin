@@ -38,6 +38,9 @@ import org.jetbrains.kotlin.idea.debugger.stepping.DexBytecode.RETURN_VOID
 import org.jetbrains.kotlin.idea.debugger.stepping.DexBytecode.RETURN_WIDE
 import org.jetbrains.kotlin.idea.core.util.getLineNumber
 import org.jetbrains.kotlin.idea.core.util.getLineStartOffset
+import org.jetbrains.kotlin.idea.debugger.stepping.filter.KotlinStepOverInlineFilter
+import org.jetbrains.kotlin.idea.debugger.stepping.filter.KotlinSuspendCallStepOverFilter
+import org.jetbrains.kotlin.idea.debugger.stepping.filter.StepOverFilterData
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.*

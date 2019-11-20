@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.debugger.stepping
+package org.jetbrains.kotlin.idea.debugger.stepping.filter
 
 import com.intellij.debugger.DebuggerBundle
 import com.intellij.debugger.DebuggerManagerEx

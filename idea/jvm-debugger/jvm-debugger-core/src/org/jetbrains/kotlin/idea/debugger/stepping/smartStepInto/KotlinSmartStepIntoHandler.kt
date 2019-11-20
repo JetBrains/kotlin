@@ -13,8 +13,8 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.util.Range
 import com.intellij.util.containers.OrderedSet
 import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils.getTopmostElementAtOffset
-import org.jetbrains.kotlin.idea.debugger.stepping.KotlinBasicStepMethodFilter
-import org.jetbrains.kotlin.idea.debugger.stepping.KotlinLambdaMethodFilter
+import org.jetbrains.kotlin.idea.debugger.stepping.filter.KotlinBasicStepMethodFilter
+import org.jetbrains.kotlin.idea.debugger.stepping.filter.KotlinLambdaMethodFilter
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.idea.util.application.runReadAction

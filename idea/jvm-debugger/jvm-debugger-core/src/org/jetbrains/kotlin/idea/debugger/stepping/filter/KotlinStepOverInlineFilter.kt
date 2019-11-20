@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.debugger.stepping
+package org.jetbrains.kotlin.idea.debugger.stepping.filter
 
 import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.engine.SuspendContextImpl
@@ -23,6 +23,8 @@ import com.intellij.util.Range
 import com.sun.jdi.LocalVariable
 import com.sun.jdi.Location
 import org.jetbrains.kotlin.idea.debugger.ktLocationInfo
+import org.jetbrains.kotlin.idea.debugger.stepping.KotlinMethodFilter
+import org.jetbrains.kotlin.idea.debugger.stepping.getInlineRangeLocalVariables
 
 class StepOverFilterData(
     val lineNumber: Int,

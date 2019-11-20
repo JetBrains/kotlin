@@ -14,6 +14,8 @@ import com.intellij.debugger.impl.PositionUtil
 import com.intellij.execution.process.ProcessOutputTypes
 import com.sun.jdi.request.StepRequest
 import org.jetbrains.kotlin.idea.debugger.stepping.*
+import org.jetbrains.kotlin.idea.debugger.stepping.filter.KotlinBasicStepMethodFilter
+import org.jetbrains.kotlin.idea.debugger.stepping.filter.KotlinLambdaMethodFilter
 import org.jetbrains.kotlin.idea.debugger.stepping.smartStepInto.KotlinLambdaSmartStepTarget
 import org.jetbrains.kotlin.idea.debugger.stepping.smartStepInto.KotlinMethodSmartStepTarget
 import org.jetbrains.kotlin.idea.debugger.stepping.smartStepInto.KotlinSmartStepIntoHandler

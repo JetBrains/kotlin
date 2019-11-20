@@ -38,10 +38,10 @@ import one.util.streamex.StreamEx;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.debugger.NoStrataPositionManagerHelperKt;
+import org.jetbrains.kotlin.idea.debugger.stepping.filter.KotlinSuspendCallStepOverFilter;
 import org.jetbrains.kotlin.psi.KtFunctionLiteral;
 import org.jetbrains.kotlin.psi.KtNamedFunction;
 import java.util.List;
-
 
 public class DebuggerSteppingHelper {
     private static final Logger LOG = Logger.getInstance(DebuggerSteppingHelper.class);
