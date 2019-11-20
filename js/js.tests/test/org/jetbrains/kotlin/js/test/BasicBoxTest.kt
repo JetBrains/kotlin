@@ -156,10 +156,10 @@ abstract class BasicBoxTest(
                 val outputFileName = module.outputFileName(outputDir) + ".js"
                 val isMainModule = mainModuleName == module.name
                 generateJavaScriptFile(
+                    testFactory.tmpDir,
                     file.parent, module, outputFileName, dependencies, allDependencies, friends, modules.size > 1,
-                    !SKIP_SOURCEMAP_REMAPPING.matcher(fileContent).find(),
-                    outputPrefixFile, outputPostfixFile, actualMainCallParameters, testPackage, testFunction,
-                    needsFullIrRuntime, isMainModule
+                    !SKIP_SOURCEMAP_REMAPPING.matcher(fileContent).find(), outputPrefixFile, outputPostfixFile,
+                    actualMainCallParameters, testPackage, testFunction, needsFullIrRuntime, isMainModule
                 )
 
                 when {
@@ -336,6 +336,7 @@ abstract class BasicBoxTest(
     private fun TestModule.outputFileName(directory: File) = directory.absolutePath + "/" + outputFileSimpleName() + "_v5"
 
     private fun generateJavaScriptFile(
+        tmpDir: File,
         directory: String,
         module: TestModule,
         outputFileName: String,
@@ -366,7 +367,7 @@ abstract class BasicBoxTest(
         val psiFiles = createPsiFiles(allSourceFiles.sortedBy { it.canonicalPath }.map { it.canonicalPath })
 
         val sourceDirs = (testFiles + additionalFiles).map { File(it).parent }.distinct()
-        val config = createConfig(sourceDirs, module, dependencies, allDependencies, friends, multiModule, incrementalData = null)
+        val config = createConfig(sourceDirs, module, dependencies, allDependencies, friends, multiModule, tmpDir, incrementalData = null)
         val outputFile = File(outputFileName)
 
         val incrementalData = IncrementalData()
@@ -377,7 +378,7 @@ abstract class BasicBoxTest(
 
         if (incrementalCompilationChecksEnabled && module.hasFilesToRecompile) {
             checkIncrementalCompilation(
-                sourceDirs, module, kotlinFiles, dependencies, allDependencies, friends, multiModule, remap,
+                sourceDirs, module, kotlinFiles, dependencies, allDependencies, friends, multiModule, tmpDir, remap,
                 outputFile, outputPrefixFile, outputPostfixFile, mainCallParameters, incrementalData, testPackage, testFunction, needsFullIrRuntime
             )
         }
@@ -391,6 +392,7 @@ abstract class BasicBoxTest(
         allDependencies: List<String>,
         friends: List<String>,
         multiModule: Boolean,
+        tmpDir: File,
         remap: Boolean,
         outputFile: File,
         outputPrefixFile: File?,
@@ -417,7 +419,7 @@ abstract class BasicBoxTest(
                 .sortedBy { it.canonicalPath }
                 .map { sourceToTranslationUnit[it]!! }
 
-        val recompiledConfig = createConfig(sourceDirs, module, dependencies, allDependencies, friends, multiModule, incrementalData)
+        val recompiledConfig = createConfig(sourceDirs, module, dependencies, allDependencies, friends, multiModule, tmpDir, incrementalData)
         val recompiledOutputFile = File(outputFile.parentFile, outputFile.nameWithoutExtension + "-recompiled.js")
 
         translateFiles(
@@ -628,8 +630,8 @@ abstract class BasicBoxTest(
     private fun createPsiFiles(fileNames: List<String>): List<KtFile> = fileNames.map(this::createPsiFile)
 
     private fun createConfig(
-            sourceDirs: List<String>, module: TestModule, dependencies: List<String>, allDependencies: List<String>, friends: List<String>,
-            multiModule: Boolean, incrementalData: IncrementalData?
+        sourceDirs: List<String>, module: TestModule, dependencies: List<String>, allDependencies: List<String>, friends: List<String>,
+        multiModule: Boolean, tmpDir: File, incrementalData: IncrementalData?
     ): JsConfig {
         val configuration = environment.configuration.copy()
 
@@ -672,6 +674,14 @@ abstract class BasicBoxTest(
         configuration.put(JSConfigurationKeys.TYPED_ARRAYS_ENABLED, typedArraysEnabled)
 
         configuration.put(JSConfigurationKeys.GENERATE_REGION_COMMENTS, true)
+
+        configuration.put(
+            JSConfigurationKeys.FILE_PATHS_PREFIX_MAP,
+            mapOf(
+                tmpDir.absolutePath to "<TMP>",
+                File(".").absolutePath.removeSuffix(".") to ""
+            )
+        )
 
         return JsConfig(project, configuration, METADATA_CACHE, (JsConfig.JS_STDLIB + JsConfig.JS_KOTLIN_TEST).toSet())
     }

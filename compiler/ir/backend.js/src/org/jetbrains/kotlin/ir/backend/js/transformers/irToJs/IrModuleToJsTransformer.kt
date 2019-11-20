@@ -44,6 +44,7 @@ class IrModuleToJsTransformer(
         statements.addWithComment("block: pre-declaration", preDeclarationBlock)
 
         val generateFilePaths = backendContext.configuration.getBoolean(JSConfigurationKeys.GENERATE_COMMENTS_WITH_FILE_PATH)
+        val pathPrefixMap = backendContext.configuration.getMap(JSConfigurationKeys.FILE_PATHS_PREFIX_MAP)
 
         module.files.forEach {
             val fileStatements = it.accept(IrFileToJsTransformer(), context).statements
@@ -55,7 +56,13 @@ class IrModuleToJsTransformer(
                 }
 
                 if (generateRegionComments || generateFilePaths) {
-                    startComment += "file: ${it.path}"
+                    val originalPath = it.path
+                    val path = pathPrefixMap.entries
+                        .find { (k, _) -> originalPath.startsWith(k) }
+                        ?.let { (k, v) -> v + originalPath.substring(k.length) }
+                        ?: originalPath
+
+                    startComment += "file: $path"
                 }
 
                 if (startComment.isNotEmpty()) {

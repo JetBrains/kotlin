@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.serialization.js.ModuleKind;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 public class JSConfigurationKeys {
     public static final CompilerConfigurationKey<List<String>> TRANSITIVE_LIBRARIES =
@@ -80,5 +81,10 @@ public class JSConfigurationKeys {
             CompilerConfigurationKey.create("generate comments with file path at the start of each file block");
 
     public static final CompilerConfigurationKey<Boolean> GENERATE_REGION_COMMENTS =
-            CompilerConfigurationKey.create("generate special comments at the start and the end of each file block, it allows to fold them and navigate to them in the IDEA");
+            CompilerConfigurationKey.create("generate special comments at the start and the end of each file block, " +
+                                            "it allows to fold them and navigate to them in the IDEA");
+
+    public static final CompilerConfigurationKey<Map<String, String>> FILE_PATHS_PREFIX_MAP =
+            CompilerConfigurationKey.create("this map used to shorten/replace prefix of paths in comments with file paths, " +
+                                            "including region comments");
 }
