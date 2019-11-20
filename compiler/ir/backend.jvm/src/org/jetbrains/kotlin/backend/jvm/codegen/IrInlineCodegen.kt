@@ -217,14 +217,16 @@ class IrExpressionLambdaImpl(
 
     private val loweredMethod = methodSignatureMapper.mapAsmMethod(function.getOrCreateSuspendFunctionViewIfNeeded(context))
 
-    val capturedParamsInDesc: List<Type> =
-        loweredMethod.argumentTypes.drop(if (isExtensionLambda) 1 else 0).take(capturedVars.size)
+    val capturedParamsInDesc: List<Type> = if (isBoundCallableReference) {
+        loweredMethod.argumentTypes.take(1)
+    } else loweredMethod.argumentTypes.drop(if (isExtensionLambda) 1 else 0).take(capturedVars.size)
 
     override val invokeMethod: Method = loweredMethod.let {
         Method(
             it.name,
             it.returnType,
-            ((if (isExtensionLambda) it.argumentTypes.take(1) else emptyList()) +
+            (if (isBoundCallableReference) it.argumentTypes.drop(1)
+            else (if (isExtensionLambda) it.argumentTypes.take(1) else emptyList()) +
                     it.argumentTypes.drop((if (isExtensionLambda) 1 else 0) + capturedVars.size)).toTypedArray()
         )
     }

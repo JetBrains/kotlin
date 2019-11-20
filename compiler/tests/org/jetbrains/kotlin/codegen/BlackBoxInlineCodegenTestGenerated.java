@@ -876,6 +876,11 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
                 runTest("compiler/testData/codegen/boxInline/callableReference/bound/filter.kt");
             }
 
+            @TestMetadata("inlineValueParameterInsteadOfReceiver.kt")
+            public void testInlineValueParameterInsteadOfReceiver() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/callableReference/bound/inlineValueParameterInsteadOfReceiver.kt");
+            }
+
             @TestMetadata("innerGenericConstuctor.kt")
             public void testInnerGenericConstuctor() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/callableReference/bound/innerGenericConstuctor.kt");
