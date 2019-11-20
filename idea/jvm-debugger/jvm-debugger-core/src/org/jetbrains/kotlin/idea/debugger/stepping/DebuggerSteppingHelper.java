@@ -24,7 +24,6 @@ import com.intellij.debugger.jdi.StackFrameProxyImpl;
 import com.intellij.debugger.jdi.ThreadReferenceProxyImpl;
 import com.intellij.debugger.settings.DebuggerSettings;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.extensions.Extensions;
 import com.intellij.ui.classFilter.ClassFilter;
 import com.intellij.ui.classFilter.DebuggerClassFilterProvider;
 import com.sun.jdi.Location;
@@ -34,13 +33,12 @@ import com.sun.jdi.ThreadReference;
 import com.sun.jdi.request.EventRequest;
 import com.sun.jdi.request.EventRequestManager;
 import com.sun.jdi.request.StepRequest;
+import one.util.streamex.StreamEx;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.debugger.NoStrataPositionManagerHelperKt;
 import org.jetbrains.kotlin.psi.KtFunctionLiteral;
 import org.jetbrains.kotlin.psi.KtNamedFunction;
-
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -171,27 +169,16 @@ public class DebuggerSteppingHelper {
     // copied from DebugProcessImpl.getActiveFilters
     @NotNull
     private static List<ClassFilter> getActiveFilters() {
-        List<ClassFilter> activeFilters = new ArrayList<>();
         DebuggerSettings settings = DebuggerSettings.getInstance();
+        StreamEx<ClassFilter> stream = StreamEx.of(DebuggerClassFilterProvider.EP_NAME.getExtensionList())
+                .flatCollection(DebuggerClassFilterProvider::getFilters);
         if (settings.TRACING_FILTERS_ENABLED) {
-            for (ClassFilter filter : settings.getSteppingFilters()) {
-                if (filter.isEnabled()) {
-                    activeFilters.add(filter);
-                }
-            }
+            stream = stream.prepend(settings.getSteppingFilters());
         }
-        //noinspection deprecation
-        for (DebuggerClassFilterProvider provider : Extensions.getExtensions(DebuggerClassFilterProvider.EP_NAME)) {
-            for (ClassFilter filter : provider.getFilters()) {
-                if (filter.isEnabled()) {
-                    activeFilters.add(filter);
-                }
-            }
-        }
-        return activeFilters;
+        return stream.filter(ClassFilter::isEnabled).toList();
     }
 
-    // copied from DebugProcessImpl.getActiveFilters
+    // copied from DebugProcessImpl.getCurrentClassName
     @Nullable
     private static String getCurrentClassName(ThreadReferenceProxyImpl thread) {
         try {
