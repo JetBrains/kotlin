@@ -1,0 +1,8 @@
+LineBreakpoint created at stopInInlineInOtherFile.Other.kt:7
+Run Java
+Connected to the target VM
+stopInInlineInOtherFile.Other.kt:7
+stopInInlineInOtherFile.Other.kt:8
+Disconnected from the target VM
+
+Process finished with exit code 0

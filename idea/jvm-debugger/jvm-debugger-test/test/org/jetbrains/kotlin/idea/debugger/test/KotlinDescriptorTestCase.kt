@@ -104,9 +104,8 @@ abstract class KotlinDescriptorTestCase : DescriptorTestCase() {
 
         val rawJvmTarget = preferences[DebuggerPreferenceKeys.JVM_TARGET]
         val jvmTarget = JvmTarget.fromString(rawJvmTarget) ?: error("Invalid JVM target value: $rawJvmTarget")
-        val applyDexPatch = preferences[DebuggerPreferenceKeys.EMULATE_DEX]
 
-        val compilerFacility = DebuggerTestCompilerFacility(testFiles, jvmTarget, applyDexPatch)
+        val compilerFacility = DebuggerTestCompilerFacility(testFiles, jvmTarget)
 
         for (library in preferences[DebuggerPreferenceKeys.ATTACH_LIBRARY]) {
             compilerFacility.compileExternalLibrary(library, librarySrcDirectory, libraryOutputDirectory)
