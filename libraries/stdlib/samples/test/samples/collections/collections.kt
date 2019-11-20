@@ -341,11 +341,12 @@ class Collections {
         fun associate() {
             data class Person(val firstName: String, val lastName: String)
 
-            val computerScientists = listOf(Person("Grace", "Hopper"), Person("Edsger", "Dijkstra"), Person("Alan", "Turing"))
+            val scientists = listOf(Person("Grace", "Hopper"), Person("Jacob", "Bernoulli"), Person("Johann", "Bernoulli"))
 
-            val byLastName = computerScientists.associate { it.lastName to it.firstName }
+            val byLastName = scientists.associate { it.lastName to it.firstName }
 
-            assertPrints(byLastName, "{Hopper=Grace, Dijkstra=Edsger, Turing=Alan}")
+            // Jacob Bernoulli does not occur in the map because only the last pair with the same key gets added
+            assertPrints(byLastName, "{Hopper=Grace, Bernoulli=Johann}")
         }
 
         @Sample
@@ -354,23 +355,24 @@ class Collections {
                 override fun toString(): String = "$firstName $lastName"
             }
 
-            val computerScientists = listOf(Person("Grace", "Hopper"), Person("Edsger", "Dijkstra"), Person("Alan", "Turing"))
+            val scientists = listOf(Person("Grace", "Hopper"), Person("Jacob", "Bernoulli"), Person("Johann", "Bernoulli"))
 
-            val byLastName = computerScientists.associateBy { it.lastName }
+            val byLastName = scientists.associateBy { it.lastName }
 
-            assertPrints(byLastName.keys, "[Hopper, Dijkstra, Turing]")
-            assertPrints(byLastName.values, "[Grace Hopper, Edsger Dijkstra, Alan Turing]")
+            // Jacob Bernoulli does not occur in the map because only the last pair with the same key gets added
+            assertPrints(byLastName, "{Hopper=Grace Hopper, Bernoulli=Johann Bernoulli}")
         }
 
         @Sample
         fun associateByWithValueTransform() {
             data class Person(val firstName: String, val lastName: String)
 
-            val computerScientists = listOf(Person("Grace", "Hopper"), Person("Edsger", "Dijkstra"), Person("Alan", "Turing"))
+            val scientists = listOf(Person("Grace", "Hopper"), Person("Jacob", "Bernoulli"), Person("Johann", "Bernoulli"))
 
-            val byLastName = computerScientists.associateBy({ it.lastName }, { it.firstName })
+            val byLastName = scientists.associateBy({ it.lastName }, { it.firstName })
 
-            assertPrints(byLastName, "{Hopper=Grace, Dijkstra=Edsger, Turing=Alan}")
+            // Jacob Bernoulli does not occur in the map because only the last pair with the same key gets added
+            assertPrints(byLastName, "{Hopper=Grace, Bernoulli=Johann}")
         }
 
         @Sample
@@ -379,46 +381,48 @@ class Collections {
                 override fun toString(): String = "$firstName $lastName"
             }
 
-            val computerScientists = listOf(Person("Grace", "Hopper"), Person("Edsger", "Dijkstra"), Person("Alan", "Turing"))
+            val scientists = listOf(Person("Grace", "Hopper"), Person("Jacob", "Bernoulli"), Person("Johann", "Bernoulli"))
 
             val byLastName = mutableMapOf<String, Person>()
             assertTrue(byLastName.isEmpty())
 
-            computerScientists.associateByTo(byLastName) { it.lastName }
+            scientists.associateByTo(byLastName) { it.lastName }
 
             assertTrue(byLastName.isNotEmpty())
-            assertPrints(byLastName.keys, "[Hopper, Dijkstra, Turing]")
-            assertPrints(byLastName.values, "[Grace Hopper, Edsger Dijkstra, Alan Turing]")
+            // Jacob Bernoulli does not occur in the map because only the last pair with the same key gets added
+            assertPrints(byLastName, "{Hopper=Grace Hopper, Bernoulli=Johann Bernoulli}")
         }
 
         @Sample
         fun associateByToWithValueTransform() {
             data class Person(val firstName: String, val lastName: String)
 
-            val computerScientists = listOf(Person("Grace", "Hopper"), Person("Edsger", "Dijkstra"), Person("Alan", "Turing"))
+            val scientists = listOf(Person("Grace", "Hopper"), Person("Jacob", "Bernoulli"), Person("Johann", "Bernoulli"))
 
             val byLastName = mutableMapOf<String, String>()
             assertTrue(byLastName.isEmpty())
 
-            computerScientists.associateByTo(byLastName, { it.lastName }, { it.firstName} )
+            scientists.associateByTo(byLastName, { it.lastName }, { it.firstName} )
 
             assertTrue(byLastName.isNotEmpty())
-            assertPrints(byLastName, "{Hopper=Grace, Dijkstra=Edsger, Turing=Alan}")
+            // Jacob Bernoulli does not occur in the map because only the last pair with the same key gets added
+            assertPrints(byLastName, "{Hopper=Grace, Bernoulli=Johann}")
         }
 
         @Sample
         fun associateTo() {
             data class Person(val firstName: String, val lastName: String)
 
-            val computerScientists = listOf(Person("Grace", "Hopper"), Person("Edsger", "Dijkstra"), Person("Alan", "Turing"))
+            val scientists = listOf(Person("Grace", "Hopper"), Person("Jacob", "Bernoulli"), Person("Johann", "Bernoulli"))
 
             val byLastName = mutableMapOf<String, String>()
             assertTrue(byLastName.isEmpty())
 
-            computerScientists.associateTo(byLastName) { it.lastName to it.firstName }
+            scientists.associateTo(byLastName) { it.lastName to it.firstName }
 
             assertTrue(byLastName.isNotEmpty())
-            assertPrints(byLastName, "{Hopper=Grace, Dijkstra=Edsger, Turing=Alan}")
+            // Jacob Bernoulli does not occur in the map because only the last pair with the same key gets added
+            assertPrints(byLastName, "{Hopper=Grace, Bernoulli=Johann}")
         }
 
         @Sample
@@ -435,15 +439,15 @@ class Collections {
                 override fun toString(): String = "$firstName $lastName"
             }
 
-            val computerScientists = listOf(Person("Grace", "Hopper"), Person("Edsger", "Dijkstra"), Person("Alan", "Turing"))
+            val scientists = listOf(Person("Grace", "Hopper"), Person("Jacob", "Bernoulli"), Person("Jacob", "Bernoulli"))
             val withLengthOfNames = mutableMapOf<Person, Int>()
             assertTrue(withLengthOfNames.isEmpty())
 
-            computerScientists.associateWithTo(withLengthOfNames) { it.firstName.length + it.lastName.length }
+            scientists.associateWithTo(withLengthOfNames) { it.firstName.length + it.lastName.length }
 
             assertTrue(withLengthOfNames.isNotEmpty())
-            assertPrints(withLengthOfNames.keys, "[Grace Hopper, Edsger Dijkstra, Alan Turing]")
-            assertPrints(withLengthOfNames.values, "[11, 14, 10]")
+            // Jacob Bernoulli only occurs once in the map because only the last pair with the same key gets added
+            assertPrints(withLengthOfNames, "{Grace Hopper=11, Jacob Bernoulli=14}")
         }
 
         @Sample

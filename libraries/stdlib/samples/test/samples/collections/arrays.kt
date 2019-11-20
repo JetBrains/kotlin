@@ -68,34 +68,22 @@ class Arrays {
         fun associate() {
             data class Person(val firstName: String, val lastName: String)
 
-            val computerScientists = arrayOf(Person("Grace", "Hopper"), Person("Edsger", "Dijkstra"), Person("Alan", "Turing"))
+            val scientists = arrayOf(Person("Grace", "Hopper"), Person("Jacob", "Bernoulli"), Person("Johann", "Bernoulli"))
 
-            val byLastName = computerScientists.associate { it.lastName to it.firstName }
+            val byLastName = scientists.associate { it.lastName to it.firstName }
 
-            assertPrints(byLastName, "{Hopper=Grace, Dijkstra=Edsger, Turing=Alan}")
+            // Jacob Bernoulli does not occur in the map because only the last pair with the same key gets added
+            assertPrints(byLastName, "{Hopper=Grace, Bernoulli=Johann}")
         }
 
         @Sample
         fun associateArrayOfPrimitives() {
-            fun fib(n: Int): Int {
-                var current = 0
-                var next = 1
-                var sum: Int
-                if (n == 0)
-                    return current
-                for (i in 2..n) {
-                    sum = current + next
-                    current = next
-                    next = sum
-                }
-                return next
-            }
+            val charCodes = intArrayOf(72, 69, 76, 76, 79)
 
-            val numbers = intArrayOf(1, 2, 3, 4, 5)
+            val byCharCode = charCodes.associate { it to it.toChar() }
 
-            val fibonacciNumbers = numbers.associate { it to fib(it) }
-
-            assertPrints(fibonacciNumbers, "{1=1, 2=1, 3=2, 4=3, 5=5}")
+            // 76=L only occurs once because only the last pair with the same key gets added
+            assertPrints(byCharCode, "{72=H, 69=E, 76=L, 79=O}")
         }
 
         @Sample
@@ -104,41 +92,44 @@ class Arrays {
                 override fun toString(): String = "$firstName $lastName"
             }
 
-            val computerScientists = arrayOf(Person("Grace", "Hopper"), Person("Edsger", "Dijkstra"), Person("Alan", "Turing"))
+            val scientists = arrayOf(Person("Grace", "Hopper"), Person("Jacob", "Bernoulli"), Person("Johann", "Bernoulli"))
 
-            val byLastName = computerScientists.associateBy { it.lastName }
+            val byLastName = scientists.associateBy { it.lastName }
 
-            assertPrints(byLastName.keys, "[Hopper, Dijkstra, Turing]")
-            assertPrints(byLastName.values, "[Grace Hopper, Edsger Dijkstra, Alan Turing]")
+            // Jacob Bernoulli does not occur in the map because only the last pair with the same key gets added
+            assertPrints(byLastName, "{Hopper=Grace Hopper, Bernoulli=Johann Bernoulli}")
         }
 
         @Sample
         fun associateArrayOfPrimitivesBy() {
-            val asciiValues = intArrayOf(65, 66, 67, 68, 69)
+            val charCodes = intArrayOf(72, 69, 76, 76, 79)
 
-            val byChar = asciiValues.associateBy { it.toChar() }
+            val byChar = charCodes.associateBy { it.toChar() }
 
-            assertPrints(byChar, "{A=65, B=66, C=67, D=68, E=69}")
+            // L=76 only occurs once because only the last pair with the same key gets added
+            assertPrints(byChar, "{H=72, E=69, L=76, O=79}")
         }
 
         @Sample
         fun associateByWithValueTransform() {
             data class Person(val firstName: String, val lastName: String)
 
-            val computerScientists = arrayOf(Person("Grace", "Hopper"), Person("Edsger", "Dijkstra"), Person("Alan", "Turing"))
+            val scientists = arrayOf(Person("Grace", "Hopper"), Person("Jacob", "Bernoulli"), Person("Johann", "Bernoulli"))
 
-            val byLastName = computerScientists.associateBy({ it.lastName }, { it.firstName })
+            val byLastName = scientists.associateBy({ it.lastName }, { it.firstName })
 
-            assertPrints(byLastName, "{Hopper=Grace, Dijkstra=Edsger, Turing=Alan}")
+            // Jacob Bernoulli does not occur in the map because only the last pair with the same key gets added
+            assertPrints(byLastName, "{Hopper=Grace, Bernoulli=Johann}")
         }
 
         @Sample
         fun associateArrayOfPrimitivesByWithValueTransform() {
-            val asciiValues = intArrayOf(65, 66, 67, 68, 69)
+            val charCodes = intArrayOf(65, 65, 66, 67, 68, 69)
 
-            val byCharToLowerCase = asciiValues.associateBy({ it.toChar() }, { (it + 32).toChar() })
+            val byUpperCase = charCodes.associateBy({ it.toChar() }, { (it + 32).toChar() })
 
-            assertPrints(byCharToLowerCase, "{A=a, B=b, C=c, D=d, E=e}")
+            // A=a only occurs once because only the last pair with the same key gets added
+            assertPrints(byUpperCase, "{A=a, B=b, C=c, D=d, E=e}")
         }
 
         @Sample
@@ -147,91 +138,83 @@ class Arrays {
                 override fun toString(): String = "$firstName $lastName"
             }
 
-            val computerScientists = arrayOf(Person("Grace", "Hopper"), Person("Edsger", "Dijkstra"), Person("Alan", "Turing"))
+            val scientists = arrayOf(Person("Grace", "Hopper"), Person("Jacob", "Bernoulli"), Person("Johann", "Bernoulli"))
 
             val byLastName = mutableMapOf<String, Person>()
             assertTrue(byLastName.isEmpty())
 
-            computerScientists.associateByTo(byLastName) { it.lastName }
+            scientists.associateByTo(byLastName) { it.lastName }
 
             assertTrue(byLastName.isNotEmpty())
-            assertPrints(byLastName.keys, "[Hopper, Dijkstra, Turing]")
-            assertPrints(byLastName.values, "[Grace Hopper, Edsger Dijkstra, Alan Turing]")
+            // Jacob Bernoulli does not occur in the map because only the last pair with the same key gets added
+            assertPrints(byLastName, "{Hopper=Grace Hopper, Bernoulli=Johann Bernoulli}")
         }
 
         @Sample
         fun associateArrayOfPrimitivesByTo() {
-            val asciiValues = intArrayOf(65, 66, 67, 68, 69)
-
+            val charCodes = intArrayOf(72, 69, 76, 76, 79)
             val byChar = mutableMapOf<Char, Int>()
-            asciiValues.associateByTo(byChar) { it.toChar() }
 
-            assertPrints(byChar, "{A=65, B=66, C=67, D=68, E=69}")
+            assertTrue(byChar.isEmpty())
+            charCodes.associateByTo(byChar) { it.toChar() }
+
+            assertTrue(byChar.isNotEmpty())
+            // L=76 only occurs once because only the last pair with the same key gets added
+            assertPrints(byChar, "{H=72, E=69, L=76, O=79}")
         }
 
         @Sample
         fun associateByToWithValueTransform() {
             data class Person(val firstName: String, val lastName: String)
 
-            val computerScientists = arrayOf(Person("Grace", "Hopper"), Person("Edsger", "Dijkstra"), Person("Alan", "Turing"))
+            val scientists = arrayOf(Person("Grace", "Hopper"), Person("Jacob", "Bernoulli"), Person("Johann", "Bernoulli"))
 
             val byLastName = mutableMapOf<String, String>()
             assertTrue(byLastName.isEmpty())
 
-            computerScientists.associateByTo(byLastName, { it.lastName }, { it.firstName} )
+            scientists.associateByTo(byLastName, { it.lastName }, { it.firstName} )
 
             assertTrue(byLastName.isNotEmpty())
-            assertPrints(byLastName, "{Hopper=Grace, Dijkstra=Edsger, Turing=Alan}")
+            // Jacob Bernoulli does not occur in the map because only the last pair with the same key gets added
+            assertPrints(byLastName, "{Hopper=Grace, Bernoulli=Johann}")
         }
 
         @Sample
         fun associateArrayOfPrimitivesByToWithValueTransform() {
-            val asciiValues = intArrayOf(65, 66, 67, 68, 69)
+            val charCodes = intArrayOf(65, 65, 66, 67, 68, 69)
 
-            val byChar = mutableMapOf<Char, Char>()
-            asciiValues.associateByTo(byChar, { it.toChar() }, { (it + 32).toChar() } )
+            val byUpperCase = mutableMapOf<Char, Char>()
+            charCodes.associateByTo(byUpperCase, { it.toChar() }, { (it + 32).toChar() } )
 
-            assertPrints(byChar, "{A=a, B=b, C=c, D=d, E=e}")
+            // A=a only occurs once because only the last pair with the same key gets added
+            assertPrints(byUpperCase, "{A=a, B=b, C=c, D=d, E=e}")
         }
 
         @Sample
         fun associateTo() {
             data class Person(val firstName: String, val lastName: String)
 
-            val computerScientists = arrayOf(Person("Grace", "Hopper"), Person("Edsger", "Dijkstra"), Person("Alan", "Turing"))
+            val scientists = arrayOf(Person("Grace", "Hopper"), Person("Jacob", "Bernoulli"), Person("Johann", "Bernoulli"))
 
             val byLastName = mutableMapOf<String, String>()
             assertTrue(byLastName.isEmpty())
 
-            computerScientists.associateTo(byLastName) { it.lastName to it.firstName }
+            scientists.associateTo(byLastName) { it.lastName to it.firstName }
 
             assertTrue(byLastName.isNotEmpty())
-            assertPrints(byLastName, "{Hopper=Grace, Dijkstra=Edsger, Turing=Alan}")
+            // Jacob Bernoulli does not occur in the map because only the last pair with the same key gets added
+            assertPrints(byLastName, "{Hopper=Grace, Bernoulli=Johann}")
         }
 
         @Sample
         fun associateArrayOfPrimitivesTo() {
-            fun fib(n: Int): Int {
-                var current = 0
-                var next = 1
-                var sum: Int
-                if (n == 0)
-                    return current
-                for (i in 2..n) {
-                    sum = current + next
-                    current = next
-                    next = sum
-                }
-                return next
-            }
+            val charCodes = intArrayOf(72, 69, 76, 76, 79)
 
-            val numbers = intArrayOf(1, 2, 3, 4, 5)
+            val byChar = mutableMapOf<Int, Char>()
+            charCodes.associateTo(byChar) { it to it.toChar() }
 
-            val fibonacciNumbers = mutableMapOf<Int, Int>()
-
-            numbers.associateTo(fibonacciNumbers) { it to fib(it) }
-
-            assertPrints(fibonacciNumbers, "{1=1, 2=1, 3=2, 4=3, 5=5}")
+            // 76=L only occurs once because only the last pair with the same key gets added
+            assertPrints(byChar, "{72=H, 69=E, 76=L, 79=O}")
         }
 
         @Sample
