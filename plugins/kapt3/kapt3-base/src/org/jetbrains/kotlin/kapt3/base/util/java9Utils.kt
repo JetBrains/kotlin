@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.kapt3.base.plus
 
 fun isJava9OrLater(): Boolean = !System.getProperty("java.version").startsWith("1.")
 fun isJava11OrLater(): Boolean {
-    val majorVersion = System.getProperty("java.version").substringBefore(".", "")
+    val majorVersion = System.getProperty("java.version").substringBefore(".")
     if (majorVersion.isEmpty()) return false
 
     return try {
