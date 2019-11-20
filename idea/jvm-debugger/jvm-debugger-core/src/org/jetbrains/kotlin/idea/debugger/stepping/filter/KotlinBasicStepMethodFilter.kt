@@ -80,16 +80,17 @@ class KotlinBasicStepMethodFilter(
             return true
         }
 
-        val declaration = declarationPtr?.element
-            ?: return true // Element is lost. But we know that name is matches, so stop.
+        // Element is lost. But we know that name is matches, so stop.
+        val declaration = declarationPtr?.element ?: return true
 
-        if (currentDeclaration.isEquivalentTo(declaration)) {
+        val psiManager = currentDeclaration.manager
+        if (psiManager.areElementsEquivalent(currentDeclaration, declaration)) {
             return true
         }
 
         return DescriptorUtils.getAllOverriddenDescriptors(currentDescriptor).any { baseOfCurrent ->
             val currentBaseDeclaration = DescriptorToSourceUtilsIde.getAnyDeclaration(currentDeclaration.project, baseOfCurrent)
-            declaration.isEquivalentTo(currentBaseDeclaration)
+            psiManager.areElementsEquivalent(declaration, currentBaseDeclaration)
         }
     }
 }
