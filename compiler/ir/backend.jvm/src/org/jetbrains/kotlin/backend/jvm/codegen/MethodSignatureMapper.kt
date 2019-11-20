@@ -286,7 +286,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
             if (valueArgumentsCount > 0) (getValueArgument(0) as? IrConst<*>)?.value as? Boolean ?: true else null
         }
 
-    fun mapToCallableMethod(expression: IrFunctionAccessExpression): IrCallableMethod {
+    fun mapToCallableMethod(caller: IrFunction, expression: IrFunctionAccessExpression): IrCallableMethod {
         val callee = expression.symbol.owner.getOrCreateSuspendFunctionViewIfNeeded(context)
         val calleeParent = callee.parent
         if (calleeParent !is IrClass) {
@@ -316,14 +316,17 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         }
 
         val declaration = findSuperDeclaration(callee, isSuperCall)
-        val signature = mapOverriddenSpecialBuiltinIfNeeded(declaration, isSuperCall)
+        val signature = mapOverriddenSpecialBuiltinIfNeeded(caller, declaration, isSuperCall)
             ?: mapSignatureSkipGeneric(declaration)
 
         return IrCallableMethod(owner, invokeOpcode, signature, isInterface)
     }
 
     // TODO: get rid of this (probably via some special lowering)
-    private fun mapOverriddenSpecialBuiltinIfNeeded(callee: IrFunction, superCall: Boolean): JvmMethodSignature? {
+    private fun mapOverriddenSpecialBuiltinIfNeeded(caller: IrFunction, callee: IrFunction, superCall: Boolean): JvmMethodSignature? {
+        // Do not remap special builtin methods when called from a bridge. The bridges are there to provide the
+        // remapped name or signature and forward to the actually declared method.
+        if (caller.origin == IrDeclarationOrigin.BRIDGE || caller.origin == IrDeclarationOrigin.BRIDGE_SPECIAL) return null
         val overriddenSpecialBuiltinFunction = callee.descriptor.original.getOverriddenBuiltinReflectingJvmDescriptor()
         if (overriddenSpecialBuiltinFunction != null && !superCall) {
             return mapSignatureSkipGeneric(context.referenceFunction(overriddenSpecialBuiltinFunction.original).owner)

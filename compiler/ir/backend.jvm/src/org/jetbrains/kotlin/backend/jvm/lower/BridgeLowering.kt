@@ -120,6 +120,8 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
             irFunction.overriddenSymbols.all { it.owner.getJvmName() != ourMethodName }
         ) {
             // Bridges for abstract fake overrides whose JVM names differ from overridden functions.
+            // The orphaned copy will get irFunction's name; the original irFunction will be renamed
+            // according to its overrides,
             val bridge = irFunction.orphanedCopy()
             irClass.declarations.add(bridge)
             targetForCommonBridges = bridge
@@ -320,18 +322,13 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
         isSpecial: Boolean,
         invokeStatically: Boolean = false
     ) {
-        val maybeOrphanedTarget = if (isSpecial)
-            target.orphanedCopy()
-        else
-            target
-
         context.createIrBuilder(symbol).run {
             body = irBlockBody {
                 if (specialMethodInfo != null) {
                     valueParameters.take(specialMethodInfo.argumentsToCheck).forEach {
                         addParameterTypeCheck(
                             it,
-                            maybeOrphanedTarget.valueParameters[it.index].type,
+                            target.valueParameters[it.index].type,
                             specialMethodInfo.defaultValueGenerator,
                             this@createBridgeBody
                         )
@@ -341,17 +338,17 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
                     irImplicitCast(
                         IrCallImpl(
                             UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                            maybeOrphanedTarget.returnType,
-                            maybeOrphanedTarget.symbol, origin = IrStatementOrigin.BRIDGE_DELEGATION,
-                            superQualifierSymbol = if (invokeStatically) maybeOrphanedTarget.parentAsClass.symbol else null
+                            target.returnType,
+                            target.symbol, origin = IrStatementOrigin.BRIDGE_DELEGATION,
+                            superQualifierSymbol = if (invokeStatically) target.parentAsClass.symbol else null
                         ).apply {
                             passTypeArgumentsFrom(this@createBridgeBody)
                             dispatchReceiver = irGet(dispatchReceiverParameter!!)
                             extensionReceiverParameter?.let {
-                                extensionReceiver = irImplicitCast(irGet(it), maybeOrphanedTarget.extensionReceiverParameter!!.type)
+                                extensionReceiver = irImplicitCast(irGet(it), target.extensionReceiverParameter!!.type)
                             }
                             valueParameters.forEach {
-                                putValueArgument(it.index, irImplicitCast(irGet(it), maybeOrphanedTarget.valueParameters[it.index].type))
+                                putValueArgument(it.index, irImplicitCast(irGet(it), target.valueParameters[it.index].type))
                             }
                         },
                         returnType
