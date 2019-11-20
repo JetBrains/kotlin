@@ -55,16 +55,15 @@ import org.jetbrains.kotlin.serialization.js.JsModuleDescriptor
 import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.serialization.js.ModuleKind
-import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.TestFiles
-import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
-import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.JsMetadataVersion
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadata
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
-import java.io.*
+import java.io.ByteArrayOutputStream
+import java.io.Closeable
+import java.io.File
+import java.io.PrintStream
 import java.lang.Boolean.getBoolean
 import java.nio.charset.Charset
 import java.util.regex.Pattern
@@ -671,6 +670,8 @@ abstract class BasicBoxTest(
         configuration.put(JSConfigurationKeys.SOURCE_MAP_EMBED_SOURCES, module.sourceMapSourceEmbedding)
 
         configuration.put(JSConfigurationKeys.TYPED_ARRAYS_ENABLED, typedArraysEnabled)
+
+        configuration.put(JSConfigurationKeys.GENERATE_REGION_COMMENTS, true)
 
         return JsConfig(project, configuration, METADATA_CACHE, (JsConfig.JS_STDLIB + JsConfig.JS_KOTLIN_TEST).toSet())
     }
