@@ -5,3 +5,4 @@ modules = UIKit
 
 compilerOpts = -framework UIKit
 linkerOpts = -framework UIKit
+excludedFunctions = UISceneErrorDomain

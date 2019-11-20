@@ -4,4 +4,3 @@ package = platform.CoreAudioTypes
 modules = CoreAudioTypes
 
 compilerOpts = -framework CoreAudioTypes
-linkerOpts = -framework CoreAudioTypes

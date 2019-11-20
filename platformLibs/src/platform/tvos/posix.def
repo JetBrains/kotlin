@@ -14,7 +14,10 @@ headers = alloca.h assert.h complex.h ctype.h dirent.h dlfcn.h err.h errno.h fcn
     sys/syslimits.h sys/time.h sys/times.h sys/utsname.h sys/wait.h
 
 compilerOpts = -D_XOPEN_SOURCE
-linkerOpts = -ldl
+linkerOpts = -ldl -lresolv
+
+excludedFunctions = acl_valid_link_np pfctlinput profil unwhiteout zopen getdirentries
+excludedFunctions.tvos_arm64 = longjmperror
 
 ---
 // Wrapper to access errno variable.
