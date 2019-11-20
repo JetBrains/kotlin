@@ -22,29 +22,20 @@ import com.intellij.openapi.project.Project
 import com.intellij.util.Range
 import com.sun.jdi.LocalVariable
 import com.sun.jdi.Location
-import org.jetbrains.kotlin.idea.debugger.ktLocationInfo
 import org.jetbrains.kotlin.idea.debugger.stepping.KotlinMethodFilter
 import org.jetbrains.kotlin.idea.debugger.stepping.getInlineRangeLocalVariables
 
 class StepOverFilterData(
     val lineNumber: Int,
     val stepOverLines: Set<Int>,
-    val inlineRangeVariables: List<LocalVariable>,
-    val isDexDebug: Boolean,
-    val skipAfterCodeIndex: Long = -1
+    val inlineRangeVariables: List<LocalVariable>
 )
 
 class KotlinStepOverInlineFilter(val project: Project, val data: StepOverFilterData) : KotlinMethodFilter {
-    private fun Location.ktLineNumber() = ktLocationInfo(this, data.isDexDebug, project).first
-
     override fun locationMatches(context: SuspendContextImpl, location: Location): Boolean {
         val frameProxy = context.frameProxy ?: return true
 
-        if (data.skipAfterCodeIndex != -1L && location.codeIndex() > data.skipAfterCodeIndex) {
-            return false
-        }
-
-        val currentLine = location.ktLineNumber()
+        val currentLine = location.lineNumber()
         if (!(data.stepOverLines.contains(currentLine))) {
             return currentLine != data.lineNumber
         }

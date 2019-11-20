@@ -138,11 +138,6 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
             return SourcePosition.createFromElement(elementInDeclaration)
         }
 
-        if (sourceLineNumber > psiFile.getLineCount() && myDebugProcess.isDexDebug()) {
-            val (line, ktFile) = ktLocationInfo(location, true, myDebugProcess.project, false, psiFile)
-            return SourcePosition.createFromLine(ktFile ?: psiFile, line - 1)
-        }
-
         val sameLineLocations = location.safeMethod()?.safeAllLineLocations()?.filter {
             it.safeLineNumber() == lineNumber && it.safeSourceName() == fileName
         }

@@ -37,7 +37,6 @@ import com.sun.jdi.request.StepRequest;
 import one.util.streamex.StreamEx;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.debugger.NoStrataPositionManagerHelperKt;
 import org.jetbrains.kotlin.idea.debugger.stepping.filter.KotlinSuspendCallStepOverFilter;
 import org.jetbrains.kotlin.psi.KtFunctionLiteral;
 import org.jetbrains.kotlin.psi.KtNamedFunction;
@@ -56,17 +55,11 @@ public class DebuggerSteppingHelper {
         return debugProcess.new ResumeCommand(suspendContext) {
             @Override
             public void contextAction() {
-                boolean isDexDebug = NoStrataPositionManagerHelperKt.isDexDebug(suspendContext.getDebugProcess());
-
                 try {
                     StackFrameProxyImpl frameProxy = suspendContext.getFrameProxy();
                     if (frameProxy != null) {
-                        Action action = KotlinSteppingCommandProviderKt.getStepOverAction(
-                                frameProxy.location(),
-                                kotlinSourcePosition,
-                                frameProxy,
-                                isDexDebug
-                        );
+                        Action action = KotlinSteppingCommandProviderKt
+                                .getStepOverAction(frameProxy.location(), kotlinSourcePosition, frameProxy);
 
                         createStepRequest(
                                 suspendContext, getContextThread(),
