@@ -12,10 +12,14 @@ fun test(map: MyMap) {
     // Java forEach
     map.forEach { key, value ->
         println("$key: $value")
+        key.length
+        value.length
     }
     // Kotlin forEach
     map.forEach { (key, value) ->
         println("$key: $value")
+        key.length
+        value.length
     }
 }
 
@@ -27,9 +31,13 @@ fun test(map: MutableMap<String, String>) {
     // Java forEach
     map.forEach { key, value ->
         println("$key: $value")
+        key.length
+        value.length
     }
     // Kotlin forEach
     map.forEach { (key, value) ->
         println("$key: $value")
+        key.length
+        value.length
     }
 }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve
 
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
@@ -99,6 +100,27 @@ fun FirClass<*>.buildDefaultUseSiteMemberScope(useSiteSession: FirSession, scope
     }
 }
 
+private fun createSubstitution(
+    typeParameters: List<FirTypeParameter>,
+    typeArguments: Array<out ConeKotlinTypeProjection>,
+    session: FirSession
+): Map<FirTypeParameterSymbol, ConeKotlinType> {
+    return typeParameters.zip(typeArguments) { typeParameter, typeArgument ->
+        val typeParameterSymbol = typeParameter.symbol
+        typeParameterSymbol to when (typeArgument) {
+            is ConeTypedProjection -> {
+                typeArgument.type
+            }
+            else /* StarProjection */ -> {
+                ConeTypeIntersector.intersectTypes(
+                    session.inferenceContext(),
+                    typeParameterSymbol.fir.bounds.map { it.coneTypeUnsafe() }
+                )
+            }
+        }
+    }.toMap()
+}
+
 fun ConeClassLikeType.wrapSubstitutionScopeIfNeed(
     session: FirSession,
     useSiteMemberScope: FirScope,
@@ -108,23 +130,16 @@ fun ConeClassLikeType.wrapSubstitutionScopeIfNeed(
     if (this.typeArguments.isEmpty()) return useSiteMemberScope
     return builder.getOrBuild(declaration.symbol, SubstitutionScopeKey(this)) {
         val typeParameters = (declaration as? FirTypeParametersOwner)?.typeParameters.orEmpty()
-        @Suppress("UNCHECKED_CAST")
-        val substitution = typeParameters.zip(this.typeArguments) { typeParameter, typeArgument ->
-            val typeParameterSymbol = typeParameter.symbol
-            typeParameterSymbol to when (typeArgument) {
-                is ConeTypedProjection -> {
-                    typeArgument.type
-                }
-                else /* StarProjection */ -> {
-                    ConeTypeIntersector.intersectTypes(
-                        session.inferenceContext(),
-                        typeParameterSymbol.fir.bounds.map { it.coneTypeUnsafe() }
-                    )
-                }
-            }
-        }.toMap()
-
-        FirClassSubstitutionScope(session, useSiteMemberScope, builder, substitution)
+        val originalSubstitution = createSubstitution(typeParameters, typeArguments, session)
+        val javaClassId = JavaToKotlinClassMap.mapKotlinToJava(declaration.symbol.classId.asSingleFqName().toUnsafe())
+        val javaClass = javaClassId?.let { session.firSymbolProvider.getClassLikeSymbolByFqName(it)?.fir } as? FirRegularClass
+        if (javaClass != null) {
+            val javaTypeParameters = javaClass.typeParameters
+            val javaSubstitution = createSubstitution(javaTypeParameters, typeArguments, session)
+            FirClassSubstitutionScope(session, useSiteMemberScope, builder, originalSubstitution + javaSubstitution)
+        } else {
+            FirClassSubstitutionScope(session, useSiteMemberScope, builder, originalSubstitution)
+        }
     }
 }
 
