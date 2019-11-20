@@ -55,11 +55,6 @@
         </action>
 
         <group id="Kotlin.XDebugger.Actions">
-            <action id="Kotlin.XDebugger.ToggleKotlinVariableView"
-                    class="org.jetbrains.kotlin.idea.debugger.ToggleKotlinVariablesView"
-                    icon="/org/jetbrains/kotlin/idea/icons/kotlin.png"
-                    text="Show Kotlin variables only"
-            />
 <!--            TODO(design)-->
             <action id="Kotlin.XDebugger.CoroutinesDump"
                 class="org.jetbrains.kotlin.idea.debugger.coroutines.CoroutineDumpAction"
@@ -67,10 +62,11 @@
             icon="/org/jetbrains/kotlin/idea/icons/kotlin.png"/>
         </group>
 
-        <group id="Kotlin.XDebugger.Watches.Tree.Toolbar">
-            <reference ref="Kotlin.XDebugger.ToggleKotlinVariableView"/>
-            <add-to-group group-id="XDebugger.Watches.Tree.Toolbar" relative-to-action="XDebugger.SwitchWatchesInVariables" anchor="after"/>
-        </group>
+        <action id="Kotlin.XDebugger.ToggleKotlinVariableView"
+                class="org.jetbrains.kotlin.idea.debugger.ToggleKotlinVariablesView"
+                text="Show Kotlin Variables Only">
+            <add-to-group group-id="XDebugger.Settings" relative-to-action="XDebugger.Inline" anchor="after"/>
+        </action>
 
         <action id="InspectBreakpointApplicability" class="org.jetbrains.kotlin.idea.debugger.breakpoints.InspectBreakpointApplicabilityAction"
                 text="Inspect Breakpoint Applicability" internal="true">
