@@ -21,7 +21,7 @@ public abstract class AbstractTraverseWindowAction extends AnAction {
     Window window = mapWindow.fun(w);
     Component recentFocusOwner = window.getMostRecentFocusOwner();
 
-    (recentFocusOwner == null || !recentFocusOwner.isFocusable()? window : recentFocusOwner).requestFocus();
+    (recentFocusOwner == null || !recentFocusOwner.isFocusable() ? window : recentFocusOwner).requestFocus();
   }
 
   @Override
