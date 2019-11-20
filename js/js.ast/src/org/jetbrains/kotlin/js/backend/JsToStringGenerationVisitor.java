@@ -1047,6 +1047,14 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     @Override
+    public void visitSingleLineComment(@NotNull JsSingleLineComment comment) {
+        p.print("//");
+        p.print(comment.getText());
+        needSemi = false;
+        newline();
+    }
+
+    @Override
     public void visitDocComment(@NotNull JsDocComment comment) {
         boolean asSingleLine = comment.getTags().size() == 1;
         if (!asSingleLine) {
