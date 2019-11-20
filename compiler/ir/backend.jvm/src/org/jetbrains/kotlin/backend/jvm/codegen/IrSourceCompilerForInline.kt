@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.backend.common.ir.ir2string
-import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.codegen.BaseExpressionCodegen
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.OwnerKind
@@ -23,9 +22,6 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
-import org.jetbrains.kotlin.ir.util.isSuspend
-import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
@@ -95,28 +91,7 @@ class IrSourceCompilerForInline(
         asmMethod: Method
     ): SMAPAndMethodNode {
         assert(callableDescriptor == callee.symbol.descriptor.original) { "Expected $callableDescriptor got ${callee.descriptor.original}" }
-        val irFunction = getFunctionToInline()
-        return makeInlineNode(irFunction, FakeClassCodegen(irFunction, codegen.classCodegen), false)
-    }
-
-    private fun getFunctionToInline(): IrFunction {
-        val parent = callee.parentAsClass
-
-        if (parent.fileParent.fileEntry is MultifileFacadeFileEntry) {
-            codegen.context.multifileFacadeMemberToPartMember[callee]?.let { return it }
-
-            if (callee.isSuspend) {
-                codegen.context.suspendFunctionViewToOriginal[callee]?.let { facadeMemberOriginal ->
-                    codegen.context.multifileFacadeMemberToPartMember[facadeMemberOriginal]?.let { partMemberOriginal ->
-                        return partMemberOriginal.getOrCreateSuspendFunctionViewIfNeeded(codegen.context)
-                    }
-                }
-            }
-
-            error("Function from a multi-file facade without the link to the function in the part: ${callee.render()}")
-        }
-
-        return callee
+        return makeInlineNode(callee, FakeClassCodegen(callee, codegen.classCodegen), false)
     }
 
     override fun hasFinallyBlocks() = data.hasFinallyBlocks()

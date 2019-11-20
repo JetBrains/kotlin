@@ -286,7 +286,6 @@ private val jvmFilePhases =
         additionalClassAnnotationPhase then
         typeOperatorLowering then
         replaceKFunctionInvokeWithFunctionInvokePhase then
-        resolveInlineCallsPhase then
 
         checkLocalNamesWithOldBackendPhase then
 
@@ -302,6 +301,7 @@ val jvmPhases = namedIrModulePhase(
             fileClassPhase then
             performByIrFile(lower = jvmFilePhases) then
             generateMultifileFacadesPhase then
+            resolveInlineCallsPhase then
             // should be last transformation
             removeDeclarationsThatWouldBeInlined then
             validateIrAfterLowering
