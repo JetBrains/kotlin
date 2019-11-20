@@ -51,6 +51,8 @@ class JsIrBackendContext(
     override val transformedFunction = mutableMapOf<IrFunctionSymbol, IrSimpleFunctionSymbol>()
     override val lateinitNullableFields = mutableMapOf<IrField, IrField>()
 
+    val memberMap = mutableMapOf<IrSimpleFunctionSymbol, IrSimpleFunction>()
+
     override val builtIns = module.builtIns
 
     override var inVerbosePhase: Boolean = false

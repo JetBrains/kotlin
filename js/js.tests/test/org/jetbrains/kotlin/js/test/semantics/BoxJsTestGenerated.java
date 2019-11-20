@@ -4264,6 +4264,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             runTest("js/js.translator/testData/box/inlineMultiFile/lambdaInLambdaNoInline.kt");
         }
 
+        @TestMetadata("privateVarFromInline.kt")
+        public void testPrivateVarFromInline() throws Exception {
+            runTest("js/js.translator/testData/box/inlineMultiFile/privateVarFromInline.kt");
+        }
+
         @TestMetadata("regeneratedLambdaName.kt")
         public void testRegeneratedLambdaName() throws Exception {
             runTest("js/js.translator/testData/box/inlineMultiFile/regeneratedLambdaName.kt");

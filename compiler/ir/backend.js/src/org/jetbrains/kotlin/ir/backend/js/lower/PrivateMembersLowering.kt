@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrPropertyReferenceImpl
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
@@ -33,13 +33,11 @@ import org.jetbrains.kotlin.name.Name
 private val STATIC_THIS_PARAMETER = object : IrDeclarationOriginImpl("STATIC_THIS_PARAMETER") {}
 
 class PrivateMembersLowering(val context: JsIrBackendContext) : FileLoweringPass {
-    private val memberMap = mutableMapOf<IrSimpleFunctionSymbol, IrSimpleFunction>()
+    private val memberMap = context.memberMap
 
     override fun lower(irFile: IrFile) {
         transformPrivateDeclarations(irFile)
         transformPrivateUseSites(irFile)
-
-        memberMap.clear()
     }
 
     private fun transformPrivateDeclarations(irFile: IrFile) {
@@ -49,7 +47,6 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : FileLoweringPass
                 declaration.declarations.transformFlat {
                     when (it) {
                         is IrSimpleFunction -> transformMemberToStaticFunction(it)?.let { staticFunction ->
-                            memberMap[it.symbol] = staticFunction
                             listOf(staticFunction)
                         }
                         is IrProperty -> listOf(it.apply {
@@ -69,7 +66,7 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : FileLoweringPass
             override fun visitCall(expression: IrCall): IrExpression {
                 super.visitCall(expression)
 
-                return memberMap[expression.symbol]?.let {
+                return getOrPutStaticFunction(expression.symbol)?.let {
                     transformPrivateToStaticCall(expression, it)
                 } ?: expression
             }
@@ -77,7 +74,7 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : FileLoweringPass
             override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
                 super.visitFunctionReference(expression)
 
-                return memberMap[expression.symbol]?.let {
+                return getOrPutStaticFunction(expression.symbol)?.let {
                     transformPrivateToStaticReference(expression) {
                         IrFunctionReferenceImpl(
                             expression.startOffset, expression.endOffset,
@@ -92,7 +89,10 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : FileLoweringPass
             override fun visitPropertyReference(expression: IrPropertyReference): IrExpression {
                 super.visitPropertyReference(expression)
 
-                return if (expression.getter in memberMap || expression.setter in memberMap) {
+                val staticGetter = expression.getter?.let { getOrPutStaticFunction(it) }
+                val staticSetter = expression.setter?.let { getOrPutStaticFunction(it) }
+
+                return if (staticGetter != null || staticSetter != null) {
                     transformPrivateToStaticReference(expression) {
                         IrPropertyReferenceImpl(
                             expression.startOffset, expression.endOffset,
@@ -100,8 +100,8 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : FileLoweringPass
                             expression.symbol, // TODO remap property symbol based on remapped getter/setter?
                             expression.typeArgumentsCount,
                             expression.field,
-                            memberMap[expression.getter]?.symbol ?: expression.getter,
-                            memberMap[expression.setter]?.symbol ?: expression.setter,
+                            staticGetter?.symbol ?: expression.getter,
+                            staticSetter?.symbol ?: expression.setter,
                             expression.origin
                         )
                     }
@@ -127,6 +127,7 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : FileLoweringPass
 
                 return newExpression
             }
+
             private fun transformPrivateToStaticReference(
                 expression: IrCallableReference,
                 builder: () -> IrCallableReference
@@ -147,28 +148,11 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : FileLoweringPass
         }, null)
     }
 
-    private fun transformAccessor(accessor: IrSimpleFunction) =
-        transformMemberToStaticFunction(accessor)?.also { memberMap[accessor.symbol] = it } ?: accessor
+    private fun transformAccessor(accessor: IrSimpleFunction) = transformMemberToStaticFunction(accessor) ?: accessor
 
     private fun transformMemberToStaticFunction(function: IrSimpleFunction): IrSimpleFunction? {
 
-        if (function.visibility != Visibilities.PRIVATE || function.dispatchReceiverParameter == null) return null
-
-        val descriptor = WrappedSimpleFunctionDescriptor()
-        val symbol = IrSimpleFunctionSymbolImpl(descriptor)
-        val staticFunction = function.run {
-            IrFunctionImpl(
-                startOffset, endOffset, origin,
-                symbol, name, visibility, modality,
-                returnType,
-                isInline = isInline, isExternal = isExternal, isTailrec = isTailrec, isSuspend = isSuspend, isExpect = isExpect,
-                isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE
-            ).also {
-                descriptor.bind(it)
-                it.parent = parent
-                it.correspondingPropertySymbol = correspondingPropertySymbol
-            }
-        }
+        val staticFunction = getOrPutStaticFunction(function.symbol) ?: return null
 
         // Detach old function from corresponding property
         val correspondingProperty = function.correspondingPropertySymbol?.owner
@@ -178,29 +162,6 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : FileLoweringPass
                 correspondingProperty.setter -> correspondingProperty.setter = staticFunction
             }
         }
-
-        staticFunction.typeParameters += function.typeParameters.map { it.deepCopyWithSymbols(staticFunction) }
-
-        staticFunction.extensionReceiverParameter = function.extensionReceiverParameter?.copyTo(staticFunction)
-        val thisDesc = WrappedValueParameterDescriptor()
-        val thisSymbol = IrValueParameterSymbolImpl(thisDesc)
-        staticFunction.valueParameters += IrValueParameterImpl(
-            UNDEFINED_OFFSET,
-            UNDEFINED_OFFSET,
-            STATIC_THIS_PARAMETER,
-            thisSymbol,
-            Name.identifier("\$this"),
-            0,
-            function.dispatchReceiverParameter!!.type,
-            null,
-            false,
-            false
-        ).also {
-            thisDesc.bind(it)
-            it.parent = staticFunction
-        }
-
-        staticFunction.valueParameters += function.valueParameters.map { it.copyTo(staticFunction, index = it.index + 1) }
 
         val oldParameters =
             listOfNotNull(function.extensionReceiverParameter, function.dispatchReceiverParameter) + function.valueParameters
@@ -218,6 +179,55 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : FileLoweringPass
         }, null)
 
         return staticFunction
+    }
+
+    private fun getOrPutStaticFunction(functionSymbol: IrFunctionSymbol): IrSimpleFunction? {
+        val function = functionSymbol.owner
+        if (function !is IrSimpleFunction) return null
+        if (function.visibility != Visibilities.PRIVATE || function.dispatchReceiverParameter == null) return null
+
+        return memberMap.getOrPut(function.symbol) {
+            val descriptor = WrappedSimpleFunctionDescriptor()
+            val symbol = IrSimpleFunctionSymbolImpl(descriptor)
+            val staticFunction = function.run {
+                IrFunctionImpl(
+                    startOffset, endOffset, origin,
+                    symbol, name, visibility, modality,
+                    returnType,
+                    isInline = isInline, isExternal = isExternal, isTailrec = isTailrec, isSuspend = isSuspend, isExpect = isExpect,
+                    isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE
+                ).also {
+                    descriptor.bind(it)
+                    it.parent = parent
+                    it.correspondingPropertySymbol = correspondingPropertySymbol
+                }
+            }
+
+            staticFunction.typeParameters += function.typeParameters.map { it.deepCopyWithSymbols(staticFunction) }
+
+            staticFunction.extensionReceiverParameter = function.extensionReceiverParameter?.copyTo(staticFunction)
+            val thisDesc = WrappedValueParameterDescriptor()
+            val thisSymbol = IrValueParameterSymbolImpl(thisDesc)
+            staticFunction.valueParameters += IrValueParameterImpl(
+                UNDEFINED_OFFSET,
+                UNDEFINED_OFFSET,
+                STATIC_THIS_PARAMETER,
+                thisSymbol,
+                Name.identifier("\$this"),
+                0,
+                function.dispatchReceiverParameter!!.type,
+                null,
+                isCrossinline = false,
+                isNoinline = false
+            ).also {
+                thisDesc.bind(it)
+                it.parent = staticFunction
+            }
+
+            staticFunction.valueParameters += function.valueParameters.map { it.copyTo(staticFunction, index = it.index + 1) }
+
+            staticFunction
+        }
     }
 
 }
