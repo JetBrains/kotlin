@@ -45,7 +45,7 @@ class IrModuleToJsTransformer(
         module.files.forEach {
             val fileStatements = it.accept(IrFileToJsTransformer(), context).statements
             if (fileStatements.isNotEmpty()) {
-                statements.add(JsDocComment(mapOf("file" to it.path)).makeStmt())
+                statements.add(JsSingleLineComment("file: ${it.path}"))
 
                 statements.addAll(fileStatements)
             }
