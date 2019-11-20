@@ -86,8 +86,8 @@ class KotlinStepActionFactory(private val debuggerProcess: DebugProcessImpl) {
         return getFromField(DebugProcessImpl::class.java.getDeclaredField(fieldName))
     }
 
-    private fun <T> getFromField(field: Field?): T {
-        field!!.isAccessible = true
+    private fun <T> getFromField(field: Field): T {
+        field.isAccessible = true
 
         @Suppress("UNCHECKED_CAST")
         return field.get(debuggerProcess) as T
