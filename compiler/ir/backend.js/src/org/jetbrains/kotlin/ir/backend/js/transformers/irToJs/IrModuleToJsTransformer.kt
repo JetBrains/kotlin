@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.ir.backend.js.CompilerResult
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.export.ExportModelGenerator
 import org.jetbrains.kotlin.ir.backend.js.export.ExportModelToJsStatements
-import org.jetbrains.kotlin.ir.backend.js.lower.StaticMembersLowering
 import org.jetbrains.kotlin.ir.backend.js.export.toTypeScript
+import org.jetbrains.kotlin.ir.backend.js.lower.StaticMembersLowering
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -43,8 +43,12 @@ class IrModuleToJsTransformer(
         statements += preDeclarationBlock
 
         module.files.forEach {
-            statements.add(JsDocComment(mapOf("file" to it.path)).makeStmt())
-            statements.addAll(it.accept(IrFileToJsTransformer(), context).statements)
+            val fileStatements = it.accept(IrFileToJsTransformer(), context).statements
+            if (fileStatements.isNotEmpty()) {
+                statements.add(JsDocComment(mapOf("file" to it.path)).makeStmt())
+
+                statements.addAll(fileStatements)
+            }
         }
 
         // sort member forwarding code
