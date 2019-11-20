@@ -10,7 +10,7 @@ import com.intellij.debugger.engine.JavaValue
 import com.intellij.debugger.memory.utils.StackFrameItem
 import com.intellij.execution.process.ProcessOutputTypes
 import com.intellij.openapi.extensions.Extensions
-import org.jetbrains.kotlin.idea.debugger.KotlinCoroutinesAsyncStackTraceProvider
+import org.jetbrains.kotlin.idea.debugger.coroutines.CoroutineAsyncStackTraceProvider
 import org.jetbrains.kotlin.idea.debugger.test.preference.DebuggerPreferences
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.getSafe
@@ -54,7 +54,7 @@ abstract class AbstractAsyncStackTraceTest : KotlinDescriptorTestCaseWithSteppin
         }
     }
 
-    private fun getAsyncStackTraceProvider(): KotlinCoroutinesAsyncStackTraceProvider? {
+    private fun getAsyncStackTraceProvider(): CoroutineAsyncStackTraceProvider? {
         val area = Extensions.getArea(null)
         if (!area.hasExtensionPoint(ASYNC_STACKTRACE_EP_NAME)) {
             System.err.println("$ASYNC_STACKTRACE_EP_NAME extension point is not found (probably old IDE version)")
@@ -62,7 +62,7 @@ abstract class AbstractAsyncStackTraceTest : KotlinDescriptorTestCaseWithSteppin
         }
 
         val extensionPoint = area.getExtensionPoint<Any>(ASYNC_STACKTRACE_EP_NAME)
-        val provider = extensionPoint.extensions.firstIsInstanceOrNull<KotlinCoroutinesAsyncStackTraceProvider>()
+        val provider = extensionPoint.extensions.firstIsInstanceOrNull<CoroutineAsyncStackTraceProvider>()
 
         if (provider == null) {
             System.err.println("Kotlin coroutine async stack trace provider is not found")
