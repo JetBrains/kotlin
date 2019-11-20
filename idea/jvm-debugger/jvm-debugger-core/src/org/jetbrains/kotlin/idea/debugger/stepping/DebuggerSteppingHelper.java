@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.debugger.stepping;
 
 import com.intellij.debugger.engine.DebugProcessImpl;
+import com.intellij.debugger.engine.RequestHint;
 import com.intellij.debugger.engine.SuspendContextImpl;
 import com.intellij.debugger.engine.evaluation.EvaluateException;
 import com.intellij.debugger.impl.DebuggerUtilsEx;
@@ -81,6 +82,26 @@ public class DebuggerSteppingHelper {
                 catch (EvaluateException e) {
                     LOG.error(e);
                 }
+            }
+        };
+    }
+
+    public static DebugProcessImpl.StepOverCommand createStepOverCommandWithCustomFilter(
+            SuspendContextImpl suspendContext,
+            boolean ignoreBreakpoints,
+            KotlinSuspendCallStepOverFilter methodFilter
+    ) {
+        DebugProcessImpl debugProcess = suspendContext.getDebugProcess();
+        return debugProcess.new StepOverCommand(suspendContext, ignoreBreakpoints, StepRequest.STEP_LINE) {
+            @NotNull
+            @Override
+            protected RequestHint getHint(SuspendContextImpl suspendContext, ThreadReferenceProxyImpl stepThread) {
+                @SuppressWarnings("MagicConstant")
+                RequestHint hint = new RequestHintWithMethodFilter(stepThread, suspendContext, StepRequest.STEP_OVER, methodFilter);
+                hint.setRestoreBreakpoints(ignoreBreakpoints);
+                hint.setIgnoreFilters(ignoreBreakpoints || debugProcess.getSession().shouldIgnoreSteppingFilters());
+
+                return hint;
             }
         };
     }
