@@ -18,26 +18,27 @@ package org.jetbrains.kotlin.idea.debugger.stepping.filter
 
 import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.engine.NamedMethodFilter
-import com.intellij.psi.SmartPsiElementPointer
 import com.intellij.util.Range
 import com.sun.jdi.Location
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
+import org.jetbrains.kotlin.idea.debugger.stepping.smartStepInto.KotlinMethodSmartStepTarget
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypesAndPredicate
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
-class KotlinBasicStepMethodFilter(
-    private val declarationPtr: SmartPsiElementPointer<KtDeclaration>?,
-    private val isInvoke: Boolean,
-    private val targetMethodName: String,
-    private val myCallingExpressionLines: Range<Int>
-) : NamedMethodFilter {
+class KotlinOrdinaryMethodFilter(target: KotlinMethodSmartStepTarget) : NamedMethodFilter {
+    private val declarationPtr = target.declaration?.createSmartPointer()
+    private val isInvoke = target.isInvoke
+    private val targetMethodName = target.targetMethodName
+    private val myCallingExpressionLines: Range<Int>? = target.callingExpressionLines
+
     init {
         assert(declarationPtr != null || isInvoke)
     }
@@ -81,7 +82,7 @@ class KotlinBasicStepMethodFilter(
         }
 
         // Element is lost. But we know that name is matches, so stop.
-        val declaration = declarationPtr?.element ?: return true
+        val declaration = runReadAction { declarationPtr?.element } ?: return true
 
         val psiManager = currentDeclaration.manager
         if (psiManager.areElementsEquivalent(currentDeclaration, declaration)) {

@@ -13,10 +13,9 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.util.Range
 import com.intellij.util.containers.OrderedSet
 import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils.getTopmostElementAtOffset
-import org.jetbrains.kotlin.idea.debugger.stepping.filter.KotlinBasicStepMethodFilter
+import org.jetbrains.kotlin.idea.debugger.stepping.filter.KotlinOrdinaryMethodFilter
 import org.jetbrains.kotlin.idea.debugger.stepping.filter.KotlinLambdaMethodFilter
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 
 class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
@@ -40,15 +39,8 @@ class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
 
     override fun createMethodFilter(stepTarget: SmartStepTarget?): MethodFilter? {
         return when (stepTarget) {
-            is KotlinMethodSmartStepTarget -> {
-                val declarationPtr = stepTarget.declaration?.createSmartPointer()
-                val lines = stepTarget.callingExpressionLines ?: return null
-                KotlinBasicStepMethodFilter(declarationPtr, stepTarget.isInvoke, stepTarget.targetMethodName, lines)
-            }
-            is KotlinLambdaSmartStepTarget -> {
-                val lines = stepTarget.callingExpressionLines ?: return null
-                KotlinLambdaMethodFilter(stepTarget.getLambda(), lines, stepTarget.isInline, stepTarget.isSuspend)
-            }
+            is KotlinMethodSmartStepTarget -> KotlinOrdinaryMethodFilter(stepTarget)
+            is KotlinLambdaSmartStepTarget -> KotlinLambdaMethodFilter(stepTarget)
             else -> super.createMethodFilter(stepTarget)
         }
     }

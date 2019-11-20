@@ -24,20 +24,24 @@ import com.sun.jdi.Location
 import org.jetbrains.kotlin.codegen.coroutines.isResumeImplMethodNameFromAnyLanguageSettings
 import org.jetbrains.kotlin.idea.core.util.isMultiLine
 import org.jetbrains.kotlin.idea.debugger.isInsideInlineArgument
+import org.jetbrains.kotlin.idea.debugger.safeMethod
+import org.jetbrains.kotlin.idea.debugger.stepping.smartStepInto.KotlinLambdaSmartStepTarget
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtBlockExpression
-import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-class KotlinLambdaMethodFilter(
-    private val lambda: KtFunction,
-    private val myCallingExpressionLines: Range<Int>,
-    private val isInline: Boolean,
-    private val isSuspend: Boolean
-) : BreakpointStepMethodFilter {
+class KotlinLambdaMethodFilter(target: KotlinLambdaSmartStepTarget) : BreakpointStepMethodFilter {
+    private val lambdaPtr = target.getLambda().createSmartPointer()
+    private val myCallingExpressionLines: Range<Int>? = target.callingExpressionLines
+    private val isInline = target.isInline
+    private val isSuspend = target.isSuspend
+
     private val myFirstStatementPosition: SourcePosition?
     private val myLastStatementLine: Int
 
     init {
+        val lambda = target.getLambda()
         val body = lambda.bodyExpression
         if (body != null && lambda.isMultiLine()) {
             var firstStatementPosition: SourcePosition? = null
@@ -51,7 +55,7 @@ class KotlinLambdaMethodFilter(
                 }
             }
             myFirstStatementPosition = firstStatementPosition
-            myLastStatementLine = if (lastStatementPosition != null) lastStatementPosition.line else -1
+            myLastStatementLine = lastStatementPosition?.line ?: -1
         } else {
             myFirstStatementPosition = SourcePosition.createFromElement(lambda)
             myLastStatementLine = myFirstStatementPosition!!.line
@@ -62,12 +66,13 @@ class KotlinLambdaMethodFilter(
     override fun getLastStatementLine() = myLastStatementLine
 
     override fun locationMatches(process: DebugProcessImpl, location: Location): Boolean {
-        val method = location.method()
+        val lambda = runReadAction { lambdaPtr.element } ?: return true
 
         if (isInline) {
             return isInsideInlineArgument(lambda, location, process)
         }
 
+        val method = location.safeMethod() ?: return true
         return isLambdaName(method.name())
     }
 
