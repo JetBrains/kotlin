@@ -24,7 +24,7 @@ class NewInlayProviderSettingsModel<T : Any>(
     providerWithSettings.configurable.createComponent(onChangeListener!!)
   }
   override fun collectAndApply(editor: Editor, file: PsiFile) {
-    providerWithSettings.getCollectorWrapperFor(file, editor, providerWithSettings.language)?.collectTraversingAndApply(editor, file)
+    providerWithSettings.getCollectorWrapperFor(file, editor, providerWithSettings.language)?.collectTraversingAndApply(editor, file, isEnabled)
   }
 
   override val cases: List<ImmediateConfigurable.Case>

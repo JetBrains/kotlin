@@ -33,6 +33,7 @@ class InlayPassTest : BasePlatformTestCase() {
     sink.addInlineElement(5, true, SpacePresentation(10, 10))
     val editor = myFixture.editor
     sink.applyToEditor(editor, inlineElements, blockElements, true)
+    sink.addInlineElement(2, true, SpacePresentation(10, 10))
     sink.applyToEditor(editor, inlineElements, blockElements, false)
     assertEquals(0, inlineElements.size)
     assertEquals(0, blockElements.size)

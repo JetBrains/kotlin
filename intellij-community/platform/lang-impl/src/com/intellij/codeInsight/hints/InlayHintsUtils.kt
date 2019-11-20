@@ -73,7 +73,7 @@ class CollectorWithSettings<T : Any>(
     sink.applyToEditor(editor, existingHorizontalInlays, existingVerticalInlays, isEnabled)
   }
 
-  fun collectTraversingAndApply(editor: Editor, file: PsiFile) {
+  fun collectTraversingAndApply(editor: Editor, file: PsiFile, enabled: Boolean) {
     val traverser = SyntaxTraverser.psiTraverser(file)
     traverser.forEach {
       collectHints(it, editor)
@@ -83,7 +83,7 @@ class CollectorWithSettings<T : Any>(
     val endOffset = file.textRange.endOffset
     val existingHorizontalInlays: MarkList<Inlay<*>> = MarkList(model.getInlineElementsInRange(startOffset, endOffset))
     val existingVerticalInlays: MarkList<Inlay<*>> = MarkList(model.getBlockElementsInRange(startOffset, endOffset))
-    applyToEditor(editor, existingHorizontalInlays, existingVerticalInlays, true)
+    applyToEditor(editor, existingHorizontalInlays, existingVerticalInlays, enabled)
   }
 }
 

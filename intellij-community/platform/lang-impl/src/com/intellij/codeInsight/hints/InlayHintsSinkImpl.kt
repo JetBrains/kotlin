@@ -91,7 +91,9 @@ class InlayHintsSinkImpl<T>(val key: SettingsKey<T>) : InlayHintsSink {
     EditorScrollingPositionKeeper.perform(editor, true) {
       DocumentUtil.executeInBulk(editor.document, isBulkChange) {
         updateOrDeleteExistingHints(existingHorizontalInlays, existingVerticalInlays, isEnabled)
-        createNewHints(inlayModel)
+        if (isEnabled) {
+          createNewHints(inlayModel)
+        }
       }
     }
     hints.clear()
