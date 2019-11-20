@@ -5,13 +5,13 @@
  */
 package com.intellij.psi.stubs;
 
-import com.google.common.collect.Maps;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.extensions.impl.ExtensionPointImpl;
 import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.progress.util.ProgressIndicatorUtils;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.ModificationTracker;
@@ -27,7 +27,6 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.provided.StubProvidedIndexExtension;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValueProvider;
-import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.util.CachedValueImpl;
 import com.intellij.util.ConcurrencyUtil;
 import com.intellij.util.Processor;
@@ -36,10 +35,12 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.FactoryMap;
 import com.intellij.util.indexing.*;
 import com.intellij.util.indexing.hash.MergedInvertedIndex;
-import com.intellij.util.indexing.impl.*;
+import com.intellij.util.indexing.impl.AbstractUpdateData;
+import com.intellij.util.indexing.impl.KeyValueUpdateProcessor;
+import com.intellij.util.indexing.impl.RemovedKeyProcessor;
 import com.intellij.util.indexing.provided.ProvidedIndexExtension;
-import com.intellij.util.io.*;
 import com.intellij.util.io.DataOutputStream;
+import com.intellij.util.io.*;
 import gnu.trove.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -95,12 +96,7 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
   private AsyncState getAsyncState() {
     AsyncState state = myState; // memory barrier
     if (state == null) {
-      try {
-        myState = state = myStateFuture.get();
-      }
-      catch (Throwable t) {
-        throw new RuntimeException(t);
-      }
+      myState = state = ProgressIndicatorUtils.awaitWithCheckCanceled(myStateFuture);
     }
     return state;
   }
