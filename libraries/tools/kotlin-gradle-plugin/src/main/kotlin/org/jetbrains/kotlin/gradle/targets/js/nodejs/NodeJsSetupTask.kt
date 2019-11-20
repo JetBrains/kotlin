@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.gradle.targets.js.nodejs
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.artifacts.repositories.IvyPatternRepositoryLayout
+import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
@@ -11,6 +12,7 @@ import org.jetbrains.kotlin.gradle.utils.patternLayoutCompatible
 import java.io.File
 import java.net.URI
 
+@CacheableTask
 open class NodeJsSetupTask : DefaultTask() {
     private val settings get() = NodeJsRootPlugin.apply(project.rootProject)
     private val env by lazy { settings.environment }

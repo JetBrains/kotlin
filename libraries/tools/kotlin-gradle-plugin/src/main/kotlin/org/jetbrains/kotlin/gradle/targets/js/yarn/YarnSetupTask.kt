@@ -7,12 +7,14 @@ package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import de.undercouch.gradle.tasks.download.DownloadAction
 import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import java.io.File
 
+@CacheableTask
 open class YarnSetupTask : DefaultTask() {
     private val settings = project.yarn
     private val env by lazy { settings.environment }
