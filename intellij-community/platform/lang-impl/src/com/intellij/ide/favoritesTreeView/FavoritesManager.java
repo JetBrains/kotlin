@@ -164,12 +164,11 @@ public final class FavoritesManager implements ProjectComponent, JDOMExternaliza
     return myViewSettings;
   }
 
-  public synchronized boolean removeFavoritesList(@NotNull String name) {
-    boolean result = myName2FavoritesRoots.remove(name) != null;
+  public synchronized void removeFavoritesList(@NotNull String name) {
+    myName2FavoritesRoots.remove(name);
     myFavoritesRootsOrder.remove(name);
     myDescriptions.remove(name);
     listRemoved(name);
-    return result;
   }
 
   @NotNull
@@ -467,7 +466,7 @@ public final class FavoritesManager implements ProjectComponent, JDOMExternaliza
     final ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(myProject).getFileIndex();
     final Set<Boolean> find = new HashSet<>();
     final ContentIterator contentIterator = fileOrDir -> {
-      if (fileOrDir != null && fileOrDir.getPath().equals(vFile.getPath())) {
+      if (fileOrDir.getPath().equals(vFile.getPath())) {
         find.add(Boolean.TRUE);
       }
       return true;
