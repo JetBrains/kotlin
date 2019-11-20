@@ -36,4 +36,36 @@ class TestContinueInSwitchInFor {
         }
         println("a = $a; b = $b; c = $c")
     }
+
+    fun fooWithNestedLabel(cc: CharArray) {
+        var i = 0
+        Loop@ while (i < cc.size && cc[i] != ';') {
+            when (cc[i]) {
+                ' ' -> {
+                    ++i
+                    continue@Loop
+                }
+                'a' -> a++
+                'b' -> b++
+                'c' -> c++
+                'x' -> run {
+                    var i = 0
+                    while (i < cc.size && cc[i] != ';') {
+                        when (cc[i]) {
+                            ' ' -> {
+                                ++i
+                                continue@Loop
+                            }
+                            'a' -> a++
+                            'b' -> b++
+                            'c' -> c++
+                        }
+                        break
+                    }
+                }
+            }
+            ++i
+        }
+        println("a = $a; b = $b; c = $c")
+    }
 }

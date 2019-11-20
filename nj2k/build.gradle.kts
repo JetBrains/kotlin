@@ -5,6 +5,14 @@ plugins {
     id("jps-compatible")
 }
 
+//tasks.test {
+//    filter {
+//        //include specific method in any of the tests
+//        includeTestsMatching("*Switch*")
+//
+//    }
+//}
+
 dependencies {
     testRuntime(intellijDep())
 

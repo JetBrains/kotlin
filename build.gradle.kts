@@ -582,6 +582,11 @@ tasks {
         dependsOn(":idea:test")
     }
 
+    register("j2k") {
+        dependsOn(":nj2k:test")
+    }
+
+
     register("idea-plugin-additional-tests") {
         dependsOn("dist")
         dependsOn(

@@ -61,7 +61,12 @@ class ContinueStatementConversion(context: NewJ2kConverterContext) : RecursiveAp
             return loopStatement
         }
         if (!needLabel) {
-            return blockStatement(loopStatement.copyTreeAndDetach())
+            loopStatement.parent.let {
+                if (it != null) {
+                    loopStatement.detached(it)
+                }
+            }
+            return blockStatement(loopStatement)
         }
 
         val labeledLoop = JKLabeledExpression(
