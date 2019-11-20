@@ -40,6 +40,132 @@ private val noParameters = { emptyMap<String, String>() }
 class FcsCodegenTests : AbstractCodegenTest() {
 
     @Test
+    fun testReturnValue(): Unit = ensureSetup {
+        compose("""
+
+            @Composable
+            fun <T, V1> testMemo(
+                v1: V1,
+                calculation: () -> T
+            ): T {
+                return +memo(v1, calculation)
+            }
+
+            var a = 0
+            var b = 0
+
+            @Composable
+            fun SimpleComposable() {
+                a++
+                val c = +state { 0 }
+                val d = testMemo(c.value) { b++; b }
+                val recompose = +invalidate
+                Button(
+                  text=listOf(a, b, c.value, d).joinToString(", "),
+                  onClick={ c.value += 1 },
+                  id=42
+                )
+                Button(
+                  text="Recompose",
+                  onClick={ recompose() },
+                  id=43
+                )
+            }
+        """,
+            noParameters,
+            "SimpleComposable()"
+        ).then { activity ->
+            val button = activity.findViewById(42) as Button
+            assertEquals(
+                button.text,
+                listOf(
+                    1, // SimpleComposable has run once
+                    1, // memo has been called once because of initial mount
+                    0, // state was in itialized at 0
+                    1 // memo should return b
+                ).joinToString(", ")
+            )
+            button.performClick()
+        }.then { activity ->
+            val button = activity.findViewById(42) as Button
+            val recompose = activity.findViewById(43) as Button
+            assertEquals(
+                button.text,
+                listOf(
+                    2, // SimpleComposable has run twice
+                    2, // memo has been called twice, because state input has changed
+                    1, // state was changed to 1
+                    2 // memo should return b
+                ).joinToString(", ")
+            )
+            recompose.performClick()
+        }.then { activity ->
+            val button = activity.findViewById(42) as Button
+            assertEquals(
+                button.text,
+                listOf(
+                    3, // SimpleComposable has run three times
+                    2, // memo was not called this time, because input didn't change
+                    1, // state stayed at 1
+                    2 // memo should return b
+                ).joinToString(", ")
+            )
+        }
+    }
+
+    @Test
+    fun testReorderedArgsReturnValue(): Unit = ensureSetup {
+        compose(
+            """
+            @Composable
+            fun <T, V1> testMemo(
+                v1: V1,
+                calculation: () -> T
+            ): T {
+                return +memo(v1, calculation)
+            }
+
+            @Composable
+            fun SimpleComposable() {
+                val x = testMemo(calculation = { "abc" }, v1 = "def")
+                TextView(
+                  text=x,
+                  id=42
+                )
+            }
+        """,
+            noParameters,
+            "SimpleComposable()"
+        ).then { activity ->
+            val button = activity.findViewById(42) as TextView
+            assertEquals(button.text, "abc")
+        }
+    }
+
+    @Test
+    fun testTrivialReturnValue(): Unit = ensureSetup {
+        compose("""
+        @Composable
+        fun <T> identity(value: T): T = value
+
+        @Composable
+        fun SimpleComposable() {
+            val x = identity("def")
+            TextView(
+              text=x,
+              id=42
+            )
+        }
+    """,
+            noParameters,
+            "SimpleComposable()"
+        ).then { activity ->
+            val button = activity.findViewById(42) as TextView
+            assertEquals(button.text, "def")
+        }
+    }
+
+    @Test
     fun testForDevelopment(): Unit = ensureSetup {
         codegen(
             """
