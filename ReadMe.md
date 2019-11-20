@@ -98,13 +98,13 @@ Development for some particular platform is possible after 'switching' that can 
 ```sh
 cd kotlin-project-dir
 
-# switching to IntelliJ Idea 2018.2
-bunch switch 182
+# switching to IntelliJ Idea 2019.1
+bunch switch 191
 ```
 
 ## <a name="working-in-idea"></a> Working with the project in IntelliJ IDEA
 
-Working with the Kotlin project requires at least IntelliJ IDEA 2017.3. You can download IntelliJ IDEA 2017.3 [here](https://www.jetbrains.com/idea/download).
+Working with the Kotlin project requires at least IntelliJ IDEA 2019.1. You can download IntelliJ IDEA 2019.1 [here](https://www.jetbrains.com/idea/download).
 
 After cloning the project, to import the project in Intellij choose the project directory in the Open project dialog. Then, after project opened, Select 
 `File` -> `New...` -> `Module from Existing Sources` in the menu, and select `build.gradle.kts` file in the project's root folder.
@@ -113,7 +113,7 @@ In the import dialog, select `use default gradle wrapper`.
 
 To be able to run tests from IntelliJ easily, check `Delegate IDE build/run actions to Gradle` and choose `Gradle Test Runner` in the Gradle runner settings after importing the project.
 
-At this time, you can use the latest released 1.2.x version of the Kotlin plugin for working with the code. To make sure you have the latest version installed, use Tools | Kotlin | Configure Kotlin Plugin Updates and press "Check for updates now".
+At this time, you can use the latest released 1.3.x version of the Kotlin plugin for working with the code. To make sure you have the latest version installed, use Tools | Kotlin | Configure Kotlin Plugin Updates and press "Check for updates now".
 
 ### Compiling and running
 
