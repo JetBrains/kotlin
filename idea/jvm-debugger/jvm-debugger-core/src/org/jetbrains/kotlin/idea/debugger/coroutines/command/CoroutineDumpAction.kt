@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.debugger.coroutines
+package org.jetbrains.kotlin.idea.debugger.coroutines.command
 
 import com.intellij.debugger.DebuggerManagerEx
 import com.intellij.debugger.engine.events.SuspendContextCommandImpl
@@ -21,11 +21,14 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.text.DateFormatUtil
 import com.intellij.xdebugger.impl.XDebuggerManagerImpl
-import org.jetbrains.kotlin.idea.debugger.evaluate.ExecutionContext
+import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.debugger.coroutines.view.CoroutineDumpPanel
+import org.jetbrains.kotlin.idea.debugger.coroutines.coroutineDebuggerEnabled
+import org.jetbrains.kotlin.idea.debugger.coroutines.data.CoroutineInfoData
+import org.jetbrains.kotlin.idea.debugger.coroutines.proxy.CoroutinesDebugProbesProxy
 
 @Suppress("ComponentNotRegistered")
 class CoroutineDumpAction : AnAction(), AnAction.TransparentUpdate {
@@ -39,28 +42,23 @@ class CoroutineDumpAction : AnAction(), AnAction.TransparentUpdate {
             val process = context.debugProcess ?: return
             process.managerThread.schedule(object : SuspendContextCommandImpl(context.suspendContext) {
                 override fun contextAction() {
-                    val evalContext = context.createEvaluationContext()
-                    val frameProxy = evalContext?.frameProxy ?: return
-                    val execContext = ExecutionContext(evalContext, frameProxy)
-                    val states = CoroutinesDebugProbesProxy.dumpCoroutines(execContext)
-                    if (states.isLeft) {
-                        logger.warn(states.left)
-                        XDebuggerManagerImpl.NOTIFICATION_GROUP
-                            .createNotification(
-                                "Coroutine dump failed. See log",
-                                MessageType.WARNING
-                            ).notify(project)
-                        return
+                    val states = CoroutinesDebugProbesProxy(context.suspendContext!!).dumpCoroutines() ?: return
+                    if (states.isOk()) {
+                        XDebuggerManagerImpl.NOTIFICATION_GROUP.createNotification(
+                            KotlinBundle.message("debugger.session.tab.coroutine.message.error"),
+                            MessageType.ERROR
+                        ).notify(project)
+                    } else {
+                        val f = fun() {
+                            addCoroutineDump(
+                                project,
+                                states.cache,
+                                session.xDebugSession?.ui ?: return,
+                                session.searchScope
+                            )
+                        }
+                        ApplicationManager.getApplication().invokeLater(f, ModalityState.NON_MODAL)
                     }
-                    val f = fun() {
-                        addCoroutineDump(
-                            project,
-                            states.get(),
-                            session.xDebugSession?.ui ?: return,
-                            session.searchScope
-                        )
-                    }
-                    ApplicationManager.getApplication().invokeLater(f, ModalityState.NON_MODAL)
                 }
             })
         }
@@ -69,7 +67,7 @@ class CoroutineDumpAction : AnAction(), AnAction.TransparentUpdate {
     /**
      * Analog of [DebuggerUtilsEx.addThreadDump].
      */
-    fun addCoroutineDump(project: Project, coroutines: List<CoroutineState>, ui: RunnerLayoutUi, searchScope: GlobalSearchScope) {
+    fun addCoroutineDump(project: Project, coroutines: List<CoroutineInfoData>, ui: RunnerLayoutUi, searchScope: GlobalSearchScope) {
         val consoleBuilder = TextConsoleBuilderFactory.getInstance().createBuilder(project)
         consoleBuilder.filters(ExceptionFilters.getFilters(searchScope))
         val consoleView = consoleBuilder.console
@@ -102,7 +100,7 @@ class CoroutineDumpAction : AnAction(), AnAction.TransparentUpdate {
             return
         }
         val debuggerSession = DebuggerManagerEx.getInstanceEx(project).context.debuggerSession
-        presentation.isEnabled = debuggerSession != null && debuggerSession.isAttached && isCoroutineDebuggerEnabled()
+        presentation.isEnabled = debuggerSession != null && debuggerSession.isAttached && coroutineDebuggerEnabled()
         presentation.isVisible = presentation.isEnabled
     }
 }

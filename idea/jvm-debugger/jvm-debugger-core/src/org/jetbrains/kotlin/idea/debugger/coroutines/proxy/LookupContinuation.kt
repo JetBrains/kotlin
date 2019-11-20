@@ -3,52 +3,43 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.debugger.coroutines
+package org.jetbrains.kotlin.idea.debugger.coroutines.proxy
 
 import com.sun.jdi.*
+import org.jetbrains.kotlin.idea.debugger.coroutines.data.CoroutineInfoData
 import org.jetbrains.kotlin.idea.debugger.evaluate.ExecutionContext
 import org.jetbrains.kotlin.idea.debugger.isSubtype
 
-/**
- * Represents state of a coroutine.
- * @see `kotlinx.coroutines.debug.CoroutineInfo`
- */
-class CoroutineState(
-    val name: String,
-    val state: State,
-    val thread: ThreadReference? = null,
-    val stackTrace: List<StackTraceElement>,
-    val frame: ObjectReference?
-) {
-    val isSuspended: Boolean = state == State.SUSPENDED
-    val isEmptyStackTrace: Boolean by lazy { stackTrace.isEmpty() }
-    val stringStackTrace: String by lazy {
-        buildString {
-            appendln("\"$name\", state: $state")
-            stackTrace.forEach {
-                appendln("\t$it")
-            }
-        }
+class LookupContinuation(val context: ExecutionContext, val frame: StackTraceElement) {
+
+    private fun suspendOrInvokeSuspend(method: Method): Boolean =
+        "Lkotlin/coroutines/Continuation;)" in method.signature() ||
+        (method.name() == "invokeSuspend" && method.signature() == "(Ljava/lang/Object;)Ljava/lang/Object;") // suspend fun or invokeSuspend
+
+    private fun findMethod() : Method {
+        val clazz = context.findClass(frame.className) as ClassType
+        val method = clazz.methodsByName(frame.methodName).last {
+            val loc = it.location().lineNumber()
+            loc < 0 && frame.lineNumber < 0 || loc > 0 && loc <= frame.lineNumber
+        } // pick correct method if an overloaded one is given
+        return method
+    }
+
+    fun isApplicable(): Boolean {
+        val method = findMethod()
+        return suspendOrInvokeSuspend(method)
     }
 
     /**
-     * Finds previous Continuation for this Continuation (completion field in BaseContinuationImpl)
-     * @return null if given ObjectReference is not a BaseContinuationImpl instance or completion is null
-     */
-    private fun getNextFrame(continuation: ObjectReference, context: ExecutionContext): ObjectReference? {
-        val type = continuation.type() as ClassType
-        if (!type.isSubtype("kotlin.coroutines.jvm.internal.BaseContinuationImpl")) return null
-        val next = type.concreteMethodByName("getCompletion", "()Lkotlin/coroutines/Continuation;")
-        return context.invokeMethod(continuation, next, emptyList()) as? ObjectReference
-    }
-
-    /**
-     * Find continuation for the [stackTraceElement]
+     * Find continuation for the [frame]
      * Gets current CoroutineInfo.lastObservedFrame and finds next frames in it until null or needed stackTraceElement is found
      * @return null if matching continuation is not found or is not BaseContinuationImpl
      */
-    fun getContinuation(stackTraceElement: StackTraceElement, context: ExecutionContext): ObjectReference? {
-        var continuation = frame ?: return null
+    fun findContinuation(infoData: CoroutineInfoData): ObjectReference? {
+        if (!isApplicable())
+            return null
+
+        var continuation = infoData.frame ?: return null
         val baseType = "kotlin.coroutines.jvm.internal.BaseContinuationImpl"
         val getTrace = (continuation.type() as ClassType).concreteMethodByName(
             "getStackTraceElement",
@@ -71,7 +62,7 @@ class CoroutineState(
         }
 
         while (continuation.type().isSubtype(baseType)
-            && (stackTraceElement.className != className() || stackTraceElement.lineNumber != lineNumber())
+            && (frame.className != className() || frame.lineNumber != lineNumber())
         ) {
             // while continuation is BaseContinuationImpl and it's frame equals to the current
             continuation = getNextFrame(continuation, context) ?: return null
@@ -79,9 +70,15 @@ class CoroutineState(
         return if (continuation.type().isSubtype(baseType)) continuation else null
     }
 
-    enum class State {
-        RUNNING,
-        SUSPENDED,
-        CREATED
+
+    /**
+     * Finds previous Continuation for this Continuation (completion field in BaseContinuationImpl)
+     * @return null if given ObjectReference is not a BaseContinuationImpl instance or completion is null
+     */
+    private fun getNextFrame(continuation: ObjectReference, context: ExecutionContext): ObjectReference? {
+        val type = continuation.type() as ClassType
+        if (!type.isSubtype("kotlin.coroutines.jvm.internal.BaseContinuationImpl")) return null
+        val next = type.concreteMethodByName("getCompletion", "()Lkotlin/coroutines/Continuation;")
+        return context.invokeMethod(continuation, next, emptyList()) as? ObjectReference
     }
 }
