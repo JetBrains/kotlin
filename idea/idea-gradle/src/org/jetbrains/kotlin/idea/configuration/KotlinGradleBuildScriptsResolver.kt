@@ -12,8 +12,8 @@ import com.intellij.util.Consumer
 import org.gradle.tooling.model.idea.IdeaProject
 import org.gradle.tooling.model.kotlin.dsl.KotlinDslModelsParameters.*
 import org.gradle.tooling.model.kotlin.dsl.KotlinDslScriptsModel
-import org.jetbrains.kotlin.idea.scripting.minimal_gradle_version_supported
-import org.jetbrains.kotlin.idea.scripting.shouldLoadDependenciesDuringImport
+import org.jetbrains.kotlin.idea.scripting.gradle.minimal_gradle_version_supported
+import org.jetbrains.kotlin.idea.scripting.gradle.shouldLoadDependenciesDuringImport
 import org.jetbrains.plugins.gradle.model.ProjectImportExtraModelProvider
 import org.jetbrains.plugins.gradle.service.project.AbstractProjectResolverExtension
 

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.scripting.gradle
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
@@ -56,4 +57,10 @@ fun getGradleScriptInputsStamp(
             GradleKotlinScriptConfigurationInputs(result.toString())
         } else null
     }
+}
+
+const val minimal_gradle_version_supported = "6.0"
+
+fun shouldLoadDependenciesDuringImport(): Boolean {
+    return Registry.`is`("kotlin.gradle.scripts.useIdeaProjectImport", false)
 }
