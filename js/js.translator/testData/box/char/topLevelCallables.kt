@@ -1,4 +1,5 @@
 // SKIP_MINIFICATION
+// IGNORE_BACKEND: JS_IR
 @JsName("foo")
 @JsExport
 fun foo(): Char = '1'
