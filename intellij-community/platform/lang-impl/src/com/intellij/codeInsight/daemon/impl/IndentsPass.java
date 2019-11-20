@@ -208,7 +208,12 @@ public class IndentsPass extends TextEditorHighlightingPass implements DumbAware
   private long nowStamp() {
     if (!myEditor.getSettings().isIndentGuidesShown()) return -1;
     assert myDocument != null;
-    return myDocument.getModificationStamp();
+    // include tab size into stamp to make sure indent guides are recalculated on tab size change
+    return myDocument.getModificationStamp() ^ (((long)getTabSize()) << 24);
+  }
+
+  private int getTabSize() {
+    return EditorUtil.getTabSize(myEditor);
   }
 
   @Override
@@ -376,7 +381,7 @@ public class IndentsPass extends TextEditorHighlightingPass implements DumbAware
     void calculate() {
       assert myDocument != null;
       final FileType fileType = myFile.getFileType();
-      int tabSize = EditorUtil.getTabSize(myEditor);
+      int tabSize = getTabSize();
 
       for (int line = 0; line < lineIndents.length; line++) {
         ProgressManager.checkCanceled();
