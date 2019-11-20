@@ -181,7 +181,7 @@ private class SingletonObjectJvmStaticLowering(
     }
 
     fun modifyBody(irFunction: IrFunction, irClass: IrClass, oldDispatchReceiverParameter: IrValueParameter) {
-        irFunction.body = irFunction.body?.replaceThisByStaticReference(context, irClass, oldDispatchReceiverParameter)
+        irFunction.body = irFunction.body?.replaceThisByStaticReference(context.declarationFactory, irClass, oldDispatchReceiverParameter)
     }
 }
 
