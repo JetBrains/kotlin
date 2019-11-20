@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 open class MyClass() {
     fun testPublic(s: String = "") {}
 
@@ -16,4 +17,4 @@ open class MyClass() {
 
 // TESTED_OBJECT_KIND: function
 // TESTED_OBJECTS: MyClass, testPrivate$default
-// FLAGS: ACC_PUBLIC, ACC_STATIC, ACC_SYNTHETIC
+// FLAGS: ACC_STATIC, ACC_SYNTHETIC
