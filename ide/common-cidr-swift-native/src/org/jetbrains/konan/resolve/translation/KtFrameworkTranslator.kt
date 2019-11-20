@@ -40,7 +40,7 @@ class KtFrameworkTranslator(val project: Project) {
     private fun collectSources(konanFile: KonanBridgeVirtualFile): List<VirtualFile> {
         val projectNode = ProjectDataManager.getInstance().getExternalProjectsData(project, GradleConstants.SYSTEM_ID).first().externalProjectStructure as DataNode<*>
         val moduleNode = ExternalSystemApiUtil.find(projectNode, ProjectKeys.MODULE) {
-            it.data.id == konanFile.target.name
+            it.data.id == konanFile.target.moduleId
         } ?: return emptyList()
 
         val vfs = LocalFileSystem.getInstance()

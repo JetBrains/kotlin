@@ -2,9 +2,4 @@ package com.jetbrains.cidr.apple.bridging
 
 import org.jetbrains.konan.resolve.konan.KonanTarget
 
-data class MobileKonanTarget(val targetName: String) : KonanTarget {
-    override val name: String
-        get() = targetName
-
-    override val productModuleName = targetName.replace('-', '_')
-}
+data class MobileKonanTarget(override val moduleId: String, override val productModuleName: String) : KonanTarget

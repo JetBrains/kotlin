@@ -4,7 +4,7 @@ import com.jetbrains.cidr.xcode.model.PBXTarget
 import com.jetbrains.cidr.xcode.model.rawBuildSettings
 
 class AppCodeKonanTarget(val target: PBXTarget) : KonanTarget {
-    override val name: String
+    override val moduleId: String
         get() = ":" + target.name
 
     override val productModuleName: String

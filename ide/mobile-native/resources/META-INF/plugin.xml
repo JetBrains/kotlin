@@ -43,6 +43,8 @@
     <!-- apple gradle project model -->
     <externalProjectDataService implementation="com.jetbrains.cidr.apple.gradle.AppleProjectDataService"/>
     <projectService serviceImplementation="com.jetbrains.cidr.apple.gradle.GradleAppleWorkspace"/>
+    <projectService serviceImplementation="com.jetbrains.cidr.apple.bridging.MobileKonanTargetManager"
+                    serviceInterface="org.jetbrains.konan.resolve.konan.KonanTargetManager"/>
 
     <!-- swift -->
     <applicationService serviceInterface="com.jetbrains.swift.SwiftCompilerSettings"

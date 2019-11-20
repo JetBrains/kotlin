@@ -21,7 +21,7 @@ class MobileKonanSwiftModule(
     override fun getConfiguration(): OCResolveConfiguration = parentConfiguration
 
     override fun konanBridgeFile(): KonanBridgeVirtualFile =
-        KonanBridgeFileManager.getInstance(project).forTarget(target, name.replace('-', '_').let { "$it/$it.h" })
+        KonanBridgeFileManager.getInstance(project).forTarget(target, name.let { "$it/$it.h" })
 
     override fun getFiles(): List<VirtualFile> = emptyList()
 }

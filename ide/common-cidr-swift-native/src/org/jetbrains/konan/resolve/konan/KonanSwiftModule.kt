@@ -1,9 +1,5 @@
 package org.jetbrains.konan.resolve.konan
 
-import com.intellij.openapi.externalSystem.model.DataNode
-import com.intellij.openapi.externalSystem.model.ProjectKeys
-import com.intellij.openapi.externalSystem.service.project.ProjectDataManager
-import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.openapi.util.UserDataHolderBase
@@ -22,7 +18,6 @@ import com.jetbrains.swift.symbols.impl.SwiftSourceModuleSymbol
 import com.jetbrains.swift.symbols.impl.SymbolProps
 import org.jetbrains.konan.resolve.symbols.KtFileReferenceSymbol
 import org.jetbrains.konan.resolve.translation.KtFrameworkTranslator
-import org.jetbrains.plugins.gradle.util.GradleConstants
 
 abstract class KonanSwiftModule : SwiftModule, UserDataHolder by UserDataHolderBase() {
     protected abstract val project: Project
@@ -69,12 +64,5 @@ abstract class KonanSwiftModule : SwiftModule, UserDataHolder by UserDataHolderB
         val context = OCInclusionContext.empty(SwiftLanguageKind.SWIFT, psiFile)
         context.addProcessedFile(bridgeFile)
         FileSymbolTable.forFile(file, context)?.processFile(processor)
-    }
-
-    companion object {
-        fun getAllKonanTargets(project: Project): List<String> {
-            val projectNode = ProjectDataManager.getInstance().getExternalProjectsData(project, GradleConstants.SYSTEM_ID).first().externalProjectStructure as DataNode<*>
-            return ExternalSystemApiUtil.findAll(projectNode, ProjectKeys.MODULE).map { it.data.id }
-        }
     }
 }

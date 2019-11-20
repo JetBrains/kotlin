@@ -24,7 +24,8 @@
 <!--    <configurationType implementation="org.jetbrains.konan.tests.AppCodeKonanTestRunConfigurationType"/>-->
 
     <lang.documentationProvider language="kotlin" implementationClass="org.jetbrains.konan.documentation.KonanXcodeDocumentationProvider"/>
-
+    <projectService serviceImplementation="org.jetbrains.konan.resolve.konan.AppCodeKonanTargetManager"
+                    serviceInterface="org.jetbrains.konan.resolve.konan.KonanTargetManager"/>
   </extensions>
 
   <extensions defaultExtensionNs="appcode">

@@ -45,4 +45,4 @@ internal fun ReferencesSearch.SearchParameters.duplicateWith(psi: PsiElement): R
     return ReferencesSearch.SearchParameters(psi, scopeDeterminedByUser, isIgnoreAccessScope, optimizer)
 }
 
-internal fun KtNamedDeclaration.toLightSymbols(): List<OCSymbol> = findSymbols().map { symbol -> KtOCLightSymbol(this, symbol) }
+internal fun KtNamedDeclaration.toLightSymbols(): Sequence<OCSymbol> = findSymbols().map { symbol -> KtOCLightSymbol(this, symbol) }

@@ -25,6 +25,7 @@ repositories {
 }
 
 dependencies {
+    addIdeaNativeModuleDeps(project)
     compile(project(":kotlin-ultimate:ide:common-cidr-native"))
     compileOnly(fileTree(cidrUnscrambledJarDir) { include("**/*.jar") })
     if (!isStandaloneBuild || !useAppCodeForCommon) compileOnly("com.jetbrains.intellij.swift:swift:$cidrVersion") { isTransitive = false }

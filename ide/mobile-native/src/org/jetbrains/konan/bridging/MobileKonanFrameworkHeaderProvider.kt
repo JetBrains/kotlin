@@ -1,21 +1,19 @@
 package org.jetbrains.konan.bridging
 
-import com.intellij.openapi.externalSystem.model.DataNode
-import com.intellij.openapi.externalSystem.model.ProjectKeys
-import com.intellij.openapi.externalSystem.service.project.ProjectDataManager
-import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.cidr.apple.bridging.MobileKonanTarget
+import com.jetbrains.cidr.apple.bridging.MobileKonanTargetManager
 import com.jetbrains.cidr.apple.gradle.GradleAppleWorkspace
 import com.jetbrains.cidr.lang.CustomHeaderProvider
 import com.jetbrains.cidr.lang.OCIncludeHelpers.adjustHeaderName
 import com.jetbrains.cidr.lang.preprocessor.OCResolveRootAndConfiguration
+import org.jetbrains.konan.forEachKonanFrameworkTarget
 import org.jetbrains.konan.resolve.konan.KonanBridgeFileManager
 import org.jetbrains.konan.resolve.konan.KonanBridgeVirtualFile
-import org.jetbrains.plugins.gradle.util.GradleConstants
+import org.jetbrains.konan.resolve.konan.KonanTargetManager
 
 class MobileKonanFrameworkHeaderProvider : CustomHeaderProvider() {
     init {
@@ -44,15 +42,17 @@ class MobileKonanFrameworkHeaderProvider : CustomHeaderProvider() {
         val target = virtualFile.target
         if (target !is MobileKonanTarget) return null
 
-        return "${prefix}::" + target.name
+        return "$prefix::${target.moduleId}::${target.productModuleName}"
     }
 
     override fun getCustomSerializedHeaderFile(serializationPath: String, project: Project, currentFile: VirtualFile): VirtualFile? {
-        val items = serializationPath.split("::", limit = 3)
-        if (items.size != 2 || prefix != items[0]) return null
+        val items = serializationPath.split("::", limit = 4)
+        if (items.size != 3 || prefix != items[0]) return null
 
-        val target = items[1]
-        return KonanBridgeFileManager.getInstance(project).forTarget(MobileKonanTarget(target), "$target/$target.h")
+        val moduleId = items[1]
+        val productModuleName = items[2]
+        return KonanBridgeFileManager.getInstance(project)
+            .forTarget(MobileKonanTarget(moduleId, productModuleName), "$productModuleName/$productModuleName.h")
     }
 
     private fun getHeader(project: Project, import: String): VirtualFile? {
@@ -65,19 +65,16 @@ class MobileKonanFrameworkHeaderProvider : CustomHeaderProvider() {
         val headerName = StringUtil.trimEnd(parts[1], ".h")
         if (!FileUtil.pathsEqual(frameworkName, headerName)) return null
 
-        val konanTarget = getKonanTarget(project, frameworkName) ?: return null
-        return KonanBridgeFileManager.getInstance(project).forTarget(MobileKonanTarget(konanTarget), adjustedName)
+        forEachKonanFrameworkTarget(project) { moduleId, artifact ->
+            if (artifact.file.nameWithoutExtension == frameworkName) {
+                val konanTarget = MobileKonanTargetManager.getInstance(project).forArtifact(moduleId, artifact)
+                return KonanBridgeFileManager.getInstance(project).forTarget(konanTarget, adjustedName)
+            }
+        }
+        return null
     }
 
     companion object {
         private const val prefix = "konan-bridge"
-
-        private fun getKonanTarget(project: Project, frameworkName: String): String? {
-            val projectNode = ProjectDataManager.getInstance().getExternalProjectsData(project, GradleConstants.SYSTEM_ID).first()
-                .externalProjectStructure as DataNode<*>
-            return ExternalSystemApiUtil.find(projectNode, ProjectKeys.MODULE) {
-                FileUtil.pathsEqual(it.data.id.trimStart(':').replace('-', '_'), frameworkName)
-            }?.data?.id
-        }
     }
 }
