@@ -91,18 +91,15 @@ internal var Project.listenerCreated: Boolean? by UserDataProperty(Key.create("C
 
 internal fun isCoroutineDebuggerEnabled() = Registry.`is`("kotlin.debugger.coroutines")
 
-internal fun <T : RunConfigurationBase<*>?> initializeCoroutineAgent(
-    params: JavaParameters,
-    it: String?,
-    configuration: T
-): Boolean {
+internal fun initializeCoroutineAgent(params: JavaParameters, it: String?) {
     params.vmParametersList?.add("-javaagent:$it")
     params.vmParametersList?.add("-ea")
+}
+
+internal fun <T : RunConfigurationBase<*>?> registerProjectCoroutineListener(configuration: T) {
     val project = (configuration as RunConfigurationBase<*>).project
     // add listener to put coroutines tab into debugger tab
     if (project.listenerCreated != true) { // prevent multiple listeners creation
         CoroutineXDebuggerManagerListener(project).attach()
-        return true
     }
-    return false
 }

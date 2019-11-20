@@ -29,7 +29,8 @@ class CoroutinesDebugConfigurationExtension : RunConfigurationExtension() {
         if (runnerSettings is DebuggingRunnerData) {
             try {
                 val kotlinxCoroutinesClassPathLib = params?.classPath?.pathList?.first { it.contains("kotlinx-coroutines-debug") }
-                initializeCoroutineAgent(params!!, kotlinxCoroutinesClassPathLib, configuration)
+                initializeCoroutineAgent(params!!, kotlinxCoroutinesClassPathLib)
+                registerProjectCoroutineListener(configuration)
             } catch (e: NoSuchElementException) {
                 log.warn("'kotlinx-coroutines-debug' not found in classpath. Coroutine debugger disabled.")
             }
