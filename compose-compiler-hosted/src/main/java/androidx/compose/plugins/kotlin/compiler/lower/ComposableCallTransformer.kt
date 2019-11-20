@@ -134,6 +134,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.isNullable
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
+import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 
 class ComposableCallTransformer(val context: JvmBackendContext) :
@@ -205,6 +206,23 @@ class ComposableCallTransformer(val context: JvmBackendContext) :
         }
     }
 
+    private fun findIrCall(expr: IrStatement): IrCall {
+        return when (expr) {
+            is IrCall -> expr
+            is IrTypeOperatorCall -> when (expr.operator) {
+                IrTypeOperator.IMPLICIT_CAST -> findIrCall(expr.argument)
+                IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> findIrCall(expr.argument)
+                else -> error("Unhandled IrTypeOperatorCall: ${expr.operator}")
+            }
+            is IrBlock -> when (expr.origin) {
+                IrStatementOrigin.ARGUMENTS_REORDERING_FOR_CALL ->
+                    findIrCall(expr.statements.last())
+                else -> error("Unhandled IrBlock origin: ${expr.origin}")
+            }
+            else -> error("Unhandled IrExpression: ${expr::class.java.simpleName}")
+        }
+    }
+
     override fun visitBlock(expression: IrBlock): IrExpression {
         if (expression.origin != COMPOSABLE_EMIT_OR_CALL) {
             return super.visitBlock(expression)
@@ -220,8 +238,17 @@ class ComposableCallTransformer(val context: JvmBackendContext) :
             val transformedComposerCall = composerCall.transformChildren()
             val transformed = emitOrCall.transformChildren()
 
-            return context.createIrBuilder(declarationStack.last().symbol).irBlock {
-                +irComposableCall(transformedComposerCall, transformed, descriptor)
+            val returnType = descriptor.returnType
+            return if (returnType == null || returnType.isUnit()) {
+                context.createIrBuilder(declarationStack.last().symbol).irBlock {
+                    +irComposableCall(transformedComposerCall, transformed, descriptor)
+                }
+            } else {
+                context
+                    .createIrBuilder(declarationStack.last().symbol)
+                    .irBlock(resultType = transformed.type) {
+                        +irComposableExpr(transformedComposerCall, transformed, descriptor)
+                    }
             }
         }
 
@@ -247,26 +274,8 @@ class ComposableCallTransformer(val context: JvmBackendContext) :
         // the first statement should represent the call to get the composer
         // the second statement should represent the composable call or emit
         val (first, second) = expression.statements
-        val composerCall = when {
-            first is IrCall -> first
-            // the psi->IR phase seems to generate coercions to UNIT, so we won't just find the
-            // bare call here.
-            first is IrTypeOperatorCall &&
-                    first.operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT &&
-                    first.argument is IrCall -> first.argument as IrCall
-            else -> error("Couldn't find composer call in block")
-        }
-
-        val emitOrCall = when {
-            second is IrCall -> second
-            // the psi -> IR phase seems to generate argument reordering blocks when calls are
-            // made with named arguments out of order. In this case we need to find the last
-            // statement
-            second is IrBlock &&
-                    second.origin == IrStatementOrigin.ARGUMENTS_REORDERING_FOR_CALL &&
-                    second.statements.last() is IrCall -> second.statements.last() as IrCall
-            else -> error("Couldn't find composable call in block")
-        }
+        val composerCall = findIrCall(first)
+        val emitOrCall = findIrCall(second)
         return composerCall to emitOrCall
     }
 
@@ -442,6 +451,116 @@ class ComposableCallTransformer(val context: JvmBackendContext) :
                             putValueArgument(param, getExpr())
                         }
                     }
+                }
+            )
+        }
+    }
+
+    private fun IrBlockBuilder.irComposableExpr(
+        composerCall: IrCall,
+        original: IrCall,
+        descriptor: ComposableFunctionDescriptor
+    ): IrExpression {
+        val composerTemp = irTemporary(composerCall)
+
+        /*
+
+        Foo(text="foo")
+
+        // transforms into
+
+        val attr_text = "foo"
+        composer.call(
+            key = 123,
+            invalid = { changed(attr_text) },
+            block = { Foo(attr_text) }
+        )
+         */
+        val composer = descriptor.composerCall.resultingDescriptor as PropertyDescriptor
+
+        // TODO(lmr): the way we grab temporaries here feels wrong. We should investigate the right
+        // way to do this. Additionally, we are creating temporary vars for variables which is
+        // causing larger stack space than needed in our generated code.
+
+        val irGetArguments = original
+            .descriptor
+            .valueParameters
+            .map {
+                val arg = original.getValueArgument(it)
+                it to getParameterExpression(it, arg)
+            }
+
+        val tmpDispatchReceiver = original.dispatchReceiver?.let { irTemporary(it) }
+        val tmpExtensionReceiver = original.extensionReceiver?.let { irTemporary(it) }
+
+        val exprDescriptor = composer
+            .type
+            .memberScope
+            .findFirstFunction(KtxNameConventions.EXPR.identifier) {
+                it.valueParameters.size == 2
+            }
+
+        val joinKeyDescriptor = composer
+            .type
+            .memberScope
+            .findFirstFunction(KtxNameConventions.JOINKEY.identifier) {
+                it.valueParameters.size == 2
+            }
+
+        val exprParameters = exprDescriptor.valueParameters
+            .map { it.name to it }
+            .toMap()
+
+        fun getExprParameter(name: Name) = exprParameters[name]
+            ?: error("Expected $name parameter to exist")
+
+        return irCall(
+            callee = symbolTable.referenceFunction(exprDescriptor),
+            type = original.type
+        ).apply {
+            dispatchReceiver = irGet(composerTemp)
+
+            putTypeArgument(0, original.type)
+
+            putValueArgument(
+                getExprParameter(KtxNameConventions.CALL_KEY_PARAMETER),
+                irGroupKey(
+                    original = original,
+                    getComposer = { irGet(composerTemp) },
+                    joinKey = joinKeyDescriptor,
+                    pivotals = irGetArguments.mapNotNull { (param, getExpr) ->
+                        if (!param.hasPivotalAnnotation()) null
+                        else getExpr()
+                    }
+                )
+            )
+
+            val blockParameter = getExprParameter(KtxNameConventions.CALL_BLOCK_PARAMETER)
+
+            putValueArgument(
+                blockParameter,
+                irLambdaExpression(
+                    original.startOffset,
+                    original.endOffset,
+                    descriptor = createFunctionDescriptor(
+                        type = blockParameter.type,
+                        owner = descriptor.containingDeclaration
+                    ),
+                    type = blockParameter.type.toIrType()
+                ) {
+                    +irReturn(irCall(
+                        callee = symbolTable.referenceFunction(descriptor.underlyingDescriptor),
+                        type = original.type
+                    ).apply {
+                        copyTypeArgumentsFrom(original)
+
+                        dispatchReceiver = tmpDispatchReceiver?.let { irGet(it) }
+                        extensionReceiver = tmpExtensionReceiver?.let { irGet(it) }
+
+                        irGetArguments.forEach { (param, getExpr) ->
+                            putValueArgument(param, getExpr())
+                        }
+                    })
                 }
             )
         }
