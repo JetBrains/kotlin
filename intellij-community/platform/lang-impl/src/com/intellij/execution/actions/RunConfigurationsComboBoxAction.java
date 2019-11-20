@@ -80,7 +80,7 @@ public class RunConfigurationsComboBoxAction extends ComboBoxAction implements D
       if (target != DefaultExecutionTarget.INSTANCE && !target.isExternallyManaged()) {
         name += " | " + target.getDisplayName();
       } else {
-        if (!ExecutionTargetManager.canRun(settings.getConfiguration(), target)) {
+        if (target != DefaultExecutionTarget.INSTANCE && !ExecutionTargetManager.canRun(settings.getConfiguration(), target)) {
           name += " | Nothing to run on";
         }
       }
