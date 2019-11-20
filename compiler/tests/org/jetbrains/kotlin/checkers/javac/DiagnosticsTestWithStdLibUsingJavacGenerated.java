@@ -2716,6 +2716,11 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
             runTest("compiler/testData/diagnostics/testsWithStdLib/inference/integerLiterals.kt");
         }
 
+        @TestMetadata("intersectionInputType.kt")
+        public void testIntersectionInputType() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/inference/intersectionInputType.kt");
+        }
+
         @TestMetadata("kt11266.kt")
         public void testKt11266() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/inference/kt11266.kt");
