@@ -98,34 +98,6 @@ class KotlinSteppingCommandProvider : JvmSteppingCommandProvider() {
         return null
     }
 
-    data class KotlinSourcePosition(
-        val file: KtFile, val declaration: KtDeclaration,
-        val linesRange: IntRange, val sourcePosition: SourcePosition
-    ) {
-        companion object {
-            fun create(sourcePosition: SourcePosition): KotlinSourcePosition? {
-                val file = sourcePosition.file as? KtFile ?: return null
-                if (sourcePosition.line < 0) return null
-
-                val elementAt = sourcePosition.elementAt ?: return null
-
-                val containingDeclaration = elementAt.parents
-                    .filterIsInstance<KtDeclaration>()
-                    .filter { it is KtFunction || it is KtProperty || it is KtClassInitializer }
-                    .firstOrNull { !KtPsiUtil.isLocal(it) }
-                    ?: return null
-
-                val startLineNumber = containingDeclaration.getLineNumber(true) + 1
-                val endLineNumber = containingDeclaration.getLineNumber(false) + 1
-                if (startLineNumber > endLineNumber) return null
-
-                val linesRange = startLineNumber..endLineNumber
-
-                return KotlinSourcePosition(file, containingDeclaration, linesRange, sourcePosition)
-            }
-        }
-    }
-
     private fun isSpecialStepOverNeeded(kotlinSourcePosition: KotlinSourcePosition): Boolean {
         val sourcePosition = kotlinSourcePosition.sourcePosition
 
@@ -311,7 +283,7 @@ interface KotlinMethodFilter : MethodFilter {
 
 fun getStepOverAction(
     location: Location,
-    kotlinSourcePosition: KotlinSteppingCommandProvider.KotlinSourcePosition,
+    kotlinSourcePosition: KotlinSourcePosition,
     frameProxy: StackFrameProxyImpl,
     isDexDebug: Boolean
 ): Action {

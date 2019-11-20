@@ -49,7 +49,7 @@ public class DebuggerSteppingHelper {
     public static DebugProcessImpl.ResumeCommand createStepOverCommand(
             SuspendContextImpl suspendContext,
             boolean ignoreBreakpoints,
-            KotlinSteppingCommandProvider.KotlinSourcePosition kotlinSourcePosition
+            KotlinSourcePosition kotlinSourcePosition
     ) {
         DebugProcessImpl debugProcess = suspendContext.getDebugProcess();
 
