@@ -83,11 +83,11 @@ class InlayHintsConfigurable(val project: Project) : Configurable, Configurable.
   }
 
   private class ConfigurationChangeListener(val configurables: List<Configurable>) : InlayHintsSettings.SettingsListener {
-    override fun didLanguageStatusChanged() {
+    override fun languageStatusChanged() {
       reset()
     }
 
-    override fun didGlobalEnabledStatusChanged(newEnabled: Boolean) {
+    override fun globalEnabledStatusChanged(newEnabled: Boolean) {
       reset()
     }
 
