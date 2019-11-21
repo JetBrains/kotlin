@@ -4,12 +4,10 @@ package com.intellij.ide.favoritesTreeView;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.CopyPasteDelegator;
-import com.intellij.ide.ExporterToTextFile;
 import com.intellij.ide.IdeView;
 import com.intellij.ide.bookmarks.Bookmark;
 import com.intellij.ide.dnd.aware.DnDAwareTree;
 import com.intellij.ide.favoritesTreeView.actions.*;
-import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.projectView.impl.ModuleGroup;
 import com.intellij.ide.projectView.impl.ProjectViewTree;
@@ -57,8 +55,6 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import java.awt.*;
-import java.awt.event.MouseListener;
-import java.io.File;
 import java.util.List;
 import java.util.*;
 
@@ -66,29 +62,27 @@ import java.util.*;
  * @author anna
  * @author Konstantin Bulenkov
  */
-public class FavoritesTreeViewPanel extends JPanel implements DataProvider, DockContainer {
+public final class FavoritesTreeViewPanel extends JPanel implements DataProvider, DockContainer {
   private final FavoritesTreeStructure myFavoritesTreeStructure;
   private FavoritesViewTreeBuilder myBuilder;
   private final CopyPasteDelegator myCopyPasteDelegator;
-  private final MouseListener myTreePopupHandler;
 
   public static final DataKey<FavoritesTreeNodeDescriptor[]> CONTEXT_FAVORITES_ROOTS_DATA_KEY = DataKey.create("FavoritesRoot");
   public static final DataKey<DnDAwareTree> FAVORITES_TREE_KEY = DataKey.create("Favorites.Tree");
   public static final DataKey<FavoritesViewTreeBuilder> FAVORITES_TREE_BUILDER_KEY = DataKey.create("Favorites.Tree.Builder");
 
   public static final DataKey<String> FAVORITES_LIST_NAME_DATA_KEY = DataKey.create("FavoritesListName");
-  protected Project myProject;
-  protected DnDAwareTree myTree;
+  private final Project myProject;
+  final DnDAwareTree myTree;
 
   private final AutoScrollToSourceHandler myAutoScrollToSourceHandler;
 
   private final IdeView myIdeView = new MyIdeView();
-  private final FavoritesManager myFavoritesManager;
 
-  public FavoritesTreeViewPanel(Project project) {
+  public FavoritesTreeViewPanel(@NotNull Project project) {
     super(new BorderLayout());
+
     myProject = project;
-    myFavoritesManager = FavoritesManager.getInstance(myProject);
 
     myFavoritesTreeStructure = new FavoritesTreeStructure(project);
     DefaultMutableTreeNode root = new DefaultMutableTreeNode();
@@ -114,14 +108,14 @@ public class FavoritesTreeViewPanel extends JPanel implements DataProvider, Dock
     myTree.setLargeModel(true);
     new TreeSpeedSearch(myTree);
     ToolTipManager.sharedInstance().registerComponent(myTree);
-    final FavoritesComparator favoritesComparator =
-      new FavoritesComparator(ProjectView.getInstance(project), FavoritesProjectViewPane.ID);
+    FavoritesComparator favoritesComparator = new FavoritesComparator(ProjectView.getInstance(project), FavoritesViewTreeBuilder.ID);
+    FavoritesManager favoriteManager = FavoritesManager.getInstance(myProject);
     myBuilder.setNodeDescriptorComparator((o1, o2) -> {
       if (o1 instanceof FavoritesTreeNodeDescriptor && o2 instanceof FavoritesTreeNodeDescriptor) {
         final FavoritesListNode listNode1 = FavoritesTreeUtil.extractParentList((FavoritesTreeNodeDescriptor)o1);
         final FavoritesListNode listNode2 = FavoritesTreeUtil.extractParentList((FavoritesTreeNodeDescriptor)o2);
         if (listNode1.equals(listNode2)) {
-          final Comparator<FavoritesTreeNodeDescriptor> comparator = myFavoritesManager.getCustomComparator(listNode1.getName());
+          final Comparator<FavoritesTreeNodeDescriptor> comparator = favoriteManager.getCustomComparator(listNode1.getName());
           if (comparator != null) {
             return comparator.compare((FavoritesTreeNodeDescriptor)o1, (FavoritesTreeNodeDescriptor)o2);
           }
@@ -149,7 +143,7 @@ public class FavoritesTreeViewPanel extends JPanel implements DataProvider, Dock
           if (userObject instanceof FavoritesTreeNodeDescriptor) {
             final FavoritesTreeNodeDescriptor favoritesTreeNodeDescriptor = (FavoritesTreeNodeDescriptor)userObject;
             AbstractTreeNode treeNode = favoritesTreeNodeDescriptor.getElement();
-            FavoritesListProvider provider = FavoritesTreeUtil.getProvider(myFavoritesManager, favoritesTreeNodeDescriptor);
+            FavoritesListProvider provider = FavoritesTreeUtil.getProvider(favoriteManager, favoritesTreeNodeDescriptor);
             if (provider != null) {
               Object o = myBuilder.getUi().getElementFor(value);
               if (o instanceof AbstractTreeNode) {
@@ -173,8 +167,7 @@ public class FavoritesTreeViewPanel extends JPanel implements DataProvider, Dock
         }
       }
     });
-    myTreePopupHandler =
-      CustomizationUtil.installPopupHandler(myTree, IdeActions.GROUP_FAVORITES_VIEW_POPUP, ActionPlaces.FAVORITES_VIEW_POPUP);
+    CustomizationUtil.installPopupHandler(myTree, IdeActions.GROUP_FAVORITES_VIEW_POPUP, ActionPlaces.FAVORITES_VIEW_POPUP);
 
     EditSourceOnDoubleClickHandler.install(myTree);
     EditSourceOnEnterKeyHandler.install(myTree);
@@ -212,16 +205,16 @@ public class FavoritesTreeViewPanel extends JPanel implements DataProvider, Dock
     myAutoScrollToSourceHandler = new AutoScrollToSourceHandler() {
       @Override
       protected boolean isAutoScrollMode() {
-        return myFavoritesManager.getViewSettings().isAutoScrollToSource();
+        return favoriteManager.getViewSettings().isAutoScrollToSource();
       }
 
       @Override
       protected void setAutoScrollMode(boolean state) {
-        myFavoritesManager.getViewSettings().setAutoScrollToSource(state);
+        favoriteManager.getViewSettings().setAutoScrollToSource(state);
       }
     };
     myAutoScrollToSourceHandler.install(myTree);
-    myFavoritesManager.addFavoritesListener(new FavoritesListener() {
+    favoriteManager.addFavoritesListener(new FavoritesListener() {
       @Override
       public void rootsChanged() {
         myBuilder.updateFromRoot();
@@ -240,80 +233,6 @@ public class FavoritesTreeViewPanel extends JPanel implements DataProvider, Dock
         myTree.repaint();
       }
     }, this);
-  }
-
-
-  private ExporterToTextFile createTextExporter() {
-    return new ExporterToTextFile() {
-      @NotNull
-      @Override
-      public String getReportText() {
-        final StringBuilder sb = new StringBuilder();
-
-        final Object[] elements = myBuilder.getStructure().getChildElements(myBuilder.getRoot());
-
-        final TreeUtil.Traverse traverse = new TreeUtil.Traverse() {
-          @Override
-          public boolean accept(Object node) {
-            if (node instanceof LoadingNode) return true;
-            final AbstractTreeNode abstractTreeNode = (AbstractTreeNode)node;
-            if (sb.length() > 0) {
-              sb.append('\n');
-            }
-            int deepLevel = getDeepLevel((AbstractTreeNode)node);
-            for (int i = 1; i < deepLevel; i++) {
-              sb.append('\t');
-            }
-            abstractTreeNode.update();
-            final PresentationData presentation = abstractTreeNode.getPresentation();
-            sb.append(presentation.getPresentableText());
-            String locationString = presentation.getLocationString();
-            if (locationString == null) {
-              locationString = FavoritesTreeNodeDescriptor.getLocation(abstractTreeNode, myProject);
-            }
-            if (locationString != null) {
-              sb.append(" (").append(locationString).append(")");
-            }
-            return true;
-          }
-
-          public int getDeepLevel(AbstractTreeNode node) {
-            int result = 0;
-            while (node.getParent() != null) {
-              result++;
-              node = node.getParent();
-            }
-            return result;
-          }
-        };
-
-        for (Object element : elements) {
-          traverseDepth((AbstractTreeNode)element, traverse);
-        }
-        return sb.toString();
-      }
-
-      @NotNull
-      @Override
-      public String getDefaultFilePath() {
-        return myProject.getBasePath() + File.separator + "Favorites.txt";
-      }
-
-      @Override
-      public boolean canExport() {
-        return true;
-      }
-    };
-  }
-
-  private static boolean traverseDepth(final AbstractTreeNode node, final TreeUtil.Traverse traverse) {
-    if (!traverse.accept(node)) return false;
-    final Collection<? extends AbstractTreeNode> children = node.getChildren();
-    for (AbstractTreeNode child : children) {
-      child.setParent(node);
-      if (!traverseDepth(child, traverse)) return false;
-    }
-    return true;
   }
 
   public void selectElement(final Object selector, final VirtualFile file, final boolean requestFocus) {
@@ -374,12 +293,12 @@ public class FavoritesTreeViewPanel extends JPanel implements DataProvider, Dock
       final FavoritesTreeNodeDescriptor[] selectedNodeDescriptors = FavoritesTreeUtil.getSelectedNodeDescriptors(myTree);
       return selectedNodeDescriptors.length == 1 ? selectedNodeDescriptors[0].getElement() : null;
     }
+    FavoritesManager favoriteManager = FavoritesManager.getInstance(myProject);
     if (CommonDataKeys.NAVIGATABLE_ARRAY.is(dataId)) {
       List<String> listNames = getSelectedElements(String.class);
       final List<Navigatable> selectedElements = new SmartList<>();
       for (String listname : listNames) {
-        selectedElements.addAll(
-          ContainerUtil.map(myFavoritesManager.getVirtualFiles(listname, false), file -> new OpenFileDescriptor(myProject, file)));
+        selectedElements.addAll(ContainerUtil.map(favoriteManager.getVirtualFiles(listname, false), file -> new OpenFileDescriptor(myProject, file)));
       }
       selectedElements.addAll(getSelectedElements(Navigatable.class));
       return selectedElements.isEmpty() ? null : selectedElements.toArray(new Navigatable[0]);
@@ -449,7 +368,7 @@ public class FavoritesTreeViewPanel extends JPanel implements DataProvider, Dock
       List<FavoritesTreeNodeDescriptor> result = new ArrayList<>();
       FavoritesTreeNodeDescriptor[] selectedNodeDescriptors = FavoritesTreeUtil.getSelectedNodeDescriptors(myTree);
       for (FavoritesTreeNodeDescriptor selectedNodeDescriptor : selectedNodeDescriptors) {
-        if (FavoritesTreeUtil.getProvider(myFavoritesManager, selectedNodeDescriptor) != null) {
+        if (FavoritesTreeUtil.getProvider(favoriteManager, selectedNodeDescriptor) != null) {
           continue;
         }
         FavoritesTreeNodeDescriptor root = selectedNodeDescriptor.getFavoritesRoot();
@@ -491,24 +410,9 @@ public class FavoritesTreeViewPanel extends JPanel implements DataProvider, Dock
     return null;
   }
 
-  private Set<FavoritesListNode> getSelectedListsNodes() {
-    final Set<FavoritesListNode> result = new HashSet<>();
-    final FavoritesTreeNodeDescriptor[] descriptors = FavoritesTreeUtil.getSelectedNodeDescriptors(myTree);
-    for (FavoritesTreeNodeDescriptor descriptor : descriptors) {
-      final FavoritesListNode listNode = FavoritesTreeUtil.extractParentList(descriptor);
-      if (listNode != null) {
-        result.add(listNode);
-      }
-    }
-    return result;
-  }
-
   private <T> List<T> getSelectedElements(Class<T> klass) {
     final Object[] elements = getSelectedNodeElements();
     ArrayList<T> result = new ArrayList<>();
-    if (elements == null) {
-      return result;
-    }
     for (Object element : elements) {
       if (element == null) continue;
       if (klass.isAssignableFrom(element.getClass())) {
@@ -520,9 +424,6 @@ public class FavoritesTreeViewPanel extends JPanel implements DataProvider, Dock
 
   private Module[] getSelectedModules() {
     final Object[] elements = getSelectedNodeElements();
-    if (elements == null) {
-      return null;
-    }
     ArrayList<Module> result = new ArrayList<>();
     for (Object element : elements) {
       if (element instanceof Module) {
@@ -536,9 +437,10 @@ public class FavoritesTreeViewPanel extends JPanel implements DataProvider, Dock
     return result.isEmpty() ? null : result.toArray(Module.EMPTY_ARRAY);
   }
 
+  @NotNull
   private Object[] getSelectedNodeElements() {
-    final FavoritesTreeNodeDescriptor[] selectedNodeDescriptors = FavoritesTreeUtil.getSelectedNodeDescriptors(myTree);
-    ArrayList<Object> result = new ArrayList<>();
+    FavoritesTreeNodeDescriptor[] selectedNodeDescriptors = FavoritesTreeUtil.getSelectedNodeDescriptors(myTree);
+    List<Object> result = new ArrayList<>();
     for (FavoritesTreeNodeDescriptor selectedNodeDescriptor : selectedNodeDescriptors) {
       if (selectedNodeDescriptor != null) {
         Object value = selectedNodeDescriptor.getElement().getValue();
@@ -553,7 +455,7 @@ public class FavoritesTreeViewPanel extends JPanel implements DataProvider, Dock
 
   public void setupToolWindow(ToolWindowEx window) {
     final CollapseAllAction collapseAction = new CollapseAllAction(myTree);
-    collapseAction.getTemplatePresentation().setIcon(AllIcons.General.CollapseAll);
+    collapseAction.getTemplatePresentation().setIcon(AllIcons.Actions.Collapseall);
     window.setTitleActions(collapseAction);
 
     final DefaultActionGroup group = new DefaultActionGroup();
@@ -728,15 +630,17 @@ public class FavoritesTreeViewPanel extends JPanel implements DataProvider, Dock
 
   @Override
   public void add(@NotNull DockableContent content, RelativePoint dropTarget) {
-    if (content.getKey() instanceof VirtualFile) {
-      VirtualFile vFile = (VirtualFile)content.getKey();
-      PsiFileSystemItem psiFile = PsiUtilCore.findFileSystemItem(myProject, vFile);
-      Point p = dropTarget.getScreenPoint();
-      SwingUtilities.convertPointFromScreen(p, myTree);
-      FavoritesListNode node = findFavoritesListNode(p);
-      if (node != null && psiFile != null) {
-        dropPsiElements(myFavoritesManager, node, new PsiElement[]{psiFile});
-      }
+    if (!(content.getKey() instanceof VirtualFile)) {
+      return;
+    }
+
+    VirtualFile vFile = (VirtualFile)content.getKey();
+    PsiFileSystemItem psiFile = PsiUtilCore.findFileSystemItem(myProject, vFile);
+    Point p = dropTarget.getScreenPoint();
+    SwingUtilities.convertPointFromScreen(p, myTree);
+    FavoritesListNode node = findFavoritesListNode(p);
+    if (node != null && psiFile != null) {
+      dropPsiElements(FavoritesManager.getInstance(myProject), node, new PsiElement[]{psiFile});
     }
   }
 

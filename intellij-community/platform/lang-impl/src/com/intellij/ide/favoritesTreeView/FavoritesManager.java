@@ -50,7 +50,10 @@ public final class FavoritesManager implements ProjectComponent, JDOMExternaliza
 
   @NotNull
   private Map<String, FavoritesListProvider> getProviders() {
-    if (myProviders != null) return myProviders;
+    if (myProviders != null) {
+      return myProviders;
+    }
+
     myProviders = new HashMap<>();
     if (!ApplicationManager.getApplication().isUnitTestMode()) {
       final FavoritesListProvider[] providers = EP_NAME.getExtensions(myProject);

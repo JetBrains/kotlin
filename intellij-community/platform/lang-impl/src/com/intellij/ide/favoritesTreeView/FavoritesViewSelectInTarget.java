@@ -23,8 +23,8 @@ import org.jetbrains.annotations.NotNull;
  * @author anna
  * @author Konstantin Bulenkov
  */
-public class FavoritesViewSelectInTarget extends SelectInTargetPsiWrapper {
-  public FavoritesViewSelectInTarget(final Project project) {
+final class FavoritesViewSelectInTarget extends SelectInTargetPsiWrapper {
+  FavoritesViewSelectInTarget(final Project project) {
     super(project);
 
     if (PlatformUtils.isPyCharmEducational()) {
@@ -93,7 +93,7 @@ public class FavoritesViewSelectInTarget extends SelectInTargetPsiWrapper {
 
   @Override
   public String getMinorViewId() {
-    return FavoritesProjectViewPane.ID;
+    return FavoritesViewTreeBuilder.ID;
   }
 
   @Override
