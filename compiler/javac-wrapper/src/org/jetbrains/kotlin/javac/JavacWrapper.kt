@@ -375,7 +375,9 @@ class JavacWrapper(
                 // This line is necessary for e.g. CliTestGenerated.jvm.javacKotlinJavaInterdependency to work
                 // In general, it makes compiled Kotlin classes from the module visible for javac
                 // It's necessary when javac work with APT (without -proc:none flag)
-                fileManager.setLocation(CLASS_PATH, fileManager.getLocation(CLASS_PATH) + outputDir)
+                if (aptOn) {
+                    fileManager.setLocation(CLASS_PATH, fileManager.getLocation(CLASS_PATH) + outputDir)
+                }
             }
             outputDir.mkdirs()
             fileManager.setLocation(CLASS_OUTPUT, listOf(outputDir))
