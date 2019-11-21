@@ -2,9 +2,11 @@
 package com.intellij.openapi.roots.ui.configuration.projectRoot;
 
 import com.google.common.collect.Sets;
+import com.intellij.ide.ui.EditorOptionsTopHitProvider;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.application.TransactionGuard;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.PerformInBackgroundOption;
@@ -23,7 +25,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -137,25 +138,23 @@ public class SdkDownloadTracker implements Disposable {
   // we would like to ignore.
   private static class PendingDownloadModalityTracker {
     @NotNull
-    private static ModalityState modality() {
-      return ApplicationManager.getApplication().getCurrentModalityState();
+    static ModalityState modality() {
+      ModalityState state = ApplicationManager.getApplication().getCurrentModalityState();
+      TransactionGuard.getInstance().assertWriteSafeContext(state);
+      return state;
     }
 
-    private ModalityState myModalityState = modality();
+    ModalityState myModalityState = modality();
 
-    public synchronized void updateModality() {
+    synchronized void updateModality() {
       ModalityState newModality = modality();
       if (newModality != myModalityState && newModality.dominates(myModalityState)) {
         myModalityState = newModality;
       }
     }
 
-    public synchronized void invokeLater(@NotNull Runnable r) {
+    synchronized void invokeLater(@NotNull Runnable r) {
       ApplicationManager.getApplication().invokeLater(r, myModalityState);
-    }
-
-    public synchronized void invokeAndWait(@NotNull Runnable r) {
-      ApplicationManager.getApplication().invokeAndWait(r, myModalityState);
     }
   }
 
@@ -179,17 +178,16 @@ public class SdkDownloadTracker implements Disposable {
   }
 
   private static class PendingDownload {
-    private final SdkDownloadTask myTask;
-    private final SdksSet myEditableSdks = new SdksSet();
-    private final ProgressIndicatorBase myProgressIndicator = new ProgressIndicatorBase();
-    private final Set<Runnable> myCompleteListeners = Sets.newIdentityHashSet();
-    private final Set<Disposable> myDisposables = Sets.newIdentityHashSet();
-    private final PendingDownloadModalityTracker myModalityTracker = new PendingDownloadModalityTracker();
+    final SdkDownloadTask myTask;
+    final SdksSet myEditableSdks = new SdksSet();
+    final ProgressIndicatorBase myProgressIndicator = new ProgressIndicatorBase();
+    final Set<Runnable> myCompleteListeners = Sets.newIdentityHashSet();
+    final Set<Disposable> myDisposables = Sets.newIdentityHashSet();
+    final PendingDownloadModalityTracker myModalityTracker = new PendingDownloadModalityTracker();
 
-    private boolean myIsDownloading = false;
+    boolean myIsDownloading = false;
 
-    private PendingDownload(@NotNull Sdk sdk,
-                            @NotNull SdkDownloadTask task) {
+    PendingDownload(@NotNull Sdk sdk, @NotNull SdkDownloadTask task) {
       myEditableSdks.add(sdk);
       myTask = task;
     }
@@ -199,7 +197,7 @@ public class SdkDownloadTracker implements Disposable {
       return myEditableSdks.contains(sdk);
     }
 
-    public void registerEditableSdk(@NotNull Sdk editable) {
+    void registerEditableSdk(@NotNull Sdk editable) {
       // called from any thread
       //
       // there are many Sdk clones that are created
@@ -213,7 +211,7 @@ public class SdkDownloadTracker implements Disposable {
       myEditableSdks.add(editable);
     }
 
-    public void startDownloadIfNeeded(@NotNull Sdk sdkFromTable) {
+    void startDownloadIfNeeded(@NotNull Sdk sdkFromTable) {
       ApplicationManager.getApplication().assertIsDispatchThread();
 
       if (myIsDownloading || myProgressIndicator.isCanceled()) return;
@@ -246,7 +244,7 @@ public class SdkDownloadTracker implements Disposable {
           catch (Exception e) {
             if (!myProgressIndicator.isCanceled()) {
               LOG.warn("SDK Download failed. " + e.getMessage(), e);
-              myModalityTracker.invokeAndWait(() -> {
+              myModalityTracker.invokeLater(() -> {
                 Messages.showErrorDialog(e.getMessage(), getTitle());
               });
             }
@@ -258,9 +256,9 @@ public class SdkDownloadTracker implements Disposable {
       ProgressManager.getInstance().run(task);
     }
 
-    public void registerListener(@NotNull Disposable lifetime,
-                                 @NotNull ProgressIndicator uiIndicator,
-                                 @NotNull Runnable completedCallback) {
+    void registerListener(@NotNull Disposable lifetime,
+                          @NotNull ProgressIndicator uiIndicator,
+                          @NotNull Runnable completedCallback) {
       ApplicationManager.getApplication().assertIsDispatchThread();
       myModalityTracker.updateModality();
 
@@ -284,7 +282,7 @@ public class SdkDownloadTracker implements Disposable {
       myDisposables.add(unsubscribe);
     }
 
-    public void onSdkDownloadCompleted(boolean failed) {
+    void onSdkDownloadCompleted(boolean failed) {
       Runnable task = failed
                       ? () -> disposeNow()
                       : () -> {
@@ -310,7 +308,7 @@ public class SdkDownloadTracker implements Disposable {
       myModalityTracker.invokeLater(task);
     }
 
-    private void disposeNow() {
+    void disposeNow() {
       ApplicationManager.getApplication().assertIsDispatchThread();
       getInstance().removeTask(this);
       //collections may change from the callbacks
@@ -318,7 +316,7 @@ public class SdkDownloadTracker implements Disposable {
       new ArrayList<>(myDisposables).forEach(Disposable::dispose);
     }
 
-    public void cancel() {
+    void cancel() {
       myProgressIndicator.cancel();
       myModalityTracker.invokeLater(() -> disposeNow());
     }

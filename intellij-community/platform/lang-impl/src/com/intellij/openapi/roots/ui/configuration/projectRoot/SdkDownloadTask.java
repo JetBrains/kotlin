@@ -28,8 +28,9 @@ public interface SdkDownloadTask {
 
   /**
    * @return SDK is expected to have a home directory.
-   * Return the planned directory where the SDK will be installed
-   * by {@link #doDownload(ProgressIndicator)}
+   * Return the planned canonical directory path where the SDK will be installed
+   * by {@link #doDownload(ProgressIndicator)},
+   * that path will later be seen from {@link Sdk#getHomePath()}
    */
   @NotNull
   String getPlannedHomeDir();

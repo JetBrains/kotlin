@@ -27,9 +27,10 @@ public interface SdkDownload {
   boolean supportsDownload(@NotNull SdkTypeId sdkTypeId);
 
   /**
-   * @return the icon to show for the download action in the UI
+   * @return the icon to show for the download action in the dialog
    * for the given {@param sdkTypeId}, which satisfies the
    * {@link #supportsDownload(SdkTypeId)} test
+   * Invoked in the EDT thread
    */
   @NotNull
   default Icon getIconForDownloadAction(@NotNull SdkTypeId sdkTypeId) {
