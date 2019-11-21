@@ -244,6 +244,7 @@ extra["compilerModules"] = arrayOf(
     ":compiler:fir:resolve",
     ":compiler:fir:tree",
     ":compiler:fir:psi2fir",
+    ":compiler:fir:lightTree",
     ":compiler:fir:fir2ir",
     ":compiler:fir:java"
 )
