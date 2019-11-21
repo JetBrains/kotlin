@@ -40,7 +40,7 @@ public class CommentJoinLinesHandler implements JoinRawLinesHandlerDelegate {
     }
     else if (!sameComment && !(blockCommentSuffix != null && CharArrayUtil.regionMatches(text, start - 2, blockCommentSuffix))) {
       for (String lineCommentPrefix : commenter.getLineCommentPrefixes()) {
-        if (lineCommentPrefix != null && CharArrayUtil.regionMatches(text, end, lineCommentPrefix)) {
+        if (CharArrayUtil.regionMatches(text, end, lineCommentPrefix)) {
           // merge two line comments
           // like this
           adjacentLineComments = true;
