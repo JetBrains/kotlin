@@ -29,7 +29,7 @@ public class CreateAction extends BaseRunConfigurationAction {
 
   private static BaseCreatePolicy choosePolicy(final ConfigurationContext context) {
     final RunnerAndConfigurationSettings configuration = context.findExisting();
-    return configuration == null ? CREATE_AND_EDIT : EDIT;
+    return configuration == null ? Holder.CREATE_AND_EDIT : Holder.EDIT;
   }
 
   private static abstract class BaseCreatePolicy {
@@ -99,6 +99,8 @@ public class CreateAction extends BaseRunConfigurationAction {
     }
   }
 
-  private static final BaseCreatePolicy CREATE_AND_EDIT = new CreateAndEditPolicy();
-  private static final BaseCreatePolicy EDIT = new EditPolicy();
+  private static class Holder {
+    private static final BaseCreatePolicy CREATE_AND_EDIT = new CreateAndEditPolicy();
+    private static final BaseCreatePolicy EDIT = new EditPolicy();
+  }
 }

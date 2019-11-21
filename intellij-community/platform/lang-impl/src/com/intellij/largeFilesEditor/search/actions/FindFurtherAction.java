@@ -22,8 +22,10 @@ public class FindFurtherAction extends AnAction implements DumbAware {
   private static final String DESCRIPTION_FIND_ADD_PREV =
     "Search for matches toward the beginning of the file and add them to existing results";
 
-  private static final Icon ICON_FIND_ADD_NEXT = AllIcons.Actions.FindAndShowNextMatches;
-  private static final Icon ICON_FIND_ADD_PREV = AllIcons.Actions.FindAndShowPrevMatches;
+  private static class Holder {
+    private static final Icon ICON_FIND_ADD_NEXT = AllIcons.Actions.FindAndShowNextMatches;
+    private static final Icon ICON_FIND_ADD_PREV = AllIcons.Actions.FindAndShowPrevMatches;
+  }
 
   private final boolean directionForward;
   private final RangeSearch myRangeSearch;
@@ -39,12 +41,12 @@ public class FindFurtherAction extends AnAction implements DumbAware {
     if (directionForward) {
       text = TEXT_FIND_ADD_NEXT;
       description = DESCRIPTION_FIND_ADD_NEXT;
-      icon = ICON_FIND_ADD_NEXT;
+      icon = Holder.ICON_FIND_ADD_NEXT;
     }
     else {
       text = TEXT_FIND_ADD_PREV;
       description = DESCRIPTION_FIND_ADD_PREV;
-      icon = ICON_FIND_ADD_PREV;
+      icon = Holder.ICON_FIND_ADD_PREV;
     }
 
     getTemplatePresentation().setText(text);

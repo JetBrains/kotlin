@@ -16,7 +16,6 @@ import com.intellij.openapi.actionSystem.impl.ActionButton;
 import com.intellij.openapi.keymap.MacKeymapUtil;
 import com.intellij.openapi.keymap.impl.ModifierKeyDoubleClickHandler;
 import com.intellij.openapi.project.DumbAware;
-import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
@@ -39,17 +38,13 @@ public class RunAnythingAction extends AnAction implements CustomComponentAction
 
   private boolean myIsDoubleCtrlRegistered;
 
-  private static final NotNullLazyValue<Boolean> IS_ACTION_ENABLED = new NotNullLazyValue<Boolean>() {
-    @NotNull
-    @Override
-    protected Boolean compute() {
-      return Arrays.stream(RunAnythingProvider.EP_NAME.getExtensions())
-        .anyMatch(provider -> !(provider instanceof RunAnythingRunConfigurationProvider ||
-                                provider instanceof RunAnythingRecentProjectProvider ||
-                                provider instanceof RunAnythingRecentCommandProvider ||
-                                provider instanceof RunAnythingCommandExecutionProvider));
-    }
-  };
+  private static class Holder {
+    private static final boolean IS_ACTION_ENABLED = Arrays.stream(RunAnythingProvider.EP_NAME.getExtensions())
+          .anyMatch(provider -> !(provider instanceof RunAnythingRunConfigurationProvider ||
+                                  provider instanceof RunAnythingRecentProjectProvider ||
+                                  provider instanceof RunAnythingRecentCommandProvider ||
+                                  provider instanceof RunAnythingCommandExecutionProvider));
+  }
 
   static {
     IdeEventQueue.getInstance().addPostprocessor(event -> {
@@ -98,7 +93,7 @@ public class RunAnythingAction extends AnAction implements CustomComponentAction
       }
     }
 
-    boolean isEnabled = IS_ACTION_ENABLED.getValue();
+    boolean isEnabled = Holder.IS_ACTION_ENABLED;
     e.getPresentation().setEnabledAndVisible(isEnabled);
   }
 

@@ -79,49 +79,49 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class ShowUsagesAction extends AnAction implements PopupAction {
   public static final String ID = "ShowUsages";
+  private static class Holder {
+    private static final UsageNode USAGES_OUTSIDE_SCOPE_NODE = new UsageNode(null, ShowUsagesTable.USAGES_OUTSIDE_SCOPE_SEPARATOR);
 
+    private static final Comparator<UsageNode> USAGE_NODE_COMPARATOR = (c1, c2) -> {
+      if (c1 instanceof StringNode || c2 instanceof StringNode) {
+        if (c1 instanceof StringNode && c2 instanceof StringNode) {
+          return Comparing.compare(c1.toString(), c2.toString());
+        }
+        return c1 instanceof StringNode ? 1 : -1;
+      }
+
+      Usage o1 = c1.getUsage();
+      Usage o2 = c2.getUsage();
+      int weight1 = o1 == ShowUsagesTable.USAGES_OUTSIDE_SCOPE_SEPARATOR ? 2 : o1 == ShowUsagesTable.MORE_USAGES_SEPARATOR ? 1 : 0;
+      int weight2 = o2 == ShowUsagesTable.USAGES_OUTSIDE_SCOPE_SEPARATOR ? 2 : o2 == ShowUsagesTable.MORE_USAGES_SEPARATOR ? 1 : 0;
+      if (weight1 != weight2) return weight1 - weight2;
+
+      if (o1 instanceof Comparable && o2 instanceof Comparable) {
+        //noinspection unchecked
+        return ((Comparable)o1).compareTo(o2);
+      }
+
+      VirtualFile v1 = UsageListCellRenderer.getVirtualFile(o1);
+      VirtualFile v2 = UsageListCellRenderer.getVirtualFile(o2);
+      String name1 = v1 == null ? null : v1.getName();
+      String name2 = v2 == null ? null : v2.getName();
+      int i = Comparing.compare(name1, name2);
+      if (i != 0) return i;
+      if (Comparing.equal(v1, v2)) {
+        FileEditorLocation loc1 = o1.getLocation();
+        FileEditorLocation loc2 = o2.getLocation();
+        return Comparing.compare(loc1, loc2);
+      }
+      else {
+        String path1 = v1 == null ? null : v1.getPath();
+        String path2 = v2 == null ? null : v2.getPath();
+        return Comparing.compare(path1, path2);
+      }
+    };
+  }
   public static int getUsagesPageSize() {
     return Math.max(1, Registry.intValue("ide.usages.page.size", 100));
   }
-
-  private static final UsageNode USAGES_OUTSIDE_SCOPE_NODE = new UsageNode(null, ShowUsagesTable.USAGES_OUTSIDE_SCOPE_SEPARATOR);
-
-  private static final Comparator<UsageNode> USAGE_NODE_COMPARATOR = (c1, c2) -> {
-    if (c1 instanceof StringNode || c2 instanceof StringNode) {
-      if (c1 instanceof StringNode && c2 instanceof StringNode) {
-        return Comparing.compare(c1.toString(), c2.toString());
-      }
-      return c1 instanceof StringNode ? 1 : -1;
-    }
-
-    Usage o1 = c1.getUsage();
-    Usage o2 = c2.getUsage();
-    int weight1 = o1 == ShowUsagesTable.USAGES_OUTSIDE_SCOPE_SEPARATOR ? 2 : o1 == ShowUsagesTable.MORE_USAGES_SEPARATOR ? 1 : 0;
-    int weight2 = o2 == ShowUsagesTable.USAGES_OUTSIDE_SCOPE_SEPARATOR ? 2 : o2 == ShowUsagesTable.MORE_USAGES_SEPARATOR ? 1 : 0;
-    if (weight1 != weight2) return weight1 - weight2;
-
-    if (o1 instanceof Comparable && o2 instanceof Comparable) {
-      //noinspection unchecked
-      return ((Comparable)o1).compareTo(o2);
-    }
-
-    VirtualFile v1 = UsageListCellRenderer.getVirtualFile(o1);
-    VirtualFile v2 = UsageListCellRenderer.getVirtualFile(o2);
-    String name1 = v1 == null ? null : v1.getName();
-    String name2 = v2 == null ? null : v2.getName();
-    int i = Comparing.compare(name1, name2);
-    if (i != 0) return i;
-    if (Comparing.equal(v1, v2)) {
-      FileEditorLocation loc1 = o1.getLocation();
-      FileEditorLocation loc2 = o2.getLocation();
-      return Comparing.compare(loc1, loc2);
-    }
-    else {
-      String path1 = v1 == null ? null : v1.getPath();
-      String path2 = v2 == null ? null : v2.getPath();
-      return Comparing.compare(path1, path2);
-    }
-  };
 
   private Runnable mySearchEverywhereRunnable;
 
@@ -269,7 +269,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
     Processor<Usage> collect = usage -> {
       if (!UsageViewManagerImpl.isInScope(usage, options.searchScope)) {
         if (outOfScopeUsages.getAndIncrement() == 0) {
-          visibleNodes.add(USAGES_OUTSIDE_SCOPE_NODE);
+          visibleNodes.add(Holder.USAGES_OUTSIDE_SCOPE_NODE);
           usages.add(ShowUsagesTable.USAGES_OUTSIDE_SCOPE_SEPARATOR);
         }
         return true;
@@ -686,7 +686,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
       String progressText = StringUtil.escapeXmlEntities(UsageViewManagerImpl.getProgressTitle(presentation));
       data.add(createStringNode(progressText));
     }
-    Collections.sort(data, USAGE_NODE_COMPARATOR);
+    Collections.sort(data, Holder.USAGE_NODE_COMPARATOR);
     return data;
   }
 
@@ -742,7 +742,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
     }
     boolean hasOutsideScopeUsages = usages.contains(ShowUsagesTable.USAGES_OUTSIDE_SCOPE_SEPARATOR);
     if (hasOutsideScopeUsages && !shouldShowMoreSeparator) {
-      nodes.add(USAGES_OUTSIDE_SCOPE_NODE);
+      nodes.add(Holder.USAGES_OUTSIDE_SCOPE_NODE);
     }
 
     String title = presentation.getTabText();

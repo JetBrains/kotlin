@@ -16,14 +16,16 @@ public class StopRangeSearchAction extends AnAction implements DumbAware {
   //private static final Logger logger = Logger.getInstance(FindFurtherAction.class);
 
   private static final String TEXT = "Stop Searching";
-  private static final Icon ICON = AllIcons.Actions.Suspend;
+  private static class Holder {
+    private static final Icon ICON = AllIcons.Actions.Suspend;
+  }
 
   private final RangeSearch myRangeSearch;
 
   public StopRangeSearchAction(@NotNull RangeSearch rangeSearch) {
     this.myRangeSearch = rangeSearch;
     getTemplatePresentation().setText(TEXT);
-    getTemplatePresentation().setIcon(ICON);
+    getTemplatePresentation().setIcon(Holder.ICON);
   }
 
   @Override
