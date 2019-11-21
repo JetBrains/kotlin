@@ -82,7 +82,7 @@ fun LexicalScope.getImplicitReceiversWithInstanceToExpression(
     for ((index, receiver) in receivers.withIndex()) {
         val owner = receiver.containingDeclaration
         if (owner is ScriptDescriptor) {
-            result.put(receiver, null)
+            result[receiver] = null
             continue
         }
         val (expressionText, isImmediateThis) = if (owner in outerDeclarationsWithInstance) {
@@ -91,11 +91,9 @@ fun LexicalScope.getImplicitReceiversWithInstanceToExpression(
                 (thisWithLabel ?: "this") to true
             else
                 thisWithLabel to false
-        }
-        else if (owner is ClassDescriptor && owner.kind.isSingleton) {
+        } else if (owner is ClassDescriptor && owner.kind.isSingleton) {
             IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(owner) to false
-        }
-        else {
+        } else {
             continue
         }
         val factory = if (expressionText != null)
@@ -108,7 +106,7 @@ fun LexicalScope.getImplicitReceiversWithInstanceToExpression(
             }
         else
             null
-        result.put(receiver, factory)
+        result[receiver] = factory
     }
     return result
 }
@@ -123,15 +121,15 @@ private fun thisQualifierName(receiver: ReceiverParameterDescriptor): Name? {
 }
 
 private fun List<ReceiverParameterDescriptor>.shadowedByDslMarkers(): Set<ReceiverParameterDescriptor> {
-    val typesByDslScopes = LinkedHashMap<FqName, MutableList<ReceiverParameterDescriptor>>()
+    val typesByDslScopes = mutableMapOf<FqName, MutableList<ReceiverParameterDescriptor>>()
 
-    this.mapNotNull { receiver ->
+    for (receiver in this) {
         val dslMarkers = DslMarkerUtils.extractDslMarkerFqNames(receiver.value).all()
-        (receiver to dslMarkers).takeIf { dslMarkers.isNotEmpty() }
-    }.forEach { (v, dslMarkers) -> dslMarkers.forEach { typesByDslScopes.getOrPut(it, { mutableListOf() }) += v } }
+        for (marker in dslMarkers) {
+            typesByDslScopes.getOrPut(marker) { mutableListOf() } += receiver
+        }
+    }
 
-    val shadowedDslReceivers = mutableSetOf<ReceiverParameterDescriptor>()
-    typesByDslScopes.flatMapTo(shadowedDslReceivers) { (_, v) -> v.asSequence().drop(1).asIterable() }
-
-    return shadowedDslReceivers
+    // for each DSL marker, all receivers except the closest one are shadowed by it; that is why we drop it
+    return typesByDslScopes.values.flatMapTo(mutableSetOf()) { it.drop(1) }
 }
