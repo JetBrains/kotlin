@@ -22,6 +22,9 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.impl.light.LightMethodBuilder
+import com.intellij.psi.impl.light.LightModifierList
+import com.intellij.psi.impl.light.LightParameterListBuilder
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.LightClassUtil
@@ -513,8 +516,17 @@ internal object KotlinConverter {
                         }
                     } else {
                         el<UMethod> {
-                            val lightMethod = LightClassUtil.getLightClassMethod(original) ?: return null
-                            convertDeclaration(lightMethod, givenParent, expectedTypes)
+                            val lightMethod = LightClassUtil.getLightClassMethod(original)
+                            if (lightMethod != null)
+                                convertDeclaration(lightMethod, givenParent, expectedTypes)
+                            else {
+                                val lightFake = LightMethodBuilder(
+                                    original.manager, original.language, original.name,
+                                    LightParameterListBuilder(original.manager, original.language),
+                                    LightModifierList(original.manager)
+                                )
+                                KotlinUMethod(lightFake, original, givenParent)
+                            }
                         }
                     }
 

@@ -48,7 +48,10 @@ open class KotlinUMethod(
 
     private val kotlinOrigin = (psi.originalElement as? KtLightElement<*, *>)?.kotlinOrigin ?: sourcePsi
 
-    override fun getContainingFile(): PsiFile? = unwrapFakeFileForLightClass(psi.containingFile)
+    override fun getContainingFile(): PsiFile? {
+        kotlinOrigin?.containingFile?.let { return it }
+        return unwrapFakeFileForLightClass(psi.containingFile)
+    }
 
     override fun getNameIdentifier() = UastLightIdentifier(psi, kotlinOrigin as KtNamedDeclaration?)
 
