@@ -101,14 +101,13 @@ public class ShowAutoImportPass extends TextEditorHighlightingPass {
       return true;
     });
 
-    List<ReferenceImporter> importers = ReferenceImporter.EP_NAME.getExtensionList();
     for (HighlightInfo info : infos) {
       for (HintAction action : extractHints(info)) {
         if (action.isAvailable(myProject, myEditor, myFile) && action.fixSilently(myEditor)) {
           break;
         }
       }
-      for(ReferenceImporter importer: importers) {
+      for (ReferenceImporter importer: ReferenceImporter.EP_NAME.getExtensionList()) {
         //noinspection deprecation
         if (importer.autoImportReferenceAt(myEditor, myFile, info.getActualStartOffset())) break;
       }
