@@ -2,7 +2,6 @@
 package com.intellij.openapi.roots.ui.configuration.projectRoot;
 
 import com.google.common.collect.Sets;
-import com.intellij.ide.ui.EditorOptionsTopHitProvider;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
