@@ -103,6 +103,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         runTest("compiler/fir/resolve/testData/resolve/stdlib/implicitReceiverOrder.kt");
     }
 
+    @TestMetadata("javaEnumSynthetic.kt")
+    public void testJavaEnumSynthetic() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/stdlib/javaEnumSynthetic.kt");
+    }
+
     @TestMetadata("listPlusAssign.kt")
     public void testListPlusAssign() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/stdlib/listPlusAssign.kt");
