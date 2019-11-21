@@ -44,6 +44,14 @@ public class C {
     }
 }
 
+// FILE: D.java
+
+public class D {
+    public boolean isGood() {
+        return true;
+    }
+}
+
 // FILE: main.kt
 
 fun test_1(x: A) {
@@ -67,4 +75,8 @@ class Foo {
 
 fun test_4(foo: Foo) {
     foo.<!UNRESOLVED_REFERENCE!>x<!> // should be error
+}
+
+fun test_5(x: D) {
+    x.isGood
 }

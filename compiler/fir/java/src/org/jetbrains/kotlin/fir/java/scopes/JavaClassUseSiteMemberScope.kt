@@ -52,10 +52,42 @@ class JavaClassUseSiteMemberScope(
         }
     }
 
+    private fun processAccessorFunction(
+        functionSymbol: FirFunctionSymbol<*>,
+        syntheticPropertyName: Name,
+        overrideCandidates: MutableSet<FirCallableSymbol<*>>,
+        processor: (FirCallableSymbol<*>) -> ProcessorAction,
+        isGetter: Boolean
+    ): ProcessorAction {
+        if (functionSymbol is FirNamedFunctionSymbol) {
+            val fir = functionSymbol.fir
+            if (fir.isStatic) {
+                return NEXT
+            }
+            when (isGetter) {
+                true -> if (fir.valueParameters.isNotEmpty()) {
+                    return NEXT
+                }
+                false -> if (fir.valueParameters.size != 1) {
+                    return NEXT
+                }
+            }
+        }
+        overrideCandidates += functionSymbol
+        val accessorSymbol = FirAccessorSymbol(
+            accessorId = functionSymbol.callableId,
+            callableId = CallableId(functionSymbol.callableId.packageName, functionSymbol.callableId.className, syntheticPropertyName)
+        )
+        if (functionSymbol is FirNamedFunctionSymbol) {
+            functionSymbol.fir.let { callableMember -> accessorSymbol.bind(callableMember) }
+        }
+        return processor(accessorSymbol)
+    }
+
     private fun processAccessorFunctionsAndPropertiesByName(
         propertyName: Name,
-        accessorName: Name,
-        isGetter: Boolean,
+        getterName: Name,
+        setterName: Name,
         processor: (FirCallableSymbol<*>) -> ProcessorAction
     ): ProcessorAction {
         val overrideCandidates = mutableSetOf<FirCallableSymbol<*>>()
@@ -66,32 +98,16 @@ class JavaClassUseSiteMemberScope(
             }
         ) return STOP
         if (klass is FirJavaClass) {
-            if (!declaredMemberScope.processFunctionsByName(accessorName) { functionSymbol ->
-                    if (functionSymbol is FirNamedFunctionSymbol) {
-                        val fir = functionSymbol.fir
-                        if (fir.isStatic) {
-                            return@processFunctionsByName NEXT
-                        }
-                        when (isGetter) {
-                            true -> if (fir.valueParameters.isNotEmpty()) {
-                                return@processFunctionsByName NEXT
-                            }
-                            false -> if (fir.valueParameters.size != 1) {
-                                return@processFunctionsByName NEXT
-                            }
-                        }
-                    }
-                    overrideCandidates += functionSymbol
-                    val accessorSymbol = FirAccessorSymbol(
-                        accessorId = functionSymbol.callableId,
-                        callableId = CallableId(functionSymbol.callableId.packageName, functionSymbol.callableId.className, propertyName)
-                    )
-                    if (functionSymbol is FirNamedFunctionSymbol) {
-                        functionSymbol.fir.let { callableMember -> accessorSymbol.bind(callableMember) }
-                    }
-                    processor(accessorSymbol)
+            if (!declaredMemberScope.processFunctionsByName(getterName) { functionSymbol ->
+                    processAccessorFunction(functionSymbol, propertyName, overrideCandidates, processor, isGetter = true)
                 }
             ) return STOP
+            if (propertyName.asString().startsWith(IS_PREFIX)) {
+                if (!declaredMemberScope.processFunctionsByName(propertyName) { functionSymbol ->
+                        processAccessorFunction(functionSymbol, propertyName, overrideCandidates, processor, isGetter = true)
+                    }
+                ) return STOP
+            }
         }
 
         return superTypesScope.processPropertiesByName(propertyName) {
@@ -135,11 +151,16 @@ class JavaClassUseSiteMemberScope(
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> ProcessorAction): ProcessorAction {
-        val getterName = Name.identifier(getterPrefix + name.asString().capitalize())
-        return processAccessorFunctionsAndPropertiesByName(name, getterName, isGetter = true, processor = processor)
+        val getterName = Name.identifier(GETTER_PREFIX + name.asString().capitalize())
+        val setterName = Name.identifier(SETTER_PREFIX + name.asString().capitalize())
+        return processAccessorFunctionsAndPropertiesByName(name, getterName, setterName, processor)
     }
 
     companion object {
-        private const val getterPrefix = "get"
+        private const val GETTER_PREFIX = "get"
+
+        private const val SETTER_PREFIX = "set"
+
+        private const val IS_PREFIX = "is"
     }
 }
