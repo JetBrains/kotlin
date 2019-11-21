@@ -31,6 +31,7 @@ dependencies {
     // TODO: Get rid of this heavyweight dependency.
     shadows(project(":core:descriptors"))
     shadows(project(":core:metadata"))
+    shadows(project(":core:deserialization"))
     shadows(project(":compiler:serialization"))
     shadows(project(":kotlin-util-klib-metadata"))
     shadows(project(":kotlin-util-klib"))
