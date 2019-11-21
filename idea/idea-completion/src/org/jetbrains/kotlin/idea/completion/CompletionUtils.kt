@@ -250,13 +250,13 @@ fun returnExpressionItems(bindingContext: BindingContext, position: KtElement): 
 }
 
 private fun KtElement.isDirectlyInLoopBody(): Boolean {
-    val possibleLoop = when (parent) {
-        is KtBlockExpression -> parent.parent?.parent
-        is KtContainerNodeForControlStructureBody -> parent.parent
+    val loopContainer = when (val blockOrContainer = parent) {
+        is KtBlockExpression -> blockOrContainer.parent as? KtContainerNodeForControlStructureBody
+        is KtContainerNodeForControlStructureBody -> blockOrContainer
         else -> null
     }
 
-    return possibleLoop is KtLoopExpression
+    return loopContainer?.parent is KtLoopExpression
 }
 
 fun KtElement.isRightOperandInElvis(): Boolean {
@@ -292,9 +292,9 @@ private fun KtElement.inReturnExpression(): Boolean = findReturnExpression(this)
 private tailrec fun findReturnExpression(expression: PsiElement?): KtReturnExpression? =
     when (val parent = expression?.parent) {
         is KtReturnExpression -> parent
-        is KtBinaryExpression -> findReturnExpression(parent.takeIf { it.operationToken == KtTokens.ELVIS })
+        is KtBinaryExpression -> if (parent.operationToken == KtTokens.ELVIS) findReturnExpression(parent) else null
         is KtContainerNodeForControlStructureBody, is KtIfExpression -> findReturnExpression(parent)
-        is KtBlockExpression -> findReturnExpression(parent.takeIf { expression.isLastOrSingleStatement() })
+        is KtBlockExpression -> if (expression.isLastOrSingleStatement()) findReturnExpression(parent) else null
         is KtWhenEntry -> findReturnExpression(parent.parent)
         else -> null
     }

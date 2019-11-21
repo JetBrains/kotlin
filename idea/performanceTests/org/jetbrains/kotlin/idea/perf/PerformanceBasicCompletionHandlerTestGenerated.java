@@ -973,6 +973,11 @@ public class PerformanceBasicCompletionHandlerTestGenerated extends AbstractPerf
             runTest("idea/idea-completion/testData/handlers/basic/typeArgsForCall/FunctionTypeParameter2.kt");
         }
 
+        @TestMetadata("FunctionTypeParameter3.kt")
+        public void testFunctionTypeParameter3() throws Exception {
+            runTest("idea/idea-completion/testData/handlers/basic/typeArgsForCall/FunctionTypeParameter3.kt");
+        }
+
         @TestMetadata("HasExpectedType.kt")
         public void testHasExpectedType() throws Exception {
             runTest("idea/idea-completion/testData/handlers/basic/typeArgsForCall/HasExpectedType.kt");

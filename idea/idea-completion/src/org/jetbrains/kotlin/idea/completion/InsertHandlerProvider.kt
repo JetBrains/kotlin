@@ -20,7 +20,6 @@ import com.intellij.codeInsight.completion.InsertHandler
 import com.intellij.codeInsight.lookup.LookupElement
 import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
-import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.completion.handlers.*
 import org.jetbrains.kotlin.idea.core.ExpectedInfo
@@ -102,7 +101,7 @@ class InsertHandlerProvider(
                 descriptor.upperBounds.filter { it.arguments.isNotEmpty() }.forEach(::addPotentiallyInferred)
             }
 
-            if (type.isFunctionType && getValueParametersCountFromFunctionType(type) <= 1) {
+            if (type.isBuiltinFunctionalType && getValueParametersCountFromFunctionType(type) <= 1) {
                 // do not rely on inference from input of function type with one or no arguments - use only return type of functional type
                 addPotentiallyInferred(type.getReturnTypeFromFunctionType())
                 return
