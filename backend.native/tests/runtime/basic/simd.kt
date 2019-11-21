@@ -9,6 +9,8 @@ import kotlin.test.*
 
 
 @Test fun runTest() {
+    testBoxingSimple()
+    testBoxing()
     testSetGet()
     testString()
     testOOB()
@@ -17,19 +19,42 @@ import kotlin.test.*
     testDefaultValue()
 }
 
+
+class Box<T>(t: T) {
+    var value = t
+}
+
+class UnalignedC(t: Vector128) {
+    var smth = 1
+    var value = t
+}
+
+fun testBoxingSimple() {
+    val v = vectorOf(1f, 3.162f, 10f, 31f)
+    val box: Box<Vector128> = Box<Vector128>(v)
+    assertEquals(v, box.value, "testBoxingSimple FAILED")
+}
+
+fun testBoxing() {
+    var u = UnalignedC(vectorOf(0, 1, 2, 3))
+    assertEquals(3, u.value.getIntAt(3))
+    u.value = vectorOf(0f, 1f, 2f, 3f)
+    assertEquals(vectorOf(0f, 1f, 2f, 3f), u.value, "testBoxing FAILED")
+}
+
 fun testSetGet() {
     var v4any = vectorOf(0, 1, 2, 3)
-    (0 until 4).forEach { assertEquals(it, v4any.getIntAt(it)) }
+    (0 until 4).forEach { assertEquals(it, v4any.getIntAt(it), "testSetGet FAILED for <4 x i32>") }
 
     // type punning: set the variable to another runtime type
     val a = arrayOf(1f, 3.162f, 10f, 31f)
     v4any = vectorOf(a[0], a[1], a[2], a[3])
-    (0 until 4).forEach { assertEquals(a[it], v4any.getFloatAt(it)) }
+    (0 until 4).forEach { assertEquals(a[it], v4any.getFloatAt(it), "testSetGet FAILED for <4 x float>") }
 }
 
 fun testString() {
     val v4i = vectorOf(100, 1024, Int.MAX_VALUE, Int.MIN_VALUE)
-    assertEquals("(0x64, 0x400, 0x7fffffff, 0x80000000)", v4i.toString())
+    assertEquals("(0x64, 0x400, 0x7fffffff, 0x80000000)", v4i.toString(), "testString FAILED")
 }
 
 fun testOOB() {

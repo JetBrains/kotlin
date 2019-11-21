@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
@@ -1476,15 +1477,15 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     //-------------------------------------------------------------------------//
 
     private fun evaluateGetField(value: IrGetField): LLVMValueRef {
-        context.log{"evaluateGetField               : ${ir2string(value)}"}
-        if (!value.symbol.owner.isStatic) {
+        context.log { "evaluateGetField               : ${ir2string(value)}" }
+        return if (!value.symbol.owner.isStatic) {
             val thisPtr = evaluateExpression(value.receiver!!)
-            return functionGenerationContext.loadSlot(
+            functionGenerationContext.loadSlot(
                     fieldPtrOfClass(thisPtr, value.symbol.owner), !value.symbol.owner.isFinal)
         } else {
             assert(value.receiver == null)
-            return if (value.symbol.owner.correspondingPropertySymbol?.owner?.isConst == true) {
-                 evaluateConst(value.symbol.owner.initializer?.expression as IrConst<*>)
+            if (value.symbol.owner.correspondingPropertySymbol?.owner?.isConst == true) {
+                evaluateConst(value.symbol.owner.initializer?.expression as IrConst<*>)
             } else {
                 if (context.config.threadsAreAllowed && value.symbol.owner.isMainOnlyNonPrimitive) {
                     functionGenerationContext.checkMainThread(currentCodeContext.exceptionHandler)
@@ -1492,6 +1493,10 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 val ptr = context.llvmDeclarations.forStaticField(value.symbol.owner).storage
                 functionGenerationContext.loadSlot(ptr, !value.symbol.owner.isFinal)
             }
+        }.also {
+            if (value.type.classifierOrNull?.isClassWithFqName(vectorType) == true)
+                LLVMSetAlignment(it, 8)
+
         }
     }
 
@@ -1505,7 +1510,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     private fun evaluateSetField(value: IrSetField): LLVMValueRef {
         context.log{"evaluateSetField               : ${ir2string(value)}"}
         val valueToAssign = evaluateExpression(value.value)
-        if (!value.symbol.owner.isStatic) {
+        val store = if (!value.symbol.owner.isStatic) {
             val thisPtr = evaluateExpression(value.receiver!!)
             assert(thisPtr.type == codegen.kObjHeaderPtr) {
                 LLVMPrintTypeToString(thisPtr.type)?.toKString().toString()
@@ -1525,10 +1530,15 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 functionGenerationContext.freeze(valueToAssign, currentCodeContext.exceptionHandler)
             functionGenerationContext.storeAny(valueToAssign, globalValue, false)
         }
+        if (store != null && value.value.type.classifierOrNull?.isClassWithFqName(vectorType) == true) {
+            LLVMSetAlignment(store, 8)
+        }
 
         assert (value.type.isUnit())
         return codegen.theUnitInstanceRef.llvm
     }
+
+    private val vectorType = FqName("kotlin.native.Vector128").toUnsafe()
 
     //-------------------------------------------------------------------------//
     private fun fieldPtrOfClass(thisPtr: LLVMValueRef, value: IrField): LLVMValueRef {

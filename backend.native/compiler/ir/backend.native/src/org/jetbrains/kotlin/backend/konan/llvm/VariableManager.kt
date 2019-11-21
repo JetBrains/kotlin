@@ -24,7 +24,9 @@ internal class VariableManager(val functionGenerationContext: FunctionGeneration
 
     inner class SlotRecord(val address: LLVMValueRef, val refSlot: Boolean, val isVar: Boolean) : Record {
         override fun load() : LLVMValueRef = functionGenerationContext.loadSlot(address, isVar)
-        override fun store(value: LLVMValueRef) = functionGenerationContext.storeAny(value, address, true)
+        override fun store(value: LLVMValueRef) {
+            functionGenerationContext.storeAny(value, address, true)
+        }
         override fun address() : LLVMValueRef = this.address
         override fun toString() = (if (refSlot) "refslot" else "slot") + " for ${address}"
     }

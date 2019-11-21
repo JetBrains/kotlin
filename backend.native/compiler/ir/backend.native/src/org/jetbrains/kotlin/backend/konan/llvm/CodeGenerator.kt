@@ -318,13 +318,12 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         updateRef(value, ptr, onStack = true)
     }
 
-    fun storeAny(value: LLVMValueRef, ptr: LLVMValueRef, onStack: Boolean) {
-        if (isObjectRef(value)) {
+    fun storeAny(value: LLVMValueRef, ptr: LLVMValueRef, onStack: Boolean) = if (isObjectRef(value)) {
             if (onStack) storeStackRef(value, ptr) else storeHeapRef(value, ptr)
+            null
         } else {
             LLVMBuildStore(builder, value, ptr)
         }
-    }
 
     fun freeze(value: LLVMValueRef, exceptionHandler: ExceptionHandler) {
         if (isObjectRef(value))
