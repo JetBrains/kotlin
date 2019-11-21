@@ -465,19 +465,16 @@ public final class DaemonListeners implements Disposable {
     }
   }
 
+  private static class Holder {
+    private static final String myCutActionName = ActionManager.getInstance().getAction(IdeActions.ACTION_EDITOR_CUT).getTemplatePresentation().getText();
+  }
   private class MyCommandListener implements CommandListener {
-    private final String myCutActionName;
-
-    private MyCommandListener() {
-      myCutActionName = ActionManager.getInstance().getAction(IdeActions.ACTION_EDITOR_CUT).getTemplatePresentation().getText();
-    }
-
     @Override
     public void commandStarted(@NotNull CommandEvent event) {
       Document affectedDocument = extractDocumentFromCommand(event);
       if (!worthBothering(affectedDocument, event.getProject())) return;
 
-      cutOperationJustHappened = myCutActionName.equals(event.getCommandName());
+      cutOperationJustHappened = Comparing.strEqual(Holder.myCutActionName, event.getCommandName());
       if (!myDaemonCodeAnalyzer.isRunning()) return;
       if (LOG.isDebugEnabled()) {
         LOG.debug("cancelling code highlighting by command:" + event.getCommand());
