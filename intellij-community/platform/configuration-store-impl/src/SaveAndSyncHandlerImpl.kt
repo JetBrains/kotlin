@@ -7,6 +7,7 @@ import com.intellij.ide.GeneralSettings
 import com.intellij.ide.IdeEventQueue
 import com.intellij.ide.SaveAndSyncHandler
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.AccessToken
 import com.intellij.openapi.application.Application
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
@@ -72,6 +73,10 @@ internal class SaveAndSyncHandlerImpl : BaseSaveAndSyncHandler(), Disposable {
 
       if (task.onlyProject?.isDisposed == true) {
         continue
+      }
+
+      if (blockSaveOnFrameDeactivationCount.get() > 0 || ProgressManager.getInstance().hasModalProgressIndicator()) {
+        return
       }
 
       LOG.runAndLogException {
@@ -203,7 +208,7 @@ internal class SaveAndSyncHandlerImpl : BaseSaveAndSyncHandler(), Disposable {
     }
 
     var isSavedSuccessfully = true
-    runInSaveOnFrameDeactivationDisabledMode {
+    runInAutoSaveDisabledMode {
       edtPoolDispatcherManager.processTasks()
 
       ProgressManager.getInstance().run(object : Task.Modal(componentManager as? Project, "Saving " + (if (componentManager is Application) "Application" else "Project"), /* canBeCancelled = */ false) {
@@ -287,6 +292,15 @@ internal class SaveAndSyncHandlerImpl : BaseSaveAndSyncHandler(), Disposable {
     if (files.isNotEmpty()) {
       // refresh open files synchronously so it doesn't wait for potentially longish refresh request in the queue to finish
       RefreshQueue.getInstance().refresh(false, false, null, files)
+    }
+  }
+
+  override fun disableAutoSave(): AccessToken {
+    blockSaveOnFrameDeactivation()
+    return object : AccessToken() {
+      override fun finish() {
+        unblockSaveOnFrameDeactivation()
+      }
     }
   }
 
