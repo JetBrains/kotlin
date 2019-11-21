@@ -3,12 +3,12 @@ package com.intellij.openapi.externalSystem.autoimport
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.event.DocumentEvent
 import com.intellij.openapi.editor.event.DocumentListener
+import com.intellij.openapi.externalSystem.autoimport.NonBlockingReadActionBuilder.Companion.nonBlockingReadAction
 import com.intellij.openapi.externalSystem.autoimport.ProjectTracker.ModificationType
 import com.intellij.openapi.externalSystem.autoimport.ProjectTracker.ModificationType.EXTERNAL
 import com.intellij.openapi.externalSystem.autoimport.ProjectTracker.ModificationType.INTERNAL
@@ -25,7 +25,6 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
 import com.intellij.psi.ExternalChangeAction
 import com.intellij.util.LocalTimeCounter.currentTime
-import com.intellij.util.concurrency.AppExecutorUtil
 import org.jetbrains.annotations.ApiStatus
 import java.io.File
 import java.util.concurrent.atomic.AtomicReference
@@ -83,12 +82,13 @@ class ProjectSettingsTracker(
   private fun applyChanges() {
     applyChangesOperation.startTask()
     submitSettingsFilesRefresh {
-      submitNonBlockingReadAction {
+      nonBlockingReadAction {
         settingsFilesCRC.set(calculateSettingsFilesCRC())
         modificationType.set(null)
         status.markSynchronized(currentTime())
+      }.finishOnUiThread {
         applyChangesOperation.finishTask()
-      }
+      }.submit()
     }
   }
 
@@ -99,28 +99,30 @@ class ProjectSettingsTracker(
   private fun applyUnknownChanges() {
     applyChangesOperation.startTask()
     submitSettingsFilesRefresh {
-      submitNonBlockingReadAction {
+      nonBlockingReadAction {
         val newSettingsFilesCRC = calculateSettingsFilesCRC()
         settingsFilesCRC.updateAndGet { newSettingsFilesCRC + it }
         if (!hasChanges(newSettingsFilesCRC)) {
           modificationType.set(null)
           status.markReverted(currentTime())
         }
+      }.finishOnUiThread {
         applyChangesOperation.finishTask()
-      }
+      }.submit()
     }
   }
 
   fun refreshChanges() {
     submitSettingsFilesRefresh {
-      submitNonBlockingReadAction {
+      nonBlockingReadAction {
         modificationType.set(null)
         when (hasChanges()) {
           true -> status.markDirty(currentTime())
           else -> status.markReverted(currentTime())
         }
+      }.finishOnUiThread {
         projectTracker.scheduleProjectRefresh()
-      }
+      }.submit(parentDisposable)
     }
   }
 
@@ -144,15 +146,7 @@ class ProjectSettingsTracker(
     }
   }
 
-  private fun submitNonBlockingReadAction(action: () -> Unit) {
-    if (!isAsyncAllowed()) {
-      action()
-      return
-    }
-    ReadAction.nonBlocking(action)
-      .expireWith(parentDisposable)
-      .submit(AppExecutorUtil.getAppExecutorService())
-  }
+  private fun NonBlockingReadActionBuilder<*>.submit() = submit(parentDisposable)
 
   private fun invokeLater(action: () -> Unit) {
     val application = ApplicationManager.getApplication()
@@ -281,7 +275,7 @@ class ProjectSettingsTracker(
 
     fun apply() {
       if (hasRelevantChanges) {
-        submitNonBlockingReadAction {
+        nonBlockingReadAction {
           if (!hasChanges()) {
             modificationType.set(null)
             status.markReverted(currentTime())
@@ -290,8 +284,9 @@ class ProjectSettingsTracker(
             modificationType.set(null)
             status.markDirty(currentTime())
           }
+        }.finishOnUiThread {
           projectTracker.scheduleChangeProcessing()
-        }
+        }.submit()
       }
     }
 
