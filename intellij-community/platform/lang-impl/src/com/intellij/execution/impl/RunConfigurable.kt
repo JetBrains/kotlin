@@ -221,7 +221,16 @@ open class RunConfigurable @JvmOverloads constructor(protected val project: Proj
           showFolderField(node, userObject)
         }
         else if (userObject is ConfigurationFactory) {
-          showTemplateConfigurable(userObject)
+          val parent = node.parent as DefaultMutableTreeNode
+          if (!parent.isRoot) {
+            showTemplateConfigurable(userObject)
+          } else {
+            if (userObject is ConfigurationType) {
+              drawPressAddButtonMessage(userObject as ConfigurationType)
+            } else {
+              drawPressAddButtonMessage(null)
+            }
+          }
         }
         else if (userObject === TEMPLATES_NODE_USER_OBJECT) {
           drawPressAddButtonMessage(null)
