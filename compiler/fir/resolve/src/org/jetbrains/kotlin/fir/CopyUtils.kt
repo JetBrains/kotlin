@@ -96,19 +96,22 @@ fun FirTypeParameter.copy(
 
 fun FirWhenExpression.copy(
     resultType: FirTypeRef = this.typeRef,
-    calleeReference: FirReference = this.calleeReference
+    calleeReference: FirReference = this.calleeReference,
+    annotations: List<FirAnnotationCall> = this.annotations
 ): FirWhenExpressionImpl = FirWhenExpressionImpl(source, subject, subjectVariable).apply {
     this.calleeReference = calleeReference
     this@apply.branches.addAll(this@copy.branches)
     this.typeRef = resultType
-    this.calleeReference = calleeReference
+    this.annotations += annotations
 }
 
 fun FirTryExpression.copy(
     resultType: FirTypeRef = this.typeRef,
-    calleeReference: FirReference = this.calleeReference
+    calleeReference: FirReference = this.calleeReference,
+    annotations: List<FirAnnotationCall> = this.annotations
 ): FirTryExpressionImpl = FirTryExpressionImpl(source, tryBlock, finallyBlock).apply {
     this.calleeReference = calleeReference
     this@apply.catches.addAll(this@copy.catches)
     this.typeRef = resultType
+    this.annotations += annotations
 }

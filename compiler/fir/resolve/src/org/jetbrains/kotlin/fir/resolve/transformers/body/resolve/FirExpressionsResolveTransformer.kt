@@ -53,7 +53,10 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
 
     override fun transformExpression(expression: FirExpression, data: ResolutionMode): CompositeTransformResult<FirStatement> {
         if (expression.resultType is FirImplicitTypeRef && expression !is FirWrappedExpression) {
-            val type = FirErrorTypeRefImpl(expression.source, FirSimpleDiagnostic("Type calculating for ${expression::class} is not supported", DiagnosticKind.InferenceError))
+            val type = FirErrorTypeRefImpl(
+                expression.source,
+                FirSimpleDiagnostic("Type calculating for ${expression::class} is not supported", DiagnosticKind.InferenceError)
+            )
             expression.resultType = type
         }
         return (expression.transformChildren(transformer, data) as FirStatement).compose()
@@ -63,6 +66,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
         qualifiedAccessExpression: FirQualifiedAccessExpression,
         data: ResolutionMode
     ): CompositeTransformResult<FirStatement> {
+        qualifiedAccessExpression.annotations.forEach { it.accept(this, data) }
         var result = when (val callee = qualifiedAccessExpression.calleeReference) {
             is FirExplicitThisReference -> {
                 val labelName = callee.labelName
@@ -131,6 +135,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
             storeTypeFromCallee(functionCall)
         }
         if (functionCall.calleeReference !is FirSimpleNamedReference) return functionCall.compose()
+        functionCall.annotations.forEach { it.accept(this, data) }
         functionCall.transform<FirFunctionCall, Nothing?>(InvocationKindTransformer, null)
         functionCall.transformTypeArguments(transformer, ResolutionMode.ContextIndependent)
         val expectedTypeRef = data.expectedType
@@ -194,6 +199,8 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
 
         if (operatorCall.operation in FirOperation.ASSIGNMENTS) {
             require(operatorCall.operation != FirOperation.ASSIGN)
+
+            operatorCall.annotations.forEach { it.accept(this, data) }
             @Suppress("NAME_SHADOWING")
             val operatorCall = operatorCall.transformArguments(this, ResolutionMode.ContextIndependent)
             val (leftArgument, rightArgument) = operatorCall.arguments
@@ -245,7 +252,10 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
         throw IllegalArgumentException(operatorCall.render())
     }
 
-    override fun transformTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: ResolutionMode): CompositeTransformResult<FirStatement> {
+    override fun transformTypeOperatorCall(
+        typeOperatorCall: FirTypeOperatorCall,
+        data: ResolutionMode
+    ): CompositeTransformResult<FirStatement> {
         val symbolProvider = session.firSymbolProvider
         val resolved = transformExpression(typeOperatorCall, data).single
         when ((resolved as FirTypeOperatorCall).operation) {
@@ -295,6 +305,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
         data: ResolutionMode
     ): CompositeTransformResult<FirStatement> {
         // val resolvedAssignment = transformCallee(variableAssignment)
+        variableAssignment.annotations.forEach { it.accept(this, data) }
         val resolvedAssignment = callResolver.resolveVariableAccessAndSelectCandidate(variableAssignment, file)
         val result = if (resolvedAssignment is FirVariableAssignment) {
             val completeAssignment = callCompleter.completeCall(resolvedAssignment, noExpectedType) // TODO: check
@@ -317,6 +328,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
             return callableReferenceAccess.compose()
         }
 
+        callableReferenceAccess.annotations.forEach { it.accept(this, data) }
         val transformedLHS =
             callableReferenceAccess.explicitReceiver?.transformSingle(this, ResolutionMode.ContextIndependent)
 
@@ -384,6 +396,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
     override fun <T> transformConstExpression(constExpression: FirConstExpression<T>, data: ResolutionMode): CompositeTransformResult<FirStatement> {
         // TODO: add support of IntegerLiteralType
 
+        constExpression.annotations.forEach { it.accept(this, data) }
         val kind = constExpression.kind
         val symbol = when (kind) {
             IrConstKind.Null -> StandardClassIds.Nothing(symbolProvider)
