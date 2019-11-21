@@ -516,7 +516,8 @@ class Fir2IrVisitor(
         }.setParentByParentStack().withParent {
             declarationStorage.enterScope(descriptor)
             val initializerExpression = firInitializerExpression?.toIrExpression()
-            this.initializer = initializerExpression?.let { IrExpressionBodyImpl(it) }
+            initializer = initializerExpression?.let { IrExpressionBodyImpl(it) }
+            correspondingPropertySymbol = this@createBackingField.symbol
             declarationStorage.leaveScope(descriptor)
         }
     }
