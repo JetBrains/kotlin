@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.native.DisabledNativeTargetsReporter
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
+import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
@@ -131,7 +132,10 @@ abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
                 return compilations.all { it.target.platformType == KotlinPlatformType.native }
             }
 
-            val stdlib = defaultLibs(stdlibOnly = true).single()
+            val stdlib = defaultLibs(stdlibOnly = true).singleOrNull() ?: run {
+                warnAboutMissingNativeStdlib(project)
+                return@whenEvaluated
+            }
 
             project.kotlinExtension.sourceSets
                 .filter { it.isIntermediateNativeSourceSet() }
@@ -143,7 +147,27 @@ abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
 
     companion object {
         private const val KOTLIN_NATIVE_HOME_PRIVATE_PROPERTY = "konanHome"
+
+        private fun warnAboutMissingNativeStdlib(project: Project) {
+            if (!project.hasProperty("kotlin.native.nostdlib")) {
+                SingleWarningPerBuild.show(
+                    project,
+                    buildString {
+                        append(NO_NATIVE_STDLIB_WARNING)
+                        if (PropertiesProvider(project).nativeHome != null)
+                            append(NO_NATIVE_STDLIB_PROPERTY_WARNING)
+                    }
+                )
+            }
+        }
+
+        internal const val NO_NATIVE_STDLIB_WARNING =
+            "The Kotlin/Native distribution used in this build does not provide the standard library. "
+
+        internal const val NO_NATIVE_STDLIB_PROPERTY_WARNING =
+            "Make sure that the '${PropertiesProvider.KOTLIN_NATIVE_HOME}' property points to a valid Kotlin/Native distribution."
     }
+
 }
 
 open class KotlinNativeTargetPreset(name: String, project: Project, konanTarget: KonanTarget, kotlinPluginVersion: String) :
