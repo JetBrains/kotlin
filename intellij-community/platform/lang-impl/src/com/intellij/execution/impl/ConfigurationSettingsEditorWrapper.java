@@ -13,6 +13,7 @@ import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.actionSystem.DataKey;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
+import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.HideableDecorator;
 import com.intellij.ui.RelativeFont;
@@ -89,7 +90,7 @@ public class ConfigurationSettingsEditorWrapper extends SettingsEditor<RunnerAnd
     myIsAllowRunningInParallelCheckBox.setSelected(settings.getConfiguration().isAllowRunningInParallel());
     myIsAllowRunningInParallelCheckBox.setVisible(settings.isTemplate() && settings.getFactory().getSingletonPolicy().isPolicyConfigurable());
 
-    myDisclaimerPanel.setVisible(settings.isTemplate());
+    myDisclaimerPanel.setVisible(settings.isTemplate() && ProjectManager.getInstance().getOpenProjects().length != 0);
   }
 
   @Override
