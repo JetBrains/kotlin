@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.references.FirReference
+import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -24,6 +25,7 @@ class FirVariableAssignmentImpl(
     override var rValue: FirExpression
 ) : FirVariableAssignment(), FirModifiableQualifiedAccess, FirAbstractAnnotatedElement {
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
+    override val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
     override var explicitReceiver: FirExpression? = null
     override var dispatchReceiver: FirExpression = FirNoReceiverExpression
     override var extensionReceiver: FirExpression = FirNoReceiverExpression
@@ -36,6 +38,7 @@ class FirVariableAssignmentImpl(
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
+        typeArguments.forEach { it.accept(visitor, data) }
         explicitReceiver?.accept(visitor, data)
         if (dispatchReceiver !== explicitReceiver) {
             dispatchReceiver.accept(visitor, data)
@@ -49,6 +52,7 @@ class FirVariableAssignmentImpl(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirVariableAssignmentImpl {
         annotations.transformInplace(transformer, data)
+        transformTypeArguments(transformer, data)
         explicitReceiver = explicitReceiver?.transformSingle(transformer, data)
         if (dispatchReceiver !== explicitReceiver) {
             dispatchReceiver = dispatchReceiver.transformSingle(transformer, data)
@@ -58,6 +62,11 @@ class FirVariableAssignmentImpl(
         }
         transformCalleeReference(transformer, data)
         transformRValue(transformer, data)
+        return this
+    }
+
+    override fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirVariableAssignmentImpl {
+        typeArguments.transformInplace(transformer, data)
         return this
     }
 

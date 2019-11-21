@@ -248,6 +248,11 @@ public class PsiVisualizerForRawFirDataGenerated extends AbstractPsiVisualizer {
             runTest("compiler/fir/psi2fir/testData/rawBuilder/expressions/nullability.kt");
         }
 
+        @TestMetadata("qualifierWithTypeArguments.kt")
+        public void testQualifierWithTypeArguments() throws Exception {
+            runTest("compiler/fir/psi2fir/testData/rawBuilder/expressions/qualifierWithTypeArguments.kt");
+        }
+
         @TestMetadata("simpleReturns.kt")
         public void testSimpleReturns() throws Exception {
             runTest("compiler/fir/psi2fir/testData/rawBuilder/expressions/simpleReturns.kt");

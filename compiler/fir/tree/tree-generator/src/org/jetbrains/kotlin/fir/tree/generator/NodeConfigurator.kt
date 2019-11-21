@@ -173,6 +173,7 @@ object NodeConfigurator : AbstractFieldConfigurator() {
 
         qualifiedAccessWithoutCallee.configure {
             +booleanField("safe")
+            +typeArguments.withTransform()
             +receivers
         }
 
@@ -183,7 +184,6 @@ object NodeConfigurator : AbstractFieldConfigurator() {
         }
 
         functionCall.configure {
-            +typeArguments.withTransform()
             +field("calleeReference", namedReference)
         }
 
@@ -428,6 +428,7 @@ object NodeConfigurator : AbstractFieldConfigurator() {
             +field("packageFqName", fqNameType)
             +field("relativeClassFqName", fqNameType, nullable = true)
             +field("classId", classIdType, nullable = true)
+            +typeArguments.withTransform()
         }
 
         stringConcatenationCall.configure {

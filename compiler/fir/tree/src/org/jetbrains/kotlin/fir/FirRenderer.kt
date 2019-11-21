@@ -170,6 +170,14 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         }
     }
 
+    private fun List<FirTypeProjection>.renderTypeArguments() {
+        if (isNotEmpty()) {
+            print("<")
+            renderSeparated()
+            print(">")
+        }
+    }
+
     override fun visitMemberDeclaration(memberDeclaration: FirMemberDeclaration) {
         memberDeclaration.annotations.renderAnnotations()
         if (memberDeclaration !is FirProperty || !memberDeclaration.isLocal) {
@@ -926,6 +934,7 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         qualifiedAccessExpression.annotations.renderAnnotations()
         visitQualifiedAccess(qualifiedAccessExpression)
         qualifiedAccessExpression.calleeReference.accept(this)
+        qualifiedAccessExpression.typeArguments.renderTypeArguments()
     }
 
     override fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression) {
@@ -964,11 +973,7 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         functionCall.annotations.renderAnnotations()
         visitQualifiedAccess(functionCall)
         functionCall.calleeReference.accept(this)
-        if (functionCall.typeArguments.isNotEmpty()) {
-            print("<")
-            functionCall.typeArguments.renderSeparated()
-            print(">")
-        }
+        functionCall.typeArguments.renderTypeArguments()
         visitCall(functionCall)
     }
 

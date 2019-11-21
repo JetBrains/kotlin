@@ -5,6 +5,6 @@ val kotlinClass: KClass<String> = String::class
 
 fun foo() {
     val stringClass = String::class.java
-    val arrayStringClass = <!INAPPLICABLE_CANDIDATE!>Array<!><String>::class.<!INAPPLICABLE_CANDIDATE!>java<!>
+    val arrayStringClass = Array<String>::class.java
 }
 

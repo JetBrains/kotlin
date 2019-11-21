@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -30,6 +31,7 @@ class FirExpressionWithSmartcastImpl(
     override val source: FirSourceElement? get() = originalExpression.source
     override val annotations: List<FirAnnotationCall> get() = originalExpression.annotations
     override val safe: Boolean get() = originalExpression.safe
+    override val typeArguments: List<FirTypeProjection> get() = originalExpression.typeArguments
     override val explicitReceiver: FirExpression? get() = originalExpression.explicitReceiver
     override val dispatchReceiver: FirExpression get() = originalExpression.dispatchReceiver
     override val extensionReceiver: FirExpression get() = originalExpression.extensionReceiver
@@ -58,6 +60,10 @@ class FirExpressionWithSmartcastImpl(
     }
 
     override fun <D> transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirExpressionWithSmartcast {
+        throw IllegalStateException()
+    }
+
+    override fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirExpressionWithSmartcast {
         throw IllegalStateException()
     }
 

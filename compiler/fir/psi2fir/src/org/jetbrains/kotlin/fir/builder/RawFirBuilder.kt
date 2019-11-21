@@ -1234,28 +1234,39 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
         override fun visitCallExpression(expression: KtCallExpression, data: Unit): FirElement {
             val calleeExpression = expression.calleeExpression
             val source = expression.toFirSourceElement()
-            return FirFunctionCallImpl(source).apply {
-                val calleeReference = when (calleeExpression) {
-                    is KtSimpleNameExpression -> FirSimpleNamedReference(
-                        calleeExpression.toFirSourceElement(), calleeExpression.getReferencedNameAsName(), null
-                    )
-                    null -> FirErrorNamedReferenceImpl(
-                        null, FirSimpleDiagnostic("Call has no callee", DiagnosticKind.Syntax)
-                    )
-                    else -> {
-                        explicitReceiver = calleeExpression.toFirExpression("Incorrect invoke receiver")
-                        FirSimpleNamedReference(
-                            source, OperatorNameConventions.INVOKE, null
-                        )
-                    }
+
+            val (calleeReference, explicitReceiver) = when (calleeExpression) {
+                is KtSimpleNameExpression -> FirSimpleNamedReference(
+                    calleeExpression.toFirSourceElement(), calleeExpression.getReferencedNameAsName(), null
+                ) to null
+                null -> FirErrorNamedReferenceImpl(
+                    null, FirSimpleDiagnostic("Call has no callee", DiagnosticKind.Syntax)
+                ) to null
+                else -> {
+                    FirSimpleNamedReference(
+                        source, OperatorNameConventions.INVOKE, null
+                    ) to calleeExpression.toFirExpression("Incorrect invoke receiver")
                 }
-                this.calleeReference = calleeReference
-                context.firFunctionCalls += this
-                expression.extractArgumentsTo(this)
+            }
+
+            val result = if (expression.valueArgumentList == null && expression.lambdaArguments.isEmpty()) {
+                FirQualifiedAccessExpressionImpl(source).apply {
+                    this.calleeReference = calleeReference
+                }
+            } else {
+                FirFunctionCallImpl(source).apply {
+                    this.calleeReference = calleeReference
+                    context.firFunctionCalls += this
+                    expression.extractArgumentsTo(this)
+                    context.firFunctionCalls.removeLast()
+                }
+            }
+
+            return result.apply {
+                this.explicitReceiver = explicitReceiver
                 for (typeArgument in expression.typeArguments) {
                     typeArguments += typeArgument.convert<FirTypeProjection>()
                 }
-                context.firFunctionCalls.removeLast()
             }
         }
 
