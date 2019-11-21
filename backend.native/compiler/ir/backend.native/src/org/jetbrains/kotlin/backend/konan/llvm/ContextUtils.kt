@@ -554,6 +554,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     val llvmInt64 = int64Type
     val llvmFloat = floatType
     val llvmDouble = doubleType
+    val llvmVector128 = vector128Type
 }
 
 class IrStaticInitializer(val file: IrFile, val initializer: LLVMValueRef)

@@ -219,6 +219,7 @@ internal fun IrType.llvmType(context:Context): LLVMTypeRef = context.debugInfo.l
         PrimitiveBinaryType.LONG -> context.llvm.llvmInt64
         PrimitiveBinaryType.FLOAT -> context.llvm.llvmFloat
         PrimitiveBinaryType.DOUBLE -> context.llvm.llvmDouble
+        PrimitiveBinaryType.VECTOR128 -> context.llvm.llvmVector128
         else -> context.debugInfo.otherLlvmType
     }
 }

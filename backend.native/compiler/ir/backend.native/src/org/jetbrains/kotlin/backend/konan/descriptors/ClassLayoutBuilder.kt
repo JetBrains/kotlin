@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.backend.konan.descriptors
 
+import llvm.LLVMStoreSizeOfType
 import org.jetbrains.kotlin.backend.common.ir.simpleFunctions
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.functionName
+import org.jetbrains.kotlin.backend.konan.llvm.llvmType
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
 import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
 import org.jetbrains.kotlin.descriptors.Modality
@@ -439,7 +441,7 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
         if (irClass.hasAnnotation(FqName.fromSegments(listOf("kotlin", "native", "internal", "NoReorderFields"))))
             return fields
 
-        return fields.sortedBy { it.fqNameForIrSerialization.localHash.value }
+        return fields.sortedByDescending{ LLVMStoreSizeOfType(context.llvm.runtime.targetData, it.type.llvmType(context)) }
     }
 
     private val IrClass.sortedOverridableOrOverridingMethods: List<IrSimpleFunction>
