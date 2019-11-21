@@ -99,6 +99,11 @@ public class MultiplatformAnalysisTestGenerated extends AbstractMultiplatformAna
         runTest("idea/testData/multiplatform/multilevelParents/");
     }
 
+    @TestMetadata("platformSpecficChecksInTwoTargets")
+    public void testPlatformSpecficChecksInTwoTargets() throws Exception {
+        runTest("idea/testData/multiplatform/platformSpecficChecksInTwoTargets/");
+    }
+
     @TestMetadata("platformSpecificChecksInCommon")
     public void testPlatformSpecificChecksInCommon() throws Exception {
         runTest("idea/testData/multiplatform/platformSpecificChecksInCommon/");
