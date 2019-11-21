@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.idea.conversion.copy
 
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.*
 import com.intellij.psi.search.PsiShortNamesCache
 import com.intellij.psi.util.PsiTreeUtil
@@ -30,6 +32,7 @@ import org.jetbrains.kotlin.idea.core.isVisible
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtFile
@@ -69,53 +72,82 @@ class PlainTextPasteImportResolver(private val dataForConversion: DataForConvers
     }
 
     fun addImportsFromTargetFile() {
+        if (importList in dataForConversion.elementsAndTexts.toList()) return
 
-        fun tryConvertKotlinImport(importDirective: KtImportDirective) {
-            val importPath = importDirective.importPath
-            val importedReference = importDirective.importedReference
-            if (importPath != null && !importPath.hasAlias() && importedReference is KtDotQualifiedExpression) {
-                val receiver = importedReference
-                    .receiverExpression
-                    .referenceExpression()
-                    ?.mainReference
-                    ?.resolve()
-                val selector = importedReference
-                    .selectorExpression
-                    ?.referenceExpression()
-                    ?.mainReference
-                    ?.resolve()
+        val task = {
+            val addImportList = mutableListOf<PsiImportStatementBase>()
 
-                val isPackageReceiver = receiver is PsiPackage
-                val isClassReceiver = receiver is PsiClass
-                val isClassSelector = selector is PsiClass
+            fun tryConvertKotlinImport(importDirective: KtImportDirective) {
+                val importPath = importDirective.importPath
+                val importedReference = importDirective.importedReference
+                if (importPath != null && !importPath.hasAlias() && importedReference is KtDotQualifiedExpression) {
+                    val receiver = importedReference
+                        .receiverExpression
+                        .referenceExpression()
+                        ?.mainReference
+                        ?.resolve()
+                    val selector = importedReference
+                        .selectorExpression
+                        ?.referenceExpression()
+                        ?.mainReference
+                        ?.resolve()
 
-                if (importPath.isAllUnder) {
-                    when {
-                        isClassReceiver ->
-                            addImport(psiElementFactory.createImportStaticStatement(receiver as PsiClass, "*"))
-                        isPackageReceiver ->
-                            addImport(psiElementFactory.createImportStatementOnDemand((receiver as PsiPackage).qualifiedName))
-                    }
-                } else {
-                    when {
-                        isClassSelector ->
-                            addImport(psiElementFactory.createImportStatement(selector as PsiClass))
-                        isClassReceiver ->
-                            addImport(
-                                psiElementFactory.createImportStaticStatement(
-                                    receiver as PsiClass,
-                                    importPath.importedName!!.asString()
+                    val isPackageReceiver = receiver is PsiPackage
+                    val isClassReceiver = receiver is PsiClass
+                    val isClassSelector = selector is PsiClass
+
+                    if (importPath.isAllUnder) {
+                        when {
+                            isClassReceiver ->
+                                addImportList.add(
+                                    psiElementFactory.createImportStaticStatement(
+                                        receiver as PsiClass,
+                                        "*"
+                                    )
                                 )
-                            )
+                            isPackageReceiver ->
+                                addImportList.add(
+                                    psiElementFactory.createImportStatementOnDemand(
+                                        (receiver as PsiPackage).qualifiedName
+                                    )
+                                )
+                        }
+                    } else {
+                        when {
+                            isClassSelector ->
+                                addImportList.add(
+                                    psiElementFactory.createImportStatement(
+                                        selector as PsiClass
+                                    )
+                                )
+                            isClassReceiver ->
+                                addImportList.add(
+                                    psiElementFactory.createImportStaticStatement(
+                                        receiver as PsiClass,
+                                        importPath.importedName!!.asString()
+                                    )
+                                )
+                        }
                     }
                 }
             }
-        }
-        if (importList !in dataForConversion.elementsAndTexts.toList()) {
-            runWriteAction {
-                targetFile.importDirectives.forEach(::tryConvertKotlinImport)
+
+            runReadAction {
+                val importDirectives = targetFile.importDirectives
+                importDirectives.forEachIndexed { index, value ->
+                    ProgressManager.getInstance().progressIndicator?.fraction = 1.0 * index / importDirectives.size
+                    tryConvertKotlinImport(value)
+                }
+            }
+
+            ApplicationManager.getApplication().invokeAndWait {
+                runWriteAction { addImportList.forEach { addImport(it) } }
             }
         }
+
+        ProgressManager.getInstance().runProcessWithProgressSynchronously(
+            task, "Adding imports ...", true, project
+        )
     }
 
     fun tryResolveReferences() {
