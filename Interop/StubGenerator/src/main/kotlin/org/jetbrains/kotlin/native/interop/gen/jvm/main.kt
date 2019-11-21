@@ -24,8 +24,12 @@ import org.jetbrains.kotlin.native.interop.gen.wasm.processIdlLib
 import org.jetbrains.kotlin.native.interop.indexer.*
 import org.jetbrains.kotlin.native.interop.tool.*
 import kotlinx.cli.ArgParser
-import org.jetbrains.kotlin.konan.library.KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
+import org.jetbrains.kotlin.konan.library.*
+import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.resolver.impl.libraryResolver
+import org.jetbrains.kotlin.library.toUnresolvedLibraries
 import java.io.File
 import java.lang.IllegalArgumentException
 import java.nio.file.*
@@ -98,15 +102,14 @@ private fun selectNativeLanguage(config: DefFile.DefFileConfig): Language {
             error("Unexpected language '$language'. Possible values are: ${languages.keys.joinToString { "'$it'" }}")
 }
 
-private fun parseImports(imports: Array<String>): ImportsImpl {
-    val headerIdToPackage = imports.map { arg ->
-        val (pkg, joinedIds) = arg.split(':')
-        val ids = joinedIds.split(';')
-        ids.map { HeaderId(it) to pkg }
-    }.reversed().flatten().toMap()
-
-    return ImportsImpl(headerIdToPackage)
-}
+private fun parseImports(dependencies: List<KotlinLibrary>): ImportsImpl =
+        dependencies.filterIsInstance<KonanLibrary>().mapNotNull { library ->
+            // TODO: handle missing properties?
+            library.packageFqName?.let { packageFqName ->
+                val headerIds = library.includedHeaders
+                headerIds.map { HeaderId(it) to packageFqName }
+            }
+        }.reversed().flatten().toMap().let(::ImportsImpl)
 
 fun getCompilerFlagsForVfsOverlay(headerFilterPrefix: Array<String>, def: DefFile): List<String> {
     val relativeToRoot = mutableMapOf<Path, Path>() // TODO: handle clashes
@@ -161,7 +164,6 @@ private fun findFilesByGlobs(roots: List<Path>, globs: List<String>): Map<Path, 
     return relativeToRoot
 }
 
-
 private fun processCLib(args: Array<String>, additionalArgs: Map<String, Any> = mapOf()): Array<String>? {
     val cinteropArguments = CInteropArguments()
     cinteropArguments.argParser.parse(args)
@@ -209,11 +211,19 @@ private fun processCLib(args: Array<String>, additionalArgs: Map<String, Any> = 
 
     val outKtPkg = fqParts.joinToString(".")
 
-    val libName = (additionalArgs["cstubsname"] as? String)?: fqParts.joinToString("") + "stubs"
+    val mode = parseGenerationMode(cinteropArguments.mode)
+            ?: error ("Unexpected interop generation mode: ${cinteropArguments.mode}")
+
+    val allLibraryDependencies = when (flavor) {
+        KotlinPlatform.NATIVE -> resolveDependencies(cinteropArguments, tool.target)
+        else -> listOf()
+    }
+
+    val libName = additionalArgs["cstubsName"] as? String ?: fqParts.joinToString("") + "stubs"
 
     val tempFiles = TempFiles(libName, cinteropArguments.tempDir)
 
-    val imports = parseImports((additionalArgs["import"] as? List<String>)?.toTypedArray() ?: arrayOf())
+    val imports = parseImports(allLibraryDependencies)
 
     val library = buildNativeLibrary(tool, def, cinteropArguments, imports)
 
@@ -250,9 +260,6 @@ private fun processCLib(args: Array<String>, additionalArgs: Map<String, Any> = 
     } else {
         {}
     }
-
-    val mode = parseGenerationMode(cinteropArguments.mode)
-            ?: error ("Unexpected interop generation mode: ${cinteropArguments.mode}")
 
     val stubIrContext = StubIrContext(logger, configuration, nativeIndex, imports, flavor, libName)
     val stubIrOutput = run {
@@ -320,12 +327,34 @@ private fun processCLib(args: Array<String>, additionalArgs: Map<String, Any> = 
                     target = tool.target,
                     moduleName = moduleName,
                     outputPath = cinteropArguments.output,
-                    manifest = def.manifestAddendProperties
+                    manifest = def.manifestAddendProperties,
+                    dependencies = allLibraryDependencies
             )
             createInteropLibrary(args)
             return null
         }
     }
+}
+
+private fun resolveDependencies(
+        cinteropArguments: CInteropArguments, target: KonanTarget
+): List<KotlinLibrary> {
+    val libraries = cinteropArguments.library
+    val repos = cinteropArguments.repo
+    val noDefaultLibs = cinteropArguments.nodefaultlibs || cinteropArguments.nodefaultlibsDeprecated
+    val noEndorsedLibs = cinteropArguments.noendorsedlibs
+    val resolver = defaultResolver(
+            repos,
+            libraries.filter { it.contains(org.jetbrains.kotlin.konan.file.File.separator) },
+            target,
+            Distribution()
+    ).libraryResolver()
+    return resolver.resolveWithDependencies(
+            libraries.toUnresolvedLibraries,
+            noStdLib = false,
+            noDefaultLibs = noDefaultLibs,
+            noEndorsedLibs = noEndorsedLibs
+    ).getFullList()
 }
 
 internal fun prepareTool(target: String?, flavor: KotlinPlatform): ToolConfig {

@@ -5,14 +5,7 @@
 package org.jetbrains.kotlin.cli.utilities
 
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.konan.library.KonanLibrary
-import org.jetbrains.kotlin.konan.library.defaultResolver
-import org.jetbrains.kotlin.konan.library.includedHeaders
-import org.jetbrains.kotlin.konan.library.packageFqName
-import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.PlatformManager
-import org.jetbrains.kotlin.library.resolver.impl.libraryResolver
-import org.jetbrains.kotlin.library.toUnresolvedLibraries
 import org.jetbrains.kotlin.native.interop.gen.jvm.interop
 import org.jetbrains.kotlin.native.interop.tool.*
 
@@ -41,8 +34,6 @@ fun invokeInterop(flavor: String, args: Array<String>): Array<String>? {
             "-natives", nativesDir.path,
             "-flavor", flavor
     )
-    val additionalProperties = mutableMapOf<String, Any>(
-            "manifest" to manifest.path)
     val cstubsName ="cstubs"
     val libraries = arguments.library
     val repos = arguments.repo
@@ -50,54 +41,33 @@ fun invokeInterop(flavor: String, args: Array<String>): Array<String>? {
         else (arguments as JSInteropArguments).target
     val target = PlatformManager().targetManager(targetRequest).target
 
-    if (flavor == "native") {
-        val resolver = defaultResolver(
-                repos,
-                libraries.filter { it.contains(File.separator) },
-                target,
-                Distribution()
-        ).libraryResolver()
-        val allLibraries = resolver.resolveWithDependencies(
-                libraries.toUnresolvedLibraries, noStdLib = true, noDefaultLibs = noDefaultLibs,
-                noEndorsedLibs = noEndorsedLibs
-        ).getFullList() as List<KonanLibrary>
+    val cinteropArgsToCompiler = interop(flavor, args + additionalArgs,
+            listOfNotNull(
+                    "manifest" to manifest.path,
+                    ("cstubsName" to cstubsName).takeIf { flavor == "native" }
+            ).toMap()
+    ) ?: return null // There is no need in compiler invocation if we're generating only metadata.
 
-        val imports = allLibraries.map { library ->
-            // TODO: handle missing properties?
-            library.packageFqName?.let { packageFqName ->
-                val headerIds = library.includedHeaders
-                "$packageFqName:${headerIds.joinToString(";")}"
-            }
-        }.filterNotNull()
-        additionalProperties.putAll(mapOf("cstubsname" to cstubsName, "import" to imports))
-    }
-
-
-    val cinteropArgsToCompiler = interop(flavor, args + additionalArgs, additionalProperties)
-            ?: return null // There is no need in compiler invocation if we're generating only metadata.
-
-    val nativeStubs = 
-        if (flavor == "wasm") 
+    val nativeStubs =
+        if (flavor == "wasm")
             arrayOf("-include-binary", File(nativesDir, "js_stubs.js").path)
-        else 
+        else
             arrayOf("-native-library", File(nativesDir, "$cstubsName.bc").path)
 
-    val konancArgs = arrayOf(
-        generatedDir.path, 
-        "-produce", "library", 
+    return arrayOf(
+        generatedDir.path,
+        "-produce", "library",
         "-o", outputFileName,
         "-target", target.visibleName,
         "-manifest", manifest.path,
         "-Xtemporary-files-dir=$temporaryFilesDir") +
         nativeStubs +
-        cinteropArgsToCompiler + 
-        libraries.flatMap { listOf("-library", it) } + 
+        cinteropArgsToCompiler +
+        libraries.flatMap { listOf("-library", it) } +
         repos.flatMap { listOf("-repo", it) } +
         (if (noDefaultLibs) arrayOf("-$NODEFAULTLIBS") else emptyArray()) +
         (if (noEndorsedLibs) arrayOf("-$NOENDORSEDLIBS") else emptyArray()) +
         (if (purgeUserLibs) arrayOf("-$PURGE_USER_LIBS") else emptyArray())
-
-    return konancArgs
 }
 
 

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.konan.library.impl.KonanLibraryWriterImpl
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinLibraryVersioning
 import org.jetbrains.kotlin.library.KotlinAbiVersion
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import java.util.*
@@ -24,7 +25,8 @@ data class LibraryCreationArguments(
         val moduleName: String,
         val nativeBitcodePath: String,
         val target: KonanTarget,
-        val manifest: Properties
+        val manifest: Properties,
+        val dependencies: List<KotlinLibrary>
 )
 
 fun createInteropLibrary(arguments: LibraryCreationArguments) {
@@ -47,6 +49,7 @@ fun createInteropLibrary(arguments: LibraryCreationArguments) {
         addMetadata(SerializedMetadata(metadata.header, metadata.fragments, metadata.fragmentNames))
         addNativeBitcode(arguments.nativeBitcodePath)
         addManifestAddend(arguments.manifest)
+        addLinkDependencies(arguments.dependencies)
         commit()
     }
 }
