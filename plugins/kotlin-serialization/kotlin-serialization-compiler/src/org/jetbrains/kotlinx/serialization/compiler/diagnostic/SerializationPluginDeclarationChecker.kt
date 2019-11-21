@@ -82,7 +82,7 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
 
     private fun ClassDescriptor.isSerializableEnumWithMissingSerializer(): Boolean {
         if (kind != ClassKind.ENUM_CLASS) return false
-        if (hasSerializableAnnotationWithoutArgs) return false
+        if (annotations.hasAnnotation(SerializationAnnotations.serializableAnnotationFqName)) return false
         if (annotations.hasAnySerialAnnotation) return true
         return enumEntries().any { (it.annotations.hasAnySerialAnnotation) }
     }

@@ -1,5 +1,16 @@
 package
 
+public object EnumSerializer : kotlinx.serialization.KSerializer<ExplicitlyMarkedEnumCustom> {
+    private constructor EnumSerializer()
+    public open override /*1*/ val descriptor: kotlin.Nothing
+    public open override /*1*/ fun deserialize(/*0*/ decoder: kotlinx.serialization.Decoder): ExplicitlyMarkedEnumCustom
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun patch(/*0*/ decoder: kotlinx.serialization.Decoder, /*1*/ old: ExplicitlyMarkedEnumCustom): ExplicitlyMarkedEnumCustom
+    public open override /*1*/ fun serialize(/*0*/ encoder: kotlinx.serialization.Encoder, /*1*/ obj: ExplicitlyMarkedEnumCustom): kotlin.Nothing
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
 @kotlinx.serialization.Serializable public final enum class ExplicitlyMarkedEnum : kotlin.Enum<ExplicitlyMarkedEnum> {
     @kotlinx.serialization.SerialId(id = 10) enum entry A
 
@@ -39,6 +50,27 @@ package
     // Static members
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): ExplicitlyMarkedEnum
     public final /*synthesized*/ fun values(): kotlin.Array<ExplicitlyMarkedEnum>
+}
+
+@kotlinx.serialization.Serializable(with = EnumSerializer::class) public final enum class ExplicitlyMarkedEnumCustom : kotlin.Enum<ExplicitlyMarkedEnumCustom> {
+    @kotlinx.serialization.SerialId(id = 10) enum entry A
+
+    enum entry B
+
+    private constructor ExplicitlyMarkedEnumCustom()
+    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: ExplicitlyMarkedEnumCustom): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<ExplicitlyMarkedEnumCustom!>!
+    public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): ExplicitlyMarkedEnumCustom
+    public final /*synthesized*/ fun values(): kotlin.Array<ExplicitlyMarkedEnumCustom>
 }
 
 public final enum class MarkedInfoEnum : kotlin.Enum<MarkedInfoEnum> {
