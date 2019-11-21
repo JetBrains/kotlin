@@ -7,6 +7,7 @@ import com.intellij.codeInsight.hint.*;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInsight.intention.IntentionActionDelegate;
 import com.intellij.codeInsight.intention.impl.config.IntentionManagerSettings;
+import com.intellij.codeInsight.intention.impl.preview.IntentionPreviewPopupUpdateProcessor;
 import com.intellij.codeInsight.unwrap.ScopeHighlighter;
 import com.intellij.codeInspection.SuppressIntentionActionFromFix;
 import com.intellij.icons.AllIcons;
@@ -40,10 +41,12 @@ import com.intellij.ui.PopupMenuListenerAdapter;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.icons.RowIcon;
 import com.intellij.ui.popup.WizardPopup;
+import com.intellij.ui.popup.list.ListPopupImpl;
 import com.intellij.util.Alarm;
 import com.intellij.util.ThreeState;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.EmptyIcon;
+import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -77,6 +80,9 @@ public class IntentionHintComponent implements Disposable, ScrollAwareHint {
 
   private static final Border INACTIVE_BORDER = BorderFactory.createEmptyBorder(NORMAL_BORDER_SIZE, NORMAL_BORDER_SIZE, NORMAL_BORDER_SIZE, NORMAL_BORDER_SIZE);
   private static final Border INACTIVE_BORDER_SMALL = BorderFactory.createEmptyBorder(SMALL_BORDER_SIZE, SMALL_BORDER_SIZE, SMALL_BORDER_SIZE, SMALL_BORDER_SIZE);
+  public static final KeyboardShortcut ALT_SPACE_SHORTCUT = KeyboardShortcut.fromString(("alt SPACE"));
+  public static final String ALT_SPACE_SHORTCUT_TEXT = KeymapUtil.getShortcutText(ALT_SPACE_SHORTCUT);
+  private final IntentionPreviewPopupUpdateProcessor myPreviewPopupUpdateProcessor;
 
   @TestOnly
   public CachedIntentions getCachedIntentions() {
@@ -314,6 +320,7 @@ public class IntentionHintComponent implements Disposable, ScrollAwareHint {
     ApplicationManager.getApplication().assertIsDispatchThread();
     myFile = file;
     myEditor = editor;
+    myPreviewPopupUpdateProcessor = new IntentionPreviewPopupUpdateProcessor(project, myFile, myEditor);
     myCachedIntentions = cachedIntentions;
     myPanel.setLayout(new BorderLayout());
     myPanel.setOpaque(false);
@@ -438,6 +445,7 @@ public class IntentionHintComponent implements Disposable, ScrollAwareHint {
           }
         }
       }
+      registerShowPreviewAction();
     }
 
     boolean committed = PsiDocumentManager.getInstance(myFile.getProject()).isCommitted(myEditor.getDocument());
@@ -464,6 +472,9 @@ public class IntentionHintComponent implements Disposable, ScrollAwareHint {
         final Object selectedItem = PlatformDataKeys.SELECTED_ITEM.getData((DataProvider)source);
         if (selectedItem instanceof IntentionActionWithTextCaching) {
           IntentionAction action = IntentionActionDelegate.unwrap(((IntentionActionWithTextCaching)selectedItem).getAction());
+          if (myPopup instanceof ListPopupImpl) {
+            updatePreviewPopup(action, ((ListPopupImpl)myPopup).getList().getSelectedIndex());
+          }
           if (action instanceof SuppressIntentionActionFromFix) {
             if (injectedFile != null && ((SuppressIntentionActionFromFix)action).isShouldBeAppliedToInjectionHost() == ThreeState.NO) {
               final PsiElement at = injectedFile.findElementAt(injectedEditor.getCaretModel().getOffset());
@@ -502,6 +513,32 @@ public class IntentionHintComponent implements Disposable, ScrollAwareHint {
 
     Disposer.register(this, myPopup);
     Disposer.register(myPopup, ApplicationManager.getApplication()::assertIsDispatchThread);
+  }
+
+  private void updatePreviewPopup(@NotNull IntentionAction action, int index) {
+    myPreviewPopupUpdateProcessor.setup(text -> {
+      myPopup.setAdText(text, SwingConstants.LEFT);
+      return Unit.INSTANCE;
+    }, index);
+    myPreviewPopupUpdateProcessor.updatePopup(action);
+  }
+
+  private void registerShowPreviewAction() {
+    ((WizardPopup)myPopup).registerAction("showIntentionPreview", ALT_SPACE_SHORTCUT.getFirstKeyStroke(), new AbstractAction() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        myPreviewPopupUpdateProcessor.toggleShow();
+        if (myPopup instanceof ListPopupImpl) {
+          JList list = ((ListPopupImpl)myPopup).getList();
+          int selectedIndex = list.getSelectedIndex();
+          Object selectedValue = list.getSelectedValue();
+          if (selectedValue instanceof IntentionActionWithTextCaching) {
+            updatePreviewPopup(((IntentionActionWithTextCaching)selectedValue).getAction(), selectedIndex);
+          }
+        }
+      }
+    });
+    myPopup.setAdText(CodeInsightBundle.message("intention.preview.adv.show.text", ALT_SPACE_SHORTCUT_TEXT), SwingConstants.LEFT);
   }
 
   void canceled(@NotNull ListPopupStep intentionListStep) {
