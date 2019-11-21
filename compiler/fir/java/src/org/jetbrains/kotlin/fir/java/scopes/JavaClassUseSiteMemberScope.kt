@@ -90,7 +90,7 @@ class JavaClassUseSiteMemberScope(
     private fun processAccessorFunctionsAndPropertiesByName(
         propertyName: Name,
         getterNames: List<Name>,
-        setterName: Name,
+        setterName: Name?,
         processor: (FirCallableSymbol<*>) -> ProcessorAction
     ): ProcessorAction {
         val overrideCandidates = mutableSetOf<FirCallableSymbol<*>>()
@@ -150,6 +150,9 @@ class JavaClassUseSiteMemberScope(
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> ProcessorAction): ProcessorAction {
+        if (name.isSpecial) {
+            return processAccessorFunctionsAndPropertiesByName(name, emptyList(), null, processor)
+        }
         val identifier = name.identifier
         val capitalizedAsciiName = identifier.capitalizeAsciiOnly()
         val capitalizedFirstWordName = identifier.capitalizeFirstWord(asciiOnly = true)
@@ -160,7 +163,7 @@ class JavaClassUseSiteMemberScope(
         ).filter {
             propertyNameByGetMethodName(it) == name
         }
-        val setterName = Name.identifier(SETTER_PREFIX + name.asString().capitalize())
+        val setterName = Name.identifier(SETTER_PREFIX + identifier.capitalize())
         return processAccessorFunctionsAndPropertiesByName(name, getterNames, setterName, processor)
     }
 
