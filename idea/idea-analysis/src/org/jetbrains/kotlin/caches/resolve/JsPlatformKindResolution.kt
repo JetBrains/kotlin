@@ -13,10 +13,10 @@ import org.jetbrains.kotlin.analyzer.ResolverForModuleFactory
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.context.ProjectContext
+import org.jetbrains.kotlin.idea.caches.project.SdkInfo
 import org.jetbrains.kotlin.idea.caches.resolve.BuiltInsCacheKey
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.js.resolve.JsResolverForModuleFactory
-import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
 import org.jetbrains.kotlin.platform.impl.JsIdePlatformKind
 import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -35,7 +35,7 @@ class JsPlatformKindResolution : IdePlatformKindResolution {
         return BuiltInsCacheKey.DefaultBuiltInsKey
     }
 
-    override fun createBuiltIns(moduleInfo: ModuleInfo, projectContext: ProjectContext): KotlinBuiltIns {
+    override fun createBuiltIns(moduleInfo: ModuleInfo, projectContext: ProjectContext, sdkDependency: SdkInfo?): KotlinBuiltIns {
         return DefaultBuiltIns.Instance
     }
 
