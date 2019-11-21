@@ -51,6 +51,9 @@ internal val Project.konanVersion: CompilerVersion
 internal val Project.disableKonanDaemon: Boolean
     get() = PropertiesProvider(this).nativeDisableCompilerDaemon == true
 
+internal val Project.disableKonanCache: Boolean
+    get() = PropertiesProvider(this).nativeDisableCompilerCache == true
+
 internal interface KonanToolRunner : Named {
     val mainClass: String
     val classpath: FileCollection

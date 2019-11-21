@@ -147,6 +147,12 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = booleanProperty("kotlin.native.disableCompilerDaemon")
 
     /**
+     * Forbids dependencies precompilation to dynamic/static libraries.
+     */
+    val nativeDisableCompilerCache: Boolean?
+        get() = booleanProperty("kotlin.native.disableCompilerCache")
+
+    /**
      * Generate kotlin/js external declarations from all .d.ts files found in npm modules
      */
     val jsGenerateExternals: Boolean?
