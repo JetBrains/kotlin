@@ -47,7 +47,6 @@ class MobileBeforeRunTaskProvider : BeforeRunTaskProvider<MobileBeforeRunTaskPro
     ): Boolean {
         if (configuration !is MobileRunConfiguration) return false
         val device = environment.executionTarget as? Device ?: return false
-        if (device !is AndroidDevice) return true // TODO iOS
 
         val project = configuration.project
         val projectData = ProjectDataManager.getInstance().getExternalProjectData(project, GRADLE_SYSTEM_ID, project.basePath!!)
@@ -62,8 +61,18 @@ class MobileBeforeRunTaskProvider : BeforeRunTaskProvider<MobileBeforeRunTaskPro
         settings.externalProjectPath = projectData.externalProjectPath
         settings.executionName = name
         settings.taskNames = when (configuration) {
-            is MobileAppRunConfiguration -> listOf("$moduleId:assembleDebug")
-            is MobileTestRunConfiguration -> listOf("$moduleId:assembleDebug", "$moduleId:assembleDebugAndroidTest")
+            is MobileAppRunConfiguration ->
+                when (device) {
+                    is AndroidDevice -> listOf("$moduleId:assembleDebug")
+                    is AppleDevice -> listOf("$moduleId:buildIosAppMain")
+                    else -> throw IllegalStateException()
+                }
+            is MobileTestRunConfiguration ->
+                when (device) {
+                    is AndroidDevice -> listOf("$moduleId:assembleDebug", "$moduleId:assembleDebugAndroidTest")
+                    is AppleDevice -> listOf("$moduleId:buildIosAppMain") // TODO
+                    else -> throw IllegalStateException()
+                }
             else -> throw IllegalStateException()
         }
 

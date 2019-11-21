@@ -14,6 +14,8 @@ import com.jetbrains.cidr.execution.CidrRunConfigurationExecutableEditor
 import com.jetbrains.cidr.execution.CidrRunConfigurationSettingsEditor
 import com.jetbrains.cidr.ui.SelectExecutableActionComboItem
 import org.jetbrains.konan.MobileBundle
+import org.jetbrains.konan.isAndroid
+import org.jetbrains.konan.isApple
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import javax.swing.JPanel
 
@@ -32,14 +34,14 @@ open class MobileRunConfigurationEditor(project: Project, helper: MobileBuildCon
             MobileRunConfiguration,
             MobileBuildConfigurationHelper>
 
-    protected open val allowedModuleNames: Array<String> = arrayOf("androidMain", "iosMain")
+    protected open val modulePostfix: String = "Main"
 
     override fun createEditorInner(panel: JPanel, g: GridBag) {
         val modulesLabel = JBLabel(MobileBundle.message("run.configuration.editor.module"))
         panel.add(modulesLabel, g.nextLine().next())
         modulesComboBox = ModulesComboBox()
         modulesComboBox.setModules(myProject.allModules().filter { module ->
-            allowedModuleNames.any { module.name.endsWith(it) }
+            (module.isAndroid || module.isApple) && module.name.endsWith(modulePostfix)
         })
         panel.add(modulesComboBox, g.next().coverLine())
         modulesLabel.labelFor = modulesComboBox

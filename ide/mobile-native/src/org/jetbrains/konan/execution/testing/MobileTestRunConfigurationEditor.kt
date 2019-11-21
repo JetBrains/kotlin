@@ -13,7 +13,7 @@ import org.jetbrains.konan.execution.MobileRunConfigurationEditor
 class MobileTestRunConfigurationEditor(project: Project, helper: MobileBuildConfigurationHelper) :
     MobileRunConfigurationEditor(project, helper) {
 
-    override val allowedModuleNames: Array<String> = arrayOf("androidTest", "iosTest")
+    override val modulePostfix: String = "Test"
 
     override fun applyEditorTo(runConfiguration: MobileRunConfiguration) {
         super.applyEditorTo(runConfiguration)
