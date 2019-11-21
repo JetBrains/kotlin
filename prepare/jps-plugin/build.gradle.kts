@@ -8,6 +8,9 @@ plugins {
 val projectsToShadow = listOf(
     ":core:type-system",
     ":kotlin-build-common",
+    ":kotlin-util-io",
+    ":kotlin-util-klib",
+    ":kotlin-util-klib-metadata",
     ":compiler:cli-common",
     ":kotlin-compiler-runner",
     ":daemon-common",
