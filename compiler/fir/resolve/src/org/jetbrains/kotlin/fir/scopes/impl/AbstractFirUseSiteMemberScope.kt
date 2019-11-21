@@ -27,22 +27,37 @@ abstract class AbstractFirUseSiteMemberScope(
     protected val superTypesScope: FirSuperTypeScope,
     protected val declaredMemberScope: FirScope
 ) : AbstractFirOverrideScope(session, overrideChecker) {
+
+    private val functions = hashMapOf<Name, Collection<FirFunctionSymbol<*>>>()
+
     override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> ProcessorAction): ProcessorAction {
+        functions.getOrPut(name) {
+            doProcessFunctions(name)
+        }.forEach {
+            if (processor(it) == ProcessorAction.STOP) return ProcessorAction.STOP
+        }
+
+        return ProcessorAction.NEXT
+    }
+
+    private fun doProcessFunctions(
+        name: Name
+    ): Collection<FirFunctionSymbol<*>> = mutableListOf<FirFunctionSymbol<*>>().apply {
         val overrideCandidates = mutableSetOf<FirFunctionSymbol<*>>()
         if (!declaredMemberScope.processFunctionsByName(name) {
                 val symbol = processInheritedDefaultParameters(it)
                 overrideCandidates += symbol
-                processor(symbol)
-            }
-        ) return ProcessorAction.STOP
-
-        return superTypesScope.processFunctionsByName(name) {
-            val overriddenBy = it.getOverridden(overrideCandidates)
-            if (overriddenBy == null) {
-                processor(it)
-            } else {
+                add(symbol)
                 ProcessorAction.NEXT
             }
+        ) return@apply
+
+        superTypesScope.processFunctionsByName(name) {
+            val overriddenBy = it.getOverridden(overrideCandidates)
+            if (overriddenBy == null) {
+                add(it)
+            }
+            ProcessorAction.NEXT
         }
     }
 
