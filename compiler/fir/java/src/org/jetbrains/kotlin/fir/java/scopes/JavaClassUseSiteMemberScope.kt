@@ -7,8 +7,14 @@ package org.jetbrains.kotlin.fir.java.scopes
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirSimpleFunctionImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaValueParameter
+import org.jetbrains.kotlin.fir.java.types.FirJavaTypeRef
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction.NEXT
@@ -101,6 +107,31 @@ class JavaClassUseSiteMemberScope(
                 }
             }
         }
+    }
+
+    override fun createFunctionCopy(firSimpleFunction: FirSimpleFunction, newSymbol: FirNamedFunctionSymbol): FirSimpleFunctionImpl {
+        if (firSimpleFunction !is FirJavaMethod) return super.createFunctionCopy(firSimpleFunction, newSymbol)
+        return FirJavaMethod(
+            firSimpleFunction.session,
+            firSimpleFunction.source,
+            newSymbol,
+            firSimpleFunction.name,
+            firSimpleFunction.visibility,
+            firSimpleFunction.modality,
+            firSimpleFunction.returnTypeRef as FirJavaTypeRef,
+            firSimpleFunction.status.isStatic
+        )
+    }
+
+    override fun createValueParameterCopy(parameter: FirValueParameter, newDefaultValue: FirExpression?): FirValueParameterImpl {
+        if (parameter !is FirJavaValueParameter) return super.createValueParameterCopy(parameter, newDefaultValue)
+        return FirJavaValueParameter(
+            parameter.session,
+            parameter.source,
+            parameter.name,
+            parameter.returnTypeRef as FirJavaTypeRef,
+            parameter.isVararg
+        )
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> ProcessorAction): ProcessorAction {

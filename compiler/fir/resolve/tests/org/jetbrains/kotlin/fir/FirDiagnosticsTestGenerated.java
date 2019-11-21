@@ -245,6 +245,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/resolve/testData/resolve/arguments/default.kt");
         }
 
+        @TestMetadata("defaultFromOverrides.kt")
+        public void testDefaultFromOverrides() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/arguments/defaultFromOverrides.kt");
+        }
+
         @TestMetadata("fieldPlusAssign.kt")
         public void testFieldPlusAssign() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/arguments/fieldPlusAssign.kt");
