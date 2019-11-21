@@ -107,7 +107,7 @@ private class JvmStringConcatenationLowering(val context: JvmBackendContext) : F
         val toStringReplacement = backendContext.inlineClassReplacements.getReplacementFunction(toStringFunction)
             ?: return expression
 
-        return irCall(toStringReplacement.function).apply {
+        return irCall(toStringReplacement).apply {
             putValueArgument(0, expression)
         }
     }
