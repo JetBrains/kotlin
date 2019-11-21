@@ -235,44 +235,11 @@ private fun findCallsOnPosition(sourcePosition: SourcePosition, filter: (KtCallE
     }
 }
 
-sealed class Action(
-    val position: XSourcePositionImpl? = null,
-    val stepOverInlineData: StepOverFilterData? = null
-) {
-    class StepOver : Action() {
-        override fun apply(debugProcess: DebugProcessImpl, suspendContext: SuspendContextImpl, ignoreBreakpoints: Boolean) =
-            debugProcess.createStepOverCommand(suspendContext, ignoreBreakpoints).contextAction(suspendContext)
-    }
-
-    class StepOut : Action() {
-        override fun apply(debugProcess: DebugProcessImpl, suspendContext: SuspendContextImpl, ignoreBreakpoints: Boolean) =
-            debugProcess.createStepOutCommand(suspendContext).contextAction(suspendContext)
-    }
-
-    class RunToCursor(position: XSourcePositionImpl) : Action(position) {
-        override fun apply(debugProcess: DebugProcessImpl, suspendContext: SuspendContextImpl, ignoreBreakpoints: Boolean) {
-            return runReadAction {
-                debugProcess.createRunToCursorCommand(suspendContext, position!!, ignoreBreakpoints)
-            }.contextAction(suspendContext)
-        }
-    }
-
-    class StepOverInlined(stepOverInlineData: StepOverFilterData) : Action(stepOverInlineData = stepOverInlineData) {
-        override fun apply(debugProcess: DebugProcessImpl, suspendContext: SuspendContextImpl, ignoreBreakpoints: Boolean) {
-            return KotlinStepActionFactory(debugProcess).createKotlinStepOverInlineAction(
-                KotlinStepOverInlineFilter(debugProcess.project, stepOverInlineData!!)
-            ).contextAction(suspendContext)
-        }
-    }
-
-    abstract fun apply(debugProcess: DebugProcessImpl, suspendContext: SuspendContextImpl, ignoreBreakpoints: Boolean)
-}
-
 interface KotlinMethodFilter : MethodFilter {
     fun locationMatches(context: SuspendContextImpl, location: Location): Boolean
 }
 
-fun getStepOverAction(location: Location, kotlinSourcePosition: KotlinSourcePosition, frameProxy: StackFrameProxyImpl): Action {
+fun getStepOverAction(location: Location, kotlinSourcePosition: KotlinSourcePosition, frameProxy: StackFrameProxyImpl): KotlinStepAction {
     val inlineArgumentsToSkip = runReadAction {
         getInlineCallFunctionArgumentsIfAny(kotlinSourcePosition.sourcePosition)
     }
@@ -289,12 +256,12 @@ fun getStepOverAction(
     range: IntRange,
     inlineFunctionArguments: List<KtElement>,
     frameProxy: StackFrameProxyImpl
-): Action {
-    location.declaringType() ?: return Action.StepOver()
+): KotlinStepAction {
+    location.declaringType() ?: return KotlinStepAction.StepOver()
 
     val methodLocations = location.method().safeAllLineLocations()
     if (methodLocations.isEmpty()) {
-        return Action.StepOver()
+        return KotlinStepAction.StepOver()
     }
 
     fun isThisMethodLocation(nextLocation: Location): Boolean {
@@ -364,7 +331,7 @@ fun getStepOverAction(
         }
 
     if (stepOverLocations.isNotEmpty()) {
-        return Action.StepOverInlined(
+        return KotlinStepAction.StepOverInlined(
             StepOverFilterData(
                 patchedLineNumber,
                 stepOverLocations.map { it.lineNumber() }.toSet(),
@@ -373,7 +340,7 @@ fun getStepOverAction(
         )
     }
 
-    return Action.StepOver()
+    return KotlinStepAction.StepOver()
 }
 
 fun getStepOutAction(
@@ -381,8 +348,8 @@ fun getStepOutAction(
     suspendContext: SuspendContextImpl,
     inlineFunctions: List<KtNamedFunction>,
     inlinedArgument: KtFunctionLiteral?
-): Action {
-    val computedReferenceType = location.declaringType() ?: return Action.StepOut()
+): KotlinStepAction {
+    val computedReferenceType = location.declaringType() ?: return KotlinStepAction.StepOut()
 
     val locations = computedReferenceType.safeAllLineLocations()
     val nextLineLocations = locations
@@ -393,15 +360,15 @@ fun getStepOutAction(
 
     if (inlineFunctions.isNotEmpty()) {
         val position = suspendContext.getXPositionForStepOutFromInlineFunction(nextLineLocations, inlineFunctions)
-        return position?.let { Action.RunToCursor(it) } ?: Action.StepOver()
+        return position?.let { KotlinStepAction.RunToCursor(it) } ?: KotlinStepAction.StepOver()
     }
 
     if (inlinedArgument != null) {
         val position = suspendContext.getXPositionForStepOutFromInlinedArgument(nextLineLocations, inlinedArgument)
-        return position?.let { Action.RunToCursor(it) } ?: Action.StepOver()
+        return position?.let { KotlinStepAction.RunToCursor(it) } ?: KotlinStepAction.StepOver()
     }
 
-    return Action.StepOver()
+    return KotlinStepAction.StepOver()
 }
 
 private fun SuspendContextImpl.getXPositionForStepOutFromInlineFunction(
