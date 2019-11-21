@@ -9,35 +9,53 @@ import org.jetbrains.kotlin.backend.common.interpreter.builtins.CompileTimeFunct
 import org.jetbrains.kotlin.backend.common.interpreter.builtins.binaryFunctions
 import org.jetbrains.kotlin.backend.common.interpreter.builtins.unaryFunctions
 import org.jetbrains.kotlin.backend.common.interpreter.stack.*
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.isFakeOverride
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
-fun IrInterpreter.calculateOverridden(symbol: IrFunctionSymbol, data: Frame): State {
-    val owner = symbol.owner as IrFunctionImpl
-    val overridden = owner.overriddenSymbols.first()
-    val overriddenReceiver = data.getVariableState(symbol.getThisAsReceiver()).getState(overridden.getThisAsReceiver())
-    val valueParameters = symbol.owner.valueParameters.zip(overridden.owner.valueParameters)
-        .map { Variable(it.second.descriptor, data.getVariableState(it.first.descriptor)) }
-    val newStates = InterpreterFrame((valueParameters + Variable(overridden.getThisAsReceiver(), overriddenReceiver)).toMutableList())
-
-    return if (overridden.owner.body != null) {
-        overridden.owner.body!!.accept(this, newStates)
-    } else {
-        calculateOverridden(overridden.owner.symbol, newStates)
-    }
+fun IrInterpreter.calculateAbstract(irFunction: IrFunction?, data: Frame): State {
+    return irFunction?.body?.accept(this, data)
+        ?: throw NoSuchMethodException("Method \"$irFunction\" wasn't implemented")
 }
 
-fun calculateBuiltIns(descriptor: FunctionDescriptor, frame: Frame): Any {
+fun IrInterpreter.calculateOverridden(owner: IrFunctionImpl, data: Frame): State {
+    val overridden = owner.overriddenSymbols.first()
+
+    val variableDescriptor = owner.symbol.getReceiverDescriptor()!!
+    val overriddenReceiver = overridden.getReceiverDescriptor()!!
+    val overriddenReceiverState = data.getVariableState(variableDescriptor).getState(overriddenReceiver)
+        ?: throw NoSuchElementException("Variable \"$variableDescriptor\" doesn't contains state \"$overriddenReceiver\"")
+
+    val valueParameters = owner.valueParameters.zip(overridden.owner.valueParameters)
+        .map { Variable(it.second.descriptor, data.getVariableState(it.first.descriptor)) }
+    val newStates = InterpreterFrame((valueParameters + Variable(overriddenReceiver, overriddenReceiverState)).toMutableList())
+
+    var overriddenOwner: IrSimpleFunction? = overridden.owner
+    do {
+        val body = overriddenOwner?.body
+        when {
+            body != null -> return body.accept(this, newStates)
+            else -> overriddenOwner = overriddenOwner?.overriddenSymbols?.firstOrNull()?.owner
+        }
+    } while (overriddenOwner != null)
+
+    throw NoSuchMethodException("$owner has no body")
+}
+
+fun IrInterpreter.calculateBuiltIns(expression: IrCall, frame: Frame): Any {
+    val descriptor = expression.symbol.descriptor
     val methodName = descriptor.name.asString()
     val receiverType = descriptor.dispatchReceiverParameter?.type ?: descriptor.extensionReceiverParameter?.type
     val argsType = listOfNotNull(receiverType) + descriptor.valueParameters.map { TypeUtils.makeNotNullable(it.original.type) }
@@ -55,14 +73,26 @@ fun calculateBuiltIns(descriptor: FunctionDescriptor, frame: Frame): Any {
         2 -> {
             val function = binaryFunctions[signature]
                 ?: throw NoSuchMethodException("For given function $signature there is no entry in binary map")
-            function.invoke(argsValues[0], argsValues[1])
+            when (methodName) {
+                "rangeTo" -> calculateRangeTo(expression, frame)
+                else -> function.invoke(argsValues[0], argsValues[1])
+            }
         }
         else -> throw UnsupportedOperationException("Unsupported number of arguments")
     }
 }
 
-fun IrInterpreter.calculateAbstract(irFunction: IrFunction?, data: Frame): State {
-    return irFunction?.body?.accept(this, data)!!
+private fun IrInterpreter.calculateRangeTo(expression: IrExpression, data: Frame): Any {
+    val constructor = expression.type.classOrNull!!.owner.constructors.first()
+    val constructorCall = IrConstructorCallImpl.fromSymbolOwner(constructor.returnType, constructor.symbol)
+
+    val primitiveValueParameters = data.getAll().map { it.state as Primitive<*> }
+    primitiveValueParameters.forEachIndexed { index, primitive -> constructorCall.putValueArgument(index, primitive.getIrConst()) }
+
+    val constructorValueParameters = constructor.valueParameters.map { it.descriptor }.zip(primitiveValueParameters)
+    val newFrame = InterpreterFrame(constructorValueParameters.map { Variable(it.first, it.second) }.toMutableList())
+
+    return constructorCall.accept(this, newFrame)
 }
 
 fun IrInterpreter.convertValueParameters(memberAccess: IrMemberAccessExpression, data: Frame): MutableList<Variable> {
@@ -74,16 +104,30 @@ fun IrInterpreter.convertValueParameters(memberAccess: IrMemberAccessExpression,
     }
 }
 
-fun IrFunctionSymbol.getThisAsReceiver(): ReceiverParameterDescriptor {
-    return (this.descriptor.containingDeclaration as ClassDescriptor).thisAsReceiverParameter
+// main purpose is to get receiver from constructor call
+fun IrFunctionAccessExpression.getThisAsReceiver(): DeclarationDescriptor {
+    return (this.symbol.descriptor.containingDeclaration as ClassDescriptor).thisAsReceiverParameter
 }
 
-fun IrFunctionAccessExpression.getThisAsReceiver(): ReceiverParameterDescriptor {
-    return (this.symbol.descriptor.containingDeclaration as ClassDescriptor).thisAsReceiverParameter
+fun IrFunctionSymbol.getReceiverDescriptor(): DeclarationDescriptor? {
+    return this.owner.dispatchReceiverParameter?.descriptor ?: this.owner.extensionReceiverParameter?.descriptor
 }
 
 fun IrFunctionAccessExpression.getBody(): IrBody? {
     return this.symbol.owner.body
+}
+
+fun DeclarationDescriptor.isSubtypeOf(other: DeclarationDescriptor): Boolean {
+    if (this !is ReceiverParameterDescriptor || other !is ReceiverParameterDescriptor) return false
+    return when {
+        this.value is ImplicitClassReceiver && other.value is ImplicitClassReceiver -> this.value.type.isSubtypeOf(other.value.type)
+        this.value is ExtensionReceiver && other.value is ExtensionReceiver -> this.value == other.value
+        else -> false
+    }
+}
+
+fun DeclarationDescriptor.hasSameNameAs(other: DeclarationDescriptor): Boolean {
+    return this is ValueParameterDescriptor && other is ValueParameterDescriptor && this.name == other.name
 }
 
 fun IrCall.isAbstract(): Boolean {
@@ -94,7 +138,25 @@ fun IrCall.isFakeOverridden(): Boolean {
     return this.symbol.owner.isFakeOverride
 }
 
-fun Any?.toIrConst(expression: IrExpression): IrConst<*> {
+fun State?.getIrFunction(expression: IrCall): IrFunction {
+    return this.let { (it as? Complex)?.getIrFunctionByName(expression.symbol.descriptor.name) } ?: expression.symbol.owner
+}
+
+fun State.toIrExpression(expression: IrExpression): IrExpression {
+    return when (this) {
+        is Primitive<*> -> this.getIrConst().value.toIrConst(expression) // it is necessary to replace ir offsets
+        else -> TODO("not supported")
+    }
+}
+
+fun Any?.toState(expression: IrExpression): State {
+    return when (this) {
+        is Complex -> this
+        else -> this.toIrConst(expression).toPrimitive()
+    }
+}
+
+private fun Any?.toIrConst(expression: IrExpression): IrConst<*> {
     return when (this) {
         is Boolean -> expression.copyParametersTo(IrConstKind.Boolean, this)
         is Char -> expression.copyParametersTo(IrConstKind.Char, this)

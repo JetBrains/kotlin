@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.backend.common.interpreter.stack
 
+import org.jetbrains.kotlin.backend.common.interpreter.hasSameNameAs
+import org.jetbrains.kotlin.backend.common.interpreter.isSubtypeOf
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -13,10 +15,9 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.name.Name
-import java.util.*
 
 interface State {
-    fun getState(descriptor: DeclarationDescriptor): State
+    fun getState(descriptor: DeclarationDescriptor): State?
     fun setState(newVar: Variable)
     fun copy(): State
 }
@@ -43,6 +44,7 @@ class Primitive<T>(private var value: IrConst<T>) : State {
         return "Primitive(value=${value.value})"
     }
 }
+
 class Complex(private var classOfObject: IrClass, private val values: MutableList<Variable>) : State {
     fun addSuperQualifier(superObj: Variable) {
         val superTypesList = getSuperTypes(classOfObject).map { it.descriptor.thisAsReceiverParameter }
@@ -55,19 +57,14 @@ class Complex(private var classOfObject: IrClass, private val values: MutableLis
         return superTypesList + superTypesList.flatMap { getSuperTypes(it.owner) }
     }
 
-    fun getIrFunctionByName(name: Name): IrFunction {
-        return classOfObject.declarations.firstOrNull { it.descriptor.name == name } as? IrFunction
-            ?: throw NoSuchMethodException("Abstract method $name has not been implemented")
+    fun getIrFunctionByName(name: Name): IrFunction? {
+        return classOfObject.declarations.filterIsInstance<IrFunction>().firstOrNull { it.descriptor.name == name }
     }
 
-    fun getAllStates(): List<Variable> {
-        val superTypesList = getSuperTypes(classOfObject).map { it.descriptor.thisAsReceiverParameter }
-        return values.filter { superTypesList.contains(it.descriptor) } + Variable(classOfObject.descriptor.thisAsReceiverParameter, this)
-    }
-
-    override fun getState(descriptor: DeclarationDescriptor): State {
-        return values.firstOrNull { it.descriptor == descriptor }?.state
-            ?: throw NoSuchElementException("Complex object doesn't contains state with descriptor $descriptor")
+    override fun getState(descriptor: DeclarationDescriptor): State? {
+        return values.firstOrNull {
+            it.descriptor.isSubtypeOf(descriptor) || it.descriptor.hasSameNameAs(descriptor) || it.descriptor == descriptor
+        }?.state
     }
 
     override fun setState(newVar: Variable) {

@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.backend.common.interpreter.stack
 
+import org.jetbrains.kotlin.backend.common.interpreter.hasSameNameAs
+import org.jetbrains.kotlin.backend.common.interpreter.isSubtypeOf
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import java.util.*
@@ -37,8 +39,9 @@ class InterpreterFrame(val pool: MutableList<Variable> = mutableListOf()) : Fram
     }
 
     override fun getVariableState(variableDescriptor: DeclarationDescriptor): State {
-        return pool.firstOrNull { it.descriptor == variableDescriptor }?.state
-            ?: throw NoSuchElementException("Frame pool doesn't contains variable with descriptor $variableDescriptor")
+        return pool.firstOrNull {
+            it.descriptor.isSubtypeOf(variableDescriptor) || it.descriptor.hasSameNameAs(variableDescriptor) || it.descriptor == variableDescriptor
+        }?.state ?: throw NoSuchElementException("Frame pool doesn't contains variable with descriptor $variableDescriptor")
     }
 
     override fun getAll(): List<Variable> {
