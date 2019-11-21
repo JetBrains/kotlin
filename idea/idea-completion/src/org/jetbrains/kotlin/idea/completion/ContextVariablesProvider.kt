@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.completion
 
 import com.intellij.psi.PsiElement
 import com.intellij.util.SmartList
-import org.jetbrains.kotlin.builtins.isFunctionTypeOrSubtype
+import org.jetbrains.kotlin.builtins.isBuiltinFunctionalTypeOrSubtype
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
@@ -39,7 +39,7 @@ class RealContextVariablesProvider(
 ) : ContextVariablesProvider {
 
     val allFunctionTypeVariables by lazy {
-        collectVariables().filter { it.type.isFunctionTypeOrSubtype }
+        collectVariables().filter { it.type.isBuiltinFunctionalTypeOrSubtype }
     }
 
     private fun collectVariables(): Collection<VariableDescriptor> {

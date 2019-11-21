@@ -75,7 +75,7 @@ class LookupElementFactory(
     companion object {
         fun hasSingleFunctionTypeParameter(descriptor: FunctionDescriptor): Boolean {
             val parameter = descriptor.original.valueParameters.singleOrNull() ?: return false
-            return parameter.type.isFunctionType
+            return parameter.type.isBuiltinFunctionalType
         }
 
         val CAST_REQUIRED_COLOR = JBColor(0x4E4040, 0x969696)
