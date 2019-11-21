@@ -83,6 +83,7 @@ fun LexicalScope.getImplicitReceiversWithInstanceToExpression(
         val owner = receiver.containingDeclaration
         if (owner is ScriptDescriptor) {
             result[receiver] = null
+            outerDeclarationsWithInstance.addAll(owner.implicitReceivers)
             continue
         }
         val (expressionText, isImmediateThis) = if (owner in outerDeclarationsWithInstance) {
