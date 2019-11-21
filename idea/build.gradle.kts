@@ -197,6 +197,12 @@ dependencies {
     performanceTestRuntime(sourceSets["performanceTest"].output)
 }
 
+tasks.named<Copy>("processResources") {
+    from(provider { project(":compiler:cli-common").mainSourceSet.resources }) {
+        include("META-INF/extensions/compiler.xml")
+    }
+}
+
 projectTest(parallel = true) {
     dependsOn(":dist")
     workingDir = rootDir
