@@ -57,7 +57,7 @@ import java.util.concurrent.locks.ReadWriteLock;
   @Storage(value = StoragePathMacros.CACHE_FILE),
   @Storage(value = "stubIndex.xml", deprecated = true, roamingType = RoamingType.DISABLED)
 })
-public final class StubIndexImpl extends StubIndex implements PersistentStateComponent<StubIndexState> {
+public final class StubIndexImpl extends StubIndexEx implements PersistentStateComponent<StubIndexState> {
   private static final AtomicReference<Boolean> ourForcedClean = new AtomicReference<>(null);
   private static final Logger LOG = Logger.getInstance(StubIndexImpl.class);
 
@@ -243,6 +243,7 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
     }
   }
 
+  @Override
   @NotNull
   <K> TObjectHashingStrategy<K> getKeyHashingStrategy(StubIndexKey<K, ?> stubIndexKey) {
     return (TObjectHashingStrategy<K>)getAsyncState().myKeyHashingStrategies.get(stubIndexKey);
@@ -314,6 +315,7 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
     }
   }
 
+  @Override
   <K> void serializeIndexValue(@NotNull DataOutput out, @NotNull StubIndexKey<K, ?> stubIndexKey, @NotNull Map<K, StubIdList> map) throws IOException {
     UpdatableIndex<K, Void, FileContent> index = getIndex(stubIndexKey);
     if (index == null) return;
@@ -329,6 +331,7 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
     out.write(indexOs.getInternalBuffer(), 0, indexOs.size());
   }
 
+  @Override
   @NotNull
   <K> Map<K, StubIdList> deserializeIndexValue(@NotNull DataInput in, @NotNull StubIndexKey<K, ?> stubIndexKey, @Nullable K requestedKey) throws IOException {
     UpdatableIndex<K, Void, FileContent> index = getIndex(stubIndexKey);
@@ -354,11 +357,6 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
       }
     }
     return result;
-  }
-
-  <K> void skipIndexValue(@NotNull DataInput in) throws IOException {
-    int bufferSize = DataInputOutputUtil.readINT(in);
-    in.skipBytes(bufferSize);
   }
 
   @Override
@@ -582,13 +580,6 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
       catch (Throwable t) {
         LOG.error(t);
       }
-    }
-  }
-
-  static void initExtensions() {
-    // initialize stub index keys
-    for (StubIndexExtension<?, ?> extension : StubIndexExtension.EP_NAME.getExtensionList()) {
-      extension.getKey();
     }
   }
 
