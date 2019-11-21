@@ -177,7 +177,7 @@ dependencies {
     testRuntime(intellijPluginDep("junit"))
     testRuntime(intellijPluginDep("gradle"))
     testRuntime(intellijPluginDep("Groovy"))
-    testRuntime(intellijPluginDep("coverage"))
+    testCompile(intellijPluginDep("coverage")) { includeJars("coverage") }
     testRuntime(intellijPluginDep("android"))
     testRuntime(intellijPluginDep("smali"))
     testRuntime(intellijPluginDep("testng"))

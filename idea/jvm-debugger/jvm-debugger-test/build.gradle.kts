@@ -23,7 +23,7 @@ dependencies {
     }
 
     Platform[192].orHigher {
-        testCompileOnly(intellijPluginDep("java")) { includeJars("java-api", "java-impl") }
+        testCompileOnly(intellijPluginDep("java")) { includeJars("java-api", "java-impl", "aether-dependency-resolver") }
         testRuntime(intellijPluginDep("java"))
     }
 
