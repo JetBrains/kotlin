@@ -258,11 +258,17 @@ private val primaryConstructorLoweringPhase = makeJsModulePhase(
     prerequisite = setOf(enumClassConstructorLoweringPhase)
 )
 
+private val annotationConstructorLowering = makeJsModulePhase(
+    ::AnnotationConstructorLowering,
+    name = "AnnotationConstructorLowering",
+    description = "Generate annotation constructor body"
+)
+
 private val initializersLoweringPhase = makeJsModulePhase(
     ::InitializersLowering,
     name = "InitializersLowering",
     description = "Merge init block and field initializers into [primary] constructor",
-    prerequisite = setOf(enumClassConstructorLoweringPhase, primaryConstructorLoweringPhase)
+    prerequisite = setOf(enumClassConstructorLoweringPhase, primaryConstructorLoweringPhase, annotationConstructorLowering)
 )
 
 private val multipleCatchesLoweringPhase = makeJsModulePhase(
@@ -397,6 +403,7 @@ val jsPhases = namedIrModulePhase(
             innerClassConstructorCallsLoweringPhase then
             propertiesLoweringPhase then
             primaryConstructorLoweringPhase then
+            annotationConstructorLowering then
             initializersLoweringPhase then
             // Common prefix ends
             enumClassLoweringPhase then
