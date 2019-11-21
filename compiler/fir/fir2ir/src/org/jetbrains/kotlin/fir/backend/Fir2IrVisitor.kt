@@ -411,6 +411,7 @@ class Fir2IrVisitor(
             symbolTable.declareAnonymousInitializer(
                 startOffset, endOffset, origin, parent.descriptor
             ).apply {
+                setParentByParentStack()
                 declarationStorage.enterScope(descriptor)
                 body = anonymousInitializer.body!!.convertToIrBlockBody()
                 declarationStorage.leaveScope(descriptor)
