@@ -16,19 +16,19 @@ def rootBuildDirectory = rootProject.projectDir
 
 task konanRun {
     subprojects.each {
-        dependsOn it.getTasksByName('konanRun', true)[0]
+        dependsOn "${it.path}:konanRun"
     }
 }
     
 task jvmRun {
     subprojects.each {
-        dependsOn it.getTasksByName('jvmRun', true)[0]
+        dependsOn "${it.path}:jvmRun"
     }
 }
 
 task clean {
     subprojects.each {
-        dependsOn it.getTasksByName('clean', true)[0]
+        dependsOn "${it.path}:clean"
     }
     doLast {
         delete "${buildDir.absolutePath}"
@@ -187,8 +187,10 @@ task mergeJvmReports {
 }
 
 subprojects.each {
-    it.getTasksByName('jvmJsonReport', true)[0].finalizedBy mergeJvmReports
-    it.getTasksByName('konanJsonReport', true)[0].finalizedBy mergeNativeReports
+    it.afterEvaluate {
+        it.jvmJsonReport.finalizedBy mergeJvmReports
+        it.konanJsonReport.finalizedBy mergeNativeReports
+    }
 }
 
 task teamCityStat(type:Exec) {

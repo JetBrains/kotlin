@@ -31,19 +31,21 @@ include ':backend.native:tests'
 include ':backend.native:debugger-tests'
 include ':utilities'
 
-include ':performance'
-include ':performance:ring'
-include ':performance:cinterop'
-include ':performance:helloworld'
-include ':performance:numerical'
-include ':performance:videoplayer'
-include ':performance:framework'
-if (System.getProperty("os.name") == "Mac OS X") {
-    include ':performance:objcinterop'
-    include ':performance:swiftinterop'
-    if (hasProperty("runExcludedBenchmarks")) {
-        include ':performance:KotlinVsSwift'
-        include ':performance:KotlinVsSwift:ring'
+if (hasProperty("konan.home") || hasProperty("org.jetbrains.kotlin.native.home")) {
+    include ':performance'
+    include ':performance:ring'
+    include ':performance:cinterop'
+    include ':performance:helloworld'
+    include ':performance:numerical'
+    include ':performance:videoplayer'
+    include ':performance:framework'
+    if (System.getProperty("os.name") == "Mac OS X") {
+        include ':performance:objcinterop'
+        include ':performance:swiftinterop'
+        if (hasProperty("runExcludedBenchmarks")) {
+            include ':performance:KotlinVsSwift'
+            include ':performance:KotlinVsSwift:ring'
+        }
     }
 }
 
