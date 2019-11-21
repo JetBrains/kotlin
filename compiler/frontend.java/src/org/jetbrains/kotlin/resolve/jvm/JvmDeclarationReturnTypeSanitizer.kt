@@ -35,9 +35,11 @@ object JvmDeclarationReturnTypeSanitizer : DeclarationReturnTypeSanitizer {
             if (languageVersionSettings.supportsFeature(LanguageFeature.StrictJavaNullabilityAssertions)) {
                 // NB can't check for presence of EnhancedNullability here,
                 // because it will also cause recursion in declaration type resolution.
-                inferred.replaceAnnotations(FilteredAnnotations(inferred.annotations) {
-                    it != JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION
-                })
+                inferred.replaceAnnotations(
+                    FilteredAnnotations(inferred.annotations, languageVersionSettings.supportsFeature(LanguageFeature.NewInference)) {
+                        it != JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION
+                    }
+                )
             }
             else inferred
 }

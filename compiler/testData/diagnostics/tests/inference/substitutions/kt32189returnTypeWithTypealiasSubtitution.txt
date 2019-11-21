@@ -1,0 +1,21 @@
+package
+
+public fun applyRestrictions1(): ApplyRestrictions /* = B.Builder.() -> B.Builder */
+public fun applyRestrictions2(): ApplyRestrictions /* = B.Builder.() -> B.Builder */
+public fun </*0*/ K> applyRestrictions3(/*0*/ e: K): ApplyRestrictions /* = B.Builder.() -> B.Builder */
+public fun buildB(): kotlin.Unit
+
+public final class B {
+    public constructor B()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final class Builder {
+        public constructor Builder()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+public typealias ApplyRestrictions = B.Builder.() -> B.Builder

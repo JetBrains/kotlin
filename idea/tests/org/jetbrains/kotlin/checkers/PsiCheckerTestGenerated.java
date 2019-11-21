@@ -155,6 +155,11 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
             runTest("idea/testData/checker/JvmStaticUsagesRuntime.kt");
         }
 
+        @TestMetadata("kt32189returnTypeWithTypealiasSubtitution.kt")
+        public void testKt32189returnTypeWithTypealiasSubtitution() throws Exception {
+            runTest("idea/testData/checker/kt32189returnTypeWithTypealiasSubtitution.kt");
+        }
+
         @TestMetadata("LocalObjects.kt")
         public void testLocalObjects() throws Exception {
             runTest("idea/testData/checker/LocalObjects.kt");
