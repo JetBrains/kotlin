@@ -10,7 +10,10 @@ import com.intellij.execution.Executor
 import com.intellij.execution.configurations.CommandLineState
 import com.intellij.execution.configurations.ConfigurationFactory
 import com.intellij.execution.configurations.RunConfiguration
+import com.intellij.execution.configurations.RunConfigurationModule
 import com.intellij.execution.runners.ExecutionEnvironment
+import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.options.SettingsEditor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
@@ -19,33 +22,53 @@ import com.jetbrains.cidr.execution.CidrRunConfiguration
 import com.jetbrains.cidr.execution.ExecutableData
 import com.jetbrains.cidr.lang.workspace.OCResolveConfiguration
 import org.jdom.Element
+import org.jetbrains.konan.isAndroid
+import org.jetbrains.konan.isApple
 import java.io.File
 
 abstract class MobileRunConfiguration(project: Project, factory: ConfigurationFactory, name: String) :
     CidrRunConfiguration<MobileBuildConfiguration, MobileBuildTarget>(project, factory, name),
     CidrExecutableDataHolder {
 
+    private var _module = RunConfigurationModule(project).also { it.setModuleToAnyFirstIfNotSpecified() }
+    var module: Module
+        get() = _module.module!!
+        set(value) {
+            _module.module = value
+        }
+
     override fun canRunOn(target: ExecutionTarget): Boolean =
         target is Device &&
                 (canRunOnApple && target is AppleDevice) ||
                 (canRunOnAndroid && target is AndroidDevice)
 
+    val canRunOnAndroid: Boolean get() = module.isAndroid
+    val canRunOnApple: Boolean get() = module.isApple
+
     open fun getProductBundle(environment: ExecutionEnvironment): File {
-        if (environment.executionTarget is AndroidDevice) {
-            return File(project.basePath, FileUtil.join("app", "build", "outputs", "apk", "debug", "app-debug.apk"))
+        val moduleRoot = ExternalSystemApiUtil.getExternalProjectPath(module)?.let { File(it) }
+            ?: throw IllegalStateException()
+        return when (val device = environment.executionTarget) {
+            is AndroidDevice -> {
+                File(moduleRoot, FileUtil.join("build", "outputs", "apk", "debug", "${moduleRoot.name}-debug.apk"))
+            }
+            is AppleDevice -> {
+                @Suppress("SpellCheckingInspection")
+                val deviceType = when (device) {
+                    is ApplePhysicalDevice -> "iphoneos"
+                    is AppleSimulator -> "iphonesimulator"
+                    else -> throw IllegalStateException()
+                }
+                File(moduleRoot, FileUtil.join("build", "bin", "iosAppMain", "Debug-$deviceType", "iosApp.app"))
+            }
+            else -> throw IllegalStateException()
         }
-        // TODO decide if we want to allow custom executable selection
-        //  and retrieve info from gradle when executable not selected explicitly
-        return File(_executableData!!.path!!)
     }
 
     private val helper = MobileBuildConfigurationHelper(project)
     override fun getHelper(): MobileBuildConfigurationHelper = helper
 
     override fun getResolveConfiguration(target: ExecutionTarget): OCResolveConfiguration? = null
-
-    val canRunOnApple: Boolean get() = _executableData?.path?.endsWith(".app") == true
-    val canRunOnAndroid: Boolean get() = !canRunOnApple // TODO check for the selected module
 
     private var _executableData: ExecutableData? = null
 
@@ -56,11 +79,13 @@ abstract class MobileRunConfiguration(project: Project, factory: ConfigurationFa
 
     override fun writeExternal(element: Element) {
         super.writeExternal(element)
+        _module.writeExternal(element)
         _executableData?.writeExternal(element)
     }
 
     override fun readExternal(element: Element) {
         super.readExternal(element)
+        _module.readExternal(element)
         _executableData = ExecutableData.loadExternal(element)
     }
 }

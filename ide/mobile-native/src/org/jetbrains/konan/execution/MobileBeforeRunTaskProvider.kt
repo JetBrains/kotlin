@@ -23,6 +23,7 @@ import com.intellij.util.concurrency.FutureResult
 import org.jetbrains.konan.MobileBundle
 import org.jetbrains.konan.execution.testing.MobileTestRunConfiguration
 import org.jetbrains.kotlin.idea.framework.GRADLE_SYSTEM_ID
+import org.jetbrains.plugins.gradle.service.project.GradleProjectResolverUtil
 import javax.swing.Icon
 
 class MobileBeforeRunTaskProvider : BeforeRunTaskProvider<MobileBeforeRunTaskProvider.Task>() {
@@ -54,14 +55,15 @@ class MobileBeforeRunTaskProvider : BeforeRunTaskProvider<MobileBeforeRunTaskPro
             log.warn("External project is not configured")
             return false
         }
+        val moduleId = GradleProjectResolverUtil.getGradlePath(configuration.module)!!
 
         val settings = ExternalSystemTaskExecutionSettings()
         settings.externalSystemIdString = GRADLE_SYSTEM_ID.id
         settings.externalProjectPath = projectData.externalProjectPath
         settings.executionName = name
         settings.taskNames = when (configuration) {
-            is MobileAppRunConfiguration -> listOf(":app:assembleDebug")
-            is MobileTestRunConfiguration -> listOf(":app:assembleDebug", ":app:assembleAndroidTest")
+            is MobileAppRunConfiguration -> listOf("$moduleId:assembleDebug")
+            is MobileTestRunConfiguration -> listOf("$moduleId:assembleDebug", "$moduleId:assembleDebugAndroidTest")
             else -> throw IllegalStateException()
         }
 
