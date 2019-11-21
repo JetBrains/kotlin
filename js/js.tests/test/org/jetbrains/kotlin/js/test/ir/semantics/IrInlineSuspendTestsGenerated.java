@@ -38,6 +38,11 @@ public class IrInlineSuspendTestsGenerated extends AbstractIrInlineSuspendTests 
         runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/capturedVariables.kt", "kotlin.coroutines");
     }
 
+    @TestMetadata("catchBlockNop.kt")
+    public void testCatchBlockNop() throws Exception {
+        runTest("compiler/testData/codegen/boxInline/suspend/catchBlockNop.kt");
+    }
+
     @TestMetadata("crossinlineSuspendLambdaInsideCrossinlineSuspendLambda.kt")
     public void testCrossinlineSuspendLambdaInsideCrossinlineSuspendLambda_1_3() throws Exception {
         runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/crossinlineSuspendLambdaInsideCrossinlineSuspendLambda.kt", "kotlin.coroutines");
