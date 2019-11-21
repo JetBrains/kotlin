@@ -63,7 +63,7 @@ public class RunAnythingManager {
       .setRequestFocus(true)
       .setCancelKeyEnabled(false)
       .setCancelCallback(() -> {
-        if (!Objects.equals(myRunAnythingUI.getUserInputText(), searchText)) {
+        if (isShown() && !Objects.equals(myRunAnythingUI.getUserInputText(), searchText)) {
           saveSearchText();
         }
 
@@ -110,10 +110,6 @@ public class RunAnythingManager {
   }
 
   private void saveSearchText() {
-    if (!isShown()) {
-      return;
-    }
-
     mySelectedText = myRunAnythingUI.getUserInputText();
   }
 
