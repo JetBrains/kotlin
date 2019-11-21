@@ -175,8 +175,8 @@ public class ConfigurationSettingsEditorWrapper extends SettingsEditor<RunnerAnd
 
   private void createUIComponents() {
     myTemplateLabel = new JLabel("Template", AllIcons.General.Warning, SwingConstants.LEADING);
-    myTemplateLabel.setBorder(JBUI.Borders.emptyRight(5));
     RelativeFont.BOLD.install(myTemplateLabel);
+    myTemplateLabel.setBorder(JBUI.Borders.emptyBottom(2));
     myCreateNewRCLabel = new LinkLabel(ExecutionBundle.message("create.configuration"), null, new LinkListener() {
       @Override
       public void linkSelected(LinkLabel aSource, Object aLinkData) {
