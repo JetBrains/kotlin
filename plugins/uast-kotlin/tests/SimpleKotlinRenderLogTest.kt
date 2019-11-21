@@ -105,6 +105,12 @@ class SimpleKotlinRenderLogTest : AbstractKotlinRenderLogTest() {
 
     @Test
     fun testReified() = doTest("Reified")
+
+    @Test
+    fun testSuspend() = doTest("Suspend")
+
+    @Test
+    fun testDeprecatedHidden() = doTest("DeprecatedHidden")
 }
 
 fun withForceUInjectionHostValue(call: () -> Unit) {
