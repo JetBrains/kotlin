@@ -26,16 +26,12 @@ public final class SdkSetupNotificationProvider extends EditorNotifications.Prov
 
   @Override
   public EditorNotificationPanel createNotificationPanel(@NotNull VirtualFile file, @NotNull FileEditor fileEditor, @NotNull Project project) {
-    for (ProjectSdkSetupValidator validator : ProjectSdkSetupValidator.PROJECT_SDK_SETUP_VALIDATOR_EP.getExtensionList()) {
+    for (ProjectSdkSetupValidator validator : ProjectSdkSetupValidator.EP_NAME.getExtensionList()) {
       if (validator.isApplicableFor(project, file)) {
-        final String errorMessage = validator.getErrorMessage(project, file);
-        if (errorMessage != null) {
-          return createPanel(errorMessage, () -> validator.doFix(project, file));
-        }
-        return null;
+        String errorMessage = validator.getErrorMessage(project, file);
+        return errorMessage != null ? createPanel(errorMessage, () -> validator.doFix(project, file)) : null;
       }
     }
-
     return null;
   }
 

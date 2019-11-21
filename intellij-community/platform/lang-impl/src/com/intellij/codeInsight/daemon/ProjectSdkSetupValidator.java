@@ -26,8 +26,7 @@ import org.jetbrains.annotations.Nullable;
  * @author Pavel.Dolgov
  */
 public interface ProjectSdkSetupValidator {
-  ExtensionPointName<ProjectSdkSetupValidator>
-    PROJECT_SDK_SETUP_VALIDATOR_EP = ExtensionPointName.create("com.intellij.projectSdkSetupValidator");
+  ExtensionPointName<ProjectSdkSetupValidator> EP_NAME = ExtensionPointName.create("com.intellij.projectSdkSetupValidator");
 
   boolean isApplicableFor(@NotNull Project project, @NotNull VirtualFile file);
 
