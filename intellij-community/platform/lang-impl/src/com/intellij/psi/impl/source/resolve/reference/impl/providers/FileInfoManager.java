@@ -19,17 +19,19 @@ package com.intellij.psi.impl.source.resolve.reference.impl.providers;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.extensions.ExtensionPointListener;
+import com.intellij.openapi.extensions.PluginDescriptor;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.file.FileLookupInfoProvider;
-import java.util.HashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -39,13 +41,27 @@ public class FileInfoManager implements Disposable {
   private final Map<FileType, FileLookupInfoProvider> myFileType2InfoProvider = new HashMap<>();
 
   public FileInfoManager() {
-    final FileLookupInfoProvider[] providers = FileLookupInfoProvider.EP_NAME.getExtensions();
-    for (final FileLookupInfoProvider provider : providers) {
-      final FileType[] types = provider.getFileTypes();
-      for (FileType type : types) {
+    for (FileLookupInfoProvider provider : FileLookupInfoProvider.EP_NAME.getExtensions()) {
+      for (FileType type : provider.getFileTypes()) {
         myFileType2InfoProvider.put(type, provider);
       }
     }
+
+    FileLookupInfoProvider.EP_NAME.addExtensionPointListener(new ExtensionPointListener<FileLookupInfoProvider>() {
+      @Override
+      public void extensionAdded(@NotNull FileLookupInfoProvider extension, @NotNull PluginDescriptor pluginDescriptor) {
+        for (FileType type : extension.getFileTypes()) {
+          myFileType2InfoProvider.put(type, extension);
+        }
+      }
+
+      @Override
+      public void extensionRemoved(@NotNull FileLookupInfoProvider extension, @NotNull PluginDescriptor pluginDescriptor) {
+        for (FileType type : extension.getFileTypes()) {
+          myFileType2InfoProvider.remove(type);
+        }
+      }
+    }, this);
   }
 
   public static FileInfoManager getFileInfoManager() {
