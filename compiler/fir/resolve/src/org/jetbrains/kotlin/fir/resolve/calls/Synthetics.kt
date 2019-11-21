@@ -20,8 +20,6 @@ import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
 
-interface SyntheticSymbol
-
 class SyntheticPropertySymbol(callableId: CallableId) : FirPropertySymbol(callableId), SyntheticSymbol
 
 class FirSyntheticFunctionSymbol(

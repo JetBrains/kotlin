@@ -114,10 +114,7 @@ class MemberScopeTowerLevel(
                 }
             }.stop()
         ) return ProcessorAction.STOP
-        val withSynthetic = FirSyntheticPropertiesScope(session, scope, ReturnTypeCalculatorWithJump(session, scopeSession))
-        return withSynthetic.processScopeMembers { symbol ->
-            output.consumeCandidate(symbol, symbol.dispatchReceiverValue(), implicitExtensionReceiver)
-        }
+        return ProcessorAction.NEXT
     }
 
     override fun <T : AbstractFirBasedSymbol<*>> processElementsByName(

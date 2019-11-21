@@ -10,10 +10,10 @@ FILE fqName:<root> fileName:/Derived.kt
         SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:value type:kotlin.Int visibility:public' type=kotlin.Unit origin=null
           receiver: GET_VAR '<this>: <root>.Base declared in <root>.Base' type=<root>.Base origin=null
           value: CONST Int type=kotlin.Int value=0
-    FUN name:getValue visibility:public modality:FINAL <> ($this:<root>.Derived) returnType:IrErrorType
+    FUN name:getValue visibility:public modality:FINAL <> ($this:<root>.Derived) returnType:kotlin.Int
       $this: VALUE_PARAMETER name:<this> type:<root>.Derived
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun getValue (): IrErrorType declared in <root>.Derived'
+        RETURN type=kotlin.Nothing from='public final fun getValue (): kotlin.Int declared in <root>.Derived'
           GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:value type:kotlin.Int visibility:public' type=kotlin.Int origin=GET_PROPERTY
             receiver: GET_VAR '<this>: <root>.Base declared in <root>.Base' type=<root>.Base origin=null
     FUN name:setValue visibility:public modality:FINAL <> ($this:<root>.Derived, value:kotlin.Int) returnType:kotlin.Unit

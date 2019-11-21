@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.symbols.impl
 
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.symbols.CallableId
+import org.jetbrains.kotlin.fir.symbols.SyntheticSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -35,7 +36,7 @@ class FirConstructorSymbol(
 class FirAccessorSymbol(
     callableId: CallableId,
     val accessorId: CallableId
-) : FirFunctionSymbol<FirSimpleFunction>(callableId)
+) : FirFunctionSymbol<FirSimpleFunction>(callableId), SyntheticSymbol
 
 // ------------------------ unnamed ------------------------
 

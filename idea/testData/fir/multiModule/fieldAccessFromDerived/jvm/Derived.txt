@@ -4,7 +4,7 @@ FILE: Derived.kt
             super<R|Base|>()
         }
 
-        public final fun getValue(): <ERROR TYPE REF: cycle> {
+        public final fun getValue(): R|kotlin/Int| {
             ^getValue this@R|/Base|.R|/Base.value|
         }
 

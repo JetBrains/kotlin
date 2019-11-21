@@ -1,5 +1,5 @@
 FILE: main.kt
     public final fun test(a: R|A|): R|kotlin/Unit| {
-        lval int: <ERROR TYPE REF: Ambiguity: x, [/A.x, /A.x]> = R|<local>/a|.<Ambiguity: x, [/A.x, /A.x]>#
+        lval int: R|kotlin/Int| = R|<local>/a|.R|/A.x|
         lval string: R|ft<kotlin/String, kotlin/String?>!| = R|<local>/a|.R|/A.getX|()
     }
