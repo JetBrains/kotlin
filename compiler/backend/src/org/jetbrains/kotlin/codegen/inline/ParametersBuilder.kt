@@ -23,8 +23,8 @@ class ParametersBuilder private constructor() {
         return addParameter(ParameterInfo(type, skipped, nextParameterOffset, -1, nextValueParameterIndex))
     }
 
-    fun addNextParameter(type: Type, skipped: Boolean): ParameterInfo {
-        return addParameter(ParameterInfo(type, skipped, nextParameterOffset, null, nextValueParameterIndex))
+    fun addNextParameter(type: Type, skipped: Boolean, typeOnStack: Type = type): ParameterInfo {
+        return addParameter(ParameterInfo(type, skipped, nextParameterOffset, null, nextValueParameterIndex, typeOnStack))
     }
 
     fun addNextValueParameter(type: Type, skipped: Boolean, remapValue: StackValue?, parameterIndex: Int): ParameterInfo {
