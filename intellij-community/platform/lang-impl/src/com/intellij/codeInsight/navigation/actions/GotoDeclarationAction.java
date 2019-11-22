@@ -18,7 +18,6 @@ import com.intellij.lang.LanguageNamesValidation;
 import com.intellij.lang.refactoring.NamesValidator;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.ex.ActionUtil;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
@@ -27,17 +26,13 @@ import com.intellij.openapi.editor.EditorGutter;
 import com.intellij.openapi.editor.ex.util.EditorUtil;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.fileEditor.ex.IdeDocumentHistory;
-import com.intellij.openapi.progress.ProcessCanceledException;
-import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.ThrowableComputable;
 import com.intellij.pom.Navigatable;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
@@ -47,7 +42,6 @@ import com.intellij.psi.search.PsiElementProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.ui.awt.RelativePoint;
-import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -79,7 +73,8 @@ public class GotoDeclarationAction extends BaseCodeInsightAction implements Code
     DumbService.getInstance(project).setAlternativeResolveEnabled(true);
     try {
       int offset = editor.getCaretModel().getOffset();
-      Pair<PsiElement[], PsiElement> pair = underModalProgress(project, "Resolving Reference...", () -> doSelectCandidate(project, editor, offset));
+      Pair<PsiElement[], PsiElement> pair = ActionUtil
+        .underModalProgress(project, "Resolving Reference...", () -> doSelectCandidate(project, editor, offset));
       FeatureUsageTracker.getInstance().triggerFeatureUsed("navigation.goto.declaration");
 
       PsiElement[] elements = pair.first;
@@ -145,21 +140,6 @@ public class GotoDeclarationAction extends BaseCodeInsightAction implements Code
       RelativePoint popupPosition = JBPopupFactory.getInstance().guessBestPopupLocation(editor);
       new ShowUsagesAction().startFindUsages(element, popupPosition, editor, ShowUsagesAction.getUsagesPageSize());
     }
-  }
-
-  static <T> T underModalProgress(@NotNull Project project,
-                                  @NotNull @Nls(capitalization = Nls.Capitalization.Title) String progressTitle,
-                                  @NotNull Computable<T> computable) throws ProcessCanceledException {
-    return ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
-      DumbService.getInstance(project).setAlternativeResolveEnabled(true);
-      try {
-        ThrowableComputable<T, RuntimeException> inRead = () -> ApplicationManager.getApplication().runReadAction(computable);
-        return ProgressManager.getInstance().computePrioritized(inRead);
-      }
-      finally {
-        DumbService.getInstance(project).setAlternativeResolveEnabled(false);
-      }
-    }, progressTitle, true, project);
   }
 
   public static PsiElement findElementToShowUsagesOf(@NotNull Editor editor, int offset) {
@@ -241,7 +221,7 @@ public class GotoDeclarationAction extends BaseCodeInsightAction implements Code
 
     final PsiElement[] finalElements = elements;
     Pair<PsiElement[], PsiReference> pair =
-      underModalProgress(project, "Resolving Reference...", () -> doChooseAmbiguousTarget(editor, offset, finalElements));
+      ActionUtil.underModalProgress(project, "Resolving Reference...", () -> doChooseAmbiguousTarget(editor, offset, finalElements));
 
     elements = pair.first;
     PsiReference reference = pair.second;

@@ -10,6 +10,7 @@ import com.intellij.codeInsight.actions.BaseCodeInsightAction;
 import com.intellij.codeInsight.navigation.NavigationUtil;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.actionSystem.ex.ActionUtil;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
@@ -61,8 +62,8 @@ public class GotoTypeDeclarationAction extends BaseCodeInsightAction implements 
     DumbService.getInstance(project).setAlternativeResolveEnabled(true);
     try {
       int offset = editor.getCaretModel().getOffset();
-      PsiElement[] symbolTypes = GotoDeclarationAction.underModalProgress(project, "Resolving Reference...",
-                                                                          () -> findSymbolTypes(editor, offset));
+      PsiElement[] symbolTypes = ActionUtil.underModalProgress(project, "Resolving Reference...",
+                                                               () -> findSymbolTypes(editor, offset));
       if (symbolTypes == null || symbolTypes.length == 0) return;
       if (symbolTypes.length == 1) {
         navigate(project, symbolTypes[0]);
