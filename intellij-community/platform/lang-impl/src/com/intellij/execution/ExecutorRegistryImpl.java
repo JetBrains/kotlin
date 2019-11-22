@@ -252,10 +252,6 @@ public final class ExecutorRegistryImpl extends ExecutorRegistry implements Disp
     public void update(@NotNull final AnActionEvent e) {
       final Presentation presentation = e.getPresentation();
       final Project project = e.getProject();
-      if (project != null) {
-        boolean b = (System.currentTimeMillis() % 10000) > 5000;
-        project.putUserData(EXECUTION_TEMPORARY_DISABLED, b ? Boolean.TRUE : null);
-      }
       if (project == null || !project.isInitialized() || project.isDisposed() || EXECUTION_TEMPORARY_DISABLED.get(project) == Boolean.TRUE) {
         presentation.setEnabled(false);
         return;
