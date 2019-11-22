@@ -9,6 +9,8 @@ import com.intellij.openapi.editor.ex.util.EditorUtil
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFileSystemItem
 
 class CommonLocationFeatures : ContextFeatureProvider {
   override fun getName(): String = "common"
@@ -33,6 +35,7 @@ class CommonLocationFeatures : ContextFeatureProvider {
       result["dumb_mode"] = MLFeatureValue.binary(true)
     }
 
+    result.addPsiParents(environment.parameters.position, 10)
     return result
   }
 
@@ -40,6 +43,18 @@ class CommonLocationFeatures : ContextFeatureProvider {
     val scoringFunction = NGram.createScoringFunction(environment.parameters, 4)
     if(scoringFunction != null) {
       environment.putUserData(NGram.NGRAM_SCORER_KEY, scoringFunction)
+    }
+  }
+
+  private fun MutableMap<String, MLFeatureValue>.addPsiParents(position: PsiElement, numParents: Int) {
+    // First parent is always referenceExpression
+    var curParent = position.parent ?: return
+    for (i in 1..numParents) {
+      curParent = curParent.parent
+      if (curParent == null) return
+      val parentName = "parent_$i"
+      this[parentName] = MLFeatureValue.className(curParent::class.java)
+      if (curParent is PsiFileSystemItem) return
     }
   }
 }
