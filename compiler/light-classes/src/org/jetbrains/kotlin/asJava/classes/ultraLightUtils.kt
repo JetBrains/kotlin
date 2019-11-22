@@ -16,6 +16,7 @@ import com.intellij.psi.impl.compiled.ClsTypeElementImpl
 import com.intellij.psi.impl.compiled.SignatureParsing
 import com.intellij.psi.impl.compiled.StubBuildingVisitor
 import com.intellij.psi.impl.light.*
+import com.intellij.psi.util.TypeConversionUtil
 import com.intellij.util.BitUtil.isSet
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.asJava.UltraLightClassModifierExtension
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.elements.KotlinLightTypeParameterListBuilder
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.asJava.elements.psiType
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.AsmUtil
@@ -41,7 +43,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
-import org.jetbrains.kotlin.resolve.constants.EnumValue
+import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
@@ -354,6 +356,35 @@ private fun toQualifiedName(userType: KtUserType): FqName? {
 
     return FqName.fromSegments(ContainerUtil.reverse(reversedNames))
 }
+
+internal fun ConstantValue<*>.createPsiLiteral(parent: PsiElement): PsiExpression? {
+    val asString = asStringForPsiLiteral(parent)
+    val instance = PsiElementFactory.SERVICE.getInstance(parent.project)
+    return instance.createExpressionFromText(asString, parent)
+}
+
+private fun ConstantValue<*>.asStringForPsiLiteral(parent: PsiElement): String =
+    when (this) {
+        is NullValue -> "null"
+        is StringValue -> "\"$value\""
+        is KClassValue -> {
+            val value = (value as KClassValue.Value.NormalClass).value
+            val arrayPart = "[]".repeat(value.arrayNestedness)
+            val fqName = value.classId.asSingleFqName()
+            val canonicalText = psiType(
+                fqName.asString(), parent, boxPrimitiveType = value.arrayNestedness > 0
+            ).let(TypeConversionUtil::erasure).getCanonicalText(false)
+
+            "$canonicalText$arrayPart.class"
+        }
+        is EnumValue -> "${enumClassId.asSingleFqName().asString()}.$enumEntryName"
+        else -> when (value) {
+            is Long -> "${value}L"
+            is Float -> "${value}f"
+            else -> value.toString()
+        }
+    }
+
 
 /***
  * @see org.jetbrains.kotlin.codegen.ImplementationBodyCodegen

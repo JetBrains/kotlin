@@ -170,7 +170,13 @@ object UltraLightChecker {
         if (this is PsiParameter && this.isVarArgs) {
             result += " /* vararg */"
         }
+
+        if (hasInitializer()) {
+            result += " = ${initializer?.text} /* initializer type: ${initializer?.type?.renderType()} */"
+        }
+
         computeConstantValue()?.let { result += " /* constant value $it */" }
+
         return result
     }
 

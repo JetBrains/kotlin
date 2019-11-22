@@ -45,7 +45,7 @@ final class null /* null*/ {
   @null()
   public static final java.lang.Object INSTANCE;
 
-  private static final java.lang.String fy /* constant value text */;
+  private static final java.lang.String fy = "text" /* initializer type: java.lang.String */ /* constant value text */;
 
   @org.jetbrains.annotations.NotNull()
   public final java.lang.String getFy();
@@ -104,7 +104,7 @@ final class null /* null*/ {
   @null()
   public static final java.lang.Object INSTANCE;
 
-  private static final java.lang.String fy /* constant value text */;
+  private static final java.lang.String fy = "text" /* initializer type: java.lang.String */ /* constant value text */;
 
   @org.jetbrains.annotations.NotNull()
   public final java.lang.String getFy();

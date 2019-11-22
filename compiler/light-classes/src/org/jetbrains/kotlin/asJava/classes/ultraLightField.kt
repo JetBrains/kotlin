@@ -135,12 +135,22 @@ internal open class KtUltraLightFieldImpl protected constructor(
     override fun getContainingClass() = containingClass
     override fun getContainingFile(): PsiFile? = containingClass.containingFile
 
-    override fun computeConstantValue(): Any? =
-        if (hasModifierProperty(PsiModifier.FINAL) &&
-            (TypeConversionUtil.isPrimitiveAndNotNull(_type) || _type.equalsToText(CommonClassNames.JAVA_LANG_STRING))
-        )
-            (declaration.resolve() as? VariableDescriptor)?.compileTimeInitializer?.value
-        else null
+    private val _initializer by lazyPub {
+        _constantInitializer?.createPsiLiteral(declaration)
+    }
+
+    override fun getInitializer(): PsiExpression? = _initializer
+
+    override fun hasInitializer(): Boolean = initializer !== null
+
+    private val _constantInitializer by lazyPub {
+        if ((declaration as? KtProperty)?.hasInitializer() != true) return@lazyPub null
+        if (!hasModifierProperty(PsiModifier.FINAL)) return@lazyPub null
+        if (!TypeConversionUtil.isPrimitiveAndNotNull(_type) && !_type.equalsToText(CommonClassNames.JAVA_LANG_STRING)) return@lazyPub null
+        propertyDescriptor?.compileTimeInitializer
+    }
+
+    override fun computeConstantValue(): Any? = _constantInitializer?.value
 
     override fun computeConstantValue(visitedVars: MutableSet<PsiVariable>?): Any? = computeConstantValue()
 
