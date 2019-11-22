@@ -765,4 +765,13 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
             }
         """)
     }
+
+    fun testComposableReporting049() {
+        check("""
+            import androidx.compose.*
+            fun foo(<!WRONG_ANNOTATION_TARGET!>@Composable<!> bar: ()->Unit) {
+                println(bar)
+            }
+        """)
+    }
 }
