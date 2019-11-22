@@ -207,8 +207,7 @@ object Snapshots : TemplateGroupBase() {
         }
         sample(when (family) {
             CharSequences -> "samples.text.Strings.associate"
-            ArraysOfObjects -> "samples.collections.Arrays.Transformations.associate"
-            ArraysOfPrimitives -> "samples.collections.Arrays.Transformations.associateArrayOfPrimitives"
+            ArraysOfObjects, ArraysOfPrimitives -> "samples.collections.Arrays.Transformations.associateArrayOfPrimitives"
             else -> "samples.collections.Collections.Transformations.associate"
         })
         body {
@@ -255,8 +254,7 @@ object Snapshots : TemplateGroupBase() {
         }
         sample(when (family) {
             CharSequences -> "samples.text.Strings.associateTo"
-            ArraysOfObjects -> "samples.collections.Arrays.Transformations.associateTo"
-            ArraysOfPrimitives -> "samples.collections.Arrays.Transformations.associateArrayOfPrimitivesTo"
+            ArraysOfObjects, ArraysOfPrimitives -> "samples.collections.Arrays.Transformations.associateArrayOfPrimitivesTo"
             else -> "samples.collections.Collections.Transformations.associateTo"
         })
         body {
@@ -287,8 +285,7 @@ object Snapshots : TemplateGroupBase() {
         }
         sample(when (family) {
             CharSequences -> "samples.text.Strings.associateBy"
-            ArraysOfObjects -> "samples.collections.Arrays.Transformations.associateBy"
-            ArraysOfPrimitives -> "samples.collections.Arrays.Transformations.associateArrayOfPrimitivesBy"
+            ArraysOfObjects, ArraysOfPrimitives -> "samples.collections.Arrays.Transformations.associateArrayOfPrimitivesBy"
             else -> "samples.collections.Collections.Transformations.associateBy"
         })
         returns("Map<K, T>")
@@ -339,8 +336,7 @@ object Snapshots : TemplateGroupBase() {
         }
         sample(when (family) {
             CharSequences -> "samples.text.Strings.associateByTo"
-            ArraysOfObjects -> "samples.collections.Arrays.Transformations.associateByTo"
-            ArraysOfPrimitives -> "samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByTo"
+            ArraysOfObjects, ArraysOfPrimitives -> "samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByTo"
             else -> "samples.collections.Collections.Transformations.associateByTo"
         })
         body {
@@ -371,8 +367,7 @@ object Snapshots : TemplateGroupBase() {
         }
         sample(when (family) {
             CharSequences -> "samples.text.Strings.associateByWithValueTransform"
-            ArraysOfObjects -> "samples.collections.Arrays.Transformations.associateByWithValueTransform"
-            ArraysOfPrimitives -> "samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByWithValueTransform"
+            ArraysOfObjects, ArraysOfPrimitives -> "samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByWithValueTransform"
             else -> "samples.collections.Collections.Transformations.associateByWithValueTransform"
         })
         returns("Map<K, V>")
@@ -428,8 +423,7 @@ object Snapshots : TemplateGroupBase() {
         }
         sample(when (family) {
             CharSequences -> "samples.text.Strings.associateByToWithValueTransform"
-            ArraysOfObjects -> "samples.collections.Arrays.Transformations.associateByToWithValueTransform"
-            ArraysOfPrimitives -> "samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByToWithValueTransform"
+            ArraysOfObjects, ArraysOfPrimitives -> "samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByToWithValueTransform"
             else -> "samples.collections.Collections.Transformations.associateByToWithValueTransform"
         })
         body {

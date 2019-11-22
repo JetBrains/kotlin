@@ -7146,7 +7146,7 @@ public expect fun CharArray.toTypedArray(): Array<Char>
  * 
  * The returned map preserves the entry iteration order of the original array.
  * 
- * @sample samples.collections.Arrays.Transformations.associate
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitives
  */
 public inline fun <T, K, V> Array<out T>.associate(transform: (T) -> Pair<K, V>): Map<K, V> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7281,7 +7281,7 @@ public inline fun <K, V> CharArray.associate(transform: (Char) -> Pair<K, V>): M
  * 
  * The returned map preserves the entry iteration order of the original array.
  * 
- * @sample samples.collections.Arrays.Transformations.associateBy
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesBy
  */
 public inline fun <T, K> Array<out T>.associateBy(keySelector: (T) -> K): Map<K, T> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7415,7 +7415,7 @@ public inline fun <K> CharArray.associateBy(keySelector: (Char) -> K): Map<K, Ch
  * 
  * The returned map preserves the entry iteration order of the original array.
  * 
- * @sample samples.collections.Arrays.Transformations.associateByWithValueTransform
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByWithValueTransform
  */
 public inline fun <T, K, V> Array<out T>.associateBy(keySelector: (T) -> K, valueTransform: (T) -> V): Map<K, V> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7541,7 +7541,7 @@ public inline fun <K, V> CharArray.associateBy(keySelector: (Char) -> K, valueTr
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  * 
- * @sample samples.collections.Arrays.Transformations.associateByTo
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByTo
  */
 public inline fun <T, K, M : MutableMap<in K, in T>> Array<out T>.associateByTo(destination: M, keySelector: (T) -> K): M {
     for (element in this) {
@@ -7685,7 +7685,7 @@ public inline fun <K, M : MutableMap<in K, in Char>> CharArray.associateByTo(des
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  * 
- * @sample samples.collections.Arrays.Transformations.associateByToWithValueTransform
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByToWithValueTransform
  */
 public inline fun <T, K, V, M : MutableMap<in K, in V>> Array<out T>.associateByTo(destination: M, keySelector: (T) -> K, valueTransform: (T) -> V): M {
     for (element in this) {
@@ -7828,7 +7828,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> CharArray.associateByTo(des
  * 
  * If any of two pairs would have the same key the last one gets added to the map.
  * 
- * @sample samples.collections.Arrays.Transformations.associateTo
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesTo
  */
 public inline fun <T, K, V, M : MutableMap<in K, in V>> Array<out T>.associateTo(destination: M, transform: (T) -> Pair<K, V>): M {
     for (element in this) {

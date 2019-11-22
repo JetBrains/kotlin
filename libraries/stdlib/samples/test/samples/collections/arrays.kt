@@ -65,18 +65,6 @@ class Arrays {
     class Transformations {
 
         @Sample
-        fun associate() {
-            data class Person(val firstName: String, val lastName: String)
-
-            val scientists = arrayOf(Person("Grace", "Hopper"), Person("Jacob", "Bernoulli"), Person("Johann", "Bernoulli"))
-
-            val byLastName = scientists.associate { it.lastName to it.firstName }
-
-            // Jacob Bernoulli does not occur in the map because only the last pair with the same key gets added
-            assertPrints(byLastName, "{Hopper=Grace, Bernoulli=Johann}")
-        }
-
-        @Sample
         fun associateArrayOfPrimitives() {
             val charCodes = intArrayOf(72, 69, 76, 76, 79)
 
@@ -86,19 +74,6 @@ class Arrays {
             assertPrints(byCharCode, "{72=H, 69=E, 76=L, 79=O}")
         }
 
-        @Sample
-        fun associateBy() {
-            data class Person(val firstName: String, val lastName: String) {
-                override fun toString(): String = "$firstName $lastName"
-            }
-
-            val scientists = arrayOf(Person("Grace", "Hopper"), Person("Jacob", "Bernoulli"), Person("Johann", "Bernoulli"))
-
-            val byLastName = scientists.associateBy { it.lastName }
-
-            // Jacob Bernoulli does not occur in the map because only the last pair with the same key gets added
-            assertPrints(byLastName, "{Hopper=Grace Hopper, Bernoulli=Johann Bernoulli}")
-        }
 
         @Sample
         fun associateArrayOfPrimitivesBy() {
@@ -111,18 +86,6 @@ class Arrays {
         }
 
         @Sample
-        fun associateByWithValueTransform() {
-            data class Person(val firstName: String, val lastName: String)
-
-            val scientists = arrayOf(Person("Grace", "Hopper"), Person("Jacob", "Bernoulli"), Person("Johann", "Bernoulli"))
-
-            val byLastName = scientists.associateBy({ it.lastName }, { it.firstName })
-
-            // Jacob Bernoulli does not occur in the map because only the last pair with the same key gets added
-            assertPrints(byLastName, "{Hopper=Grace, Bernoulli=Johann}")
-        }
-
-        @Sample
         fun associateArrayOfPrimitivesByWithValueTransform() {
             val charCodes = intArrayOf(65, 65, 66, 67, 68, 69)
 
@@ -130,24 +93,6 @@ class Arrays {
 
             // A=a only occurs once because only the last pair with the same key gets added
             assertPrints(byUpperCase, "{A=a, B=b, C=c, D=d, E=e}")
-        }
-
-        @Sample
-        fun associateByTo() {
-            data class Person(val firstName: String, val lastName: String) {
-                override fun toString(): String = "$firstName $lastName"
-            }
-
-            val scientists = arrayOf(Person("Grace", "Hopper"), Person("Jacob", "Bernoulli"), Person("Johann", "Bernoulli"))
-
-            val byLastName = mutableMapOf<String, Person>()
-            assertTrue(byLastName.isEmpty())
-
-            scientists.associateByTo(byLastName) { it.lastName }
-
-            assertTrue(byLastName.isNotEmpty())
-            // Jacob Bernoulli does not occur in the map because only the last pair with the same key gets added
-            assertPrints(byLastName, "{Hopper=Grace Hopper, Bernoulli=Johann Bernoulli}")
         }
 
         @Sample
@@ -164,22 +109,6 @@ class Arrays {
         }
 
         @Sample
-        fun associateByToWithValueTransform() {
-            data class Person(val firstName: String, val lastName: String)
-
-            val scientists = arrayOf(Person("Grace", "Hopper"), Person("Jacob", "Bernoulli"), Person("Johann", "Bernoulli"))
-
-            val byLastName = mutableMapOf<String, String>()
-            assertTrue(byLastName.isEmpty())
-
-            scientists.associateByTo(byLastName, { it.lastName }, { it.firstName} )
-
-            assertTrue(byLastName.isNotEmpty())
-            // Jacob Bernoulli does not occur in the map because only the last pair with the same key gets added
-            assertPrints(byLastName, "{Hopper=Grace, Bernoulli=Johann}")
-        }
-
-        @Sample
         fun associateArrayOfPrimitivesByToWithValueTransform() {
             val charCodes = intArrayOf(65, 65, 66, 67, 68, 69)
 
@@ -188,22 +117,6 @@ class Arrays {
 
             // A=a only occurs once because only the last pair with the same key gets added
             assertPrints(byUpperCase, "{A=a, B=b, C=c, D=d, E=e}")
-        }
-
-        @Sample
-        fun associateTo() {
-            data class Person(val firstName: String, val lastName: String)
-
-            val scientists = arrayOf(Person("Grace", "Hopper"), Person("Jacob", "Bernoulli"), Person("Johann", "Bernoulli"))
-
-            val byLastName = mutableMapOf<String, String>()
-            assertTrue(byLastName.isEmpty())
-
-            scientists.associateTo(byLastName) { it.lastName to it.firstName }
-
-            assertTrue(byLastName.isNotEmpty())
-            // Jacob Bernoulli does not occur in the map because only the last pair with the same key gets added
-            assertPrints(byLastName, "{Hopper=Grace, Bernoulli=Johann}")
         }
 
         @Sample
