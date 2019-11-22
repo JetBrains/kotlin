@@ -7,6 +7,7 @@ package org.jetbrains.konan.execution
 
 import com.intellij.application.options.ModulesComboBox
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBLabel
 import com.intellij.util.ui.GridBag
@@ -14,17 +15,17 @@ import com.jetbrains.cidr.execution.CidrRunConfigurationExecutableEditor
 import com.jetbrains.cidr.execution.CidrRunConfigurationSettingsEditor
 import com.jetbrains.cidr.ui.SelectExecutableActionComboItem
 import org.jetbrains.konan.MobileBundle
-import org.jetbrains.konan.isAndroid
-import org.jetbrains.konan.isApple
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import javax.swing.JPanel
 
-open class MobileRunConfigurationEditor(project: Project, helper: MobileBuildConfigurationHelper) :
-    CidrRunConfigurationSettingsEditor<
-            MobileBuildConfiguration,
-            MobileBuildTarget,
-            MobileRunConfiguration,
-            MobileBuildConfigurationHelper>(project, helper) {
+open class MobileRunConfigurationEditor(
+    project: Project, helper: MobileBuildConfigurationHelper,
+    private val modulePredicate: (Module) -> Boolean
+) : CidrRunConfigurationSettingsEditor<
+        MobileBuildConfiguration,
+        MobileBuildTarget,
+        MobileRunConfiguration,
+        MobileBuildConfigurationHelper>(project, helper) {
 
     private lateinit var modulesComboBox: ModulesComboBox
 
@@ -34,15 +35,11 @@ open class MobileRunConfigurationEditor(project: Project, helper: MobileBuildCon
             MobileRunConfiguration,
             MobileBuildConfigurationHelper>
 
-    protected open val modulePostfix: String = "Main"
-
     override fun createEditorInner(panel: JPanel, g: GridBag) {
         val modulesLabel = JBLabel(MobileBundle.message("run.configuration.editor.module"))
         panel.add(modulesLabel, g.nextLine().next())
         modulesComboBox = ModulesComboBox()
-        modulesComboBox.setModules(myProject.allModules().filter { module ->
-            (module.isAndroid || module.isApple) && module.name.endsWith(modulePostfix)
-        })
+        modulesComboBox.setModules(myProject.allModules().filter(modulePredicate))
         panel.add(modulesComboBox, g.next().coverLine())
         modulesLabel.labelFor = modulesComboBox
 

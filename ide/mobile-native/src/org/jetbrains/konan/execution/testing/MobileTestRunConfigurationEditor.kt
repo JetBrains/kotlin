@@ -5,15 +5,14 @@
 
 package org.jetbrains.konan.execution.testing
 
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import org.jetbrains.konan.execution.MobileBuildConfigurationHelper
 import org.jetbrains.konan.execution.MobileRunConfiguration
 import org.jetbrains.konan.execution.MobileRunConfigurationEditor
 
-class MobileTestRunConfigurationEditor(project: Project, helper: MobileBuildConfigurationHelper) :
-    MobileRunConfigurationEditor(project, helper) {
-
-    override val modulePostfix: String = "Test"
+class MobileTestRunConfigurationEditor(project: Project, helper: MobileBuildConfigurationHelper, modulePredicate: (Module) -> Boolean) :
+    MobileRunConfigurationEditor(project, helper, modulePredicate) {
 
     override fun applyEditorTo(runConfiguration: MobileRunConfiguration) {
         super.applyEditorTo(runConfiguration)

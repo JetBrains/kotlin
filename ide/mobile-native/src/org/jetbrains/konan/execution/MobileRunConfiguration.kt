@@ -24,26 +24,27 @@ import com.jetbrains.cidr.lang.workspace.OCResolveConfiguration
 import org.jdom.Element
 import org.jetbrains.konan.isAndroid
 import org.jetbrains.konan.isApple
+import org.jetbrains.konan.isMobileAppMain
+import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import java.io.File
 
 abstract class MobileRunConfiguration(project: Project, factory: ConfigurationFactory, name: String) :
     CidrRunConfiguration<MobileBuildConfiguration, MobileBuildTarget>(project, factory, name),
     CidrExecutableDataHolder {
 
-    private var _module = RunConfigurationModule(project).also { it.setModuleToAnyFirstIfNotSpecified() }
+    private var _module = RunConfigurationModule(project).also { it.module = project.allModules().first { module -> isSuitable(module) } }
     var module: Module
         get() = _module.module!!
         set(value) {
             _module.module = value
         }
 
+    protected abstract fun isSuitable(module: Module): Boolean
+
     override fun canRunOn(target: ExecutionTarget): Boolean =
         target is Device &&
-                (canRunOnApple && target is AppleDevice) ||
-                (canRunOnAndroid && target is AndroidDevice)
-
-    val canRunOnAndroid: Boolean get() = module.isAndroid
-    val canRunOnApple: Boolean get() = module.isApple
+                (module.isApple && target is AppleDevice) ||
+                (module.isAndroid && target is AndroidDevice)
 
     open fun getProductBundle(environment: ExecutionEnvironment): File {
         val moduleRoot = ExternalSystemApiUtil.getExternalProjectPath(module)?.let { File(it) }
@@ -93,8 +94,10 @@ abstract class MobileRunConfiguration(project: Project, factory: ConfigurationFa
 class MobileAppRunConfiguration(project: Project, factory: ConfigurationFactory, name: String) :
     MobileRunConfiguration(project, factory, name) {
 
+    override fun isSuitable(module: Module): Boolean = module.isMobileAppMain
+
     override fun getConfigurationEditor(): SettingsEditor<out RunConfiguration> =
-        MobileRunConfigurationEditor(project, helper)
+        MobileRunConfigurationEditor(project, helper, ::isSuitable)
 
     override fun getState(executor: Executor, environment: ExecutionEnvironment): CommandLineState? =
         (environment.executionTarget as? Device)?.createState(this, environment)

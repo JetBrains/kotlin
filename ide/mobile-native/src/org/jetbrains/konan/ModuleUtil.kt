@@ -24,3 +24,9 @@ val Module.isAndroid: Boolean
 
 val Module.isApple: Boolean
     get() = targetPlatformOrNull() is KonanPlatform
+
+val Module.isMobileAppMain: Boolean
+    get() = name.endsWith("Main") && (isAndroid || isApple)
+
+val Module.isMobileAppTest: Boolean
+    get() = name.endsWith("Test") && (isAndroid || isApple) // FIXME

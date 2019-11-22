@@ -10,6 +10,7 @@ import com.intellij.execution.configurations.CommandLineState
 import com.intellij.execution.configurations.ConfigurationFactory
 import com.intellij.execution.configurations.RunConfiguration
 import com.intellij.execution.runners.ExecutionEnvironment
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.options.SettingsEditor
 import com.intellij.openapi.project.Project
 import com.jetbrains.cidr.execution.testing.*
@@ -18,6 +19,9 @@ import org.jetbrains.konan.execution.AndroidDevice
 import org.jetbrains.konan.execution.AppleDevice
 import org.jetbrains.konan.execution.Device
 import org.jetbrains.konan.execution.MobileRunConfiguration
+import org.jetbrains.konan.isAndroid
+import org.jetbrains.konan.isApple
+import org.jetbrains.konan.isMobileAppTest
 import java.io.File
 
 class MobileTestRunConfiguration(project: Project, factory: ConfigurationFactory, name: String) :
@@ -37,9 +41,11 @@ class MobileTestRunConfiguration(project: Project, factory: ConfigurationFactory
     private lateinit var testData: CidrTestRunConfigurationData<MobileTestRunConfiguration>
 
     fun recreateTestData() {
-        testData = // TODO choose based on module
-            if (canRunOnAndroid) AndroidTestRunConfigurationData(this)
-            else AppleXCTestRunConfigurationData(this)
+        testData = when {
+            module.isAndroid -> AndroidTestRunConfigurationData(this)
+            module.isApple -> AppleXCTestRunConfigurationData(this)
+            else -> throw IllegalStateException()
+        }
     }
 
     init {
@@ -48,8 +54,10 @@ class MobileTestRunConfiguration(project: Project, factory: ConfigurationFactory
 
     override fun getTestData(): CidrTestRunConfigurationData<MobileTestRunConfiguration> = testData
 
+    override fun isSuitable(module: Module): Boolean = module.isMobileAppTest
+
     override fun getConfigurationEditor(): SettingsEditor<out RunConfiguration> =
-        MobileTestRunConfigurationEditor(project, helper)
+        MobileTestRunConfigurationEditor(project, helper, ::isSuitable)
 
     override fun getState(executor: Executor, environment: ExecutionEnvironment): CommandLineState? =
         (environment.executionTarget as? Device)?.createState(this, environment)
