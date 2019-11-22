@@ -22465,6 +22465,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             public void testParameterNamesAndNullability() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/lambdaClasses/parameterNamesAndNullability.kt");
             }
+
+            @TestMetadata("reflectOnLambdaInField.kt")
+            public void testReflectOnLambdaInField() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/lambdaClasses/reflectOnLambdaInField.kt");
+            }
+
+            @TestMetadata("reflectOnLambdaInStaticField.kt")
+            public void testReflectOnLambdaInStaticField() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/lambdaClasses/reflectOnLambdaInStaticField.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/reflection/mapping")

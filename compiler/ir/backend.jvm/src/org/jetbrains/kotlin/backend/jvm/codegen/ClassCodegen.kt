@@ -89,6 +89,7 @@ open class ClassCodegen protected constructor(
         when (val metadata = irClass.metadata) {
             is MetadataSource.Class -> DescriptorSerializer.create(metadata.descriptor, serializerExtension, parentClassCodegen?.serializer)
             is MetadataSource.File -> DescriptorSerializer.createTopLevel(serializerExtension)
+            is MetadataSource.Function -> DescriptorSerializer.createForLambda(serializerExtension)
             else -> null
         }
 
@@ -236,6 +237,15 @@ open class ClassCodegen protected constructor(
 
                     if (irClass in context.classNameOverride) {
                         av.visit(JvmAnnotationNames.METADATA_PACKAGE_NAME_FIELD_NAME, irClass.fqNameWhenAvailable!!.parent().asString())
+                    }
+                }
+            }
+            is MetadataSource.Function -> {
+                val fakeDescriptor = createFreeFakeLambdaDescriptor(metadata.descriptor)
+                val functionProto = serializer!!.functionProto(fakeDescriptor)?.build()
+                writeKotlinMetadata(visitor, state, KotlinClassHeader.Kind.SYNTHETIC_CLASS, 0) {
+                    if (functionProto != null) {
+                        AsmUtil.writeAnnotationData(it, serializer, functionProto)
                     }
                 }
             }
