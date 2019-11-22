@@ -17,10 +17,12 @@ import org.junit.runners.Parameterized;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 
 /**
  * @author Vladislav.Soroka
  */
+@SuppressWarnings("GrUnresolvedAccess") // ignore unresolved code for injected Groovy Gradle DSL
 public class GradleMiscImportingTest extends GradleImportingTestCase {
 
   /**
@@ -122,8 +124,8 @@ public class GradleMiscImportingTest extends GradleImportingTestCase {
     );
 
     assertModules("project", "project.main", "project.test");
-    assertTrue(getSdkForModule("project.main") == myJdk);
-    assertTrue(getSdkForModule("project.test") == myJdk);
+    assertSame(getSdkForModule("project.main"), myJdk);
+    assertSame(getSdkForModule("project.test"), myJdk);
   }
 
   @Test
@@ -133,7 +135,7 @@ public class GradleMiscImportingTest extends GradleImportingTestCase {
     );
     assertModules("project", "project.main", "project.test");
 
-    edt(() -> ModuleManager.getInstance(myProject).setUnloadedModules(Arrays.asList("project.main")));
+    edt(() -> ModuleManager.getInstance(myProject).setUnloadedModules(Collections.singletonList("project.main")));
     assertModules("project", "project.test");
 
     importProject();
