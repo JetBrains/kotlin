@@ -17,14 +17,10 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsSingleTargetPreset
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
 import org.jetbrains.kotlin.gradle.utils.checkGradleCompatibility
 
-interface Npm : (String) -> NpmDependency
+interface Npm {
+    operator fun invoke(packageName: String, version: String = "*"): NpmDependency
 
-fun Npm(lambda: (name: String) -> NpmDependency): Npm {
-    return object : Npm {
-        override fun invoke(name: String): NpmDependency {
-            return lambda(name)
-        }
-    }
+    operator fun invoke(org: String, packageName: String, version: String = "*"): NpmDependency
 }
 
 open class KotlinJsPlugin(
@@ -39,7 +35,16 @@ open class KotlinJsPlugin(
 
         checkGradleCompatibility()
 
-        val npm = Npm { name: String -> NpmDependency(project, null, name, "*") }
+        val npm = object : Npm {
+            override fun invoke(packageName: String, version: String): NpmDependency {
+                return NpmDependency(project, null, packageName, version)
+            }
+
+            override fun invoke(org: String, packageName: String, version: String): NpmDependency {
+                return NpmDependency(project, org, packageName, version)
+            }
+
+        }
 
         (project.dependencies as ExtensionAware)
             .extensions
