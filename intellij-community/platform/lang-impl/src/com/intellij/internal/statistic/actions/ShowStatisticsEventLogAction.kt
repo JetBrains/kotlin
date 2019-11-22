@@ -17,6 +17,9 @@ import com.intellij.openapi.wm.impl.ToolWindowImpl
 import com.intellij.ui.content.ContentFactory
 import com.intellij.ui.content.ContentManager
 
+/**
+ * Opens a toolwindow with feature usage statistics event log
+ */
 class ShowStatisticsEventLogAction : DumbAwareAction() {
 
   override fun actionPerformed(event: AnActionEvent) {
