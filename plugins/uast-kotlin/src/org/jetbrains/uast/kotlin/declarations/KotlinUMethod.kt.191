@@ -17,6 +17,9 @@
 package org.jetbrains.uast.kotlin.declarations
 
 import com.intellij.psi.*
+import com.intellij.psi.impl.light.LightMethodBuilder
+import com.intellij.psi.impl.light.LightModifierList
+import com.intellij.psi.impl.light.LightParameterListBuilder
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.elements.isGetter
@@ -55,7 +58,7 @@ open class KotlinUMethod(
 
     override fun getNameIdentifier() = UastLightIdentifier(psi, kotlinOrigin as KtNamedDeclaration?)
 
-    override val annotations by lz {
+    override val annotations: List<UAnnotation> by lz {
         psi.annotations
                 .mapNotNull { (it as? KtLightElement<*, *>)?.kotlinOrigin as? KtAnnotationEntry }
                 .map { KotlinUAnnotation(it, this) }
@@ -146,6 +149,18 @@ open class KotlinUAnnotationMethod(
     }
 
 
+}
+
+private fun buildLightMethodFake(original: KtFunction): PsiMethod = LightMethodBuilder(
+    original.manager, original.language, original.name,
+    LightParameterListBuilder(original.manager, original.language),
+    LightModifierList(original.manager)
+)
+
+class KotlinUMethodWithFakeLightDelegate(val original: KtFunction, givenParent: UElement?) :
+    KotlinUMethod(buildLightMethodFake(original), original, givenParent) {
+    override val annotations: List<UAnnotation>
+        get() = original.annotationEntries.mapNotNull { it.toUElementOfType<UAnnotation>() }
 }
 
 internal fun wrapExpressionBody(function: UElement, bodyExpression: KtExpression): UExpression? = when (bodyExpression) {
