@@ -31,6 +31,8 @@
 <!--    <applicationService-->
 <!--        serviceInterface="org.jetbrains.kotlin.platform.DefaultIdeTargetPlatformKindProvider"-->
 <!--        serviceImplementation="org.jetbrains.konan.support.NativeOnlyDefaultTargetPlatformKindProvider"/>-->
+    <externalProjectDataService implementation="org.jetbrains.konan.gradle.KonanProjectDataService"
+                                id="KonanProjectDataService"/>
   </extensions>
 
   <extensions defaultExtensionNs="cidr.debugger">

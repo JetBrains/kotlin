@@ -27,7 +27,8 @@
   </extensions>
 
   <extensions defaultExtensionNs="com.intellij">
-    <externalProjectDataService implementation="org.jetbrains.konan.gradle.CLionKonanProjectDataService"/>
+    <externalProjectDataService implementation="org.jetbrains.konan.gradle.CLionKonanProjectDataService"
+                                order="after KonanProjectDataService"/>
     <directoryProjectGenerator implementation="org.jetbrains.konan.KonanGradleProjectGenerator"/>
     <projectTaskRunner implementation="org.jetbrains.konan.gradle.execution.GradleKonanProjectTaskRunner"/>
 
