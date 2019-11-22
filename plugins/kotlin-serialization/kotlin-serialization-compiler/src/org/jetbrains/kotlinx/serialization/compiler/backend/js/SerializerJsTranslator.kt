@@ -148,6 +148,7 @@ open class SerializerJsTranslator(
 
         f.name = context.getInnerNameForDescriptor(typedConstructorDescriptor);
         context.addDeclarationStatement(f.makeStmt())
+        context.export(typedConstructorDescriptor)
     }
 
     protected fun TranslationContext.referenceMethod(clazz: ClassDescriptor, name: String) =
