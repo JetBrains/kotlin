@@ -861,6 +861,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/expressions/equality.kt");
         }
 
+        @TestMetadata("equals.kt")
+        public void testEquals() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/equals.kt");
+        }
+
         @TestMetadata("extFunInvokeAsFun.kt")
         public void testExtFunInvokeAsFun() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/extFunInvokeAsFun.kt");
@@ -944,6 +949,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         @TestMetadata("implicitCastToTypeParameter.kt")
         public void testImplicitCastToTypeParameter() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/implicitCastToTypeParameter.kt");
+        }
+
+        @TestMetadata("implicitNotNullInDestructuringAssignment.kt")
+        public void testImplicitNotNullInDestructuringAssignment() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/implicitNotNullInDestructuringAssignment.kt");
         }
 
         @TestMetadata("in.kt")
@@ -1668,6 +1678,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         @TestMetadata("genericPropertyReferenceType.kt")
         public void testGenericPropertyReferenceType() throws Exception {
             runTest("compiler/testData/ir/irText/types/genericPropertyReferenceType.kt");
+        }
+
+        @TestMetadata("implicitNotNullOnPlatformType.kt")
+        public void testImplicitNotNullOnPlatformType() throws Exception {
+            runTest("compiler/testData/ir/irText/types/implicitNotNullOnPlatformType.kt");
         }
 
         @TestMetadata("intersectionType1_NI.kt")

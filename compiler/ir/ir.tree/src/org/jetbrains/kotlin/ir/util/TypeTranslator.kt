@@ -59,18 +59,18 @@ class TypeTranslator(
             ?: symbolTable.referenceTypeParameter(typeParameterDescriptor)
 
     fun translateType(kotlinType: KotlinType): IrType =
-        translateType(kotlinType, Variance.INVARIANT).type
+        translateType(kotlinType, kotlinType, Variance.INVARIANT).type
 
-    private fun translateType(kotlinType: KotlinType, variance: Variance): IrTypeProjection {
+    private fun translateType(kotlinType: KotlinType, approximatedKotlinType: KotlinType, variance: Variance): IrTypeProjection {
         val approximatedType = LegacyTypeApproximation().approximate(kotlinType)
 
         when {
             approximatedType.isError ->
-                return IrErrorTypeImpl(approximatedType, translateTypeAnnotations(approximatedType.annotations), variance)
+                return IrErrorTypeImpl(approximatedKotlinType, translateTypeAnnotations(approximatedType.annotations), variance)
             approximatedType.isDynamic() ->
-                return IrDynamicTypeImpl(approximatedType, translateTypeAnnotations(approximatedType.annotations), variance)
+                return IrDynamicTypeImpl(approximatedKotlinType, translateTypeAnnotations(approximatedType.annotations), variance)
             approximatedType.isFlexible() ->
-                return translateType(approximatedType.upperIfFlexible(), variance)
+                return translateType(approximatedType.upperIfFlexible(), approximatedType, variance)
         }
 
         val ktTypeConstructor = approximatedType.constructor
@@ -78,7 +78,7 @@ class TypeTranslator(
             ?: throw AssertionError("No descriptor for type $approximatedType")
 
         return IrSimpleTypeBuilder().apply {
-            this.kotlinType = kotlinType
+            this.kotlinType = approximatedKotlinType
             hasQuestionMark = approximatedType.isMarkedNullable
             this.variance = variance
             this.abbreviation = approximatedType.getAbbreviation()?.toIrTypeAbbreviation()
@@ -154,6 +154,6 @@ class TypeTranslator(
             if (it.isStarProjection)
                 IrStarProjectionImpl
             else
-                translateType(it.type, it.projectionKind)
+                translateType(it.type, it.type, it.projectionKind)
         }
 }

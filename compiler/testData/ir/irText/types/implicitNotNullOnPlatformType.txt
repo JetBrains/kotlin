@@ -1,0 +1,12 @@
+FILE fqName:<root> fileName:/implicitNotNullOnPlatformType.kt
+  FUN name:f visibility:public modality:FINAL <> (s:kotlin.String) returnType:kotlin.Unit
+    VALUE_PARAMETER name:s index:0 type:kotlin.String
+    BLOCK_BODY
+  FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    BLOCK_BODY
+      CALL 'public final fun f (s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        s: TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
+          CALL 'public open fun s (): kotlin.String? declared in <root>.J' type=kotlin.String? origin=null
+      CALL 'public final fun f (s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        s: TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
+          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:STRING type:kotlin.String? visibility:public [static]' type=kotlin.String? origin=GET_PROPERTY
