@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.extensions.internal.CallResolutionInterceptorExtension
@@ -54,6 +55,7 @@ import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.scopes.ResolutionScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.PackageQualifier
 import org.jetbrains.kotlin.types.KotlinType
+import java.util.concurrent.Callable
 
 typealias Candidate = NewResolutionOldInference.MyCandidate
 
@@ -69,7 +71,7 @@ fun ComposableCandidate(
         return Candidate(
             eagerDiagnostics = eagerDiagnostics,
             resolvedCall = ComposableResolvedCall(
-                resolvedCall as MutableResolvedCall<FunctionDescriptor>, composerCall,
+                resolvedCall, composerCall,
                 composerMetadata),
             finalDiagnosticsComputation = null
         )
@@ -92,23 +94,41 @@ fun ComposableCandidate(
     )
 }
 
-class ComposableResolvedCall(
-    val underlying: MutableResolvedCall<FunctionDescriptor>,
+@Suppress("UNCHECKED_CAST")
+class ComposableResolvedCall<T : CallableDescriptor>(
+    val underlying: MutableResolvedCall<T>,
     val composerCall: ResolvedCall<*>,
     val composerMetadata: ComposerMetadata
-) : MutableResolvedCall<FunctionDescriptor> by underlying {
-    private val composableCandidateDescriptor = ComposableFunctionDescriptor(
-        underlying.candidateDescriptor,
-        composerCall,
-        composerMetadata
-    )
-    override fun getCandidateDescriptor(): FunctionDescriptor = composableCandidateDescriptor
-    override fun getResultingDescriptor(): FunctionDescriptor {
-        return ComposableFunctionDescriptor(
-            underlying.resultingDescriptor,
-            composerCall,
-            composerMetadata
-        )
+) : MutableResolvedCall<T> by underlying {
+    private val composableCandidateDescriptor =
+        when (val descriptor = underlying.candidateDescriptor) {
+            is FunctionDescriptor -> ComposableFunctionDescriptor(
+                descriptor,
+                composerCall,
+                composerMetadata
+            )
+            is PropertyDescriptor -> ComposablePropertyDescriptorImpl(
+                descriptor,
+                composerCall,
+                composerMetadata
+            )
+            else -> error("Expected FunctionDescriptor or PropertyDescriptor, found $descriptor")
+        }
+    override fun getCandidateDescriptor(): T = composableCandidateDescriptor as T
+    override fun getResultingDescriptor(): T {
+        return when (val descriptor = underlying.resultingDescriptor) {
+            is FunctionDescriptor -> ComposableFunctionDescriptor(
+                descriptor,
+                composerCall,
+                composerMetadata
+            )
+            is PropertyDescriptor -> ComposablePropertyDescriptorImpl(
+                descriptor,
+                composerCall,
+                composerMetadata
+            )
+            else -> error("Expected FunctionDescriptor or PropertyDescriptor, found $descriptor")
+        } as T
     }
 }
 

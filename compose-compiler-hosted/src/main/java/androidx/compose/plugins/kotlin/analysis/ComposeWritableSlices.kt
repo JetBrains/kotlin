@@ -3,6 +3,7 @@ package androidx.compose.plugins.kotlin.analysis
 import androidx.compose.plugins.kotlin.ComposableAnnotationChecker
 import androidx.compose.plugins.kotlin.ComposableEmitDescriptor
 import androidx.compose.plugins.kotlin.ComposableFunctionDescriptor
+import androidx.compose.plugins.kotlin.ComposablePropertyDescriptor
 import androidx.compose.plugins.kotlin.ComposerMetadata
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
@@ -43,6 +44,9 @@ object ComposeWritableSlices {
         BasicWritableSlice(RewritePolicy.DO_NOTHING)
     val COMPOSABLE_FUNCTION_DESCRIPTOR: WritableSlice<IrAttributeContainer,
             ComposableFunctionDescriptor> =
+        BasicWritableSlice(RewritePolicy.DO_NOTHING)
+    val COMPOSABLE_PROPERTY_DESCRIPTOR: WritableSlice<IrAttributeContainer,
+            ComposablePropertyDescriptor> =
         BasicWritableSlice(RewritePolicy.DO_NOTHING)
 }
 
