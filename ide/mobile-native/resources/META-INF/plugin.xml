@@ -40,6 +40,8 @@
     <applicationService serviceImplementation="org.jetbrains.konan.execution.DeviceService"/>
     <executionTargetProvider implementation="org.jetbrains.konan.execution.DeviceExecutionTargetProvider"/>
 
+    <externalProjectDataService implementation="org.jetbrains.konan.gradle.AndroidProjectDataService"/>
+
     <!-- apple gradle project model -->
     <externalProjectDataService implementation="com.jetbrains.cidr.apple.gradle.AppleProjectDataService"/>
     <projectService serviceImplementation="com.jetbrains.cidr.apple.gradle.GradleAppleWorkspace"/>

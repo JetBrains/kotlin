@@ -9,8 +9,10 @@ import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.Key
 import com.intellij.openapi.externalSystem.model.ProjectKeys
 import com.intellij.openapi.externalSystem.model.project.ModuleData
+import com.intellij.openapi.externalSystem.service.project.manage.AbstractProjectDataService
 import com.intellij.openapi.externalSystem.util.ExternalSystemConstants
 import com.intellij.openapi.externalSystem.util.Order
+import com.intellij.openapi.module.Module
 import org.gradle.api.Project
 import org.gradle.tooling.model.idea.IdeaModule
 import org.jetbrains.plugins.gradle.service.project.AbstractProjectResolverExtension
@@ -73,4 +75,9 @@ class AndroidProjectResolver : AbstractProjectResolverExtension() {
     companion object {
         val KEY = Key.create(AndroidProjectModel::class.java, ProjectKeys.MODULE.processingWeight + 1)
     }
+}
+
+/** Contributes class loader to external system deserialization */
+class AndroidProjectDataService : AbstractProjectDataService<AndroidProjectModel, Module>() {
+    override fun getTargetDataKey(): Key<AndroidProjectModel> = AndroidProjectResolver.KEY
 }
