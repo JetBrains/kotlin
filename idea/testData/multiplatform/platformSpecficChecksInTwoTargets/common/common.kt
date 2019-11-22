@@ -5,4 +5,4 @@ class A : (Int) -> Int
 fun `name in backticks`() {}
 
 // Array as upper bound isn't allowed on JVM
-class B<<!UPPER_BOUND_CANNOT_BE_ARRAY!>T : Array<*><!>>
+class B<T : Array<*>>
