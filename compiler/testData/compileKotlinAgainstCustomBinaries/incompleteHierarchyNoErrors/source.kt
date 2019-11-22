@@ -1,4 +1,5 @@
-import test.Sub as MySub;
+import test.Sub as MySub
+import test.SubKt
 
 typealias Sub = MySub
 
@@ -21,4 +22,6 @@ fun test() {
     useCallRef(::Sub)
     simpleFun(Sub())
     inlineFun<Sub>(Sub())
+    SubKt.companionMethod()
+    SubKt.InnerObject.objectMethod()
 }

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.resolve.MissingSupertypesResolver
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -47,7 +48,7 @@ object MissingDependencySupertypeChecker {
                 descriptor.dispatchReceiverParameter?.declaration, reportOn,
                 context.trace, context.missingSupertypesResolver
             )
-            if (descriptor !is ConstructorDescriptor && !errorReported) {
+            if (descriptor !is ConstructorDescriptor && descriptor !is FakeCallableDescriptorForObject && !errorReported) {
                 // The constructed class' own supertypes are not resolved after constructor call,
                 // so its containing declaration should not be checked.
                 // Dispatch receiver is checked before for case of inner class constructor call.
