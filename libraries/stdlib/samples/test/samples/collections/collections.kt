@@ -339,11 +339,9 @@ class Collections {
 
         @Sample
         fun associate() {
-            data class Person(val firstName: String, val lastName: String)
+            val names = listOf("Grace Hopper", "Jacob Bernoulli", "Johann Bernoulli")
 
-            val scientists = listOf(Person("Grace", "Hopper"), Person("Jacob", "Bernoulli"), Person("Johann", "Bernoulli"))
-
-            val byLastName = scientists.associate { it.lastName to it.firstName }
+            val byLastName = names.associate { it.split(" ").let { (firstName, lastName) -> lastName to firstName } }
 
             // Jacob Bernoulli does not occur in the map because only the last pair with the same key gets added
             assertPrints(byLastName, "{Hopper=Grace, Bernoulli=Johann}")
