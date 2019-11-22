@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.eraseTypeParameters
 import org.jetbrains.kotlin.backend.jvm.ir.hasJvmDefault
+import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -32,11 +33,12 @@ import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isNullable
+import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isInterface
@@ -44,6 +46,7 @@ import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 
 internal val bridgePhase = makeIrFilePhase(
@@ -159,10 +162,9 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
             )
         }
 
-        // If there is an existing function that would conflict with a special bridge signature, insert the special bridge
-        // code directly as a prelude in the existing method.
-        if (!irFunction.isFakeOverride && specialOverride != null && specialOverrideSignature == ourSignature) {
-            irFunction.rewriteSpecialMethodBody(specialOverrideInfo!!)
+        // Deal with existing function that override special bridge methods.
+        if (!irFunction.isFakeOverride && specialOverride != null) {
+            irFunction.rewriteSpecialMethodBody(ourSignature, specialOverrideSignature!!, specialOverrideInfo!!)
         }
 
         val bridgeSignatures = generateBridges(
@@ -277,43 +279,63 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
         )
     }
 
-    private fun IrSimpleFunction.rewriteSpecialMethodBody(specialOverrideInfo: SpecialMethodWithDefaultInfo) {
-        val argumentsToCheck = valueParameters.take(specialOverrideInfo.argumentsToCheck)
-        val shouldGenerateParameterChecks = argumentsToCheck.any { !it.type.isNullable() }
-        if (shouldGenerateParameterChecks) {
-            // Rewrite the body to check if arguments have wrong type. If so, return the default value, otherwise,
-            // use the existing function body.
-            context.createIrBuilder(symbol).run {
-                body = irBlockBody {
-                    // Change the parameter types to be Any? so that null checks are not generated. The checks
-                    // we insert here make them superfluous.
-                    val variableMap = mutableMapOf<IrValueParameter, IrValueParameter>()
-                    argumentsToCheck.forEach {
-                        val parameterType = it.type
-                        if (!parameterType.isNullable()) {
-                            val newParameter = it.copyTo(this@rewriteSpecialMethodBody, type = context.irBuiltIns.anyNType)
-                            variableMap.put(valueParameters[it.index], newParameter)
-                            valueParameters[it.index] = newParameter
-                            addParameterTypeCheck(
-                                newParameter,
-                                parameterType,
-                                specialOverrideInfo.defaultValueGenerator,
-                                this@rewriteSpecialMethodBody
-                            )
+    private fun IrSimpleFunction.rewriteSpecialMethodBody(
+        ourSignature: Method,
+        specialOverrideSignature: Method,
+        specialOverrideInfo: SpecialMethodWithDefaultInfo
+    ) {
+        // If there is an existing function that would conflict with a special bridge signature, insert the special bridge
+        // code directly as a prelude in the existing method.
+        val variableMap = mutableMapOf<IrValueParameter, IrValueParameter>()
+        if (specialOverrideSignature == ourSignature) {
+            val argumentsToCheck = valueParameters.take(specialOverrideInfo.argumentsToCheck)
+            val shouldGenerateParameterChecks = argumentsToCheck.any { !it.type.isNullable() }
+            if (shouldGenerateParameterChecks) {
+                // Rewrite the body to check if arguments have wrong type. If so, return the default value, otherwise,
+                // use the existing function body.
+                context.createIrBuilder(symbol).run {
+                    body = irBlockBody {
+                        // Change the parameter types to be Any? so that null checks are not generated. The checks
+                        // we insert here make them superfluous.
+                        argumentsToCheck.forEach {
+                            val parameterType = it.type
+                            if (!parameterType.isNullable()) {
+                                val newParameter = it.copyTo(this@rewriteSpecialMethodBody, type = context.irBuiltIns.anyNType)
+                                variableMap.put(valueParameters[it.index], newParameter)
+                                valueParameters[it.index] = newParameter
+                                addParameterTypeCheck(
+                                    newParameter,
+                                    parameterType,
+                                    specialOverrideInfo.defaultValueGenerator,
+                                    this@rewriteSpecialMethodBody
+                                )
+                            }
                         }
-                    }
-
-                    // Map usages of rewritten parameters in old body to the new parameters and paste in the body after the explicit
-                    // null check.
-                    body?.transform(VariableRemapper(variableMap), null)
-                    if (body is IrExpressionBody) {
-                        +(body as IrExpressionBody).expression
-                    } else {
-                        (body as IrBlockBody).statements.forEach { +it }
+                        // After the checks, insert the orignal method body.
+                        if (body is IrExpressionBody) {
+                            +(body as IrExpressionBody).expression
+                        } else {
+                            (body as IrBlockBody).statements.forEach { +it }
+                        }
                     }
                 }
             }
+        } else {
+            // If the signature of this method will be changed in the output to take a boxed argument instead of a primitive,
+            // rewrite the argument so that code will be generated for a boxed argument and not a primitive.
+            for ((i, p) in valueParameters.withIndex()) {
+                if (AsmUtil.isPrimitive(context.typeMapper.mapType(p.type)) && ourSignature.argumentTypes[i].sort == Type.OBJECT) {
+                    val newParameter = p.copyTo(this, type = p.type.makeNullable())
+                    variableMap[p] = newParameter
+                    valueParameters[i] = newParameter
+                }
+            }
         }
+        // If any parameters change, remap them in the function body.
+        if (variableMap.isNotEmpty()) {
+            body?.transform(VariableRemapper(variableMap), null)
+        }
+
     }
 
     private fun IrSimpleFunction.createBridgeBody(
