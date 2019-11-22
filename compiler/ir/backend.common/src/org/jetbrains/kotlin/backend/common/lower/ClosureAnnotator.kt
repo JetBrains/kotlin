@@ -189,6 +189,10 @@ class ClosureAnnotator(irFile: IrFile) {
 
         private fun processMemberAccess(declaration: IrDeclaration) {
             if (declaration.isLocal) {
+                if (declaration is IrSimpleFunction && declaration.parent is IrClass) {
+                    return
+                }
+
                 val builder = closureBuilders[declaration]
                 builder?.let {
                     closuresStack.peek()?.include(builder)

@@ -17146,6 +17146,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/objects/objectLiteral.kt");
         }
 
+        @TestMetadata("objectLiteralInClass.kt")
+        public void testObjectLiteralInClass() throws Exception {
+            runTest("compiler/testData/codegen/box/objects/objectLiteralInClass.kt");
+        }
+
         @TestMetadata("objectLiteralInClosure.kt")
         public void testObjectLiteralInClosure() throws Exception {
             runTest("compiler/testData/codegen/box/objects/objectLiteralInClosure.kt");
