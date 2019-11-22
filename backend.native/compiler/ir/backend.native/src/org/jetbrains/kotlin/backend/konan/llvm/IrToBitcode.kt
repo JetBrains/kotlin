@@ -1272,6 +1272,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             IrTypeOperator.NOT_INSTANCEOF            -> evaluateNotInstanceOf(value)
             IrTypeOperator.SAM_CONVERSION            -> TODO(ir2string(value))
             IrTypeOperator.IMPLICIT_DYNAMIC_CAST     -> TODO(ir2string(value))
+            IrTypeOperator.REINTERPRET_CAST          -> TODO(ir2string(value))
         }
     }
 
