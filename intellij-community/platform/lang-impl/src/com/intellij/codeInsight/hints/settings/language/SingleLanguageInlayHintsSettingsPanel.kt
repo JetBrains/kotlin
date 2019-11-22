@@ -291,6 +291,7 @@ class SingleLanguageInlayHintsSettingsPanel(
     }
     myCasesPanel?.updateFromSettings()
     updateWarningPanel()
+    updateHints()
   }
 
   override fun performCopy(dataContext: DataContext) {
