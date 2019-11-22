@@ -28,7 +28,6 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.impl.LoadTextUtil
 import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.projectRoots.JavaSdk
-import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.TestDialog
@@ -45,6 +44,7 @@ import org.intellij.lang.annotations.Language
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.idea.test.KotlinSdkCreationChecker
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
 import org.jetbrains.kotlin.test.JUnitParameterizedWithIdeaConfigurationRunner
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.plugins.gradle.settings.DistributionType
@@ -110,13 +110,14 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
         assumeTrue(isApplicableTest())
         assumeThat(gradleVersion, versionMatcherRule.matcher)
         runWrite {
-            ProjectJdkTable.getInstance().findJdk(GRADLE_JDK_NAME)?.let {
-                ProjectJdkTable.getInstance().removeJdk(it)
+            val jdkTable = getProjectJdkTableSafe()
+            jdkTable.findJdk(GRADLE_JDK_NAME)?.let {
+                jdkTable.removeJdk(it)
             }
             val jdkHomeDir = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(File(myJdkHome))!!
             val jdk = SdkConfigurationUtil.setupSdk(arrayOfNulls(0), jdkHomeDir, JavaSdk.getInstance(), true, null, GRADLE_JDK_NAME)
             TestCase.assertNotNull("Cannot create JDK for $myJdkHome", jdk)
-            ProjectJdkTable.getInstance().addJdk(jdk!!)
+            jdkTable.addJdk(jdk!!)
             FileTypeManager.getInstance().associateExtension(GroovyFileType.GROOVY_FILE_TYPE, "gradle")
 
         }
@@ -135,7 +136,7 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
     override fun tearDown() {
         try {
             runWrite {
-                val old = ProjectJdkTable.getInstance().findJdk(GRADLE_JDK_NAME)
+                val old = getProjectJdkTableSafe().findJdk(GRADLE_JDK_NAME)
                 if (old != null) {
                     SdkConfigurationUtil.removeSdk(old)
                 }

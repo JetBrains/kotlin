@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.idea.caches.resolve
 
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.StdModuleTypes
-import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.roots.DependencyScope
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ModuleRootModificationUtil
@@ -28,6 +27,7 @@ import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.*
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.util.addDependency
@@ -347,13 +347,15 @@ class IdeaModuleInfoTest : ModuleTestCase() {
     fun testSdkForScript() {
         // The first known jdk will be used for scripting if there is no jdk in the project
         runWriteAction {
-            ProjectJdkTable.getInstance().addJdk(mockJdk6())
-            ProjectJdkTable.getInstance().addJdk(mockJdk9())
+            val jdkTable = getProjectJdkTableSafe()
+
+            jdkTable.addJdk(mockJdk6())
+            jdkTable.addJdk(mockJdk9())
 
             ProjectRootManager.getInstance(project).projectSdk = null
         }
 
-        val firstSDK = ProjectJdkTable.getInstance().allJdks.first()
+        val firstSDK = getProjectJdkTableSafe().allJdks.first()
 
         with(createFileInProject("script.kts").moduleInfo) {
             dependencies().filterIsInstance<SdkInfo>().single { it.sdk == firstSDK }
@@ -362,8 +364,10 @@ class IdeaModuleInfoTest : ModuleTestCase() {
 
     fun testSdkForScriptProjectSdk() {
         runWriteAction {
-            ProjectJdkTable.getInstance().addJdk(mockJdk6())
-            ProjectJdkTable.getInstance().addJdk(mockJdk9())
+            val jdkTable = getProjectJdkTableSafe()
+
+            jdkTable.addJdk(mockJdk6())
+            jdkTable.addJdk(mockJdk9())
 
             ProjectRootManager.getInstance(project).projectSdk = mockJdk9()
         }
@@ -377,8 +381,10 @@ class IdeaModuleInfoTest : ModuleTestCase() {
         val a = module("a")
 
         runWriteAction {
-            ProjectJdkTable.getInstance().addJdk(mockJdk6())
-            ProjectJdkTable.getInstance().addJdk(mockJdk9())
+            val jdkTable = getProjectJdkTableSafe()
+
+            jdkTable.addJdk(mockJdk6())
+            jdkTable.addJdk(mockJdk9())
 
             ProjectRootManager.getInstance(project).projectSdk = mockJdk6()
             with(ModuleRootManager.getInstance(a).modifiableModel) {

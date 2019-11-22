@@ -28,7 +28,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ex.ProjectManagerEx
 import com.intellij.openapi.project.impl.ProjectImpl
 import com.intellij.openapi.projectRoots.JavaSdk
-import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.impl.JavaAwareProjectJdkTableImpl
 import com.intellij.openapi.roots.ProjectRootManager
@@ -59,6 +58,7 @@ import org.jetbrains.kotlin.idea.testFramework.Fixture.Companion.cleanupCaches
 import org.jetbrains.kotlin.idea.testFramework.Fixture.Companion.isAKotlinScriptFile
 import org.jetbrains.kotlin.idea.testFramework.Fixture.Companion.openFileInEditor
 import org.jetbrains.kotlin.idea.testFramework.Fixture.Companion.openFixture
+import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
 import java.io.File
 import java.nio.file.Paths
 
@@ -89,7 +89,7 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
             jdk18 = javaSdk.createJdk("1.8", homePath)
             val internal = javaSdk.createJdk("IDEA jdk", homePath)
 
-            val jdkTable = ProjectJdkTable.getInstance()
+            val jdkTable = getProjectJdkTableSafe()
             jdkTable.addJdk(jdk18, testRootDisposable)
             jdkTable.addJdk(internal, testRootDisposable)
             KotlinSdkType.setUpIfNeeded()

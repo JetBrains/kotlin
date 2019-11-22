@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.script
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.module.JavaModuleType
 import com.intellij.openapi.module.Module
-import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.ProjectRootManager
@@ -30,6 +29,7 @@ import org.jetbrains.kotlin.idea.core.script.isScriptChangesNotifierDisabled
 import org.jetbrains.kotlin.idea.highlighter.KotlinHighlightingUtil
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -78,7 +78,7 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
     private val sdk by lazy {
         val jdk = PluginTestCaseBase.jdk(TestJdkKind.MOCK_JDK)
         runWriteAction {
-            ProjectJdkTable.getInstance().addJdk(jdk, testRootDisposable)
+            getProjectJdkTableSafe().addJdk(jdk, testRootDisposable)
             ProjectRootManager.getInstance(project).projectSdk = jdk
         }
         jdk
@@ -208,7 +208,7 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
         }
         runWriteAction {
             val jdk = PluginTestCaseBase.jdk(jdkKind)
-            ProjectJdkTable.getInstance().addJdk(jdk, testRootDisposable)
+            getProjectJdkTableSafe().addJdk(jdk, testRootDisposable)
             env["javaHome"] = File(jdk.homePath)
         }
 

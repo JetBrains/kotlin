@@ -20,7 +20,6 @@ import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsPr
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.JavaSdkVersion
-import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.roots.ExternalProjectSystemRegistry
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ModuleRootModel
@@ -39,6 +38,7 @@ import org.jetbrains.kotlin.idea.core.isAndroidModule
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.idea.platform.tooling
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
 import org.jetbrains.kotlin.platform.*
 import org.jetbrains.kotlin.platform.compat.toNewPlatform
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
@@ -279,7 +279,7 @@ private fun Module.configureSdkIfPossible(compilerArguments: CommonCompilerArgum
 
     val projectSdk = ProjectRootManager.getInstance(project).projectSdk
     KotlinSdkType.setUpIfNeeded()
-    val allSdks = ProjectJdkTable.getInstance().allJdks
+    val allSdks = getProjectJdkTableSafe().allJdks
     val sdk = if (compilerArguments is K2JVMCompilerArguments) {
         val jdkHome = compilerArguments.jdkHome
         when {

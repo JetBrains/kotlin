@@ -20,7 +20,6 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ex.ApplicationEx
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.projectRoots.JavaSdk
-import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.impl.JavaAwareProjectJdkTableImpl
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
@@ -32,6 +31,7 @@ import com.intellij.xml.XmlSchemaProvider
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.idea.perf.Stats.Companion.tcSuite
 import org.jetbrains.kotlin.idea.perf.Stats.Companion.tcTest
+import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
 import java.io.*
 
 abstract class WholeProjectPerformanceTest : DaemonAnalyzerTestCase(), WholeProjectFileProvider {
@@ -57,7 +57,7 @@ abstract class WholeProjectPerformanceTest : DaemonAnalyzerTestCase(), WholeProj
             val javaSdk = JavaSdk.getInstance()
             val j8 = javaSdk.createJdk("1.8", homePath)
 
-            val jdkTable = ProjectJdkTable.getInstance()
+            val jdkTable = getProjectJdkTableSafe()
             jdkTable.addJdk(j8, testRootDisposable)
             KotlinSdkType.setUpIfNeeded()
         }
