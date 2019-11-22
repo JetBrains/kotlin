@@ -14,7 +14,7 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.konan.execution.AndroidCommandLineState
 import org.jetbrains.konan.execution.AndroidProcessHandler
-import org.jetbrains.konan.gradle.AndroidTestModelResolver
+import org.jetbrains.konan.gradle.AndroidProjectResolver
 import org.jetbrains.plugins.gradle.util.GradleUtil
 
 class AndroidTestCommandLineState(
@@ -27,7 +27,7 @@ class AndroidTestCommandLineState(
         try {
             @Suppress("UnstableApiUsage")
             val moduleData = GradleUtil.findGradleModuleData(configuration.module!!)!!
-            val model = ExternalSystemApiUtil.find(moduleData, AndroidTestModelResolver.KEY)!!.data
+            val model = ExternalSystemApiUtil.find(moduleData, AndroidProjectResolver.KEY)!!.data
             model.testInstrumentationRunner
         } catch (e: Throwable) {
             log.warn(e)

@@ -19,23 +19,23 @@ import org.jetbrains.plugins.gradle.tooling.ModelBuilderService
 import java.io.Serializable
 import kotlin.reflect.full.memberFunctions
 
-interface AndroidTestModel : Serializable {
+interface AndroidProjectModel : Serializable {
     val testInstrumentationRunner: String
 }
 
-data class AndroidTestModelImpl(override val testInstrumentationRunner: String) : AndroidTestModel
+data class AndroidProjectModelImpl(override val testInstrumentationRunner: String) : AndroidProjectModel
 
-class AndroidTestModelBuilder : ModelBuilderService {
+class AndroidProjectModelBuilder : ModelBuilderService {
     override fun getErrorMessageBuilder(project: Project, e: Exception): ErrorMessageBuilder =
         ErrorMessageBuilder.create(project, e, "Gradle import errors")
-            .withDescription("Unable to build Android Tests configuration")
+            .withDescription("Unable to build Android project configuration")
 
     override fun canBuild(modelName: String?): Boolean =
-        modelName == AndroidTestModel::class.java.name
+        modelName == AndroidProjectModel::class.java.name
 
-    override fun buildAll(modelName: String?, project: Project): AndroidTestModel? {
+    override fun buildAll(modelName: String?, project: Project): AndroidProjectModel? {
         val id = getTestRunnerId(project) ?: return null
-        return AndroidTestModelImpl(id)
+        return AndroidProjectModelImpl(id)
     }
 
     private fun getTestRunnerId(project: Project): String? {
@@ -54,15 +54,14 @@ class AndroidTestModelBuilder : ModelBuilderService {
     }
 }
 
-
 @Order(ExternalSystemConstants.UNORDERED)
-class AndroidTestModelResolver : AbstractProjectResolverExtension() {
-    override fun getExtraProjectModelClasses() = setOf(AndroidTestModel::class.java)
-    override fun getToolingExtensionsClasses() = setOf(AndroidTestModelBuilder::class.java, Unit::class.java)
+class AndroidProjectResolver : AbstractProjectResolverExtension() {
+    override fun getExtraProjectModelClasses() = setOf(AndroidProjectModel::class.java)
+    override fun getToolingExtensionsClasses() = setOf(AndroidProjectModelBuilder::class.java, Unit::class.java)
 
     override fun populateModuleExtraModels(gradleModule: IdeaModule, ideModule: DataNode<ModuleData>) {
         try {
-            val model = resolverCtx.getExtraProject(gradleModule, AndroidTestModel::class.java)
+            val model = resolverCtx.getExtraProject(gradleModule, AndroidProjectModel::class.java)
             if (model != null) {
                 ideModule.createChild(KEY, model)
             }
@@ -72,6 +71,6 @@ class AndroidTestModelResolver : AbstractProjectResolverExtension() {
     }
 
     companion object {
-        val KEY = Key.create(AndroidTestModel::class.java, ProjectKeys.MODULE.processingWeight + 1)
+        val KEY = Key.create(AndroidProjectModel::class.java, ProjectKeys.MODULE.processingWeight + 1)
     }
 }
