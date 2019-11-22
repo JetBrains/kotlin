@@ -28,8 +28,6 @@ import org.jetbrains.kotlin.idea.core.targetDescriptors
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.substituteExtensionIfCallable
-import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
@@ -102,9 +100,8 @@ class StaticMembersCompletion(
         val descriptorKindFilter = DescriptorKindFilter.CALLABLES exclude DescriptorKindExclude.Extensions
         val nameFilter: (String) -> Boolean = { prefixMatcher.prefixMatches(it) }
 
-        val filter = { declaration: KtNamedDeclaration, objectDeclaration: KtObjectDeclaration ->
-            !declaration.hasModifier(KtTokens.OVERRIDE_KEYWORD) && objectDeclaration.isTopLevelOrCompanion()
-        }
+        val filter = { _: KtNamedDeclaration, _: KtObjectDeclaration -> true }
+
         indicesHelper.processObjectMembers(descriptorKindFilter, nameFilter, filter) {
             if (it !in alreadyAdded) {
                 processor(it)
@@ -127,19 +124,9 @@ class StaticMembersCompletion(
         val filter = { _: KtNamedDeclaration, _: KtObjectDeclaration -> true }
 
         indicesHelper.processObjectMembers(descriptorKindFilter, nameFilter, filter) {
-            if (it !in alreadyAdded && it is CallableDescriptor) {
+            if (it is CallableDescriptor && it !in alreadyAdded) {
                 processor(it)
             }
-        }
-    }
-
-    private fun KtObjectDeclaration.isTopLevelOrCompanion(): Boolean {
-        if (isCompanion()) {
-            val owner = parent.parent as? KtClass ?: return false
-            return owner.isTopLevel()
-        }
-        else {
-            return isTopLevel()
         }
     }
 
