@@ -49,6 +49,7 @@ class ParameterInlayProviderSettingsModel(
     for (state in optionStates) {
       state.apply()
     }
+    ParameterHintsPassFactory.forceHintsUpdateOnNextPass()
   }
 
   override fun isModified(): Boolean {

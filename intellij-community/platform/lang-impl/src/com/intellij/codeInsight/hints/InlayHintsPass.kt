@@ -50,7 +50,7 @@ class InlayHintsPass(
         myEditor,
         existingHorizontalInlays,
         existingVerticalInlays,
-        settings.hintsEnabled(collector.key, collector.language)
+        settings.hintsShouldBeShown(collector.key, collector.language)
       )
     }
     disposeOrphanInlays(existingHorizontalInlays)
