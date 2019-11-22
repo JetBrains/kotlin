@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
@@ -144,6 +145,9 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
             if (irFunctionReference.isSuspend) superTypes += context.ir.symbols.suspendFunctionInterface.defaultType
             createImplicitParameterDeclarationWithWrappedDescriptor()
             copyAttributes(irFunctionReference)
+            if (isLambda) {
+                (this as IrClassImpl).metadata = irFunctionReference.symbol.owner.metadata
+            }
         }
 
         private val receiverFieldFromSuper = context.ir.symbols.functionReferenceReceiverField.owner
