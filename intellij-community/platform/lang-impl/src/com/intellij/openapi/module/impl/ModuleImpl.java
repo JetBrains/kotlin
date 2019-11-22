@@ -95,10 +95,10 @@ public class ModuleImpl extends PlatformComponentManagerImpl implements ModuleEx
   }
 
   @Override
-  public boolean isDisposed() {
+  public final boolean isDisposed() {
     // in case of light project in tests when it's temporarily disposed, the module should be treated as disposed too.
     //noinspection TestOnlyProblems
-    return isDisposedOrDisposeInProgress() || ((ProjectImpl)myProject).isLight() && myProject.isDisposed();
+    return super.isDisposed() || ((ProjectImpl)myProject).isLight() && myProject.isDisposed();
   }
 
   @Override

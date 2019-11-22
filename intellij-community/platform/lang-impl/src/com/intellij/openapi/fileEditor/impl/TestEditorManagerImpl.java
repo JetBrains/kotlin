@@ -380,7 +380,9 @@ final class TestEditorManagerImpl extends FileEditorManagerEx implements Disposa
       TextEditorProvider editorProvider = TextEditorProvider.getInstance();
       editorProvider.disposeEditor(editorProvider.getTextEditor(editor));
       EditorFactory.getInstance().releaseEditor(editor);
-      eventPublisher().fileClosed(this, file);
+      if (!myProject.isDisposed()) {
+        eventPublisher().fileClosed(this, file);
+      }
     }
     if (Comparing.equal(file, myActiveFile)) {
       myActiveFile = null;

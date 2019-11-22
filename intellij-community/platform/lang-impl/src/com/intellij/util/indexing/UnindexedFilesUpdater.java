@@ -30,14 +30,14 @@ import java.util.List;
 /**
  * @author Eugene Zhuravlev
  */
-public class UnindexedFilesUpdater extends DumbModeTask {
+public final class UnindexedFilesUpdater extends DumbModeTask {
   private static final Logger LOG = Logger.getInstance(UnindexedFilesUpdater.class);
 
   private final FileBasedIndexImpl myIndex = (FileBasedIndexImpl)FileBasedIndex.getInstance();
   private final Project myProject;
   private final PushedFilePropertiesUpdater myPusher;
 
-  public UnindexedFilesUpdater(final Project project) {
+  public UnindexedFilesUpdater(@NotNull Project project) {
     myProject = project;
     myPusher = PushedFilePropertiesUpdater.getInstance(myProject);
     project.getMessageBus().connect(this).subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootListener() {

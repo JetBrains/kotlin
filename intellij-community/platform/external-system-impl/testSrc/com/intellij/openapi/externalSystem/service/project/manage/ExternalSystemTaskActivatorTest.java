@@ -44,7 +44,6 @@ import static com.intellij.openapi.externalSystem.util.ExternalSystemConstants.U
 import static java.util.Collections.emptyList;
 
 public class ExternalSystemTaskActivatorTest extends HeavyPlatformTestCase {
-
   private static final Key<StringBuilder> TASKS_TRACE = KeyWithDefaultValue.create("tasks trace", StringBuilder::new);
   private static final String TEST_MODULE_NAME = "MyModule";
 
