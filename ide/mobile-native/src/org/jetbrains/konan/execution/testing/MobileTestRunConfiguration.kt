@@ -41,6 +41,7 @@ class MobileTestRunConfiguration(project: Project, factory: ConfigurationFactory
     private lateinit var testData: CidrTestRunConfigurationData<MobileTestRunConfiguration>
 
     fun recreateTestData() {
+        val module = module ?: return
         testData = when {
             module.isAndroid -> AndroidTestRunConfigurationData(this)
             module.isApple -> AppleXCTestRunConfigurationData(this)

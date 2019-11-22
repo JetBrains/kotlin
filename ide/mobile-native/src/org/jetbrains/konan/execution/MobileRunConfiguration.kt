@@ -33,8 +33,8 @@ abstract class MobileRunConfiguration(project: Project, factory: ConfigurationFa
     CidrExecutableDataHolder {
 
     private var _module = RunConfigurationModule(project).also { it.module = project.allModules().first { module -> isSuitable(module) } }
-    var module: Module
-        get() = _module.module!!
+    var module: Module?
+        get() = _module.module
         set(value) {
             _module.module = value
         }
@@ -43,11 +43,11 @@ abstract class MobileRunConfiguration(project: Project, factory: ConfigurationFa
 
     override fun canRunOn(target: ExecutionTarget): Boolean =
         target is Device &&
-                (module.isApple && target is AppleDevice) ||
-                (module.isAndroid && target is AndroidDevice)
+                (module?.isApple == true && target is AppleDevice) ||
+                (module?.isAndroid == true && target is AndroidDevice)
 
     open fun getProductBundle(environment: ExecutionEnvironment): File {
-        val moduleRoot = ExternalSystemApiUtil.getExternalProjectPath(module)?.let { File(it) }
+        val moduleRoot = ExternalSystemApiUtil.getExternalProjectPath(module!!)?.let { File(it) }
             ?: throw IllegalStateException()
         return when (val device = environment.executionTarget) {
             is AndroidDevice -> {

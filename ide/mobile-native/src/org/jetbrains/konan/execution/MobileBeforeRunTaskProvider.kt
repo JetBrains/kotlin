@@ -54,7 +54,7 @@ class MobileBeforeRunTaskProvider : BeforeRunTaskProvider<MobileBeforeRunTaskPro
             log.warn("External project is not configured")
             return false
         }
-        val moduleId = GradleProjectResolverUtil.getGradlePath(configuration.module)!!
+        val moduleId = GradleProjectResolverUtil.getGradlePath(configuration.module!!)!!
 
         val settings = ExternalSystemTaskExecutionSettings()
         settings.externalSystemIdString = GRADLE_SYSTEM_ID.id
