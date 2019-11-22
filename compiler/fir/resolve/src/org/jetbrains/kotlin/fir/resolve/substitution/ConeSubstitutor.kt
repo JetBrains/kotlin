@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
 
 
 abstract class ConeSubstitutor : TypeSubstitutorMarker {
-    abstract fun substituteOrSelf(type: ConeKotlinType): ConeKotlinType
+    open fun substituteOrSelf(type: ConeKotlinType): ConeKotlinType = substituteOrNull(type) ?: type
     abstract fun substituteOrNull(type: ConeKotlinType): ConeKotlinType?
 
     object Empty : ConeSubstitutor() {
@@ -53,10 +53,6 @@ abstract class AbstractConeSubstitutor : ConeSubstitutor() {
     fun makeNullableIfNeed(isNullable: Boolean, type: ConeKotlinType?): ConeKotlinType? {
         if (!isNullable) return type
         return type?.withNullability(ConeNullability.NULLABLE)
-    }
-
-    override fun substituteOrSelf(type: ConeKotlinType): ConeKotlinType {
-        return substituteOrNull(type) ?: type
     }
 
     override fun substituteOrNull(type: ConeKotlinType): ConeKotlinType? {
@@ -143,8 +139,14 @@ fun substitutorByMap(substitution: Map<FirTypeParameterSymbol, ConeKotlinType>):
     return ConeSubstitutorByMap(substitution)
 }
 
-class ConeSubstitutorByMap(val substitution: Map<FirTypeParameterSymbol, ConeKotlinType>) : AbstractConeSubstitutor() {
+class ChainedSubstitutor(private val first: ConeSubstitutor, private val second: ConeSubstitutor) : ConeSubstitutor() {
+    override fun substituteOrNull(type: ConeKotlinType): ConeKotlinType? {
+        first.substituteOrNull(type)?.let { return second.substituteOrSelf(it) }
+        return second.substituteOrNull(type)
+    }
+}
 
+class ConeSubstitutorByMap(val substitution: Map<FirTypeParameterSymbol, ConeKotlinType>) : AbstractConeSubstitutor() {
     override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
         if (type !is ConeTypeParameterType) return null
         return makeNullableIfNeed(type.isMarkedNullable, substitution[type.lookupTag.symbol])
