@@ -4,7 +4,6 @@ package com.intellij.execution.ui;
 import com.intellij.execution.ExecutionBundle;
 import com.intellij.execution.TerminateRemoteProcessDialog;
 import com.intellij.execution.process.ProcessHandler;
-import com.intellij.execution.process.ScriptRunnerUtil;
 import com.intellij.ide.GeneralSettings;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -122,7 +121,7 @@ public abstract class BaseContentCloseListener extends ContentManagerAdapter imp
     }
     boolean destroyProcess = rc == GeneralSettings.ProcessCloseConfirmation.TERMINATE;
     if (destroyProcess) {
-      ScriptRunnerUtil.terminateProcessHandler(processHandler, 2000, null);
+      processHandler.destroyProcess();
     }
     else {
       processHandler.detachProcess();
