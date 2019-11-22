@@ -57,6 +57,66 @@ class ComposeCallLoweringTests : AbstractCodegenTest() {
     }
 
     @Test
+    fun testProperties(): Unit = ensureSetup {
+        codegen(
+            """
+            import androidx.compose.*
+
+            @Composable val foo get() = 123
+
+            class A {
+                @Composable val bar get() = 123
+            }
+
+            @Composable val A.bam get() = 123
+
+            @Composable fun Foo() {
+            }
+
+            @Composable
+            fun test() {
+                val a = A()
+                foo
+                Foo()
+                a.bar
+                a.bam
+            }
+        """
+        )
+    }
+
+    @Test
+    fun testPropertyValues(): Unit = ensureSetup {
+        compose("""
+            @Composable val foo get() = "123"
+
+            class A {
+                @Composable val bar get() = "123"
+            }
+
+            @Composable val A.bam get() = "123"
+
+            @Composable
+            fun App() {
+                val a = A()
+                TextView(id=1, text=a.bar)
+                TextView(id=2, text=foo)
+                TextView(id=3, text=a.bam)
+            }
+        """,
+            "App()"
+        ).then { activity ->
+            fun assertText(id: Int, value: String) {
+                val tv = activity.findViewById<TextView>(id)
+                assertEquals(value, tv.text)
+            }
+            assertText(1, "123")
+            assertText(2, "123")
+            assertText(3, "123")
+        }
+    }
+
+    @Test
     fun testComposableLambdaCallWithGenerics(): Unit = ensureSetup {
         codegen(
             """

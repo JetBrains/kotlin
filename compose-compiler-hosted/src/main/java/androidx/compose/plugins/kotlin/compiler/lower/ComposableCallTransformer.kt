@@ -2,6 +2,7 @@ package androidx.compose.plugins.kotlin.compiler.lower
 
 import androidx.compose.plugins.kotlin.COMPOSABLE_EMIT_OR_CALL
 import androidx.compose.plugins.kotlin.ComposableAnnotationChecker
+import androidx.compose.plugins.kotlin.ComposableCallableDescriptor
 import androidx.compose.plugins.kotlin.ComposableEmitDescriptor
 import androidx.compose.plugins.kotlin.ComposableFunctionDescriptor
 import androidx.compose.plugins.kotlin.ComposeFqNames
@@ -12,6 +13,7 @@ import androidx.compose.plugins.kotlin.ValidationType
 import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices
 import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices.COMPOSABLE_EMIT_DESCRIPTOR
 import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices.COMPOSABLE_FUNCTION_DESCRIPTOR
+import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices.COMPOSABLE_PROPERTY_DESCRIPTOR
 import androidx.compose.plugins.kotlin.hasPivotalAnnotation
 import androidx.compose.plugins.kotlin.irTrace
 import androidx.compose.plugins.kotlin.isMarkedStable
@@ -263,6 +265,21 @@ class ComposableCallTransformer(val context: JvmBackendContext) :
             }
         }
 
+        val property = context.state.irTrace[COMPOSABLE_PROPERTY_DESCRIPTOR, expression]
+
+        if (property != null) {
+            val (composerCall, emitOrCall) = deconstructComposeBlock(expression)
+
+            val transformedComposerCall = composerCall.transformChildren()
+            val transformed = emitOrCall.transformChildren()
+
+            return context
+                .createIrBuilder(declarationStack.last().symbol)
+                .irBlock(resultType = transformed.type) {
+                    +irComposableExpr(transformedComposerCall, transformed, property)
+                }
+        }
+
         error(
             "Expected ComposableFunctionDescriptor or ComposableEmitDescriptor\n" +
             "Found: $descriptor"
@@ -459,7 +476,7 @@ class ComposableCallTransformer(val context: JvmBackendContext) :
     private fun IrBlockBuilder.irComposableExpr(
         composerCall: IrCall,
         original: IrCall,
-        descriptor: ComposableFunctionDescriptor
+        descriptor: ComposableCallableDescriptor
     ): IrExpression {
         val composerTemp = irTemporary(composerCall)
 
@@ -548,8 +565,14 @@ class ComposableCallTransformer(val context: JvmBackendContext) :
                     ),
                     type = blockParameter.type.toIrType()
                 ) {
+                    val fn = when (val underlying = descriptor.underlyingDescriptor) {
+                        is FunctionDescriptor -> underlying
+                        is PropertyDescriptor -> underlying.getter!!
+                        else -> error("Expected FunctionDescriptor or PropertyDescriptor, found " +
+                                "$descriptor")
+                    }
                     +irReturn(irCall(
-                        callee = symbolTable.referenceFunction(descriptor.underlyingDescriptor),
+                        callee = symbolTable.referenceFunction(fn),
                         type = original.type
                     ).apply {
                         copyTypeArgumentsFrom(original)

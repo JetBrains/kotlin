@@ -56,6 +56,7 @@ import androidx.compose.plugins.kotlin.analysis.ComposeErrors
 import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices.COMPOSABLE_ANALYSIS
 import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices.FCS_RESOLVEDCALL_COMPOSABLE
 import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices.INFERRED_COMPOSABLE_DESCRIPTOR
+import org.jetbrains.kotlin.descriptors.PropertyGetterDescriptor
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.resolve.AdditionalAnnotationChecker
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -64,6 +65,7 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.psi.KtLambdaArgument
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
@@ -125,7 +127,8 @@ open class ComposableAnnotationChecker : CallChecker, DeclarationChecker,
             return candidateDescriptor.type.hasComposableAnnotation()
         }
         if (candidateDescriptor is PropertyDescriptor) {
-            return candidateDescriptor.type.hasComposableAnnotation()
+            return candidateDescriptor.hasComposableAnnotation() ||
+                    candidateDescriptor.type.hasComposableAnnotation()
         }
         return candidateDescriptor.hasComposableAnnotation()
     }
@@ -168,6 +171,9 @@ open class ComposableAnnotationChecker : CallChecker, DeclarationChecker,
                         composability = Composability.MARKED
                     }
                 }
+                is PropertyGetterDescriptor ->
+                    if (unwrappedDescriptor.correspondingProperty.hasComposableAnnotation())
+                        composability = Composability.MARKED
                 else -> if (unwrappedDescriptor.hasComposableAnnotation()) composability =
                     Composability.MARKED
             }
@@ -205,15 +211,40 @@ open class ComposableAnnotationChecker : CallChecker, DeclarationChecker,
                     super.visitLambdaExpression(lambdaExpression)
             }
 
+            override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
+                val resolvedCall = expression.getResolvedCall(trace.bindingContext)
+                if (resolvedCall?.candidateDescriptor is PropertyDescriptor) {
+                    checkResolvedCall(
+                        resolvedCall,
+                        trace.get(FCS_RESOLVEDCALL_COMPOSABLE, expression),
+                        expression
+                    )
+                }
+                super.visitSimpleNameExpression(expression)
+            }
+
             override fun visitCallExpression(expression: KtCallExpression) {
                 val resolvedCall = expression.getResolvedCall(trace.bindingContext)
+                checkResolvedCall(
+                    resolvedCall,
+                    trace.get(FCS_RESOLVEDCALL_COMPOSABLE, expression),
+                    expression.calleeExpression ?: expression
+                )
+                super.visitCallExpression(expression)
+            }
+
+            private fun checkResolvedCall(
+                resolvedCall: ResolvedCall<*>?,
+                isCallComposable: Boolean?,
+                reportElement: KtExpression
+            ) {
                 when (resolvedCall?.candidateDescriptor) {
                     is ComposableEmitDescriptor,
+                    is ComposablePropertyDescriptor,
                     is ComposableFunctionDescriptor -> {
                         localFcs = true
                         if (!isInlineLambda && composability != Composability.MARKED) {
                             // Report error on composable element to make it obvious which invocation is offensive
-                            val reportElement = expression.calleeExpression ?: expression
                             trace.reportFromPlugin(
                                 ComposeErrors.COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE
                                     .on(reportElement),
@@ -223,12 +254,10 @@ open class ComposableAnnotationChecker : CallChecker, DeclarationChecker,
                     }
                 }
                 // Can be null in cases where the call isn't resolvable (eg. due to a bug/typo in the user's code)
-                val isCallComposable = trace.get(FCS_RESOLVEDCALL_COMPOSABLE, expression)
                 if (isCallComposable == true) {
                     localFcs = true
                     if (!isInlineLambda && composability != Composability.MARKED) {
                         // Report error on composable element to make it obvious which invocation is offensive
-                        val reportElement = expression.calleeExpression ?: expression
                         trace.reportFromPlugin(
                             ComposeErrors.COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE
                                 .on(reportElement),
@@ -236,7 +265,6 @@ open class ComposableAnnotationChecker : CallChecker, DeclarationChecker,
                         )
                     }
                 }
-                super.visitCallExpression(expression)
             }
         }, null)
         if (

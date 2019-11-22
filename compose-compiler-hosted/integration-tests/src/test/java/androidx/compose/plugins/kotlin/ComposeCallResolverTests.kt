@@ -18,7 +18,10 @@ package androidx.compose.plugins.kotlin
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtCallExpression
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -27,6 +30,28 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import kotlin.reflect.KClass
 
 class ComposeCallResolverTests : AbstractCodegenTest() {
+
+    fun testProperties() = assertInterceptions(
+        """
+            import androidx.compose.*
+
+            @Composable val foo get() = 123
+
+            class A {
+                @Composable val bar get() = 123
+            }
+
+            @Composable val A.bam get() = 123
+
+            @Composable
+            fun test() {
+                val a = A()
+                <call>foo
+                a.<call>bar
+                a.<call>bam
+            }
+        """
+    )
 
     fun testBasicCallTypes() = assertInterceptions(
         """
@@ -219,7 +244,11 @@ class ComposeCallResolverTests : AbstractCodegenTest() {
 
     private fun ResolvedCall<*>.isEmit(): Boolean = candidateDescriptor is ComposableEmitDescriptor
     private fun ResolvedCall<*>.isCall(): Boolean =
-        candidateDescriptor is ComposableFunctionDescriptor
+        when (candidateDescriptor) {
+            is ComposableFunctionDescriptor -> true
+            is ComposablePropertyDescriptor -> true
+            else -> false
+        }
 
     private val callPattern = Regex("(<normal>)|(<emit>)|(<call>)")
     private fun extractCarets(text: String): Pair<String, List<Pair<Int, String>>> {
@@ -239,9 +268,26 @@ class ComposeCallResolverTests : AbstractCodegenTest() {
         index: Int
     ): ResolvedCall<*>? {
         val element = jetFile.findElementAt(index)!!
-        val callExpression = element.parentOfType<KtCallExpression>()
-        return callExpression?.getResolvedCall(bindingContext)
+        return element.getNearestResolvedCall(bindingContext)
     }
+}
+
+fun PsiElement?.getNearestResolvedCall(bindingContext: BindingContext): ResolvedCall<*>? {
+    var node: PsiElement? = this
+    while (node != null) {
+        when (node) {
+            is KtBlockExpression,
+            is KtDeclaration -> return null
+            is KtElement -> {
+                val resolvedCall = node.getResolvedCall(bindingContext)
+                if (resolvedCall != null) {
+                    return resolvedCall
+                }
+            }
+        }
+        node = node.parent
+    }
+    return null
 }
 
 private inline fun <reified T : PsiElement> PsiElement.parentOfType(): T? = parentOfType(T::class)

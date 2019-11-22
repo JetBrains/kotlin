@@ -18,6 +18,7 @@ package androidx.compose.plugins.kotlin
 
 import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices.COMPOSABLE_EMIT_DESCRIPTOR
 import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices.COMPOSABLE_FUNCTION_DESCRIPTOR
+import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices.COMPOSABLE_PROPERTY_DESCRIPTOR
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
@@ -110,6 +111,25 @@ class ComposeSyntheticIrExtension : SyntheticIrExtension {
         return null
     }
 
+    override fun visitSimpleNameExpression(
+        statementGenerator: StatementGenerator,
+        element: KtSimpleNameExpression
+    ): IrExpression? {
+        val resolvedCall = statementGenerator.getResolvedCall(element)
+            ?: return super.visitSimpleNameExpression(statementGenerator, element)
+
+        val descriptor = resolvedCall.candidateDescriptor
+
+        when (descriptor) {
+            is ComposablePropertyDescriptor -> {
+                val x = statementGenerator.visitComposableProperty(descriptor, element)
+                return x
+            }
+        }
+
+        return super.visitSimpleNameExpression(statementGenerator, element)
+    }
+
     private fun StatementGenerator.visitEmitCall(
         descriptor: ComposableEmitDescriptor,
         expression: KtCallExpression
@@ -169,6 +189,44 @@ class ComposeSyntheticIrExtension : SyntheticIrExtension {
             )
         ).also {
             context.irTrace.record(COMPOSABLE_FUNCTION_DESCRIPTOR, it, descriptor)
+        }
+    }
+
+    private fun StatementGenerator.visitComposableProperty(
+        descriptor: ComposablePropertyDescriptor,
+        expression: KtSimpleNameExpression
+    ): IrExpression? {
+        val resolvedCall = getResolvedCall(expression) ?: error("expected resolved call")
+        // NOTE(lmr):
+        // we insert a block here with two calls:
+        //  1. a call to get the composer
+        //  2. the original call that would have been generated to the synthetic emit descriptor
+        //
+        // We need to do this here because this is the only place we can properly generate a
+        // resolved call in full generality, which we need to do for the composer. We then intercept
+        // this block in the lowering phase and generate the final code we want.
+        return IrBlockImpl(
+            expression.startOffset,
+            expression.endOffset,
+            descriptor.returnType?.toIrType() ?: context.irBuiltIns.unitType,
+            COMPOSABLE_EMIT_OR_CALL,
+            listOf(
+                CallGenerator(this).generateCall(
+                    expression.startOffsetSkippingComments,
+                    expression.endOffset,
+                    pregenerateCall(descriptor.composerCall),
+                    COMPOSABLE_EMIT_OR_CALL
+                ),
+                CallGenerator(this).generateValueReference(
+                    expression.startOffsetSkippingComments,
+                    expression.endOffset,
+                    descriptor,
+                    resolvedCall,
+                    null
+                )
+            )
+        ).also {
+            context.irTrace.record(COMPOSABLE_PROPERTY_DESCRIPTOR, it, descriptor)
         }
     }
 }

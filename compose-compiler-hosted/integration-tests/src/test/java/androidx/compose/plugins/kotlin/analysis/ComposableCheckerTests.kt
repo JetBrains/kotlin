@@ -34,16 +34,20 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         try {
             doTest(text, environment)
             if (!expectPass) {
-                throw Exception(
+                throw ExpectedFailureException(
                     "Test unexpectedly passed, but SHOULD FAIL"
                 )
             }
+        } catch (e: ExpectedFailureException) {
+            throw e
         } catch (e: Exception) {
             if (expectPass) throw Exception(e)
         } finally {
             Disposer.dispose(disposable)
         }
     }
+
+    class ExpectedFailureException(message: String) : Exception(message)
 
     fun check(expectedText: String) {
         doTest(expectedText, true)
@@ -568,7 +572,8 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
     }
 
     fun testComposableReporting039() {
-        checkFail("""
+        check(
+            """
             import androidx.compose.*
             import android.widget.TextView;
 
@@ -583,7 +588,11 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
             fun Bar() {
                 Foo()
             }
-        """)
+        """
+        )
+    }
+
+    fun testComposableReporting040() {
         checkFail("""
             import androidx.compose.*
             import android.widget.TextView;
@@ -771,6 +780,103 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
             import androidx.compose.*
             fun foo(<!WRONG_ANNOTATION_TARGET!>@Composable<!> bar: ()->Unit) {
                 println(bar)
+            }
+        """)
+    }
+
+    fun testComposableReporting050() {
+        checkFail("""
+            import androidx.compose.*;
+
+            @Composable val foo: Int = 123
+
+            fun App() {
+                foo
+            }
+        """)
+        check("""
+            import androidx.compose.*;
+
+            @Composable val foo: Int = 123
+
+            @Composable
+            fun App() {
+                println(foo)
+            }
+        """)
+    }
+
+    fun testComposableReporting051() {
+        checkFail("""
+            import androidx.compose.*;
+
+            class A {
+                @Composable val bar get() = 123
+            }
+
+            @Composable val A.bam get() = 123
+
+            fun App() {
+                val a = A()
+                a.bar
+            }
+        """)
+        checkFail("""
+            import androidx.compose.*;
+
+            class A {
+                @Composable val bar get() = 123
+            }
+
+            @Composable val A.bam get() = 123
+
+            fun App() {
+                val a = A()
+                a.bam
+            }
+        """)
+        check("""
+            import androidx.compose.*;
+
+            class A {
+                @Composable val bar get() = 123
+            }
+
+            @Composable val A.bam get() = 123
+
+            @Composable
+            fun App() {
+                val a = A()
+                a.bar
+                a.bam
+                with(a) {
+                    bar
+                    bam
+                }
+            }
+        """)
+    }
+
+    fun testComposableReporting052() {
+        checkFail("""
+            import androidx.compose.*;
+
+            @Composable fun Foo() {}
+
+            val bam: Int get() {
+                Foo()
+                return 123
+            }
+        """)
+
+        check("""
+            import androidx.compose.*;
+
+            @Composable fun Foo() {}
+
+            @Composable val bam: Int get() {
+                Foo()
+                return 123
             }
         """)
     }
