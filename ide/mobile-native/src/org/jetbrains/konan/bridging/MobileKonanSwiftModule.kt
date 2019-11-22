@@ -7,12 +7,12 @@ import com.jetbrains.cidr.lang.workspace.OCResolveConfiguration
 import org.jetbrains.konan.resolve.konan.KonanBridgeFileManager
 import org.jetbrains.konan.resolve.konan.KonanBridgeVirtualFile
 import org.jetbrains.konan.resolve.konan.KonanSwiftModule
+import org.jetbrains.konan.resolve.konan.KonanTarget
 
 class MobileKonanSwiftModule(
-    private val target: MobileKonanTarget,
+    private val target: KonanTarget,
     private val parentConfiguration: OCResolveConfiguration
 ) : KonanSwiftModule() {
-
     override val project: Project
         get() = parentConfiguration.project
 

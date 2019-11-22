@@ -45,8 +45,6 @@
     <!-- apple gradle project model -->
     <externalProjectDataService implementation="com.jetbrains.cidr.apple.gradle.AppleProjectDataService"/>
     <projectService serviceImplementation="com.jetbrains.cidr.apple.gradle.GradleAppleWorkspace"/>
-    <projectService serviceImplementation="com.jetbrains.cidr.apple.bridging.MobileKonanTargetManager"
-                    serviceInterface="org.jetbrains.konan.resolve.konan.KonanTargetManager"/>
 
     <!-- swift -->
     <applicationService serviceInterface="com.jetbrains.swift.SwiftCompilerSettings"
@@ -71,6 +69,10 @@
 
   <extensions defaultExtensionNs="cidr.lang">
     <testFramework implementation="org.jetbrains.konan.execution.testing.AppleXCTestFramework"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="org.jetbrains.konan">
+    <konanConsumer implementation="org.jetbrains.konan.bridging.MobileKonanConsumer"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">

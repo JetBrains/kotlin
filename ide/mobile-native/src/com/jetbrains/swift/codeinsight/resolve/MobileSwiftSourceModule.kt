@@ -9,7 +9,6 @@ import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.jetbrains.cidr.apple.bridging.MobileBridgeTarget
-import com.jetbrains.cidr.apple.bridging.MobileKonanTargetManager
 import com.jetbrains.cidr.apple.gradle.AppleTargetModel
 import com.jetbrains.cidr.apple.gradle.GradleAppleWorkspace
 import com.jetbrains.cidr.lang.OCLog
@@ -24,7 +23,7 @@ import com.jetbrains.swift.symbols.SwiftModuleSymbol
 import com.jetbrains.swift.symbols.impl.SwiftSourceModuleSymbol
 import com.jetbrains.swift.symbols.impl.SymbolProps
 import org.jetbrains.konan.bridging.MobileKonanSwiftModule
-import org.jetbrains.konan.forEachKonanFrameworkTarget
+import org.jetbrains.konan.getKonanFrameworkTargets
 
 class MobileSwiftSourceModule(private val config: OCResolveConfiguration) : SwiftModule, UserDataHolderBase() {
     private val project: Project
@@ -81,14 +80,8 @@ class MobileSwiftSourceModule(private val config: OCResolveConfiguration) : Swif
         return SwiftAndBridgedSymbols(swiftSymbols, bridgedSymbols, this)
     }
 
-    override fun getDependencies(): List<SwiftModule> {
-        val dependencies = mutableListOf<SwiftModule>()
-        forEachKonanFrameworkTarget(project) { moduleId, artifact ->
-            val target = MobileKonanTargetManager.getInstance(project).forArtifact(moduleId, artifact)
-            dependencies.add(MobileKonanSwiftModule(target, config))
-        }
-        return dependencies
-    }
+    override fun getDependencies(): List<SwiftModule> =
+        GradleAppleWorkspace.getInstance(project).availableKonanFrameworkTargets.values.map { MobileKonanSwiftModule(it, config) }
 
     override fun getFiles(): List<VirtualFile> = config.sources.let { sources: Collection<VirtualFile> ->
         sources as? List<VirtualFile> ?: sources.toList()

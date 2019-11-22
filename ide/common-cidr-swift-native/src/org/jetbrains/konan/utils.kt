@@ -2,13 +2,14 @@ package org.jetbrains.konan
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.konan.gradle.forEachKonanProject
-import org.jetbrains.kotlin.gradle.KonanArtifactModel
+import org.jetbrains.konan.resolve.konan.KonanTarget
+import org.jetbrains.konan.resolve.konan.KonanTargetManager
 
-inline fun forEachKonanFrameworkTarget(project: Project, consumer: (moduleId: String, artifact: KonanArtifactModel) -> Unit) {
+fun getKonanFrameworkTargets(project: Project): List<KonanTarget> = mutableListOf<KonanTarget>().apply {
     forEachKonanProject(project) { konanModel, module, _ ->
         for (artifact in konanModel.artifacts) {
-            if (artifact.type == "FRAMEWORK") consumer(module.data.id, artifact)
+            if (artifact.type != "FRAMEWORK") continue
+            add(KonanTargetManager.getInstance(project).forArtifact(module.data.id, artifact) ?: continue)
         }
     }
 }
-

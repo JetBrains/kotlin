@@ -5,15 +5,13 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.cidr.apple.bridging.MobileKonanTarget
-import com.jetbrains.cidr.apple.bridging.MobileKonanTargetManager
 import com.jetbrains.cidr.apple.gradle.GradleAppleWorkspace
 import com.jetbrains.cidr.lang.CustomHeaderProvider
 import com.jetbrains.cidr.lang.OCIncludeHelpers.adjustHeaderName
 import com.jetbrains.cidr.lang.preprocessor.OCResolveRootAndConfiguration
-import org.jetbrains.konan.forEachKonanFrameworkTarget
+import org.jetbrains.konan.getKonanFrameworkTargets
 import org.jetbrains.konan.resolve.konan.KonanBridgeFileManager
 import org.jetbrains.konan.resolve.konan.KonanBridgeVirtualFile
-import org.jetbrains.konan.resolve.konan.KonanTargetManager
 
 class MobileKonanFrameworkHeaderProvider : CustomHeaderProvider() {
     init {
@@ -65,13 +63,8 @@ class MobileKonanFrameworkHeaderProvider : CustomHeaderProvider() {
         val headerName = StringUtil.trimEnd(parts[1], ".h")
         if (!FileUtil.pathsEqual(frameworkName, headerName)) return null
 
-        forEachKonanFrameworkTarget(project) { moduleId, artifact ->
-            if (artifact.file.nameWithoutExtension == frameworkName) {
-                val konanTarget = MobileKonanTargetManager.getInstance(project).forArtifact(moduleId, artifact)
-                return KonanBridgeFileManager.getInstance(project).forTarget(konanTarget, adjustedName)
-            }
-        }
-        return null
+        val konanTarget = GradleAppleWorkspace.getInstance(project).availableKonanFrameworkTargets[frameworkName]
+        return konanTarget?.let { KonanBridgeFileManager.getInstance(project).forTarget(it, adjustedName) }
     }
 
     companion object {

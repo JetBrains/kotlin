@@ -3,7 +3,10 @@ package com.jetbrains.cidr.apple.gradle
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.TransactionGuard
+import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.components.State
+import com.intellij.openapi.components.Storage
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsManager
 import com.intellij.openapi.progress.BackgroundTaskQueue
@@ -18,6 +21,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.pointers.VirtualFilePointer
 import com.intellij.openapi.vfs.pointers.VirtualFilePointerManager
 import com.intellij.util.containers.MultiMap
+import com.jetbrains.cidr.apple.bridging.MobileKonanTarget
 import com.jetbrains.cidr.lang.CLanguageKind
 import com.jetbrains.cidr.lang.OCFileTypeHelpers
 import com.jetbrains.cidr.lang.OCLanguageKindProvider
@@ -31,13 +35,18 @@ import com.jetbrains.cidr.lang.workspace.compiler.CompilerInfoCache
 import com.jetbrains.cidr.lang.workspace.compiler.OCCompilerKind
 import com.jetbrains.cidr.xcode.frameworks.ApplePlatform
 import com.jetbrains.cidr.xcode.frameworks.AppleSdkManager
+import org.jdom.Element
+import org.jetbrains.konan.gradle.forEachKonanProject
+import org.jetbrains.konan.resolve.konan.KonanTarget
 import org.jetbrains.plugins.gradle.settings.GradleSettings
 import java.io.File
 
-class GradleAppleWorkspace(private val project: Project) {
+@State(name = "GradleAppleWorkspace", storages = [Storage("gradle.xml")])
+class GradleAppleWorkspace(private val project: Project) : PersistentStateComponent<Element> {
     private val reloadsQueue = BackgroundTaskQueue(project, LOADING_GRADLE_APPLE_PROJECT)
     private var disposable: Disposable = Disposer.newDisposable()
     private var configurationData: Map<String, Data> = emptyMap()
+    private var konanFrameworkTargets: Map<String, KonanTarget> = emptyMap()
 
     private class Data(val target: AppleTargetModel, disposable: Disposable) {
         val bridgingHeader: VirtualFilePointer? = target.bridgingHeader?.let {
@@ -60,9 +69,12 @@ class GradleAppleWorkspace(private val project: Project) {
         })
     }
 
+    private fun newDisposable(): Disposable =
+        Disposer.newDisposable("GradleAppleWorkspaceState").also { Disposer.register(project, it) }
+
     private fun updateOCWorkspace() {
         var committed = false
-        val newDisposable = Disposer.newDisposable("GradleAppleWorkspaceState").also { Disposer.register(project, it) }
+        val newDisposable = newDisposable()
         val configData = mutableMapOf<String, Data>()
 
         val workspace = OCWorkspace.getInstance(project).getModifiableModel(true)
@@ -118,6 +130,17 @@ class GradleAppleWorkspace(private val project: Project) {
                 }
             }
 
+            // todo[florian.kistner] restrict to declared dependencies per apple target
+            val frameworkTargets = mutableMapOf<String, KonanTarget>().apply {
+                forEachKonanProject(project) { konanModel, module, _ ->
+                    for (artifact in konanModel.artifacts) {
+                        if (artifact.type != "FRAMEWORK") continue
+                        val productModuleName = artifact.file.nameWithoutExtension
+                        computeIfAbsent(productModuleName) { MobileKonanTarget(module.data.id, it) }
+                    }
+                }
+            }
+
             compilerInfoSession.waitForAll(messages)
             workspace.preCommit()
 
@@ -132,6 +155,7 @@ class GradleAppleWorkspace(private val project: Project) {
                     synchronized(this) {
                         disposable = newDisposable
                         configurationData = configData
+                        konanFrameworkTargets = frameworkTargets
                         committed = true
                     }
                 }
@@ -145,6 +169,51 @@ class GradleAppleWorkspace(private val project: Project) {
         messages.values().forEach { each ->
             LOG.warn(each.getType().toString() + ": " + each.getText())
             // todo send messages to the build view (sync tab)
+        }
+    }
+
+    override fun getState(): Element = Element("state").apply {
+        for ((id, data) in configurationData) {
+            addContent(Element("configuration").apply {
+                setAttribute("id", id)
+                setAttribute("targetName", data.target.name)
+                data.target.bridgingHeader?.let { addContent(Element("bridgingHeader").addContent(it.path)) }
+                for (sourceFolder in data.target.sourceFolders) {
+                    addContent(Element("sourceFolder").addContent(sourceFolder.path))
+                }
+            })
+        }
+        for (target in konanFrameworkTargets.values) {
+            addContent(Element("importedTarget").apply {
+                setAttribute("id", target.moduleId)
+                setAttribute("productModuleName", target.productModuleName)
+            })
+        }
+    }
+
+    override fun loadState(element: Element) {
+        val newDisposable = newDisposable()
+        val configData = mutableMapOf<String, Data>()
+        val frameworkTargets = mutableMapOf<String, KonanTarget>()
+        for (configElement in element.getChildren("configuration")) {
+            configData[configElement.getAttributeValue("id") ?: continue] = Data(AppleTargetModelImpl(
+                name = configElement.getAttributeValue("targetName") ?: continue,
+                sourceFolders = configElement.getChildren("sourceFolder").mapTo(mutableSetOf()) { File(it.text) },
+                bridgingHeader = configElement.getChild("bridgingHeader")?.let { File(it.text) }
+            ), newDisposable)
+        }
+        for (configElement in element.getChildren("importedTarget")) {
+            val productModuleName = configElement.getAttributeValue("productModuleName") ?: continue
+            frameworkTargets[productModuleName] = MobileKonanTarget(
+                configElement.getAttributeValue("id") ?: continue,
+                productModuleName
+            )
+        }
+        synchronized(this) {
+            if (configurationData.isNotEmpty()) return Disposer.dispose(newDisposable)
+            disposable = newDisposable
+            configurationData = configData
+            konanFrameworkTargets = frameworkTargets
         }
     }
 
@@ -173,6 +242,9 @@ class GradleAppleWorkspace(private val project: Project) {
     fun getBridgingHeader(config: OCResolveConfiguration): VirtualFile? = synchronized(this) {
         configurationData[config.uniqueId]?.bridgingHeader?.file
     }
+
+    val availableKonanFrameworkTargets: Map<String, KonanTarget>
+        get() = synchronized(this) { konanFrameworkTargets }
 
     companion object {
         private const val LOADING_GRADLE_APPLE_PROJECT = "Loading Gradle Apple Project..."

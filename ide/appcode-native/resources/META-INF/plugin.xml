@@ -24,8 +24,6 @@
 <!--    <configurationType implementation="org.jetbrains.konan.tests.AppCodeKonanTestRunConfigurationType"/>-->
 
     <lang.documentationProvider language="kotlin" implementationClass="org.jetbrains.konan.documentation.KonanXcodeDocumentationProvider"/>
-    <projectService serviceImplementation="org.jetbrains.konan.resolve.konan.AppCodeKonanTargetManager"
-                    serviceInterface="org.jetbrains.konan.resolve.konan.KonanTargetManager"/>
   </extensions>
 
   <extensions defaultExtensionNs="appcode">
@@ -39,6 +37,10 @@
 
   <extensions defaultExtensionNs="cidr.lang">
     <customHeaderProvider implementation="org.jetbrains.konan.resolve.konan.KonanFrameworkHeaderProvider"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="org.jetbrains.konan">
+    <konanConsumer implementation="org.jetbrains.konan.resolve.konan.AppCodeKonanConsumer"/>
   </extensions>
 
   <application-components>

@@ -1,4 +1,7 @@
 <idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
+  <extensionPoints>
+    <extensionPoint qualifiedName="org.jetbrains.konan.konanConsumer" interface="org.jetbrains.konan.resolve.konan.KonanConsumer"/>
+  </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
     <projectService serviceImplementation="org.jetbrains.konan.resolve.konan.KonanBridgeFileManager"/>

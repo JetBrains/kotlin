@@ -13,6 +13,7 @@ import com.jetbrains.cidr.execution.BuildConfiguration
 import com.jetbrains.cidr.execution.build.XcodeBuildAction
 import com.jetbrains.cidr.execution.build.XcodeExternalBuildProvider
 import com.jetbrains.cidr.xcode.frameworks.buildSystem.BuildSettingNames
+import com.jetbrains.cidr.xcode.model.PBXTarget
 import com.jetbrains.konan.runBuildTasks
 import org.jetbrains.konan.gradle.forEachKonanProject
 import org.jetbrains.plugins.gradle.settings.GradleSettings
@@ -48,7 +49,7 @@ class AppCodeGradleKonanExternalBuildProvider : XcodeExternalBuildProvider {
 
         return configurations.asSequence()
             .mapNotNull { it.getBuildSetting(BuildSettingNames.TARGET_NAME).string }
-            .filterGradleTasks(taskName, configuration.project).toList()
+            .mapGradleTasks(taskName, configuration.project).toList()
     }
 
     override fun beforeBuild(project: Project, configuration: BuildConfiguration, action: XcodeBuildAction) {
@@ -93,9 +94,14 @@ class AppCodeGradleKonanExternalBuildProvider : XcodeExternalBuildProvider {
     }
 }
 
-fun Sequence<String>.filterGradleTasks(taskName: String, project: Project): Sequence<String> {
+fun Sequence<PBXTarget>.filterGradleTasks(taskName: String, project: Project): Sequence<PBXTarget> {
     val tasks = collectsGradleTasks(project)
-    return this.map { targetName -> ":$targetName:$taskName" }.filter { task -> task in tasks }
+    return filter { target -> target.isFramework && ":${target.name}:$taskName" in tasks }
+}
+
+fun Sequence<String>.mapGradleTasks(taskName: String, project: Project): Sequence<String> {
+    val tasks = collectsGradleTasks(project)
+    return map { targetName -> ":$targetName:$taskName" }.filter { task -> task in tasks }
 }
 
 private fun collectsGradleTasks(project: Project): Set<String> {

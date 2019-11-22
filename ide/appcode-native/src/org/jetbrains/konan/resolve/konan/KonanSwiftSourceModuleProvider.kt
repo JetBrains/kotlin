@@ -20,5 +20,5 @@ class KonanSwiftSourceModuleProvider : AppcodeSourceModuleProducer {
     }
 
     private fun PBXTarget.isKotlinTarget(project: Project): Boolean =
-        isFramework && sequenceOf(this).containsKotlinNativeTargets(project)
+        sequenceOf(this).containsKotlinNativeTargets(project)
 }

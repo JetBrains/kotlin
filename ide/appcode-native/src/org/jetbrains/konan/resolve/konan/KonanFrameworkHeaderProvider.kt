@@ -36,12 +36,9 @@ class KonanFrameworkHeaderProvider : CustomHeaderProvider() {
         val target = XcodeMetaData.getTargetFor(config) ?: return false
         val targets = mutableListOf(target)
 
-        targets.addAll(frameworkDependencies(target))
+        targets.addAll(target.resolvedDependencies)
         return targets.asSequence().containsKotlinNativeTargets(config.project)
     }
-
-    private fun frameworkDependencies(target: PBXTarget): Sequence<PBXTarget> =
-        target.resolvedDependencies.asSequence().filter { it.isFramework }
 
     override fun provideSerializationPath(virtualFile: VirtualFile): String? {
         assert(ApplicationManager.getApplication().isReadAccessAllowed)
@@ -71,8 +68,8 @@ class KonanFrameworkHeaderProvider : CustomHeaderProvider() {
 
         val target = XcodeMetaData.getInstance(project).allProjects
             .asSequence()
-            .flatMap { it.getTargets<PBXTarget>(null).asSequence() }
-            .find { it.name == frameworkName }
+            .flatMap { it.getTargets(PBXTarget::class.java).asSequence() }
+            .find { it.isFramework && it.name == frameworkName }
 
         return target?.let { KonanBridgeFileManager.getInstance(project).forTarget(AppCodeKonanTarget(target), adjustedName) }
     }
@@ -93,7 +90,5 @@ class KonanFrameworkHeaderProvider : CustomHeaderProvider() {
 }
 
 fun Sequence<PBXTarget>.containsKotlinNativeTargets(project: Project): Boolean =
-    this.mapNotNull { target -> target.name }
-        .filterGradleTasks(GRADLE_BUILD_TASK_NAME, project)
-        .any()
+    filterGradleTasks(GRADLE_BUILD_TASK_NAME, project).any()
 
