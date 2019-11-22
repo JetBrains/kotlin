@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.fir.resolve.directExpansionType
 import org.jetbrains.kotlin.fir.resolve.firProvider
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.resolveSupertypesInTheAir
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
@@ -208,10 +208,8 @@ private fun createJavaFileStub(packageFqName: FqName, files: Collection<KtFile>)
 }
 
 private fun ConeClassLikeType.toFirClass(session: FirSession): FirRegularClass? {
-    return when (this) {
-        is ConeAbbreviatedType -> this.directExpansionType(session)?.toFirClass(session)
-        else -> (this.lookupTag.toSymbol(session) as? FirClassSymbol)?.fir
-    } as? FirRegularClass
+    val expandedType = this.fullyExpandedType(session)
+    return (expandedType.lookupTag.toSymbol(session) as? FirClassSymbol)?.fir as? FirRegularClass
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -232,13 +230,12 @@ private fun ConeKotlinType.mapToCanonicalString(session: FirSession): String {
 
 private fun ConeClassLikeType.mapToCanonicalString(session: FirSession): String {
     return when (this) {
-        is ConeAbbreviatedType -> this.directExpansionType(session)?.mapToCanonicalString(session) ?: ERROR_TYPE_STUB
-        is ConeClassType -> mapToCanonicalString(session)
         is ConeClassErrorType -> ERROR_TYPE_STUB
+        else -> fullyExpandedType(session).mapToCanonicalNoExpansionString(session)
     }
 }
 
-private fun ConeClassType.mapToCanonicalString(session: FirSession): String {
+private fun ConeClassLikeType.mapToCanonicalNoExpansionString(session: FirSession): String {
     if (lookupTag.classId == StandardClassIds.Array) {
         return when (val typeProjection = typeArguments[0]) {
             is ConeStarProjection -> CommonClassNames.JAVA_LANG_OBJECT
