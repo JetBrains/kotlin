@@ -99,7 +99,8 @@ public class DetectableIndentOptionsProvider extends FileIndentOptionsProvider {
   }
 
   private boolean isEnabled(@NotNull CodeStyleSettings settings, @NotNull PsiFile file) {
-    if (!file.isWritable() ||
+    if (!file.isValid() ||
+        !file.isWritable() ||
         (file instanceof PsiBinaryFile) ||
         (file instanceof PsiCompiledFile) ||
         file.getFileType() == ScratchFileType.INSTANCE) {
