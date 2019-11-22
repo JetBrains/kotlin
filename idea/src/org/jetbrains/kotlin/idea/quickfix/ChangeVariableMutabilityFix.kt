@@ -56,6 +56,9 @@ class ChangeVariableMutabilityFix(
         if (deleteInitializer) {
             (element as? KtProperty)?.initializer = null
         }
+        if (makeVar) {
+            (element as? KtModifierListOwner)?.removeModifier(KtTokens.CONST_KEYWORD)
+        }
     }
 
     companion object {
