@@ -357,10 +357,13 @@ class DiagnosticReporterByTrackingStrategy(
             }
 
             NotEnoughInformationForTypeParameter::class.java -> {
-                if (allDiagnostics.any {it is ConstrainingTypeIsError || it is NewConstraintError || it is WrongCountOfTypeArguments})
-                    return
-
                 val error = diagnostic as NotEnoughInformationForTypeParameter
+                if (allDiagnostics.any {
+                        (it is ConstrainingTypeIsError && it.typeVariable == error.typeVariable)
+                                || it is NewConstraintError || it is WrongCountOfTypeArguments
+                    }
+                ) return
+
                 val call = error.resolvedAtom.atom?.safeAs<PSIKotlinCall>()?.psiCall ?: call
                 val expression = call.calleeExpression ?: return
                 val typeVariableName = when (val typeVariable = error.typeVariable) {

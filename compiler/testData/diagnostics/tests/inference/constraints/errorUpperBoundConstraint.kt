@@ -20,7 +20,7 @@ public class Foo {
 // FILE: test.kt
 
 fun test(e: <!UNRESOLVED_REFERENCE!>ErrorType<!>) {
-    Foo.foo {
+    Foo.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!> {
         Sam.Result.create(<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>e<!>)
     }
 }
