@@ -2609,7 +2609,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
   @Override
   public void invalidateCaches() {
     File indexRoot = PathManager.getIndexRoot();
-    LOG.info("Requesting explicit indices invalidation", new Throwable());
+    LOG.info("Requesting explicit indices invalidation");
     try {
       final File corruptionMarker = new File(indexRoot, CORRUPTION_MARKER_NAME);
       //noinspection IOResourceOpenedButNotSafelyClosed
