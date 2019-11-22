@@ -21,4 +21,8 @@ fun main() {
     assertEquals(1u, StrictEnum2.StrictEnum2B.value)
     assertEquals(0u, NonStrictEnum1A)
     assertEquals(1u, NonStrictEnum2B)
+
+    assertEquals(49, sendV4I(vectorOf(1, 2, 3, 4)))
+    assertEquals(49, (sendV4F(vectorOf(1f, 2f, 3f, 4f)) + 0.00001).toInt())
 }
+

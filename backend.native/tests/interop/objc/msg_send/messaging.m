@@ -14,6 +14,15 @@
     return 3.14;
 }
 
++ (simd_float4)simdFn {
+    simd_float4 v;
+    v.x = 2;
+    v.y = 4;
+    v.z = 5;
+    v.w = 8;
+    return v;
+}
+
 @end;
 
 @implementation AggregateTestSubject
@@ -59,6 +68,14 @@
     s.f7 = 7.0f;
     s.f8 = 8.0f;
     return s;
+}
+
++ (GeterogeneousSmall)geterogeneousSmallFn {
+    return (GeterogeneousSmall){1, {1, 4, 9, 25}, 3, 4};
+}
+
++ (simd_quatf)simd_quatfFn {
+    return (simd_quatf){ {1, 4, 9, 25} };
 }
 
 @end;

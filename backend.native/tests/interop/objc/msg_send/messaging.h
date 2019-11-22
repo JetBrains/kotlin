@@ -1,10 +1,12 @@
 #import <objc/NSObject.h>
+#include <simd/simd.h>
 
 @interface PrimitiveTestSubject : NSObject
 
 + (int)intFn;
 + (float)floatFn;
 + (double)doubleFn;
++ (simd_float4)simdFn;
 
 @end;
 
@@ -45,6 +47,13 @@ typedef struct {
 
 // TODO: Add more cases later: SIMD, bitfields.
 
+typedef struct {
+    short s1;
+    simd_float4 v2;
+    float f3;
+    int i4;
+} GeterogeneousSmall;
+
 @interface AggregateTestSubject : NSObject
 
 + (SingleFloat)singleFloatFn;
@@ -52,5 +61,8 @@ typedef struct {
 + (EvenSmallerPacked)evenSmallerPackedFn;
 + (HomogeneousSmall)homogeneousSmallFn;
 + (HomogeneousBig)homogeneousBigFn;
++ (simd_quatf)simd_quatfFn;
++ (GeterogeneousSmall)geterogeneousSmallFn;
+
 
 @end;
