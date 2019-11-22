@@ -16,39 +16,70 @@
 
 package org.jetbrains.kotlin.idea.debugger.stepping.filter
 
+import com.intellij.debugger.engine.DebugProcess.JAVA_STRATUM
 import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.engine.SuspendContextImpl
 import com.intellij.openapi.project.Project
 import com.intellij.util.Range
-import com.sun.jdi.LocalVariable
 import com.sun.jdi.Location
+import com.sun.jdi.StackFrame
+import org.jetbrains.kotlin.codegen.inline.isFakeLocalVariableForInline
+import org.jetbrains.kotlin.idea.debugger.safeLineNumber
+import org.jetbrains.kotlin.idea.debugger.safeMethod
+import org.jetbrains.kotlin.idea.debugger.safeVariables
 import org.jetbrains.kotlin.idea.debugger.stepping.KotlinMethodFilter
-import org.jetbrains.kotlin.idea.debugger.stepping.getInlineRangeLocalVariables
 
-class StepOverFilterData(
-    val lineNumber: Int,
-    val stepOverLines: Set<Int>,
-    val inlineRangeVariables: List<LocalVariable>
-)
-
-class KotlinStepOverInlineFilter(val project: Project, val data: StepOverFilterData) : KotlinMethodFilter {
-    override fun locationMatches(context: SuspendContextImpl, location: Location): Boolean {
-        val frameProxy = context.frameProxy ?: return true
-
-        val currentLine = location.lineNumber()
-        if (!(data.stepOverLines.contains(currentLine))) {
-            return currentLine != data.lineNumber
+@Suppress("EqualsOrHashCode")
+data class StepOverCallerInfo(val declaringType: String, val methodName: String?, val methodSignature: String?) {
+    companion object {
+        fun from(location: Location): StepOverCallerInfo {
+            val method = location.safeMethod()
+            val declaringType = location.declaringType().name()
+            val methodName = method?.name()
+            val methodSignature = method?.signature()
+            return StepOverCallerInfo(declaringType, methodName, methodSignature)
         }
+    }
+}
 
-        val visibleInlineVariables = getInlineRangeLocalVariables(frameProxy)
+data class LocationToken(val lineNumber: Int, val inlineVariables: List<String>) {
+    companion object {
+        fun from(stackFrame: StackFrame): LocationToken {
+            val location = stackFrame.location()
+            val lineNumber = location.safeLineNumber(JAVA_STRATUM)
+            val methodVariables = ArrayList<String>(0)
 
-        // Our ranges check missed exit from inline function. This is when breakpoint was in last statement of inline functions.
-        // This can be observed by inline local range-variables. Absence of any means step out was done.
-        return data.inlineRangeVariables.any { !visibleInlineVariables.contains(it) }
+            for (variable in location.safeMethod()?.safeVariables() ?: emptyList()) {
+                val name = variable.name()
+                if (variable.isVisible(stackFrame) && isFakeLocalVariableForInline(name)) {
+                    methodVariables += name
+                }
+            }
+
+            return LocationToken(lineNumber, methodVariables)
+        }
+    }
+}
+
+class KotlinStepOverInlineFilter(
+    val project: Project,
+    private val tokensToSkip: Set<LocationToken>,
+    private val callerInfo: StepOverCallerInfo
+) : KotlinMethodFilter {
+    override fun locationMatches(context: SuspendContextImpl, location: Location): Boolean {
+        val stackFrame = context.frameProxy?.stackFrame ?: return true
+        val token = LocationToken.from(stackFrame)
+        val callerInfo = StepOverCallerInfo.from(location)
+
+        if (callerInfo.methodName != null && callerInfo.methodSignature != null && this.callerInfo == callerInfo) {
+            return token.lineNumber >= 0 && token !in tokensToSkip
+        } else {
+            return true
+        }
     }
 
     override fun locationMatches(process: DebugProcessImpl, location: Location): Boolean {
-        throw IllegalStateException() // Should not be called from Kotlin hint
+        throw IllegalStateException("Should not be called from Kotlin hint")
     }
 
     override fun getCallingExpressionLines(): Range<Int>? = null

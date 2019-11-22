@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.debugger
 
+import com.intellij.debugger.engine.DebugProcess.JAVA_STRATUM
 import com.intellij.debugger.engine.evaluation.AbsentInformationEvaluateException
 import com.intellij.debugger.engine.evaluation.EvaluateException
 import com.intellij.debugger.engine.jdi.StackFrameProxy
@@ -12,6 +13,7 @@ import com.intellij.debugger.impl.DebuggerUtilsEx
 import com.intellij.debugger.jdi.LocalVariableProxyImpl
 import com.intellij.debugger.jdi.StackFrameProxyImpl
 import com.sun.jdi.*
+import org.jetbrains.kotlin.codegen.inline.KOTLIN_STRATA_NAME
 
 fun StackFrameProxyImpl.safeVisibleVariables(): List<LocalVariableProxyImpl> {
     return wrapAbsentInformationException { visibleVariables() } ?: emptyList()
@@ -19,6 +21,10 @@ fun StackFrameProxyImpl.safeVisibleVariables(): List<LocalVariableProxyImpl> {
 
 fun StackFrameProxyImpl.safeVisibleVariableByName(name: String): LocalVariableProxyImpl? {
     return wrapAbsentInformationException { visibleVariableByName(name) }
+}
+
+fun StackFrame.safeVisibleVariables(): List<LocalVariable> {
+    return wrapAbsentInformationException { visibleVariables() } ?: emptyList()
 }
 
 fun Method.safeAllLineLocations(): List<Location> {
@@ -61,6 +67,14 @@ fun StackFrameProxy.safeLocation(): Location? {
     }
 }
 
+fun StackFrameProxy.safeStackFrame(): StackFrame? {
+    return try {
+        this.stackFrame
+    } catch (e: EvaluateException) {
+        null
+    }
+}
+
 fun Location.safeSourceName(): String? {
     return wrapAbsentInformationException { this.sourceName() }
 }
@@ -73,8 +87,23 @@ fun Location.safeLineNumber(): Int {
     return DebuggerUtilsEx.getLineNumber(this, false)
 }
 
-fun Location.safeSourceLineNumber(): Int {
-    return DebuggerUtilsEx.getLineNumber(this, true)
+fun Location.safeLineNumber(stratum: String): Int {
+    return try {
+        lineNumber(stratum)
+    } catch (e: InternalError) {
+        -1
+    } catch (e: IllegalArgumentException) {
+        -1
+    }
+}
+
+fun Location.safeKotlinPreferredLineNumber(): Int {
+    val kotlinLineNumber = safeLineNumber(KOTLIN_STRATA_NAME)
+    if (kotlinLineNumber > 0) {
+        return kotlinLineNumber
+    }
+
+    return safeLineNumber(JAVA_STRATUM)
 }
 
 fun Location.safeMethod(): Method? {

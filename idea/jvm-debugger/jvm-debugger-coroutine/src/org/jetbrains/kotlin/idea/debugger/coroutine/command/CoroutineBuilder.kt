@@ -173,4 +173,3 @@ class CoroutineBuilder(val suspendContext: XSuspendContext) {
                 frame.safeLocation()?.safeMethod()?.signature() == "(Ljava/lang/Object;)Ljava/lang/Object;" &&
                 frame.safeLocation()?.safeLineNumber() ?: 0 < 0
 }
-

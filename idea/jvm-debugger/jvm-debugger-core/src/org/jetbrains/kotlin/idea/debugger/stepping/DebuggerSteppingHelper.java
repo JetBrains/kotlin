@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.debugger.stepping;
 
+import com.intellij.debugger.SourcePosition;
 import com.intellij.debugger.engine.DebugProcessImpl;
 import com.intellij.debugger.engine.RequestHint;
 import com.intellij.debugger.engine.SuspendContextImpl;
@@ -48,7 +49,7 @@ public class DebuggerSteppingHelper {
     public static DebugProcessImpl.ResumeCommand createStepOverCommand(
             SuspendContextImpl suspendContext,
             boolean ignoreBreakpoints,
-            KotlinSourcePosition kotlinSourcePosition
+            SourcePosition sourcePosition
     ) {
         DebugProcessImpl debugProcess = suspendContext.getDebugProcess();
 
@@ -58,8 +59,9 @@ public class DebuggerSteppingHelper {
                 try {
                     StackFrameProxyImpl frameProxy = suspendContext.getFrameProxy();
                     if (frameProxy != null) {
-                        KotlinStepAction action = KotlinSteppingCommandProviderKt
-                                .getStepOverAction(frameProxy.location(), kotlinSourcePosition, frameProxy);
+
+                        Location location = frameProxy.location();
+                        KotlinStepAction action = KotlinSteppingCommandProviderKt.getStepOverAction(location, sourcePosition, frameProxy);
 
                         createStepRequest(
                                 suspendContext, getContextThread(),

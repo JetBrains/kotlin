@@ -123,7 +123,8 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
 
         if (psiFile !is KtFile) throw NoDataException.INSTANCE
 
-        val sourceLineNumber = location.safeSourceLineNumber()
+        // Zero-based line-number for Document.getLineStartOffset()
+        val sourceLineNumber = location.safeLineNumber() - 1
         if (sourceLineNumber < 0) {
             throw NoDataException.INSTANCE
         }
