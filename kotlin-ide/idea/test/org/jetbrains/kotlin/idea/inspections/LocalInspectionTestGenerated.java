@@ -9005,6 +9005,21 @@ public abstract class LocalInspectionTestGenerated extends AbstractLocalInspecti
             runTest("testData/inspectionsLocal/removeRedundantBackticks/identifierContainingSpaces.kt");
         }
 
+        @TestMetadata("inStringTemplate.kt")
+        public void testInStringTemplate() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantBackticks/inStringTemplate.kt");
+        }
+
+        @TestMetadata("inStringTemplate2.kt")
+        public void testInStringTemplate2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantBackticks/inStringTemplate2.kt");
+        }
+
+        @TestMetadata("inStringTemplate3.kt")
+        public void testInStringTemplate3() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantBackticks/inStringTemplate3.kt");
+        }
+
         @TestMetadata("keyword.kt")
         public void testKeyword() throws Exception {
             runTest("testData/inspectionsLocal/removeRedundantBackticks/keyword.kt");
