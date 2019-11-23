@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.konan.isKonanStdlib
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.util.addFile
@@ -183,8 +184,13 @@ internal val psiToIrPhase = konanUnitPhase(
                     symbolTable, generatorContext.irBuiltIns, reflectionTypes)
             val irProviderForInteropStubs = IrProviderForInteropStubs()
             val symbols = KonanSymbols(this, symbolTable, symbolTable.lazyWrapper, functionIrClassFactory)
-            val module = translator.generateModuleFragment(generatorContext, environment.getSourceFiles(),
-                    deserializer, listOf(irProviderForInteropStubs, functionIrClassFactory))
+            val stubGenerator = DeclarationStubGenerator(
+                    moduleDescriptor, symbolTable,
+                    config.configuration.languageVersionSettings
+            )
+            val irProviders = listOf(irProviderForInteropStubs, functionIrClassFactory, deserializer, stubGenerator)
+            stubGenerator.setIrProviders(irProviders)
+            val module = translator.generateModuleFragment(generatorContext, environment.getSourceFiles(), irProviders)
 
             if (this.stdlibModule in modulesWithoutDCE) {
                 functionIrClassFactory.buildAllClasses()
