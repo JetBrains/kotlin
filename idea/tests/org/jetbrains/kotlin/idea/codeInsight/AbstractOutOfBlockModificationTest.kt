@@ -13,8 +13,10 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.PsiModificationTrackerImpl
 import com.intellij.psi.util.PsiTreeUtil
 import junit.framework.TestCase
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithAllCompilerChecks
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.trackers.outOfBlockModificationCount
+import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -39,6 +41,10 @@ abstract class AbstractOutOfBlockModificationTest : KotlinLightCodeInsightFixtur
         TestCase.assertNotNull("Should be valid element", element)
         val oobBeforeType = ktFile.outOfBlockModificationCount
         val modificationCountBeforeType = tracker.modificationCount
+
+        // have to analyze file before any change to support incremental analysis
+        ktFile.analyzeWithAllCompilerChecks()
+
         myFixture.type(stringToType)
         PsiDocumentManager.getInstance(myFixture.project).commitDocument(myFixture.getDocument(myFixture.file))
         val oobAfterCount = ktFile.outOfBlockModificationCount
@@ -52,9 +58,15 @@ abstract class AbstractOutOfBlockModificationTest : KotlinLightCodeInsightFixtur
                     + FileUtil.loadFile(testDataFile()),
             expectedOutOfBlock, oobBeforeType != oobAfterCount
         )
+        checkForUnexpectedErrors(ktFile)
+
         if (!isSkipCheckDefined) {
             checkOOBWithDescriptorsResolve(expectedOutOfBlock)
         }
+    }
+
+    private fun checkForUnexpectedErrors(ktFile: KtFile) {
+        DirectiveBasedActionUtils.checkForUnexpectedErrors(ktFile) { it.analyzeWithAllCompilerChecks().bindingContext.diagnostics }
     }
 
     private fun checkOOBWithDescriptorsResolve(expectedOutOfBlock: Boolean) {
