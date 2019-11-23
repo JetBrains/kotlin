@@ -15,6 +15,7 @@
  */
 package com.intellij.compiler.impl;
 
+import com.intellij.compiler.ModuleSourceSet;
 import com.intellij.openapi.compiler.CompileScope;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.Key;
@@ -65,6 +66,30 @@ public class CompileScopeUtil {
         }
         scopes.add(builder.build());
       }
+    }
+  }
+
+  public static void addScopesForSourceSets(Collection<? extends ModuleSourceSet> sets, Collection<String> unloadedModules, List<? super TargetTypeBuildScope> scopes, boolean forceBuild) {
+    if (!sets.isEmpty() || !unloadedModules.isEmpty()) {
+      for (ModuleSourceSet set : sets) {
+        final BuildTargetType targetType = toTargetType(set);
+        assert targetType != null;
+
+        TargetTypeBuildScope.Builder builder = TargetTypeBuildScope.newBuilder().setTypeId(targetType.getTypeId()).setForceBuild(forceBuild);
+        builder.addTargetId(set.getModule().getName());
+        for (String unloadedModule : unloadedModules) {
+          builder.addTargetId(unloadedModule);
+        }
+        scopes.add(builder.build());
+      }
+    }
+  }
+
+  private static BuildTargetType toTargetType(ModuleSourceSet set) {
+    switch (set.getType()) {
+      case TEST: return JavaModuleBuildTargetType.TEST;
+      case PRODUCTION: return JavaModuleBuildTargetType.PRODUCTION;
+      default: return null;
     }
   }
 

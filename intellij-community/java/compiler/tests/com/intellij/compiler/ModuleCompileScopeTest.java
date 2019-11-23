@@ -70,7 +70,8 @@ public class ModuleCompileScopeTest extends BaseCompilerTestCase {
 
   public void testForceCompileUpToDateFileAndDoNotCompileDependentTestClass() {
     VirtualFile a = createFile("src/A.java", "class A{ public static void foo(int param) {} }");
-    VirtualFile b = createFile("testSrc/B.java", "class B { void bar() {A.foo(10);}}");
+    final String bText = "class B { void bar() {A.foo(10);}}";
+    VirtualFile b = createFile("testSrc/B.java", bText);
     Module module = addModule("a", a.getParent(), b.getParent());
     make(module);
     assertOutput(module, fs().file("A.class"), false);
@@ -87,7 +88,7 @@ public class ModuleCompileScopeTest extends BaseCompilerTestCase {
     deleteFile(testClassFile);
     make(module);
     assertOutput(module, fs());
-    changeFile(b); // touch b
+    changeFile(b, bText + "  "); // touch b
     
     compile(true, a);
     assertOutput(module, fs().file("A.class"), false);

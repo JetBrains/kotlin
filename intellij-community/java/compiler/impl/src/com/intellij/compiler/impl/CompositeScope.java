@@ -19,6 +19,7 @@
  */
 package com.intellij.compiler.impl;
 
+import com.intellij.compiler.ModuleSourceSet;
 import com.intellij.openapi.compiler.CompileScope;
 import com.intellij.openapi.compiler.ExportableUserDataHolderBase;
 import com.intellij.openapi.fileTypes.FileType;
@@ -27,6 +28,7 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.SmartHashSet;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 
@@ -89,6 +91,15 @@ public class CompositeScope extends ExportableUserDataHolderBase implements Comp
       ContainerUtil.addAll(modules, compileScope.getAffectedModules());
     }
     return modules.toArray(Module.EMPTY_ARRAY);
+  }
+
+  @Override
+  public Collection<ModuleSourceSet> getAffectedSourceSets() {
+    Set<ModuleSourceSet> sets = new SmartHashSet<>();
+    for (CompileScope scope : myScopes) {
+      sets.addAll(scope.getAffectedSourceSets());
+    }
+    return sets;
   }
 
   @NotNull
