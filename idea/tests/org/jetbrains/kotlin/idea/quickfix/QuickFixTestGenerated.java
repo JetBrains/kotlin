@@ -14342,6 +14342,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 runTest("idea/testData/quickfix/variables/changeMutability/capturedValInitialization.kt");
             }
 
+            @TestMetadata("const.kt")
+            public void testConst() throws Exception {
+                runTest("idea/testData/quickfix/variables/changeMutability/const.kt");
+            }
+
             @TestMetadata("funParameter.kt")
             public void testFunParameter() throws Exception {
                 runTest("idea/testData/quickfix/variables/changeMutability/funParameter.kt");
