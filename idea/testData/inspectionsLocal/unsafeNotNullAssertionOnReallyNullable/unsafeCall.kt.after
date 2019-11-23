@@ -1,0 +1,3 @@
+fun unsafe(string: String?) {
+    string?.length ?:
+}
