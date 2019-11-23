@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.lower.InitializersLoweringBase
+import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.declarations.IrAnonymousInitializer
@@ -15,13 +15,15 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.expressions.IrSetField
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
-import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
+import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.name.Name
 
-class StaticInitializersLowering(context: CommonBackendContext) : InitializersLoweringBase(context) {
+class StaticInitializersLowering(override val context: JvmBackendContext) : InitializersLoweringBase(context) {
     override fun lower(irClass: IrClass) {
         val staticInitializerStatements = extractInitializers(irClass) {
-            (it is IrField && it.isStatic) || (it is IrAnonymousInitializer && it.isStatic)
+            // JVM implementations are required to generate initializers for all static fields with ConstantValue,
+            // so don't add any to <clinit>.
+            (it is IrField && it.isStatic && it.constantValue(context) == null) || (it is IrAnonymousInitializer && it.isStatic)
         }.toMutableList()
         if (staticInitializerStatements.isNotEmpty()) {
             staticInitializerStatements.sortBy {
@@ -40,8 +42,7 @@ class StaticInitializersLowering(context: CommonBackendContext) : InitializersLo
                 origin = JvmLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER
                 returnType = context.irBuiltIns.unitType
             }.apply {
-                body = IrBlockBodyImpl(irClass.startOffset, irClass.endOffset, staticInitializerStatements)
-                    .deepCopyWithSymbols(this)
+                body = IrBlockBodyImpl(irClass.startOffset, irClass.endOffset, staticInitializerStatements).patchDeclarationParents(this)
             }
         }
     }

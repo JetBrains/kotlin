@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.backend.jvm.lower.buildAssertionsDisabledField
-import org.jetbrains.kotlin.backend.jvm.lower.constantValue
 import org.jetbrains.kotlin.backend.jvm.lower.hasAssertionsDisabledField
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
@@ -18,13 +17,13 @@ import org.jetbrains.kotlin.codegen.inline.ReifiedTypeParametersUsages
 import org.jetbrains.kotlin.codegen.inline.SourceMapper
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.WrappedClassDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
+import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
@@ -332,13 +331,9 @@ open class ClassCodegen protected constructor(
             if (field.origin == IrDeclarationOrigin.DELEGATE) null
             else methodSignatureMapper.mapFieldSignature(field)
         val fieldName = field.name.asString()
-        // The ConstantValue attribute makes the initializer part of the ABI, which is why since 1.4
-        // it is no longer set unless the property is explicitly `const`.
-        val implicitConst = !state.languageVersionSettings.supportsFeature(LanguageFeature.NoConstantValueAttributeForNonConstVals) &&
-                (AsmUtil.isPrimitive(fieldType) || fieldType == AsmTypes.JAVA_STRING_TYPE)
         val fv = visitor.newField(
             field.OtherOrigin, field.flags, fieldName, fieldType.descriptor,
-            fieldSignature, field.constantValue(implicitConst)?.value
+            fieldSignature, (field.initializer?.expression as? IrConst<*>)?.value
         )
 
         AnnotationCodegen(this, context, fv::visitAnnotation).genAnnotations(field, fieldType)

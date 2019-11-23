@@ -463,14 +463,9 @@ class ExpressionCodegen(
 
     override fun visitFieldAccess(expression: IrFieldAccessExpression, data: BlockInfo): PromisedValue {
         val callee = expression.symbol.owner
-        callee.constantValue()?.let {
-            if (context.state.shouldInlineConstVals) {
-                // Handling const reads before codegen is important for constant folding.
-                assert(expression is IrSetField) { "read of const val ${callee.name} not inlined by ConstLowering" }
-                // This can only be the field's initializer; JVM implementations are required
-                // to generate those for ConstantValue-marked fields automatically, so this is redundant.
-                return defaultValue(expression.type)
-            }
+        if (context.state.shouldInlineConstVals) {
+            // Const fields should only have reads, and those should have been transformed by ConstLowering.
+            assert(callee.constantValue() == null) { "access of const val: ${expression.dump()}" }
         }
 
         val realField = callee.resolveFakeOverride()!!

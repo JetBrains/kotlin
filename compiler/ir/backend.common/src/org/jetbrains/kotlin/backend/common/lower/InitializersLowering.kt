@@ -39,7 +39,7 @@ open class InitializersLowering(context: CommonBackendContext) : InitializersLow
     }
 }
 
-abstract class InitializersLoweringBase(val context: CommonBackendContext) : ClassLoweringPass {
+abstract class InitializersLoweringBase(open val context: CommonBackendContext) : ClassLoweringPass {
     protected fun extractInitializers(irClass: IrClass, filter: (IrDeclaration) -> Boolean) =
         irClass.declarations.filter(filter).mapNotNull {
             when (it) {
@@ -57,6 +57,7 @@ abstract class InitializersLoweringBase(val context: CommonBackendContext) : Cla
                 IrGetValueImpl(startOffset, endOffset, irClass.thisReceiver!!.type, irClass.thisReceiver!!.symbol)
             else
                 null
+            declaration.initializer = null
             IrSetFieldImpl(startOffset, endOffset, declaration.symbol, receiver, expression, context.irBuiltIns.unitType)
         }
 
