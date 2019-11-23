@@ -12,6 +12,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
@@ -116,6 +117,10 @@ class ConstantConditionIfInspection : AbstractKotlinInspection() {
         }
 
         override fun applyFix(ifExpression: KtIfExpression) {
+            val parent = ifExpression.parent
+            if (parent.node.elementType == KtNodeTypes.ELSE) {
+                (parent.parent as? KtIfExpression)?.elseKeyword?.delete()
+            }
             ifExpression.delete()
         }
     }
