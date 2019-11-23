@@ -1,5 +1,4 @@
-// Generates ICONST_1
-val a = 1
+val a = 2
 
 fun main() {
     // Generates IF_ICMPNE and GOTO
@@ -39,7 +38,7 @@ fun main() {
 }
 
 //0 ICONST_0
-//1 ICONST_1
+//0 ICONST_1
 //1 IF_ICMPNE
 //1 IF_ICMPLE
 //1 IF_ICMPLT

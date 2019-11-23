@@ -1,5 +1,4 @@
-// Generates ICONST_1
-val a = 1
+val a = 2
 
 fun main() {
     // Generates IF_ICMPEQ and GOTO
@@ -34,7 +33,7 @@ fun main() {
 }
 
 //0 ICONST_0
-//1 ICONST_1
+//0 ICONST_1
 //2 IF_ICMPEQ
 //1 IF_ICMPLE
 //1 IF_ICMPLT

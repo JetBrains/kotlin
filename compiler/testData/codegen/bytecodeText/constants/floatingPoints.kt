@@ -1,3 +1,4 @@
+// !LANGUAGE: +NoConstantValueAttributeForNonConstVals
 val a = 1.0 + 10
 val b = 2 + 10.0
 val c = 3.0F + 10
