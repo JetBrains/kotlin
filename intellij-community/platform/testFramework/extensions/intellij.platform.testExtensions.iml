@@ -12,7 +12,7 @@
     <orderEntry type="module" module-name="intellij.platform.testFramework" />
     <orderEntry type="library" name="JDOM" level="project" />
     <orderEntry type="library" exported="" name="assertJ" level="project" />
-    <orderEntry type="library" name="memoryfilesystem" level="project" />
+    <orderEntry type="library" exported="" name="memoryfilesystem" level="project" />
     <orderEntry type="library" name="snakeyaml" level="project" />
   </component>
 </module>
