@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.descriptors.impl
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.InvalidModuleException
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
-import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -39,7 +36,7 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
     override val platform: TargetPlatform? = null,
     capabilities: Map<ModuleDescriptor.Capability<*>, Any?> = emptyMap(),
     override val stableName: Name? = null
-) : DeclarationDescriptorImpl(Annotations.EMPTY, moduleName), ModuleDescriptor {
+) : DeclarationDescriptorImpl(Annotations.EMPTY, moduleName), ModuleDescriptor, DescriptorWithStorageManager {
     private val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>
 
     init {
@@ -152,6 +149,8 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
 
     @Suppress("UNCHECKED_CAST")
     override fun <T> getCapability(capability: ModuleDescriptor.Capability<T>) = capabilities[capability] as? T
+
+    override fun getComputeStorageManager(): StorageManager = storageManager
 }
 
 interface ModuleDependencies {

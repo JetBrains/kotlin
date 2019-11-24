@@ -33,13 +33,15 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner;
 
 import java.util.List;
 
-public abstract class AbstractClassDescriptor extends ModuleAwareClassDescriptor {
+public abstract class AbstractClassDescriptor extends ModuleAwareClassDescriptor implements DescriptorWithStorageManager {
+    private StorageManager storageManager;
     private final Name name;
     protected final NotNullLazyValue<SimpleType> defaultType;
     private final NotNullLazyValue<MemberScope> unsubstitutedInnerClassesScope;
     private final NotNullLazyValue<ReceiverParameterDescriptor> thisAsReceiverParameter;
 
     public AbstractClassDescriptor(@NotNull StorageManager storageManager, @NotNull Name name) {
+        this.storageManager = storageManager;
         this.name = name;
         this.defaultType = storageManager.createLazyValue(new Function0<SimpleType>() {
             @Override
@@ -175,5 +177,11 @@ public abstract class AbstractClassDescriptor extends ModuleAwareClassDescriptor
     @Override
     public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
         return visitor.visitClassDescriptor(this, data);
+    }
+
+    @NotNull
+    @Override
+    public StorageManager getComputeStorageManager() {
+        return storageManager;
     }
 }

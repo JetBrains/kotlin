@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.KotlinTypeFactory
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
@@ -52,4 +53,14 @@ fun DeclarationDescriptor.isTopLevelInPackage(name: String, packageName: String)
     val containingDeclaration = containingDeclaration as? PackageFragmentDescriptor ?: return false
     val packageFqName = containingDeclaration.fqName.asString()
     return packageName == packageFqName
+}
+
+tailrec fun DeclarationDescriptor.findStorageManager(): StorageManager {
+    if (this is DescriptorWithStorageManager) {
+        return this.computeStorageManager
+    }
+
+    val containingDeclaration = containingDeclaration ?: throw IllegalStateException("Can't find storage manager")
+
+    return containingDeclaration.findStorageManager()
 }
