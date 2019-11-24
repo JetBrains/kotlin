@@ -1,7 +1,7 @@
 FILE fqName:<root> fileName:/specializedTypeAliasConstructorCall.kt
   CLASS CLASS name:Cell modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Cell
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
     CONSTRUCTOR visibility:public <> (value:T of <uninitialized parent>) returnType:<root>.Cell<T of <uninitialized parent>> [primary]
       VALUE_PARAMETER name:value index:0 type:T of <uninitialized parent>
       BLOCK_BODY
@@ -35,5 +35,5 @@ FILE fqName:<root> fileName:/specializedTypeAliasConstructorCall.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test (): <root>.Cell<kotlin.Int> declared in <root>'
         CONSTRUCTOR_CALL 'public constructor <init> (value: T of <uninitialized parent>) [primary] declared in <root>.Cell' type=<root>.Cell<kotlin.Int> origin=null
-          <class: T>: <none>
+          <class: T>: kotlin.Int
           value: CONST Int type=kotlin.Int value=42

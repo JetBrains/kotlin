@@ -17,7 +17,7 @@ FILE fqName:<root> fileName:/in.kt
             $this: GET_VAR 'x: kotlin.collections.Collection<kotlin.Any> declared in <root>.test2' type=kotlin.collections.Collection<kotlin.Any> origin=null
             element: GET_VAR 'a: kotlin.Any declared in <root>.test2' type=kotlin.Any origin=null
   FUN name:test3 visibility:public modality:FINAL <T> (a:T of <root>.test3, x:kotlin.collections.Collection<T of <root>.test3>) returnType:kotlin.Boolean
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
     VALUE_PARAMETER name:a index:0 type:T of <root>.test3
     VALUE_PARAMETER name:x index:1 type:kotlin.collections.Collection<T of <root>.test3>
     BLOCK_BODY
@@ -26,7 +26,7 @@ FILE fqName:<root> fileName:/in.kt
           $this: GET_VAR 'x: kotlin.collections.Collection<T of <root>.test3> declared in <root>.test3' type=kotlin.collections.Collection<T of <root>.test3> origin=null
           element: GET_VAR 'a: T of <root>.test3 declared in <root>.test3' type=T of <root>.test3 origin=null
   FUN name:test4 visibility:public modality:FINAL <T> (a:T of <root>.test4, x:kotlin.collections.Collection<T of <root>.test4>) returnType:kotlin.Boolean
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
     VALUE_PARAMETER name:a index:0 type:T of <root>.test4
     VALUE_PARAMETER name:x index:1 type:kotlin.collections.Collection<T of <root>.test4>
     BLOCK_BODY

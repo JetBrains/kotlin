@@ -35,7 +35,7 @@ FILE fqName:<root> fileName:/bangbang.kt
               if: CONST Boolean type=kotlin.Boolean value=true
               then: GET_VAR 'val tmp_1: kotlin.Int? [val] declared in <root>.test2' type=kotlin.Int origin=null
   FUN name:test3 visibility:public modality:FINAL <X> (a:X of <root>.test3) returnType:kotlin.Any
-    TYPE_PARAMETER name:X index:0 variance: superTypes:[]
+    TYPE_PARAMETER name:X index:0 variance: superTypes:[kotlin.Any?]
     VALUE_PARAMETER name:a index:0 type:X of <root>.test3
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test3 <X> (a: X of <root>.test3): kotlin.Any declared in <root>'
@@ -56,7 +56,7 @@ FILE fqName:<root> fileName:/bangbang.kt
     VALUE_PARAMETER name:s index:0 type:kotlin.String
     BLOCK_BODY
   FUN name:test4 visibility:public modality:FINAL <X> (a:X of <root>.test4) returnType:kotlin.Unit
-    TYPE_PARAMETER name:X index:0 variance: superTypes:[]
+    TYPE_PARAMETER name:X index:0 variance: superTypes:[kotlin.Any?]
     VALUE_PARAMETER name:a index:0 type:X of <root>.test4
     BLOCK_BODY
       WHEN type=kotlin.Unit origin=IF

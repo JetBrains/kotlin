@@ -1,7 +1,7 @@
 FILE fqName:<root> fileName:/delegatingConstructorCallToTypeAliasConstructor.kt
   CLASS CLASS name:Cell modality:OPEN visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Cell
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
     CONSTRUCTOR visibility:public <> (value:T of <uninitialized parent>) returnType:<root>.Cell<T of <uninitialized parent>> [primary]
       VALUE_PARAMETER name:value index:0 type:T of <uninitialized parent>
       BLOCK_BODY

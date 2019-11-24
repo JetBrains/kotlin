@@ -1,9 +1,9 @@
 FILE fqName:<root> fileName:/useImportedMember.kt
   CLASS INTERFACE name:I modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.I
-    TYPE_PARAMETER name:G index:0 variance: superTypes:[]
+    TYPE_PARAMETER name:G index:0 variance: superTypes:[kotlin.Any?]
     FUN name:fromInterface visibility:public modality:OPEN <T> ($this:<root>.I, $receiver:T of <root>.I.fromInterface) returnType:T of <root>.I.fromInterface
-      TYPE_PARAMETER name:T index:0 variance: superTypes:[]
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
       $this: VALUE_PARAMETER name:<this> type:<root>.I
       $receiver: VALUE_PARAMETER name:<this> type:T of <root>.I.fromInterface
       BLOCK_BODY
@@ -105,7 +105,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
           RETURN type=kotlin.Nothing from='public final fun <get-ext> (): kotlin.Int declared in <root>.C'
             CONST Int type=kotlin.Int value=6
     FUN name:g1 visibility:public modality:FINAL <T> ($this:<root>.C, t:T of <root>.C.g1) returnType:T of <root>.C.g1
-      TYPE_PARAMETER name:T index:0 variance: superTypes:[]
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
       $this: VALUE_PARAMETER name:<this> type:<root>.C
       VALUE_PARAMETER name:t index:0 type:T of <root>.C.g1
       BLOCK_BODY
@@ -213,7 +213,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
               arg0: CALL 'public final fun g1 <T> (t: T of <root>.C.g1): T of <root>.C.g1 declared in <root>.C' type=kotlin.String origin=null
-                <T>: <none>
+                <T>: kotlin.String
                 $this: GET_VAR '<this>: <root>.C declared in <root>.C' type=<root>.C origin=null
                 t: CONST String type=kotlin.String value="7"
               arg1: CONST String type=kotlin.String value="7"
@@ -233,7 +233,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
               arg0: CALL 'public open fun fromInterface <T> (): T of <root>.I.fromInterface declared in <root>.I' type=kotlin.Int origin=null
-                <T>: <none>
+                <T>: kotlin.Int
                 $this: GET_VAR '<this>: <root>.I declared in <root>.I' type=<root>.I<*> origin=null
               arg1: CONST Int type=kotlin.Int value=9
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'

@@ -1,7 +1,7 @@
 FILE fqName:<root> fileName:/typeAliasCtorForGenericClass.kt
   CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
-    TYPE_PARAMETER name:Q index:0 variance: superTypes:[]
+    TYPE_PARAMETER name:Q index:0 variance: superTypes:[kotlin.Any?]
     CONSTRUCTOR visibility:public <> (q:Q of <uninitialized parent>) returnType:<root>.A<Q of <uninitialized parent>> [primary]
       VALUE_PARAMETER name:q index:0 type:Q of <uninitialized parent>
       BLOCK_BODY
@@ -35,9 +35,9 @@ FILE fqName:<root> fileName:/typeAliasCtorForGenericClass.kt
     BLOCK_BODY
       VAR name:b type:<root>.A<kotlin.Int> [val]
         CONSTRUCTOR_CALL 'public constructor <init> (q: Q of <uninitialized parent>) [primary] declared in <root>.A' type=<root>.A<kotlin.Int> origin=null
-          <class: Q>: <none>
+          <class: Q>: kotlin.Int
           q: CONST Int type=kotlin.Int value=2
       VAR name:b2 type:<root>.A<<root>.A<kotlin.Int>> [val]
         CONSTRUCTOR_CALL 'public constructor <init> (q: Q of <uninitialized parent>) [primary] declared in <root>.A' type=<root>.A<<root>.A<kotlin.Int>> origin=null
-          <class: Q>: <none>
+          <class: Q>: <root>.A<kotlin.Int>
           q: GET_VAR 'val b: <root>.A<kotlin.Int> [val] declared in <root>.bar' type=<root>.A<kotlin.Int> origin=null
