@@ -443,7 +443,7 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
         .withComment(ExecutionBundle.message("edit.run.configuration.run.configuration.run.on.comment"))
         .addToPanel(myRunOnPanel, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0,
                                                          GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH,
-                                                         JBUI.emptyInsets(), 0, 0));
+                                                         JBUI.emptyInsets(), 0, 0), false);
       JLabel runOnLabel = UIUtil.findComponentOfType(myRunOnPanel, JLabel.class);
       if (runOnLabel != null) {
         runOnLabel.setLabelFor(myRunOnComboBox);
