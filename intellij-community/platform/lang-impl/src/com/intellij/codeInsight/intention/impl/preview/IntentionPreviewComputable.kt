@@ -12,10 +12,8 @@ import com.intellij.diff.fragments.LineFragment
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorFactory
-import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.progress.DumbProgressIndicator
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressManager
@@ -26,26 +24,17 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
 
-class IntentionPreviewComputable(private val originalFile: PsiFile,
-                                 private val project: Project,
+class IntentionPreviewComputable(private val project: Project,
+                                 private val action: IntentionAction,
+                                 private val originalFile: PsiFile,
                                  private val originalEditor: Editor,
-                                 private val action: IntentionAction) : Computable<Pair<PsiFile?, List<LineFragment>>?> {
-  private val LOG = Logger.getInstance(IntentionPreviewComputable::class.java)
-
+                                 private val psiFileCopy: PsiFile,
+                                 private val editorCopy: Editor
+                                 ) : Computable<Pair<PsiFile?, List<LineFragment>>?> {
   override fun compute(): Pair<PsiFile?, List<LineFragment>>? {
-    ProgressManager.checkCanceled()
-    val psiFileCopy = ApplicationManager.getApplication().runReadAction(Computable<PsiFile> { nonPhysicalPsiCopy(originalFile, project) })
-    ProgressManager.checkCanceled()
-    val documentCopy = ApplicationManager.getApplication().runReadAction(
-      Computable<Document> { FileDocumentManager.getInstance().getDocument(psiFileCopy.viewProvider.virtualFile) })
-    if (documentCopy == null) return null
-
     CommandProcessor.getInstance().runUndoTransparentAction(Runnable {
       try {
-        ApplicationManager.getApplication().runReadAction(ThrowableComputable<Unit, RuntimeException> {
-          val editorCopy = EditorFactory.getInstance().createEditor(documentCopy, project)
-            .also { it.caretModel.moveToOffset(originalEditor.caretModel.offset) }
-
+        ApplicationManager.getApplication().runReadAction(ThrowableComputable<Unit, Exception> {
           val actionWithTextCachingCopy = intentionActionWithTextCaching(editorCopy, psiFileCopy)
           if (actionWithTextCachingCopy == null) return@ThrowableComputable
 
@@ -65,7 +54,7 @@ class IntentionPreviewComputable(private val originalFile: PsiFile,
       }
       catch (e: Exception) {
         LOG.warn("There are exceptions on invocation the intention: '${action.text}' on a copy of the file.", e)
-        throw ProcessCanceledException()
+        throw ProcessCanceledException(e)
       }
     })
 
@@ -98,4 +87,8 @@ class IntentionPreviewComputable(private val originalFile: PsiFile,
       .plus(cachedIntentions.intentions)
       .plus(cachedIntentions.inspectionFixes)
       .plus(cachedIntentions.errorFixes)
+
+  companion object {
+    private val LOG = Logger.getInstance(IntentionPreviewComputable::class.java)
+  }
 }
