@@ -94,7 +94,7 @@ private fun checkExpressionArgument(
         return resolvedExpression
     }
 
-    println("POSITION: $position; arg: $argumentType, ET: $expectedType")
+    println("${Thread.currentThread().id} POSITION: $position; arg: $argumentType, ET: $expectedType")
     if (!csBuilder.addSubtypeConstraintIfCompatible(argumentType, expectedType, position)) {
         if (!isReceiver) {
             diagnosticsHolder.addDiagnosticIfNotNull(

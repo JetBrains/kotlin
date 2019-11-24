@@ -89,13 +89,14 @@ class NewConstraintSystemImpl(
             position
         )
 
-    override fun addEqualityConstraint(a: KotlinTypeMarker, b: KotlinTypeMarker, position: ConstraintPosition) =
-        constraintInjector.addInitialEqualityConstraint(
+    override fun addEqualityConstraint(a: KotlinTypeMarker, b: KotlinTypeMarker, position: ConstraintPosition) {
+        return constraintInjector.addInitialEqualityConstraint(
             apply { checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION) },
             a,
             b,
             position
         )
+    }
 
     override fun getProperSuperTypeConstructors(type: KotlinTypeMarker): List<TypeConstructorMarker> {
         checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)

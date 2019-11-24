@@ -62,15 +62,17 @@ class MutableVariableWithConstraints(
             }
         }
 
-        val actualConstraint = if (addAsEqualityConstraint)
-            Constraint(
+        val actualConstraint = if (addAsEqualityConstraint) {
+            val constraint1 = Constraint(
                 ConstraintKind.EQUALITY,
                 constraint.type,
                 constraint.position,
                 constraint.typeHashCode,
                 derivedFrom = constraint.derivedFrom
             )
-        else
+            println("${Thread.currentThread().id} EQUALITY ADDED $constraint1")
+            constraint1
+        } else
             constraint
 
         mutableConstraints.add(actualConstraint)

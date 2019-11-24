@@ -202,6 +202,7 @@ class ConstraintInjector(
             }
 
             if (targetType.isError()) {
+                println("${Thread.currentThread().id} TYPE ERROR $targetType")
                 c.addError(ConstrainingTypeIsError(typeVariable, targetType, position))
                 return
             }
@@ -230,7 +231,9 @@ class ConstraintInjector(
                 }
             }
 
-            possibleNewConstraints.add(typeVariable to Constraint(kind, targetType, position, derivedFrom = derivedFrom))
+            val constraint = Constraint(kind, targetType, position, derivedFrom = derivedFrom)
+            println("${Thread.currentThread().id} ADD $constraint")
+            possibleNewConstraints.add(typeVariable to constraint)
         }
 
         override val allTypeVariablesWithConstraints: Collection<VariableWithConstraints>
