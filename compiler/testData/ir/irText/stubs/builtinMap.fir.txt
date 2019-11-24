@@ -1,7 +1,7 @@
 FILE fqName:<root> fileName:/builtinMap.kt
   FUN name:plus visibility:public modality:FINAL <K1, V1> ($receiver:kotlin.collections.Map<out K1 of <root>.plus, V1 of <root>.plus>, pair:kotlin.Pair<K1 of <root>.plus, V1 of <root>.plus>) returnType:kotlin.collections.Map<K1 of <root>.plus, V1 of <root>.plus>
-    TYPE_PARAMETER name:K1 index:0 variance: superTypes:[]
-    TYPE_PARAMETER name:V1 index:0 variance: superTypes:[]
+    TYPE_PARAMETER name:K1 index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:V1 index:0 variance: superTypes:[kotlin.Any?]
     $receiver: VALUE_PARAMETER name:<this> type:kotlin.collections.Map<out K1 of <root>.plus, V1 of <root>.plus>
     VALUE_PARAMETER name:pair index:0 type:kotlin.Pair<K1 of <root>.plus, V1 of <root>.plus>
     BLOCK_BODY
@@ -10,14 +10,17 @@ FILE fqName:<root> fileName:/builtinMap.kt
           BRANCH
             if: CALL 'public abstract fun isEmpty (): kotlin.Boolean declared in kotlin.collections.Map' type=kotlin.Boolean origin=null
               $this: GET_VAR '<this>: kotlin.collections.Map<out K1 of <root>.plus, V1 of <root>.plus> declared in <root>.plus' type=kotlin.collections.Map<out K1 of <root>.plus, V1 of <root>.plus> origin=null
-            then: CALL 'public final fun mapOf (pair: kotlin.Pair<K of <uninitialized parent>, V of <uninitialized parent>>): kotlin.collections.Map<K of <uninitialized parent>, V of <uninitialized parent>> declared in kotlin.collections' type=kotlin.collections.Map<K1 of <root>.plus, V1 of <root>.plus> origin=null
+            then: CALL 'public final fun mapOf <K, V> (pair: kotlin.Pair<K of kotlin.collections.mapOf, V of kotlin.collections.mapOf>): kotlin.collections.Map<K of kotlin.collections.mapOf, V of kotlin.collections.mapOf> declared in kotlin.collections' type=kotlin.collections.Map<K1 of <root>.plus, V1 of <root>.plus> origin=null
+              <K>: K1 of <root>.plus
+              <V>: V1 of <root>.plus
               pair: GET_VAR 'pair: kotlin.Pair<K1 of <root>.plus, V1 of <root>.plus> declared in <root>.plus' type=kotlin.Pair<K1 of <root>.plus, V1 of <root>.plus> origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
-            then: CALL 'public final fun apply (block: kotlin.Function1<T of <uninitialized parent>, kotlin.Unit>): T of <uninitialized parent> [inline] declared in kotlin' type=java.util.LinkedHashMap<K1 of <root>.plus, V1 of <root>.plus> origin=null
+            then: CALL 'public final fun apply <T> (block: kotlin.Function1<T of kotlin.apply, kotlin.Unit>): T of kotlin.apply [inline] declared in kotlin' type=java.util.LinkedHashMap<K1 of <root>.plus, V1 of <root>.plus> origin=null
+              <T>: java.util.LinkedHashMap<K1 of <root>.plus, V1 of <root>.plus>
               $receiver: CONSTRUCTOR_CALL 'public constructor <init> (p0: kotlin.collections.Map<out K of java.util.LinkedHashMap, out V of java.util.LinkedHashMap>?) declared in java.util.LinkedHashMap' type=java.util.LinkedHashMap<K1 of <root>.plus, V1 of <root>.plus> origin=null
-                <class: K>: <none>
-                <class: V>: <none>
+                <class: K>: K1 of <root>.plus
+                <class: V>: V1 of <root>.plus
                 p0: GET_VAR '<this>: kotlin.collections.Map<out K1 of <root>.plus, V1 of <root>.plus> declared in <root>.plus' type=kotlin.collections.Map<out K1 of <root>.plus, V1 of <root>.plus> origin=null
               block: FUN_EXPR type=kotlin.Function1<java.util.LinkedHashMap<K1 of <root>.plus, V1 of <root>.plus>, kotlin.Unit> origin=LAMBDA
                 FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit

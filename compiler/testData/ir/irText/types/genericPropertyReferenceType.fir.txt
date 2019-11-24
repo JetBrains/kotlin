@@ -1,7 +1,7 @@
 FILE fqName:<root> fileName:/genericPropertyReferenceType.kt
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
     CONSTRUCTOR visibility:public <> (x:T of <uninitialized parent>) returnType:<root>.C<T of <uninitialized parent>> [primary]
       VALUE_PARAMETER name:x index:0 type:T of <uninitialized parent>
       BLOCK_BODY

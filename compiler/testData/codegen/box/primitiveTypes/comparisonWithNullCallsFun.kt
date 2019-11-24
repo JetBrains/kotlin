@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 var entered = 0
 
 fun <T> foo(t: T): T {

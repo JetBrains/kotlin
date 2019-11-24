@@ -1,7 +1,7 @@
 FILE fqName:<root> fileName:/memberTypeArguments.kt
   CLASS CLASS name:GenericClass modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.GenericClass
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
     CONSTRUCTOR visibility:public <> (value:T of <uninitialized parent>) returnType:<root>.GenericClass<T of <uninitialized parent>> [primary]
       VALUE_PARAMETER name:value index:0 type:T of <uninitialized parent>
       BLOCK_BODY
@@ -24,7 +24,7 @@ FILE fqName:<root> fileName:/memberTypeArguments.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun withNewValue (newValue: T of <root>.GenericClass): <root>.GenericClass<T of <root>.GenericClass> declared in <root>.GenericClass'
           CONSTRUCTOR_CALL 'public constructor <init> (value: T of <uninitialized parent>) [primary] declared in <root>.GenericClass' type=<root>.GenericClass<T of <root>.GenericClass> origin=null
-            <class: T>: <none>
+            <class: T>: T of <root>.GenericClass
             value: GET_VAR 'newValue: T of <root>.GenericClass declared in <root>.GenericClass.withNewValue' type=T of <root>.GenericClass origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override]
       overridden:

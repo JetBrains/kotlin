@@ -1,6 +1,6 @@
 FILE fqName:<root> fileName:/argumentMappedWithError.kt
   FUN name:convert visibility:public modality:FINAL <R> ($receiver:kotlin.Number) returnType:R of <root>.convert
-    TYPE_PARAMETER name:R index:0 variance: superTypes:[]
+    TYPE_PARAMETER name:R index:0 variance: superTypes:[kotlin.Number]
     $receiver: VALUE_PARAMETER name:<this> type:kotlin.Number
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun convert <R> (): R of <root>.convert declared in <root>'
@@ -15,5 +15,5 @@ FILE fqName:<root> fileName:/argumentMappedWithError.kt
         CONST Int type=kotlin.Int value=0
       CALL 'public final fun foo (arg: kotlin.Number): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         arg: CALL 'public final fun convert <R> (): R of <root>.convert declared in <root>' type=kotlin.Number origin=null
-          <R>: <none>
+          <R>: kotlin.Number
           $receiver: GET_VAR 'val x: kotlin.Int [val] declared in <root>.main' type=kotlin.Int origin=null

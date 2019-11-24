@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 fun box() =
         if (getAndCheck({ 42 }, { 42 })) "OK" else "fail"
 

@@ -6,7 +6,7 @@ FILE fqName:test fileName:/funImportedFromObject.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN name:foo visibility:public modality:FINAL <T> ($this:test.Host) returnType:kotlin.String [inline]
-      TYPE_PARAMETER name:T index:0 variance: superTypes:[]
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
       $this: VALUE_PARAMETER name:<this> type:test.Host
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun foo <T> (): kotlin.String [inline] declared in test.Host'
@@ -28,5 +28,5 @@ FILE fqName:test fileName:/funImportedFromObject.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test (): kotlin.String declared in test'
         CALL 'public final fun foo <T> (): kotlin.String [inline] declared in test.Host' type=kotlin.String origin=null
-          <T>: <none>
+          <T>: kotlin.Any
           $this: GET_VAR '<this>: test.Host declared in test.Host' type=test.Host origin=null

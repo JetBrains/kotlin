@@ -1,7 +1,7 @@
 FILE fqName:<root> fileName:/typeParameterBoundedBySubclass.kt
   CLASS CLASS name:Base1 modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Base1
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[<root>.Derived1]
     CONSTRUCTOR visibility:public <> () returnType:<root>.Base1<T of <uninitialized parent>> [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
@@ -46,7 +46,7 @@ FILE fqName:<root> fileName:/typeParameterBoundedBySubclass.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Base2 modality:ABSTRACT visibility:public superTypes:[kotlin.Any]'
     FUN name:foo visibility:public modality:FINAL <T> ($this:<root>.Base2, x:T of <root>.Base2.foo) returnType:kotlin.Unit
-      TYPE_PARAMETER name:T index:0 variance: superTypes:[]
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[<root>.Derived2]
       $this: VALUE_PARAMETER name:<this> type:<root>.Base2
       VALUE_PARAMETER name:x index:0 type:T of <root>.Base2.foo
       BLOCK_BODY
