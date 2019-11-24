@@ -17,13 +17,22 @@
 package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.descriptors.SupertypeLoopChecker
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.checker.refineTypes
 import org.jetbrains.kotlin.types.refinement.TypeRefinement
 
 abstract class AbstractTypeConstructor(storageManager: StorageManager) : TypeConstructor {
+    init {
+        if (storageManager === LockBasedStorageManager.NO_LOCKS) {
+            println("NOOOOO")
+        }
+    }
+
     override fun getSupertypes() = supertypes().supertypesWithoutCycles
 
     abstract override fun getDeclarationDescriptor(): ClassifierDescriptor
@@ -77,9 +86,15 @@ abstract class AbstractTypeConstructor(storageManager: StorageManager) : TypeCon
     }
 
     private val supertypes = storageManager.createLazyValueWithPostCompute(
-        { Supertypes(computeSupertypes()) },
-        { Supertypes(listOf(ErrorUtils.ERROR_TYPE_FOR_LOOP_IN_SUPERTYPES)) },
-        { supertypes ->
+        computable = {
+            println("${Thread.currentThread().id} Start $this ${this.hashCode()}")
+            Supertypes(computeSupertypes())
+        },
+        onRecursiveCall = {
+            println("${Thread.currentThread().id} !!! LOOP REPORTED $this ${this.hashCode()}")
+            Supertypes(listOf(ErrorUtils.ERROR_TYPE_FOR_LOOP_IN_SUPERTYPES))
+        },
+        postCompute = { supertypes ->
             // It's important that loops disconnection begins in post-compute phase, because it guarantees that
             // when we start calculation supertypes of supertypes (for computing neighbours), they start their disconnection loop process
             // either, and as we want to report diagnostic about loops on all declarations they should see consistent version of 'allSupertypes'
@@ -104,6 +119,7 @@ abstract class AbstractTypeConstructor(storageManager: StorageManager) : TypeCon
             )
 
             supertypes.supertypesWithoutCycles = (resultWithoutCycles as? List<KotlinType>) ?: resultWithoutCycles.toList()
+            println("${Thread.currentThread().id} End $this ${this.hashCode()}")
         })
 
     private fun TypeConstructor.computeNeighbours(useCompanions: Boolean): Collection<KotlinType> =

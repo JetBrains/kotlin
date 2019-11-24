@@ -96,6 +96,7 @@ public class TypeParameterDescriptorImpl extends AbstractTypeParameterDescriptor
     ) {
         super(DescriptorUtilKt.findStorageManager(containingDeclaration), containingDeclaration, annotations, name, variance, reified, index, source,
               supertypeLoopsChecker);
+        System.out.println("!!! HERE NO_LOCK !!!");
         this.reportCycleError = reportCycleError;
     }
 

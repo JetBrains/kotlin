@@ -8,7 +8,8 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.AbstractTypeApproximator
+import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -61,7 +62,9 @@ class ConstraintIncorporator(
 
         // constraint.type <: \alpha
         if (constraint.kind != ConstraintKind.UPPER) {
-            getConstraintsForVariable(typeVariable).forEach {
+            val constraintsForVariable = getConstraintsForVariable(typeVariable)
+            println("${Thread.currentThread().id} $constraintsForVariable")
+            constraintsForVariable.forEach {
                 if (it.kind != ConstraintKind.LOWER) {
                     addNewIncorporatedConstraint(constraint.type, it.type)
                 }
