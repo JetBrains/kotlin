@@ -25,19 +25,12 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.junit.Before
-import org.junit.BeforeClass
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
-import java.io.PrintWriter
-import java.io.StringWriter
-import java.lang.reflect.InvocationTargetException
 import java.net.URLClassLoader
 import kotlin.reflect.KClass
 
@@ -198,11 +191,11 @@ class ComposeCallLoweringTests : AbstractCodegenTest() {
             """
                 import androidx.compose.*
 
-                val x = Ambient.of<Int> { 123 }
+                val x = ambientOf<Int> { 123 }
 
                 @Composable
                 fun test() {
-                    x.Provider(456) {
+                    Providers(x provides 456) {
 
                     }
                 }
@@ -229,13 +222,11 @@ class ComposeCallLoweringTests : AbstractCodegenTest() {
     fun testReceiverLambda2(): Unit = forComposerParam(true, false) {
         codegen(
             """
-                import androidx.compose.*
-
                 class DensityScope(val density: Density)
 
                 class Density
 
-                val DensityAmbient = Ambient.of<Density>()
+                val DensityAmbient = ambientOf<Density>()
 
                 @Composable
                 fun ambientDensity() = ambient(DensityAmbient)
@@ -320,7 +311,7 @@ class ComposeCallLoweringTests : AbstractCodegenTest() {
     fun testInlinedComposable(): Unit = forComposerParam(true, false) {
         codegen(
             """
-        @Composable 
+        @Composable
         inline fun Foo(crossinline children: @Composable() () -> Unit) {
                 children()
         }
@@ -1148,7 +1139,7 @@ fun WebComponent(
         }
     }
 
-    fun codegen(text: String, dumpClasses: Boolean = false): Unit {
+    fun codegen(text: String, dumpClasses: Boolean = false) {
         codegenNoImports(
             """
            import android.content.Context
