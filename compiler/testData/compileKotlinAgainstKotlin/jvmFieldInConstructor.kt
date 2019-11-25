@@ -11,7 +11,7 @@ open class B : A()
 
 open class C : B() {
     fun test(): String {
-        return super.publicField + super.internalField + super.protectedfield
+        return publicField + super.internalField + super.protectedfield
     }
 }
 

@@ -65,6 +65,9 @@ object JvmGeneratorExtensions : GeneratorExtensions() {
             descriptor.visibility
         else
             null
+
+    override fun isPropertyWithPlatformField(descriptor: PropertyDescriptor): Boolean =
+        descriptor.hasJvmFieldAnnotation()
 }
 
 class JvmStubGeneratorExtensions : StubGeneratorExtensions() {

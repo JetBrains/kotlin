@@ -102,6 +102,9 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         DelegatedPropertyGenerator(declarationGenerator)
             .generateDelegatedProperty(ktProperty, ktDelegate, propertyDescriptor)
 
+    private fun PropertyDescriptor.actuallyHasBackingField(bindingContext: BindingContext) =
+        hasBackingField(bindingContext) || context.extensions.isPropertyWithPlatformField(this)
+
     private fun generateSimpleProperty(ktProperty: KtProperty, propertyDescriptor: PropertyDescriptor): IrProperty =
         context.symbolTable.declareProperty(
             ktProperty.startOffsetSkippingComments, ktProperty.endOffset,
@@ -110,7 +113,7 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
             isDelegated = false
         ).buildWithScope { irProperty ->
             irProperty.backingField =
-                if (propertyDescriptor.hasBackingField(context.bindingContext))
+                if (propertyDescriptor.actuallyHasBackingField(context.bindingContext))
                     generatePropertyBackingField(ktProperty, propertyDescriptor) { irField ->
                         ktProperty.initializer?.let { ktInitializer ->
                             val compileTimeConst = propertyDescriptor.compileTimeInitializer
@@ -139,11 +142,11 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         val endOffset = ktElement.pureEndOffsetOrUndefined
 
         val backingField =
-            if (propertyDescriptor.hasBackingField(context.bindingContext) && propertyDescriptor.fieldVisibility.admitsFakeOverride)
+            if (propertyDescriptor.actuallyHasBackingField(context.bindingContext) && propertyDescriptor.fieldVisibility.admitsFakeOverride)
                 context.symbolTable.declareFieldWithOverrides(
                     startOffset, endOffset, IrDeclarationOrigin.FAKE_OVERRIDE,
                     propertyDescriptor, propertyDescriptor.type.toIrType()
-                ) { it.hasBackingField(context.bindingContext) }
+                ) { it.actuallyHasBackingField(context.bindingContext) }
             else
                 null
 
