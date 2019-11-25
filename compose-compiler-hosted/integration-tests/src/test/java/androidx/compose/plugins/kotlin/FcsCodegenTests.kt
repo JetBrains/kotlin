@@ -24,7 +24,6 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.compose.Composer
 import androidx.compose.currentComposerNonNull
-import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -943,181 +942,18 @@ class FcsCodegenTests : AbstractCodegenTest() {
         compose(
             """
 
-            val StringAmbient = Ambient.of<String> { "default" }
+            val StringAmbient = ambientOf<String> { "default" }
 
             @Composable fun Foo() {
-                StringAmbient.Consumer { value ->
-                    TextView(id=$tvId, text=value)
-                }
+                TextView(id=$tvId, text=StringAmbient.current)
             }
 
         """,
             { mapOf("text" to text) },
             """
-            StringAmbient.Provider(value=text) {
+            Providers(StringAmbient provides text) {
                 Foo()
             }
-        """
-        ).then { activity ->
-            val textView = activity.findViewById(tvId) as TextView
-
-            assertEquals(text, textView.text)
-            text = "wat"
-        }.then { activity ->
-            val textView = activity.findViewById(tvId) as TextView
-
-            assertEquals(text, textView.text)
-        }
-    }
-
-    // @Test
-    fun testAmbientPortal1(): Unit = forComposerParam(true, false) {
-        val llId = 123
-        val tvId = 345
-        var text = "Hello, world!"
-
-        // NOTE(lmr): The fact that "bust" is needed here is actually an issue with the fact that
-        // changes to providers don't invalidate consumers from other composers via Ambient.Portal.
-        // When that gets fixed, we should update this test to show that.
-        compose(
-            """
-            val StringAmbient = Ambient.of<String> { "default" }
-
-            fun buildPortal() = effectOf<Ambient.Reference> {
-                context.buildReference()
-            }
-
-            @Composable fun App(value: String) {
-                StringAmbient.Provider(value) {
-                    Parent(bust=Math.random())
-                }
-            }
-
-            @Composable fun Parent(bust: Double) {
-                val ambientRef = +buildPortal()
-                val viewRef = remember { Ref<LinearLayout>() }
-
-                LinearLayout(id=$llId, ref=viewRef)
-
-                onCommit {
-                    Compose.composeInto(
-                        container = viewRef.value ?: error("No View Ref!"),
-                        parent = ambientRef
-                    ) {
-                        Child(bust=Math.random())
-                    }
-                }
-            }
-
-            @Composable fun Child(bust: Double) {
-                StringAmbient.Consumer { value ->
-                    TextView(id=$tvId, text=value)
-                }
-            }
-
-            """,
-            { mapOf("text" to text) },
-            """
-            App(value=text)
-            """
-        ).then { activity ->
-            val textView = activity.findViewById(tvId) as TextView
-            val layout = activity.findViewById(llId) as LinearLayout
-
-            assertEquals(1, layout.childCount)
-            assertEquals(text, textView.text)
-            text = "wat"
-        }.then { activity ->
-            val textView = activity.findViewById(tvId) as TextView
-            val layout = activity.findViewById(llId) as LinearLayout
-
-            assertEquals(1, layout.childCount)
-            assertEquals(text, textView.text)
-        }
-    }
-
-    // @Test
-    fun testAmbientPortal2(): Unit = forComposerParam(true, false) {
-        val llId = 123
-        val tvId = 345
-        var text = "Hello, world!"
-
-        // NOTE(lmr): The fact that "bust" is needed here is actually an issue with the fact that
-        // changes to providers don't invalidate consumers from other composers via Ambient.Portal.
-        // When that gets fixed, we should update this test to show that.
-        compose(
-            """
-            val StringAmbient = Ambient.of<String> { "default" }
-
-            @Composable fun App(value: String) {
-                StringAmbient.Provider(value) {
-                    Parent(bust=Math.random())
-                }
-            }
-
-            @Composable fun Parent(bust: Double) {
-                Ambient.Portal { ambientRef ->
-                    val viewRef = remember { Ref<LinearLayout>() }
-
-                    LinearLayout(id=$llId, ref=viewRef)
-
-                    onCommit {
-                        Compose.composeInto(
-                            container = viewRef.value ?: error("No View Ref!"),
-                            parent = ambientRef
-                        ) {
-                            Child(bust=Math.random())
-                        }
-                    }
-                }
-            }
-
-            @Composable fun Child(bust: Double) {
-                StringAmbient.Consumer { value ->
-                    TextView(id=$tvId, text=value)
-                }
-            }
-
-            """,
-            { mapOf("text" to text) },
-            """
-            App(value=text)
-            """
-        ).then { activity ->
-            val textView = activity.findViewById(tvId) as TextView
-            val layout = activity.findViewById(llId) as LinearLayout
-
-            assertEquals(1, layout.childCount)
-            assertEquals(text, textView.text)
-            text = "wat"
-        }.then { activity ->
-            val textView = activity.findViewById(tvId) as TextView
-            val layout = activity.findViewById(llId) as LinearLayout
-
-            assertEquals(1, layout.childCount)
-            assertEquals(text, textView.text)
-        }
-    }
-
-    // @Test
-    fun testCGNClassComponent(): Unit = forComposerParam(true, false) {
-        var text = "Hello, world!"
-        val tvId = 123
-
-        compose(
-            """
-            class Foo {
-                var text = ""
-                @Composable
-                operator fun invoke(bar: Int) {
-                    TextView(id=$tvId, text=text)
-                }
-            }
-
-        """,
-            { mapOf("text" to text) },
-            """
-             Foo(text=text, bar=123)
         """
         ).then { activity ->
             val textView = activity.findViewById(tvId) as TextView
@@ -1248,7 +1084,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
             @Composable
             fun Main() {
                 var text = state { "$initialText" }
-                TextAmbient.Provider(text.value) {
+                Providers(TextAmbient provides text.value) {
                     LinearLayout {
                         ConsumesAmbientFromDefaultParameter()
                         Button(
@@ -1261,7 +1097,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
             }
 
             @Composable
-            fun ConsumesAmbientFromDefaultParameter(text: String = ambient(TextAmbient)) {
+            fun ConsumesAmbientFromDefaultParameter(text: String = TextAmbient.current) {
                 TextView(text = text, id = 42)
             }
         """,
@@ -1963,7 +1799,6 @@ class FcsCodegenTests : AbstractCodegenTest() {
         )
     }
 
-
     @Test
     fun testSimpleClassConstructor(): Unit = forComposerParam(true, false) {
         codegen(
@@ -2569,7 +2404,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
         }
     }
 
-    fun codegen(text: String, dumpClasses: Boolean = false): Unit {
+    fun codegen(text: String, dumpClasses: Boolean = false) {
         val className = "Test_${uniqueNumber++}"
         val fileName = "$className.kt"
 
