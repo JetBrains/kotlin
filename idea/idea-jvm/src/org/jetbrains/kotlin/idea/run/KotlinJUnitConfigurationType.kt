@@ -29,8 +29,8 @@ class KotlinJUnitConfigurationType : ConfigurationType {
 
     override fun getConfigurationFactories(): Array<ConfigurationFactory> = arrayOf(factory)
 
-    override fun getDisplayName() = ExecutionBundle.message("junit.configuration.display.name")
-    override fun getConfigurationTypeDescription() = ExecutionBundle.message("junit.configuration.description")
+    override fun getDisplayName() = "Kotlin JUnit"
+    override fun getConfigurationTypeDescription() = "Kotlin JUnit test configuration"
     override fun getIcon(): Icon = AllIcons.RunConfigurations.Junit
     override fun getId() = "KotlinJUnit"
     override fun getTag() = "junit"
