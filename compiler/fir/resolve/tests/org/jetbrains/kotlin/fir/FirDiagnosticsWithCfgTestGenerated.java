@@ -118,6 +118,11 @@ public class FirDiagnosticsWithCfgTestGenerated extends AbstractFirDiagnosticsWi
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/smartcasts"), Pattern.compile("^([^.]+)\\.kt$"), true);
         }
 
+        @TestMetadata("anotherBoundSmartcasts.kt")
+        public void testAnotherBoundSmartcasts() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/smartcasts/anotherBoundSmartcasts.kt");
+        }
+
         @TestMetadata("bangbang.kt")
         public void testBangbang() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/smartcasts/bangbang.kt");

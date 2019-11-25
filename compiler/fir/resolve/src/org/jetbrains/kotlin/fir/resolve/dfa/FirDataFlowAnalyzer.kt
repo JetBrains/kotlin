@@ -638,15 +638,30 @@ class FirDataFlowAnalyzer(private val components: FirAbstractBodyResolveTransfor
          *      x.length
          *   }
          */
+        val realVariable = getOrCreateRealVariable(variable)
+        requireNotNull(realVariable)
         variableStorage[initializer]?.takeIf { it.isSynthetic() }?.let { initializerVariable ->
-            val realVariable = getOrCreateRealVariable(variable)
-            requireNotNull(realVariable)
             logicSystem.changeVariableForConditionFlow(node.flow, initializerVariable, realVariable)
         }
 
 
         getOrCreateRealVariable(initializer)?.let { rhsVariable ->
             variableStorage.createAliasVariable(variable.symbol, rhsVariable)
+        }
+
+        getRealVariablesForSafeCallChain(initializer).takeIf { it.isNotEmpty() }?.let {
+            val flow = node.flow
+            for (variableFromSafeCall in it) {
+                logicSystem.addConditionalInfo(
+                    flow,
+                    variableFromSafeCall,
+                    ConditionalFirDataFlowInfo(
+                        NotEqNull,
+                        realVariable,
+                        FirDataFlowInfo(setOf(session.builtinTypes.anyType.coneTypeUnsafe()), emptySet())
+                    )
+                )
+            }
         }
     }
 
