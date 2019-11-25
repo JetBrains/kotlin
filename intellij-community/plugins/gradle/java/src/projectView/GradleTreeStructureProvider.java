@@ -20,7 +20,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
-import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,8 +27,11 @@ import org.jetbrains.plugins.gradle.service.project.GradleProjectResolverUtil;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
 
 import java.util.Collection;
+import java.util.List;
 
 import static com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil.*;
+import static com.intellij.ui.SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES;
+import static com.intellij.ui.SimpleTextAttributes.merge;
 
 /**
  * @author Vladislav.Soroka
@@ -203,7 +205,7 @@ public class GradleTreeStructureProvider implements TreeStructureProvider, DumbA
     if (!isExternalSystemAwareModule(GradleConstants.SYSTEM_ID, module)) return null;
 
     String moduleShortName;
-    if (GradleConstants.GRADLE_SOURCE_SET_MODULE_TYPE_KEY.equals(getExternalModuleType(module))) {
+    if (isSourceSetModule(module)) {
       return GradleProjectResolverUtil.getSourceSetName(module);
     }
     else {
@@ -211,42 +213,55 @@ public class GradleTreeStructureProvider implements TreeStructureProvider, DumbA
     }
 
     boolean isRootModule = StringUtil.equals(getExternalProjectPath(module), getExternalRootProjectPath(module));
-    if(isRootModule || moduleShortName == null) return moduleShortName;
+    if (isRootModule || moduleShortName == null) return moduleShortName;
 
     moduleShortName = ModuleGrouper.instanceFor(module.getProject()).getShortenedNameByFullModuleName(moduleShortName);
     return StringUtil.getShortName(moduleShortName, ':');
   }
 
+  private static boolean isSourceSetModule(Module module) {
+    return GradleConstants.GRADLE_SOURCE_SET_MODULE_TYPE_KEY.equals(getExternalModuleType(module));
+  }
 
   private static class GradleModuleDirectoryNode extends PsiDirectoryNode {
     private final String myModuleShortName;
     private final Module myModule;
+    private final boolean appendModuleName;
+    private final boolean isSourceSetModule;
 
     GradleModuleDirectoryNode(Project project,
                               @NotNull PsiDirectory psiDirectory,
-                                     ViewSettings settings,
-                                     Module module,
-                                     String moduleShortName,
-                                     PsiFileSystemItemFilter filter) {
+                              ViewSettings settings,
+                              Module module,
+                              String moduleShortName,
+                              PsiFileSystemItemFilter filter) {
       super(project, psiDirectory, settings, filter);
       myModuleShortName = moduleShortName;
       myModule = module;
+      VirtualFile directoryFile = psiDirectory.getVirtualFile();
+      appendModuleName = StringUtil.isNotEmpty(myModuleShortName) &&
+                         !StringUtil.equalsIgnoreCase(myModuleShortName.replace("-", ""), directoryFile.getName().replace("-", ""));
+      isSourceSetModule = isSourceSetModule(myModule);
     }
 
     @Override
     protected boolean shouldShowModuleName() {
-      return false;
+      return !(appendModuleName || isSourceSetModule);
     }
 
     @Override
     protected void updateImpl(@NotNull PresentationData data) {
       super.updateImpl(data);
-      PsiDirectory psiDirectory = getValue();
-      assert psiDirectory != null;
-      VirtualFile directoryFile = psiDirectory.getVirtualFile();
-      if (StringUtil.isNotEmpty(myModuleShortName) &&
-          !StringUtil.equalsIgnoreCase(myModuleShortName.replace("-", ""), directoryFile.getName().replace("-", ""))) {
-        data.addText("[" + myModuleShortName + "]", SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES);
+      if (appendModuleName) {
+        data.addText("[" + myModuleShortName + "]", REGULAR_BOLD_ATTRIBUTES);
+      }
+      else if (isSourceSetModule) {
+        List<ColoredFragment> fragments = data.getColoredText();
+        if (fragments.size() == 1) {
+          ColoredFragment fragment = fragments.iterator().next();
+          data.clearText();
+          data.addText(fragment.getText().trim(), merge(fragment.getAttributes(), REGULAR_BOLD_ATTRIBUTES));
+        }
       }
     }
   }
@@ -264,7 +279,7 @@ public class GradleTreeStructureProvider implements TreeStructureProvider, DumbA
     public void update(@NotNull PresentationData presentation) {
       super.update(presentation);
       presentation.setPresentableText(myModuleShortName);
-      presentation.addText(myModuleShortName, SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES);
+      presentation.addText(myModuleShortName, REGULAR_BOLD_ATTRIBUTES);
     }
 
     @Override
