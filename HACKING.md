@@ -42,7 +42,7 @@ with the big traces.
 To perform memory profiling follow the steps above, and after attachment to the running process
 use "Start Object Allocation Recording" button. See https://www.yourkit.com/docs/java/help/allocations.jsp for more details.
 
- ## Compiler Gradle options
+## Compiler Gradle options
 
 There are several gradle flags one can use for Konan build.
 
@@ -172,4 +172,53 @@ and then a final native binary is produced from this klibrary using the -Xinclud
      teamcity:id:42491947:nativeReport.json
      
  Pay attention, user and password information(with flag `-u <username>:<password>`) should be provided to get data from TeamCity.
-    
+   
+## Composite build and testing
+
+If you have a fix spanning both Kotlin and Kotlin/native workspaces you need to be able to test Native composite build. Here's how to do it manually:
+
+### Have a composite build with the proper Kotlin tag.
+
+Find the version of Kotlin the current native is guaranteed to build with. 
+The version is specified in `kotlin-native/gradle.properties`. For example:
+```
+kotlinVersion=1.3.70-dev-1526
+```
+Checkout `kotlin` workspace to tag `build-1.3.70-dev-1526`.
+Direct `kotlin-native` build to the kotlin with `kotlinProjectPath` in native's `gradle.properties`.
+
+Now you have the kotlin + kotlin-native combination that is known to build.
+Apply your fix on top of both workspaces and run 
+```
+$ ./gradlew dist
+```
+
+in `kotlin-native` to check the buildability.
+
+### Testing native
+
+For a quick check use:
+```
+$ ./gradlew sanity
+```
+
+For a longer, more thorough testing build the complete build make sure you are runing it on a osx. 
+
+
+Have a complete build:
+
+```
+$ ./gradlew bundle # includes dist as its part
+```
+
+then run two test sets:
+
+```
+$ ./gradlew backend.native:tests:run 
+
+$ ./gradlew backend.native:tests:runExternal -Ptest_two_stage=true
+
+```
+
+
+
