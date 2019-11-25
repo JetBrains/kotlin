@@ -2684,6 +2684,11 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             runTest("compiler/testData/codegen/boxInline/property/augAssignmentAndIncViaConvention.kt");
         }
 
+        @TestMetadata("fromObject.kt")
+        public void testFromObject() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/property/fromObject.kt");
+        }
+
         @TestMetadata("kt22649.kt")
         public void testKt22649() throws Exception {
             runTest("compiler/testData/codegen/boxInline/property/kt22649.kt");
