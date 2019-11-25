@@ -1,0 +1,80 @@
+FILE: nestedClassNameClash.kt
+    public final fun <T> listOf(): R|kotlin/collections/List<T>| {
+        ^listOf when (lval <bangbang>: R|kotlin/Nothing?| = Null(null)) {
+            ==($subj$, Null(null)) ->  {
+                throw <Unresolved name: KotlinNullPointerException>#()
+            }
+            else ->  {
+                R|<local>/<bangbang>|
+            }
+        }
+
+    }
+    public final fun <T> materialize(): R|T| {
+        ^materialize when (lval <bangbang>: R|kotlin/Nothing?| = Null(null)) {
+            ==($subj$, Null(null)) ->  {
+                throw <Unresolved name: KotlinNullPointerException>#()
+            }
+            else ->  {
+                R|<local>/<bangbang>|
+            }
+        }
+
+    }
+    public final class Result : R|kotlin/Any| {
+        public constructor(): R|Result| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class Foo : R|kotlin/Any| {
+        public constructor(): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun test_0(): R|kotlin/Unit| {
+            lval result: R|Foo.Result| = R|/materialize|<R|Foo.Result|>()
+            this@R|/Foo|.R|/Foo.saveResult|(R|<local>/result|)
+        }
+
+        public final fun test_1(): R|kotlin/Unit| {
+            lval results: R|kotlin/collections/List<Foo.Result>| = R|/listOf|<R|Foo.Result|>()
+            this@R|/Foo|.R|/Foo.saveResults|(R|<local>/results|)
+        }
+
+        public final fun test_2(results: R|kotlin/collections/List<Foo.Result>|): R|kotlin/Unit| {
+            this@R|/Foo|.R|/Foo.saveResults|(R|<local>/results|)
+        }
+
+        public final fun test_3(result: R|Foo.Result|): R|kotlin/Unit| {
+            this@R|/Foo|.R|/Foo.saveResult|(R|<local>/result|)
+        }
+
+        public final fun test_4(): R|kotlin/Unit| {
+            lval result: R|Foo.Result| = this@R|/Foo|.R|/Foo.getResult|()
+            this@R|/Foo|.R|/Foo.saveResult|(R|<local>/result|)
+        }
+
+        public final fun test_5(): R|kotlin/Unit| {
+            lval result: R|Foo.Result| = R|/Foo.Result.Result|()
+            this@R|/Foo|.R|/Foo.saveResult|(R|<local>/result|)
+        }
+
+        private final fun getResult(): R|Foo.Result| {
+            ^getResult R|/Foo.Result.Result|()
+        }
+
+        private final fun saveResults(results: R|kotlin/collections/List<Foo.Result>|): R|kotlin/Unit| {
+        }
+
+        private final fun saveResult(result: R|Foo.Result|): R|kotlin/Unit| {
+        }
+
+        public final class Result : R|kotlin/Any| {
+            public constructor(): R|Foo.Result| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
