@@ -2,16 +2,19 @@
 package com.intellij.codeInsight.template.impl;
 
 import com.intellij.AbstractBundle;
+import com.intellij.codeInsight.template.Macro;
 import com.intellij.codeInsight.template.Template;
 import com.intellij.codeInsight.template.TemplateContextType;
 import com.intellij.internal.statistic.utils.PluginInfo;
 import com.intellij.internal.statistic.utils.PluginInfoDetectorKt;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ex.DecodeDefaultsUtil;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.extensions.ExtensionPointAdapter;
 import com.intellij.openapi.options.BaseSchemeProcessor;
 import com.intellij.openapi.options.SchemeManager;
 import com.intellij.openapi.options.SchemeManagerFactory;
@@ -272,6 +275,17 @@ public final class TemplateSettings implements PersistentStateComponent<Template
     });
 
     doLoadTemplates(mySchemeManager.loadSchemes());
+
+    Macro.EP_NAME.addExtensionPointListener(new ExtensionPointAdapter<Macro>() {
+      @Override
+      public void extensionListChanged() {
+        for (TemplateImpl template : myTemplates.values()) {
+          for (Variable variable : template.getVariables()) {
+            variable.dropParsedData();
+          }
+        }
+      }
+    }, ApplicationManager.getApplication());
   }
 
   private void doLoadTemplates(@NotNull Collection<? extends TemplateGroup> groups) {
