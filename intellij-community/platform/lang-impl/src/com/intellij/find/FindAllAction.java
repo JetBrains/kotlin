@@ -15,6 +15,8 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
+
 public class FindAllAction extends AnAction implements ShortcutProvider, DumbAware {
   public FindAllAction() {
     super(IdeBundle.message("show.in.find.window.button.name"),
@@ -27,8 +29,7 @@ public class FindAllAction extends AnAction implements ShortcutProvider, DumbAwa
     Editor editor = e.getData(CommonDataKeys.EDITOR_EVEN_IF_INACTIVE);
     EditorSearchSession search = e.getData(EditorSearchSession.SESSION_KEY);
 
-    e.getPresentation().setIcon(project == null ? AllIcons.General.Pin_tab :
-      ToolWindowManagerEx.getInstanceEx(project).getLocationIcon(ToolWindowId.FIND, AllIcons.General.Pin_tab));
+    e.getPresentation().setIcon(getIcon(project));
     e.getPresentation().setEnabled(editor != null && project != null && search != null &&
                                    !project.isDisposed() && search.hasMatches() &&
                                    PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument()) != null);
@@ -57,5 +58,14 @@ public class FindAllAction extends AnAction implements ShortcutProvider, DumbAwa
   public ShortcutSet getShortcut() {
     AnAction findUsages = ActionManager.getInstance().getAction(IdeActions.ACTION_FIND_USAGES);
     return findUsages != null ? findUsages.getShortcutSet() : null;
+  }
+
+  @NotNull
+  private static Icon getIcon(@Nullable Project project) {
+    ToolWindowManagerEx toolWindowManager = project != null ? ToolWindowManagerEx.getInstanceEx(project) : null;
+    if (toolWindowManager != null) {
+      return toolWindowManager.getLocationIcon(ToolWindowId.FIND, AllIcons.General.Pin_tab);
+    }
+    return AllIcons.General.Pin_tab;
   }
 }
