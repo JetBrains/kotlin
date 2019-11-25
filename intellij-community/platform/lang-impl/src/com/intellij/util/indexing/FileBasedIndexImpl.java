@@ -1535,7 +1535,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
       }
       else {
         // we do invoke later since we can have read lock acquired
-        TransactionGuard.getInstance().submitTransactionLater(app, rebuildRunnable);
+        app.invokeLater(rebuildRunnable, app.getDisposed());
       }
     }
   }
