@@ -12,6 +12,8 @@ class SimpleKotlinRenderLogTest : AbstractKotlinRenderLogTest() {
 
     @Test fun testDefaultImpls() = doTest("DefaultImpls")
 
+    @Test fun testBitwise() = doTest("Bitwise")
+
     @Test fun testElvis() = doTest("Elvis")
 
     @Test fun testPropertyAccessors() = doTest("PropertyAccessors")
