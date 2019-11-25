@@ -741,6 +741,7 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
             ).apply {
                 kotlin.srcDir(project.file(project.file("src/${sourceSet.name}/kotlin")))
                 kotlin.srcDirs(sourceSet.java.srcDirs)
+                sourceSet.java.srcDir(project.file("src/$name/kotlin"))
             }
             sourceSet.addConvention(KOTLIN_DSL_NAME, kotlinSourceSet)
 
