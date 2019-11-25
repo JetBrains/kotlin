@@ -173,8 +173,13 @@ private val staticInitializersPhase = makeIrFilePhase(
     description = "Move code from object init blocks and static field initializers to a new <clinit> function"
 )
 
-private val initializersPhase = makeIrFilePhase(
-    ::InitializersLowering,
+private val initializersPhase = makeIrFilePhase<JvmBackendContext>(
+    { context ->
+        object : InitializersLowering(context) {
+            override fun shouldEraseFieldInitializer(irField: IrField): Boolean =
+                irField.constantValue(context) == null
+        }
+    },
     name = "Initializers",
     description = "Merge init blocks and field initializers into constructors",
     stickyPostconditions = setOf(fun(irFile: IrFile) {

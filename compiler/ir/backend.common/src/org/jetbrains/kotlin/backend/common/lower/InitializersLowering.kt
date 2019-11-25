@@ -51,14 +51,21 @@ abstract class InitializersLoweringBase(open val context: CommonBackendContext) 
             irClass.declarations.removeAll { it is IrAnonymousInitializer && filter(it) }
         }
 
+    protected open fun shouldEraseFieldInitializer(irField: IrField): Boolean = true
+
     private fun handleField(irClass: IrClass, declaration: IrField): IrStatement? =
         declaration.initializer?.run {
             val receiver = if (!declaration.isStatic) // TODO isStaticField
                 IrGetValueImpl(startOffset, endOffset, irClass.thisReceiver!!.type, irClass.thisReceiver!!.symbol)
             else
                 null
-            declaration.initializer = null
-            IrSetFieldImpl(startOffset, endOffset, declaration.symbol, receiver, expression, context.irBuiltIns.unitType)
+            val value = if (shouldEraseFieldInitializer(declaration)) {
+                declaration.initializer = null
+                expression
+            } else {
+                expression.deepCopyWithSymbols()
+            }
+            IrSetFieldImpl(startOffset, endOffset, declaration.symbol, receiver, value, context.irBuiltIns.unitType)
         }
 
     private fun handleAnonymousInitializer(declaration: IrAnonymousInitializer): IrStatement =

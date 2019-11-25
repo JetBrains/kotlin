@@ -33,12 +33,12 @@ fun IrField.constantValue(context: JvmBackendContext? = null): IrConst<*>? {
     // JVM has a ConstantValue attribute which does two things:
     //   1. allows the field to be inlined into other modules;
     //   2. implicitly generates an initialization of that field in <clinit>
-    // It is only allowed on static final fields of primitive/string types. Java and Kotlin < 1.4
+    // It is only allowed on final fields of primitive/string types. Java and Kotlin < 1.4
     // apply it whenever possible; Kotlin >= 1.4 only applies it to `const val`s to avoid making
     // values part of the library's ABI unless explicitly requested by the author.
     val allowImplicitConst =
         context != null && !context.state.languageVersionSettings.supportsFeature(LanguageFeature.NoConstantValueAttributeForNonConstVals)
-    val implicitConst = isStatic && isFinal && (origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB ||
+    val implicitConst = isFinal && ((isStatic && origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB) ||
             (allowImplicitConst && (type.isPrimitiveType() || type.isStringClassType())))
     return if (implicitConst || correspondingPropertySymbol?.owner?.isConst == true) value else null
 }
