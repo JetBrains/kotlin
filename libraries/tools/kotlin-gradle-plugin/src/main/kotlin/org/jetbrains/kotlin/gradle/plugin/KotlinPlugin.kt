@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.gradle.internal.checkAndroidAnnotationProcessorDepen
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.logging.kotlinWarn
 import org.jetbrains.kotlin.gradle.model.builder.KotlinModelBuilder
+import org.jetbrains.kotlin.gradle.model.builder.KotlinMppAndroidSourceSetBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
@@ -820,18 +821,17 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
         val project = kotlinAndroidTarget.project
         val ext = project.extensions.getByName("android") as BaseExtension
 
-        ext.sourceSets.all { sourceSet ->
-            logger.kotlinDebug("Creating KotlinBaseSourceSet for source set $sourceSet")
-            val kotlinSourceSet = project.kotlinExtension.sourceSets.maybeCreate(
-                lowerCamelCaseName(kotlinAndroidTarget.disambiguationClassifier, sourceSet.name)
-            ).apply {
-                kotlin.srcDir(project.file(project.file("src/${sourceSet.name}/kotlin")))
-                kotlin.srcDirs(sourceSet.java.srcDirs)
-            }
-            sourceSet.addConvention(KOTLIN_DSL_NAME, kotlinSourceSet)
+        val createdSourceSets = KotlinMppAndroidSourceSetBuilder.configureSourceSets(
+            project = project,
+            androidTargetName = kotlinAndroidTarget.disambiguationClassifier.toString(),
+            kotlinMppSourceSets = project.kotlinExtension.sourceSets,
+            androidSourceSets = ext.sourceSets
+        )
 
+        createdSourceSets.forEach { (androidSourceSet, kotlinMppSourceSet) ->
+            androidSourceSet.addConvention(KOTLIN_DSL_NAME, kotlinMppSourceSet)
             ifKaptEnabled(project) {
-                Kapt3KotlinGradleSubplugin.createAptConfigurationIfNeeded(project, sourceSet.name)
+                Kapt3KotlinGradleSubplugin.createAptConfigurationIfNeeded(project, androidSourceSet.name)
             }
         }
 
