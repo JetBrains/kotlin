@@ -222,9 +222,7 @@ private val inspectionLikePostProcessingGroup =
         intentionBasedProcessing(ReplaceMapGetOrDefaultIntention()),
         inspectionBasedProcessing(ReplaceGuardClauseWithFunctionCallInspection()),
         intentionBasedProcessing(ConvertToRawStringTemplateIntention()) { element ->
-            element.parents.none {
-                it is KtAnnotationEntry || (it as? KtProperty)?.hasModifier(KtTokens.CONST_KEYWORD) == true
-            } && ConvertToStringTemplateIntention.buildReplacement(element).entries.any {
+            ConvertToStringTemplateIntention.buildReplacement(element).entries.any {
                 (it as? KtEscapeStringTemplateEntry)?.unescapedValue == "\n"
             }
         },
