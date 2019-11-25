@@ -29,4 +29,6 @@ open class GeneratorExtensions {
     }
 
     open fun computeFieldVisibility(descriptor: PropertyDescriptor): Visibility? = null
+
+    open fun isPropertyWithPlatformField(descriptor: PropertyDescriptor): Boolean = false
 }
