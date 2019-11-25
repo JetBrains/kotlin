@@ -6,7 +6,10 @@ import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.editor.*;
+import com.intellij.openapi.editor.Caret;
+import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.RawText;
+import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler;
 import com.intellij.openapi.editor.actions.CopyAction;
 import com.intellij.openapi.editor.actions.EditorActionUtil;
@@ -67,12 +70,12 @@ public class CopyHandler extends EditorActionHandler {
     final int[] startOffsets = selectionModel.getBlockSelectionStarts();
     final int[] endOffsets = selectionModel.getBlockSelectionEnds();
 
-    final List<TextBlockTransferableData> transferableDatas = new ArrayList<>();
+    final List<TextBlockTransferableData> transferableDataList = new ArrayList<>();
 
     DumbService.getInstance(project).withAlternativeResolveEnabled(() -> {
       for (CopyPastePostProcessor<? extends TextBlockTransferableData> processor : CopyPastePostProcessor.EP_NAME.getExtensionList()) {
         try {
-          transferableDatas.addAll(processor.collectTransferableData(file, editor, startOffsets, endOffsets));
+          transferableDataList.addAll(processor.collectTransferableData(file, editor, startOffsets, endOffsets));
         }
         catch (IndexNotReadyException e) {
           LOG.debug(e);
@@ -84,9 +87,9 @@ public class CopyHandler extends EditorActionHandler {
     });
 
     String text = editor.getCaretModel().supportsMultipleCarets()
-                  ? EditorCopyPasteHelperImpl.getSelectedTextForClipboard(editor, transferableDatas)
+                  ? EditorCopyPasteHelperImpl.getSelectedTextForClipboard(editor, transferableDataList)
                   : selectionModel.getSelectedText();
-    String rawText = TextBlockTransferable.convertLineSeparators(text, "\n", transferableDatas);
+    String rawText = TextBlockTransferable.convertLineSeparators(text, "\n", transferableDataList);
     String escapedText = null;
     for (CopyPastePreProcessor processor : CopyPastePreProcessor.EP_NAME.getExtensionList()) {
       try {
@@ -100,7 +103,7 @@ public class CopyHandler extends EditorActionHandler {
       }
     }
     final Transferable transferable = new TextBlockTransferable(escapedText != null ? escapedText : rawText,
-                                                                transferableDatas,
+                                                                transferableDataList,
                                                                 escapedText != null ? new RawText(rawText) : null);
     CopyPasteManager.getInstance().setContents(transferable);
     if (editor instanceof EditorEx) {

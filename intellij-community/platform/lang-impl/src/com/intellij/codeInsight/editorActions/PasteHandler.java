@@ -478,7 +478,7 @@ public class PasteHandler extends EditorActionHandler implements EditorTextInser
         desiredSymbolsToRemove = -diff;
       }
 
-      Runnable deindentTask = () -> {
+      Runnable unindentTask = () -> {
         for (int line = anchorLine + 1; line <= lastLine; line++) {
           int currentLineStart = document.getLineStartOffset(line);
           int currentLineIndentOffset = CharArrayUtil.shiftForward(chars, currentLineStart, " \t");
@@ -488,7 +488,7 @@ public class PasteHandler extends EditorActionHandler implements EditorTextInser
           }
         }
       };
-      DocumentUtil.executeInBulk(document, lastLine - anchorLine > LINE_LIMIT_FOR_BULK_CHANGE, deindentTask);
+      DocumentUtil.executeInBulk(document, lastLine - anchorLine > LINE_LIMIT_FOR_BULK_CHANGE, unindentTask);
     }
     else {
       CharSequence toInsert = chars.subSequence(anchorLineStart, diff + startOffset);
