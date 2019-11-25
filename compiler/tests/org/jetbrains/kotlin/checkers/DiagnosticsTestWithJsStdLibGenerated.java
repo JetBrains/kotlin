@@ -113,6 +113,16 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
             runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/callableReferences.kt");
         }
 
+        @TestMetadata("capturedDynamic.kt")
+        public void testСapturedDynamic() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/capturedDynamic.kt");
+        }
+
+        @TestMetadata("capturedDynamicNI.kt")
+        public void testCapturedDynamicNI() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/capturedDynamicNI.kt");
+        }
+
         @TestMetadata("classDelegateBy.kt")
         public void testClassDelegateBy() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/classDelegateBy.kt");

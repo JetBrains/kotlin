@@ -41,7 +41,11 @@ object NewCommonSuperTypeCalculator {
 
         val lowers = types.map {
             when (it) {
-                is SimpleTypeMarker -> it
+                is SimpleTypeMarker -> {
+                    if (it.isCapturedDynamic()) return it
+
+                    it
+                }
                 is FlexibleTypeMarker -> {
                     if (it.isDynamic()) return it
                     // raw types are allowed here and will be transformed to FlexibleTypes
