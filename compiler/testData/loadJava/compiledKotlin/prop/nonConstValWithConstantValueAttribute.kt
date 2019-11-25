@@ -1,5 +1,4 @@
 // !LANGUAGE: -NoConstantValueAttributeForNonConstVals
-// IGNORE_BACKEND: JVM_IR
 //ALLOW_AST_ACCESS
 
 package test
