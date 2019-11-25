@@ -37,14 +37,20 @@ import org.jetbrains.jps.model.module.JpsModuleSourceRootType;
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.util.List;
+import java.util.Set;
 
 public class ContentEntryTreeCellRenderer extends NodeRenderer {
   protected final ContentEntryTreeEditor myTreeEditor;
   private final List<? extends ModuleSourceRootEditHandler<?>> myEditHandlers;
+  @NotNull
+  private final Set<String> myExcludedUrls;
 
-  public ContentEntryTreeCellRenderer(@NotNull final ContentEntryTreeEditor treeEditor, List<? extends ModuleSourceRootEditHandler<?>> editHandlers) {
+  public ContentEntryTreeCellRenderer(@NotNull final ContentEntryTreeEditor treeEditor, 
+                                      @NotNull ContentEntry contentEntry, 
+                                      List<? extends ModuleSourceRootEditHandler<?>> editHandlers) {
     myTreeEditor = treeEditor;
     myEditHandlers = editHandlers;
+    myExcludedUrls = ContentEntryEditor.getEntryExcludedUrls(myTreeEditor.getProject(), contentEntry);
   }
 
   @Override
@@ -87,7 +93,7 @@ public class ContentEntryTreeCellRenderer extends NodeRenderer {
   }
 
   protected Icon updateIcon(final ContentEntry entry, final VirtualFile file, Icon originalIcon) {
-    if (ContentEntryEditor.isExcludedOrUnderExcludedDirectory(myTreeEditor.getProject(), entry, file)) {
+    if (ContentEntryEditor.isExcludedOrUnderExcludedDirectory(entry, myExcludedUrls, file)) {
       return AllIcons.Modules.ExcludeRoot;
     }
 

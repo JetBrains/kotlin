@@ -133,8 +133,8 @@ public class ContentEntryTreeEditor {
     return myEditHandlers;
   }
 
-  protected TreeCellRenderer getContentEntryCellRenderer() {
-    return new ContentEntryTreeCellRenderer(this, myEditHandlers);
+  protected TreeCellRenderer getContentEntryCellRenderer(@NotNull ContentEntry contentEntry) {
+    return new ContentEntryTreeCellRenderer(this, contentEntry, myEditHandlers);
   }
 
   /**
@@ -181,7 +181,7 @@ public class ContentEntryTreeEditor {
       myFileSystemTree.select(file, null);
     };
 
-    myFileSystemTree = new FileSystemTreeImpl(myProject, myDescriptor, myTree, getContentEntryCellRenderer(), init, null) {
+    myFileSystemTree = new FileSystemTreeImpl(myProject, myDescriptor, myTree, getContentEntryCellRenderer(entry), init, null) {
       @Override
       protected AbstractTreeBuilder createTreeBuilder(JTree tree, DefaultTreeModel treeModel, AbstractTreeStructure treeStructure,
                                                       Comparator<NodeDescriptor> comparator, FileChooserDescriptor descriptor,
@@ -226,6 +226,10 @@ public class ContentEntryTreeEditor {
 
   public void update() {
     if (myFileSystemTree != null) {
+      ContentEntry entry = myContentEntryEditor == null ? null : myContentEntryEditor.getContentEntry();
+      if (entry != null) {
+        myFileSystemTree.getTree().setCellRenderer(getContentEntryCellRenderer(entry));
+      }
       myFileSystemTree.updateTree();
       final DefaultTreeModel model = (DefaultTreeModel)myTree.getModel();
       final int visibleRowCount = TreeUtil.getVisibleRowCount(myTree);

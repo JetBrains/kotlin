@@ -304,12 +304,12 @@ public abstract class ContentEntryEditor implements ContentRootPanel.ActionCallb
   public static boolean isExcludedOrUnderExcludedDirectory(@Nullable Project project,
                                                            @NotNull ContentEntry entry,
                                                            @NotNull VirtualFile file) {
-    Set<String> excludedUrls = new HashSet<>(entry.getExcludeFolderUrls());
-    if (project != null) {
-      for (DirectoryIndexExcludePolicy policy : DirectoryIndexExcludePolicy.getExtensions(project)) {
-        ContainerUtil.addAll(excludedUrls, policy.getExcludeUrlsForProject());
-      }
-    }
+    return isExcludedOrUnderExcludedDirectory(entry, getEntryExcludedUrls(project, entry), file);
+  }
+
+  public static boolean isExcludedOrUnderExcludedDirectory(@NotNull ContentEntry entry,
+                                                           @NotNull Set<String> excludedUrls, 
+                                                           @NotNull VirtualFile file) {
     Set<VirtualFile> sourceRoots = ContainerUtil.set(entry.getSourceFolderFiles());
     VirtualFile parent = file;
     while (parent != null) {
@@ -318,6 +318,18 @@ public abstract class ContentEntryEditor implements ContentRootPanel.ActionCallb
       parent = parent.getParent();
     }
     return false;
+  }
+
+  @NotNull
+  public static Set<String> getEntryExcludedUrls(@Nullable Project project,
+                                                 @NotNull ContentEntry entry) {
+    Set<String> excludedUrls = new HashSet<>(entry.getExcludeFolderUrls());
+    if (project != null) {
+      for (DirectoryIndexExcludePolicy policy : DirectoryIndexExcludePolicy.getExtensions(project)) {
+        ContainerUtil.addAll(excludedUrls, policy.getExcludeUrlsForProject());
+      }
+    }
+    return excludedUrls;
   }
 
   @Nullable
