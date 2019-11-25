@@ -135,7 +135,7 @@ public class GradleProjectOpenProcessorTest extends GradleImportingTestCase {
                          "</module>");
 
     Project fooProject = executeOnEdt(() -> ProjectUtil.openProject(foo.getPath(), null, true));
-    ExternalSystemProjectTracker.getInstance(fooProject).enableAutoImportInTests();
+    ProjectTracker.getInstance(fooProject).enableAutoImportInTests();
 
     try {
       assertTrue(fooProject.isOpen());

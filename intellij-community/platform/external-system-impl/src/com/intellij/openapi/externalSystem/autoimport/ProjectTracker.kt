@@ -14,8 +14,8 @@ import com.intellij.openapi.externalSystem.autoimport.ExternalSystemRefreshStatu
 import com.intellij.openapi.externalSystem.autoimport.ProjectTracker.ModificationType.EXTERNAL
 import com.intellij.openapi.externalSystem.autoimport.ProjectTracker.ModificationType.INTERNAL
 import com.intellij.openapi.externalSystem.service.project.autoimport.ProjectStatus
-import com.intellij.openapi.observable.operations.CompoundParallelOperationTrace
 import com.intellij.openapi.observable.operations.AnonymousParallelOperationTrace
+import com.intellij.openapi.observable.operations.CompoundParallelOperationTrace
 import com.intellij.openapi.observable.properties.AtomicBooleanProperty
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
@@ -212,8 +212,12 @@ class ProjectTracker(private val project: Project) : ExternalSystemProjectTracke
     dispatcher.activate()
   }
 
+  /**
+   * Enables auto-import in tests
+   * Note: project tracker automatically enabled out of tests
+   */
   @TestOnly
-  override fun enableAutoImportInTests() {
+  fun enableAutoImportInTests() {
     isDisabled.set(false)
   }
 
@@ -257,4 +261,12 @@ class ProjectTracker(private val project: Project) : ExternalSystemProjectTracke
   }
 
   enum class ModificationType { EXTERNAL, INTERNAL }
+
+  companion object {
+    @TestOnly
+    @JvmStatic
+    fun getInstance(project: Project): ProjectTracker {
+      return ExternalSystemProjectTracker.getInstance(project) as ProjectTracker
+    }
+  }
 }
