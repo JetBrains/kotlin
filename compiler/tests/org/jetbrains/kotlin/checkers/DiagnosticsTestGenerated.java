@@ -17813,6 +17813,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/resolve/anonymousObjectFromTopLevelMember.kt");
             }
 
+            @TestMetadata("callableReferenceInCST.kt")
+            public void testCallableReferenceInCST() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/resolve/callableReferenceInCST.kt");
+            }
+
             @TestMetadata("capturedTypesInLambdaParameter.kt")
             public void testCapturedTypesInLambdaParameter() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/resolve/capturedTypesInLambdaParameter.kt");
