@@ -164,7 +164,6 @@ class ProjectSettingsTracker(
   init {
     val projectRefreshListener = object : ExternalSystemProjectRefreshListener {
       override fun beforeProjectRefresh() {
-        applyChangesOperation.startOperation()
         applyChangesOperation.startTask()
         applyChanges()
       }
@@ -234,7 +233,6 @@ class ProjectSettingsTracker(
     }
 
     override fun bulkUpdateStarting(document: Document) {
-      bulkUpdateOperation.startOperation()
       bulkUpdateOperation.startTask(document)
     }
 

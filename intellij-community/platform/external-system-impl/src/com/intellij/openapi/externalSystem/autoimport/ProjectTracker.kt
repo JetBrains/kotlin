@@ -42,10 +42,8 @@ class ProjectTracker(private val project: Project) : ExternalSystemProjectTracke
 
   private fun createProjectChangesListener() =
     object : ProjectBatchFileChangeListener(project) {
-      override fun batchChangeStarted(activityName: String?) {
-        projectChangeOperation.startOperation()
+      override fun batchChangeStarted(activityName: String?) =
         projectChangeOperation.startTask()
-      }
 
       override fun batchChangeCompleted() =
         projectChangeOperation.finishTask()
@@ -56,7 +54,6 @@ class ProjectTracker(private val project: Project) : ExternalSystemProjectTracke
       val id = "ProjectTracker: ${projectData.projectAware.projectId.readableName}"
 
       override fun beforeProjectRefresh() {
-        projectRefreshOperation.startOperation()
         projectRefreshOperation.startTask(id)
         projectData.status.markSynchronized(currentTime())
       }
