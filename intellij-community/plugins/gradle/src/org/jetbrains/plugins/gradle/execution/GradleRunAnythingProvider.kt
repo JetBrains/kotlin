@@ -137,7 +137,7 @@ class GradleRunAnythingProvider : RunAnythingCommandLineProvider() {
     val model = GotoClassModel2(context.project)
     val parameters = FindSymbolParameters.simple(context.project, false)
     model.processNames({ result.add("$callChain$it") }, parameters)
-    return result.asSequence()
+    return result.toList().asSequence()
   }
 
   private fun getTaskOptions(context: Context, task: String): Sequence<TaskOption> {
