@@ -2,33 +2,39 @@
 package com.intellij.codeInsight.intention.impl.preview
 
 import com.intellij.openapi.editor.colors.EditorColorsManager
-import com.intellij.openapi.editor.colors.EditorFontType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.LoadingDecorator
 import com.intellij.ui.ColorUtil
 import com.intellij.ui.components.panels.NonOpaquePanel
+import com.intellij.ui.components.panels.OpaquePanel
 import com.intellij.util.ui.AsyncProcessIcon
 import java.awt.BorderLayout
+import java.awt.FlowLayout
 import javax.swing.JLabel
 import javax.swing.JPanel
 
 class IntentionPreviewLoadingDecorator(panel: JPanel, project: Project) :
   LoadingDecorator(panel, project, 500, false, AsyncProcessIcon("IntentionPreviewProcessLoading")) {
   override fun customizeLoadingLayer(parent: JPanel, text: JLabel, icon: AsyncProcessIcon): NonOpaquePanel {
-    val opaquePanel =
-      NonOpaquePanel(BorderLayout(100, 100)).also {
-        it.isOpaque = true
-        it.background = ColorUtil.withAlpha(EditorColorsManager.getInstance().globalScheme.defaultBackground, 0.6)
-        it.add(icon)
-        it.add(text)
+    val iconNonOpaquePanel = OpaquePanel(FlowLayout(FlowLayout.RIGHT, 2, 2))
+      .also {
+        it.add(icon, BorderLayout.NORTH)
+        it.background = EditorColorsManager.getInstance().globalScheme.defaultBackground
       }
 
+    icon.background = ColorUtil.withAlpha(EditorColorsManager.getInstance().globalScheme.defaultBackground, 0.0)
+    icon.isOpaque = true
+
+    val opaquePanel = OpaquePanel()
+    opaquePanel.background = ColorUtil.withAlpha(EditorColorsManager.getInstance().globalScheme.defaultBackground, 0.6)
+
+    val nonOpaquePanel = NonOpaquePanel(BorderLayout())
+    nonOpaquePanel.add(iconNonOpaquePanel, BorderLayout.EAST)
+    nonOpaquePanel.add(opaquePanel, BorderLayout.CENTER)
+
     parent.layout = BorderLayout()
-    parent.add(opaquePanel)
+    parent.add(nonOpaquePanel)
 
-    val font = EditorColorsManager.getInstance().globalScheme.getFont(EditorFontType.PLAIN)
-    text.font = font.deriveFont(font.style, (font.size + 2).toFloat());
-
-    return opaquePanel
+    return nonOpaquePanel
   }
 }

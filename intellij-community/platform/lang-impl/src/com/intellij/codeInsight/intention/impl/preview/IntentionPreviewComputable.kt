@@ -22,7 +22,6 @@ import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.ThrowableComputable
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiFileFactory
 
 class IntentionPreviewComputable(private val project: Project,
                                  private val action: IntentionAction,
@@ -53,8 +52,8 @@ class IntentionPreviewComputable(private val project: Project,
         })
       }
       catch (e: Exception) {
-        LOG.warn("There are exceptions on invocation the intention: '${action.text}' on a copy of the file.", e)
-        throw ProcessCanceledException(e)
+        LOG.warn("There are exceptions on invocation the intention: '${action.text}' on a copy of the file.")
+        throw ProcessCanceledException()
       }
     })
 
@@ -71,14 +70,6 @@ class IntentionPreviewComputable(private val project: Project,
     val actionsToShow = ShowIntentionsPass.getActionsToShow(editorCopy, psiFileCopy, false)
     val cachedIntentions = CachedIntentions.createAndUpdateActions(project, psiFileCopy, editorCopy, actionsToShow)
     return getFixes(cachedIntentions).find { it.text == action.text }
-  }
-
-  private fun nonPhysicalPsiCopy(psiFile: PsiFile, project: Project): PsiFile {
-    ProgressManager.checkCanceled()
-    return PsiFileFactory.getInstance(project).createFileFromText(psiFile.name,
-                                                                  psiFile.language,
-                                                                  psiFile.text, false, true, false,
-                                                                  psiFile.virtualFile)
   }
 
 

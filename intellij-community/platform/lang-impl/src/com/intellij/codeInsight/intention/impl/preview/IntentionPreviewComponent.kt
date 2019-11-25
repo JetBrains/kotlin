@@ -6,16 +6,18 @@ import com.intellij.ide.plugins.MultiPanel
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.project.Project
+import com.intellij.ui.ColorUtil
 import com.intellij.ui.components.JBLoadingPanel
 import com.intellij.util.ui.JBUI
 import java.awt.BorderLayout
 import javax.swing.JComponent
 import javax.swing.JLabel
+import javax.swing.JPanel
 
 class IntentionPreviewComponent(project: Project) : JBLoadingPanel(BorderLayout(),
                                                                    { panel -> IntentionPreviewLoadingDecorator(panel, project) }) {
-  private var NO_PREVIEW_LABEL = JLabel(CodeInsightBundle.message("intention.preview.no.available.text")).also { setupLabel(it) }
-  private var LOADING_LABEL = JLabel(CodeInsightBundle.message("intention.preview.initial.loading.preview")).also { setupLabel(it) }
+  private var NO_PREVIEW_LABEL = JLabel(CodeInsightBundle.message("intention.preview.no.available.text") + "     ").also { setupLabel(it) }
+  private var LOADING_LABEL = JLabel(CodeInsightBundle.message("intention.preview.loading.preview") + "     ").also { setupLabel(it) }
 
   var editors: List<EditorEx> = emptyList()
 
@@ -34,6 +36,7 @@ class IntentionPreviewComponent(project: Project) : JBLoadingPanel(BorderLayout(
   }
 
   init {
+    background = ColorUtil.withAlpha(EditorColorsManager.getInstance().globalScheme.defaultBackground, 1.0)
     add(multiPanel)
     setLoadingText(CodeInsightBundle.message("intention.preview.loading.preview"))
   }
@@ -45,6 +48,16 @@ class IntentionPreviewComponent(project: Project) : JBLoadingPanel(BorderLayout(
     private fun setupLabel(label: JLabel) {
       label.border = JBUI.Borders.empty(3)
       label.background = EditorColorsManager.getInstance().globalScheme.defaultBackground
+    }
+
+    private fun wrapWithPlaceholder(content: JComponent): JPanel {
+      val panel = JPanel(BorderLayout())
+      panel.add(content, BorderLayout.CENTER)
+      val placeholder = JLabel("     ")
+      panel.add(placeholder, BorderLayout.EAST)
+      panel.background = EditorColorsManager.getInstance().globalScheme.defaultBackground
+
+      return panel
     }
   }
 }

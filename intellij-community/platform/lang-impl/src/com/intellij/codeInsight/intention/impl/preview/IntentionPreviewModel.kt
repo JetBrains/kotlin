@@ -51,8 +51,10 @@ class IntentionPreviewModel {
 
           if (start >= end) return@mapNotNull null
 
-          val text = psiFileCopy.text.substring(start, end).trimStart('\n').trimEnd('\n').trimIndent()
+          var text = psiFileCopy.text.substring(start, end).trimStart('\n').trimEnd('\n').trimIndent()
           if (text.isBlank()) return@mapNotNull null
+
+          text = text.lines().joinToString(separator = "\n") { line -> "$line    "}
 
           return@mapNotNull createEditor(project, originalFile.fileType, text, it.startLine1)
         }
