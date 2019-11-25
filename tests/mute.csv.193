@@ -132,3 +132,4 @@ org.jetbrains.kotlin.idea.resolve.ReferenceResolveInLibrarySourcesTestGenerated.
 org.jetbrains.kotlin.idea.resolve.ReferenceResolveInLibrarySourcesTestGenerated.testToLocalFun, KT-34542, FAIL
 org.jetbrains.kotlin.idea.script.ScriptConfigurationHighlightingTestGenerated.Highlighting.testCustomJavaHome, No Java
 org.jetbrains.uast.test.kotlin.KotlinUastReferencesTest.`test original getter is visible when reference is under renaming`, Extensions API changed
+org.jetbrains.kotlin.gradle.GradleMultiplatformWizardTest.testWeb, KT-35095
