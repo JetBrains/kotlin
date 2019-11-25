@@ -451,30 +451,38 @@ public abstract class AbstractModuleDataService<E extends ModuleData> extends Ab
       11, (o1, o2) -> {
       int order1 = o1.second.getOrder();
       int order2 = o2.second.getOrder();
-      return order1 != order2 ? order1 < order2 ? -1 : 1 : 0;
+      if (order1 != order2) {
+        return order1 < order2 ? -1 : 1;
+      }
+      return o1.second.toString().compareTo(o2.second.toString());
     });
-
-    int shift = 0;
+    final List<OrderEntry> noOrderAwareItems = new ArrayList<>();
     for (int i = 0; i < length; i++) {
       OrderEntry orderEntry = orderEntries[i];
       final OrderAware orderAware = orderEntryDataMap.get(orderEntry);
       if (orderAware == null) {
-        newOrder[i] = orderEntry;
-        shift++;
+        noOrderAwareItems.add(orderEntry);
       }
       else {
         priorityQueue.add(Pair.create(orderEntry, orderAware));
       }
     }
 
+    Collections.sort(noOrderAwareItems, new Comparator<OrderEntry>() {
+      @Override
+      public int compare(OrderEntry o1, OrderEntry o2) {
+        return o1.toString().compareTo(o2.toString());
+      }
+    });
+
+    for (int i = 0; i < noOrderAwareItems.size(); i++) {
+      newOrder[i] = noOrderAwareItems.get(i);
+    }
+    int index = noOrderAwareItems.size();
     Pair<OrderEntry, OrderAware> pair;
     while ((pair = priorityQueue.poll()) != null) {
-      final OrderEntry orderEntry = pair.first;
-      final OrderAware orderAware = pair.second;
-      final int order = orderAware.getOrder() != -1 ? orderAware.getOrder() : length - 1;
-      final int newPlace = findNewPlace(newOrder, order - shift);
-      assert newPlace != -1;
-      newOrder[newPlace] = orderEntry;
+      newOrder[index] = pair.first;
+      index++;
     }
 
     if (LOG.isDebugEnabled()) {

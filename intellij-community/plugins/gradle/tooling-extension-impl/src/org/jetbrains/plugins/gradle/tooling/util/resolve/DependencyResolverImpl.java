@@ -298,7 +298,7 @@ public class DependencyResolverImpl implements DependencyResolver {
                                       Map<File, Integer> runtimeClasspathOrder,
                                       ExternalDependency dependency) {
     String scope = dependency.getScope();
-    Map<File, Integer> classpathOrderMap = scope == CompileDependenciesProvider.SCOPE ? compileClasspathOrder :
+    Map<File, Integer> classpathOrderMap = scope == CompileDependenciesProvider.SCOPE || scope == PROVIDED_SCOPE ? compileClasspathOrder :
                                            scope == RuntimeDependenciesProvider.SCOPE ? runtimeClasspathOrder : null;
     final Collection<File> depFiles = getFiles(dependency);
     int order = getOrder(classpathOrderMap, depFiles);
