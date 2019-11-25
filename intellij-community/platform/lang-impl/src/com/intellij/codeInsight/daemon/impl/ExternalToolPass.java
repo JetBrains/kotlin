@@ -261,28 +261,18 @@ public class ExternalToolPass extends ProgressableTextEditorHighlightingPass {
   private static void runChangeAware(@NotNull Document document, @NotNull Runnable runnable) {
     ProgressIndicator currentIndicator = ProgressManager.getInstance().getProgressIndicator();
     assert currentIndicator != null;
-    CancellingDocumentListener cancellingListener = new CancellingDocumentListener(currentIndicator);
+    DocumentListener cancellingListener = new DocumentListener() {
+      @Override
+      public void documentChanged(@NotNull DocumentEvent event) {
+        currentIndicator.cancel();
+      }
+    };
     document.addDocumentListener(cancellingListener);
     try {
-      ProgressManager.getInstance().executeProcessUnderProgress(runnable, currentIndicator);
+      runnable.run();
     }
     finally {
       document.removeDocumentListener(cancellingListener);
-    }
-  }
-
-  private static final class CancellingDocumentListener implements DocumentListener {
-
-    @NotNull
-    final ProgressIndicator myIndicator;
-
-    CancellingDocumentListener(@NotNull ProgressIndicator indicator) {
-      myIndicator = indicator;
-    }
-
-    @Override
-    public void documentChanged(@NotNull DocumentEvent event) {
-      myIndicator.cancel();
     }
   }
 }
