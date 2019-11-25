@@ -71,6 +71,8 @@ import com.intellij.profile.ProfileChangeAdapter;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.PsiManagerEx;
 import com.intellij.psi.impl.PsiModificationTrackerImpl;
+import com.intellij.psi.util.CachedValuesManager;
+import com.intellij.util.CachedValuesManagerImpl;
 import com.intellij.util.KeyedLazyInstance;
 import com.intellij.util.messages.MessageBus;
 import com.intellij.util.messages.MessageBusConnection;
@@ -364,12 +366,14 @@ public final class DaemonListeners implements Disposable {
     connection.subscribe(DynamicPluginListener.TOPIC, new DynamicPluginListener() {
       @Override
       public void pluginLoaded(@NotNull IdeaPluginDescriptor pluginDescriptor) {
+        ((CachedValuesManagerImpl)CachedValuesManager.getManager(myProject)).clearCachedValues();
         ((PsiModificationTrackerImpl)PsiManager.getInstance(myProject).getModificationTracker()).incCounter();
         stopDaemonAndRestartAllFiles("Plugin installed");
       }
 
       @Override
       public void beforePluginUnload(@NotNull IdeaPluginDescriptor pluginDescriptor, boolean isUpdate) {
+        ((CachedValuesManagerImpl)CachedValuesManager.getManager(myProject)).clearCachedValues();
         ((PsiModificationTrackerImpl)PsiManager.getInstance(myProject).getModificationTracker()).incCounter();
         stopDaemonAndRestartAllFiles("Plugin will be uninstalled");
         removeQuickFixesContributedByPlugin(pluginDescriptor);
