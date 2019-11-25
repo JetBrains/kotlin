@@ -2,11 +2,11 @@
 package com.intellij.openapi.externalSystem.autoimport
 
 import com.intellij.icons.AllIcons
-import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.externalSystem.util.ExternalSystemBundle
+import com.intellij.openapi.project.DumbAwareAction
 
-class HideProjectRefreshAction : AnAction() {
+class HideProjectRefreshAction : DumbAwareAction() {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     val notificationAware = ProjectNotificationAware.getInstance(project)
