@@ -132,9 +132,9 @@ internal class UntilHandler(private val context: CommonBackendContext, private v
             var additionalVariables = emptyList<IrVariable>()
             if (untilArg.canHaveSideEffects) {
                 if (receiverValue.canHaveSideEffects) {
-                    receiverValueVar = scope.createTemporaryVariable(receiverValue, nameHint = "untilReceiverValue")
+                    receiverValueVar = scope.createTmpVariable(receiverValue, nameHint = "untilReceiverValue")
                 }
-                untilArgVar = scope.createTemporaryVariable(untilArgCasted, nameHint = "untilArg")
+                untilArgVar = scope.createTmpVariable(untilArgCasted, nameHint = "untilArg")
                 additionalVariables = listOfNotNull(receiverValueVar, untilArgVar)
             }
 
@@ -572,7 +572,7 @@ internal class DefaultProgressionHandler(private val context: CommonBackendConte
     override fun build(expression: IrExpression, scopeOwner: IrSymbol): HeaderInfo? =
         with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {
             // Directly use the `first/last/step` properties of the progression.
-            val progression = scope.createTemporaryVariable(expression, nameHint = "progression")
+            val progression = scope.createTmpVariable(expression, nameHint = "progression")
             val progressionClass = progression.type.getClass()!!
             val first = irCall(progressionClass.symbol.getPropertyGetter("first")!!).apply {
                 dispatchReceiver = irGet(progression)
@@ -616,7 +616,7 @@ internal abstract class IndexedGetIterationHandler(
             //
             // This also ensures that the semantics of re-assignment of array variables used in the loop is consistent with the semantics
             // proposed in https://youtrack.jetbrains.com/issue/KT-21354.
-            val objectVariable = scope.createTemporaryVariable(
+            val objectVariable = scope.createTmpVariable(
                 expression, nameHint = "indexedObject"
             )
 
@@ -747,7 +747,7 @@ internal class DefaultIterableHandler(private val context: CommonBackendContext)
                     dispatchReceiver = expression
                 }
             IterableHeaderInfo(
-                scope.createTemporaryVariable(iterator, nameHint = "iterator")
+                scope.createTmpVariable(iterator, nameHint = "iterator")
             )
         }
 }

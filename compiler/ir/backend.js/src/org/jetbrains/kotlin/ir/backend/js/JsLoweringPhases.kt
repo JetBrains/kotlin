@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.inline.FunctionInlining
+import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.calls.CallsLowering
@@ -155,6 +156,12 @@ private val returnableBlockLoweringPhase = makeJsModulePhase(
     name = "ReturnableBlockLowering",
     description = "Replace returnable block with do-while loop",
     prerequisite = setOf(functionInliningPhase)
+)
+
+private val forLoopsLoweringPhase = makeJsModulePhase(
+    ::ForLoopsLowering,
+    name = "ForLoopsLowering",
+    description = "For loops lowering"
 )
 
 private val localDelegatedPropertiesLoweringPhase = makeJsModulePhase(
@@ -410,6 +417,7 @@ val jsPhases = namedIrModulePhase(
             enumUsageLoweringPhase then
             suspendFunctionsLoweringPhase then
             returnableBlockLoweringPhase then
+            forLoopsLoweringPhase then
             privateMembersLoweringPhase then
             callableReferenceLoweringPhase then
             defaultArgumentStubGeneratorPhase then
