@@ -64,14 +64,6 @@ abstract class Visibility protected constructor(
     open val externalDisplayName: String
         get() = internalDisplayName
 
-    @Deprecated(
-        "Visibility.displayName is deprecated, use internalDisplayName instead",
-        ReplaceWith("internalDisplayName"),
-        level = DeprecationLevel.WARNING
-    )
-    open val displayName: String
-        get() = internalDisplayName
-
     override final fun toString() = internalDisplayName
 
     open fun normalize(): Visibility = this
