@@ -1,0 +1,24 @@
+public final class BitwiseKt {
+    public static final fun foo() : int {
+        var mask: int = 127
+        var x: int = 2863311530
+        var pos: int = x & mask
+        var max: int = x | mask
+        var zebra: int = x ^ mask
+        var signed: int = x >> 2
+        var one: int = x >>> 31
+        var zero: int = x << 32
+        return pos + zero - zebra * signed / one
+    }
+    public static final fun bar() : long {
+        var mask: long = 127
+        var x: long = 6148914691236517205
+        var pos: long = x & mask
+        var max: long = x | mask
+        var zebra: long = x ^ mask
+        var signed: long = x >> 2
+        var one: long = x >>> 63
+        var zero: long = x << 64
+        return pos + zero - zebra * signed / one
+    }
+}
