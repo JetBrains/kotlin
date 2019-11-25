@@ -179,7 +179,7 @@ class JvmDeclarationFactory(
                 annotations += oldField.annotations
                 initializer = oldField.initializer
                     ?.replaceThisByStaticReference(this@JvmDeclarationFactory, oldParent, oldParent.thisReceiver!!)
-                    ?.deepCopyWithSymbols(this) as IrExpressionBody?
+                    ?.patchDeclarationParents(this) as IrExpressionBody?
                 (this as IrFieldImpl).metadata = oldField.metadata
             }
         }

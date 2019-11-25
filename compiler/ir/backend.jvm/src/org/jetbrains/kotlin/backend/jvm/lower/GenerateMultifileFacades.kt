@@ -27,22 +27,13 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrGetField
 import org.jetbrains.kotlin.ir.expressions.copyTypeArgumentsFrom
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.types.typeWith
-import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
-import org.jetbrains.kotlin.ir.util.primaryConstructor
-import org.jetbrains.kotlin.ir.util.transformFlat
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 
@@ -57,17 +48,15 @@ internal val generateMultifileFacadesPhase = namedIrModulePhase(
             context: JvmBackendContext,
             input: IrModuleFragment
         ): IrModuleFragment {
-            val movedFields = mutableMapOf<IrField, IrField>()
             val functionDelegates = mutableMapOf<IrFunction, IrFunction>()
 
             // In -Xmultifile-parts-inherit mode, instead of generating "bridge" methods in the facade which call into parts,
             // we construct an inheritance chain such that all part members are present as fake overrides in the facade.
             val shouldGeneratePartHierarchy = context.state.languageVersionSettings.getFlag(JvmAnalysisFlags.inheritMultifileParts)
             input.files.addAll(
-                generateMultifileFacades(input.descriptor, context, shouldGeneratePartHierarchy, movedFields, functionDelegates)
+                generateMultifileFacades(input.descriptor, context, shouldGeneratePartHierarchy, functionDelegates)
             )
 
-            UpdateFieldCallSites(movedFields).lower(input)
             UpdateFunctionCallSites(functionDelegates).lower(input)
 
             context.multifileFacadesToAdd.clear()
@@ -103,7 +92,6 @@ private fun generateMultifileFacades(
     module: ModuleDescriptor,
     context: JvmBackendContext,
     shouldGeneratePartHierarchy: Boolean,
-    movedFields: MutableMap<IrField, IrField>,
     functionDelegates: MutableMap<IrFunction, IrFunction>
 ): List<IrFile> =
     context.multifileFacadesToAdd.map { (jvmClassName, partClasses) ->
@@ -152,7 +140,7 @@ private fun generateMultifileFacades(
         for (partClass in partClasses) {
             context.multifileFacadeForPart[partClass.attributeOwnerId as IrClass] = jvmClassName
 
-            moveFieldsOfConstProperties(partClass, facadeClass, movedFields)
+            moveFieldsOfConstProperties(partClass, facadeClass)
 
             for (member in partClass.declarations) {
                 if (member is IrSimpleFunction) {
@@ -192,14 +180,11 @@ private fun modifyMultifilePartsForHierarchy(context: JvmBackendContext, unsorte
     return parts.last()
 }
 
-private fun moveFieldsOfConstProperties(partClass: IrClass, facadeClass: IrClass, movedFields: MutableMap<IrField, IrField>) {
+private fun moveFieldsOfConstProperties(partClass: IrClass, facadeClass: IrClass) {
     partClass.declarations.transformFlat { member ->
         if (member is IrField && member.shouldMoveToFacade()) {
-            val field = member.deepCopyWithSymbols(facadeClass).also {
-                (it as IrFieldImpl).metadata = member.metadata
-            }
-            facadeClass.declarations.add(field)
-            movedFields[member] = field
+            member.patchDeclarationParents(facadeClass)
+            facadeClass.declarations.add(member)
             emptyList()
         } else null
     }
@@ -246,21 +231,6 @@ private fun IrSimpleFunction.createMultifileDelegateIfNeeded(
     facadeClass.declarations.add(function)
 
     return function
-}
-
-private class UpdateFieldCallSites(
-    private val movedFields: Map<IrField, IrField>
-) : FileLoweringPass, IrElementTransformerVoid() {
-    override fun lower(irFile: IrFile) {
-        irFile.transformChildrenVoid(this)
-    }
-
-    override fun visitGetField(expression: IrGetField): IrExpression {
-        val newField = movedFields[expression.symbol.owner] ?: return super.visitGetField(expression)
-        return expression.run {
-            IrGetFieldImpl(startOffset, endOffset, newField.symbol, type, receiver, origin, superQualifierSymbol)
-        }
-    }
 }
 
 private class UpdateFunctionCallSites(

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.addField
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrAnonymousInitializerImpl
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
@@ -109,7 +110,7 @@ private class MoveOrCopyCompanionObjectFieldsLowering(val context: JvmBackendCon
         }.apply {
             parent = newParent
             annotations += oldField.annotations
-            initializer = oldField.initializer?.deepCopyWithSymbols(this)
+            initializer = with(oldField.initializer!!) { IrExpressionBodyImpl(startOffset, endOffset, (expression as IrConst<*>).copy()) }
         }
 }
 
