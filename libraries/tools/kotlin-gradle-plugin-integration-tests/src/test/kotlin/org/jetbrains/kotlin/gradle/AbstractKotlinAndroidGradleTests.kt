@@ -22,6 +22,55 @@ open class KotlinAndroid36GradleIT : KotlinAndroid33GradleIT() {
         get() = GradleVersionRequired.AtLeast("6.0")
 
     @Test
+    fun testAndroidMppSourceSets(): Unit = with(Project("new-mpp-android-source-sets", GradleVersionRequired.FOR_MPP_SUPPORT)) {
+        build("sourceSets") {
+            assertSuccessful()
+            assertContains("Java sources: [lib/src/androidTest/java, lib/src/androidAndroidTest/kotlin]")
+            assertContains("Java sources: [lib/src/androidTestDebug/java, lib/src/androidAndroidTestDebug/kotlin]")
+            assertContains("Java sources: [lib/src/debug/java, lib/src/androidDebug/kotlin, lib/src/debug/kotlin]")
+            assertContains("Java sources: [lib/src/main/java, lib/src/androidMain/kotlin, lib/src/main/kotlin]")
+            assertContains("Java sources: [lib/src/release/java, lib/src/androidRelease/kotlin, lib/src/release/kotlin]")
+            assertContains("Java sources: [lib/src/test/java, lib/src/androidTest/kotlin, lib/src/test/kotlin]")
+            assertContains("Java sources: [lib/src/testDebug/java, lib/src/androidTestDebug/kotlin, lib/src/testDebug/kotlin]")
+            assertContains("Java sources: [lib/src/testRelease/java, lib/src/androidTestRelease/kotlin, lib/src/testRelease/kotlin]")
+
+            assertContains("Android resources: [lib/src/main/res, lib/src/androidMain/res]")
+            assertContains("Assets: [lib/src/main/assets, lib/src/androidMain/assets]")
+            assertContains("AIDL sources: [lib/src/main/aidl, lib/src/androidMain/aidl]")
+            assertContains("RenderScript sources: [lib/src/main/rs, lib/src/androidMain/rs]")
+            assertContains("JNI sources: [lib/src/main/jni, lib/src/androidMain/jni]")
+            assertContains("JNI libraries: [lib/src/main/jniLibs, lib/src/androidMain/jniLibs]")
+            assertContains("Java-style resources: [lib/src/main/resources, lib/src/androidMain/resources]")
+
+            assertContains("Android resources: [lib/src/androidTestDebug/res, lib/src/androidAndroidTestDebug/res]")
+            assertContains("Assets: [lib/src/androidTestDebug/assets, lib/src/androidAndroidTestDebug/assets]")
+            assertContains("AIDL sources: [lib/src/androidTestDebug/aidl, lib/src/androidAndroidTestDebug/aidl]")
+            assertContains("RenderScript sources: [lib/src/androidTestDebug/rs, lib/src/androidAndroidTestDebug/rs]")
+            assertContains("JNI sources: [lib/src/androidTestDebug/jni, lib/src/androidAndroidTestDebug/jni]")
+            assertContains("JNI libraries: [lib/src/androidTestDebug/jniLibs, lib/src/androidAndroidTestDebug/jniLibs]")
+            assertContains("Java-style resources: [lib/src/androidTestDebug/resources, lib/src/androidAndroidTestDebug/resources]")
+        }
+
+        build("testDebug") {
+            assertFailed()
+            assertContains("CommonTest > fail FAILED")
+            assertContains("TestKotlin > fail FAILED")
+            assertContains("AndroidTestKotlin > fail FAILED")
+            assertContains("TestJava > fail FAILED")
+        }
+
+        build("assemble") {
+            assertSuccessful()
+        }
+
+        // Test for KT-35016: MPP should recognize android instrumented tests correctly
+        build("connectedAndroidTest") {
+            assertFailed()
+            assertContains("No connected devices!")
+        }
+    }
+
+    @Test
     fun testAndroidWithNewMppApp() = with(Project("new-mpp-android", GradleVersionRequired.FOR_MPP_SUPPORT)) {
         build("assemble", "compileDebugUnitTestJavaWithJavac", "printCompilerPluginOptions") {
             assertSuccessful()
@@ -600,7 +649,12 @@ fun getSomething() = 10
         }
 
         val libAndroidClassesOnlyUtilKt = project.projectDir.getFileByName("LibAndroidClassesOnlyUtil.kt")
-        libAndroidClassesOnlyUtilKt.modify { it.replace("fun libAndroidClassesOnlyUtil(): String", "fun libAndroidClassesOnlyUtil(): CharSequence") }
+        libAndroidClassesOnlyUtilKt.modify {
+            it.replace(
+                "fun libAndroidClassesOnlyUtil(): String",
+                "fun libAndroidClassesOnlyUtil(): CharSequence"
+            )
+        }
         project.build("assembleDebug", options = options) {
             assertSuccessful()
             val affectedSources = project.projectDir.getFilesByNames("LibAndroidClassesOnlyUtil.kt", "useLibAndroidClassesOnlyUtil.kt")
