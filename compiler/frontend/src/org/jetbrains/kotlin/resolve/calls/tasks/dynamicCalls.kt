@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.utils.Printer
 import java.util.*
 
-class DynamicCallableDescriptors(storageManager: StorageManager, builtIns: KotlinBuiltIns) {
+class DynamicCallableDescriptors(private val storageManager: StorageManager, builtIns: KotlinBuiltIns) {
 
     val dynamicType by storageManager.createLazyValue {
         createDynamicType(builtIns)
@@ -150,7 +150,8 @@ class DynamicCallableDescriptors(storageManager: StorageManager, builtIns: Kotli
                 false,
                 Variance.INVARIANT,
                 Name.identifier("T$index"),
-                index
+                index,
+                storageManager
             )
         }
 

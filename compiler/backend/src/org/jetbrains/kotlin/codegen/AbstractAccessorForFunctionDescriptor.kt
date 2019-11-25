@@ -21,8 +21,6 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import java.util.*
 
 open class AbstractAccessorForFunctionDescriptor(
         containingDeclaration: DeclarationDescriptor,
@@ -34,7 +32,9 @@ open class AbstractAccessorForFunctionDescriptor(
         val copy = TypeParameterDescriptorImpl.createForFurtherModification(
                 this, it.annotations, it.isReified,
                 it.variance, it.name,
-                it.index, SourceElement.NO_SOURCE)
+                it.index, SourceElement.NO_SOURCE,
+                it.storageManager
+        )
         for (upperBound in it.upperBounds) {
             copy.addUpperBound(upperBound)
         }

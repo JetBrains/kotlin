@@ -288,6 +288,7 @@ open class WrappedTypeParameterDescriptor(
 
     override fun getDefaultType() = _defaultType
 
+    override fun getStorageManager() = LockBasedStorageManager.NO_LOCKS
 
     override fun getContainingDeclaration() = (owner.parent as IrDeclaration).descriptor
 
