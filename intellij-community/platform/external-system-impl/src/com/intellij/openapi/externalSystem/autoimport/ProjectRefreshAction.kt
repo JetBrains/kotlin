@@ -22,9 +22,11 @@ class ProjectRefreshAction : AnAction() {
     val project = e.project ?: return
     val notificationAware = ProjectNotificationAware.getInstance(project)
     val systemIds = notificationAware.getSystemIds()
-    e.presentation.text = getNotificationText(systemIds)
-    e.presentation.description = getNotificationDescription(systemIds)
-    getNotificationIcon(systemIds)?.let { e.presentation.icon = it }
+    if (systemIds.isNotEmpty()) {
+      e.presentation.text = getNotificationText(systemIds)
+      e.presentation.description = getNotificationDescription(systemIds)
+      e.presentation.icon = getNotificationIcon(systemIds)
+    }
   }
 
   private fun getNotificationText(systemIds: Set<ProjectSystemId>): String {
@@ -47,9 +49,8 @@ class ProjectRefreshAction : AnAction() {
     return ExternalSystemBundle.message("external.system.reload.notification.action.reload.description", systemsPresentation, productName)
   }
 
-  private fun getNotificationIcon(systemIds: Set<ProjectSystemId>): Icon? {
+  private fun getNotificationIcon(systemIds: Set<ProjectSystemId>): Icon {
     val iconManager = when (systemIds.size) {
-      0 -> return null
       1 -> ExternalSystemIconProvider.getExtension(systemIds.first())
       else -> DefaultExternalSystemIconProvider
     }
@@ -57,8 +58,9 @@ class ProjectRefreshAction : AnAction() {
   }
 
   init {
+    val productName = ApplicationNamesInfo.getInstance().fullProductName
     templatePresentation.icon = DefaultExternalSystemIconProvider.reloadIcon
     templatePresentation.text = ExternalSystemBundle.message("external.system.reload.notification.action.reload.text.empty")
-    templatePresentation.description = ExternalSystemBundle.message("external.system.reload.notification.action.reload.description.empty")
+    templatePresentation.description = ExternalSystemBundle.message("external.system.reload.notification.action.reload.description.empty", productName)
   }
 }
