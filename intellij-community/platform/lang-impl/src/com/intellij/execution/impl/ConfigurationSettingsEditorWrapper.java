@@ -16,9 +16,7 @@ import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.HideableDecorator;
-import com.intellij.ui.RelativeFont;
 import com.intellij.ui.components.JBCheckBox;
-import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.labels.LinkLabel;
 import com.intellij.ui.components.labels.LinkListener;
 import com.intellij.util.containers.ContainerUtil;
@@ -41,8 +39,7 @@ public class ConfigurationSettingsEditorWrapper extends SettingsEditor<RunnerAnd
   private JPanel myBeforeLaunchContainer;
   private JBCheckBox myIsAllowRunningInParallelCheckBox;
   private JPanel myDisclaimerPanel;
-  private JLabel myTemplateLabel;
-  private JBLabel myDisclaimerLabel;
+  private JLabel myDisclaimerLabel;
   private JLabel myCreateNewRCLabel;
   private final BeforeRunStepsPanel myBeforeRunStepsPanel;
 
@@ -175,14 +172,15 @@ public class ConfigurationSettingsEditorWrapper extends SettingsEditor<RunnerAnd
   }
 
   private void createUIComponents() {
-    myTemplateLabel = new JLabel("Template", AllIcons.General.Warning, SwingConstants.LEADING);
-    RelativeFont.BOLD.install(myTemplateLabel);
-    myTemplateLabel.setBorder(JBUI.Borders.emptyBottom(2));
+    myDisclaimerLabel = new JLabel(ExecutionBundle.message("template.disclaimer"), AllIcons.General.Warning, SwingConstants.LEADING);
+    myDisclaimerLabel.setEnabled(false);
+    myDisclaimerLabel.setDisabledIcon(AllIcons.General.Warning);
+    myDisclaimerLabel.setBorder(JBUI.Borders.emptyBottom(2));
     myCreateNewRCLabel = new LinkLabel(ExecutionBundle.message("create.configuration"), null, new LinkListener() {
       @Override
       public void linkSelected(LinkLabel aSource, Object aLinkData) {
         RunConfigurationCreator creator =
-          DataManager.getInstance().getDataContext(myTemplateLabel).getData(RunConfigurationCreator.KEY);
+          DataManager.getInstance().getDataContext(myDisclaimerLabel).getData(RunConfigurationCreator.KEY);
         if (creator != null) {
           creator.createNewConfiguration(myEditor.getFactory().create().getFactory());
         }
