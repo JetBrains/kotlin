@@ -175,7 +175,7 @@ and then a final native binary is produced from this klibrary using the -Xinclud
    
 ## Composite build and testing
 
-If you have a fix spanning both Kotlin and Kotlin/native workspaces you need to be able to test Native composite build. Here's how to do it manually:
+If you have a fix spanning both Kotlin and Kotlin/native workspaces you need to be able to test Kotlin/Native composite build. Here's how to do it manually:
 
 ### Have a composite build with the proper Kotlin tag.
 
@@ -184,7 +184,8 @@ The version is specified in `kotlin-native/gradle.properties`. For example:
 ```
 kotlinVersion=1.3.70-dev-1526
 ```
-Checkout `kotlin` workspace to tag `build-1.3.70-dev-1526`.
+Checkout `kotlin` workspace to tag `build-1.3.70-dev-1526`. Make sure its path ends with `.../kotlin`. 
+Otherwise issues will arise.
 Direct `kotlin-native` build to the kotlin with `kotlinProjectPath` in native's `gradle.properties`.
 
 Now you have the kotlin + kotlin-native combination that is known to build.
@@ -199,10 +200,10 @@ in `kotlin-native` to check the buildability.
 
 For a quick check use:
 ```
-$ ./gradlew sanity
+$ ./gradlew sanity 2>&1 | tee log
 ```
 
-For a longer, more thorough testing build the complete build make sure you are runing it on a osx. 
+For a longer, more thorough testing build the complete build. Make sure you are runing it on a osx. 
 
 
 Have a complete build:
@@ -214,9 +215,9 @@ $ ./gradlew bundle # includes dist as its part
 then run two test sets:
 
 ```
-$ ./gradlew backend.native:tests:run 
+$ ./gradlew backend.native:tests:run 2>&1 | tee log
 
-$ ./gradlew backend.native:tests:runExternal -Ptest_two_stage=true
+$ ./gradlew backend.native:tests:runExternal -Ptest_two_stage=true 2>&1 | tee log
 
 ```
 
