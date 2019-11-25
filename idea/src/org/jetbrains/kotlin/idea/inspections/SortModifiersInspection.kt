@@ -57,7 +57,7 @@ class SortModifiersInspection : AbstractApplicabilityBasedInspection<KtModifierL
     }
 
     private fun KtModifierList.modifierKeywordTokens(): List<KtModifierKeywordToken> {
-        return allChildren.toList().asSequence().mapNotNull { it.node.elementType as? KtModifierKeywordToken }.toList()
+        return allChildren.mapNotNull { it.node.elementType as? KtModifierKeywordToken }.toList()
     }
 
     private fun KtModifierList.modifiersBeforeAnnotations(): Boolean {
