@@ -4,7 +4,7 @@ package com.intellij.openapi.externalSystem.autoimport
 import com.intellij.openapi.editor.toolbar.floating.AbstractFloatingToolbarProvider
 import com.intellij.openapi.editor.toolbar.floating.EditorFloatingToolbar.Companion.EP_NAME
 
-class ProjectReloadFloatingProvider : AbstractFloatingToolbarProvider(ACTION_GROUP) {
+class ProjectRefreshFloatingProvider : AbstractFloatingToolbarProvider(ACTION_GROUP) {
 
   override val priority = 100
 
@@ -13,8 +13,8 @@ class ProjectReloadFloatingProvider : AbstractFloatingToolbarProvider(ACTION_GRO
   companion object {
     const val ACTION_GROUP = "ProjectRefreshActionGroup"
 
-    fun getInstance(): ProjectReloadFloatingProvider {
-      return EP_NAME.findExtensionOrFail(ProjectReloadFloatingProvider::class.java)
+    fun getExtension(): ProjectRefreshFloatingProvider {
+      return EP_NAME.findExtensionOrFail(ProjectRefreshFloatingProvider::class.java)
     }
   }
 }
