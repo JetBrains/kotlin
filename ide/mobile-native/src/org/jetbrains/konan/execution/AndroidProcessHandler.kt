@@ -41,10 +41,12 @@ class AndroidProcessHandler : ProcessHandler() {
                     if ((appId == clientDescription || appId == client.clientData.packageName) && processClient == null) {
                         processClient = client
                         debuggerPort.complete(client.debuggerListenPort)
-                        notifyTextAvailable(
-                            MobileBundle.message("run.android.started", client.clientData.pid) + "\n",
-                            ProcessOutputType.SYSTEM
-                        )
+                        if (shouldHandleTermination) {
+                            notifyTextAvailable(
+                                MobileBundle.message("run.android.started", client.clientData.pid) + "\n",
+                                ProcessOutputType.SYSTEM
+                            )
+                        }
                     }
                 }
             }
