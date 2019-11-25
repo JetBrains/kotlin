@@ -14,13 +14,13 @@ FILE: properties.kt
         public get(): R|kotlin/Int| {
             ^ Int(1)
         }
-    public final fun foo1(x: R|kotlin/Function0<kotlin/Int>|): R|kotlin/Unit| {
+    public final fun foo1(x: R|() -> kotlin/Int|): R|kotlin/Unit| {
     }
-    public final fun foo2(x: R|kotlin/Function1<A, kotlin/Int>|): R|kotlin/Unit| {
+    public final fun foo2(x: R|(A) -> kotlin/Int|): R|kotlin/Unit| {
     }
-    public final fun <R> foo3(x: R|kotlin/Function0<R>|): R|kotlin/Unit| {
+    public final fun <R> foo3(x: R|() -> R|): R|kotlin/Unit| {
     }
-    public final fun <T, R> foo4(x: R|kotlin/Function1<T, R>|): R|kotlin/Unit| {
+    public final fun <T, R> foo4(x: R|(T) -> R|): R|kotlin/Unit| {
     }
     public final fun main(): R|kotlin/Unit| {
         R|/foo1|(::R|/bar|)

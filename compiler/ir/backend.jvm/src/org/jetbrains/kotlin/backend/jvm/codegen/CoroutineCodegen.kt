@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedFunctionDescriptorWithContainerSource
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
 import org.jetbrains.kotlin.backend.common.ir.isSuspend
@@ -22,6 +20,8 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
+import org.jetbrains.kotlin.ir.descriptors.WrappedFunctionDescriptorWithContainerSource
+import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
@@ -126,7 +126,8 @@ internal fun IrFunction.shouldNotContainSuspendMarkers(context: JvmBackendContex
 // the result is called 'view', just to be consistent with old backend.
 internal fun IrFunction.getOrCreateSuspendFunctionViewIfNeeded(context: JvmBackendContext): IrFunction {
     if (!isSuspend || origin == JvmLoweredDeclarationOrigin.SUSPEND_FUNCTION_VIEW) return this
-    return if (isSuspend) context.suspendFunctionViews.getOrElse(this) { suspendFunctionView(context) } else this
+    context.suspendFunctionOriginalToView[this]?.let { return it }
+    return suspendFunctionView(context)
 }
 
 private fun IrFunction.suspendFunctionView(context: JvmBackendContext): IrFunction {
@@ -163,9 +164,11 @@ private fun IrFunction.suspendFunctionView(context: JvmBackendContext): IrFuncti
             else context.ir.symbols.continuationClass.createType(false, listOf(makeTypeProjection(returnType, Variance.INVARIANT)))
         )
         val valueParametersMapping = explicitParameters.zip(it.explicitParameters).toMap()
+
         // Add the suspend function view to the map before transforming the body to make sure
         // that recursive suspend functions do not lead to unbounded recursion at compile time.
-        context.suspendFunctionViews.put(this, it)
+        context.recordSuspendFunctionView(this, it)
+
         it.body = body?.deepCopyWithSymbols(this)
         it.body?.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitGetValue(expression: IrGetValue): IrGetValue =

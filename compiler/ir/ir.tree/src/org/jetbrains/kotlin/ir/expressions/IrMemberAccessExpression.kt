@@ -10,18 +10,17 @@ import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
-import org.jetbrains.kotlin.ir.types.toKotlinType
-import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.types.KotlinType
 
-interface IrMemberAccessExpression : IrExpression {
+interface IrMemberAccessExpression : IrExpression, IrDeclarationReference {
     var dispatchReceiver: IrExpression?
     var extensionReceiver: IrExpression?
 
-    val descriptor: CallableDescriptor
+    override val symbol: IrSymbol
+
     val origin: IrStatementOrigin?
 
     val typeArgumentsCount: Int
@@ -66,8 +65,7 @@ val CallableDescriptor.typeParametersCount: Int
 fun IrMemberAccessExpression.getTypeArgumentOrDefault(irTypeParameter: IrTypeParameter) =
     getTypeArgument(irTypeParameter.index) ?: irTypeParameter.defaultType
 
-interface IrFunctionAccessExpression : IrMemberAccessExpression, IrDeclarationReference {
-    override val descriptor: FunctionDescriptor
+interface IrFunctionAccessExpression : IrMemberAccessExpression {
     override val symbol: IrFunctionSymbol
 }
 
@@ -84,6 +82,7 @@ fun IrMemberAccessExpression.removeValueArgument(valueParameterDescriptor: Value
 
 inline fun <T : IrMemberAccessExpression> T.mapTypeParameters(transform: (TypeParameterDescriptor) -> IrType) : T =
     apply {
+        val descriptor = symbol.descriptor as CallableDescriptor
         descriptor.typeParameters.forEach {
             putTypeArgument(it.index, transform(it))
         }
@@ -91,6 +90,7 @@ inline fun <T : IrMemberAccessExpression> T.mapTypeParameters(transform: (TypePa
 
 inline fun <T : IrMemberAccessExpression> T.mapValueParameters(transform: (ValueParameterDescriptor) -> IrExpression?): T =
     apply {
+        val descriptor = symbol.descriptor as CallableDescriptor
         descriptor.valueParameters.forEach {
             putValueArgument(it.index, transform(it))
         }
@@ -98,6 +98,7 @@ inline fun <T : IrMemberAccessExpression> T.mapValueParameters(transform: (Value
 
 inline fun <T : IrMemberAccessExpression> T.mapValueParametersIndexed(transform: (Int, ValueParameterDescriptor) -> IrExpression?): T =
     apply {
+        val descriptor = symbol.descriptor as CallableDescriptor
         descriptor.valueParameters.forEach {
             putValueArgument(it.index, transform(it.index, it))
         }

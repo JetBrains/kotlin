@@ -188,6 +188,11 @@ public class KotlinDeclarationMover extends AbstractKotlinUpDownMover {
             return new LineRange(startLine, endLine);
         }
 
+        int lineCount = doc.getLineCount();
+        if (oldRange.startLine >= lineCount || oldRange.endLine >= lineCount) {
+            return null;
+        }
+
         TextRange lineTextRange = new TextRange(doc.getLineStartOffset(oldRange.startLine),
                                                 doc.getLineEndOffset(oldRange.endLine));
         if (element instanceof KtDeclaration) {

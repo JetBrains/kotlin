@@ -6,16 +6,11 @@
 package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.types.KotlinType
 
 open class GeneratorExtensions {
-    open val externalDeclarationOrigin: ((DeclarationDescriptor) -> IrDeclarationOrigin)?
-        get() = null
-
     open val samConversion: SamConversion
         get() = SamConversion
 

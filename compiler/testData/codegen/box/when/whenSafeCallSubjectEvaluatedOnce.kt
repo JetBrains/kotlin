@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 var subjectEvaluated = 0
 
 fun String.foo() = length.also { ++subjectEvaluated }

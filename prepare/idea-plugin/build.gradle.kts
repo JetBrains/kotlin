@@ -151,6 +151,7 @@ dependencies {
     gradleToolingModel(project(":plugins:android-extensions-ide")) { isTransitive = false }
     gradleToolingModel(project(":noarg-ide-plugin")) { isTransitive = false }
     gradleToolingModel(project(":allopen-ide-plugin")) { isTransitive = false }
+    gradleToolingModel(project(":idea:idea-gradle-tooling-api")) { isTransitive = false }
 
     jpsPlugin(project(":kotlin-jps-plugin")) { isTransitive = false }
 

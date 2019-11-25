@@ -6,5 +6,5 @@ fun x (y: Any) {
 }
 
 private operator fun Any.get(s: String): Any {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    TODO("Not yet implemented")
 }

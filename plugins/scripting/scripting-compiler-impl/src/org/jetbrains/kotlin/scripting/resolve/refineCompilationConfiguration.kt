@@ -229,7 +229,10 @@ fun refineScriptCompilationConfiguration(
             .onSuccess {
                 it.refineBeforeCompiling(script, collectedData)
             }.onSuccess {
-                ScriptCompilationConfigurationWrapper.FromCompilationConfiguration(ktFileSource, it).asSuccess()
+                ScriptCompilationConfigurationWrapper.FromCompilationConfiguration(
+                    ktFileSource,
+                    it.adjustByDefinition(definition)
+                ).asSuccess()
             }
     } else {
         val file = script.getVirtualFile(definition)
@@ -260,10 +263,26 @@ fun refineScriptCompilationConfiguration(
         else
             ScriptCompilationConfigurationWrapper.FromLegacy(
                 ktFileSource,
-                result.dependencies?.adjustByDefinition(definition.legacyDefinition),
+                result.dependencies?.adjustByDefinition(definition),
                 definition
             ).asSuccess(result.reports.mapToDiagnostics())
     }
+}
+
+fun ScriptDependencies.adjustByDefinition(definition: ScriptDefinition): ScriptDependencies {
+    val additionalClasspath = additionalClasspath(definition)
+    if (additionalClasspath.isEmpty()) return this
+
+    return copy(classpath = additionalClasspath + classpath)
+}
+
+fun ScriptCompilationConfiguration.adjustByDefinition(definition: ScriptDefinition): ScriptCompilationConfiguration {
+    return this.withUpdatedClasspath(additionalClasspath(definition))
+}
+
+private fun additionalClasspath(definition: ScriptDefinition): List<File> {
+    return (definition.asLegacyOrNull<KotlinScriptDefinitionFromAnnotatedTemplate>()?.templateClasspath
+        ?: definition.hostConfiguration[ScriptingHostConfiguration.configurationDependencies].toClassPathOrEmpty())
 }
 
 internal fun makeScriptContents(

@@ -138,6 +138,10 @@ FILE fqName:<root> fileName:/classesWithAnnotations.kt
     FUN name:values visibility:public modality:FINAL <> ($this:<root>.TestEnum) returnType:kotlin.Array<<root>.TestEnum>
       $this: VALUE_PARAMETER name:<this> type:<root>.TestEnum
       BLOCK_BODY
+    FUN name:valueOf visibility:public modality:FINAL <> ($this:<root>.TestEnum, value:kotlin.String) returnType:<root>.TestEnum
+      $this: VALUE_PARAMETER name:<this> type:<root>.TestEnum
+      VALUE_PARAMETER name:value index:0 type:kotlin.String
+      BLOCK_BODY
     FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum) returnType:kotlin.Any [fake_override]
       overridden:
         protected final fun clone (): kotlin.Any declared in kotlin.Enum

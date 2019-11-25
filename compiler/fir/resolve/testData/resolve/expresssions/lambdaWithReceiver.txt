@@ -3,13 +3,13 @@ FILE: lambdaWithReceiver.kt
         public abstract fun foo(): R|kotlin/Unit|
 
     }
-    public final fun <T> myWith(receiver: R|T|, block: @R|kotlin/ExtensionFunctionType|() R|kotlin/Function1<T, kotlin/Unit>|): R|kotlin/Unit| {
+    public final fun <T> myWith(receiver: R|T|, block: R|T.() -> kotlin/Unit|): R|kotlin/Unit| {
         R|<local>/receiver|.<Unresolved name: block>#()
     }
-    public final fun <T> R|T|.myApply(block: @R|kotlin/ExtensionFunctionType|() R|kotlin/Function1<T, kotlin/Unit>|): R|kotlin/Unit| {
+    public final fun <T> R|T|.myApply(block: R|T.() -> kotlin/Unit|): R|kotlin/Unit| {
         this@R|/myApply|.<Unresolved name: block>#()
     }
-    public final fun withA(block: @R|kotlin/ExtensionFunctionType|() R|kotlin/Function1<A, kotlin/Unit>|): R|kotlin/Unit| {
+    public final fun withA(block: R|A.() -> kotlin/Unit|): R|kotlin/Unit| {
     }
     public final fun test_1(): R|kotlin/Unit| {
         R|/withA|(<L> = withA@fun R|A|.<anonymous>(): R|kotlin/Unit| {
@@ -29,7 +29,7 @@ FILE: lambdaWithReceiver.kt
         }
         )
     }
-    public final fun complexLambda(block: @R|kotlin/ExtensionFunctionType|() R|kotlin/Function2<kotlin/Int, kotlin/String, kotlin/Unit>|): R|kotlin/Unit| {
+    public final fun complexLambda(block: R|kotlin/Int.(kotlin/String) -> kotlin/Unit|): R|kotlin/Unit| {
     }
     public final fun test_4(): R|kotlin/Unit| {
         R|/complexLambda|(<L> = complexLambda@fun R|kotlin/Int|.<anonymous>(it: R|kotlin/String|): R|kotlin/Unit| {

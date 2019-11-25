@@ -6,7 +6,7 @@ actual class <caret>My {
 
     actual val correct = true
     actual val x: String
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+        get() = TODO("Not yet implemented")
     actual val pi: Double
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+        get() = TODO("Not yet implemented")
 }

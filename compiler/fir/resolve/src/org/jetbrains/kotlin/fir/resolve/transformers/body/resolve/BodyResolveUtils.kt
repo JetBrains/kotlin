@@ -37,8 +37,12 @@ internal inline var FirExpression.resultType: FirTypeRef
         replaceTypeRef(type)
     }
 
-internal fun inferenceComponents(session: FirSession, returnTypeCalculator: ReturnTypeCalculator, scopeSession: ScopeSession) =
-    InferenceComponents(object : ConeInferenceContext, TypeSystemInferenceExtensionContextDelegate, DataFlowInferenceContext {
+internal interface UniversalConeInferenceContext :
+    ConeInferenceContext, TypeSystemInferenceExtensionContextDelegate, DataFlowInferenceContext
+
+internal fun FirSession.inferenceContext(): UniversalConeInferenceContext {
+    val session = this
+    return object : UniversalConeInferenceContext {
         override fun findCommonIntegerLiteralTypesSuperType(explicitSupertypes: List<SimpleTypeMarker>): SimpleTypeMarker? {
             // TODO: implement
             return null
@@ -59,4 +63,14 @@ internal fun inferenceComponents(session: FirSession, returnTypeCalculator: Retu
             require(this is ErrorTypeConstructor)
             return ConeClassErrorType(reason)
         }
-    }, session, returnTypeCalculator, scopeSession)
+    }
+}
+
+internal fun inferenceComponents(
+    session: FirSession,
+    returnTypeCalculator: ReturnTypeCalculator,
+    scopeSession: ScopeSession
+): InferenceComponents {
+    val inferenceContext = session.inferenceContext()
+    return InferenceComponents(inferenceContext, session, returnTypeCalculator, scopeSession)
+}

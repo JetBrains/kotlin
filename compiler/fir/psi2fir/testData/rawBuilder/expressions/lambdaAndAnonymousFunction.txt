@@ -1,0 +1,20 @@
+FILE: lambdaAndAnonymousFunction.kt
+    public? final? fun <T> run(block: ( () -> T )): T {
+        ^run block#()
+    }
+    public? final? fun test_1(): R|kotlin/Unit| {
+        run#(<L> = run@fun <implicit>.<anonymous>(): <implicit> {
+            ^@run Unit
+        }
+        )
+        run#(<L> = run@fun <implicit>.<anonymous>(): <implicit> {
+            ^test_1 Unit
+        }
+        )
+    }
+    public? final? fun test_2(): R|kotlin/Unit| {
+        run#(fun <anonymous>(): Int {
+            ^ Int(1)
+        }
+        )
+    }

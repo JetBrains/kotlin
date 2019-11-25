@@ -7,19 +7,19 @@ FILE: simpleDelegatedToMap.kt
         public final val map: R|kotlin/collections/MutableMap<kotlin/String, kotlin/Any>| = R|<local>/map|
             public get(): R|kotlin/collections/MutableMap<kotlin/String, kotlin/Any>|
 
-        public final var foo: <ERROR TYPE REF: Empty diagnostic>by R|<local>/map|
-            public get(): <ERROR TYPE REF: Empty diagnostic> {
+        public final var foo: <ERROR TYPE REF: Ambiguity: getValue, [kotlin/collections/getValue, kotlin/collections/getValue, kotlin/collections/getValue]>by R|<local>/map|
+            public get(): <ERROR TYPE REF: Ambiguity: getValue, [kotlin/collections/getValue, kotlin/collections/getValue, kotlin/collections/getValue]> {
                 ^ D|/C.foo|.<Ambiguity: getValue, [kotlin/collections/getValue, kotlin/collections/getValue, kotlin/collections/getValue]>#(this@R|/C|, ::R|/C.foo|)
             }
-            public set(<set-?>: <ERROR TYPE REF: Empty diagnostic>): R|kotlin/Unit| {
+            public set(<set-?>: <ERROR TYPE REF: Ambiguity: getValue, [kotlin/collections/getValue, kotlin/collections/getValue, kotlin/collections/getValue]>): R|kotlin/Unit| {
                 D|/C.foo|.<Inapplicable(INAPPLICABLE): [kotlin/collections/setValue]>#(this@R|/C|, ::R|/C.foo|, R|<local>/foo|)
             }
 
     }
-    public final var bar: <ERROR TYPE REF: Empty diagnostic>by R|kotlin/collections/hashMapOf|<R|kotlin/String|, R|kotlin/Any|>()
-        public get(): <ERROR TYPE REF: Empty diagnostic> {
+    public final var bar: <ERROR TYPE REF: Ambiguity: getValue, [kotlin/collections/getValue, kotlin/collections/getValue, kotlin/collections/getValue]>by R|kotlin/collections/hashMapOf|<R|kotlin/String|, R|kotlin/Any|>()
+        public get(): <ERROR TYPE REF: Ambiguity: getValue, [kotlin/collections/getValue, kotlin/collections/getValue, kotlin/collections/getValue]> {
             ^ D|/bar|.<Ambiguity: getValue, [kotlin/collections/getValue, kotlin/collections/getValue, kotlin/collections/getValue]>#(Null(null), ::R|/bar|)
         }
-        public set(<set-?>: <ERROR TYPE REF: Empty diagnostic>): R|kotlin/Unit| {
+        public set(<set-?>: <ERROR TYPE REF: Ambiguity: getValue, [kotlin/collections/getValue, kotlin/collections/getValue, kotlin/collections/getValue]>): R|kotlin/Unit| {
             D|/bar|.<Inapplicable(INAPPLICABLE): [kotlin/collections/setValue]>#(Null(null), ::R|/bar|, R|<local>/bar|)
         }

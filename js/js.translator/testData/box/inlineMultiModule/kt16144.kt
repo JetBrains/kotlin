@@ -25,7 +25,7 @@ open class M2 {
 
 class M1 : M2(), M3
 
-// MODULE: main(m1, m2)
+// MODULE: main(m1, m2, m3)
 // FILE: main.kt
 
 // CHECK_CONTAINS_NO_CALLS: box except=equals;getKClass

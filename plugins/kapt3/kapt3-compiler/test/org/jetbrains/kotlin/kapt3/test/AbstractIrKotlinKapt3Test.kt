@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.kapt3.test
 
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.test.TargetBackend
 
 /*
@@ -14,19 +12,9 @@ Currently Kapt3 only works with the old backend. To enable IR, modify the isIrBa
 */
 
 abstract class AbstractIrClassFileToSourceStubConverterTest : AbstractClassFileToSourceStubConverterTest() {
-    override fun updateConfiguration(configuration: CompilerConfiguration) {
-        super.updateConfiguration(configuration)
-        configuration.put(JVMConfigurationKeys.IR, true)
-    }
-
     override fun getBackend() = TargetBackend.JVM_IR
 }
 
 abstract class AbstractIrKotlinKaptContextTest : AbstractKotlinKaptContextTest() {
-    override fun updateConfiguration(configuration: CompilerConfiguration) {
-        super.updateConfiguration(configuration)
-        configuration.put(JVMConfigurationKeys.IR, true)
-    }
-
     override fun getBackend() = TargetBackend.JVM_IR
 }

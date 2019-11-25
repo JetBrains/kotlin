@@ -1,4 +1,7 @@
 Test key, Issue, State (optional: MUTE or FAIL)
+org.jetbrains.kotlin.checkers.JavaAgainstKotlinSourceCheckerTestGenerated.JavaAgainstKotlin.testExtendingMutableInterfaces, KT-34105
+org.jetbrains.kotlin.checkers.JavaAgainstKotlinSourceCheckerTestGenerated.JavaAgainstKotlin.testExtendingReadOnlyInterfaces, KT-34105
+org.jetbrains.kotlin.checkers.JavaAgainstKotlinSourceCheckerWithoutUltraLightTestGenerated.JavaAgainstKotlin.testExtendingMutableInterfaces, KT-34105
 org.jetbrains.kotlin.findUsages.KotlinFindUsagesWithLibraryTestGenerated.KotlinLibrary.testLibraryClassUsages, KT-34542, FAIL
 org.jetbrains.kotlin.findUsages.KotlinFindUsagesWithLibraryTestGenerated.KotlinLibrary.testLibraryNestedClassUsages, KT-34542, FAIL
 org.jetbrains.kotlin.findUsages.KotlinFindUsagesWithLibraryTestGenerated.KotlinLibrary.testLibraryObjectUsages, KT-34542, FAIL
@@ -10,6 +13,16 @@ org.jetbrains.kotlin.idea.codeInsight.surroundWith.SurroundWithTestGenerated.If.
 org.jetbrains.kotlin.idea.codeInsight.surroundWith.SurroundWithTestGenerated.If.MoveDeclarationsOut.Order.testValOrder, flaky failure
 org.jetbrains.kotlin.idea.codeInsight.surroundWith.SurroundWithTestGenerated.If.MoveDeclarationsOut.Val.testValWithTypeWoInitializer, flaky failure
 org.jetbrains.kotlin.idea.codeInsight.surroundWith.SurroundWithTestGenerated.If.MoveDeclarationsOut.Var.testVarWithTypeWoInitializer, Unprocessed
+org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Common.StaticMembers.testJavaStaticMethodsFromImports, KT-32919
+org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Java.BoldOrGrayed.testNonPredictableSmartCast1, KT-32919
+org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Java.BoldOrGrayed.testNonPredictableSmartCast2, KT-32919
+org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Java.BoldOrGrayed.testSyntheticJavaProperties1, KT-32919
+org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Java.BoldOrGrayed.testSyntheticJavaProperties2, KT-32919
+org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Java.SyntheticExtensions.testNullableReceiver, KT-32919
+org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Java.SyntheticExtensions.testSafeCall, KT-32919
+org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Java.SyntheticExtensions.testSmartCast, KT-32919
+org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Java.SyntheticExtensions.testSmartCast2, KT-32919
+org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Java.SyntheticExtensions.testSyntheticExtensions1, KT-32919
 org.jetbrains.kotlin.idea.completion.test.KotlinSourceInJavaCompletionTestGenerated.testMultiFileFacadeMembers, KT-34689
 org.jetbrains.kotlin.idea.decompiler.navigation.NavigateFromJSLibrarySourcesTest.testIcon, Unprocessed
 org.jetbrains.kotlin.idea.decompiler.navigation.NavigateFromLibrarySourcesTest.testBuiltinClass, KT-34542
@@ -89,6 +102,7 @@ org.jetbrains.kotlin.idea.intentions.declarations.JoinLinesTestGenerated.RemoveB
 org.jetbrains.kotlin.idea.intentions.declarations.JoinLinesTestGenerated.RemoveBraces.testIf, KT-34408
 org.jetbrains.kotlin.idea.intentions.declarations.JoinLinesTestGenerated.RemoveBraces.testNotSingleLineStatement, KT-34408
 org.jetbrains.kotlin.idea.intentions.declarations.JoinLinesTestGenerated.RemoveBraces.testWhenEntry, KT-34408
+org.jetbrains.kotlin.idea.navigation.KotlinGotoImplementationMultiModuleTestGenerated.testExpectClassSuperclassFun, Flaky failure
 org.jetbrains.kotlin.idea.parameterInfo.ParameterInfoTestGenerated.WithLib1.testUseJavaFromLib, KT-34542, FAIL
 org.jetbrains.kotlin.idea.parameterInfo.ParameterInfoTestGenerated.WithLib2.testUseJavaSAMFromLib, KT-34542, FAIL
 org.jetbrains.kotlin.idea.parameterInfo.ParameterInfoTestGenerated.WithLib3.testUseJavaSAMFromLib, KT-34542, FAIL
@@ -100,11 +114,19 @@ org.jetbrains.kotlin.idea.refactoring.inline.InlineTestGenerated.Function.Expres
 org.jetbrains.kotlin.idea.refactoring.introduce.ExtractionTestGenerated.IntroduceJavaParameter.testJavaMethodOverridingKotlinFunctionWithUsages, Unprocessed
 org.jetbrains.kotlin.idea.refactoring.move.MoveTestGenerated.testJava_moveClass_moveInnerToTop_moveNestedClassToTopLevelInTheSamePackageAndAddOuterInstanceWithLambda_MoveNestedClassToTopLevelInTheSamePackageAndAddOuterInstanceWithLambda, final modifier added
 org.jetbrains.kotlin.idea.refactoring.move.MoveTestGenerated.testJava_moveClass_moveInnerToTop_moveNestedClassToTopLevelInTheSamePackageAndAddOuterInstance_MoveNestedClassToTopLevelInTheSamePackageAndAddOuterInstance, final modifier added
+org.jetbrains.kotlin.idea.refactoring.move.MultiModuleMoveTestGenerated.testMoveFromJsModuleToJvmModule_MoveFromJsModuleToJvmModule, KT-34106
+org.jetbrains.kotlin.idea.refactoring.move.MultiModuleMoveTestGenerated.testMoveFromJvmModuleToJsModule_MoveFromJvmModuleToJsModule, KT-34106
+org.jetbrains.kotlin.idea.refactoring.move.MultiModuleMoveTestGenerated.testMoveJdkDependentToJsModule_MoveJdkDependentToJsModule, KT-34106
 org.jetbrains.kotlin.idea.refactoring.pullUp.PullUpTestGenerated.K2K.testAccidentalOverrides, Unprocessed
 org.jetbrains.kotlin.idea.refactoring.rename.RenameTestGenerated.testOverloadsWithSameOrigin_OverloadsWithSameOrigin, Bad imports after rename
 org.jetbrains.kotlin.idea.refactoring.rename.RenameTestGenerated.testRenameKotlinMultifileFacadeClassWithJvmNameByRef_RenameKotlinMultifileFacadeClassWithJvmName, KT-34689
-org.jetbrains.kotlin.idea.repl.IdeReplCompletionTestGenerated.testDefinedExtension, Unprocessed
-org.jetbrains.kotlin.idea.repl.IdeReplCompletionTestGenerated.testFunctions, Unprocessed
+org.jetbrains.kotlin.idea.repl.IdeReplCompletionTestGenerated.testBuiltInMember, KT-34825
+org.jetbrains.kotlin.idea.repl.IdeReplCompletionTestGenerated.testDefinedClass, KT-34825
+org.jetbrains.kotlin.idea.repl.IdeReplCompletionTestGenerated.testDefinedClassMember, KT-34825
+org.jetbrains.kotlin.idea.repl.IdeReplCompletionTestGenerated.testDefinedExtension, KT-34825
+org.jetbrains.kotlin.idea.repl.IdeReplCompletionTestGenerated.testFunctions, KT-34825
+org.jetbrains.kotlin.idea.repl.IdeReplCompletionTestGenerated.testStdlib, KT-34825
+org.jetbrains.kotlin.idea.repl.IdeReplCompletionTestGenerated.testVariables, KT-34825
 org.jetbrains.kotlin.idea.resolve.ReferenceResolveInLibrarySourcesTestGenerated.testInLibrarySource, KT-34542, FAIL
 org.jetbrains.kotlin.idea.resolve.ReferenceResolveInLibrarySourcesTestGenerated.testToFunParameter, KT-34542, FAIL
 org.jetbrains.kotlin.idea.resolve.ReferenceResolveInLibrarySourcesTestGenerated.testToLocalFun, KT-34542, FAIL

@@ -1,5 +1,5 @@
 public open class MethodWithTypePRefClassP<P> : R|kotlin/Any| {
-    public final operator fun <Q : R|P|> f(): R|kotlin/Unit|
+    public final operator fun <Q : R|P?|> f(): R|kotlin/Unit|
 
     public constructor<P>(): R|test/MethodWithTypePRefClassP<P>|
 

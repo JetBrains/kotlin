@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.MissingSupertypesResolver
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 
 interface DeclarationChecker {
@@ -33,5 +34,6 @@ class DeclarationCheckerContext(
     override val languageVersionSettings: LanguageVersionSettings,
     override val deprecationResolver: DeprecationResolver,
     override val moduleDescriptor: ModuleDescriptor,
-    val expectActualTracker: ExpectActualTracker
+    val expectActualTracker: ExpectActualTracker,
+    val missingSupertypesResolver: MissingSupertypesResolver
 ) : CheckerContext

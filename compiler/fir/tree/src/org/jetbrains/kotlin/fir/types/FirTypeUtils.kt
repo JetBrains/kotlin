@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.types
 
+import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.name.ClassId
@@ -33,3 +35,25 @@ val FirFunctionTypeRef.parametersCount: Int
         valueParameters.size + 1
     else
         valueParameters.size
+
+const val EXTENSION_FUNCTION_ANNOTATION = "kotlin/ExtensionFunctionType"
+
+fun FirTypeRef.isExtensionFunctionType(): Boolean {
+    return annotations.any {
+        it.isExtensionFunctionAnnotationCall
+    }
+}
+
+val FirAnnotationCall.isExtensionFunctionAnnotationCall: Boolean
+    get() = (this as? FirAnnotationCall)?.let {
+        (it.annotationTypeRef as? FirResolvedTypeRef)?.let {
+            (it.type as? ConeClassLikeType)?.let {
+                it.lookupTag.classId.asString() == EXTENSION_FUNCTION_ANNOTATION
+            }
+        }
+    } == true
+
+
+fun List<FirAnnotationCall>.dropExtensionFunctionAnnotation(): List<FirAnnotationCall> {
+    return filterNot { it.isExtensionFunctionAnnotationCall }
+}

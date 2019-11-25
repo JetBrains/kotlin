@@ -11,7 +11,7 @@ FILE: eagerAndPostponedCallableReferences.kt
     }
     public final fun singleB(a: R|B|): R|kotlin/Unit| {
     }
-    public final fun <T> foo(f: R|kotlin/Function1<T, kotlin/Unit>|, g: R|kotlin/Function1<T, kotlin/Unit>|): R|T| {
+    public final fun <T> foo(f: R|(T) -> kotlin/Unit|, g: R|(T) -> kotlin/Unit|): R|T| {
         ^foo R|kotlin/TODO|()
     }
     public final fun test(): R|kotlin/Unit| {

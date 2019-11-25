@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
-import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
@@ -80,7 +79,7 @@ internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendConte
         return irBuilder.irBlock(expression, IrStatementOrigin.LAMBDA) {
             val function = buildFun {
                 setSourceRange(expression)
-                origin = JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
+                origin = JvmLoweredDeclarationOrigin.GENERATED_MEMBER_IN_CALLABLE_REFERENCE
                 name = Name.identifier("stub_for_inline")
                 visibility = Visibilities.LOCAL
                 returnType = field.type
@@ -106,7 +105,6 @@ internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendConte
                 expression.endOffset,
                 field.type,
                 function.symbol,
-                function.symbol.descriptor,
                 typeArgumentsCount = 0,
                 origin = IrStatementOrigin.LAMBDA
             ).apply {
@@ -126,7 +124,7 @@ internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendConte
 
             val function = buildFun {
                 setSourceRange(expression)
-                origin = JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
+                origin = JvmLoweredDeclarationOrigin.GENERATED_MEMBER_IN_CALLABLE_REFERENCE
                 name = Name.identifier("stub_for_inlining")
                 visibility = Visibilities.LOCAL
                 returnType = referencedFunction.returnType
@@ -145,7 +143,7 @@ internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendConte
                     expression.endOffset
                 ).run {
                     irExprBody(irCall(referencedFunction).apply {
-                        this@apply.descriptor.typeParameters.forEach {
+                        this@apply.symbol.owner.allTypeParameters.forEach {
                             putTypeArgument(it.index, expression.getTypeArgument(it.index))
                         }
 
@@ -176,7 +174,6 @@ internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendConte
                 expression.endOffset,
                 referencedFunction.returnType,
                 function.symbol,
-                function.symbol.descriptor,
                 referencedFunction.typeParameters.size,
                 IrStatementOrigin.LAMBDA
             ).apply {

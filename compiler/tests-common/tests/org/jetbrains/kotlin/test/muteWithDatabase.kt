@@ -8,9 +8,27 @@ package org.jetbrains.kotlin.test
 import junit.framework.TestCase
 import java.io.File
 
+private class AutoMute(
+    val file: String,
+    val issue: String
+)
+
+private val DO_AUTO_MUTE: AutoMute? by lazy {
+    val autoMuteFile = File("tests/automute")
+    if (autoMuteFile.exists()) {
+        val lines = autoMuteFile.readLines().filter { it.isNotBlank() }.map { it.trim() }
+        AutoMute(
+            lines.getOrNull(0) ?: error("A file path is expected in tne first line"),
+            lines.getOrNull(1) ?: error("An issue description is the second line")
+        )
+    } else {
+        null
+    }
+}
+
 private class MutedTest(
     val key: String,
-    val issue: String?,
+    @Suppress("unused") val issue: String?,
     val hasFailFile: Boolean
 ) {
     val methodName = key.substringAfterLast(".", "").replace("`", "").also {
@@ -92,21 +110,36 @@ internal fun isMutedInDatabase(testCase: TestCase): Boolean {
     return mutedTest != null && !mutedTest.hasFailFile
 }
 
-internal fun wrapWithMuteInDatabase(testCase: TestCase, f: () -> Unit): () -> Unit {
-    if (!isMutedInDatabase(testCase)) return f
-    return { MUTED_DO_TEST_LAMBDA(testCase) }
-}
+internal fun wrapWithMuteInDatabase(testCase: TestCase, f: () -> Unit): (() -> Unit)? {
+    if (isMutedInDatabase(testCase)) {
+        return { MUTED_DO_TEST_LAMBDA(testCase) }
+    }
 
-internal val MUTED_DO_TEST_LAMBDA = { testCase: TestCase ->
-    System.err.println("MUTED TEST: ${testCase::class.java.name}.${testCase.name}")
-}
+    val doAutoMute = DO_AUTO_MUTE ?: return null
 
-internal class MutedDoTest(val testCase: TestCase) : KotlinTestUtils.DoTest {
-    override fun invoke(filePath: String) {
-        MUTED_DO_TEST_LAMBDA(testCase)
+    return {
+        try {
+            f()
+        } catch (e: Throwable) {
+            val file = File(doAutoMute.file)
+            val lines = file.readLines()
+            val firstLine = lines[0]
+            val muted = lines.drop(1).toMutableList()
+            muted.add("${testKey(testCase)}, ${doAutoMute.issue}")
+            val newMuted: List<String> = mutableListOf<String>() + firstLine + muted.sorted()
+            file.writeText(newMuted.joinToString("\n"))
+
+            throw e
+        }
     }
 }
 
+internal val MUTED_DO_TEST_LAMBDA = { testCase: TestCase ->
+    System.err.println("MUTED TEST: ${testKey(testCase)}")
+}
+
+private fun testKey(testCase: TestCase) = "${testCase::class.java.canonicalName}.${testCase.name}"
+
 fun TestCase.runTest(test: () -> Unit) {
-    wrapWithMuteInDatabase(this, test).invoke()
+    (wrapWithMuteInDatabase(this, test) ?: test).invoke()
 }

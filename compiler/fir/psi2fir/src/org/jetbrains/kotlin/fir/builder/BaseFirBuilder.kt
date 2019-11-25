@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
-import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.lexer.KtTokens.OPEN_QUOTE
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtStringTemplateEntryWithExpression
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 import org.jetbrains.kotlin.psi.KtUnaryExpression
 import org.jetbrains.kotlin.resolve.constants.evaluate.*
@@ -105,8 +106,8 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
             this
         ).apply {
             target = FirFunctionTarget(labelName)
-            val lastFunction = context.firFunctions.lastOrNull()
             if (labelName == null) {
+                val lastFunction = context.firFunctions.lastOrNull { !(it is FirAnonymousFunction && it.isLambda) }
                 if (lastFunction != null) {
                     target.bind(lastFunction)
                 } else {
@@ -157,7 +158,7 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
         }
         return FirResolvedTypeRefImpl(
             this?.toFirSourceElement(),
-            ConeClassTypeImpl(
+            ConeClassLikeTypeImpl(
                 firClass.symbol.toLookupTag(),
                 typeParameters.map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false) }.toTypedArray(),
                 false
@@ -289,7 +290,12 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
                 }
                 SHORT_STRING_TEMPLATE_ENTRY, LONG_STRING_TEMPLATE_ENTRY -> {
                     hasExpressions = true
-                    entry.convertTemplateEntry("Incorrect template argument")
+                    val firExpression = entry.convertTemplateEntry("Incorrect template argument")
+                    val source = firExpression.source
+                    FirFunctionCallImpl(source).apply {
+                        explicitReceiver = firExpression
+                        calleeReference = FirSimpleNamedReference(source, Name.identifier("toString"), candidateSymbol = null)
+                    }
                 }
                 else -> {
                     hasExpressions = true
@@ -463,22 +469,6 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
                 statements += arraySet.apply { lValue = FirSimpleNamedReference(psiArrayExpression?.toFirSourceElement(), name, null) }
             }
         }
-        if (operation != FirOperation.ASSIGN &&
-            tokenType != REFERENCE_EXPRESSION && tokenType != THIS_EXPRESSION &&
-            ((tokenType != DOT_QUALIFIED_EXPRESSION && tokenType != SAFE_ACCESS_EXPRESSION) || this.selectorExpression?.elementType != REFERENCE_EXPRESSION)
-        ) {
-            return FirBlockImpl(this.getSourceOrNull()).apply {
-                val name = Name.special("<complex-set>")
-                statements += generateTemporaryVariable(
-                    this@BaseFirBuilder.session, this@generateAssignment.getSourceOrNull(), name,
-                    this@generateAssignment?.convert()
-                        ?: FirErrorExpressionImpl(this.getSourceOrNull(), FirSimpleDiagnostic("No LValue in assignment", DiagnosticKind.Syntax))
-                )
-                statements += FirVariableAssignmentImpl(source, false, value, operation).apply {
-                    lValue = FirSimpleNamedReference(this.getSourceOrNull(), name, null)
-                }
-            }
-        }
 
         if (operation in FirOperation.ASSIGNMENTS && operation != FirOperation.ASSIGN) {
             return FirOperatorCallImpl(source, operation).apply {
@@ -487,8 +477,8 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
                 arguments += value
             }
         }
-
-        return FirVariableAssignmentImpl(source, false, value, operation).apply {
+        require(operation == FirOperation.ASSIGN)
+        return FirVariableAssignmentImpl(source, false, value).apply {
             lValue = initializeLValue(this@generateAssignment) { convert() as? FirQualifiedAccess }
         }
     }

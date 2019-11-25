@@ -1,6 +1,6 @@
 FILE: recursiveBug.kt
     public final class Foo : R|kotlin/Any| {
-        public constructor(name: R|kotlin/Function0<kotlin/String>|): R|Foo| {
+        public constructor(name: R|() -> kotlin/String|): R|Foo| {
             super<R|kotlin/Any|>()
         }
 
@@ -14,7 +14,7 @@ FILE: recursiveBug.kt
             public get(): R|kotlin/Int|
 
     }
-    public final fun bar(name: R|kotlin/Function0<kotlin/String>|): R|kotlin/Unit| {
+    public final fun bar(name: R|() -> kotlin/String|): R|kotlin/Unit| {
         lval result: R|kotlin/String| = R|kotlin/run|<R|kotlin/String|>(<L> = run@fun <anonymous>(): R|kotlin/String| <kind=EXACTLY_ONCE>  {
             R|<local>/name|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/String|>|()
         }

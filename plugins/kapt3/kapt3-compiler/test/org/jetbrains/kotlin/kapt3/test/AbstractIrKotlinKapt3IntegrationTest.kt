@@ -5,15 +5,8 @@
 
 package org.jetbrains.kotlin.kapt3.test
 
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.test.TargetBackend
 
 abstract class AbstractIrKotlinKapt3IntegrationTest : AbstractKotlinKapt3IntegrationTest() {
-    override fun updateConfiguration(configuration: CompilerConfiguration) {
-        super.updateConfiguration(configuration)
-        configuration.put(JVMConfigurationKeys.IR, true)
-    }
-
     override fun getBackend() = TargetBackend.JVM_IR
 }

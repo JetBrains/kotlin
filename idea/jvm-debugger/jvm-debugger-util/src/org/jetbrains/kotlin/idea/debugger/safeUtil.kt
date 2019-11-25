@@ -62,7 +62,11 @@ fun StackFrameProxy.safeLocation(): Location? {
 }
 
 fun Location.safeSourceName(): String? {
-    return DebuggerUtilsEx.getSourceName(this) { null }
+    return wrapAbsentInformationException { this.sourceName() }
+}
+
+fun Location.safeSourceName(stratum: String): String? {
+    return wrapAbsentInformationException { this.sourceName(stratum) }
 }
 
 fun Location.safeLineNumber(): Int {
@@ -91,6 +95,8 @@ private inline fun <T> wrapAbsentInformationException(block: () -> T): T? {
     } catch (e: AbsentInformationException) {
         null
     } catch (e: AbsentInformationEvaluateException) {
+        null
+    } catch (e: InternalException) {
         null
     }
 }

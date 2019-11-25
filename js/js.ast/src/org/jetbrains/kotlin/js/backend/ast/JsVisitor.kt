@@ -159,6 +159,9 @@ abstract class JsVisitor {
     open fun visitDocComment(comment: JsDocComment): Unit =
             visitElement(comment)
 
+    open fun visitSingleLineComment(comment: JsSingleLineComment): Unit =
+            visitElement(comment)
+
     protected open fun visitElement(node: JsNode) {
     }
 }

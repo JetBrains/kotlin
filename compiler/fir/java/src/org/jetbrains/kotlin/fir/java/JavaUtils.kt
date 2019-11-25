@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.toFirSourceElement
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
@@ -63,7 +63,7 @@ internal fun ClassId.toConeKotlinType(
     isNullable: Boolean
 ): ConeLookupTagBasedType {
     val lookupTag = ConeClassLikeLookupTagImpl(this)
-    return ConeClassTypeImpl(lookupTag, typeArguments, isNullable)
+    return ConeClassLikeTypeImpl(lookupTag, typeArguments, isNullable)
 }
 
 internal fun FirTypeRef.toNotNullConeKotlinType(
@@ -93,9 +93,9 @@ internal fun JavaType.toFirJavaTypeRef(session: FirSession, javaTypeParameterSta
 }
 
 internal fun JavaClassifierType.toFirResolvedTypeRef(
-    session: FirSession, javaTypeParameterStack: JavaTypeParameterStack
+    session: FirSession, javaTypeParameterStack: JavaTypeParameterStack, isNullable: Boolean = false
 ): FirResolvedTypeRef {
-    val coneType = this.toConeKotlinTypeWithNullability(session, javaTypeParameterStack, isNullable = false)
+    val coneType = this.toConeKotlinTypeWithNullability(session, javaTypeParameterStack, isNullable)
     return FirResolvedTypeRefImpl(
         source = null, type = coneType
     ).apply {
@@ -180,7 +180,7 @@ internal fun JavaAnnotation.toFirAnnotationCall(
         source = null, useSiteTarget = null,
         annotationTypeRef = FirResolvedTypeRefImpl(
             source = null,
-            type = ConeClassTypeImpl(FirRegularClassSymbol(classId!!).toLookupTag(), emptyArray(), isNullable = false)
+            type = ConeClassLikeTypeImpl(FirRegularClassSymbol(classId!!).toLookupTag(), emptyArray(), isNullable = false)
         )
     ).apply {
         for (argument in this@toFirAnnotationCall.arguments) {
@@ -197,15 +197,15 @@ internal fun FirAbstractAnnotatedElement.addAnnotationsFrom(
     }
 }
 
-internal fun JavaValueParameter.toFirValueParameters(
-    session: FirSession, javaTypeParameterStack: JavaTypeParameterStack
+internal fun JavaValueParameter.toFirValueParameter(
+    session: FirSession, index: Int, javaTypeParameterStack: JavaTypeParameterStack
 ): FirValueParameter {
     return FirJavaValueParameter(
-        session, (this as? JavaElementImpl<*>)?.psi?.toFirSourceElement(), name ?: Name.special("<anonymous Java parameter>"),
+        session, (this as? JavaElementImpl<*>)?.psi?.toFirSourceElement(), name ?: Name.identifier("p$index"),
         returnTypeRef = type.toFirJavaTypeRef(session, javaTypeParameterStack),
         isVararg = isVararg
     ).apply {
-        addAnnotationsFrom(session, this@toFirValueParameters, javaTypeParameterStack)
+        addAnnotationsFrom(session, this@toFirValueParameter, javaTypeParameterStack)
     }
 }
 

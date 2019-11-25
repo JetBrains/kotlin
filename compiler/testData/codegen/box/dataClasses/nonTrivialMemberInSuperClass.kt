@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 // See KT-6206 Always generate hashCode() and equals() for data classes even if base classes have non-trivial analogs
 
 abstract class Base {

@@ -645,6 +645,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/unsupportedTypeAlias.args");
         }
 
+        @TestMetadata("useMixedNamedArgumentsFlag.args")
+        public void testUseMixedNamedArgumentsFlag() throws Exception {
+            runTest("compiler/testData/cli/jvm/useMixedNamedArgumentsFlag.args");
+        }
+
         @TestMetadata("warningJdkWithNoJdk.args")
         public void testWarningJdkWithNoJdk() throws Exception {
             runTest("compiler/testData/cli/jvm/warningJdkWithNoJdk.args");

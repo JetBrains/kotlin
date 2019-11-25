@@ -1,0 +1,1 @@
+Value read 16 val (x1, y1) = f()

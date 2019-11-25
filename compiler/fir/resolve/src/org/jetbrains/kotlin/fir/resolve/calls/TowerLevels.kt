@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractImportingScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirExplicitSimpleImportingScope
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.ConeAbbreviatedType
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
 import org.jetbrains.kotlin.name.FqName
@@ -86,6 +85,7 @@ abstract class SessionBasedTowerLevel(val session: FirSession) : TowerScopeLevel
 //     or given implicit or explicit receiver, otherwise
 class MemberScopeTowerLevel(
     session: FirSession,
+    val bodyResolveComponents: BodyResolveComponents,
     val dispatchReceiver: ReceiverValue,
     val implicitExtensionReceiver: ImplicitReceiverValue<*>? = null,
     val scopeSession: ScopeSession
@@ -128,7 +128,7 @@ class MemberScopeTowerLevel(
                 this.processPropertiesByName(name, symbol.cast())
             }
             TowerScopeLevel.Token.Functions -> processMembers(processor, explicitExtensionReceiver) { symbol ->
-                this.processFunctionsByName(name, symbol.cast())
+                this.processFunctionsAndConstructorsByName(name, session, bodyResolveComponents, symbol.cast())
             }
             TowerScopeLevel.Token.Objects -> processMembers(processor, explicitExtensionReceiver) { symbol ->
                 this.processClassifiersByName(name, symbol.cast())
@@ -221,15 +221,24 @@ class QualifiedReceiverTowerLevel(
         processor: TowerScopeLevel.TowerScopeLevelProcessor<T>
     ): ProcessorAction {
         val qualifiedReceiver = explicitReceiver?.explicitReceiverExpression as FirResolvedQualifier
-        val scope = FirExplicitSimpleImportingScope(
-            listOf(
-                FirResolvedImportImpl(
-                    FirImportImpl(null, FqName.topLevel(name), false, null),
-                    qualifiedReceiver.packageFqName,
-                    qualifiedReceiver.relativeClassFqName
+        val classId = qualifiedReceiver.classId
+        val scope = when {
+            token == TowerScopeLevel.Token.Objects || classId == null -> {
+                FirExplicitSimpleImportingScope(
+                    listOf(
+                        FirResolvedImportImpl(
+                            FirImportImpl(null, FqName.topLevel(name), false, null),
+                            qualifiedReceiver.packageFqName,
+                            qualifiedReceiver.relativeClassFqName
+                        )
+                    ), session, bodyResolveComponents.scopeSession
                 )
-            ), session, bodyResolveComponents.scopeSession
-        )
+            }
+            else -> {
+                session.firSymbolProvider.getClassUseSiteMemberScope(classId, session, bodyResolveComponents.scopeSession)
+                    ?: return ProcessorAction.NEXT
+            }
+        }
 
         val processorForCallables: (FirCallableSymbol<*>) -> ProcessorAction = {
             val fir = it.fir
@@ -314,14 +323,13 @@ private fun FirScope.getFirstClassifierOrNull(name: Name): FirClassifierSymbol<*
 }
 
 private fun finalExpansionName(symbol: FirTypeAliasSymbol, session: FirSession): Name? {
-    return when (val expandedType = symbol.fir.expandedTypeRef.coneTypeUnsafe<ConeClassLikeType>()) {
-        is ConeAbbreviatedType ->
-            expandedType.abbreviationLookupTag.toSymbol(session)?.safeAs<FirTypeAliasSymbol>()?.let {
-                finalExpansionName(it, session)
-            }
-        else -> expandedType.lookupTag.classId.shortClassName
-    }
+    val expandedType = symbol.fir.expandedTypeRef.coneTypeUnsafe<ConeClassLikeType>()
+    val typeAliasSymbol = expandedType.lookupTag.toSymbol(session)?.safeAs<FirTypeAliasSymbol>()
 
+    return if (typeAliasSymbol != null)
+        finalExpansionName(typeAliasSymbol, session)
+    else
+        expandedType.lookupTag.classId.shortClassName
 }
 
 val SAM_PARAMETER_NAME = Name.identifier("block")

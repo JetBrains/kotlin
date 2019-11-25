@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.internal
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.api.AndroidSourceSet
 import com.android.builder.model.SourceProvider
+import com.intellij.openapi.util.SystemInfo
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -433,8 +434,13 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         }
 
         val dslJavacOptions = kaptExtension.getJavacOptions().toMutableMap()
-        if (javaCompile != null && "-source" !in dslJavacOptions && "--release" !in dslJavacOptions) {
-            dslJavacOptions["-source"] = javaCompile.sourceCompatibility
+        if (javaCompile != null && "-source" !in dslJavacOptions && "--source" !in dslJavacOptions && "--release" !in dslJavacOptions) {
+            val sourceOptionKey = if (SystemInfo.isJavaVersionAtLeast(12, 0, 0)) {
+                "--source"
+            } else {
+                "-source"
+            }
+            dslJavacOptions[sourceOptionKey] = javaCompile.sourceCompatibility
         }
         if (kaptTask is KaptWithKotlincTask) {
             if (kaptTask.isIncremental) {

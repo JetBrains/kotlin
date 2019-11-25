@@ -1473,7 +1473,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         markLineNumber(element, false);
     }
 
-    public void markLineNumber(@NotNull KtElement statement, boolean markEndOffset) {
+    public void markLineNumber(@NotNull PsiElement statement, boolean markEndOffset) {
         if (!shouldMarkLineNumbers) return;
 
         Integer lineNumber = CodegenUtil.getLineNumberForElement(statement, markEndOffset);
@@ -3871,12 +3871,10 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         Type type = expressionType(exp);
         StackValue argument = pregeneratedExpr != null ? pregeneratedExpr : gen(exp);
 
-        if (kotlinType == null || TypeUtils.isNullableType(kotlinType)) {
+        if (kotlinType == null || TypeUtils.isNullableType(kotlinType) || !InlineClassesUtilsKt.isInlineClassType(kotlinType)) {
             return StackValue.compareWithNull(argument, (KtTokens.EQEQ == opToken || KtTokens.EQEQEQ == opToken) ? IFNONNULL : IFNULL);
         } else {
-            // If exp has a non-nullable type, the comparison is vacuous.
-            // For inline classes we cannot necessarily compare with null at all.
-            // In this case the code below is necessary for correctness, not just an optimization.
+            // If exp is an unboxed inline class value the comparison is vacuous
             return StackValue.operation(Type.BOOLEAN_TYPE, v -> {
                 argument.put(type, kotlinType, v);
                 AsmUtil.pop(v, type);
@@ -5073,11 +5071,11 @@ The "returned" value of try expression with no finally is either the last expres
     private StackValue generateWhenCondition(KtExpression subjectExpression, Type subjectType, KotlinType subjectKotlinType, int subjectLocal, KtWhenCondition condition) {
         if (condition instanceof KtWhenConditionInRange) {
             KtWhenConditionInRange conditionInRange = (KtWhenConditionInRange) condition;
-            return generateIn(StackValue.local(subjectLocal, subjectType),
+            return generateIn(StackValue.local(subjectLocal, subjectType, subjectKotlinType),
                               conditionInRange.getRangeExpression(),
                               conditionInRange.getOperationReference());
         }
-        StackValue.Local match = subjectLocal == -1 ? null : StackValue.local(subjectLocal, subjectType);
+        StackValue.Local match = subjectLocal == -1 ? null : StackValue.local(subjectLocal, subjectType, subjectKotlinType);
         if (condition instanceof KtWhenConditionIsPattern) {
             KtWhenConditionIsPattern patternCondition = (KtWhenConditionIsPattern) condition;
             return generateIsCheck(match, patternCondition.getTypeReference(), patternCondition.isNegated());

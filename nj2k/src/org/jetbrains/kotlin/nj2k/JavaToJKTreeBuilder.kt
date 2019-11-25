@@ -885,6 +885,14 @@ class JavaToJKTreeBuilder constructor(
             }
         }
 
+        fun PsiStatement?.asJKStatementsList() = when (this) {
+            null -> emptyList()
+            is PsiExpressionListStatement -> expressionList.expressions.map { expression ->
+                JKExpressionStatement(with(expressionTreeMapper) { expression.toJK() })
+            }
+            else -> listOf(toJK())
+        }
+
         fun PsiStatement?.toJK(): JKStatement {
             return when (this) {
                 null -> JKExpressionStatement(JKStubExpression())
@@ -909,15 +917,9 @@ class JavaToJKTreeBuilder constructor(
 
 
                 is PsiForStatement -> JKJavaForLoopStatement(
-                    initialization.toJK(),
+                    initialization.asJKStatementsList(),
                     with(expressionTreeMapper) { condition.toJK() },
-                    when (update) {
-                        is PsiExpressionListStatement ->
-                            (update as PsiExpressionListStatement).expressionList.expressions.map {
-                                JKExpressionStatement(with(expressionTreeMapper) { it.toJK() })
-                            }
-                        else -> listOf(update.toJK())
-                    },
+                    update.asJKStatementsList(),
                     body.toJK()
                 )
                 is PsiForeachStatement ->

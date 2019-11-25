@@ -1,4 +1,5 @@
 // !DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
+// IGNORE_BACKEND_FIR: JVM_IR
 
 fun <R> foo(f: () -> R): R = f()
 

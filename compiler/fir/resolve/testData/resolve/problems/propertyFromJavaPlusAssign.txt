@@ -1,0 +1,4 @@
+FILE: main.kt
+    public final fun test(b: R|B|): R|kotlin/Unit| {
+        <Variable expected># = R|<local>/b|.R|/B.text|.R|kotlin/String.plus|(String())
+    }

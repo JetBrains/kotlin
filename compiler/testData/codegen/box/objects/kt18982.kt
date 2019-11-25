@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 import Foo.bar0 as bar
 
 object Foo {

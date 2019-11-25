@@ -204,7 +204,7 @@ class DataClassMembersGenerator(
             when (val typeConstructorDescriptor = type.constructor.declarationDescriptor) {
                 is ClassDescriptor ->
                     if (KotlinBuiltIns.isArrayOrPrimitiveArray(typeConstructorDescriptor))
-                        context.irBuiltIns.dataClassArrayMemberHashCodeSymbol.descriptor
+                        context.irBuiltIns.dataClassArrayMemberHashCode
                     else
                         type.memberScope.findFirstFunction("hashCode") { it.valueParameters.isEmpty() }
 
@@ -258,7 +258,7 @@ class DataClassMembersGenerator(
             val hashCodeFunctionDescriptor = getHashCodeFunction(kotlinType)
             val hashCodeFunctionSymbol = declarationGenerator.context.symbolTable.referenceFunction(hashCodeFunctionDescriptor.original)
             return irCall(hashCodeFunctionSymbol, context.irBuiltIns.intType).apply {
-                if (descriptor.dispatchReceiverParameter != null) {
+                if (hashCodeFunctionDescriptor.dispatchReceiverParameter != null) {
                     dispatchReceiver = irValue
                 } else {
                     putValueArgument(0, irValue)

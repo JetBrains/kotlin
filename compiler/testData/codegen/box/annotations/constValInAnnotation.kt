@@ -1,4 +1,5 @@
 // !LANGUAGE: +NestedClassesInAnnotations
+// IGNORE_BACKEND_FIR: JVM_IR
 // WITH_RUNTIME
 // TARGET_BACKEND: JVM
 // FILE: Foo.java

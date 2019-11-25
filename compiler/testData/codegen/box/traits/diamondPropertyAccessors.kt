@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 interface A {
     var bar: Boolean
         get() = false

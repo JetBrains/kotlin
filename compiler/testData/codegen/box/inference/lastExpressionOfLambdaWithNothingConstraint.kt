@@ -1,4 +1,5 @@
 // !LANGUAGE: +NewInference
+// IGNORE_BACKEND_FIR: JVM_IR
 // WITH_RUNTIME
 
 inline fun <T> foo(f: () -> T): String {

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 
 class StrList : List<String?> {
     override val size: Int

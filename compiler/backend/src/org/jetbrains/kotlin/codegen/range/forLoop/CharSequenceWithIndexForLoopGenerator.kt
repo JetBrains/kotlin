@@ -63,12 +63,14 @@ class CharSequenceWithIndexForLoopGenerator(
     }
 
     override fun assignLoopParametersNextValues() {
+        v.load(charSeqVar, charSeqType)
+        v.load(indexVar, Type.INT_TYPE)
+        v.invokeinterface("java/lang/CharSequence", "charAt", "(I)C")
         if (elementLoopComponent != null) {
-            v.load(charSeqVar, charSeqType)
-            v.load(indexVar, Type.INT_TYPE)
-            v.invokeinterface("java/lang/CharSequence", "charAt", "(I)C")
             StackValue.local(elementLoopComponent.parameterVar, elementLoopComponent.parameterType)
                 .store(StackValue.onStack(Type.CHAR_TYPE), v)
+        } else {
+            v.pop()
         }
     }
 

@@ -1,7 +1,7 @@
 FILE: inferenceFromCallableReferenceType.kt
-    public final fun <T, E> foo(x: R|kotlin/Function1<T, E>|): R|kotlin/Unit| {
+    public final fun <T, E> foo(x: R|(T) -> E|): R|kotlin/Unit| {
     }
-    public final fun <T, E> foo2(x: R|kotlin/Function2<A, T, E>|): R|kotlin/Unit| {
+    public final fun <T, E> foo2(x: R|(A, T) -> E|): R|kotlin/Unit| {
     }
     public final class A : R|kotlin/Any| {
         public constructor(): R|A| {

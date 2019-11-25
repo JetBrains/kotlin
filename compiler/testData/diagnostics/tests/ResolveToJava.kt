@@ -1,6 +1,7 @@
 // !WITH_NEW_INFERENCE
 // !CHECK_TYPE
 // JAVAC_SKIP
+// FULL_JDK
 
 // FILE: f.kt
 

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 interface A<O, K> {
     val o: O
     val k: K

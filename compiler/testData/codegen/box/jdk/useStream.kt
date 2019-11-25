@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 // SKIP_JDK6
 // TARGET_BACKEND: JVM
 // KT-5190 Java 8 Stream.collect couldn't be called

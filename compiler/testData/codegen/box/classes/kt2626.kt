@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 package example2
 
 fun box() = Context.OsType.OK.toString()

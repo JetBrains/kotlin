@@ -41,7 +41,8 @@ FILE fqName:<root> fileName:/kt28006.kt
         STRING_CONCATENATION type=kotlin.String
           CONST String type=kotlin.String value="\uD83E"
           CONST String type=kotlin.String value="\uDD17"
-          CALL 'public final fun <get-testConst2> (): kotlin.String declared in <root>' type=kotlin.String origin=null
+          CALL 'public open fun toString (): kotlin.String declared in kotlin.Any' type=kotlin.String origin=null
+            $this: CALL 'public final fun <get-testConst2> (): kotlin.String declared in <root>' type=kotlin.String origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testConst3> visibility:public modality:FINAL <> () returnType:kotlin.String
       correspondingProperty: PROPERTY name:testConst3 visibility:public modality:FINAL [const,val]
       BLOCK_BODY
@@ -51,8 +52,10 @@ FILE fqName:<root> fileName:/kt28006.kt
     FIELD PROPERTY_BACKING_FIELD name:testConst4 type:kotlin.String visibility:private [final,static]
       EXPRESSION_BODY
         STRING_CONCATENATION type=kotlin.String
-          CALL 'public final fun <get-testConst2> (): kotlin.String declared in <root>' type=kotlin.String origin=null
-          CALL 'public final fun <get-testConst2> (): kotlin.String declared in <root>' type=kotlin.String origin=null
+          CALL 'public open fun toString (): kotlin.String declared in kotlin.Any' type=kotlin.String origin=null
+            $this: CALL 'public final fun <get-testConst2> (): kotlin.String declared in <root>' type=kotlin.String origin=null
+          CALL 'public open fun toString (): kotlin.String declared in kotlin.Any' type=kotlin.String origin=null
+            $this: CALL 'public final fun <get-testConst2> (): kotlin.String declared in <root>' type=kotlin.String origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testConst4> visibility:public modality:FINAL <> () returnType:kotlin.String
       correspondingProperty: PROPERTY name:testConst4 visibility:public modality:FINAL [const,val]
       BLOCK_BODY
@@ -65,13 +68,15 @@ FILE fqName:<root> fileName:/kt28006.kt
         STRING_CONCATENATION type=kotlin.String
           CONST String type=kotlin.String value="\uD83E"
           CONST String type=kotlin.String value="\uDD17"
-          GET_VAR 'x: kotlin.Int declared in <root>.test1' type=kotlin.Int origin=null
+          CALL 'public open fun toString (): kotlin.String declared in kotlin.Any' type=kotlin.String origin=null
+            $this: GET_VAR 'x: kotlin.Int declared in <root>.test1' type=kotlin.Int origin=null
   FUN name:test2 visibility:public modality:FINAL <> (x:kotlin.Int) returnType:kotlin.String
     VALUE_PARAMETER name:x index:0 type:kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test2 (x: kotlin.Int): kotlin.String declared in <root>'
         STRING_CONCATENATION type=kotlin.String
-          GET_VAR 'x: kotlin.Int declared in <root>.test2' type=kotlin.Int origin=null
+          CALL 'public open fun toString (): kotlin.String declared in kotlin.Any' type=kotlin.String origin=null
+            $this: GET_VAR 'x: kotlin.Int declared in <root>.test2' type=kotlin.Int origin=null
           CONST String type=kotlin.String value="\uD83E"
           CONST String type=kotlin.String value="\uDD17"
   FUN name:test3 visibility:public modality:FINAL <> (x:kotlin.Int) returnType:kotlin.String
@@ -79,7 +84,9 @@ FILE fqName:<root> fileName:/kt28006.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test3 (x: kotlin.Int): kotlin.String declared in <root>'
         STRING_CONCATENATION type=kotlin.String
-          GET_VAR 'x: kotlin.Int declared in <root>.test3' type=kotlin.Int origin=null
+          CALL 'public open fun toString (): kotlin.String declared in kotlin.Any' type=kotlin.String origin=null
+            $this: GET_VAR 'x: kotlin.Int declared in <root>.test3' type=kotlin.Int origin=null
           CONST String type=kotlin.String value="\uD83E"
           CONST String type=kotlin.String value="\uDD17"
-          GET_VAR 'x: kotlin.Int declared in <root>.test3' type=kotlin.Int origin=null
+          CALL 'public open fun toString (): kotlin.String declared in kotlin.Any' type=kotlin.String origin=null
+            $this: GET_VAR 'x: kotlin.Int declared in <root>.test3' type=kotlin.Int origin=null

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 fun checkLess(x: Double, y: Int) = when {
     x >= y    -> "Fail $x >= $y"
     !(x < y)  -> "Fail !($x < $y)"

@@ -34,7 +34,8 @@ abstract class AbstractForeignJava8AnnotationsNoAnnotationInClasspathTest : Abst
     }
 }
 
-abstract class AbstractForeignJava8AnnotationsNoAnnotationInClasspathWithFastClassReadingTest : AbstractForeignAnnotationsNoAnnotationInClasspathWithFastClassReadingTest() {
+abstract class AbstractForeignJava8AnnotationsNoAnnotationInClasspathWithPsiClassReadingTest :
+    AbstractForeignAnnotationsNoAnnotationInClasspathWithPsiClassReadingTest() {
     override val annotationsPath: String
         get() = JAVA8_ANNOTATION_SOURCES_PATH
 

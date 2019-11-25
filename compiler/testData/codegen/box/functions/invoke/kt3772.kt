@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 //KT-3772 Invoke and overload resolution ambiguity
 
 open class A {

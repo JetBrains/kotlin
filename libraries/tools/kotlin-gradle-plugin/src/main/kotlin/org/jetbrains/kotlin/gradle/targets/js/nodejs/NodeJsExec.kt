@@ -33,16 +33,20 @@ open class NodeJsExec : AbstractExecTask<NodeJsExec>(NodeJsExec::class.java), Re
     override val requiredNpmDependencies: Collection<RequiredKotlinJsDependency>
         get() = mutableListOf<RequiredKotlinJsDependency>().also {
             if (sourceMapStackTraces) {
-                it.add(nodeJs.versions.kotlinJsTestRunner)
+                it.add(nodeJs.versions.sourceMapSupport)
             }
         }
 
     override fun exec() {
         if (sourceMapStackTraces) {
-            args(
+            val sourceMapSupportArgs = mutableListOf(
                 "--require",
-                compilation.npmProject.require("kotlin-test-js-runner/kotlin-nodejs-source-map-support")
+                compilation.npmProject.require("source-map-support/register.js")
             )
+
+            args?.let { sourceMapSupportArgs.addAll(it) }
+
+            args = sourceMapSupportArgs
         }
 
         super.exec()

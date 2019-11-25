@@ -15,8 +15,8 @@ public final class ConstructorTypeParamClassObjectConflict<test> : R|kotlin/Any|
 }
 
 public final class ConstructorTypeParamClassObjectTypeConflict<test> : R|kotlin/Any| {
-    public final val some: R|test|
-        public get(): R|test|
+    public final val some: R|test?|
+        public get(): R|test?|
 
     public constructor<test>(): R|test/ConstructorTypeParamClassObjectTypeConflict<test>|
 

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.impl.FirLabelImpl
 import org.jetbrains.kotlin.fir.references.impl.*
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.types.EXTENSION_FUNCTION_ANNOTATION
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.*
@@ -537,6 +538,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
 
                 if (classOrObject.hasModifier(ENUM_KEYWORD)) {
                     firClass.generateValuesFunction(session, context.packageFqName, context.className)
+                    firClass.generateValueOfFunction(session, context.packageFqName, context.className)
                 }
 
                 firClass
@@ -590,7 +592,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
             }
             val receiverType = function.receiverTypeReference.convertSafe<FirTypeRef>()
             val firFunction = if (function.name == null) {
-                FirAnonymousFunctionImpl(function.toFirSourceElement(), session, returnType, receiverType, FirAnonymousFunctionSymbol())
+                FirAnonymousFunctionImpl(function.toFirSourceElement(), session, returnType, receiverType, FirAnonymousFunctionSymbol(), isLambda = false)
             } else {
                 val status = FirDeclarationStatusImpl(
                     if (function.isLocal) Visibilities.LOCAL else function.visibility,
@@ -634,7 +636,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
             val literalSource = literal.toFirSourceElement()
             val returnType = FirImplicitTypeRefImpl(literalSource)
             val receiverType = FirImplicitTypeRefImpl(literalSource)
-            return FirAnonymousFunctionImpl(literalSource, session, returnType, receiverType, FirAnonymousFunctionSymbol()).apply {
+            return FirAnonymousFunctionImpl(literalSource, session, returnType, receiverType, FirAnonymousFunctionSymbol(), isLambda = true).apply {
                 context.firFunctions += this
                 var destructuringBlock: FirExpression? = null
                 for (valueParameter in literal.valueParameters) {
@@ -854,7 +856,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
                         isNullable,
                         unwrappedElement.receiverTypeReference.convertSafe(),
                         // TODO: probably implicit type should not be here
-                        unwrappedElement.returnTypeReference.toFirOrImplicitType()
+                        unwrappedElement.returnTypeReference.toFirOrErrorType()
                     )
                     for (valueParameter in unwrappedElement.parameters) {
                         functionType.valueParameters += valueParameter.convert<FirValueParameter>()
@@ -1232,28 +1234,39 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
         override fun visitCallExpression(expression: KtCallExpression, data: Unit): FirElement {
             val calleeExpression = expression.calleeExpression
             val source = expression.toFirSourceElement()
-            return FirFunctionCallImpl(source).apply {
-                val calleeReference = when (calleeExpression) {
-                    is KtSimpleNameExpression -> FirSimpleNamedReference(
-                        calleeExpression.toFirSourceElement(), calleeExpression.getReferencedNameAsName(), null
-                    )
-                    null -> FirErrorNamedReferenceImpl(
-                        null, FirSimpleDiagnostic("Call has no callee", DiagnosticKind.Syntax)
-                    )
-                    else -> {
-                        arguments += calleeExpression.toFirExpression("Incorrect invoke receiver")
-                        FirSimpleNamedReference(
-                            source, OperatorNameConventions.INVOKE, null
-                        )
-                    }
+
+            val (calleeReference, explicitReceiver) = when (calleeExpression) {
+                is KtSimpleNameExpression -> FirSimpleNamedReference(
+                    calleeExpression.toFirSourceElement(), calleeExpression.getReferencedNameAsName(), null
+                ) to null
+                null -> FirErrorNamedReferenceImpl(
+                    null, FirSimpleDiagnostic("Call has no callee", DiagnosticKind.Syntax)
+                ) to null
+                else -> {
+                    FirSimpleNamedReference(
+                        source, OperatorNameConventions.INVOKE, null
+                    ) to calleeExpression.toFirExpression("Incorrect invoke receiver")
                 }
-                this.calleeReference = calleeReference
-                context.firFunctionCalls += this
-                expression.extractArgumentsTo(this)
+            }
+
+            val result = if (expression.valueArgumentList == null && expression.lambdaArguments.isEmpty()) {
+                FirQualifiedAccessExpressionImpl(source).apply {
+                    this.calleeReference = calleeReference
+                }
+            } else {
+                FirFunctionCallImpl(source).apply {
+                    this.calleeReference = calleeReference
+                    context.firFunctionCalls += this
+                    expression.extractArgumentsTo(this)
+                    context.firFunctionCalls.removeLast()
+                }
+            }
+
+            return result.apply {
+                this.explicitReceiver = explicitReceiver
                 for (typeArgument in expression.typeArguments) {
                     typeArguments += typeArgument.convert<FirTypeProjection>()
                 }
-                context.firFunctionCalls.removeLast()
             }
         }
 
@@ -1374,8 +1387,8 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
         null,
         FirResolvedTypeRefImpl(
             null,
-            ConeClassTypeImpl(
-                ConeClassLikeLookupTagImpl(ClassId.fromString("kotlin/ExtensionFunctionType")),
+            ConeClassLikeTypeImpl(
+                ConeClassLikeLookupTagImpl(ClassId.fromString(EXTENSION_FUNCTION_ANNOTATION)),
                 emptyArray(),
                 false
             )

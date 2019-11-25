@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.jvm.compiler.ir
 
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.jvm.compiler.AbstractLoadJavaWithFastClassReadingTest
+import org.jetbrains.kotlin.jvm.compiler.AbstractLoadJavaWithPsiClassReadingTest
 
-abstract class AbstractIrLoadJavaTest : AbstractLoadJavaWithFastClassReadingTest() {
+abstract class AbstractIrLoadJavaTest : AbstractLoadJavaWithPsiClassReadingTest() {
     override fun updateConfiguration(configuration: CompilerConfiguration) = configuration.put(JVMConfigurationKeys.IR, true)
 }

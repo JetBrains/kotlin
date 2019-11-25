@@ -71,12 +71,17 @@ abstract class KotlinFindUsagesHandler<T : PsiElement>(
     }
 
     override fun processElementUsages(element: PsiElement, processor: Processor<UsageInfo>, options: FindUsagesOptions): Boolean {
-        return searchReferences(element, processor, options) && searchTextOccurrences(element, processor, options)
+        return searchReferences(element, processor, options, forHighlight = false) && searchTextOccurrences(element, processor, options)
     }
 
-    private fun searchReferences(element: PsiElement, processor: Processor<UsageInfo>, options: FindUsagesOptions): Boolean {
+    private fun searchReferences(
+        element: PsiElement,
+        processor: Processor<UsageInfo>,
+        options: FindUsagesOptions,
+        forHighlight: Boolean
+    ): Boolean {
         val searcher = createSearcher(element, processor, options)
-        if (!runReadAction { project }.runReadActionInSmartMode { searcher.buildTaskList() }) return false
+        if (!runReadAction { project }.runReadActionInSmartMode { searcher.buildTaskList(forHighlight) }) return false
         return searcher.executeTasks()
     }
 
@@ -92,7 +97,7 @@ abstract class KotlinFindUsagesHandler<T : PsiElement>(
                 results.add(reference)
             }
             true
-        }, options)
+        }, options, forHighlight = true)
         return results
     }
 
@@ -116,7 +121,7 @@ abstract class KotlinFindUsagesHandler<T : PsiElement>(
         /**
          * Invoked under read-action, should use [addTask] for all time-consuming operations
          */
-        abstract fun buildTaskList(): Boolean
+        abstract fun buildTaskList(forHighlight: Boolean): Boolean
     }
 
     companion object {

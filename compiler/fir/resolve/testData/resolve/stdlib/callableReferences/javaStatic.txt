@@ -1,11 +1,11 @@
 FILE: main.kt
-    public final fun foo1(x: R|kotlin/Function1<kotlin/String, kotlin/Int>|): R|kotlin/Unit| {
+    public final fun foo1(x: R|(kotlin/String) -> kotlin/Int|): R|kotlin/Unit| {
     }
-    public final fun foo2(x: R|kotlin/Function2<JavaClass, kotlin/CharSequence, kotlin/Int>|): R|kotlin/Unit| {
+    public final fun foo2(x: R|(JavaClass, kotlin/CharSequence) -> kotlin/Int|): R|kotlin/Unit| {
     }
-    public final fun foo3(x: R|kotlin/Function2<JavaClass, kotlin/CharSequence, kotlin/Int>|): R|kotlin/Unit| {
+    public final fun foo3(x: R|(JavaClass, kotlin/CharSequence) -> kotlin/Int|): R|kotlin/Unit| {
     }
-    public final fun foo3(x: R|kotlin/Function1<kotlin/String, kotlin/Int>|): R|kotlin/Unit| {
+    public final fun foo3(x: R|(kotlin/String) -> kotlin/Int|): R|kotlin/Unit| {
     }
     public final fun main(): R|kotlin/Unit| {
         R|/foo1|(Q|JavaClass|::R|/JavaClass.bar|)

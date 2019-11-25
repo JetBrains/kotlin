@@ -1,0 +1,7 @@
+error: supertypes of the following classes cannot be resolved. Please make sure you have the required dependencies in the classpath:
+    class test.B, unresolved supertypes: test.A
+
+compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyMissingInterface/source.kt:5:15: error: cannot access 'test.A' which is a supertype of 'test.B'. Check your module classpath for missing or conflicting dependencies
+        D.m(B.n())
+              ^
+COMPILATION_ERROR

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 fun f(x: Long, zzz: Long = 1): Long
 {
     return if (x <= 1) zzz

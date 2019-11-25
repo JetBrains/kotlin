@@ -1,5 +1,5 @@
 FILE: whenAsReceiver.kt
-    public final fun <T, R> R|T|.also(block: R|kotlin/Function0<R>|): R|R| {
+    public final fun <T, R> R|T|.also(block: R|() -> R|): R|R| {
         ^also when (lval <bangbang>: R|kotlin/Nothing?| = Null(null)) {
             ==($subj$, Null(null)) ->  {
                 throw <Unresolved name: KotlinNullPointerException>#()

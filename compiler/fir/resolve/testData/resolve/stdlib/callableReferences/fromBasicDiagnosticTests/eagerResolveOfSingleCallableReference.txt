@@ -26,6 +26,6 @@ FILE: eagerResolveOfSingleCallableReference.kt
     public final fun test(ls: R|Out<B>|): R|kotlin/Unit| {
         R|<local>/ls|.R|/reduce|<R|A|, R|B|>(::R|/Or.Or|)
     }
-    public final fun <S, T : R|S|> R|Out<T>|.reduce(operation: R|kotlin/Function2<S, T, S>|): R|S| {
+    public final fun <S, T : R|S|> R|Out<T>|.reduce(operation: R|(S, T) -> S|): R|S| {
         ^reduce R|kotlin/TODO|()
     }

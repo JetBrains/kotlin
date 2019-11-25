@@ -157,7 +157,7 @@ public class RunUtils {
             }
             catch (NumberFormatException e) {
                 timeout = 30;
-                System.err.println("Timeout system property should be a number");
+                System.err.println("Timeout system property should be a number: " + timeoutAsString);
             }
             handler.waitFor(timeout * 60 * 1000);
 
@@ -165,7 +165,7 @@ public class RunUtils {
                 System.out.println("Output before handler.isProcessTerminated() " + settings.commandLine);
                 System.out.println(stdOut);
                 System.err.println(stdErr);
-                return new RunResult(false, "Timeout exception: execution was terminated after ~20 min.");
+                return new RunResult(false, "Timeout exception: execution was terminated after ~" + timeout + " min.");
             }
         }
         else {

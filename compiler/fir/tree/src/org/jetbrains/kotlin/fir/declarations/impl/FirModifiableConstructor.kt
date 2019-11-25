@@ -39,13 +39,13 @@ abstract class FirModifiableConstructor : FirPureAbstractElement(), FirConstruct
     abstract override var controlFlowGraphReference: FirControlFlowGraphReference
     abstract override val typeParameters: MutableList<FirTypeParameter>
     abstract override val valueParameters: MutableList<FirValueParameter>
-    abstract override var body: FirBlock?
     abstract override val name: Name
     abstract override var status: FirDeclarationStatus
     abstract override var containerSource: DeserializedContainerSource?
     abstract override val annotations: MutableList<FirAnnotationCall>
     abstract override val symbol: FirConstructorSymbol
     abstract override var delegatedConstructor: FirDelegatedConstructorCall?
+    abstract override var body: FirBlock?
     abstract override val isPrimary: Boolean
     abstract override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirModifiableConstructor
 

@@ -5,31 +5,31 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
+import org.jetbrains.kotlin.backend.common.ir.createParameterDeclarations
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.ir.builders.declarations.buildClass
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.util.StubGeneratorExtensions
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.sam.SamAdapterDescriptor
 import org.jetbrains.kotlin.load.java.sam.SamConstructorDescriptor
 import org.jetbrains.kotlin.load.java.sam.SingleAbstractMethodUtils
+import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmFieldAnnotation
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.synthetic.SamAdapterExtensionFunctionDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.Variance
 
 object JvmGeneratorExtensions : GeneratorExtensions() {
-    override val externalDeclarationOrigin: ((DeclarationDescriptor) -> IrDeclarationOrigin)? = { descriptor ->
-        if (descriptor is JavaCallableMemberDescriptor)
-            IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
-        else
-            IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
-    }
-
     override val samConversion: SamConversion
         get() = JvmSamConversion
 
@@ -65,4 +65,29 @@ object JvmGeneratorExtensions : GeneratorExtensions() {
             descriptor.visibility
         else
             null
+}
+
+class JvmStubGeneratorExtensions : StubGeneratorExtensions() {
+    val classNameOverride = mutableMapOf<IrClass, JvmClassName>()
+
+    override fun computeExternalDeclarationOrigin(descriptor: DeclarationDescriptor): IrDeclarationOrigin? =
+        if (descriptor is JavaCallableMemberDescriptor)
+            IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
+        else
+            IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
+
+    override fun generateFacadeClass(source: DeserializedContainerSource): IrClass? {
+        val jvmPackagePartSource = source as? JvmPackagePartSource ?: return null
+        val facadeName = jvmPackagePartSource.facadeClassName ?: jvmPackagePartSource.className
+        return buildClass {
+            origin = IrDeclarationOrigin.FILE_CLASS
+            name = facadeName.fqNameForTopLevelClassMaybeWithDollars.shortName()
+        }.also {
+            it.createParameterDeclarations()
+            classNameOverride[it] = facadeName
+        }
+    }
+
+    override fun isPropertyWithPlatformField(descriptor: PropertyDescriptor): Boolean =
+        descriptor.hasJvmFieldAnnotation()
 }

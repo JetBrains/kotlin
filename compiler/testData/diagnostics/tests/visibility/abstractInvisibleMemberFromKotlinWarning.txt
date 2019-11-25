@@ -1,0 +1,31 @@
+// -- Module: <base> --
+package
+
+package base {
+
+    public abstract class Base {
+        public constructor Base()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public final fun foo(): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        internal abstract fun internalFoo(): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+
+// -- Module: <impl> --
+package
+
+package impl {
+    public fun foo(): kotlin.Unit
+
+    public final class Impl : base.Base {
+        public constructor Impl()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public final override /*1*/ /*fake_override*/ fun foo(): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        invisible_fake abstract override /*1*/ /*fake_override*/ fun internalFoo(): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

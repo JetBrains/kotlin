@@ -279,7 +279,7 @@ class SurroundSuspendLambdaCallsWithSuspendMarkersMethodVisitor(
 
 private fun FunctionalArgument.isSuspendLambda(): Boolean =
     (this is NonInlineableArgumentForInlineableParameterCalledInSuspend && isSuspend) ||
-            (this is PsiExpressionLambda && invokeMethodDescriptor.isSuspend)
+            (this is PsiExpressionLambda && isSuspend)
 
 fun surroundInvokesWithSuspendMarkers(
     methodNode: MethodNode,

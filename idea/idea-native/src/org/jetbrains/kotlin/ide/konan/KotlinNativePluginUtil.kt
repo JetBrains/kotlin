@@ -14,6 +14,7 @@ import com.intellij.psi.SingleRootFileViewProvider
 import com.intellij.psi.impl.PsiFileFactoryImpl
 import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.testFramework.LightVirtualFile
+import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.ide.konan.decompiler.KotlinNativeLoadingMetadataCache
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
@@ -53,7 +54,7 @@ internal object CachingIdeKonanLibraryMetadataLoader : PackageAccessHandler {
         if (library.isZipped) asJarFileSystemFile(library.libraryFile, file) else asLocalFile(file)
 
     private fun asJarFileSystemFile(jarFile: KFile, localFile: KFile): VirtualFile {
-        val fullPath = jarFile.absolutePath + "!" + localFile.absolutePath
+        val fullPath = jarFile.absolutePath + "!" + PathUtil.toSystemIndependentName(localFile.path)
         return StandardFileSystems.jar().findFileByPath(fullPath) ?: error("File not found: $fullPath")
     }
 

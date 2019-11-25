@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.util.KotlinMangler
+import org.jetbrains.kotlin.ir.util.UniqId
 
 class DescriptorTable {
     private val descriptors = mutableMapOf<DeclarationDescriptor, Long>()
@@ -35,14 +37,12 @@ abstract class GlobalDeclarationTable(private val mangler: KotlinMangler, privat
 
     constructor(mangler: KotlinMangler) : this(mangler, UniqIdClashTracker.DEFAULT_TRACKER)
 
-    protected open fun loadKnownBuiltins(builtIns: IrBuiltIns, startIndex: Long): Long {
-        var index = startIndex
+    protected fun loadKnownBuiltins(builtIns: IrBuiltIns) {
         val mask = 1L shl 63
         builtIns.knownBuiltins.forEach {
-            table[it.owner] = UniqId(index or mask).also { id -> clashTracker.commit(it.owner, id) }
-            index++
+            val index = with(mangler) { it.mangle.hashMangle }
+            table[it] = UniqId(index or mask).also { id -> clashTracker.commit(it, id) }
         }
-        return index
     }
 
     open fun computeUniqIdByDeclaration(declaration: IrDeclaration): UniqId {
@@ -56,7 +56,7 @@ abstract class GlobalDeclarationTable(private val mangler: KotlinMangler, privat
     fun isExportedDeclaration(declaration: IrDeclaration): Boolean = with(mangler) { declaration.isExported() }
 }
 
-class DeclarationTable(
+open class DeclarationTable(
     private val descriptorTable: DescriptorTable,
     private val globalDeclarationTable: GlobalDeclarationTable,
     startIndex: Long
@@ -71,7 +71,11 @@ class DeclarationTable(
 
     fun isExportedDeclaration(declaration: IrDeclaration) = globalDeclarationTable.isExportedDeclaration(declaration)
 
+    protected open fun tryComputeBackendSpecificUniqId(declaration: IrDeclaration): UniqId? =
+            null
+
     private fun computeUniqIdByDeclaration(declaration: IrDeclaration): UniqId {
+        tryComputeBackendSpecificUniqId(declaration)?.let { return it }
         return if (declaration.isLocalDeclaration()) {
             table.getOrPut(declaration) { UniqId(localIndex++) }
         } else globalDeclarationTable.computeUniqIdByDeclaration(declaration)

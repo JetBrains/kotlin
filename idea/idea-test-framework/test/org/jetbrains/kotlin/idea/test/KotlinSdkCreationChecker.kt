@@ -7,23 +7,23 @@ package org.jetbrains.kotlin.idea.test
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runWriteAction
-import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.Sdk
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
+import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
 
 class KotlinSdkCreationChecker {
 
-    private val sdksBefore: Array<out Sdk> = ProjectJdkTable.getInstance().allJdks
+    private val sdksBefore: Array<out Sdk> = getProjectJdkTableSafe().allJdks
 
-    fun getKotlinSdks() = ProjectJdkTable.getInstance().allJdks.filter { it.sdkType is KotlinSdkType }
+    fun getKotlinSdks() = getProjectJdkTableSafe().allJdks.filter { it.sdkType is KotlinSdkType }
 
     private fun getCreatedKotlinSdks() =
-        ProjectJdkTable.getInstance().allJdks.filter { !sdksBefore.contains(it) && it.sdkType is KotlinSdkType }
+        getProjectJdkTableSafe().allJdks.filter { !sdksBefore.contains(it) && it.sdkType is KotlinSdkType }
 
     fun isKotlinSdkCreated() = getCreatedKotlinSdks().isNotEmpty()
 
     fun removeNewKotlinSdk() {
-        val jdkTable = ProjectJdkTable.getInstance()
+        val jdkTable = getProjectJdkTableSafe()
         ApplicationManager.getApplication().invokeAndWait {
             runWriteAction {
                 getCreatedKotlinSdks().forEach { jdkTable.removeJdk(it) }

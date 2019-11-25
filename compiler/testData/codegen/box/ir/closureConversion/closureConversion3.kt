@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 fun foo(x: String): String {
     fun bar(y: String): String {
         fun qux(z: String): String =

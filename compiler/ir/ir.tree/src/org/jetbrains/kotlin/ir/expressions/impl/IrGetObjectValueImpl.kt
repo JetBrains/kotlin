@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrGetObjectValue
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -27,9 +26,7 @@ class IrGetObjectValueImpl(
     endOffset: Int,
     type: IrType,
     symbol: IrClassSymbol
-) :
-    IrTerminalDeclarationReferenceBase<IrClassSymbol, ClassDescriptor>(startOffset, endOffset, type, symbol, symbol.descriptor),
-    IrGetObjectValue {
+) : IrTerminalDeclarationReferenceBase<IrClassSymbol>(startOffset, endOffset, type, symbol), IrGetObjectValue {
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitGetObjectValue(this, data)

@@ -75,7 +75,6 @@ private class ScriptRemoveReceiverLowering(val context: CommonBackendContext) : 
                                 type.annotations
                             ),
                             symbol,
-                            descriptor,
                             typeArgumentsCount,
                             valueArgumentsCount,
                             origin
@@ -111,7 +110,6 @@ private class ScriptRemoveReceiverLowering(val context: CommonBackendContext) : 
                                 type.annotations
                             ),
                             symbol,
-                            descriptor,
                             typeArgumentsCount,
                             field,
                             getter,

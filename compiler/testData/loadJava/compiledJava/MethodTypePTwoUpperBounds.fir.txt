@@ -1,5 +1,5 @@
 public open class MethodTypePTwoUpperBounds : R|kotlin/Any| {
-    public open operator fun <T : R|kotlin/Cloneable|, R|java/lang/Runnable|> foo(): R|kotlin/Unit|
+    public open operator fun <T : R|kotlin/Cloneable?|, R|java/lang/Runnable?|> foo(): R|kotlin/Unit|
 
     public constructor(): R|test/MethodTypePTwoUpperBounds|
 

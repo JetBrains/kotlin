@@ -6,13 +6,13 @@ interface T<X> {
 
 class U : T<String> {
     override val foo: String
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+        get() = TODO("Not yet implemented")
 
 }
 
 class V : T<Int> {
     override val foo: Int
-        get() = <caret><selection>TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.</selection>
+        get() = <caret><selection>TODO("Not yet implemented")</selection>
 
 }
 

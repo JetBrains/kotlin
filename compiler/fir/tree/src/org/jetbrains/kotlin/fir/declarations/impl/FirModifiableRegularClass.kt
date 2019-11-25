@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
-import org.jetbrains.kotlin.fir.declarations.SupertypesComputationStatus
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -34,7 +33,6 @@ interface FirModifiableRegularClass : FirRegularClass, FirModifiableClass<FirReg
     override val annotations: MutableList<FirAnnotationCall>
     override val typeParameters: MutableList<FirTypeParameter>
     override var status: FirDeclarationStatus
-    override var supertypesComputationStatus: SupertypesComputationStatus
     override val classKind: ClassKind
     override val declarations: MutableList<FirDeclaration>
     override val symbol: FirRegularClassSymbol
@@ -45,8 +43,6 @@ interface FirModifiableRegularClass : FirRegularClass, FirModifiableClass<FirReg
     override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirModifiableRegularClass
 
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
-
-    override fun replaceSupertypesComputationStatus(newSupertypesComputationStatus: SupertypesComputationStatus)
 
     override fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>)
 }

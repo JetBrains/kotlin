@@ -98,7 +98,7 @@ abstract class AbstractClosureAnnotator : IrElementVisitorVoid {
     override fun visitVariableAccess(expression: IrValueAccessExpression) {
         val closureBuilder = closuresStack.peek() ?: return
 
-        val variableDescriptor = expression.descriptor
+        val variableDescriptor = expression.symbol.descriptor
         if (variableDescriptor.containingDeclaration != closureBuilder.owner) {
             closureBuilder.capturedValues.add(variableDescriptor)
         }

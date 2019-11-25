@@ -106,11 +106,11 @@ abstract class AbstractKotlinUastTest : AbstractUastTest() {
     override fun createEnvironment(source: File): AbstractCoreEnvironment {
         val appWasNull = ApplicationManager.getApplication() == null
         compilerConfiguration = createKotlinCompilerConfiguration(source)
+        compilerConfiguration.put(JVMConfigurationKeys.USE_PSI_CLASS_FILES_READING, true)
+
         val parentDisposable = Disposer.newDisposable()
-        val kotlinCoreEnvironment = KotlinCoreEnvironment.createForTests(
-                parentDisposable,
-                compilerConfiguration,
-                EnvironmentConfigFiles.JVM_CONFIG_FILES)
+        val kotlinCoreEnvironment =
+            KotlinCoreEnvironment.createForTests(parentDisposable, compilerConfiguration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
         this.kotlinCoreEnvironment = kotlinCoreEnvironment
 

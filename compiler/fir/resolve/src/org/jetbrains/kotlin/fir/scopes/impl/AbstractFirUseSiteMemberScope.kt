@@ -42,6 +42,9 @@ abstract class AbstractFirUseSiteMemberScope(
         name: Name,
         processor: (FirClassifierSymbol<*>) -> ProcessorAction
     ): ProcessorAction {
-        return declaredMemberScope.processClassifiersByName(name, processor)
+        if (!declaredMemberScope.processClassifiersByName(name, processor)) {
+            return ProcessorAction.STOP
+        }
+        return superTypesScope.processClassifiersByName(name, processor)
     }
 }

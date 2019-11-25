@@ -738,6 +738,8 @@ open class IrFileSerializer(
             ProtoTypeOperator.SAM_CONVERSION
         IrTypeOperator.IMPLICIT_DYNAMIC_CAST ->
             ProtoTypeOperator.IMPLICIT_DYNAMIC_CAST
+        IrTypeOperator.REINTERPRET_CAST ->
+            error("Unreachable execution")
     }
 
     private fun serializeTypeOp(expression: IrTypeOperatorCall): ProtoTypeOp {

@@ -216,19 +216,21 @@ fun findElementAtLine(file: KtFile, line: Int): PsiElement? {
     val lineStartOffset = file.getLineStartOffset(line) ?: return null
     val lineEndOffset = file.getLineEndOffset(line) ?: return null
 
-    var topMostElement: PsiElement? = null
-    var elementAt: PsiElement?
-    for (offset in lineStartOffset until lineEndOffset) {
-        elementAt = file.findElementAt(offset)
-        if (elementAt != null) {
-            topMostElement = CodeInsightUtils.getTopmostElementAtOffset(elementAt, offset)
-            if (topMostElement is KtElement) {
-                break
+    return runReadAction {
+        var topMostElement: PsiElement? = null
+        var elementAt: PsiElement?
+        for (offset in lineStartOffset until lineEndOffset) {
+            elementAt = file.findElementAt(offset)
+            if (elementAt != null) {
+                topMostElement = CodeInsightUtils.getTopmostElementAtOffset(elementAt, offset)
+                if (topMostElement is KtElement) {
+                    break
+                }
             }
         }
-    }
 
-    return topMostElement
+        topMostElement
+    }
 }
 
 fun findCallByEndToken(element: PsiElement): KtCallExpression? {

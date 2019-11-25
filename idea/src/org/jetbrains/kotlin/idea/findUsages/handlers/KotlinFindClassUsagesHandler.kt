@@ -82,7 +82,7 @@ class KotlinFindClassUsagesHandler(
         private val kotlinOptions = options as KotlinClassFindUsagesOptions
         private val referenceProcessor = createReferenceProcessor(processor)
 
-        override fun buildTaskList(): Boolean {
+        override fun buildTaskList(forHighlight: Boolean): Boolean {
             val classOrObject = element as KtClassOrObject
 
             if (kotlinOptions.isUsages || kotlinOptions.searchConstructorUsages) {

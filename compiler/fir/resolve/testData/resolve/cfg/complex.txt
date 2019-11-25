@@ -1,9 +1,9 @@
 FILE: complex.kt
     @R|kotlin/jvm/Throws|(<getClass>(<Unresolved name: IOException>#), <getClass>(<Unresolved name: ResponseParseException>#)) public final fun fetchPluginReleaseDate(pluginId: R|class error: Symbol not found, for `PluginId`|, version: R|kotlin/String|, channel: R|kotlin/String?|): R|class error: Symbol not found, for `LocalDate?`| {
-        lval url: R|kotlin/String| = <strcat>(String(https://plugins.jetbrains.com/api/plugins/), R|<local>/pluginId|.<Unresolved name: idString>#, String(/updates?version=), R|<local>/version|)
+        lval url: R|kotlin/String| = <strcat>(String(https://plugins.jetbrains.com/api/plugins/), R|<local>/pluginId|.<Unresolved name: idString>#.R|kotlin/toString|(), String(/updates?version=), R|<local>/version|.R|kotlin/Any.toString|())
         lval pluginDTOs: R|kotlin/Array<class error: Symbol not found, for `PluginDTO`>| = try {
-            <Unresolved name: HttpRequests>#.<Unresolved name: request>#(R|<local>/url|).<Unresolved name: connect>#(<L> = connect@fun <implicit>.<anonymous>(): <ERROR TYPE REF: Empty diagnostic> {
-                <Unresolved name: GsonBuilder>#().<Unresolved name: create>#().<Unresolved name: fromJson>#(<Unresolved name: it>#.<Unresolved name: inputStream>#.<Ambiguity: reader, [kotlin/io/reader, kotlin/io/reader, kotlin/io/reader]>#(), <getClass>(<Inapplicable(PARAMETER_MAPPING_ERROR): [kotlin/Array.Array]>#<R|class error: Symbol not found, for `PluginDTO`|>()).<Inapplicable(WRONG_RECEIVER): [kotlin/jvm/java]>#)
+            <Unresolved name: HttpRequests>#.<Unresolved name: request>#(R|<local>/url|).<Unresolved name: connect>#(<L> = connect@fun <anonymous>(): <ERROR TYPE REF: Unresolved name: fromJson> {
+                <Unresolved name: GsonBuilder>#().<Unresolved name: create>#().<Unresolved name: fromJson>#(<Unresolved name: it>#.<Unresolved name: inputStream>#.<Ambiguity: reader, [kotlin/io/reader, kotlin/io/reader, kotlin/io/reader]>#(), <getClass>(Q|kotlin/Array|).R|kotlin/jvm/java|)
             }
             )
         }
@@ -40,9 +40,9 @@ FILE: complex.kt
     }
     public final inline fun <reified T : R|kotlin/Any|> R|kotlin/sequences/Sequence<*>|.firstIsInstanceOrNull(): R|T?| {
         lval <range>: R|kotlin/sequences/Sequence<*>| = this@R|/firstIsInstanceOrNull|
-        lval <iterator>: R|kotlin/collections/Iterator<T>| = R|<local>/<range>|.R|kotlin/sequences/Sequence.iterator|()
+        lval <iterator>: R|kotlin/collections/Iterator<kotlin/Any?>| = R|<local>/<range>|.R|FakeOverride<kotlin/sequences/Sequence.iterator: R|kotlin/collections/Iterator<kotlin/Any?>|>|()
         while(R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()) {
-            lval element: R|T| = R|<local>/<iterator>|.R|FakeOverride<kotlin/collections/Iterator.next: R|T|>|()
+            lval element: R|kotlin/Any?| = R|<local>/<iterator>|.R|FakeOverride<kotlin/collections/Iterator.next: R|kotlin/Any?|>|()
             when () {
                 (R|<local>/element| is R|T|) ->  {
                     ^firstIsInstanceOrNull R|<local>/element|

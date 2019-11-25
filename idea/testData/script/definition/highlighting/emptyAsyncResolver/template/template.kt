@@ -1,23 +1,24 @@
 package custom.scriptDefinition
 
-import java.io.File
-import kotlin.script.dependencies.*
-import kotlin.script.experimental.dependencies.*
-import kotlin.script.templates.ScriptTemplateDefinition
-import kotlin.script.experimental.location.*
+import kotlin.script.experimental.annotations.KotlinScript
+import kotlin.script.experimental.api.*
 
-class TestDependenciesResolver : AsyncDependenciesResolver {
-    override suspend fun resolveAsync(
-            scriptContents: ScriptContents,
-            environment: Environment
-    ): DependenciesResolver.ResolveResult {
-        return ScriptDependencies.Empty.asSuccess()
+@KotlinScript(
+    displayName = "Definition for tests",
+    fileExtension = "kts",
+    compilationConfiguration = TemplateDefinition::class
+)
+open class Template(val args: Array<String>)
+
+@Suppress("UNCHECKED_CAST")
+object TemplateDefinition : ScriptCompilationConfiguration(
+    {
+        baseClass(Base::class)
+        ide {
+            acceptedLocations(ScriptAcceptedLocation.Everywhere)
+        }
     }
-}
-
-@ScriptExpectedLocations([ScriptExpectedLocation.Everywhere])
-@ScriptTemplateDefinition(TestDependenciesResolver::class, scriptFilePattern = "script.kts")
-open class Template: Base()
+)
 
 open class Base {
     val i = 3

@@ -41,7 +41,7 @@ FILE: inner.kt
     public final fun test(): R|kotlin/Unit| {
         lval o: R|Owner| = R|/Owner.Owner|()
         R|<local>/o|.R|/Owner.foo|()
-        lval err: <ERROR TYPE REF: Empty diagnostic> = Q|Owner|.<Unresolved name: Inner>#()
+        lval err: <ERROR TYPE REF: Unresolved name: Inner> = Q|Owner|.<Unresolved name: Inner>#()
         R|<local>/err|.<Unresolved name: baz>#()
         lval i: R|Owner.Inner| = R|<local>/o|.R|/Owner.Inner.Inner|()
         R|<local>/i|.R|/Owner.Inner.gau|()

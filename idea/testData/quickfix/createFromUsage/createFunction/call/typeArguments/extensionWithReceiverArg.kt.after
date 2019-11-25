@@ -8,5 +8,5 @@ class A<T>(val items: List<T>) {
 }
 
 private fun <E, T, U> List<E>.foo(t: T, u: U): T {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    TODO("Not yet implemented")
 }

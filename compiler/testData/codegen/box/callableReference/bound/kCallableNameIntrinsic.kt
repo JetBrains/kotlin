@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 // SKIP_SOURCEMAP_REMAPPING
 
 fun box(): String {

@@ -32,7 +32,7 @@ abstract class IrNoArgumentsCallableReferenceBase(
     IrCallableReference {
 
     private fun throwNoValueArguments(): Nothing {
-        throw UnsupportedOperationException("Property reference $descriptor has no value arguments")
+        throw UnsupportedOperationException("Property reference ${symbol.descriptor} has no value arguments")
     }
 
     override fun getValueArgument(index: Int): IrExpression? = throwNoValueArguments()

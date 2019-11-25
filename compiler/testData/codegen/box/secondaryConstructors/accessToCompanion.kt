@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 internal class A(val result: Int) {
     companion object {
         fun foo(): Int = 1

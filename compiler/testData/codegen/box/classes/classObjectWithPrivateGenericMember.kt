@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 class C() {
     companion object {
         private fun <T> create() = C()

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 var result = "fail"
 
 open class Base(val o: String, val k: String)

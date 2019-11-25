@@ -1,13 +1,20 @@
-plugins {
-    id 'org.jetbrains.kotlin.multiplatform' version '1.3.50'
+buildscript {
+    repositories {
+        {{kotlin_plugin_repositories}}
+    }
+    dependencies {
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:{{kotlin_plugin_version}}")
+                {{extraPluginDependencies}}
+    }
 }
-repositories {
-    mavenLocal()
-    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
-    mavenCentral()
 
+allprojects {
+    repositories {
+        {{kotlin_plugin_repositories}}
+    }
 }
 
+apply plugin: 'kotlin-multiplatform'
 
 group 'com.example'
 version '0.0.1'

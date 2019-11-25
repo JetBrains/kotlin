@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeStarProjection
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 
 sealed class DoubleColonLHS(val type: ConeKotlinType) {
     /**
@@ -146,7 +146,7 @@ class FirDoubleColonExpressionResolver(
             ?.fir as? FirRegularClass
             ?: return null
 
-        val type = ConeClassTypeImpl(
+        val type = ConeClassLikeTypeImpl(
             firClass.symbol.toLookupTag(),
             Array(firClass.typeParameters.size) { ConeStarProjection },
             isNullable = false // TODO: Use org.jetbrains.kotlin.psi.KtDoubleColonExpression.getHasQuestionMarks

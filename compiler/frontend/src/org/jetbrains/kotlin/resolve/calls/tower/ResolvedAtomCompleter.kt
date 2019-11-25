@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.resolve.calls.tower
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.createFunctionType
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl
 import org.jetbrains.kotlin.psi.KtElement
@@ -18,6 +15,7 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.MissingSupertypesResolver
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
@@ -31,6 +29,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategyImpl
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
+import org.jetbrains.kotlin.resolve.checkers.MissingDependencySupertypeChecker
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.expressions.DoubleColonExpressionResolver
@@ -51,9 +50,12 @@ class ResolvedAtomCompleter(
     private val deprecationResolver: DeprecationResolver,
     private val moduleDescriptor: ModuleDescriptor,
     private val dataFlowValueFactory: DataFlowValueFactory,
-    private val typeApproximator: TypeApproximator
+    private val typeApproximator: TypeApproximator,
+    private val missingSupertypesResolver: MissingSupertypesResolver
 ) {
-    private val topLevelCallCheckerContext = CallCheckerContext(topLevelCallContext, deprecationResolver, moduleDescriptor)
+    private val topLevelCallCheckerContext = CallCheckerContext(
+        topLevelCallContext, deprecationResolver, moduleDescriptor, missingSupertypesResolver
+    )
     private val topLevelTrace = topLevelCallCheckerContext.trace
 
     private fun complete(resolvedAtom: ResolvedAtom) {
@@ -92,6 +94,7 @@ class ResolvedAtomCompleter(
         val lastCall = if (resolvedCall is VariableAsFunctionResolvedCall) resolvedCall.functionCall else resolvedCall
         if (ErrorUtils.isError(resolvedCall.candidateDescriptor)) {
             kotlinToResolvedCallTransformer.runArgumentsChecks(topLevelCallContext, topLevelTrace, lastCall as NewResolvedCallImpl<*>)
+            checkMissingReceiverSupertypes(resolvedCall, missingSupertypesResolver, topLevelTrace)
             return resolvedCall
         }
 
@@ -102,7 +105,8 @@ class ResolvedAtomCompleter(
             CallCheckerContext(
                 resolutionContextForPartialCall.replaceBindingTrace(topLevelTrace),
                 deprecationResolver,
-                moduleDescriptor
+                moduleDescriptor,
+                missingSupertypesResolver
             )
         else
             topLevelCallCheckerContext
@@ -116,6 +120,22 @@ class ResolvedAtomCompleter(
         kotlinToResolvedCallTransformer.reportDiagnostics(topLevelCallContext, topLevelTrace, resolvedCall, diagnostics)
 
         return resolvedCall
+    }
+
+    private fun checkMissingReceiverSupertypes(
+        resolvedCall: ResolvedCall<CallableDescriptor>,
+        missingSupertypesResolver: MissingSupertypesResolver,
+        trace: BindingTrace
+    ) {
+        val receiverValue = resolvedCall.dispatchReceiver ?: resolvedCall.extensionReceiver
+        receiverValue?.type?.let { receiverType ->
+            MissingDependencySupertypeChecker.checkSupertypes(
+                receiverType,
+                resolvedCall.call.callElement,
+                trace,
+                missingSupertypesResolver
+            )
+        }
     }
 
     private fun clearPartiallyResolvedCall(resolvedCallAtom: ResolvedCallAtom) {
@@ -311,6 +331,8 @@ class ResolvedAtomCompleter(
             topLevelCallContext.trace,
             callableReferenceExpression
         )
+
+        kotlinToResolvedCallTransformer.runCallCheckers(resolvedCall, topLevelCallCheckerContext)
     }
 
     private fun completeCollectionLiteralCalls(collectionLiteralArgument: ResolvedCollectionLiteralAtom) {

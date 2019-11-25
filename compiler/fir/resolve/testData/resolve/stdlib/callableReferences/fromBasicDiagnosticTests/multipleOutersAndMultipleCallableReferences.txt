@@ -13,9 +13,9 @@ FILE: multipleOutersAndMultipleCallableReferences.kt
     public final fun foo(y: R|kotlin/String|): R|Inv<kotlin/String>| {
         ^foo R|kotlin/TODO|()
     }
-    public final fun <T, R : R|kotlin/Number|> bar(f: R|kotlin/Function1<T, Inv<R>>|, p: R|kotlin/String| = String()): R|kotlin/Unit| {
+    public final fun <T, R : R|kotlin/Number|> bar(f: R|(T) -> Inv<R>|, p: R|kotlin/String| = String()): R|kotlin/Unit| {
     }
-    public final fun <T, R : R|Base|> bar(f: R|kotlin/Function1<T, Inv<R>>|, p: R|kotlin/Int| = Int(4)): R|kotlin/Unit| {
+    public final fun <T, R : R|Base|> bar(f: R|(T) -> Inv<R>|, p: R|kotlin/Int| = Int(4)): R|kotlin/Unit| {
     }
     public final fun test(): R|kotlin/Unit| {
         R|/bar|<R|kotlin/Int|, R|kotlin/Int|>(::R|/foo|)

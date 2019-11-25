@@ -3,6 +3,6 @@ actual enum class MyEnum {
     FIRST, SECOND, LAST;
 
     actual val num: Int
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+        get() = TODO("Not yet implemented")
 
 }

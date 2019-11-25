@@ -1,9 +1,9 @@
 public open class TypeParameterOfMethod : R|kotlin/Any| {
     public open static operator fun <T> max(comparator: R|ft<java/util/Comparator<ft<T, T?>!>, java/util/Comparator<ft<T, T?>!>?>!|, value1: R|ft<T, T?>!|, value2: R|ft<T, T?>!|): R|ft<T, T?>!|
 
-    public open static operator fun <T : R|kotlin/CharSequence|> max2(comparator: R|ft<java/util/Comparator<ft<T, T?>!>, java/util/Comparator<ft<T, T?>!>?>!|, value1: R|ft<T, T?>!|, value2: R|ft<T, T?>!|): R|ft<T, T?>!|
+    public open static operator fun <T : R|kotlin/CharSequence?|> max2(comparator: R|ft<java/util/Comparator<ft<T, T?>!>, java/util/Comparator<ft<T, T?>!>?>!|, value1: R|ft<T, T?>!|, value2: R|ft<T, T?>!|): R|ft<T, T?>!|
 
-    public open static operator fun <A : R|kotlin/CharSequence|, B : R|kotlin/collections/MutableList<A>|> method(a: R|ft<java/util/Comparator<ft<A, A?>!>, java/util/Comparator<ft<A, A?>!>?>!|, b: R|ft<B, B?>!|): R|kotlin/Unit|
+    public open static operator fun <A : R|kotlin/CharSequence?|, B : R|kotlin/collections/MutableList<A>?|> method(a: R|ft<java/util/Comparator<ft<A, A?>!>, java/util/Comparator<ft<A, A?>!>?>!|, b: R|ft<B, B?>!|): R|kotlin/Unit|
 
     public constructor(): R|test/TypeParameterOfMethod|
 

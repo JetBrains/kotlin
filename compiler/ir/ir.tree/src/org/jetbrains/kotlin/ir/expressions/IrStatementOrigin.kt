@@ -86,6 +86,7 @@ interface IrStatementOrigin {
     object FOR_LOOP_NEXT : IrStatementOriginImpl("FOR_LOOP_NEXT")
 
     object LAMBDA : IrStatementOriginImpl("LAMBDA")
+    object DEFAULT_VALUE : IrStatementOriginImpl("DEFAULT_VALUE")
     object ANONYMOUS_FUNCTION : IrStatementOriginImpl("ANONYMOUS_FUNCTION")
     object OBJECT_LITERAL : IrStatementOriginImpl("OBJECT_LITERAL")
 

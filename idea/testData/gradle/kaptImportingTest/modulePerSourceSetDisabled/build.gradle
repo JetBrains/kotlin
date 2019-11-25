@@ -1,6 +1,5 @@
 buildscript {
-    apply from: "include.gradle"
-    ext.kotlin_version = gradleKotlinPluginVersion('1.3.10')
+    ext.kotlin_version = '{{kotlin_plugin_version}}'
     repositories {
         google()
         jcenter()

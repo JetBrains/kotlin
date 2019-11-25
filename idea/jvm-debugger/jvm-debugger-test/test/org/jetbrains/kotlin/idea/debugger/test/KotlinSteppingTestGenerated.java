@@ -487,6 +487,21 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOver/kt24343.kt");
         }
 
+        @TestMetadata("noParameterExtensionLambdaArgumentCallInInline.kt")
+        public void testNoParameterExtensionLambdaArgumentCallInInline() throws Exception {
+            runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOver/noParameterExtensionLambdaArgumentCallInInline.kt");
+        }
+
+        @TestMetadata("noParameterExtensionLambdaArgumentCallInInline2.kt")
+        public void testNoParameterExtensionLambdaArgumentCallInInline2() throws Exception {
+            runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOver/noParameterExtensionLambdaArgumentCallInInline2.kt");
+        }
+
+        @TestMetadata("noParameterExtensionLambdaArgumentCallInInline3.kt")
+        public void testNoParameterExtensionLambdaArgumentCallInInline3() throws Exception {
+            runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOver/noParameterExtensionLambdaArgumentCallInInline3.kt");
+        }
+
         @TestMetadata("noParameterLambdaArgumentCallInInline.kt")
         public void testNoParameterLambdaArgumentCallInInline() throws Exception {
             runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOver/noParameterLambdaArgumentCallInInline.kt");

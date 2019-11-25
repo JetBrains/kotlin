@@ -3017,6 +3017,11 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/simple"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
         }
 
+        @TestMetadata("captureAndArgumentIncompatibleTypes.kt")
+        public void testCaptureAndArgumentIncompatibleTypes() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/simple/captureAndArgumentIncompatibleTypes.kt");
+        }
+
         @TestMetadata("classObject.kt")
         public void testClassObject() throws Exception {
             runTest("compiler/testData/codegen/boxInline/simple/classObject.kt");
@@ -3785,6 +3790,16 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
             @TestMetadata("defaultValueCrossinline.kt")
             public void testDefaultValueCrossinline_1_3() throws Exception {
                 runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/defaultParameter/defaultValueCrossinline.kt", "kotlin.coroutines");
+            }
+
+            @TestMetadata("defaultValueInlineFromMultiFileFacade.kt")
+            public void testDefaultValueInlineFromMultiFileFacade_1_2() throws Exception {
+                runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/defaultParameter/defaultValueInlineFromMultiFileFacade.kt", "kotlin.coroutines.experimental");
+            }
+
+            @TestMetadata("defaultValueInlineFromMultiFileFacade.kt")
+            public void testDefaultValueInlineFromMultiFileFacade_1_3() throws Exception {
+                runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/defaultParameter/defaultValueInlineFromMultiFileFacade.kt", "kotlin.coroutines");
             }
 
             @TestMetadata("defaultValueInline.kt")

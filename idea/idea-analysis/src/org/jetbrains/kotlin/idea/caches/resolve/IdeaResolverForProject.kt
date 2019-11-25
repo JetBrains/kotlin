@@ -18,10 +18,9 @@ import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.context.withModule
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.idea.caches.project.*
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
-import org.jetbrains.kotlin.idea.caches.project.findSdkAcrossDependencies
 import org.jetbrains.kotlin.idea.caches.project.getNullableModuleInfo
-import org.jetbrains.kotlin.idea.caches.project.getPlatformModuleInfo
 import org.jetbrains.kotlin.idea.compiler.IDELanguageSettingsProvider
 import org.jetbrains.kotlin.idea.project.IdeaEnvironment
 import org.jetbrains.kotlin.idea.project.findAnalyzerServices
@@ -45,7 +44,7 @@ class IdeaResolverForProject(
     fallbackModificationTracker: ModificationTracker? = null,
     private val isReleaseCoroutines: Boolean? = null,
     // TODO(dsavvinov): this is needed only for non-composite analysis, extract separate resolver implementation instead
-    private val constantSdkDependencyIfAny: IdeaModuleInfo? = null
+    private val constantSdkDependencyIfAny: SdkInfo? = null
 ) : AbstractResolverForProject<IdeaModuleInfo>(
     debugName,
     projectContext,
@@ -54,9 +53,10 @@ class IdeaResolverForProject(
     delegateResolver,
     ServiceManager.getService(projectContext.project, IdePackageOracleFactory::class.java)
 ) {
-    private val builtInsCache: BuiltInsCache = (delegateResolver as? IdeaResolverForProject)?.builtInsCache ?: BuiltInsCache(projectContext, this)
+    private val builtInsCache: BuiltInsCache =
+        (delegateResolver as? IdeaResolverForProject)?.builtInsCache ?: BuiltInsCache(projectContext, this)
 
-    override fun sdkDependency(module: IdeaModuleInfo): IdeaModuleInfo? {
+    override fun sdkDependency(module: IdeaModuleInfo): SdkInfo? {
         if (projectContext.project.useCompositeAnalysis) {
             require(constantSdkDependencyIfAny == null) { "Shouldn't pass SDK dependency manually for composite analysis mode" }
         }
@@ -129,13 +129,13 @@ class IdeaResolverForProject(
 
             // Note #1: we can't use .getOrPut, because we have to put builtIns into map *before* initialization
             // Note #2: it's OK to put not-initialized built-ins into public map, because access to [cache] is guarded by storageManager.lock
-            val newBuiltIns = module.platform.idePlatformKind.resolution.createBuiltIns(module, projectContextFromSdkResolver)
+            val sdk = resolverForSdk.sdkDependency(module)
+            val newBuiltIns = module.platform.idePlatformKind.resolution.createBuiltIns(module, projectContextFromSdkResolver, sdk)
             cache[key] = newBuiltIns
 
             if (newBuiltIns is JvmBuiltIns) {
                 // SDK should be present, otherwise we wouldn't have created JvmBuiltIns in createBuiltIns
-                val sdk = module.findSdkAcrossDependencies()!!
-                val sdkDescriptor = resolverForSdk.descriptorForModule(sdk)
+                val sdkDescriptor = resolverForSdk.descriptorForModule(sdk!!)
 
                 val isAdditionalBuiltInsFeaturesSupported = module.supportsAdditionalBuiltInsMembers(projectContextFromSdkResolver.project)
 

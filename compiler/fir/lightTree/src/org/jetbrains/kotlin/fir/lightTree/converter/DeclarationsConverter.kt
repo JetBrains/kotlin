@@ -31,10 +31,7 @@ import org.jetbrains.kotlin.fir.lightTree.fir.modifier.TypeParameterModifier
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.TypeProjectionModifier
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.FirDelegatedTypeRef
-import org.jetbrains.kotlin.fir.types.FirTypeProjection
-import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.FirUserTypeRef
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens.*
@@ -435,6 +432,7 @@ class DeclarationsConverter(
 
             if (modifiers.isEnum()) {
                 firClass.generateValuesFunction(session, context.packageFqName, context.className)
+                firClass.generateValueOfFunction(session, context.packageFqName, context.className)
             }
 
             return@withChildClassName firClass
@@ -1039,7 +1037,7 @@ class DeclarationsConverter(
         val parentNode = functionDeclaration.getParent()
         val isLocal = !(parentNode?.tokenType == KT_FILE || parentNode?.tokenType == CLASS_BODY)
         val firFunction = if (identifier == null) {
-            FirAnonymousFunctionImpl(null, session, returnType!!, receiverType, FirAnonymousFunctionSymbol())
+            FirAnonymousFunctionImpl(null, session, returnType!!, receiverType, FirAnonymousFunctionSymbol(), isLambda = false)
         } else {
             val functionName = identifier.nameAsSafeName()
             val status = FirDeclarationStatusImpl(
@@ -1461,8 +1459,8 @@ class DeclarationsConverter(
         null,
         FirResolvedTypeRefImpl(
             null,
-            ConeClassTypeImpl(
-                ConeClassLikeLookupTagImpl(ClassId.fromString("kotlin/ExtensionFunctionType")),
+            ConeClassLikeTypeImpl(
+                ConeClassLikeLookupTagImpl(ClassId.fromString(EXTENSION_FUNCTION_ANNOTATION)),
                 emptyArray(),
                 false
             )

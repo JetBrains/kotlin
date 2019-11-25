@@ -11,6 +11,6 @@ FILE: mapList.kt
         }
         )
     }
-    public final inline fun <T> R|T|.applyX(block: @R|kotlin/ExtensionFunctionType|() R|kotlin/Function1<T, kotlin/Unit>|): R|T| {
+    public final inline fun <T> R|T|.applyX(block: R|T.() -> kotlin/Unit|): R|T| {
         R|kotlin/TODO|()
     }

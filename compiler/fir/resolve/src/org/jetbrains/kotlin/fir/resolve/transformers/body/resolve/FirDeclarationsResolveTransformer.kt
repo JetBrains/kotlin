@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.transformVarargTypeToArrayT
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
-import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirComputingImplicitTypeRef
@@ -65,14 +64,12 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
     }
 
     private fun prepareSignatureForBodyResolve(callableMember: FirCallableMemberDeclaration<*>) {
-        withScopeCleanup(topLevelScopes) {
-            callableMember.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent)
-            callableMember.transformReceiverTypeRef(transformer, ResolutionMode.ContextIndependent)
-            if (callableMember is FirFunction<*>) {
-                callableMember.valueParameters.forEach {
-                    it.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent)
-                    it.transformVarargTypeToArrayType()
-                }
+        callableMember.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent)
+        callableMember.transformReceiverTypeRef(transformer, ResolutionMode.ContextIndependent)
+        if (callableMember is FirFunction<*>) {
+            callableMember.valueParameters.forEach {
+                it.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent)
+                it.transformVarargTypeToArrayType()
             }
         }
     }
@@ -186,13 +183,12 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
     }
 
     private fun prepareLocalClassForBodyResolve(klass: FirClass<*>) {
-        if (klass.supertypesComputationStatus == SupertypesComputationStatus.NOT_COMPUTED) {
+        if (klass.superTypeRefs.any { it !is FirResolvedTypeRef }) {
             klass.replaceSuperTypeRefs(
                 klass.superTypeRefs.map { superTypeRef ->
                     this.transformer.transformTypeRef(superTypeRef, ResolutionMode.ContextIndependent).single
                 }
             )
-            klass.replaceSupertypesComputationStatus(SupertypesComputationStatus.COMPUTED)
         }
         if (klass is FirRegularClass) {
             klass.transformStatus(transformer, klass.resolveStatus(klass.status).mode())
@@ -231,11 +227,6 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
             if (regularClass.symbol.classId.isLocal) {
                 prepareLocalClassForBodyResolve(regularClass)
             }
-            val companionObjects = regularClass.declarations.filterIsInstance<FirRegularClass>().filter { it.isCompanion }
-            for (companionObject in companionObjects) {
-                topLevelScopes += nestedClassifierScope(companionObject)
-            }
-            topLevelScopes += nestedClassifierScope(regularClass)
 
             val oldConstructorScope = primaryConstructorParametersScope
             val oldContainingClass = containingClass
@@ -260,8 +251,6 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
     override fun transformAnonymousObject(anonymousObject: FirAnonymousObject, data: ResolutionMode): CompositeTransformResult<FirStatement> {
         prepareLocalClassForBodyResolve(anonymousObject)
         return withScopeCleanup(topLevelScopes) {
-            topLevelScopes += nestedClassifierScope(anonymousObject)
-
             val type = anonymousObject.defaultType()
             anonymousObject.resultType = FirResolvedTypeRefImpl(anonymousObject.source, type)
             val result = withLabelAndReceiverType(null, anonymousObject, type) {

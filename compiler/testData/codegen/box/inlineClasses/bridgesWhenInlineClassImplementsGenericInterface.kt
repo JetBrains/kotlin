@@ -1,4 +1,5 @@
 // !LANGUAGE: +InlineClasses
+// IGNORE_BACKEND_FIR: JVM_IR
 
 inline class InlinedComparable(val x: Int) : Comparable<InlinedComparable> {
     override fun compareTo(other: InlinedComparable): Int {

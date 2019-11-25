@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 // TARGET_BACKEND: JVM
 
 class MyMap<K, V>: Map<K, V> {

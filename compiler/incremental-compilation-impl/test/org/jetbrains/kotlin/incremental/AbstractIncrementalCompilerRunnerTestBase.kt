@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.incremental
 
-import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.TestWithWorkingDir
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.incremental.testingUtils.*
 import org.jetbrains.kotlin.incremental.utils.TestCompilationResult
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.junit.Assert
 import java.io.File
 
@@ -41,11 +41,8 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
         val mapWorkingToOriginalFile = HashMap(copyTestSources(testDir, srcDir, filePrefix = ""))
         val sourceRoots = listOf(srcDir)
         val args = createCompilerArguments(outDir, testDir)
-        // initial build
-        val (_, _, errors) = make(cacheDir, sourceRoots, args)
-        if (errors.isNotEmpty()) {
-            throw IllegalStateException("Initial build failed: \n${errors.joinToString("\n")}")
-        }
+        val (_, _, errors) = initialMake(cacheDir, sourceRoots, args)
+        check(errors.isEmpty()) { "Initial build failed: \n${errors.joinToString("\n")}" }
 
         // modifications
         val buildLogFile = buildLogFinder.findBuildLog(testDir) ?: throw IllegalStateException("build log file not found in $workingDir")
@@ -72,7 +69,7 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
         var step = 1
         for ((modificationStep, buildLogStep) in modifications.zip(buildLogSteps)) {
             modificationStep.forEach { it.perform(workingDir, mapWorkingToOriginalFile) }
-            val (_, compiledSources, compileErrors) = make(cacheDir, sourceRoots, args)
+            val (_, compiledSources, compileErrors) = incrementalMake(cacheDir, sourceRoots, args)
 
             expectedSB.appendLine(stepLogAsString(step, buildLogStep.compiledKotlinFiles, buildLogStep.compileErrors))
             expectedSBWithoutErrors.appendLine(
@@ -93,12 +90,17 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
                 // JPS logs should be updated carefully, because standalone logs are a bit different (no removed classes, iterations, etc)
                 Assert.assertEquals(expectedSB.toString(), actualSB.toString())
             } else {
-                UsefulTestCase.assertSameLinesWithFile(buildLogFile.canonicalPath, actualSB.toString(), false)
+                KtUsefulTestCase.assertSameLinesWithFile(buildLogFile.canonicalPath, actualSB.toString(), false)
             }
         }
 
         rebuildAndCompareOutput(sourceRoots, testDir, buildLogSteps, outDir)
     }
+
+    // these functions are needed only to simplify debugging of IC tests
+    private fun initialMake(cacheDir: File, sourceRoots: List<File>, args: Args) = make(cacheDir, sourceRoots, args)
+
+    private fun incrementalMake(cacheDir: File, sourceRoots: List<File>, args: Args) = make(cacheDir, sourceRoots, args)
 
     protected open fun rebuildAndCompareOutput(
         sourceRoots: List<File>,
@@ -155,7 +157,7 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
 
         @JvmStatic
         protected val kotlinStdlibJvm: File = File(distKotlincLib, "kotlin-stdlib.jar").also {
-            UsefulTestCase.assertExists(it)
+            KtUsefulTestCase.assertExists(it)
         }
     }
 }

@@ -1,1 +1,2 @@
-public final fun fun1(): R|kotlin/Function1<kotlin/String, kotlin/Int>|
+public final fun fun1(): R|(kotlin/String) -> kotlin/Int|
+

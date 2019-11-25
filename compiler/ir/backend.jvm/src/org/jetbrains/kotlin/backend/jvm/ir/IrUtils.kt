@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.lower.IrLoweringContext
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmSymbols
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
+import org.jetbrains.kotlin.backend.jvm.descriptors.JvmDeclarationFactory
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.hasMangledParameters
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -17,8 +18,8 @@ import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.expressions.IrConst
+import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_DEFAULT_FQ_NAME
 
@@ -86,8 +88,10 @@ val IrType.erasedUpperBound: IrClass
 
 
 fun IrDeclaration.getJvmNameFromAnnotation(): String? {
-    val const = getAnnotation(DescriptorUtils.JVM_NAME)?.getValueArgument(0) as? IrConst<*>
-    return const?.value as? String
+    // TODO lower @JvmName?
+    val const = getAnnotation(DescriptorUtils.JVM_NAME)?.getValueArgument(0) as? IrConst<*> ?: return null
+    val value = const.value as? String ?: return null
+    return if (origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) "$value\$default" else value
 }
 
 val IrFunction.propertyIfAccessor: IrDeclaration
@@ -95,7 +99,7 @@ val IrFunction.propertyIfAccessor: IrDeclaration
 
 fun IrFunction.hasJvmDefault(): Boolean = propertyIfAccessor.hasAnnotation(JVM_DEFAULT_FQ_NAME)
 
-fun IrValueParameter.isInlineParameter() =
+fun IrValueParameter.isInlineParameter(type: IrType = this.type) =
     index >= 0 && !isNoinline && !type.isNullable() && (type.isFunction() || type.isSuspendFunctionTypeOrSubtype())
 
 val IrType.isBoxedArray: Boolean
@@ -138,3 +142,32 @@ fun JvmBackendContext.createJvmIrBuilder(
 
 fun IrDeclaration.isInCurrentModule(): Boolean =
     getPackageFragment() is IrFile
+
+// Determine if the IrExpression is smartcast, and if so, if it is cast from higher than nullable target types.
+// This is needed to pinpoint exceptional treatment of IEEE754 floating point comparisons, where proper IEEE
+// comparisons are used "if values are statically known to be of primitive numeric types", taken to mean as
+// "not learned through smartcasting".
+fun IrExpression.isSmartcastFromHigherThanNullable(context: JvmBackendContext) =
+    this is IrTypeOperatorCall &&
+            operator == IrTypeOperator.IMPLICIT_CAST &&
+            !this.argument.type.isSubtypeOf(type.makeNullable(), context.irBuiltIns)
+
+fun IrBody.replaceThisByStaticReference(
+    declarationFactory: JvmDeclarationFactory,
+    irClass: IrClass,
+    oldThisReceiverParameter: IrValueParameter
+): IrBody =
+    transform(object : IrElementTransformerVoid() {
+        override fun visitGetValue(expression: IrGetValue): IrExpression {
+            if (expression.symbol == oldThisReceiverParameter.symbol) {
+                val instanceField = declarationFactory.getPrivateFieldForObjectInstance(irClass)
+                return IrGetFieldImpl(
+                    expression.startOffset,
+                    expression.endOffset,
+                    instanceField.symbol,
+                    irClass.defaultType
+                )
+            }
+            return super.visitGetValue(expression)
+        }
+    }, null)

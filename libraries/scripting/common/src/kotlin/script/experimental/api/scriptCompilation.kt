@@ -274,13 +274,15 @@ fun ScriptCompilationConfiguration.refineOnAnnotations(
     val foundAnnotationNames = collectedData[ScriptCollectedData.foundAnnotations]?.mapTo(HashSet()) { it.annotationClass.java.name }
     if (foundAnnotationNames.isNullOrEmpty()) return this.asSuccess()
 
-    val refinedConfig = this[ScriptCompilationConfiguration.refineConfigurationOnAnnotations]
-        ?.fold(this) { config, (annotations, handler) ->
-            // checking that the collected data contains expected annotations
-            if (annotations.none { foundAnnotationNames.contains(it.typeName) }) config
-            else handler.invoke(ScriptConfigurationRefinementContext(script, config, collectedData)).valueOr { return it }
-        }
-    return (refinedConfig ?: this).asSuccess()
+    val thisResult: ResultWithDiagnostics<ScriptCompilationConfiguration> = this.asSuccess()
+    return this[ScriptCompilationConfiguration.refineConfigurationOnAnnotations]
+        ?.fold(thisResult) { config, (annotations, handler) ->
+            config.onSuccess {
+                // checking that the collected data contains expected annotations
+                if (annotations.none { foundAnnotationNames.contains(it.typeName) }) it.asSuccess()
+                else handler.invoke(ScriptConfigurationRefinementContext(script, it, collectedData))
+            }
+        } ?: thisResult
 }
 
 fun ScriptCompilationConfiguration.refineBeforeCompiling(

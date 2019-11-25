@@ -31,13 +31,13 @@ interface FirConstructor : FirMemberFunction<FirConstructor> {
     override val controlFlowGraphReference: FirControlFlowGraphReference
     override val typeParameters: List<FirTypeParameter>
     override val valueParameters: List<FirValueParameter>
-    override val body: FirBlock?
     override val name: Name
     override val status: FirDeclarationStatus
     override val containerSource: DeserializedContainerSource?
     override val annotations: List<FirAnnotationCall>
     override val symbol: FirConstructorSymbol
     val delegatedConstructor: FirDelegatedConstructorCall?
+    override val body: FirBlock?
     val isPrimary: Boolean
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitConstructor(this, data)

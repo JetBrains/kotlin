@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 enum class State {
   _0,
   _1,

@@ -42,12 +42,12 @@ public abstract class AbstractConfigureProjectByChangingFileTest<C extends Kotli
         ApplicationManager.getApplication().runWriteAction(
                 () -> FileTypeManager.getInstance().associateExtension(GroovyFileType.GROOVY_FILE_TYPE, "gradle")
         );
-        ScriptUtilsKt.setScriptDependenciesUpdaterDisabled(ApplicationManager.getApplication(), true);
+        ScriptUtilsKt.setScriptChangesNotifierDisabled(ApplicationManager.getApplication(), true);
     }
 
     @Override
     protected void tearDown() throws Exception {
-        ScriptUtilsKt.setScriptDependenciesUpdaterDisabled(ApplicationManager.getApplication(), false);
+        ScriptUtilsKt.setScriptChangesNotifierDisabled(ApplicationManager.getApplication(), false);
         moduleInfoFile = null;
         super.tearDown();
     }

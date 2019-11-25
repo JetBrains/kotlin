@@ -40,11 +40,13 @@ class ForConversion(context: NewJ2kConverterContext) : RecursiveApplicableConver
             else JKLiteralExpression("true", JKLiteralExpression.LiteralType.BOOLEAN)
         val whileStatement = JKWhileStatement(condition, whileBody)
 
-        if (loopStatement.initializer is JKEmptyStatement) return whileStatement
+        if (loopStatement.initializers.isEmpty()
+            || loopStatement.initializers.singleOrNull() is JKEmptyStatement
+        ) return whileStatement
 
         val convertedFromForLoopSyntheticWhileStatement =
             JKKtConvertedFromForLoopSyntheticWhileStatement(
-                loopStatement::initializer.detached(),
+                loopStatement::initializers.detached(),
                 whileStatement
             )
 
@@ -81,8 +83,7 @@ class ForConversion(context: NewJ2kConverterContext) : RecursiveApplicableConver
         val body = continueStatementConverter.applyToElement(loopStatement::body.detached())
 
         if (body is JKBlockStatement) {
-            val initializer = loopStatement.initializer
-            val hasNameConflict =
+            val hasNameConflict = loopStatement.initializers.any { initializer ->
                 initializer is JKDeclarationStatement && initializer.declaredStatements.any { loopVar ->
                     loopVar is JKLocalVariable && body.statements.any { statement ->
                         statement is JKDeclarationStatement && statement.declaredStatements.any {
@@ -90,6 +91,7 @@ class ForConversion(context: NewJ2kConverterContext) : RecursiveApplicableConver
                         }
                     }
                 }
+            }
 
             val statements =
                 if (hasNameConflict) {
@@ -106,8 +108,8 @@ class ForConversion(context: NewJ2kConverterContext) : RecursiveApplicableConver
     }
 
     private fun convertToForeach(loopStatement: JKJavaForLoopStatement): JKForInStatement? {
-        val loopVar =
-            (loopStatement.initializer as? JKDeclarationStatement)?.declaredStatements?.singleOrNull() as? JKLocalVariable ?: return null
+        val initializer = loopStatement.initializers.singleOrNull() ?: return null
+        val loopVar = (initializer as? JKDeclarationStatement)?.declaredStatements?.singleOrNull() as? JKLocalVariable ?: return null
         val loopVarPsi = loopVar.psi<PsiLocalVariable>() ?: return null
         val condition = loopStatement.condition as? JKBinaryExpression ?: return null
         if (!loopVarPsi.hasWriteAccesses(referenceSearcher, loopStatement.body.psi())
@@ -276,7 +278,7 @@ class ForConversion(context: NewJ2kConverterContext) : RecursiveApplicableConver
     }
 
     private fun JKJavaForLoopStatement.hasNameConflict(): Boolean {
-        val names = initializer.declaredVariableNames()
+        val names = initializers.flatMap { it.declaredVariableNames() }
         if (names.isEmpty()) return false
 
         val factory = PsiElementFactory.SERVICE.getInstance(context.project)
@@ -301,7 +303,7 @@ class ForConversion(context: NewJ2kConverterContext) : RecursiveApplicableConver
         when (this) {
             is JKDeclarationStatement ->
                 declaredStatements.filterIsInstance<JKVariable>().map { it.name.value }
-            is JKJavaForLoopStatement -> initializer.declaredVariableNames()
+            is JKJavaForLoopStatement -> initializers.flatMap { it.declaredVariableNames() }
             else -> emptyList()
         }
 

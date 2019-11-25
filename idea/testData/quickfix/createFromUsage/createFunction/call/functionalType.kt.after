@@ -5,5 +5,5 @@ fun foo(block: (Int) -> String) {
 }
 
 fun bar(block: (Int) -> String) {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    TODO("Not yet implemented")
 }

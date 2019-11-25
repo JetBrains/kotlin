@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 fun booleanVararg(vararg xs: Boolean) {
     if (xs.size != 1 && xs[0] != true) throw AssertionError()
 }

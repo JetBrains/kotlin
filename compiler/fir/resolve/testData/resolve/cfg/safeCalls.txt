@@ -1,0 +1,21 @@
+FILE: safeCalls.kt
+    public abstract interface A : R|kotlin/Any| {
+        public abstract fun foo(): R|A|
+
+        public abstract fun bar(): R|A|
+
+    }
+    public abstract interface B : R|kotlin/Any| {
+        public abstract val foo: R|B|
+            public get(): R|B|
+
+        public abstract val bar: R|B|
+            public get(): R|B|
+
+    }
+    public final fun test_1(x: R|A?|): R|kotlin/Unit| {
+        R|<local>/x|?.R|/A.foo|()?.R|/A.bar|()
+    }
+    public final fun test_2(x: R|B?|): R|kotlin/Unit| {
+        R|<local>/x|?.R|/B.foo|?.R|/B.bar|
+    }

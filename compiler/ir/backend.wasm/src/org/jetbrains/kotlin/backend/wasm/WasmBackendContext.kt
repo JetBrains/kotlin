@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.UniqId
 import org.jetbrains.kotlin.name.FqName
 
 class WasmBackendContext(
@@ -84,6 +85,10 @@ class DescriptorlessExternalPackageFragmentSymbol : IrExternalPackageFragmentSym
 
     private var _owner: IrExternalPackageFragment? = null
     override val owner get() = _owner!!
+
+    override var uniqId: UniqId
+        get() = error("Operation is unsupported")
+        set(value) { error("Operation is unsupported") }
 
     override val isBound get() = _owner != null
 

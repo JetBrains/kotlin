@@ -122,7 +122,9 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
             context.symbolTable.referenceLocalDelegatedProperty(variableDescriptor),
             irDelegateSymbol, getterSymbol, setterSymbol,
             origin
-        )
+        ).apply {
+            context.callToSubstitutedDescriptorMap[this] = variableDescriptor
+        }
     }
 
     private fun generatePropertyReference(
@@ -137,17 +139,18 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
         val originalProperty = propertyDescriptor.original
         val originalGetter = originalProperty.getter?.original
         val originalSetter = if (mutable) originalProperty.setter?.original else null
+        val originalSymbol = context.symbolTable.referenceProperty(originalProperty)
 
         return IrPropertyReferenceImpl(
             startOffset, endOffset, type.toIrType(),
-            context.symbolTable.referenceProperty(originalProperty),
-            propertyDescriptor,
+            originalSymbol,
             propertyDescriptor.typeParametersCount,
             getFieldForPropertyReference(originalProperty),
             originalGetter?.let { context.symbolTable.referenceSimpleFunction(it) },
             originalSetter?.let { context.symbolTable.referenceSimpleFunction(it) },
             origin
         ).apply {
+            context.callToSubstitutedDescriptorMap[this] = propertyDescriptor
             putTypeArguments(typeArguments) { it.toIrType() }
         }
     }
@@ -172,9 +175,9 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
     ): IrFunctionReference =
         IrFunctionReferenceImpl(
             startOffset, endOffset, type.toIrType(),
-            symbol, descriptor, descriptor.typeParametersCount,
-            origin
+            symbol, descriptor.typeParametersCount, origin
         ).apply {
+            context.callToSubstitutedDescriptorMap[this] = descriptor
             putTypeArguments(typeArguments) { it.toIrType() }
         }
 }

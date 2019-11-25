@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 open class X(private val n: String) {
 
     fun foo(): String {

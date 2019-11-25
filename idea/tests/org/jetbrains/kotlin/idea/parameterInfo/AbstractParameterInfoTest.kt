@@ -76,7 +76,7 @@ abstract class AbstractParameterInfoTest : LightCodeInsightFixtureTestCase() {
             }
 
             //to update current parameter index
-            val updateContext = MockUpdateParameterInfoContext(file, myFixture)
+            val updateContext = MockUpdateParameterInfoContext(file, myFixture, mockCreateParameterInfoContext)
             val elementForUpdating = handler.findElementForUpdatingParameterInfo(updateContext)
             if (elementForUpdating != null) {
                 handler.updateParameterInfo(elementForUpdating, updateContext)

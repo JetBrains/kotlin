@@ -29,7 +29,6 @@ abstract class FirSealedClass : FirPureAbstractElement(), FirRegularClass {
     abstract override val annotations: List<FirAnnotationCall>
     abstract override val typeParameters: List<FirTypeParameter>
     abstract override val status: FirDeclarationStatus
-    abstract override val supertypesComputationStatus: SupertypesComputationStatus
     abstract override val classKind: ClassKind
     abstract override val declarations: List<FirDeclaration>
     abstract override val symbol: FirRegularClassSymbol

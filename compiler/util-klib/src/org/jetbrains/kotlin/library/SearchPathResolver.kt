@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.library
 
 import org.jetbrains.kotlin.konan.KonanVersion
 import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.konan.properties.hasProperty
 import org.jetbrains.kotlin.library.impl.createKotlinLibrary
 import org.jetbrains.kotlin.util.*
 
@@ -97,13 +98,18 @@ abstract class KotlinLibrarySearchPathResolver<L: KotlinLibrary>(
 
     override fun resolve(unresolved: UnresolvedLibrary, isDefaultLink: Boolean): L {
         val givenPath = unresolved.path
-        val fileSequence = resolutionSequence(givenPath)
-        val matching = fileSequence.map { libraryBuilder(it, isDefaultLink) }
-            .map { it.takeIf { libraryMatch(it, unresolved) } }
-            .filterNotNull()
+        try {
+            val fileSequence = resolutionSequence(givenPath)
+            val matching = fileSequence.map { libraryBuilder(it, isDefaultLink) }
+                .map { it.takeIf { libraryMatch(it, unresolved) } }
+                .filterNotNull()
 
-        return matching.firstOrNull() ?: run {
-            logger.fatal("Could not find \"$givenPath\" in ${searchRoots.map { it.absolutePath }}.")
+            return matching.firstOrNull() ?: run {
+                logger.fatal("Could not find \"$givenPath\" in ${searchRoots.map { it.absolutePath }}.")
+            }
+        } catch (e: Throwable) {
+            logger.error("Failed to resolve Kotlin library: $givenPath")
+            throw e
         }
     }
 
@@ -170,7 +176,8 @@ abstract class KotlinLibraryProperResolverWithAttributes<L: KotlinLibrary>(
     distributionKlib: String?,
     localKotlinDir: String?,
     skipCurrentDir: Boolean,
-    override val logger: Logger
+    override val logger: Logger,
+    private val knownIrProviders: List<String>
 ) : KotlinLibrarySearchPathResolver<L>(repositories, directLibs, distributionKlib, localKotlinDir, skipCurrentDir, logger),
     SearchPathResolverWithAttributes<L>
 {
@@ -207,6 +214,13 @@ abstract class KotlinLibraryProperResolverWithAttributes<L: KotlinLibrary>(
         ) {
             logger.warning("skipping $candidatePath. The library versions don't match. Expected '${unresolved.libraryVersion}', found '${candidateLibraryVersion}'")
             return false
+        }
+
+        candidate.manifestProperties["ir_provider"]?.let {
+            if (it !in knownIrProviders) {
+                logger.warning("skipping $candidatePath. The library requires unknown IR provider $it.")
+                return false
+            }
         }
 
         return true

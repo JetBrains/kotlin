@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
+import org.jetbrains.kotlin.fir.resolve.ImplicitReceiverStack
+import org.jetbrains.kotlin.fir.resolve.calls.ImplicitExtensionReceiverValue
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
@@ -12,6 +14,7 @@ import org.jetbrains.kotlin.name.Name
 
 class FirTypeResolveScopeForBodyResolve(
     private val topLevelScopes: List<FirScope>,
+    private val implicitReceiverStack: ImplicitReceiverStack,
     private val localScopes: List<FirScope>
 ) : FirScope() {
     override fun processClassifiersByName(
@@ -20,6 +23,12 @@ class FirTypeResolveScopeForBodyResolve(
     ): ProcessorAction {
         for (scope in localScopes.asReversed()) {
             if (!scope.processClassifiersByName(name, processor)) {
+                return ProcessorAction.STOP
+            }
+        }
+        for (receiverValue in implicitReceiverStack.receiversAsReversed()) {
+            if (receiverValue is ImplicitExtensionReceiverValue) continue
+            if (receiverValue.implicitScope?.processClassifiersByName(name, processor) == ProcessorAction.STOP) {
                 return ProcessorAction.STOP
             }
         }

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 internal var sideEffects: String = ""
 
 internal class A {

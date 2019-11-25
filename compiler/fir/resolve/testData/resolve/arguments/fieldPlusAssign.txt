@@ -1,0 +1,11 @@
+FILE: fieldPlusAssign.kt
+    public final var x: R|kotlin/Int| = Int(1)
+        public get(): R|kotlin/Int|
+        public set(value: R|kotlin/Int|): R|kotlin/Unit| {
+            F|/x| = F|/x|.R|kotlin/Int.plus|(R|<local>/value|)
+        }
+    public final val y: R|kotlin/Int| = Int(1)
+        public get(): R|kotlin/Int| {
+            <Variable expected># = F|/y|.R|kotlin/Int.plus|(Int(1))
+            ^ Int(1)
+        }

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 interface T {
     open fun baz(): String = "T.baz"
 }

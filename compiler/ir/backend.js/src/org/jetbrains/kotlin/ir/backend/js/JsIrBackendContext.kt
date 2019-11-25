@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrDynamicTypeImpl
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -53,6 +54,8 @@ class JsIrBackendContext(
     override val builtIns = module.builtIns
 
     override var inVerbosePhase: Boolean = false
+
+    val devMode = configuration[JSConfigurationKeys.DEVELOPER_MODE] ?: false
 
     var externalPackageFragment = mutableMapOf<IrFileSymbol, IrFile>()
     lateinit var bodilessBuiltInsPackageFragment: IrPackageFragment

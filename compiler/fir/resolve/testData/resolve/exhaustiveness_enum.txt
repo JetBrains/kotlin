@@ -28,6 +28,9 @@ FILE: exhaustiveness_enum.kt
         public final static fun values(): R|kotlin/Array<Enum>| {
         }
 
+        public final static fun valueOf(value: R|kotlin/String|): R|Enum| {
+        }
+
     }
     public final fun test_1(e: R|Enum|): R|kotlin/Unit| {
         lval a: R|kotlin/Unit| = when (R|<local>/e|) {
@@ -113,6 +116,17 @@ FILE: exhaustiveness_enum.kt
             }
             else ->  {
                 Int(4)
+            }
+        }
+
+    }
+    public final fun test_3(e: R|Enum|): R|kotlin/Unit| {
+        lval a: R|kotlin/Int| = when (R|<local>/e|) {
+            ==($subj$, Q|Enum.A|) || ==($subj$, Q|Enum.B|) ->  {
+                Int(1)
+            }
+            ==($subj$, Q|Enum.C|) ->  {
+                Int(2)
             }
         }
 

@@ -114,10 +114,11 @@ open class KotlinJsTest : KotlinTest(), RequiresNpmDependencies {
 
         val nodeJsArgs = mutableListOf<String>()
 
-        if (debug) {
-            nodeJsArgs.add("--inspect-brk")
-        }
-
-        return testFramework!!.createTestExecutionSpec(this, forkOptions, nodeJsArgs)
+        return testFramework!!.createTestExecutionSpec(
+            task = this,
+            forkOptions = forkOptions,
+            nodeJsArgs = nodeJsArgs,
+            debug = debug
+        )
     }
 }

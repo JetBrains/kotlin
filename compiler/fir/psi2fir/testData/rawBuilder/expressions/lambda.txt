@@ -64,11 +64,10 @@ FILE: lambda.kt
     public? final? fun test(list: List<Int>): R|kotlin/Unit| {
         lval map: <implicit> = mutableMapOf#<Int, String>()
         list#.forEach#(<L> = forEach@fun <implicit>.<anonymous>(): <implicit> {
-            lval <complex-set>: <implicit> = map#.getOrPut#(it#, getOrPut@fun <implicit>.<anonymous>(): <implicit> {
+            +=(map#.getOrPut#(it#, getOrPut@fun <implicit>.<anonymous>(): <implicit> {
                 mutableListOf#()
             }
-            )
-            <complex-set># += String()
+            ), String())
         }
         )
     }

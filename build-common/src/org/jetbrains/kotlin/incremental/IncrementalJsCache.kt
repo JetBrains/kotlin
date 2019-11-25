@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.parentOrNull
+import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
 import java.io.DataInput
@@ -37,7 +38,8 @@ import java.io.File
 
 open class IncrementalJsCache(
     cachesDir: File,
-    pathConverter: FileToPathConverter
+    pathConverter: FileToPathConverter,
+    serializerProtocol: SerializerExtensionProtocol
 ) : AbstractIncrementalCache<FqName>(cachesDir, pathConverter) {
     companion object {
         private const val TRANSLATION_RESULT_MAP = "translation-result"
@@ -49,9 +51,11 @@ open class IncrementalJsCache(
         fun hasHeaderFile(cachesDir: File) = File(cachesDir, HEADER_FILE_NAME).exists()
     }
 
+    private val protoData = ProtoDataProvider(serializerProtocol)
+
     override val sourceToClassesMap = registerMap(SourceToFqNameMap(SOURCE_TO_CLASSES.storageFile, pathConverter))
     override val dirtyOutputClassesMap = registerMap(DirtyClassesFqNameMap(DIRTY_OUTPUT_CLASSES.storageFile))
-    private val translationResults = registerMap(TranslationResultMap(TRANSLATION_RESULT_MAP.storageFile, pathConverter))
+    private val translationResults = registerMap(TranslationResultMap(TRANSLATION_RESULT_MAP.storageFile, pathConverter, protoData))
     private val irTranslationResults = registerMap(IrTranslationResultMap(IR_TRANSLATION_RESULT_MAP.storageFile, pathConverter))
     private val inlineFunctions = registerMap(InlineFunctionsMap(INLINE_FUNCTIONS.storageFile, pathConverter))
     private val packageMetadata = registerMap(PackageMetadataMap(PACKAGE_META_FILE.storageFile))
@@ -86,8 +90,8 @@ open class IncrementalJsCache(
             dirtySources.remove(srcFile)
             val (binaryMetadata, binaryAst, inlineData) = data
 
-            val oldProtoMap = translationResults[srcFile]?.metadata?.let { getProtoData(srcFile, it) } ?: emptyMap()
-            val newProtoMap = getProtoData(srcFile, binaryMetadata)
+            val oldProtoMap = translationResults[srcFile]?.metadata?.let { protoData(srcFile, it) } ?: emptyMap()
+            val newProtoMap = protoData(srcFile, binaryMetadata)
 
             for ((classId, protoData) in newProtoMap) {
                 registerOutputForFile(srcFile, classId.asSingleFqName())
@@ -192,7 +196,8 @@ private object TranslationResultValueExternalizer : DataExternalizer<Translation
 
 private class TranslationResultMap(
     storageFile: File,
-    private val pathConverter: FileToPathConverter
+    private val pathConverter: FileToPathConverter,
+    private val protoData: ProtoDataProvider
 ) :
     BasicStringMap<TranslationResultValue>(storageFile, TranslationResultValueExternalizer) {
     override fun dumpValue(value: TranslationResultValue): String =
@@ -212,7 +217,7 @@ private class TranslationResultMap(
     fun remove(sourceFile: File, changesCollector: ChangesCollector) {
         val path = pathConverter.toPath(sourceFile)
         val protoBytes = storage[path]!!.metadata
-        val protoMap = getProtoData(sourceFile, protoBytes)
+        val protoMap = protoData(sourceFile, protoBytes)
 
         for ((_, protoData) in protoMap) {
             changesCollector.collectProtoChanges(oldData = protoData, newData = null)
@@ -263,9 +268,23 @@ private class IrTranslationResultMap(
 ) :
     BasicStringMap<IrTranslationResultValue>(storageFile, IrTranslationResultValueExternalizer) {
     override fun dumpValue(value: IrTranslationResultValue): String =
-        "Filedata: ${value.fileData.md5()}, Symbols: ${value.symbols.md5()}, Types: ${value.types.md5()}, Strings: ${value.strings.md5()}, Declarations: ${value.declarations.md5()}, Bodies: ${value.bodies.md5()}"
+        "Filedata: ${value.fileData.md5()}, " +
+                "Symbols: ${value.symbols.md5()}, " +
+                "Types: ${value.types.md5()}, " +
+                "Strings: ${value.strings.md5()}, " +
+                "Declarations: ${value.declarations.md5()}, " +
+                "Bodies: ${value.bodies.md5()}"
 
-    fun put(sourceFile: File, newFiledata: ByteArray, newSymbols: ByteArray, newTypes: ByteArray, newStrings: ByteArray, newDeclarations: ByteArray, newBodies: ByteArray, fqn: ByteArray) {
+    fun put(
+        sourceFile: File,
+        newFiledata: ByteArray,
+        newSymbols: ByteArray,
+        newTypes: ByteArray,
+        newStrings: ByteArray,
+        newDeclarations: ByteArray,
+        newBodies: ByteArray,
+        fqn: ByteArray
+    ) {
         storage[pathConverter.toPath(sourceFile)] =
             IrTranslationResultValue(newFiledata, newSymbols, newTypes, newStrings, newDeclarations, newBodies, fqn)
     }
@@ -282,6 +301,29 @@ private class IrTranslationResultMap(
     }
 }
 
+private class ProtoDataProvider(private val serializerProtocol: SerializerExtensionProtocol) {
+    operator fun invoke(sourceFile: File, metadata: ByteArray): Map<ClassId, ProtoData> {
+        val classes = hashMapOf<ClassId, ProtoData>()
+        val proto = ProtoBuf.PackageFragment.parseFrom(metadata, serializerProtocol.extensionRegistry)
+        val nameResolver = NameResolverImpl(proto.strings, proto.qualifiedNames)
+
+        proto.class_List.forEach {
+            val classId = nameResolver.getClassId(it.fqName)
+            classes[classId] = ClassProtoData(it, nameResolver)
+        }
+
+        proto.`package`.apply {
+            val packageNameId = getExtensionOrNull(serializerProtocol.packageFqName)
+            val packageFqName = packageNameId?.let { FqName(nameResolver.getPackageFqName(it)) } ?: FqName.ROOT
+            val packagePartClassId = ClassId(packageFqName, Name.identifier(sourceFile.nameWithoutExtension.capitalize() + "Kt"))
+            classes[packagePartClassId] = PackagePartProtoData(this, nameResolver, packageFqName)
+        }
+
+        return classes
+    }
+}
+
+// TODO: remove this method once AbstractJsProtoComparisonTest is fixed
 fun getProtoData(sourceFile: File, metadata: ByteArray): Map<ClassId, ProtoData> {
     val classes = hashMapOf<ClassId, ProtoData>()
     val proto = ProtoBuf.PackageFragment.parseFrom(metadata, JsSerializerProtocol.extensionRegistry)

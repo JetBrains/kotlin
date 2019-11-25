@@ -12,7 +12,7 @@ FILE: extensionReceiverInference.kt
     public final fun <X> R|X|.baz(): R|kotlin/Int| {
         ^baz Int(1)
     }
-    public final fun foo(x: R|kotlin/Function1<A, kotlin/Int>|): R|kotlin/Unit| {
+    public final fun foo(x: R|(A) -> kotlin/Int|): R|kotlin/Unit| {
     }
     public final fun main(): R|kotlin/Unit| {
         R|/foo|(Q|A|::R|/prop<A>|)

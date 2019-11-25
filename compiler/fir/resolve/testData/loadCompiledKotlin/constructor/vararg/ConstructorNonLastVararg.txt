@@ -1,4 +1,4 @@
 public final class A : R|kotlin/Any| {
-    public constructor(vararg a: R|kotlin/IntArray|, f: R|kotlin/Function0<kotlin/Unit>|): R|test/A|
+    public constructor(vararg a: R|kotlin/IntArray|, f: R|() -> kotlin/Unit|): R|test/A|
 
 }

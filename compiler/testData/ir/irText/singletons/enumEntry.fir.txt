@@ -55,6 +55,10 @@ FILE fqName:<root> fileName:/enumEntry.kt
     FUN name:values visibility:public modality:FINAL <> ($this:<root>.Z) returnType:kotlin.Array<<root>.Z>
       $this: VALUE_PARAMETER name:<this> type:<root>.Z
       BLOCK_BODY
+    FUN name:valueOf visibility:public modality:FINAL <> ($this:<root>.Z, value:kotlin.String) returnType:<root>.Z
+      $this: VALUE_PARAMETER name:<this> type:<root>.Z
+      VALUE_PARAMETER name:value index:0 type:kotlin.String
+      BLOCK_BODY
     FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum) returnType:kotlin.Any [fake_override]
       overridden:
         protected final fun clone (): kotlin.Any declared in kotlin.Enum

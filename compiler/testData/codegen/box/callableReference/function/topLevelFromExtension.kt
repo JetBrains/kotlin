@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 fun <T> run(arg1: T, arg2: T, funRef:(T,T) -> T): T {
     return funRef(arg1, arg2)
 }

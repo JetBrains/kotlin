@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 fun test(x: Int): Int {
     x myMap {
         return@myMap

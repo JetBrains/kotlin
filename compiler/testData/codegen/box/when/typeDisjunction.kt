@@ -10,6 +10,3 @@ fun foo(s: Any): String {
 }
 
 fun box() = if (foo("OK") == "OK" && foo(42) == "42" && foo(true) == "") "OK" else "Fail"
-
-
-

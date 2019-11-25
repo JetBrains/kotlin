@@ -48,4 +48,7 @@ FILE: enum.kt
         public final static fun values(): R|kotlin/Array<SomeEnum>| {
         }
 
+        public final static fun valueOf(value: R|kotlin/String|): R|SomeEnum| {
+        }
+
     }

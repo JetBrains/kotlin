@@ -1,5 +1,5 @@
 public final class ExtValPIntInClass<P> : R|kotlin/Any| {
-    public final var R|P|.asas: R|kotlin/Int|
+    public final var R|P?|.asas: R|kotlin/Int|
         public get(): R|kotlin/Int|
         public set(value: R|kotlin/Int|): R|kotlin/Unit|
 

@@ -16,21 +16,16 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 
 
 interface IrDeclarationReference : IrExpression {
-    val descriptor: DeclarationDescriptor
     val symbol: IrSymbol
 }
 
-interface IrGetSingletonValue : IrDeclarationReference {
-    override val descriptor: ClassDescriptor
-}
+interface IrGetSingletonValue : IrDeclarationReference
 
 interface IrGetObjectValue : IrGetSingletonValue {
     override val symbol: IrClassSymbol

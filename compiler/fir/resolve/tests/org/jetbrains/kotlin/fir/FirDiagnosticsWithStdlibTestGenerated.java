@@ -68,6 +68,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         runTest("compiler/fir/resolve/testData/resolve/stdlib/concurrent.kt");
     }
 
+    @TestMetadata("emptyArray.kt")
+    public void testEmptyArray() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/stdlib/emptyArray.kt");
+    }
+
     @TestMetadata("exception.kt")
     public void testException() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/stdlib/exception.kt");
@@ -98,6 +103,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         runTest("compiler/fir/resolve/testData/resolve/stdlib/implicitReceiverOrder.kt");
     }
 
+    @TestMetadata("listPlusAssign.kt")
+    public void testListPlusAssign() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/stdlib/listPlusAssign.kt");
+    }
+
     @TestMetadata("mapList.kt")
     public void testMapList() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/stdlib/mapList.kt");
@@ -106,6 +116,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
     @TestMetadata("multipleImplicitReceivers.kt")
     public void testMultipleImplicitReceivers() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/stdlib/multipleImplicitReceivers.kt");
+    }
+
+    @TestMetadata("nullableTypeParameter.kt")
+    public void testNullableTypeParameter() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/stdlib/nullableTypeParameter.kt");
     }
 
     @TestMetadata("problems.kt")
@@ -381,6 +396,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
             runTest("compiler/fir/resolve/testData/resolve/stdlib/j+k/FunctionTypeInJava.kt");
         }
 
+        @TestMetadata("JavaVisibility2.kt")
+        public void testJavaVisibility2() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/stdlib/j+k/JavaVisibility2.kt");
+        }
+
         @TestMetadata("KJKComplexHierarchy.kt")
         public void testKJKComplexHierarchy() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/stdlib/j+k/KJKComplexHierarchy.kt");
@@ -444,6 +464,39 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         @TestMetadata("RawType.kt")
         public void testRawType() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/stdlib/j+k/RawType.kt");
+        }
+
+        @TestMetadata("StaticClassConstructorFromBaseClass.kt")
+        public void testStaticClassConstructorFromBaseClass() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/stdlib/j+k/StaticClassConstructorFromBaseClass.kt");
+        }
+
+        @TestMetadata("StaticFromBaseClass.kt")
+        public void testStaticFromBaseClass() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/stdlib/j+k/StaticFromBaseClass.kt");
+        }
+
+        @TestMetadata("StaticGenericMethod.kt")
+        public void testStaticGenericMethod() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/stdlib/j+k/StaticGenericMethod.kt");
+        }
+    }
+
+    @TestMetadata("compiler/fir/resolve/testData/resolve/stdlib/problems")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Problems extends AbstractFirDiagnosticsWithStdlibTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInProblems() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/stdlib/problems"), Pattern.compile("^([^.]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("unresolvedComparator.kt")
+        public void testUnresolvedComparator() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/stdlib/problems/unresolvedComparator.kt");
         }
     }
 }

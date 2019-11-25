@@ -1,0 +1,14 @@
+package test
+
+public open class InnerClassTypeAnnotation {
+    public constructor InnerClassTypeAnnotation()
+
+    @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) public final annotation class Foo : kotlin.Annotation {
+        public constructor Foo()
+    }
+
+    public open inner class Inner {
+        public constructor Inner(/*0*/ @test.InnerClassTypeAnnotation.Foo p0: @test.InnerClassTypeAnnotation.Foo kotlin.String!)
+        @test.InnerClassTypeAnnotation.Foo public open fun bar(/*0*/ p0: kotlin.String!, /*1*/ @test.InnerClassTypeAnnotation.Foo p1: @test.InnerClassTypeAnnotation.Foo kotlin.String!): @test.InnerClassTypeAnnotation.Foo kotlin.String!
+    }
+}

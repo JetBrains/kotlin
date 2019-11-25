@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.test
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.module.Module
-import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModifiableRootModel
@@ -33,6 +32,7 @@ import com.intellij.openapi.vfs.VfsUtil
 import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
@@ -109,7 +109,7 @@ object ConfigLibraryUtil {
             val rootModel = rootManager.modifiableModel
 
             assertNotNull(
-                ProjectJdkTable.getInstance().findJdk(sdk.name),
+                getProjectJdkTableSafe().findJdk(sdk.name),
                 "Cannot find sdk in ProjectJdkTable. This may cause sdk leak.\n" +
                         "You can use ProjectPluginTestBase.addJdk(Disposable ...) to register sdk in ProjectJdkTable.\n" +
                         "Then sdk will be removed in tearDown"

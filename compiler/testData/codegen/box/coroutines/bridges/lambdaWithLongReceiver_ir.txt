@@ -1,5 +1,5 @@
 @kotlin.Metadata
-final class LambdaWithLongReceiver_irKt$$call$Continuation {
+final class LambdaWithLongReceiverKt$$call$Continuation {
     field label: int
     @org.jetbrains.annotations.NotNull field result: java.lang.Object
     public method <init>(@org.jetbrains.annotations.Nullable p0: kotlin.coroutines.Continuation): void
@@ -8,10 +8,10 @@ final class LambdaWithLongReceiver_irKt$$call$Continuation {
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
-final class LambdaWithLongReceiver_irKt$box$1$1 {
+final class LambdaWithLongReceiverKt$box$1$1 {
     private field $p: long
     private field label: int
-    inner class LambdaWithLongReceiver_irKt$box$1$1
+    inner class LambdaWithLongReceiverKt$box$1$1
     public method <init>(): void
     public method <init>(@org.jetbrains.annotations.Nullable p0: kotlin.coroutines.Continuation): void
     public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
@@ -21,11 +21,11 @@ final class LambdaWithLongReceiver_irKt$box$1$1 {
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
-final class LambdaWithLongReceiver_irKt$box$1 {
+final class LambdaWithLongReceiverKt$box$1 {
     private field $res: kotlin.jvm.internal.Ref$ObjectRef
     field L$0: java.lang.Object
     private field label: int
-    inner class LambdaWithLongReceiver_irKt$box$1
+    inner class LambdaWithLongReceiverKt$box$1
     public method <init>(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.internal.Ref$ObjectRef): void
     public method <init>(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.internal.Ref$ObjectRef, @org.jetbrains.annotations.Nullable p1: kotlin.coroutines.Continuation): void
     public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
@@ -34,9 +34,9 @@ final class LambdaWithLongReceiver_irKt$box$1 {
 }
 
 @kotlin.Metadata
-public final class LambdaWithLongReceiver_irKt {
-    inner class LambdaWithLongReceiver_irKt$box$1
-    inner class LambdaWithLongReceiver_irKt$box$1$1
+public final class LambdaWithLongReceiverKt {
+    inner class LambdaWithLongReceiverKt$box$1
+    inner class LambdaWithLongReceiverKt$box$1$1
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method builder(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): void
     public final static @org.jetbrains.annotations.Nullable method call(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function2, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object

@@ -5,4 +5,5 @@
 
 package org.jetbrains.kotlin.idea.scratch.output
 
+// BUNCH: 183
 inline fun executeCommand(crossinline command: () -> Unit) = com.intellij.openapi.command.executeCommand(command = command)

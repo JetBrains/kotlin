@@ -57,6 +57,7 @@ class JavaSymbolProvider(
     override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> =
         emptyList()
 
+    // NB: looks like it's better not to use this function at all...
     override fun getClassDeclaredMemberScope(classId: ClassId): FirScope? {
         val classSymbol = getClassLikeSymbolByFqName(classId) ?: return null
         return declaredMemberScope(classSymbol.fir)
@@ -92,7 +93,11 @@ class JavaSymbolProvider(
         visitedSymbols: MutableSet<FirClassLikeSymbol<*>>
     ): JavaClassUseSiteMemberScope {
         return scopeSession.getOrBuild(regularClass.symbol, JAVA_USE_SITE) {
-            val declaredScope = declaredMemberScope(regularClass)
+            val declaredScope = declaredMemberScope(
+                regularClass,
+                useLazyNestedClassifierScope = regularClass is FirJavaClass,
+                existingNames = (regularClass as? FirJavaClass)?.existingNestedClassifierNames
+            )
             val superTypeEnhancementScopes =
                 lookupSuperTypes(regularClass, lookupInterfaces = true, deep = false, useSiteSession = useSiteSession)
                     .mapNotNull { useSiteSuperType ->
@@ -136,7 +141,7 @@ class JavaSymbolProvider(
     ) {
         require(this is FirTypeParameterImpl)
         for (upperBound in javaTypeParameter.upperBounds) {
-            bounds += upperBound.toFirResolvedTypeRef(this@JavaSymbolProvider.session, stack)
+            bounds += upperBound.toFirResolvedTypeRef(this@JavaSymbolProvider.session, stack, isNullable = true)
         }
         addDefaultBoundIfNecessary()
     }
@@ -146,7 +151,9 @@ class JavaSymbolProvider(
             .map { it.toFirTypeParameter(stack) }
             .also {
                 it.forEachIndexed { index, typeParameter ->
-                    typeParameter.addBounds(this[index], stack)
+                    if (typeParameter.bounds.isEmpty()) {
+                        typeParameter.addBounds(this[index], stack)
+                    }
                 }
             }
     }
@@ -181,7 +188,8 @@ class JavaSymbolProvider(
                     javaClass.visibility, javaClass.modality,
                     javaClass.classKind, isTopLevel = isTopLevel,
                     isStatic = javaClass.isStatic,
-                    javaTypeParameterStack = javaTypeParameterStack
+                    javaTypeParameterStack = javaTypeParameterStack,
+                    existingNestedClassifierNames = javaClass.innerClassNames.toList()
                 ).apply {
                     this.typeParameters += foundClass.typeParameters.convertTypeParameters(javaTypeParameterStack)
                     addAnnotationsFrom(this@JavaSymbolProvider.session, javaClass, javaTypeParameterStack)
@@ -221,9 +229,9 @@ class JavaSymbolProvider(
                         ).apply {
                             this.typeParameters += javaMethod.typeParameters.convertTypeParameters(javaTypeParameterStack)
                             addAnnotationsFrom(this@JavaSymbolProvider.session, javaMethod, javaTypeParameterStack)
-                            for (valueParameter in javaMethod.valueParameters) {
-                                valueParameters += valueParameter.toFirValueParameters(
-                                    this@JavaSymbolProvider.session, javaTypeParameterStack
+                            for ((index, valueParameter) in javaMethod.valueParameters.withIndex()) {
+                                valueParameters += valueParameter.toFirValueParameter(
+                                    this@JavaSymbolProvider.session, index, javaTypeParameterStack
                                 )
                             }
                         }
@@ -269,9 +277,9 @@ class JavaSymbolProvider(
                         ).apply {
                             this.typeParameters += javaConstructor.typeParameters.convertTypeParameters(javaTypeParameterStack)
                             addAnnotationsFrom(this@JavaSymbolProvider.session, javaConstructor, javaTypeParameterStack)
-                            for (valueParameter in javaConstructor.valueParameters) {
-                                valueParameters += valueParameter.toFirValueParameters(
-                                    this@JavaSymbolProvider.session, javaTypeParameterStack
+                            for ((index, valueParameter) in javaConstructor.valueParameters.withIndex()) {
+                                valueParameters += valueParameter.toFirValueParameter(
+                                    this@JavaSymbolProvider.session, index, javaTypeParameterStack
                                 )
                             }
                         }

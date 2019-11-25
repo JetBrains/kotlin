@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 class Range(val from : C, val to: C) {
     operator fun iterator() = It(from, to)
 }

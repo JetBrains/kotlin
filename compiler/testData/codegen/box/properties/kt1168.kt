@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 public abstract class BaseClass() {
     protected abstract val kind : String
 

@@ -10,9 +10,11 @@ import org.jetbrains.kotlin.name.Name
 
 abstract class ConeClassifierLookupTag {
     abstract val name: Name
+
+    override fun toString(): String {
+        return name.asString()
+    }
 }
-
-
 
 abstract class ConeClassLikeLookupTag : ConeClassifierLookupTag() {
     abstract val classId: ClassId
@@ -20,6 +22,4 @@ abstract class ConeClassLikeLookupTag : ConeClassifierLookupTag() {
     override val name: Name
         get() = classId.shortClassName
 }
-
-abstract class ConeTypeAliasLookupTag : ConeClassLikeLookupTag()
 

@@ -2,10 +2,10 @@
 // DISABLE-ERRORS
 class A(private var name: String) : JavaInterface {
     override fun setName(name: String?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        TODO("Not yet implemented")
     }
 
     override fun getName(): String {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        TODO("Not yet implemented")
     }
 }

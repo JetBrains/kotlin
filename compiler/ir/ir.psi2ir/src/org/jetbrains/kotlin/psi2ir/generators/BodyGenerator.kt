@@ -261,8 +261,7 @@ class BodyGenerator(
             IrDelegatingConstructorCallImpl(
                 ktElement.pureStartOffset, ktElement.pureEndOffset,
                 context.irBuiltIns.unitType,
-                context.symbolTable.referenceConstructor(anyConstructor),
-                anyConstructor
+                context.symbolTable.referenceConstructor(anyConstructor)
             )
         )
     }

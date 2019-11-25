@@ -1,6 +1,6 @@
 FILE fqName:<root> fileName:/typeParameterWithPrimitiveNumericSupertype.kt
   FUN name:test0 visibility:public modality:FINAL <T> (x:kotlin.Any, y:T of <root>.test0) returnType:kotlin.Boolean
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
     VALUE_PARAMETER name:x index:0 type:kotlin.Any
     VALUE_PARAMETER name:y index:1 type:T of <root>.test0
     BLOCK_BODY
@@ -16,7 +16,7 @@ FILE fqName:<root> fileName:/typeParameterWithPrimitiveNumericSupertype.kt
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
   FUN name:test1 visibility:public modality:FINAL <T> (x:kotlin.Any, y:T of <root>.test1) returnType:kotlin.Boolean
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Float]
     VALUE_PARAMETER name:x index:0 type:kotlin.Any
     VALUE_PARAMETER name:y index:1 type:T of <root>.test1
     BLOCK_BODY
@@ -32,7 +32,7 @@ FILE fqName:<root> fileName:/typeParameterWithPrimitiveNumericSupertype.kt
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
   FUN name:test2 visibility:public modality:FINAL <T> (x:kotlin.Any, y:T of <root>.test2) returnType:kotlin.Boolean
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Double]
     VALUE_PARAMETER name:x index:0 type:kotlin.Any
     VALUE_PARAMETER name:y index:1 type:T of <root>.test2
     BLOCK_BODY
@@ -48,7 +48,7 @@ FILE fqName:<root> fileName:/typeParameterWithPrimitiveNumericSupertype.kt
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
   FUN name:test3 visibility:public modality:FINAL <T> (x:kotlin.Any, y:T of <root>.test3) returnType:kotlin.Boolean
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Float]
     VALUE_PARAMETER name:x index:0 type:kotlin.Any
     VALUE_PARAMETER name:y index:1 type:T of <root>.test3
     BLOCK_BODY
@@ -64,7 +64,7 @@ FILE fqName:<root> fileName:/typeParameterWithPrimitiveNumericSupertype.kt
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
   FUN name:test4 visibility:public modality:FINAL <T> (x:kotlin.Any, y:T of <root>.test4) returnType:kotlin.Boolean
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Float?]
     VALUE_PARAMETER name:x index:0 type:kotlin.Any
     VALUE_PARAMETER name:y index:1 type:T of <root>.test4
     BLOCK_BODY
@@ -80,8 +80,8 @@ FILE fqName:<root> fileName:/typeParameterWithPrimitiveNumericSupertype.kt
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
   FUN name:test5 visibility:public modality:FINAL <T, R> (x:kotlin.Any, y:R of <root>.test5) returnType:kotlin.Boolean
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[]
-    TYPE_PARAMETER name:R index:0 variance: superTypes:[]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Float?]
+    TYPE_PARAMETER name:R index:0 variance: superTypes:[T of <root>.test5]
     VALUE_PARAMETER name:x index:0 type:kotlin.Any
     VALUE_PARAMETER name:y index:1 type:R of <root>.test5
     BLOCK_BODY
@@ -97,7 +97,7 @@ FILE fqName:<root> fileName:/typeParameterWithPrimitiveNumericSupertype.kt
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
   FUN name:test6 visibility:public modality:FINAL <T> (x:kotlin.Any, y:T of <root>.test6) returnType:kotlin.Boolean
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Number]
     VALUE_PARAMETER name:x index:0 type:kotlin.Any
     VALUE_PARAMETER name:y index:1 type:T of <root>.test6
     BLOCK_BODY
@@ -114,7 +114,7 @@ FILE fqName:<root> fileName:/typeParameterWithPrimitiveNumericSupertype.kt
             then: CONST Boolean type=kotlin.Boolean value=false
   CLASS CLASS name:F modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.F
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Float]
     CONSTRUCTOR visibility:public <> () returnType:<root>.F<T of <uninitialized parent>> [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'

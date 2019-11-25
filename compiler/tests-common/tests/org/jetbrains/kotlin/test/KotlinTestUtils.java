@@ -740,6 +740,22 @@ public class KotlinTestUtils {
     }
 
     private static void runTestImpl(@NotNull DoTest test, @Nullable TestCase testCase, String testDataFilePath) throws Exception {
+        if (testCase != null) {
+            Function0<Unit> wrapWithMuteInDatabase = MuteWithDatabaseKt.wrapWithMuteInDatabase(testCase, () -> {
+                try {
+                    test.invoke(testDataFilePath);
+                }
+                catch (Exception e) {
+                    throw new IllegalStateException(e);
+                }
+                return null;
+            });
+            if (wrapWithMuteInDatabase != null) {
+                wrapWithMuteInDatabase.invoke();
+                return;
+            }
+        }
+
         DoTest wrappedTest = testCase != null ?
                              MuteWithFileKt.testWithMuteInFile(test, testCase) :
                              MuteWithFileKt.testWithMuteInFile(test, "");
@@ -769,7 +785,7 @@ public class KotlinTestUtils {
             catch (Throwable e) {
                 if (!isIgnored && AUTOMATICALLY_MUTE_FAILED_TESTS) {
                     String text = doLoadFile(testDataFile);
-                    String directive = InTextDirectivesUtils.IGNORE_BACKEND_DIRECTIVE_PREFIX + targetBackend.name() + "\n";
+                    String directive = ignoreDirective + targetBackend.name() + "\n";
 
                     String newText;
                     if (text.startsWith("// !")) {
@@ -808,7 +824,7 @@ public class KotlinTestUtils {
             if (isIgnored) {
                 if (AUTOMATICALLY_UNMUTE_PASSED_TESTS) {
                     String text = doLoadFile(testDataFile);
-                    String directive = InTextDirectivesUtils.IGNORE_BACKEND_DIRECTIVE_PREFIX + targetBackend.name();
+                    String directive = ignoreDirective + targetBackend.name();
                     String newText = Pattern.compile("^" + directive + "\n", Pattern.MULTILINE).matcher(text).replaceAll("");
                     if (!newText.equals(text)) {
                         System.err.println("\"" + directive + "\" was removed from \"" + testDataFile + "\"");

@@ -69,7 +69,8 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
         String suffix =
                 (coroutinesPackage.contains("experimental") || coroutinesPackage.isEmpty())
                 && InTextDirectivesUtils.isDirectiveDefined(FileUtil.loadFile(wholeFile), "COMMON_COROUTINES_TEST")
-                ? "_1_2" : "";
+                ? "_1_2" :
+                getBackend().isIR() ? "_ir" : "";
         File expectedFile = new File(wholeFile.getParent(), FilesKt.getNameWithoutExtension(wholeFile) + suffix + ".txt");
 
         String text =

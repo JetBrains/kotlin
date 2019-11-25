@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 
 class JvmDefaultArgumentStubGenerator(override val context: JvmBackendContext) : DefaultArgumentStubGenerator(context, false, false) {
     override fun IrBlockBodyBuilder.selectArgumentOrDefault(
-        shouldUseDefault: IrExpression,
+        defaultFlag: IrExpression,
         parameter: IrValueParameter,
         default: IrExpression
     ): IrValueDeclaration {
@@ -36,7 +36,7 @@ class JvmDefaultArgumentStubGenerator(override val context: JvmBackendContext) :
         //
         // This control flow limits us to an if-then (without an else), and this together with the
         // restriction on loading the parameter in the default case means we cannot create any temporaries.
-        +irIfThen(shouldUseDefault, irCall(this@JvmDefaultArgumentStubGenerator.context.ir.symbols.reassignParameterIntrinsic).apply {
+        +irIfThen(defaultFlag, irCall(this@JvmDefaultArgumentStubGenerator.context.ir.symbols.reassignParameterIntrinsic).apply {
             putTypeArgument(0, parameter.type)
             putValueArgument(0, irGet(parameter))
             putValueArgument(1, default)

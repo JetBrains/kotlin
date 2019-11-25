@@ -29,7 +29,7 @@ class ScriptTrafficLightRendererContributor : TrafficLightRendererContributor {
             if (!ScriptDefinitionsManager.getInstance(file.project).isReady()) {
                 status.reasonWhySuspended = "Loading kotlin script definitions"
                 status.errorAnalyzingFinished = false
-            } else if (!ScriptConfigurationManager.getInstance(project).isConfigurationCached(file)) {
+            } else if (!ScriptConfigurationManager.getInstance(project).hasConfiguration(file)) {
                 status.reasonWhySuspended = "Loading kotlin script dependencies"
                 status.errorAnalyzingFinished = false
             }

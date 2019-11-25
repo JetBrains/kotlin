@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 operator fun String.get(vararg value: Any) : String {
     return if (value[0] == 44 && value[1] == "example") "OK" else "fail"
 }

@@ -16,13 +16,38 @@ import org.jetbrains.kotlin.fir.types.ConeTypeContext
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.types.AbstractStrictEqualityTypeChecker.strictEqualTypes
+import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 
 class FirStandardOverrideChecker(session: FirSession) : FirAbstractOverrideChecker() {
 
     private val context: ConeTypeContext = session.typeContext
 
-    private fun isEqualTypes(candidateType: ConeKotlinType, baseType: ConeKotlinType, substitutor: ConeSubstitutor) =
-        strictEqualTypes(context, substitutor.substituteOrSelf(candidateType), substitutor.substituteOrSelf(baseType))
+    private fun isEqualTypes(candidateType: ConeKotlinType, baseType: ConeKotlinType, substitutor: ConeSubstitutor): Boolean{
+        val substitutedCandidateType = substitutor.substituteOrSelf(candidateType)
+        val substitutedBaseType = substitutor.substituteOrSelf(baseType)
+        return with(context) {
+            val baseIsFlexible = substitutedBaseType.isFlexible()
+            val candidateIsFlexible = substitutedCandidateType.isFlexible()
+            if (baseIsFlexible == candidateIsFlexible) {
+                return strictEqualTypes(context, substitutedCandidateType, substitutedBaseType)
+            }
+            val lowerBound: SimpleTypeMarker
+            val upperBound: SimpleTypeMarker
+            val type: KotlinTypeMarker
+            if (baseIsFlexible) {
+                lowerBound = substitutedBaseType.lowerBoundIfFlexible()
+                upperBound = substitutedBaseType.upperBoundIfFlexible()
+                type = substitutedCandidateType
+            } else {
+                lowerBound = substitutedCandidateType.lowerBoundIfFlexible()
+                upperBound = substitutedCandidateType.upperBoundIfFlexible()
+                type = substitutedBaseType
+            }
+            AbstractTypeChecker.isSubtypeOf(context, lowerBound, type) && AbstractTypeChecker.isSubtypeOf(context, type, upperBound)
+        }
+    }
 
     override fun isEqualTypes(candidateTypeRef: FirTypeRef, baseTypeRef: FirTypeRef, substitutor: ConeSubstitutor) =
         isEqualTypes((candidateTypeRef as FirResolvedTypeRef).type, (baseTypeRef as FirResolvedTypeRef).type, substitutor)

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 class Wrapper<T>(var x: T)
 
 inline fun <reified T> change(w: Wrapper<T>, x: Any?) {

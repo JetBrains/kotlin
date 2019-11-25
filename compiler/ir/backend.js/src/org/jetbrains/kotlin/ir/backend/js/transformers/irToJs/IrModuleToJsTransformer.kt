@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.ir.backend.js.CompilerResult
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.export.ExportModelGenerator
 import org.jetbrains.kotlin.ir.backend.js.export.ExportModelToJsStatements
-import org.jetbrains.kotlin.ir.backend.js.lower.StaticMembersLowering
 import org.jetbrains.kotlin.ir.backend.js.export.toTypeScript
+import org.jetbrains.kotlin.ir.backend.js.lower.StaticMembersLowering
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -31,30 +31,59 @@ class IrModuleToJsTransformer(
 ) {
     val moduleName = backendContext.configuration[CommonConfigurationKeys.MODULE_NAME]!!
     private val moduleKind = backendContext.configuration[JSConfigurationKeys.MODULE_KIND]!!
+    private val generateRegionComments = backendContext.configuration.getBoolean(JSConfigurationKeys.GENERATE_REGION_COMMENTS)
 
     private fun generateModuleBody(module: IrModuleFragment, context: JsGenerationContext): List<JsStatement> {
         val statements = mutableListOf<JsStatement>().also {
             if (!generateScriptModule) it += JsStringLiteral("use strict").makeStmt()
         }
 
-        val preDeclarationBlock = JsBlock()
-        val postDeclarationBlock = JsBlock()
+        val preDeclarationBlock = JsGlobalBlock()
+        val postDeclarationBlock = JsGlobalBlock()
 
-        statements += preDeclarationBlock
+        statements.addWithComment("block: pre-declaration", preDeclarationBlock)
+
+        val generateFilePaths = backendContext.configuration.getBoolean(JSConfigurationKeys.GENERATE_COMMENTS_WITH_FILE_PATH)
+        val pathPrefixMap = backendContext.configuration.getMap(JSConfigurationKeys.FILE_PATHS_PREFIX_MAP)
 
         module.files.forEach {
-            statements.add(JsDocComment(mapOf("file" to it.path)).makeStmt())
-            statements.addAll(it.accept(IrFileToJsTransformer(), context).statements)
+            val fileStatements = it.accept(IrFileToJsTransformer(), context).statements
+            if (fileStatements.isNotEmpty()) {
+                var startComment = ""
+
+                if (generateRegionComments) {
+                    startComment = "region "
+                }
+
+                if (generateRegionComments || generateFilePaths) {
+                    val originalPath = it.path
+                    val path = pathPrefixMap.entries
+                        .find { (k, _) -> originalPath.startsWith(k) }
+                        ?.let { (k, v) -> v + originalPath.substring(k.length) }
+                        ?: originalPath
+
+                    startComment += "file: $path"
+                }
+
+                if (startComment.isNotEmpty()) {
+                    statements.add(JsSingleLineComment(startComment))
+                }
+
+                statements.addAll(fileStatements)
+                statements.endRegion()
+            }
         }
 
         // sort member forwarding code
         processClassModels(context.staticContext.classModels, preDeclarationBlock, postDeclarationBlock)
 
-        statements += postDeclarationBlock
-        statements += context.staticContext.initializerBlock
+        statements.addWithComment("block: post-declaration", postDeclarationBlock.statements)
+        statements.addWithComment("block: init", context.staticContext.initializerBlock.statements)
 
         if (backendContext.hasTests) {
+            statements.startRegion("block: tests")
             statements += JsInvocation(context.getNameForStaticFunction(backendContext.testContainer).makeRef()).makeStmt()
+            statements.endRegion()
         }
 
         return statements
@@ -104,18 +133,18 @@ class IrModuleToJsTransformer(
 
         if (generateScriptModule) {
             with(program.globalBlock) {
-                statements += importStatements
+                statements.addWithComment("block: imports", importStatements)
                 statements += moduleBody
-                statements += exportStatements
+                statements.addWithComment("block: exports", exportStatements)
             }
         } else {
             with(rootFunction) {
                 parameters += JsParameter(internalModuleName)
                 parameters += importedJsModules.map { JsParameter(it.internalName) }
                 with(body) {
-                    statements += importStatements
+                    statements.addWithComment("block: imports", importStatements)
                     statements += moduleBody
-                    statements += exportStatements
+                    statements.addWithComment("block: exports", exportStatements)
                     statements += generateCallToMain(rootContext)
                     statements += JsReturn(internalModuleName.makeRef())
                 }
@@ -224,5 +253,31 @@ class IrModuleToJsTransformer(
             { klass -> classModelMap[klass]?.superClasses ?: emptyList() },
             declarationHandler
         )
+    }
+
+    private fun MutableList<JsStatement>.startRegion(description: String = "") {
+        if (generateRegionComments) {
+            this += JsSingleLineComment("region $description")
+        }
+    }
+
+    private fun MutableList<JsStatement>.endRegion() {
+        if (generateRegionComments) {
+            this += JsSingleLineComment("endregion")
+        }
+    }
+
+    private fun MutableList<JsStatement>.addWithComment(regionDescription: String = "", block: JsBlock) {
+        startRegion(regionDescription)
+        this += block
+        endRegion()
+    }
+
+    private fun MutableList<JsStatement>.addWithComment(regionDescription: String = "", statements: List<JsStatement>) {
+        if (statements.isEmpty()) return
+
+        startRegion(regionDescription)
+        this += statements
+        endRegion()
     }
 }

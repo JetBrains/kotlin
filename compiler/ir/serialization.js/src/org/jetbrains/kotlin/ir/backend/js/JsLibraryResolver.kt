@@ -33,7 +33,8 @@ class JsLibraryResolver(
     distributionKlib,
     localKotlinDir,
     skipCurrentDir,
-    logger
+    logger,
+    emptyList()
 ) {
     // Stick with the default KotlinLibrary for now.
     override fun libraryBuilder(file: File, isDefault: Boolean) = createKotlinLibrary(file, isDefault)

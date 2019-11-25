@@ -56,4 +56,11 @@ interface KlibMetadataModuleDescriptorFactory {
         configuration: DeserializationConfiguration,
         compositePackageFragmentAddend: PackageFragmentProvider?
     ): PackageFragmentProvider
+
+    fun createCachedPackageFragmentProvider(
+        byteArrays: List<ByteArray>,
+        storageManager: StorageManager,
+        moduleDescriptor: ModuleDescriptor,
+        configuration: DeserializationConfiguration
+    ): PackageFragmentProvider
 }

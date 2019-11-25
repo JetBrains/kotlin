@@ -8,8 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.substitution
 import org.jetbrains.kotlin.fir.resolve.withNullability
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.impl.ConeAbbreviatedTypeImpl
-import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
 
 
@@ -68,8 +67,7 @@ abstract class AbstractConeSubstitutor : ConeSubstitutor() {
     private fun ConeKotlinType.substituteRecursive(): ConeKotlinType? {
         return when (this) {
             is ConeClassErrorType -> return null
-            is ConeClassType -> this.substituteArguments()
-            is ConeAbbreviatedType -> this.substituteArguments()
+            is ConeClassLikeType -> this.substituteArguments()
             is ConeLookupTagBasedType -> return null
             is ConeFlexibleType -> this.substituteBounds()
             is ConeCapturedType -> return null
@@ -93,7 +91,7 @@ abstract class AbstractConeSubstitutor : ConeSubstitutor() {
     }
 
     private fun ConeDefinitelyNotNullType.substituteOriginal(): ConeDefinitelyNotNullType? {
-        TODO()
+        return ConeDefinitelyNotNullType.create(substituteType(original)?.withNullability(ConeNullability.NOT_NULL) ?: original)
     }
 
     private fun ConeFlexibleType.substituteBounds(): ConeFlexibleType? {
@@ -125,13 +123,8 @@ abstract class AbstractConeSubstitutor : ConeSubstitutor() {
             }
             @Suppress("UNCHECKED_CAST")
             return when (this) {
-                is ConeClassTypeImpl -> ConeClassTypeImpl(
+                is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(
                     lookupTag,
-                    newArguments as Array<ConeKotlinTypeProjection>,
-                    nullability.isNullable
-                )
-                is ConeAbbreviatedTypeImpl -> ConeAbbreviatedTypeImpl(
-                    abbreviationLookupTag,
                     newArguments as Array<ConeKotlinTypeProjection>,
                     nullability.isNullable
                 )
@@ -144,7 +137,6 @@ abstract class AbstractConeSubstitutor : ConeSubstitutor() {
 
 
 }
-
 
 fun substitutorByMap(substitution: Map<FirTypeParameterSymbol, ConeKotlinType>): ConeSubstitutor {
     if (substitution.isEmpty()) return ConeSubstitutor.Empty

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.backend
 
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -37,10 +36,12 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
 import org.jetbrains.kotlin.ir.types.makeNullable
@@ -218,7 +219,8 @@ class Fir2IrVisitor(
                         }
                     } else if (fakeOverrideMode != FakeOverrideMode.SUBSTITUTION) {
                         // Trivial fake override case
-                        val fakeOverrideSymbol = FirClassSubstitutionScope.createFakeOverrideFunction(session, originalFunction, functionSymbol)
+                        val fakeOverrideSymbol =
+                            FirClassSubstitutionScope.createFakeOverrideFunction(session, originalFunction, functionSymbol)
                         val fakeOverrideFunction = fakeOverrideSymbol.fir
 
                         val irFunction = declarationStorage.getIrFunction(
@@ -246,7 +248,8 @@ class Fir2IrVisitor(
                         }
                     } else if (fakeOverrideMode != FakeOverrideMode.SUBSTITUTION) {
                         // Trivial fake override case
-                        val fakeOverrideSymbol = FirClassSubstitutionScope.createFakeOverrideProperty(session, originalProperty, propertySymbol)
+                        val fakeOverrideSymbol =
+                            FirClassSubstitutionScope.createFakeOverrideProperty(session, originalProperty, propertySymbol)
                         val fakeOverrideProperty = fakeOverrideSymbol.fir
 
                         val irProperty = declarationStorage.getIrProperty(
@@ -322,11 +325,6 @@ class Fir2IrVisitor(
     ): T {
         setParentByParentStack()
         withParent {
-            if (firFunction is FirSimpleFunction) {
-                for ((index, typeParameter) in firFunction.typeParameters.withIndex()) {
-                    typeParameters += declarationStorage.getIrTypeParameter(typeParameter, index).setParentByParentStack()
-                }
-            }
             val firFunctionSymbol = (firFunction as? FirSimpleFunction)?.symbol
             val lastClass = classStack.lastOrNull()
             val containingClass = if (firOverriddenSymbol == null || firFunctionSymbol == null) {
@@ -410,6 +408,7 @@ class Fir2IrVisitor(
             symbolTable.declareAnonymousInitializer(
                 startOffset, endOffset, origin, parent.descriptor
             ).apply {
+                setParentByParentStack()
                 declarationStorage.enterScope(descriptor)
                 body = anonymousInitializer.body!!.convertToIrBlockBody()
                 declarationStorage.leaveScope(descriptor)
@@ -515,7 +514,8 @@ class Fir2IrVisitor(
         }.setParentByParentStack().withParent {
             declarationStorage.enterScope(descriptor)
             val initializerExpression = firInitializerExpression?.toIrExpression()
-            this.initializer = initializerExpression?.let { IrExpressionBodyImpl(it) }
+            initializer = initializerExpression?.let { IrExpressionBodyImpl(it) }
+            correspondingPropertySymbol = this@createBackingField.symbol
             declarationStorage.leaveScope(descriptor)
         }
     }
@@ -680,8 +680,7 @@ class Fir2IrVisitor(
             when {
                 symbol is IrConstructorSymbol -> IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, type, symbol)
                 symbol is IrSimpleFunctionSymbol -> IrCallImpl(
-                    startOffset, endOffset, type, symbol, symbol.descriptor,
-                    origin = calleeReference.statementOrigin()
+                    startOffset, endOffset, type, symbol, origin = calleeReference.statementOrigin()
                 )
                 symbol is IrPropertySymbol && symbol.isBound -> {
                     val getter = symbol.owner.getter
@@ -760,6 +759,32 @@ class Fir2IrVisitor(
         }
     }
 
+    private fun IrExpression.applyTypeArguments(call: FirFunctionCall): IrExpression {
+        return when (this) {
+            is IrCallWithIndexedArgumentsBase -> {
+                val argumentsCount = call.typeArguments.size
+                if (argumentsCount <= typeArgumentsCount) {
+                    apply {
+                        for ((index, argument) in call.typeArguments.withIndex()) {
+                            val argumentIrType = (argument as FirTypeProjectionWithVariance).typeRef.toIrType(
+                                session,
+                                declarationStorage
+                            )
+                            putTypeArgument(index, argumentIrType)
+                        }
+                    }
+                } else {
+                    val name = if (this is IrCallImpl) symbol.owner.name else "???"
+                    IrErrorExpressionImpl(
+                        startOffset, endOffset, type,
+                        "Cannot bind $argumentsCount type arguments to $name call with $typeArgumentsCount type parameters"
+                    )
+                }
+            }
+            else -> this
+        }
+    }
+
     private fun IrExpression.applyReceivers(qualifiedAccess: FirQualifiedAccess): IrExpression {
         return when (this) {
             is IrCallImpl -> {
@@ -792,7 +817,8 @@ class Fir2IrVisitor(
     }
 
     override fun visitFunctionCall(functionCall: FirFunctionCall, data: Any?): IrElement {
-        return functionCall.toIrExpression(functionCall.typeRef).applyCallArguments(functionCall).applyReceivers(functionCall)
+        return functionCall.toIrExpression(functionCall.typeRef).applyCallArguments(functionCall).applyTypeArguments(functionCall)
+            .applyReceivers(functionCall)
     }
 
     override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: Any?): IrElement {
@@ -827,7 +853,7 @@ class Fir2IrVisitor(
                 is IrFunctionSymbol -> {
                     IrFunctionReferenceImpl(
                         startOffset, endOffset, type, symbol,
-                        symbol.descriptor, 0
+                        0
                     )
                 }
                 else -> {
@@ -904,7 +930,11 @@ class Fir2IrVisitor(
                 listOf(
                     anonymousClass,
                     IrConstructorCallImpl.fromSymbolOwner(
-                        startOffset, endOffset, anonymousClassType, anonymousClass.constructors.first().symbol
+                        startOffset,
+                        endOffset,
+                        anonymousClassType,
+                        anonymousClass.constructors.first().symbol,
+                        anonymousClass.typeParameters.size
                     )
                 )
             )
@@ -1145,21 +1175,22 @@ class Fir2IrVisitor(
         }
         // TODO: it's temporary hack which should be refactored
         val simpleType = when (val classId = (firstType.type as? ConeClassLikeType)?.lookupTag?.classId) {
-            ClassId(FqName("kotlin"), FqName("Long"), false) -> irBuiltIns.builtIns.longType
-            ClassId(FqName("kotlin"), FqName("Int"), false) -> irBuiltIns.builtIns.intType
-            ClassId(FqName("kotlin"), FqName("Float"), false) -> irBuiltIns.builtIns.floatType
-            ClassId(FqName("kotlin"), FqName("Double"), false) -> irBuiltIns.builtIns.doubleType
+            ClassId(FqName("kotlin"), FqName("Long"), false) -> irBuiltIns.longType
+            ClassId(FqName("kotlin"), FqName("Int"), false) -> irBuiltIns.intType
+            ClassId(FqName("kotlin"), FqName("Float"), false) -> irBuiltIns.floatType
+            ClassId(FqName("kotlin"), FqName("Double"), false) -> irBuiltIns.doubleType
             else -> {
                 return IrErrorCallExpressionImpl(
                     startOffset, endOffset, booleanType, "Comparison of arguments with unsupported type: $classId"
                 )
             }
         }
+        val classifier = simpleType.classifierOrFail
         val (symbol, origin) = when (operation) {
-            FirOperation.LT -> irBuiltIns.lessFunByOperandType[simpleType] to IrStatementOrigin.LT
-            FirOperation.GT -> irBuiltIns.greaterFunByOperandType[simpleType] to IrStatementOrigin.GT
-            FirOperation.LT_EQ -> irBuiltIns.lessOrEqualFunByOperandType[simpleType] to IrStatementOrigin.LTEQ
-            FirOperation.GT_EQ -> irBuiltIns.greaterOrEqualFunByOperandType[simpleType] to IrStatementOrigin.GTEQ
+            FirOperation.LT -> irBuiltIns.lessFunByOperandType[classifier] to IrStatementOrigin.LT
+            FirOperation.GT -> irBuiltIns.greaterFunByOperandType[classifier] to IrStatementOrigin.GT
+            FirOperation.LT_EQ -> irBuiltIns.lessOrEqualFunByOperandType[classifier] to IrStatementOrigin.LTEQ
+            FirOperation.GT_EQ -> irBuiltIns.greaterOrEqualFunByOperandType[classifier] to IrStatementOrigin.GTEQ
             else -> throw AssertionError("Unexpected comparison operation: $operation")
         }
         return primitiveOp2(startOffset, endOffset, symbol!!, booleanType, origin, first.toIrExpression(), second.toIrExpression())

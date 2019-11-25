@@ -22,10 +22,18 @@ interface PackageAccessHandler {
         library: KotlinLibrary,
         packageFqName: String,
         partName: String
-    ): ProtoBuf.PackageFragment = parsePackageFragment(library.packageMetadata(packageFqName, partName))
+    ): ProtoBuf.PackageFragment = loadPackageFragmentByteArray(library.packageMetadata(packageFqName, partName))
+
+    fun loadPackageFragmentByteArray(byteArray: ByteArray): ProtoBuf.PackageFragment = parsePackageFragment(byteArray)
 
     fun markNeededForLink(library: KotlinLibrary, fqName: String) {}
 }
 
-object SimplePackageAccessHandler : PackageAccessHandler
+object SimplePackageAccessHandler : PackageAccessHandler {
+    override fun loadPackageFragment(
+        library: KotlinLibrary,
+        packageFqName: String,
+        partName: String
+    ): ProtoBuf.PackageFragment = parsePackageFragment(library.packageMetadata(packageFqName, partName))
+}
 

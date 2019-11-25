@@ -653,6 +653,10 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         }
         nestedPush(thenStmt);
 
+        if (thenStmt instanceof JsBlock) {
+            lineBreakAfterBlock = false;
+        }
+
         sourceLocationConsumer.pushSourceInfo(null);
         accept(thenStmt);
         sourceLocationConsumer.popSourceInfo();
@@ -984,6 +988,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     public void visitTry(@NotNull JsTry x) {
         p.print(CHARS_TRY);
         spaceOpt();
+        lineBreakAfterBlock = false;
         accept(x.getTryBlock());
 
         acceptList(x.getCatches());
@@ -1039,6 +1044,14 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         }
 
         popSourceInfo();
+    }
+
+    @Override
+    public void visitSingleLineComment(@NotNull JsSingleLineComment comment) {
+        p.print("//");
+        p.print(comment.getText());
+        needSemi = false;
+        newline();
     }
 
     @Override

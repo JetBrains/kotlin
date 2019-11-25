@@ -17,11 +17,8 @@
 package org.jetbrains.kotlin.codegen.ir
 
 import org.jetbrains.kotlin.codegen.AbstractBlackBoxCodegenTest
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.test.TargetBackend
 
 abstract class AbstractIrBlackBoxInlineCodegenTest : AbstractBlackBoxCodegenTest() {
-    override fun updateConfiguration(configuration: CompilerConfiguration) = configuration.put(JVMConfigurationKeys.IR, true)
     override fun getBackend() = TargetBackend.JVM_IR
 }

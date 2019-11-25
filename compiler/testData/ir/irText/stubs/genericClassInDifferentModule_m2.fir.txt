@@ -1,7 +1,7 @@
 FILE fqName:<root> fileName:/genericClassInDifferentModule_m2.kt
   CLASS CLASS name:Derived1 modality:FINAL visibility:public superTypes:[<root>.Base<T of <root>.Derived1>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Derived1
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
     CONSTRUCTOR visibility:public <> (x:T of <uninitialized parent>) returnType:<root>.Derived1<T of <uninitialized parent>> [primary]
       VALUE_PARAMETER name:x index:0 type:T of <uninitialized parent>
       BLOCK_BODY
@@ -10,7 +10,7 @@ FILE fqName:<root> fileName:/genericClassInDifferentModule_m2.kt
           x: GET_VAR 'x: T of <uninitialized parent> declared in <root>.Derived1.<init>' type=T of <uninitialized parent> origin=null
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Derived1 modality:FINAL visibility:public superTypes:[<root>.Base<T of <root>.Derived1>]'
     FUN name:foo visibility:public modality:FINAL <Y> ($this:<root>.Derived1, y:Y of <root>.Derived1.foo) returnType:T of <root>.Derived1
-      TYPE_PARAMETER name:Y index:0 variance: superTypes:[]
+      TYPE_PARAMETER name:Y index:0 variance: superTypes:[kotlin.Any?]
       $this: VALUE_PARAMETER name:<this> type:<root>.Derived1
       VALUE_PARAMETER name:y index:0 type:Y of <root>.Derived1.foo
       BLOCK_BODY

@@ -1,4 +1,4 @@
 public open class ConstructorGenericUpperBound : R|kotlin/Any| {
-    public constructor<P : R|java/util/RandomAccess|>(p: R|ft<P, P?>!|): R|test/ConstructorGenericUpperBound|
+    public constructor<P : R|java/util/RandomAccess?|>(p: R|ft<P, P?>!|): R|test/ConstructorGenericUpperBound|
 
 }

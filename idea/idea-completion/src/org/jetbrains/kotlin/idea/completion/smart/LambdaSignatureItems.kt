@@ -20,7 +20,7 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
-import org.jetbrains.kotlin.builtins.isFunctionType
+import org.jetbrains.kotlin.builtins.isFunctionOrSuspendFunctionType
 import org.jetbrains.kotlin.idea.completion.LambdaSignatureTemplates
 import org.jetbrains.kotlin.idea.completion.suppressAutoInsertion
 import org.jetbrains.kotlin.idea.core.ExpectedInfos
@@ -48,7 +48,7 @@ object LambdaSignatureItems {
 
         val expectedFunctionTypes = ExpectedInfos(bindingContext, resolutionFacade, null).calculate(literalExpression)
                 .mapNotNull { it.fuzzyType?.type }
-                .filter { it.isFunctionType }
+                .filter { it.isFunctionOrSuspendFunctionType }
                 .toSet()
         for (functionType in expectedFunctionTypes) {
             if (functionType.getValueParameterTypesFromFunctionType().isEmpty()) continue

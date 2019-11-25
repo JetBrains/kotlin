@@ -17,6 +17,6 @@ FILE: typeParameters2.kt
         ^foo R|<local>/t|
     }
     public final fun main(fooImpl: R|FooImpl|, fooBarImpl: R|FooBarImpl|): R|kotlin/Unit| {
-        lval a: <ERROR TYPE REF: Empty diagnostic> = <Inapplicable(INAPPLICABLE): [/foo]>#<R|FooImpl|>(R|<local>/fooBarImpl|)
+        lval a: <ERROR TYPE REF: Inapplicable(INAPPLICABLE): [/foo]> = <Inapplicable(INAPPLICABLE): [/foo]>#<R|FooImpl|>(R|<local>/fooBarImpl|)
         lval b: R|Foo| = R|/foo|<R|Foo|>(R|<local>/fooImpl|)
     }

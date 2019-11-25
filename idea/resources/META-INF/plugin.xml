@@ -82,4 +82,9 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
       <trafficLightRendererContributor implementation="org.jetbrains.kotlin.idea.core.script.ScriptTrafficLightRendererContributor"/>
       <fileTypeUsageSchemaDescriptor schema="Gradle Script" implementationClass="org.jetbrains.kotlin.idea.core.script.KotlinGradleScriptFileTypeSchemaDetector"/>
     </extensions>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <focusModeProvider language="kotlin" implementationClass="org.jetbrains.kotlin.idea.core.KotlinFocusModeProvider" />
+  </extensions>
+
 </idea-plugin>

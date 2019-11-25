@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 fun f(a : Int?, b : Int.(Int)->Int) = a?.b(1)
 
 fun box(): String {

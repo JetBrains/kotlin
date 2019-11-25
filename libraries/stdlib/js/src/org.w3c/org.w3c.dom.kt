@@ -4938,6 +4938,8 @@ public external open class Document : Node, GlobalEventHandlers, DocumentAndElem
     fun elementFromPoint(x: Double, y: Double): Element?
     fun elementsFromPoint(x: Double, y: Double): Array<Element>
     fun caretPositionFromPoint(x: Double, y: Double): CaretPosition?
+    fun createTouch(view: Window, target: EventTarget, identifier: Int, pageX: Int, pageY: Int, screenX: Int, screenY: Int): Touch
+    fun createTouchList(vararg touches: Touch): TouchList
     fun exitFullscreen(): Promise<Unit>
     override fun getElementById(elementId: String): Element?
     override fun prepend(vararg nodes: dynamic)
@@ -5924,6 +5926,45 @@ public external interface GeometryUtils {
     fun convertQuadFromNode(quad: dynamic, from: dynamic, options: ConvertCoordinateOptions = definedExternally): DOMQuad
     fun convertRectFromNode(rect: DOMRectReadOnly, from: dynamic, options: ConvertCoordinateOptions = definedExternally): DOMQuad
     fun convertPointFromNode(point: DOMPointInit, from: dynamic, options: ConvertCoordinateOptions = definedExternally): DOMPoint
+}
+
+/**
+ * Exposes the JavaScript [Touch](https://developer.mozilla.org/en/docs/Web/API/Touch) to Kotlin
+ */
+public external abstract class Touch {
+    open val identifier: Int
+    open val target: EventTarget
+    open val screenX: Int
+    open val screenY: Int
+    open val clientX: Int
+    open val clientY: Int
+    open val pageX: Int
+    open val pageY: Int
+    open val region: String?
+}
+
+public external abstract class TouchList : ItemArrayLike<Touch> {
+    override fun item(index: Int): Touch?
+}
+
+@kotlin.internal.InlineOnly
+public inline operator fun TouchList.get(index: Int): Touch? = asDynamic()[index]
+
+public external open class TouchEvent : UIEvent {
+    open val touches: TouchList
+    open val targetTouches: TouchList
+    open val changedTouches: TouchList
+    open val altKey: Boolean
+    open val metaKey: Boolean
+    open val ctrlKey: Boolean
+    open val shiftKey: Boolean
+
+    companion object {
+        val NONE: Short
+        val CAPTURING_PHASE: Short
+        val AT_TARGET: Short
+        val BUBBLING_PHASE: Short
+    }
 }
 
 /**

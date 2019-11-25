@@ -103,6 +103,12 @@ class KJvmReplCompilerImpl(val hostConfiguration: ScriptingHostConfiguration) : 
                 messageCollector
             )
 
+            val firstFailure = sourceDependencies.firstOrNull { it.sourceDependencies is ResultWithDiagnostics.Failure }
+                ?.let { it.sourceDependencies as ResultWithDiagnostics.Failure }
+
+            if (firstFailure != null)
+                return firstFailure
+
             if (history.isEmpty()) {
                 val updatedConfiguration = ScriptDependenciesProvider.getInstance(context.environment.project)
                     ?.getScriptConfiguration(snippetKtFile)?.configuration
@@ -165,7 +171,7 @@ class KJvmReplCompilerImpl(val hostConfiguration: ScriptingHostConfiguration) : 
                         ?: context.baseScriptCompilationConfiguration
                 }
 
-            ResultWithDiagnostics.Success(compiledScript, messageCollector.diagnostics)
+            compiledScript.asSuccess(messageCollector.diagnostics)
         }
 }
 

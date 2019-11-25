@@ -22,7 +22,6 @@ class CandidateFactory(
 
     init {
         val system = bodyResolveComponents.inferenceComponents.createConstraintSystem()
-        callInfo.explicitReceiver?.let { system.addSubsystemFromExpression(it) }
         callInfo.arguments.forEach {
             system.addSubsystemFromExpression(it)
         }
@@ -35,19 +34,21 @@ class CandidateFactory(
         implicitExtensionReceiverValue: ImplicitReceiverValue<*>?,
         explicitReceiverKind: ExplicitReceiverKind
     ): Candidate {
-        return Candidate(
+        val candidate = Candidate(
             symbol, dispatchReceiverValue, implicitExtensionReceiverValue,
             explicitReceiverKind, bodyResolveComponents, baseSystem, callInfo
         )
+        return candidate
     }
 }
 
-fun PostponedArgumentsAnalyzer.Context.addSubsystemFromExpression(expression: FirExpression) {
-    when (expression) {
-        is FirFunctionCall, is FirWhenExpression, is FirTryExpression, is FirCallableReferenceAccess ->
-            (expression as FirResolvable).candidate()?.let { addOtherSystem(it.system.asReadOnlyStorage()) }
-        is FirWrappedArgumentExpression -> addSubsystemFromExpression(expression.expression)
-        is FirBlock -> expression.returnExpressions().forEach { addSubsystemFromExpression(it) }
+fun PostponedArgumentsAnalyzer.Context.addSubsystemFromExpression(statement: FirStatement) {
+    when (statement) {
+        is FirFunctionCall, is FirQualifiedAccessExpression, is FirWhenExpression, is FirTryExpression, is FirCallableReferenceAccess ->
+            (statement as FirResolvable).candidate()?.let { addOtherSystem(it.system.asReadOnlyStorage()) }
+        is FirWrappedArgumentExpression -> addSubsystemFromExpression(statement.expression)
+        is FirBlock -> statement.returnExpressions().forEach { addSubsystemFromExpression(it) }
+        else -> {}
     }
 }
 

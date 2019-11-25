@@ -119,8 +119,7 @@ class SerializableIrGenerator(
             startOffset,
             endOffset,
             compilerContext.irBuiltIns.unitType,
-            ctorRef,
-            suitableCtor
+            ctorRef
         )
         call.insertTypeArgumentsForSuperClass(superClass)
         +call
@@ -152,8 +151,7 @@ class SerializableIrGenerator(
             startOffset,
             endOffset,
             compilerContext.irBuiltIns.unitType,
-            superCtorRef,
-            superCtorRef.owner.descriptor
+            superCtorRef
         )
         arguments.forEachIndexed { index, parameter -> call.putValueArgument(index, irGet(parameter)) }
         call.insertTypeArgumentsForSuperClass(superClass)

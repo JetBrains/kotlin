@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 interface Expr {
     public fun ttFun() : Int = 12
 }

@@ -5,15 +5,4 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.jetbrains.kotlin.idea.codeInsight.gradle.MultiplePluginVersionGradleImportingTestCase.Companion.MINIMAL_SUPPORTED_VERSION
-
-//BUNCH 181
-fun MultiplatformProjectImportingTest.shouldRunTest(kotlinPluginVersion: String, gradleVersion: String): Boolean {
-    return MINIMAL_SUPPORTED_VERSION == kotlinPluginVersion
-}
-
-fun NewMultiplatformProjectImportingTest.shouldRunTest(kotlinPluginVersion: String, gradleVersion: String): Boolean {
-    return !gradleVersion.startsWith("3.")
-}
-
 fun KaptImportingTest.isAndroidStudio() = false

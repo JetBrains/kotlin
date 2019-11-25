@@ -1,4 +1,5 @@
 // !LANGUAGE: +InlineClasses
+// IGNORE_BACKEND_FIR: JVM_IR
 
 inline class Result<out T>(val value: Any?) {
     val isFailure: Boolean get() = value is Failure

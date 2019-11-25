@@ -4,11 +4,11 @@
 // DISABLE-ERRORS
 actual class <caret>F<T> {
     actual val a: List<T>
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+        get() = TODO("Not yet implemented")
     actual val b: T
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+        get() = TODO("Not yet implemented")
 
     actual fun <F> c(t: T): F {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        TODO("Not yet implemented")
     }
 }

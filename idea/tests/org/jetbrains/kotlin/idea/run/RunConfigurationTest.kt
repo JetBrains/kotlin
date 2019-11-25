@@ -11,10 +11,8 @@ import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ModuleRootModificationUtil
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiComment
-import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiManager
 import com.intellij.refactoring.RefactoringFactory
 import com.intellij.testFramework.MapDataContext
@@ -28,7 +26,6 @@ import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionFqnNameIndex
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
-import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.*
 import org.jetbrains.kotlin.idea.test.configureLanguageAndApiVersion
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
@@ -43,10 +40,7 @@ import java.util.*
 private const val RUN_PREFIX = "// RUN:"
 
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
-class RunConfigurationTest: KotlinCodeInsightTestCase() {
-    fun getTestProject() = myProject!!
-    override fun getModule() = myModule!!
-
+class RunConfigurationTest : AbstractRunConfigurationTest() {
     fun testMainInTest() {
         val createResult = configureModule(moduleDirPath("module"), getTestProject().baseDir!!)
         configureLanguageAndApiVersion(
@@ -108,7 +102,7 @@ class RunConfigurationTest: KotlinCodeInsightTestCase() {
             }
         }
 
-        createResult.srcDir.children.filter { it.extension == "kt" }.forEach {
+        createResult.srcDir?.children?.filter { it.extension == "kt" }?.forEach {
             val psiFile = PsiManager.getInstance(createResult.module.project).findFile(it)
             if (psiFile is KtFile) {
                 psiFile.acceptChildren(object : KtVisitorVoid() {
@@ -216,7 +210,7 @@ class RunConfigurationTest: KotlinCodeInsightTestCase() {
     private fun doTest(configureRuntime: (Module, Sdk) -> Unit) {
         val baseDir = getTestProject().baseDir!!
         val createModuleResult = configureModule(moduleDirPath("module"), baseDir)
-        val srcDir = createModuleResult.srcDir
+        val srcDir = createModuleResult.srcDir!!
 
         configureRuntime(createModuleResult.module, addJdk(testRootDisposable, ::mockJdk))
 
@@ -264,41 +258,5 @@ class RunConfigurationTest: KotlinCodeInsightTestCase() {
         return createConfigurationFromElement(mainFunction, save) as KotlinRunConfiguration
     }
 
-    private fun configureModule(moduleDir: String, outputParentDir: VirtualFile, configModule: Module = module): CreateModuleResult {
-        val srcPath = moduleDir + "/src"
-        val srcDir = PsiTestUtil.createTestProjectStructure(project, configModule, srcPath, myFilesToDelete, true)
-
-        val testPath = moduleDir + "/test"
-        if (File(testPath).exists()) {
-            val testDir = PsiTestUtil.createTestProjectStructure(project, configModule, testPath, myFilesToDelete, false)
-            PsiTestUtil.addSourceRoot(module, testDir, true)
-        }
-
-        val (srcOutDir, testOutDir) = runWriteAction {
-            val outDir = outputParentDir.createChildDirectory(this, "out")
-            val srcOutDir = outDir.createChildDirectory(this, "production")
-            val testOutDir = outDir.createChildDirectory(this, "test")
-
-            PsiTestUtil.setCompilerOutputPath(configModule, srcOutDir.url, false)
-            PsiTestUtil.setCompilerOutputPath(configModule, testOutDir.url, true)
-
-            Pair(srcOutDir, testOutDir)
-        }
-
-        PsiDocumentManager.getInstance(getTestProject()).commitAllDocuments()
-
-        return CreateModuleResult(configModule, srcDir, srcOutDir, testOutDir)
-    }
-
-    private fun moduleDirPath(moduleName: String) = "${testDataPath}${getTestName(false)}/$moduleName"
-
     override fun getTestDataPath() = getTestDataPathBase() + "/run/"
-    override fun getTestProjectJdk() = mockJdk()
-
-    private class CreateModuleResult(
-            val module: Module,
-            val srcDir: VirtualFile,
-            val srcOutputDir: VirtualFile,
-            val testOutputDir: VirtualFile
-    )
 }

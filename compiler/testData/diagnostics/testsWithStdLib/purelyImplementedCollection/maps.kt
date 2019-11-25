@@ -1,5 +1,7 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 // !WITH_NEW_INFERENCE
+// FULL_JDK
+
 import java.util.*
 import java.util.concurrent.*
 

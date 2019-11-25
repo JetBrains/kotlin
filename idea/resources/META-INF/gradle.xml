@@ -9,7 +9,12 @@
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
         <buildSystemTypeDetector implementation="org.jetbrains.kotlin.idea.configuration.GradleDetector"/>
-        <scriptDiagnosticFixProvider implementation="org.jetbrains.kotlin.idea.script.GradleScriptDiagnosticFixProvider"/>
+        <scriptDiagnosticFixProvider implementation="org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptDiagnosticFixProvider"/>
+    </extensions>
+
+    <extensions defaultExtensionNs="org.jetbrains.kotlin.scripting.idea">
+        <listener order="first" implementation="org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptListener"/>
+        <loader order="first" implementation="org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptConfigurationLoader"/>
     </extensions>
 
     <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">
@@ -19,9 +24,11 @@
     </extensions>
 
     <extensions defaultExtensionNs="com.intellij">
+        <configurationType implementation="org.jetbrains.kotlin.idea.run.KotlinGradleExternalTaskConfigurationType"/>
         <projectTaskRunner implementation="org.jetbrains.kotlin.idea.gradle.execution.KotlinMPPGradleProjectTaskRunner" order="first, before gradle"/>
         <externalProjectDataService implementation="org.jetbrains.kotlin.idea.configuration.KotlinSourceSetDataService"/>
         <externalProjectDataService implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleProjectSettingsDataService"/>
+        <externalProjectDataService implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleBuildScriptsDataService"/>
         <registryKey key="kotlin.mpp.tests.force.gradle"
                      description="Run multi-platform tests with Gradle runner even if the platform runner is used by default.
                      This setting currently affects only HMPP projects. You may need to delete existing test configurations for the change to take place."

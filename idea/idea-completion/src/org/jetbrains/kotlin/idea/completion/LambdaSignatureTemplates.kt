@@ -27,7 +27,7 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.builtins.extractParameterNameFromFunctionTypeArgument
 import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
-import org.jetbrains.kotlin.builtins.isFunctionType
+import org.jetbrains.kotlin.builtins.isFunctionOrSuspendFunctionType
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.completion.handlers.isCharAt
 import org.jetbrains.kotlin.idea.core.ExpectedInfos
@@ -122,7 +122,7 @@ object LambdaSignatureTemplates {
         val expectedInfos = ExpectedInfos(bindingContext, resolutionFacade, indicesHelper = null, useHeuristicSignatures = false).calculate(expression)
         val functionTypes = expectedInfos
                 .mapNotNull { it.fuzzyType?.type }
-                .filter(KotlinType::isFunctionType)
+                .filter(KotlinType::isFunctionOrSuspendFunctionType)
                 .toSet()
         return explicitParameterTypesRequired(functionTypes, lambdaType)
     }

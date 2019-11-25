@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 open class Foo(val x: () -> String)
 open class Foo2(val foo: Foo)
 

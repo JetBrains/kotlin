@@ -80,6 +80,16 @@ public class FirDiagnosticsWithCfgTestGenerated extends AbstractFirDiagnosticsWi
             runTest("compiler/fir/resolve/testData/resolve/cfg/propertiesAndInitBlocks.kt");
         }
 
+        @TestMetadata("returnValuesFromLambda.kt")
+        public void testReturnValuesFromLambda() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/cfg/returnValuesFromLambda.kt");
+        }
+
+        @TestMetadata("safeCalls.kt")
+        public void testSafeCalls() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/cfg/safeCalls.kt");
+        }
+
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/cfg/simple.kt");
@@ -108,6 +118,11 @@ public class FirDiagnosticsWithCfgTestGenerated extends AbstractFirDiagnosticsWi
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/smartcasts"), Pattern.compile("^([^.]+)\\.kt$"), true);
         }
 
+        @TestMetadata("bangbang.kt")
+        public void testBangbang() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/smartcasts/bangbang.kt");
+        }
+
         @TestMetadata("booleanOperators.kt")
         public void testBooleanOperators() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/smartcasts/booleanOperators.kt");
@@ -121,6 +136,16 @@ public class FirDiagnosticsWithCfgTestGenerated extends AbstractFirDiagnosticsWi
         @TestMetadata("casts.kt")
         public void testCasts() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/smartcasts/casts.kt");
+        }
+
+        @TestMetadata("dataFlowInfoFromWhileCondition.kt")
+        public void testDataFlowInfoFromWhileCondition() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/smartcasts/dataFlowInfoFromWhileCondition.kt");
+        }
+
+        @TestMetadata("delayedAssignment.kt")
+        public void testDelayedAssignment() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/smartcasts/delayedAssignment.kt");
         }
 
         @TestMetadata("elvis.kt")
@@ -168,9 +193,24 @@ public class FirDiagnosticsWithCfgTestGenerated extends AbstractFirDiagnosticsWi
             runTest("compiler/fir/resolve/testData/resolve/smartcasts/returns.kt");
         }
 
+        @TestMetadata("safeCalls.kt")
+        public void testSafeCalls() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/smartcasts/safeCalls.kt");
+        }
+
         @TestMetadata("simpleIf.kt")
         public void testSimpleIf() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/smartcasts/simpleIf.kt");
+        }
+
+        @TestMetadata("smartcastAfterReassignment.kt")
+        public void testSmartcastAfterReassignment() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/smartcasts/smartcastAfterReassignment.kt");
+        }
+
+        @TestMetadata("smartcastOnLambda.kt")
+        public void testSmartcastOnLambda() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/smartcasts/smartcastOnLambda.kt");
         }
 
         @TestMetadata("when.kt")

@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrStatement
@@ -16,6 +14,8 @@ import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
+import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
+import org.jetbrains.kotlin.ir.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
@@ -82,9 +82,8 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : FileLoweringPass
                         IrFunctionReferenceImpl(
                             expression.startOffset, expression.endOffset,
                             expression.type,
-                            it.symbol, it.descriptor,
-                            expression.typeArgumentsCount, expression.valueArgumentsCount,
-                            expression.origin
+                            it.symbol, expression.typeArgumentsCount,
+                            expression.valueArgumentsCount, expression.origin
                         )
                     }
                 } ?: expression
@@ -113,8 +112,7 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : FileLoweringPass
                 val newExpression = IrCallImpl(
                     expression.startOffset, expression.endOffset,
                     expression.type,
-                    staticTarget.symbol, staticTarget.descriptor,
-                    expression.typeArgumentsCount,
+                    staticTarget.symbol, expression.typeArgumentsCount,
                     expression.origin,
                     expression.superQualifierSymbol
                 )

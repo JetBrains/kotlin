@@ -23,11 +23,19 @@ object GenerateInRangeExpressionTestData {
         header: String = ""
     ) {
         PrintWriter(File(GENERATED_DIR, fileName)).use {
-            it.generateTestCaseBody(header, rangeExpressions, elementExpressions)
+            it.generateTestCaseBody(header, rangeExpressions, elementExpressions, ignoreFrontendIR = (fileName != "charRangeLiteral.kt"))
         }
     }
 
-    private fun PrintWriter.generateTestCaseBody(header: String, rangeExpressions: List<String>, elementExpressions: List<String>) {
+    private fun PrintWriter.generateTestCaseBody(
+        header: String,
+        rangeExpressions: List<String>,
+        elementExpressions: List<String>,
+        ignoreFrontendIR: Boolean
+    ) {
+        if (ignoreFrontendIR) {
+            println("// IGNORE_BACKEND_FIR: JVM_IR")
+        }
         println("// KJS_WITH_FULL_RUNTIME")
         println("// $PREAMBLE_MESSAGE")
         println("// WITH_RUNTIME")

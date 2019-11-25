@@ -1,0 +1,9 @@
+FILE: smartcastOnLambda.kt
+    public final fun test(func: R|() -> kotlin/Unit|): R|kotlin/Unit| {
+        when () {
+            !=(R|<local>/func|, Null(null)) ->  {
+                R|<local>/func|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+            }
+        }
+
+    }

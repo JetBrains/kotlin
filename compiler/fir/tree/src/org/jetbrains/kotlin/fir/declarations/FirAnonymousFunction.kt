@@ -38,6 +38,7 @@ abstract class FirAnonymousFunction : FirPureAbstractElement(), FirFunction<FirA
     abstract override val symbol: FirAnonymousFunctionSymbol
     abstract val label: FirLabel?
     abstract val invocationKind: InvocationKind?
+    abstract val isLambda: Boolean
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitAnonymousFunction(this, data)
 

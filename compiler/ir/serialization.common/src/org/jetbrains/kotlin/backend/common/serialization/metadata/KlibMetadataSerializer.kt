@@ -11,15 +11,12 @@ import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.library.metadata.KlibMetadataFileRegistry
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.descriptorUtil.filterOutSourceAnnotations
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.serialization.AnnotationSerializer
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.serialization.StringTableImpl
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
@@ -34,7 +31,6 @@ abstract class KlibMetadataSerializer(
     val metadataVersion: BinaryVersion,
     val descriptorTable: DescriptorTable
 ) {
-    val fileRegistry = KlibMetadataFileRegistry()
 
     lateinit var serializerContext: SerializerContext
 
@@ -44,9 +40,9 @@ abstract class KlibMetadataSerializer(
         var classSerializer: DescriptorSerializer = topSerializer
     )
 
-    fun declarationTableHandler(declarationDescriptor: DeclarationDescriptor): KlibMetadataProtoBuf.DescriptorUniqId {
+    private fun declarationTableHandler(declarationDescriptor: DeclarationDescriptor): KlibMetadataProtoBuf.DescriptorUniqId {
         val index = descriptorTable.get(declarationDescriptor) ?: error("No descriptor ID found for $declarationDescriptor")
-        return index.let { newDescriptorUniqId(it) }
+        return newDescriptorUniqId(index)
     }
 
     protected fun createNewContext(): SerializerContext {
@@ -55,7 +51,6 @@ abstract class KlibMetadataSerializer(
             languageVersionSettings,
             metadataVersion,
             ::declarationTableHandler,
-            {descriptor: DeclarationDescriptorWithSource -> fileRegistry.assign(descriptor.source.containingFile) } ,
             KlibMetadataStringTable()
         )
         return SerializerContext(
@@ -216,20 +211,6 @@ abstract class KlibMetadataSerializer(
         return result
     }
 
-    private fun serializeFiles(
-        header: KlibMetadataProtoBuf.Header.Builder,
-        fileRegistry: KlibMetadataFileRegistry
-    ) {
-
-        fileRegistry.filesAndClear().map { it.name ?: "" }.forEach {
-            val fileProto = KlibMetadataProtoBuf.File.newBuilder()
-                .setName(it)
-                .build()
-
-            header.addFile(fileProto)
-        }
-    }
-
     protected fun getPackagesFqNames(module: ModuleDescriptor): Set<FqName> {
         val result = mutableSetOf<FqName>()
 
@@ -245,7 +226,7 @@ abstract class KlibMetadataSerializer(
     fun serializeHeader(
         moduleDescriptor: ModuleDescriptor,
         fragmentNames: List<String>,
-        emptyPackages: List<String> = emptyList()
+        emptyPackages: List<String>
     ): KlibMetadataProtoBuf.Header {
         val header = KlibMetadataProtoBuf.Header.newBuilder()
 
@@ -274,8 +255,6 @@ abstract class KlibMetadataSerializer(
         emptyPackages.forEach {
             header.addEmptyPackage(it)
         }
-
-        serializeFiles(header, fileRegistry)
 
         return header.build()
     }

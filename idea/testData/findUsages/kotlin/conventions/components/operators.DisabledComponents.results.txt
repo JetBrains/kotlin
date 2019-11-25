@@ -1,0 +1,2 @@
+Value read 15 val (x, y) = b1 + b2
+Value read 6 val (x, y) = this

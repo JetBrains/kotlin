@@ -365,7 +365,7 @@ fun FirModifiableVariable<*>.generateAccessorsByDelegate(session: FirSession, me
             )
         }
     }
-    if (setter == null || setter is FirDefaultPropertyAccessor) {
+    if (variable.isVar && (setter == null || setter is FirDefaultPropertyAccessor)) {
         setter = FirPropertyAccessorImpl(
             null,
             session,

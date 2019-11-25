@@ -22,7 +22,7 @@ import junit.framework.TestCase
 import org.jetbrains.kotlin.formatter.FormatSettingsUtil
 import org.jetbrains.kotlin.idea.codeInsight.upDownMover.KotlinDeclarationMover
 import org.jetbrains.kotlin.idea.codeInsight.upDownMover.KotlinExpressionMover
-import org.jetbrains.kotlin.idea.core.script.isScriptDependenciesUpdaterDisabled
+import org.jetbrains.kotlin.idea.core.script.isScriptChangesNotifierDisabled
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
@@ -59,11 +59,11 @@ abstract class AbstractMoveLeftRightTest : AbstractCodeMoverTest() {
 abstract class AbstractCodeMoverTest : LightCodeInsightTestCase() {
     override fun setUp() {
         super.setUp()
-        ApplicationManager.getApplication().isScriptDependenciesUpdaterDisabled = true
+        ApplicationManager.getApplication().isScriptChangesNotifierDisabled = true
     }
 
     override fun tearDown() {
-        ApplicationManager.getApplication().isScriptDependenciesUpdaterDisabled = false
+        ApplicationManager.getApplication().isScriptChangesNotifierDisabled = false
         super.tearDown()
     }
 

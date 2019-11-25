@@ -959,6 +959,11 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         public void testOutsideCallParenthesisAndVararg2() throws Exception {
             runTest("idea/idea-completion/testData/smart/functionLiterals/OutsideCallParenthesisAndVararg2.kt");
         }
+
+        @TestMetadata("SuspendExplicitParameterTypesRequired.kt")
+        public void testSuspendExplicitParameterTypesRequired() throws Exception {
+            runTest("idea/idea-completion/testData/smart/functionLiterals/SuspendExplicitParameterTypesRequired.kt");
+        }
     }
 
     @TestMetadata("idea/idea-completion/testData/smart/generics")
@@ -1329,6 +1334,11 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         @TestMetadata("SingleParameter.kt")
         public void testSingleParameter() throws Exception {
             runTest("idea/idea-completion/testData/smart/lambdaSignature/SingleParameter.kt");
+        }
+
+        @TestMetadata("SuspendExplicitParameterTypesRequired.kt")
+        public void testSuspendExplicitParameterTypesRequired() throws Exception {
+            runTest("idea/idea-completion/testData/smart/lambdaSignature/SuspendExplicitParameterTypesRequired.kt");
         }
     }
 

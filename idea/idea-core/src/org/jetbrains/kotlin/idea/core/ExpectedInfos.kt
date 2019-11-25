@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.core
 
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
+import org.jetbrains.kotlin.builtins.isFunctionOrSuspendFunctionType
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
@@ -375,7 +376,7 @@ class ExpectedInfos(
             if (alreadyHasStar) return
 
             if (isFunctionLiteralArgument) {
-                if (parameterType.isFunctionType) {
+                if (parameterType.isFunctionOrSuspendFunctionType) {
                     add(ExpectedInfo.createForArgument(parameterType, expectedName, null, argumentPositionData))
                 }
             }
@@ -504,7 +505,7 @@ class ExpectedInfos(
             val literalExpression = functionLiteral.parent as KtLambdaExpression
             calculate(literalExpression)
                     .mapNotNull { it.fuzzyType }
-                    .filter { it.type.isFunctionType }
+                    .filter { it.type.isFunctionOrSuspendFunctionType }
                     .map {
                         val returnType = it.type.getReturnTypeFromFunctionType()
                         ExpectedInfo(returnType.toFuzzyType(it.freeParameters), null, Tail.RBRACE)

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 public fun box() : String {
     var i : Short?
     i = 10

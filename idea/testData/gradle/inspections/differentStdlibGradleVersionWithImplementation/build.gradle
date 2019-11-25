@@ -9,12 +9,12 @@ buildscript {
     }
 
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.0.2")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.20")
     }
 }
 
 apply plugin: 'kotlin'
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.0.3"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.3.30"
 }

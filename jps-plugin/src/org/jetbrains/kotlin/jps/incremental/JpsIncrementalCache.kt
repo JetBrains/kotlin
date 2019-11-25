@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.incremental.IncrementalJvmCache
 import org.jetbrains.kotlin.incremental.storage.FileToPathConverter
 import org.jetbrains.kotlin.jps.build.KotlinBuilder
 import org.jetbrains.kotlin.jps.targets.KotlinModuleBuildTarget
+import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
 import java.io.File
 
 interface JpsIncrementalCache : IncrementalCacheCommon, StorageOwner {
@@ -53,7 +54,7 @@ class JpsIncrementalJsCache(
     target: ModuleBuildTarget,
     paths: BuildDataPaths,
     pathConverter: FileToPathConverter
-) : IncrementalJsCache(paths.getTargetDataRoot(target), pathConverter), JpsIncrementalCache {
+) : IncrementalJsCache(paths.getTargetDataRoot(target), pathConverter, JsSerializerProtocol), JpsIncrementalCache {
     override fun addJpsDependentCache(cache: JpsIncrementalCache) {
         if (cache is JpsIncrementalJsCache) {
             addDependentCache(cache)

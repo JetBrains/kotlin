@@ -51,7 +51,8 @@ class KaptIncrementalWithAggregatingApt : KaptIncrementalIT() {
                     fileInWorkingDir("build/tmp/kapt3/stubs/main/bar/UseBKt.java").canonicalPath,
                     fileInWorkingDir("build/tmp/kapt3/stubs/main/bar/B.java").canonicalPath,
                     fileInWorkingDir("build/tmp/kapt3/stubs/main/baz/UtilKt.java").canonicalPath,
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/foo/A.java").canonicalPath
+                    fileInWorkingDir("build/tmp/kapt3/stubs/main/foo/A.java").canonicalPath,
+                    fileInWorkingDir("build/tmp/kapt3/stubs/main/error/NonExistentClass.java").canonicalPath
                 ), getProcessedSources(output)
             )
         }
@@ -68,7 +69,8 @@ class KaptIncrementalWithAggregatingApt : KaptIncrementalIT() {
                     fileInWorkingDir("build/tmp/kapt3/stubs/main/bar/UseBKt.java").canonicalPath,
                     fileInWorkingDir("build/tmp/kapt3/stubs/main/bar/B.java").canonicalPath,
                     fileInWorkingDir("build/tmp/kapt3/stubs/main/baz/UtilKt.java").canonicalPath,
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/foo/A.java").canonicalPath
+                    fileInWorkingDir("build/tmp/kapt3/stubs/main/foo/A.java").canonicalPath,
+                    fileInWorkingDir("build/tmp/kapt3/stubs/main/error/NonExistentClass.java").canonicalPath
                 ),
                 getProcessedSources(output)
             )
@@ -95,7 +97,8 @@ class KaptIncrementalWithAggregatingApt : KaptIncrementalIT() {
                     fileInWorkingDir("build/tmp/kapt3/stubs/main/bar/UseBKt.java").canonicalPath,
                     fileInWorkingDir("build/tmp/kapt3/stubs/main/bar/B.java").canonicalPath,
                     fileInWorkingDir("build/tmp/kapt3/stubs/main/baz/UtilKt.java").canonicalPath,
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/foo/A.java").canonicalPath
+                    fileInWorkingDir("build/tmp/kapt3/stubs/main/foo/A.java").canonicalPath,
+                    fileInWorkingDir("build/tmp/kapt3/stubs/main/error/NonExistentClass.java").canonicalPath
                 ), getProcessedSources(output)
             )
         }
@@ -150,7 +153,8 @@ class KaptIncrementalWithAggregatingApt : KaptIncrementalIT() {
                     fileInWorkingDir("app/build/tmp/kapt3/stubs/main/foo/FooUseAKt.java").canonicalPath,
                     fileInWorkingDir("app/build/tmp/kapt3/stubs/main/foo/FooUseBKt.java").canonicalPath,
                     fileInWorkingDir("app/build/tmp/kapt3/stubs/main/foo/FooUseAAKt.java").canonicalPath,
-                    fileInWorkingDir("app/build/tmp/kapt3/stubs/main/foo/FooUseBBKt.java").canonicalPath
+                    fileInWorkingDir("app/build/tmp/kapt3/stubs/main/foo/FooUseBBKt.java").canonicalPath,
+                    fileInWorkingDir("app/build/tmp/kapt3/stubs/main/error/NonExistentClass.java").canonicalPath
 
                 ), getProcessedSources(output)
             )

@@ -1,5 +1,5 @@
 public open class Some : R|kotlin/Any|, R|Strange<*>| {
-    public open operator fun foo(): R|kotlin/Any|
+    public open operator fun foo(): R|kotlin/Any?|
 
     public constructor(): R|Some|
 

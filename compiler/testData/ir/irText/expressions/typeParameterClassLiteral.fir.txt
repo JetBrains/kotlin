@@ -1,12 +1,12 @@
 FILE fqName:<root> fileName:/typeParameterClassLiteral.kt
   FUN name:classRefFun visibility:public modality:FINAL <T> () returnType:kotlin.reflect.KClass<IrErrorType> [inline]
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any]
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun classRefFun <T> (): kotlin.reflect.KClass<IrErrorType> [inline] declared in <root>'
         GET_CLASS type=kotlin.reflect.KClass<IrErrorType>
           ERROR_CALL 'Unresolved reference: R|?|' type=IrErrorType
   FUN name:classRefExtFun visibility:public modality:FINAL <T> ($receiver:kotlin.Any) returnType:kotlin.reflect.KClass<IrErrorType> [inline]
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any]
     $receiver: VALUE_PARAMETER name:<this> type:kotlin.Any
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun classRefExtFun <T> (): kotlin.reflect.KClass<IrErrorType> [inline] declared in <root>'
@@ -26,14 +26,14 @@ FILE fqName:<root> fileName:/typeParameterClassLiteral.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN name:classRefGenericMemberFun visibility:public modality:FINAL <TF> ($this:<root>.Host) returnType:kotlin.reflect.KClass<IrErrorType> [inline]
-      TYPE_PARAMETER name:TF index:0 variance: superTypes:[]
+      TYPE_PARAMETER name:TF index:0 variance: superTypes:[kotlin.Any]
       $this: VALUE_PARAMETER name:<this> type:<root>.Host
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun classRefGenericMemberFun <TF> (): kotlin.reflect.KClass<IrErrorType> [inline] declared in <root>.Host'
           GET_CLASS type=kotlin.reflect.KClass<IrErrorType>
             ERROR_CALL 'Unresolved reference: R|?|' type=IrErrorType
     FUN name:classRefGenericMemberExtFun visibility:public modality:FINAL <TF> ($this:<root>.Host, $receiver:kotlin.Any) returnType:kotlin.reflect.KClass<IrErrorType> [inline]
-      TYPE_PARAMETER name:TF index:0 variance: superTypes:[]
+      TYPE_PARAMETER name:TF index:0 variance: superTypes:[kotlin.Any]
       $this: VALUE_PARAMETER name:<this> type:<root>.Host
       $receiver: VALUE_PARAMETER name:<this> type:kotlin.Any
       BLOCK_BODY

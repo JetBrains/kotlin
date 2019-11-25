@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 fun WithCompanion.test(): String {
     object : WithCompanion(this) {}
     return "OK"

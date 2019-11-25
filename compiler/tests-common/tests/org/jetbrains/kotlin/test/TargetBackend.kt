@@ -6,14 +6,15 @@
 package org.jetbrains.kotlin.test
 
 enum class TargetBackend(
+    val isIR: Boolean,
     private val compatibleWithTargetBackend: TargetBackend? = null
 ) {
-    ANY,
-    JVM,
-    JVM_IR(JVM),
-    JS,
-    JS_IR(JS),
-    WASM;
+    ANY(false),
+    JVM(false),
+    JVM_IR(true, JVM),
+    JS(false),
+    JS_IR(true, JS),
+    WASM(true);
 
     val compatibleWith get() = compatibleWithTargetBackend ?: ANY
 }

@@ -29,24 +29,8 @@ final class test/Class$NestedInnerClass {
     public method <init>(): void
 }
 @kotlin.Metadata
-final class test/Class$classPublicMethod$publicMethodLambda$1 {
-    public final static field INSTANCE: test.Class$classPublicMethod$publicMethodLambda$1
-    inner class test/Class$classPublicMethod$publicMethodLambda$1
-    method <init>(): void
-    public final method invoke(p0: int): int
-    public synthetic method invoke(p0: java.lang.Object): java.lang.Object
-}
-@kotlin.Metadata
-public final class test/Class$classPublicMethod$publicMethodLocalClass {
-    inner class test/Class$classPublicMethod$publicMethodLocalClass
-    public method <init>(): void
-    public final method getX(): int
-}
-@kotlin.Metadata
 public final class test/Class {
     inner class test/Class$NestedInnerClass
-    inner class test/Class$classPublicMethod$publicMethodLambda$1
-    inner class test/Class$classPublicMethod$publicMethodLocalClass
     public method <init>(): void
     public final method classPublicMethod(): void
 }

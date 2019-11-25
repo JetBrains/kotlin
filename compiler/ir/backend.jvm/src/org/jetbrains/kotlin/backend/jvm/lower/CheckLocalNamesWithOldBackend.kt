@@ -35,7 +35,7 @@ class CheckLocalNamesWithOldBackend(private val context: JvmBackendContext) : Fi
     }
 
     override fun visitClass(declaration: IrClass) {
-        val actualName = context.getLocalClassInfo(declaration)?.internalName
+        val actualName = context.getLocalClassType(declaration)?.internalName
         if (actualName != null) {
             val expectedName = context.state.bindingTrace.get(CodegenBinding.ASM_TYPE, declaration.symbol.descriptor)?.internalName
             if (expectedName != null && expectedName != actualName) {

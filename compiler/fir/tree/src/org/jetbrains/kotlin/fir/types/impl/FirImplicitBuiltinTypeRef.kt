@@ -26,7 +26,7 @@ sealed class FirImplicitBuiltinTypeRef(
     override val annotations: List<FirAnnotationCall>
         get() = emptyList()
 
-    override val type: ConeClassLikeType = ConeClassTypeImpl(ConeClassLikeLookupTagImpl(id), typeArguments, isNullable)
+    override val type: ConeClassLikeType = ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(id), typeArguments, isNullable)
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
 

@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.backend.jvm.descriptors
 
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedTypeParameterDescriptor
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedVariableDescriptor
 import org.jetbrains.kotlin.backend.common.ir.SharedVariablesManager
 import org.jetbrains.kotlin.backend.common.ir.addChild
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -23,6 +21,8 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrTypeParameterImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.descriptors.WrappedTypeParameterDescriptor
+import org.jetbrains.kotlin.ir.descriptors.WrappedVariableDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
@@ -153,7 +153,7 @@ class JvmSharedVariablesManager(
 
         override val elementType = refClass.typeParameters[0].defaultType
 
-        override fun getRefType(valueType: IrType) = refClass.typeWith(listOf(valueType))
+        override fun getRefType(valueType: IrType) = refClass.typeWith(valueType)
     }
 
     private fun getProvider(valueType: IrType): RefProvider =
@@ -210,7 +210,7 @@ class JvmSharedVariablesManager(
             getElementFieldSymbol(valueType),
             IrGetValueImpl(initializer.startOffset, initializer.endOffset, sharedVariableDeclaration.symbol),
             initializer,
-            valueType
+            irBuiltIns.unitType
         )
 
         return IrCompositeImpl(

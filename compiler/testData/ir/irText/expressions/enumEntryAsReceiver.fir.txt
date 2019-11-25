@@ -59,6 +59,10 @@ FILE fqName:<root> fileName:/enumEntryAsReceiver.kt
     FUN name:values visibility:public modality:FINAL <> ($this:<root>.X) returnType:kotlin.Array<<root>.X>
       $this: VALUE_PARAMETER name:<this> type:<root>.X
       BLOCK_BODY
+    FUN name:valueOf visibility:public modality:FINAL <> ($this:<root>.X, value:kotlin.String) returnType:<root>.X
+      $this: VALUE_PARAMETER name:<this> type:<root>.X
+      VALUE_PARAMETER name:value index:0 type:kotlin.String
+      BLOCK_BODY
     FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum) returnType:kotlin.Any [fake_override]
       overridden:
         protected final fun clone (): kotlin.Any declared in kotlin.Enum

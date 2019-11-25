@@ -5,12 +5,10 @@
 
 package org.jetbrains.kotlinx.serialization
 
-import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.codegen.AbstractAsmLikeInstructionListingTest
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationComponentRegistrar
 import java.io.File
 
@@ -21,9 +19,7 @@ abstract class AbstractSerializationIrBytecodeListingTest : AbstractAsmLikeInstr
         return wholeFile.nameWithoutExtension + ".ir.txt"
     }
 
-    override fun updateConfiguration(configuration: CompilerConfiguration) {
-        configuration.put(JVMConfigurationKeys.IR, true)
-    }
+    override fun getBackend(): TargetBackend = TargetBackend.JVM_IR
 
     override fun setupEnvironment(environment: KotlinCoreEnvironment) {
         SerializationComponentRegistrar.registerExtensions(environment.project)

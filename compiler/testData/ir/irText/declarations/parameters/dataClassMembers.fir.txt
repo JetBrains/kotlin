@@ -1,7 +1,7 @@
 FILE fqName:<root> fileName:/dataClassMembers.kt
   CLASS CLASS name:Test modality:FINAL visibility:public [data] superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
     CONSTRUCTOR visibility:public <> (x:T of <uninitialized parent>, y:kotlin.String) returnType:<root>.Test<T of <uninitialized parent>> [primary]
       VALUE_PARAMETER name:x index:0 type:T of <uninitialized parent>
       VALUE_PARAMETER name:y index:1 type:kotlin.String

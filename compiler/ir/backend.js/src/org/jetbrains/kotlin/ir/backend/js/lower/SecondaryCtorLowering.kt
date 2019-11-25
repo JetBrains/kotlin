@@ -238,7 +238,7 @@ private class CallsiteRedirectionTransformer(context: JsIrBackendContext) : IrEl
     private fun replaceSecondaryConstructorWithFactoryFunction(
         call: IrFunctionAccessExpression,
         newTarget: IrSimpleFunctionSymbol
-    ) = IrCallImpl(call.startOffset, call.endOffset, call.type, newTarget, newTarget.descriptor, call.typeArgumentsCount).apply {
+    ) = IrCallImpl(call.startOffset, call.endOffset, call.type, newTarget, call.typeArgumentsCount).apply {
 
         copyTypeArgumentsFrom(call)
 

@@ -23,7 +23,7 @@ fun ProtoBuf.Annotation.readAnnotation(strings: NameResolver): KmAnnotation =
         }.toMap()
     )
 
-private fun ProtoBuf.Annotation.Argument.Value.readAnnotationArgument(strings: NameResolver): KmAnnotationArgument<*>? {
+fun ProtoBuf.Annotation.Argument.Value.readAnnotationArgument(strings: NameResolver): KmAnnotationArgument<*>? {
     if (Flags.IS_UNSIGNED[flags]) {
         return when (type) {
             BYTE -> KmAnnotationArgument.UByteValue(intValue.toByte())

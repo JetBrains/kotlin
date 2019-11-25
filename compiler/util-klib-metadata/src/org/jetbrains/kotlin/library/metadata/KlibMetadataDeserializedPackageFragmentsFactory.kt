@@ -16,6 +16,12 @@ interface KlibMetadataDeserializedPackageFragmentsFactory {
         storageManager: StorageManager
     ): List<KlibMetadataPackageFragment>
 
+    fun createCachedPackageFragments(
+        packageFragments: List<ByteArray>,
+        moduleDescriptor: ModuleDescriptor,
+        storageManager: StorageManager
+    ): List<KlibMetadataPackageFragment>
+
     fun createSyntheticPackageFragments(
         library: KotlinLibrary,
         deserializedPackageFragments: List<KlibMetadataPackageFragment>,

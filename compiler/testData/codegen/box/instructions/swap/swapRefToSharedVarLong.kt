@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 //KT-3042 Attempt to split long or double on the stack excepion
 
 fun box(): String {

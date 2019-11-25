@@ -507,9 +507,18 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
                     if (i == declarations.size() - 1 && this instanceof ScriptCodegen) {
                         bodyExpressionType = expressionCodegen.expressionType(body);
                     }
+
+                    if (declaration instanceof KtClassInitializer) {
+                        KtClassInitializer classInitializer = (KtClassInitializer) declaration;
+                        expressionCodegen.markLineNumber(classInitializer.getInitKeyword(), true);
+                        expressionCodegen.v.nop();
+                    }
+
                     expressionCodegen.gen(body, bodyExpressionType);
-                    expressionCodegen.markLineNumber(declaration, true);
-                    nopSeparatorNeeded = true;
+                    if (declaration instanceof KtClassInitializer) {
+                        expressionCodegen.markLineNumber(declaration, true);
+                        nopSeparatorNeeded = true;
+                    }
                 }
             }
         }

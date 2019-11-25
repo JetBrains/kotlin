@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
 
 @set: org.jetbrains.annotations.TestOnly
-var Application.isScriptDependenciesUpdaterDisabled by NotNullableUserDataProperty(
-    Key.create("SCRIPT_DEPENDENCIES_UPDATER_DISABLED"),
+var Application.isScriptChangesNotifierDisabled by NotNullableUserDataProperty(
+    Key.create("SCRIPT_CHANGES_NOTIFIER_DISABLED"),
     false
 )
 

@@ -41,7 +41,7 @@ abstract public class AbstractGenerateNotNullAssertionsTest extends CodegenTestC
 
         configuration.put(JVMConfigurationKeys.DISABLE_CALL_ASSERTIONS, disableCallAssertions);
         configuration.put(JVMConfigurationKeys.DISABLE_PARAM_ASSERTIONS, disableParamAssertions);
-        updateConfiguration(configuration);
+        configuration.put(JVMConfigurationKeys.IR, getBackend().isIR());
 
         myEnvironment =
                 KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);

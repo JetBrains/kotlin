@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 class P(val actual: String, val expected: String)
 fun array(vararg s: P) = s
 

@@ -4,9 +4,7 @@
  */
 package org.jetbrains.kotlin.gradle
 
-import org.jetbrains.kotlin.gradle.internals.DISABLED_NATIVE_TARGETS_REPORTER_DISABLE_WARNING_PROPERTY_NAME
-import org.jetbrains.kotlin.gradle.internals.DISABLED_NATIVE_TARGETS_REPORTER_WARNING_PREFIX
-import org.jetbrains.kotlin.gradle.internals.GRADLE_NO_METADATA_WARNING
+import org.jetbrains.kotlin.gradle.internals.*
 import org.jetbrains.kotlin.gradle.plugin.ProjectLocalConfigurations
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmWithJavaTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
@@ -20,7 +18,6 @@ import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.Assert
-import org.junit.Assume
 import org.junit.Ignore
 import org.junit.Test
 import java.util.jar.JarFile
@@ -1486,13 +1483,17 @@ class NewMultiplatformIT : BaseGradleIT() {
                 assertSuccessful()
                 assertContains("User-provided Kotlin/Native distribution: $currentDir")
                 assertNotContains("Project property 'org.jetbrains.kotlin.native.home' is deprecated")
+                assertContains(NO_NATIVE_STDLIB_WARNING)
+                assertContains(NO_NATIVE_STDLIB_PROPERTY_WARNING)
             }
 
             // Deprecated property.
-            build("tasks", "-Porg.jetbrains.kotlin.native.home=$currentDir") {
+            build("tasks", "-Porg.jetbrains.kotlin.native.home=$currentDir", "-Pkotlin.native.nostdlib=true") {
                 assertSuccessful()
                 assertContains("User-provided Kotlin/Native distribution: $currentDir")
                 assertContains("Project property 'org.jetbrains.kotlin.native.home' is deprecated")
+                assertNotContains(NO_NATIVE_STDLIB_WARNING)
+                assertNotContains(NO_NATIVE_STDLIB_PROPERTY_WARNING)
             }
 
             build("tasks", "-Pkotlin.native.version=1.3-eap-10779") {

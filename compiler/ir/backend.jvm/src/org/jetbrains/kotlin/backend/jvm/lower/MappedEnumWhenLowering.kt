@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetEnumValueImpl
+import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
@@ -83,7 +84,7 @@ private class MappedEnumWhenLowering(context: CommonBackendContext) : EnumWhenLo
             mappings.getOrPut(enumClass) {
                 mutableMapOf<IrEnumEntry, Int>() to mappingsClass.addField {
                     name = Name.identifier("\$EnumSwitchMapping\$${mappings.size}")
-                    type = intArray.owner.defaultType
+                    type = intArray.defaultType
                     origin = JvmLoweredDeclarationOrigin.ENUM_MAPPINGS_FOR_WHEN
                     isFinal = true
                     isStatic = true

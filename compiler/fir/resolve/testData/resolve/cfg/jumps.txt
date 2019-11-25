@@ -50,7 +50,7 @@ FILE: jumps.kt
         }
 
     }
-    public final inline fun run(block: R|kotlin/Function0<kotlin/Unit>|): R|kotlin/Unit| {
+    public final inline fun run(block: R|() -> kotlin/Unit|): R|kotlin/Unit| {
         R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
     }
     public final fun test_6(): R|kotlin/Unit| {

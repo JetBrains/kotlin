@@ -9,7 +9,12 @@
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
         <buildSystemTypeDetector implementation="org.jetbrains.kotlin.idea.configuration.GradleDetector"/>
-        <scriptDiagnosticFixProvider implementation="org.jetbrains.kotlin.idea.script.GradleScriptDiagnosticFixProvider"/>
+        <scriptDiagnosticFixProvider implementation="org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptDiagnosticFixProvider"/>
+    </extensions>
+
+    <extensions defaultExtensionNs="org.jetbrains.kotlin.scripting.idea">
+        <listener order="first" implementation="org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptListener"/>
+        <loader order="first" implementation="org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptConfigurationLoader"/>
     </extensions>
 
     <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">

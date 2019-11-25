@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 var recivier : Any? = "fail"
 var value2 : Any? = "fail2"
 

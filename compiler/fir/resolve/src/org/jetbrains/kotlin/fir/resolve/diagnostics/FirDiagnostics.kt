@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
 
 class FirUnresolvedReferenceError(val name: Name? = null) : FirDiagnostic() {
     override val reason: String get() = "Unresolved reference" + if (name != null) ": ${name.asString()}" else ""
@@ -25,8 +26,13 @@ class FirUnresolvedNameError(val name: Name) : FirDiagnostic() {
     override val reason: String get() = "Unresolved name: $name"
 }
 
-class FirInapplicableCandidateError(val applicability: CandidateApplicability, val candidates: Collection<AbstractFirBasedSymbol<*>>) : FirDiagnostic() {
-    override val reason: String get() = "Inapplicable($applicability): ${candidates.map { describeSymbol(it) }}"
+class FirInapplicableCandidateError(
+    val applicability: CandidateApplicability,
+    val candidates: Collection<CandidateInfo>
+) : FirDiagnostic() {
+    data class CandidateInfo(val symbol: AbstractFirBasedSymbol<*>, val diagnostics: List<KotlinCallDiagnostic>)
+
+    override val reason: String get() = "Inapplicable($applicability): ${candidates.map { describeSymbol(it.symbol) }}"
 }
 
 class FirAmbiguityError(val name: Name, val candidates: Collection<AbstractFirBasedSymbol<*>>) : FirDiagnostic() {
@@ -35,6 +41,10 @@ class FirAmbiguityError(val name: Name, val candidates: Collection<AbstractFirBa
 
 class FirOperatorAmbiguityError(val candidates: Collection<AbstractFirBasedSymbol<*>>) : FirDiagnostic() {
     override val reason: String get() = "Operator overload ambiguity. Compatible candidates: ${candidates.map { describeSymbol(it) }}"
+}
+
+class FirVariableExpectedError : FirDiagnostic() {
+    override val reason: String get() = "Variable expected"
 }
 
 private fun describeSymbol(symbol: AbstractFirBasedSymbol<*>): String {

@@ -8,77 +8,56 @@ digraph emptyWhen_kt {
     0 [label="Enter function test_1" style="filled" fillcolor=red];
     subgraph cluster_1 {
       color=blue
-      1 [label="Enter block"];
-      subgraph cluster_2 {
-        color=blue
-        2 [label="Enter when"];
-        3 [label="Synthetic else branch"];
-        4 [label="Exit when"];
-      }
-      5 [label="Exit block"];
+      1 [label="Enter when"];
+      2 [label="Synthetic else branch"];
+      3 [label="Exit when"];
     }
-    6 [label="Exit function test_1" style="filled" fillcolor=red];
+    4 [label="Exit function test_1" style="filled" fillcolor=red];
   }
 
   0 -> {1};
   1 -> {2};
   2 -> {3};
   3 -> {4};
-  4 -> {5};
-  5 -> {6};
 
-  subgraph cluster_3 {
+  subgraph cluster_2 {
     color=red
-    7 [label="Enter function test_2" style="filled" fillcolor=red];
-    subgraph cluster_4 {
+    5 [label="Enter function test_2" style="filled" fillcolor=red];
+    subgraph cluster_3 {
       color=blue
-      8 [label="Enter block"];
-      subgraph cluster_5 {
-        color=blue
-        9 [label="Enter when"];
-        10 [label="Access variable R|<local>/x|"];
-        11 [label="Synthetic else branch"];
-        12 [label="Exit when"];
-      }
-      13 [label="Exit block"];
+      6 [label="Enter when"];
+      7 [label="Access variable R|<local>/x|"];
+      8 [label="Synthetic else branch"];
+      9 [label="Exit when"];
     }
-    14 [label="Exit function test_2" style="filled" fillcolor=red];
+    10 [label="Exit function test_2" style="filled" fillcolor=red];
   }
 
+  5 -> {6};
+  6 -> {7};
   7 -> {8};
   8 -> {9};
   9 -> {10};
-  10 -> {11};
+
+  subgraph cluster_4 {
+    color=red
+    11 [label="Enter function test_3" style="filled" fillcolor=red];
+    subgraph cluster_5 {
+      color=blue
+      12 [label="Enter when"];
+      13 [label="Access variable R|<local>/x|"];
+      14 [label="Variable declaration: lval y: R|kotlin/Int|"];
+      15 [label="Synthetic else branch"];
+      16 [label="Exit when"];
+    }
+    17 [label="Exit function test_3" style="filled" fillcolor=red];
+  }
+
   11 -> {12};
   12 -> {13};
   13 -> {14};
-
-  subgraph cluster_6 {
-    color=red
-    15 [label="Enter function test_3" style="filled" fillcolor=red];
-    subgraph cluster_7 {
-      color=blue
-      16 [label="Enter block"];
-      subgraph cluster_8 {
-        color=blue
-        17 [label="Enter when"];
-        18 [label="Access variable R|<local>/x|"];
-        19 [label="Variable declaration: lval y: R|kotlin/Int|"];
-        20 [label="Synthetic else branch"];
-        21 [label="Exit when"];
-      }
-      22 [label="Exit block"];
-    }
-    23 [label="Exit function test_3" style="filled" fillcolor=red];
-  }
-
+  14 -> {15};
   15 -> {16};
   16 -> {17};
-  17 -> {18};
-  18 -> {19};
-  19 -> {20};
-  20 -> {21};
-  21 -> {22};
-  22 -> {23};
 
 }

@@ -1,5 +1,8 @@
 //FULL_JDK
 
+// In BridgeLowering, no concrete overwrite is found for getOrDefault.
+// IGNORE_BACKEND: JVM_IR
+
 class KotlinMap1<K, V> : java.util.AbstractMap<K, V>() {
     override val entries: MutableSet<MutableMap.MutableEntry<K, V>>
         get() = throw UnsupportedOperationException()

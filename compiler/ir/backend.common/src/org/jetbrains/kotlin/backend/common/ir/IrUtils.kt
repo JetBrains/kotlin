@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.backend.common.ir
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.DumpIrTreeWithDescriptorsVisitor
 import org.jetbrains.kotlin.backend.common.deepCopyWithVariables
-import org.jetbrains.kotlin.backend.common.descriptors.*
-import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -22,9 +20,11 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrTypeParameterImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
@@ -84,8 +84,8 @@ fun IrClass.addSimpleDelegatingConstructor(
             listOf(
                 IrDelegatingConstructorCallImpl(
                     startOffset, endOffset, irBuiltIns.unitType,
-                    superConstructor.symbol, superConstructor.descriptor,
-                    0, superConstructor.valueParameters.size
+                    superConstructor.symbol, 0,
+                    superConstructor.valueParameters.size
                 ).apply {
                     constructor.valueParameters.forEachIndexed { idx, parameter ->
                         putValueArgument(idx, IrGetValueImpl(startOffset, endOffset, parameter.type, parameter.symbol))
@@ -368,7 +368,7 @@ fun IrClass.createImplicitParameterDeclarationWithWrappedDescriptor() {
         IrValueParameterSymbolImpl(thisReceiverDescriptor),
         Name.identifier("<this>"),
         index = -1,
-        type = this.symbol.typeWith(this.typeParameters.map { it.defaultType }),
+        type = symbol.typeWithParameters(typeParameters),
         varargElementType = null,
         isCrossinline = false,
         isNoinline = false
@@ -406,7 +406,7 @@ fun IrClass.createParameterDeclarations() {
             IrValueParameterSymbolImpl(it),
             Name.special("<this>"),
             0,
-            symbol.typeWith(typeParameters.map { it.defaultType }),
+            symbol.typeWithParameters(typeParameters),
             null,
             false,
             false
@@ -587,3 +587,6 @@ fun copyBodyToStatic(oldFunction: IrFunction, staticFunction: IrFunction) {
             }, null)
         ?.patchDeclarationParents(staticFunction)
 }
+
+val IrSymbol.isSuspend: Boolean
+    get() = this is IrSimpleFunctionSymbol && owner.isSuspend

@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir
 
+import org.jetbrains.kotlin.builtins.functions.BuiltInFictitiousFunctionClassFactory
+import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
@@ -23,7 +25,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
@@ -162,6 +163,14 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
     }
 
     private fun List<FirTypeParameter>.renderTypeParameters() {
+        if (isNotEmpty()) {
+            print("<")
+            renderSeparated()
+            print(">")
+        }
+    }
+
+    private fun List<FirTypeProjection>.renderTypeArguments() {
         if (isNotEmpty()) {
             print("<")
             renderSeparated()
@@ -736,12 +745,26 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
     }
 
     override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
-        resolvedTypeRef.annotations.renderAnnotations()
+        val kind = resolvedTypeRef.functionTypeKind
+        val annotations = if (kind.withPrettyRender()) {
+            resolvedTypeRef.annotations.dropExtensionFunctionAnnotation()
+        } else {
+            resolvedTypeRef.annotations
+        }
+        annotations.renderAnnotations()
         print("R|")
         val coneType = resolvedTypeRef.type
-        print(coneType.render())
+        print(coneType.renderFunctionType(kind, resolvedTypeRef.isExtensionFunctionType()))
         print("|")
     }
+
+    private val FirResolvedTypeRef.functionTypeKind: FunctionClassDescriptor.Kind?
+        get() {
+            val classId = (type as? ConeClassLikeType)?.lookupTag?.classId ?: return null
+            return BuiltInFictitiousFunctionClassFactory.getFunctionalClassKind(
+                classId.shortClassName.asString(), classId.packageFqName
+            )
+        }
 
     override fun visitUserTypeRef(userTypeRef: FirUserTypeRef) {
         userTypeRef.annotations.renderAnnotations()
@@ -805,12 +828,16 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
 
     override fun visitResolvedNamedReference(resolvedNamedReference: FirResolvedNamedReference) {
         print("R|")
-        val isFakeOverride = (resolvedNamedReference.resolvedSymbol as? FirNamedFunctionSymbol)?.isFakeOverride == true
+        val symbol = resolvedNamedReference.resolvedSymbol
+        val isFakeOverride = when (symbol) {
+            is FirNamedFunctionSymbol -> symbol.isFakeOverride
+            is FirPropertySymbol -> symbol.isFakeOverride
+            else -> false
+        }
 
         if (isFakeOverride) {
             print("FakeOverride<")
         }
-        val symbol = resolvedNamedReference.resolvedSymbol
         print(symbol.render())
 
 
@@ -907,6 +934,7 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         qualifiedAccessExpression.annotations.renderAnnotations()
         visitQualifiedAccess(qualifiedAccessExpression)
         qualifiedAccessExpression.calleeReference.accept(this)
+        qualifiedAccessExpression.typeArguments.renderTypeArguments()
     }
 
     override fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression) {
@@ -928,7 +956,7 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         visitQualifiedAccess(variableAssignment)
         variableAssignment.lValue.accept(this)
         print(" ")
-        visitAssignment(variableAssignment.operation, variableAssignment.rValue)
+        visitAssignment(FirOperation.ASSIGN, variableAssignment.rValue)
     }
 
     override fun visitArraySetCall(arraySetCall: FirArraySetCall) {
@@ -945,11 +973,7 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         functionCall.annotations.renderAnnotations()
         visitQualifiedAccess(functionCall)
         functionCall.calleeReference.accept(this)
-        if (functionCall.typeArguments.isNotEmpty()) {
-            print("<")
-            functionCall.typeArguments.renderSeparated()
-            print(">")
-        }
+        functionCall.typeArguments.renderTypeArguments()
         visitCall(functionCall)
     }
 

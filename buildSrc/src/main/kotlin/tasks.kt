@@ -134,7 +134,7 @@ fun Project.projectTest(
     if (parallel) {
         maxParallelForks =
             project.findProperty("kotlin.test.maxParallelForks")?.toString()?.toInt()
-                ?: Math.max(Runtime.getRuntime().availableProcessors() / 2, 1)
+                ?: Math.max(Runtime.getRuntime().availableProcessors() / if (kotlinBuildProperties.isTeamcityBuild) 2 else 4, 1)
     }
     body()
 }

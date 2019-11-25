@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 // IGNORE_BACKEND: JS_IR
 // TODO: Enable when JS backend supports Java class library, since FunctionX are required for interoperation
 // IGNORE_BACKEND: JS

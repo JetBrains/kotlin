@@ -10,6 +10,8 @@ public class JavaClass {
 
 // FILE: test.kt
 
+package some
+
 fun test(jc: JavaClass) {
-    jc.<!AMBIGUITY!>field<!>
+    jc.field
 }

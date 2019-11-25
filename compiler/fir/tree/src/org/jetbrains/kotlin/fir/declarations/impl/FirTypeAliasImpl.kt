@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
-import org.jetbrains.kotlin.fir.declarations.SupertypesComputationStatus
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
@@ -33,7 +32,6 @@ class FirTypeAliasImpl(
     override var expandedTypeRef: FirTypeRef
 ) : FirTypeAlias(), FirModifiableTypeParametersOwner, FirAbstractAnnotatedElement {
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
-    override var supertypesComputationStatus: SupertypesComputationStatus = SupertypesComputationStatus.NOT_COMPUTED
     override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
 
@@ -63,10 +61,6 @@ class FirTypeAliasImpl(
 
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
         resolvePhase = newResolvePhase
-    }
-
-    override fun replaceSupertypesComputationStatus(newSupertypesComputationStatus: SupertypesComputationStatus) {
-        supertypesComputationStatus = newSupertypesComputationStatus
     }
 
     override fun replaceExpandedTypeRef(newExpandedTypeRef: FirTypeRef) {

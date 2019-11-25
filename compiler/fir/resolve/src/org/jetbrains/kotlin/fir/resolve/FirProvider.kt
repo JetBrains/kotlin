@@ -28,8 +28,13 @@ abstract class FirProvider : FirSymbolProvider() {
 
     abstract fun getFirClassifierContainerFile(fqName: ClassId): FirFile
 
+    abstract fun getFirClassifierContainerFileIfAny(fqName: ClassId): FirFile?
+
     fun getFirClassifierContainerFile(symbol: FirClassLikeSymbol<*>): FirFile =
         getFirClassifierContainerFile(symbol.classId)
+
+    fun getFirClassifierContainerFileIfAny(symbol: FirClassLikeSymbol<*>): FirFile? =
+        getFirClassifierContainerFileIfAny(symbol.classId)
 
     abstract fun getFirCallableContainerFile(symbol: FirCallableSymbol<*>): FirFile?
 

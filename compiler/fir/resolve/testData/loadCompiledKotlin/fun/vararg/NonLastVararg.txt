@@ -1,3 +1,4 @@
-public final fun f(vararg t: R|kotlin/Array<out kotlin/String>|, f: R|kotlin/Function0<kotlin/Unit>|): R|kotlin/Unit|
+public final fun f(vararg t: R|kotlin/Array<out kotlin/String>|, f: R|() -> kotlin/Unit|): R|kotlin/Unit|
 
-public final fun f(vararg t: R|kotlin/IntArray|, f: R|kotlin/Function0<kotlin/Unit>|): R|kotlin/Unit|
+public final fun f(vararg t: R|kotlin/IntArray|, f: R|() -> kotlin/Unit|): R|kotlin/Unit|
+

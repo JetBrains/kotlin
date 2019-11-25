@@ -11,6 +11,8 @@ public final class DebugExtOptionsProtoBuf {
     registry.add(org.jetbrains.kotlin.metadata.DebugExtOptionsProtoBuf.nameIdInTable);
     registry.add(org.jetbrains.kotlin.metadata.DebugExtOptionsProtoBuf.fqNameIdInTable);
     registry.add(org.jetbrains.kotlin.metadata.DebugExtOptionsProtoBuf.stringIdInTable);
+    registry.add(org.jetbrains.kotlin.metadata.DebugExtOptionsProtoBuf.typeIdInTable);
+    registry.add(org.jetbrains.kotlin.metadata.DebugExtOptionsProtoBuf.skipMessageInComparison);
   }
   public static final int SKIP_IN_COMPARISON_FIELD_NUMBER = 50000;
   /**
@@ -56,6 +58,28 @@ public final class DebugExtOptionsProtoBuf {
           .newFileScopedGeneratedExtension(
         java.lang.Boolean.class,
         null);
+  public static final int TYPE_ID_IN_TABLE_FIELD_NUMBER = 50004;
+  /**
+   * <code>extend .google.protobuf.FieldOptions { ... }</code>
+   */
+  public static final
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.GeneratedExtension<
+      org.jetbrains.kotlin.protobuf.DescriptorProtos.FieldOptions,
+      java.lang.Boolean> typeIdInTable = org.jetbrains.kotlin.protobuf.GeneratedMessage
+          .newFileScopedGeneratedExtension(
+        java.lang.Boolean.class,
+        null);
+  public static final int SKIP_MESSAGE_IN_COMPARISON_FIELD_NUMBER = 50100;
+  /**
+   * <code>extend .google.protobuf.MessageOptions { ... }</code>
+   */
+  public static final
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.GeneratedExtension<
+      org.jetbrains.kotlin.protobuf.DescriptorProtos.MessageOptions,
+      java.lang.Boolean> skipMessageInComparison = org.jetbrains.kotlin.protobuf.GeneratedMessage
+          .newFileScopedGeneratedExtension(
+        java.lang.Boolean.class,
+        null);
 
   public static org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -73,8 +97,11 @@ public final class DebugExtOptionsProtoBuf {
       "rotobuf.FieldOptions\030\321\206\003 \001(\010:<\n\023fq_name_" +
       "id_in_table\022\035.google.protobuf.FieldOptio" +
       "ns\030\322\206\003 \001(\010:;\n\022string_id_in_table\022\035.googl" +
-      "e.protobuf.FieldOptions\030\323\206\003 \001(\010B\031B\027Debug" +
-      "ExtOptionsProtoBuf"
+      "e.protobuf.FieldOptions\030\323\206\003 \001(\010:9\n\020type_" +
+      "id_in_table\022\035.google.protobuf.FieldOptio",
+      "ns\030\324\206\003 \001(\010:E\n\032skip_message_in_comparison" +
+      "\022\037.google.protobuf.MessageOptions\030\264\207\003 \001(" +
+      "\010B\031B\027DebugExtOptionsProtoBuf"
     };
     org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -93,6 +120,8 @@ public final class DebugExtOptionsProtoBuf {
     nameIdInTable.internalInit(descriptor.getExtensions().get(1));
     fqNameIdInTable.internalInit(descriptor.getExtensions().get(2));
     stringIdInTable.internalInit(descriptor.getExtensions().get(3));
+    typeIdInTable.internalInit(descriptor.getExtensions().get(4));
+    skipMessageInComparison.internalInit(descriptor.getExtensions().get(5));
     org.jetbrains.kotlin.protobuf.DescriptorProtos.getDescriptor();
   }
 

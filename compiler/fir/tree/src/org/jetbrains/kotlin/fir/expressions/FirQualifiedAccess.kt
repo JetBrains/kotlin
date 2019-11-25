@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.references.FirReference
+import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -18,12 +19,15 @@ interface FirQualifiedAccess : FirQualifiedAccessWithoutCallee, FirResolvable {
     override val source: FirSourceElement?
     override val annotations: List<FirAnnotationCall>
     override val safe: Boolean
+    override val typeArguments: List<FirTypeProjection>
     override val explicitReceiver: FirExpression?
     override val dispatchReceiver: FirExpression
     override val extensionReceiver: FirExpression
     override val calleeReference: FirReference
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitQualifiedAccess(this, data)
+
+    override fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirQualifiedAccess
 
     override fun <D> transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccess
 

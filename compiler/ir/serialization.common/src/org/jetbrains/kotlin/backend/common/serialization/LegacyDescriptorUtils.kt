@@ -6,17 +6,15 @@
 package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.descriptors.propertyIfAccessor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.MemberDescriptor
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.metadata.KlibMetadataPackageFragment
+import org.jetbrains.kotlin.descriptors.konan.kotlinLibrary
+import org.jetbrains.kotlin.library.metadata.DeserializedSourceFile
+import org.jetbrains.kotlin.library.metadata.KlibMetadataDeserializedPackageFragment
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.OverridingUtil
+import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
 
@@ -26,7 +24,7 @@ internal val DeclarationDescriptor.isExpectMember: Boolean
 internal val DeclarationDescriptor.isSerializableExpectClass: Boolean
     get() = this is ClassDescriptor && ExpectedActualDeclarationChecker.shouldGenerateExpectClass(this)
 
-internal tailrec fun DeclarationDescriptor.findPackage(): PackageFragmentDescriptor {
+tailrec fun DeclarationDescriptor.findPackage(): PackageFragmentDescriptor {
     return if (this is PackageFragmentDescriptor) this
     else this.containingDeclaration!!.findPackage()
 }
@@ -56,8 +54,9 @@ val ModuleDescriptor.isForwardDeclarationModule get() =
     name == Name.special("<forward declarations>")
 
 private fun sourceByIndex(descriptor: CallableMemberDescriptor, index: Int): SourceFile {
-    val fragment = descriptor.findPackage() as KlibMetadataPackageFragment
-    return fragment.fileRegistry.sourceFile(index)
+    val fragment = descriptor.findPackage() as KlibMetadataDeserializedPackageFragment
+    val fileName = fragment.proto.strings.stringList[index]
+    return DeserializedSourceFile(fileName, descriptor.module.kotlinLibrary)
 }
 
 fun CallableMemberDescriptor.findSourceFile(): SourceFile {

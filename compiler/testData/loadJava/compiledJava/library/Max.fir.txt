@@ -1,5 +1,5 @@
 public open class Max : R|kotlin/Any| {
-    public open operator fun <T : R|kotlin/Any|, R|kotlin/Comparable<in T>|> max(coll: R|ft<kotlin/collections/MutableCollection<out T>, kotlin/collections/Collection<out T>?>!|): R|ft<T, T?>!|
+    public open operator fun <T : R|kotlin/Comparable<in T>?|> max(coll: R|ft<kotlin/collections/MutableCollection<out T>, kotlin/collections/Collection<out T>?>!|): R|ft<T, T?>!|
 
     public constructor(): R|test/Max|
 

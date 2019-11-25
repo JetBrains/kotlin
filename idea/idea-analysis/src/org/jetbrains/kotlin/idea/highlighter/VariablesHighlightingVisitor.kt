@@ -20,6 +20,7 @@ import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNameIdentifierOwner
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContext.*
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.smartcasts.MultipleSmartCasts
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
@@ -40,14 +42,9 @@ internal class VariablesHighlightingVisitor(holder: AnnotationHolder, bindingCon
 
     override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
         val target = bindingContext.get(REFERENCE_TARGET, expression) ?: return
-        if (target is ValueParameterDescriptor) {
-            if (bindingContext.get(AUTO_CREATED_IT, target) == true) {
-                createInfoAnnotation(expression, "Automatically declared based on the expected type")
-                        .textAttributes = FUNCTION_LITERAL_DEFAULT_PARAMETER
-            }
-        }
-
-        if (expression.parent !is KtValueArgumentName) { // highlighted separately
+        if (target is ValueParameterDescriptor && bindingContext.get(AUTO_CREATED_IT, target) == true) {
+            createInfoAnnotation(expression, FUNCTION_LITERAL_DEFAULT_PARAMETER, "Automatically declared based on the expected type")
+        } else if (expression.parent !is KtValueArgumentName) { // highlighted separately
             highlightVariable(expression, target)
         }
 
@@ -154,7 +151,7 @@ internal class VariablesHighlightingVisitor(holder: AnnotationHolder, bindingCon
 
                 val parent = elementToHighlight.parent
                 if (!(parent is PsiNameIdentifierOwner && parent.nameIdentifier == elementToHighlight)) {
-                    createInfoAnnotation(elementToHighlight, msg).textAttributes = WRAPPED_INTO_REF
+                    createInfoAnnotation(elementToHighlight, WRAPPED_INTO_REF, msg)
                     return
                 }
             }
@@ -165,6 +162,15 @@ internal class VariablesHighlightingVisitor(holder: AnnotationHolder, bindingCon
 
             if (descriptor is ValueParameterDescriptor) {
                 highlightName(elementToHighlight, PARAMETER)
+            }
+
+            if (descriptor is PropertyDescriptor && KotlinHighlightingUtil.hasCustomPropertyDeclaration(descriptor)) {
+                val isStaticDeclaration = DescriptorUtils.isStaticDeclaration(descriptor)
+                highlightName(elementToHighlight,
+                              if (isStaticDeclaration)
+                                  PACKAGE_PROPERTY_CUSTOM_PROPERTY_DECLARATION
+                              else
+                                  INSTANCE_PROPERTY_CUSTOM_PROPERTY_DECLARATION)
             }
         }
     }

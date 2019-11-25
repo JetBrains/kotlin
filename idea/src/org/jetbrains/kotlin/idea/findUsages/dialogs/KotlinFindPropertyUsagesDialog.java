@@ -20,6 +20,7 @@ import com.intellij.find.FindBundle;
 import com.intellij.find.FindSettings;
 import com.intellij.find.findUsages.FindUsagesHandler;
 import com.intellij.find.findUsages.JavaFindUsagesDialog;
+import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.ui.IdeBorderFactory;
@@ -29,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.findUsages.KotlinPropertyFindUsagesOptions;
 import org.jetbrains.kotlin.lexer.KtTokens;
-import org.jetbrains.kotlin.psi.KtNamedDeclaration;
+import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 
 import javax.swing.*;
@@ -132,10 +133,49 @@ public class KotlinFindPropertyUsagesDialog extends JavaFindUsagesDialog<KotlinP
                     false
             );
         }
+
+        if (isDataClassConstructorProperty(property)) {
+            JCheckBox dataClassComponentCheckBox =
+                    new JCheckBox("Fast data class component search");
+            dataClassComponentCheckBox.setToolTipText("Disable search for data class components and destruction declarations. (Project wide setting)");
+            Project project = property.getProject();
+            dataClassComponentCheckBox.setSelected(getDisableComponentAndDestructionSearch(project));
+            optionsPanel.add(dataClassComponentCheckBox);
+            dataClassComponentCheckBox.addActionListener(
+                    ___ -> setDisableComponentAndDestructionSearch(project, dataClassComponentCheckBox.isSelected())
+            );
+        }
     }
 
     @Override
     protected void update() {
         setOKActionEnabled(isSelected(readAccesses) || isSelected(writeAccesses));
+    }
+
+    private static final boolean disableComponentAndDestructionSearchDefault = false;
+    private static final String optionName = "kotlin.disable.search.component.and.destruction";
+
+    public static boolean getDisableComponentAndDestructionSearch(Project project) {
+        return PropertiesComponent.getInstance(project).getBoolean(optionName, disableComponentAndDestructionSearchDefault);
+    }
+
+    public static void setDisableComponentAndDestructionSearch(Project project, boolean value) {
+        PropertiesComponent.getInstance(project).setValue(optionName, value, disableComponentAndDestructionSearchDefault);
+    }
+
+    private static boolean isDataClassConstructorProperty(KtNamedDeclaration declaration) {
+        if (declaration instanceof KtParameter) {
+            PsiElement parent = declaration.getParent();
+            if (parent instanceof KtParameterList) {
+                parent = parent.getParent();
+                if (parent instanceof KtPrimaryConstructor) {
+                    parent = parent.getParent();
+                    if (parent instanceof KtClass) {
+                        return ((KtClass)parent).isData();
+                    }
+                }
+            }
+        }
+        return false;
     }
 }

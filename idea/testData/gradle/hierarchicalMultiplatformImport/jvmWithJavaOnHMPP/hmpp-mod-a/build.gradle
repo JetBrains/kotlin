@@ -4,20 +4,15 @@ apply plugin: 'kotlin-multiplatform'
 
 buildscript {
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-allopen:$kotlin_version"
-        classpath "org.jetbrains.kotlin:kotlin-noarg:$kotlin_version"
+        {{extraPluginDependencies}}
     }
     repositories {
-        mavenLocal()
-        jcenter()
-        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
+        {{kotlin_plugin_repositories}}
     }
 }
 
 repositories {
-    mavenLocal()
-    jcenter()
-    maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
+    {{kotlin_plugin_repositories}}
 }
 
 kotlin {

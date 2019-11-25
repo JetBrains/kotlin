@@ -9,7 +9,12 @@ import com.intellij.ProjectTopics
 import com.intellij.notification.*
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.components.ProjectComponent
+import com.intellij.openapi.progress.EmptyProgressIndicator
+import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.roots.ModuleRootEvent
@@ -59,9 +64,43 @@ class KotlinNativeABICompatibilityChecker(private val project: Project) : Projec
         if (ApplicationManager.getApplication().isUnitTestMode || project.isDisposed)
             return
 
-        val librariesToNotify = getLibrariesToNotifyAbout()
+        ProgressManager.getInstance().runProcessWithProgressAsynchronously(
+            object : Task.Backgroundable(project, BG_TASK_NAME) {
+                override fun run(indicator: ProgressIndicator) {
+                    val librariesToNotify = getLibrariesToNotifyAbout()
+                    val notifications = prepareNotifications(librariesToNotify)
+
+                    notifications.forEach {
+                        runInEdt {
+                            it.notify(project)
+                        }
+                    }
+                }
+            },
+            EmptyProgressIndicator()
+        )
+    }
+
+    private fun getLibrariesToNotifyAbout(): Map<String, NativeLibraryInfo> = synchronized(this) {
+        val incompatibleLibraries = getModuleInfosFromIdeaModel(project).asSequence()
+            .filterIsInstance<NativeLibraryInfo>()
+            .filter { it.safeAbiVersion != KotlinAbiVersion.CURRENT }
+            .associateBy { it.libraryRoot }
+
+        val newEntries = if (cachedIncompatibleLibraries.isNotEmpty())
+            incompatibleLibraries.filterKeys { it !in cachedIncompatibleLibraries }
+        else
+            incompatibleLibraries
+
+        cachedIncompatibleLibraries.clear()
+        cachedIncompatibleLibraries.addAll(incompatibleLibraries.keys)
+
+        return newEntries
+    }
+
+    private fun prepareNotifications(librariesToNotify: Map<String, NativeLibraryInfo>): List<Notification> {
         if (librariesToNotify.isEmpty())
-            return
+            return emptyList()
 
         val librariesByGroups = HashMap<Pair<LibraryGroup, Boolean>, MutableList<Pair<String, String>>>()
         librariesToNotify.forEach { (libraryRoot, libraryInfo) ->
@@ -70,12 +109,12 @@ class KotlinNativeABICompatibilityChecker(private val project: Project) : Projec
             librariesByGroups.computeIfAbsent(libraryGroup to isOldAbi) { mutableListOf() } += libraryName to libraryRoot
         }
 
-        librariesByGroups.keys.sortedWith(
+        return librariesByGroups.keys.sortedWith(
             compareBy(
                 { (libraryGroup, _) -> libraryGroup },
                 { (_, isOldAbi) -> isOldAbi }
             )
-        ).forEach { key ->
+        ).map { key ->
 
             val (libraryGroup, isOldAbi) = key
             val libraries =
@@ -154,25 +193,8 @@ class KotlinNativeABICompatibilityChecker(private val project: Project) : Projec
                 StringUtilRt.convertLineSeparators(message, "<br/>"),
                 NotificationType.ERROR,
                 null
-            ).notify(project)
+            )
         }
-    }
-
-    private fun getLibrariesToNotifyAbout(): Map<String, NativeLibraryInfo> = synchronized(this) {
-        val incompatibleLibraries = getModuleInfosFromIdeaModel(project).asSequence()
-            .filterIsInstance<NativeLibraryInfo>()
-            .filter { it.safeAbiVersion != KotlinAbiVersion.CURRENT }
-            .associateBy { it.libraryRoot }
-
-        val newEntries = if (cachedIncompatibleLibraries.isNotEmpty())
-            incompatibleLibraries.filterKeys { it !in cachedIncompatibleLibraries }
-        else
-            incompatibleLibraries
-
-        cachedIncompatibleLibraries.clear()
-        cachedIncompatibleLibraries.addAll(incompatibleLibraries.keys)
-
-        return newEntries
     }
 
     // returns pair of library name and library group
@@ -208,5 +230,7 @@ class KotlinNativeABICompatibilityChecker(private val project: Project) : Projec
 
         private const val NOTIFICATION_TITLE = "Incompatible Kotlin/Native libraries"
         private const val NOTIFICATION_GROUP_ID = NOTIFICATION_TITLE
+
+        private const val BG_TASK_NAME = "Finding incompatible Kotlin/Native libraries"
     }
 }

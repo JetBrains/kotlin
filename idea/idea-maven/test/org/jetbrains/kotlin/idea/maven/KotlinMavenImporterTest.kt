@@ -20,7 +20,6 @@ import com.intellij.application.options.CodeStyle
 import com.intellij.openapi.application.Result
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.projectRoots.JavaSdk
-import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.roots.CompilerModuleExtension
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
@@ -45,6 +44,7 @@ import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
+import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.jetbrains.kotlin.platform.CommonPlatforms
@@ -2540,7 +2540,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
         object : WriteAction<Unit>() {
             override fun run(result: Result<Unit>) {
                 val jdk = JavaSdk.getInstance().createJdk("myJDK", "my/path/to/jdk")
-                ProjectJdkTable.getInstance().addJdk(jdk)
+                getProjectJdkTableSafe().addJdk(jdk)
             }
         }.execute()
 
@@ -2597,7 +2597,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
         } finally {
             object : WriteAction<Unit>() {
                 override fun run(result: Result<Unit>) {
-                    val jdkTable = ProjectJdkTable.getInstance()
+                    val jdkTable = getProjectJdkTableSafe()
                     jdkTable.removeJdk(jdkTable.findJdk("myJDK")!!)
                 }
             }.execute()

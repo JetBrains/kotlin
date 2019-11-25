@@ -34,14 +34,14 @@ class GradleMigrateTest : GradleImportingTestCase() {
                     mavenCentral()
                 }
                 dependencies {
-                    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0"
+                    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.40"
                 }
             }
 
             apply plugin: 'kotlin'
 
             dependencies {
-                compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.0"
+                compile "org.jetbrains.kotlin:kotlin-stdlib:1.2.40"
             }
             """,
 
@@ -53,14 +53,14 @@ class GradleMigrateTest : GradleImportingTestCase() {
                     mavenCentral()
                 }
                 dependencies {
-                    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.0"
+                    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.50"
                 }
             }
 
             apply plugin: 'kotlin'
 
             dependencies {
-                compile "org.jetbrains.kotlin:kotlin-stdlib:1.2.0"
+                compile "org.jetbrains.kotlin:kotlin-stdlib:1.3.50"
             }
             """
         )
@@ -69,12 +69,12 @@ class GradleMigrateTest : GradleImportingTestCase() {
 
         Assert.assertEquals(
             MigrationInfo.create(
-                oldStdlibVersion = "1.1.0",
-                oldApiVersion = ApiVersion.KOTLIN_1_1,
-                oldLanguageVersion = LanguageVersion.KOTLIN_1_1,
-                newStdlibVersion = "1.2.0",
-                newApiVersion = ApiVersion.KOTLIN_1_2,
-                newLanguageVersion = LanguageVersion.KOTLIN_1_2
+                oldStdlibVersion = "1.2.40",
+                oldApiVersion = ApiVersion.KOTLIN_1_2,
+                oldLanguageVersion = LanguageVersion.KOTLIN_1_2,
+                newStdlibVersion = "1.3.50",
+                newApiVersion = ApiVersion.KOTLIN_1_3,
+                newLanguageVersion = LanguageVersion.KOTLIN_1_3
             ),
             migrateComponentState?.migrationInfo
         )

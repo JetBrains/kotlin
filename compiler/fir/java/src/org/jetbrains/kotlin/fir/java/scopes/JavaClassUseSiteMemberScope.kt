@@ -91,7 +91,7 @@ class JavaClassUseSiteMemberScope(
         return superTypesScope.processPropertiesByName(propertyName) {
             val firCallableMember = it.fir as? FirCallableMemberDeclaration<*>
             if (firCallableMember?.isStatic == true) {
-                NEXT
+                processor(it)
             } else {
                 val overriddenBy = it.getOverridden(overrideCandidates)
                 if (overriddenBy == null && it is FirVariableSymbol<*>) {

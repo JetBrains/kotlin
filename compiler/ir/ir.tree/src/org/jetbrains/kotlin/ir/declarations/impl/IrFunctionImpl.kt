@@ -64,13 +64,6 @@ class IrFunctionImpl(
 
     override val overriddenSymbols: MutableList<IrSimpleFunctionSymbol> = SmartList()
 
-    @Suppress("OverridingDeprecatedMember")
-    override var correspondingProperty: IrProperty?
-        get() = correspondingPropertySymbol?.owner
-        set(value) {
-            correspondingPropertySymbol = value?.symbol
-        }
-
     override var correspondingPropertySymbol: IrPropertySymbol? = null
 
     // Used by kotlin-native in InteropLowering.kt and IrUtils2.kt

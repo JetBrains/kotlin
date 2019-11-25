@@ -1,5 +1,5 @@
 public open class AllBoundsInWhen : R|kotlin/Any| {
-    public open operator fun <T : R|java/io/Serializable|> foo(): R|kotlin/Unit|
+    public open operator fun <T : R|java/io/Serializable?|> foo(): R|kotlin/Unit|
 
     public constructor(): R|test/AllBoundsInWhen|
 

@@ -1,0 +1,26 @@
+package
+
+package base {
+
+    public abstract class Base {
+        public constructor Base()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open fun foo(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public/*package*/ abstract fun packagePrivateFoo(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+package impl {
+    public fun foo(): kotlin.Unit
+
+    public final class Impl : base.Base {
+        public constructor Impl()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun foo(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        invisible_fake abstract override /*1*/ /*fake_override*/ fun packagePrivateFoo(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

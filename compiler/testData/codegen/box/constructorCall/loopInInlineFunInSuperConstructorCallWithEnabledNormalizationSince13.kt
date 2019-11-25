@@ -1,4 +1,5 @@
 // !LANGUAGE: +NormalizeConstructorCalls
+// IGNORE_BACKEND_FIR: JVM_IR
 // TARGET_BACKEND: JVM
 // WITH_RUNTIME
 open class A(val s: String)

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 class Slot() {
   var vitality: Int = 10000
 

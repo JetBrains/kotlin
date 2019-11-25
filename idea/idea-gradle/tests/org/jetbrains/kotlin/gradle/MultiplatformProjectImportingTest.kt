@@ -52,10 +52,6 @@ class MultiplatformProjectImportingTest : MultiplePluginVersionGradleImportingTe
         assert(getModule(moduleName).getModuleWithDependenciesAndLibrariesScope(true).contains(file))
     }
 
-    override fun isApplicableTest(): Boolean {
-        return shouldRunTest(gradleKotlinPluginVersion, gradleVersion)
-    }
-
     @Test
     fun testPlatformToCommonDependency() {
         val files = configureByFiles()

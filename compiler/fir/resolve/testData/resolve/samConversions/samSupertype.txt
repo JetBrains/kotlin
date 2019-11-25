@@ -10,7 +10,7 @@ FILE: main.kt
             >(R|<local>/it|, Int(1))
         }
         )
-        lval x: R|kotlin/Function1<kotlin/Int, kotlin/Boolean>| = fun <anonymous>(x: R|kotlin/Int|): R|kotlin/Boolean| {
+        lval x: R|(kotlin/Int) -> kotlin/Boolean| = fun <anonymous>(x: R|kotlin/Int|): R|kotlin/Boolean| {
             >(R|<local>/x|, Int(1))
         }
 

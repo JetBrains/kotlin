@@ -61,13 +61,14 @@ fun extractDefaultLambdaOffsetAndDescriptor(
 }
 
 
-fun expandMaskConditionsAndUpdateVariableNodes(
+fun <T, R : DefaultLambda> expandMaskConditionsAndUpdateVariableNodes(
     node: MethodNode,
     maskStartIndex: Int,
     masks: List<Int>,
     methodHandlerIndex: Int,
-    defaultLambdas: Map<Int, ValueParameterDescriptor>
-): List<DefaultLambda> {
+    defaultLambdas: Map<Int, T>,
+    lambdaConstructor: (Type, Array<Type>, T, Int, Boolean) -> R
+): List<R> {
     fun isMaskIndex(varIndex: Int): Boolean {
         return maskStartIndex <= varIndex && varIndex < maskStartIndex + masks.size
     }
@@ -110,7 +111,7 @@ fun expandMaskConditionsAndUpdateVariableNodes(
     val toDelete = linkedSetOf<AbstractInsnNode>()
     val toInsert = arrayListOf<Pair<AbstractInsnNode, AbstractInsnNode>>()
 
-    val defaultLambdasInfo = extractDefaultLambdasInfo(conditions, defaultLambdas, toDelete, toInsert)
+    val defaultLambdasInfo = extractDefaultLambdasInfo(conditions, defaultLambdas, toDelete, toInsert, lambdaConstructor)
 
     val indexToVarNode = node.localVariables?.filter { it.index < maskStartIndex }?.associateBy { it.index } ?: emptyMap()
     conditions.forEach {
@@ -137,12 +138,13 @@ fun expandMaskConditionsAndUpdateVariableNodes(
 }
 
 
-private fun extractDefaultLambdasInfo(
+private fun <T, R : DefaultLambda> extractDefaultLambdasInfo(
     conditions: List<Condition>,
-    defaultLambdas: Map<Int, ValueParameterDescriptor>,
+    defaultLambdas: Map<Int, T>,
     toDelete: MutableCollection<AbstractInsnNode>,
-    toInsert: MutableList<Pair<AbstractInsnNode, AbstractInsnNode>>
-): List<DefaultLambda> {
+    toInsert: MutableList<Pair<AbstractInsnNode, AbstractInsnNode>>,
+    lambdaConstructor: (Type, Array<Type>, T, Int, Boolean) -> R
+): List<R> {
     val defaultLambdaConditions = conditions.filter { it.expandNotDelete && defaultLambdas.contains(it.varIndex) }
     return defaultLambdaConditions.map {
         val varAssignmentInstruction = it.varInsNode!!
@@ -186,7 +188,7 @@ private fun extractDefaultLambdasInfo(
 
         toInsert.add(varAssignmentInstruction to defaultLambdaFakeCallStub(argTypes, it.varIndex))
 
-        DefaultLambda(owner, argTypes, defaultLambdas[it.varIndex]!!, it.varIndex, needReification)
+        lambdaConstructor(owner, argTypes, defaultLambdas[it.varIndex]!!, it.varIndex, needReification)
     }
 }
 

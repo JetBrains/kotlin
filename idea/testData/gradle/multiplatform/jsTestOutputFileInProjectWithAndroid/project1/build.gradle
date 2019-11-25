@@ -1,0 +1,13 @@
+buildscript {
+    repositories {
+        jcenter()
+        maven { url 'https://maven.google.com' }
+    }
+
+    dependencies {
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:{{kotlin_plugin_version}}")
+        classpath 'com.android.tools.build:gradle:3.0.0'
+    }
+}
+
+apply plugin: 'kotlin-platform-common'

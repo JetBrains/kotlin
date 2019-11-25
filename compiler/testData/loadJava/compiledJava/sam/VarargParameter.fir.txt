@@ -1,4 +1,4 @@
 public abstract interface VarargParameter : R|kotlin/Any| {
-    public abstract operator fun f(vararg strings: R|kotlin/Array<ft<kotlin/String, kotlin/String?>!>|): R|kotlin/Unit|
+    public abstract operator fun f(vararg strings: R|ft<kotlin/Array<ft<kotlin/String, kotlin/String?>!>, kotlin/Array<out ft<kotlin/String, kotlin/String?>!>?>!|): R|kotlin/Unit|
 
 }

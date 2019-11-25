@@ -291,6 +291,9 @@ interface KotlinFacetSettingsProvider {
 
     companion object {
         fun getInstance(project: Project): KotlinFacetSettingsProvider? {
+            if (project.isDisposed) {
+                return null
+            }
             return ServiceManager.getService(project, KotlinFacetSettingsProvider::class.java)
         }
     }

@@ -48,6 +48,9 @@ internal class JvmMetadataExtensions : MetadataExtensions {
         ext.visitEnd()
     }
 
+    // ModuleFragment is not used by JVM backend.
+    override fun readModuleFragmentExtensions(v: KmModuleFragmentVisitor, proto: ProtoBuf.PackageFragment, c: ReadContext) {}
+
     override fun readFunctionExtensions(v: KmFunctionVisitor, proto: ProtoBuf.Function, c: ReadContext) {
         val ext = v.visitExtensions(JvmFunctionExtensionVisitor.TYPE) as? JvmFunctionExtensionVisitor ?: return
         ext.visit(JvmProtoBufUtil.getJvmMethodSignature(proto, c.strings, c.types)?.wrapAsPublic())
@@ -104,6 +107,8 @@ internal class JvmMetadataExtensions : MetadataExtensions {
         ext.visitEnd()
     }
 
+    override fun readTypeAliasExtensions(v: KmTypeAliasVisitor, proto: ProtoBuf.TypeAlias, c: ReadContext) {}
+
     override fun writeClassExtensions(type: KmExtensionType, proto: ProtoBuf.Class.Builder, c: WriteContext): KmClassExtensionVisitor? {
         if (type != JvmClassExtensionVisitor.TYPE) return null
         return object : JvmClassExtensionVisitor() {
@@ -143,6 +148,13 @@ internal class JvmMetadataExtensions : MetadataExtensions {
             }
         }
     }
+
+    // PackageFragment is not used by JVM backend.
+    override fun writeModuleFragmentExtensions(
+        type: KmExtensionType,
+        proto: ProtoBuf.PackageFragment.Builder,
+        c: WriteContext
+    ): KmModuleFragmentExtensionVisitor? = null
 
     override fun writeFunctionExtensions(
         type: KmExtensionType, proto: ProtoBuf.Function.Builder, c: WriteContext
@@ -258,9 +270,18 @@ internal class JvmMetadataExtensions : MetadataExtensions {
         }
     }
 
+    override fun writeTypeAliasExtensions(
+        type: KmExtensionType,
+        proto: ProtoBuf.TypeAlias.Builder,
+        c: WriteContext
+    ): KmTypeAliasExtensionVisitor? = null
+
     override fun createClassExtension(): KmClassExtension = JvmClassExtension()
 
     override fun createPackageExtension(): KmPackageExtension = JvmPackageExtension()
+
+    override fun createModuleFragmentExtensions(): KmModuleFragmentExtension =
+        error("metadata-jvm doesn't have any extensions for module fragment!")
 
     override fun createFunctionExtension(): KmFunctionExtension = JvmFunctionExtension()
 
@@ -271,6 +292,8 @@ internal class JvmMetadataExtensions : MetadataExtensions {
     override fun createTypeParameterExtension(): KmTypeParameterExtension = JvmTypeParameterExtension()
 
     override fun createTypeExtension(): KmTypeExtension = JvmTypeExtension()
+
+    override fun createTypeAliasExtension(): KmTypeAliasExtension = JvmTypeAliasExtension()
 
     private fun JvmMemberSignature.toJvmMethodSignature(c: WriteContext): JvmProtoBuf.JvmMethodSignature =
         JvmProtoBuf.JvmMethodSignature.newBuilder().apply {

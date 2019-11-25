@@ -14,7 +14,7 @@ val newInferenceEnabled: Boolean by rootProject.extra
 
 configureFreeCompilerArg(effectSystemEnabled, "-Xeffect-system")
 configureFreeCompilerArg(newInferenceEnabled, "-Xnew-inference")
-configureFreeCompilerArg(true, "-XXLanguage:+MixedNamedArgumentsInTheirOwnPosition")
+configureFreeCompilerArg(true, "-Xuse-mixed-named-arguments")
 
 fun configureFreeCompilerArg(isEnabled: Boolean, compilerArgument: String) {
     if (isEnabled) {
@@ -48,6 +48,7 @@ dependencies {
     testCompile(projectTests(":compiler:fir:psi2fir"))
     testCompile(projectTests(":compiler:fir:fir2ir"))
     testCompile(projectTests(":compiler:fir:resolve"))
+    testCompile(projectTests(":compiler:fir:lightTree"))
     testCompile(projectTests(":compiler:visualizer"))
     testCompile(projectTests(":generators:test-generator"))
     testCompile(project(":compiler:ir.ir2cfg"))

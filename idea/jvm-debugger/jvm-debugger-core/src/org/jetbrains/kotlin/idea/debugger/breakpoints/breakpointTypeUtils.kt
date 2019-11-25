@@ -113,12 +113,7 @@ private fun getTopmostParentOnLineOrSelf(element: PsiElement, document: Document
     var parent = current.parent
     while (parent != null && parent !is PsiFile) {
         val offset = parent.textOffset
-        if (offset > document.textLength) {
-            val containingFile = element.containingFile
-            val attachments = if (containingFile != null) arrayOf(attachmentByPsiFile(containingFile)) else emptyArray()
-            LOG.error("Wrong offset: $offset for line $line. Should be in range: [0, ${document.textLength}].", *attachments)
-            break
-        }
+        if (offset > document.textLength) break
         if (offset >= 0 && document.getLineNumber(offset) != line) break
 
         current = parent

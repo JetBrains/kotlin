@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 fun Long.id() = this
 
 fun String.drop2() = if (length >= 2) subSequence(2, length) else null

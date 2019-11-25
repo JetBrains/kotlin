@@ -17,26 +17,6 @@ export default [
         plugins: plugins()
     },
     {
-        input: './nodejs-source-map-support.js',
-        external: ['path', 'fs', 'module'],
-        output: {
-            file: 'lib/kotlin-nodejs-source-map-support.js',
-            format: 'cjs',
-            sourcemap: true
-        },
-        plugins: [
-            nodeResolve({
-                            jsnext: true,
-                            main: true
-                        }),
-            commonjs(),
-            terser({
-                       compress: true,
-                       sourcemap: true
-                   })
-        ]
-    },
-    {
         input: './karma.ts',
         output: {
             file: 'lib/kotlin-test-karma-runner.js',
@@ -44,6 +24,20 @@ export default [
             sourcemap: true
         },
         plugins: plugins()
+    },
+    {
+        input: './karma-debug-runner.js',
+        output: {
+            file: 'lib/karma-debug-runner.js',
+            format: 'cjs'
+        }
+    },
+    {
+        input: './karma-debug-framework.js',
+        output: {
+            file: 'lib/karma-debug-framework.js',
+            format: 'cjs'
+        }
     },
     {
         input: './karma-kotlin-reporter.js',

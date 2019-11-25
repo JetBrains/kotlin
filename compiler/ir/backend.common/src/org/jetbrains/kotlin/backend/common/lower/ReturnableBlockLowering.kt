@@ -75,7 +75,7 @@ class ReturnableBlockLowering(val context: CommonBackendContext) : FileLoweringP
     }
 }
 
-private class ReturnableBlockTransformer(val context: CommonBackendContext) : IrElementTransformerVoidWithContext() {
+class ReturnableBlockTransformer(val context: CommonBackendContext) : IrElementTransformerVoidWithContext() {
     private var labelCnt = 0
     private val returnMap = mutableMapOf<IrReturnableBlockSymbol, (IrReturn) -> IrExpression>()
 

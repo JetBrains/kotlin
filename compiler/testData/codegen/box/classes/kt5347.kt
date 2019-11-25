@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 fun test1(str: String): String {
     data class A(val x: Int) {
         fun foo() = str

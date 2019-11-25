@@ -8,7 +8,7 @@ FILE: simpleExpressionReceiver.kt
         }
 
     }
-    public final fun foo(x: R|kotlin/Function1<kotlin/String, kotlin/Int>|): R|kotlin/Unit| {
+    public final fun foo(x: R|(kotlin/String) -> kotlin/Int|): R|kotlin/Unit| {
     }
     public final fun main(): R|kotlin/Unit| {
         lval a: R|A| = R|/A.A|()

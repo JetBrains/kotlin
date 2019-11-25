@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.codegen.flags.AbstractWriteFlagsTest
 import org.jetbrains.kotlin.codegen.ir.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
+import org.jetbrains.kotlin.fir.lightTree.AbstractLightTree2FirConverterTestCase
 import org.jetbrains.kotlin.fir.java.AbstractFirLightClassesTest
 import org.jetbrains.kotlin.fir.java.AbstractFirTypeEnhancementTest
 import org.jetbrains.kotlin.fir.java.AbstractOwnFirTypeEnhancementTest
@@ -127,7 +128,7 @@ fun main(args: Array<String>) {
             model("foreignAnnotations/tests")
         }
 
-        testClass<AbstractForeignAnnotationsNoAnnotationInClasspathWithFastClassReadingTest> {
+        testClass<AbstractForeignAnnotationsNoAnnotationInClasspathWithPsiClassReadingTest> {
             model("foreignAnnotations/tests")
         }
 
@@ -278,7 +279,7 @@ fun main(args: Array<String>) {
             model("loadJava/compiledKotlin")
         }
 
-        testClass<AbstractLoadJavaWithFastClassReadingTest> {
+        testClass<AbstractLoadJavaWithPsiClassReadingTest> {
             model("loadJava/compiledJava", extension = "java", testMethod = "doTestCompiledJava")
         }
 
@@ -298,7 +299,8 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractCompileKotlinAgainstJavaTest> {
-            model("compileKotlinAgainstJava")
+            model("compileKotlinAgainstJava", testClassName = "WithAPT", testMethod = "doTestWithAPT")
+            model("compileKotlinAgainstJava", testClassName = "WithoutAPT", testMethod = "doTestWithoutAPT")
         }
 
         testClass<AbstractCompileKotlinAgainstKotlinTest> {
@@ -485,7 +487,17 @@ fun main(args: Array<String>) {
     testGroup(
         "compiler/tests", "compiler/testData",
         testRunnerMethodName = "runTestWithCustomIgnoreDirective",
-        additionalRunnerArguments = listOf("\"// IGNORE_BACKEND_MULTI_MODULE:\"")
+        additionalRunnerArguments = listOf("\"// IGNORE_BACKEND_FIR: \"")
+    ) {
+        testClass<AbstractFirBlackBoxCodegenTest> {
+            model("codegen/box", targetBackend = TargetBackend.JVM_IR, excludeDirs = listOf("oldLanguageVersions"))
+        }
+    }
+
+    testGroup(
+        "compiler/tests", "compiler/testData",
+        testRunnerMethodName = "runTestWithCustomIgnoreDirective",
+        additionalRunnerArguments = listOf("\"// IGNORE_BACKEND_MULTI_MODULE: \"")
     ) {
         testClass<AbstractCompileKotlinAgainstInlineKotlinTest> {
             model("codegen/boxInline", targetBackend = TargetBackend.JVM)
@@ -499,6 +511,12 @@ fun main(args: Array<String>) {
     testGroup("compiler/fir/psi2fir/tests", "compiler/fir/psi2fir/testData") {
         testClass<AbstractRawFirBuilderTestCase> {
             model("rawBuilder", testMethod = "doRawFirTest")
+        }
+    }
+
+    testGroup("compiler/fir/lightTree/tests", "compiler/fir/psi2fir/testData") {
+        testClass<AbstractLightTree2FirConverterTestCase> {
+            model("rawBuilder")
         }
     }
 

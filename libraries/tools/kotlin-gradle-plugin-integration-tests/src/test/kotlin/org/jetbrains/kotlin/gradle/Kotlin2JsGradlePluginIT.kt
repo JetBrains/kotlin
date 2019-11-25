@@ -13,7 +13,21 @@ import java.util.zip.ZipFile
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true)
+class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
+    @Test
+    fun generateDts() {
+        val project = Project("kotlin2JsIrDtsGeneration")
+        project.build("build") {
+            assertSuccessful()
+            checkIrCompilationMessage()
+
+            assertFileExists("build/kotlin2js/main/lib.js")
+            val dts = fileInWorkingDir("build/kotlin2js/main/lib.d.ts")
+            assert(dts.exists())
+            assert(dts.readText().contains("function bar(): string"))
+        }
+    }
+}
 
 class Kotlin2JsGradlePluginIT : AbstractKotlin2JsGradlePluginIT(false) {
     @Test
@@ -119,7 +133,7 @@ abstract class AbstractKotlin2JsGradlePluginIT(private val irBackend: Boolean) :
     override fun defaultBuildOptions(): BuildOptions =
         super.defaultBuildOptions().copy(jsIrBackend = irBackend)
 
-    private fun CompiledProject.checkIrCompilationMessage() {
+    protected fun CompiledProject.checkIrCompilationMessage() {
         if (irBackend) {
             assertContains(USING_JS_IR_BACKEND_MESSAGE)
         } else {
@@ -437,8 +451,6 @@ abstract class AbstractKotlin2JsGradlePluginIT(private val irBackend: Boolean) :
             assertFileExists("build/js/node_modules/kotlin-test/kotlin-test.js.map")
             assertFileExists("build/js/node_modules/kotlin-test-js-runner/kotlin-test-nodejs-runner.js")
             assertFileExists("build/js/node_modules/kotlin-test-js-runner/kotlin-test-nodejs-runner.js.map")
-            assertFileExists("build/js/node_modules/kotlin-test-js-runner/kotlin-nodejs-source-map-support.js")
-            assertFileExists("build/js/node_modules/kotlin-test-js-runner/kotlin-nodejs-source-map-support.js.map")
             assertFileExists("build/js/node_modules/kotlin-js-plugin/kotlin/kotlin-js-plugin.js")
             assertFileExists("build/js/node_modules/kotlin-js-plugin/kotlin/kotlin-js-plugin.js.map")
             assertFileExists("build/js/node_modules/kotlin-js-plugin-test/kotlin/kotlin-js-plugin-test.js")
@@ -486,6 +498,35 @@ abstract class AbstractKotlin2JsGradlePluginIT(private val irBackend: Boolean) :
 
         build("test") {
             assertSuccessful()
+        }
+    }
+
+    @Test
+    fun testBrowserDistribution() = with(Project("kotlin-js-browser-project", GradleVersionRequired.AtLeast("4.10.2"))) {
+        setupWorkingDir()
+        gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+        gradleSettingsScript().modify(::transformBuildScriptWithPluginsDsl)
+
+        build("build") {
+            assertSuccessful()
+
+            assertTasksExecuted(
+                ":app:processDceKotlinJs",
+                ":app:browserProductionWebpack"
+            )
+
+            assertFileExists("build/js/packages/kotlin-js-browser-base")
+            assertFileExists("build/js/packages/kotlin-js-browser-lib")
+            assertFileExists("build/js/packages/kotlin-js-browser-app")
+            assertFileExists("build/js/packages/kotlin-js-browser-app/kotlin-dce")
+
+            assertFileExists("build/js/packages/kotlin-js-browser-app/kotlin-dce/kotlin.js")
+            assertFileExists("build/js/packages/kotlin-js-browser-app/kotlin-dce/kotlin-js-browser-app.js")
+            assertFileExists("build/js/packages/kotlin-js-browser-app/kotlin-dce/kotlin-js-browser-lib.js")
+            assertFileExists("build/js/packages/kotlin-js-browser-app/kotlin-dce/kotlin-js-browser-base.js")
+
+            assertFileExists("app/build/distributions/app.js")
+            assertFileExists("app/build/distributions/app.js.map")
         }
     }
 }

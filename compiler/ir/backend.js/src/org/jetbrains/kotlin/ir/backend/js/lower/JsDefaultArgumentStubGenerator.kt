@@ -79,7 +79,6 @@ class JsDefaultCallbackGenerator(val context: JsIrBackendContext): BodyLoweringP
                 endOffset,
                 context.irBuiltIns.anyType,
                 originalFunction.symbol,
-                originalFunction.descriptor,
                 0,
                 BIND_CALL
             )
@@ -91,7 +90,6 @@ class JsDefaultCallbackGenerator(val context: JsIrBackendContext): BodyLoweringP
                 endOffset,
                 context.irBuiltIns.anyType,
                 context.intrinsics.jsBind.symbol,
-                context.intrinsics.jsBind.descriptor,
                 BIND_CALL,
                 superQualifierSymbol
             )

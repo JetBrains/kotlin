@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 // KJS_WITH_FULL_RUNTIME
 // WITH_RUNTIME
 val alist = arrayListOf(1 to 2, 2 to 3, 3 to 4)

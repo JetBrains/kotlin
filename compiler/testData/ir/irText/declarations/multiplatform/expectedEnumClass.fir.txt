@@ -47,6 +47,10 @@ FILE fqName:<root> fileName:/expectedEnumClass.kt
     FUN name:values visibility:public modality:FINAL <> ($this:<root>.MyEnum) returnType:kotlin.Array<<root>.MyEnum>
       $this: VALUE_PARAMETER name:<this> type:<root>.MyEnum
       BLOCK_BODY
+    FUN name:valueOf visibility:public modality:FINAL <> ($this:<root>.MyEnum, value:kotlin.String) returnType:<root>.MyEnum
+      $this: VALUE_PARAMETER name:<this> type:<root>.MyEnum
+      VALUE_PARAMETER name:value index:0 type:kotlin.String
+      BLOCK_BODY
     FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum) returnType:kotlin.Any [fake_override]
       overridden:
         protected final fun clone (): kotlin.Any declared in kotlin.Enum
@@ -147,6 +151,10 @@ FILE fqName:<root> fileName:/expectedEnumClass.kt
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN name:values visibility:public modality:FINAL <> ($this:<root>.MyEnum) returnType:kotlin.Array<<root>.MyEnum>
       $this: VALUE_PARAMETER name:<this> type:<root>.MyEnum
+      BLOCK_BODY
+    FUN name:valueOf visibility:public modality:FINAL <> ($this:<root>.MyEnum, value:kotlin.String) returnType:<root>.MyEnum
+      $this: VALUE_PARAMETER name:<this> type:<root>.MyEnum
+      VALUE_PARAMETER name:value index:0 type:kotlin.String
       BLOCK_BODY
     FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum) returnType:kotlin.Any [fake_override]
       overridden:

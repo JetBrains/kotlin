@@ -19,8 +19,16 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.name.Name
 
-class FirClassDeclaredMemberScope(klass: FirClass<*>) : FirScope() {
-    private val nestedClassifierScope = nestedClassifierScope(klass)
+class FirClassDeclaredMemberScope(
+    klass: FirClass<*>,
+    useLazyNestedClassifierScope: Boolean = false,
+    existingNames: List<Name>? = null
+) : FirScope() {
+    private val nestedClassifierScope = if (useLazyNestedClassifierScope) {
+        nestedClassifierScope(klass.symbol.classId, klass.session, existingNames)
+    } else {
+        nestedClassifierScope(klass)
+    }
 
     private val callablesIndex: Map<Name, List<FirCallableSymbol<*>>> = run {
         val result = mutableMapOf<Name, MutableList<FirCallableSymbol<*>>>()
@@ -32,13 +40,6 @@ class FirClassDeclaredMemberScope(klass: FirClass<*>) : FirScope() {
                         else -> declaration.name
                     }
                     result.getOrPut(name) { mutableListOf() } += declaration.symbol
-                }
-                is FirRegularClass -> {
-                    for (nestedDeclaration in declaration.declarations) {
-                        if (nestedDeclaration is FirConstructor) {
-                            result.getOrPut(declaration.name) { mutableListOf() } += nestedDeclaration.symbol
-                        }
-                    }
                 }
             }
         }

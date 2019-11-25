@@ -11,7 +11,7 @@ FILE: overloadsBound.kt
         }
 
     }
-    public final fun foo(p: R|kotlin/Function1<kotlin/String, kotlin/Unit>|): R|kotlin/Unit| {
+    public final fun foo(p: R|(kotlin/String) -> kotlin/Unit|): R|kotlin/Unit| {
     }
     public final fun bar(c: R|C|): R|kotlin/Unit| {
         R|/foo|(R|<local>/c|::R|/C.xf1|)

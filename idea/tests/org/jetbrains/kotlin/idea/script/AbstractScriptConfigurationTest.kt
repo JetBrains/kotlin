@@ -6,10 +6,9 @@
 package org.jetbrains.kotlin.idea.script
 
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.module.JavaModuleType
 import com.intellij.openapi.module.Module
-import com.intellij.openapi.projectRoots.ProjectJdkTable
+import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.io.FileUtil
@@ -18,7 +17,6 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.PlatformTestCase
-import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.PsiTestUtil
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
@@ -27,10 +25,11 @@ import org.jetbrains.kotlin.idea.core.script.IdeScriptReportSink
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager.Companion.updateScriptDependenciesSynchronously
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionContributor
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager
-import org.jetbrains.kotlin.idea.core.script.isScriptDependenciesUpdaterDisabled
+import org.jetbrains.kotlin.idea.core.script.isScriptChangesNotifierDisabled
 import org.jetbrains.kotlin.idea.highlighter.KotlinHighlightingUtil
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -79,7 +78,7 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
     private val sdk by lazy {
         val jdk = PluginTestCaseBase.jdk(TestJdkKind.MOCK_JDK)
         runWriteAction {
-            ProjectJdkTable.getInstance().addJdk(jdk, testRootDisposable)
+            getProjectJdkTableSafe().addJdk(jdk, testRootDisposable)
             ProjectRootManager.getInstance(project).projectSdk = jdk
         }
         jdk
@@ -140,15 +139,19 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
 
     override fun setUp() {
         super.setUp()
-        ApplicationManager.getApplication().isScriptDependenciesUpdaterDisabled = true
+        ApplicationManager.getApplication().isScriptChangesNotifierDisabled = true
     }
 
     override fun tearDown() {
-        ApplicationManager.getApplication().isScriptDependenciesUpdaterDisabled = false
+        ApplicationManager.getApplication().isScriptChangesNotifierDisabled = false
 
         System.setProperty("kotlin.script.classpath", oldScripClasspath ?: "")
 
         super.tearDown()
+    }
+
+    override fun getTestProjectJdk(): Sdk {
+        return PluginTestCaseBase.mockJdk()
     }
 
     private fun createTestModuleByName(name: String): Module {
@@ -199,16 +202,14 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
             env["template-classes-names"] = listOf("custom.scriptDefinition.Template")
         }
 
-        if (env["javaHome"] != null) {
-            val jdkKind = when ((env["javaHome"] as? List<String>)?.singleOrNull()) {
-                "9" -> TestJdkKind.FULL_JDK_9
-                else -> TestJdkKind.MOCK_JDK
-            }
-            runWriteAction {
-                val jdk = PluginTestCaseBase.jdk(jdkKind)
-                ProjectJdkTable.getInstance().addJdk(jdk, testRootDisposable)
-                env["javaHome"] = File(jdk.homePath)
-            }
+        val jdkKind = when ((env["javaHome"] as? List<String>)?.singleOrNull()) {
+            "9" -> TestJdkKind.FULL_JDK_9
+            else -> TestJdkKind.MOCK_JDK
+        }
+        runWriteAction {
+            val jdk = PluginTestCaseBase.jdk(jdkKind)
+            getProjectJdkTableSafe().addJdk(jdk, testRootDisposable)
+            env["javaHome"] = File(jdk.homePath)
         }
 
         env.putAll(defaultEnvironment)
@@ -264,12 +265,20 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
         if (script == null) error("Test file with script couldn't be found in test project")
 
         configureByExistingFile(script)
+        loadScriptConfigurationSynchronously(script)
+    }
+
+    protected open fun loadScriptConfigurationSynchronously(script: VirtualFile) {
         updateScriptDependenciesSynchronously(myFile, project)
 
-        VfsUtil.markDirtyAndRefresh(false, true, true, project.baseDir)
         // This is needed because updateScriptDependencies invalidates psiFile that was stored in myFile field
+        VfsUtil.markDirtyAndRefresh(false, true, true, project.baseDir)
         myFile = psiManager.findFile(script)
 
+        checkHighlighting()
+    }
+
+    protected fun checkHighlighting() {
         val ktFile = myFile as KtFile
         val reports = IdeScriptReportSink.getReports(ktFile)
         val isFatalErrorPresent = reports.any { it.severity == ScriptDiagnostic.Severity.FATAL }

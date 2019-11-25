@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
 import java.io.File
+import kotlin.script.experimental.api.ResultWithDiagnostics
+import kotlin.script.experimental.api.asSuccess
 import kotlin.script.experimental.host.FileBasedScriptSource
 
 data class ScriptsCompilationDependencies(
@@ -22,7 +24,7 @@ data class ScriptsCompilationDependencies(
 ) {
     data class SourceDependencies(
         val scriptFile: KtFile,
-        val sourceDependencies: List<KtFile>
+        val sourceDependencies: ResultWithDiagnostics<List<KtFile>>
     )
 }
 
@@ -42,34 +44,39 @@ fun collectScriptsCompilationDependencies(
         while (true) {
             val newRemainingSources = ArrayList<KtFile>()
             for (source in remainingSources) {
-                val refinedConfiguration = importsProvider.getScriptConfiguration(source)
-                if (refinedConfiguration != null) {
-                    collectedClassPath.addAll(refinedConfiguration.dependenciesClassPath)
-
-                    val sourceDependenciesRoots = refinedConfiguration.importedScripts.mapNotNull {
-                        // TODO: support any kind of ScriptSource.
-                        val path = (it as? FileBasedScriptSource)?.file?.path ?: return@mapNotNull null
-                        KotlinSourceRoot(path, false)
+                when (val refinedConfiguration = importsProvider.getScriptConfigurationResult(source)) {
+                    null -> {}
+                    is ResultWithDiagnostics.Failure -> {
+                        collectedSourceDependencies.add(ScriptsCompilationDependencies.SourceDependencies(source, refinedConfiguration))
                     }
-                    val sourceDependencies =
-                        createSourceFilesFromSourceRoots(
-                            configuration, project, sourceDependenciesRoots,
-                            // TODO: consider receiving and using precise location from the resolver in the future
-                            source.virtualFile?.path?.let { CompilerMessageLocation.create(it) }
-                        )
-                    if (sourceDependencies.isNotEmpty()) {
-                        collectedSourceDependencies.add(
-                            ScriptsCompilationDependencies.SourceDependencies(
-                                source,
-                                sourceDependencies
-                            )
-                        )
+                    is ResultWithDiagnostics.Success -> {
+                        collectedClassPath.addAll(refinedConfiguration.value.dependenciesClassPath)
 
-                        val newSources = sourceDependencies.filterNot { knownSourcePaths.contains(it.virtualFile.path) }
-                        for (newSource in newSources) {
-                            collectedSources.add(newSource)
-                            newRemainingSources.add(newSource)
-                            knownSourcePaths.add(newSource.virtualFile.path)
+                        val sourceDependenciesRoots = refinedConfiguration.value.importedScripts.mapNotNull {
+                            // TODO: support any kind of ScriptSource.
+                            val path = (it as? FileBasedScriptSource)?.file?.path ?: return@mapNotNull null
+                            KotlinSourceRoot(path, false)
+                        }
+                        val sourceDependencies =
+                            createSourceFilesFromSourceRoots(
+                                configuration, project, sourceDependenciesRoots,
+                                // TODO: consider receiving and using precise location from the resolver in the future
+                                source.virtualFile?.path?.let { CompilerMessageLocation.create(it) }
+                            )
+                        if (sourceDependencies.isNotEmpty()) {
+                            collectedSourceDependencies.add(
+                                ScriptsCompilationDependencies.SourceDependencies(
+                                    source,
+                                    sourceDependencies.asSuccess(refinedConfiguration.reports)
+                                )
+                            )
+
+                            val newSources = sourceDependencies.filterNot { knownSourcePaths.contains(it.virtualFile.path) }
+                            for (newSource in newSources) {
+                                collectedSources.add(newSource)
+                                newRemainingSources.add(newSource)
+                                knownSourcePaths.add(newSource.virtualFile.path)
+                            }
                         }
                     }
                 }

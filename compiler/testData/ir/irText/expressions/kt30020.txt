@@ -51,9 +51,9 @@ FILE fqName:<root> fileName:/kt30020.kt
         element: CONST Int type=kotlin.Int value=4
       CALL 'public final fun plusAssign <T> (element: T of kotlin.collections.plusAssign): kotlin.Unit [inline] declared in kotlin.collections' type=kotlin.Unit origin=PLUSEQ
         <T>: kotlin.Int
-        $receiver: CALL 'public final fun CHECK_NOT_NULL <T> (x: T of kotlin.internal.ir.CHECK_NOT_NULL?): T of kotlin.internal.ir.CHECK_NOT_NULL declared in kotlin.internal.ir' type=kotlin.collections.MutableList<kotlin.Any> origin=EXCLEXCL
-          <T>: kotlin.collections.MutableList<kotlin.Any>
-          x: BLOCK type=kotlin.collections.MutableList<kotlin.Any>? origin=SAFE_CALL
+        $receiver: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): T0 of kotlin.internal.ir.CHECK_NOT_NULL declared in kotlin.internal.ir' type=kotlin.collections.MutableList<kotlin.Any> origin=EXCLEXCL
+          <T0>: kotlin.collections.MutableList<kotlin.Any>
+          arg0: BLOCK type=kotlin.collections.MutableList<kotlin.Any>? origin=SAFE_CALL
             VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:<root>.X? [val]
               GET_VAR 'nx: <root>.X? declared in <root>.test' type=<root>.X? origin=null
             WHEN type=kotlin.collections.MutableList<kotlin.Any>? origin=null
@@ -69,9 +69,9 @@ FILE fqName:<root> fileName:/kt30020.kt
         element: CONST Int type=kotlin.Int value=5
       CALL 'public final fun plusAssign <T> (element: T of kotlin.collections.plusAssign): kotlin.Unit [inline] declared in kotlin.collections' type=kotlin.Unit origin=PLUSEQ
         <T>: kotlin.Int
-        $receiver: CALL 'public final fun CHECK_NOT_NULL <T> (x: T of kotlin.internal.ir.CHECK_NOT_NULL?): T of kotlin.internal.ir.CHECK_NOT_NULL declared in kotlin.internal.ir' type=kotlin.collections.MutableList<kotlin.Any> origin=EXCLEXCL
-          <T>: kotlin.collections.MutableList<kotlin.Any>
-          x: BLOCK type=kotlin.collections.MutableList<kotlin.Any>? origin=SAFE_CALL
+        $receiver: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): T0 of kotlin.internal.ir.CHECK_NOT_NULL declared in kotlin.internal.ir' type=kotlin.collections.MutableList<kotlin.Any> origin=EXCLEXCL
+          <T0>: kotlin.collections.MutableList<kotlin.Any>
+          arg0: BLOCK type=kotlin.collections.MutableList<kotlin.Any>? origin=SAFE_CALL
             VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:<root>.X? [val]
               GET_VAR 'nx: <root>.X? declared in <root>.test' type=<root>.X? origin=null
             WHEN type=kotlin.collections.MutableList<kotlin.Any>? origin=null

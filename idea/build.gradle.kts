@@ -125,6 +125,7 @@ dependencies {
     testCompile(project(":idea:idea-native")) { isTransitive = false }
     testCompile(project(":idea:idea-gradle-native")) { isTransitive = false }
     testCompile(commonDep("junit:junit"))
+    testCompileOnly(intellijPluginDep("coverage"))
 
     testRuntime(project(":kotlin-native:kotlin-native-library-reader")) { isTransitive = false }
     testRuntime(project(":kotlin-native:kotlin-native-utils")) { isTransitive = false }
@@ -162,6 +163,8 @@ dependencies {
     testCompile(intellijPluginDep("copyright"))
     testCompile(intellijPluginDep("properties"))
     testCompile(intellijPluginDep("java-i18n"))
+    testCompile(intellijPluginDep("junit"))
+
     testCompileOnly(intellijDep())
     testCompileOnly(commonDep("com.google.code.findbugs", "jsr305"))
     testCompileOnly(intellijPluginDep("gradle"))
@@ -193,6 +196,12 @@ dependencies {
     performanceTestCompile(project(":nj2k"))
     performanceTestCompile(intellijPluginDep("gradle"))
     performanceTestRuntime(sourceSets["performanceTest"].output)
+}
+
+tasks.named<Copy>("processResources") {
+    from(provider { project(":compiler:cli-common").mainSourceSet.resources }) {
+        include("META-INF/extensions/compiler.xml")
+    }
 }
 
 projectTest(parallel = true) {

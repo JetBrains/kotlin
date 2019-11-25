@@ -1,5 +1,7 @@
 // !LANGUAGE: +NewInference
+// IGNORE_BACKEND_FIR: JVM_IR
 // TARGET_BACKEND: JVM
+// SKIP_JDK6
 // FULL_JDK
 
 package test

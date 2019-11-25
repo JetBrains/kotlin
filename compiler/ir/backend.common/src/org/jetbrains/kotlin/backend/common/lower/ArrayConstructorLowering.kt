@@ -18,8 +18,8 @@ import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.copyTypeArgumentsFrom
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.getClass
-import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.functions
@@ -78,7 +78,7 @@ class ArrayConstructorLowering(val context: CommonBackendContext) : IrElementTra
             val invoke = invokable.type.getClass()!!.functions.single { it.name == OperatorNameConventions.INVOKE }
             val invokableVar = if (lambda == null) irTemporary(invokable) else null
             +irWhile().apply {
-                condition = irCall(context.irBuiltIns.lessFunByOperandType[index.type.toKotlinType()]!!).apply {
+                condition = irCall(context.irBuiltIns.lessFunByOperandType[index.type.classifierOrFail]!!).apply {
                     putValueArgument(0, irGet(index))
                     putValueArgument(1, irGet(sizeVar))
                 }

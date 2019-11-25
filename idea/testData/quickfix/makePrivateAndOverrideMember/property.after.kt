@@ -3,6 +3,6 @@
 class B : JavaClass() {
     private val name: String = ""
     override fun getName(): String {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        TODO("Not yet implemented")
     }
 }

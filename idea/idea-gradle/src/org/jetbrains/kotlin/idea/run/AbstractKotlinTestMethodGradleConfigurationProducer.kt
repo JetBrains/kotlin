@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.run
 import com.intellij.execution.Location
 import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.actions.ConfigurationFromContext
+import com.intellij.execution.configurations.ConfigurationFactory
 import com.intellij.execution.junit.InheritorChooser
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemRunConfiguration
 import com.intellij.openapi.module.Module
@@ -41,12 +42,12 @@ abstract class AbstractKotlinMultiplatformTestMethodGradleConfigurationProducer 
         return isApplicable(module, platform)
     }
 
-    override fun isPreferredConfiguration(self: ConfigurationFromContext?, other: ConfigurationFromContext): Boolean {
-        return other.isJpsJunitConfiguration()
+    override fun isPreferredConfiguration(self: ConfigurationFromContext, other: ConfigurationFromContext): Boolean {
+        return other.isJpsJunitConfiguration() || super.isPreferredConfiguration(self, other)
     }
 
     override fun shouldReplace(self: ConfigurationFromContext, other: ConfigurationFromContext): Boolean {
-        return other.isJpsJunitConfiguration()
+        return other.isJpsJunitConfiguration() || super.shouldReplace(self, other)
     }
 
     override fun onFirstRun(fromContext: ConfigurationFromContext, context: ConfigurationContext, performRunnable: Runnable) {
@@ -97,6 +98,10 @@ abstract class AbstractKotlinMultiplatformTestMethodGradleConfigurationProducer 
 abstract class AbstractKotlinTestMethodGradleConfigurationProducer
     : TestMethodGradleConfigurationProducer(), KotlinGradleConfigurationProducer
 {
+    override fun getConfigurationFactory(): ConfigurationFactory {
+        return KotlinGradleExternalTaskConfigurationType.instance.factory
+    }
+
     override fun isConfigurationFromContext(configuration: ExternalSystemRunConfiguration, context: ConfigurationContext): Boolean {
         if (!context.check()) {
             return false
@@ -135,4 +140,24 @@ abstract class AbstractKotlinTestMethodGradleConfigurationProducer
     }
 
     override fun getPsiMethodForLocation(contextLocation: Location<*>) = getTestMethodForKotlinTest(contextLocation)
+
+    override fun isPreferredConfiguration(self: ConfigurationFromContext, other: ConfigurationFromContext): Boolean {
+        return checkShouldReplace(self, other) || super.isPreferredConfiguration(self, other)
+    }
+
+    override fun shouldReplace(self: ConfigurationFromContext, other: ConfigurationFromContext): Boolean {
+        return checkShouldReplace(self, other) || super.shouldReplace(self, other)
+    }
+
+    private fun checkShouldReplace(self: ConfigurationFromContext, other: ConfigurationFromContext): Boolean {
+        if (self.isProducedBy(javaClass)) {
+            if (other.isProducedBy(TestMethodGradleConfigurationProducer::class.java) ||
+                other.isProducedBy(AbstractKotlinTestClassGradleConfigurationProducer::class.java)
+            ) {
+                return true
+            }
+        }
+
+        return false
+    }
 }
