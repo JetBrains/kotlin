@@ -16,7 +16,7 @@ import com.intellij.openapi.externalSystem.service.project.autoimport.ProjectSta
 import com.intellij.openapi.externalSystem.util.calculateCrc
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.observable.operations.CompoundParallelOperationTrace
-import com.intellij.openapi.observable.operations.SuperCompoundParallelOperationTrace
+import com.intellij.openapi.observable.operations.AnonymousParallelOperationTrace
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
@@ -45,7 +45,7 @@ class ProjectSettingsTracker(
 
   private val settingsFilesCRC = AtomicReference(emptyMap<String, Long>())
 
-  private val applyChangesOperation = SuperCompoundParallelOperationTrace(debugName = "Apply changes operation")
+  private val applyChangesOperation = AnonymousParallelOperationTrace(debugName = "Apply changes operation")
 
   private fun calculateSettingsFilesCRC(): Map<String, Long> {
     val localFileSystem = LocalFileSystem.getInstance()
