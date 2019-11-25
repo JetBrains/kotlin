@@ -88,6 +88,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         runTest("compiler/fir/resolve/testData/resolve/stdlib/functionX.kt");
     }
 
+    @TestMetadata("hashMapTypeAlias.kt")
+    public void testHashMapTypeAlias() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/stdlib/hashMapTypeAlias.kt");
+    }
+
     @TestMetadata("hashSet.kt")
     public void testHashSet() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/stdlib/hashSet.kt");
