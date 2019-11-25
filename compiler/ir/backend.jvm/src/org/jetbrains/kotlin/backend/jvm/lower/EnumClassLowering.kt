@@ -68,11 +68,41 @@ private class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringP
         private lateinit var valueOfFunction: IrFunction
 
         fun run() {
+            insertInstanceInitializer()
             assignOrdinalsToEnumEntries()
             lowerEnumConstructors(irClass)
             lowerEnumEntries()
             setupSynthesizedEnumClassMembers()
             lowerEnumClassBody()
+        }
+
+        // Make sure that an instance initializer call exists, so that field initialization code will be generated.
+        // TODO: This function is identical to the one used in the JS lowerings. Share them.
+        private fun insertInstanceInitializer() {
+            irClass.transformChildrenVoid(object : IrElementTransformerVoid() {
+                override fun visitClass(declaration: IrClass) = declaration
+
+                override fun visitConstructor(declaration: IrConstructor): IrStatement {
+                    declaration.transformChildrenVoid(this)
+
+                    val blockBody = declaration.body as IrBlockBody
+
+                    if (!blockBody.statements.any { it is IrInstanceInitializerCall }) {
+                        blockBody.statements.transformFlat {
+                            if (it is IrEnumConstructorCall)
+                                listOf(
+                                    it, IrInstanceInitializerCallImpl(
+                                        declaration.startOffset, declaration.startOffset,
+                                        irClass.symbol, context.irBuiltIns.unitType
+                                    )
+                                )
+                            else null
+                        }
+                    }
+
+                    return declaration
+                }
+            })
         }
 
         private fun assignOrdinalsToEnumEntries() {
