@@ -83,10 +83,10 @@ class JKKtWhenStatement(
 }
 
 class JKKtConvertedFromForLoopSyntheticWhileStatement(
-    variableDeclaration: JKStatement,
+    variableDeclarations: List<JKStatement>,
     whileStatement: JKWhileStatement
 ) : JKStatement() {
-    var variableDeclaration: JKStatement by child(variableDeclaration)
+    var variableDeclarations: List<JKStatement> by children(variableDeclarations)
     var whileStatement: JKWhileStatement by child(whileStatement)
     override fun accept(visitor: JKVisitor) = visitor.visitKtConvertedFromForLoopSyntheticWhileStatement(this)
 }
@@ -154,7 +154,7 @@ class JKJavaAssertStatement(condition: JKExpression, description: JKExpression) 
 }
 
 class JKJavaForLoopStatement(
-    initializer: JKStatement,
+    initializers: List<JKStatement>,
     condition: JKExpression,
     updaters: List<JKStatement>,
     body: JKStatement
@@ -162,7 +162,7 @@ class JKJavaForLoopStatement(
     override var body by child(body)
     var updaters by children(updaters)
     var condition by child(condition)
-    var initializer by child(initializer)
+    var initializers by children(initializers)
 
     override fun accept(visitor: JKVisitor) = visitor.visitJavaForLoopStatement(this)
 }

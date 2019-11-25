@@ -2023,6 +2023,11 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
             runTest("nj2k/testData/newJ2k/for/downTo4.java");
         }
 
+        @TestMetadata("emptyInitializers.java")
+        public void testEmptyInitializers() throws Exception {
+            runTest("nj2k/testData/newJ2k/for/emptyInitializers.java");
+        }
+
         @TestMetadata("falseArrayIndicesReversed.java")
         public void testFalseArrayIndicesReversed() throws Exception {
             runTest("nj2k/testData/newJ2k/for/falseArrayIndicesReversed.java");
@@ -2151,6 +2156,16 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         @TestMetadata("infiniteFor.java")
         public void testInfiniteFor() throws Exception {
             runTest("nj2k/testData/newJ2k/for/infiniteFor.java");
+        }
+
+        @TestMetadata("multipleInitializers.java")
+        public void testMultipleInitializers() throws Exception {
+            runTest("nj2k/testData/newJ2k/for/multipleInitializers.java");
+        }
+
+        @TestMetadata("multipleInitializersWithvariableDeclarations.java")
+        public void testMultipleInitializersWithvariableDeclarations() throws Exception {
+            runTest("nj2k/testData/newJ2k/for/multipleInitializersWithvariableDeclarations.java");
         }
 
         @TestMetadata("nameConflict1.java")
