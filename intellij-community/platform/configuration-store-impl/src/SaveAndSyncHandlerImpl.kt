@@ -133,7 +133,7 @@ internal class SaveAndSyncHandlerImpl : BaseSaveAndSyncHandler(), Disposable {
         }
 
         // for web development it is crucially important to save documents on frame deactivation as early as possible
-        FileDocumentManager.getInstance().saveAllDocuments()
+        (FileDocumentManager.getInstance() as FileDocumentManagerImpl).saveAllDocuments(false)
 
         if (addToSaveQueue(saveAppAndProjectsSettingsTask)) {
           // do not cancel if there is already request - opposite to scheduleSave,
