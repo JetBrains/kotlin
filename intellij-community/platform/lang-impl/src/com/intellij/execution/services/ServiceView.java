@@ -96,8 +96,6 @@ abstract class ServiceView extends JPanel implements Disposable {
 
   abstract void jumpToServices();
 
-  abstract boolean hasItems();
-
   static ServiceView createView(@NotNull Project project, @NotNull ServiceViewModel viewModel, @NotNull ServiceViewState viewState) {
     setViewModelState(viewModel, viewState);
     ServiceView serviceView = viewModel instanceof ServiceViewModel.SingeServiceModel ?

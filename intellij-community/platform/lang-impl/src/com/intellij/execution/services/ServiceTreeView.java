@@ -316,11 +316,6 @@ class ServiceTreeView extends ServiceView {
     return Collections.emptyList();
   }
 
-  @Override
-  boolean hasItems() {
-    return !myTree.isEmpty();
-  }
-
   private void cancelSelectionUpdate() {
     Promise<?> selectPromise = myUpdateSelectionPromise;
     if (selectPromise instanceof AsyncPromise) {
