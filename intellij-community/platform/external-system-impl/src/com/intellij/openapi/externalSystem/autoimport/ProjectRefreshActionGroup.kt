@@ -5,7 +5,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.editor.toolbar.floating.FloatingToolbarComponent
 
-class ProjectReloadActionGroup : DefaultActionGroup() {
+class ProjectRefreshActionGroup : DefaultActionGroup() {
   override fun update(e: AnActionEvent) {
     val project = e.project ?: return
     val toolbarComponent = e.toolbarComponent ?: return
