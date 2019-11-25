@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.util.generateTypicalIrProviderList
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -67,7 +68,8 @@ fun compile(
 
     // Load declarations referenced during `context` initialization
     dependencyModules.forEach {
-        ExternalDependenciesGenerator(it.descriptor, symbolTable, irBuiltIns, deserializer).generateUnboundSymbolsAsDependencies()
+        val irProviders = generateTypicalIrProviderList(it.descriptor, irBuiltIns, symbolTable, deserializer)
+        ExternalDependenciesGenerator(symbolTable, irProviders).generateUnboundSymbolsAsDependencies()
     }
 
     val irFiles = dependencyModules.flatMap { it.files } + moduleFragment.files
@@ -75,8 +77,9 @@ fun compile(
     moduleFragment.files.clear()
     moduleFragment.files += irFiles
 
+    val irProvidersWithoutDeserializer = generateTypicalIrProviderList(moduleDescriptor, irBuiltIns, symbolTable)
     // Create stubs
-    ExternalDependenciesGenerator(moduleDescriptor, symbolTable, irBuiltIns).generateUnboundSymbolsAsDependencies()
+    ExternalDependenciesGenerator(symbolTable, irProvidersWithoutDeserializer).generateUnboundSymbolsAsDependencies()
     moduleFragment.patchDeclarationParents()
 
     moveBodilessDeclarationsToSeparatePlace(context, moduleFragment)

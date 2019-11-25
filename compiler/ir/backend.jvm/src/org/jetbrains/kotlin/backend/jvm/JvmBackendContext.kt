@@ -47,7 +47,10 @@ class JvmBackendContext(
     override val irBuiltIns: IrBuiltIns,
     irModuleFragment: IrModuleFragment,
     symbolTable: SymbolTable,
-    val phaseConfig: PhaseConfig
+    val phaseConfig: PhaseConfig,
+    // If the JVM fqname of a class differs from what is implied by its parent, e.g. if it's a file class
+    // annotated with @JvmPackageName, the correct name is recorded here.
+    internal val classNameOverride: MutableMap<IrClass, JvmClassName>
 ) : CommonBackendContext {
     override val transformedFunction: MutableMap<IrFunctionSymbol, IrSimpleFunctionSymbol>
         get() = TODO("not implemented")
@@ -85,10 +88,6 @@ class JvmBackendContext(
     internal val regeneratedObjectNameGenerators = mutableMapOf<Pair<IrClass, Name>, NameGenerator>()
 
     internal val localDelegatedProperties = mutableMapOf<IrClass, List<IrLocalDelegatedPropertySymbol>>()
-
-    // If the JVM fqname of a class differs from what is implied by its parent, e.g. if it's a file class
-    // annotated with @JvmPackageName, the correct name is recorded here.
-    internal lateinit var classNameOverride: MutableMap<IrClass, JvmClassName>
 
     internal val multifileFacadesToAdd = mutableMapOf<JvmClassName, MutableList<IrClass>>()
     internal val multifileFacadeForPart = mutableMapOf<IrClass, JvmClassName>()

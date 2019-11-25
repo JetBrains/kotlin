@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.wasm.codegen.IrModuleToWasm
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.loadIr
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
+import org.jetbrains.kotlin.ir.util.generateTypicalIrProviderList
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
@@ -37,7 +38,8 @@ fun compileWasm(
 
     // Load declarations referenced during `context` initialization
     dependencyModules.forEach {
-        ExternalDependenciesGenerator(it.descriptor, symbolTable, irBuiltIns, deserializer).generateUnboundSymbolsAsDependencies()
+        val irProviders = generateTypicalIrProviderList(it.descriptor, irBuiltIns, symbolTable, deserializer)
+        ExternalDependenciesGenerator(symbolTable, irProviders).generateUnboundSymbolsAsDependencies()
     }
 
     val irFiles = dependencyModules.flatMap { it.files } + moduleFragment.files
@@ -46,7 +48,8 @@ fun compileWasm(
     moduleFragment.files += irFiles
 
     // Create stubs
-    ExternalDependenciesGenerator(moduleDescriptor, symbolTable, irBuiltIns).generateUnboundSymbolsAsDependencies()
+    val irProviders = generateTypicalIrProviderList(moduleDescriptor, irBuiltIns, symbolTable, deserializer)
+    ExternalDependenciesGenerator(symbolTable, irProviders).generateUnboundSymbolsAsDependencies()
     moduleFragment.patchDeclarationParents()
 
     wasmPhases.invokeToplevel(phaseConfig, context, moduleFragment)

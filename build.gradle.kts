@@ -214,6 +214,7 @@ extra["compilerModules"] = arrayOf(
     ":compiler:backend.wasm",
     ":compiler:ir.serialization.common",
     ":compiler:ir.serialization.js",
+    ":compiler:ir.serialization.jvm",
     ":kotlin-util-io",
     ":kotlin-util-klib",
     ":kotlin-util-klib-metadata",

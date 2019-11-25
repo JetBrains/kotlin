@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.IrDeserializer
 import org.jetbrains.kotlin.ir.util.IrProvider
 import org.jetbrains.kotlin.ir.util.StubGeneratorExtensions
+import org.jetbrains.kotlin.ir.util.generateTypicalIrProviderList
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.descriptors.findPackageFragmentForFile
@@ -35,7 +36,12 @@ class ModuleGenerator(override val context: GeneratorContext) : Generator {
 
     private val constantValueGenerator = context.constantValueGenerator
 
-    fun generateModuleFragment(ktFiles: Collection<KtFile>): IrModuleFragment =
+    fun generateModuleFragment(ktFiles: Collection<KtFile>, deserializer: IrDeserializer, extensions: StubGeneratorExtensions = StubGeneratorExtensions.EMPTY): IrModuleFragment =
+        generateModuleFragmentWithoutDependencies(ktFiles).also { irModule ->
+            generateUnboundSymbolsAsDependencies(irModule, deserializer, extensions)
+        }
+
+    fun generateModuleFragmentWithoutDependencies(ktFiles: Collection<KtFile>): IrModuleFragment =
         IrModuleFragmentImpl(context.moduleDescriptor, context.irBuiltIns).also { irModule ->
             irModule.files.addAll(generateFiles(ktFiles))
         }
@@ -43,12 +49,17 @@ class ModuleGenerator(override val context: GeneratorContext) : Generator {
     fun generateUnboundSymbolsAsDependencies(
         irModule: IrModuleFragment,
         deserializer: IrDeserializer? = null,
-        irProviders: List<IrProvider> = emptyList(),
         extensions: StubGeneratorExtensions = StubGeneratorExtensions.EMPTY
     ) {
-        ExternalDependenciesGenerator(
-            irModule.descriptor, context.symbolTable, context.irBuiltIns, deserializer, irProviders, extensions
-        ).generateUnboundSymbolsAsDependencies()
+        val fullIrProvidersList = generateTypicalIrProviderList(
+            irModule.descriptor, context.irBuiltIns, context.symbolTable, deserializer,
+            extensions
+        )
+        ExternalDependenciesGenerator(context.symbolTable, fullIrProvidersList).generateUnboundSymbolsAsDependencies()
+    }
+
+    fun generateUnboundSymbolsAsDependencies(irProviders: List<IrProvider>) {
+        ExternalDependenciesGenerator(context.symbolTable, irProviders).generateUnboundSymbolsAsDependencies()
     }
 
     private fun generateFiles(ktFiles: Collection<KtFile>): List<IrFile> {
