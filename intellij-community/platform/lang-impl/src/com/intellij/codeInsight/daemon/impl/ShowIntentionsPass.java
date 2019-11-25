@@ -20,6 +20,7 @@ import com.intellij.openapi.editor.RangeMarker;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressIndicatorProvider;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
@@ -31,6 +32,7 @@ import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.util.CommonProcessors;
 import com.intellij.util.containers.ContainerUtil;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -117,6 +119,7 @@ public class ShowIntentionsPass extends TextEditorHighlightingPass {
     boolean fixRangeIsNotEmpty = !info.getFixTextRange().isEmpty();
     Editor injectedEditor = null;
     PsiFile injectedFile = null;
+    ProgressIndicator indicator = ProgressIndicatorProvider.getGlobalProgressIndicator();
     for (Pair<HighlightInfo.IntentionActionDescriptor, RangeMarker> pair : info.quickFixActionMarkers) {
       HighlightInfo.IntentionActionDescriptor actionInGroup = pair.first;
       RangeMarker range = pair.second;
@@ -145,6 +148,9 @@ public class ShowIntentionsPass extends TextEditorHighlightingPass {
       else {
         editorToUse = editor;
         fileToUse = file;
+      }
+      if (indicator != null) {
+        indicator.setText(actionInGroup.getDisplayName());
       }
       if (actionInGroup.getAction().isAvailable(project, editorToUse, fileToUse)) {
         outList.add(actionInGroup);
@@ -231,7 +237,7 @@ public class ShowIntentionsPass extends TextEditorHighlightingPass {
     TemplateState state = TemplateManagerImpl.getTemplateState(myEditor);
     if ((state == null || state.isFinished()) && cachedIntentions != null) {
       IntentionsInfo syncInfo = new IntentionsInfo();
-      getActionsToShowSync(myEditor, myFile, syncInfo, myPassIdToShowIntentionsFor);
+      getActionsToShowSync(myEditor, myFile, syncInfo);
       actionsChanged |= cachedIntentions.addActions(syncInfo);
 
       IntentionsUI.getInstance(myProject).update(cachedIntentions, actionsChanged);
@@ -249,7 +255,7 @@ public class ShowIntentionsPass extends TextEditorHighlightingPass {
     IntentionsInfo result = new IntentionsInfo();
     getActionsToShow(hostEditor, hostFile, result, -1);
     if (includeSyncActions) {
-      getActionsToShowSync(hostEditor, hostFile, result, -1);
+      getActionsToShowSync(hostEditor, hostFile, result);
     }
     return result;
   }
@@ -257,13 +263,12 @@ public class ShowIntentionsPass extends TextEditorHighlightingPass {
   /**
    * Collects intention actions from providers intended to be invoked in EDT.
    */
-  private static void getActionsToShowSync(@NotNull final Editor hostEditor,
-                                           @NotNull final PsiFile hostFile,
-                                           @NotNull final IntentionsInfo intentions,
-                                           int passIdToShowIntentionsFor) {
+  @ApiStatus.Internal
+  public static void getActionsToShowSync(@NotNull Editor hostEditor,
+                                          @NotNull PsiFile hostFile,
+                                          @NotNull IntentionsInfo intentions) {
     ApplicationManager.getApplication().assertIsDispatchThread();
-    new EditorNotificationActions().collectActions(hostEditor, hostFile, intentions, passIdToShowIntentionsFor,
-                                                   hostEditor.getCaretModel().getOffset());
+    EditorNotificationActions.collectActions(hostEditor, intentions);
     intentions.filterActions(hostFile);
   }
 
@@ -299,9 +304,14 @@ public class ShowIntentionsPass extends TextEditorHighlightingPass {
       fillIntentionsInfoForHighlightInfo(infoAtCursor, intentions, fixes);
     }
 
+    ProgressIndicator indicator = ProgressIndicatorProvider.getGlobalProgressIndicator();
+
     if (queryIntentionActions) {
       PsiFile injectedFile = InjectedLanguageUtil.findInjectedPsiNoCommit(hostFile, offset);
       for (final IntentionAction action : IntentionManager.getInstance().getAvailableIntentionActions()) {
+        if (indicator != null) {
+          indicator.setText(action.getFamilyName());
+        }
         Pair<PsiFile, Editor> place =
           ShowIntentionActionsHandler.chooseBetweenHostAndInjected(hostFile, hostEditor, injectedFile,
                      (psiFile, editor) -> ShowIntentionActionsHandler.availableFor(psiFile, editor, action));
@@ -318,6 +328,9 @@ public class ShowIntentionsPass extends TextEditorHighlightingPass {
         }
       }
 
+      if (indicator != null) {
+        indicator.setText("Searching for additional intention actions & quick fixes");
+      }
       for (IntentionMenuContributor extension : IntentionMenuContributor.EP_NAME.getExtensionList()) {
         extension.collectActions(hostEditor, hostFile, intentions, passIdToShowIntentionsFor, offset);
       }

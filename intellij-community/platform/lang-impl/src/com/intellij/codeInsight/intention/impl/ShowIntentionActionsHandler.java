@@ -23,6 +23,7 @@ import com.intellij.featureStatistics.FeatureUsageTrackerImpl;
 import com.intellij.injected.editor.EditorWindow;
 import com.intellij.internal.statistic.collectors.fus.actions.persistence.IntentionsCollector;
 import com.intellij.lang.injection.InjectedLanguageManager;
+import com.intellij.openapi.actionSystem.ex.ActionUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.application.impl.ApplicationInfoImpl;
@@ -69,7 +70,6 @@ public class ShowIntentionActionsHandler implements CodeInsightActionHandler {
     final DaemonCodeAnalyzerImpl codeAnalyzer = (DaemonCodeAnalyzerImpl)DaemonCodeAnalyzer.getInstance(project);
     letAutoImportComplete(editor, file, codeAnalyzer);
 
-    ShowIntentionsPass.IntentionsInfo intentions = ShowIntentionsPass.getActionsToShow(editor, file, true);
     IntentionsUI.getInstance(project).hide();
 
     if (HintManagerImpl.getInstanceImpl().performCurrentQuestionAction()) return;
@@ -82,9 +82,7 @@ public class ShowIntentionActionsHandler implements CodeInsightActionHandler {
     }
 
     editor.getScrollingModel().scrollToCaret(ScrollType.MAKE_VISIBLE);
-    Editor finalEditor = editor;
-    PsiFile finalFile = file;
-    showIntentionHint(project, finalEditor, finalFile, intentions, showFeedbackOnEmptyMenu);
+    showIntentionHint(project, editor, file, calcIntentions(project, editor, file), showFeedbackOnEmptyMenu);
   }
 
   protected void showIntentionHint(@NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file, @NotNull ShowIntentionsPass.IntentionsInfo intentions, boolean showFeedbackOnEmptyMenu) {
@@ -97,6 +95,17 @@ public class ShowIntentionActionsHandler implements CodeInsightActionHandler {
     else if (showFeedbackOnEmptyMenu) {
       HintManager.getInstance().showInformationHint(editor, "No context actions available at this location");
     }
+  }
+
+  @NotNull
+  private static ShowIntentionsPass.IntentionsInfo calcIntentions(@NotNull Project project,
+                                                                  @NotNull Editor editor,
+                                                                  @NotNull PsiFile file) {
+    ShowIntentionsPass.IntentionsInfo intentions = ActionUtil.underModalProgress(project, "Finding Context Actions", () ->
+      ShowIntentionsPass.getActionsToShow(editor, file, false));
+
+    ShowIntentionsPass.getActionsToShowSync(editor, file, intentions);
+    return intentions;
   }
 
   private static void letAutoImportComplete(@NotNull Editor editor, @NotNull PsiFile file, DaemonCodeAnalyzerImpl codeAnalyzer) {
