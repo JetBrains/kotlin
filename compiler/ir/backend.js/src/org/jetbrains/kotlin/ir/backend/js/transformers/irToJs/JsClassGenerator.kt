@@ -112,13 +112,16 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
     private fun generateMemberFunction(declaration: IrSimpleFunction): JsStatement? {
 
-        val translatedFunction = declaration.run { if (isReal) accept(IrFunctionToJsTransformer(), context) else null }
-        assert(!declaration.isStaticMethodOfClass)
-
         val memberName = context.getNameForMemberFunction(declaration.realOverrideTarget)
         val memberRef = JsNameRef(memberName, classPrototypeRef)
 
-        translatedFunction?.let { return jsAssignment(memberRef, it.apply { name = null }).makeStmt() }
+        if (declaration.isReal && declaration.body != null) {
+            val translatedFunction = declaration.accept(IrFunctionToJsTransformer(), context)
+
+            assert(!declaration.isStaticMethodOfClass)
+
+            return jsAssignment(memberRef, translatedFunction.apply { name = null }).makeStmt()
+        }
 
         // do not generate code like
         // interface I { foo() = "OK" }
