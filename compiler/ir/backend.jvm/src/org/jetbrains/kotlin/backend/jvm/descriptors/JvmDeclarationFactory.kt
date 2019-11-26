@@ -253,7 +253,8 @@ class JvmDeclarationFactory(
                     isTailrec = false,
                     isSuspend = isSuspend,
                     isExpect = false,
-                    isFakeOverride = false
+                    isFakeOverride = false,
+                    isOperator = isOperator
                 ).apply {
                     descriptor.bind(this)
                     parent = irClass

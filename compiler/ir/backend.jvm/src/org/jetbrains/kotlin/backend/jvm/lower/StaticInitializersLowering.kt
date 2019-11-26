@@ -61,7 +61,8 @@ class StaticInitializersLowering(context: CommonBackendContext) : InitializersLo
             isTailrec = false,
             isSuspend = false,
             isExpect = false,
-            isFakeOverride = false
+            isFakeOverride = false,
+            isOperator = false
         ).apply {
             staticInitializerDescriptor.bind(this)
             body = IrBlockBodyImpl(irClass.startOffset, irClass.endOffset,

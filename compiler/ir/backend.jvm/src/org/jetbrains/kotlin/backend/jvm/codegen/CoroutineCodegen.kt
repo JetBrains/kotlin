@@ -148,7 +148,7 @@ private fun IrFunction.suspendFunctionView(context: JvmBackendContext): IrFuncti
         startOffset, endOffset, JvmLoweredDeclarationOrigin.SUSPEND_FUNCTION_VIEW, IrSimpleFunctionSymbolImpl(descriptor),
         name, visibility, modality, context.irBuiltIns.anyNType,
         isInline = isInline, isExternal = isExternal, isTailrec = isTailrec, isSuspend = isSuspend, isExpect = isExpect,
-        isFakeOverride = false
+        isFakeOverride = false, isOperator = false
     ).also {
         descriptor.bind(it)
         it.parent = parent

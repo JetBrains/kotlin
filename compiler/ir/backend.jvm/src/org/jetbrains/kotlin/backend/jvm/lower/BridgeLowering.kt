@@ -215,7 +215,8 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
                 newName,
                 visibility, modality, returnType,
                 isInline = isInline, isExternal = isExternal, isTailrec = isTailrec, isSuspend = isSuspend, isExpect = isExpect,
-                isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE
+                isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+                isOperator = isOperator
             ).apply {
                 newDescriptor.bind(this)
                 parent = this@copyRenamingTo.parent
@@ -250,7 +251,8 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
             isTailrec = false,
             isSuspend = signatureFunction.isSuspend,
             isExpect = false,
-            isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE
+            isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+            isOperator = false
         ).apply {
             descriptor.bind(this)
             parent = irClass
@@ -393,7 +395,8 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
                     Name.identifier(getJvmName()),
                     visibility, modality, returnType,
                     isInline = isInline, isExternal = isExternal, isTailrec = isTailrec, isSuspend = isSuspend, isExpect = isExpect,
-                    isFakeOverride = newOrigin == IrDeclarationOrigin.FAKE_OVERRIDE
+                    isFakeOverride = newOrigin == IrDeclarationOrigin.FAKE_OVERRIDE,
+                    isOperator = isOperator
                 ).apply {
                     wrappedDescriptor.bind(this)
                     parent = this@orphanedCopy.parent

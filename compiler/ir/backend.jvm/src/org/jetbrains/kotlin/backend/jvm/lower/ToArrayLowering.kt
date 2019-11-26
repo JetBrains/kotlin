@@ -88,10 +88,11 @@ private class ToArrayLowering(private val context: JvmBackendContext) : ClassLow
                     isTailrec = false,
                     isSuspend = false,
                     isExpect = false,
-                    isFakeOverride = false
-                )
-                functionDescriptor.bind(irFunction)
-                irFunction.parent = irClass
+                    isFakeOverride = false,
+                isOperator = false
+            )
+            functionDescriptor.bind(irFunction)
+            irFunction.parent = irClass
 
                 typeParameter.parent = irFunction
                 irFunction.typeParameters.add(typeParameter)
@@ -161,10 +162,11 @@ private class ToArrayLowering(private val context: JvmBackendContext) : ClassLow
                     isTailrec = false,
                     isSuspend = false,
                     isExpect = false,
-                    isFakeOverride = false
-                )
-                functionDescriptor.bind(irFunction)
-                irFunction.parent = irClass
+                    isFakeOverride = false,
+                isOperator = false
+            )
+            functionDescriptor.bind(irFunction)
+            irFunction.parent = irClass
 
                 val dispatchReceiverParameterDescriptor = WrappedValueParameterDescriptor()
                 irFunction.dispatchReceiverParameter = IrValueParameterImpl(
