@@ -182,7 +182,11 @@ public class CopyReferenceUtil {
       }
     }
 
-    String relativePath = VfsUtilCore.getRelativePath(virtualFile, project.getBaseDir());
+    VirtualFile dir = project.getBaseDir();
+    if (dir == null) {
+      return virtualFile.getPath();
+    }
+    String relativePath = VfsUtilCore.getRelativePath(virtualFile, dir);
     if (relativePath != null) {
       return relativePath;
     }
