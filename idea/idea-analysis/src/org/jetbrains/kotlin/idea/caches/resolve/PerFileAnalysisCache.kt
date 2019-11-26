@@ -235,6 +235,14 @@ private class MergedDiagnostics(val diagnostics: Collection<Diagnostic>, overrid
     override fun noSuppression() = this
 }
 
+/**
+ * Keep in mind: trace fallbacks to [resolveContext] (is used during resolve) that does not have any
+ * traces of earlier resolve for this [element]
+ *
+ * When trace turned into [BindingContext] it fallbacks to [parentContext]:
+ * It is expected that all slices specific to [element] (and its descendants) are stored in this binding context
+ * and for the rest elements it falls back to [parentContext].
+ */
 private class StackedCompositeBindingContextTrace(
     val depth: Int, // depth of stack over original ktFile bindingContext
     val element: KtElement,
