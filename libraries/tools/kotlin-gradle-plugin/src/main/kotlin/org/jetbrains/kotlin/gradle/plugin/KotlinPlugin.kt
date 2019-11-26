@@ -734,19 +734,30 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
         val project = kotlinAndroidTarget.project
         val ext = project.extensions.getByName("android") as BaseExtension
 
-        ext.sourceSets.all { sourceSet ->
-            logger.kotlinDebug("Creating KotlinBaseSourceSet for source set $sourceSet")
-            val kotlinSourceSet = project.kotlinExtension.sourceSets.maybeCreate(
-                lowerCamelCaseName(kotlinAndroidTarget.disambiguationClassifier, sourceSet.name)
-            ).apply {
-                kotlin.srcDir(project.file(project.file("src/${sourceSet.name}/kotlin")))
-                kotlin.srcDirs(sourceSet.java.srcDirs)
-                sourceSet.java.srcDir(project.file("src/$name/kotlin"))
+        fun kotlinSourceSetName(sourceSet: AndroidSourceSet): String {
+            return lowerCamelCaseName(kotlinAndroidTarget.disambiguationClassifier, sourceSet.name)
+        }
+
+        val kotlinSourceSetNames = ext.sourceSets.map(::kotlinSourceSetName)
+
+        ext.sourceSets.all { androidSourceSet ->
+            logger.kotlinDebug("Creating KotlinBaseSourceSet for source set $androidSourceSet")
+            val kotlinSourceSet = project.kotlinExtension.sourceSets.maybeCreate(kotlinSourceSetName(androidSourceSet)).apply {
+                /* Avoiding conflicts like the "androidTest" kotlin source set vs "androidTest" android source set. */
+                if (kotlinAndroidTarget.disambiguationClassifier != null && androidSourceSet.name in kotlinSourceSetNames) {
+                    /* In case of conflict: Remove ambiguous source dirs from the Android source set */
+                    androidSourceSet.java.setSrcDirs(emptyList<File>())
+                } else {
+                    kotlin.srcDir(project.file(project.file("src/${androidSourceSet.name}/kotlin")))
+                    kotlin.srcDirs(androidSourceSet.java.srcDirs)
+                }
+
+                androidSourceSet.java.srcDirs(*(kotlin.srcDirs - androidSourceSet.java.srcDirs).toTypedArray())
             }
-            sourceSet.addConvention(KOTLIN_DSL_NAME, kotlinSourceSet)
+            androidSourceSet.addConvention(KOTLIN_DSL_NAME, kotlinSourceSet)
 
             ifKaptEnabled(project) {
-                Kapt3KotlinGradleSubplugin.createAptConfigurationIfNeeded(project, sourceSet.name)
+                Kapt3KotlinGradleSubplugin.createAptConfigurationIfNeeded(project, androidSourceSet.name)
             }
         }
 
