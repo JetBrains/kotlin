@@ -99,12 +99,12 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
              * for project dependencies (as the Kotlin Granular metadata is enabled across all projects in a build, this is OK).
              * See also [KotlinMetadataTarget.kotlinComponents]
              */
-            target.project.tasks.create(ALL_METADATA_JAR_NAME, Jar::class.java).apply {
-                description = "Assembles a jar archive containing the metadata for all Kotlin source sets."
-                group = BasePlugin.BUILD_GROUP
+            target.project.registerTask<Jar>(ALL_METADATA_JAR_NAME) {
+                it.description = "Assembles a jar archive containing the metadata for all Kotlin source sets."
+                it.group = BasePlugin.BUILD_GROUP
 
-                setArchiveAppendixCompatible { target.name.toLowerCase() }
-                setArchiveClassifierCompatible { "all" }
+                it.setArchiveAppendixCompatible { target.name.toLowerCase() }
+                it.setArchiveClassifierCompatible { "all" }
             }
         }
     }

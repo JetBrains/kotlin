@@ -9,7 +9,9 @@ package org.jetbrains.kotlin.gradle.plugin.cocoapods
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Sync
+import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -69,8 +71,8 @@ open class KotlinCocoapodsPlugin: Plugin<Project> {
         }
     }
 
-    private fun Project.createSyncFrameworkTask(originalDirectory: File, buildingTask: Task) =
-        tasks.create(SYNC_TASK_NAME, Sync::class.java) {
+    private fun Project.createSyncFrameworkTask(originalDirectory: Provider<File>, buildingTask: TaskProvider<*>) =
+        registerTask<Sync>(SYNC_TASK_NAME) {
             it.group = TASK_GROUP
             it.description = "Copies a framework for given platform and build type into the CocoaPods build directory"
 
@@ -97,7 +99,7 @@ open class KotlinCocoapodsPlugin: Plugin<Project> {
             }
         }
 
-        val fatFrameworkTask = project.tasks.create("fatFramework", FatFrameworkTask::class.java) { task ->
+        val fatFrameworkTask = project.registerTask<FatFrameworkTask>("fatFramework") { task ->
             task.group = TASK_GROUP
             task.description = "Creates a fat framework for ARM32 and ARM64 architectures"
             task.destinationDir = project.cocoapodsBuildDirs.fatFramework(requestedBuildType)
@@ -109,7 +111,7 @@ open class KotlinCocoapodsPlugin: Plugin<Project> {
             }
         }
 
-        project.createSyncFrameworkTask(fatFrameworkTask.destinationDir, fatFrameworkTask)
+        project.createSyncFrameworkTask(fatFrameworkTask.map { it.destinationDir }, fatFrameworkTask)
     }
 
     private fun createSyncForRegularFramework(
@@ -123,8 +125,8 @@ open class KotlinCocoapodsPlugin: Plugin<Project> {
         check(targets.isNotEmpty()) { "The project doesn't contain a target for the requested platform: `${requestedPlatform.visibleName}`" }
         check(targets.size == 1) { "The project has more than one target for the requested platform: `${requestedPlatform.visibleName}`" }
 
-        val frameworkLinkTask = targets.single().binaries.getFramework(requestedBuildType).linkTask
-        project.createSyncFrameworkTask(frameworkLinkTask.destinationDir, frameworkLinkTask)
+        val frameworkLinkTask = targets.single().binaries.getFramework(requestedBuildType).linkTaskProvider
+        project.createSyncFrameworkTask(frameworkLinkTask.map { it.destinationDir }, frameworkLinkTask)
     }
 
     private fun createSyncTask(
@@ -156,9 +158,9 @@ open class KotlinCocoapodsPlugin: Plugin<Project> {
         project: Project,
         cocoapodsExtension: CocoapodsExtension
     ) {
-        val dummyFrameworkTask = project.tasks.create("generateDummyFramework", DummyFrameworkTask::class.java)
+        val dummyFrameworkTask = project.registerTask<DummyFrameworkTask>("generateDummyFramework") { }
 
-        project.tasks.create("podspec", PodspecTask::class.java) {
+        project.registerTask<PodspecTask>("podspec") {
             it.group = TASK_GROUP
             it.description = "Generates a podspec file for CocoaPods import"
             it.settings = cocoapodsExtension
@@ -176,9 +178,8 @@ open class KotlinCocoapodsPlugin: Plugin<Project> {
         cocoapodsExtension: CocoapodsExtension
     ) {
         cocoapodsExtension.pods.all { pod ->
-            val defTask = project.tasks.create(
-                lowerCamelCaseName("generateDef", pod.name).asValidTaskName(),
-                DefFileTask::class.java
+            val defTask = project.registerTask<DefFileTask>(
+                lowerCamelCaseName("generateDef", pod.name).asValidTaskName()
             ) {
                 it.pod = pod
                 it.description = "Generates a def file for CocoaPods dependency ${pod.name}"
@@ -191,7 +192,7 @@ open class KotlinCocoapodsPlugin: Plugin<Project> {
 
                     val interopTask = project.tasks.getByPath(interop.interopProcessingTaskName)
                     interopTask.dependsOn(defTask)
-                    interop.defFile = defTask.outputFile
+                    interop.defFile.set(defTask.map { it.outputFile })
                     interop.packageName = "cocoapods.${pod.moduleName}"
 
                     project.findProperty(CFLAGS_PROPERTY)?.toString()?.let { args ->

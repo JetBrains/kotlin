@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
+import org.gradle.api.DefaultTask
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -27,6 +28,7 @@ import org.gradle.language.jvm.tasks.ProcessResources
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.util.concurrent.Callable
 import kotlin.reflect.KMutableProperty1
@@ -128,12 +130,12 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
 
         compilation.output.classesDirs.from(project.files().builtBy(compilation.compileAllTaskName))
 
-        project.tasks.create(compilation.compileAllTaskName).apply {
-            group = LifecycleBasePlugin.BUILD_GROUP
-            description = "Assembles outputs for compilation '${compilation.name}' of target '${compilation.target.name}'"
-            dependsOn(compilation.compileKotlinTaskName)
+        project.registerTask<DefaultTask>(compilation.compileAllTaskName) {
+            it.group = LifecycleBasePlugin.BUILD_GROUP
+            it.description = "Assembles outputs for compilation '${compilation.name}' of target '${compilation.target.name}'"
+            it.dependsOn(compilation.compileKotlinTaskName)
             if (compilation is KotlinCompilationWithResources) {
-                dependsOn(compilation.processResourcesTaskName)
+                it.dependsOn(compilation.processResourcesTaskName)
             }
         }
     }
@@ -337,10 +339,11 @@ abstract class KotlinOnlyTargetConfigurator<KotlinCompilationType : KotlinCompil
 
     /** The implementations are expected to create a [Jar] task under the name [KotlinTarget.artifactsTaskName] of the [target]. */
     protected open fun createJarTasks(target: KotlinOnlyTarget<KotlinCompilationType>) {
-        val result = target.project.tasks.create(target.artifactsTaskName, Jar::class.java)
-        result.description = "Assembles a jar archive containing the main classes."
-        result.group = BasePlugin.BUILD_GROUP
-        result.from(target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).output.allOutputs)
+        target.project.registerTask<Jar>(target.artifactsTaskName) { result ->
+            result.description = "Assembles a jar archive containing the main classes."
+            result.group = BasePlugin.BUILD_GROUP
+            result.from(target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).output.allOutputs)
+        }
     }
 
     override fun configureArchivesAndComponent(target: KotlinTargetType) {

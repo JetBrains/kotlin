@@ -10,29 +10,31 @@ import com.android.build.gradle.api.AndroidSourceSet
 import com.android.builder.model.SourceProvider
 import com.intellij.openapi.util.SystemInfo
 import org.gradle.api.Plugin
+import com.android.build.gradle.api.BaseVariant
+import com.android.build.gradle.api.SourceKind
 import org.gradle.api.Project
-import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.Usage
+import org.gradle.api.file.FileCollection
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.SourceSet
+import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.TaskDependency
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.process.CommandLineArgumentProvider
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
-import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedClassesDir
-import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedKotlinSourcesDir
-import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedSourcesDir
-import org.jetbrains.kotlin.gradle.internal.Kapt3KotlinGradleSubplugin.Companion.KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.CLASS_STRUCTURE_ARTIFACT_TYPE
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.StructureArtifactTransform
 import org.jetbrains.kotlin.gradle.model.builder.KaptModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileTaskData
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.registerTask
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.ObjectOutputStream
@@ -40,10 +42,9 @@ import java.util.*
 import javax.inject.Inject
 
 // apply plugin: 'kotlin-kapt'
-class Kapt3GradleSubplugin @Inject internal constructor(private val registry: ToolingModelBuilderRegistry) : Plugin<Project> {
+open class Kapt3GradleSubplugin @Inject internal constructor(private val registry: ToolingModelBuilderRegistry) :
+    KotlinCompilerPluginSupportPlugin {
     companion object {
-        fun isEnabled(project: Project) = project.plugins.findPlugin(Kapt3GradleSubplugin::class.java) != null
-
         @JvmStatic
         fun getKaptGeneratedClassesDir(project: Project, sourceSetName: String) =
             File(project.project.buildDir, "tmp/kapt3/classes/$sourceSetName")
@@ -55,41 +56,7 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
         @JvmStatic
         fun getKaptGeneratedKotlinSourcesDir(project: Project, sourceSetName: String) =
             File(project.project.buildDir, "generated/source/kaptKotlin/$sourceSetName")
-    }
 
-    override fun apply(project: Project) {
-        project.extensions.create("kapt", KaptExtension::class.java)
-
-        Kapt3KotlinGradleSubplugin().run {
-            project.configurations.create(KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME).apply {
-                project.getKotlinPluginVersion()?.let { kotlinPluginVersion ->
-                    val kaptDependency = getPluginArtifact().run { "$groupId:$artifactId:$kotlinPluginVersion" }
-                    dependencies.add(project.dependencies.create(kaptDependency))
-                } ?: project.logger.error("Kotlin plugin should be enabled before 'kotlin-kapt'")
-            }
-        }
-        registry.register(KaptModelBuilder())
-    }
-}
-
-abstract class KaptVariantData<T>(val variantData: T) {
-    abstract val name: String
-    abstract val sourceProviders: Iterable<SourceProvider>
-    abstract fun addJavaSourceFoldersToModel(generatedFilesDir: File)
-    abstract val annotationProcessorOptions: Map<String, String>?
-    abstract fun registerGeneratedJavaSource(
-        project: Project,
-        kaptTask: KaptTask,
-        javaTask: AbstractCompile
-    )
-
-    open val annotationProcessorOptionProviders: List<*>
-        get() = emptyList<Any>()
-}
-
-// Subplugin for the Kotlin Gradle plugin
-class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
-    companion object {
         private val VERBOSE_OPTION_NAME = "kapt.verbose"
         private val USE_WORKER_API = "kapt.use.worker.api"
         private val INFO_AS_WARNINGS = "kapt.info.as.warnings"
@@ -138,7 +105,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         fun findMainKaptConfiguration(project: Project) = project.findKaptConfiguration(SourceSet.MAIN_SOURCE_SET_NAME)
 
         fun createAptConfigurationIfNeeded(project: Project, sourceSetName: String): Configuration {
-            val configurationName = Kapt3KotlinGradleSubplugin.getKaptConfigurationName(sourceSetName)
+            val configurationName = getKaptConfigurationName(sourceSetName)
 
             project.configurations.findByName(configurationName)?.let { return it }
             val aptConfiguration = project.configurations.create(configurationName).apply {
@@ -147,7 +114,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
                 attributes.attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage::class.java, Usage.JAVA_RUNTIME))
             }
 
-            if (aptConfiguration.name != Kapt3KotlinGradleSubplugin.MAIN_KAPT_CONFIGURATION_NAME) {
+            if (aptConfiguration.name != MAIN_KAPT_CONFIGURATION_NAME) {
                 // The main configuration can be created after the current one. We should handle this case
                 val mainConfiguration = findMainKaptConfiguration(project)
                     ?: createAptConfigurationIfNeeded(project, SourceSet.MAIN_SOURCE_SET_NAME)
@@ -157,11 +124,30 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
             return aptConfiguration
         }
+
+        fun isEnabled(project: Project) =
+            project.plugins.any { it is Kapt3GradleSubplugin }
     }
 
-    private val kotlinToKaptGenerateStubsTasksMap = mutableMapOf<KotlinCompile, KaptGenerateStubsTask>()
+    override fun apply(project: Project) {
+        project.extensions.create("kapt", KaptExtension::class.java)
 
-    override fun isApplicable(project: Project, task: AbstractCompile) = task is KotlinCompile && Kapt3GradleSubplugin.isEnabled(project)
+        project.configurations.create(KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME).apply {
+            project.getKotlinPluginVersion()?.let { kotlinPluginVersion ->
+                val kaptDependency = getPluginArtifact().run { "$groupId:$artifactId:$kotlinPluginVersion" }
+                dependencies.add(project.dependencies.create(kaptDependency))
+            } ?: project.logger.error("Kotlin plugin should be enabled before 'kotlin-kapt'")
+        }
+
+        registry.register(KaptModelBuilder())
+    }
+
+    private val kotlinToKaptGenerateStubsTasksMap = mutableMapOf<KotlinCompilation<*>, TaskProvider<KaptGenerateStubsTask>>()
+
+    override fun isApplicable(
+        kotlinCompilation: KotlinCompilation<*>
+    ): Boolean =
+        (kotlinCompilation.platformType == KotlinPlatformType.jvm || kotlinCompilation.platformType == KotlinPlatformType.androidJvm)
 
     private fun Kapt3SubpluginContext.getKaptStubsDir() = temporaryKaptDirectory("stubs")
 
@@ -177,13 +163,12 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         return dir
     }
 
-    private inner class Kapt3SubpluginContext(
+    internal inner class Kapt3SubpluginContext(
         val project: Project,
-        val kotlinCompile: KotlinCompile,
-        val javaCompile: AbstractCompile?,
-        val kaptVariantData: KaptVariantData<*>?,
+        val javaCompile: TaskProvider<out AbstractCompile>?,
+        val variantData: Any?,
         val sourceSetName: String,
-        val kotlinCompilation: KotlinCompilation<*>?,
+        val kotlinCompilation: KotlinCompilation<*>,
         val kaptExtension: KaptExtension,
         val kaptClasspathConfigurations: List<Configuration>
     ) {
@@ -192,19 +177,19 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         val classesOutputDir = getKaptGeneratedClassesDir(project, sourceSetName)
         val includeCompileClasspath =
             kaptExtension.includeCompileClasspath
-                ?: Kapt3KotlinGradleSubplugin.includeCompileClasspath(project)
+                ?: includeCompileClasspath(project)
                 ?: true
+
+        val kotlinCompile: TaskProvider<KotlinCompile>
+            // Can't use just kotlinCompilation.compileKotlinTaskProvider, as the latter is not statically-known to be KotlinCompile
+            get() = project.tasks.withType(KotlinCompile::class.java).named(kotlinCompilation.compileKotlinTaskName)
     }
 
-    override fun apply(
-        project: Project,
-        kotlinCompile: KotlinCompile,
-        javaCompile: AbstractCompile?,
-        variantData: Any?,
-        androidProjectHandler: Any?,
-        kotlinCompilation: KotlinCompilation<*>?
-    ): List<SubpluginOption> {
-        assert((variantData != null) xor (kotlinCompilation != null))
+    override fun applyToCompilation(
+        kotlinCompilation: KotlinCompilation<*>,
+        javaCompile: TaskProvider<out AbstractCompile>?
+    ): Provider<List<SubpluginOption>> {
+        val project = kotlinCompilation.target.project
 
         val buildDependencies = arrayListOf<TaskDependency>()
         val kaptConfigurations = arrayListOf<Configuration>()
@@ -216,17 +201,14 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
             }
         }
 
-        val kaptVariantData = variantData as? KaptVariantData<*>
+        val androidVariantData: BaseVariant? = (kotlinCompilation as? KotlinJvmAndroidCompilation)?.androidVariant
 
-        val sourceSetName = if (kaptVariantData != null) {
-            for (provider in kaptVariantData.sourceProviders) {
+        val sourceSetName = if (androidVariantData != null) {
+            for (provider in androidVariantData.sourceSets) {
                 handleSourceSet((provider as AndroidSourceSet).name)
             }
-
-            kaptVariantData.name
+            androidVariantData.name
         } else {
-            if (kotlinCompilation == null) error("In non-Android projects, Kotlin compilation should not be null")
-
             handleSourceSet(kotlinCompilation.compilationName)
             kotlinCompilation.compilationName
         }
@@ -236,74 +218,103 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         val nonEmptyKaptConfigurations = kaptConfigurations.filter { it.dependencies.isNotEmpty() }
 
         val context = Kapt3SubpluginContext(
-            project, kotlinCompile, javaCompile,
-            kaptVariantData, sourceSetName, kotlinCompilation, kaptExtension, nonEmptyKaptConfigurations
+            project, javaCompile,
+            androidVariantData, sourceSetName, kotlinCompilation, kaptExtension, nonEmptyKaptConfigurations
         )
 
-        val kaptGenerateStubsTask = context.createKaptGenerateStubsTask()
-        val kaptTask = context.createKaptKotlinTask(useWorkerApi = project.isUseWorkerApi())
+        val kaptGenerateStubsTaskProvider = context.createKaptGenerateStubsTask()
+        val kaptTaskProvider = context.createKaptKotlinTask(useWorkerApi = project.isUseWorkerApi())
 
-        kaptGenerateStubsTask.source(*kaptConfigurations.toTypedArray())
+        kaptGenerateStubsTaskProvider.configure { kaptGenerateStubsTask ->
+            kaptGenerateStubsTask.source(*kaptConfigurations.toTypedArray())
 
-        kaptGenerateStubsTask.dependsOn(*buildDependencies.toTypedArray())
-        kaptGenerateStubsTask.dependsOn(*kotlinCompile.dependsOn.toTypedArray())
+            kaptGenerateStubsTask.dependsOn(*buildDependencies.toTypedArray())
+            kaptGenerateStubsTask.dependsOn(
+                project.provider {
+                    kotlinCompilation.compileKotlinTask.dependsOn.filter { it !is TaskProvider<*> || it.name != kaptTaskProvider.name }
+                }
+            )
 
-        kaptTask.dependsOn(kaptGenerateStubsTask)
-        kotlinCompile.dependsOn(kaptTask)
+            if (androidVariantData != null) {
+                kaptGenerateStubsTask.inputs.files(
+                    project.provider {
+                        // Avoid circular dependency: the stubs task need the Java sources, but the Java sources generated by Kapt should be
+                        // excluded, as the Kapt tasks depend on the stubs ones, and having them in the input would lead to a cycle
+                        val kaptJavaOutput = kaptTaskProvider.get().destinationDir
+                        androidVariantData.getSourceFolders(SourceKind.JAVA).filter { it.dir != kaptJavaOutput }
+                    }
+                )
+            }
+        }
+
+        kaptTaskProvider.configure { it.dependsOn(kaptGenerateStubsTaskProvider) }
+        context.kotlinCompile.configure { it.dependsOn(kaptTaskProvider) }
 
         /** Plugin options are applied to kapt*Compile inside [createKaptKotlinTask] */
-        return emptyList()
+        return project.provider { emptyList<SubpluginOption>() }
     }
 
-    override fun getSubpluginKotlinTasks(project: Project, kotlinCompile: KotlinCompile): List<AbstractCompile> {
-        val kaptGenerateStubsTask = kotlinToKaptGenerateStubsTasksMap[kotlinCompile]
+    override fun getPluginKotlinTasks(compilation: KotlinCompilation<*>): List<TaskProvider<out AbstractCompile>> {
+        val kaptGenerateStubsTask = kotlinToKaptGenerateStubsTasksMap[compilation]
         return if (kaptGenerateStubsTask == null) emptyList() else listOf(kaptGenerateStubsTask)
     }
 
     // This method should be called no more than once for each Kapt3SubpluginContext
-    private fun Kapt3SubpluginContext.buildOptions(aptMode: String, javacOptions: Map<String, String>): List<SubpluginOption> {
-        val pluginOptions = mutableListOf<SubpluginOption>()
-
-        val generatedFilesDir = getKaptGeneratedSourcesDir(project, sourceSetName)
-        kaptVariantData?.addJavaSourceFoldersToModel(generatedFilesDir)
-
-        pluginOptions += SubpluginOption("aptMode", aptMode)
+    private fun Kapt3SubpluginContext.buildOptions(
+        aptMode: String,
+        javacOptions: Provider<Map<String, String>>
+    ): Provider<List<SubpluginOption>> {
         disableAnnotationProcessingInJavaTask()
 
-        pluginOptions += FilesSubpluginOption("sources", listOf(generatedFilesDir))
-        pluginOptions += FilesSubpluginOption("classes", listOf(getKaptGeneratedClassesDir(project, sourceSetName)))
+        return project.provider {
+            val pluginOptions = mutableListOf<SubpluginOption>()
 
-        pluginOptions += FilesSubpluginOption("incrementalData", listOf(getKaptIncrementalDataDir()))
+            val generatedFilesDir = getKaptGeneratedSourcesDir(project, sourceSetName)
+            KaptWithAndroid.androidVariantData(this)?.addJavaSourceFoldersToModel(generatedFilesDir)
 
-        val annotationProcessors = kaptExtension.processors
-        if (annotationProcessors.isNotEmpty()) {
-            pluginOptions += SubpluginOption("processors", annotationProcessors)
+            pluginOptions += SubpluginOption("aptMode", aptMode)
+
+            pluginOptions += FilesSubpluginOption("sources", listOf(generatedFilesDir))
+            pluginOptions += FilesSubpluginOption("classes", listOf(getKaptGeneratedClassesDir(project, sourceSetName)))
+
+            pluginOptions += FilesSubpluginOption("incrementalData", listOf(getKaptIncrementalDataDir()))
+
+            val annotationProcessors = kaptExtension.processors
+            if (annotationProcessors.isNotEmpty()) {
+                pluginOptions += SubpluginOption("processors", annotationProcessors)
+            }
+
+            kotlinSourcesOutputDir.mkdirs()
+
+            val apOptions = getAPOptions()
+
+            pluginOptions += CompositeSubpluginOption(
+                "apoptions",
+                lazy { encodeList(apOptions.get().associate { it.key to it.value }) },
+                apOptions.get()
+            )
+
+            pluginOptions += SubpluginOption("javacArguments", encodeList(javacOptions.get()))
+
+            pluginOptions += SubpluginOption("includeCompileClasspath", includeCompileClasspath.toString())
+
+            addMiscOptions(pluginOptions)
+
+            pluginOptions
         }
-
-        kotlinSourcesOutputDir.mkdirs()
-
-        val apOptions = getAPOptions()
-
-        pluginOptions += CompositeSubpluginOption("apoptions", lazy { encodeList(apOptions.associate { it.key to it.value }) }, apOptions)
-
-        pluginOptions += SubpluginOption("javacArguments", encodeList(javacOptions))
-
-        pluginOptions += SubpluginOption("includeCompileClasspath", includeCompileClasspath.toString())
-
-        addMiscOptions(pluginOptions)
-
-        return pluginOptions
     }
 
-    private fun Kapt3SubpluginContext.getAPOptions(): List<SubpluginOption> {
-        val androidPlugin = kaptVariantData?.let {
+    private fun Kapt3SubpluginContext.getAPOptions(): Provider<List<SubpluginOption>> = project.provider {
+        val androidVariantData = KaptWithAndroid.androidVariantData(this)
+
+        val androidPlugin = androidVariantData?.let {
             project.extensions.findByName("android") as? BaseExtension
         }
 
-        val androidOptions = kaptVariantData?.annotationProcessorOptions ?: emptyMap()
+        val androidOptions = androidVariantData?.annotationProcessorOptions ?: emptyMap()
 
         val apOptionsFromProviders =
-            kaptVariantData?.annotationProcessorOptionProviders
+            androidVariantData?.annotationProcessorOptionProviders
                 ?.flatMap { (it as CommandLineArgumentProvider).asArguments() }
                 .orEmpty()
 
@@ -316,32 +327,43 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         }
 
         val apOptionsPairsList: List<Pair<String, String>> =
-            kaptExtension.getAdditionalArguments(project, kaptVariantData?.variantData, androidPlugin).toList() +
+            kaptExtension.getAdditionalArguments(project, androidVariantData, androidPlugin).toList() +
                     androidOptions.toList()
 
-        return apOptionsPairsList.map { SubpluginOption(it.first, it.second) } +
+        apOptionsPairsList.map { SubpluginOption(it.first, it.second) } +
                 FilesSubpluginOption(KAPT_KOTLIN_GENERATED, listOf(kotlinSourcesOutputDir)) +
                 subluginOptionsFromProvidedApOptions
     }
 
     private fun Kapt3SubpluginContext.registerSubpluginOptions(
-        task: Task,
-        container: CompilerPluginOptions,
-        options: List<SubpluginOption>
+        task: TaskProvider<*>,
+        optionsProvider: Provider<List<SubpluginOption>>
     ) {
-        val compilerPluginId = getCompilerPluginId()
-        task.registerSubpluginOptionsAsInputs(compilerPluginId, options)
+        task.configure { taskInstance ->
+            val container = when (taskInstance) {
+                is KaptGenerateStubsTask -> taskInstance.pluginOptions
+                is KaptWithKotlincTask -> taskInstance.pluginOptions
+                else -> error("Unexpected task ${taskInstance.name} (${taskInstance.javaClass})")
+            }
 
-        for (option in options) {
-            container.addPluginArgument(compilerPluginId, option)
-        }
+            val compilerPluginId = getCompilerPluginId()
 
-        // Also register all the subplugin options from the Kotlin task:
-        project.afterEvaluate {
-            kotlinCompile.pluginOptions.subpluginOptionsByPluginId.forEach { (pluginId, options) ->
-                task.registerSubpluginOptionsAsInputs("kotlinCompile.$pluginId", options)
+            val options = optionsProvider.get()
+
+            taskInstance.registerSubpluginOptionsAsInputs(compilerPluginId, options)
+
+            for (option in options) {
+                container.addPluginArgument(compilerPluginId, option)
+            }
+
+            // Also register all the subplugin options from the Kotlin task:
+            project.runOnceAfterEvaluated("add kapt compiler plugin options to the compile task", task) {
+                kotlinCompile.get().pluginOptions.subpluginOptionsByPluginId.forEach { (pluginId, options) ->
+                    taskInstance.registerSubpluginOptionsAsInputs("kotlinCompile.$pluginId", options)
+                }
             }
         }
+
     }
 
     private fun encodeList(options: Map<String, String>): String {
@@ -377,95 +399,109 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         }
     }
 
-    private fun Kapt3SubpluginContext.createKaptKotlinTask(useWorkerApi: Boolean): KaptTask {
+    private fun Kapt3SubpluginContext.createKaptKotlinTask(useWorkerApi: Boolean): TaskProvider<out KaptTask> {
         val taskClass = if (useWorkerApi) KaptWithoutKotlincTask::class.java else KaptWithKotlincTask::class.java
         val taskName = getKaptTaskName("kapt")
-        val kaptTask = project.tasks.create(taskName, taskClass)
 
-        kaptTask.useBuildCache = kaptExtension.useBuildCache
+        var classStructure: Configuration? = null
 
-        kaptTask.kotlinCompileTask = kotlinCompile
-
-        kaptTask.stubsDir = getKaptStubsDir()
-        kaptTask.destinationDir = sourcesOutputDir
-        kaptTask.kotlinSourcesDestinationDir = kotlinSourcesOutputDir
-        kaptTask.classesDir = classesOutputDir
-        kaptTask.includeCompileClasspath = includeCompileClasspath
-
-        kaptTask.isIncremental = project.isIncrementalKapt()
-        if (kaptTask.isIncremental) {
-            kaptTask.incAptCache = getKaptIncrementalAnnotationProcessingCache()
-            kaptTask.localState.register(kaptTask.incAptCache)
-
+        if (project.isIncrementalKapt()) {
             maybeRegisterTransform(project)
-            val classStructure = project.configurations.create("_classStructure${taskName}")
+            classStructure = project.configurations.create("_classStructure${taskName}")
 
             // Wrap the `kotlinCompile.classpath` into a file collection, so that, if the classpath is represented by a configuration,
             // the configuration is not extended (via extendsFrom, which normally happens when one configuration is _added_ into another)
             // but is instead included as the (lazily) resolved files. This is needed because the class structure configuration doesn't have
             // the attributes that are potentially needed to resolve dependencies on MPP modules, and the classpath configuration does.
-            project.dependencies.add(classStructure.name, project.files(project.provider { kotlinCompile.classpath }))
-
-            kaptTask.classpathStructure = classStructure.incoming.artifactView { viewConfig ->
-                viewConfig.attributes.attribute(artifactType, CLASS_STRUCTURE_ARTIFACT_TYPE)
-            }.files
+            project.dependencies.add(classStructure.name, project.files(project.provider { kotlinCompile.get().classpath }))
         }
 
-        kotlinCompilation?.run {
-            output.apply {
-                addClassesDir { project.files(classesOutputDir).builtBy(kaptTask) }
+        val kaptTaskProvider = project.registerTask(taskName, taskClass, emptyList()) { kaptTask ->
+            kaptTask.useBuildCache = kaptExtension.useBuildCache
+
+            kaptTask.kotlinCompileTask = kotlinCompilation.compileKotlinTask as KotlinCompile
+
+            kaptTask.stubsDir = getKaptStubsDir()
+
+            kaptTask.destinationDir = sourcesOutputDir
+            kaptTask.kotlinSourcesDestinationDir = kotlinSourcesOutputDir
+            kaptTask.classesDir = classesOutputDir
+            kaptTask.includeCompileClasspath = includeCompileClasspath
+
+            kaptTask.isIncremental = project.isIncrementalKapt()
+            if (kaptTask.isIncremental) {
+                kaptTask.incAptCache = getKaptIncrementalAnnotationProcessingCache()
+                kaptTask.localState.register(kaptTask.incAptCache)
+
+                kaptTask.classpathStructure = classStructure!!.incoming.artifactView { viewConfig ->
+                    viewConfig.attributes.attribute(artifactType, CLASS_STRUCTURE_ARTIFACT_TYPE)
+                }.files
+
+                if (kaptTask is KaptWithKotlincTask) {
+                    kaptTask.pluginOptions.addPluginArgument(
+                        getCompilerPluginId(),
+                        SubpluginOption("incrementalCache", kaptTask.incAptCache!!.absolutePath)
+                    )
+                }
+            }
+
+            kaptTask.kaptClasspathConfigurations = kaptClasspathConfigurations
+
+            KaptWithAndroid.androidVariantData(this)?.annotationProcessorOptionProviders?.let {
+                kaptTask.annotationProcessorOptionProviders.add(it)
             }
         }
 
-        kotlinCompile.source(sourcesOutputDir, kotlinSourcesOutputDir)
+        kotlinCompilation.output.apply {
+            addClassesDir { project.files(classesOutputDir).builtBy(kaptTaskProvider) }
+        }
+
+        kotlinCompilation.compileKotlinTaskProvider.configure {
+            it as SourceTask
+            it.source(sourcesOutputDir, kotlinSourcesOutputDir)
+        }
 
         if (javaCompile != null) {
-            if (kaptVariantData != null) {
-                kaptVariantData.registerGeneratedJavaSource(project, kaptTask, javaCompile)
+            val androidVariantData = KaptWithAndroid.androidVariantData(this)
+            if (androidVariantData != null) {
+                KaptWithAndroid.registerGeneratedJavaSource(this, project, androidVariantData, kaptTaskProvider)
             } else {
-                registerGeneratedJavaSource(kaptTask, javaCompile)
+                registerGeneratedJavaSource(kaptTaskProvider, javaCompile)
             }
         }
 
-        kaptTask.kaptClasspathConfigurations = kaptClasspathConfigurations
-
-        kaptVariantData?.annotationProcessorOptionProviders?.let {
-            kaptTask.annotationProcessorOptionProviders.add(it)
+        val dslJavacOptions: Provider<Map<String, String>> = project.provider {
+            kaptExtension.getJavacOptions().toMutableMap().also { result ->
+                if (javaCompile != null && "-source" !in dslJavacOptions && "--source" !in dslJavacOptions && "--release" !in dslJavacOptions) {
+                    val sourceOptionKey = if (SystemInfo.isJavaVersionAtLeast(12, 0, 0)) {
+                        "--source"
+                    } else {
+                        "-source"
+                    }
+                    result[sourceOptionKey] = javaCompile.get().sourceCompatibility
+                }
+            }
         }
 
-        val dslJavacOptions = kaptExtension.getJavacOptions().toMutableMap()
-        if (javaCompile != null && "-source" !in dslJavacOptions && "--source" !in dslJavacOptions && "--release" !in dslJavacOptions) {
-            val sourceOptionKey = if (SystemInfo.isJavaVersionAtLeast(12, 0, 0)) {
-                "--source"
-            } else {
-                "-source"
-            }
-            dslJavacOptions[sourceOptionKey] = javaCompile.sourceCompatibility
-        }
-        if (kaptTask is KaptWithKotlincTask) {
-            if (kaptTask.isIncremental) {
-                kaptTask.pluginOptions.addPluginArgument(
-                    getCompilerPluginId(),
-                    SubpluginOption("incrementalCache", kaptTask.incAptCache!!.absolutePath))
-            }
-
+        if (taskClass == KaptWithKotlincTask::class.java) {
             val subpluginOptions = buildOptions("apt", dslJavacOptions)
-            registerSubpluginOptions(kaptTask, kaptTask.pluginOptions, subpluginOptions)
+            registerSubpluginOptions(kaptTaskProvider, subpluginOptions)
         }
 
-        if (kaptTask is KaptWithoutKotlincTask) {
-            with(kaptTask) {
-                isVerbose = project.isKaptVerbose()
-                mapDiagnosticLocations = kaptExtension.mapDiagnosticLocations
-                annotationProcessorFqNames = kaptExtension.processors.split(',').filter { it.isNotEmpty() }
-                javacOptions = dslJavacOptions
+        if (taskClass == KaptWithoutKotlincTask::class.java) {
+            kaptTaskProvider.configure {
+                it as KaptWithoutKotlincTask
+                it.isVerbose = project.isKaptVerbose()
+                it.mapDiagnosticLocations = kaptExtension.mapDiagnosticLocations
+                it.annotationProcessorFqNames = kaptExtension.processors.split(',').filter { it.isNotEmpty() }
+                it.javacOptions = dslJavacOptions.get()
             }
 
             val subpluginOptions = getAPOptions()
-            registerSubpluginOptions(kaptTask, kaptTask.processorOptions, subpluginOptions)
+            registerSubpluginOptions(kaptTaskProvider, subpluginOptions)
         }
 
-        return kaptTask
+        return kaptTaskProvider
     }
 
     private fun maybeRegisterTransform(project: Project) {
@@ -485,33 +521,31 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         }
     }
 
-    private fun Kapt3SubpluginContext.createKaptGenerateStubsTask(): KaptGenerateStubsTask {
+    private fun Kapt3SubpluginContext.createKaptGenerateStubsTask(): TaskProvider<KaptGenerateStubsTask> {
         val kaptTaskName = getKaptTaskName("kaptGenerateStubs")
 
         KotlinCompileTaskData.register(kaptTaskName, KotlinCompileTaskData.get(project, kotlinCompile.name).compilation).apply {
             useModuleDetection.set(KotlinCompileTaskData.get(project, kotlinCompile.name).useModuleDetection)
+            destinationDir.set(project.provider { getKaptIncrementalDataDir() })
         }
 
-        val kaptTask = project.tasks.create(
-            kaptTaskName,
-            KaptGenerateStubsTask::class.java
-        )
+        val kaptTaskProvider = project.registerTask<KaptGenerateStubsTask>(kaptTaskName) { kaptTask ->
+            kaptTask.kotlinCompileTask = kotlinCompile.get()
 
-        kaptTask.kotlinCompileTask = kotlinCompile
-        kotlinToKaptGenerateStubsTasksMap[kotlinCompile] = kaptTask
+            kaptTask.stubsDir = getKaptStubsDir()
+            kaptTask.mapClasspath { kaptTask.kotlinCompileTask.classpath }
+            kaptTask.generatedSourcesDir = sourcesOutputDir
+            PropertiesProvider(project).mapKotlinTaskProperties(kaptTask)
 
-        kaptTask.stubsDir = getKaptStubsDir()
-        kaptTask.setDestinationDir { getKaptIncrementalDataDir() }
-        kaptTask.mapClasspath { kotlinCompile.classpath }
-        kaptTask.generatedSourcesDir = sourcesOutputDir
-        PropertiesProvider(project).mapKotlinTaskProperties(kaptTask)
+            kaptTask.kaptClasspathConfigurations = kaptClasspathConfigurations
+        }
 
-        kaptTask.kaptClasspathConfigurations = kaptClasspathConfigurations
+        val subpluginOptions = buildOptions("stubs", project.provider { kaptExtension.getJavacOptions() })
+        registerSubpluginOptions(kaptTaskProvider, subpluginOptions)
 
-        val subpluginOptions = buildOptions("stubs", kaptExtension.getJavacOptions())
-        registerSubpluginOptions(kaptTask, kaptTask.pluginOptions, subpluginOptions)
+        kotlinToKaptGenerateStubsTasksMap[kotlinCompilation] = kaptTaskProvider
 
-        return kaptTask
+        return kaptTaskProvider
     }
 
     private fun Kapt3SubpluginContext.getKaptTaskName(prefix: String): String {
@@ -522,8 +556,11 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
     }
 
     private fun Kapt3SubpluginContext.disableAnnotationProcessingInJavaTask() {
-        (javaCompile as? JavaCompile)?.let { javaCompile ->
-            val options = javaCompile.options
+        javaCompile?.configure { javaCompileInstance ->
+            if (javaCompileInstance !is JavaCompile)
+                return@configure
+
+            val options = javaCompileInstance.options
             // 'android-apt' (com.neenbedankt) adds a File instance to compilerArgs (List<String>).
             // Although it's not our problem, we need to handle this case properly.
             val oldCompilerArgs: List<Any> = options.compilerArgs
@@ -537,8 +574,8 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
             // Filter out the argument providers that are related to annotation processing and therefore already used by Kapt.
             // This is done to avoid outputs intersections between Kapt and and javaCompile and make the up-to-date check for
             // javaCompile more granular as it does not perform annotation processing:
-            if (kaptVariantData != null) {
-                options.compilerArgumentProviders.removeAll(kaptVariantData.annotationProcessorOptionProviders)
+            KaptWithAndroid.androidVariantData(this)?.let { androidVariantData ->
+                options.compilerArgumentProviders.removeAll(androidVariantData.annotationProcessorOptionProviders)
             }
         }
     }
@@ -548,13 +585,41 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
     override fun getPluginArtifact(): SubpluginArtifact =
         JetBrainsSubpluginArtifact(artifactId = KAPT_ARTIFACT_NAME)
 }
+
+// Don't reference the BaseVariant type in the Kapt plugin signature, as those type references will fail to link when there's no Android
+// Gradle plugin on the project's plugin classpath
+private object KaptWithAndroid {
+    // To avoid loading the signature and instead lazily load BaseVariant when evaluation reaches it in the body, inline the function
+    @Suppress("NOTHING_TO_INLINE")
+    inline fun androidVariantData(context: Kapt3GradleSubplugin.Kapt3SubpluginContext): BaseVariant? = context.variantData as? BaseVariant
+
+    @Suppress("NOTHING_TO_INLINE")
+    inline fun registerGeneratedJavaSource(
+        kapt3SubpluginContext: Kapt3GradleSubplugin.Kapt3SubpluginContext,
+        project: Project,
+        variantData: BaseVariant,
+        kaptTask: TaskProvider<out KaptTask>
+    ) {
+        val kaptSourceOutput = project.fileTree(kapt3SubpluginContext.sourcesOutputDir).builtBy(kaptTask)
+        kaptSourceOutput.include("**/*.java")
+        variantData.registerExternalAptJavaOutput(kaptSourceOutput)
+        kaptTask.configure { kaptTaskInstance ->
+            variantData.dataBindingDependencyArtifactsIfSupported?.let { dataBindingArtifacts ->
+                kaptTaskInstance.dependsOn(dataBindingArtifacts)
+            }
+        }
+    }
+}
+
 private val artifactType = Attribute.of("artifactType", String::class.java)
 
 
-internal fun registerGeneratedJavaSource(kaptTask: KaptTask, javaTask: AbstractCompile) {
-    val generatedJavaSources = javaTask.project.fileTree(kaptTask.destinationDir)
-    generatedJavaSources.include("**/*.java")
-    javaTask.source(generatedJavaSources)
+internal fun registerGeneratedJavaSource(kaptTask: TaskProvider<out KaptTask>, javaTaskProvider: TaskProvider<out AbstractCompile>) {
+    javaTaskProvider.configure { javaTask ->
+        val generatedJavaSources = javaTask.project.fileTree(kaptTask.map { it.destinationDir })
+        generatedJavaSources.include("**/*.java")
+        javaTask.source(generatedJavaSources)
+    }
 }
 
 internal fun Configuration.getNamedDependencies(): List<Dependency> = allDependencies.filter { it.group != null && it.name != null }
@@ -581,7 +646,7 @@ internal fun checkAndroidAnnotationProcessorDependencyUsage(project: Project) {
             ANNOTATION_PROCESSOR -> "kapt"
             else -> {
                 val configurationName = apConfigurationName.dropLast(ANNOTATION_PROCESSOR_CAP.length)
-                Kapt3KotlinGradleSubplugin.getKaptConfigurationName(configurationName)
+                Kapt3GradleSubplugin.getKaptConfigurationName(configurationName)
             }
         }
 
@@ -605,3 +670,22 @@ internal fun checkAndroidAnnotationProcessorDependencyUsage(project: Project) {
         )
     }
 }
+
+private val BaseVariant.annotationProcessorOptions: Map<String, String>?
+    get() = javaCompileOptions.annotationProcessorOptions.arguments
+
+private val BaseVariant.annotationProcessorOptionProviders: List<*>
+    get() = try {
+        // Public API added in Android Gradle Plugin 3.2.0-alpha15:
+        val apOptions = javaCompileOptions.annotationProcessorOptions
+        apOptions.javaClass.getMethod("getCompilerArgumentProviders").invoke(apOptions) as List<*>
+    } catch (e: NoSuchMethodException) {
+        emptyList<Any>()
+    }
+
+//TODO once the Android plugin reaches its 3.0.0 release, consider compiling against it (remove the reflective call)
+private val BaseVariant.dataBindingDependencyArtifactsIfSupported: FileCollection?
+    get() = this::class.java.methods
+        .find { it.name == "getDataBindingDependencyArtifacts" }
+        ?.also { it.isAccessible = true }
+        ?.invoke(this) as? FileCollection

@@ -16,44 +16,28 @@
 
 package org.jetbrains.kotlinx.serialization.gradle
 
-import org.gradle.api.Plugin
-import org.gradle.api.Project
+import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.KotlinGradleSubplugin
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerPluginSupportPlugin
 import org.jetbrains.kotlin.gradle.plugin.SubpluginArtifact
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
 
-class SerializationGradleSubplugin : Plugin<Project> {
-    companion object {
-        fun isEnabled(project: Project) = project.plugins.findPlugin(SerializationGradleSubplugin::class.java) != null
-    }
-
-    override fun apply(project: Project) {
-        // nothing here
-    }
-}
-
-class SerializationKotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompile> {
+class SerializationGradleSubplugin : KotlinCompilerPluginSupportPlugin {
     companion object {
         const val SERIALIZATION_GROUP_NAME = "org.jetbrains.kotlin"
         const val SERIALIZATION_ARTIFACT_NAME = "kotlin-serialization"
         const val SERIALIZATION_ARTIFACT_UNSHADED_NAME = "kotlin-serialization-unshaded"
     }
 
-    override fun isApplicable(project: Project, task: AbstractCompile): Boolean =
-        SerializationGradleSubplugin.isEnabled(project)
+    override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean = true
 
-    override fun apply(
-        project: Project,
-        kotlinCompile: AbstractCompile,
-        javaCompile: AbstractCompile?,
-        variantData: Any?,
-        androidProjectHandler: Any?,
-        kotlinCompilation: KotlinCompilation<*>?
-    ): List<SubpluginOption> {
-        return emptyList()
-    }
+    override fun applyToCompilation(
+        kotlinCompilation: KotlinCompilation<*>,
+        javaCompile: TaskProvider<out AbstractCompile>?
+    ): Provider<List<SubpluginOption>> =
+        kotlinCompilation.target.project.provider { emptyList<SubpluginOption>() }
 
     override fun getPluginArtifact(): SubpluginArtifact =
         SubpluginArtifact(SERIALIZATION_GROUP_NAME, SERIALIZATION_ARTIFACT_NAME)

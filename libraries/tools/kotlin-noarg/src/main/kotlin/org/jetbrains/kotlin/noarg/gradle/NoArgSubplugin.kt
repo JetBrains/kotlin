@@ -18,65 +18,60 @@ package org.jetbrains.kotlin.noarg.gradle
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.noarg.gradle.model.builder.NoArgModelBuilder
 import javax.inject.Inject
 
-class NoArgGradleSubplugin @Inject internal constructor(private val registry: ToolingModelBuilderRegistry) : Plugin<Project> {
-    companion object {
-        fun isEnabled(project: Project) = project.plugins.findPlugin(NoArgGradleSubplugin::class.java) != null
+class NoArgGradleSubplugin @Inject internal constructor(private val registry: ToolingModelBuilderRegistry) :
+    KotlinCompilerPluginSupportPlugin {
 
+    companion object {
         fun getNoArgExtension(project: Project): NoArgExtension {
             return project.extensions.getByType(NoArgExtension::class.java)
         }
+
+        private const val NOARG_ARTIFACT_NAME = "kotlin-noarg"
+
+        private const val ANNOTATION_ARG_NAME = "annotation"
+        private const val PRESET_ARG_NAME = "preset"
+        private const val INVOKE_INITIALIZERS_ARG_NAME = "invokeInitializers"
     }
 
     override fun apply(project: Project) {
         project.extensions.create("noArg", NoArgExtension::class.java)
         registry.register(NoArgModelBuilder())
     }
-}
 
-class NoArgKotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompile> {
-    companion object {
-        const val NOARG_ARTIFACT_NAME = "kotlin-noarg"
+    override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean = true
 
-        private val ANNOTATION_ARG_NAME = "annotation"
-        private val PRESET_ARG_NAME = "preset"
-        private val INVOKE_INITIALIZERS_ARG_NAME = "invokeInitializers"
-    }
+    override fun applyToCompilation(
+        kotlinCompilation: KotlinCompilation<*>,
+        javaCompile: TaskProvider<out AbstractCompile>?
+    ): Provider<List<SubpluginOption>> {
+        val project = kotlinCompilation.target.project
 
-    override fun isApplicable(project: Project, task: AbstractCompile) = NoArgGradleSubplugin.isEnabled(project)
+        return project.provider {
+            val noArgExtension = project.extensions.getByType(NoArgExtension::class.java)
+            val options = mutableListOf<SubpluginOption>()
 
-    override fun apply(
-        project: Project,
-        kotlinCompile: AbstractCompile,
-        javaCompile: AbstractCompile?,
-        variantData: Any?,
-        androidProjectHandler: Any?,
-        kotlinCompilation: KotlinCompilation<*>?
-    ): List<SubpluginOption> {
-        if (!NoArgGradleSubplugin.isEnabled(project)) return emptyList()
+            for (anno in noArgExtension.myAnnotations) {
+                options += SubpluginOption(ANNOTATION_ARG_NAME, anno)
+            }
 
-        val noArgExtension = project.extensions.findByType(NoArgExtension::class.java) ?: return emptyList()
+            for (preset in noArgExtension.myPresets) {
+                options += SubpluginOption(PRESET_ARG_NAME, preset)
+            }
 
-        val options = mutableListOf<SubpluginOption>()
+            if (noArgExtension.invokeInitializers) {
+                options += SubpluginOption(INVOKE_INITIALIZERS_ARG_NAME, "true")
+            }
 
-        for (anno in noArgExtension.myAnnotations) {
-            options += SubpluginOption(ANNOTATION_ARG_NAME, anno)
+            options
         }
-
-        for (preset in noArgExtension.myPresets) {
-            options += SubpluginOption(PRESET_ARG_NAME, preset)
-        }
-
-        if (noArgExtension.invokeInitializers) {
-            options += SubpluginOption(INVOKE_INITIALIZERS_ARG_NAME, "true")
-        }
-
-        return options
     }
 
     override fun getCompilerPluginId() = "org.jetbrains.kotlin.noarg"

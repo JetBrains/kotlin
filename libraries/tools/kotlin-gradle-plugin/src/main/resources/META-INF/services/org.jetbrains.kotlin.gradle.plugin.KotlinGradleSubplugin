@@ -1,3 +1,0 @@
-org.jetbrains.kotlin.gradle.internal.AndroidSubplugin
-org.jetbrains.kotlin.gradle.internal.Kapt3KotlinGradleSubplugin
-org.jetbrains.kotlin.gradle.scripting.internal.ScriptingKotlinGradleSubplugin

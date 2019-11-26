@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinJsDce
+import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.io.File
 
@@ -44,17 +45,17 @@ class KotlinJsDcePlugin : Plugin<Project> {
     }
 
     private fun processCompilation(project: Project, kotlinCompilation: KotlinCompilation<*>) {
-        val kotlinTaskName = kotlinCompilation.compileKotlinTaskName
-        val kotlinTask = project.tasks.findByName(kotlinTaskName) as? Kotlin2JsCompile ?: return
+        val kotlinTask = kotlinCompilation.compileKotlinTaskProvider
         val dceTaskName = lowerCamelCaseName(
             DCE_TASK_PREFIX,
             kotlinCompilation.target.disambiguationClassifier,
             kotlinCompilation.name.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
             if (kotlinCompilation.target is KotlinWithJavaTarget<*>) TASK_SUFFIX else MPP_TASK_SUFFIX
         )
-        val dceTask = project.tasks.create(dceTaskName, KotlinJsDce::class.java).also {
+
+        val dceTask = project.registerTask<KotlinJsDce>(dceTaskName) {
             it.dependsOn(kotlinTask)
-            project.tasks.findByName("build")!!.dependsOn(it)
+            project.tasks.getByName("build").dependsOn(it)
         }
 
         project.afterEvaluate {
@@ -64,10 +65,10 @@ class KotlinJsDcePlugin : Plugin<Project> {
 
             val configuration = project.configurations.getByName(kotlinCompilation.compileDependencyConfigurationName)
 
-            with(dceTask) {
-                classpath = configuration
-                destinationDir = dceTask.dceOptions.outputDirectory?.let { File(it) } ?: outputDir
-                source(kotlinTask.outputFile)
+            dceTask.configure {
+                it.classpath = configuration
+                it.destinationDir = it.dceOptions.outputDirectory?.let { File(it) } ?: outputDir
+                it.source((kotlinTask.get() as Kotlin2JsCompile).outputFile)
             }
         }
     }

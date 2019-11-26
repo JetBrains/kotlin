@@ -16,7 +16,10 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
+import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import java.io.File
@@ -62,6 +65,10 @@ enum class FilesOptionKind {
 /** Defines a subplugin option that should be excluded from Gradle input/output checks */
 open class InternalSubpluginOption(key: String, value: String) : SubpluginOption(key, value)
 
+@Deprecated(
+    message = "This interface is deprecated and will be removed soon. Use the KotlinCompilerPluginSupportPlugin interface instead.",
+    replaceWith = ReplaceWith("KotlinCompilerPluginSupportPlugin")
+)
 interface KotlinGradleSubplugin<in KotlinCompile : AbstractCompile> {
     fun isApplicable(project: Project, task: AbstractCompile): Boolean
 
@@ -75,12 +82,37 @@ interface KotlinGradleSubplugin<in KotlinCompile : AbstractCompile> {
     ): List<SubpluginOption>
 
     fun getSubpluginKotlinTasks(
-            project: Project,
-            kotlinCompile: KotlinCompile
+        project: Project,
+        kotlinCompile: KotlinCompile
     ): List<AbstractCompile> = emptyList()
 
     fun getCompilerPluginId(): String
 
+    fun getPluginArtifact(): SubpluginArtifact
+    fun getNativeCompilerPluginArtifact(): SubpluginArtifact? = null
+}
+
+/**
+ * Gradle plugin implementing support for a Kotlin compiler plugin.
+ * In order to be discovered, it should be applied to the project as an ordinary [Plugin].
+ * Then its [isApplicable] is checked against compilations of the project, and if it returns true,
+ * then [applyToCompilation], [getPluginKotlinTasks], and other functions may be called later.
+ */
+interface KotlinCompilerPluginSupportPlugin : Plugin<Project> {
+    override fun apply(project: Project) = Unit
+
+    fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean
+
+    fun applyToCompilation(
+        kotlinCompilation: KotlinCompilation<*>,
+        javaCompile: TaskProvider<out AbstractCompile>?
+    ): Provider<List<SubpluginOption>>
+
+    fun getPluginKotlinTasks(
+        compilation: KotlinCompilation<*>
+    ): List<TaskProvider<out AbstractCompile>> = emptyList()
+
+    fun getCompilerPluginId(): String
     fun getPluginArtifact(): SubpluginArtifact
     fun getNativeCompilerPluginArtifact(): SubpluginArtifact? = null
 }

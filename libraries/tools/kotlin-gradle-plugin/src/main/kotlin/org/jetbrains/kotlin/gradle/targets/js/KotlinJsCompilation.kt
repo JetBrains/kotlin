@@ -6,6 +6,7 @@
 @file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
+import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationWithResources
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
@@ -21,6 +22,10 @@ class KotlinJsCompilation(
 
     override val compileKotlinTask: Kotlin2JsCompile
         get() = super.compileKotlinTask as Kotlin2JsCompile
+
+    @Suppress("UNCHECKED_CAST")
+    override val compileKotlinTaskProvider: TaskProvider<out Kotlin2JsCompile>
+        get() = super.compileKotlinTaskProvider as TaskProvider<out Kotlin2JsCompile>
 
     internal val packageJsonHandlers = mutableListOf<PackageJson.() -> Unit>()
 

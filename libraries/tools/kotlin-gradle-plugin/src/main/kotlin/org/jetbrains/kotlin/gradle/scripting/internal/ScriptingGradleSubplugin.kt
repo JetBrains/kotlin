@@ -13,10 +13,11 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.transform.ArtifactTransform
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.plugins.JavaPluginConvention
+import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -37,8 +38,6 @@ class ScriptingGradleSubplugin : Plugin<Project> {
     companion object {
         const val MISCONFIGURATION_MESSAGE_SUFFIX = "the plugin is probably applied by a mistake"
 
-        fun isEnabled(project: Project) = project.plugins.findPlugin(ScriptingGradleSubplugin::class.java) != null
-
         fun configureForSourceSet(project: Project, sourceSetName: String) {
             val discoveryConfiguration = project.configurations.maybeCreate(getDiscoveryClasspathConfigurationName(sourceSetName)).apply {
                 isVisible = false
@@ -52,8 +51,9 @@ class ScriptingGradleSubplugin : Plugin<Project> {
     }
 
     override fun apply(project: Project) {
-        project.afterEvaluate {
+        project.plugins.apply(ScriptingKotlinGradleSubplugin::class.java)
 
+        project.afterEvaluate {
             val javaPluginConvention = project.convention.findPlugin(JavaPluginConvention::class.java)
             if (javaPluginConvention?.sourceSets?.isEmpty() == false) {
 
@@ -218,7 +218,7 @@ fun Configuration.discoverScriptExtensionsFiles() =
     }.artifacts.artifactFiles
 
 
-class ScriptingKotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompile> {
+class ScriptingKotlinGradleSubplugin : KotlinCompilerPluginSupportPlugin {
     companion object {
         const val SCRIPTING_ARTIFACT_NAME = "kotlin-scripting-compiler-embeddable"
 
@@ -228,38 +228,35 @@ class ScriptingKotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompile> {
         val LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION = "script-resolver-environment"
     }
 
-    override fun isApplicable(project: Project, task: AbstractCompile) =
-        task is KotlinJvmCompile && ScriptingGradleSubplugin.isEnabled(project)
+    override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean = true
 
-    override fun apply(
-        project: Project,
-        kotlinCompile: AbstractCompile,
-        javaCompile: AbstractCompile?,
-        variantData: Any?,
-        androidProjectHandler: Any?,
-        kotlinCompilation: KotlinCompilation<*>?
-    ): List<SubpluginOption> {
-        if (!ScriptingGradleSubplugin.isEnabled(project)) return emptyList()
+    override fun applyToCompilation(
+        kotlinCompilation: KotlinCompilation<*>,
+        javaCompile: TaskProvider<out AbstractCompile>?
+    ): Provider<List<SubpluginOption>> {
+        val project = kotlinCompilation.target.project
 
         val scriptingExtension = project.extensions.findByType(ScriptingExtension::class.java)
             ?: project.extensions.create("kotlinScripting", ScriptingExtension::class.java)
 
-        val options = mutableListOf<SubpluginOption>()
+        return project.provider {
+            val options = mutableListOf<SubpluginOption>()
 
-        for (scriptDef in scriptingExtension.myScriptDefinitions) {
-            options += SubpluginOption(SCRIPT_DEFINITIONS_OPTION, scriptDef)
-        }
-        for (path in scriptingExtension.myScriptDefinitionsClasspath) {
-            options += SubpluginOption(SCRIPT_DEFINITIONS_CLASSPATH_OPTION, path)
-        }
-        if (scriptingExtension.myDisableScriptDefinitionsFromClasspath) {
-            options += SubpluginOption(DISABLE_SCRIPT_DEFINITIONS_FROM_CLSSPATH_OPTION, "true")
-        }
-        for (pair in scriptingExtension.myScriptResolverEnvironment) {
-            options += SubpluginOption(LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION, "${pair.key}=${pair.value}")
-        }
+            for (scriptDef in scriptingExtension.myScriptDefinitions) {
+                options += SubpluginOption(SCRIPT_DEFINITIONS_OPTION, scriptDef)
+            }
+            for (path in scriptingExtension.myScriptDefinitionsClasspath) {
+                options += SubpluginOption(SCRIPT_DEFINITIONS_CLASSPATH_OPTION, path)
+            }
+            if (scriptingExtension.myDisableScriptDefinitionsFromClasspath) {
+                options += SubpluginOption(DISABLE_SCRIPT_DEFINITIONS_FROM_CLSSPATH_OPTION, "true")
+            }
+            for (pair in scriptingExtension.myScriptResolverEnvironment) {
+                options += SubpluginOption(LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION, "${pair.key}=${pair.value}")
+            }
 
-        return options
+            options
+        }
     }
 
     override fun getCompilerPluginId() = "kotlin.scripting"
