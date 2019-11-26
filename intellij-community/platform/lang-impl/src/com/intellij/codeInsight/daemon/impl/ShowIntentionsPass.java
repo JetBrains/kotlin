@@ -328,11 +328,16 @@ public class ShowIntentionsPass extends TextEditorHighlightingPass {
         }
       }
 
-      if (indicator != null) {
+      ~ if (indicator != null) {
         indicator.setText("Searching for additional intention actions & quick fixes");
       }
       for (IntentionMenuContributor extension : IntentionMenuContributor.EP_NAME.getExtensionList()) {
-        extension.collectActions(hostEditor, hostFile, intentions, passIdToShowIntentionsFor, offset);
+        try {
+          extension.collectActions(hostEditor, hostFile, intentions, passIdToShowIntentionsFor, offset);
+        }
+        catch (UnsupportedOperationException e) {
+          //can collect action on a mock memory editor and produce exceptions - ignore
+        }
       }
     }
 

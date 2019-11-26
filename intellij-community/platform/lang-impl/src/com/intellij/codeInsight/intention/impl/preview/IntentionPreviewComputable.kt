@@ -10,10 +10,9 @@ import com.intellij.diff.comparison.ComparisonManager
 import com.intellij.diff.comparison.ComparisonPolicy
 import com.intellij.diff.fragments.LineFragment
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.command.CommandProcessor
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.progress.DumbProgressIndicator
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressManager
@@ -22,40 +21,48 @@ import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.ThrowableComputable
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiFileFactory
 
 class IntentionPreviewComputable(private val project: Project,
                                  private val action: IntentionAction,
                                  private val originalFile: PsiFile,
-                                 private val originalEditor: Editor,
-                                 private val psiFileCopy: PsiFile,
-                                 private val editorCopy: Editor
-                                 ) : Computable<Pair<PsiFile?, List<LineFragment>>?> {
+                                 private val originalEditor: Editor) : Computable<Pair<PsiFile?, List<LineFragment>>?> {
   override fun compute(): Pair<PsiFile?, List<LineFragment>>? {
-    CommandProcessor.getInstance().runUndoTransparentAction(Runnable {
-      try {
-        ApplicationManager.getApplication().runReadAction(ThrowableComputable<Unit, Exception> {
-          val actionWithTextCachingCopy = intentionActionWithTextCaching(editorCopy, psiFileCopy)
-          if (actionWithTextCachingCopy == null) return@ThrowableComputable
+    val psiFileCopy = runReadAction { nonPhysicalPsiCopy(originalFile, project) }
+    ProgressManager.checkCanceled()
 
-          try {
-            originalEditor.document.setReadOnly(true)
-            val fileEditorPair = ShowIntentionActionsHandler.chooseFileForAction(psiFileCopy, editorCopy, actionWithTextCachingCopy.action)
-                                 ?: return@ThrowableComputable
-            ProgressManager.checkCanceled()
-            actionWithTextCachingCopy.action.invoke(project, fileEditorPair.second, fileEditorPair.first)
-            ProgressManager.checkCanceled()
-          }
-          finally {
-            originalEditor.document.setReadOnly(false)
-            ApplicationManager.getApplication().invokeLater(Runnable { EditorFactory.getInstance().releaseEditor(editorCopy) })
-          }
-        })
-      }
-      catch (e: Exception) {
-        LOG.warn("There are exceptions on invocation the intention: '${action.text}' on a copy of the file.")
-        throw ProcessCanceledException()
-      }
-    })
+    val editorCopy = try {
+      IntentionPreviewEditor(psiFileCopy, runReadAction { originalEditor.caretModel.offset })
+    }
+    catch (e: IllegalStateException) {
+      LOG.warn(e)
+      throw ProcessCanceledException()
+    }
+
+    try {
+      ApplicationManager.getApplication().runReadAction(ThrowableComputable<Unit, Exception> {
+        val action = (intentionActionWithTextCaching(editorCopy, psiFileCopy) ?: return@ThrowableComputable).action
+        val fileEditorPair = ShowIntentionActionsHandler.chooseFileForAction(psiFileCopy, editorCopy, action)
+                             ?: return@ThrowableComputable
+
+        try {
+          originalEditor.document.setReadOnly(true)
+          ProgressManager.checkCanceled()
+          action.invoke(project, fileEditorPair.second, fileEditorPair.first)
+          ProgressManager.checkCanceled()
+        }
+        finally {
+          originalEditor.document.setReadOnly(false)
+        }
+      })
+    }
+    catch (e: UnsupportedOperationException) {
+      throw ProcessCanceledException()
+    }
+    catch (e: Exception) {
+      LOG.debug("There are exceptions on invocation the intention: '${action.text}' on a copy of the file.", e)
+      throw ProcessCanceledException()
+    }
 
     return Pair<PsiFile?, List<LineFragment>>(
       psiFileCopy,
@@ -65,13 +72,19 @@ class IntentionPreviewComputable(private val project: Project,
       }))
   }
 
-  private fun intentionActionWithTextCaching(editorCopy: Editor,
-                                             psiFileCopy: PsiFile): IntentionActionWithTextCaching? {
+  private fun intentionActionWithTextCaching(editorCopy: Editor, psiFileCopy: PsiFile): IntentionActionWithTextCaching? {
     val actionsToShow = ShowIntentionsPass.getActionsToShow(editorCopy, psiFileCopy, false)
     val cachedIntentions = CachedIntentions.createAndUpdateActions(project, psiFileCopy, editorCopy, actionsToShow)
     return getFixes(cachedIntentions).find { it.text == action.text }
   }
 
+  private fun nonPhysicalPsiCopy(psiFile: PsiFile, project: Project): PsiFile {
+    ProgressManager.checkCanceled()
+    return PsiFileFactory.getInstance(project).createFileFromText(psiFile.name,
+                                                                  psiFile.language,
+                                                                  psiFile.text, false, true, false,
+                                                                  psiFile.virtualFile)
+  }
 
   fun getFixes(cachedIntentions: CachedIntentions): Sequence<IntentionActionWithTextCaching> =
     sequenceOf<IntentionActionWithTextCaching>()

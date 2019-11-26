@@ -150,6 +150,10 @@ public class ShowIntentionActionsHandler implements CodeInsightActionHandler {
     catch (IndexNotReadyException e) {
       return false;
     }
+    catch (Exception e) {
+      //check action availability can be invoked on a mock editor and may produce exceptions
+      return false;
+    }
     return true;
   }
 
@@ -158,24 +162,29 @@ public class ShowIntentionActionsHandler implements CodeInsightActionHandler {
                                                                    @NotNull Editor hostEditor,
                                                                    @Nullable PsiFile injectedFile,
                                                                    @NotNull PairProcessor<? super PsiFile, ? super Editor> predicate) {
-    Editor editorToApply = null;
-    PsiFile fileToApply = null;
+    try {
+      Editor editorToApply = null;
+      PsiFile fileToApply = null;
 
-    Editor injectedEditor = null;
-    if (injectedFile != null) {
-      injectedEditor = InjectedLanguageUtil.getInjectedEditorForInjectedFile(hostEditor, injectedFile);
-      if (predicate.process(injectedFile, injectedEditor)) {
-        editorToApply = injectedEditor;
-        fileToApply = injectedFile;
+      Editor injectedEditor = null;
+      if (injectedFile != null) {
+        injectedEditor = InjectedLanguageUtil.getInjectedEditorForInjectedFile(hostEditor, injectedFile);
+        if (predicate.process(injectedFile, injectedEditor)) {
+          editorToApply = injectedEditor;
+          fileToApply = injectedFile;
+        }
       }
-    }
 
-    if (editorToApply == null && hostEditor != injectedEditor && predicate.process(hostFile, hostEditor)) {
-      editorToApply = hostEditor;
-      fileToApply = hostFile;
+      if (editorToApply == null && hostEditor != injectedEditor && predicate.process(hostFile, hostEditor)) {
+        editorToApply = hostEditor;
+        fileToApply = hostFile;
+      }
+      if (editorToApply == null) return null;
+      return Pair.create(fileToApply, editorToApply);
     }
-    if (editorToApply == null) return null;
-    return Pair.create(fileToApply, editorToApply);
+    catch (UnsupportedOperationException e) {
+      return null;
+    }
   }
 
   public static boolean chooseActionAndInvoke(@NotNull PsiFile hostFile,

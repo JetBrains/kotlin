@@ -3,18 +3,14 @@ package com.intellij.codeInsight.intention.impl.preview
 
 import com.intellij.codeInsight.CodeInsightBundle
 import com.intellij.codeInsight.intention.IntentionAction
-import com.intellij.codeInsight.intention.impl.CachedIntentions
-import com.intellij.codeInsight.intention.impl.IntentionActionWithTextCaching
 import com.intellij.codeInsight.intention.impl.IntentionHintComponent
 import com.intellij.codeInsight.intention.impl.preview.IntentionPreviewComponent.Companion.LOADING_PREVIEW
 import com.intellij.codeInsight.intention.impl.preview.IntentionPreviewComponent.Companion.NO_PREVIEW
 import com.intellij.diff.fragments.LineFragment
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.ex.EditorEx
-import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.progress.EmptyProgressIndicator
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressIndicator
@@ -22,9 +18,7 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.JBPopup
 import com.intellij.openapi.ui.popup.JBPopupFactory
-import com.intellij.openapi.util.Computable
 import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiFileFactory
 import com.intellij.ui.popup.PopupPositionManager
 import com.intellij.ui.popup.PopupUpdateProcessor
 import com.intellij.util.Alarm
@@ -105,25 +99,11 @@ class IntentionPreviewPopupUpdateProcessor(private val project: Project,
     fun start() {
       component.startLoading()
 
-      ProgressManager.checkCanceled()
-      val psiFileCopy = ApplicationManager.getApplication().runReadAction(Computable<PsiFile> { nonPhysicalPsiCopy(originalFile, project) })
-      ProgressManager.checkCanceled()
-
-      val documentCopy = ApplicationManager.getApplication().runReadAction(
-        Computable<Document> { FileDocumentManager.getInstance().getDocument(psiFileCopy.viewProvider.virtualFile) })
-      if (documentCopy == null) {
-        select(NO_PREVIEW)
-        return
-      }
-
-      val editorCopy = EditorFactory.getInstance().createEditor(documentCopy, project)
-        .also { it.caretModel.moveToOffset(originalEditor.caretModel.offset) }
-
       computation = ApplicationManager.getApplication().executeOnPooledThread(
         Callable {
           try {
-            ProgressManager.getInstance().runProcess(
-              IntentionPreviewComputable(project, action, originalFile, originalEditor, psiFileCopy, editorCopy), progressIndicator)
+            ProgressManager.getInstance().runProcess(IntentionPreviewComputable(project, action, originalFile, originalEditor),
+                                                     progressIndicator)
           }
           catch (e: ProcessCanceledException) {
             Pair<PsiFile?, List<LineFragment>>(null, emptyList())
@@ -154,21 +134,6 @@ class IntentionPreviewPopupUpdateProcessor(private val project: Project,
       }
     }
   }
-
-  private fun nonPhysicalPsiCopy(psiFile: PsiFile, project: Project): PsiFile {
-    ProgressManager.checkCanceled()
-    return PsiFileFactory.getInstance(project).createFileFromText(psiFile.name,
-                                                                  psiFile.language,
-                                                                  psiFile.text, false, true, false,
-                                                                  psiFile.virtualFile)
-  }
-
-
-  fun getFixes(cachedIntentions: CachedIntentions): Sequence<IntentionActionWithTextCaching> =
-    sequenceOf<IntentionActionWithTextCaching>()
-      .plus(cachedIntentions.intentions)
-      .plus(cachedIntentions.inspectionFixes)
-      .plus(cachedIntentions.errorFixes)
 
   fun toggleShow() {
     show = !show
