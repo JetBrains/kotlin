@@ -26,8 +26,6 @@ import com.intellij.ide.ui.OptionsTopHitProvider;
 import com.intellij.ide.ui.UISettings;
 import com.intellij.ide.ui.laf.darcula.ui.DarculaTextBorder;
 import com.intellij.ide.ui.laf.darcula.ui.DarculaTextFieldUI;
-import com.intellij.ide.ui.laf.intellij.MacIntelliJTextBorder;
-import com.intellij.ide.ui.laf.intellij.MacIntelliJTextFieldUI;
 import com.intellij.ide.ui.search.BooleanOptionDescription;
 import com.intellij.ide.ui.search.OptionDescription;
 import com.intellij.ide.util.PropertiesComponent;
@@ -981,11 +979,12 @@ public class SearchEverywhereAction extends AnAction implements CustomComponentA
       JTextField editor = getTextEditor();
       editor.setOpaque(false);
       editor.putClientProperty(SearchEverywhereUI.SEARCH_EVERYWHERE_SEARCH_FILED_KEY, true);
-      if (UIUtil.isUnderDefaultMacTheme()) {
-        editor.setUI((MacIntelliJTextFieldUI)MacIntelliJTextFieldUI.createUI(editor));
-        editor.setBorder(new MacIntelliJTextBorder());
-      }
-      else if (!UIUtil.isUnderWin10LookAndFeel()){
+      //if (UIUtil.isUnderDefaultMacTheme()) {
+      //  editor.setUI((MacIntelliJTextFieldUI)MacIntelliJTextFieldUI.createUI(editor));
+      //  editor.setBorder(new MacIntelliJTextBorder());
+      //}
+      //else
+        if (!UIUtil.isUnderWin10LookAndFeel()){
         editor.setUI((DarculaTextFieldUI)DarculaTextFieldUI.createUI(editor));
         editor.setBorder(new DarculaTextBorder());
       }
