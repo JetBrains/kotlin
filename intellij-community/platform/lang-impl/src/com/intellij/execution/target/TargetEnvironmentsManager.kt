@@ -10,7 +10,7 @@ import com.intellij.util.xmlb.annotations.XCollection
 @State(name = "RemoteTargetsManager", storages = [Storage("remote-targets.xml")])
 class TargetEnvironmentsManager : PersistentStateComponent<TargetEnvironmentsManager.TargetsListState> {
 
-  val targets: BaseExtendableList<TargetEnvironmentConfiguration, RemoteTargetType<*>> = TargetsList()
+  val targets: ContributedConfigurationsList<TargetEnvironmentConfiguration, RemoteTargetType<*>> = TargetsList()
 
   override fun getState(): TargetsListState {
     val result = TargetsListState()
@@ -49,14 +49,14 @@ class TargetEnvironmentsManager : PersistentStateComponent<TargetEnvironmentsMan
       TargetEnvironmentsManager::class.java)
   }
 
-  internal class TargetsList : BaseExtendableList<TargetEnvironmentConfiguration, RemoteTargetType<*>>(RemoteTargetType.EXTENSION_NAME) {
+  internal class TargetsList : ContributedConfigurationsList<TargetEnvironmentConfiguration, RemoteTargetType<*>>(RemoteTargetType.EXTENSION_NAME) {
     override fun toBaseState(config: TargetEnvironmentConfiguration): OneTargetState =
       OneTargetState().also {
         it.loadFromConfiguration(config)
         it.runtimes = config.runtimes.state.configs
       }
 
-    override fun fromOneState(state: BaseExtendableState): TargetEnvironmentConfiguration? {
+    override fun fromOneState(state: ContributedStateBase): TargetEnvironmentConfiguration? {
       val result = super.fromOneState(state)
       if (result != null && state is OneTargetState) {
         result.runtimes.loadState(state.runtimes)
@@ -73,9 +73,9 @@ class TargetEnvironmentsManager : PersistentStateComponent<TargetEnvironmentsMan
 
 
   @Tag("target")
-  class OneTargetState : BaseExtendableState() {
+  class OneTargetState : ContributedStateBase() {
     @get: XCollection(style = XCollection.Style.v2)
     @get: Property(surroundWithTag = false)
-    var runtimes by list<BaseExtendableState>()
+    var runtimes by list<ContributedStateBase>()
   }
 }
