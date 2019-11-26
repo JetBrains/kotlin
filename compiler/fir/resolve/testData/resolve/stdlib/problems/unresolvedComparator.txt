@@ -5,12 +5,6 @@ FILE: unresolvedComparator.kt
         }
         )
     }
-    public final fun test_2(list: R|kotlin/collections/List<kotlin/Int>|): R|kotlin/Unit| {
-        lval comp: <ERROR TYPE REF: Unresolved name: Comparator> = Q|java/util|.<Unresolved name: Comparator>#<R|kotlin/Int|>(<L> = Comparator@fun <anonymous>(x: R|class error: No type for parameter|, y: R|class error: No type for parameter|): R|kotlin/Int| {
-            Int(1)
-        }
-        )
-    }
     public final fun test_3(comparator: R|java/util/Comparator<kotlin/Int>|): R|kotlin/Unit| {
         R|<local>/comparator|.R|FakeOverride<java/util/Comparator.compare: R|kotlin/Int|>|(Int(1), Int(2))
     }
