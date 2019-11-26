@@ -1,0 +1,34 @@
+FILE: receiverWithCapturedType.kt
+    public abstract interface ResolvedCall<D : R|CallableDescriptor|> : R|kotlin/Any| {
+        public abstract var d: R|D|
+            public get(): R|D|
+            public set(value: R|D|): R|kotlin/Unit|
+
+    }
+    public abstract interface CallableDescriptor : R|kotlin/Any| {
+    }
+    public final fun <D : R|CallableDescriptor|> R|ResolvedCall<D>|.getParameterForArgument(): R|kotlin/String| {
+        ^getParameterForArgument String()
+    }
+    public final fun <D : R|CallableDescriptor|> R|ResolvedCall<D>|.updateD(d: R|D|): R|D| {
+        this@R|/updateD|.R|FakeOverride</ResolvedCall.d: R|D|>| = R|<local>/d|
+        ^updateD R|<local>/d|
+    }
+    public final fun test_1_1(resolvedCall: R|ResolvedCall<out CallableDescriptor>|): R|kotlin/Unit| {
+        R|<local>/resolvedCall|.<Inapplicable(WRONG_RECEIVER): [/getParameterForArgument]>#()
+    }
+    public final fun test_1_2(resolvedCall: R|ResolvedCall<in CallableDescriptor>|): R|kotlin/Unit| {
+        R|<local>/resolvedCall|.R|/getParameterForArgument|<R|CallableDescriptor|>()
+    }
+    public final fun test_1_3(resolvedCall: R|ResolvedCall<CallableDescriptor>|): R|kotlin/Unit| {
+        R|<local>/resolvedCall|.R|/getParameterForArgument|<R|CallableDescriptor|>()
+    }
+    public final fun test_2_1(resolvedCall: R|ResolvedCall<out CallableDescriptor>|, d: R|CallableDescriptor|): R|kotlin/Unit| {
+        lval x: <ERROR TYPE REF: Inapplicable(WRONG_RECEIVER): [/updateD]> = R|<local>/resolvedCall|.<Inapplicable(WRONG_RECEIVER): [/updateD]>#(R|<local>/d|)
+    }
+    public final fun test_2_2(resolvedCall: R|ResolvedCall<in CallableDescriptor>|, d: R|CallableDescriptor|): R|kotlin/Unit| {
+        lval x: R|CallableDescriptor| = R|<local>/resolvedCall|.R|/updateD|<R|CallableDescriptor|>(R|<local>/d|)
+    }
+    public final fun test_2_3(resolvedCall: R|ResolvedCall<CallableDescriptor>|, d: R|CallableDescriptor|): R|kotlin/Unit| {
+        lval x: R|CallableDescriptor| = R|<local>/resolvedCall|.R|/updateD|<R|CallableDescriptor|>(R|<local>/d|)
+    }
