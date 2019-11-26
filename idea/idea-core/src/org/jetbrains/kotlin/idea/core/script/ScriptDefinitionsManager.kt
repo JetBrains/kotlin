@@ -306,6 +306,14 @@ class ScriptDefinitionSourceFromContributor(
         get() =
             if (contributor is ScriptDefinitionsSource) contributor.definitions
             else contributor.getDefinitions().asSequence().map { ScriptDefinition.FromLegacy(hostConfiguration, it) }
+
+    override fun equals(other: Any?): Boolean {
+        return contributor.id == (other as? ScriptDefinitionSourceFromContributor)?.contributor?.id
+    }
+
+    override fun hashCode(): Int {
+        return contributor.id.hashCode()
+    }
 }
 
 fun ScriptDefinitionContributor.asSource(): ScriptDefinitionsSource =
