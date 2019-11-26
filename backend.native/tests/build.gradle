@@ -3936,6 +3936,21 @@ if (UtilsKt.testTargetSupportsCodeCoverage(project)) {
         }
     }
 
+    task coverage_controlflow(type: CoverageTest) {
+        binaryName = "CoverageControlFlow"
+        numberOfCoveredFunctions = 1
+        numberOfCoveredLines = 102
+
+        konanArtifacts {
+            program(binaryName, targets: [ target ]) {
+                srcDir 'coverage/basic/controlflow'
+                baseDir "$testOutputCoverage/$binaryName"
+                entryPoint "coverage.basic.controlflow.main"
+                extraOpts "-Xcoverage", "-Xcoverage-file=$profrawFile"
+            }
+        }
+    }
+
     task coverage_smoke0(type: CoverageTest) {
         binaryName = "CoverageSmoke0"
         numberOfCoveredFunctions = 2
@@ -3951,16 +3966,16 @@ if (UtilsKt.testTargetSupportsCodeCoverage(project)) {
         }
     }
 
-    task coverage_controlflow(type: CoverageTest) {
-        binaryName = "CoverageControlFlow"
-        numberOfCoveredFunctions = 1
-        numberOfCoveredLines = 102
+    task coverage_smoke1(type: CoverageTest) {
+        binaryName = "CoverageSmoke1"
+        numberOfCoveredFunctions = 9
+        numberOfCoveredLines = 33
 
         konanArtifacts {
             program(binaryName, targets: [ target ]) {
-                srcDir 'coverage/basic/controlflow'
+                srcDir 'coverage/basic/smoke1'
                 baseDir "$testOutputCoverage/$binaryName"
-                entryPoint "coverage.basic.controlflow.main"
+                entryPoint "coverage.basic.smoke1.main"
                 extraOpts "-Xcoverage", "-Xcoverage-file=$profrawFile"
             }
         }

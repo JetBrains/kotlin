@@ -11,8 +11,10 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.nameForIrSerialization
+import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 /**
  * Collect all regions in the module.
@@ -40,7 +42,7 @@ internal class CoverageRegionCollector(private val fileFilter: (IrFile) -> Boole
         override fun visitFunction(declaration: IrFunction) {
             if (!declaration.isInline && !declaration.isExternal && !declaration.isGeneratedByCompiler) {
                 val regionsCollector = IrFunctionRegionsCollector(fileFilter, file)
-                regionsCollector.visitFunction(declaration)
+                declaration.acceptVoid(regionsCollector)
                 if (regionsCollector.regions.isNotEmpty()) {
                     functionRegions += FunctionRegions(declaration, regionsCollector.regions)
                 }
@@ -80,12 +82,29 @@ private class IrFunctionRegionsCollector(
         element.acceptChildrenVoid(this)
     }
 
-    override fun visitFunction(declaration: IrFunction) {
+    override fun visitSimpleFunction(declaration: IrSimpleFunction) {
         declaration.body?.let {
             recordRegion(it)
             it.acceptChildrenVoid(this)
         }
     }
+
+    override fun visitConstructor(declaration: IrConstructor) {
+        val statements = declaration.body?.statements ?: return
+        statements.forEach {
+            if (it is IrDelegatingConstructorCall && !declaration.isPrimary
+                    || it !is IrDelegatingConstructorCall && it !is IrReturn) {
+                recordRegion(it)
+                it.acceptVoid(this)
+            }
+        }
+    }
+
+    // TODO: The following implementation produces correct region mapping, but something goes wrong later
+    // override fun visitFieldAccess(expression: IrFieldAccessExpression) {
+    //     expression.receiver?.let { recordRegion(it) }
+    //     expression.acceptChildrenVoid(this)
+    // }
 
     override fun visitWhen(expression: IrWhen) {
         val branches = expression.branches
