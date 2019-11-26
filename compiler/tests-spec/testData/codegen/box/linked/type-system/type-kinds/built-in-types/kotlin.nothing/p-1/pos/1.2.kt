@@ -11,16 +11,15 @@
 
 
 fun foo(s: String?): String {
-    val data = s ?: throw IllegalArgumentException("not null string is expected");
+    return s ?: throw IllegalArgumentException("not null string is expected");
 }
 
-fun box() {
-    val result = "NOK"
+fun box(): String {
     val b = foo("")
     try {
         val a = foo(null)
     } catch (e: IllegalArgumentException) {
-        result = "OK"
+        return "OK"
     }
-    return result
+    return "NOK"
 }

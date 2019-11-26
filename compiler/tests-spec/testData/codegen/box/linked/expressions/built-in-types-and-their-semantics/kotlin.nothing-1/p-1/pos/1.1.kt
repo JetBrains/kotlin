@@ -13,7 +13,7 @@ fun foo(): Nothing {
     throw Exception()
 }
 
-fun box() {
+fun box(): String {
     try {
         foo()
     } catch (e: Exception) {

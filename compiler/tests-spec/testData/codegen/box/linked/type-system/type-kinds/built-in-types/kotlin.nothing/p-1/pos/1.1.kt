@@ -9,11 +9,10 @@
  * DESCRIPTION: todo
  */
 
-fun box() {
-    val b : Any? = null
+fun box(): String {
+    val b: Int? = null
     try {
-        val a: Int
-        a = b!!
+        val a: Int = b!!
     } catch (e: NullPointerException) {
         return "OK"
     }

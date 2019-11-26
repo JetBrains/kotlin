@@ -20,12 +20,16 @@ fun foo2(): Unit {
 fun foo3(): Unit {
 }
 
-fun box(){
+fun box(): String {
     val u1 = foo1()
     val u2 = foo2()
     val u3 = foo3()
-    if (u1 === u2 && u1 === u3 && u2 === u3) {
-        return ( "OK")
+    val u4 = Unit
+    if (u1 === u2 && u1 === u3 && u1 === u4
+        && u2 === u3 && u2 === u4
+        && u3 === u4
+    ) {
+        return ("OK")
     }
-    return ( "NOK")
+    return ("NOK")
 }
