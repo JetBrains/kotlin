@@ -27,7 +27,7 @@ public interface SdkDownloadTask {
   String getSuggestedSdkName();
 
   /**
-   * @return SDK is expected to have a home directory.
+   * @return SDK is expected to have a system dependent home directory.
    * Return the planned canonical directory path where the SDK will be installed
    * by {@link #doDownload(ProgressIndicator)},
    * that path will later be seen from {@link Sdk#getHomePath()}
@@ -47,7 +47,7 @@ public interface SdkDownloadTask {
    * a proposed SDK. Once completed, we will set up the SDK the same way
    * as it is installed from a home path.
    * <br/>
-   * Should the task fail — the SDK will be rejected, and the
+   * Should the task fail &mdash; the SDK will be rejected, and the
    * message from the thrown exception will be shown to the user;
    * make sure the exception message is ready to be presented (some details could be
    * still hidden in the {@link Throwable#cause} field)

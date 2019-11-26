@@ -159,7 +159,7 @@ public class SdkDownloadTracker implements Disposable {
 
   // synchronized newIdentityHashSet
   // (Collections.synchronizedSet does not help the iterator)
-  private static class SdksSet {
+  private static class SdkSet {
     final Set<Sdk> myEditableSdks = Sets.newIdentityHashSet();
 
     synchronized void add(@NotNull Sdk sdk) {
@@ -178,7 +178,7 @@ public class SdkDownloadTracker implements Disposable {
 
   private static class PendingDownload {
     final SdkDownloadTask myTask;
-    final SdksSet myEditableSdks = new SdksSet();
+    final SdkSet myEditableSdks = new SdkSet();
     final ProgressIndicatorBase myProgressIndicator = new ProgressIndicatorBase();
     final Set<Runnable> myCompleteListeners = Sets.newIdentityHashSet();
     final Set<Disposable> myDisposables = Sets.newIdentityHashSet();
@@ -282,29 +282,26 @@ public class SdkDownloadTracker implements Disposable {
     }
 
     void onSdkDownloadCompleted(boolean failed) {
-      Runnable task = failed
-                      ? () -> disposeNow()
-                      : () -> {
-                        WriteAction.run(() -> {
-                          for (Sdk sdk : myEditableSdks.copy()) {
-                            try {
-                              ((SdkType)sdk.getSdkType()).setupSdkPaths(sdk);
-                            }
-                            catch (Exception e) {
-                              LOG.warn("Failed to setup Sdk " + sdk + ". " + e.getMessage(), e);
-                            }
-                          }
-                          //free the WriteAction, thus non-blocking
-                          myModalityTracker.invokeLater(() -> disposeNow());
-                        });
-                      };
+      if (!failed) {
+        // we handle ModalityState explicitly to handle the case,
+        // when the next ProjectSettings dialog is shown, and we still want to
+        // notify all current viewers to reflect our SDK changes, thus we need
+        // it's newer ModalityState to invoke. Using ModalityState.any is not
+        // an option as we do update Sdk instances in the call
+        myModalityTracker.invokeLater(() -> WriteAction.run(() -> {
+          for (Sdk sdk : myEditableSdks.copy()) {
+            try {
+              ((SdkType)sdk.getSdkType()).setupSdkPaths(sdk);
+            }
+            catch (Exception e) {
+              LOG.warn("Failed to setup Sdk " + sdk + ". " + e.getMessage(), e);
+            }
+          }
+        }));
+      }
 
-      // we handle ModalityState explicitly to handle the case,
-      // when the next ProjectSettings dialog is shown, and we still want to
-      // notify all current viewers to reflect our SDK changes, thus we need
-      // it's newer ModalityState to invoke. Using ModalityState.any is not
-      // an option as we do update Sdk instances in the call
-      myModalityTracker.invokeLater(task);
+      // dispose our own state
+      myModalityTracker.invokeLater(() -> disposeNow());
     }
 
     void disposeNow() {

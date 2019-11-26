@@ -18,6 +18,7 @@ import com.intellij.openapi.ui.MasterDetailsComponent;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.Consumer;
 import com.intellij.util.EventDispatcher;
@@ -332,7 +333,7 @@ public class ProjectSdksModel implements SdkModel {
     // we do not ask the SdkType to set up the SDK for us, instead, we return an incomplete SDK to the
     // model with an expectation it would be updated later on
     String suggestedName = item.getSuggestedSdkName();
-    String homeDir = item.getPlannedHomeDir();
+    String homeDir = FileUtil.toSystemIndependentName(item.getPlannedHomeDir());
     Sdk sdk = createSdk(type, suggestedName, homeDir);
 
     SdkModificator modificator = sdk.getSdkModificator();
