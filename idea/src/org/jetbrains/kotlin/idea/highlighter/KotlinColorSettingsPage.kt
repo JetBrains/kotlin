@@ -90,7 +90,7 @@ var <PACKAGE_PROPERTY_CUSTOM_PROPERTY_DECLARATION><MUTABLE_VARIABLE>globalCounte
 
 <KEYWORD>object</KEYWORD> <OBJECT>Obj</OBJECT>
 
-<KEYWORD>enum</KEYWORD> <KEYWORD>class</KEYWORD> <CLASS>E</CLASS> { <ENUM_ENTRY>A</ENUM_ENTRY>, <ENUM_ENTRY>B</ENUM_ENTRY> }
+<KEYWORD>enum</KEYWORD> <KEYWORD>class</KEYWORD> <ENUM>E</ENUM> { <ENUM_ENTRY>A</ENUM_ENTRY>, <ENUM_ENTRY>B</ENUM_ENTRY> }
 
 <KEYWORD>interface</KEYWORD> <TRAIT>FunctionLike</TRAIT> {
     <BUILTIN_ANNOTATION>operator</BUILTIN_ANNOTATION> <KEYWORD>fun</KEYWORD> <FUNCTION_DECLARATION>invoke</FUNCTION_DECLARATION>() = <NUMBER>1</NUMBER>
@@ -162,6 +162,7 @@ var <PACKAGE_PROPERTY_CUSTOM_PROPERTY_DECLARATION><MUTABLE_VARIABLE>globalCounte
             OptionsBundle.message("options.java.attribute.descriptor.interface") to KotlinHighlightingColors.TRAIT,
             KotlinBundle.message("options.kotlin.attribute.descriptor.annotation") to KotlinHighlightingColors.ANNOTATION,
             KotlinBundle.message("options.kotlin.attribute.descriptor.object") to KotlinHighlightingColors.OBJECT,
+            KotlinBundle.message("options.kotlin.attribute.descriptor.enum") to KotlinHighlightingColors.ENUM,
             KotlinBundle.message("options.kotlin.attribute.descriptor.enumEntry") to KotlinHighlightingColors.ENUM_ENTRY,
             KotlinBundle.message("options.kotlin.attribute.descriptor.typeAlias") to KotlinHighlightingColors.TYPE_ALIAS,
             KotlinBundle.message("options.kotlin.attribute.descriptor.var") to KotlinHighlightingColors.MUTABLE_VARIABLE,
