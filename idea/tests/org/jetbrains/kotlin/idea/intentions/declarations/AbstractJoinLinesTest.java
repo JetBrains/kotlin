@@ -9,14 +9,15 @@ import com.intellij.codeInsight.editorActions.JoinLinesHandler;
 import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.rt.execution.junit.FileComparisonFailure;
-import com.intellij.testFramework.LightCodeInsightTestCase;
 import org.apache.commons.lang.SystemUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightTestCase;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.io.File;
 
-public abstract class AbstractJoinLinesTest extends LightCodeInsightTestCase {
+@SuppressWarnings("deprecation")
+public abstract class AbstractJoinLinesTest extends KotlinLightCodeInsightTestCase {
     public void doTest(@NotNull String path) throws Exception {
         configureByFile(path);
         new JoinLinesHandler(null).execute(getEditor(), getEditor().getCaretModel().getCurrentCaret(),

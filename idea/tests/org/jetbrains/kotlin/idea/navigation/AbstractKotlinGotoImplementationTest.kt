@@ -6,14 +6,15 @@
 package org.jetbrains.kotlin.idea.navigation
 
 import com.intellij.openapi.projectRoots.Sdk
-import com.intellij.testFramework.LightCodeInsightTestCase
 import com.intellij.testFramework.LightPlatformCodeInsightTestCase
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.invalidateLibraryCache
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
-abstract class AbstractKotlinGotoImplementationTest : LightCodeInsightTestCase() {
+@Suppress("DEPRECATION")
+abstract class AbstractKotlinGotoImplementationTest : KotlinLightCodeInsightTestCase() {
 
     override fun setUp() {
         super.setUp()

@@ -15,7 +15,6 @@ import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.editor.actionSystem.EditorAction
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.testFramework.LightCodeInsightTestCase
 import com.intellij.testFramework.LightPlatformCodeInsightTestCase
 import junit.framework.ComparisonFailure
 import junit.framework.TestCase
@@ -23,6 +22,7 @@ import org.jetbrains.kotlin.formatter.FormatSettingsUtil
 import org.jetbrains.kotlin.idea.codeInsight.upDownMover.KotlinDeclarationMover
 import org.jetbrains.kotlin.idea.codeInsight.upDownMover.KotlinExpressionMover
 import org.jetbrains.kotlin.idea.core.script.isScriptChangesNotifierDisabled
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightTestCase
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
@@ -56,7 +56,8 @@ abstract class AbstractMoveLeftRightTest : AbstractCodeMoverTest() {
     }
 }
 
-abstract class AbstractCodeMoverTest : LightCodeInsightTestCase() {
+@Suppress("DEPRECATION")
+abstract class AbstractCodeMoverTest : KotlinLightCodeInsightTestCase() {
     override fun setUp() {
         super.setUp()
         ApplicationManager.getApplication().isScriptChangesNotifierDisabled = true

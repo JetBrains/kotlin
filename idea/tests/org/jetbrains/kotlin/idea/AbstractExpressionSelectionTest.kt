@@ -5,14 +5,15 @@
 
 package org.jetbrains.kotlin.idea
 
-import com.intellij.testFramework.LightCodeInsightTestCase
 import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils
 import org.jetbrains.kotlin.idea.refactoring.IntroduceRefactoringException
 import org.jetbrains.kotlin.idea.refactoring.selectElement
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightTestCase
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.KotlinTestUtils
 
-abstract class AbstractExpressionSelectionTest : LightCodeInsightTestCase() {
+@Suppress("DEPRECATION")
+abstract class AbstractExpressionSelectionTest : KotlinLightCodeInsightTestCase() {
     override fun getTestDataPath() = ""
 
     fun doTestExpressionSelection(path: String) {

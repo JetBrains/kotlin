@@ -10,14 +10,15 @@ import com.intellij.openapi.editor.CaretModel;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.testFramework.EditorTestUtil;
-import com.intellij.testFramework.LightCodeInsightTestCase;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightTestCase;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.SettingsConfigurator;
 
 import java.io.File;
 
-public abstract class AbstractTypingIndentationTestBase extends LightCodeInsightTestCase {
+@SuppressWarnings("deprecation")
+public abstract class AbstractTypingIndentationTestBase extends KotlinLightCodeInsightTestCase {
     public void doNewlineTest(String afterFilePath) throws Exception {
         doNewlineTest(afterFilePath, false);
     }

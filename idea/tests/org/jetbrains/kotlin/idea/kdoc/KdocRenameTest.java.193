@@ -10,29 +10,30 @@ import com.intellij.ide.startup.impl.StartupManagerImpl;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.rename.RenameProcessor;
-import com.intellij.testFramework.LightCodeInsightTestCase;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightTestCase;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner;
 import org.junit.runner.RunWith;
 
+@SuppressWarnings("deprecation")
 @RunWith(JUnit3WithIdeaConfigurationRunner.class)
-public class KdocRenameTest extends LightCodeInsightTestCase {
+public class KdocRenameTest extends KotlinLightCodeInsightTestCase {
     @NotNull
     @Override
     protected String getTestDataPath() {
         return PluginTestCaseBase.getTestDataPathBase() + "/kdoc/rename/";
     }
 
-    public void testParamReference() throws Exception {
+    public void testParamReference() {
         doTest("bar");
     }
 
-    public void testTypeParamReference() throws Exception {
+    public void testTypeParamReference() {
         doTest("R");
     }
 
-    public void testCodeReference() throws Exception {
+    public void testCodeReference() {
         doTest("xyzzy");
     }
 
@@ -42,7 +43,7 @@ public class KdocRenameTest extends LightCodeInsightTestCase {
         ((StartupManagerImpl) StartupManager.getInstance(getProject())).runPostStartupActivities();
     }
 
-    private void doTest(String newName) throws Exception {
+    private void doTest(String newName) {
         configureByFile(getTestName(false) + ".kt");
         PsiElement element = TargetElementUtil
                 .findTargetElement(getEditor(),
