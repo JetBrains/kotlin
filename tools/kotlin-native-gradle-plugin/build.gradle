@@ -182,14 +182,6 @@ gradlePlugin {
             id = 'konan'
             implementationClass = 'org.jetbrains.kotlin.gradle.plugin.konan.KonanPlugin'
         }
-        create('kotlin-native') {
-            id = 'kotlin-native'
-            implementationClass = 'org.jetbrains.kotlin.gradle.plugin.experimental.plugins.KotlinNativePlugin'
-        }
-        create('kotlin-platform-native') {
-            id = 'kotlin-platform-native'
-            implementationClass = 'org.jetbrains.kotlin.gradle.plugin.experimental.plugins.KotlinPlatformNativePlugin'
-        }
         // We bundle a shaded version of kotlinx-serialization plugin
         create('kotlinx-serialization-native') {
             id = 'kotlinx-serialization-native'
@@ -199,14 +191,6 @@ gradlePlugin {
         create('org.jetbrains.kotlin.konan') {
             id = 'org.jetbrains.kotlin.konan'
             implementationClass = 'org.jetbrains.kotlin.gradle.plugin.konan.KonanPlugin'
-        }
-        create('org.jetbrains.kotlin.native') {
-            id = 'org.jetbrains.kotlin.native'
-            implementationClass = 'org.jetbrains.kotlin.gradle.plugin.experimental.plugins.KotlinNativePlugin'
-        }
-        create('org.jetbrains.kotlin.platform.native') {
-            id = 'org.jetbrains.kotlin.platform.native'
-            implementationClass = 'org.jetbrains.kotlin.gradle.plugin.experimental.plugins.KotlinPlatformNativePlugin'
         }
     }
 }

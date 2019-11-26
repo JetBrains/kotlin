@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.gradle.plugin.model
 
 import org.gradle.api.Project
 import org.gradle.tooling.provider.model.ToolingModelBuilder
-import org.jetbrains.kotlin.gradle.plugin.experimental.internal.AbstractKotlinNativeBinary
 import org.jetbrains.kotlin.gradle.plugin.konan.konanArtifactsContainer
 import org.jetbrains.kotlin.gradle.plugin.konan.konanExtension
 import org.jetbrains.kotlin.gradle.plugin.konan.konanHome
@@ -45,55 +44,15 @@ object KonanToolingModelBuilder : ToolingModelBuilder {
         )
     }
 
-    private fun buildModelKotlinNative(project: Project): KonanModel {
-        val artifacts = project.components.withType(AbstractKotlinNativeBinary::class.java).map {
-            it.toModelArtifact()
-        }
-        return KonanModelImpl(
-            artifacts,
-            project.file(project.konanHome),
-            KonanVersion.CURRENT,
-            null,
-            null
-        )
-    }
-
-    private fun AbstractKotlinNativeBinary.toModelArtifact(): KonanModelArtifact {
-        val compileTask = compileTask.get()
-        val sourceRoots = with(component.sources) {
-            kotlin.srcDirs + getPlatformSources(konanTarget).srcDirs
-        }
-        return KonanModelArtifactImpl(
-            name,
-            compileTask.outputFile,
-            kind,
-            konanTarget.name,
-            compileTask.name,
-            sourceRoots.toList(),
-            sources.files.toList(),
-            klibs.files.toList(),
-            klibs.files.map { it.parentFile }
-        )
-    }
-
     private val Project.hasKonanPlugin: Boolean
         get() = with(pluginManager) {
             hasPlugin("konan") ||
             hasPlugin("org.jetbrains.kotlin.konan")
         }
 
-    private val Project.hasKotlinNativePlugin: Boolean
-        get() = with(pluginManager) {
-            hasPlugin("kotlin-native") ||
-            hasPlugin("kotlin-platform-native") ||
-            hasPlugin("org.jetbrains.kotlin.native") ||
-            hasPlugin("org.jetbrains.kotlin.platform.native")
-        }
-
 
     override fun buildAll(modelName: String, project: Project): KonanModel =
         when {
-            project.hasKotlinNativePlugin -> buildModelKotlinNative(project)
             project.hasKonanPlugin -> buildModelKonan(project)
             else -> throw IllegalStateException("The project '${project.path}' has no Kotlin/Native plugin")
         }
