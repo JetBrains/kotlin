@@ -1,4 +1,5 @@
 // !LANGUAGE: +NewInference
+// !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
 // SKIP_TXT
 
 /*
@@ -14,12 +15,11 @@
 
 // TESTCASE NUMBER: 1
 
-fun foo() {
-    val proc = "case 1"
-}
+fun foo() {}
 
-class Case1() {
-    checkType<Unit>(foo())
+fun case1() {
+    foo() checkType { check<Unit>() }
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!>foo()<!>
 }
 
 // TESTCASE NUMBER: 2
@@ -31,15 +31,16 @@ fun case2foo(m: String, bar: (m: String) -> Unit) {
 
 class Case2Boo {
     fun buz(m: String) {
-        val proc = "case 2"
+        val proc = m
     }
 }
 
 
-class Case2() {
+fun case2() {
     val boo = Case2Boo()
-    val res = case2foo("s", boo::buz)
-    checkType<Unit>(res)
+    val res = case2foo("case 2", boo::buz)
+    res checkType { check<Unit>() }
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!>res<!>
 }
 
 // TESTCASE NUMBER: 3
@@ -48,25 +49,21 @@ interface Processable<T> {
 }
 
 class Processor : Processable<Unit> {
-    override fun process() {
-        val proc = "case 3"
-
-    }
+    override fun process() {}
 }
 
-class Case3() {
+fun case3() {
     val p1 = Processor().process()
-    checkType<Unit>(p1)
-
+    p1 checkType { check<Unit>() }
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!>p1<!>
 }
 
 // TESTCASE NUMBER: 4
 
-class Case4() {
+fun case4() {
     val p2 = object : Processable<Unit> {
-        override fun process() {
-            val proc = "case 4"
-        }
-    }
-    checkType<Unit>(p2)
+        override fun process() {}
+    }.process()
+    p2 checkType { check<Unit>() }
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!>p2<!>
 }
