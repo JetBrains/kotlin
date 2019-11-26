@@ -4,7 +4,6 @@ package org.jetbrains.plugins.gradle.importing
 import com.intellij.ide.util.treeView.AbstractTreeNode
 import com.intellij.ide.util.treeView.AbstractTreeStructure
 import com.intellij.openapi.application.ReadAction
-import com.intellij.openapi.ui.Queryable.PrintInfo
 import com.intellij.projectView.TestProjectTreeStructure
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.ui.SimpleTextAttributes
@@ -15,11 +14,9 @@ import org.junit.runners.Parameterized
 class GradleModulesInProjectViewTest : GradleImportingTestCase() {
 
   private lateinit var myStructure: TestProjectTreeStructure
-  private lateinit var myPrintInfo: PrintInfo
 
   override fun setUp() {
     super.setUp()
-    myPrintInfo = PrintInfo()
     myStructure = TestProjectTreeStructure(myProject, testRootDisposable).apply {
       isShowLibraryContents = false
       hideExcludedFiles()
