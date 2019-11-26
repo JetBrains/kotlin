@@ -73,9 +73,9 @@ class TargetEnvironmentsManager : PersistentStateComponent<TargetEnvironmentsMan
 
 
   @Tag("target")
-  class OneTargetState : ContributedStateBase() {
+  class OneTargetState : ContributedConfigurationsList.ContributedStateBase() {
     @get: XCollection(style = XCollection.Style.v2)
     @get: Property(surroundWithTag = false)
-    var runtimes by list<ContributedStateBase>()
+    var runtimes by list<ContributedConfigurationsList.ContributedStateBase>()
   }
 }
