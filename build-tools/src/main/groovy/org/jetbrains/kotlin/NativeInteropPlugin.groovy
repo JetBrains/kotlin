@@ -23,6 +23,7 @@ import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.AbstractNamedDomainObjectContainer
+import org.gradle.api.internal.CollectionCallbackActionDecorator
 import org.gradle.api.internal.file.AbstractFileCollection
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.SourceSet
@@ -266,7 +267,7 @@ class NativeInteropExtension extends AbstractNamedDomainObjectContainer<NamedNat
     private String flavor = 'jvm'
 
     protected NativeInteropExtension(Project project) {
-        super(NamedNativeInteropConfig, project.gradle.services.get(Instantiator))
+        super(NamedNativeInteropConfig, project.gradle.services.get(Instantiator), project.gradle.services.get(CollectionCallbackActionDecorator))
         this.project = project
     }
 

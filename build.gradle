@@ -203,7 +203,7 @@ dependencies {
 }
 
 task sharedJar {
-    dependsOn gradle.includedBuild('kotlin-native-shared').task(':jar')
+    dependsOn gradle.includedBuild('shared').task(':jar')
 }
 
 task gradlePluginJar {

@@ -172,7 +172,7 @@ processResources {
     from(file("$rootBuildDirectory/utilities/env_blacklist"))
 }
 
-compileTestGroovy.dependsOn.remove('compileTestJava')
+compileTestGroovy.dependsOn -= 'compileTestJava'
 compileTestKotlin.dependsOn compileTestGroovy
 compileTestKotlin.classpath += files(compileTestGroovy.destinationDir)
 
