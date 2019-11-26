@@ -27,6 +27,10 @@ public class GotoClassModel2 extends FilteringGotoByModel<Language> {
 
   public GotoClassModel2(@NotNull Project project) {
     super(project, new ChooseByNameContributor[0]);
+    ChooseByNameContributor.CLASS_EP_NAME.addExtensionPointListener(
+      (e, pd) -> { mySeparators = null; },
+      (e, pd) -> { mySeparators = null; },
+      project);
   }
 
   @Override
