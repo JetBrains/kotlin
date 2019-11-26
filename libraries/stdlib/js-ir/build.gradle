@@ -21,7 +21,6 @@ task prepareNativeBuiltinsSources(type: Sync) {
         include "Array.kt"
         include "Boolean.kt"
         include "CharSequence.kt"
-        include "Collections.kt"
         include "Comparable.kt"
         include "Coroutines.kt"
         include "Iterator.kt"
