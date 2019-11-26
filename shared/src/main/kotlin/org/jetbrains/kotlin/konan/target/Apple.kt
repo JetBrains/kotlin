@@ -31,27 +31,27 @@ class AppleConfigurablesImpl(
     private val toolchainDependency = this.targetToolchain!!
     private val xcodeAddonDependency = this.additionalToolsDir!!
 
-    override val absoluteTargetSysRoot: String get() = when (xcodePartsProvider) {
+    override val absoluteTargetSysRoot: String get() = when (val provider = xcodePartsProvider) {
         is XcodePartsProvider.Local -> when (target) {
-            KonanTarget.MACOS_X64 -> xcodePartsProvider.xcode.macosxSdk
-            KonanTarget.IOS_ARM32, KonanTarget.IOS_ARM64 -> xcodePartsProvider.xcode.iphoneosSdk
-            KonanTarget.IOS_X64 -> xcodePartsProvider.xcode.iphonesimulatorSdk
-            KonanTarget.TVOS_ARM64 -> xcodePartsProvider.xcode.appletvosSdk
-            KonanTarget.TVOS_X64 -> xcodePartsProvider.xcode.appletvsimulatorSdk
-            KonanTarget.WATCHOS_ARM64, KonanTarget.WATCHOS_ARM32 -> xcodePartsProvider.xcode.watchosSdk
-            KonanTarget.WATCHOS_X64, KonanTarget.WATCHOS_X86 -> xcodePartsProvider.xcode.watchsimulatorSdk
+            KonanTarget.MACOS_X64 -> provider.xcode.macosxSdk
+            KonanTarget.IOS_ARM32, KonanTarget.IOS_ARM64 -> provider.xcode.iphoneosSdk
+            KonanTarget.IOS_X64 -> provider.xcode.iphonesimulatorSdk
+            KonanTarget.TVOS_ARM64 -> provider.xcode.appletvosSdk
+            KonanTarget.TVOS_X64 -> provider.xcode.appletvsimulatorSdk
+            KonanTarget.WATCHOS_ARM64, KonanTarget.WATCHOS_ARM32 -> provider.xcode.watchosSdk
+            KonanTarget.WATCHOS_X64, KonanTarget.WATCHOS_X86 -> provider.xcode.watchsimulatorSdk
             else -> error(target)
         }
         XcodePartsProvider.InternalServer -> absolute(sdkDependency)
     }
 
-    override val absoluteTargetToolchain: String get() = when (xcodePartsProvider) {
-        is XcodePartsProvider.Local -> xcodePartsProvider.xcode.toolchain
+    override val absoluteTargetToolchain: String get() = when (val provider = xcodePartsProvider) {
+        is XcodePartsProvider.Local -> provider.xcode.toolchain
         XcodePartsProvider.InternalServer -> absolute(toolchainDependency)
     }
 
-    override val absoluteAdditionalToolsDir: String get() = when (xcodePartsProvider) {
-        is XcodePartsProvider.Local -> xcodePartsProvider.xcode.additionalTools
+    override val absoluteAdditionalToolsDir: String get() = when (val provider = xcodePartsProvider) {
+        is XcodePartsProvider.Local -> provider.xcode.additionalTools
         XcodePartsProvider.InternalServer -> absolute(additionalToolsDir)
     }
 
@@ -60,19 +60,21 @@ class AppleConfigurablesImpl(
         XcodePartsProvider.InternalServer -> listOf(sdkDependency, toolchainDependency, xcodeAddonDependency)
     }
 
-    private val xcodePartsProvider = if (InternalServer.isAvailable) {
-        XcodePartsProvider.InternalServer
-    } else {
-        val xcode = Xcode.current
+    private val xcodePartsProvider by lazy {
+        if (InternalServer.isAvailable) {
+            XcodePartsProvider.InternalServer
+        } else {
+            val xcode = Xcode.current
 
-        if (properties.getProperty("ignoreXcodeVersionCheck") != "true") {
-            properties.getProperty("minimalXcodeVersion")?.let { minimalXcodeVersion ->
-                val currentXcodeVersion = xcode.version
-                checkXcodeVersion(minimalXcodeVersion, currentXcodeVersion)
+            if (properties.getProperty("ignoreXcodeVersionCheck") != "true") {
+                properties.getProperty("minimalXcodeVersion")?.let { minimalXcodeVersion ->
+                    val currentXcodeVersion = xcode.version
+                    checkXcodeVersion(minimalXcodeVersion, currentXcodeVersion)
+                }
             }
-        }
 
-        XcodePartsProvider.Local(xcode)
+            XcodePartsProvider.Local(xcode)
+        }
     }
 
     private fun checkXcodeVersion(minimalVersion: String, currentVersion: String) {
