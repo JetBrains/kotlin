@@ -34,10 +34,14 @@ import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.idea.core.util.EDT
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
+import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 import org.jetbrains.kotlin.scripting.resolve.ScriptReportSink
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
-import kotlin.script.experimental.api.ScriptDiagnostic
+import kotlin.script.experimental.api.*
+import kotlin.script.experimental.jvm.impl.toClassPathOrEmpty
+import kotlin.script.experimental.jvm.jdkHome
+import kotlin.script.experimental.jvm.jvm
 
 /**
  * Standard implementation of scripts configuration loading and caching
@@ -244,7 +248,7 @@ internal class DefaultScriptConfigurationManager(project: Project) :
             } else {
                 val old = getCachedConfigurationState(file)
                 val oldConfiguration = old?.applied?.configuration
-                if (oldConfiguration == newConfiguration) {
+                if (oldConfiguration != null && areSimilar(oldConfiguration, newConfiguration)) {
                     saveReports(file, newResult.reports)
                     file.removeScriptDependenciesNotificationPanel(project)
                 } else {
@@ -305,6 +309,27 @@ internal class DefaultScriptConfigurationManager(project: Project) :
                 EditorNotifications.getInstance(project).updateAllNotifications()
             }
         }
+    }
+
+    private fun areSimilar(old: ScriptCompilationConfigurationWrapper, new: ScriptCompilationConfigurationWrapper): Boolean {
+        if (old.script != new.script) return false
+
+        val oldConfig = old.configuration
+        val newConfig = new.configuration
+
+        if (oldConfig == newConfig) return true
+        if (oldConfig == null || newConfig == null) return false
+
+        if (oldConfig[ScriptCompilationConfiguration.jvm.jdkHome] != newConfig[ScriptCompilationConfiguration.jvm.jdkHome]) return false
+
+        // there is differences how script definition classpath is added to script classpath in old and new scripting API,
+        // so it's important to compare the resulting classpath list, not only the value of key
+        if (oldConfig[ScriptCompilationConfiguration.dependencies].toClassPathOrEmpty() != newConfig[ScriptCompilationConfiguration.dependencies].toClassPathOrEmpty()) return false
+
+        if (oldConfig[ScriptCompilationConfiguration.ide.dependenciesSources] != newConfig[ScriptCompilationConfiguration.ide.dependenciesSources]) return false
+        if (oldConfig[ScriptCompilationConfiguration.defaultImports] != newConfig[ScriptCompilationConfiguration.defaultImports]) return false
+
+        return true
     }
 }
 
