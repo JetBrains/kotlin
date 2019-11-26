@@ -65,7 +65,6 @@
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="9" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <enabled value="false"/>
               <text resource-bundle="messages/ExecutionBundle" key="template.disclaimer"/>
             </properties>
           </component>

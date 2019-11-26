@@ -173,8 +173,6 @@ public class ConfigurationSettingsEditorWrapper extends SettingsEditor<RunnerAnd
 
   private void createUIComponents() {
     myDisclaimerLabel = new JLabel(ExecutionBundle.message("template.disclaimer"), AllIcons.General.Warning, SwingConstants.LEADING);
-    myDisclaimerLabel.setEnabled(false);
-    myDisclaimerLabel.setDisabledIcon(AllIcons.General.Warning);
     myDisclaimerLabel.setBorder(JBUI.Borders.emptyBottom(2));
     myCreateNewRCLabel = new LinkLabel(ExecutionBundle.message("create.configuration"), null, new LinkListener() {
       @Override
