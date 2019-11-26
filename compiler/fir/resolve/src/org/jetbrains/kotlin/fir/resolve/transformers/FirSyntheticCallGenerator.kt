@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.copy
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirTryExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirFunctionCallImpl
+import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.impl.FirStubReference
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.*
@@ -34,6 +36,9 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.fir.types.impl.FirTypeProjectionWithVarianceImpl
+import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.compose
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.types.Variance
@@ -59,7 +64,7 @@ class FirSyntheticCallGenerator(
             SyntheticCallableId.WHEN.callableName
         ) ?: return null // TODO
 
-        return whenExpression.copy(calleeReference = reference)
+        return whenExpression.transformCalleeReference(UpdateReference, reference)
     }
 
     fun generateCalleeForTryExpression(tryExpression: FirTryExpression): FirTryExpression? {
@@ -81,7 +86,7 @@ class FirSyntheticCallGenerator(
             SyntheticCallableId.TRY.callableName
         ) ?: return null // TODO
 
-        return tryExpression.copy(calleeReference = reference)
+        return tryExpression.transformCalleeReference(UpdateReference, reference)
     }
 
     fun resolveCallableReferenceWithSyntheticOuterCall(
@@ -191,5 +196,15 @@ class FirSyntheticCallGenerator(
         ).apply {
             this.resolvePhase = FirResolvePhase.BODY_RESOLVE
         }
+    }
+}
+
+private object UpdateReference : FirTransformer<FirNamedReferenceWithCandidate>() {
+    override fun <E : FirElement> transformElement(element: E, data: FirNamedReferenceWithCandidate): CompositeTransformResult<E> {
+        return element.compose()
+    }
+
+    override fun transformReference(reference: FirReference, data: FirNamedReferenceWithCandidate): CompositeTransformResult<FirReference> {
+        return data.compose()
     }
 }

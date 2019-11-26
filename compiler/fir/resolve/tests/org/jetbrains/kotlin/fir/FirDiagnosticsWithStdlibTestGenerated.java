@@ -183,6 +183,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         runTest("compiler/fir/resolve/testData/resolve/stdlib/unaryOperators.kt");
     }
 
+    @TestMetadata("whenAsLambdaReturnStatement.kt")
+    public void testWhenAsLambdaReturnStatement() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/stdlib/whenAsLambdaReturnStatement.kt");
+    }
+
     @TestMetadata("compiler/fir/resolve/testData/resolve/stdlib/callableReferences")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
