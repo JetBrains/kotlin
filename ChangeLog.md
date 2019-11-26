@@ -1,7 +1,39 @@
-# Content
-The release contains the JVM version of Kotlin compiler and also one native system dependent version for every major platform (Linux, macOS, and Windows). 
-
 # CHANGELOG
+
+## 1.3.61
+
+### Compiler
+
+- [`KT-35004`](https://youtrack.jetbrains.com/issue/KT-35004) "AssertionError: Unsigned type expected" in `when` range check in extension on unsigned type
+
+### IDE
+
+- [`KT-34923`](https://youtrack.jetbrains.com/issue/KT-34923) [Regression] KtUltraLightMethod.hasModifierProperty("native") returns false for external Kotlin functions
+
+### IDE. Gradle. Script
+
+- [`KT-31767`](https://youtrack.jetbrains.com/issue/KT-31767) Gradle Kotlin DSL new project template: use settings.gradle.kts
+- [`KT-33451`](https://youtrack.jetbrains.com/issue/KT-33451) Conform Kotlin DSL file templates of Kotlin and Gradle IntelliJ plugins
+
+### Libraries
+
+- [`KT-21445`](https://youtrack.jetbrains.com/issue/KT-21445) W3C DOM Touch events and interfaces are incomplete / missing
+
+### Tools. Compiler Plugins
+
+- [`KT-34991`](https://youtrack.jetbrains.com/issue/KT-34991) kotlinx.serialization: False warning "Explicit @Serializable annotation on enum class is required when @SerialName or @SerialInfo annotations are used on its members"
+
+### Tools. Gradle. Native
+
+- [`KT-33076`](https://youtrack.jetbrains.com/issue/KT-33076) MPP Gradle plugin: Produce final native binaries from compilation output instead of sources
+- [`KT-33645`](https://youtrack.jetbrains.com/issue/KT-33645) Kotlin/Native: Compilation failure if a library passed by the -Xinclude option contains a constructor annotated with @OverrideInit
+- [`KT-34259`](https://youtrack.jetbrains.com/issue/KT-34259) MPP Gradle plugin: Support fat frameworks for watchOS and tvOS
+- [`KT-34329`](https://youtrack.jetbrains.com/issue/KT-34329) Support watchOS and tvOS in CocoaPods Gradle plugin
+
+### Tools. J2K
+
+- [`KT-34987`](https://youtrack.jetbrains.com/issue/KT-34987) New J2K converter: @NotNull annotations are not removed after converting java code to kotlin
+- [`KT-35074`](https://youtrack.jetbrains.com/issue/KT-35074) J2K: No auto conversion in 'for' loop with multiple init variables
 
 ## 1.3.60
 
