@@ -873,6 +873,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/resolve/testData/resolve/problems/asImports.kt");
         }
 
+        @TestMetadata("invokeOfLambdaWithReceiver.kt")
+        public void testInvokeOfLambdaWithReceiver() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/problems/invokeOfLambdaWithReceiver.kt");
+        }
+
         @TestMetadata("javaAccessorConversion.kt")
         public void testJavaAccessorConversion() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/problems/javaAccessorConversion.kt");

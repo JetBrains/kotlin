@@ -1,0 +1,6 @@
+FILE: invokeOfLambdaWithReceiver.kt
+    public abstract interface A : R|kotlin/Any| {
+    }
+    public final fun test(a: R|A|, block: R|A.() -> kotlin/Int|): R|kotlin/Unit| {
+        R|<local>/a|.<Unresolved name: block>#()
+    }
