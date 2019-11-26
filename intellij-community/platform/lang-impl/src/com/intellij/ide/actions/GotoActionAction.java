@@ -17,7 +17,6 @@ import com.intellij.openapi.actionSystem.ex.ActionUtil;
 import com.intellij.openapi.actionSystem.impl.ActionMenu;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
-import com.intellij.openapi.application.TransactionGuard;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.keymap.Keymap;
 import com.intellij.openapi.keymap.KeymapManager;
@@ -277,23 +276,24 @@ public class GotoActionAction extends GotoActionBase implements DumbAware {
                                                 @Nullable Project project,
                                                 Component component,
                                                 @JdkConstants.InputEventMask int modifiers) {
-    if (element instanceof OptionDescription) {
-      OptionDescription optionDescription = (OptionDescription)element;
-      String configurableId = optionDescription.getConfigurableId();
-      Disposable disposable = project != null ? project : ApplicationManager.getApplication();
-      TransactionGuard guard = TransactionGuard.getInstance();
-      if (optionDescription.hasExternalEditor()) {
-        guard.submitTransactionLater(disposable, () -> optionDescription.invokeInternalEditor());
+    // invoke later to let the Goto Action popup close completely before the action is performed
+    // and avoid focus issues if the action shows complicated popups itself
+    ApplicationManager.getApplication().invokeLater(() -> {
+      if (project != null && project.isDisposed()) return;
+
+      if (element instanceof OptionDescription) {
+        OptionDescription optionDescription = (OptionDescription)element;
+        if (optionDescription.hasExternalEditor()) {
+          optionDescription.invokeInternalEditor();
+        } else {
+          ShowSettingsUtilImpl.showSettingsDialog(project, optionDescription.getConfigurableId(), enteredText);
+        }
       }
       else {
-        guard.submitTransactionLater(disposable, () -> ShowSettingsUtilImpl.showSettingsDialog(project, configurableId, enteredText));
+        IdeFocusManager.getInstance(project).doWhenFocusSettlesDown(
+          () -> performAction(element, component, null, modifiers, null));
       }
-    }
-    else {
-      ApplicationManager.getApplication().invokeLater(
-        () -> IdeFocusManager.getInstance(project).doWhenFocusSettlesDown(
-          () -> performAction(element, component, null, modifiers, null)));
-    }
+    });
   }
 
   public static void performAction(@NotNull Object element, @Nullable Component component, @Nullable AnActionEvent e) {
@@ -308,7 +308,7 @@ public class GotoActionAction extends GotoActionBase implements DumbAware {
     // element could be AnAction (SearchEverywhere)
     if (component == null) return;
     AnAction action = element instanceof AnAction ? (AnAction)element : ((GotoActionModel.ActionWrapper)element).getAction();
-    TransactionGuard.getInstance().submitTransactionLater(ApplicationManager.getApplication(), () -> {
+    ApplicationManager.getApplication().invokeLater(() -> {
         DataManager instance = DataManager.getInstance();
         DataContext context = instance != null ? instance.getDataContext(component) : DataContext.EMPTY_CONTEXT;
         InputEvent inputEvent = e != null ? e.getInputEvent() : null;
