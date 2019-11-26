@@ -155,11 +155,20 @@ public class MoveFilesOrDirectoriesProcessor extends BaseRefactoringProcessor {
 
       Map<PsiFile, FileASTNode> movedFiles = new LinkedHashMap<>();
       final Map<PsiElement, PsiElement> oldToNewMap = new HashMap<>();
+      if (mySearchForReferences) {
+        for (final PsiElement element : myElementsToMove) {
+          if (element instanceof PsiDirectory) {
+            encodeDirectoryFiles(element, movedFiles);
+          }
+          else if (element instanceof PsiFile) {
+            FileReferenceContextUtil.encodeFileReferences(element);
+          }
+        }
+      }
       for (final PsiElement element : myElementsToMove) {
         final RefactoringElementListener elementListener = getTransaction().getElementListener(element);
 
         if (element instanceof PsiDirectory) {
-          if (mySearchForReferences) encodeDirectoryFiles(element, movedFiles);
           MoveFilesOrDirectoriesUtil.doMoveDirectory((PsiDirectory)element, myNewParent);
           for (PsiElement psiElement : element.getChildren()) {
             processDirectoryFiles(movedFiles, oldToNewMap, psiElement);
@@ -168,7 +177,6 @@ public class MoveFilesOrDirectoriesProcessor extends BaseRefactoringProcessor {
         else if (element instanceof PsiFile) {
           final PsiFile movedFile = (PsiFile)element;
           FileASTNode node = movedFile.getNode();
-          if (mySearchForReferences) FileReferenceContextUtil.encodeFileReferences(element);
           MoveFileHandler.forElement(movedFile).prepareMovedFile(movedFile, myNewParent, oldToNewMap);
 
           PsiFile moving = myNewParent.findFile(movedFile.getName());
