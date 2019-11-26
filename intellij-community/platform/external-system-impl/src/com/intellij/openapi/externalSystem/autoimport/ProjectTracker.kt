@@ -38,7 +38,7 @@ class ProjectTracker(private val project: Project) : ExternalSystemProjectTracke
   private val initializationProperty = AtomicBooleanProperty(false)
   private val projectChangeOperation = AnonymousParallelOperationTrace(debugName = "Project change operation")
   private val projectRefreshOperation = CompoundParallelOperationTrace<String>(debugName = "Project refresh operation")
-  private val dispatcher = MergingUpdateQueue("project tracker", AUTO_REPARSE_DELAY, false, ANY_COMPONENT, this)
+  private val dispatcher = MergingUpdateQueue("project tracker", AUTO_REPARSE_DELAY, false, null, this)
 
   private fun createProjectChangesListener() =
     object : ProjectBatchFileChangeListener(project) {

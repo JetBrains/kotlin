@@ -2,7 +2,6 @@
 package com.intellij.openapi.externalSystem.service.project.autoimport
 
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.ExternalSystemAutoImportAware
 import com.intellij.openapi.externalSystem.autoimport.ExternalSystemProjectAware
@@ -48,12 +47,7 @@ class ProjectAware(
   }
 
   override fun refreshProject() {
-    val application = ApplicationManager.getApplication()
-    application.invokeLater {
-      application.runWriteAction {
-        ExternalSystemUtil.refreshProject(projectPath, ImportSpecBuilder(project, systemId).build())
-      }
-    }
+    ExternalSystemUtil.refreshProject(projectPath, ImportSpecBuilder(project, systemId).build())
   }
 
   private inner class TaskNotificationListener(
