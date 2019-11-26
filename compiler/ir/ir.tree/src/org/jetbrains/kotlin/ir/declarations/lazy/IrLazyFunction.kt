@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
@@ -35,6 +34,7 @@ class IrLazyFunction(
     override val isSuspend: Boolean,
     isExpect: Boolean,
     override val isFakeOverride: Boolean,
+    override val isOperator: Boolean,
     stubGenerator: DeclarationStubGenerator,
     typeTranslator: TypeTranslator
 ) :
@@ -59,6 +59,7 @@ class IrLazyFunction(
         isSuspend = symbol.descriptor.isSuspend,
         isExpect = symbol.descriptor.isExpect,
         isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+        isOperator = symbol.descriptor.isOperator,
         stubGenerator = stubGenerator,
         typeTranslator = TypeTranslator
     )

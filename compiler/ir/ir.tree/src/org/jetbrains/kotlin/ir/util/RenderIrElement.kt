@@ -383,7 +383,8 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
             "external".takeIf { isExternal },
             "suspend".takeIf { isSuspend },
             "expect".takeIf { isExpect },
-            "fake_override".takeIf { isFakeOverride }
+            "fake_override".takeIf { isFakeOverride },
+            "operator".takeIf { isOperator }
         )
 
     private fun IrFunction.renderTypeParameters(): String =

@@ -31,13 +31,20 @@ class IrBuiltInOperator(
     name: Name,
     returnType: IrType,
     val suffix: String
-) : IrSimpleFunction, IrBuiltinWithMangle, IrFunctionBase(
-    UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrBuiltIns.BUILTIN_OPERATOR, name, Visibilities.PUBLIC, false, false, false, returnType
-) {
+) :
+    IrSimpleFunction,
+    IrBuiltinWithMangle,
+    IrFunctionBase(
+        UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrBuiltIns.BUILTIN_OPERATOR,
+        name, Visibilities.PUBLIC, false, false, false,
+        returnType
+    ) {
+
     override val modality get() = Modality.FINAL
     override val isTailrec get() = false
     override val isSuspend get() = false
     override val isFakeOverride get() = false
+    override val isOperator: Boolean get() = false
     override var correspondingPropertySymbol: IrPropertySymbol?
         get() = null
         set(_) {}
@@ -57,6 +64,7 @@ class IrBuiltInOperator(
 
 class IrBuiltInOperatorValueParameter(override val symbol: IrValueParameterSymbol, override val index: Int, override val type: IrType) :
     IrValueParameter, IrDeclarationBase(UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrBuiltIns.BUILTIN_OPERATOR) {
+
     override val descriptor: ParameterDescriptor get() = symbol.descriptor
     override val varargElementType: IrType? get() = null
     override val isCrossinline: Boolean get() = false
@@ -84,6 +92,7 @@ class IrBuiltInOperatorTypeParameter(
     override val index: Int,
     override val isReified: Boolean
 ) : IrTypeParameter, IrDeclarationBase(UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrBuiltIns.BUILTIN_OPERATOR) {
+
     override val descriptor: TypeParameterDescriptor get() = symbol.descriptor
     override val superTypes: MutableList<IrType> = SmartList()
     override val name: Name = Name.identifier("T$index")

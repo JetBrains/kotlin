@@ -29,6 +29,7 @@ interface IrSimpleFunction :
     val isTailrec: Boolean
     val isSuspend: Boolean
     val isFakeOverride: Boolean
+    val isOperator: Boolean
 
     var correspondingPropertySymbol: IrPropertySymbol?
 }

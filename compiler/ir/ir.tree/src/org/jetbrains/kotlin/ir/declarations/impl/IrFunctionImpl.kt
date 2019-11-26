@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -32,6 +31,7 @@ class IrFunctionImpl(
     isExternal: Boolean,
     override val isTailrec: Boolean,
     override val isSuspend: Boolean,
+    override val isOperator: Boolean,
     isExpect: Boolean,
     override val isFakeOverride: Boolean
 ) :
@@ -57,7 +57,8 @@ class IrFunctionImpl(
         isTailrec = symbol.descriptor.isTailrec,
         isSuspend = symbol.descriptor.isSuspend,
         isExpect = symbol.descriptor.isExpect,
-        isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE
+        isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+        isOperator = symbol.descriptor.isOperator
     )
 
     override val descriptor: FunctionDescriptor = symbol.descriptor
