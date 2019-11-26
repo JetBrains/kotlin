@@ -8,15 +8,19 @@ package org.jetbrains.kotlin.fir.resolve
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.classId
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.fir.scopes.impl.FirClassUseSiteMemberScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirStandardOverrideChecker
+import org.jetbrains.kotlin.fir.scopes.impl.FirSuperTypeScope
+import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.jvm.JvmMappedScope
 import org.jetbrains.kotlin.fir.symbols.*
-import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.types.ConeClassErrorType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -52,6 +56,53 @@ abstract class FirSymbolProvider : FirSessionComponent {
         scopeSession: ScopeSession
     ): FirScope?
 
+    protected fun wrapScopeWithJvmMapped(
+        classId: ClassId,
+        declaredMemberScope: FirScope,
+        useSiteSession: FirSession,
+        scopeSession: ScopeSession
+    ): FirScope {
+        val javaClassId = JavaToKotlinClassMap.mapKotlinToJava(classId.asSingleFqName().toUnsafe())
+            ?: return declaredMemberScope
+        val symbolProvider = useSiteSession.firSymbolProvider
+        val javaClass = symbolProvider.getClassLikeSymbolByFqName(javaClassId)?.fir as? FirRegularClass
+            ?: return declaredMemberScope
+        val preparedSignatures = JvmMappedScope.prepareSignatures(javaClass)
+        return if (preparedSignatures.isNotEmpty()) {
+            symbolProvider.getClassUseSiteMemberScope(javaClassId, useSiteSession, scopeSession)?.let {
+                JvmMappedScope(declaredMemberScope, it, preparedSignatures)
+            } ?: declaredMemberScope
+        } else {
+            declaredMemberScope
+        }
+    }
+
+    fun buildDefaultUseSiteMemberScope(klass: FirClass<*>, useSiteSession: FirSession, scopeSession: ScopeSession): FirScope {
+        return scopeSession.getOrBuild(klass.symbol, USE_SITE) {
+
+            val declaredScope = declaredMemberScope(klass)
+            val wrappedDeclaredScope = wrapScopeWithJvmMapped(
+                klass.classId, declaredScope, useSiteSession, scopeSession
+            )
+            val scopes = lookupSuperTypes(klass, lookupInterfaces = true, deep = false, useSiteSession = useSiteSession)
+                .mapNotNull { useSiteSuperType ->
+                    if (useSiteSuperType is ConeClassErrorType) return@mapNotNull null
+                    val symbol = useSiteSuperType.lookupTag.toSymbol(useSiteSession)
+                    if (symbol is FirRegularClassSymbol) {
+                        val useSiteMemberScope = symbol.fir.buildUseSiteMemberScope(useSiteSession, scopeSession)!!
+                        useSiteSuperType.wrapSubstitutionScopeIfNeed(useSiteSession, useSiteMemberScope, symbol.fir, scopeSession)
+                    } else {
+                        null
+                    }
+                }
+            FirClassUseSiteMemberScope(
+                useSiteSession,
+                FirSuperTypeScope(useSiteSession, FirStandardOverrideChecker(useSiteSession), scopes),
+                wrappedDeclaredScope
+            )
+        }
+    }
+
     open fun getAllCallableNamesInPackage(fqName: FqName): Set<Name> = emptySet()
     open fun getClassNamesInPackage(fqName: FqName): Set<Name> = emptySet()
 
@@ -65,27 +116,6 @@ abstract class FirSymbolProvider : FirSessionComponent {
 
     companion object {
         fun getInstance(session: FirSession) = session.firSymbolProvider
-
-        fun wrapScopeWithJvmMapped(
-            classId: ClassId,
-            declaredMemberScope: FirScope,
-            useSiteSession: FirSession,
-            scopeSession: ScopeSession
-        ): FirScope {
-            val javaClassId = JavaToKotlinClassMap.mapKotlinToJava(classId.asSingleFqName().toUnsafe())
-                ?: return declaredMemberScope
-            val symbolProvider = useSiteSession.firSymbolProvider
-            val javaClass = symbolProvider.getClassLikeSymbolByFqName(javaClassId)?.fir as? FirRegularClass
-                ?: return declaredMemberScope
-            val preparedSignatures = JvmMappedScope.prepareSignatures(javaClass)
-            return if (preparedSignatures.isNotEmpty()) {
-                symbolProvider.getClassUseSiteMemberScope(javaClassId, useSiteSession, scopeSession)?.let {
-                    JvmMappedScope(declaredMemberScope, it, preparedSignatures)
-                } ?: declaredMemberScope
-            } else {
-                declaredMemberScope
-            }
-        }
     }
 }
 

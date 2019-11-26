@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.deserialization.FirDeserializationContext
 import org.jetbrains.kotlin.fir.deserialization.deserializeClassToSymbol
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.buildDefaultUseSiteMemberScope
 import org.jetbrains.kotlin.fir.resolve.getOrPut
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScope
@@ -130,7 +129,7 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider(
         scopeSession: ScopeSession
     ): FirScope? {
         val symbol = this.getClassLikeSymbolByFqName(classId) ?: return null
-        return symbol.fir.buildDefaultUseSiteMemberScope(useSiteSession, scopeSession)
+        return buildDefaultUseSiteMemberScope(symbol.fir, useSiteSession, scopeSession)
     }
 
     override fun getPackage(fqName: FqName): FqName? {

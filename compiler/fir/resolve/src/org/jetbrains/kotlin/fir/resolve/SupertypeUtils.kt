@@ -59,45 +59,19 @@ val USE_SITE = scopeSessionKey<FirScope>()
 data class SubstitutionScopeKey(val type: ConeClassLikeType) : ScopeSessionKey<FirClassSubstitutionScope>() {}
 
 fun FirClassSymbol<*>.buildUseSiteMemberScope(useSiteSession: FirSession, builder: ScopeSession): FirScope? {
-    when (this) {
-        is FirAnonymousObjectSymbol -> return fir.buildDefaultUseSiteMemberScope(useSiteSession, builder)
-        is FirRegularClassSymbol -> return fir.buildUseSiteMemberScope(useSiteSession, builder)
+    return when (this) {
+        is FirAnonymousObjectSymbol -> useSiteSession.firSymbolProvider.buildDefaultUseSiteMemberScope(fir, useSiteSession, builder)
+        is FirRegularClassSymbol -> fir.buildUseSiteMemberScope(useSiteSession, builder)
     }
 }
 
 fun FirClass<*>.buildUseSiteMemberScope(useSiteSession: FirSession, builder: ScopeSession): FirScope? {
     if (classId.isLocal) {
         // It's not possible to find local class by symbol
-        return buildDefaultUseSiteMemberScope(useSiteSession, builder)
+        return useSiteSession.firSymbolProvider.buildDefaultUseSiteMemberScope(this, useSiteSession, builder)
     }
     val symbolProvider = useSiteSession.firSymbolProvider
     return symbolProvider.getClassUseSiteMemberScope(classId, useSiteSession, builder)
-}
-
-fun FirClass<*>.buildDefaultUseSiteMemberScope(useSiteSession: FirSession, scopeSession: ScopeSession): FirScope {
-    return scopeSession.getOrBuild(symbol, USE_SITE) {
-
-        val declaredScope = declaredMemberScope(this)
-        val wrappedDeclaredScope = FirSymbolProvider.wrapScopeWithJvmMapped(
-            classId, declaredScope, useSiteSession, scopeSession
-        )
-        val scopes = lookupSuperTypes(this, lookupInterfaces = true, deep = false, useSiteSession = useSiteSession)
-            .mapNotNull { useSiteSuperType ->
-                if (useSiteSuperType is ConeClassErrorType) return@mapNotNull null
-                val symbol = useSiteSuperType.lookupTag.toSymbol(useSiteSession)
-                if (symbol is FirRegularClassSymbol) {
-                    val useSiteMemberScope = symbol.fir.buildUseSiteMemberScope(useSiteSession, scopeSession)!!
-                    useSiteSuperType.wrapSubstitutionScopeIfNeed(useSiteSession, useSiteMemberScope, symbol.fir, scopeSession)
-                } else {
-                    null
-                }
-            }
-        FirClassUseSiteMemberScope(
-            useSiteSession,
-            FirSuperTypeScope(useSiteSession, FirStandardOverrideChecker(useSiteSession), scopes),
-            wrappedDeclaredScope
-        )
-    }
 }
 
 private fun createSubstitution(
