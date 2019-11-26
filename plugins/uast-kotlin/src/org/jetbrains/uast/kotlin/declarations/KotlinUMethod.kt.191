@@ -162,6 +162,16 @@ class KotlinUMethodWithFakeLightDelegate(val original: KtFunction, givenParent: 
     KotlinUMethod(buildLightMethodFake(original), original, givenParent) {
     override val annotations: List<UAnnotation>
         get() = original.annotationEntries.mapNotNull { it.toUElementOfType<UAnnotation>() }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        other as KotlinUMethodWithFakeLightDelegate
+        if (original != other.original) return false
+        return true
+    }
+
+    override fun hashCode(): Int = original.hashCode()
 }
 
 internal fun wrapExpressionBody(function: UElement, bodyExpression: KtExpression): UExpression? = when (bodyExpression) {
