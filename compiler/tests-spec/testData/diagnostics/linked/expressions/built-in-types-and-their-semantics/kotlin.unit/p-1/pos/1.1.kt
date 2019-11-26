@@ -67,3 +67,4 @@ fun case4() {
     p2 checkType { check<Unit>() }
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!>p2<!>
 }
+

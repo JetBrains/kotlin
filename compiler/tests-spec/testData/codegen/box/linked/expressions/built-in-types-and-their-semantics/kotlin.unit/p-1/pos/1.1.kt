@@ -6,7 +6,7 @@
  * SPEC VERSION: 0.1-213
  * PLACE: expressions, built-in-types-and-their-semantics, kotlin.unit -> paragraph 1 -> sentence 1
  * NUMBER: 1
- * DESCRIPTION: todo
+ * DESCRIPTION: check  all values of type kotlin.Unit should reference the same underlying kotlin.Unit object.
  */
 
 fun foo1() {
