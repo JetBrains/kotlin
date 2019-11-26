@@ -12379,9 +12379,19 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/unsafeNotNullAssertionOnReallyNullable"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
         }
 
-        @TestMetadata("unsafeCall.kt")
-        public void testUnsafeCall() throws Exception {
-            runTest("idea/testData/inspectionsLocal/unsafeNotNullAssertionOnReallyNullable/unsafeCall.kt");
+        @TestMetadata("localPropToNotNullable.kt")
+        public void testLocalPropToNotNullable() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unsafeNotNullAssertionOnReallyNullable/localPropToNotNullable.kt");
+        }
+
+        @TestMetadata("nullableFunToNot.kt")
+        public void testNullableFunToNot() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unsafeNotNullAssertionOnReallyNullable/nullableFunToNot.kt");
+        }
+
+        @TestMetadata("nullableParamToSafeCallWithElvis.kt")
+        public void testNullableParamToSafeCallWithElvis() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unsafeNotNullAssertionOnReallyNullable/nullableParamToSafeCallWithElvis.kt");
         }
     }
 
