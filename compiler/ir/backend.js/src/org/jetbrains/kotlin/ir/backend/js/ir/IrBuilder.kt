@@ -119,6 +119,7 @@ object JsIrBuilder {
         isTailrec: Boolean = false,
         isSuspend: Boolean = false,
         isExpect: Boolean = false,
+        isOperator: Boolean = false,
         origin: IrDeclarationOrigin = SYNTHESIZED_DECLARATION
     ): IrSimpleFunction {
         val descriptor = WrappedSimpleFunctionDescriptor()
@@ -136,7 +137,8 @@ object JsIrBuilder {
             isTailrec = isTailrec,
             isSuspend = isSuspend,
             isExpect = isExpect,
-            isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE
+            isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+            isOperator = isOperator
         ).also {
             descriptor.bind(it)
             it.parent = parent
