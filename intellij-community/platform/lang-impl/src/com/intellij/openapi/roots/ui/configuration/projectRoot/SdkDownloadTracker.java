@@ -16,6 +16,7 @@ import com.intellij.openapi.progress.util.ProgressIndicatorBase;
 import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.projectRoots.SdkModificator;
 import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Disposer;
@@ -291,7 +292,11 @@ public class SdkDownloadTracker implements Disposable {
         myModalityTracker.invokeLater(() -> WriteAction.run(() -> {
           for (Sdk sdk : myEditableSdks.copy()) {
             try {
-              ((SdkType)sdk.getSdkType()).setupSdkPaths(sdk);
+              SdkType sdkType = (SdkType)sdk.getSdkType();
+              sdkType.setupSdkPaths(sdk);
+              SdkModificator modificator = sdk.getSdkModificator();
+              modificator.setVersionString(sdkType.getVersionString(sdk));
+              modificator.commitChanges();
             }
             catch (Exception e) {
               LOG.warn("Failed to setup Sdk " + sdk + ". " + e.getMessage(), e);
