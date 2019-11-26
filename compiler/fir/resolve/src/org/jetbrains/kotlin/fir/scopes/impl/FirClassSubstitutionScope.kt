@@ -95,26 +95,7 @@ class FirClassSubstitutionScope(
             else -> throw AssertionError("Should not be here")
         }
 
-        val newTypeParameters = member.typeParameters.map { originalParameter ->
-            FirTypeParameterImpl(
-                originalParameter.source, originalParameter.session, originalParameter.name,
-                FirTypeParameterSymbol(), originalParameter.variance, originalParameter.isReified
-            ).apply {
-                annotations += originalParameter.annotations
-            }
-        }
-
-        val newSubstitutor =
-            if (member.typeParameters.isEmpty())
-                substitutor
-            else {
-                val substitutionMapForNewParameters = member.typeParameters.zip(newTypeParameters).map {
-                    Pair(it.first.symbol, ConeTypeParameterTypeImpl(it.second.symbol.toLookupTag(), isNullable = false))
-                }.toMap()
-                ChainedSubstitutor(substitutor, substitutorByMap(substitutionMapForNewParameters))
-            }
-
-        val wereChangesInTypeParameters = fillBoundsForTypeParameters(newTypeParameters, member, newSubstitutor)
+        val (newTypeParameters, newSubstitutor) = createNewTypeParametersAndSubstitutor(member)
 
         val receiverType = member.receiverTypeRef?.coneTypeUnsafe<ConeKotlinType>()
         val newReceiverType = receiverType?.substitute(newSubstitutor)
@@ -126,7 +107,8 @@ class FirClassSubstitutionScope(
             it.returnTypeRef.coneTypeUnsafe<ConeKotlinType>().substitute(newSubstitutor)
         }
 
-        if (newReceiverType == null && newReturnType == null && newParameterTypes.all { it == null } && !wereChangesInTypeParameters) {
+        if (newReceiverType == null && newReturnType == null && newParameterTypes.all { it == null } &&
+            newTypeParameters === member.typeParameters) {
             return original
         }
 
@@ -135,26 +117,45 @@ class FirClassSubstitutionScope(
         )
     }
 
-    private fun fillBoundsForTypeParameters(
-        newTypeParameters: List<FirTypeParameterImpl>,
-        member: FirSimpleFunction,
-        newSubstitutor: ConeSubstitutor
-    ): Boolean {
+    // Returns a list of type parameters, and a substitutor that should be used for all other types
+    private fun createNewTypeParametersAndSubstitutor(
+        member: FirSimpleFunction
+    ): Pair<List<FirTypeParameter>, ConeSubstitutor> {
+        if (member.typeParameters.isEmpty()) return Pair(member.typeParameters, substitutor)
+        val newTypeParameters = member.typeParameters.map { originalParameter ->
+            FirTypeParameterImpl(
+                originalParameter.source, originalParameter.session, originalParameter.name,
+                FirTypeParameterSymbol(), originalParameter.variance, originalParameter.isReified
+            ).apply {
+                annotations += originalParameter.annotations
+            }
+        }
+
+        val substitutionMapForNewParameters = member.typeParameters.zip(newTypeParameters).map {
+            Pair(it.first.symbol, ConeTypeParameterTypeImpl(it.second.symbol.toLookupTag(), isNullable = false))
+        }.toMap()
+
+        val additionalSubstitutor = substitutorByMap(substitutionMapForNewParameters)
+
         var wereChangesInTypeParameters = false
         for ((newTypeParameter, oldTypeParameter) in newTypeParameters.zip(member.typeParameters)) {
             for (boundTypeRef in oldTypeParameter.bounds) {
                 val typeForBound = boundTypeRef.coneTypeUnsafe<ConeKotlinType>()
-                val substitutedBound = typeForBound.substitute(newSubstitutor)
-                if (substitutedBound == null) {
-                    newTypeParameter.bounds += boundTypeRef
-                } else {
-                    newTypeParameter.bounds += FirResolvedTypeRefImpl(boundTypeRef.source, substitutedBound)
+                val substitutedBound = typeForBound.substitute()
+                if (substitutedBound != null) {
                     wereChangesInTypeParameters = true
                 }
+
+                newTypeParameter.bounds +=
+                    FirResolvedTypeRefImpl(
+                        boundTypeRef.source, additionalSubstitutor.substituteOrSelf(substitutedBound ?: typeForBound)
+                    )
             }
         }
 
-        return wereChangesInTypeParameters
+        if (!wereChangesInTypeParameters) return Pair(member.typeParameters, substitutor)
+
+        return Pair(newTypeParameters, ChainedSubstitutor(substitutor, additionalSubstitutor))
     }
 
     private fun createFakeOverrideProperty(original: FirPropertySymbol): FirPropertySymbol {
