@@ -64,6 +64,7 @@ object SetOps : TemplateGroupBase() {
             returns("Sequence<T>")
             body { "return this.distinctBy { it }" }
         }
+        sample("samples.collections.Collections.Transformations.distinctAndDistinctBy")
     }
 
     val f_distinctBy = fn("distinctBy(selector: (T) -> K)") {
@@ -100,6 +101,8 @@ object SetOps : TemplateGroupBase() {
             sequenceClassification(intermediate, stateful)
             body { """return DistinctSequence(this, selector)""" }
         }
+
+        sample("samples.collections.Collections.Transformations.distinctAndDistinctBy")
     }
 
     val f_union = fn("union(other: Iterable<T>)") {

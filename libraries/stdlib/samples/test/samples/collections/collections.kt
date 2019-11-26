@@ -449,6 +449,13 @@ class Collections {
         }
 
         @Sample
+        fun distinctAndDistinctBy() {
+            val list = listOf('a', 'A', 'b', 'B', 'A', 'a')
+            assertPrints(list.distinct(), "[a, A, b, B]")
+            assertPrints(list.distinctBy { it.toUpperCase() }, "[a, b]")
+        }
+
+        @Sample
         fun groupBy() {
             val words = listOf("a", "abc", "ab", "def", "abcd")
             val byLength = words.groupBy { it.length }

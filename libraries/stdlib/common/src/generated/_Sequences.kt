@@ -978,6 +978,8 @@ public fun <T> Sequence<T>.withIndex(): Sequence<IndexedValue<T>> {
  * The elements in the resulting sequence are in the same order as they were in the source sequence.
  *
  * The operation is _intermediate_ and _stateful_.
+ * 
+ * @sample samples.collections.Collections.Transformations.distinctAndDistinctBy
  */
 public fun <T> Sequence<T>.distinct(): Sequence<T> {
     return this.distinctBy { it }
@@ -990,6 +992,8 @@ public fun <T> Sequence<T>.distinct(): Sequence<T> {
  * The elements in the resulting sequence are in the same order as they were in the source sequence.
  *
  * The operation is _intermediate_ and _stateful_.
+ * 
+ * @sample samples.collections.Collections.Transformations.distinctAndDistinctBy
  */
 public fun <T, K> Sequence<T>.distinctBy(selector: (T) -> K): Sequence<T> {
     return DistinctSequence(this, selector)
