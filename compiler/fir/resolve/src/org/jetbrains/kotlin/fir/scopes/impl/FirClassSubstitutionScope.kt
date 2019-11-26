@@ -240,7 +240,13 @@ class FirClassSubstitutionScope(
                         }
                     }
 
-                    typeParameters += newTypeParameters ?: baseFunction.typeParameters
+                    // TODO: Fix the hack for org.jetbrains.kotlin.fir.backend.Fir2IrVisitor.addFakeOverrides
+                    // We might have added baseFunction.typeParameters in case new ones are null
+                    // But it fails at org.jetbrains.kotlin.ir.AbstractIrTextTestCase.IrVerifier.elementsAreUniqueChecker
+                    // because it shares the same declarations of type parameters between two different two functions
+                    if (newTypeParameters != null) {
+                        typeParameters += newTypeParameters
+                    }
                 }
             }
         }
