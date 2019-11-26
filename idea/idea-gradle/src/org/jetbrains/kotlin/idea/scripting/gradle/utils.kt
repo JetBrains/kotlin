@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.scripting.gradle
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
@@ -63,4 +64,8 @@ const val minimal_gradle_version_supported = "6.0"
 
 fun kotlinDslScriptsModelImportSupported(currentGradleVersion: String): Boolean {
     return GradleVersion.version(currentGradleVersion) >= GradleVersion.version(minimal_gradle_version_supported)
+}
+
+fun useScriptConfigurationFromImportOnly(): Boolean {
+    return Registry.`is`("kotlin.gradle.scripts.useIdeaProjectImport", false)
 }
