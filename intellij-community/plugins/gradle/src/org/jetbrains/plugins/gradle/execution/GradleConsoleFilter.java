@@ -92,6 +92,11 @@ public class GradleConsoleFilter implements Filter {
         break;
       }
     }
+
+    if (lineNumberStr.length() < 1) {
+      return null;
+    }
+
     lineNumberStr = lineNumberStr.substring(0, lineNumberEndIndex + 1);
     int lineNumber;
     try {
