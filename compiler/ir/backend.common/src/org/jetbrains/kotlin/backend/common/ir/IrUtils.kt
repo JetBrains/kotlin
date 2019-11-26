@@ -486,7 +486,8 @@ fun IrClass.addFakeOverrides() {
                 isTailrec = irFunction.isTailrec,
                 isSuspend = irFunction.isSuspend,
                 isExpect = irFunction.isExpect,
-                isFakeOverride = true
+                isFakeOverride = true,
+                isOperator = irFunction.isOperator
             ).apply {
                 descriptor.bind(this)
                 parent = this@addFakeOverrides
@@ -528,7 +529,8 @@ fun createStaticFunctionWithReceivers(
         isTailrec = false,
         isSuspend = oldFunction.isSuspend,
         isExpect = oldFunction.isExpect,
-        isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE
+        isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+        isOperator = oldFunction is IrSimpleFunction && oldFunction.isOperator
     ).apply {
         descriptor.bind(this)
         parent = irParent

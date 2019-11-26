@@ -85,7 +85,8 @@ class PropertiesLowering(
         return IrFunctionImpl(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, symbol, Name.identifier(name),
             declaration.visibility, Modality.OPEN, context.irBuiltIns.unitType,
-            isInline = false, isExternal = false, isTailrec = false, isSuspend = false, isExpect = false, isFakeOverride = false
+            isInline = false, isExternal = false, isTailrec = false, isSuspend = false, isExpect = false, isFakeOverride = false,
+            isOperator = false
         ).apply {
             descriptor.bind(this)
 
