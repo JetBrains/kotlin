@@ -13,6 +13,10 @@ interface Some {
      */
     fun f6()
     fun f7()
+
+    @NotNull
+    fun f8()
+    fun f9()
 }
 
 abstract class Abstract() {

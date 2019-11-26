@@ -105,8 +105,7 @@ class KotlinSpacingBuilder(val commonCodeStyleSettings: CommonCodeStyleSettings,
                 val leftEndsWithComment = lastChild is PsiComment && lastChild.tokenType == KtTokens.EOL_COMMENT
                 val dependentSpacingRule = DependentSpacingRule(Trigger.HAS_LINE_FEEDS).registerData(Anchor.MIN_LINE_FEEDS, emptyLines + 1)
                 val textRange = left.node
-                    ?.children()
-                    ?.firstOrNull { it.elementType !in KtTokens.WHITE_SPACE_OR_COMMENT_BIT_SET }
+                    ?.startOfDeclaration()
                     ?.startOffset
                     ?.let { TextRange.create(it, left.textRange.endOffset) }
                     ?: left.textRange

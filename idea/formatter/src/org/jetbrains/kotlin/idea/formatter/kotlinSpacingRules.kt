@@ -95,9 +95,9 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
                 _: ASTBlock,
                 right: ASTBlock
             ): Spacing? {
-                val firstChild = right.node?.firstChildNode as? PsiComment ?: return null
-                val whiteSpace = firstChild.nextSibling as? PsiWhiteSpace ?: return null
-                return if (StringUtil.containsLineBreak(firstChild.text) || StringUtil.containsLineBreak(whiteSpace.text)) {
+                val node = right.node ?: return null
+                val elementStart = node.startOfDeclaration() ?: return null
+                return if (StringUtil.containsLineBreak(node.text.subSequence(0, elementStart.startOffset - node.startOffset).trimStart())) {
                     createSpacing(0, minLineFeeds = 2)
                 } else
                     null
