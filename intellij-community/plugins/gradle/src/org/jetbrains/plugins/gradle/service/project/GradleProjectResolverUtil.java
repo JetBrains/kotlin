@@ -188,10 +188,12 @@ public class GradleProjectResolverUtil {
     ProjectIdentifier projectIdentifier = project.getProjectIdentifier();
     String gradlePath = projectIdentifier.getProjectPath();
     String compositePrefix = "";
-    if (build != resolverCtx.getModels().getMainBuild()) {
-      if (!StringUtil.isEmpty(gradlePath) && !":".equals(gradlePath)) {
-        compositePrefix = build.getName();
-      }
+    boolean isRootPath = StringUtil.isEmpty(gradlePath) || ":".equals(gradlePath);
+    if (!StringUtil.isEmpty(resolverCtx.getBuildSrcGroup())) {
+      compositePrefix = resolverCtx.getBuildSrcGroup() + (isRootPath ? ":" : ":buildSrc");
+    }
+    else if (!isRootPath && build != resolverCtx.getModels().getMainBuild()) {
+      compositePrefix = build.getName();
     }
     return compositePrefix + getModuleId(gradlePath, project.getName());
   }
@@ -202,10 +204,13 @@ public class GradleProjectResolverUtil {
     GradleProject gradleProject = gradleModule.getGradleProject();
     String gradlePath = gradleProject.getPath();
     String compositePrefix = "";
-    if (gradleModule.getProject() != resolverCtx.getModels().getModel(IdeaProject.class)) {
-      if (!StringUtil.isEmpty(gradlePath) && !":".equals(gradlePath)) {
-        compositePrefix = gradleModule.getProject().getName();
-      }
+    IdeaProject ideaProject = gradleModule.getProject();
+    boolean isRootPath = StringUtil.isEmpty(gradlePath) || ":".equals(gradlePath);
+    if (!StringUtil.isEmpty(resolverCtx.getBuildSrcGroup())) {
+      compositePrefix = resolverCtx.getBuildSrcGroup() + (isRootPath ? ":" : ":buildSrc");
+    }
+    else if (!isRootPath && ideaProject != resolverCtx.getModels().getModel(IdeaProject.class)) {
+      compositePrefix = ideaProject.getName();
     }
     return compositePrefix + getModuleId(gradlePath, gradleModule.getName());
   }
