@@ -29,6 +29,7 @@ import org.junit.runner.notification.RunNotifier;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
@@ -87,7 +88,12 @@ public class JUnit3RunnerWithInnersForJPS extends Runner implements Filterable, 
      */
     private static void ensureCompilerXmlExists() {
         String compilerXmlSourcePath = "compiler/cli/cli-common/resources/META-INF/extensions/compiler.xml";
-        String compilerXmlTargetPath = "out/production/kotlin.idea.main/META-INF/extensions/compiler.xml";
+
+        String jpsTargetDirectory = "out/production/kotlin.idea.main";
+        String pillTargetDirectory = "out/production/idea.src";
+
+        String baseDir = Files.exists(Paths.get(jpsTargetDirectory)) ? jpsTargetDirectory : pillTargetDirectory;
+        String compilerXmlTargetPath = baseDir + "/META-INF/extensions/compiler.xml";
 
         try {
             Files.copy(Paths.get(compilerXmlSourcePath), Paths.get(compilerXmlTargetPath), REPLACE_EXISTING);
