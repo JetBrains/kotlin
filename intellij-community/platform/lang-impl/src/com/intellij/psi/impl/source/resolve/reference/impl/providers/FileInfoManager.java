@@ -19,8 +19,6 @@ package com.intellij.psi.impl.source.resolve.reference.impl.providers;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.extensions.ExtensionPointListener;
-import com.intellij.openapi.extensions.PluginDescriptor;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -47,21 +45,10 @@ public class FileInfoManager implements Disposable {
       }
     }
 
-    FileLookupInfoProvider.EP_NAME.addExtensionPointListener(new ExtensionPointListener<FileLookupInfoProvider>() {
-      @Override
-      public void extensionAdded(@NotNull FileLookupInfoProvider extension, @NotNull PluginDescriptor pluginDescriptor) {
-        for (FileType type : extension.getFileTypes()) {
-          myFileType2InfoProvider.put(type, extension);
-        }
-      }
-
-      @Override
-      public void extensionRemoved(@NotNull FileLookupInfoProvider extension, @NotNull PluginDescriptor pluginDescriptor) {
-        for (FileType type : extension.getFileTypes()) {
-          myFileType2InfoProvider.remove(type);
-        }
-      }
-    }, this);
+    FileLookupInfoProvider.EP_NAME.addExtensionPointListener(
+      (e, pd) -> { for (FileType type : e.getFileTypes()) myFileType2InfoProvider.put(type, e); },
+      (e, pd) -> { for (FileType type : e.getFileTypes()) myFileType2InfoProvider.remove(type); }, 
+      this);
   }
 
   public static FileInfoManager getFileInfoManager() {
