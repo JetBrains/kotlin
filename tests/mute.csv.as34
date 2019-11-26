@@ -2,6 +2,8 @@ Test key, Issue, State (optional: MUTE or FAIL)
 org.jetbrains.kotlin.checkers.JavaAgainstKotlinSourceCheckerTestGenerated.JavaAgainstKotlin.testExtendingMutableInterfaces, KT-34105
 org.jetbrains.kotlin.checkers.JavaAgainstKotlinSourceCheckerTestGenerated.JavaAgainstKotlin.testExtendingReadOnlyInterfaces, KT-34105
 org.jetbrains.kotlin.checkers.JavaAgainstKotlinSourceCheckerWithoutUltraLightTestGenerated.JavaAgainstKotlin.testExtendingMutableInterfaces, KT-34105
+org.jetbrains.kotlin.idea.caches.resolve.MultiModuleHighlightingTest.testLazyResolvers
+org.jetbrains.kotlin.idea.caches.resolve.MultiModuleHighlightingTest.testRecomputeResolversOnChange
 org.jetbrains.kotlin.idea.codeInsight.InspectionTestGenerated.Inspections.testOverridingDeprecatedMember_inspectionData_Inspections_test, KT-32856
 org.jetbrains.kotlin.idea.codeInsight.InspectionTestGenerated.Inspections.testRecursivePropertyAccessor_inspectionData_Inspections_test, KT-32856
 org.jetbrains.kotlin.idea.codeInsight.InspectionTestGenerated.Inspections.testRemoveSetterParameterType_inspectionData_Inspections_test, KT-32856
