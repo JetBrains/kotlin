@@ -42,7 +42,6 @@ class ClassReferenceLowering(val context: JsIrBackendContext) : FileLoweringPass
             IrType::isDouble to "doubleClass",
             IrType::isArray to "arrayClass",
             IrType::isString to "stringClass",
-            IrType::isThrowable to "throwableClass",
             IrType::isBooleanArray to "booleanArrayClass",
             IrType::isCharArray to "charArrayClass",
             IrType::isByteArray to "byteArrayClass",
@@ -60,6 +59,7 @@ class ClassReferenceLowering(val context: JsIrBackendContext) : FileLoweringPass
         mapOf(
             IrType::isAny to "anyClass",
             IrType::isNumber to "numberClass",
+            IrType::isThrowable to "throwableClass",
             IrType::isNothing to "nothingClass"
         ).mapValues {
             primitiveClassProperty(it.value)
