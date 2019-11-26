@@ -380,7 +380,8 @@ class Fir2IrDeclarationStorage(
                         isTailrec = function.isTailRec,
                         isSuspend = function.isSuspend,
                         isExpect = function.isExpect,
-                        isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE
+                        isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+                        isOperator = function.isOperator
                     )
                 }
                 leaveScope(descriptor)
@@ -421,7 +422,8 @@ class Fir2IrDeclarationStorage(
                     // TODO: suspend lambda
                     isSuspend = false,
                     isExpect = false,
-                    isFakeOverride = false
+                    isFakeOverride = false,
+                    isOperator = false
                 )
             }.bindAndDeclareParameters(
                 function, descriptor, irParent = null, isStatic = false, shouldLeaveScope = false
@@ -480,7 +482,8 @@ class Fir2IrDeclarationStorage(
                 propertyAccessor?.visibility ?: correspondingProperty.visibility,
                 correspondingProperty.modality, accessorReturnType,
                 isInline = false, isExternal = false, isTailrec = false, isSuspend = false, isExpect = false,
-                isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE
+                isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+                isOperator = false
             ).apply {
                 if (propertyAccessor == null && isSetter) {
                     declareDefaultSetterParameter(propertyType)
