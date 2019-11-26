@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.nj2k.tree
 import org.jetbrains.kotlin.utils.SmartList
 
 
-class JKComment(val text: String) {
+class JKComment(val text: String, val indent: String? = null) {
     val isSingleline
         get() = text.startsWith("//")
 }

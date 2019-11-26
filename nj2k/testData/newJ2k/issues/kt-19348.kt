@@ -14,6 +14,6 @@ class TestMutltipleCtorsWithJavadoc
         this.y = y
     }
     // ---
-// Constructors
-//
+    // Constructors
+    //
 }

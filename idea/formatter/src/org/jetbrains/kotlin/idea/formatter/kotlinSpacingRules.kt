@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.idea.formatter.KotlinSpacingBuilder.CustomSpacingBui
 import org.jetbrains.kotlin.idea.util.requireNode
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.children
 import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.psi.psiUtil.textRangeWithoutComments
@@ -90,6 +91,14 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
 
             inPosition(right = BLOCK_COMMENT).spacing(commentSpacing(0))
             inPosition(right = EOL_COMMENT).spacing(commentSpacing(1))
+            inPosition(parent = FUNCTION_LITERAL, right = BLOCK).customRule { _, _, right ->
+                when (right.node?.children()?.firstOrNull()?.elementType) {
+                    BLOCK_COMMENT -> commentSpacing(0)
+                    EOL_COMMENT -> commentSpacing(1)
+                    else -> null
+                }
+            }
+
             inPosition(leftSet = DECLARATIONS, rightSet = DECLARATIONS).customRule(fun(
                 _: ASTBlock,
                 _: ASTBlock,
@@ -97,9 +106,12 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
             ): Spacing? {
                 val node = right.node ?: return null
                 val elementStart = node.startOfDeclaration() ?: return null
-                return if (StringUtil.containsLineBreak(node.text.subSequence(0, elementStart.startOffset - node.startOffset).trimStart())) {
+                return if (StringUtil.containsLineBreak(
+                        node.text.subSequence(0, elementStart.startOffset - node.startOffset).trimStart()
+                    )
+                )
                     createSpacing(0, minLineFeeds = 2)
-                } else
+                else
                     null
             })
 

@@ -1030,6 +1030,11 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
             runTest("nj2k/testData/newJ2k/comments/comments2.java");
         }
 
+        @TestMetadata("comments3.java")
+        public void testComments3() throws Exception {
+            runTest("nj2k/testData/newJ2k/comments/comments3.java");
+        }
+
         @TestMetadata("commentsForConstructors.java")
         public void testCommentsForConstructors() throws Exception {
             runTest("nj2k/testData/newJ2k/comments/commentsForConstructors.java");
@@ -1038,6 +1043,11 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         @TestMetadata("fieldWithEndOfLineComment.java")
         public void testFieldWithEndOfLineComment() throws Exception {
             runTest("nj2k/testData/newJ2k/comments/fieldWithEndOfLineComment.java");
+        }
+
+        @TestMetadata("fieldWithEndOfLineComment2.java")
+        public void testFieldWithEndOfLineComment2() throws Exception {
+            runTest("nj2k/testData/newJ2k/comments/fieldWithEndOfLineComment2.java");
         }
 
         @TestMetadata("fieldsInitializedFromParams.java")

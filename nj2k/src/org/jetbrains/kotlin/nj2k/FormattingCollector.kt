@@ -5,14 +5,13 @@
 
 package org.jetbrains.kotlin.nj2k
 
-import com.intellij.psi.PsiComment
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiKeyword
-import com.intellij.psi.PsiWhiteSpace
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.psi.*
 import com.intellij.psi.javadoc.PsiDocComment
 import org.jetbrains.kotlin.idea.j2k.IdeaDocCommentConverter
 import org.jetbrains.kotlin.nj2k.tree.JKComment
 import org.jetbrains.kotlin.nj2k.tree.JKFormattingOwner
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class FormattingCollector {
     private val commentCache = mutableMapOf<PsiElement, JKComment>()
@@ -48,11 +47,19 @@ class FormattingCollector {
                     this
                 )
             )
-            is PsiComment -> JKComment(text)
+            is PsiComment -> JKComment(text, indent())
             else -> null
         } ?: return null
         commentCache[this] = token
         return token
+    }
+
+    private fun PsiComment.indent(): String? = takeIf { parent is PsiCodeBlock }?.prevSibling?.safeAs<PsiWhiteSpace>()?.let { space ->
+        val text = space.text
+        if (space.prevSibling is PsiStatement)
+            text.indexOfFirst(StringUtil::isLineBreak).takeIf { it != -1 }?.let { text.substring(it + 1) } ?: text
+        else
+            text
     }
 
     private fun Sequence<PsiElement>.toComments(): List<JKComment> =

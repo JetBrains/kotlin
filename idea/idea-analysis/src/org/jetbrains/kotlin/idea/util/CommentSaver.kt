@@ -22,6 +22,7 @@ import com.intellij.psi.*
 import com.intellij.psi.codeStyle.CodeStyleManager
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.*
 import java.util.*
@@ -346,6 +347,11 @@ class CommentSaver(originalElements: PsiChildRange, private val saveLineBreaks: 
                     restored = parent.addBefore(comment, anchorElement) as PsiComment
                     if (commentTreeElement.spaceAfter.isNotEmpty()) {
                         parent.addBefore(psiFactory.createWhiteSpace(commentTreeElement.spaceAfter), anchorElement)
+                    }
+
+                    val functionLiteral = restored.parent as? KtFunctionLiteral
+                    if (functionLiteral != null && commentTreeElement.spaceBefore.isNotEmpty()) {
+                        functionLiteral.addBefore(psiFactory.createWhiteSpace(commentTreeElement.spaceBefore), restored)
                     }
                 }
             } else {
