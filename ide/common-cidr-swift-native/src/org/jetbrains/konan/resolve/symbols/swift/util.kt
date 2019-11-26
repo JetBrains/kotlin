@@ -13,6 +13,7 @@ import com.jetbrains.swift.symbols.SwiftTypeSymbol
 import com.jetbrains.swift.symbols.impl.SwiftAttributesInfoImpl
 import com.jetbrains.swift.symbols.swiftoc.SwiftGlobalApiNotes
 import org.jetbrains.kotlin.backend.konan.objcexport.*
+import org.jetbrains.kotlin.utils.addToStdlib.indexOfOrNull
 import java.util.*
 
 private val typeFactory: SwiftTypeFactory
@@ -111,11 +112,16 @@ private fun findClass(context: SwiftSymbol): SwiftTypeSymbol? {
 
 //classes, protocols & extensions have custom swift names in attribute "swift_name("...")"
 val Stub<*>.swiftName: String
-    get() = (this as? ObjCClass)?.attributes?.extractSwiftName() ?: this.name
+    get() = when (this) {
+        is ObjCClass -> attributes
+        is ObjCMethod -> attributes
+        is ObjCProperty -> propertyAttributes
+        else -> null
+    }?.extractSwiftName() ?: name
 
 private fun List<String>.extractSwiftName(): String? =
     find { attr -> attr.startsWith("swift_name") }
-        ?.let { attr -> attr.substring(12, attr.length - 2) }  //swift_name("...")
+        ?.let { attr -> attr.substring(12, attr.indexOfOrNull('(', 12) ?: attr.length - 2) }  //swift_name("...")
 
 internal val publicSwiftAttributes: SwiftAttributesInfo =
     SwiftAttributesInfoImpl.create(emptyList(), EnumSet.of(SwiftDeclarationSpecifiers.PUBLIC))

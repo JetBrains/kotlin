@@ -10,8 +10,6 @@ import com.jetbrains.swift.symbols.impl.variable.TypeAnnotationInfo
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProperty
 
 class KtSwiftPropertySymbol : KtSwiftMemberSymbol, SwiftPropertySymbol {
-    private lateinit var type: SwiftType
-
     constructor(
         stub: ObjCProperty,
         project: Project,
@@ -24,8 +22,7 @@ class KtSwiftPropertySymbol : KtSwiftMemberSymbol, SwiftPropertySymbol {
     override val declarationKind: SwiftDeclarationKind
         get() = SwiftDeclarationKind.propertyDeclaration
 
-    override val swiftType: SwiftType
-        get() = this.type
+    override lateinit var swiftType: SwiftType
 
     override fun isReadOnly(): Boolean {
         val modifiers = this.modifiers
@@ -50,8 +47,4 @@ class KtSwiftPropertySymbol : KtSwiftMemberSymbol, SwiftPropertySymbol {
 
     override val initializer: SwiftExpression?
         get() = null
-
-    fun setType(type: SwiftType) {
-        this.type = type
-    }
 }

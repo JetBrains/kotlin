@@ -48,7 +48,7 @@ abstract class KtSwiftTypeSymbol<State : KtSwiftTypeSymbol.TypeState, Stub : Obj
                 val translatedMember = translator.translateMember(member, clazz, clazz.containingFile)
                 if (translatedMember != null) {
                     if (map == null) map = MostlySingularMultiMap()
-                    map.add(member.name, translatedMember)
+                    map.add(translatedMember.name, translatedMember)
                 }
             }
             this.members = map

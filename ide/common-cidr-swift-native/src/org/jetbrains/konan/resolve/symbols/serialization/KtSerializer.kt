@@ -21,6 +21,7 @@ class KtSerializer : SerializerProvider {
 
         serializer.registerProjectAndFileOwnerSerializer(KtSwiftParameterSymbol::class.java, ::KtSwiftParameterSymbol)
         serializer.registerProjectAndFileOwnerSerializer(KtSwiftMethodSymbol::class.java, ::KtSwiftMethodSymbol)
+        serializer.registerProjectAndFileOwnerSerializer(KtSwiftInitializerSymbol::class.java, ::KtSwiftInitializerSymbol)
         serializer.registerProjectAndFileOwnerSerializer(KtSwiftPropertySymbol::class.java, ::KtSwiftPropertySymbol)
 
         serializer.registerSwiftLazySymbolSerializer(KtSwiftClassSymbol::class.java, ::KtSwiftClassSymbol)
@@ -51,7 +52,7 @@ class KtSerializer : SerializerProvider {
     }
 
 
-    override fun getVersion(): Int = 1
+    override fun getVersion(): Int = 2
 
     companion object {
         @JvmStatic

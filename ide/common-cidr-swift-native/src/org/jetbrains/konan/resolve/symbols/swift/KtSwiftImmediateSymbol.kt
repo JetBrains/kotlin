@@ -6,7 +6,10 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.cidr.lang.symbols.DeepEqual
 import com.jetbrains.cidr.lang.symbols.OCSymbol
 import com.jetbrains.cidr.lang.symbols.OCSymbolKind
-import com.jetbrains.swift.symbols.*
+import com.jetbrains.swift.symbols.SwiftAttributesInfo
+import com.jetbrains.swift.symbols.SwiftDeclarationSpecifiers
+import com.jetbrains.swift.symbols.SwiftSymbol
+import com.jetbrains.swift.symbols.SwiftSymbolAttribute
 import org.jetbrains.konan.resolve.symbols.KtImmediateSymbol
 import org.jetbrains.konan.resolve.symbols.KtOCLightSymbol
 import org.jetbrains.kotlin.backend.konan.objcexport.Stub
@@ -17,9 +20,10 @@ abstract class KtSwiftImmediateSymbol : KtImmediateSymbol, SwiftSymbol {
     @Transient
     private lateinit var project: Project
 
-    constructor(stub: Stub<*>, file: VirtualFile, project: Project) : super(stub) {
+    constructor(stub: Stub<*>, file: VirtualFile, project: Project) : super(stub, stub.swiftName) {
         this.file = file
         this.project = project
+        this.objcName = stub.name
     }
 
     constructor() : super()
@@ -63,9 +67,9 @@ abstract class KtSwiftImmediateSymbol : KtImmediateSymbol, SwiftSymbol {
     override val swiftAttributes: SwiftAttributesInfo
         get() = publicSwiftAttributes //todo???
 
-    override val shortObjcName: String?
-        get() = name //todo???
+    override val shortObjcName: String
+        get() = objcName //todo???
 
-    override val objcName: String?
-        get() = name //todo???
+    final override lateinit var objcName: String //todo???
+        private set
 }

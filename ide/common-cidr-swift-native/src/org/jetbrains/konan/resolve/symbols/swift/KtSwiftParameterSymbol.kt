@@ -7,7 +7,7 @@ package org.jetbrains.konan.resolve.symbols.swift
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.jetbrains.cidr.lang.symbols.*
+import com.jetbrains.cidr.lang.symbols.OCResolveContext
 import com.jetbrains.swift.psi.SwiftDeclarationKind
 import com.jetbrains.swift.psi.SwiftExpression
 import com.jetbrains.swift.psi.types.SwiftType
@@ -16,16 +16,13 @@ import com.jetbrains.swift.symbols.impl.variable.TypeAnnotationInfo
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCParameter
 
 class KtSwiftParameterSymbol : KtSwiftImmediateSymbol, SwiftParameterSymbol {
-    private lateinit var methodSymbol: SwiftFunctionSymbol
-    private lateinit var type: SwiftType
-
     constructor(
         stub: ObjCParameter,
         project: Project,
         file: VirtualFile,
-        methodSymbol: SwiftFunctionSymbol
+        methodSymbol: SwiftCallableSymbol
     ) : super(stub, file, project) {
-        this.methodSymbol = methodSymbol
+        context = methodSymbol
     }
 
     constructor() : super()
@@ -33,11 +30,10 @@ class KtSwiftParameterSymbol : KtSwiftImmediateSymbol, SwiftParameterSymbol {
     override val declarationKind: SwiftDeclarationKind
         get() = SwiftDeclarationKind.parameter
 
-    override val context: SwiftMemberSymbol?
-        get() = methodSymbol
+    override lateinit var context: SwiftCallableSymbol
+        private set
 
-    override val swiftType: SwiftType
-        get() = type
+    override lateinit var swiftType: SwiftType
 
     override fun isOptional(): Boolean = false
 
@@ -48,12 +44,12 @@ class KtSwiftParameterSymbol : KtSwiftImmediateSymbol, SwiftParameterSymbol {
 
     override fun getNameInfo(): SwiftParameterNameInfo = SwiftParameterNameInfo.create(name, null, true)
 
-    override fun getParent(): SwiftCallableSymbol? = methodSymbol
+    override fun getParent(): SwiftCallableSymbol? = context
 
     //todo [medvedev]???
     override fun isVariadic(): Boolean = false
 
-    override fun getTypeInfo(): SwiftVariableTypeInfo = TypeAnnotationInfo(type)
+    override fun getTypeInfo(): SwiftVariableTypeInfo = TypeAnnotationInfo(swiftType)
 
     override fun getNameWithParent(context: OCResolveContext): String = name
 
@@ -63,8 +59,4 @@ class KtSwiftParameterSymbol : KtSwiftImmediateSymbol, SwiftParameterSymbol {
     //todo [medvedev]???
     override val modifiers: SwiftModifierInfo
         get() = SwiftModifierInfo.EMPTY
-
-    fun setType(type: SwiftType) {
-        this.type = type
-    }
 }

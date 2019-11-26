@@ -22,7 +22,7 @@ abstract class KtOCLazySymbol<State : KtLazySymbol.StubState, Stb : Stub<*>> : K
         stub: Stb,
         project: Project,
         file: VirtualFile
-    ) : super(stub, project) {
+    ) : super(stub, project, stub.name) {
         this.file = file
     }
 

@@ -12,8 +12,8 @@ abstract class KtImmediateSymbol : KtSymbol {
     private lateinit var name: String
     private var offset: Long
 
-    constructor(stub: Stub<*>) {
-        this.name = stub.name
+    constructor(stub: Stub<*>, name: String) {
+        this.name = name
         this.offset = stub.offset
     }
 

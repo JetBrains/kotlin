@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater
 
 abstract class KtLazySymbol<State : KtLazySymbol.StubState, Stb : Stub<*>> : KtSymbol {
-
     private lateinit var name: String
 
     @Volatile
@@ -23,7 +22,7 @@ abstract class KtLazySymbol<State : KtLazySymbol.StubState, Stb : Stub<*>> : KtS
     constructor(
         stub: Stb,
         project: Project,
-        name: String = stub.name
+        name: String
     ) {
         this.name = name
         this.stubAndProject = Pair(stub, project)

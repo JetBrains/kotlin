@@ -19,6 +19,7 @@ abstract class KtSwiftLazySymbol<State : KtLazySymbol.StubState, Stb : Stub<*>> 
     constructor(stub: Stb, project: Project, file: VirtualFile) : super(stub, project, stub.swiftName) {
         this.file = file
         this.project = project
+        this.objcName = stub.name
     }
 
     constructor() : super()
@@ -46,8 +47,8 @@ abstract class KtSwiftLazySymbol<State : KtLazySymbol.StubState, Stb : Stub<*>> 
         get() = publicSwiftAttributes //todo???
 
     override val shortObjcName: String?
-        get() = name //todo???
+        get() = objcName //todo???
 
-    override val objcName: String?
-        get() = name //todo???
+    final override lateinit var objcName: String //todo???
+        private set
 }
