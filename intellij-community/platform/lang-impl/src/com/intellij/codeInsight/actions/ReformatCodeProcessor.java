@@ -4,6 +4,7 @@ package com.intellij.codeInsight.actions;
 
 import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.formatting.FormattingProgressTask;
+import com.intellij.lang.Language;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.SelectionModel;
@@ -12,7 +13,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.*;
 import com.intellij.psi.codeStyle.ChangedRangesInfo;
 import com.intellij.psi.codeStyle.CodeStyleManager;
@@ -139,12 +139,13 @@ public class ReformatCodeProcessor extends AbstractLayoutCodeProcessor {
     if (file.isValid()) return file;
 
     VirtualFile virtualFile = file.getVirtualFile();
-    if (!virtualFile.isValid()) {
-      virtualFile = VirtualFileManager.getInstance().findFileByUrl(virtualFile.getUrl());
-      if (virtualFile == null) return null;
-    }
+    if (!virtualFile.isValid()) return null;
 
-    return file.getManager().findFile(virtualFile);
+    FileViewProvider provider = file.getManager().findViewProvider(virtualFile);
+    if (provider == null) return null;
+
+    Language language = file.getLanguage();
+    return provider.hasLanguage(language) ? provider.getPsi(language) : provider.getPsi(provider.getBaseLanguage());
   }
 
   private static void assertFileIsValid(@NotNull PsiFile file) {
