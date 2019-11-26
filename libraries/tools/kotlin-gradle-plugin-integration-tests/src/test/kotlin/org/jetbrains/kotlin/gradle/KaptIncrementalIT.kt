@@ -209,11 +209,11 @@ open class KaptIncrementalIT : BaseGradleIT() {
 
         project.build("build") {
             assertSuccessful()
-            assertKapt3FullyExecuted()
+            assertFileExists("$kapt3StubsPath/bar/UseBKt.java")
         }
 
         with(project.projectDir) {
-            resolve("src/main/java").deleteRecursively()
+            resolve("src/").deleteRecursively()
             resolve("src/main/java/bar").mkdirs()
             resolve("src/main/java/bar/MyClass.java").writeText(
                 """
@@ -226,8 +226,13 @@ open class KaptIncrementalIT : BaseGradleIT() {
         project.build("build") {
             assertSuccessful()
 
-            // Make sure all stubs are removed
-            assertEquals(emptyList(), fileInWorkingDir(kapt3StubsPath).walk().filter { it.extension == "java" }.toList())
+            // Make sure all generated stubs are removed (except for NonExistentClass).
+            assertEquals(
+                listOf(fileInWorkingDir("$kapt3StubsPath/error/NonExistentClass.java").canonicalPath),
+                fileInWorkingDir(kapt3StubsPath).walk().filter { it.extension == "java" }.map { it.canonicalPath }.toList()
+            )
+            // Make sure all compiled kt files are cleaned up.
+            assertEquals(emptyList(), fileInWorkingDir("build/classes/kotlin").walk().filter { it.extension == "class" }.toList())
         }
     }
 
