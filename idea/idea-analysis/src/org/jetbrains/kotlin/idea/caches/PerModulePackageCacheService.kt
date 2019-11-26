@@ -71,6 +71,13 @@ class KotlinPackageContentModificationListener(private val project: Project): Di
                             val vFile = it.file!!
                             vFile.isDirectory || FileTypeRegistry.getInstance().getFileTypeByFileName(vFile.nameSequence) == KotlinFileType.INSTANCE
                         }
+                        .filter {
+                            when (val origin = it.requestor) {
+                                is Project -> origin == project
+                                is PsiManager -> origin.project == project
+                                else -> true
+                            }
+                        }
                         .forEach { event -> service.notifyPackageChange(event) }
                 }
             }
