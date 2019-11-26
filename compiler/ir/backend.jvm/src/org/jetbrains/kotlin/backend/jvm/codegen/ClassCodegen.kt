@@ -75,7 +75,7 @@ open class ClassCodegen protected constructor(
         val descriptor = WrappedClassDescriptor()
         descriptor.bind(irClass)
         return state.factory.newVisitor(
-            OtherOrigin(descriptor.psiElement, descriptor),
+            irClass.OtherOrigin,
             type,
             irClass.fileParent.loadSourceFilesInfo()
         )
