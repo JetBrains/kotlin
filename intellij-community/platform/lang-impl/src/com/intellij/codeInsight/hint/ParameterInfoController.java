@@ -830,6 +830,7 @@ public class ParameterInfoController extends UserDataHolderBase implements Visib
   public static class Model {
     public final List<SignatureItemModel> signatures = new ArrayList<>();
     public int current = -1;
+    public int highlightedSignature = -1;
     public TextRange range;
     public Editor editor;
     public Project project;

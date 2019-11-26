@@ -316,6 +316,10 @@ public class ParameterInfoComponent extends JPanel {
       context.i = i;
       final Object o = myObjects[i];
 
+      boolean isHighlighted = myObjects[i].equals(myHighlighted);
+      if (isHighlighted) {
+        context.result.highlightedSignature = i;
+      }
       if (singleParameterInfo && myObjects.length > 1 && !context.isHighlighted()) {
         setVisible(i, false);
       }
