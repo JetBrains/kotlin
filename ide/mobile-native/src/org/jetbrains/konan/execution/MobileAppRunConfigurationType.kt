@@ -7,6 +7,7 @@ package org.jetbrains.konan.execution
 
 import com.intellij.execution.configurations.ConfigurationFactory
 import com.intellij.execution.configurations.ConfigurationTypeBase
+import com.intellij.execution.configurations.ConfigurationTypeUtil
 import com.intellij.execution.configurations.RunConfiguration
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.project.Project
@@ -23,5 +24,12 @@ class MobileAppRunConfigurationType : ConfigurationTypeBase(
             override fun createTemplateConfiguration(project: Project): RunConfiguration =
                 MobileAppRunConfiguration(project, this, name)
         })
+    }
+
+    val factory: ConfigurationFactory get() = configurationFactories[0]
+
+    companion object {
+        val instance: MobileAppRunConfigurationType
+            get() = ConfigurationTypeUtil.findConfigurationType(MobileAppRunConfigurationType::class.java)
     }
 }

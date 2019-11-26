@@ -95,6 +95,8 @@ abstract class MobileRunConfiguration(project: Project, factory: ConfigurationFa
         result._module = RunConfigurationModule(project).also { it.module = this.module }
         return result
     }
+
+    companion object
 }
 
 class MobileAppRunConfiguration(project: Project, factory: ConfigurationFactory, name: String) :

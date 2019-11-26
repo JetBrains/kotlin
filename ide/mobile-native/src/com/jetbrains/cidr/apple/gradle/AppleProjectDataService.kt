@@ -10,13 +10,17 @@ import com.intellij.openapi.externalSystem.service.project.manage.AbstractProjec
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.jetbrains.cidr.apple.gradle.AppleProjectResolver.Companion.APPLE_PROJECT
+import org.jetbrains.konan.execution.MobileRunConfiguration
+import org.jetbrains.konan.execution.createDefaults
 import org.jetbrains.konan.gradle.forEachModule
+import org.jetbrains.konan.isApple
+import org.jetbrains.konan.isMobileAppMain
 
 class AppleProjectDataService : AbstractProjectDataService<AppleProjectModel, Module>() {
     override fun getTargetDataKey(): Key<AppleProjectModel> = APPLE_PROJECT
 
     override fun postProcess(
-        toImport: MutableCollection<DataNode<AppleProjectModel>>,
+        toImport: Collection<DataNode<AppleProjectModel>>,
         projectData: ProjectData?,
         project: Project,
         modelsProvider: IdeModifiableModelsProvider
@@ -25,12 +29,14 @@ class AppleProjectDataService : AbstractProjectDataService<AppleProjectModel, Mo
     }
 
     override fun onSuccessImport(
-        imported: MutableCollection<DataNode<AppleProjectModel>>,
+        imported: Collection<DataNode<AppleProjectModel>>,
         projectData: ProjectData?,
         project: Project,
         modelsProvider: IdeModelsProvider
     ) {
-        // TODO Need to create run configurations?
+        val modules = modelsProvider.getModules(projectData ?: return)
+            .filter { it.isMobileAppMain && it.isApple }
+        MobileRunConfiguration.createDefaults(project, modules)
     }
 
     companion object {
