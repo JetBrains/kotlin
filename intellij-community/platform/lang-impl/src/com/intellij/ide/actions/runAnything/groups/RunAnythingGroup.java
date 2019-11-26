@@ -3,14 +3,13 @@ package com.intellij.ide.actions.runAnything.groups;
 
 import com.intellij.ide.actions.runAnything.items.RunAnythingItem;
 import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.psi.codeStyle.NameUtil;
 import com.intellij.util.Function;
 import gnu.trove.TIntArrayList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -57,18 +56,17 @@ public abstract class RunAnythingGroup {
 
   /**
    * Gets current group items to add into the main list.
-   *
    * @param dataContext
    * @param model               needed to avoid adding duplicates into the list
    * @param pattern             input search string
    * @param isInsertionMode     if true gets {@link #getMaxItemsToInsert()} group items, else limits to {@link #getMaxInitialItems()}
-   * @param cancellationChecker checks 'load more' calculation process to be cancelled
+   * @param progressIndicator   checks 'load more' calculation process to be cancelled
    */
   public abstract SearchResult getItems(@NotNull DataContext dataContext,
-                                        @NotNull DefaultListModel model,
+                                        @NotNull List<RunAnythingItem> model,
                                         @NotNull String pattern,
                                         boolean isInsertionMode,
-                                        @NotNull Runnable cancellationChecker);
+                                        @NotNull ProgressIndicator progressIndicator);
 
   /**
    * Resets current group 'load more..' {@link #myMoreIndex} index.
@@ -195,27 +193,22 @@ public abstract class RunAnythingGroup {
 
   /**
    * Adds current group matched items into the list.
-   *
    * @param dataContext
    * @param model               needed to avoid adding duplicates into the list
    * @param pattern             input search string
-   * @param cancellationChecker runnable that should throw a {@code ProcessCancelledException} if 'load more' process was cancelled
+   * @param progressIndicator   checks if 'load more' process was cancelled
    */
   public final synchronized void collectItems(@NotNull DataContext dataContext,
-                                              @NotNull DefaultListModel model,
+                                              @NotNull List<RunAnythingItem> model,
                                               @NotNull String pattern,
-                                              @NotNull Runnable cancellationChecker) {
-    SearchResult result = getItems(dataContext, model, pattern, false, cancellationChecker);
+                                              @NotNull ProgressIndicator progressIndicator) {
+    SearchResult result = getItems(dataContext, model, pattern, false, progressIndicator);
 
-    cancellationChecker.run();
+    progressIndicator.checkCanceled();
     if (!result.isEmpty()) {
-      ApplicationManager.getApplication().invokeLater(() -> {
-        cancellationChecker.run();
-
-        myTitleIndex = model.size();
-        result.forEach(model::addElement);
-        myMoreIndex = result.myNeedMore ? model.getSize() - 1 : -1;
-      });
+      myTitleIndex = model.size();
+      model.addAll(result);
+      myMoreIndex = result.myNeedMore ? model.size() - 1 : -1;
     }
   }
 
