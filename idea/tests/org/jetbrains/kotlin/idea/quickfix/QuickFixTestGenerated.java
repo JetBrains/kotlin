@@ -2838,9 +2838,19 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/convertToAnonymousObject/labeledReturn.kt");
         }
 
+        @TestMetadata("lambdaInParentheses.kt")
+        public void testLambdaInParentheses() throws Exception {
+            runTest("idea/testData/quickfix/convertToAnonymousObject/lambdaInParentheses.kt");
+        }
+
         @TestMetadata("multiMethod.kt")
         public void testMultiMethod() throws Exception {
             runTest("idea/testData/quickfix/convertToAnonymousObject/multiMethod.kt");
+        }
+
+        @TestMetadata("noLambda.kt")
+        public void testNoLambda() throws Exception {
+            runTest("idea/testData/quickfix/convertToAnonymousObject/noLambda.kt");
         }
 
         @TestMetadata("parameter.kt")
