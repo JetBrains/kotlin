@@ -31,7 +31,7 @@ include ':backend.native:tests'
 include ':backend.native:debugger-tests'
 include ':utilities'
 
-if (hasProperty("konan.home") || hasProperty("org.jetbrains.kotlin.native.home")) {
+if (hasProperty("org.jetbrains.kotlin.native.home") || hasProperty("kotlin.native.home")) {
     include ':performance'
     include ':performance:ring'
     include ':performance:cinterop'
