@@ -89,6 +89,12 @@ abstract class MobileRunConfiguration(project: Project, factory: ConfigurationFa
         _module.readExternal(element)
         _executableData = ExecutableData.loadExternal(element)
     }
+
+    override fun clone(): MobileRunConfiguration {
+        val result = super.clone() as MobileRunConfiguration
+        result._module = RunConfigurationModule(project).also { it.module = this.module }
+        return result
+    }
 }
 
 class MobileAppRunConfiguration(project: Project, factory: ConfigurationFactory, name: String) :

@@ -86,7 +86,7 @@ class MobileTestRunConfiguration(project: Project, factory: ConfigurationFactory
         testData.checkData()
     }
 
-    override fun clone(): RunConfiguration {
+    override fun clone(): MobileTestRunConfiguration {
         val result = super.clone() as MobileTestRunConfiguration
         result.testData = testData.cloneForConfiguration(result) as CidrTestRunConfigurationData<MobileTestRunConfiguration>
         return result
