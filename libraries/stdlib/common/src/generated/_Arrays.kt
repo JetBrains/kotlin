@@ -9640,6 +9640,8 @@ public fun CharArray.withIndex(): Iterable<IndexedValue<Char>> {
  * Returns a list containing only distinct elements from the given array.
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
+ * 
+ * @sample samples.collections.Collections.Transformations.distinctAndDistinctBy
  */
 public fun <T> Array<out T>.distinct(): List<T> {
     return this.toMutableSet().toList()
@@ -9649,6 +9651,8 @@ public fun <T> Array<out T>.distinct(): List<T> {
  * Returns a list containing only distinct elements from the given array.
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
+ * 
+ * @sample samples.collections.Collections.Transformations.distinctAndDistinctBy
  */
 public fun ByteArray.distinct(): List<Byte> {
     return this.toMutableSet().toList()
@@ -9658,6 +9662,8 @@ public fun ByteArray.distinct(): List<Byte> {
  * Returns a list containing only distinct elements from the given array.
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
+ * 
+ * @sample samples.collections.Collections.Transformations.distinctAndDistinctBy
  */
 public fun ShortArray.distinct(): List<Short> {
     return this.toMutableSet().toList()
@@ -9667,6 +9673,8 @@ public fun ShortArray.distinct(): List<Short> {
  * Returns a list containing only distinct elements from the given array.
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
+ * 
+ * @sample samples.collections.Collections.Transformations.distinctAndDistinctBy
  */
 public fun IntArray.distinct(): List<Int> {
     return this.toMutableSet().toList()
@@ -9676,6 +9684,8 @@ public fun IntArray.distinct(): List<Int> {
  * Returns a list containing only distinct elements from the given array.
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
+ * 
+ * @sample samples.collections.Collections.Transformations.distinctAndDistinctBy
  */
 public fun LongArray.distinct(): List<Long> {
     return this.toMutableSet().toList()
@@ -9685,6 +9695,8 @@ public fun LongArray.distinct(): List<Long> {
  * Returns a list containing only distinct elements from the given array.
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
+ * 
+ * @sample samples.collections.Collections.Transformations.distinctAndDistinctBy
  */
 public fun FloatArray.distinct(): List<Float> {
     return this.toMutableSet().toList()
@@ -9694,6 +9706,8 @@ public fun FloatArray.distinct(): List<Float> {
  * Returns a list containing only distinct elements from the given array.
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
+ * 
+ * @sample samples.collections.Collections.Transformations.distinctAndDistinctBy
  */
 public fun DoubleArray.distinct(): List<Double> {
     return this.toMutableSet().toList()
@@ -9703,6 +9717,8 @@ public fun DoubleArray.distinct(): List<Double> {
  * Returns a list containing only distinct elements from the given array.
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
+ * 
+ * @sample samples.collections.Collections.Transformations.distinctAndDistinctBy
  */
 public fun BooleanArray.distinct(): List<Boolean> {
     return this.toMutableSet().toList()
@@ -9712,6 +9728,8 @@ public fun BooleanArray.distinct(): List<Boolean> {
  * Returns a list containing only distinct elements from the given array.
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
+ * 
+ * @sample samples.collections.Collections.Transformations.distinctAndDistinctBy
  */
 public fun CharArray.distinct(): List<Char> {
     return this.toMutableSet().toList()
@@ -9722,6 +9740,8 @@ public fun CharArray.distinct(): List<Char> {
  * having distinct keys returned by the given [selector] function.
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
+ * 
+ * @sample samples.collections.Collections.Transformations.distinctAndDistinctBy
  */
 public inline fun <T, K> Array<out T>.distinctBy(selector: (T) -> K): List<T> {
     val set = HashSet<K>()
@@ -9739,6 +9759,8 @@ public inline fun <T, K> Array<out T>.distinctBy(selector: (T) -> K): List<T> {
  * having distinct keys returned by the given [selector] function.
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
+ * 
+ * @sample samples.collections.Collections.Transformations.distinctAndDistinctBy
  */
 public inline fun <K> ByteArray.distinctBy(selector: (Byte) -> K): List<Byte> {
     val set = HashSet<K>()
@@ -9756,6 +9778,8 @@ public inline fun <K> ByteArray.distinctBy(selector: (Byte) -> K): List<Byte> {
  * having distinct keys returned by the given [selector] function.
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
+ * 
+ * @sample samples.collections.Collections.Transformations.distinctAndDistinctBy
  */
 public inline fun <K> ShortArray.distinctBy(selector: (Short) -> K): List<Short> {
     val set = HashSet<K>()
@@ -9773,6 +9797,8 @@ public inline fun <K> ShortArray.distinctBy(selector: (Short) -> K): List<Short>
  * having distinct keys returned by the given [selector] function.
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
+ * 
+ * @sample samples.collections.Collections.Transformations.distinctAndDistinctBy
  */
 public inline fun <K> IntArray.distinctBy(selector: (Int) -> K): List<Int> {
     val set = HashSet<K>()
@@ -9790,6 +9816,8 @@ public inline fun <K> IntArray.distinctBy(selector: (Int) -> K): List<Int> {
  * having distinct keys returned by the given [selector] function.
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
+ * 
+ * @sample samples.collections.Collections.Transformations.distinctAndDistinctBy
  */
 public inline fun <K> LongArray.distinctBy(selector: (Long) -> K): List<Long> {
     val set = HashSet<K>()
@@ -9807,6 +9835,8 @@ public inline fun <K> LongArray.distinctBy(selector: (Long) -> K): List<Long> {
  * having distinct keys returned by the given [selector] function.
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
+ * 
+ * @sample samples.collections.Collections.Transformations.distinctAndDistinctBy
  */
 public inline fun <K> FloatArray.distinctBy(selector: (Float) -> K): List<Float> {
     val set = HashSet<K>()
@@ -9824,6 +9854,8 @@ public inline fun <K> FloatArray.distinctBy(selector: (Float) -> K): List<Float>
  * having distinct keys returned by the given [selector] function.
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
+ * 
+ * @sample samples.collections.Collections.Transformations.distinctAndDistinctBy
  */
 public inline fun <K> DoubleArray.distinctBy(selector: (Double) -> K): List<Double> {
     val set = HashSet<K>()
@@ -9841,6 +9873,8 @@ public inline fun <K> DoubleArray.distinctBy(selector: (Double) -> K): List<Doub
  * having distinct keys returned by the given [selector] function.
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
+ * 
+ * @sample samples.collections.Collections.Transformations.distinctAndDistinctBy
  */
 public inline fun <K> BooleanArray.distinctBy(selector: (Boolean) -> K): List<Boolean> {
     val set = HashSet<K>()
@@ -9858,6 +9892,8 @@ public inline fun <K> BooleanArray.distinctBy(selector: (Boolean) -> K): List<Bo
  * having distinct keys returned by the given [selector] function.
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
+ * 
+ * @sample samples.collections.Collections.Transformations.distinctAndDistinctBy
  */
 public inline fun <K> CharArray.distinctBy(selector: (Char) -> K): List<Char> {
     val set = HashSet<K>()

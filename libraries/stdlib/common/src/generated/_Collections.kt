@@ -1422,6 +1422,8 @@ public fun <T> Iterable<T>.withIndex(): Iterable<IndexedValue<T>> {
  * Returns a list containing only distinct elements from the given collection.
  * 
  * The elements in the resulting list are in the same order as they were in the source collection.
+ * 
+ * @sample samples.collections.Collections.Transformations.distinctAndDistinctBy
  */
 public fun <T> Iterable<T>.distinct(): List<T> {
     return this.toMutableSet().toList()
@@ -1432,6 +1434,8 @@ public fun <T> Iterable<T>.distinct(): List<T> {
  * having distinct keys returned by the given [selector] function.
  * 
  * The elements in the resulting list are in the same order as they were in the source collection.
+ * 
+ * @sample samples.collections.Collections.Transformations.distinctAndDistinctBy
  */
 public inline fun <T, K> Iterable<T>.distinctBy(selector: (T) -> K): List<T> {
     val set = HashSet<K>()
