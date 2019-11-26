@@ -138,7 +138,6 @@ fun KotlinCoreEnvironment.registerJavacIfNeeded(
     return true
 }
 
-
 fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerArguments) {
 
     put(JVMConfigurationKeys.PARAMETERS_METADATA, arguments.javaParameters)
@@ -198,4 +197,12 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
     put(JVMConfigurationKeys.USE_SINGLE_MODULE, arguments.singleModule)
 
     arguments.declarationsOutputPath?.let { put(JVMConfigurationKeys.DECLARATIONS_JSON_PATH, it) }
+}
+
+fun CompilerConfiguration.configureKlibPaths(arguments: K2JVMCompilerArguments) {
+    assert(arguments.useIR || arguments.klibLibraries == null) { "Klib libraries can only be used with IR backend" }
+    arguments.klibLibraries?.split(File.pathSeparator.toRegex())
+        ?.toTypedArray()
+        ?.filterNot { it.isEmpty() }
+        ?.let { put(JVMConfigurationKeys.KLIB_PATHS, it) }
 }

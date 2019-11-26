@@ -75,6 +75,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         configuration.configureExplicitContentRoots(arguments)
         configuration.configureStandardLibs(paths, arguments)
         configuration.configureAdvancedJvmOptions(arguments)
+        configuration.configureKlibPaths(arguments)
 
         if (arguments.buildFile == null && !arguments.version  && !arguments.allowNoSourceFiles &&
             (arguments.script || arguments.expression != null || arguments.freeArgs.isEmpty())) {

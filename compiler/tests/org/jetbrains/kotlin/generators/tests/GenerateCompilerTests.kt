@@ -513,7 +513,6 @@ fun main(args: Array<String>) {
         }
     }
 
-
     testGroup("compiler/fir/psi2fir/tests", "compiler/fir/psi2fir/testData") {
         testClass<AbstractRawFirBuilderTestCase> {
             model("rawBuilder", testMethod = "doRawFirTest")

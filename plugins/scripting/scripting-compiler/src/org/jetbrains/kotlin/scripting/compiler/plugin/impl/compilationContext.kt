@@ -181,6 +181,8 @@ private fun CompilerConfiguration.updateWithCompilerOptions(
     setupJvmSpecificArguments(compilerArguments)
 
     configureAdvancedJvmOptions(compilerArguments)
+
+    configureKlibPaths(compilerArguments)
 }
 
 private fun ScriptCompilationConfiguration.withUpdatesFromCompilerConfiguration(kotlinCompilerConfiguration: CompilerConfiguration) =

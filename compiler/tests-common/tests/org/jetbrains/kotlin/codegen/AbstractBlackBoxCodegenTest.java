@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.codegen.ir.AbstractFirBlackBoxCodegenTest;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.io.File;
@@ -33,9 +32,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
             @NotNull List<TestFile> files,
             boolean unexpectedBehaviour
     ) throws Exception {
-        boolean isIgnored = InTextDirectivesUtils.isIgnoredTarget(getBackend(), wholeFile) ||
-                            (this instanceof AbstractFirBlackBoxCodegenTest &&
-                             InTextDirectivesUtils.isDirectiveDefined(FileUtil.loadFile(wholeFile), "IGNORE_BACKEND_FIR: JVM_IR"));
+        boolean isIgnored = isIgnoredTarget(wholeFile);
 
         compile(files, !isIgnored, false);
 
@@ -141,5 +138,16 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
         return CodegenUtil.getMemberDeclarationsToGenerate(file).isEmpty()
                ? null
                : JvmFileClassUtil.getFileClassInfoNoResolve(file).getFacadeClassFqName().asString();
+    }
+
+    protected boolean isIgnoredTarget(@NotNull File wholeFile) {
+        try {
+            return InTextDirectivesUtils.isIgnoredTarget(getBackend(), wholeFile) ||
+                   (this instanceof AbstractFirBlackBoxCodegenTest &&
+                    InTextDirectivesUtils.isDirectiveDefined(FileUtil.loadFile(wholeFile), "IGNORE_BACKEND_FIR: JVM_IR"));
+        }
+        catch (Exception e) {
+            throw ExceptionUtilsKt.rethrow(e);
+        }
     }
 }
