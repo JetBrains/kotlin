@@ -76,12 +76,7 @@ class SamConversionToAnonymousObjectIntention : SelfTargetingRangeIntention<KtCa
     }
 
     companion object {
-        fun convertToAnonymousObject(call: KtCallExpression, functionDescriptor: FunctionDescriptor, functionName: String) {
-            val lambda = getLambdaExpression(call) ?: return
-            convertToAnonymousObject(call, lambda, functionDescriptor, functionName)
-        }
-
-        private fun convertToAnonymousObject(
+        fun convertToAnonymousObject(
             call: KtCallExpression,
             lambda: KtLambdaExpression,
             functionDescriptor: FunctionDescriptor,
@@ -106,7 +101,7 @@ class SamConversionToAnonymousObjectIntention : SelfTargetingRangeIntention<KtCa
             }
         }
 
-        private fun getLambdaExpression(element: KtCallExpression): KtLambdaExpression? {
+        fun getLambdaExpression(element: KtCallExpression): KtLambdaExpression? {
             return element.lambdaArguments.firstOrNull()?.getLambdaExpression()
                 ?: element.valueArguments.firstOrNull()?.getArgumentExpression() as? KtLambdaExpression
         }
