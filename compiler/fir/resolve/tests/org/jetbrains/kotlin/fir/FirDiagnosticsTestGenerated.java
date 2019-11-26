@@ -878,6 +878,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/resolve/testData/resolve/problems/javaAccessorConversion.kt");
         }
 
+        @TestMetadata("localFunctionsHiding.kt")
+        public void testLocalFunctionsHiding() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/problems/localFunctionsHiding.kt");
+        }
+
         @TestMetadata("nestedClassContructor.kt")
         public void testNestedClassContructor() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/problems/nestedClassContructor.kt");
