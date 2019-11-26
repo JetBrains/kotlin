@@ -17,11 +17,11 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
-import com.intellij.testFramework.LightIdeaTestCase;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
+import org.jetbrains.kotlin.idea.test.KotlinLightIdeaTestCase;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
@@ -33,7 +33,7 @@ import java.util.Map;
 
 // Based on from com.intellij.psi.formatter.java.AbstractJavaFormatterTest
 @SuppressWarnings("UnusedDeclaration")
-public abstract class AbstractFormatterTest extends LightIdeaTestCase {
+public abstract class AbstractFormatterTest extends KotlinLightIdeaTestCase {
 
     protected enum Action {REFORMAT, INDENT}
 
