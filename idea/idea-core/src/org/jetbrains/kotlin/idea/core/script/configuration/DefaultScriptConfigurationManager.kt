@@ -9,7 +9,6 @@ import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.extensions.ExtensionPointName
-import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
@@ -18,12 +17,9 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.jetbrains.kotlin.idea.core.script.*
 import org.jetbrains.kotlin.idea.core.script.configuration.DefaultScriptConfigurationManagerExtensions.LOADER
-import org.jetbrains.kotlin.idea.core.script.configuration.DefaultScriptConfigurationManagerExtensions.LISTENER
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationFileAttributeCache
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationMemoryCache
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationSnapshot
-import org.jetbrains.kotlin.idea.core.script.configuration.listener.DefaultScriptChangeListener
-import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptChangeListener
 import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptChangesNotifier
 import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptConfigurationUpdater
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.DefaultScriptConfigurationLoader
@@ -119,14 +115,7 @@ internal class DefaultScriptConfigurationManager(project: Project) :
             yield(defaultLoader)
         }
 
-    private val defaultListener = DefaultScriptChangeListener()
-    private val listeners: Sequence<ScriptChangeListener>
-        get() = sequence {
-            yieldAll(LISTENER.getPoint(project).extensionList)
-            yield(defaultListener)
-        }
-
-    private val notifier = ScriptChangesNotifier(project, updater, listeners)
+    private val notifier = ScriptChangesNotifier(project, updater)
 
     private val saveLock = ReentrantLock()
 
@@ -322,9 +311,6 @@ internal class DefaultScriptConfigurationManager(project: Project) :
 object DefaultScriptConfigurationManagerExtensions {
     val LOADER: ExtensionPointName<ScriptConfigurationLoader> =
         ExtensionPointName.create("org.jetbrains.kotlin.scripting.idea.loader")
-
-    val LISTENER: ExtensionPointName<ScriptChangeListener> =
-        ExtensionPointName.create("org.jetbrains.kotlin.scripting.idea.listener")
 }
 
 val ScriptConfigurationManager.testingBackgroundExecutor
