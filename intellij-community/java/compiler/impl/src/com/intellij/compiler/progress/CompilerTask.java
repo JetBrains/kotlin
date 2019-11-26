@@ -414,6 +414,12 @@ public class CompilerTask extends Task.Backgroundable {
     queue();
   }
 
+  public void run(Runnable compileWork, Runnable restartWork, ProgressIndicator progressIndicator) {
+    myCompileWork = compileWork;
+    myRestartWork = restartWork;
+    run(progressIndicator);
+  }
+
   private void updateProgressText() {
   }
 

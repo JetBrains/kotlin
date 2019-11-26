@@ -18,6 +18,7 @@ import com.intellij.openapi.module.EffectiveLanguageLevelUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressIndicatorProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -55,8 +56,10 @@ import org.jetbrains.jps.model.java.JavaSourceRootType;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
+import java.awt.*;
 import java.lang.ref.WeakReference;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static org.jetbrains.jps.api.CmdlineRemoteProto.Message.ControllerMessage.ParametersMessage.TargetTypeBuildScope;
@@ -107,8 +110,8 @@ public class CompileDriver {
 
     final Ref<ExitStatus> result = new Ref<>();
 
-    task.start(() -> {
-      final ProgressIndicator indicator = compileContext.getProgressIndicator();
+    Runnable compileWork = () -> {
+      ProgressIndicator indicator = compileContext.getProgressIndicator();
       if (indicator.isCanceled() || myProject.isDisposed()) {
         return;
       }
@@ -131,7 +134,15 @@ public class CompileDriver {
           CompilerCacheManager.getInstance(myProject).flushCaches();
         }
       }
-    }, null);
+    };
+
+    ProgressIndicatorProvider indicatorProvider = ProgressIndicatorProvider.getInstance();
+    if (!EventQueue.isDispatchThread() && indicatorProvider.getProgressIndicator() != null) {
+      // if called from background process on pooled thread, run synchronously
+      task.run(compileWork, null, indicatorProvider.getProgressIndicator());
+    } else {
+      task.start(compileWork, null);
+    }
 
     if (LOG.isDebugEnabled()) {
       LOG.debug("isUpToDate operation finished");
