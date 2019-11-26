@@ -153,7 +153,10 @@ class FirClassSubstitutionScope(
             }
         }
 
-        if (!wereChangesInTypeParameters) return Pair(member.typeParameters, substitutor)
+        // TODO: Uncomment when problem from org.jetbrains.kotlin.fir.Fir2IrTextTestGenerated.Declarations.Parameters.testDelegatedMembers is gone
+        // The problem is that Fir2Ir thinks that type parameters in fake override are the same as for original
+        // While common Ir contracts expect them to be different
+        // if (!wereChangesInTypeParameters) return Pair(member.typeParameters, substitutor)
 
         return Pair(newTypeParameters, ChainedSubstitutor(substitutor, additionalSubstitutor))
     }
