@@ -51,9 +51,9 @@ FILE fqName:<root> fileName:/samConversionInGenericConstructorCall_NI.kt
             RETURN type=kotlin.Nothing from='public final fun <get-j12> (): <root>.J<T1 of <root>.Outer, T2 of <root>.Outer.Inner> declared in <root>.Outer.Inner'
               GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:j12 type:<root>.J<T1 of <root>.Outer, T2 of <root>.Outer.Inner> visibility:private [final]' type=<root>.J<T1 of <root>.Outer, T2 of <root>.Outer.Inner> origin=null
                 receiver: GET_VAR '<this>: <root>.Outer.Inner<T2 of <root>.Outer.Inner, T1 of <root>.Outer> declared in <root>.Outer.Inner.<get-j12>' type=<root>.Outer.Inner<T2 of <root>.Outer.Inner, T1 of <root>.Outer> origin=null
-      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override]
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
         overridden:
-          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
         VALUE_PARAMETER name:other index:0 type:kotlin.Any?
       FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -64,9 +64,9 @@ FILE fqName:<root> fileName:/samConversionInGenericConstructorCall_NI.kt
         overridden:
           public open fun toString (): kotlin.String declared in kotlin.Any
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]

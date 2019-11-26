@@ -54,14 +54,14 @@ FILE fqName:<root> fileName:/temporaryInEnumEntryInitializer.kt
       overridden:
         public final fun getDeclaringClass (): java.lang.Class<E of kotlin.Enum?>? declared in kotlin.Enum
       $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.En>
-    FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.En>, other:<root>.En) returnType:kotlin.Int [fake_override]
+    FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.En>, other:<root>.En) returnType:kotlin.Int [fake_override,operator]
       overridden:
-        public final fun compareTo (other: E of kotlin.Enum): kotlin.Int declared in kotlin.Enum
+        public final fun compareTo (other: E of kotlin.Enum): kotlin.Int [operator] declared in kotlin.Enum
       $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.En>
       VALUE_PARAMETER name:other index:0 type:<root>.En
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.En>, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.En>, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public final fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Enum
+        public final fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Enum
       $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.En>
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.En>) returnType:kotlin.Int [fake_override]

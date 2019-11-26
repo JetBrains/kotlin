@@ -51,9 +51,9 @@ FILE fqName:<root> fileName:/genericPropertyRef.kt
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:text type:kotlin.String? visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.Value declared in <root>.Value.<set-text>' type=<root>.Value origin=null
             value: GET_VAR '<set-?>: kotlin.String? declared in <root>.Value.<set-text>' type=kotlin.String? origin=null
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -73,7 +73,7 @@ FILE fqName:<root> fileName:/genericPropertyRef.kt
       correspondingProperty: PROPERTY name:additionalText visibility:public modality:FINAL [delegated,val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-additionalText> (): kotlin.Int declared in <root>'
-          CALL 'public final fun getValue (t: kotlin.Any?, p: kotlin.Any): kotlin.Int declared in <root>.DVal' type=kotlin.Int origin=null
+          CALL 'public final fun getValue (t: kotlin.Any?, p: kotlin.Any): kotlin.Int [operator] declared in <root>.DVal' type=kotlin.Int origin=null
             $this: GET_FIELD 'FIELD DELEGATE name:additionalText$delegate type:<root>.DVal visibility:private [final,static]' type=<root>.DVal origin=GET_PROPERTY
             t: CONST Null type=kotlin.Nothing? value=null
             p: PROPERTY_REFERENCE 'public final additionalText: kotlin.Int [delegated,val]' field='FIELD DELEGATE name:additionalText$delegate type:<root>.DVal visibility:private [final,static]' getter='public final fun <get-additionalText> (): kotlin.Int declared in <root>' setter=null type=kotlin.reflect.KProperty<*> origin=null
@@ -86,7 +86,7 @@ FILE fqName:<root> fileName:/genericPropertyRef.kt
       correspondingProperty: PROPERTY name:additionalValue visibility:public modality:FINAL [delegated,val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-additionalValue> (): kotlin.Int declared in <root>'
-          CALL 'public final fun getValue (t: kotlin.Any?, p: kotlin.Any): kotlin.Int declared in <root>.DVal' type=kotlin.Int origin=null
+          CALL 'public final fun getValue (t: kotlin.Any?, p: kotlin.Any): kotlin.Int [operator] declared in <root>.DVal' type=kotlin.Int origin=null
             $this: GET_FIELD 'FIELD DELEGATE name:additionalValue$delegate type:<root>.DVal visibility:private [final,static]' type=<root>.DVal origin=GET_PROPERTY
             t: CONST Null type=kotlin.Nothing? value=null
             p: PROPERTY_REFERENCE 'public final additionalValue: kotlin.Int [delegated,val]' field='FIELD DELEGATE name:additionalValue$delegate type:<root>.DVal visibility:private [final,static]' getter='public final fun <get-additionalValue> (): kotlin.Int declared in <root>' setter=null type=kotlin.reflect.KProperty<*> origin=null
@@ -108,16 +108,16 @@ FILE fqName:<root> fileName:/genericPropertyRef.kt
           RETURN type=kotlin.Nothing from='public final fun <get-kmember> (): kotlin.Any declared in <root>.DVal'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:kmember type:kotlin.Any visibility:private [final]' type=kotlin.Any origin=null
               receiver: GET_VAR '<this>: <root>.DVal declared in <root>.DVal.<get-kmember>' type=<root>.DVal origin=null
-    FUN name:getValue visibility:public modality:FINAL <> ($this:<root>.DVal, t:kotlin.Any?, p:kotlin.Any) returnType:kotlin.Int
+    FUN name:getValue visibility:public modality:FINAL <> ($this:<root>.DVal, t:kotlin.Any?, p:kotlin.Any) returnType:kotlin.Int [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.DVal
       VALUE_PARAMETER name:t index:0 type:kotlin.Any?
       VALUE_PARAMETER name:p index:1 type:kotlin.Any
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun getValue (t: kotlin.Any?, p: kotlin.Any): kotlin.Int declared in <root>.DVal'
+        RETURN type=kotlin.Nothing from='public final fun getValue (t: kotlin.Any?, p: kotlin.Any): kotlin.Int [operator] declared in <root>.DVal'
           CONST Int type=kotlin.Int value=42
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]

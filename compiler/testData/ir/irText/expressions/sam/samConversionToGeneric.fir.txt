@@ -22,7 +22,7 @@ FILE fqName:<root> fileName:/samConversionToGeneric.kt
   FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test3 (): kotlin.Unit declared in <root>'
-        CALL 'public open fun bar <X> (j: <root>.J<X of <root>.H.bar?>?): kotlin.Unit declared in <root>.H' type=kotlin.Unit origin=null
+        CALL 'public open fun bar <X> (j: <root>.J<X of <root>.H.bar?>?): kotlin.Unit [operator] declared in <root>.H' type=kotlin.Unit origin=null
           <X>: kotlin.String
           j: FUN_EXPR type=kotlin.Function1<kotlin.String, kotlin.String> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (x:kotlin.String) returnType:kotlin.String
@@ -34,7 +34,7 @@ FILE fqName:<root> fileName:/samConversionToGeneric.kt
     BLOCK_BODY
       TYPE_OP type=<root>.J<kotlin.String> origin=CAST typeOperand=<root>.J<kotlin.String>
         GET_VAR 'a: kotlin.Any declared in <root>.test4' type=kotlin.Any origin=null
-      CALL 'public open fun bar <X> (j: <root>.J<X of <root>.H.bar?>?): kotlin.Unit declared in <root>.H' type=kotlin.Unit origin=null
+      CALL 'public open fun bar <X> (j: <root>.J<X of <root>.H.bar?>?): kotlin.Unit [operator] declared in <root>.H' type=kotlin.Unit origin=null
         <X>: kotlin.String
         j: GET_VAR 'a: kotlin.Any declared in <root>.test4' type=<root>.J<kotlin.String> origin=null
   FUN name:test5 visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit
@@ -42,14 +42,14 @@ FILE fqName:<root> fileName:/samConversionToGeneric.kt
     BLOCK_BODY
       TYPE_OP type=kotlin.Function1<kotlin.String, kotlin.String> origin=CAST typeOperand=kotlin.Function1<kotlin.String, kotlin.String>
         GET_VAR 'a: kotlin.Any declared in <root>.test5' type=kotlin.Any origin=null
-      CALL 'public open fun bar <X> (j: <root>.J<X of <root>.H.bar?>?): kotlin.Unit declared in <root>.H' type=kotlin.Unit origin=null
+      CALL 'public open fun bar <X> (j: <root>.J<X of <root>.H.bar?>?): kotlin.Unit [operator] declared in <root>.H' type=kotlin.Unit origin=null
         <X>: kotlin.String
         j: GET_VAR 'a: kotlin.Any declared in <root>.test5' type=kotlin.Function1<kotlin.String, kotlin.String> origin=null
   FUN name:test6 visibility:public modality:FINAL <T> (a:kotlin.Function1<T of <root>.test6, T of <root>.test6>) returnType:kotlin.Unit
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
     VALUE_PARAMETER name:a index:0 type:kotlin.Function1<T of <root>.test6, T of <root>.test6>
     BLOCK_BODY
-      CALL 'public open fun bar <X> (j: <root>.J<X of <root>.H.bar?>?): kotlin.Unit declared in <root>.H' type=kotlin.Unit origin=null
+      CALL 'public open fun bar <X> (j: <root>.J<X of <root>.H.bar?>?): kotlin.Unit [operator] declared in <root>.H' type=kotlin.Unit origin=null
         <X>: T of <root>.test6
         j: GET_VAR 'a: kotlin.Function1<T of <root>.test6, T of <root>.test6> declared in <root>.test6' type=kotlin.Function1<T of <root>.test6, T of <root>.test6> origin=null
   FUN name:test7 visibility:public modality:FINAL <T> (a:kotlin.Any) returnType:kotlin.Unit
@@ -58,7 +58,7 @@ FILE fqName:<root> fileName:/samConversionToGeneric.kt
     BLOCK_BODY
       TYPE_OP type=kotlin.Function1<T of <root>.test7, T of <root>.test7> origin=CAST typeOperand=kotlin.Function1<T of <root>.test7, T of <root>.test7>
         GET_VAR 'a: kotlin.Any declared in <root>.test7' type=kotlin.Any origin=null
-      CALL 'public open fun bar <X> (j: <root>.J<X of <root>.H.bar?>?): kotlin.Unit declared in <root>.H' type=kotlin.Unit origin=null
+      CALL 'public open fun bar <X> (j: <root>.J<X of <root>.H.bar?>?): kotlin.Unit [operator] declared in <root>.H' type=kotlin.Unit origin=null
         <X>: T of <root>.test7
         j: GET_VAR 'a: kotlin.Any declared in <root>.test7' type=kotlin.Function1<T of <root>.test7, T of <root>.test7> origin=null
   FUN name:test8 visibility:public modality:FINAL <> (efn:kotlin.Function1<kotlin.String, kotlin.String>) returnType:<root>.J<kotlin.String>
@@ -71,12 +71,12 @@ FILE fqName:<root> fileName:/samConversionToGeneric.kt
   FUN name:test9 visibility:public modality:FINAL <> (efn:kotlin.Function1<kotlin.String, kotlin.String>) returnType:kotlin.Unit
     VALUE_PARAMETER name:efn index:0 type:kotlin.Function1<kotlin.String, kotlin.String>
     BLOCK_BODY
-      CALL 'public open fun bar <X> (j: <root>.J<X of <root>.H.bar?>?): kotlin.Unit declared in <root>.H' type=kotlin.Unit origin=null
+      CALL 'public open fun bar <X> (j: <root>.J<X of <root>.H.bar?>?): kotlin.Unit [operator] declared in <root>.H' type=kotlin.Unit origin=null
         <X>: kotlin.String
         j: GET_VAR 'efn: kotlin.Function1<kotlin.String, kotlin.String> declared in <root>.test9' type=kotlin.Function1<kotlin.String, kotlin.String> origin=null
   FUN name:test10 visibility:public modality:FINAL <> (fn:kotlin.Function1<kotlin.Int, kotlin.String>) returnType:kotlin.Unit
     VALUE_PARAMETER name:fn index:0 type:kotlin.Function1<kotlin.Int, kotlin.String>
     BLOCK_BODY
-      CALL 'public open fun bar2x <Y> (j2x: <root>.J2X<Y of <root>.H.bar2x?>?): kotlin.Unit declared in <root>.H' type=kotlin.Unit origin=null
+      CALL 'public open fun bar2x <Y> (j2x: <root>.J2X<Y of <root>.H.bar2x?>?): kotlin.Unit [operator] declared in <root>.H' type=kotlin.Unit origin=null
         <Y>: kotlin.Int
         j2x: GET_VAR 'fn: kotlin.Function1<kotlin.Int, kotlin.String> declared in <root>.test10' type=kotlin.Function1<kotlin.Int, kotlin.String> origin=null

@@ -18,9 +18,9 @@ CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:J1 modality:OPEN visibility:public
       overridden:
         public open fun hashCode (): <unbound IrClassSymbolImpl> declared in kotlin.Any
       $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:<unbound IrClassSymbolImpl> [fake_override]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:<unbound IrClassSymbolImpl> [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): <unbound IrClassSymbolImpl> declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): <unbound IrClassSymbolImpl> [operator] declared in kotlin.Any
       $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Any
       VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:<unbound IrClassSymbolImpl> [fake_override]
@@ -31,9 +31,9 @@ CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:J1 modality:OPEN visibility:public
     overridden:
       public open fun hashCode (): <unbound IrClassSymbolImpl> declared in kotlin.Any
     $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Any
-  FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:<unbound IrClassSymbolImpl> [fake_override]
+  FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:<unbound IrClassSymbolImpl> [fake_override,operator]
     overridden:
-      public open fun equals (other: kotlin.Any?): <unbound IrClassSymbolImpl> declared in kotlin.Any
+      public open fun equals (other: kotlin.Any?): <unbound IrClassSymbolImpl> [operator] declared in kotlin.Any
     $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Any
     VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any?
   FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:<unbound IrClassSymbolImpl> [fake_override]

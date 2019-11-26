@@ -20,7 +20,7 @@
       @11:4..12:32 BLOCK_BODY
         @12:25..32 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         @11:4..12:32 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]'
-    @0:0..13:1 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override]
+    @0:0..13:1 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       @0:0..13:1 VALUE_PARAMETER name:<this> type:kotlin.Any
       @0:0..13:1 VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     @0:0..13:1 FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]

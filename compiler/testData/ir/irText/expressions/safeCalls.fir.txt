@@ -25,9 +25,9 @@ FILE fqName:<root> fileName:/safeCalls.kt
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.Ref declared in <root>.Ref.<set-value>' type=<root>.Ref origin=null
             value: GET_VAR '<set-?>: kotlin.Int declared in <root>.Ref.<set-value>' type=kotlin.Int origin=null
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -47,9 +47,9 @@ FILE fqName:<root> fileName:/safeCalls.kt
         RETURN type=kotlin.Nothing from='public open fun extLength (): kotlin.Int declared in <root>.IHost'
           CALL 'public open fun <get-length> (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=null
             $this: GET_VAR '<this>: kotlin.String declared in kotlin.String' type=kotlin.String origin=null
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -77,7 +77,7 @@ FILE fqName:<root> fileName:/safeCalls.kt
     VALUE_PARAMETER name:y index:1 type:kotlin.Any?
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test3 (x: kotlin.String?, y: kotlin.Any?): kotlin.Boolean? declared in <root>'
-        CALL 'public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any' type=kotlin.Boolean? origin=null
+        CALL 'public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any' type=kotlin.Boolean? origin=null
           $this: GET_VAR 'x: kotlin.String? declared in <root>.test3' type=kotlin.String? origin=null
           other: GET_VAR 'y: kotlin.Any? declared in <root>.test3' type=kotlin.Any? origin=null
   FUN name:test4 visibility:public modality:FINAL <> (x:<root>.Ref?) returnType:kotlin.Unit

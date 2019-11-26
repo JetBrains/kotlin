@@ -71,9 +71,9 @@ FILE fqName:<root> fileName:/objectReference.kt
             value: CONST Int type=kotlin.Int value=1
           CALL 'public final fun foo (): kotlin.Unit declared in <root>.Z' type=kotlin.Unit origin=null
             $this: GET_OBJECT 'CLASS OBJECT name:Z modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.Z
-      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override]
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
         overridden:
-          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
         VALUE_PARAMETER name:other index:0 type:kotlin.Any?
       FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -151,9 +151,9 @@ FILE fqName:<root> fileName:/objectReference.kt
           RETURN type=kotlin.Nothing from='public final fun <get-anObject> (): <uninitialized parent>.<anonymous> declared in <root>.Z'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:anObject type:<uninitialized parent>.<anonymous> visibility:private [final]' type=<uninitialized parent>.<anonymous> origin=null
               receiver: GET_VAR '<this>: <root>.Z declared in <root>.Z.<get-anObject>' type=<root>.Z origin=null
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]

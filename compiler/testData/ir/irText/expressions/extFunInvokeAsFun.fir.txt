@@ -4,7 +4,7 @@ FILE fqName:<root> fileName:/extFunInvokeAsFun.kt
     VALUE_PARAMETER name:block index:1 type:kotlin.Function1<kotlin.Any?, kotlin.Unit>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun with1 (receiver: kotlin.Any?, block: kotlin.Function1<kotlin.Any?, kotlin.Unit>): kotlin.Unit declared in <root>'
-        CALL 'public abstract fun invoke (p1: kotlin.Any?): kotlin.Unit declared in kotlin.Function1' type=kotlin.Unit origin=null
+        CALL 'public abstract fun invoke (p1: kotlin.Any?): kotlin.Unit [operator] declared in kotlin.Function1' type=kotlin.Unit origin=null
           $this: GET_VAR 'block: kotlin.Function1<kotlin.Any?, kotlin.Unit> declared in <root>.with1' type=kotlin.Function1<kotlin.Any?, kotlin.Unit> origin=null
           p1: GET_VAR 'receiver: kotlin.Any? declared in <root>.with1' type=kotlin.Any? origin=null
   FUN name:with2 visibility:public modality:FINAL <> (receiver:kotlin.Any?, block:kotlin.Function1<kotlin.Any?, kotlin.Unit>) returnType:IrErrorType

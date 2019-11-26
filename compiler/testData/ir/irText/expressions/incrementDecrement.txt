@@ -34,13 +34,13 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
       VAR name:x1 type:kotlin.Int [val]
         BLOCK type=kotlin.Int origin=PREFIX_INCR
           SET_VAR 'var x: kotlin.Int [var] declared in <root>.testVarPrefix' type=kotlin.Unit origin=PREFIX_INCR
-            CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PREFIX_INCR
+            CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PREFIX_INCR
               $this: GET_VAR 'var x: kotlin.Int [var] declared in <root>.testVarPrefix' type=kotlin.Int origin=PREFIX_INCR
           GET_VAR 'var x: kotlin.Int [var] declared in <root>.testVarPrefix' type=kotlin.Int origin=PREFIX_INCR
       VAR name:x2 type:kotlin.Int [val]
         BLOCK type=kotlin.Int origin=PREFIX_DECR
           SET_VAR 'var x: kotlin.Int [var] declared in <root>.testVarPrefix' type=kotlin.Unit origin=PREFIX_DECR
-            CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PREFIX_DECR
+            CALL 'public final fun dec (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PREFIX_DECR
               $this: GET_VAR 'var x: kotlin.Int [var] declared in <root>.testVarPrefix' type=kotlin.Int origin=PREFIX_DECR
           GET_VAR 'var x: kotlin.Int [var] declared in <root>.testVarPrefix' type=kotlin.Int origin=PREFIX_DECR
   FUN name:testVarPostfix visibility:public modality:FINAL <> () returnType:kotlin.Unit
@@ -52,7 +52,7 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
           VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int [val]
             GET_VAR 'var x: kotlin.Int [var] declared in <root>.testVarPostfix' type=kotlin.Int origin=POSTFIX_INCR
           SET_VAR 'var x: kotlin.Int [var] declared in <root>.testVarPostfix' type=kotlin.Unit origin=POSTFIX_INCR
-            CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
+            CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
               $this: GET_VAR 'val tmp_0: kotlin.Int [val] declared in <root>.testVarPostfix' type=kotlin.Int origin=null
           GET_VAR 'val tmp_0: kotlin.Int [val] declared in <root>.testVarPostfix' type=kotlin.Int origin=null
       VAR name:x2 type:kotlin.Int [val]
@@ -60,7 +60,7 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
           VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Int [val]
             GET_VAR 'var x: kotlin.Int [var] declared in <root>.testVarPostfix' type=kotlin.Int origin=POSTFIX_DECR
           SET_VAR 'var x: kotlin.Int [var] declared in <root>.testVarPostfix' type=kotlin.Unit origin=POSTFIX_DECR
-            CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_DECR
+            CALL 'public final fun dec (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_DECR
               $this: GET_VAR 'val tmp_1: kotlin.Int [val] declared in <root>.testVarPostfix' type=kotlin.Int origin=null
           GET_VAR 'val tmp_1: kotlin.Int [val] declared in <root>.testVarPostfix' type=kotlin.Int origin=null
   FUN name:testPropPrefix visibility:public modality:FINAL <> () returnType:kotlin.Unit
@@ -69,14 +69,14 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
         BLOCK type=kotlin.Int origin=PREFIX_INCR
           BLOCK type=kotlin.Int origin=PREFIX_INCR
             CALL 'public final fun <set-p> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PREFIX_INCR
-              <set-?>: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PREFIX_INCR
+              <set-?>: CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PREFIX_INCR
                 $this: CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=PREFIX_INCR
             CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=PREFIX_INCR
       VAR name:p2 type:kotlin.Int [val]
         BLOCK type=kotlin.Int origin=PREFIX_DECR
           BLOCK type=kotlin.Int origin=PREFIX_DECR
             CALL 'public final fun <set-p> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PREFIX_DECR
-              <set-?>: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PREFIX_DECR
+              <set-?>: CALL 'public final fun dec (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PREFIX_DECR
                 $this: CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=PREFIX_DECR
             CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=PREFIX_DECR
   FUN name:testPropPostfix visibility:public modality:FINAL <> () returnType:kotlin.Unit
@@ -87,14 +87,14 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
             VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:kotlin.Int [val]
               CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=POSTFIX_INCR
             CALL 'public final fun <set-p> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=POSTFIX_INCR
-              <set-?>: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
+              <set-?>: CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
                 $this: GET_VAR 'val tmp_2: kotlin.Int [val] declared in <root>.testPropPostfix' type=kotlin.Int origin=null
             GET_VAR 'val tmp_2: kotlin.Int [val] declared in <root>.testPropPostfix' type=kotlin.Int origin=null
       VAR name:p2 type:kotlin.Int [val]
         BLOCK type=kotlin.Int origin=PREFIX_DECR
           BLOCK type=kotlin.Int origin=PREFIX_DECR
             CALL 'public final fun <set-p> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PREFIX_DECR
-              <set-?>: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PREFIX_DECR
+              <set-?>: CALL 'public final fun dec (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PREFIX_DECR
                 $this: CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=PREFIX_DECR
             CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=PREFIX_DECR
   FUN name:testArrayPrefix visibility:public modality:FINAL <> () returnType:kotlin.Unit
@@ -105,14 +105,14 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
             CALL 'public final fun <get-arr> (): kotlin.IntArray declared in <root>' type=kotlin.IntArray origin=GET_PROPERTY
           VAR IR_TEMPORARY_VARIABLE name:tmp_4 type:kotlin.Int [val]
             CONST Int type=kotlin.Int value=0
-          CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=PREFIX_INCR
+          CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit [operator] declared in kotlin.IntArray' type=kotlin.Unit origin=PREFIX_INCR
             $this: GET_VAR 'val tmp_3: kotlin.IntArray [val] declared in <root>.testArrayPrefix' type=kotlin.IntArray origin=null
             index: GET_VAR 'val tmp_4: kotlin.Int [val] declared in <root>.testArrayPrefix' type=kotlin.Int origin=null
-            value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PREFIX_INCR
-              $this: CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=PREFIX_INCR
+            value: CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PREFIX_INCR
+              $this: CALL 'public final fun get (index: kotlin.Int): kotlin.Int [operator] declared in kotlin.IntArray' type=kotlin.Int origin=PREFIX_INCR
                 $this: GET_VAR 'val tmp_3: kotlin.IntArray [val] declared in <root>.testArrayPrefix' type=kotlin.IntArray origin=null
                 index: GET_VAR 'val tmp_4: kotlin.Int [val] declared in <root>.testArrayPrefix' type=kotlin.Int origin=null
-          CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=PREFIX_INCR
+          CALL 'public final fun get (index: kotlin.Int): kotlin.Int [operator] declared in kotlin.IntArray' type=kotlin.Int origin=PREFIX_INCR
             $this: GET_VAR 'val tmp_3: kotlin.IntArray [val] declared in <root>.testArrayPrefix' type=kotlin.IntArray origin=null
             index: GET_VAR 'val tmp_4: kotlin.Int [val] declared in <root>.testArrayPrefix' type=kotlin.Int origin=null
       VAR name:a2 type:kotlin.Int [val]
@@ -121,14 +121,14 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
             CALL 'public final fun <get-arr> (): kotlin.IntArray declared in <root>' type=kotlin.IntArray origin=GET_PROPERTY
           VAR IR_TEMPORARY_VARIABLE name:tmp_6 type:kotlin.Int [val]
             CONST Int type=kotlin.Int value=0
-          CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=PREFIX_DECR
+          CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit [operator] declared in kotlin.IntArray' type=kotlin.Unit origin=PREFIX_DECR
             $this: GET_VAR 'val tmp_5: kotlin.IntArray [val] declared in <root>.testArrayPrefix' type=kotlin.IntArray origin=null
             index: GET_VAR 'val tmp_6: kotlin.Int [val] declared in <root>.testArrayPrefix' type=kotlin.Int origin=null
-            value: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PREFIX_DECR
-              $this: CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=PREFIX_DECR
+            value: CALL 'public final fun dec (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PREFIX_DECR
+              $this: CALL 'public final fun get (index: kotlin.Int): kotlin.Int [operator] declared in kotlin.IntArray' type=kotlin.Int origin=PREFIX_DECR
                 $this: GET_VAR 'val tmp_5: kotlin.IntArray [val] declared in <root>.testArrayPrefix' type=kotlin.IntArray origin=null
                 index: GET_VAR 'val tmp_6: kotlin.Int [val] declared in <root>.testArrayPrefix' type=kotlin.Int origin=null
-          CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=PREFIX_DECR
+          CALL 'public final fun get (index: kotlin.Int): kotlin.Int [operator] declared in kotlin.IntArray' type=kotlin.Int origin=PREFIX_DECR
             $this: GET_VAR 'val tmp_5: kotlin.IntArray [val] declared in <root>.testArrayPrefix' type=kotlin.IntArray origin=null
             index: GET_VAR 'val tmp_6: kotlin.Int [val] declared in <root>.testArrayPrefix' type=kotlin.Int origin=null
   FUN name:testArrayPostfix visibility:public modality:FINAL <> () returnType:kotlin.Unit
@@ -140,13 +140,13 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
           VAR IR_TEMPORARY_VARIABLE name:tmp_8 type:kotlin.Int [val]
             CONST Int type=kotlin.Int value=0
           VAR IR_TEMPORARY_VARIABLE name:tmp_9 type:kotlin.Int [val]
-            CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=POSTFIX_INCR
+            CALL 'public final fun get (index: kotlin.Int): kotlin.Int [operator] declared in kotlin.IntArray' type=kotlin.Int origin=POSTFIX_INCR
               $this: GET_VAR 'val tmp_7: kotlin.IntArray [val] declared in <root>.testArrayPostfix' type=kotlin.IntArray origin=null
               index: GET_VAR 'val tmp_8: kotlin.Int [val] declared in <root>.testArrayPostfix' type=kotlin.Int origin=null
-          CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=POSTFIX_INCR
+          CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit [operator] declared in kotlin.IntArray' type=kotlin.Unit origin=POSTFIX_INCR
             $this: GET_VAR 'val tmp_7: kotlin.IntArray [val] declared in <root>.testArrayPostfix' type=kotlin.IntArray origin=null
             index: GET_VAR 'val tmp_8: kotlin.Int [val] declared in <root>.testArrayPostfix' type=kotlin.Int origin=null
-            value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
+            value: CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
               $this: GET_VAR 'val tmp_9: kotlin.Int [val] declared in <root>.testArrayPostfix' type=kotlin.Int origin=null
           GET_VAR 'val tmp_9: kotlin.Int [val] declared in <root>.testArrayPostfix' type=kotlin.Int origin=null
       VAR name:a2 type:kotlin.Int [val]
@@ -156,12 +156,12 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
           VAR IR_TEMPORARY_VARIABLE name:tmp_11 type:kotlin.Int [val]
             CONST Int type=kotlin.Int value=0
           VAR IR_TEMPORARY_VARIABLE name:tmp_12 type:kotlin.Int [val]
-            CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=POSTFIX_DECR
+            CALL 'public final fun get (index: kotlin.Int): kotlin.Int [operator] declared in kotlin.IntArray' type=kotlin.Int origin=POSTFIX_DECR
               $this: GET_VAR 'val tmp_10: kotlin.IntArray [val] declared in <root>.testArrayPostfix' type=kotlin.IntArray origin=null
               index: GET_VAR 'val tmp_11: kotlin.Int [val] declared in <root>.testArrayPostfix' type=kotlin.Int origin=null
-          CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=POSTFIX_DECR
+          CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit [operator] declared in kotlin.IntArray' type=kotlin.Unit origin=POSTFIX_DECR
             $this: GET_VAR 'val tmp_10: kotlin.IntArray [val] declared in <root>.testArrayPostfix' type=kotlin.IntArray origin=null
             index: GET_VAR 'val tmp_11: kotlin.Int [val] declared in <root>.testArrayPostfix' type=kotlin.Int origin=null
-            value: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_DECR
+            value: CALL 'public final fun dec (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_DECR
               $this: GET_VAR 'val tmp_12: kotlin.Int [val] declared in <root>.testArrayPostfix' type=kotlin.Int origin=null
           GET_VAR 'val tmp_12: kotlin.Int [val] declared in <root>.testArrayPostfix' type=kotlin.Int origin=null

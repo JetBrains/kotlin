@@ -18,7 +18,7 @@ CONTENT
       2 GET_VAR 'm: kotlin.Int declared in <root>.digitCountInNumber' type=kotlin.Int origin=null
       3 GET_VAR 'var number: kotlin.Int [var] declared in <root>.digitCountInNumber' type=kotlin.Int origin=null
       4 CONST Int type=kotlin.Int value=10
-      5 CALL 'public final fun rem (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PERC
+      5 CALL 'public final fun rem (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PERC
 OUTGOING -> BB 2
     CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
 BB 2

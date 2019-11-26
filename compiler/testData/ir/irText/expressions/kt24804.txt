@@ -13,7 +13,7 @@ FILE fqName:<root> fileName:/kt24804.kt
         DO_WHILE label=l2 origin=DO_WHILE_LOOP
           body: COMPOSITE type=kotlin.Unit origin=null
             SET_VAR 'var z: kotlin.Int [var] declared in <root>.run' type=kotlin.Unit origin=PLUSEQ
-              CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
+              CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
                 $this: GET_VAR 'var z: kotlin.Int [var] declared in <root>.run' type=kotlin.Int origin=PLUSEQ
                 other: CONST Int type=kotlin.Int value=1
             WHEN type=kotlin.Unit origin=IF

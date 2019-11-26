@@ -6,6 +6,5 @@ public class J {
 }
 
 // FILE: javaStaticMethod.kt
-// FIR_IDENTICAL
 
 fun test() = J.bar()

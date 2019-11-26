@@ -13,7 +13,7 @@
         @8:4..10:36 BLOCK_BODY
           @8:4..10:36 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
           @8:4..10:36 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Inner modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]'
-      @8:10..10:36 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override]
+      @8:10..10:36 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
         @8:4..10:36 VALUE_PARAMETER name:<this> type:kotlin.Any
         @8:10..10:36 VALUE_PARAMETER name:other index:0 type:kotlin.Any?
       @8:10..10:36 FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -32,7 +32,7 @@
         @27:8..25 VALUE_PARAMETER name:<this> type:<root>.Foo
         @27:16..25 BLOCK_BODY
           @27:25..25 RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.Foo'
-            @27:16..25 CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
+            @27:16..25 CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
               @27:16..21 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
                 @27:16..21 GET_VAR '<this>: <root>.Foo declared in <root>.Foo.<get-x>' type=<root>.Foo origin=null
               @27:24..25 CONST Int type=kotlin.Int value=1
@@ -42,7 +42,7 @@
         @31:8..41 CALL 'protected open fun foo (y: kotlin.Int): kotlin.Unit declared in <root>.Foo' type=kotlin.Unit origin=null
           @31:8..41 GET_VAR '<this>: <root>.Foo declared in <root>.Foo.test' type=<root>.Foo origin=null
           @31:38..40 CONST Int type=kotlin.Int value=42
-    @1:0..33:1 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override]
+    @1:0..33:1 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       @1:0..33:1 VALUE_PARAMETER name:<this> type:kotlin.Any
       @1:0..33:1 VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     @1:0..33:1 FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]

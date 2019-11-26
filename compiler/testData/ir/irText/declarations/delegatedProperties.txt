@@ -13,7 +13,7 @@ FILE fqName:<root> fileName:/delegatedProperties.kt
       correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [delegated,val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test1> (): kotlin.Int declared in <root>'
-          CALL 'public final fun getValue <T> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T of kotlin.getValue [inline] declared in kotlin' type=kotlin.Int origin=null
+          CALL 'public final fun getValue <T> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T of kotlin.getValue [inline,operator] declared in kotlin' type=kotlin.Int origin=null
             <T>: kotlin.Int
             $receiver: GET_FIELD 'FIELD DELEGATE name:test1$delegate type:kotlin.Lazy<kotlin.Int> visibility:private [final,static]' type=kotlin.Lazy<kotlin.Int> origin=null
             thisRef: CONST Null type=kotlin.Nothing? value=null
@@ -51,7 +51,7 @@ FILE fqName:<root> fileName:/delegatedProperties.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.C
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-test2> (): kotlin.Int declared in <root>.C'
-            CALL 'public final fun getValue <T> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T of kotlin.getValue [inline] declared in kotlin' type=kotlin.Int origin=null
+            CALL 'public final fun getValue <T> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T of kotlin.getValue [inline,operator] declared in kotlin' type=kotlin.Int origin=null
               <T>: kotlin.Int
               $receiver: GET_FIELD 'FIELD DELEGATE name:test2$delegate type:kotlin.Lazy<kotlin.Int> visibility:private [final]' type=kotlin.Lazy<kotlin.Int> origin=null
                 receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-test2>' type=<root>.C origin=null
@@ -67,7 +67,7 @@ FILE fqName:<root> fileName:/delegatedProperties.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.C
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-test3> (): kotlin.Any declared in <root>.C'
-            CALL 'public final fun getValue <V, V1> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): V1 of kotlin.collections.getValue [inline] declared in kotlin.collections' type=kotlin.Any origin=null
+            CALL 'public final fun getValue <V, V1> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): V1 of kotlin.collections.getValue [inline,operator] declared in kotlin.collections' type=kotlin.Any origin=null
               <V>: kotlin.Any
               <V1>: kotlin.Any
               $receiver: GET_FIELD 'FIELD DELEGATE name:test3$delegate type:kotlin.collections.MutableMap<kotlin.String, kotlin.Any> visibility:private [final]' type=kotlin.collections.MutableMap<kotlin.String, kotlin.Any> origin=null
@@ -80,16 +80,16 @@ FILE fqName:<root> fileName:/delegatedProperties.kt
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Any
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <set-test3> (<set-?>: kotlin.Any): kotlin.Unit declared in <root>.C'
-            CALL 'public final fun setValue <V> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: V of kotlin.collections.setValue): kotlin.Unit [inline] declared in kotlin.collections' type=kotlin.Unit origin=null
+            CALL 'public final fun setValue <V> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: V of kotlin.collections.setValue): kotlin.Unit [inline,operator] declared in kotlin.collections' type=kotlin.Unit origin=null
               <V>: kotlin.Any
               $receiver: GET_FIELD 'FIELD DELEGATE name:test3$delegate type:kotlin.collections.MutableMap<kotlin.String, kotlin.Any> visibility:private [final]' type=kotlin.collections.MutableMap<kotlin.String, kotlin.Any> origin=null
                 receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<set-test3>' type=<root>.C origin=null
               thisRef: GET_VAR '<this>: <root>.C declared in <root>.C.<set-test3>' type=<root>.C origin=null
               property: PROPERTY_REFERENCE 'public final test3: kotlin.Any [delegated,var]' field=null getter='public final fun <get-test3> (): kotlin.Any declared in <root>.C' setter='public final fun <set-test3> (<set-?>: kotlin.Any): kotlin.Unit declared in <root>.C' type=kotlin.reflect.KMutableProperty1<<root>.C, kotlin.Any> origin=PROPERTY_REFERENCE_FOR_DELEGATE
               value: GET_VAR '<set-?>: kotlin.Any declared in <root>.C.<set-test3>' type=kotlin.Any origin=null
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -110,7 +110,7 @@ FILE fqName:<root> fileName:/delegatedProperties.kt
       correspondingProperty: PROPERTY name:test4 visibility:public modality:FINAL [delegated,var]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test4> (): kotlin.Any declared in <root>'
-          CALL 'public final fun getValue <V, V1> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): V1 of kotlin.collections.getValue [inline] declared in kotlin.collections' type=kotlin.Any origin=null
+          CALL 'public final fun getValue <V, V1> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): V1 of kotlin.collections.getValue [inline,operator] declared in kotlin.collections' type=kotlin.Any origin=null
             <V>: kotlin.Any
             <V1>: kotlin.Any
             $receiver: GET_FIELD 'FIELD DELEGATE name:test4$delegate type:java.util.HashMap<kotlin.String, kotlin.Any>{ kotlin.collections.HashMap<kotlin.String, kotlin.Any> } visibility:private [final,static]' type=java.util.HashMap<kotlin.String, kotlin.Any>{ kotlin.collections.HashMap<kotlin.String, kotlin.Any> } origin=null
@@ -121,7 +121,7 @@ FILE fqName:<root> fileName:/delegatedProperties.kt
       VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Any
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <set-test4> (<set-?>: kotlin.Any): kotlin.Unit declared in <root>'
-          CALL 'public final fun setValue <V> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: V of kotlin.collections.setValue): kotlin.Unit [inline] declared in kotlin.collections' type=kotlin.Unit origin=null
+          CALL 'public final fun setValue <V> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: V of kotlin.collections.setValue): kotlin.Unit [inline,operator] declared in kotlin.collections' type=kotlin.Unit origin=null
             <V>: kotlin.Any
             $receiver: GET_FIELD 'FIELD DELEGATE name:test4$delegate type:java.util.HashMap<kotlin.String, kotlin.Any>{ kotlin.collections.HashMap<kotlin.String, kotlin.Any> } visibility:private [final,static]' type=java.util.HashMap<kotlin.String, kotlin.Any>{ kotlin.collections.HashMap<kotlin.String, kotlin.Any> } origin=null
             thisRef: CONST Null type=kotlin.Nothing? value=null

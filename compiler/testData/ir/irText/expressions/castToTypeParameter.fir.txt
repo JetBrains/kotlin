@@ -73,9 +73,9 @@ FILE fqName:<root> fileName:/castToTypeParameter.kt
           RETURN type=kotlin.Nothing from='public final fun <get-castGenericMemberExtVal> (): TV of <uninitialized parent> declared in <root>.Host'
             TYPE_OP type=TV of <uninitialized parent> origin=CAST typeOperand=TV of <uninitialized parent>
               ERROR_CALL 'Unresolved reference: this@R|/Host.castGenericMemberExtVal|' type=TV of <uninitialized parent>
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]

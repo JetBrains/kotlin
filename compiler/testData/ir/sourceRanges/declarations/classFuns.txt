@@ -17,7 +17,7 @@
     @21:4..18 FUN name:test3 visibility:private modality:FINAL <> ($this:test.Test) returnType:kotlin.Unit
       @20:4..21:18 VALUE_PARAMETER name:<this> type:test.Test
       @21:16..18 BLOCK_BODY
-    @3:0..23:1 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override]
+    @3:0..23:1 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       @3:0..23:1 VALUE_PARAMETER name:<this> type:kotlin.Any
       @3:0..23:1 VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     @3:0..23:1 FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]

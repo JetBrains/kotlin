@@ -20,8 +20,8 @@ FILE fqName:<root> fileName:/constValInitializers.kt
   PROPERTY name:I2 visibility:public modality:FINAL [const,val]
     FIELD PROPERTY_BACKING_FIELD name:I2 type:kotlin.Int visibility:private [final,static]
       EXPRESSION_BODY
-        CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
-          $this: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+        CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+          $this: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
             $this: CALL 'public final fun <get-I0> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
             other: CALL 'public final fun <get-I1> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
           other: CALL 'public final fun <get-I1> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
@@ -42,7 +42,7 @@ FILE fqName:<root> fileName:/constValInitializers.kt
   PROPERTY name:STR2 visibility:public modality:FINAL [const,val]
     FIELD PROPERTY_BACKING_FIELD name:STR2 type:kotlin.String visibility:private [final,static]
       EXPRESSION_BODY
-        CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=null
+        CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [operator] declared in kotlin.String' type=kotlin.String origin=null
           $this: CONST String type=kotlin.String value="String"
           other: CONST String type=kotlin.String value="2"
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-STR2> visibility:public modality:FINAL <> () returnType:kotlin.String
@@ -53,7 +53,7 @@ FILE fqName:<root> fileName:/constValInitializers.kt
   PROPERTY name:STR3 visibility:public modality:FINAL [const,val]
     FIELD PROPERTY_BACKING_FIELD name:STR3 type:kotlin.String visibility:private [final,static]
       EXPRESSION_BODY
-        CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=null
+        CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [operator] declared in kotlin.String' type=kotlin.String origin=null
           $this: CALL 'public final fun <get-STR1> (): kotlin.String declared in <root>' type=kotlin.String origin=null
           other: CALL 'public final fun <get-STR2> (): kotlin.String declared in <root>' type=kotlin.String origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-STR3> visibility:public modality:FINAL <> () returnType:kotlin.String

@@ -75,7 +75,7 @@ FILE fqName:<root> fileName:/packageLevelProperties.kt
       correspondingProperty: PROPERTY name:test7 visibility:public modality:FINAL [delegated,val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test7> (): kotlin.Int declared in <root>'
-          CALL 'public final fun getValue <T> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T of kotlin.getValue [inline] declared in kotlin' type=kotlin.Int origin=null
+          CALL 'public final fun getValue <T> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T of kotlin.getValue [inline,operator] declared in kotlin' type=kotlin.Int origin=null
             <T>: kotlin.Int
             $receiver: GET_FIELD 'FIELD DELEGATE name:test7$delegate type:kotlin.Lazy<kotlin.Int> visibility:private [final,static]' type=kotlin.Lazy<kotlin.Int> origin=GET_PROPERTY
             thisRef: CONST Null type=kotlin.Nothing? value=null

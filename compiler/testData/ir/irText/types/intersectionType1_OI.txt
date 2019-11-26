@@ -6,9 +6,9 @@ FILE fqName:<root> fileName:/intersectionType1_OI.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:In modality:FINAL visibility:public superTypes:[kotlin.Any]'
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -34,7 +34,7 @@ FILE fqName:<root> fileName:/intersectionType1_OI.kt
       RETURN type=kotlin.Nothing from='public final fun foo <T> (a: kotlin.Array<<root>.In<T of <root>.foo>>, b: kotlin.Array<<root>.In<kotlin.String>>): kotlin.Boolean declared in <root>'
         CALL 'public final fun ofType <K> (y: kotlin.Any?): kotlin.Boolean [inline] declared in <root>' type=kotlin.Boolean origin=null
           <K>: kotlin.Any?
-          $receiver: CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=<root>.In<kotlin.Any?> origin=GET_ARRAY_ELEMENT
+          $receiver: CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array [operator] declared in kotlin.Array' type=<root>.In<kotlin.Any?> origin=GET_ARRAY_ELEMENT
             $this: CALL 'public final fun select <S> (x: S of <root>.select, y: S of <root>.select): S of <root>.select declared in <root>' type=kotlin.Array<out <root>.In<kotlin.Any?>> origin=null
               <S>: kotlin.Array<out <root>.In<kotlin.Any?>>
               x: GET_VAR 'a: kotlin.Array<<root>.In<T of <root>.foo>> declared in <root>.foo' type=kotlin.Array<<root>.In<T of <root>.foo>> origin=null

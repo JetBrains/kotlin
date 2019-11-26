@@ -1,0 +1,5 @@
+FILE fqName:<root> fileName:/javaStaticMethod.kt
+  FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun test (): kotlin.Unit declared in <root>'
+        CALL 'public open fun bar (): kotlin.Unit [operator] declared in <root>.J' type=kotlin.Unit origin=null

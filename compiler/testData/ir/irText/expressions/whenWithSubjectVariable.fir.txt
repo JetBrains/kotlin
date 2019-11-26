@@ -34,5 +34,5 @@ FILE fqName:<root> fileName:/whenWithSubjectVariable.kt
               then: CONST Int type=kotlin.Int value=4
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
-              then: CALL 'public final fun unaryMinus (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+              then: CALL 'public final fun unaryMinus (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
                 $this: CONST Int type=kotlin.Int value=1

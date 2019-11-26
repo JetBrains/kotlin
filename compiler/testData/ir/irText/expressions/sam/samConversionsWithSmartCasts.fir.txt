@@ -6,7 +6,7 @@ FILE fqName:<root> fileName:/samConversionsWithSmartCasts.kt
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=java.lang.Runnable
             GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.test1' type=kotlin.Function0<kotlin.Unit> origin=null
-          then: CALL 'public open fun runStatic (r: java.lang.Runnable?): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
+          then: CALL 'public open fun runStatic (r: java.lang.Runnable?): kotlin.Unit [operator] declared in <root>.J' type=kotlin.Unit origin=null
             r: GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.test1' type=java.lang.Runnable origin=null
   FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:kotlin.Function0<kotlin.Unit>
@@ -15,7 +15,7 @@ FILE fqName:<root> fileName:/samConversionsWithSmartCasts.kt
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=java.lang.Runnable
             GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.test2' type=kotlin.Function0<kotlin.Unit> origin=null
-          then: CALL 'public open fun run1 (r: java.lang.Runnable?): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
+          then: CALL 'public open fun run1 (r: java.lang.Runnable?): kotlin.Unit [operator] declared in <root>.J' type=kotlin.Unit origin=null
             $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.J' type=<root>.J origin=null
             r: GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.test2' type=java.lang.Runnable origin=null
   FUN name:test3 visibility:public modality:FINAL <> (a:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit
@@ -25,7 +25,7 @@ FILE fqName:<root> fileName:/samConversionsWithSmartCasts.kt
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=java.lang.Runnable
             GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.test3' type=kotlin.Function0<kotlin.Unit> origin=null
-          then: CALL 'public open fun run2 (r1: java.lang.Runnable?, r2: java.lang.Runnable?): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
+          then: CALL 'public open fun run2 (r1: java.lang.Runnable?, r2: java.lang.Runnable?): kotlin.Unit [operator] declared in <root>.J' type=kotlin.Unit origin=null
             $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.J' type=<root>.J origin=null
             r1: GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.test3' type=java.lang.Runnable origin=null
             r2: GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.test3' type=java.lang.Runnable origin=null
@@ -37,7 +37,7 @@ FILE fqName:<root> fileName:/samConversionsWithSmartCasts.kt
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=java.lang.Runnable
             GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.test4' type=kotlin.Function0<kotlin.Unit> origin=null
-          then: CALL 'public open fun run2 (r1: java.lang.Runnable?, r2: java.lang.Runnable?): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
+          then: CALL 'public open fun run2 (r1: java.lang.Runnable?, r2: java.lang.Runnable?): kotlin.Unit [operator] declared in <root>.J' type=kotlin.Unit origin=null
             $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.J' type=<root>.J origin=null
             r1: GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.test4' type=java.lang.Runnable origin=null
             r2: GET_VAR 'b: kotlin.Function0<kotlin.Unit> declared in <root>.test4' type=kotlin.Function0<kotlin.Unit> origin=null
@@ -48,7 +48,7 @@ FILE fqName:<root> fileName:/samConversionsWithSmartCasts.kt
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=java.lang.Runnable
             GET_VAR 'a: kotlin.Any declared in <root>.test5' type=kotlin.Any origin=null
-          then: CALL 'public open fun run1 (r: java.lang.Runnable?): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
+          then: CALL 'public open fun run1 (r: java.lang.Runnable?): kotlin.Unit [operator] declared in <root>.J' type=kotlin.Unit origin=null
             $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.J' type=<root>.J origin=null
             r: GET_VAR 'a: kotlin.Any declared in <root>.test5' type=java.lang.Runnable origin=null
   FUN name:test5x visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit
@@ -61,7 +61,7 @@ FILE fqName:<root> fileName:/samConversionsWithSmartCasts.kt
           then: BLOCK type=kotlin.Unit origin=null
             TYPE_OP type=kotlin.Function0<kotlin.Unit> origin=CAST typeOperand=kotlin.Function0<kotlin.Unit>
               GET_VAR 'a: kotlin.Any declared in <root>.test5x' type=java.lang.Runnable origin=null
-            CALL 'public open fun run1 (r: java.lang.Runnable?): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
+            CALL 'public open fun run1 (r: java.lang.Runnable?): kotlin.Unit [operator] declared in <root>.J' type=kotlin.Unit origin=null
               $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.J' type=<root>.J origin=null
               r: GET_VAR 'a: kotlin.Any declared in <root>.test5x' type=java.lang.Runnable origin=null
   FUN name:test6 visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit
@@ -69,7 +69,7 @@ FILE fqName:<root> fileName:/samConversionsWithSmartCasts.kt
     BLOCK_BODY
       TYPE_OP type=kotlin.Function0<kotlin.Unit> origin=CAST typeOperand=kotlin.Function0<kotlin.Unit>
         GET_VAR 'a: kotlin.Any declared in <root>.test6' type=kotlin.Any origin=null
-      CALL 'public open fun run1 (r: java.lang.Runnable?): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
+      CALL 'public open fun run1 (r: java.lang.Runnable?): kotlin.Unit [operator] declared in <root>.J' type=kotlin.Unit origin=null
         $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.J' type=<root>.J origin=null
         r: GET_VAR 'a: kotlin.Any declared in <root>.test6' type=kotlin.Function0<kotlin.Unit> origin=null
   FUN name:test7 visibility:public modality:FINAL <> (a:kotlin.Function1<kotlin.Int, kotlin.Int>) returnType:kotlin.Unit
@@ -83,11 +83,11 @@ FILE fqName:<root> fileName:/samConversionsWithSmartCasts.kt
     VALUE_PARAMETER name:a index:0 type:kotlin.Function0<kotlin.Unit>
     BLOCK_BODY
       ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/J.run1]>#' type=IrErrorType
-        CALL 'public open fun id <T> (x: T of <root>.J.id?): T of <root>.J.id? declared in <root>.J' type=kotlin.Function0<kotlin.Unit> origin=null
+        CALL 'public open fun id <T> (x: T of <root>.J.id?): T of <root>.J.id? [operator] declared in <root>.J' type=kotlin.Function0<kotlin.Unit> origin=null
           <T>: kotlin.Function0<kotlin.Unit>
           x: GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.test8' type=kotlin.Function0<kotlin.Unit> origin=null
   FUN name:test9 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-      CALL 'public open fun run1 (r: java.lang.Runnable?): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
+      CALL 'public open fun run1 (r: java.lang.Runnable?): kotlin.Unit [operator] declared in <root>.J' type=kotlin.Unit origin=null
         $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.J' type=<root>.J origin=null
         r: FUNCTION_REFERENCE 'public final fun test9 (): kotlin.Unit declared in <root>' type=kotlin.Function0<kotlin.Unit> origin=null

@@ -7,9 +7,9 @@ FILE fqName:<root> fileName:/kt30020.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.X
     FUN name:f visibility:public modality:ABSTRACT <> ($this:<root>.X) returnType:kotlin.collections.MutableList<kotlin.Any>
       $this: VALUE_PARAMETER name:<this> type:<root>.X
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -24,29 +24,29 @@ FILE fqName:<root> fileName:/kt30020.kt
     VALUE_PARAMETER name:x index:0 type:<root>.X
     VALUE_PARAMETER name:nx index:1 type:<root>.X?
     BLOCK_BODY
-      CALL 'public final fun plusAssign <T> (element: T of kotlin.collections.plusAssign): kotlin.Unit [inline] declared in kotlin.collections' type=kotlin.Unit origin=null
+      CALL 'public final fun plusAssign <T> (element: T of kotlin.collections.plusAssign): kotlin.Unit [inline,operator] declared in kotlin.collections' type=kotlin.Unit origin=null
         <T>: kotlin.Int
         $receiver: CALL 'public abstract fun <get-xs> (): kotlin.collections.MutableList<kotlin.Any> declared in <root>.X' type=kotlin.collections.MutableList<kotlin.Any> origin=null
           $this: GET_VAR 'x: <root>.X declared in <root>.test' type=<root>.X origin=null
         element: CONST Int type=kotlin.Int value=1
-      CALL 'public final fun plusAssign <T> (element: T of kotlin.collections.plusAssign): kotlin.Unit [inline] declared in kotlin.collections' type=kotlin.Unit origin=null
+      CALL 'public final fun plusAssign <T> (element: T of kotlin.collections.plusAssign): kotlin.Unit [inline,operator] declared in kotlin.collections' type=kotlin.Unit origin=null
         <T>: kotlin.Int
         $receiver: CALL 'public abstract fun f (): kotlin.collections.MutableList<kotlin.Any> declared in <root>.X' type=kotlin.collections.MutableList<kotlin.Any> origin=null
           $this: GET_VAR 'x: <root>.X declared in <root>.test' type=<root>.X origin=null
         element: CONST Int type=kotlin.Int value=2
-      CALL 'public final fun plusAssign <T> (element: T of kotlin.collections.plusAssign): kotlin.Unit [inline] declared in kotlin.collections' type=kotlin.Unit origin=null
+      CALL 'public final fun plusAssign <T> (element: T of kotlin.collections.plusAssign): kotlin.Unit [inline,operator] declared in kotlin.collections' type=kotlin.Unit origin=null
         <T>: kotlin.Int
         $receiver: TYPE_OP type=kotlin.collections.MutableList<kotlin.Int> origin=CAST typeOperand=kotlin.collections.MutableList<kotlin.Int>
           CALL 'public abstract fun <get-xs> (): kotlin.collections.MutableList<kotlin.Any> declared in <root>.X' type=kotlin.collections.MutableList<kotlin.Int> origin=null
             $this: GET_VAR 'x: <root>.X declared in <root>.test' type=<root>.X origin=null
         element: CONST Int type=kotlin.Int value=3
-      CALL 'public final fun plusAssign <T> (element: T of kotlin.collections.plusAssign): kotlin.Unit [inline] declared in kotlin.collections' type=kotlin.Unit origin=null
+      CALL 'public final fun plusAssign <T> (element: T of kotlin.collections.plusAssign): kotlin.Unit [inline,operator] declared in kotlin.collections' type=kotlin.Unit origin=null
         <T>: kotlin.Int
         $receiver: TYPE_OP type=kotlin.collections.MutableList<kotlin.Int> origin=CAST typeOperand=kotlin.collections.MutableList<kotlin.Int>
           CALL 'public abstract fun f (): kotlin.collections.MutableList<kotlin.Any> declared in <root>.X' type=kotlin.collections.MutableList<kotlin.Any> origin=null
             $this: GET_VAR 'x: <root>.X declared in <root>.test' type=<root>.X origin=null
         element: CONST Int type=kotlin.Int value=4
-      CALL 'public final fun plusAssign <T> (element: T of kotlin.collections.plusAssign): kotlin.Unit [inline] declared in kotlin.collections' type=kotlin.Unit origin=null
+      CALL 'public final fun plusAssign <T> (element: T of kotlin.collections.plusAssign): kotlin.Unit [inline,operator] declared in kotlin.collections' type=kotlin.Unit origin=null
         <T>: kotlin.Int
         $receiver: BLOCK type=kotlin.collections.MutableList<kotlin.Int> origin=EXCLEXCL
           VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.collections.MutableList<kotlin.Int> [val]
@@ -63,7 +63,7 @@ FILE fqName:<root> fileName:/kt30020.kt
               if: CONST Boolean type=kotlin.Boolean value=true
               then: GET_VAR 'val tmp_0: kotlin.collections.MutableList<kotlin.Int> [val] declared in <root>.test' type=kotlin.collections.MutableList<kotlin.Int> origin=null
         element: CONST Int type=kotlin.Int value=5
-      CALL 'public final fun plusAssign <T> (element: T of kotlin.collections.plusAssign): kotlin.Unit [inline] declared in kotlin.collections' type=kotlin.Unit origin=null
+      CALL 'public final fun plusAssign <T> (element: T of kotlin.collections.plusAssign): kotlin.Unit [inline,operator] declared in kotlin.collections' type=kotlin.Unit origin=null
         <T>: kotlin.Int
         $receiver: BLOCK type=kotlin.collections.MutableList<kotlin.Int> origin=EXCLEXCL
           VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.collections.MutableList<kotlin.Any>? [val]
@@ -83,7 +83,7 @@ FILE fqName:<root> fileName:/kt30020.kt
   FUN name:testExtensionReceiver visibility:public modality:FINAL <> ($receiver:kotlin.collections.MutableList<kotlin.Any>) returnType:kotlin.Unit
     $receiver: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableList<kotlin.Any>
     BLOCK_BODY
-      CALL 'public final fun plusAssign <T> (element: T of kotlin.collections.plusAssign): kotlin.Unit [inline] declared in kotlin.collections' type=kotlin.Unit origin=null
+      CALL 'public final fun plusAssign <T> (element: T of kotlin.collections.plusAssign): kotlin.Unit [inline,operator] declared in kotlin.collections' type=kotlin.Unit origin=null
         <T>: kotlin.Int
         $receiver: GET_VAR '<this>: kotlin.collections.MutableList<kotlin.Any> declared in <root>.testExtensionReceiver' type=kotlin.collections.MutableList<kotlin.Any> origin=null
         element: CONST Int type=kotlin.Int value=100
@@ -96,7 +96,7 @@ FILE fqName:<root> fileName:/kt30020.kt
     FUN name:testExplicitThis visibility:public modality:FINAL <> ($this:<root>.AML) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.AML
       BLOCK_BODY
-        CALL 'public final fun plusAssign <T> (element: T of kotlin.collections.plusAssign): kotlin.Unit [inline] declared in kotlin.collections' type=kotlin.Unit origin=null
+        CALL 'public final fun plusAssign <T> (element: T of kotlin.collections.plusAssign): kotlin.Unit [inline,operator] declared in kotlin.collections' type=kotlin.Unit origin=null
           <T>: kotlin.Int
           $receiver: GET_VAR '<this>: <root>.AML declared in <root>.AML' type=<root>.AML origin=null
           element: CONST Int type=kotlin.Int value=200
@@ -109,13 +109,13 @@ FILE fqName:<root> fileName:/kt30020.kt
       FUN name:testOuterThis visibility:public modality:FINAL <> ($this:<root>.AML.Inner) returnType:kotlin.Unit
         $this: VALUE_PARAMETER name:<this> type:<root>.AML.Inner
         BLOCK_BODY
-          CALL 'public final fun plusAssign <T> (element: T of kotlin.collections.plusAssign): kotlin.Unit [inline] declared in kotlin.collections' type=kotlin.Unit origin=null
+          CALL 'public final fun plusAssign <T> (element: T of kotlin.collections.plusAssign): kotlin.Unit [inline,operator] declared in kotlin.collections' type=kotlin.Unit origin=null
             <T>: kotlin.Int
             $receiver: GET_VAR '<this>: <root>.AML declared in <root>.AML' type=<root>.AML origin=null
             element: CONST Int type=kotlin.Int value=300
-      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override]
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
         overridden:
-          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
         VALUE_PARAMETER name:other index:0 type:kotlin.Any?
       FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -165,9 +165,9 @@ FILE fqName:<root> fileName:/kt30020.kt
         public abstract fun retainAll (elements: kotlin.collections.Collection<E of kotlin.collections.MutableList>): kotlin.Boolean declared in kotlin.collections.MutableList
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableList
       VALUE_PARAMETER name:elements index:0 type:kotlin.collections.Collection<kotlin.Int>
-    FUN FAKE_OVERRIDE name:set visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableList, index:kotlin.Int, element:kotlin.Int) returnType:kotlin.Int [fake_override]
+    FUN FAKE_OVERRIDE name:set visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableList, index:kotlin.Int, element:kotlin.Int) returnType:kotlin.Int [fake_override,operator]
       overridden:
-        public abstract fun set (index: kotlin.Int, element: E of kotlin.collections.MutableList): E of kotlin.collections.MutableList declared in kotlin.collections.MutableList
+        public abstract fun set (index: kotlin.Int, element: E of kotlin.collections.MutableList): E of kotlin.collections.MutableList [operator] declared in kotlin.collections.MutableList
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableList
       VALUE_PARAMETER name:index index:0 type:kotlin.Int
       VALUE_PARAMETER name:element index:1 type:kotlin.Int
@@ -177,9 +177,9 @@ FILE fqName:<root> fileName:/kt30020.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableList
       VALUE_PARAMETER name:fromIndex index:0 type:kotlin.Int
       VALUE_PARAMETER name:toIndex index:1 type:kotlin.Int
-    FUN FAKE_OVERRIDE name:contains visibility:public modality:ABSTRACT <> ($this:kotlin.collections.List, element:kotlin.Int) returnType:kotlin.Boolean [fake_override]
+    FUN FAKE_OVERRIDE name:contains visibility:public modality:ABSTRACT <> ($this:kotlin.collections.List, element:kotlin.Int) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public abstract fun contains (element: E of kotlin.collections.MutableList): kotlin.Boolean declared in kotlin.collections.List
+        public abstract fun contains (element: E of kotlin.collections.MutableList): kotlin.Boolean [operator] declared in kotlin.collections.List
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.List
       VALUE_PARAMETER name:element index:0 type:kotlin.Int
     FUN FAKE_OVERRIDE name:containsAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.List, elements:kotlin.collections.Collection<kotlin.Int>) returnType:kotlin.Boolean [fake_override]
@@ -187,9 +187,9 @@ FILE fqName:<root> fileName:/kt30020.kt
         public abstract fun containsAll (elements: kotlin.collections.Collection<E of kotlin.collections.MutableList>): kotlin.Boolean declared in kotlin.collections.List
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.List
       VALUE_PARAMETER name:elements index:0 type:kotlin.collections.Collection<kotlin.Int>
-    FUN FAKE_OVERRIDE name:get visibility:public modality:ABSTRACT <> ($this:kotlin.collections.List, index:kotlin.Int) returnType:kotlin.Int [fake_override]
+    FUN FAKE_OVERRIDE name:get visibility:public modality:ABSTRACT <> ($this:kotlin.collections.List, index:kotlin.Int) returnType:kotlin.Int [fake_override,operator]
       overridden:
-        public abstract fun get (index: kotlin.Int): E of kotlin.collections.MutableList declared in kotlin.collections.List
+        public abstract fun get (index: kotlin.Int): E of kotlin.collections.MutableList [operator] declared in kotlin.collections.List
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.List
       VALUE_PARAMETER name:index index:0 type:kotlin.Int
     FUN FAKE_OVERRIDE name:indexOf visibility:public modality:ABSTRACT <> ($this:kotlin.collections.List, element:kotlin.Int) returnType:kotlin.Int [fake_override]
@@ -201,9 +201,9 @@ FILE fqName:<root> fileName:/kt30020.kt
       overridden:
         public abstract fun isEmpty (): kotlin.Boolean declared in kotlin.collections.List
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.List
-    FUN FAKE_OVERRIDE name:iterator visibility:public modality:ABSTRACT <> ($this:kotlin.collections.List) returnType:kotlin.collections.Iterator<kotlin.Int> [fake_override]
+    FUN FAKE_OVERRIDE name:iterator visibility:public modality:ABSTRACT <> ($this:kotlin.collections.List) returnType:kotlin.collections.Iterator<kotlin.Int> [fake_override,operator]
       overridden:
-        public abstract fun iterator (): kotlin.collections.Iterator<E of kotlin.collections.MutableList> declared in kotlin.collections.List
+        public abstract fun iterator (): kotlin.collections.Iterator<E of kotlin.collections.MutableList> [operator] declared in kotlin.collections.List
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.List
     FUN FAKE_OVERRIDE name:lastIndexOf visibility:public modality:ABSTRACT <> ($this:kotlin.collections.List, element:kotlin.Int) returnType:kotlin.Int [fake_override]
       overridden:
@@ -216,9 +216,9 @@ FILE fqName:<root> fileName:/kt30020.kt
         overridden:
           public abstract fun <get-size> (): kotlin.Int declared in kotlin.collections.List
         $this: VALUE_PARAMETER name:<this> type:<root>.AML
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]

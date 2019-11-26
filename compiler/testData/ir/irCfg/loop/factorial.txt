@@ -7,8 +7,8 @@ CONTENT
       3 VAR name:result type:kotlin.Int [var]
       4 CONST Int type=kotlin.Int value=2
       5 GET_VAR 'i: kotlin.Int declared in <root>.factorial' type=kotlin.Int origin=null
-      6 CALL 'public final fun rangeTo (other: kotlin.Int): kotlin.ranges.IntRange declared in kotlin.Int' type=kotlin.ranges.IntRange origin=RANGE
-      7 CALL 'public open fun iterator (): kotlin.collections.IntIterator [fake_override] declared in kotlin.ranges.IntRange' type=kotlin.collections.IntIterator origin=FOR_LOOP_ITERATOR
+      6 CALL 'public final fun rangeTo (other: kotlin.Int): kotlin.ranges.IntRange [operator] declared in kotlin.Int' type=kotlin.ranges.IntRange origin=RANGE
+      7 CALL 'public open fun iterator (): kotlin.collections.IntIterator [fake_override,operator] declared in kotlin.ranges.IntRange' type=kotlin.collections.IntIterator origin=FOR_LOOP_ITERATOR
       8 VAR FOR_LOOP_ITERATOR name:tmp0_iterator type:kotlin.collections.IntIterator [val]
       9 WHILE label=null origin=FOR_LOOP_INNER_WHILE
 OUTGOING -> BB 1
@@ -19,20 +19,20 @@ INCOMING <- BB 0, 2
 CONTENT
       1 GET_VAR 'val tmp0_iterator: kotlin.collections.IntIterator [val] declared in <root>.factorial' type=kotlin.collections.IntIterator origin=null
 OUTGOING -> BB 2, 3
-    CALL 'public abstract fun hasNext (): kotlin.Boolean [fake_override] declared in kotlin.collections.IntIterator' type=kotlin.Boolean origin=FOR_LOOP_HAS_NEXT
+    CALL 'public abstract fun hasNext (): kotlin.Boolean [fake_override,operator] declared in kotlin.collections.IntIterator' type=kotlin.Boolean origin=FOR_LOOP_HAS_NEXT
 BB 2
 INCOMING <- BB 1
-    CALL 'public abstract fun hasNext (): kotlin.Boolean [fake_override] declared in kotlin.collections.IntIterator' type=kotlin.Boolean origin=FOR_LOOP_HAS_NEXT
+    CALL 'public abstract fun hasNext (): kotlin.Boolean [fake_override,operator] declared in kotlin.collections.IntIterator' type=kotlin.Boolean origin=FOR_LOOP_HAS_NEXT
 CONTENT
       1 GET_VAR 'val tmp0_iterator: kotlin.collections.IntIterator [val] declared in <root>.factorial' type=kotlin.collections.IntIterator origin=null
-      2 CALL 'public final fun next (): kotlin.Int declared in kotlin.collections.IntIterator' type=kotlin.Int origin=FOR_LOOP_NEXT
+      2 CALL 'public final fun next (): kotlin.Int [operator] declared in kotlin.collections.IntIterator' type=kotlin.Int origin=FOR_LOOP_NEXT
       3 VAR FOR_LOOP_VARIABLE name:j type:kotlin.Int [val]
       4 SET_VAR 'var result: kotlin.Int [var] declared in <root>.factorial' type=kotlin.Unit origin=MULTEQ
 OUTGOING -> BB 1
     While entry: WHILE label=null origin=FOR_LOOP_INNER_WHILE
 BB 3
 INCOMING <- BB 1
-    CALL 'public abstract fun hasNext (): kotlin.Boolean [fake_override] declared in kotlin.collections.IntIterator' type=kotlin.Boolean origin=FOR_LOOP_HAS_NEXT
+    CALL 'public abstract fun hasNext (): kotlin.Boolean [fake_override,operator] declared in kotlin.collections.IntIterator' type=kotlin.Boolean origin=FOR_LOOP_HAS_NEXT
 CONTENT
 OUTGOING -> BB 4
     While exit: WHILE label=null origin=FOR_LOOP_INNER_WHILE

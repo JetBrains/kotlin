@@ -15,9 +15,9 @@ FILE fqName:<root> fileName:/useImportedMember.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun genericFromSuper (g: G of <root>.I): G of <root>.I declared in <root>.I'
           GET_VAR 'g: G of <root>.I declared in <root>.I.genericFromSuper' type=G of <root>.I origin=null
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -41,9 +41,9 @@ FILE fqName:<root> fileName:/useImportedMember.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-fromClass> (): T of <uninitialized parent> declared in <root>.BaseClass'
             ERROR_CALL 'Unresolved reference: this@R|/BaseClass.fromClass|' type=T of <uninitialized parent>
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -124,9 +124,9 @@ FILE fqName:<root> fileName:/useImportedMember.kt
         overridden:
           public final fun <get-fromClass> (): T of <uninitialized parent> declared in <root>.BaseClass
         $this: VALUE_PARAMETER name:<this> type:<root>.C
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -152,7 +152,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
     BLOCK_BODY
       WHEN type=kotlin.Unit origin=IF
         BRANCH
-          if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+          if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
               arg0: CALL 'public final fun f (s: kotlin.Int): kotlin.Int declared in <root>.C' type=kotlin.Int origin=null
                 $this: GET_VAR '<this>: <root>.C declared in <root>.C' type=<root>.C origin=null
@@ -162,7 +162,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
             CONST String type=kotlin.String value="1"
       WHEN type=kotlin.Unit origin=IF
         BRANCH
-          if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+          if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
               arg0: CALL 'public final fun f (s: kotlin.String): kotlin.Int declared in <root>.C' type=kotlin.Int origin=null
                 $this: GET_VAR '<this>: <root>.C declared in <root>.C' type=<root>.C origin=null
@@ -172,7 +172,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
             CONST String type=kotlin.String value="2"
       WHEN type=kotlin.Unit origin=IF
         BRANCH
-          if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+          if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
               arg0: CALL 'public final fun f (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=null
                 $this: GET_VAR '<this>: <root>.C declared in <root>.C' type=<root>.C origin=null
@@ -181,7 +181,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
             CONST String type=kotlin.String value="3"
       WHEN type=kotlin.Unit origin=IF
         BRANCH
-          if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+          if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
               arg0: CALL 'public final fun <get-p> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=null
                 $this: GET_VAR '<this>: <root>.C declared in <root>.C' type=<root>.C origin=null
@@ -193,7 +193,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
         value: CONST Int type=kotlin.Int value=5
       WHEN type=kotlin.Unit origin=IF
         BRANCH
-          if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+          if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
               arg0: CALL 'public final fun <get-p> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=null
                 $this: GET_VAR '<this>: <root>.C declared in <root>.C' type=<root>.C origin=null
@@ -202,7 +202,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
             CONST String type=kotlin.String value="5"
       WHEN type=kotlin.Unit origin=IF
         BRANCH
-          if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+          if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
               arg0: CALL 'public final fun <get-ext> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=null
                 $this: GET_VAR '<this>: <root>.C declared in <root>.C' type=<root>.C origin=null
@@ -211,7 +211,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
             CONST String type=kotlin.String value="6"
       WHEN type=kotlin.Unit origin=IF
         BRANCH
-          if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+          if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
               arg0: CALL 'public final fun g1 <T> (t: T of <root>.C.g1): T of <root>.C.g1 declared in <root>.C' type=kotlin.String origin=null
                 <T>: kotlin.String
@@ -222,7 +222,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
             CONST String type=kotlin.String value="7"
       WHEN type=kotlin.Unit origin=IF
         BRANCH
-          if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+          if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
               arg0: CALL 'public final fun <get-g2> (): T of <uninitialized parent> declared in <root>.C' type=kotlin.String origin=null
                 $this: GET_VAR '<this>: <root>.C declared in <root>.C' type=<root>.C origin=null
@@ -231,7 +231,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
             CONST String type=kotlin.String value="8"
       WHEN type=kotlin.Unit origin=IF
         BRANCH
-          if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+          if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
               arg0: CALL 'public open fun fromInterface <T> (): T of <root>.I.fromInterface declared in <root>.I' type=kotlin.Int origin=null
                 <T>: kotlin.Int
@@ -241,7 +241,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
             CONST String type=kotlin.String value="9"
       WHEN type=kotlin.Unit origin=IF
         BRANCH
-          if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+          if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
               arg0: CALL 'public final fun <get-fromClass> (): T of <uninitialized parent> declared in <root>.BaseClass' type=kotlin.String origin=null
                 $this: GET_VAR '<this>: <root>.BaseClass declared in <root>.BaseClass' type=<root>.BaseClass origin=null
@@ -250,7 +250,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
             CONST String type=kotlin.String value="10"
       WHEN type=kotlin.Unit origin=IF
         BRANCH
-          if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+          if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
               arg0: CALL 'public open fun genericFromSuper (g: kotlin.String): kotlin.String declared in <root>.I' type=kotlin.String origin=null
                 $this: GET_VAR '<this>: <root>.I declared in <root>.I' type=<root>.I<*> origin=null

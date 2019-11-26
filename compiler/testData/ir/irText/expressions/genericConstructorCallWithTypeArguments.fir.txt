@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/genericConstructorCallWithTypeArguments.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testSimple (): IrErrorType declared in <root>'
         ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/Box.Box]>#' type=IrErrorType
-          CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+          CALL 'public final fun times (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
             $this: CONST Int type=kotlin.Int value=2
             other: CONST Int type=kotlin.Int value=3
   FUN name:testArray visibility:public modality:FINAL <T> (n:kotlin.Int, block:kotlin.Function0<T of <root>.testArray>) returnType:kotlin.Array<T of <root>.testArray> [inline]
@@ -19,7 +19,7 @@ FILE fqName:<root> fileName:/genericConstructorCallWithTypeArguments.kt
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.Int) returnType:T of <root>.testArray
               VALUE_PARAMETER name:it index:0 type:kotlin.Int
               BLOCK_BODY
-                CALL 'public abstract fun invoke (): T of <root>.testArray declared in kotlin.Function0' type=T of <root>.testArray origin=null
+                CALL 'public abstract fun invoke (): T of <root>.testArray [operator] declared in kotlin.Function0' type=T of <root>.testArray origin=null
                   $this: GET_VAR 'block: kotlin.Function0<T of <root>.testArray> [crossinline] declared in <root>.testArray' type=kotlin.Function0<T of <root>.testArray> origin=null
   CLASS CLASS name:Box modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Box
@@ -40,9 +40,9 @@ FILE fqName:<root> fileName:/genericConstructorCallWithTypeArguments.kt
           RETURN type=kotlin.Nothing from='public final fun <get-value> (): T of <root>.Box declared in <root>.Box'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.Box visibility:private [final]' type=T of <root>.Box origin=null
               receiver: GET_VAR '<this>: <root>.Box declared in <root>.Box.<get-value>' type=<root>.Box origin=null
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]

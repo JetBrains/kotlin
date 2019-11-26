@@ -171,7 +171,7 @@
           @74:12..17 SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test13 type:kotlin.Int visibility:private' type=kotlin.Unit origin=EQ
             @74:12..17 GET_VAR '<this>: test.Test declared in test.Test.<set-test13>' type=test.Test origin=null
             @74:20..25 GET_VAR 'value: kotlin.Int declared in test.Test.<set-test13>' type=kotlin.Int origin=null
-    @2:0..77:1 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override]
+    @2:0..77:1 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       @2:0..77:1 VALUE_PARAMETER name:<this> type:kotlin.Any
       @2:0..77:1 VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     @2:0..77:1 FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]

@@ -42,9 +42,9 @@ FILE fqName:<root> fileName:/genericClassInDifferentModule_m1.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Base<T of <root>.Base>
         $receiver: VALUE_PARAMETER name:<this> type:Z of <root>.Base.<set-exn>
         VALUE_PARAMETER name:<set-?> index:0 type:T of <root>.Base
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
