@@ -758,7 +758,7 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
     };
     scrollPane.setBorder(JBUI.Borders.empty());
     splitter.setFirstComponent(scrollPane);
-    JPanel bottomPanel = new JPanel(new MigLayout("flowx, ins 4 4 3 4, fillx, hidemode 3, gap 0"));
+    JPanel bottomPanel = new JPanel(new MigLayout("flowx, ins 4 4 4 4, fillx, hidemode 3, gap 0"));
     bottomPanel.add(tabOptionsButton);
     myOKHintLabel = new JBLabel("");
     myOKHintLabel.setEnabled(false);
