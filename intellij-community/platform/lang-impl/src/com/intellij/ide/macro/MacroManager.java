@@ -89,6 +89,11 @@ public final class MacroManager {
     for (Macro macro : Macro.EP_NAME.getExtensionList()) {
       registerMacro(macro);
     }
+
+    Macro.EP_NAME.addExtensionPointListener(
+      (e, pd) -> {registerMacro(e);},
+      (e, pd) -> {myMacrosMap.remove(e.getName());}, 
+      null);
   }
 
   private void registerMacro(Macro macro) {
