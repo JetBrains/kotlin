@@ -4,7 +4,7 @@ package com.intellij.openapi.externalSystem.service;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.externalSystem.ExternalSystemManager;
 import com.intellij.openapi.externalSystem.autoimport.ExternalSystemProjectTracker;
-import com.intellij.openapi.externalSystem.autoimport.ProjectTracker;
+import com.intellij.openapi.externalSystem.autoimport.AutoImportProjectTracker;
 import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder;
 import com.intellij.openapi.externalSystem.model.ExternalSystemDataKeys;
 import com.intellij.openapi.externalSystem.service.project.ProjectRenameAware;
@@ -36,7 +36,7 @@ final class ExternalSystemStartupActivity implements StartupActivity.Background 
       }
       else {
         ExternalSystemProjectTracker projectTracker = ExternalSystemProjectTracker.getInstance(project);
-        if (projectTracker instanceof ProjectTracker) ((ProjectTracker)projectTracker).initialize();
+        if (projectTracker instanceof AutoImportProjectTracker) ((AutoImportProjectTracker)projectTracker).initialize();
       }
       ExternalToolWindowManager.handle(project);
       ProjectRenameAware.beAware(project);

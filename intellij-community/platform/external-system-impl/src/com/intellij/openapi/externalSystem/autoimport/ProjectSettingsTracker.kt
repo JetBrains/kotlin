@@ -8,15 +8,15 @@ import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.event.DocumentEvent
 import com.intellij.openapi.editor.event.DocumentListener
+import com.intellij.openapi.externalSystem.autoimport.AutoImportProjectTracker.ModificationType
+import com.intellij.openapi.externalSystem.autoimport.AutoImportProjectTracker.ModificationType.EXTERNAL
+import com.intellij.openapi.externalSystem.autoimport.AutoImportProjectTracker.ModificationType.INTERNAL
 import com.intellij.openapi.externalSystem.autoimport.NonBlockingReadActionBuilder.Companion.nonBlockingReadAction
-import com.intellij.openapi.externalSystem.autoimport.ProjectTracker.ModificationType
-import com.intellij.openapi.externalSystem.autoimport.ProjectTracker.ModificationType.EXTERNAL
-import com.intellij.openapi.externalSystem.autoimport.ProjectTracker.ModificationType.INTERNAL
 import com.intellij.openapi.externalSystem.service.project.autoimport.ProjectStatus
 import com.intellij.openapi.externalSystem.util.calculateCrc
 import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.intellij.openapi.observable.operations.CompoundParallelOperationTrace
 import com.intellij.openapi.observable.operations.AnonymousParallelOperationTrace
+import com.intellij.openapi.observable.operations.CompoundParallelOperationTrace
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
@@ -32,7 +32,7 @@ import java.util.concurrent.atomic.AtomicReference
 @ApiStatus.Internal
 class ProjectSettingsTracker(
   private val project: Project,
-  private val projectTracker: ProjectTracker,
+  private val projectTracker: AutoImportProjectTracker,
   private val projectAware: ExternalSystemProjectAware,
   private val parentDisposable: Disposable
 ) {

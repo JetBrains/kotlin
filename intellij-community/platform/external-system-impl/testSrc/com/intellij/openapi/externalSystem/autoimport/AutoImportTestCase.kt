@@ -26,7 +26,7 @@ abstract class AutoImportTestCase : ExternalSystemTestCase() {
   override fun getExternalSystemConfigFileName() = throw UnsupportedOperationException()
 
   private val notificationAware get() = ProjectNotificationAware.getInstance(myProject)
-  private val projectTracker get() = ProjectTracker.getInstance(myProject).also { it.enableAutoImportInTests() }
+  private val projectTracker get() = AutoImportProjectTracker.getInstance(myProject).also { it.enableAutoImportInTests() }
 
   private fun doRecursive(relativePath: String, stepInto: VirtualFile.(String) -> VirtualFile) = runWriteAction {
     var file = myProjectRoot!!
@@ -148,7 +148,7 @@ abstract class AutoImportTestCase : ExternalSystemTestCase() {
 
   protected fun refreshProject() = projectTracker.scheduleProjectRefresh()
 
-  private fun loadState(state: ProjectTracker.State) = projectTracker.loadState(state)
+  private fun loadState(state: AutoImportProjectTracker.State) = projectTracker.loadState(state)
 
   protected fun initialize() = projectTracker.initialize()
 
@@ -201,9 +201,9 @@ abstract class AutoImportTestCase : ExternalSystemTestCase() {
 
   protected fun simpleTest(fileRelativePath: String,
                            content: String? = null,
-                           state: ProjectTracker.State = ProjectTracker.State(),
-                           test: SimpleTestBench.(VirtualFile) -> Unit): ProjectTracker.State {
-    return myProject.replaceService(ExternalSystemProjectTracker::class.java, ProjectTracker(myProject)) {
+                           state: AutoImportProjectTracker.State = AutoImportProjectTracker.State(),
+                           test: SimpleTestBench.(VirtualFile) -> Unit): AutoImportProjectTracker.State {
+    return myProject.replaceService(ExternalSystemProjectTracker::class.java, AutoImportProjectTracker(myProject)) {
       val systemId = ProjectSystemId("External System")
       val projectId = ExternalSystemProjectId(systemId, projectPath)
       val projectAware = MockProjectAware(projectId)

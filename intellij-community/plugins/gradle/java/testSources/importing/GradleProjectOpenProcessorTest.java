@@ -7,8 +7,7 @@ import com.intellij.codeInspection.ex.ScopeToolState;
 import com.intellij.ide.impl.ProjectUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
-import com.intellij.openapi.externalSystem.autoimport.ExternalSystemProjectTracker;
-import com.intellij.openapi.externalSystem.autoimport.ProjectTracker;
+import com.intellij.openapi.externalSystem.autoimport.AutoImportProjectTracker;
 import com.intellij.openapi.externalSystem.service.project.manage.ProjectDataImportListener;
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.project.ExternalStorageConfigurationManager;
@@ -135,7 +134,7 @@ public class GradleProjectOpenProcessorTest extends GradleImportingTestCase {
                          "</module>");
 
     Project fooProject = executeOnEdt(() -> ProjectUtil.openProject(foo.getPath(), null, true));
-    ProjectTracker.getInstance(fooProject).enableAutoImportInTests();
+    AutoImportProjectTracker.getInstance(fooProject).enableAutoImportInTests();
 
     try {
       assertTrue(fooProject.isOpen());

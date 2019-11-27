@@ -10,9 +10,9 @@ import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.components.StoragePathMacros.CACHE_FILE
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.externalSystem.autoimport.AutoImportProjectTracker.ModificationType.EXTERNAL
+import com.intellij.openapi.externalSystem.autoimport.AutoImportProjectTracker.ModificationType.INTERNAL
 import com.intellij.openapi.externalSystem.autoimport.ExternalSystemRefreshStatus.SUCCESS
-import com.intellij.openapi.externalSystem.autoimport.ProjectTracker.ModificationType.EXTERNAL
-import com.intellij.openapi.externalSystem.autoimport.ProjectTracker.ModificationType.INTERNAL
 import com.intellij.openapi.externalSystem.service.project.autoimport.ProjectStatus
 import com.intellij.openapi.observable.operations.AnonymousParallelOperationTrace
 import com.intellij.openapi.observable.operations.CompoundParallelOperationTrace
@@ -26,7 +26,7 @@ import org.jetbrains.annotations.TestOnly
 import java.util.concurrent.ConcurrentHashMap
 
 @State(name = "ExternalSystemProjectTracker", storages = [Storage(CACHE_FILE)])
-class ProjectTracker(private val project: Project) : ExternalSystemProjectTracker, PersistentStateComponent<ProjectTracker.State> {
+class AutoImportProjectTracker(private val project: Project) : ExternalSystemProjectTracker, PersistentStateComponent<AutoImportProjectTracker.State> {
 
   @Suppress("unused")
   private val debugThrowable = Throwable("Initialized with project=(${project.isDisposed}, ${Disposer.isDisposed(project)}, $project)")
@@ -260,8 +260,8 @@ class ProjectTracker(private val project: Project) : ExternalSystemProjectTracke
   companion object {
     @TestOnly
     @JvmStatic
-    fun getInstance(project: Project): ProjectTracker {
-      return ExternalSystemProjectTracker.getInstance(project) as ProjectTracker
+    fun getInstance(project: Project): AutoImportProjectTracker {
+      return ExternalSystemProjectTracker.getInstance(project) as AutoImportProjectTracker
     }
   }
 }
