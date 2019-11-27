@@ -375,3 +375,30 @@ open class JvmTypeAliasExtensionVisitor @JvmOverloads constructor(
         val TYPE: KmExtensionType = KmExtensionType(JvmTypeAliasExtensionVisitor::class)
     }
 }
+
+/**
+ * A visitor to visit JVM extensions for a value parameter.
+ */
+open class JvmValueParameterExtensionVisitor @JvmOverloads constructor(
+    private val delegate: JvmValueParameterExtensionVisitor? = null
+) : KmTypeAliasExtensionVisitor {
+    final override val type: KmExtensionType
+        get() = TYPE
+
+    /**
+     * Visits the end of JVM extensions for the value parameter.
+     */
+    open fun visitEnd() {
+        delegate?.visitEnd()
+    }
+
+    companion object {
+        /**
+         * The type of this extension visitor.
+         *
+         * @see KmExtensionType
+         */
+        @JvmField
+        val TYPE: KmExtensionType = KmExtensionType(JvmValueParameterExtensionVisitor::class)
+    }
+}

@@ -134,6 +134,14 @@ internal class KlibMetadataExtensions : MetadataExtensions {
         }
     }
 
+    override fun readValueParameterExtensions(v: KmValueParameterVisitor, proto: ProtoBuf.ValueParameter, c: ReadContext) {
+        val extension = v.visitExtensions(KlibValueParameterExtensionVisitor.TYPE) as? KlibValueParameterExtensionVisitor ?: return
+
+        proto.getExtension(KlibMetadataProtoBuf.parameterAnnotation).forEach { annotation ->
+            extension.visitAnnotation(annotation.readAnnotation(c.strings))
+        }
+    }
+
     override fun writeClassExtensions(type: KmExtensionType, proto: ProtoBuf.Class.Builder, c: WriteContext): KmClassExtensionVisitor? {
         if (type != KlibClassExtensionVisitor.TYPE) return null
         return object : KlibClassExtensionVisitor() {
@@ -348,6 +356,22 @@ internal class KlibMetadataExtensions : MetadataExtensions {
         }
     }
 
+    override fun writeValueParameterExtensions(
+        type: KmExtensionType,
+        proto: ProtoBuf.ValueParameter.Builder,
+        c: WriteContext
+    ): KmValueParameterExtensionVisitor? {
+        if (type != KlibValueParameterExtensionVisitor.TYPE) return null
+        return object : KlibValueParameterExtensionVisitor() {
+            override fun visitAnnotation(annotation: KmAnnotation) {
+                proto.addExtension(
+                    KlibMetadataProtoBuf.parameterAnnotation,
+                    annotation.writeAnnotation(c.strings).build()
+                )
+            }
+        }
+    }
+
     override fun createClassExtension(): KmClassExtension =
         KlibClassExtension()
 
@@ -374,4 +398,7 @@ internal class KlibMetadataExtensions : MetadataExtensions {
 
     override fun createTypeAliasExtension(): KmTypeAliasExtension =
         KlibTypeAliasExtension()
+
+    override fun createValueParameterExtension(): KmValueParameterExtension =
+        KlibValueParameterExtension()
 }

@@ -233,6 +233,11 @@ private fun writeValueParameter(
     override fun visitVarargElementType(flags: Flags): KmTypeVisitor? =
         writeType(c, flags) { t.varargElementType = it.build() }
 
+    override fun visitExtensions(type: KmExtensionType): KmValueParameterExtensionVisitor? =
+        applySingleExtension(type) {
+            writeValueParameterExtensions(type, t, c)
+        }
+
     override fun visitEnd() {
         if (flags != ProtoBuf.ValueParameter.getDefaultInstance().flags) {
             t.flags = flags
@@ -263,6 +268,11 @@ private fun writeTypeAlias(
 
     override fun visitVersionRequirement(): KmVersionRequirementVisitor? =
         writeVersionRequirement(c) { t.addVersionRequirement(it) }
+
+    override fun visitExtensions(type: KmExtensionType): KmTypeAliasExtensionVisitor? =
+        applySingleExtension(type) {
+            writeTypeAliasExtensions(type, t, c)
+        }
 
     override fun visitEnd() {
         if (flags != ProtoBuf.TypeAlias.getDefaultInstance().flags) {

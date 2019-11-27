@@ -140,3 +140,15 @@ abstract class KlibTypeAliasExtensionVisitor : KmTypeAliasExtensionVisitor {
         val TYPE = KmExtensionType(KlibTypeAliasExtensionVisitor::class)
     }
 }
+
+abstract class KlibValueParameterExtensionVisitor : KmValueParameterExtensionVisitor {
+
+    abstract fun visitAnnotation(annotation: KmAnnotation)
+
+    override val type: KmExtensionType
+        get() = TYPE
+
+    companion object {
+        val TYPE = KmExtensionType(KlibValueParameterExtensionVisitor::class)
+    }
+}
