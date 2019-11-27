@@ -42,7 +42,7 @@ class ExternalAnnotationsDataService: AbstractProjectDataService<LibraryData, Li
     val providedAnnotations = imported.mapNotNull {
       val libData = it.data
       val lib = modelsProvider.getLibraryByName(libData.internalName) ?: return@mapNotNull null
-      lookForLocations(lib, libData)
+      lookForLocations(project, lib, libData)
     }.toMap()
 
     resolveProvidedAnnotations(providedAnnotations, resolvers, project)
@@ -75,7 +75,7 @@ class ExternalAnnotationsModuleLibrariesService: AbstractProjectDataService<Modu
         .mapNotNull {
           val libData = it.data.target
           val lib = (modelsProvider.findIdeModuleOrderEntry(it.data) as? LibraryOrderEntry)?.library ?: return@mapNotNull null
-          lookForLocations(lib, libData)
+          lookForLocations(project, lib, libData)
         }
     }.toMap()
 
@@ -100,8 +100,8 @@ fun shouldImportExternalAnnotations(projectData: ProjectData?, project: Project)
            ?.isResolveExternalAnnotations ?: false
 }
 
-fun lookForLocations(lib: Library, libData: LibraryData): Pair<Library, Collection<AnnotationsLocation>>? {
-  val locations = AnnotationsLocationSearcher.findAnnotationsLocation(lib, libData.artifactId, libData.groupId, libData.version)
+fun lookForLocations(project: Project, lib: Library, libData: LibraryData): Pair<Library, Collection<AnnotationsLocation>>? {
+  val locations = AnnotationsLocationSearcher.findAnnotationsLocation(project, lib, libData.artifactId, libData.groupId, libData.version)
   return if (locations.isEmpty()) {
     null
   }

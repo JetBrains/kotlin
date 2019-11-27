@@ -87,7 +87,8 @@ class TestExternalAnnotationLocationProvider: AnnotationsLocationProvider {
 
   private val knownLocations = mutableMapOf<String, AnnotationsLocation>()
 
-  override fun getLocations(library: Library,
+  override fun getLocations(project: Project,
+                            library: Library,
                             artifactId: String?,
                             groupId: String?,
                             version: String?): MutableCollection<AnnotationsLocation> {
