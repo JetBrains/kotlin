@@ -35,7 +35,7 @@ class SingleLanguageInlayHintsConfigurable(project: Project, val language: Langu
   }
 
   override fun getId(): String {
-    return "inlay.hints." + language.id
+    return getId(language)
   }
 
   companion object {
@@ -43,6 +43,11 @@ class SingleLanguageInlayHintsConfigurable(project: Project, val language: Langu
       val models = InlaySettingsProvider.EP.getExtensions().flatMap { it.createModels(project, language) }
       if (models.isEmpty()) throw IllegalStateException("Language panel must have at least one config model")
       return models.toTypedArray()
+    }
+
+    @JvmStatic
+    fun getId(language: Language): String {
+      return "inlay.hints." + language.id
     }
   }
 
