@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
 import org.jetbrains.kotlin.builtins.isFunctionTypeOrSubtype
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
@@ -39,6 +40,7 @@ import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getSuperCallExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.model.*
+import org.jetbrains.kotlin.resolve.calls.tower.NewResolvedCallImpl
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjectionImpl
@@ -399,11 +401,12 @@ private fun StatementGenerator.pregenerateValueArguments(call: CallBuilder, reso
         generateExpression(it)
     }
 
-    generateSamConversionForValueArgumentsIfRequired(call, resolvedCall.resultingDescriptor)
+    generateSamConversionForValueArgumentsIfRequired(call, resolvedCall)
 }
 
-fun StatementGenerator.generateSamConversionForValueArgumentsIfRequired(call: CallBuilder, originalDescriptor: CallableDescriptor) {
-    val underlyingDescriptor = context.extensions.samConversion.getOriginalForSamAdapter(originalDescriptor) ?: return
+fun StatementGenerator.generateSamConversionForValueArgumentsIfRequired(call: CallBuilder, resolvedCall: ResolvedCall<*>) {
+    val originalDescriptor = resolvedCall.resultingDescriptor
+    val underlyingDescriptor = context.extensions.samConversion.getOriginalForSamAdapter(originalDescriptor) ?: originalDescriptor
 
     val originalValueParameters = originalDescriptor.valueParameters
     val underlyingValueParameters = underlyingDescriptor.valueParameters
@@ -422,17 +425,23 @@ fun StatementGenerator.generateSamConversionForValueArgumentsIfRequired(call: Ca
                 "$originalDescriptor has ${originalDescriptor.typeParameters}"
     }
 
+    val partialSamConversionIsSupported = context.languageVersionSettings.supportsFeature(LanguageFeature.SamConversionPerArgument)
     val substitutionContext = call.original.typeArguments.entries.associate { (typeParameterDescriptor, typeArgument) ->
         underlyingDescriptor.typeParameters[typeParameterDescriptor.index].typeConstructor to TypeProjectionImpl(typeArgument)
     }
     val typeSubstitutor = TypeSubstitutor.create(substitutionContext)
 
     for (i in underlyingValueParameters.indices) {
-        val originalParameterType = originalValueParameters[i].type
         val underlyingParameterType = underlyingValueParameters[i].type
 
-        if (!context.extensions.samConversion.isSamType(underlyingParameterType)) continue
-        if (!originalParameterType.isFunctionTypeOrSubtype) continue
+        if (partialSamConversionIsSupported && resolvedCall is NewResolvedCallImpl<*>) {
+            // TODO support SAM conversion of varargs
+            val argument = resolvedCall.valueArguments[originalValueParameters[i]]?.arguments?.singleOrNull() ?: continue
+            if (resolvedCall.getExpectedTypeForSamConvertedArgument(argument) == null) continue
+        } else {
+            if (!context.extensions.samConversion.isSamType(underlyingParameterType)) continue
+            if (!originalValueParameters[i].type.isFunctionTypeOrSubtype) continue
+        }
 
         val originalArgument = call.irValueArgumentsByIndex[i] ?: continue
 

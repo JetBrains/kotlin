@@ -124,6 +124,6 @@ class ArrayAccessAssignmentReceiver(
             ktExpressionToIrIndexValue[ktExpression]?.load()
         }
         value?.let { lastArgument = it }
-        callGenerator.statementGenerator.generateSamConversionForValueArgumentsIfRequired(this, resolvedCall.resultingDescriptor)
+        callGenerator.statementGenerator.generateSamConversionForValueArgumentsIfRequired(this, resolvedCall)
     }
 }
