@@ -21,13 +21,15 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.util.LocalTimeCounter.currentTime
 import com.intellij.util.ui.update.MergingUpdateQueue
-import com.intellij.util.ui.update.MergingUpdateQueue.ANY_COMPONENT
 import com.intellij.util.ui.update.Update
 import org.jetbrains.annotations.TestOnly
 import java.util.concurrent.ConcurrentHashMap
 
 @State(name = "ExternalSystemProjectTracker", storages = [Storage(CACHE_FILE)])
 class ProjectTracker(private val project: Project) : ExternalSystemProjectTracker, PersistentStateComponent<ProjectTracker.State> {
+
+  @Suppress("unused")
+  private val debugThrowable = Throwable("Initialized with project=(${project.isDisposed}, ${Disposer.isDisposed(project)}, $project)")
 
   private val LOG = Logger.getInstance("#com.intellij.openapi.externalSystem.autoimport")
   private val AUTO_REPARSE_DELAY get() = DaemonCodeAnalyzerSettings.getInstance().autoReparseDelay
@@ -38,7 +40,7 @@ class ProjectTracker(private val project: Project) : ExternalSystemProjectTracke
   private val initializationProperty = AtomicBooleanProperty(false)
   private val projectChangeOperation = AnonymousParallelOperationTrace(debugName = "Project change operation")
   private val projectRefreshOperation = CompoundParallelOperationTrace<String>(debugName = "Project refresh operation")
-  private val dispatcher = MergingUpdateQueue("project tracker", AUTO_REPARSE_DELAY, false, null, this)
+  private val dispatcher = MergingUpdateQueue("project tracker", AUTO_REPARSE_DELAY, false, null, project)
 
   private fun createProjectChangesListener() =
     object : ProjectBatchFileChangeListener(project) {
@@ -147,7 +149,7 @@ class ProjectTracker(private val project: Project) : ExternalSystemProjectTracke
     settingsTracker.beforeApplyChanges { projectRefreshOperation.startTask(id) }
     settingsTracker.afterApplyChanges { projectRefreshOperation.finishTask(id) }
 
-    Disposer.register(this, parentDisposable)
+    Disposer.register(project, Disposable { remove(projectId) })
     projectAware.subscribe(createProjectRefreshListener(projectData), parentDisposable)
     Disposer.register(parentDisposable, Disposable { notificationAware.notificationExpire(projectId) })
 
@@ -170,10 +172,6 @@ class ProjectTracker(private val project: Project) : ExternalSystemProjectTracke
       return
     }
     projectData.status.markDirty(currentTime())
-  }
-
-  override fun dispose() {
-    projectDataMap.clear()
   }
 
   override fun getState(): State {
@@ -204,7 +202,7 @@ class ProjectTracker(private val project: Project) : ExternalSystemProjectTracke
 
   private fun init() {
     LOG.debug("Project tracker initialization")
-    val connections = ApplicationManager.getApplication().messageBus.connect(this)
+    val connections = ApplicationManager.getApplication().messageBus.connect(project)
     connections.subscribe(BatchFileChangeListener.TOPIC, createProjectChangesListener())
     dispatcher.activate()
   }
