@@ -36,12 +36,10 @@ import org.jetbrains.kotlin.idea.intentions.conventionNameCalls.isAnyEquals
 import org.jetbrains.kotlin.idea.intentions.isOperatorOrCompatible
 import org.jetbrains.kotlin.idea.intentions.isReceiverExpressionWithValue
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
-import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.resolve.getDataFlowValueFactory
 import org.jetbrains.kotlin.idea.util.calleeTextRangeInThis
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.platform.js.isJs
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getLastParentOfTypeInRow
 import org.jetbrains.kotlin.resolve.calls.callUtil.getFirstArgumentExpression
@@ -54,7 +52,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.getKotlinTypeWithPossibleSm
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
-import org.jetbrains.kotlin.types.isDynamic
+import org.jetbrains.kotlin.types.isNullabilityFlexible
 import org.jetbrains.kotlin.types.typeUtil.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -95,9 +93,9 @@ class ReplaceCallWithBinaryOperatorInspection : AbstractApplicabilityBasedInspec
     override fun inspectionHighlightType(element: KtDotQualifiedExpression): ProblemHighlightType {
         val calleeExpression = element.callExpression?.calleeExpression as? KtSimpleNameExpression
         val identifier = calleeExpression?.getReferencedNameAsName()
-        if (element.platform.isJs() && identifier == OperatorNameConventions.EQUALS) {
+        if (identifier == OperatorNameConventions.EQUALS) {
             val context = element.analyze(BodyResolveMode.PARTIAL)
-            if (element.receiverExpression.getType(context)?.isDynamic() == true) {
+            if (element.receiverExpression.getType(context)?.isNullabilityFlexible() == true) {
                 return ProblemHighlightType.INFORMATION
             }
         }
