@@ -9,19 +9,26 @@ import org.gradle.api.Project
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.provider.Property
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinCompilation
+import org.jetbrains.kotlin.gradle.utils.getValue
 import java.io.File
 
 internal open class KotlinCompileTaskData(
     val taskName: String,
+    @field:Transient // cannot be serialized for Gradle Instant Execution, but actually is not needed when a task is deserialized
     val compilation: AbstractKotlinCompilation<*>,
     val destinationDir: Property<File>,
     val useModuleDetection: Property<Boolean>
 ) {
-    private val taskBuildDirectory: File
-        get() = File(File(compilation.target.project.buildDir, KOTLIN_BUILD_DIR_NAME), taskName)
+    private val project: Project
+        get() = compilation.target.project
 
-    val buildHistoryFile: File
-        get() = File(taskBuildDirectory, "build-history.bin")
+    private val taskBuildDirectory: File by project.provider {
+        File(File(compilation.target.project.buildDir, KOTLIN_BUILD_DIR_NAME), taskName)
+    }
+
+    val buildHistoryFile: File by project.provider {
+        File(taskBuildDirectory, "build-history.bin")
+    }
 
     var javaOutputDir: File? = null
 

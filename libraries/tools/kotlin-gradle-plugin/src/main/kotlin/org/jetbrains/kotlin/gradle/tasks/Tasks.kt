@@ -36,16 +36,12 @@ import org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.mpp.associateWithTransitiveClosure
 import org.jetbrains.kotlin.gradle.plugin.mpp.ownModuleName
 import org.jetbrains.kotlin.gradle.report.BuildReportMode
-import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
-import org.jetbrains.kotlin.gradle.utils.isParentOf
-import org.jetbrains.kotlin.gradle.utils.pathsAsStringRelativeTo
-import org.jetbrains.kotlin.gradle.utils.toSortedPathsArray
+import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.incremental.classpathAsList
 import org.jetbrains.kotlin.incremental.destinationAsFile
 import org.jetbrains.kotlin.utils.LibraryUtils
 import java.io.File
-import java.util.*
 import javax.inject.Inject
 
 const val KOTLIN_BUILD_DIR_NAME = "kotlin"
@@ -93,8 +89,8 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments>
 
     @get:Classpath
     @get:InputFiles
-    internal val computedCompilerClasspath: List<File>
-        get() = compilerClasspath?.takeIf { it.isNotEmpty() }
+    internal val computedCompilerClasspath: List<File> by project.provider {
+        compilerClasspath?.takeIf { it.isNotEmpty() }
             ?: compilerJarFile?.let {
                 // a hack to remove compiler jar from the cp, will be dropped when compilerJarFile will be removed
                 listOf(it) + findKotlinCompilerClasspath(project).filter { !it.name.startsWith("kotlin-compiler") }
@@ -113,6 +109,7 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments>
                 findKotlinCompilerClasspath(project)
             }
             ?: throw IllegalStateException("Could not find Kotlin Compiler classpath")
+    }
 
 
     protected abstract fun findKotlinCompilerClasspath(project: Project): List<File>
@@ -126,8 +123,9 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
 
     // avoid creating directory in getter: this can lead to failure in parallel build
     @get:LocalState
-    internal val taskBuildDirectory: File
-        get() = File(File(project.buildDir, KOTLIN_BUILD_DIR_NAME), name)
+    internal val taskBuildDirectory: File by project.provider {
+        File(File(project.buildDir, KOTLIN_BUILD_DIR_NAME), name)
+    }
 
     override fun localStateDirectories(): FileCollection = project.files(taskBuildDirectory)
 
@@ -145,8 +143,9 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     internal var buildReportMode: BuildReportMode? = null
 
     @get:Internal
-    internal val taskData: KotlinCompileTaskData
-        get() = KotlinCompileTaskData.get(project, name)
+    internal val taskData: KotlinCompileTaskData by project.provider {
+        KotlinCompileTaskData.get(project, name)
+    }
 
     @get:Input
     internal open var useModuleDetection: Boolean
@@ -161,8 +160,9 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
 
     @get:Classpath
     @get:InputFiles
-    val pluginClasspath: FileCollection
-        get() = project.configurations.getByName(PLUGIN_CLASSPATH_CONFIGURATION_NAME)
+    val pluginClasspath: FileCollection by project.provider {
+        project.configurations.getByName(PLUGIN_CLASSPATH_CONFIGURATION_NAME)
+    }
 
     @get:Internal
     internal val pluginOptions = CompilerPluginOptions()
@@ -171,16 +171,23 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     @get:InputFiles
     protected val additionalClasspath = arrayListOf<File>()
 
+    // Store this file collection before it is filtered by File::exists to ensure that Gradle Instant execution doesn't serialize the
+    // filtered files, losing those that don't exist yet and will only be created during build
+    private val compileClasspathImpl by project.provider {
+        classpath + additionalClasspath
+    }
+
     @get:Internal // classpath already participates in the checks
     internal val compileClasspath: Iterable<File>
-        get() = (classpath + additionalClasspath)
-            .filterTo(LinkedHashSet(), File::exists)
+        get() = compileClasspathImpl.filter { it.exists() }
 
+    @field:Transient
     private val sourceFilesExtensionsSources: MutableList<Iterable<String>> = mutableListOf()
 
     @get:Input
-    val sourceFilesExtensions: List<String>
-        get() = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS + sourceFilesExtensionsSources.flatten()
+    val sourceFilesExtensions: List<String> by project.provider {
+        DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS + sourceFilesExtensionsSources.flatten()
+    }
 
     internal fun sourceFilesExtensions(extensions: Iterable<String>) {
         sourceFilesExtensionsSources.add(extensions)
@@ -211,15 +218,18 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     internal val coroutinesStr: String
         get() = coroutines.name
 
-    private val coroutines: Coroutines
-        get() = kotlinExt.experimental.coroutines
+    private val coroutines: Coroutines by project.provider {
+        kotlinExt.experimental.coroutines
             ?: coroutinesFromGradleProperties
             ?: Coroutines.DEFAULT
+    }
 
     @get:Internal
     internal var javaOutputDir: File?
         get() = taskData.javaOutputDir
-        set(value) { taskData.javaOutputDir = value }
+        set(value) {
+            taskData.javaOutputDir = value
+        }
 
     @get:Internal
     internal val sourceSetName: String
@@ -230,17 +240,19 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     internal var commonSourceSet: FileCollection = project.files()
 
     @get:Input
-    internal val moduleName: String
-        get() = taskData.compilation.moduleName
+    internal val moduleName: String by project.provider {
+        taskData.compilation.moduleName
+    }
 
     @get:Internal // takes part in the compiler arguments
-    val friendPaths: Array<String>
-        get() = taskData.compilation.run {
+    val friendPaths: Array<String> by project.provider {
+        taskData.compilation.run {
             associateWithTransitiveClosure
                 .flatMap { it.output.classesDirs }
                 .plus(friendArtifacts)
                 .map { it.canonicalPath }.toTypedArray()
         }
+    }
 
     private val kotlinLogger by lazy { GradleKotlinLogger(logger) }
 
@@ -308,6 +320,10 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
      */
     internal abstract fun callCompilerAsync(args: T, sourceRoots: SourceRoots, changedFiles: ChangedFiles)
 
+    private val isMultiplatform: Boolean by project.provider {
+        project.plugins.any { it is KotlinPlatformPluginBase || it is KotlinMultiplatformPluginWrapper }
+    }
+
     override fun setupCompilerArgs(args: T, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
         args.coroutinesState = when (coroutines) {
             Coroutines.ENABLE -> CommonCompilerArguments.ENABLE
@@ -322,7 +338,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
             args.verbose = true
         }
 
-        args.multiPlatform = project.plugins.any { it is KotlinPlatformPluginBase || it is KotlinMultiplatformPluginWrapper }
+        args.multiPlatform = isMultiplatform
 
         setupPlugins(args)
     }
@@ -380,7 +396,7 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         args.apply { fillDefaultValues() }
         super.setupCompilerArgs(args, defaultsOnly = defaultsOnly, ignoreClasspathResolutionErrors = ignoreClasspathResolutionErrors)
 
-        args.moduleName = taskData.compilation.moduleName
+        args.moduleName = moduleName
         logger.kotlinDebug { "args.moduleName = ${args.moduleName}" }
 
         args.friendPaths = friendPaths

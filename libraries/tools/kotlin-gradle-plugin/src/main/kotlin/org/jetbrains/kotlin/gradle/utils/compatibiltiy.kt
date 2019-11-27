@@ -79,6 +79,15 @@ internal val AbstractArchiveTask.archivePathCompatible: File
             archivePath
         }
 
+internal val AbstractArchiveTask.archiveNameCompatible: String
+    get() =
+        if (isGradleVersionAtLeast(5, 1)) {
+            archiveFileName.get()
+        } else {
+            @Suppress("DEPRECATION")
+            archiveName
+        }
+
 internal fun AbstractArchiveTask.setArchiveClassifierCompatible(classifierProvider: () -> String) {
     if (isGradleVersionAtLeast(5, 2)) {
         archiveClassifier.set(project.provider { classifierProvider() })
