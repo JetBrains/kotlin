@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.interpreter.stack
 
-import org.jetbrains.kotlin.backend.common.interpreter.hasSameNameAs
-import org.jetbrains.kotlin.backend.common.interpreter.isSubtypeOf
+import org.jetbrains.kotlin.backend.common.interpreter.equalTo
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -62,9 +61,7 @@ class Complex(private var classOfObject: IrClass, private val values: MutableLis
     }
 
     override fun getState(descriptor: DeclarationDescriptor): State? {
-        return values.firstOrNull {
-            it.descriptor.isSubtypeOf(descriptor) || it.descriptor.hasSameNameAs(descriptor) || it.descriptor == descriptor
-        }?.state
+        return values.firstOrNull { it.descriptor.equalTo(descriptor) }?.state
     }
 
     override fun setState(newVar: Variable) {

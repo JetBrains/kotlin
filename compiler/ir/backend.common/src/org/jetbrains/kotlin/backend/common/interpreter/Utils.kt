@@ -117,7 +117,11 @@ fun IrFunctionAccessExpression.getBody(): IrBody? {
     return this.symbol.owner.body
 }
 
-fun DeclarationDescriptor.isSubtypeOf(other: DeclarationDescriptor): Boolean {
+fun DeclarationDescriptor.equalTo(other: DeclarationDescriptor): Boolean {
+    return this.isSubtypeOf(other) || this.hasSameNameAs(other) || this == other
+}
+
+private fun DeclarationDescriptor.isSubtypeOf(other: DeclarationDescriptor): Boolean {
     if (this !is ReceiverParameterDescriptor || other !is ReceiverParameterDescriptor) return false
     return when {
         this.value is ImplicitClassReceiver && other.value is ImplicitClassReceiver -> this.value.type.isSubtypeOf(other.value.type)
@@ -126,7 +130,7 @@ fun DeclarationDescriptor.isSubtypeOf(other: DeclarationDescriptor): Boolean {
     }
 }
 
-fun DeclarationDescriptor.hasSameNameAs(other: DeclarationDescriptor): Boolean {
+private fun DeclarationDescriptor.hasSameNameAs(other: DeclarationDescriptor): Boolean {
     return this is ValueParameterDescriptor && other is ValueParameterDescriptor && this.name == other.name
 }
 
