@@ -13,8 +13,42 @@ class KotlinNonJvmGutterConfigurator : AbstractProjectResolverExtension() {
         initScriptConsumer.consume(
             //language=Gradle
             """
-                task nonJvmTestIdeSupport(type: Test) {
+            ({
+                def doIfInstance = { Task task, String fqn, Closure action ->
+                    def taskSuperClass = task.class
+                    while (taskSuperClass != Object.class) {
+                        if (taskSuperClass.canonicalName == fqn) {
+                            action()
+
+                            return
+                        } else {
+                            taskSuperClass = taskSuperClass.superclass
+                        }
+                    }
                 }
+                
+                gradle.afterProject { project ->
+                    project.tasks.create("nonJvmTestIdeSupportDummy")
+                    project.tasks.create('nonJvmTestIdeSupport', Test) {
+                        testClassesDirs = project.tasks["nonJvmTestIdeSupportDummy"].outputs.files
+                        classpath = project.tasks["nonJvmTestIdeSupportDummy"].outputs.files
+                    }
+                    
+                    project.afterEvaluate {
+                        project.tasks.each { Task task ->
+                            doIfInstance(task, "org.jetbrains.kotlin.gradle.tasks.KotlinTest") {
+                                task.dependsOn('nonJvmTestIdeSupport')
+                            }
+                        }
+                    }
+                }
+                
+                gradle.taskGraph.beforeTask { Task task ->
+                    doIfInstance(task, "org.jetbrains.kotlin.gradle.tasks.KotlinTest") {
+                        task.filter.includePatterns = task.project.tasks['nonJvmTestIdeSupport'].filter.includePatterns
+                    }
+                }
+            })()
             """.trimIndent()
         )
     }
