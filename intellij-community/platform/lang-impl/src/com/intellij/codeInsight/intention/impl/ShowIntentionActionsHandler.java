@@ -101,7 +101,7 @@ public class ShowIntentionActionsHandler implements CodeInsightActionHandler {
   private static ShowIntentionsPass.IntentionsInfo calcIntentions(@NotNull Project project,
                                                                   @NotNull Editor editor,
                                                                   @NotNull PsiFile file) {
-    ShowIntentionsPass.IntentionsInfo intentions = ActionUtil.underModalProgress(project, "Finding Context Actions", () ->
+    ShowIntentionsPass.IntentionsInfo intentions = ActionUtil.underModalProgress(project, "Searching for Context Actions", () ->
       ShowIntentionsPass.getActionsToShow(editor, file, false));
 
     ShowIntentionsPass.getActionsToShowSync(editor, file, intentions);
