@@ -23,8 +23,7 @@
         {
           "specVersion": "0.1-213",
           "casesNumber": 0,
-          "description": "check  all values of type kotlin.Unit should reference the same underlying kotlin.Unit object.",
-          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/reference-equality-expressions/p-1/pos/2.2.kt",
+          "description": "check if two values are equal (\u003d\u003d\u003d) by reference",
           "unexpectedBehaviour": false
         },
         {
@@ -32,6 +31,20 @@
           "casesNumber": 0,
           "description": "check  all values of type kotlin.Unit should reference the same underlying kotlin.Unit object.",
           "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.unit/p-1/pos/1.1.kt",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "3": [
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 0,
+          "description": "two values are equal (\u003d\u003d\u003d) or non-equal (!\u003d\u003d) by reference",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 0,
+          "description": "check equallity by refference via constructor",
           "unexpectedBehaviour": false
         }
       ]
