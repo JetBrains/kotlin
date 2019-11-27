@@ -26,6 +26,7 @@ import com.intellij.psi.impl.PsiTreeChangeEventImpl.PsiEventType.CHILD_MOVED
 import com.intellij.psi.impl.PsiTreeChangeEventImpl.PsiEventType.PROPERTY_CHANGED
 import com.intellij.psi.impl.PsiTreeChangePreprocessor
 import com.intellij.psi.util.PsiModificationTracker
+import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.psi.*
@@ -283,8 +284,20 @@ class KotlinCodeBlockModificationListener(
                     blockDeclaration
                         .takeIf { it.isAncestor(element) }
                         ?.let { ktClassInitializer ->
-                            (KtPsiUtil.getTopmostParentOfTypes(blockDeclaration, KtClass::class.java) as? KtElement)?.let {
+                            (PsiTreeUtil.getParentOfType(blockDeclaration, KtClass::class.java) as? KtElement)?.let {
                                 return BlockModificationScopeElement(it, ktClassInitializer)
+                            }
+                        }
+                }
+
+                is KtSecondaryConstructor -> {
+                    blockDeclaration
+                        ?.takeIf {
+                            it.bodyExpression?.isAncestor(element) ?: false || it.getDelegationCallOrNull()?.isAncestor(element) ?: false
+                        }
+                        ?.let { ktConstructor ->
+                            (PsiTreeUtil.getParentOfType(blockDeclaration, KtClass::class.java) as? KtElement)?.let {
+                                return BlockModificationScopeElement(it, ktConstructor)
                             }
                         }
                 }
@@ -315,6 +328,7 @@ class KotlinCodeBlockModificationListener(
             KtProperty::class.java,
             KtNamedFunction::class.java,
             KtClassInitializer::class.java,
+            KtSecondaryConstructor::class.java,
             KtScriptInitializer::class.java
         )
 
