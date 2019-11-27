@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirSimpleFunctionImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirTypeParameterImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticFunctionSymbol
-import org.jetbrains.kotlin.fir.resolve.calls.SAM_PARAMETER_NAME
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.CallableId
@@ -38,6 +37,7 @@ interface FirSamResolver : FirSessionComponent {
 }
 
 private val NULL_STUB = Any()
+val SAM_PARAMETER_NAME = Name.identifier("block")
 
 class FirSamResolverImpl(
     private val firSession: FirSession,
