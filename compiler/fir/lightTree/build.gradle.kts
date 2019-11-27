@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm")
+    id("jps-compatible")
 }
 
 group = "org.jetbrains.kotlin.fir"
