@@ -8,21 +8,23 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtBinaryExpression
-import org.jetbrains.kotlin.psi.KtNameReferenceExpression
-import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.psi.createExpressionByPattern
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class ReplaceWithOrdinaryAssignmentIntention : SelfTargetingIntention<KtBinaryExpression>(
     KtBinaryExpression::class.java,
     KotlinBundle.lazyMessage("replace.with.ordinary.assignment")
 ), LowPriorityAction {
     override fun isApplicableTo(element: KtBinaryExpression, caretOffset: Int): Boolean {
+        val operationReference = element.operationReference
+        if (!operationReference.textRange.containsOffset(caretOffset)) return false
         if (element.operationToken !in KtTokens.AUGMENTED_ASSIGNMENTS) return false
-        if (element.left !is KtNameReferenceExpression) return false
+        val left = element.left ?: return false
+        if ((left.safeAs<KtQualifiedExpression>()?.selectorExpression ?: left) !is KtNameReferenceExpression) return false
         if (element.right == null) return false
-        return element.operationReference.textRange.containsOffset(caretOffset)
+        return operationReference.mainReference.resolve().safeAs<KtFunction>()?.name?.endsWith("Assign") != true
     }
 
     override fun applyTo(element: KtBinaryExpression, editor: Editor?) {
