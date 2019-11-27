@@ -9,6 +9,7 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationCacheScope
+import com.intellij.util.io.systemIndependentPath
 import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptChangeListener
 import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptConfigurationUpdater
 import org.jetbrains.plugins.gradle.GradleManager
@@ -48,6 +49,6 @@ class GradleScriptListener(project: Project) : ScriptChangeListener(project) {
 
         val affectedFiles = ExternalSystemApiUtil.getAllManagers().filterIsInstance<GradleManager>().firstOrNull()
             ?.getAffectedExternalProjectFiles(projectSettings.externalProjectPath, project)
-        return affectedFiles?.any { it.path == vFile.path } == true
+        return affectedFiles?.any { it.toPath().systemIndependentPath == vFile.path } == true
     }
 }
