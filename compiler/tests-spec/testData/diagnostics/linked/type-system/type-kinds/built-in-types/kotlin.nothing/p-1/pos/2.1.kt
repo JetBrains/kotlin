@@ -1,5 +1,5 @@
 // !LANGUAGE: +NewInference
-// !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION -UNREACHABLE_CODE
 // SKIP_TXT
 
 /*
@@ -13,7 +13,7 @@
  */
 
 // TESTCASE NUMBER: 1
-class Case1() {
+class Case1 {
     val data: Nothing = TODO()
 }
 
@@ -22,25 +22,16 @@ fun case1(c: Case1) {
     checkSubtype<Function<Nothing>>(c.data)
 }
 
+
 // TESTCASE NUMBER: 2
 class Case2 {
-    var data: String? = null
-}
-
-fun case2(c: Case2) {
-    val testValue = c.data ?: throw IllegalArgumentException("data required")
-    testValue checkType { check<Nothing>() }
-}
-
-// TESTCASE NUMBER: 3
-class Case3() {
-    val dataFunction : Nothing = fail("fail msg")
+    val dataFunction: Nothing = fail("fail msg")
 }
 
 fun fail(msg: String): Nothing {
-    throw new Exception (msg)
+    throw Exception(msg)
 }
 
-fun case3(c: Case3) {
+fun case2(c: Case2) {
     c.dataFunction checkType { check<Nothing>() }
 }

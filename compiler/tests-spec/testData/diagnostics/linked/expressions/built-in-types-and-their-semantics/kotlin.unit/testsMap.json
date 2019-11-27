@@ -4,7 +4,7 @@
       "1": [
         {
           "specVersion": "0.1-213",
-          "casesNumber": 1,
+          "casesNumber": 3,
           "description": "check kotlin.Unit is a unit type",
           "unexpectedBehaviour": false
         }

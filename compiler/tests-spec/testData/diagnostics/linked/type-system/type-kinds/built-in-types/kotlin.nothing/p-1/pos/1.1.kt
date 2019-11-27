@@ -1,5 +1,5 @@
 // !LANGUAGE: +NewInference
-// !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION -UNREACHABLE_CODE
 
 // SKIP_TXT
 
@@ -33,7 +33,7 @@ fun case1() {
     checkSubtype<Short>(wrapper.data)
     checkSubtype<Byte>(wrapper.data)
     checkSubtype<Long>(wrapper.data)
-    checkSubtype<kotlin.Array>(wrapper.data)
+    checkSubtype<kotlin.Array<Any>>(wrapper.data)
     checkSubtype<CustomClass>(wrapper.data)
 }
 
