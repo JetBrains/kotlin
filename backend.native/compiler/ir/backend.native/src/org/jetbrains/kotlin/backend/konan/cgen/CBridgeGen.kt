@@ -569,7 +569,8 @@ private fun KotlinStubs.createFakeKotlinExternalFunction(
             isTailrec = false,
             isSuspend = false,
             isExpect = false,
-            isFakeOverride = false
+            isFakeOverride = false,
+            isOperator = false
     )
     bridgeDescriptor.bind(bridge)
 
@@ -1269,7 +1270,7 @@ private class ObjCBlockPointerValuePassing(
                 Visibilities.PUBLIC, Modality.FINAL,
                 returnType = functionType.arguments.last().typeOrNull!!,
                 isInline = false, isExternal = false, isTailrec = false, isSuspend = false, isExpect = false,
-                isFakeOverride = false
+                isFakeOverride = false, isOperator = false
         )
         invokeMethodDescriptor.bind(invokeMethod)
         invokeMethod.overriddenSymbols += overriddenInvokeMethod.symbol

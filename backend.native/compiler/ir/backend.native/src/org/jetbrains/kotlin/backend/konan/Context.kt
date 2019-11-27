@@ -141,7 +141,8 @@ internal class SpecialDeclarationsFactory(val context: Context) : KotlinMangler 
                 isSuspend = function.isSuspend,
                 returnType = returnType,
                 isExpect = false,
-                isFakeOverride = false
+                isFakeOverride = false,
+                isOperator = false
         ).apply {
             descriptor.bind(this)
             parent = function.parent

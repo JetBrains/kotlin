@@ -98,7 +98,8 @@ internal class EnumSpecialDeclarationsFactory(val context: Context) {
                     isTailrec = false,
                     isSuspend = false,
                     isExpect = false,
-                    isFakeOverride = false
+                    isFakeOverride = false,
+                    isOperator = false
             ).apply {
                 it.bind(this)
                 parent = implObject

@@ -81,7 +81,8 @@ internal class WorkersBridgesBuilding(val context: Context) : DeclarationContain
                                 isSuspend = false,
                                 returnType = context.irBuiltIns.anyNType,
                                 isExpect = false,
-                                isFakeOverride = false
+                                isFakeOverride = false,
+                                isOperator = false
                     ).apply {
                             it.bind(this)
                         }

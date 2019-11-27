@@ -489,7 +489,8 @@ internal class NativeSuspendFunctionsLowering(ctx: Context): AbstractSuspendFunc
                 isTailrec = false,
                 isSuspend = false,
                 isExpect = false,
-                isFakeOverride = false
+                isFakeOverride = false,
+                isOperator = false
         ).apply {
             it.bind(this)
         }
@@ -509,7 +510,8 @@ internal class NativeSuspendFunctionsLowering(ctx: Context): AbstractSuspendFunc
                 isTailrec = false,
                 isSuspend = false,
                 isExpect = false,
-                isFakeOverride = false
+                isFakeOverride = false,
+                isOperator = false
         ).apply {
             it.bind(this)
         }
