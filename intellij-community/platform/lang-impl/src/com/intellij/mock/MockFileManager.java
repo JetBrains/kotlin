@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.mock;
 
 import com.intellij.openapi.vfs.VirtualFile;
@@ -35,7 +21,7 @@ import java.util.Map;
  */
 public class MockFileManager implements FileManager {
   private final PsiManagerEx myManager;
-  // in mock tests it's LightVirtualFile, they're only alive when they're referenced, 
+  // in mock tests it's LightVirtualFile, they're only alive when they're referenced,
   // and there can not be several instances representing the same file
   private final Map<VirtualFile, FileViewProvider> myViewProviders;
 
@@ -48,11 +34,6 @@ public class MockFileManager implements FileManager {
   public MockFileManager(PsiManagerEx manager) {
     myManager = manager;
     myViewProviders = ConcurrentFactoryMap.create(key->new SingleRootFileViewProvider(myManager, key), ContainerUtil::createConcurrentWeakKeyWeakValueMap);
-  }
-
-  @Override
-  public void dispose() {
-    throw new UnsupportedOperationException("Method dispose is not yet implemented in " + getClass().getName());
   }
 
   @Override

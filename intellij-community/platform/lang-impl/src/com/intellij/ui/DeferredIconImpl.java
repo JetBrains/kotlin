@@ -34,7 +34,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.Executor;
 
-public class DeferredIconImpl<T> extends JBCachingScalableIcon<DeferredIconImpl<T>> implements DeferredIcon, RetrievableIcon {
+public final class DeferredIconImpl<T> extends JBCachingScalableIcon<DeferredIconImpl<T>> implements DeferredIcon, RetrievableIcon {
   private static final Logger LOG = Logger.getInstance(DeferredIconImpl.class);
   private static final int MIN_AUTO_UPDATE_MILLIS = 950;
   private static final RepaintScheduler ourRepaintScheduler = new RepaintScheduler();
@@ -171,9 +171,7 @@ public class DeferredIconImpl<T> extends JBCachingScalableIcon<DeferredIconImpl<
       myScaledDelegateIcon = result;
       checkDelegationDepth();
 
-      final boolean shouldRevalidate =
-        Registry.is("ide.tree.deferred.icon.invalidates.cache") && myScaledDelegateIcon.getIconWidth() != oldWidth;
-
+      boolean shouldRevalidate = Registry.is("ide.tree.deferred.icon.invalidates.cache") && myScaledDelegateIcon.getIconWidth() != oldWidth;
       EdtExecutorService.getInstance().execute(() -> {
         setDone(result);
         if (equalIcons(result, myDelegateIcon)) return;
@@ -356,9 +354,7 @@ public class DeferredIconImpl<T> extends JBCachingScalableIcon<DeferredIconImpl<
       if (o == null || getClass() != o.getClass()) return false;
 
       RepaintRequest request = (RepaintRequest)o;
-
-      if (!component.equals(request.component)) return false;
-      return rectangle != null ? rectangle.equals(request.rectangle) : request.rectangle == null;
+      return component.equals(request.component) && Objects.equals(rectangle, request.rectangle);
     }
 
     @Override

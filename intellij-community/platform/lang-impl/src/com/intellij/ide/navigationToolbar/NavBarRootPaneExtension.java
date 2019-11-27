@@ -26,7 +26,7 @@ import java.awt.*;
 /**
  * @author Konstantin Bulenkov
  */
-public class NavBarRootPaneExtension extends IdeRootPaneNorthExtension {
+public final class NavBarRootPaneExtension extends IdeRootPaneNorthExtension {
   private JComponent myWrapperPanel;
   @NonNls public static final String NAV_BAR = "NavBar";
   @SuppressWarnings("StatefulEp")
@@ -36,7 +36,7 @@ public class NavBarRootPaneExtension extends IdeRootPaneNorthExtension {
   private final boolean myNavToolbarGroupExist;
   private JScrollPane myScrollPane;
 
-  public NavBarRootPaneExtension(Project project) {
+  public NavBarRootPaneExtension(@NotNull Project project) {
     myProject = project;
 
     myProject.getMessageBus().connect().subscribe(UISettingsListener.TOPIC, uiSettings -> toggleRunPanel(!uiSettings.getShowMainToolbar() && uiSettings.getShowNavigationBar() && !uiSettings.getPresentationMode()));
@@ -70,6 +70,7 @@ public class NavBarRootPaneExtension extends IdeRootPaneNorthExtension {
            correctedAction instanceof CustomisedActionGroup && ((CustomisedActionGroup)correctedAction).getFirstAction() != null;
   }
 
+  @NotNull
   @Override
   public JComponent getComponent() {
     if (myWrapperPanel == null) {
@@ -90,7 +91,6 @@ public class NavBarRootPaneExtension extends IdeRootPaneNorthExtension {
 
       toggleRunPanel(!UISettings.getInstance().getShowMainToolbar() && !UISettings.getInstance().getPresentationMode());
     }
-
     return myWrapperPanel;
   }
 

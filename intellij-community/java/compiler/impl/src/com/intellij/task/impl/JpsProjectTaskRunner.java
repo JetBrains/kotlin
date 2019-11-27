@@ -52,7 +52,7 @@ public class JpsProjectTaskRunner extends ProjectTaskRunner {
     context.putUserData(JPS_BUILD_DATA_KEY, new MyJpsBuildData());
     MessageBusConnection fileGeneratedTopicConnection;
     if (context.isCollectionOfGeneratedFilesEnabled()) {
-      fileGeneratedTopicConnection = project.getMessageBus().connect(project);
+      fileGeneratedTopicConnection = project.getMessageBus().connect();
       fileGeneratedTopicConnection.subscribe(CompilerTopics.COMPILATION_STATUS, new CompilationStatusListener() {
         @Override
         public void fileGenerated(@NotNull String outputRoot, @NotNull String relativePath) {

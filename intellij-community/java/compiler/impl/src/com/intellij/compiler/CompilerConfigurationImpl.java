@@ -107,7 +107,7 @@ public class CompilerConfigurationImpl extends CompilerConfiguration implements 
   public CompilerConfigurationImpl(Project project) {
     myProject = project;
     myExcludesConfiguration = createExcludedEntriesConfiguration(project);
-    MessageBusConnection connection = project.getMessageBus().connect(project);
+    MessageBusConnection connection = project.getMessageBus().connect();
     connection.subscribe(ProjectTopics.MODULES, new ModuleListener() {
       @Override
       public void beforeModuleRemoved(@NotNull Project project, @NotNull Module module) {

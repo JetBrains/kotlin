@@ -169,8 +169,6 @@ public class IndexInfrastructure {
         // Todo: make processing removed files more robust because ignoring 'dispose in progress' delays application exit and
         // may cause memory leaks IDEA-183718, IDEA-169374,
         if (app.isDisposed() /*|| app.isDisposeInProgress()*/) return;
-        //TODO workaround for IDEA-223244
-        if (app.isUnitTestMode() && app.isDisposeInProgress()) return;
         callable.run();
       }
       catch (Throwable t) {

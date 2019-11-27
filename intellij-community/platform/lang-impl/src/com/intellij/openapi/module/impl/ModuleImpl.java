@@ -154,7 +154,6 @@ public class ModuleImpl extends PlatformComponentManagerImpl implements ModuleEx
   @Override
   public synchronized void dispose() {
     isModuleAdded = false;
-    disposeComponents();
     super.dispose();
   }
 

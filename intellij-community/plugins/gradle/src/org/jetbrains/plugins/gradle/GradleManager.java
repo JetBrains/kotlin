@@ -322,7 +322,7 @@ public final class GradleManager
   @Override
   public void runActivity(@NotNull final Project project) {
     // We want to automatically refresh linked projects on gradle service directory change.
-    MessageBusConnection connection = project.getMessageBus().connect(project);
+    MessageBusConnection connection = project.getMessageBus().connect();
     connection.subscribe(GradleSettings.getInstance(project).getChangesTopic(), new GradleSettingsListenerAdapter() {
 
       @Override

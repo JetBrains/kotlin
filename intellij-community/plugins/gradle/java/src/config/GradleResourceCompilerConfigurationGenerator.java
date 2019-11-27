@@ -65,7 +65,7 @@ public class GradleResourceCompilerConfigurationGenerator {
     externalProjectDataCache = ExternalProjectDataCache.getInstance(project);
     assert externalProjectDataCache != null;
 
-    project.getMessageBus().connect(project).subscribe(ProjectTopics.MODULES, new ModuleListener() {
+    project.getMessageBus().connect().subscribe(ProjectTopics.MODULES, new ModuleListener() {
       @Override
       public void moduleRemoved(@NotNull Project project, @NotNull Module module) {
         myModulesConfigurationHash.remove(module.getName());

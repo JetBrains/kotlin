@@ -38,7 +38,7 @@ import com.intellij.problems.Problem;
 import com.intellij.problems.WolfTheProblemSolver;
 import com.intellij.psi.*;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.messages.MessageBus;
+import com.intellij.util.messages.MessageBusConnection;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
@@ -51,16 +51,14 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * @author cdr
  */
-public class WolfTheProblemSolverImpl extends WolfTheProblemSolver {
+public final class WolfTheProblemSolverImpl extends WolfTheProblemSolver {
   private final Map<VirtualFile, ProblemFileInfo> myProblems = new THashMap<>(); // guarded by myProblems
   private final Map<VirtualFile, Set<Object>> myProblemsFromExternalSources = new THashMap<>(); // guarded by myProblemsFromExternalSources
   private final Collection<VirtualFile> myCheckingQueue = new THashSet<>(10);
 
   private final Project myProject;
 
-  protected WolfTheProblemSolverImpl(@NotNull Project project,
-                                     @NotNull PsiManager psiManager,
-                                     @NotNull MessageBus messageBus) {
+  protected WolfTheProblemSolverImpl(@NotNull Project project) {
     myProject = project;
     PsiTreeChangeListener changeListener = new PsiTreeChangeAdapter() {
       @Override
@@ -93,8 +91,9 @@ public class WolfTheProblemSolverImpl extends WolfTheProblemSolver {
         clearSyntaxErrorFlag(event);
       }
     };
-    psiManager.addPsiTreeChangeListener(changeListener);
-    messageBus.connect().subscribe(VirtualFileManager.VFS_CHANGES, new BulkFileListener() {
+    PsiManager.getInstance(myProject).addPsiTreeChangeListener(changeListener);
+    MessageBusConnection busConnection = project.getMessageBus().connect();
+    busConnection.subscribe(VirtualFileManager.VFS_CHANGES, new BulkFileListener() {
       @Override
       public void after(@NotNull List<? extends VFileEvent> events) {
         boolean dirChanged = false;
@@ -133,7 +132,7 @@ public class WolfTheProblemSolverImpl extends WolfTheProblemSolver {
       });
     }
 
-    messageBus.connect(project).subscribe(DynamicPluginListener.TOPIC, new DynamicPluginListener() {
+    busConnection.subscribe(DynamicPluginListener.TOPIC, new DynamicPluginListener() {
       @Override
       public void beforePluginUnload(@NotNull IdeaPluginDescriptor pluginDescriptor, boolean isUpdate) {
         // Ensure we don't have any leftover problems referring to classes from plugin being unloaded
