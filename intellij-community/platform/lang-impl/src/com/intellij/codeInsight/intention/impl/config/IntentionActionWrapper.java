@@ -84,6 +84,7 @@ public final class IntentionActionWrapper implements IntentionAction, ShortcutPr
     return myExtension.getInstance();
   }
 
+  @NotNull
   public String getImplementationClassName() {
     return myExtension.className;
   }

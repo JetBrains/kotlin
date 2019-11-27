@@ -217,7 +217,7 @@ public final class IntentionManagerImpl extends IntentionManager implements Disp
     }
     checkedForDuplicates = true;
     List<String> duplicates = myActions.stream()
-       .collect(Collectors.groupingBy(action -> IntentionActionDelegate.unwrap(action).getClass()))
+       .collect(Collectors.groupingBy(action -> action instanceof IntentionActionDelegate ? ((IntentionActionDelegate)action).getImplementationClassName() : action.getClass().getName()))
        .values().stream()
        .filter(list -> list.size() > 1)
        .map(dupList -> dupList.size() + " intention duplicates found for " + IntentionActionDelegate.unwrap(dupList.get(0))
