@@ -114,7 +114,7 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
         }
 
         @TestMetadata("capturedDynamic.kt")
-        public void testСapturedDynamic() throws Exception {
+        public void testCapturedDynamic() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/capturedDynamic.kt");
         }
 
