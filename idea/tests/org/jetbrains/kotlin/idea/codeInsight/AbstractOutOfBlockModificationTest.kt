@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.codeInsight
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.PsiModificationTrackerImpl
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.trackers.outOfBlockModificationCount
 import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
@@ -75,6 +77,7 @@ abstract class AbstractOutOfBlockModificationTest : KotlinLightCodeInsightFixtur
                 .incOutOfCodeBlockModificationCounter()
         }
         val updateElement = myFixture.file.findElementAt(myFixture.caretOffset - 1)
+        val kDoc: KDoc? = PsiTreeUtil.getParentOfType(updateElement, KDoc::class.java, false)
         val ktExpression: KtExpression? = PsiTreeUtil.getParentOfType(updateElement, KtExpression::class.java, false)
         val ktDeclaration: KtDeclaration? = PsiTreeUtil.getParentOfType(updateElement, KtDeclaration::class.java, false)
         val ktElement = ktExpression ?: ktDeclaration ?: return
@@ -91,7 +94,7 @@ abstract class AbstractOutOfBlockModificationTest : KotlinLightCodeInsightFixtur
                 "Expected out-of-block should result expression analyzed and vise versa", expectedOutOfBlock,
                 expressionProcessed
             )
-        } else {
+        } else if (updateElement !is PsiComment && kDoc == null) { // comments could be ignored from analyze
             val declarationProcessed =
                 context.get(
                     BindingContext.DECLARATION_TO_DESCRIPTOR,

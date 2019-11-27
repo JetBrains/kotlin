@@ -17,6 +17,7 @@ import com.intellij.pom.event.PomModelEvent
 import com.intellij.pom.event.PomModelListener
 import com.intellij.pom.tree.TreeAspect
 import com.intellij.pom.tree.events.TreeChangeEvent
+import com.intellij.pom.tree.events.impl.ChangeInfoImpl
 import com.intellij.psi.*
 import com.intellij.psi.impl.PsiManagerImpl
 import com.intellij.psi.impl.PsiModificationTrackerImpl
@@ -26,6 +27,7 @@ import com.intellij.psi.impl.PsiTreeChangeEventImpl.PsiEventType.PROPERTY_CHANGE
 import com.intellij.psi.impl.PsiTreeChangePreprocessor
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getTopmostParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
@@ -92,6 +94,7 @@ class KotlinCodeBlockModificationListener(
                 if (changedElements.isNotEmpty() &&
                     // ignore formatting (whitespaces etc)
                     (isFormattingChange(changeSet) ||
+                            isCommentChange(changeSet) ||
                             changedElements.all { !it.psi.isPhysical })
                 ) return
 
@@ -195,7 +198,19 @@ class KotlinCodeBlockModificationListener(
 
         fun isFormattingChange(changeSet: TreeChangeEvent): Boolean =
             changeSet.changedElements.all {
-                changeSet.getChangesByElement(it).affectedChildren.all { c -> (c is PsiWhiteSpace || c is PsiComment) }
+                changeSet.getChangesByElement(it).affectedChildren.all { c -> c is PsiWhiteSpace }
+            }
+
+        fun isCommentChange(changeSet: TreeChangeEvent): Boolean =
+            changeSet.changedElements.all { changedElement ->
+                val changesByElement = changeSet.getChangesByElement(changedElement)
+                changesByElement.affectedChildren.all { affectedChild ->
+                    val changeByChild = changesByElement.getChangeByChild(affectedChild)
+                    return@all if (changeByChild is ChangeInfoImpl) {
+                        changeByChild.oldChild is PsiComment && changeByChild.newChild is PsiComment ||
+                                changeByChild.oldChild is KDoc && changeByChild.newChild is KDoc
+                    } else false
+                }
             }
 
         fun getInsideCodeBlockModificationScope(element: PsiElement): BlockModificationScopeElement? {
