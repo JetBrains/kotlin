@@ -137,7 +137,7 @@ class IrTypeMapper(private val context: JvmBackendContext) : KotlinTypeMapperBas
                     arrayElementType = AsmTypes.OBJECT_TYPE
                     sw?.writeClass(arrayElementType)
                 } else {
-                    arrayElementType = mapType(memberType, mode.toGenericArgumentMode(variance), sw)
+                    arrayElementType = mapType(memberType, mode.toGenericArgumentMode(variance, ofArray = true), sw)
                 }
                 sw?.writeArrayEnd()
 
