@@ -3,14 +3,14 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.builder
+package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.addDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableRegularClass
+import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableClass
 import org.jetbrains.kotlin.fir.declarations.impl.FirSimpleFunctionImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
@@ -29,14 +29,14 @@ private val ENUM_VALUES = Name.identifier("values")
 private val ENUM_VALUE_OF = Name.identifier("valueOf")
 private val VALUE = Name.identifier("value")
 
-fun FirModifiableRegularClass.generateValuesFunction(
+fun FirModifiableClass<out FirRegularClass>.generateValuesFunction(
     session: FirSession, packageFqName: FqName, classFqName: FqName
 ) {
     val symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, ENUM_VALUES))
     val status = FirDeclarationStatusImpl(Visibilities.PUBLIC, Modality.FINAL).apply {
         isStatic = true
     }
-    addDeclaration(
+    declarations +=
         FirSimpleFunctionImpl(
             source, session,
             FirResolvedTypeRefImpl(
@@ -50,19 +50,19 @@ fun FirModifiableRegularClass.generateValuesFunction(
             ),
             null, ENUM_VALUES, status, symbol
         ).apply {
+            resolvePhase = FirResolvePhase.BODY_RESOLVE
             body = FirEmptyExpressionBlock()
         }
-    )
 }
 
-fun FirModifiableRegularClass.generateValueOfFunction(
+fun FirModifiableClass<out FirRegularClass>.generateValueOfFunction(
     session: FirSession, packageFqName: FqName, classFqName: FqName
 ) {
     val symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, ENUM_VALUE_OF))
     val status = FirDeclarationStatusImpl(Visibilities.PUBLIC, Modality.FINAL).apply {
         isStatic = true
     }
-    addDeclaration(
+    declarations +=
         FirSimpleFunctionImpl(
             source, session,
             FirResolvedTypeRefImpl(
@@ -74,6 +74,7 @@ fun FirModifiableRegularClass.generateValueOfFunction(
             ),
             null, ENUM_VALUE_OF, status, symbol
         ).apply {
+            resolvePhase = FirResolvePhase.BODY_RESOLVE
             valueParameters += FirValueParameterImpl(
                 source, session, FirImplicitStringTypeRef(source),
                 VALUE, FirVariableSymbol(VALUE),
@@ -81,5 +82,4 @@ fun FirModifiableRegularClass.generateValueOfFunction(
             )
             body = FirEmptyExpressionBlock()
         }
-    )
 }

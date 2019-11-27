@@ -1,4 +1,5 @@
 // EXPECTED_REACHABLE_NODES: 1293
+// IGNORE_BACKEND: JS_IR
 open class A {
     fun foo(): Char = 'X'
 }

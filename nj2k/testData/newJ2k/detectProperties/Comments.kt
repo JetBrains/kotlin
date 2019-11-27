@@ -8,6 +8,7 @@ internal class A(// comment for field2 setter
     // Comment for field1 getter
     // Comment for field1
     var field1 = 0
+
     // comment for field3 setter
     // comment for field3 getter
     // comment before field3

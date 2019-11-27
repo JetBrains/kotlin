@@ -12,9 +12,9 @@ fun box() {
 // TestKt:8:
 // A:3: x:java.lang.String, y:int
 // TestKt:8:
-// TestKt:5: $dstr$x$y:A
-// TestKt$box$1:8:
-// TestKt$box$1.invoke(java.lang.Object)+8: a:A, block:TestKt$box$1
+// TestKt:5: a:A, block:TestKt$box$1
+// TestKt$box$1:8: $dstr$x$y:A
+// TestKt$box$1.invoke(java.lang.Object)+8:
 // TestKt:5: a:A, block:TestKt$box$1
 // TestKt:8:
 // TestKt:9:

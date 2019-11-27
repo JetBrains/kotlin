@@ -1,3 +1,4 @@
+// PROBLEM: Modifiers should follow annotations
 annotation class Inject
 annotation class VisibleForTesting
 

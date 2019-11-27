@@ -54,7 +54,7 @@ interface RequiredKotlinJsDependency {
 
 data class NpmPackageVersion(val name: String, var version: String) : RequiredKotlinJsDependency {
     override fun createDependency(project: Project, scope: NpmDependency.Scope): Dependency =
-        NpmDependency(project, null, name, version, scope)
+        NpmDependency(project, name, version, scope)
 }
 
 data class KotlinGradleNpmPackage(val simpleModuleName: String) : RequiredKotlinJsDependency {

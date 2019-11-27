@@ -472,7 +472,8 @@ public class DescriptorResolver {
                     }
                     return null;
                 },
-                supertypeLoopsResolver
+                supertypeLoopsResolver,
+                storageManager
         );
         trace.record(BindingContext.TYPE_PARAMETER, typeParameter, typeParameterDescriptor);
         return typeParameterDescriptor;

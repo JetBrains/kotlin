@@ -24,7 +24,7 @@
       @2:0..8:1 VALUE_PARAMETER name:<this> type:kotlin.Any
   @10:0..18 FUN name:foo visibility:public modality:FINAL <> () returnType:test.Host
     @10:12..18 BLOCK_BODY
-      @10:12..18 RETURN type=kotlin.Nothing from='public final fun foo (): test.Host declared in test'
+      @10:18..18 RETURN type=kotlin.Nothing from='public final fun foo (): test.Host declared in test'
         @10:12..18 CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in test.Host' type=test.Host origin=null
   @12:0..14:1 FUN name:test2 visibility:public modality:FINAL <> ($receiver:test.Host) returnType:kotlin.Unit
     @12:4..8 VALUE_PARAMETER name:<this> type:test.Host

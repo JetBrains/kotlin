@@ -31,5 +31,5 @@ FILE: importedReceiver.kt
         this@R|/My|.R|/My.baz|()
         (this@R|/My|, Boolean(true)).R|/My.gau|()
         this@R|/Your|.R|/Your.wat|()
-        (this@R|/Your|, Boolean(false)).R|/Your.watwat|<R|kotlin/Boolean|>()
+        (this@R|/Your|, Boolean(false)).R|FakeOverride</Your.watwat: R|kotlin/Unit|>|<R|kotlin/Boolean|>()
     }

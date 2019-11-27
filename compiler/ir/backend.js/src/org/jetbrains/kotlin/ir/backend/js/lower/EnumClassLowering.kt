@@ -334,7 +334,7 @@ class EnumClassTransformer(val context: JsIrBackendContext, private val irClass:
     private val builder = context.createIrBuilder(irClass.symbol)
     private val enumEntries = irClass.declarations.filterIsInstance<IrEnumEntry>()
     private val enumName = irClass.name.identifier
-    private val throwISESymbol = context.throwISEymbol
+    private val throwISESymbol = context.throwISEsymbol
 
     fun transform(): List<IrDeclaration> {
 

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.storage.LockBasedStorageManager;
+import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.KotlinTypeKt;
 import org.jetbrains.kotlin.types.Variance;
@@ -47,10 +47,12 @@ public class TypeParameterDescriptorImpl extends AbstractTypeParameterDescriptor
             boolean reified,
             @NotNull Variance variance,
             @NotNull Name name,
-            int index
+            int index,
+            @NotNull StorageManager storageManager
     ) {
-        TypeParameterDescriptorImpl typeParameterDescriptor =
-                createForFurtherModification(containingDeclaration, annotations, reified, variance, name, index, SourceElement.NO_SOURCE);
+        TypeParameterDescriptorImpl typeParameterDescriptor = createForFurtherModification(
+                containingDeclaration, annotations, reified, variance, name, index, SourceElement.NO_SOURCE, storageManager
+        );
         typeParameterDescriptor.addUpperBound(getBuiltIns(containingDeclaration).getDefaultBound());
         typeParameterDescriptor.setInitialized();
         return typeParameterDescriptor;
@@ -63,10 +65,13 @@ public class TypeParameterDescriptorImpl extends AbstractTypeParameterDescriptor
             @NotNull Variance variance,
             @NotNull Name name,
             int index,
-            @NotNull SourceElement source
+            @NotNull SourceElement source,
+            @NotNull StorageManager storageManager
     ) {
-        return createForFurtherModification(containingDeclaration, annotations, reified, variance, name, index, source,
-                                            /* reportSupertypeLoopError = */ null, SupertypeLoopChecker.EMPTY.INSTANCE);
+        return createForFurtherModification(
+                containingDeclaration, annotations, reified, variance, name, index, source,
+                null, SupertypeLoopChecker.EMPTY.INSTANCE, storageManager
+        );
     }
 
     public static TypeParameterDescriptorImpl createForFurtherModification(
@@ -78,10 +83,13 @@ public class TypeParameterDescriptorImpl extends AbstractTypeParameterDescriptor
             int index,
             @NotNull SourceElement source,
             @Nullable Function1<KotlinType, Void> reportCycleError,
-            @NotNull SupertypeLoopChecker supertypeLoopsResolver
+            @NotNull SupertypeLoopChecker supertypeLoopsResolver,
+            @NotNull StorageManager storageManager
     ) {
-        return new TypeParameterDescriptorImpl(containingDeclaration, annotations, reified, variance, name, index, source, reportCycleError,
-                                               supertypeLoopsResolver);
+        return new TypeParameterDescriptorImpl(
+                containingDeclaration, annotations, reified, variance, name,
+                index, source, reportCycleError, supertypeLoopsResolver, storageManager
+        );
     }
 
     private final List<KotlinType> upperBounds = new ArrayList<KotlinType>(1);
@@ -96,10 +104,10 @@ public class TypeParameterDescriptorImpl extends AbstractTypeParameterDescriptor
             int index,
             @NotNull SourceElement source,
             @Nullable Function1<KotlinType, Void> reportCycleError,
-            @NotNull SupertypeLoopChecker supertypeLoopsChecker
+            @NotNull SupertypeLoopChecker supertypeLoopsChecker,
+            @NotNull StorageManager storageManager
     ) {
-        super(LockBasedStorageManager.NO_LOCKS, containingDeclaration, annotations, name, variance, reified, index, source,
-              supertypeLoopsChecker);
+        super(storageManager, containingDeclaration, annotations, name, variance, reified, index, source, supertypeLoopsChecker);
         this.reportCycleError = reportCycleError;
     }
 

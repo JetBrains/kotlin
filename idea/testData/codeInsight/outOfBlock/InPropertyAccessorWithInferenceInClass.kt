@@ -1,4 +1,5 @@
 // OUT_OF_CODE_BLOCK: TRUE
+// ERROR: Unresolved reference: foao
 
 class A {
     fun foo(): Int = 12

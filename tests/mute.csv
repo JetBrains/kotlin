@@ -15,3 +15,4 @@ org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Java.S
 org.jetbrains.kotlin.idea.refactoring.move.MultiModuleMoveTestGenerated.testMoveFromJsModuleToJvmModule_MoveFromJsModuleToJvmModule, KT-34106
 org.jetbrains.kotlin.idea.refactoring.move.MultiModuleMoveTestGenerated.testMoveFromJvmModuleToJsModule_MoveFromJvmModuleToJsModule, KT-34106
 org.jetbrains.kotlin.idea.refactoring.move.MultiModuleMoveTestGenerated.testMoveJdkDependentToJsModule_MoveJdkDependentToJsModule, KT-34106
+org.jetbrains.kotlin.gradle.GradleMultiplatformWizardTest.testWeb, KT-35095

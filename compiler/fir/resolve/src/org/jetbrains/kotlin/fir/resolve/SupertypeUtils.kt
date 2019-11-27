@@ -73,13 +73,6 @@ fun FirClass<*>.buildUseSiteMemberScope(useSiteSession: FirSession, builder: Sco
     return symbolProvider.getClassUseSiteMemberScope(classId, useSiteSession, builder)
 }
 
-fun FirTypeAlias.buildUseSiteMemberScope(useSiteSession: FirSession, builder: ScopeSession): FirScope? {
-    val type = expandedTypeRef.coneTypeUnsafe<ConeClassLikeType>()
-    return type.scope(useSiteSession, builder)?.let {
-        type.wrapSubstitutionScopeIfNeed(useSiteSession, it, this, builder)
-    }
-}
-
 fun FirClass<*>.buildDefaultUseSiteMemberScope(useSiteSession: FirSession, builder: ScopeSession): FirScope {
     return builder.getOrBuild(symbol, USE_SITE) {
 

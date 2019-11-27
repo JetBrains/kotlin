@@ -1,6 +1,6 @@
 SimpleAnnotated -> UClass (name = SimpleAnnotated)
 Suppress -> UAnnotation (fqName = kotlin.Suppress)
-method -> UAnnotationMethod (name = method)
+method -> UMethod (name = method)
     println -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
 kotlin -> USimpleNameReferenceExpression (identifier = kotlin)
 SinceKotlin -> UAnnotation (fqName = kotlin.SinceKotlin)

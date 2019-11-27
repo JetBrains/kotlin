@@ -1,6 +1,6 @@
 UFile (package = )
     UClass (name = LocalVariableWithAnnotationKt)
-        UAnnotationMethod (name = foo)
+        UMethod (name = foo)
             UBlockExpression
                 UDeclarationsExpression
                     ULocalVariable (name = bar)

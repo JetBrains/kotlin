@@ -1,0 +1,23 @@
+FILE: supertypeGenerics.kt
+    public abstract interface I<F> : R|kotlin/Any| {
+        public abstract fun <T : R|kotlin/Comparable<T>|> f(t: R|kotlin/collections/List<T>|, f: R|kotlin/collections/List<F>|): R|kotlin/Any|
+
+    }
+    public abstract class Base<E> : R|kotlin/Any| {
+        public constructor<E>(): R|Base<E>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun <D : R|kotlin/Comparable<D>|> f(t: R|kotlin/collections/List<D>|, e: R|kotlin/collections/List<E>|): R|kotlin/Unit| {
+        }
+
+    }
+    public final class C : R|Base<kotlin/String>|, R|I<kotlin/String>| {
+        public constructor(): R|C| {
+            super<R|Base<kotlin/String>|>()
+        }
+
+    }
+    public final fun f(list: R|kotlin/collections/List<kotlin/Int>|, s: R|kotlin/collections/List<kotlin/String>|): R|kotlin/Unit| {
+        R|/C.C|().R|FakeOverride</Base.f: R|kotlin/Unit|>|<R|kotlin/Int|>(R|<local>/list|, R|<local>/s|)
+    }

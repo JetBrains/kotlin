@@ -6,18 +6,25 @@ interface Z<T>
 abstract class A<T: I, U: I, V>(x: T, y: Any?) {
     // INFO: {"checked": "true"}
     val foo1: T
+
     // INFO: {"checked": "true"}
     val foo2: Z<T>
+
     // INFO: {"checked": "true"}
     val foo3: Any?
+
     // INFO: {"checked": "true"}
     val foo4: Z<Any?>
+
     // INFO: {"checked": "true", "toAbstract": "true"}
     abstract val foo5: T
+
     // INFO: {"checked": "true", "toAbstract": "true"}
     abstract val foo6: Z<T>
+
     // INFO: {"checked": "true", "toAbstract": "true"}
     abstract val foo7: Any?
+
     // INFO: {"checked": "true", "toAbstract": "true"}
     abstract val foo8: Z<Any?>
 

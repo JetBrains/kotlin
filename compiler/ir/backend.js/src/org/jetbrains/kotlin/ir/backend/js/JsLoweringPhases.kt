@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.inline.FunctionInlining
+import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.calls.CallsLowering
@@ -97,7 +98,7 @@ private val arrayConstructorPhase = makeJsModulePhase(
 
 private val functionInliningPhase = makeCustomJsModulePhase(
     { context, module ->
-        FunctionInlining(context).inline(module)
+        FunctionInlining(context, false).inline(module)
         module.patchDeclarationParents()
     },
     name = "FunctionInliningPhase",
@@ -155,6 +156,12 @@ private val returnableBlockLoweringPhase = makeJsModulePhase(
     name = "ReturnableBlockLowering",
     description = "Replace returnable block with do-while loop",
     prerequisite = setOf(functionInliningPhase)
+)
+
+private val forLoopsLoweringPhase = makeJsModulePhase(
+    ::ForLoopsLowering,
+    name = "ForLoopsLowering",
+    description = "For loops lowering"
 )
 
 private val localDelegatedPropertiesLoweringPhase = makeJsModulePhase(
@@ -258,11 +265,17 @@ private val primaryConstructorLoweringPhase = makeJsModulePhase(
     prerequisite = setOf(enumClassConstructorLoweringPhase)
 )
 
+private val annotationConstructorLowering = makeJsModulePhase(
+    ::AnnotationConstructorLowering,
+    name = "AnnotationConstructorLowering",
+    description = "Generate annotation constructor body"
+)
+
 private val initializersLoweringPhase = makeJsModulePhase(
     ::InitializersLowering,
     name = "InitializersLowering",
     description = "Merge init block and field initializers into [primary] constructor",
-    prerequisite = setOf(enumClassConstructorLoweringPhase, primaryConstructorLoweringPhase)
+    prerequisite = setOf(enumClassConstructorLoweringPhase, primaryConstructorLoweringPhase, annotationConstructorLowering)
 )
 
 private val multipleCatchesLoweringPhase = makeJsModulePhase(
@@ -397,12 +410,14 @@ val jsPhases = namedIrModulePhase(
             innerClassConstructorCallsLoweringPhase then
             propertiesLoweringPhase then
             primaryConstructorLoweringPhase then
+            annotationConstructorLowering then
             initializersLoweringPhase then
             // Common prefix ends
             enumClassLoweringPhase then
             enumUsageLoweringPhase then
             suspendFunctionsLoweringPhase then
             returnableBlockLoweringPhase then
+            forLoopsLoweringPhase then
             privateMembersLoweringPhase then
             callableReferenceLoweringPhase then
             defaultArgumentStubGeneratorPhase then

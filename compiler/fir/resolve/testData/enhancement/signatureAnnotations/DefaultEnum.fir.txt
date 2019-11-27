@@ -13,6 +13,12 @@ public/*package*/ open class A : R|kotlin/Any| {
 public final enum class Mixed : R|kotlin/Enum<Mixed>| {
     public final static field NOT_ENTRY_EITHER: R|ft<Mixed, Mixed?>!|
 
+    public final static fun values(): R|kotlin/Array<Mixed>| {
+    }
+
+    public final static fun valueOf(value: R|kotlin/String|): R|Mixed| {
+    }
+
 }
 public final enum class Signs : R|kotlin/Enum<Signs>| {
     public final static field HELLO: R|ft<Signs, Signs?>!|
@@ -20,5 +26,11 @@ public final enum class Signs : R|kotlin/Enum<Signs>| {
     public final static field WORLD: R|ft<Signs, Signs?>!|
 
     public final static field X: R|ft<Signs, Signs?>!|
+
+    public final static fun values(): R|kotlin/Array<Signs>| {
+    }
+
+    public final static fun valueOf(value: R|kotlin/String|): R|Signs| {
+    }
 
 }

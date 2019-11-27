@@ -1,0 +1,26 @@
+FILE: protobufExt.kt
+    public abstract interface Ext<M : R|Message<M>|, T> : R|kotlin/Any| {
+    }
+    public abstract interface Message<M : R|Message<M>|> : R|kotlin/Any| {
+        public abstract fun <T> ext(e: R|Ext<M, T>|): R|T|
+
+    }
+    public final class MyMessage : R|Message<MyMessage>| {
+        public constructor(): R|MyMessage| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class MyExt : R|Ext<MyMessage, kotlin/String>| {
+        public constructor(): R|MyExt| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun <M : R|Message<M>|, T> R|Message<M>|.extF(e: R|Ext<M, T>|): R|T| {
+        ^extF this@R|/Message|.R|FakeOverride</Message.ext: R|T|>|<R|T|>(R|<local>/e|)
+    }
+    public final fun foo(m: R|MyMessage|, e: R|MyExt|): R|kotlin/Unit| {
+        R|<local>/m|.R|FakeOverride</Message.ext: R|T|>|<R|kotlin/String|>(R|<local>/e|)
+        R|<local>/m|.R|/extF|<R|MyMessage|, R|kotlin/String|>(R|<local>/e|)
+    }

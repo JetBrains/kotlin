@@ -1,0 +1,41 @@
+FILE: anotherBoundSmartcasts.kt
+    public abstract interface A : R|kotlin/Any| {
+        public abstract fun foo(): R|kotlin/Int|
+
+        public abstract val x: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+        public abstract fun bar(): R|kotlin/Unit|
+
+    }
+    public final fun test_1(a: R|A?|): R|kotlin/Unit| {
+        lval x: R|kotlin/Int?| = R|<local>/a|?.R|/A.x|
+        when () {
+            !=(R|<local>/x|, Null(null)) ->  {
+                R|<local>/a|.<Inapplicable(WRONG_RECEIVER): [/A.bar]>#()
+            }
+        }
+
+    }
+    public final fun test_2(a: R|A?|): R|kotlin/Unit| {
+        lval x: R|kotlin/Int?| = R|<local>/a|?.R|/A.foo|()
+        when () {
+            !=(R|<local>/x|, Null(null)) ->  {
+                R|<local>/a|.<Inapplicable(WRONG_RECEIVER): [/A.bar]>#()
+            }
+        }
+
+    }
+    public final fun test_3(x: R|kotlin/Any?|): R|kotlin/Unit| {
+        lval a: R|A| = when (lval <elvis>: R|A?| = (R|<local>/x| as? R|A|)) {
+            ==($subj$, Null(null)) ->  {
+                ^test_3 Unit
+            }
+            else ->  {
+                R|<local>/<elvis>|
+            }
+        }
+
+        R|<local>/a|.R|/A.foo|()
+        R|<local>/x|.<Unresolved name: foo>#()
+    }

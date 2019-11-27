@@ -1,6 +1,6 @@
 UFile (package = ) [public final class InnerNonFixedTypeVariableKt {...]
     UClass (name = InnerNonFixedTypeVariableKt) [public final class InnerNonFixedTypeVariableKt {...}]
-        UAnnotationMethod (name = test) [public static final fun test(@org.jetbrains.annotations.NotNull list: java.util.List<? extends java.lang.Object>) : void {...}]
+        UMethod (name = test) [public static final fun test(@org.jetbrains.annotations.NotNull list: java.util.List<? extends java.lang.Object>) : void {...}]
             UParameter (name = list) [@org.jetbrains.annotations.NotNull var list: java.util.List<? extends java.lang.Object>]
                 UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
             UBlockExpression [{...}] : PsiType:<ErrorType>
@@ -19,4 +19,4 @@ UFile (package = ) [public final class InnerNonFixedTypeVariableKt {...]
                         ULambdaExpression [{ ...}] : PsiType:Function0<? extends Unit>
                             UBlockExpression [{...}]
     UClass (name = Some) [public final class Some {...}]
-        UAnnotationMethod (name = Some) [public fun Some() = UastEmptyExpression]
+        UMethod (name = Some) [public fun Some() = UastEmptyExpression]

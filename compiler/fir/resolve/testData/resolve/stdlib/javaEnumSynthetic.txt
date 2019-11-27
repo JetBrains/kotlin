@@ -1,0 +1,5 @@
+FILE: main.kt
+    public final fun foo(): R|kotlin/Unit| {
+        Q|JavaEnum|.R|/JavaEnum.values|()
+        Q|JavaEnum|.R|/JavaEnum.valueOf|(String())
+    }

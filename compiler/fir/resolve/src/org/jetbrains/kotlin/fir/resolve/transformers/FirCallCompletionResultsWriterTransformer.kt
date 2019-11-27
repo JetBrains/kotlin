@@ -219,11 +219,11 @@ class FirCallCompletionResultsWriterTransformer(
         val initialType = subCandidate.substitutor.substituteOrNull(typeRef.type)
         val finalType = finalSubstitutor.substituteOrNull(initialType)
 
-        val resultType = typeRef.withReplacedConeType(finalType)
+        whenExpression.resultType = typeRef.withReplacedConeType(finalType)
 
-        return whenExpression.copy(
-            resultType = resultType,
-            calleeReference = FirResolvedNamedReferenceImpl(
+        return whenExpression.transformCalleeReference(
+            StoreCalleeReference,
+            FirResolvedNamedReferenceImpl(
                 calleeReference.source,
                 calleeReference.name,
                 calleeReference.candidateSymbol
@@ -245,11 +245,10 @@ class FirCallCompletionResultsWriterTransformer(
         val initialType = subCandidate.substitutor.substituteOrNull(typeRef.type)
         val finalType = finalSubstitutor.substituteOrNull(initialType)
 
-        val resultType = typeRef.withReplacedConeType(finalType)
-
-        return tryExpression.copy(
-            resultType = resultType,
-            calleeReference = FirResolvedNamedReferenceImpl(
+        tryExpression.resultType = typeRef.withReplacedConeType(finalType)
+        return tryExpression.transformCalleeReference(
+            StoreCalleeReference,
+            FirResolvedNamedReferenceImpl(
                 calleeReference.source,
                 calleeReference.name,
                 calleeReference.candidateSymbol

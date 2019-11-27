@@ -4,16 +4,22 @@
  */
 package org.jetbrains.kotlin.idea.core.script.configuration.listener
 
-import org.jetbrains.kotlin.psi.KtFile
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.scripting.definitions.isNonScript
 
-open class DefaultScriptChangeListener : ScriptChangeListener {
-    override fun editorActivated(file: KtFile, updater: ScriptConfigurationUpdater): Boolean {
+open class DefaultScriptChangeListener(project: Project) : ScriptChangeListener(project) {
+    override fun editorActivated(vFile: VirtualFile, updater: ScriptConfigurationUpdater) {
+        val file = getAnalyzableKtFileForScript(vFile) ?: return
         updater.ensureUpToDatedConfigurationSuggested(file)
-        return true
     }
 
-    override fun documentChanged(file: KtFile, updater: ScriptConfigurationUpdater): Boolean {
+    override fun documentChanged(vFile: VirtualFile, updater: ScriptConfigurationUpdater) {
+        val file = getAnalyzableKtFileForScript(vFile) ?: return
         updater.ensureUpToDatedConfigurationSuggested(file)
-        return true
+    }
+
+    override fun isApplicable(vFile: VirtualFile): Boolean {
+        return vFile.isValid && !vFile.isNonScript()
     }
 }

@@ -1,6 +1,6 @@
 UFile (package = )
     UClass (name = WhenIsKt)
-        UAnnotationMethod (name = foo)
+        UMethod (name = foo)
             UParameter (name = bar)
                 UAnnotation (fqName = org.jetbrains.annotations.NotNull)
             UBlockExpression

@@ -1,6 +1,6 @@
 UFile (package = )
     UClass (name = ReceiverFunKt)
-        UAnnotationMethod (name = foo)
+        UMethod (name = foo)
             UParameter (name = $this$foo)
                 UAnnotation (fqName = MyReceiverAnnotation)
                 UAnnotation (fqName = org.jetbrains.annotations.NotNull)

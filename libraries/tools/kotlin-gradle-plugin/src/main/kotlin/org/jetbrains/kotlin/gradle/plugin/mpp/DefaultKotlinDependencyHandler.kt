@@ -79,9 +79,9 @@ class DefaultKotlinDependencyHandler(
             project.dependencies.add(configurationName, it)
         }
 
-    override fun npm(packageName: String, version: String) =
-        NpmDependency(project, null, packageName, version)
+    override fun npm(name: String, version: String): NpmDependency =
+        NpmDependency(project, name, version)
 
-    override fun npm(org: String, packageName: String, version: String) =
-        NpmDependency(project, org, packageName, version)
+    override fun npm(org: String?, packageName: String, version: String) =
+        npm("${if (org != null) "@$org/" else ""}$packageName", version)
 }

@@ -232,6 +232,9 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun KotlinTypeMarker.isFlexible(): Boolean = asFlexibleType() != null
 
     fun KotlinTypeMarker.isDynamic(): Boolean = asFlexibleType()?.asDynamicType() != null
+    fun KotlinTypeMarker.isCapturedDynamic(): Boolean =
+        asSimpleType()?.asCapturedType()?.typeConstructor()?.projection()?.getType()?.isDynamic() == true
+
     fun KotlinTypeMarker.isDefinitelyNotNullType(): Boolean = asSimpleType()?.asDefinitelyNotNullType() != null
 
     fun KotlinTypeMarker.hasFlexibleNullability() =

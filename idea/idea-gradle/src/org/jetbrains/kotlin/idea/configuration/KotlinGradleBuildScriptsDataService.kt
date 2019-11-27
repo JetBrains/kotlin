@@ -52,6 +52,7 @@ class KotlinGradleBuildScriptsDataService : AbstractProjectDataService<GradleSou
         super.onSuccessImport(imported, projectData, project, modelsProvider)
 
         val projectDataNode = imported.firstNotNullResult { ExternalSystemApiUtil.findParent(it, ProjectKeys.PROJECT) } ?: return
+        val buildScripts = projectDataNode.gradleKotlinBuildScripts ?: return
 
         val gradleSettings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID)
         val projectSettings = gradleSettings.getLinkedProjectSettings(projectData?.linkedExternalProjectPath ?: return) ?: return
@@ -62,9 +63,9 @@ class KotlinGradleBuildScriptsDataService : AbstractProjectDataService<GradleSou
         )
         val javaHome = File(gradleExeSettings.javaHome ?: return)
 
-        val files = mutableListOf<Pair<VirtualFile, ScriptConfigurationSnapshot>>()
+        val scriptConfigurations = mutableListOf<Pair<VirtualFile, ScriptConfigurationSnapshot>>()
 
-        projectDataNode.gradleKotlinBuildScripts?.forEach { buildScript ->
+        buildScripts.forEach { buildScript ->
             val scriptFile = File(buildScript.file)
             val virtualFile = VfsUtil.findFile(scriptFile.toPath(), true)!!
 
@@ -81,7 +82,7 @@ class KotlinGradleBuildScriptsDataService : AbstractProjectDataService<GradleSou
                     ide.dependenciesSources(JvmDependency(buildScript.sourcePath.map { File(it) }))
                 }.adjustByDefinition(definition)
 
-            files.add(
+            scriptConfigurations.add(
                 Pair(
                     virtualFile,
                     ScriptConfigurationSnapshot(
@@ -100,7 +101,7 @@ class KotlinGradleBuildScriptsDataService : AbstractProjectDataService<GradleSou
             }
         }
 
-        project.service<ScriptConfigurationManager>().saveCompilationConfigurationAfterImport(files)
+        project.service<ScriptConfigurationManager>().saveCompilationConfigurationAfterImport(scriptConfigurations)
     }
 
     private fun addBuildScriptDiagnosticMessage(

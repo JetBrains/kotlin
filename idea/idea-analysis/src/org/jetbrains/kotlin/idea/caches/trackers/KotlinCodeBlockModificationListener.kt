@@ -238,7 +238,19 @@ class KotlinCodeBlockModificationListener(
                                         // adding annotations to accessor is the same as change contract of property
                                         (element !is KtAnnotated || element.annotationEntries.isEmpty())
                             }
-                                ?.let { return BlockModificationScopeElement(blockDeclaration, it) }
+                                ?.let { expression ->
+                                    val declaration = if (blockDeclaration.initializer != null)
+                                        blockDeclaration
+                                    else
+                                        KtPsiUtil.getTopmostParentOfTypes(
+                                            blockDeclaration,
+                                            // property could be initialized on a class level
+                                            KtClass::class.java,
+                                            // ktFile to check top level property declarations
+                                            KtFile::class.java
+                                        ) as KtElement
+                                    return BlockModificationScopeElement(declaration, expression)
+                                }
                         }
                     }
                 }

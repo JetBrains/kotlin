@@ -56,25 +56,29 @@ abstract class AsyncScriptDefinitionsContributor(protected val project: Project)
     private var _definitions: List<ScriptDefinition>? = null
     private val definitionsLock = ReentrantReadWriteLock()
 
+    @Volatile
     protected var forceStartUpdate = false
+
+    @Volatile
     protected var shouldStartNewUpdate = false
 
     private var inProgress = false
     private val inProgressLock = ReentrantReadWriteLock()
 
     private inner class DefinitionsCollectorBackgroundTask : Task.Backgroundable(project, progressMessage, true) {
+        override fun onFinished() {
+            inProgressLock.write {
+                inProgress = false
+            }
+        }
 
         override fun run(indicator: ProgressIndicator) {
             while (true) {
-                inProgressLock.read {
-                    if (indicator.isCanceled || !shouldStartNewUpdate) {
-                        inProgressLock.write {
-                            inProgress = false
-                        }
-                        return
-                    }
-                    shouldStartNewUpdate = false
+                if (indicator.isCanceled || !shouldStartNewUpdate) {
+                    return
                 }
+
+                shouldStartNewUpdate = false
 
                 val previousDefinitions = definitionsLock.read {
                     if (!forceStartUpdate && _definitions != null) return

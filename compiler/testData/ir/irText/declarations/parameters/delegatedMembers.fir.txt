@@ -46,12 +46,13 @@ FILE fqName:<root> fileName:/delegatedMembers.kt
         overridden:
           public abstract fun <get-bar> (): kotlin.Int declared in <root>.IBase
         $this: VALUE_PARAMETER name:<this> type:<root>.Test
-    FUN FAKE_OVERRIDE name:qux visibility:public modality:ABSTRACT <> ($this:<root>.IBase, t:TT of <root>.Test, x:X of <root>.IBase.qux) returnType:kotlin.Unit [fake_override]
+    FUN FAKE_OVERRIDE name:qux visibility:public modality:ABSTRACT <X> ($this:<root>.IBase, t:TT of <root>.Test, x:X of <root>.Test.qux) returnType:kotlin.Unit [fake_override]
       overridden:
         public abstract fun qux <X> (t: T of <root>.IBase, x: X of <root>.IBase.qux): kotlin.Unit declared in <root>.IBase
+      TYPE_PARAMETER name:X index:0 variance: superTypes:[kotlin.Any?]
       $this: VALUE_PARAMETER name:<this> type:<root>.IBase
       VALUE_PARAMETER name:t index:0 type:TT of <root>.Test
-      VALUE_PARAMETER name:x index:1 type:X of <root>.IBase.qux
+      VALUE_PARAMETER name:x index:1 type:X of <root>.Test.qux
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any

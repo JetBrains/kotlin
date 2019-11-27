@@ -1,10 +1,10 @@
 UFile (package = ) [public final class LocalDeclarationsKt {...]
     UClass (name = LocalDeclarationsKt) [public final class LocalDeclarationsKt {...}]
-        UAnnotationMethod (name = foo) [public static final fun foo() : boolean {...}]
+        UMethod (name = foo) [public static final fun foo() : boolean {...}]
             UBlockExpression [{...}] : PsiType:Void
                 UDeclarationsExpression [public static final class Local {...}]
                     UClass (name = Local) [public static final class Local {...}]
-                        UAnnotationMethod (name = LocalDeclarationsKt$foo$Local) [public fun LocalDeclarationsKt$foo$Local() = UastEmptyExpression]
+                        UMethod (name = LocalDeclarationsKt$foo$Local) [public fun LocalDeclarationsKt$foo$Local() = UastEmptyExpression]
                 UDeclarationsExpression [var bar: <ErrorType> = fun () {...}]
                     UVariable (name = bar) [var bar: <ErrorType> = fun () {...}]
                         ULambdaExpression [fun () {...}]
@@ -32,7 +32,7 @@ UFile (package = ) [public final class LocalDeclarationsKt {...]
                     UClass (name = LocalObject) [public static final class LocalObject {...}]
                         UField (name = INSTANCE) [@null public static final var INSTANCE: LocalDeclarationsKt.foo.LocalObject]
                             UAnnotation (fqName = null) [@null]
-                        UAnnotationMethod (name = LocalDeclarationsKt$foo$LocalObject) [private fun LocalDeclarationsKt$foo$LocalObject() = UastEmptyExpression]
+                        UMethod (name = LocalDeclarationsKt$foo$LocalObject) [private fun LocalDeclarationsKt$foo$LocalObject() = UastEmptyExpression]
                 UReturnExpression [return bar() == <init>()] : PsiType:Void
                     UBinaryExpression (operator = ==) [bar() == <init>()] : PsiType:boolean
                         UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [bar()] : PsiType:<ErrorType>

@@ -1,6 +1,6 @@
 // "Add annotation target" "true"
 
-@Target(AnnotationTarget.TYPE, AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
+@Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.TYPE)
 annotation class Foo
 
 @Foo

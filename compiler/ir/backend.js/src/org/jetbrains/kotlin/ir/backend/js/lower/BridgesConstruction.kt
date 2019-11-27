@@ -138,6 +138,7 @@ class BridgesConstruction(val context: CommonBackendContext) : ClassLoweringPass
             valueParameters += bridge.valueParameters.map { p -> p.copyTo(this) }
             annotations += bridge.annotations
             overriddenSymbols.addAll(delegateTo.overriddenSymbols)
+            overriddenSymbols.add(bridge.symbol)
         }
 
         context.createIrBuilder(irFunction.symbol).irBlockBody(irFunction) {

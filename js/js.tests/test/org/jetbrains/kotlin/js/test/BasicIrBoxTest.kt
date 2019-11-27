@@ -46,6 +46,8 @@ abstract class BasicIrBoxTest(
 
     override val skipMinification = true
 
+    override val runIrDce: Boolean = true
+
     // TODO Design incremental compilation for IR and add test support
     override val incrementalCompilationChecksEnabled = false
 
@@ -62,6 +64,7 @@ abstract class BasicIrBoxTest(
     override fun translateFiles(
         units: List<TranslationUnit>,
         outputFile: File,
+        dceOutputFile: File,
         config: JsConfig,
         outputPrefixFile: File?,
         outputPostfixFile: File?,
@@ -118,11 +121,18 @@ abstract class BasicIrBoxTest(
                 allDependencies = resolvedLibraries,
                 friendDependencies = emptyList(),
                 mainArguments = mainCallParameters.run { if (shouldBeGenerated()) arguments() else null },
-                exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, testFunction)))
+                exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, testFunction))),
+                generateFullJs = true,
+                generateDceJs = runIrDce
             )
 
-            val wrappedCode = wrapWithModuleEmulationMarkers(compiledModule.jsCode, moduleId = config.moduleId, moduleKind = config.moduleKind)
+            val wrappedCode = wrapWithModuleEmulationMarkers(compiledModule.jsCode!!, moduleId = config.moduleId, moduleKind = config.moduleKind)
             outputFile.write(wrappedCode)
+
+            compiledModule.dceJsCode?.let { dceJsCode ->
+                val dceWrappedCode = wrapWithModuleEmulationMarkers(dceJsCode, moduleId = config.moduleId, moduleKind = config.moduleKind)
+                dceOutputFile.write(dceWrappedCode)
+            }
 
             if (generateDts) {
                 val dtsFile = outputFile.withReplacedExtensionOrNull("_v5.js", ".d.ts")

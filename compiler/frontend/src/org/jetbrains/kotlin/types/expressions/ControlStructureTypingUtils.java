@@ -55,6 +55,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.descriptorUtil.AnnotationsForResolveKt;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
+import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
@@ -97,15 +98,18 @@ public class ControlStructureTypingUtils {
     private final CallResolver callResolver;
     private final DataFlowAnalyzer dataFlowAnalyzer;
     private final ModuleDescriptor moduleDescriptor;
+    private final StorageManager storageManager;
 
     public ControlStructureTypingUtils(
             @NotNull CallResolver callResolver,
             @NotNull DataFlowAnalyzer dataFlowAnalyzer,
-            @NotNull ModuleDescriptor moduleDescriptor
+            @NotNull ModuleDescriptor moduleDescriptor,
+            @NotNull StorageManager storageManager
     ) {
         this.callResolver = callResolver;
         this.dataFlowAnalyzer = dataFlowAnalyzer;
         this.moduleDescriptor = moduleDescriptor;
+        this.storageManager = storageManager;
     }
 
     /*package*/ ResolvedCall<FunctionDescriptor> resolveSpecialConstructionAsCall(
@@ -202,7 +206,7 @@ public class ControlStructureTypingUtils {
 
         TypeParameterDescriptor typeParameter = TypeParameterDescriptorImpl.createWithDefaultBound(
                 function, Annotations.Companion.getEMPTY(), false, Variance.INVARIANT,
-                construct.getSpecialTypeParameterName(), 0);
+                construct.getSpecialTypeParameterName(), 0, storageManager);
 
         KotlinType type = typeParameter.getDefaultType();
         KotlinType nullableType = TypeUtils.makeNullable(type);

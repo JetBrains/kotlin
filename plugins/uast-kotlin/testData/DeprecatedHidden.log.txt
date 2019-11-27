@@ -1,0 +1,14 @@
+UFile (package = test.pkg)
+    UClass (name = Test)
+        UMethod (name = test1)
+            UBlockExpression
+        UMethod (name = Test)
+        UMethod (name = test2)
+            UAnnotation (fqName = kotlin.Deprecated)
+                UNamedExpression (name = level)
+                    UQualifiedReferenceExpression
+                        USimpleNameReferenceExpression (identifier = DeprecationLevel)
+                        USimpleNameReferenceExpression (identifier = HIDDEN)
+                UNamedExpression (name = message)
+                    ULiteralExpression (value = "nothing")
+            UBlockExpression

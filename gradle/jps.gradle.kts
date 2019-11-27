@@ -1,7 +1,7 @@
 @file:Suppress("UnstableApiUsage")
 
-import org.jetbrains.gradle.ext.*
 import org.gradle.jvm.tasks.Jar
+import org.jetbrains.gradle.ext.*
 import org.jetbrains.kotlin.ideaExt.*
 
 
@@ -26,7 +26,8 @@ fun JUnit.configureForKotlin() {
         "-Didea.home.path=$ideaSdkPath",
         "-Djps.kotlin.home=${ideaPluginDir.absolutePath}",
         "-Dkotlin.ni=" + if (rootProject.hasProperty("newInferenceTests")) "true" else "false",
-        "-Duse.jps=true"
+        "-Duse.jps=true",
+        "-Djava.awt.headless=true"
     ).joinToString(" ")
     envs = mapOf(
         "NO_FS_ROOTS_ACCESS_CHECK" to "true",

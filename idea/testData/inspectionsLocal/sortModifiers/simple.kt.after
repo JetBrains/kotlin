@@ -1,1 +1,3 @@
+// PROBLEM: Non-canonical modifiers order
+// FIX: Sort modifiers
 public abstract class Test

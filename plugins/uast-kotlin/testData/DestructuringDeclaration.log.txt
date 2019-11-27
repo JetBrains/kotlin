@@ -1,6 +1,6 @@
 UFile (package = )
     UClass (name = DestructuringDeclarationKt)
-        UAnnotationMethod (name = foo)
+        UMethod (name = foo)
             UBlockExpression
                 UDeclarationsExpression
                     ULocalVariable (name = var268d4034)

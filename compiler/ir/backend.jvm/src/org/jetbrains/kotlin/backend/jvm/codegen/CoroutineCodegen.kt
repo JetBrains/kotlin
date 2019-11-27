@@ -152,6 +152,9 @@ private fun IrFunction.suspendFunctionView(context: JvmBackendContext): IrFuncti
     ).also {
         descriptor.bind(it)
         it.parent = parent
+
+        it.annotations.addAll(annotations)
+
         it.copyTypeParametersFrom(this)
 
         it.dispatchReceiverParameter = dispatchReceiverParameter?.copyTo(it)

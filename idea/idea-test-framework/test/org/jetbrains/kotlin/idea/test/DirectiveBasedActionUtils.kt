@@ -12,24 +12,28 @@ import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 
 object DirectiveBasedActionUtils {
-    fun checkForUnexpectedErrors(file: KtFile) {
+    fun checkForUnexpectedErrors(file: KtFile, diagnosticsProvider: (KtFile) -> Diagnostics = { it.analyzeWithContent().diagnostics }) {
         if (InTextDirectivesUtils.findLinesWithPrefixesRemoved(file.text, "// DISABLE-ERRORS").isNotEmpty()) {
             return
         }
 
         val expectedErrors = InTextDirectivesUtils.findLinesWithPrefixesRemoved(file.text, "// ERROR:").sorted()
 
-        val actualErrors = file.analyzeWithContent().diagnostics
-                .filter { it.getSeverity() == Severity.ERROR }
-                .map { DefaultErrorMessages.render(it).replace("\n", "<br>") }
-                .sorted()
+        val diagnostics = diagnosticsProvider(file)
+        val actualErrors = diagnostics
+            .filter { it.severity == Severity.ERROR }
+            .map { DefaultErrorMessages.render(it).replace("\n", "<br>") }
+            .sorted()
 
-        UsefulTestCase.assertOrderedEquals("All actual errors should be mentioned in test data with // ERROR: directive. But no unnecessary errors should be me mentioned",
-                                           actualErrors,
-                                           expectedErrors)
+        UsefulTestCase.assertOrderedEquals(
+            "All actual errors should be mentioned in test data with // ERROR: directive. But no unnecessary errors should be me mentioned",
+            actualErrors,
+            expectedErrors
+        )
     }
 
     fun checkAvailableActionsAreExpected(file: PsiFile, availableActions: Collection<IntentionAction>) {

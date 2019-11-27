@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.elements.*
+import org.jetbrains.kotlin.asJava.findFacadeClass
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -43,6 +44,7 @@ import org.jetbrains.uast.kotlin.KotlinConverter.convertDeclaration
 import org.jetbrains.uast.kotlin.KotlinConverter.convertDeclarationOrElement
 import org.jetbrains.uast.kotlin.declarations.KotlinUIdentifier
 import org.jetbrains.uast.kotlin.declarations.KotlinUMethod
+import org.jetbrains.uast.kotlin.declarations.KotlinUMethodWithFakeLightDelegate
 import org.jetbrains.uast.kotlin.expressions.*
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiParameter
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiVariable
@@ -478,8 +480,11 @@ internal object KotlinConverter {
                     }
                     else {
                         el<UMethod> {
-                            val lightMethod = LightClassUtil.getLightClassMethod(original) ?: return null
-                            convertDeclaration(lightMethod, givenParent, requiredType)
+                            val lightMethod = LightClassUtil.getLightClassMethod(original)
+                            if (lightMethod != null)
+                                convertDeclaration(lightMethod, givenParent, requiredType)
+                            else
+                                KotlinUMethodWithFakeLightDelegate(original, givenParent)
                         }
                     }
 
@@ -506,7 +511,7 @@ internal object KotlinConverter {
                     KotlinUParameter(lightParameter, original, givenParent)
                 }
 
-                is KtFile -> el<UFile> { KotlinUFile(original) }
+                is KtFile -> convertKtFile(original, givenParent, requiredType)
                 is FakeFileForLightClass -> el<UFile> { KotlinUFile(original.navigationElement) }
                 is KtAnnotationEntry -> el<UAnnotation>(build(::KotlinUAnnotation))
                 is KtCallExpression ->
@@ -550,11 +555,23 @@ internal object KotlinConverter {
         val methods = LightClassUtil.getLightClassPropertyMethods(property)
         return methods.backingField?.let { backingField ->
             with(requiredType) {
-                el<UField> { KotlinUField(backingField, (backingField as? KtLightElement<*,*>)?.kotlinOrigin,  givenParent) }
+                el<UField> { KotlinUField(backingField, (backingField as? KtLightElement<*, *>)?.kotlinOrigin, givenParent) }
             }
         } ?: methods.getter?.let { getter ->
             convertDeclaration(getter, givenParent, requiredType)
         }
+    }
+
+    private fun convertKtFile(
+        element: KtFile,
+        givenParent: UElement?,
+        requiredType: Class<out UElement>?
+    ): UElement? {
+        if (requiredType?.isAssignableFrom(KotlinUClass::class.java) == true)
+            return element.findFacadeClass()?.let { KotlinUClass.create(it, givenParent) }
+        if (requiredType?.isAssignableFrom(KotlinUFile::class.java) != false)
+            return KotlinUFile(element)
+        return null
     }
 
     internal fun convertOrEmpty(expression: KtExpression?, parent: UElement?): UExpression {

@@ -10,6 +10,7 @@ interface I {
 abstract class A : I {
     // INFO: {"checked": "true", "toAbstract": "true"}
     override val x: Int get() = 2
+
     // INFO: {"checked": "true", "toAbstract": "true"}
     abstract val y: Int
 
@@ -27,10 +28,12 @@ abstract class A : I {
 
 class B : I {
     val y = 1
+
     // INFO: {"checked": "true", "toAbstract": "true"}
     override val x: Int get() = 2
 
     fun bar(s: String) = s.length()
+
     // INFO: {"checked": "true", "toAbstract": "true"}
     override fun foo(n: Int): Boolean = n > 0
 
@@ -43,6 +46,7 @@ class B : I {
 interface J : I {
     // INFO: {"checked": "true", "toAbstract": "true"}
     override val x: Int get() = 2
+
     // INFO: {"checked": "true", "toAbstract": "true"}
     val y: Int
 
@@ -60,10 +64,12 @@ interface J : I {
 
 interface K : I {
     val y: Int get() = 1
+
     // INFO: {"checked": "true", "toAbstract": "true"}
     override val x: Int get() = 2
 
     fun bar(s: String) = s.length()
+
     // INFO: {"checked": "true", "toAbstract": "true"}
     override fun foo(n: Int): Boolean = n > 0
 

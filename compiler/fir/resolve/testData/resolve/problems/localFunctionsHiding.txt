@@ -1,0 +1,30 @@
+FILE: localFunctionsHiding.kt
+    public abstract interface A : R|kotlin/Any| {
+        public abstract val x: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+    }
+    public final fun test_1(): R|kotlin/Unit| {
+        local final fun R|kotlin/Int|.transform(): R|kotlin/Int| {
+            ^transform Int(1)
+        }
+
+        local final fun R|A|.transform(): R|kotlin/Int| {
+            ^transform this@R|/A|.R|/A.x|.<Inapplicable(WRONG_RECEIVER): [<local>/transform]>#()
+        }
+
+        lval y: R|kotlin/Int| = Int(1)
+        R|<local>/y|.<Inapplicable(WRONG_RECEIVER): [<local>/transform]>#()
+    }
+    public final fun test_2(): R|kotlin/Unit| {
+        local final fun R|kotlin/Int|.transform(): R|kotlin/Int| {
+            ^transform Int(1)
+        }
+
+        local final fun R|A|.transformX(): R|kotlin/Int| {
+            ^transformX this@R|/A|.R|/A.x|.R|<local>/transform|()
+        }
+
+        lval y: R|kotlin/Int| = Int(1)
+        R|<local>/y|.R|<local>/transform|()
+    }

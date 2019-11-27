@@ -49,6 +49,7 @@ internal class C {
      */
 //comments
     var l = 0
+
     /*two*/ /*comments*/ /*line*/
     var z = 0
 }

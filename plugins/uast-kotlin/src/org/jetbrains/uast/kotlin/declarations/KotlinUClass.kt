@@ -19,12 +19,14 @@ package org.jetbrains.uast.kotlin
 import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightPsiClassBuilder
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForScript
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 import org.jetbrains.kotlin.utils.SmartList
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.uast.*
 import org.jetbrains.uast.internal.acceptList
@@ -156,11 +158,29 @@ open class KotlinUClass private constructor(
 
         fun isDelegatedMethod(psiMethod: PsiMethod) = psiMethod is KtLightMethod && psiMethod.isDelegated
 
-        return psi.methods.asSequence()
-                .filterNot(::isDelegatedMethod)
-                .map(::createUMethod)
-                .toList()
-                .toTypedArray()
+        val result = ArrayList<UMethod>(javaPsi.methods.size)
+        val handledKtDeclarations = mutableSetOf<PsiElement>()
+
+        for (lightMethod in javaPsi.methods) {
+            if (isDelegatedMethod(lightMethod)) continue
+            val uMethod = createUMethod(lightMethod)
+            result.add(uMethod)
+            handledKtDeclarations.addIfNotNull(uMethod.sourcePsi)
+        }
+
+        val ktDeclarations: List<KtDeclaration> = run ktDeclarations@{
+            ktClass?.let { return@ktDeclarations it.declarations }
+            (javaPsi as? KtLightClassForFacade)?.let { facade ->
+                return@ktDeclarations facade.files.flatMap { file -> file.declarations }
+            }
+            emptyList()
+        }
+
+        ktDeclarations.asSequence()
+            .filterNot { handledKtDeclarations.contains(it) }
+            .mapNotNullTo(result) { KotlinConverter.convertDeclaration(it, this, arrayOf(UElement::class.java)) as? UMethod }
+
+        return result.toTypedArray()
     }
 
     private fun PsiClass.isEnumEntryLightClass() = (this as? KtLightClass)?.kotlinOrigin is KtEnumEntry
@@ -176,10 +196,10 @@ open class KotlinUClass private constructor(
 }
 
 open class KotlinConstructorUMethod(
-        private val ktClass: KtClassOrObject?,
-        override val psi: KtLightMethod,
-        givenParent: UElement?
-) : KotlinUMethod(psi, givenParent) {
+    private val ktClass: KtClassOrObject?,
+    override val psi: KtLightMethod,
+    givenParent: UElement?
+) : KotlinUMethod(psi, psi.kotlinOrigin, givenParent) {
 
     val isPrimary: Boolean
         get() = psi.kotlinOrigin.let { it is KtPrimaryConstructor || it is KtClassOrObject }
@@ -215,8 +235,6 @@ open class KotlinConstructorUMethod(
     }
 
     override val javaPsi = psi
-
-    override val sourcePsi = psi.kotlinOrigin
 
     open protected fun getBodyExpressions(): List<KtExpression> {
         if (isPrimary) return getInitializers()
@@ -307,16 +325,15 @@ class KotlinScriptUClass(
     override fun getOriginalElement(): PsiElement? = psi.originalElement
 
     class KotlinScriptConstructorUMethod(
-            script: KtScript,
-            override val psi: KtLightMethod,
-            givenParent: UElement?
-    ) : KotlinUMethod(psi, givenParent) {
+        script: KtScript,
+        override val psi: KtLightMethod,
+        givenParent: UElement?
+    ) : KotlinUMethod(psi, psi.kotlinOrigin, givenParent) {
         override val uastBody: UExpression? by lz {
             val initializers = script.declarations.filterIsInstance<KtScriptInitializer>()
             KotlinUBlockExpression.create(initializers, this)
         }
         override val javaPsi = psi
-        override val sourcePsi = psi.kotlinOrigin
     }
 }
 

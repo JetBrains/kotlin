@@ -1,0 +1,28 @@
+FILE: supertypeGenericsComplex.kt
+    public final class Out<out T> : R|kotlin/Any| {
+        public constructor<T>(): R|Out<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract interface X : R|Out<kotlin/String>| {
+    }
+    public abstract class Base<E> : R|kotlin/Any| {
+        public constructor<E>(): R|Base<E>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun <D : R|Out<E>|> f(t: R|kotlin/collections/MutableList<D>|, e: R|kotlin/collections/MutableList<E>|): R|kotlin/Unit| {
+        }
+
+    }
+    public final class C : R|Base<kotlin/CharSequence>| {
+        public constructor(): R|C| {
+            super<R|Base<kotlin/CharSequence>|>()
+        }
+
+    }
+    public final fun f(list: R|kotlin/collections/MutableList<X>|, s: R|kotlin/collections/MutableList<kotlin/CharSequence>|): R|kotlin/Unit| {
+        R|/C.C|().R|FakeOverride</Base.f: R|kotlin/Unit|>|<R|X|>(R|<local>/list|, R|<local>/s|)
+        R|/C.C|().<Inapplicable(INAPPLICABLE): [/Base.f]>#(R|<local>/s|, R|<local>/list|)
+    }

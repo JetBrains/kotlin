@@ -25,6 +25,7 @@ enum class E7 {
 }
 
 enum class E8 {
+    // test
     A, // A
     B  // B
 }
