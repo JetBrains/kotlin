@@ -7,14 +7,12 @@ import com.intellij.codeInsight.intention.impl.IntentionHintComponent
 import com.intellij.codeInsight.intention.impl.preview.IntentionPreviewComponent.Companion.LOADING_PREVIEW
 import com.intellij.codeInsight.intention.impl.preview.IntentionPreviewComponent.Companion.NO_PREVIEW
 import com.intellij.diff.fragments.LineFragment
-import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.actionSystem.CommonShortcuts.ESCAPE
+import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.ex.EditorEx
-import com.intellij.openapi.progress.EmptyProgressIndicator
-import com.intellij.openapi.progress.ProcessCanceledException
-import com.intellij.openapi.progress.ProgressIndicator
-import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.keymap.KeymapUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.JBPopup
 import com.intellij.openapi.ui.popup.JBPopupFactory
@@ -22,17 +20,15 @@ import com.intellij.psi.PsiFile
 import com.intellij.ui.popup.PopupPositionManager
 import com.intellij.ui.popup.PopupUpdateProcessor
 import com.intellij.util.Alarm
-import java.util.concurrent.Callable
-import java.util.concurrent.Future
+import com.intellij.util.concurrency.AppExecutorUtil
+import org.jetbrains.concurrency.CancellablePromise
 import java.util.concurrent.TimeUnit
 
-class IntentionPreviewPopupUpdateProcessor(private val project: Project,
-                                           private val originalFile: PsiFile,
-                                           private val originalEditor: Editor) : PopupUpdateProcessor(project) {
+internal class IntentionPreviewPopupUpdateProcessor(private val project: Project,
+                                                    private val originalFile: PsiFile,
+                                                    private val originalEditor: Editor) : PopupUpdateProcessor(project) {
   private var index: Int = LOADING_PREVIEW
   private var show = false
-
-  private var progressIndicator: ProgressIndicator = EmptyProgressIndicator()
   private val alarm = Alarm()
 
   private lateinit var popup: JBPopup
@@ -41,12 +37,10 @@ class IntentionPreviewPopupUpdateProcessor(private val project: Project,
 
   private var editorsToRelease = mutableListOf<EditorEx>()
 
-  override fun updatePopup(lookupItemObject: Any?) {
+  override fun updatePopup(intentionAction: Any?) {
     if (!show) return
 
     alarm.cancelAllRequests()
-    progressIndicator.cancel()
-
     if (!::popup.isInitialized || popup.isDisposed) {
       component = IntentionPreviewComponent(project)
       component.multiPanel.select(LOADING_PREVIEW, true)
@@ -57,7 +51,7 @@ class IntentionPreviewPopupUpdateProcessor(private val project: Project,
 
       PopupPositionManager.positionPopupInBestPosition(popup, originalEditor, null)
 
-      updateAdvText.invoke(CodeInsightBundle.message("intention.preview.adv.hide.text"))
+      updateAdvText.invoke(CodeInsightBundle.message("intention.preview.adv.hide.text", Companion.ESCAPE_SHORTCUT_TEXT))
     }
 
     val value = component.multiPanel.getValue(index, false)
@@ -66,7 +60,7 @@ class IntentionPreviewPopupUpdateProcessor(private val project: Project,
       return
     }
 
-    val action = lookupItemObject as IntentionAction
+    val action = intentionAction as IntentionAction
     if (!action.startInWriteAction() || action.getElementToMakeWritable(originalFile) !== originalFile) {
       select(NO_PREVIEW)
       return
@@ -86,7 +80,8 @@ class IntentionPreviewPopupUpdateProcessor(private val project: Project,
     component.removeAll()
     alarm.cancelAllRequests()
     show = false
-    updateAdvText.invoke(CodeInsightBundle.message("intention.preview.adv.show.text", IntentionHintComponent.ALT_SPACE_SHORTCUT_TEXT))
+    updateAdvText.invoke(
+      CodeInsightBundle.message("intention.preview.adv.show.text", IntentionHintComponent.INTENTION_PREVIEW_SHORTCUT_TEXT))
     return true
   }
 
@@ -94,21 +89,13 @@ class IntentionPreviewPopupUpdateProcessor(private val project: Project,
                           private val action: IntentionAction,
                           private val originalFile: PsiFile,
                           private val originalEditor: Editor) : Runnable {
-    lateinit var computation: Future<Pair<PsiFile?, List<LineFragment>>?>
+    lateinit var computation: CancellablePromise<Pair<PsiFile?, List<LineFragment>>?>
 
     fun start() {
       component.startLoading()
 
-      computation = ApplicationManager.getApplication().executeOnPooledThread(
-        Callable {
-          try {
-            ProgressManager.getInstance().runProcess(IntentionPreviewComputable(project, action, originalFile, originalEditor),
-                                                     progressIndicator)
-          }
-          catch (e: ProcessCanceledException) {
-            Pair<PsiFile?, List<LineFragment>>(null, emptyList())
-          }
-        })
+      computation = ReadAction.nonBlocking<Pair<PsiFile?, List<LineFragment>>>(
+        IntentionPreviewComputable(project, action, originalFile, originalEditor)).submit(AppExecutorUtil.getAppExecutorService())
 
       alarm.addRequest(this, 100)
     }
@@ -145,5 +132,9 @@ class IntentionPreviewPopupUpdateProcessor(private val project: Project,
     component.multiPanel.select(index, true)
 
     popup.pack(true, true)
+  }
+
+  companion object {
+    private val ESCAPE_SHORTCUT_TEXT = KeymapUtil.getPreferredShortcutText(ESCAPE.shortcuts)
   }
 }

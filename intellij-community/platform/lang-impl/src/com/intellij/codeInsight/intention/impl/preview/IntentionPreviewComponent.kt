@@ -14,8 +14,8 @@ import javax.swing.JComponent
 import javax.swing.JLabel
 import javax.swing.JPanel
 
-class IntentionPreviewComponent(project: Project) : JBLoadingPanel(BorderLayout(),
-                                                                   { panel -> IntentionPreviewLoadingDecorator(panel, project) }) {
+internal class IntentionPreviewComponent(project: Project) : JBLoadingPanel(BorderLayout(),
+                                                                            { panel -> IntentionPreviewLoadingDecorator(panel, project) }) {
   private var NO_PREVIEW_LABEL = JLabel(CodeInsightBundle.message("intention.preview.no.available.text") + "     ").also { setupLabel(it) }
   private var LOADING_LABEL = JLabel(CodeInsightBundle.message("intention.preview.loading.preview") + "     ").also { setupLabel(it) }
 

@@ -10,7 +10,7 @@ import com.intellij.ui.JBColor
 import com.intellij.util.ui.JBUI
 import javax.swing.JPanel
 
-class IntentionPreviewEditorsPanel(val editors: List<EditorEx>) : JPanel(VerticalFlowLayout(0, 0)) {
+internal class IntentionPreviewEditorsPanel(val editors: List<EditorEx>) : JPanel(VerticalFlowLayout(0, 0)) {
   init {
     editors.forEachIndexed { index, editor ->
       add(editor.component)

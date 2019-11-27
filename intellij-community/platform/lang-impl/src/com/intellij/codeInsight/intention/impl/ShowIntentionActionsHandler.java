@@ -13,6 +13,7 @@ import com.intellij.codeInsight.hint.HintManagerImpl;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInsight.intention.IntentionActionDelegate;
 import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction;
+import com.intellij.codeInsight.intention.impl.preview.IntentionPreviewUnsupportedOperationException;
 import com.intellij.codeInsight.lookup.LookupEx;
 import com.intellij.codeInsight.lookup.LookupManager;
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl;
@@ -41,6 +42,7 @@ import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.stubs.StubTextInconsistencyException;
 import com.intellij.util.PairProcessor;
 import com.intellij.util.ThreeState;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -150,7 +152,7 @@ public class ShowIntentionActionsHandler implements CodeInsightActionHandler {
     catch (IndexNotReadyException e) {
       return false;
     }
-    catch (Exception e) {
+    catch (IntentionPreviewUnsupportedOperationException e) {
       //check action availability can be invoked on a mock editor and may produce exceptions
       return false;
     }
@@ -182,7 +184,7 @@ public class ShowIntentionActionsHandler implements CodeInsightActionHandler {
       if (editorToApply == null) return null;
       return Pair.create(fileToApply, editorToApply);
     }
-    catch (UnsupportedOperationException e) {
+    catch (IntentionPreviewUnsupportedOperationException e) {
       return null;
     }
   }
@@ -225,6 +227,7 @@ public class ShowIntentionActionsHandler implements CodeInsightActionHandler {
     }
   }
 
+  @ApiStatus.Internal
   public static void invokeIntention(@NotNull IntentionAction action, @Nullable Editor editor, @NotNull PsiFile file) {
     IntentionsCollector.getInstance().record(file.getProject(), action, file.getLanguage());
     PsiElement elementToMakeWritable = action.getElementToMakeWritable(file);

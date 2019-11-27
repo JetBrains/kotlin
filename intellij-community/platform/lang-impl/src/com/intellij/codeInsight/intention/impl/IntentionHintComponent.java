@@ -80,8 +80,9 @@ public class IntentionHintComponent implements Disposable, ScrollAwareHint {
 
   private static final Border INACTIVE_BORDER = BorderFactory.createEmptyBorder(NORMAL_BORDER_SIZE, NORMAL_BORDER_SIZE, NORMAL_BORDER_SIZE, NORMAL_BORDER_SIZE);
   private static final Border INACTIVE_BORDER_SMALL = BorderFactory.createEmptyBorder(SMALL_BORDER_SIZE, SMALL_BORDER_SIZE, SMALL_BORDER_SIZE, SMALL_BORDER_SIZE);
-  public static final KeyboardShortcut ALT_SPACE_SHORTCUT = KeyboardShortcut.fromString(("alt SPACE"));
-  public static final String ALT_SPACE_SHORTCUT_TEXT = KeymapUtil.getShortcutText(ALT_SPACE_SHORTCUT);
+
+  private static final ShortcutSet INTENTION_PREVIEW_SHORTCUT_SET = KeymapUtil.getActiveKeymapShortcuts(IdeActions.ACTION_QUICK_IMPLEMENTATIONS);
+  public static final String INTENTION_PREVIEW_SHORTCUT_TEXT = KeymapUtil.getPreferredShortcutText(INTENTION_PREVIEW_SHORTCUT_SET.getShortcuts());
   private final IntentionPreviewPopupUpdateProcessor myPreviewPopupUpdateProcessor;
 
   @TestOnly
@@ -524,7 +525,7 @@ public class IntentionHintComponent implements Disposable, ScrollAwareHint {
   }
 
   private void registerShowPreviewAction() {
-    ((WizardPopup)myPopup).registerAction("showIntentionPreview", ALT_SPACE_SHORTCUT.getFirstKeyStroke(), new AbstractAction() {
+    ((WizardPopup)myPopup).registerAction("showIntentionPreview", KeymapUtil.getKeyStroke(INTENTION_PREVIEW_SHORTCUT_SET), new AbstractAction() {
       @Override
       public void actionPerformed(ActionEvent e) {
         myPreviewPopupUpdateProcessor.toggleShow();
@@ -538,7 +539,7 @@ public class IntentionHintComponent implements Disposable, ScrollAwareHint {
         }
       }
     });
-    myPopup.setAdText(CodeInsightBundle.message("intention.preview.adv.show.text", ALT_SPACE_SHORTCUT_TEXT), SwingConstants.LEFT);
+    myPopup.setAdText(CodeInsightBundle.message("intention.preview.adv.show.text", INTENTION_PREVIEW_SHORTCUT_TEXT), SwingConstants.LEFT);
   }
 
   void canceled(@NotNull ListPopupStep intentionListStep) {

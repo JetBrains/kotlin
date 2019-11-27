@@ -10,6 +10,7 @@ import com.intellij.codeInsight.intention.impl.CachedIntentions;
 import com.intellij.codeInsight.intention.impl.EditIntentionSettingsAction;
 import com.intellij.codeInsight.intention.impl.EnableDisableIntentionAction;
 import com.intellij.codeInsight.intention.impl.ShowIntentionActionsHandler;
+import com.intellij.codeInsight.intention.impl.preview.IntentionPreviewUnsupportedOperationException;
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl;
 import com.intellij.codeInsight.template.impl.TemplateState;
 import com.intellij.lang.annotation.HighlightSeverity;
@@ -335,7 +336,7 @@ public class ShowIntentionsPass extends TextEditorHighlightingPass {
         try {
           extension.collectActions(hostEditor, hostFile, intentions, passIdToShowIntentionsFor, offset);
         }
-        catch (UnsupportedOperationException e) {
+        catch (IntentionPreviewUnsupportedOperationException e) {
           //can collect action on a mock memory editor and produce exceptions - ignore
         }
       }

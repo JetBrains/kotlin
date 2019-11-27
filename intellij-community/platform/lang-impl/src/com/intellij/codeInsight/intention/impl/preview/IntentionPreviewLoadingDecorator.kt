@@ -13,7 +13,7 @@ import java.awt.FlowLayout
 import javax.swing.JLabel
 import javax.swing.JPanel
 
-class IntentionPreviewLoadingDecorator(panel: JPanel, project: Project) :
+internal class IntentionPreviewLoadingDecorator(panel: JPanel, project: Project) :
   LoadingDecorator(panel, project, 500, false, AsyncProcessIcon("IntentionPreviewProcessLoading")) {
   override fun customizeLoadingLayer(parent: JPanel, text: JLabel, icon: AsyncProcessIcon): NonOpaquePanel {
     val iconNonOpaquePanel = OpaquePanel(FlowLayout(FlowLayout.RIGHT, 2, 2))

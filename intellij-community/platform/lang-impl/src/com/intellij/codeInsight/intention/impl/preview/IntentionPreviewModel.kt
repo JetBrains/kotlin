@@ -17,7 +17,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.util.ui.JBUI
 
-class IntentionPreviewModel {
+internal class IntentionPreviewModel {
   companion object {
     fun reformatRange(project: Project, psiFileCopy: PsiFile, lineFragment: LineFragment) {
       val start = lineFragment.startOffset2
@@ -66,16 +66,16 @@ class IntentionPreviewModel {
       val editor = (editorFactory.createEditor(document, project, fileType, false) as EditorEx)
         .also { it.setBorder(JBUI.Borders.empty(2, 0, 2, 0)) }
 
-      editor.settings.also {
-        it.isLineNumbersShown = true
-        it.isCaretRowShown = false
-        it.isLineMarkerAreaShown = false
-        it.isFoldingOutlineShown = false
-        it.additionalColumnsCount = 0
-        it.additionalLinesCount = 0
-        it.isRightMarginShown = false
-        it.isUseSoftWraps = false
-        it.isAdditionalPageAtBottom = false
+      editor.settings.apply {
+        isLineNumbersShown = true
+        isCaretRowShown = false
+        isLineMarkerAreaShown = false
+        isFoldingOutlineShown = false
+        additionalColumnsCount = 0
+        additionalLinesCount = 0
+        isRightMarginShown = false
+        isUseSoftWraps = false
+        isAdditionalPageAtBottom = false
       }
 
       editor.gutterComponentEx.also {
