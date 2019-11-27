@@ -68,7 +68,7 @@ class TypeMappingMode private constructor(
         )
 
         /**
-         * kotlin.reflect.KClass mapped to java.lang.Class
+         * kotlin.reflect.KClass mapped to java.lang.Class when at top level or in an array;
          * primitive types and inline class types are not boxed because types in annotations cannot be nullable
          * Other types mapped as DEFAULT
          */
@@ -77,7 +77,7 @@ class TypeMappingMode private constructor(
             isForAnnotationParameter = true,
             needPrimitiveBoxing = false,
             needInlineClassWrapping = false,
-            genericArgumentMode = TypeMappingMode(isForAnnotationParameter = true, genericArgumentMode = GENERIC_ARGUMENT)
+            genericArgumentMode = GENERIC_ARGUMENT
         )
 
 
@@ -89,48 +89,37 @@ class TypeMappingMode private constructor(
         @JvmStatic
         fun getOptimalModeForValueParameter(
             type: KotlinType
-        ) = getOptimalModeForSignaturePart(type, isForAnnotationParameter = false, canBeUsedInSupertypePosition = true)
+        ) = getOptimalModeForSignaturePart(type, canBeUsedInSupertypePosition = true)
 
         @JvmStatic
         fun getOptimalModeForReturnType(
             type: KotlinType,
             isAnnotationMethod: Boolean
-        ) = getOptimalModeForSignaturePart(type, isForAnnotationParameter = isAnnotationMethod, canBeUsedInSupertypePosition = false)
+        ) = if (isAnnotationMethod) VALUE_FOR_ANNOTATION else getOptimalModeForSignaturePart(type, canBeUsedInSupertypePosition = false)
 
-        private fun getOptimalModeForSignaturePart(
-            type: KotlinType,
-            isForAnnotationParameter: Boolean,
-            canBeUsedInSupertypePosition: Boolean
-        ): TypeMappingMode {
+        private fun getOptimalModeForSignaturePart(type: KotlinType, canBeUsedInSupertypePosition: Boolean): TypeMappingMode {
             if (type.arguments.isEmpty()) return DEFAULT
 
             if (type.isInlineClassType() && shouldUseUnderlyingType(type)) {
                 val underlyingType = computeUnderlyingType(type)
                 if (underlyingType != null) {
-                    return getOptimalModeForSignaturePart(
-                        underlyingType, isForAnnotationParameter, canBeUsedInSupertypePosition
-                    ).dontWrapInlineClassesMode()
+                    return getOptimalModeForSignaturePart(underlyingType, canBeUsedInSupertypePosition).dontWrapInlineClassesMode()
                 }
             }
 
             val contravariantArgumentMode =
                 if (!canBeUsedInSupertypePosition)
-                    TypeMappingMode(
-                        isForAnnotationParameter = isForAnnotationParameter,
-                        skipDeclarationSiteWildcards = false,
-                        skipDeclarationSiteWildcardsIfPossible = true
-                    )
+                    TypeMappingMode(skipDeclarationSiteWildcards = false, skipDeclarationSiteWildcardsIfPossible = true)
                 else
                     null
 
             val invariantArgumentMode =
                 if (canBeUsedInSupertypePosition)
-                    getOptimalModeForSignaturePart(type, isForAnnotationParameter, canBeUsedInSupertypePosition = false)
+                    getOptimalModeForSignaturePart(type, canBeUsedInSupertypePosition = false)
                 else
                     null
 
             return TypeMappingMode(
-                isForAnnotationParameter = isForAnnotationParameter,
                 skipDeclarationSiteWildcards = !canBeUsedInSupertypePosition,
                 skipDeclarationSiteWildcardsIfPossible = true,
                 genericContravariantArgumentMode = contravariantArgumentMode,
@@ -153,8 +142,8 @@ class TypeMappingMode private constructor(
         )
     }
 
-    fun toGenericArgumentMode(effectiveVariance: Variance): TypeMappingMode =
-        when (effectiveVariance) {
+    fun toGenericArgumentMode(effectiveVariance: Variance, ofArray: Boolean = false): TypeMappingMode =
+        if (ofArray && isForAnnotationParameter) this else when (effectiveVariance) {
             Variance.IN_VARIANCE -> genericContravariantArgumentMode ?: this
             Variance.INVARIANT -> genericInvariantArgumentMode ?: this
             else -> genericArgumentMode ?: this

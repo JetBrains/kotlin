@@ -121,8 +121,8 @@ fun <T : Any> mapType(
                 descriptorTypeWriter?.writeArrayType()
 
                 arrayElementType = mapType(
-                    memberType, factory, mode.toGenericArgumentMode(memberProjection.projectionKind), typeMappingConfiguration,
-                    descriptorTypeWriter, writeGenericType
+                    memberType, factory, mode.toGenericArgumentMode(memberProjection.projectionKind, ofArray = true),
+                    typeMappingConfiguration, descriptorTypeWriter, writeGenericType
                 )
 
                 descriptorTypeWriter?.writeArrayEnd()
