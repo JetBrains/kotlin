@@ -1,6 +1,6 @@
-FILE: unresolvedComparator.kt
+FILE: kotlinComparatorAlias.kt
     public final fun test_1(): R|kotlin/Unit| {
-        lval comp: <ERROR TYPE REF: Unresolved name: Comparator> = <Unresolved name: Comparator>#<R|kotlin/Int|>(<L> = Comparator@fun <anonymous>(x: R|class error: No type for parameter|, y: R|class error: No type for parameter|): R|kotlin/Int| {
+        lval comp: R|java/util/Comparator<kotlin/Int>| = R|java/util/Comparator|<R|kotlin/Int|>(<L> = Comparator@fun <anonymous>(x: R|kotlin/Int|, y: R|kotlin/Int|): R|kotlin/Int| {
             Int(1)
         }
         )

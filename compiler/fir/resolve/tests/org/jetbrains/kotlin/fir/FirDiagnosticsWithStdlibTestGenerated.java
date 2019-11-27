@@ -123,6 +123,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         runTest("compiler/fir/resolve/testData/resolve/stdlib/javaLangComparator.kt");
     }
 
+    @TestMetadata("kotlinComparatorAlias.kt")
+    public void testKotlinComparatorAlias() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/stdlib/kotlinComparatorAlias.kt");
+    }
+
     @TestMetadata("listPlusAssign.kt")
     public void testListPlusAssign() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/stdlib/listPlusAssign.kt");
@@ -570,11 +575,6 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         @TestMetadata("cloneArray.kt")
         public void testCloneArray() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/stdlib/problems/cloneArray.kt");
-        }
-
-        @TestMetadata("unresolvedComparator.kt")
-        public void testUnresolvedComparator() throws Exception {
-            runTest("compiler/fir/resolve/testData/resolve/stdlib/problems/unresolvedComparator.kt");
         }
     }
 }

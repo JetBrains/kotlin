@@ -14,9 +14,12 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
+import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -79,12 +82,48 @@ private fun processSyntheticConstructors(
     processor: (FirFunctionSymbol<*>) -> ProcessorAction,
     bodyResolveComponents: BodyResolveComponents
 ): ProcessorAction {
-    if (matchedSymbol == null) return ProcessorAction.NEXT
-    if (matchedSymbol !is FirRegularClassSymbol) return ProcessorAction.NEXT
+    val samConstructor = matchedSymbol.findSAMConstructor(bodyResolveComponents)
+    if (samConstructor != null) return processor(samConstructor.symbol)
 
-    val function = bodyResolveComponents.samResolver.getSamConstructor(matchedSymbol.fir) ?: return ProcessorAction.NEXT
+    return ProcessorAction.NEXT
+}
 
-    return processor(function.symbol)
+private fun FirClassLikeSymbol<*>?.findSAMConstructor(
+    bodyResolveComponents: BodyResolveComponents
+): FirSimpleFunction? {
+    return when (this) {
+        is FirRegularClassSymbol -> bodyResolveComponents.samResolver.getSamConstructor(fir)
+        is FirTypeAliasSymbol -> findSAMConstructorForTypeAlias(bodyResolveComponents)
+        is FirAnonymousObjectSymbol, null -> null
+    }
+}
+
+private fun FirTypeAliasSymbol.findSAMConstructorForTypeAlias(
+    bodyResolveComponents: BodyResolveComponents
+): FirSimpleFunction? {
+    val session = bodyResolveComponents.session
+    val type =
+        fir.expandedTypeRef.coneTypeUnsafe<ConeClassLikeType>().fullyExpandedType(session)
+
+    val expansionRegularClass = type.lookupTag.toSymbol(session)?.fir as? FirRegularClass ?: return null
+    val samConstructorForClass = bodyResolveComponents.samResolver.getSamConstructor(expansionRegularClass) ?: return null
+
+    if (type.typeArguments.isEmpty()) return samConstructorForClass
+
+    val namedSymbol = samConstructorForClass.symbol as? FirNamedFunctionSymbol ?: return null
+
+    val substitutor = prepareSubstitutorForTypeAliasConstructors<FirSimpleFunction>(
+        this,
+        type,
+        session
+    ) { newReturnType, newParameterTypes, newTypeParameters ->
+        FirClassSubstitutionScope.createFakeOverrideFunction(
+            session, this, namedSymbol, null,
+            newReturnType, newParameterTypes, newTypeParameters
+        ).fir
+    } ?: return null
+
+    return substitutor.substitute(samConstructorForClass)
 }
 
 private fun processConstructors(
@@ -147,7 +186,8 @@ private class TypeAliasConstructorsSubstitutingScope(
     }
 }
 
-private typealias ConstructorCopyFactory<F> = F.(FirTypeRef, List<FirValueParameter>, List<FirTypeParameter>) -> F
+private typealias ConstructorCopyFactory<F> =
+        F.(newReturnType: ConeKotlinType?, newValueParameterTypes: List<ConeKotlinType?>, newTypeParameters: List<FirTypeParameter>) -> F
 
 private class TypeAliasConstructorsSubstitutor<F : FirMemberFunction<F>>(
     private val typeAliasSymbol: FirTypeAliasSymbol,
@@ -156,33 +196,17 @@ private class TypeAliasConstructorsSubstitutor<F : FirMemberFunction<F>>(
 ) {
     fun substitute(baseFunction: F): F {
         val typeParameters = typeAliasSymbol.fir.typeParameters
-        val newReturnTypeRef = baseFunction.returnTypeRef.substitute(substitutor)
+        val newReturnType = baseFunction.returnTypeRef.coneTypeUnsafe<ConeKotlinType>().let(substitutor::substituteOrNull)
 
-        val newParameterTypeRefs = baseFunction.valueParameters.map { valueParameter ->
-            valueParameter.returnTypeRef.substitute(substitutor)
+        val newParameterTypes = baseFunction.valueParameters.map { valueParameter ->
+            valueParameter.returnTypeRef.coneTypeUnsafe<ConeKotlinType>().let(substitutor::substituteOrNull)
         }
 
-        if (newReturnTypeRef == null && newParameterTypeRefs.all { it == null }) return baseFunction
+        if (newReturnType == null && newParameterTypes.all { it == null }) return baseFunction
 
         return baseFunction.copyFactory(
-            newReturnTypeRef ?: baseFunction.returnTypeRef,
-            baseFunction.valueParameters.zip(
-                newParameterTypeRefs
-            ) { valueParameter, newTypeRef ->
-                with(valueParameter) {
-                    FirValueParameterImpl(
-                        source,
-                        session,
-                        newTypeRef ?: returnTypeRef,
-                        name,
-                        FirVariableSymbol(valueParameter.symbol.callableId),
-                        defaultValue,
-                        isCrossinline,
-                        isNoinline,
-                        isVararg
-                    )
-                }
-            },
+            newReturnType,
+            newParameterTypes,
             typeParameters
         )
     }
@@ -199,13 +223,32 @@ private fun prepareSubstitutingScopeForTypeAliasConstructors(
             typeAliasSymbol,
             expandedType,
             session
-        ) factory@{ newReturnTypeRef, newValueParameters, newTypeParameters ->
+        ) factory@{ newReturnType, newParameterTypes, newTypeParameters ->
             FirConstructorImpl(
-                source, session, newReturnTypeRef, receiverTypeRef, status,
+                source, session,
+                returnTypeRef.withReplacedConeType(newReturnType),
+                receiverTypeRef, status,
                 FirConstructorSymbol(symbol.callableId, overriddenSymbol = symbol)
             ).apply {
                 resolvePhase = this@factory.resolvePhase
-                valueParameters += newValueParameters
+                valueParameters +=
+                    this@factory.valueParameters.zip(
+                        newParameterTypes
+                    ) { valueParameter, newParameterType ->
+                        with(valueParameter) {
+                            FirValueParameterImpl(
+                                source,
+                                session,
+                                returnTypeRef.withReplacedConeType(newParameterType),
+                                name,
+                                FirVariableSymbol(valueParameter.symbol.callableId),
+                                defaultValue,
+                                isCrossinline,
+                                isNoinline,
+                                isVararg
+                            )
+                        }
+                    }
                 this.typeParameters += newTypeParameters
             }
         } ?: return null
@@ -236,8 +279,3 @@ private fun <F : FirMemberFunction<F>> prepareSubstitutorForTypeAliasConstructor
 
     return TypeAliasConstructorsSubstitutor(typeAliasSymbol, substitutor, copyFactory)
 }
-
-private fun FirTypeRef.substitute(substitutor: ConeSubstitutor): FirResolvedTypeRef? =
-    coneTypeUnsafe<ConeKotlinType>()
-        .let(substitutor::substituteOrNull)
-        ?.let { FirResolvedTypeRefImpl(source, it) }
