@@ -77,9 +77,11 @@ private fun Candidate.hasProperNonTrivialLowerConstraints(components: InferenceC
     val constructor = typeVariable.typeConstructor(context)
     val variableWithConstraints = csBuilder.currentStorage().notFixedTypeVariables[constructor] ?: return false
     val constraints = variableWithConstraints.constraints
-    return constraints.isNotEmpty() && constraints.all {
+    // TODO: support Exact annotation
+    // see KotlinCallCompleter:244
+    return constraints.isNotEmpty() && constraints.any {
         !it.type.typeConstructor(context).isIntegerLiteralTypeConstructor(context) &&
-                it.kind.isLower() && csBuilder.isProperType(it.type)
+                (it.kind.isLower() || it.kind.isEqual()) && csBuilder.isProperType(it.type)
     }
 
 }

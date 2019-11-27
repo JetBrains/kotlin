@@ -379,6 +379,24 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         }
     }
 
+    @TestMetadata("compiler/fir/resolve/testData/resolve/stdlib/inference")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Inference extends AbstractFirDiagnosticsWithStdlibTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInInference() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/stdlib/inference"), Pattern.compile("^([^.]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("complexConstraintSystem.kt")
+        public void testComplexConstraintSystem() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/stdlib/inference/complexConstraintSystem.kt");
+        }
+    }
+
     @TestMetadata("compiler/fir/resolve/testData/resolve/stdlib/j+k")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
