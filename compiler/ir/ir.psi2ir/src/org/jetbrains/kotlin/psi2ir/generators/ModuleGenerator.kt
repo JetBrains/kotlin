@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.backend.common.CodegenUtil
-import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
@@ -26,10 +25,10 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.IrDeserializer
 import org.jetbrains.kotlin.ir.util.IrProvider
+import org.jetbrains.kotlin.ir.util.StubGeneratorExtensions
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.descriptors.findPackageFragmentForFile
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 class ModuleGenerator(override val context: GeneratorContext) : Generator {
@@ -37,11 +36,6 @@ class ModuleGenerator(override val context: GeneratorContext) : Generator {
     private val constantValueGenerator = context.constantValueGenerator
 
     fun generateModuleFragment(ktFiles: Collection<KtFile>): IrModuleFragment =
-        generateModuleFragmentWithoutDependencies(ktFiles).also { irModule ->
-            generateUnboundSymbolsAsDependencies(irModule)
-        }
-
-    fun generateModuleFragmentWithoutDependencies(ktFiles: Collection<KtFile>): IrModuleFragment =
         IrModuleFragmentImpl(context.moduleDescriptor, context.irBuiltIns).also { irModule ->
             irModule.files.addAll(generateFiles(ktFiles))
         }
@@ -50,16 +44,10 @@ class ModuleGenerator(override val context: GeneratorContext) : Generator {
         irModule: IrModuleFragment,
         deserializer: IrDeserializer? = null,
         irProviders: List<IrProvider> = emptyList(),
-        facadeClassGenerator: (DeserializedContainerSource) -> IrClass? = { null }
+        extensions: StubGeneratorExtensions = StubGeneratorExtensions.EMPTY
     ) {
         ExternalDependenciesGenerator(
-            irModule.descriptor,
-            context.symbolTable,
-            context.irBuiltIns,
-            context.extensions.externalDeclarationOrigin,
-            deserializer,
-            irProviders,
-            facadeClassGenerator
+            irModule.descriptor, context.symbolTable, context.irBuiltIns, deserializer, irProviders, extensions
         ).generateUnboundSymbolsAsDependencies()
     }
 

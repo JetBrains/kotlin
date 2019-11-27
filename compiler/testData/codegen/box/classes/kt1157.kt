@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 public object SomeClass {
     private val work = object : Runnable {
         override fun run() {

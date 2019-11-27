@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-class FunctionInlining(val context: CommonBackendContext) : IrElementTransformerVoidWithContext() {
+class FunctionInlining(val context: CommonBackendContext, val dontInlineTypeOf: Boolean = true) : IrElementTransformerVoidWithContext() {
 
     fun inline(irModule: IrModuleFragment) = irModule.accept(this, data = null)
 
@@ -47,7 +47,8 @@ class FunctionInlining(val context: CommonBackendContext) : IrElementTransformer
             return expression
         if (Symbols.isLateinitIsInitializedPropertyGetter(callee.symbol))
             return expression
-        if (Symbols.isTypeOfIntrinsic(callee.symbol))
+        // TODO: Temporary hack till typeOf is unimplemented in K/JS
+        if (dontInlineTypeOf && Symbols.isTypeOfIntrinsic(callee.symbol))
             return expression
 
         val actualCallee = getFunctionDeclaration(callee.symbol)
@@ -136,7 +137,7 @@ class FunctionInlining(val context: CommonBackendContext) : IrElementTransformer
             statements.transform { it.transform(transformer, data = null) }
             statements.addAll(0, evaluationStatements)
 
-            val isCoroutineIntrinsicCall = callSite.descriptor.isBuiltInSuspendCoroutineUninterceptedOrReturn(
+            val isCoroutineIntrinsicCall = callSite.symbol.descriptor.isBuiltInSuspendCoroutineUninterceptedOrReturn(
                 context.configuration.languageVersionSettings
             )
 
@@ -202,9 +203,10 @@ class FunctionInlining(val context: CommonBackendContext) : IrElementTransformer
                     val valueParameters = expression.getArgumentsWithIr().drop(1) // Skip dispatch receiver.
 
                     val immediateCall = with(expression) {
-                        if (function is IrConstructor)
-                            IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, function.returnType, function.symbol)
-                        else
+                        if (function is IrConstructor) {
+                            val classTypeParametersCount = function.parentAsClass.typeParameters.size
+                            IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, function.returnType, function.symbol, classTypeParametersCount)
+                        } else
                             IrCallImpl(startOffset, endOffset, function.returnType, functionArgument.symbol)
                     }.apply {
                         functionParameters.forEach {
@@ -433,10 +435,12 @@ class FunctionInlining(val context: CommonBackendContext) : IrElementTransformer
                 val variableInitializer = it.argumentExpression.transform(substitutor, data = null) // Arguments may reference the previous ones - substitute them.
                 val newVariable =
                     currentScope.scope.createTemporaryVariableWithWrappedDescriptor(
-                        irExpression = IrBlockImpl (variableInitializer.startOffset,
-                                variableInitializer.endOffset,
-                                variableInitializer.type,
-                                InlinerExpressionLocationHint((currentScope.irElement as IrSymbolOwner).symbol)).apply {
+                        irExpression = IrBlockImpl(
+                            variableInitializer.startOffset,
+                            variableInitializer.endOffset,
+                            variableInitializer.type,
+                            InlinerExpressionLocationHint((currentScope.irElement as IrSymbolOwner).symbol)
+                        ).apply {
                             statements.add(variableInitializer)
                         },
                         nameHint = callee.symbol.owner.name.toString(),
@@ -453,10 +457,10 @@ class FunctionInlining(val context: CommonBackendContext) : IrElementTransformer
     private class IrGetValueWithoutLocation(
         symbol: IrValueSymbol,
         override val origin: IrStatementOrigin? = null
-    ) : IrTerminalDeclarationReferenceBase<IrValueSymbol, ValueDescriptor>(
+    ) : IrTerminalDeclarationReferenceBase<IrValueSymbol>(
         UNDEFINED_OFFSET, UNDEFINED_OFFSET,
         symbol.owner.type,
-        symbol, symbol.descriptor
+        symbol
     ), IrGetValue {
         override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D) =
             visitor.visitGetValue(this, data)

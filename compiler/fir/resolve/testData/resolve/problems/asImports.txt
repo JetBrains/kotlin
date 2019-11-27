@@ -1,0 +1,19 @@
+FILE: A.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|foo/A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(): R|kotlin/Unit| {
+        }
+
+    }
+FILE: main.kt
+    public final fun test_1(): R|kotlin/Unit| {
+        lval a: <ERROR TYPE REF: Unresolved name: A> = <Unresolved name: A>#()
+        lval b: <ERROR TYPE REF: Unresolved name: B> = <Unresolved name: B>#()
+        lval c: R|foo/A| = <Unresolved name: A>#()
+    }
+    public final fun test_2(b: R|foo/A|): R|kotlin/Unit| {
+        R|<local>/b|.R|foo/A.foo|()
+    }

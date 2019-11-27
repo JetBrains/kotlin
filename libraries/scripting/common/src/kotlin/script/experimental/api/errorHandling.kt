@@ -123,15 +123,30 @@ inline fun <R1, R2> ResultWithDiagnostics<R1>.onSuccess(body: (R1) -> ResultWith
  * return failure with merged diagnostics after first failed transformation
  * and success with merged diagnostics and list of results if all transformations succeeded
  */
-inline fun<T, R> Iterable<T>.mapSuccess(body: (T) -> ResultWithDiagnostics<R>): ResultWithDiagnostics<List<R>> {
+inline fun<T, R> Iterable<T>.mapSuccess(body: (T) -> ResultWithDiagnostics<R>): ResultWithDiagnostics<List<R>> =
+    mapSuccessImpl(body) { results, r ->
+        results.add(r)
+    }
+
+/**
+ * maps transformation ([body]) over iterable merging diagnostics and flatten the results
+ * return failure with merged diagnostics after first failed transformation
+ * and success with merged diagnostics and list of results if all transformations succeeded
+ */
+inline fun<T, R> Iterable<T>.flatMapSuccess(body: (T) -> ResultWithDiagnostics<Collection<R>>): ResultWithDiagnostics<List<R>> =
+    mapSuccessImpl(body) { results, r ->
+        results.addAll(r)
+    }
+
+inline fun<T, R1, R2> Iterable<T>.mapSuccessImpl(body: (T) -> ResultWithDiagnostics<R1>, updateResults: (MutableList<R2>, R1) -> Unit): ResultWithDiagnostics<List<R2>> {
     val reports = ArrayList<ScriptDiagnostic>()
-    val results = ArrayList<R>()
+    val results = ArrayList<R2>()
     for (it in this) {
         val result = body(it)
         reports.addAll(result.reports)
         when (result) {
             is ResultWithDiagnostics.Success -> {
-                results.add(result.value)
+                updateResults(results, result.value)
             }
             else -> {
                 return ResultWithDiagnostics.Failure(reports)

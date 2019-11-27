@@ -147,7 +147,10 @@ class JavaToKotlinAction : AnAction() {
                 val conversionTime = measureTimeMillis {
                     convert()
                 }
-                val linesCount = javaFiles.sumBy { StringUtil.getLineBreakCount(it.text) }
+                val linesCount = runReadAction {
+                    javaFiles.sumBy { StringUtil.getLineBreakCount(it.text) }
+                }
+
                 logJ2kConversionStatistics(
                     ConversionType.FILES,
                     J2kConverterExtension.isNewJ2k,

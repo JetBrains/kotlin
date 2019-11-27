@@ -548,7 +548,11 @@ internal class JKCodeBuilder(context: NewJ2kConverterContext) {
         override fun visitKtConvertedFromForLoopSyntheticWhileStatementRaw(
             ktConvertedFromForLoopSyntheticWhileStatement: JKKtConvertedFromForLoopSyntheticWhileStatement
         ) {
-            ktConvertedFromForLoopSyntheticWhileStatement.variableDeclaration.accept(this)
+            printer.renderList(
+                ktConvertedFromForLoopSyntheticWhileStatement.variableDeclarations,
+                { printer.println() }) {
+                it.accept(this)
+            }
             printer.println()
             ktConvertedFromForLoopSyntheticWhileStatement.whileStatement.accept(this)
         }

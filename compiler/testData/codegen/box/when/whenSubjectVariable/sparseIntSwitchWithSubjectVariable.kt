@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 // KJS_WITH_FULL_RUNTIME
 // !LANGUAGE: +VariableDeclarationInWhenSubject
 // WITH_RUNTIME

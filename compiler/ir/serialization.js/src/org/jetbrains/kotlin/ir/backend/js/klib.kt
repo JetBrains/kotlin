@@ -9,6 +9,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.backend.common.LoggingContext
+import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
+import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorTable
 import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDeserializer
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -119,7 +121,7 @@ fun generateKLib(
 
     val psi2IrContext = runAnalysisAndPreparePsi2Ir(depsDescriptors)
 
-    val moduleFragment = psi2IrContext.generateModuleFragment(files)
+    val moduleFragment = psi2IrContext.generateModuleFragmentWithPlugins(project, files)
 
     val moduleName = configuration[CommonConfigurationKeys.MODULE_NAME]!!
 
@@ -176,7 +178,7 @@ fun loadIr(
         deserializer.deserializeIrModuleHeader(depsDescriptors.getModuleDescriptor(it))!!
     }
 
-    val moduleFragment = psi2IrContext.generateModuleFragment(files, deserializer)
+    val moduleFragment = psi2IrContext.generateModuleFragmentWithPlugins(project, files, deserializer)
 
     return IrModuleInfo(moduleFragment, deserializedModuleFragments, irBuiltIns, symbolTable, deserializer)
 }
@@ -192,6 +194,38 @@ private fun runAnalysisAndPreparePsi2Ir(depsDescriptors: ModulesStructure): Gene
         SymbolTable(),
         JsGeneratorExtensions()
     )
+}
+
+fun GeneratorContext.generateModuleFragmentWithPlugins(
+    project: Project,
+    files: List<KtFile>,
+    deserializer: IrDeserializer? = null
+): IrModuleFragment {
+    val psi2Ir = Psi2IrTranslator(languageVersionSettings, configuration)
+
+    for (extension in IrGenerationExtension.getInstances(project)) {
+        psi2Ir.addPostprocessingStep { module ->
+            extension.generate(
+                module,
+                IrPluginContext(
+                    moduleDescriptor,
+                    bindingContext,
+                    languageVersionSettings,
+                    symbolTable,
+                    typeTranslator,
+                    irBuiltIns
+                )
+            )
+        }
+    }
+
+    val moduleFragment =
+        psi2Ir.generateModuleFragment(
+            this,
+            files,
+            deserializer
+        )
+    return moduleFragment
 }
 
 fun GeneratorContext.generateModuleFragment(files: List<KtFile>, deserializer: IrDeserializer? = null) =

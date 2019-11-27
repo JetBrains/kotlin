@@ -9,5 +9,7 @@ class Foo {
   operator fun plus(increment: Int): Foo {}
   fun String.onString(a: (Int) -> Any?): Foo {}
 
+  external fun externalFun(a: Int): String { return "" }
+
   class Inner {}
 }

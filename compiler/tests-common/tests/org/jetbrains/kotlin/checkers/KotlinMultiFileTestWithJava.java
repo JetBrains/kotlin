@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
+import org.jetbrains.kotlin.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition;
 import org.jetbrains.kotlin.test.*;
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase;
@@ -70,6 +71,10 @@ public abstract class KotlinMultiFileTestWithJava<M, F> extends KtUsefulTestCase
         if (isKotlinSourceRootNeeded()) {
             ContentRootsKt.addKotlinSourceRoot(configuration, kotlinSourceRoot.getPath());
         }
+
+        // Currently, we're testing IDE behavior when generating the .txt files for comparison, but this can be changed.
+        // The main difference is the fact that the new class file reading implementation doesn't load parameter names from JDK classes.
+        configuration.put(JVMConfigurationKeys.USE_PSI_CLASS_FILES_READING, true);
 
         performCustomConfiguration(configuration);
         return KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, getEnvironmentConfigFiles());

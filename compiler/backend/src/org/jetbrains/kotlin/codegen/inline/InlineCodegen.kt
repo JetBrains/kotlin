@@ -130,16 +130,16 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
 
     fun performInline(
         typeArguments: List<TypeParameterMarker>?,
-        callDefault: Boolean,
-        typeSystem: TypeSystemCommonBackendContext,
-        codegen: BaseExpressionCodegen
+        inlineDefaultLambdas: Boolean,
+        mapDefaultSignature: Boolean,
+        typeSystem: TypeSystemCommonBackendContext
     ) {
         var nodeAndSmap: SMAPAndMethodNode? = null
         try {
             nodeAndSmap = createInlineMethodNode(
-                functionDescriptor, methodOwner, jvmSignature, callDefault, typeArguments, typeSystem, state, sourceCompiler
+                functionDescriptor, methodOwner, jvmSignature, mapDefaultSignature, typeArguments, typeSystem, state, sourceCompiler
             )
-            endCall(inlineCall(nodeAndSmap, callDefault))
+            endCall(inlineCall(nodeAndSmap, inlineDefaultLambdas))
         } catch (e: CompilationException) {
             throw e
         } catch (e: InlineException) {
@@ -210,16 +210,12 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
                 ?: error("No stack value for continuation parameter of suspend function")
     }
 
-    protected fun inlineCall(nodeAndSmap: SMAPAndMethodNode, callDefault: Boolean): InlineResult {
+    protected fun inlineCall(nodeAndSmap: SMAPAndMethodNode, inlineDefaultLambda: Boolean): InlineResult {
         assert(delayedHiddenWriting == null) { "'putHiddenParamsIntoLocals' should be called after 'processAndPutHiddenParameters(true)'" }
         defaultSourceMapper.callSiteMarker = CallSiteMarker(codegen.lastLineNumber)
         val node = nodeAndSmap.node
-        if (callDefault) {
-            val defaultLambdas = expandMaskConditionsAndUpdateVariableNodes(
-                node, maskStartIndex, maskValues, methodHandleInDefaultMethodIndex,
-                extractDefaultLambdaOffsetAndDescriptor(jvmSignature, functionDescriptor)
-            )
-            for (lambda in defaultLambdas) {
+        if (inlineDefaultLambda) {
+            for (lambda in extractDefaultLambdas(node)) {
                 invocationParamBuilder.buildParameters().getParameterByDeclarationSlot(lambda.offset).functionalArgument = lambda
                 val prev = expressionMap.put(lambda.offset, lambda)
                 assert(prev == null) { "Lambda with offset ${lambda.offset} already exists: $prev" }
@@ -282,6 +278,8 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
 
         return result
     }
+
+    abstract fun extractDefaultLambdas(node: MethodNode): List<DefaultLambda>
 
     fun generateAndInsertFinallyBlocks(
         intoNode: MethodNode,
@@ -355,7 +353,10 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         val caller = codegen.context.functionDescriptor
         if (!caller.isInline) return false
         val callerPackage = DescriptorUtils.getParentOfType(caller, PackageFragmentDescriptor::class.java) ?: return false
-        return callerPackage.fqName.asString().startsWith("kotlin.")
+        return callerPackage.fqName.asString().let {
+            // package either equals to 'kotlin' or starts with 'kotlin.'
+            it.startsWith("kotlin") && (it.length <= 6 || it[6] == '.')
+        }
     }
 
     private fun generateClosuresBodies() {
@@ -483,7 +484,9 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         if (kind !== ValueKind.DEFAULT_MASK && kind !== ValueKind.METHOD_HANDLE_IN_DEFAULT) {
             return false
         }
-        assert(value is StackValue.Constant) { "Additional default method argument should be constant, but " + value }
+        assert(value is StackValue.Constant) {
+            "Additional default method argument should be constant, but " + value
+        }
         val constantValue = (value as StackValue.Constant).value
         if (kind === ValueKind.DEFAULT_MASK) {
             assert(constantValue is Int) { "Mask should be of Integer type, but " + constantValue }
@@ -711,6 +714,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
             return NestedSourceMapper(parent, nodeAndSmap.sortedRanges, nodeAndSmap.classSMAP.sourceInfo)
         }
     }
+
 }
 
 val BaseExpressionCodegen.v: InstructionAdapter

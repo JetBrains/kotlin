@@ -44,14 +44,16 @@ class IrTypeMapper(private val context: JvmBackendContext) : KotlinTypeMapperBas
             is ClassDescriptor ->
                 mapClass(context.referenceClass(classifier).owner)
             is TypeParameterDescriptor ->
-                mapType(context.referenceTypeParameter(classifier).owner.defaultType)
+                mapType(context.referenceTypeParameter(classifier).defaultType)
             else ->
                 error("Unknown descriptor: $classifier")
         }
 
     fun classInternalName(irClass: IrClass): String {
-        context.getLocalClassInfo(irClass)?.internalName?.let { return it }
+        context.getLocalClassType(irClass)?.internalName?.let { return it }
+
         context.classNameOverride[irClass]?.let { return it.internalName }
+
         val className = SpecialNames.safeIdentifier(irClass.name).identifier
         val internalName = when (val parent = irClass.parent) {
             is IrPackageFragment -> {

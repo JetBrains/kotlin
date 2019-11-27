@@ -1,4 +1,6 @@
 // !WITH_NEW_INFERENCE
+// FULL_JDK
+
 fun test() {
   val a : Int? = 0
   if (a != null) {

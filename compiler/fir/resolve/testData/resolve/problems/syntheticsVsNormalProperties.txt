@@ -1,0 +1,29 @@
+FILE: main.kt
+    public open class Executor : R|kotlin/Any| {
+        public constructor(): R|Executor| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class CommandExecutor : R|Executor| {
+        public constructor(): R|CommandExecutor| {
+            super<R|Executor|>()
+        }
+
+    }
+    public final class B : R|A| {
+        public constructor(): R|B| {
+            super<R|A|>()
+        }
+
+        public final val executor: R|CommandExecutor| = R|/CommandExecutor.CommandExecutor|()
+            public get(): R|CommandExecutor|
+
+        public final fun test(): R|kotlin/Unit| {
+            lval e: <ERROR TYPE REF: Ambiguity: executor, [/B.executor, /A.executor]> = <Ambiguity: executor, [/B.executor, /A.executor]>#
+        }
+
+    }
+    public final fun test(b: R|B|): R|kotlin/Unit| {
+        R|<local>/b|.<Ambiguity: executor, [/B.executor, /A.executor]>#
+    }

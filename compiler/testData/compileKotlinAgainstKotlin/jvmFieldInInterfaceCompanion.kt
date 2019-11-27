@@ -1,5 +1,4 @@
 // !LANGUAGE: +JvmFieldInInterface
-// IGNORE_BACKEND: JVM_IR
 // TARGET_BACKEND: JVM
 
 // WITH_RUNTIME

@@ -275,11 +275,9 @@ class NewConstraintSystemImpl(
         if (variableWithConstraints == null || variableWithConstraints.typeVariable.safeAs<NewTypeVariable>()?.hasOnlyInputTypesAnnotation() != true ) return
         val projectedInputCallTypes = variableWithConstraints.projectedInputCallTypes
         val resultTypeIsInputType = projectedInputCallTypes.any { inputType ->
-            val constructor = inputType.constructor
-            if (constructor is IntersectionTypeConstructor)
-                constructor.supertypes.any { NewKotlinTypeChecker.Default.equalTypes(resultType, it) }
-            else
-                NewKotlinTypeChecker.Default.equalTypes(resultType, inputType)
+            NewKotlinTypeChecker.Default.equalTypes(resultType, inputType) ||
+                    inputType.constructor is IntersectionTypeConstructor
+                    && inputType.constructor.supertypes.any { NewKotlinTypeChecker.Default.equalTypes(resultType, it) }
         }
         if (!resultTypeIsInputType) {
             addError(OnlyInputTypesDiagnostic(variableWithConstraints.typeVariable as NewTypeVariable))

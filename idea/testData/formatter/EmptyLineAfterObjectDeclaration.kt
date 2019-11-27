@@ -29,6 +29,7 @@ class C1M
 
 // -----
 
+// test
 object O6
 interface T1
 

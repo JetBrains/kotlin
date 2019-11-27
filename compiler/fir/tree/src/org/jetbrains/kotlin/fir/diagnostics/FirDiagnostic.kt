@@ -9,6 +9,6 @@ abstract class FirDiagnostic {
     abstract val reason: String
 }
 
-object FirEmptyDiagnostic : FirDiagnostic() {
-    override val reason: String get() = "Empty diagnostic"
+class FirStubDiagnostic(val original: FirDiagnostic) : FirDiagnostic() {
+    override val reason: String get() = original.reason
 }

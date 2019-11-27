@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.idea.completion.suppressAutoInsertion
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.*
+import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.expressions.DoubleColonExpressionResolver
@@ -297,6 +298,8 @@ fun LookupElement.assignSmartCompletionPriority(priority: SmartCompletionItemPri
     putUserData(SMART_COMPLETION_ITEM_PRIORITY_KEY, priority)
     return this
 }
+
+var LookupElement.isProbableKeyword: Boolean by NotNullableUserDataProperty(Key.create("PROBABLE_KEYWORD_KEY"), false)
 
 fun DeclarationDescriptor.fuzzyTypesForSmartCompletion(
         smartCastCalculator: SmartCastCalculator,

@@ -101,6 +101,12 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
                 }
             }
         }
+
+        override fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression, data: EnumExhaustivenessData) {
+            if (binaryLogicExpression.kind == LogicOperationKind.OR) {
+                binaryLogicExpression.acceptChildren(this, data)
+            }
+        }
     }
 
     // ------------------------ Sealed class exhaustiveness ------------------------
@@ -146,6 +152,12 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
             val lookupTag = (resolvedTypeRef.type as? ConeLookupTagBasedType)?.lookupTag ?: return
             val symbol = data.symbolProvider.getSymbolByLookupTag(lookupTag) as? FirClassSymbol ?: return
             data.visitedInheritors.replace(symbol.classId, true)
+        }
+
+        override fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression, data: SealedExhaustivenessData) {
+            if (binaryLogicExpression.kind == LogicOperationKind.OR) {
+                binaryLogicExpression.acceptChildren(this, data)
+            }
         }
     }
 

@@ -52,6 +52,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
         if (whenExpression.calleeReference is FirResolvedNamedReference && whenExpression.resultType !is FirImplicitTypeRef) {
             return whenExpression.compose()
         }
+        whenExpression.annotations.forEach { it.accept(this, data) }
         dataFlowAnalyzer.enterWhenExpression(whenExpression)
         return withScopeCleanup(localScopes) with@{
             if (whenExpression.subjectVariable != null) {
@@ -128,6 +129,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
             return tryExpression.compose()
         }
 
+        tryExpression.annotations.forEach { it.accept(this, data) }
         dataFlowAnalyzer.enterTryExpression(tryExpression)
         tryExpression.transformTryBlock(transformer, ResolutionMode.ContextDependent)
         dataFlowAnalyzer.exitTryMainBlock(tryExpression)

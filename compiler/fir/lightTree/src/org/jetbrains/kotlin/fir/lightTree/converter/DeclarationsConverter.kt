@@ -13,9 +13,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.NAME_FOR_DEFAULT_VALUE_PARAMETER
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.*
@@ -1037,7 +1035,7 @@ class DeclarationsConverter(
         val parentNode = functionDeclaration.getParent()
         val isLocal = !(parentNode?.tokenType == KT_FILE || parentNode?.tokenType == CLASS_BODY)
         val firFunction = if (identifier == null) {
-            FirAnonymousFunctionImpl(null, session, returnType!!, receiverType, FirAnonymousFunctionSymbol())
+            FirAnonymousFunctionImpl(null, session, returnType!!, receiverType, FirAnonymousFunctionSymbol(), isLambda = false)
         } else {
             val functionName = identifier.nameAsSafeName()
             val status = FirDeclarationStatusImpl(
@@ -1459,7 +1457,7 @@ class DeclarationsConverter(
         null,
         FirResolvedTypeRefImpl(
             null,
-            ConeClassTypeImpl(
+            ConeClassLikeTypeImpl(
                 ConeClassLikeLookupTagImpl(ClassId.fromString(EXTENSION_FUNCTION_ANNOTATION)),
                 emptyArray(),
                 false

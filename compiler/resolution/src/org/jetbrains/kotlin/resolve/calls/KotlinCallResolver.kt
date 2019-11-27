@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls
 
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.resolve.calls.components.CallableReferenceResolver
 import org.jetbrains.kotlin.resolve.calls.components.KotlinCallCompleter
 import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionCallbacks
@@ -45,6 +46,8 @@ class KotlinCallResolver(
         collectAllCandidates: Boolean,
         createFactoryProviderForInvoke: () -> CandidateFactoryProviderForInvoke<KotlinResolutionCandidate>
     ): CallResolutionResult {
+        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
+
         kotlinCall.checkCallInvariants()
 
         val candidateFactory = SimpleCandidateFactory(
@@ -99,6 +102,8 @@ class KotlinCallResolver(
         givenCandidates: Collection<GivenCandidate>,
         collectAllCandidates: Boolean
     ): CallResolutionResult {
+        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
+
         kotlinCall.checkCallInvariants()
         val candidateFactory = SimpleCandidateFactory(
             callComponents, scopeTower, kotlinCall, resolutionCallbacks, callableReferenceResolver

@@ -38,7 +38,7 @@ class GradleInspectionTest : GradleImportingTestCase() {
         val problems = getInspectionResultFromTestDataProject()
 
         Assert.assertEquals(1, problems.size)
-        Assert.assertEquals("Plugin version (1.0.2) is not the same as library version (1.0.3)", problems.single())
+        Assert.assertEquals("Plugin version (1.3.20) is not the same as library version (1.3.30)", problems.single())
     }
 
     @Test
@@ -46,7 +46,7 @@ class GradleInspectionTest : GradleImportingTestCase() {
         val problems = getInspectionResultFromTestDataProject()
 
         Assert.assertEquals(1, problems.size)
-        Assert.assertEquals("Plugin version (1.0.2) is not the same as library version (1.0.3)", problems.single())
+        Assert.assertEquals("Plugin version (1.3.20) is not the same as library version (1.3.30)", problems.single())
     }
 
     @Test
@@ -70,7 +70,7 @@ class GradleInspectionTest : GradleImportingTestCase() {
         val problems = getInspectionResultFromTestDataProject()
 
         Assert.assertEquals(1, problems.size)
-        Assert.assertEquals("Plugin version (1.0.1) is not the same as library version (1.0.3)", problems.single())
+        Assert.assertEquals("Plugin version (1.3.10) is not the same as library version (1.3.30)", problems.single())
     }
 
     @Test
@@ -81,18 +81,20 @@ class GradleInspectionTest : GradleImportingTestCase() {
 
         Assert.assertEquals(1, problems.size)
         Assert.assertEquals(
-            "Kotlin version that is used for building with Gradle (1.0.1) differs from the one bundled into the IDE plugin (\$PLUGIN_VERSION)",
+            "Kotlin version that is used for building with Gradle (1.3.0) differs from the one bundled into the IDE plugin (\$PLUGIN_VERSION)",
             problems.single()
         )
     }
 
     @Test
+    @TargetVersions("4.9")
     fun testJreInOldVersion() {
         val problems = getInspectionResultFromTestDataProject()
         Assert.assertTrue("The inspection result should be empty but contains the following elements: [$problems].", problems.isEmpty())
     }
 
     @Test
+    @TargetVersions("4.9")
     fun testJreIsDeprecated() {
         val problems = getInspectionResultFromTestDataProject()
 
@@ -104,6 +106,7 @@ class GradleInspectionTest : GradleImportingTestCase() {
     }
 
     @Test
+    @TargetVersions("4.9")
     fun testJreIsDeprecatedWithImplementation() {
         val problems = getInspectionResultFromTestDataProject()
 
@@ -114,7 +117,7 @@ class GradleInspectionTest : GradleImportingTestCase() {
         )
     }
 
-    @TargetVersions("4.9+")
+    @TargetVersions("4.9")
     @Test
     fun testJreIsDeprecatedWithoutImplicitVersion() {
         val problems = getInspectionResultFromTestDataProject()
@@ -141,6 +144,7 @@ class GradleInspectionTest : GradleImportingTestCase() {
     }
 
     @Test
+    @TargetVersions("4.9")
     fun testObsoleteCoroutinesUsage() {
         val problems = getInspectionResultFromTestDataProject()
 

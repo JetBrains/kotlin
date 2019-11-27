@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.types.ConeClassType
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeStarProjection
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.name.Name
@@ -171,13 +171,14 @@ class ExplicitReceiverTowerDataConsumer<T : AbstractFirBasedSymbol<*>>(
         if (skipGroup(group, resultCollector)) return ProcessorAction.NEXT
         return when (kind) {
             TowerDataKind.EMPTY ->
-                MemberScopeTowerLevel(session, explicitReceiver, scopeSession = candidateFactory.bodyResolveComponents.scopeSession)
-                    .processElementsByName(
-                        token,
-                        name,
-                        explicitReceiver = null,
-                        processor = EmptyKindTowerProcessor(group)
-                    )
+                MemberScopeTowerLevel(
+                    session, resultCollector.components, explicitReceiver, scopeSession = candidateFactory.bodyResolveComponents.scopeSession
+                ).processElementsByName(
+                    token,
+                    name,
+                    explicitReceiver = null,
+                    processor = EmptyKindTowerProcessor(group)
+                )
             TowerDataKind.TOWER_LEVEL -> {
                 if (token == TowerScopeLevel.Token.Objects) return ProcessorAction.NEXT
                 towerScopeLevel.processElementsByName(
@@ -218,11 +219,11 @@ class ExplicitReceiverTowerDataConsumer<T : AbstractFirBasedSymbol<*>>(
         ): ProcessorAction {
             if (symbol is FirNamedFunctionSymbol && symbol.callableId.packageName.startsWith(defaultPackage)) {
                 val explicitReceiverType = explicitReceiver.type
-                if (dispatchReceiverValue == null && explicitReceiverType is ConeClassType) {
+                if (dispatchReceiverValue == null && explicitReceiverType is ConeClassLikeType) {
                     val declarationReceiverTypeRef =
                         (symbol as? FirCallableSymbol<*>)?.fir?.receiverTypeRef as? FirResolvedTypeRef
                     val declarationReceiverType = declarationReceiverTypeRef?.type
-                    if (declarationReceiverType is ConeClassType) {
+                    if (declarationReceiverType is ConeClassLikeType) {
                         if (!AbstractTypeChecker.isSubtypeOf(
                                 candidateFactory.bodyResolveComponents.inferenceComponents.ctx,
                                 explicitReceiverType,

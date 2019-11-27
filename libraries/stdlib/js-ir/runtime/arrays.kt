@@ -9,6 +9,7 @@ import withType
 
 external fun <T> Array(size: Int): Array<T>
 
+@PublishedApi
 internal fun <T> fillArrayVal(array: Array<T>, initValue: T): Array<T> {
     for (i in 0..array.size - 1) {
         array[i] = initValue
@@ -32,7 +33,8 @@ internal fun booleanArray(size: Int): BooleanArray = withType("BooleanArray", fi
 
 internal fun booleanArrayOf(arr: Array<Boolean>): BooleanArray = withType("BooleanArray", arr.asDynamic().slice()).unsafeCast<BooleanArray>()
 
-internal fun charArray(size: Int): CharArray = withType("CharArray", fillArrayVal(Array<Int>(size), 0)).unsafeCast<CharArray>()
+//internal fun charArray(size: Int): CharArray = withType("CharArray", fillArrayVal(Array<Int>(size), 0)).unsafeCast<CharArray>()
+internal fun charArray(size: Int): CharArray = withType("CharArray", fillArrayVal(Array<Char>(size), Char(0))).unsafeCast<CharArray>()
 
 internal fun charArrayOf(arr: Array<Char>): CharArray = withType("CharArray", arr.asDynamic().slice()).unsafeCast<CharArray>()
 

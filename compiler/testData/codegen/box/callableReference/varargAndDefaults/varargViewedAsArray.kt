@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 // KT-25514 Support usage of function reference with vararg where function of array is expected in new inference
 
 fun foo(x: Int, vararg y: String): String = y[0]

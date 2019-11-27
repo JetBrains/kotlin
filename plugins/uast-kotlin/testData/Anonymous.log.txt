@@ -2,15 +2,15 @@ UFile (package = )
     UImportStatement (isOnDemand = false)
     UImportStatement (isOnDemand = false)
     UClass (name = AnonymousKt)
-        UAnnotationMethod (name = foo)
+        UMethod (name = foo)
             UBlockExpression
                 UDeclarationsExpression
                     ULocalVariable (name = runnable)
                         UObjectLiteralExpression
                             UClass (name = null)
-                                UAnnotationMethod (name = run)
+                                UMethod (name = run)
                                     UBlockExpression
-                                UAnnotationMethod (name = AnonymousKt$foo$runnable$1)
+                                UMethod (name = AnonymousKt$foo$runnable$1)
                 UQualifiedReferenceExpression
                     USimpleNameReferenceExpression (identifier = runnable)
                     UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
@@ -35,23 +35,23 @@ UFile (package = )
                     ULocalVariable (name = closeableRunnable)
                         UObjectLiteralExpression
                             UClass (name = null)
-                                UAnnotationMethod (name = close)
+                                UMethod (name = close)
                                     UBlockExpression
-                                UAnnotationMethod (name = run)
+                                UMethod (name = run)
                                     UBlockExpression
-                                UAnnotationMethod (name = AnonymousKt$foo$closeableRunnable$1)
+                                UMethod (name = AnonymousKt$foo$closeableRunnable$1)
                 UDeclarationsExpression
                     ULocalVariable (name = runnableIs)
                         UObjectLiteralExpression
                             UClass (name = null)
-                                UAnnotationMethod (name = read)
+                                UMethod (name = read)
                                     UBlockExpression
                                         UReturnExpression
                                             ULiteralExpression (value = 0)
-                                UAnnotationMethod (name = run)
+                                UMethod (name = run)
                                     UBlockExpression
-                                UAnnotationMethod (name = AnonymousKt$foo$runnableIs$1)
-        UAnnotationMethod (name = withErr)
+                                UMethod (name = AnonymousKt$foo$runnableIs$1)
+        UMethod (name = withErr)
             UBlockExpression
                 UDeclarationsExpression
                     ULocalVariable (name = runnable)

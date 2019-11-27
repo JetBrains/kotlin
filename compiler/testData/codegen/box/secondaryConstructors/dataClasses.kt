@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 internal data class A1(val prop1: String) {
     val prop2: String = "const2"
     var prop3: String = ""

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.ir.isSuspend
 import org.jetbrains.kotlin.backend.common.lower.AbstractSuspendFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.FinallyBlocksLowering
+import org.jetbrains.kotlin.backend.common.lower.ReturnableBlockTransformer
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.builders.*
@@ -16,13 +17,16 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.explicitParameters
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.DFS
+import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
 
 class JsSuspendFunctionsLowering(ctx: JsIrBackendContext) : AbstractSuspendFunctionsLowering<JsIrBackendContext>(ctx) {
 
@@ -48,7 +52,11 @@ class JsSuspendFunctionsLowering(ctx: JsIrBackendContext) : AbstractSuspendFunct
         transformingFunction: IrFunction,
         argumentToPropertiesMap: Map<IrValueParameter, IrField>
     ) {
-        val simplifiedFunction = transformingFunction.transform(FinallyBlocksLowering(context, context.dynamicType), null) as IrFunction
+        val returnableBlockTransformer = ReturnableBlockTransformer(context)
+        val finallyBlockTransformer = FinallyBlocksLowering(context, context.dynamicType)
+        val simplifiedFunction =
+            transformingFunction.transform(finallyBlockTransformer, null).transform(returnableBlockTransformer, null) as IrFunction
+
         val originalBody = simplifiedFunction.body as IrBlockBody
 
         val body = IrBlockImpl(
@@ -215,6 +223,20 @@ class JsSuspendFunctionsLowering(ctx: JsIrBackendContext) : AbstractSuspendFunct
         }
     }
 
+    override fun IrBuilderWithScope.generateDelegatedCall(expectedType: IrType, delegatingCall: IrExpression): IrExpression {
+        val fromType = (delegatingCall as? IrCall)?.symbol?.owner?.returnType ?: delegatingCall.type
+        if (!needUnboxingOrUnit(fromType, expectedType)) return delegatingCall
+
+        val ctx = this@JsSuspendFunctionsLowering.context
+        return irComposite(resultType = fromType) {
+            val tmp = createTmpVariable(delegatingCall, irType = fromType)
+            val coroutineSuspended = irCall(ctx.coroutineSuspendGetter)
+            val condition = irEqeqeq(irGet(tmp), coroutineSuspended)
+            +irIfThen(fromType, condition, irReturn(irReinterpretCast(irGet(tmp), expectedType)))
+            +irGet(tmp)
+        }
+    }
+
     override fun IrBlockBodyBuilder.generateCoroutineStart(invokeSuspendFunction: IrFunction, receiver: IrExpression) {
         val dispatchReceiverVar = createTmpVariable(receiver, irType = receiver.type)
         +irCall(coroutineImplResultSymbolSetter).apply {
@@ -225,8 +247,10 @@ class JsSuspendFunctionsLowering(ctx: JsIrBackendContext) : AbstractSuspendFunct
             dispatchReceiver = irGet(dispatchReceiverVar)
             putValueArgument(0, irNull())
         }
-        +irReturn(irCall(invokeSuspendFunction.symbol).apply {
+        val call = irCall(invokeSuspendFunction.symbol).apply {
             dispatchReceiver = irGet(dispatchReceiverVar)
-        })
+        }
+        val functionReturnType = scope.scopeOwnerSymbol.assertedCast<IrSimpleFunctionSymbol> { "Expected function symbol" }.owner.returnType
+        +irReturn(generateDelegatedCall(functionReturnType, call))
     }
 }

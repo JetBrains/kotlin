@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.LoggingContext
-import org.jetbrains.kotlin.backend.common.descriptors.*
 import org.jetbrains.kotlin.backend.common.ir.DeclarationFactory
 import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.common.peek
@@ -26,7 +25,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
@@ -350,8 +349,7 @@ abstract class IrFileDeserializer(
         val symbol = deserializeIrSymbol(proto.symbol) as IrConstructorSymbol
         return IrConstructorCallImpl(
             start, end, type,
-            symbol, symbol.descriptor,
-            typeArgumentsCount = proto.memberAccess.typeArguments.typeArgumentCount,
+            symbol, typeArgumentsCount = proto.memberAccess.typeArguments.typeArgumentCount,
             constructorTypeArgumentsCount = proto.constructorTypeArgumentsCount,
             valueArgumentsCount = proto.memberAccess.valueArgumentCount
         ).also {
@@ -372,8 +370,7 @@ abstract class IrFileDeserializer(
             // TODO: implement the last three args here.
             IrCallImpl(
                 start, end, type,
-                symbol, symbol.descriptor,
-                proto.memberAccess.typeArguments.typeArgumentCount,
+                symbol, proto.memberAccess.typeArguments.typeArgumentCount,
                 proto.memberAccess.valueArgumentList.size,
                 origin,
                 superSymbol
@@ -404,7 +401,6 @@ abstract class IrFileDeserializer(
             end,
             builtIns.unitType,
             symbol,
-            symbol.descriptor,
             proto.memberAccess.typeArguments.typeArgumentCount,
             proto.memberAccess.valueArgumentList.size
         )
@@ -457,7 +453,6 @@ abstract class IrFileDeserializer(
             end,
             type,
             symbol,
-            symbol.descriptor,
             proto.memberAccess.typeArguments.typeArgumentCount,
             proto.memberAccess.valueArgumentCount,
             origin

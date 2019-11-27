@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessWithoutCallee
 import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
+import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -21,10 +22,13 @@ interface FirModifiableQualifiedAccess : FirQualifiedAccessWithoutCallee, FirAbs
     override val source: FirSourceElement?
     override val annotations: MutableList<FirAnnotationCall>
     override var safe: Boolean
+    override val typeArguments: MutableList<FirTypeProjection>
     override var explicitReceiver: FirExpression?
     override var dispatchReceiver: FirExpression
     override var extensionReceiver: FirExpression
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirModifiableQualifiedAccess
+
+    override fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirModifiableQualifiedAccess
 
     override fun <D> transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirModifiableQualifiedAccess
 

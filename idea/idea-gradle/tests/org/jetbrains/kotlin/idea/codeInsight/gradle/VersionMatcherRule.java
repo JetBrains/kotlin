@@ -42,7 +42,11 @@ public class VersionMatcherRule extends TestWatcher {
         final TargetVersions targetVersions = d.getAnnotation(TargetVersions.class);
         if (targetVersions == null) return;
 
-        myMatcher = new CustomMatcher<String>("Gradle version '" + targetVersions.value() + "'") {
+        myMatcher = produceMatcher("Gradle", targetVersions);
+    }
+
+    public static CustomMatcher<String> produceMatcher(String caption, TargetVersions targetVersions) {
+        return new CustomMatcher<String>(caption + " version '" + targetVersions.value() + "'") {
             @Override
             public boolean matches(Object item) {
                 return item instanceof String && new VersionMatcher(GradleVersion.version(item.toString())).isVersionMatch(targetVersions);

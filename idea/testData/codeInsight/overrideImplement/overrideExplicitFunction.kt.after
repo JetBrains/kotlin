@@ -4,6 +4,6 @@ interface A {
 
 class B : A {
     override fun String.foo() {
-        <selection><caret>TODO("not implemented") //To change body of created functions use File | Settings | File Templates.</selection>
+        <selection><caret>TODO("Not yet implemented")</selection>
     }
 }

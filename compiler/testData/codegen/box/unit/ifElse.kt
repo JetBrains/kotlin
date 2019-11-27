@@ -1,5 +1,4 @@
-// Name clashes
-// IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND_FIR: JVM_IR
 
 class A (val p: String, p1: String, p2: String) {
 

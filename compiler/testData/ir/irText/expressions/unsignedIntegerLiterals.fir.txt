@@ -20,7 +20,7 @@ FILE fqName:<root> fileName:/unsignedIntegerLiterals.kt
   PROPERTY name:testUByteWithExpectedType visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:testUByteWithExpectedType type:kotlin.UByte visibility:private [final,static]
       EXPRESSION_BODY
-        CONST Long type=kotlin.UByte value=1
+        CONST Long type=kotlin.Long value=1
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testUByteWithExpectedType> visibility:public modality:FINAL <> () returnType:kotlin.UByte
       correspondingProperty: PROPERTY name:testUByteWithExpectedType visibility:public modality:FINAL [val]
       BLOCK_BODY
@@ -29,7 +29,7 @@ FILE fqName:<root> fileName:/unsignedIntegerLiterals.kt
   PROPERTY name:testUShortWithExpectedType visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:testUShortWithExpectedType type:kotlin.UShort visibility:private [final,static]
       EXPRESSION_BODY
-        CONST Long type=kotlin.UShort value=1
+        CONST Long type=kotlin.Long value=1
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testUShortWithExpectedType> visibility:public modality:FINAL <> () returnType:kotlin.UShort
       correspondingProperty: PROPERTY name:testUShortWithExpectedType visibility:public modality:FINAL [val]
       BLOCK_BODY
@@ -38,7 +38,7 @@ FILE fqName:<root> fileName:/unsignedIntegerLiterals.kt
   PROPERTY name:testUIntWithExpectedType visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:testUIntWithExpectedType type:kotlin.UInt visibility:private [final,static]
       EXPRESSION_BODY
-        CONST Long type=kotlin.UInt value=1
+        CONST Long type=kotlin.Long value=1
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testUIntWithExpectedType> visibility:public modality:FINAL <> () returnType:kotlin.UInt
       correspondingProperty: PROPERTY name:testUIntWithExpectedType visibility:public modality:FINAL [val]
       BLOCK_BODY
@@ -47,7 +47,7 @@ FILE fqName:<root> fileName:/unsignedIntegerLiterals.kt
   PROPERTY name:testULongWithExpectedType visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:testULongWithExpectedType type:kotlin.ULong visibility:private [final,static]
       EXPRESSION_BODY
-        CONST Long type=kotlin.ULong value=1
+        CONST Long type=kotlin.Long value=1
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testULongWithExpectedType> visibility:public modality:FINAL <> () returnType:kotlin.ULong
       correspondingProperty: PROPERTY name:testULongWithExpectedType visibility:public modality:FINAL [val]
       BLOCK_BODY

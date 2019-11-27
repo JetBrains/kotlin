@@ -1,4 +1,5 @@
 // !LANGUAGE: +InlineClasses
+// IGNORE_BACKEND_FIR: JVM_IR
 
 inline class AsAny<T>(val x: Any?)
 inline class AsInt(val x: Int)

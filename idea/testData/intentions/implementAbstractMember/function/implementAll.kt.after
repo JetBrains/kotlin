@@ -6,14 +6,14 @@ interface T<X> {
 
 class U : T<String> {
     override fun foo(x: String): String {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        TODO("Not yet implemented")
     }
 
 }
 
 class V : T<Int> {
     override fun foo(x: Int): Int {
-        <caret><selection>TODO("not implemented") //To change body of created functions use File | Settings | File Templates.</selection>
+        <caret><selection>TODO("Not yet implemented")</selection>
     }
 
 }

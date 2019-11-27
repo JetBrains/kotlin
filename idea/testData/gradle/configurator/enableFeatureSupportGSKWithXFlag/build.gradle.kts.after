@@ -4,10 +4,10 @@ buildscript {
     repositories {
         jcenter()
         mavenCentral()
-        maven { setUrl("https://dl.bintray.com/kotlin/kotlin-dev") }
+        maven { setUrl("https://dl.bintray.com/kotlin/kotlin-eap") }
     }
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.70-dev-1416")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.60-eap-76")
     }
 }
 

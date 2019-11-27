@@ -1,0 +1,10 @@
+FILE: main.kt
+    public final fun takeA(array: R|kotlin/Array<A>|): R|kotlin/Unit| {
+    }
+    public final fun takeOutA(array: R|kotlin/Array<out A>|): R|kotlin/Unit| {
+    }
+    public final fun test(array: R|kotlin/Array<B>|): R|kotlin/Unit| {
+        Q|A|.R|/A.take|(R|<local>/array|)
+        <Inapplicable(INAPPLICABLE): [/takeA]>#(R|<local>/array|)
+        R|/takeOutA|(R|<local>/array|)
+    }

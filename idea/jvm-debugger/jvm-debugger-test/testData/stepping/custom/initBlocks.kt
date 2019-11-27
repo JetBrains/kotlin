@@ -15,4 +15,4 @@ fun main() {
     Foo()
 }
 
-// STEP_OVER: 5
+// STEP_OVER: 6

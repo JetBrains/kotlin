@@ -303,7 +303,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         private fun visitArguments(arguments: List<FirExpression>, data: StringBuilder) {
             arguments.joinTo(data, ", ", "(", ")") {
                 if (it is FirResolvedQualifier) {
-                    val lookupTag = (it.typeRef as FirResolvedTypeRefImpl).coneTypeSafe<ConeClassType>()?.lookupTag
+                    val lookupTag = (it.typeRef as FirResolvedTypeRefImpl).coneTypeSafe<ConeClassLikeType>()?.lookupTag
                     val type = lookupTag?.let {
                         (symbolProvider.getSymbolByLookupTag(it)?.fir as? FirClass)?.superTypeRefs?.first()?.render()
                     }
@@ -351,7 +351,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             if (valueParameter.isVararg) {
                 data.append("vararg ")
             }
-            valueParameter.returnTypeRef.coneTypeSafe<ConeClassType>()?.arrayElementType(session)?.let { data.append(it.render()) }
+            valueParameter.returnTypeRef.coneTypeSafe<ConeClassLikeType>()?.arrayElementType(session)?.let { data.append(it.render()) }
                 ?: valueParameter.returnTypeRef.accept(this, data)
             valueParameter.defaultValue?.let { data.append(" = ...") }
         }
@@ -467,7 +467,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: StringBuilder) {
             val coneType = resolvedTypeRef.type
             data.append(removeCurrentFilePackage(coneType.render()))
-            if (coneType is ConeAbbreviatedType) {
+            if (coneType is ConeClassLikeType) {
                 val original = coneType.directExpansionType(session)
                 original?.let { data.append(" /* = ${it.render()} */") }
             }

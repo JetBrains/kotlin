@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 fun <R> run(block: () -> R) = block()
 inline fun <R> inlineRun(block: () -> R) = block()
 

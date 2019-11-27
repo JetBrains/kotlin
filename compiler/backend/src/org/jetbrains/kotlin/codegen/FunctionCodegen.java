@@ -452,7 +452,10 @@ public class FunctionCodegen {
             boolean staticInCompanionObject
     ) {
         OwnerKind contextKind = methodContext.getContextKind();
-        if (!state.getClassBuilderMode().generateBodies || isAbstractMethod(functionDescriptor, contextKind)) {
+        if (!state.getClassBuilderMode().generateBodies
+            || isAbstractMethod(functionDescriptor, contextKind)
+            || shouldSkipMethodBodyInAbiMode(state.getClassBuilderMode(), origin)
+        ) {
             generateLocalVariableTable(
                     mv,
                     jvmSignature,
@@ -484,6 +487,13 @@ public class FunctionCodegen {
         }
 
         endVisit(mv, null, origin.getElement());
+    }
+
+    private static boolean shouldSkipMethodBodyInAbiMode(@NotNull ClassBuilderMode classBuilderMode, @NotNull JvmDeclarationOrigin origin) {
+        if (classBuilderMode != ClassBuilderMode.ABI) return false;
+
+        DeclarationDescriptor descriptor = origin.getDescriptor();
+        return descriptor != null && !InlineUtil.isInlineOrContainingInline(descriptor);
     }
 
     public static void generateParameterAnnotations(
@@ -1323,7 +1333,9 @@ public class FunctionCodegen {
 
     private boolean isDefaultNeeded(@NotNull FunctionDescriptor descriptor, @Nullable KtNamedFunction function) {
         List<ValueParameterDescriptor> parameters =
-                CodegenUtil.getFunctionParametersForDefaultValueGeneration(descriptor, state.getDiagnostics());
+                CodegenUtil.getFunctionParametersForDefaultValueGeneration(
+                        descriptor.isSuspend() ? CoroutineCodegenUtilKt.unwrapInitialDescriptorForSuspendFunction(descriptor) : descriptor,
+                        state.getDiagnostics());
         return CollectionsKt.any(parameters, ValueParameterDescriptor::declaresDefaultValue);
     }
 

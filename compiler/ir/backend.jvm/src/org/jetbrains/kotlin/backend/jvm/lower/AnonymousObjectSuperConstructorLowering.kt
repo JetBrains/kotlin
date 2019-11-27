@@ -12,13 +12,13 @@ import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
-import org.jetbrains.kotlin.ir.builders.irCallConstructor
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irTemporary
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.util.transform
 
@@ -105,9 +105,13 @@ private class AnonymousObjectSuperConstructorLowering(val context: JvmBackendCon
             }
         }
 
+        val classTypeParametersCount = objectConstructorCall.typeArgumentsCount - objectConstructorCall.symbol.owner.typeParameters.size
         context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol).run {
             expression.statements[expression.statements.size - 1] = irBlock(objectConstructorCall) {
-                +irCallConstructor(objectConstructor.symbol, listOf()).apply {
+                +IrConstructorCallImpl.fromSymbolOwner(
+                    objectConstructorCall.startOffset, objectConstructorCall.endOffset, objectConstructorCall.type,
+                    objectConstructorCall.symbol, classTypeParametersCount, objectConstructorCall.origin
+                ).apply {
                     for (i in 0 until objectConstructorCall.valueArgumentsCount)
                         putValueArgument(i, objectConstructorCall.getValueArgument(i))
                     // Avoid complex expressions between `new` and `<init>`, as the inliner gets confused if

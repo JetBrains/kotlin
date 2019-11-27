@@ -144,5 +144,5 @@ FILE fqName:<root> fileName:/breakContinueInWhen.kt
               arg0: GET_VAR 'var s: kotlin.String [var] declared in <root>.testContinueDoWhile' type=kotlin.String origin=null
               arg1: CONST String type=kotlin.String value="1;2;"
           then: THROW type=kotlin.Nothing
-            CONSTRUCTOR_CALL 'public constructor <init> (detailMessage: kotlin.Any?) declared in java.lang.AssertionError' type=java.lang.AssertionError origin=null
-              detailMessage: GET_VAR 'var s: kotlin.String [var] declared in <root>.testContinueDoWhile' type=kotlin.String origin=null
+            CONSTRUCTOR_CALL 'public constructor <init> (p0: kotlin.Any?) declared in java.lang.AssertionError' type=java.lang.AssertionError origin=null
+              p0: GET_VAR 'var s: kotlin.String [var] declared in <root>.testContinueDoWhile' type=kotlin.String origin=null

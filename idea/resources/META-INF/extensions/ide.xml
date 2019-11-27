@@ -59,6 +59,14 @@
 
         <extensionPoint qualifiedName="org.jetbrains.kotlin.scriptDiagnosticFixProvider"
                         interface="org.jetbrains.kotlin.idea.script.ScriptDiagnosticFixProvider"/>
+
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.scripting.idea.loader"
+                        interface="org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptConfigurationLoader"
+                        area="IDEA_PROJECT"/>
+
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.scripting.idea.listener"
+                        interface="org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptChangeListener"
+                        area="IDEA_PROJECT"/>
     </extensionPoints>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">

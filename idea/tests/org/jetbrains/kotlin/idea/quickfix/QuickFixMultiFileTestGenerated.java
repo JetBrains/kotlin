@@ -515,6 +515,11 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             runTest("idea/testData/quickfix/autoImports/ambiguousNamePreferWithImportsFromPackage.before.Main.kt");
         }
 
+        @TestMetadata("callWithTrailingComma.before.Main.kt")
+        public void testCallWithTrailingComma() throws Exception {
+            runTest("idea/testData/quickfix/autoImports/callWithTrailingComma.before.Main.kt");
+        }
+
         @TestMetadata("callableReferenceExtension.before.Main.kt")
         public void testCallableReferenceExtension() throws Exception {
             runTest("idea/testData/quickfix/autoImports/callableReferenceExtension.before.Main.kt");
@@ -1138,11 +1143,6 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             @TestMetadata("namedArgument.test")
             public void testNamedArgument() throws Exception {
                 runTest("idea/testData/quickfix/autoImports/mismatchingArgs/namedArgument.test");
-            }
-
-            @TestMetadata("notForIncompleteCall.test")
-            public void testNotForIncompleteCall() throws Exception {
-                runTest("idea/testData/quickfix/autoImports/mismatchingArgs/notForIncompleteCall.test");
             }
 
             @TestMetadata("smartCast.test")

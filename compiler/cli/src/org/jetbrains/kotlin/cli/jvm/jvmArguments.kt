@@ -186,7 +186,7 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
 
     put(JVMConfigurationKeys.USE_TYPE_TABLE, arguments.useTypeTable)
     put(JVMConfigurationKeys.SKIP_RUNTIME_VERSION_CHECK, arguments.skipRuntimeVersionCheck)
-    put(JVMConfigurationKeys.USE_FAST_CLASS_FILES_READING, !arguments.useOldClassFilesReading)
+    put(JVMConfigurationKeys.USE_PSI_CLASS_FILES_READING, arguments.useOldClassFilesReading)
 
     if (arguments.useOldClassFilesReading) {
         getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)

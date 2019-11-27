@@ -80,11 +80,9 @@ abstract class AbstractCompileJavaAgainstKotlinTest : TestCaseWithTmpdir() {
 
         if (!compiledSuccessfully) return
 
-        val environment = KotlinCoreEnvironment.createForTests(
-            testRootDisposable,
-            newConfiguration(ConfigurationKind.ALL, TestJdkKind.FULL_JDK, getAnnotationsJar(), out),
-            EnvironmentConfigFiles.JVM_CONFIG_FILES
-        )
+        val configuration = newConfiguration(ConfigurationKind.ALL, TestJdkKind.FULL_JDK, getAnnotationsJar(), out)
+        configuration.put(JVMConfigurationKeys.USE_PSI_CLASS_FILES_READING, true)
+        val environment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
         setupLanguageVersionSettingsForCompilerTests(ktFile.readText(), environment)
 
         val analysisResult = JvmResolveUtil.analyze(environment)

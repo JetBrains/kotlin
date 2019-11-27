@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.load.java.getOverriddenBuiltinReflectingJvmDescripto
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.load.kotlin.forceSingleValueParameterBoxing
 import org.jetbrains.kotlin.load.kotlin.getJvmModuleNameForDeserializedDescriptor
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
@@ -74,7 +73,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         if (nameForSpecialFunction != null) return nameForSpecialFunction
 
         val property = (function as? IrSimpleFunction)?.correspondingPropertySymbol?.owner
-        if (property != null) {
+        if (property != null && function.name.isSpecial) {
             val propertyName = property.name.asString()
             if (property.parent.let { it is IrClass && it.isAnnotationClass }) return propertyName
 
@@ -105,7 +104,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
 
         if (function.isTopLevel) {
             if (Visibilities.isPrivate(function.visibility) && newName != "<clinit>" &&
-                function.parentAsClass.attributeOwnerId in context.multifileFacadeForPart
+                (function.parent as? IrClass)?.attributeOwnerId in context.multifileFacadeForPart
             ) {
                 return "$newName$${function.parentAsClass.name.asString()}"
             }
@@ -287,7 +286,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
             if (valueArgumentsCount > 0) (getValueArgument(0) as? IrConst<*>)?.value as? Boolean ?: true else null
         }
 
-    fun mapToCallableMethod(expression: IrFunctionAccessExpression): IrCallableMethod {
+    fun mapToCallableMethod(caller: IrFunction, expression: IrFunctionAccessExpression): IrCallableMethod {
         val callee = expression.symbol.owner.getOrCreateSuspendFunctionViewIfNeeded(context)
         val calleeParent = callee.parent
         if (calleeParent !is IrClass) {
@@ -306,7 +305,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         }
 
         val isInterface = calleeParent.isJvmInterface
-        val isSuperCall = (expression as? IrCall)?.superQualifier != null
+        val isSuperCall = (expression as? IrCall)?.superQualifierSymbol != null
 
         val invokeOpcode = when {
             callee.dispatchReceiverParameter == null -> Opcodes.INVOKESTATIC
@@ -317,14 +316,17 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         }
 
         val declaration = findSuperDeclaration(callee, isSuperCall)
-        val signature = mapOverriddenSpecialBuiltinIfNeeded(declaration, isSuperCall)
+        val signature = mapOverriddenSpecialBuiltinIfNeeded(caller, declaration, isSuperCall)
             ?: mapSignatureSkipGeneric(declaration)
 
         return IrCallableMethod(owner, invokeOpcode, signature, isInterface)
     }
 
     // TODO: get rid of this (probably via some special lowering)
-    private fun mapOverriddenSpecialBuiltinIfNeeded(callee: IrFunction, superCall: Boolean): JvmMethodSignature? {
+    private fun mapOverriddenSpecialBuiltinIfNeeded(caller: IrFunction, callee: IrFunction, superCall: Boolean): JvmMethodSignature? {
+        // Do not remap special builtin methods when called from a bridge. The bridges are there to provide the
+        // remapped name or signature and forward to the actually declared method.
+        if (caller.origin == IrDeclarationOrigin.BRIDGE || caller.origin == IrDeclarationOrigin.BRIDGE_SPECIAL) return null
         val overriddenSpecialBuiltinFunction = callee.descriptor.original.getOverriddenBuiltinReflectingJvmDescriptor()
         if (overriddenSpecialBuiltinFunction != null && !superCall) {
             return mapSignatureSkipGeneric(context.referenceFunction(overriddenSpecialBuiltinFunction.original).owner)

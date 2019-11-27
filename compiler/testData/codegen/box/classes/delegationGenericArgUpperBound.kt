@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 interface A<T: Number> {
     fun foo(t: T): String
 }

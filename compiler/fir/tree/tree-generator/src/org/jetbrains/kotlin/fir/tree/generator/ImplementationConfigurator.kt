@@ -60,7 +60,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         val regularClassConfig: ImplementationContext.() -> Unit = {
             parents += modifiableRegularClass
             defaultNull("companionObject")
-            defaultSupertypesComputationStatus()
         }
         impl(regularClass, "FirClassImpl", regularClassConfig)
 
@@ -72,7 +71,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
                 value = "ClassKind.OBJECT"
                 withGetter = true
             }
-            defaultSupertypesComputationStatus()
         }
 
         impl(enumEntry) {
@@ -88,13 +86,11 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
                 withGetter = true
             }
             default("typeRef", "session.builtinTypes.enumType")
-            defaultSupertypesComputationStatus()
             useTypes(visibilitiesType, modalityType)
         }
 
         impl(typeAlias) {
             parents += modifiableTypeParametersOwner
-            defaultSupertypesComputationStatus()
         }
 
         impl(import)

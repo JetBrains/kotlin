@@ -1,6 +1,6 @@
 UFile (package = )
     UClass (name = TypeReferencesKt)
-        UAnnotationMethod (name = foo)
+        UMethod (name = foo)
             UParameter (name = parameter)
                 UAnnotation (fqName = org.jetbrains.annotations.NotNull)
             UBlockExpression
@@ -17,7 +17,7 @@ UFile (package = )
                             USimpleNameReferenceExpression (identifier = varWithoutType)
                 UReturnExpression
                     USimpleNameReferenceExpression (identifier = result)
-        UAnnotationMethod (name = parameterizedFoo)
+        UMethod (name = parameterizedFoo)
             UParameter (name = arg)
                 UAnnotation (fqName = org.jetbrains.annotations.Nullable)
             UBlockExpression

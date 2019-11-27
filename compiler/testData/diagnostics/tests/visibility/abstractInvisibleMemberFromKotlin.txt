@@ -1,0 +1,92 @@
+// -- Module: <base> --
+package
+
+package base {
+
+    public abstract class Base {
+        public constructor Base()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public final fun foo(): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        internal abstract fun internalFoo(): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public open class BaseWithOverride : base.Base {
+        public constructor BaseWithOverride()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public final override /*1*/ /*fake_override*/ fun foo(): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        internal open override /*1*/ fun internalFoo(): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+
+// -- Module: <impl> --
+package
+
+package impl {
+    public fun foo(): kotlin.Unit
+
+    public final class ImplDirectFromBase : base.Base {
+        public constructor ImplDirectFromBase()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public final override /*1*/ /*fake_override*/ fun foo(): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        invisible_fake abstract override /*1*/ /*fake_override*/ fun internalFoo(): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final class ImplDirectFromBaseWithOverrid : base.Base {
+        public constructor ImplDirectFromBaseWithOverrid()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public final override /*1*/ /*fake_override*/ fun foo(): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open fun internalFoo(): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final class ImplDirectFromBaseWithOverride : base.BaseWithOverride {
+        public constructor ImplDirectFromBaseWithOverride()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public final override /*1*/ /*fake_override*/ fun foo(): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        invisible_fake open override /*1*/ /*fake_override*/ fun internalFoo(): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public object ImplObjDirectFromBase : base.Base {
+        private constructor ImplObjDirectFromBase()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public final override /*1*/ /*fake_override*/ fun foo(): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        invisible_fake abstract override /*1*/ /*fake_override*/ fun internalFoo(): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final class ImplViaIntermediate : intermediate.Intermediate {
+        public constructor ImplViaIntermediate()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public final override /*1*/ /*fake_override*/ fun foo(): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        invisible_fake abstract override /*1*/ /*fake_override*/ fun internalFoo(): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+
+// -- Module: <intermediate> --
+package
+
+package intermediate {
+
+    public abstract class Intermediate : base.Base {
+        public constructor Intermediate()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public final override /*1*/ /*fake_override*/ fun foo(): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        invisible_fake abstract override /*1*/ /*fake_override*/ fun internalFoo(): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

@@ -159,6 +159,9 @@ class VariableAssignmentNode(owner: ControlFlowGraph, override val fir: FirVaria
 class EnterContractNode(owner: ControlFlowGraph, override val fir: FirFunctionCall, level: Int) : CFGNode<FirFunctionCall>(owner, level), EnterNode
 class ExitContractNode(owner: ControlFlowGraph, override val fir: FirFunctionCall, level: Int) : CFGNode<FirFunctionCall>(owner, level), ExitNode
 
+class EnterSafeCallNode(owner: ControlFlowGraph, override val fir: FirQualifiedAccess, level: Int) : CFGNode<FirQualifiedAccess>(owner, level)
+class ExitSafeCallNode(owner: ControlFlowGraph, override val fir: FirQualifiedAccess, level: Int) : CFGNode<FirQualifiedAccess>(owner, level)
+
 // ----------------------------------- Other -----------------------------------
 
 class AnnotationEnterNode(owner: ControlFlowGraph, override val fir: FirAnnotationCall, level: Int) : CFGNode<FirAnnotationCall>(owner, level), EnterNode

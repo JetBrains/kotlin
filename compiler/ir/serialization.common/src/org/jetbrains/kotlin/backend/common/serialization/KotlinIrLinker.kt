@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.LoggingContext
-import org.jetbrains.kotlin.backend.common.descriptors.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.IrElement
@@ -17,7 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
@@ -27,9 +26,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
-import org.jetbrains.kotlin.ir.util.IrDeserializer
-import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
-import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite.newInstance
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
@@ -51,7 +48,7 @@ abstract class KotlinIrLinker(
     val symbolTable: SymbolTable,
     private val exportedDependencies: List<ModuleDescriptor>,
     private val forwardModuleDescriptor: ModuleDescriptor?,
-    private val firstKnownBuiltinsIndex: Long
+    mangler: KotlinMangler
 ) : DescriptorUniqIdAware, IrDeserializer {
 
 
@@ -472,18 +469,18 @@ abstract class KotlinIrLinker(
 
     protected abstract val descriptorReferenceDeserializer: DescriptorReferenceDeserializer
 
-    protected val indexAfterKnownBuiltins = loadKnownBuiltinSymbols()
-
-    private fun loadKnownBuiltinSymbols(): Long {
-        var currentIndex = firstKnownBuiltinsIndex
+    private fun loadKnownBuiltinSymbols(mangler: KotlinMangler) {
         val mask = 1L shl 63
         val globalDeserializedSymbols = globalDeserializationState.deserializedSymbols
         builtIns.knownBuiltins.forEach {
-            globalDeserializedSymbols[UniqId(currentIndex or mask)] = it
-            assert(symbolTable.referenceSimpleFunction(it.descriptor) == it)
-            currentIndex++
+            val currentIndex = with(mangler) { it.mangle.hashMangle }
+            globalDeserializedSymbols[UniqId(currentIndex or mask)] = it.symbol
+            assert(symbolTable.referenceSimpleFunction(it.symbol.descriptor as SimpleFunctionDescriptor).owner === it)
         }
-        return currentIndex
+    }
+
+    init {
+        loadKnownBuiltinSymbols(mangler)
     }
 
     private val ByteArray.codedInputStream: org.jetbrains.kotlin.protobuf.CodedInputStream

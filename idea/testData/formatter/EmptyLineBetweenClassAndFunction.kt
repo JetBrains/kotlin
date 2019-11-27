@@ -8,11 +8,13 @@ class C2
 
 // -----
 
+// test
 fun f3 = 1
 class C3 {}
 
 // -----
 
+/*test*/
 fun f4 = 2
 class C4
 

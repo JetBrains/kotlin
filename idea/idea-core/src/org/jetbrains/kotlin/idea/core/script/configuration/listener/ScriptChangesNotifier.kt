@@ -15,17 +15,13 @@ import com.intellij.openapi.fileEditor.FileEditorManagerEvent
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiManager
 import com.intellij.util.Alarm
+import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptChangeListener.Companion.LISTENER
 import org.jetbrains.kotlin.idea.core.script.isScriptChangesNotifierDisabled
-import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.scripting.definitions.isNonScript
 
 internal class ScriptChangesNotifier(
     private val project: Project,
-    private val updater: ScriptConfigurationUpdater,
-    private val listeners: List<ScriptChangeListener>
+    private val updater: ScriptConfigurationUpdater
 ) {
     private val scriptsQueue = Alarm(Alarm.ThreadToUse.SWING_THREAD, project)
     private val scriptChangesListenerDelay = 1400
@@ -45,9 +41,7 @@ internal class ScriptChangesNotifier(
             }
 
             private fun runScriptDependenciesUpdateIfNeeded(file: VirtualFile) {
-                val ktFile = getKtFileToStartConfigurationUpdate(file) ?: return
-
-                listeners.first { it.editorActivated(ktFile, updater) }
+                getListener(project, file)?.editorActivated(file, updater)
             }
         })
 
@@ -55,12 +49,12 @@ internal class ScriptChangesNotifier(
             override fun documentChanged(event: DocumentEvent) {
                 val document = event.document
                 val file = FileDocumentManager.getInstance().getFile(document)?.takeIf { it.isInLocalFileSystem } ?: return
-                val ktFile = getKtFileToStartConfigurationUpdate(file) ?: return
+
+                val listener = getListener(project, file) ?: return
 
                 scriptsQueue.cancelAllRequests()
-
                 scriptsQueue.addRequest(
-                    { listeners.first { it.documentChanged(ktFile, updater) } },
+                    { listener.documentChanged(file, updater) },
                     scriptChangesListenerDelay,
                     true
                 )
@@ -68,23 +62,20 @@ internal class ScriptChangesNotifier(
         }, project.messageBus.connect())
     }
 
-    private fun getKtFileToStartConfigurationUpdate(file: VirtualFile): KtFile? {
-        if (project.isDisposed || !file.isValid || file.isNonScript()) {
-            return null
+    private val defaultListener = DefaultScriptChangeListener(project)
+    private val listeners: Sequence<ScriptChangeListener>
+        get() = sequence {
+            yieldAll(LISTENER.getPoint(project).extensionList)
+            yield(defaultListener)
         }
 
-        if (
-            ApplicationManager.getApplication().isUnitTestMode &&
-            ApplicationManager.getApplication().isScriptChangesNotifierDisabled == true
-        ) {
-            return null
-        }
+    private fun getListener(project: Project, file: VirtualFile): ScriptChangeListener? {
+        if (project.isDisposed || areListenersDisabled()) return null
 
-        val ktFile = PsiManager.getInstance(project).findFile(file) as? KtFile ?: return null
-        if (ProjectRootsUtil.isInProjectSource(ktFile, includeScriptsOutsideSourceRoots = true)) {
-            return ktFile
-        }
+        return listeners.firstOrNull { it.isApplicable(file) }
+    }
 
-        return null
+    private fun areListenersDisabled(): Boolean {
+        return ApplicationManager.getApplication().isUnitTestMode && ApplicationManager.getApplication().isScriptChangesNotifierDisabled == true
     }
 }

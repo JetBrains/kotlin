@@ -32,6 +32,10 @@ class KotlinVersionInfoProviderByModuleDependencies : KotlinVersionInfoProvider 
         platformKind: IdePlatformKind<*>,
         rootModel: ModuleRootModel?
     ): Collection<String> {
+        if (module.isDisposed) {
+            return emptyList()
+        }
+
         val versionProvider = platformKind.tooling.getLibraryVersionProvider(module.project)
         return (rootModel ?: ModuleRootManager.getInstance(module))
                 .orderEntries

@@ -1,0 +1,29 @@
+repositories {
+    mavenCentral()
+}
+
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+
+sourceSets {
+    custom
+}
+
+android {
+    compileSdkVersion 26
+    buildToolsVersion "23.0.1"
+    defaultConfig {
+        applicationId "org.jetbrains.kotlin"
+        minSdkVersion 18
+        targetSdkVersion 26
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+}
+
+dependencies {
+    compile project(':project2')
+    customCompile project(':project2')
+    testCompile(project(':project2').sourceSets.test.output)
+}

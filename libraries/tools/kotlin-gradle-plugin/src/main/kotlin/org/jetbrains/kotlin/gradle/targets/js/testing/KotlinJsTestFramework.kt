@@ -15,7 +15,8 @@ interface KotlinJsTestFramework : RequiresNpmDependencies {
     fun createTestExecutionSpec(
         task: KotlinJsTest,
         forkOptions: ProcessForkOptions,
-        nodeJsArgs: MutableList<String>
+        nodeJsArgs: MutableList<String>,
+        debug: Boolean
     ): TCServiceMessagesTestExecutionSpec
 
     override val nodeModulesRequired: Boolean

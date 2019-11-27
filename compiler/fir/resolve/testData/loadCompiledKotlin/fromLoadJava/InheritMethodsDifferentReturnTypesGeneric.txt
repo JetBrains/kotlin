@@ -5,16 +5,16 @@ public final class InheritMethodsDifferentReturnTypesGeneric : R|kotlin/Any| {
     }
 
     public abstract interface Super1<F, B> : R|kotlin/Any| {
-        public abstract fun bar(): R|B|
+        public abstract fun bar(): R|B?|
 
-        public abstract fun foo(): R|F|
+        public abstract fun foo(): R|F?|
 
     }
 
     public abstract interface Super2<FF, BB> : R|kotlin/Any| {
-        public abstract fun bar(): R|BB|
+        public abstract fun bar(): R|BB?|
 
-        public abstract fun foo(): R|FF|
+        public abstract fun foo(): R|FF?|
 
     }
 

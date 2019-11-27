@@ -17,7 +17,8 @@ import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.idea.util.requireNode
 import org.jetbrains.kotlin.lexer.KtTokens
-import java.util.*
+import org.jetbrains.kotlin.psi.psiUtil.children
+import org.jetbrains.kotlin.psi.stubs.elements.KtModifierListElementType
 import kotlin.math.max
 
 fun CommonCodeStyleSettings.createSpaceBeforeRBrace(numSpacesOtherwise: Int, textRange: TextRange): Spacing? {
@@ -103,13 +104,19 @@ class KotlinSpacingBuilder(val commonCodeStyleSettings: CommonCodeStyleSettings,
                 val lastChild = left.node?.psi?.lastChild
                 val leftEndsWithComment = lastChild is PsiComment && lastChild.tokenType == KtTokens.EOL_COMMENT
                 val dependentSpacingRule = DependentSpacingRule(Trigger.HAS_LINE_FEEDS).registerData(Anchor.MIN_LINE_FEEDS, emptyLines + 1)
+                val textRange = left.node
+                    ?.startOfDeclaration()
+                    ?.startOffset
+                    ?.let { TextRange.create(it, left.textRange.endOffset) }
+                    ?: left.textRange
+
                 spacingBuilderUtil.createLineFeedDependentSpacing(
                     numSpacesOtherwise,
                     numSpacesOtherwise,
                     if (leftEndsWithComment) max(1, numberOfLineFeedsOtherwise) else numberOfLineFeedsOtherwise,
                     commonCodeStyleSettings.KEEP_LINE_BREAKS,
                     commonCodeStyleSettings.KEEP_BLANK_LINES_IN_DECLARATIONS,
-                    left.textRange,
+                    textRange,
                     dependentSpacingRule
                 )
             }
@@ -199,4 +206,9 @@ fun rules(
     val builder = KotlinSpacingBuilder(commonCodeStyleSettings, builderUtil)
     builder.init()
     return builder
+}
+
+internal fun ASTNode.startOfDeclaration(): ASTNode? = children().firstOrNull {
+    val elementType = it.elementType
+    elementType !is KtModifierListElementType<*> && elementType !in KtTokens.WHITE_SPACE_OR_COMMENT_BIT_SET
 }

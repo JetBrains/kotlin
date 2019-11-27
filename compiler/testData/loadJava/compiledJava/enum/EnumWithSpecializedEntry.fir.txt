@@ -3,4 +3,10 @@ public open enum class EnumWithSpecializedEntry : R|kotlin/Enum<test/EnumWithSpe
 
     public final static field E2: R|ft<test/EnumWithSpecializedEntry, test/EnumWithSpecializedEntry?>!|
 
+    public final static fun values(): R|kotlin/Array<test/EnumWithSpecializedEntry>| {
+    }
+
+    public final static fun valueOf(value: R|kotlin/String|): R|test/EnumWithSpecializedEntry| {
+    }
+
 }

@@ -33,6 +33,11 @@ public class PerformanceHighlightingTestGenerated extends AbstractPerformanceHig
         runTest("idea/testData/highlighter/Annotations.kt");
     }
 
+    @TestMetadata("AutoCreatedItParameter.kt")
+    public void testAutoCreatedItParameter() throws Exception {
+        runTest("idea/testData/highlighter/AutoCreatedItParameter.kt");
+    }
+
     @TestMetadata("Destructuring.kt")
     public void testDestructuring() throws Exception {
         runTest("idea/testData/highlighter/Destructuring.kt");
@@ -106,6 +111,11 @@ public class PerformanceHighlightingTestGenerated extends AbstractPerformanceHig
     @TestMetadata("SmartCast.kt")
     public void testSmartCast() throws Exception {
         runTest("idea/testData/highlighter/SmartCast.kt");
+    }
+
+    @TestMetadata("Suspend.kt")
+    public void testSuspend() throws Exception {
+        runTest("idea/testData/highlighter/Suspend.kt");
     }
 
     @TestMetadata("SyntheticExtensionProperty.kt")

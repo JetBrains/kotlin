@@ -127,7 +127,7 @@ class KotlinSourcePositionProvider : SourcePositionProvider() {
         val debugProcess = context.debugProcess
         if (debugProcess != null) {
             try {
-                val locations = type.allLineLocations()
+                val locations = type.safeAllLineLocations()
                 if (!locations.isEmpty()) {
                     val lastLocation = locations.get(locations.size - 1)
                     return debugProcess.positionManager.getSourcePosition(lastLocation)

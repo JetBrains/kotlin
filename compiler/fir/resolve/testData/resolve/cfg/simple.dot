@@ -6,45 +6,31 @@ digraph simple_kt {
   subgraph cluster_0 {
     color=red
     0 [label="Enter function foo" style="filled" fillcolor=red];
-    subgraph cluster_1 {
-      color=blue
-      1 [label="Enter block"];
-      2 [label="Exit block"];
-    }
-    3 [label="Exit function foo" style="filled" fillcolor=red];
+    1 [label="Exit function foo" style="filled" fillcolor=red];
   }
 
   0 -> {1};
-  1 -> {2};
-  2 -> {3};
 
-  subgraph cluster_2 {
+  subgraph cluster_1 {
     color=red
-    4 [label="Enter function test" style="filled" fillcolor=red];
-    subgraph cluster_3 {
-      color=blue
-      5 [label="Enter block"];
-      6 [label="Const: Int(1)"];
-      7 [label="Variable declaration: lval x: R|kotlin/Int|"];
-      8 [label="Access variable R|<local>/x|"];
-      9 [label="Const: Int(1)"];
-      10 [label="Function call: R|<local>/x|.R|kotlin/Int.plus|(Int(1))"];
-      11 [label="Variable declaration: lval y: R|kotlin/Int|"];
-      12 [label="Function call: R|/foo|()"];
-      13 [label="Exit block"];
-    }
-    14 [label="Exit function test" style="filled" fillcolor=red];
+    2 [label="Enter function test" style="filled" fillcolor=red];
+    3 [label="Const: Int(1)"];
+    4 [label="Variable declaration: lval x: R|kotlin/Int|"];
+    5 [label="Access variable R|<local>/x|"];
+    6 [label="Const: Int(1)"];
+    7 [label="Function call: R|<local>/x|.R|kotlin/Int.plus|(Int(1))"];
+    8 [label="Variable declaration: lval y: R|kotlin/Int|"];
+    9 [label="Function call: R|/foo|()"];
+    10 [label="Exit function test" style="filled" fillcolor=red];
   }
 
+  2 -> {3};
+  3 -> {4};
   4 -> {5};
   5 -> {6};
   6 -> {7};
   7 -> {8};
   8 -> {9};
   9 -> {10};
-  10 -> {11};
-  11 -> {12};
-  12 -> {13};
-  13 -> {14};
 
 }

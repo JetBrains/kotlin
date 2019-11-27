@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.core.script.configuration
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
@@ -15,11 +16,10 @@ import com.intellij.ui.EditorNotifications
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.jetbrains.kotlin.idea.core.script.*
+import org.jetbrains.kotlin.idea.core.script.configuration.DefaultScriptConfigurationManagerExtensions.LOADER
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationFileAttributeCache
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationMemoryCache
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationSnapshot
-import org.jetbrains.kotlin.idea.core.script.configuration.listener.DefaultScriptChangeListener
-import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptChangeListener
 import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptChangesNotifier
 import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptConfigurationUpdater
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.DefaultScriptConfigurationLoader
@@ -27,14 +27,21 @@ import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptConfigur
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptConfigurationLoadingContext
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptOutsiderFileConfigurationLoader
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.BackgroundExecutor
+import org.jetbrains.kotlin.idea.core.script.configuration.utils.DefaultBackgroundExecutor
+import org.jetbrains.kotlin.idea.core.script.configuration.utils.TestingBackgroundExecutor
+import org.jetbrains.kotlin.idea.core.script.configuration.utils.isUnitTestModeWithoutScriptLoadingNotification
 import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.idea.core.util.EDT
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
+import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 import org.jetbrains.kotlin.scripting.resolve.ScriptReportSink
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
-import kotlin.script.experimental.api.ScriptDiagnostic
+import kotlin.script.experimental.api.*
+import kotlin.script.experimental.jvm.impl.toClassPathOrEmpty
+import kotlin.script.experimental.jvm.jdkHome
+import kotlin.script.experimental.jvm.jvm
 
 /**
  * Standard implementation of scripts configuration loading and caching
@@ -96,23 +103,23 @@ import kotlin.script.experimental.api.ScriptDiagnostic
  */
 internal class DefaultScriptConfigurationManager(project: Project) :
     AbstractScriptConfigurationManager(project) {
-    private val backgroundExecutor = BackgroundExecutor(project, rootsIndexer)
 
+    internal val backgroundExecutor: BackgroundExecutor =
+        if (ApplicationManager.getApplication().isUnitTestMode) TestingBackgroundExecutor(rootsIndexer)
+        else DefaultBackgroundExecutor(project, rootsIndexer)
+
+    private val outsiderLoader = ScriptOutsiderFileConfigurationLoader(project)
     private val fileAttributeCache = ScriptConfigurationFileAttributeCache(project)
+    private val defaultLoader = DefaultScriptConfigurationLoader(project)
+    private val loaders: Sequence<ScriptConfigurationLoader>
+        get() = sequence {
+            yield(outsiderLoader)
+            yield(fileAttributeCache)
+            yieldAll(LOADER.getPoint(project).extensionList)
+            yield(defaultLoader)
+        }
 
-    private val loaders: List<ScriptConfigurationLoader> = listOf(
-        ScriptOutsiderFileConfigurationLoader(project),
-        fileAttributeCache,
-        GradleScriptConfigurationLoader(project),
-        DefaultScriptConfigurationLoader(project)
-    )
-
-    private val listeners: List<ScriptChangeListener> = listOf(
-        GradleScriptListener(),
-        DefaultScriptChangeListener()
-    )
-
-    private val notifier = ScriptChangesNotifier(project, updater, listeners)
+    private val notifier = ScriptChangesNotifier(project, updater)
 
     private val saveLock = ReentrantLock()
 
@@ -175,11 +182,11 @@ internal class DefaultScriptConfigurationManager(project: Project) :
 
         val (async, sync) = loaders.partition { it.shouldRunInBackground(scriptDefinition) }
 
-        val syncLoader = sync.firstOrNull { it.loadDependencies(isFirstLoad, virtualFile, scriptDefinition, loadingContext) }
+        val syncLoader = sync.firstOrNull { it.loadDependencies(isFirstLoad, file, scriptDefinition, loadingContext) }
         if (syncLoader == null) {
             // run async loader
             if (forceSync) {
-                async.first { it.loadDependencies(isFirstLoad, virtualFile, scriptDefinition, loadingContext) }
+                async.first { it.loadDependencies(isFirstLoad, file, scriptDefinition, loadingContext) }
             } else {
                 backgroundExecutor.ensureScheduled(virtualFile) {
                     val cached = getCachedConfigurationState(virtualFile)
@@ -192,7 +199,7 @@ internal class DefaultScriptConfigurationManager(project: Project) :
                         // don't start loading if nothing was changed
                         // (in case we checking for up-to-date and loading concurrently)
                         val actualIsFirstLoad = cached == null
-                        async.first { it.loadDependencies(actualIsFirstLoad, virtualFile, scriptDefinition, loadingContext) }
+                        async.first { it.loadDependencies(actualIsFirstLoad, file, scriptDefinition, loadingContext) }
                     }
                 }
             }
@@ -241,14 +248,14 @@ internal class DefaultScriptConfigurationManager(project: Project) :
             } else {
                 val old = getCachedConfigurationState(file)
                 val oldConfiguration = old?.applied?.configuration
-                if (oldConfiguration == newConfiguration) {
+                if (oldConfiguration != null && areSimilar(oldConfiguration, newConfiguration)) {
                     saveReports(file, newResult.reports)
                     file.removeScriptDependenciesNotificationPanel(project)
                 } else {
                     val autoReload = skipNotification
                             || oldConfiguration == null
                             || KotlinScriptingSettings.getInstance(project).isAutoReloadEnabled
-                            || ApplicationManager.getApplication().isUnitTestMode
+                            || ApplicationManager.getApplication().isUnitTestModeWithoutScriptLoadingNotification
 
                     if (autoReload) {
                         if (oldConfiguration != null) {
@@ -303,4 +310,33 @@ internal class DefaultScriptConfigurationManager(project: Project) :
             }
         }
     }
+
+    private fun areSimilar(old: ScriptCompilationConfigurationWrapper, new: ScriptCompilationConfigurationWrapper): Boolean {
+        if (old.script != new.script) return false
+
+        val oldConfig = old.configuration
+        val newConfig = new.configuration
+
+        if (oldConfig == newConfig) return true
+        if (oldConfig == null || newConfig == null) return false
+
+        if (oldConfig[ScriptCompilationConfiguration.jvm.jdkHome] != newConfig[ScriptCompilationConfiguration.jvm.jdkHome]) return false
+
+        // there is differences how script definition classpath is added to script classpath in old and new scripting API,
+        // so it's important to compare the resulting classpath list, not only the value of key
+        if (oldConfig[ScriptCompilationConfiguration.dependencies].toClassPathOrEmpty() != newConfig[ScriptCompilationConfiguration.dependencies].toClassPathOrEmpty()) return false
+
+        if (oldConfig[ScriptCompilationConfiguration.ide.dependenciesSources] != newConfig[ScriptCompilationConfiguration.ide.dependenciesSources]) return false
+        if (oldConfig[ScriptCompilationConfiguration.defaultImports] != newConfig[ScriptCompilationConfiguration.defaultImports]) return false
+
+        return true
+    }
 }
+
+object DefaultScriptConfigurationManagerExtensions {
+    val LOADER: ExtensionPointName<ScriptConfigurationLoader> =
+        ExtensionPointName.create("org.jetbrains.kotlin.scripting.idea.loader")
+}
+
+val ScriptConfigurationManager.testingBackgroundExecutor
+    get() = (this as DefaultScriptConfigurationManager).backgroundExecutor as TestingBackgroundExecutor

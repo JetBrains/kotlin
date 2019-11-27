@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 //inspired by kt3492
 interface Base {
     val foo: String

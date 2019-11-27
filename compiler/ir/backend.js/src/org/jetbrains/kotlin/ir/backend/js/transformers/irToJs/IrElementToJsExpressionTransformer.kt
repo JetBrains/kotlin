@@ -10,12 +10,10 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.backend.ast.*
-import org.jetbrains.kotlin.util.OperatorNameConventions
 
 @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
 class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsExpression, JsGenerationContext> {
@@ -192,8 +190,8 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: JsGenerationContext): JsExpression {
         return when (expression.operator) {
-            IrTypeOperator.IMPLICIT_CAST -> expression.argument.accept(this, data)
-            else -> error("All type operator calls except IMPLICIT_CAST should be lowered at this point")
+            IrTypeOperator.REINTERPRET_CAST -> expression.argument.accept(this, data)
+            else -> error("All type operator calls except REINTERPRET_CAST should be lowered at this point: ${expression.operator}")
         }
     }
 

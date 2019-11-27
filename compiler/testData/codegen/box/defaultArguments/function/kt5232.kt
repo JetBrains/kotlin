@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 interface A {
     fun visit(a:String, b:String="") : String = b + a
 }

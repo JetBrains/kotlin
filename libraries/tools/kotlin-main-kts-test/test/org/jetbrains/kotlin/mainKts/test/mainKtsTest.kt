@@ -68,7 +68,7 @@ class MainKtsTest {
     @Test
     fun testResolveError() {
         val res = evalFile(File("$TEST_DATA_ROOT/hello-resolve-error.main.kts"))
-        assertFailed("Unrecognized set of arguments to ivy resolver: abracadabra", res)
+        assertFailed("File 'abracadabra' not found", res)
     }
 
     @Test

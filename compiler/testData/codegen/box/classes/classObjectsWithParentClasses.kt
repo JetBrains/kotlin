@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 open class Test {
     companion object {
         fun testStatic(ic: InnerClass): NotInnerClass = NotInnerClass(ic.value)

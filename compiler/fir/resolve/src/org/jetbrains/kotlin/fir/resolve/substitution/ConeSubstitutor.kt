@@ -8,13 +8,12 @@ package org.jetbrains.kotlin.fir.resolve.substitution
 import org.jetbrains.kotlin.fir.resolve.withNullability
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.impl.ConeAbbreviatedTypeImpl
-import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
 
 
 abstract class ConeSubstitutor : TypeSubstitutorMarker {
-    abstract fun substituteOrSelf(type: ConeKotlinType): ConeKotlinType
+    open fun substituteOrSelf(type: ConeKotlinType): ConeKotlinType = substituteOrNull(type) ?: type
     abstract fun substituteOrNull(type: ConeKotlinType): ConeKotlinType?
 
     object Empty : ConeSubstitutor() {
@@ -56,10 +55,6 @@ abstract class AbstractConeSubstitutor : ConeSubstitutor() {
         return type?.withNullability(ConeNullability.NULLABLE)
     }
 
-    override fun substituteOrSelf(type: ConeKotlinType): ConeKotlinType {
-        return substituteOrNull(type) ?: type
-    }
-
     override fun substituteOrNull(type: ConeKotlinType): ConeKotlinType? {
         val newType = substituteType(type)
         return (newType ?: type.substituteRecursive())
@@ -68,8 +63,7 @@ abstract class AbstractConeSubstitutor : ConeSubstitutor() {
     private fun ConeKotlinType.substituteRecursive(): ConeKotlinType? {
         return when (this) {
             is ConeClassErrorType -> return null
-            is ConeClassType -> this.substituteArguments()
-            is ConeAbbreviatedType -> this.substituteArguments()
+            is ConeClassLikeType -> this.substituteArguments()
             is ConeLookupTagBasedType -> return null
             is ConeFlexibleType -> this.substituteBounds()
             is ConeCapturedType -> return null
@@ -93,7 +87,7 @@ abstract class AbstractConeSubstitutor : ConeSubstitutor() {
     }
 
     private fun ConeDefinitelyNotNullType.substituteOriginal(): ConeDefinitelyNotNullType? {
-        TODO()
+        return ConeDefinitelyNotNullType.create(substituteType(original)?.withNullability(ConeNullability.NOT_NULL) ?: original)
     }
 
     private fun ConeFlexibleType.substituteBounds(): ConeFlexibleType? {
@@ -125,13 +119,8 @@ abstract class AbstractConeSubstitutor : ConeSubstitutor() {
             }
             @Suppress("UNCHECKED_CAST")
             return when (this) {
-                is ConeClassTypeImpl -> ConeClassTypeImpl(
+                is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(
                     lookupTag,
-                    newArguments as Array<ConeKotlinTypeProjection>,
-                    nullability.isNullable
-                )
-                is ConeAbbreviatedTypeImpl -> ConeAbbreviatedTypeImpl(
-                    abbreviationLookupTag,
                     newArguments as Array<ConeKotlinTypeProjection>,
                     nullability.isNullable
                 )
@@ -145,14 +134,19 @@ abstract class AbstractConeSubstitutor : ConeSubstitutor() {
 
 }
 
-
 fun substitutorByMap(substitution: Map<FirTypeParameterSymbol, ConeKotlinType>): ConeSubstitutor {
     if (substitution.isEmpty()) return ConeSubstitutor.Empty
     return ConeSubstitutorByMap(substitution)
 }
 
-class ConeSubstitutorByMap(val substitution: Map<FirTypeParameterSymbol, ConeKotlinType>) : AbstractConeSubstitutor() {
+class ChainedSubstitutor(private val first: ConeSubstitutor, private val second: ConeSubstitutor) : ConeSubstitutor() {
+    override fun substituteOrNull(type: ConeKotlinType): ConeKotlinType? {
+        first.substituteOrNull(type)?.let { return second.substituteOrSelf(it) }
+        return second.substituteOrNull(type)
+    }
+}
 
+class ConeSubstitutorByMap(val substitution: Map<FirTypeParameterSymbol, ConeKotlinType>) : AbstractConeSubstitutor() {
     override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
         if (type !is ConeTypeParameterType) return null
         return makeNullableIfNeed(type.isMarkedNullable, substitution[type.lookupTag.symbol])

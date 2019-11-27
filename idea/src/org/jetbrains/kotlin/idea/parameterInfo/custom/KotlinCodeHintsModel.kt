@@ -15,6 +15,7 @@ import com.intellij.openapi.editor.event.EditorFactoryListener
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.util.containers.ContainerUtil
+import org.jetbrains.kotlin.idea.core.util.end
 import org.jetbrains.kotlin.idea.core.util.range
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -45,6 +46,9 @@ class KotlinCodeHintsModel(val project: Project) : EditorFactoryListener {
                     .firstOrNull { (marker, _) ->
                         val textRange = marker.range
                         if (textRange == null || !(textRange.startOffset <= offset && offset <= textRange.endOffset)) {
+                            return@firstOrNull false
+                        }
+                        if (textRange.end > document.textLength) {
                             return@firstOrNull false
                         }
 

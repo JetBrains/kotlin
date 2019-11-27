@@ -762,7 +762,7 @@ public final class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequenc
 
 public open class Throwable : kotlin.Any, java.io.Serializable {
     public constructor Throwable()
-    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version", replaceWith = kotlin.ReplaceWith(expression = "", imports = {})) public constructor Throwable(/*0*/ x: kotlin.Double)
+    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version", replaceWith = kotlin.ReplaceWith(expression = "", imports = {})) public constructor Throwable(/*0*/ p0: kotlin.Double)
     public constructor Throwable(/*0*/ message: kotlin.String?)
     /*primary*/ public constructor Throwable(/*0*/ message: kotlin.String?, /*1*/ cause: kotlin.Throwable?)
     public constructor Throwable(/*0*/ cause: kotlin.Throwable?)
@@ -773,11 +773,11 @@ public open class Throwable : kotlin.Any, java.io.Serializable {
     public open fun fillInStackTrace(): kotlin.Throwable!
     public open fun getLocalizedMessage(): kotlin.String!
     public open fun getStackTrace(): kotlin.Array<(out) java.lang.StackTraceElement!>!
-    public open fun initCause(/*0*/ cause: kotlin.Throwable!): kotlin.Throwable!
+    public open fun initCause(/*0*/ p0: kotlin.Throwable!): kotlin.Throwable!
     public open fun printStackTrace(): kotlin.Unit
-    public open fun printStackTrace(/*0*/ s: java.io.PrintStream!): kotlin.Unit
-    public open fun printStackTrace(/*0*/ s: java.io.PrintWriter!): kotlin.Unit
-    public open fun setStackTrace(/*0*/ stackTrace: kotlin.Array<(out) java.lang.StackTraceElement!>!): kotlin.Unit
+    public open fun printStackTrace(/*0*/ p0: java.io.PrintStream!): kotlin.Unit
+    public open fun printStackTrace(/*0*/ p0: java.io.PrintWriter!): kotlin.Unit
+    public open fun setStackTrace(/*0*/ p0: kotlin.Array<(out) java.lang.StackTraceElement!>!): kotlin.Unit
 }
 
 public object Unit {

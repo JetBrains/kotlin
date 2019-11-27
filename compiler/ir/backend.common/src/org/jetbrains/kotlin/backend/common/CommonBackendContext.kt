@@ -7,10 +7,12 @@ package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
+import org.jetbrains.kotlin.ir.builders.irCall
+import org.jetbrains.kotlin.ir.builders.irString
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 
 interface LoggingContext {
     var inVerbosePhase: Boolean
@@ -24,4 +26,11 @@ interface CommonBackendContext : BackendContext, LoggingContext {
 
     val configuration: CompilerConfiguration
     val scriptMode: Boolean
+
+    fun throwUninitializedPropertyAccessException(builder: IrBuilderWithScope, name: String): IrExpression {
+        val throwErrorFunction = ir.symbols.ThrowUninitializedPropertyAccessException.owner
+        return builder.irCall(throwErrorFunction).apply {
+            putValueArgument(0, builder.irString(name))
+        }
+    }
 }

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 class C(val x: Int) {
   override fun equals(rhs: Any?): Boolean {
     if (rhs is C) {

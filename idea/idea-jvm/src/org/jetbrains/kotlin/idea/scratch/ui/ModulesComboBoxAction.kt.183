@@ -49,7 +49,7 @@ class ModulesComboBoxAction(private val scratchFile: ScratchFile) : LabeledCombo
 
     override fun update(e: AnActionEvent) {
         super.update(e)
-        val selectedModule = scratchFile.module
+        val selectedModule = scratchFile.module?.takeIf { !it.isDisposed }
 
         e.presentation.apply {
             icon = selectedModule?.let { ModuleType.get(it).icon }

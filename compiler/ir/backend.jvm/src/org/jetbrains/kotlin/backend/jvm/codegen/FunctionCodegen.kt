@@ -108,7 +108,7 @@ open class FunctionCodegen(
 
         val visibility = irFunction.getVisibilityAccessFlag()
         val staticFlag = if (isStatic) Opcodes.ACC_STATIC else 0
-        val varargFlag = if (irFunction.valueParameters.any { it.varargElementType != null }) Opcodes.ACC_VARARGS else 0
+        val varargFlag = if (irFunction.valueParameters.lastOrNull()?.varargElementType != null) Opcodes.ACC_VARARGS else 0
         val deprecation = irFunction.deprecationFlags
         val bridgeFlag = if (
             irFunction.origin == IrDeclarationOrigin.BRIDGE ||

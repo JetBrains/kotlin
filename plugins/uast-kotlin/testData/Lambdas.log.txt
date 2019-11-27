@@ -1,7 +1,7 @@
 UFile (package = )
     UImportStatement (isOnDemand = false)
     UClass (name = LambdasKt)
-        UAnnotationMethod (name = foo)
+        UMethod (name = foo)
             UBlockExpression
                 UQualifiedReferenceExpression
                     UQualifiedReferenceExpression
@@ -20,7 +20,7 @@ UFile (package = )
                                         UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
                                             UIdentifier (Identifier (isEmpty))
                                             USimpleNameReferenceExpression (identifier = isEmpty, resolvesTo = null)
-        UAnnotationMethod (name = doSelectItem)
+        UMethod (name = doSelectItem)
             UParameter (name = selectItemFunction)
                 UAnnotation (fqName = org.jetbrains.annotations.NotNull)
             UBlockExpression

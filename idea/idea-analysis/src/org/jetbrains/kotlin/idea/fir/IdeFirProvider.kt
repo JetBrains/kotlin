@@ -76,6 +76,11 @@ class IdeFirProvider(
         return cacheProvider.getFirClassifierContainerFile(fqName)
     }
 
+    override fun getFirClassifierContainerFileIfAny(fqName: ClassId): FirFile? {
+        getFirClassifierByFqName(fqName)
+        return cacheProvider.getFirClassifierContainerFileIfAny(fqName)
+    }
+
     override fun getFirCallableContainerFile(symbol: FirCallableSymbol<*>): FirFile? {
         return cacheProvider.getFirCallableContainerFile(symbol)
     }

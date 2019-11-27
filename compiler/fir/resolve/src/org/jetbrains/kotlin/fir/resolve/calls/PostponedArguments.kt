@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.invoke
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
@@ -61,7 +61,7 @@ fun Candidate.preprocessCallableReference(
 val ConeKotlinType.isBuiltinFunctionalType: Boolean
     get() {
         return when (this) {
-            is ConeClassType -> this.lookupTag.classId.asString().startsWith("kotlin/Function")
+            is ConeClassLikeType -> this.lookupTag.classId.asString().startsWith("kotlin/Function")
             else -> false
         }
     }
@@ -71,7 +71,7 @@ private val ConeKotlinType.isSuspendFunctionType: Boolean
     get() {
         val type = this
         return when (type) {
-            is ConeClassType -> {
+            is ConeClassLikeType -> {
                 val classId = type.lookupTag.classId
                 classId.packageFqName.asString() == "kotlin" && classId.relativeClassName.asString().startsWith("SuspendFunction")
             }
@@ -88,14 +88,14 @@ private fun ConeKotlinType.receiverType(expectedTypeRef: FirTypeRef): ConeKotlin
 
 val ConeKotlinType.returnType: ConeKotlinType?
     get() {
-        require(this is ConeClassType)
+        require(this is ConeClassLikeType)
         val projection = typeArguments.last()
         return (projection as? ConeTypedProjection)?.type
     }
 
 val ConeKotlinType.valueParameterTypes: List<ConeKotlinType?>
     get() {
-        require(this is ConeClassType)
+        require(this is ConeClassLikeType)
         return typeArguments.dropLast(1).map {
             (it as? ConeTypedProjection)?.type
         }
@@ -271,14 +271,14 @@ private fun extractInputOutputTypesFromCallableReferenceExpectedType(expectedTyp
 private fun extractInputOutputTypesFromFunctionType(functionType: ConeKotlinType): InputOutputTypes {
     val receiver = null// TODO: functionType.receiverType()
     val parameters = functionType.valueParameterTypes.map {
-        it ?: ConeClassTypeImpl(
+        it ?: ConeClassLikeTypeImpl(
             ConeClassLikeLookupTagImpl(StandardClassIds.Nothing), emptyArray(),
             isNullable = false
         )
     }
 
     val inputTypes = /*listOfNotNull(receiver) +*/ parameters
-    val outputType = functionType.returnType ?: ConeClassTypeImpl(
+    val outputType = functionType.returnType ?: ConeClassLikeTypeImpl(
         ConeClassLikeLookupTagImpl(StandardClassIds.Any), emptyArray(),
         isNullable = true
     )

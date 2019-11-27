@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 class MyString {
     var s = ""
     operator fun plus(x : String) : MyString {

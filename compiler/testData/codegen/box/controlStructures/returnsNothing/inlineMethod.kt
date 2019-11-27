@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 inline fun exit(): Nothing = null!!
 
 fun box(): String {

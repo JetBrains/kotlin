@@ -1,0 +1,30 @@
+FILE: annotations.kt
+    public final annotation class MyAnn : R|kotlin/Annotation| {
+        public constructor(): R|MyAnn| {
+            super<R|kotlin/Annotation|>()
+        }
+
+    }
+    public final fun bar(x: R|kotlin/Int|): R|kotlin/Unit| {
+    }
+    public final fun foo(): R|kotlin/Unit| {
+        @R|MyAnn|() lval x: R|kotlin/Int|
+        @R|MyAnn|() R|<local>/x| = @R|MyAnn|() Int(42)
+        @R|MyAnn|() R|/bar|(@R|MyAnn|() R|<local>/x|)
+        lval y: R|kotlin/Int| = @R|MyAnn|() when () {
+            Boolean(false) ->  {
+                R|<local>/x|
+            }
+            else ->  {
+                R|<local>/x|
+            }
+        }
+
+        lval z: R|kotlin/Int| = @R|MyAnn|() try {
+            R|<local>/x|
+        }
+        catch (t: R|kotlin/Throwable|) {
+            Int(0)
+        }
+
+    }

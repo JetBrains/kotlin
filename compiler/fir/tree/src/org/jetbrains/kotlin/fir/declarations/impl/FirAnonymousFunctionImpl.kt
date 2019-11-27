@@ -33,7 +33,8 @@ class FirAnonymousFunctionImpl(
     override val session: FirSession,
     override var returnTypeRef: FirTypeRef,
     override var receiverTypeRef: FirTypeRef?,
-    override val symbol: FirAnonymousFunctionSymbol
+    override val symbol: FirAnonymousFunctionSymbol,
+    override val isLambda: Boolean
 ) : FirAnonymousFunction(), FirModifiableFunction<FirAnonymousFunction>, FirAbstractAnnotatedElement {
     override var resolvePhase: FirResolvePhase = FirResolvePhase.DECLARATIONS
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common.lower.loops
 
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
+import org.jetbrains.kotlin.ir.builders.createTmpVariable
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
@@ -44,7 +45,7 @@ internal fun IrExpression.negate(): IrExpression {
                 it.name == OperatorNameConventions.UNARY_MINUS &&
                         it.valueParameters.isEmpty()
             }
-            IrCallImpl(startOffset, endOffset, type, unaryMinusFun.symbol, unaryMinusFun.descriptor).apply {
+            IrCallImpl(startOffset, endOffset, type, unaryMinusFun.symbol).apply {
                 dispatchReceiver = this@negate
             }
         }
@@ -62,7 +63,7 @@ internal fun IrExpression.decrement(): IrExpression {
                 it.name == OperatorNameConventions.DEC &&
                         it.valueParameters.isEmpty()
             }
-            IrCallImpl(startOffset, endOffset, type, decFun.symbol, decFun.descriptor).apply {
+            IrCallImpl(startOffset, endOffset, type, decFun.symbol).apply {
                 dispatchReceiver = this@decrement
             }
         }
@@ -89,7 +90,7 @@ internal val IrExpression.constLongValue: Long?
  */
 internal fun DeclarationIrBuilder.createTemporaryVariableIfNecessary(expression: IrExpression, nameHint: String? = null) =
     if (expression.canHaveSideEffects) {
-        scope.createTemporaryVariable(expression, nameHint = nameHint).let { Pair(it, irGet(it)) }
+        scope.createTmpVariable(expression, nameHint = nameHint).let { Pair(it, irGet(it)) }
     } else {
         Pair(null, expression)
     }

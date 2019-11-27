@@ -36,9 +36,8 @@ class DeclarationStubGenerator(
     moduleDescriptor: ModuleDescriptor,
     val symbolTable: SymbolTable,
     languageVersionSettings: LanguageVersionSettings,
-    private val externalDeclarationOrigin: ((DeclarationDescriptor) -> IrDeclarationOrigin)? = null,
     private val irProviders: List<IrProvider> = emptyList(),
-    private val facadeClassGenerator: (DeserializedContainerSource) -> IrClass? = { null }
+    val extensions: StubGeneratorExtensions = StubGeneratorExtensions.EMPTY
 ) {
     private val lazyTable = symbolTable.lazyWrapper
 
@@ -49,7 +48,8 @@ class DeclarationStubGenerator(
         }
 
 
-    val typeTranslator = TypeTranslator(lazyTable, languageVersionSettings, moduleDescriptor.builtIns, LazyScopedTypeParametersResolver(lazyTable), true)
+    val typeTranslator =
+        TypeTranslator(lazyTable, languageVersionSettings, moduleDescriptor.builtIns, LazyScopedTypeParametersResolver(lazyTable), true)
     private val constantValueGenerator = ConstantValueGenerator(moduleDescriptor, lazyTable)
 
     private val facadeClassMap = mutableMapOf<DeserializedContainerSource, IrClass?>()
@@ -79,7 +79,7 @@ class DeclarationStubGenerator(
         val packageFragment = directMember.containingDeclaration as? PackageFragmentDescriptor ?: return null
         val containerSource = directMember.safeAs<DescriptorWithContainerSource>()?.containerSource ?: return null
         return facadeClassMap.getOrPut(containerSource) {
-            facadeClassGenerator(containerSource)?.also { facade ->
+            extensions.generateFacadeClass(containerSource)?.also { facade ->
                 val packageStub = generateOrGetEmptyExternalPackageFragmentStub(packageFragment)
                 facade.parent = packageStub
                 packageStub.declarations.add(facade)
@@ -106,7 +106,7 @@ class DeclarationStubGenerator(
         }
 
     private fun computeOrigin(descriptor: DeclarationDescriptor): IrDeclarationOrigin =
-        externalDeclarationOrigin?.invoke(descriptor) ?: IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
+        extensions.computeExternalDeclarationOrigin(descriptor) ?: IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
 
     internal fun generatePropertyStub(
         descriptor: PropertyDescriptor,

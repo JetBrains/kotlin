@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 inline fun <reified T> jaggedArray(x: (Int, Int, Int) -> T): Array<Array<Array<T>>> = Array(1) { i ->
     Array(1) {
         j -> Array(1) { k -> x(i, j, k)  }

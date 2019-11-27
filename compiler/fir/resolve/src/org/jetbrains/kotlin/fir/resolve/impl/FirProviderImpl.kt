@@ -47,6 +47,10 @@ class FirProviderImpl(val session: FirSession) : FirProvider() {
         return state.classifierContainerFileMap[fqName] ?: error("Couldn't find container for $fqName")
     }
 
+    override fun getFirClassifierContainerFileIfAny(fqName: ClassId): FirFile? {
+        return state.classifierContainerFileMap[fqName]
+    }
+
     override fun getClassNamesInPackage(fqName: FqName): Set<Name> {
         return state.classesInPackage[fqName] ?: emptySet()
     }

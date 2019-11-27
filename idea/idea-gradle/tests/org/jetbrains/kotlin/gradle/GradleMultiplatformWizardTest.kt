@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.idea.configuration.KotlinGradleWebMultiplatformModul
 import org.jetbrains.kotlin.idea.test.KotlinSdkCreationChecker
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.jetbrains.kotlin.test.runTest
 import org.junit.runner.RunWith
 
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
@@ -63,6 +64,8 @@ class GradleMultiplatformWizardTest : AbstractGradleMultiplatformWizardTest() {
     }
 
     fun testWeb() {
-        testImportFromBuilder(KotlinGradleWebMultiplatformModuleBuilder(), "SampleTests", "SampleTestsJVM")
+        runTest {
+            testImportFromBuilder(KotlinGradleWebMultiplatformModuleBuilder(), "SampleTests", "SampleTestsJVM")
+        }
     }
 }

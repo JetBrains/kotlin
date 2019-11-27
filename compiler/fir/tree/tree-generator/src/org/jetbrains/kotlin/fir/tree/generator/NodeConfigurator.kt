@@ -173,6 +173,7 @@ object NodeConfigurator : AbstractFieldConfigurator() {
 
         qualifiedAccessWithoutCallee.configure {
             +booleanField("safe")
+            +typeArguments.withTransform()
             +receivers
         }
 
@@ -183,7 +184,6 @@ object NodeConfigurator : AbstractFieldConfigurator() {
         }
 
         functionCall.configure {
-            +typeArguments.withTransform()
             +field("calleeReference", namedReference)
         }
 
@@ -205,7 +205,6 @@ object NodeConfigurator : AbstractFieldConfigurator() {
         classLikeDeclaration.configure {
             withArg("F", "FirClassLikeDeclaration<F>")
             parentArg(symbolOwner, "F", "F")
-            +field("supertypesComputationStatus", type("fir.declarations", "SupertypesComputationStatus"), withReplace = true).apply { isMutable = true }
             +symbol("FirClassLikeSymbol", "F")
         }
 
@@ -254,6 +253,7 @@ object NodeConfigurator : AbstractFieldConfigurator() {
             +field(invocationKindType, nullable = true, withReplace = true).apply {
                 isMutable = true
             }
+            +booleanField("isLambda")
         }
 
         typeParameter.configure {
@@ -317,6 +317,7 @@ object NodeConfigurator : AbstractFieldConfigurator() {
             parentArg(memberFunction, "F", constructor)
             +symbol("FirConstructorSymbol")
             +field("delegatedConstructor", delegatedConstructorCall, nullable = true)
+            +body(nullable = true)
             +booleanField("isPrimary")
         }
 
@@ -427,6 +428,7 @@ object NodeConfigurator : AbstractFieldConfigurator() {
             +field("packageFqName", fqNameType)
             +field("relativeClassFqName", fqNameType, nullable = true)
             +field("classId", classIdType, nullable = true)
+            +typeArguments.withTransform()
         }
 
         stringConcatenationCall.configure {

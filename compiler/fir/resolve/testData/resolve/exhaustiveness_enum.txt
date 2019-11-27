@@ -120,3 +120,14 @@ FILE: exhaustiveness_enum.kt
         }
 
     }
+    public final fun test_3(e: R|Enum|): R|kotlin/Unit| {
+        lval a: R|kotlin/Int| = when (R|<local>/e|) {
+            ==($subj$, Q|Enum.A|) || ==($subj$, Q|Enum.B|) ->  {
+                Int(1)
+            }
+            ==($subj$, Q|Enum.C|) ->  {
+                Int(2)
+            }
+        }
+
+    }

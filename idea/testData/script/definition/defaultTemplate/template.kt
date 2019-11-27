@@ -23,9 +23,6 @@ val ScriptingHostConfigurationKeys.getEnvironment by PropertiesCollection.key<()
 @Suppress("UNCHECKED_CAST")
 object TemplateDefinition : ScriptCompilationConfiguration(
     {
-        jvm {
-            dependenciesFromClassContext(TemplateDefinition::class)
-        }
         ide {
             acceptedLocations(ScriptAcceptedLocation.Everywhere)
         }

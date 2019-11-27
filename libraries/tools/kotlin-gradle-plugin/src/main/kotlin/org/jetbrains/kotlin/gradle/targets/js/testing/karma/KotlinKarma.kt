@@ -56,9 +56,6 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
         useMocha()
         useWebpack()
         useSourceMapSupport()
-
-        config.singleRun = true
-        config.autoWatch = false
     }
 
     private fun useKotlinReporter() {
@@ -130,8 +127,6 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
     }
 
     private fun useWebpack() {
-        createAdapterJs()
-
         requiredDependencies.add(versions.karmaWebpack)
         requiredDependencies.add(versions.webpack)
 
@@ -175,7 +170,6 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
         requiredDependencies.add(versions.webpack)
         requiredDependencies.add(versions.webpackCli)
         requiredDependencies.add(versions.kotlinSourceMapLoader)
-        requiredDependencies.add(versions.sourceMapSupport)
     }
 
     fun useCoverage(
@@ -232,30 +226,64 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
         }
     }
 
-    private fun createAdapterJs() {
-        configurators.add {
-            val npmProject = compilation.npmProject
-            val file = it.nodeModulesToLoad
-                .map { npmProject.require(it) }
-                .single()
+    private fun createAdapterJs(
+        file: String,
+        debug: Boolean
+    ): File {
+        val npmProject = compilation.npmProject
 
-            val adapterJs = npmProject.dir.resolve("adapter-browser.js")
-            adapterJs.printWriter().use { writer ->
-                val karmaRunner = npmProject.require("kotlin-test-js-runner/kotlin-test-karma-runner.js")
-                writer.println("require(${karmaRunner.jsQuoted()})")
-
-                writer.println("module.exports = require(${file.jsQuoted()})")
+        val adapterJs = npmProject.dir.resolve("adapter-browser.js")
+        adapterJs.printWriter().use { writer ->
+            val karmaRunner = npmProject.require("kotlin-test-js-runner/kotlin-test-karma-runner.js")
+            // It is necessary for debugger attaching (--inspect-brk analogue)
+            if (debug) {
+                writer.println("debugger;")
             }
 
-            config.files.add(adapterJs.canonicalPath)
+            writer.println("require(${karmaRunner.jsQuoted()})")
+
+            writer.println("module.exports = require(${file.jsQuoted()})")
         }
+
+        return adapterJs
     }
 
     override fun createTestExecutionSpec(
         task: KotlinJsTest,
         forkOptions: ProcessForkOptions,
-        nodeJsArgs: MutableList<String>
+        nodeJsArgs: MutableList<String>,
+        debug: Boolean
     ): TCServiceMessagesTestExecutionSpec {
+        val npmProject = compilation.npmProject
+
+        val file = task.nodeModulesToLoad
+            .map { npmProject.require(it) }
+            .single()
+
+        val adapterJs = createAdapterJs(file, debug)
+
+        config.files.add(adapterJs.canonicalPath)
+
+        if (debug) {
+            config.singleRun = false
+
+            confJsWriters.add {
+                //language=ES6
+                it.appendln(
+                    """
+                        if (!config.plugins) {
+                            config.plugins = config.plugins || [];
+                            config.plugins.push('karma-*'); // default
+                        }
+                        
+                        config.plugins.push('kotlin-test-js-runner/karma-debug-framework.js');
+                    """.trimIndent()
+                )
+            }
+
+            config.frameworks.add("karma-kotlin-debug")
+        }
+
         if (config.browsers.isEmpty()) {
             error("No browsers configured for $task")
         }
@@ -267,8 +295,6 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
             stackTraceParser = ::parseNodeJsStackTraceAsJvm,
             ignoreOutOfRootNodes = true
         )
-
-        val npmProject = compilation.npmProject
 
         config.basePath = npmProject.nodeModulesDir.absolutePath
 
@@ -309,9 +335,17 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
 
         val nodeModules = listOf("karma/bin/karma")
 
-        val args = nodeJsArgs +
-                nodeModules.map { npmProject.require(it) } +
-                listOf("start", karmaConfJs.absolutePath)
+        val karmaConfigAbsolutePath = karmaConfJs.absolutePath
+        val args = if (debug) {
+            listOf(
+                npmProject.require("kotlin-test-js-runner/karma-debug-runner.js"),
+                karmaConfigAbsolutePath
+            )
+        } else {
+            nodeJsArgs +
+                    nodeModules.map { npmProject.require(it) } +
+                    listOf("start", karmaConfigAbsolutePath)
+        }
 
         return object : JSServiceMessagesTestExecutionSpec(
             forkOptions,

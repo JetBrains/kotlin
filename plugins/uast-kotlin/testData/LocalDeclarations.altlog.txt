@@ -1,5 +1,5 @@
 [2]:[UFile (package = ), UClass (name = LocalDeclarationsKt)]
-    [1]:[UAnnotationMethod (name = foo)]
+    [1]:[UMethod (name = foo)]
         [1]:[UIdentifier (Identifier (foo))]
         [1]:[UDeclarationsExpression]
         [1]:[UTypeReferenceExpression (name = boolean)]

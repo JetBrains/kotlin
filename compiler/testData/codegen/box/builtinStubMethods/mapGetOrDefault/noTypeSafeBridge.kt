@@ -1,11 +1,8 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 // SKIP_JDK6
 // TARGET_BACKEND: JVM
 // FULL_JDK
 // WITH_RUNTIME
-
-// Bridges are not generated because their signatures would conflict. The logic
-// should be inserted directly into existing methods, but this is not implemented.
-// IGNORE_BACKEND: JVM_IR
 
 class A : MutableMap<Any, Any?> {
     override val entries: MutableSet<MutableMap.MutableEntry<Any, Any?>>

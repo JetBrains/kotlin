@@ -1,0 +1,2 @@
+Value read 15 val (x, y) = list[0]
+Value read 8 val (x, y) = o

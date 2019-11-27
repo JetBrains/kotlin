@@ -11,10 +11,10 @@ FILE: extensionPropertyInLambda.kt
     }
     public final var <T> R|C<T>|.y: R|T|
         public get(): R|T| {
-            ^ this@R|/C|.R|/C.x|
+            ^ this@R|/C|.R|FakeOverride</C.x: R|T|>|
         }
         public set(v: R|T|): R|kotlin/Unit| {
-            this@R|/C|.R|/C.x| = R|<local>/v|
+            this@R|/C|.R|FakeOverride</C.x: R|T|>| = R|<local>/v|
         }
     public final fun use(f: R|() -> kotlin/String|): R|kotlin/Unit| {
     }

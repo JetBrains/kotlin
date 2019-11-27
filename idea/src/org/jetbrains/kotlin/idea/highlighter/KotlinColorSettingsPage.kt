@@ -55,7 +55,7 @@ class KotlinColorSettingsPage : ColorSettingsPage, RainbowColorSettingsPage {
         var <LOCAL_VARIABLE><MUTABLE_VARIABLE>ref</MUTABLE_VARIABLE></LOCAL_VARIABLE> = <LOCAL_VARIABLE>ints</LOCAL_VARIABLE>.<INSTANCE_PROPERTY>size</INSTANCE_PROPERTY>
         ints.<EXTENSION_PROPERTY>lastIndex</EXTENSION_PROPERTY> + <PACKAGE_PROPERTY>globalCounter</PACKAGE_PROPERTY>
         <LOCAL_VARIABLE>ints</LOCAL_VARIABLE>.<EXTENSION_FUNCTION_CALL>forEach</EXTENSION_FUNCTION_CALL> <LABEL>lit@</LABEL> <FUNCTION_LITERAL_BRACES_AND_ARROW>{</FUNCTION_LITERAL_BRACES_AND_ARROW>
-            if (<FUNCTION_LITERAL_DEFAULT_PARAMETER>it</FUNCTION_LITERAL_DEFAULT_PARAMETER> == null) return<LABEL>@lit</LABEL>
+            <KEYWORD>if</KEYWORD> (<FUNCTION_LITERAL_DEFAULT_PARAMETER>it</FUNCTION_LITERAL_DEFAULT_PARAMETER> == null) return<LABEL>@lit</LABEL>
             <PACKAGE_FUNCTION_CALL>println</PACKAGE_FUNCTION_CALL>(<FUNCTION_LITERAL_DEFAULT_PARAMETER><SMART_CAST_VALUE>it</SMART_CAST_VALUE></FUNCTION_LITERAL_DEFAULT_PARAMETER> + <LOCAL_VARIABLE><MUTABLE_VARIABLE><WRAPPED_INTO_REF>ref</WRAPPED_INTO_REF></MUTABLE_VARIABLE></LOCAL_VARIABLE>)
         <FUNCTION_LITERAL_BRACES_AND_ARROW>}</FUNCTION_LITERAL_BRACES_AND_ARROW>
         dyn.<DYNAMIC_FUNCTION_CALL>dynamicCall</DYNAMIC_FUNCTION_CALL>()
@@ -70,7 +70,7 @@ class KotlinColorSettingsPage : ColorSettingsPage, RainbowColorSettingsPage {
 }
 
 fun Int?.bar() {
-    if (this != null) {
+    <KEYWORD>if</KEYWORD> (this != null) {
         println(<NAMED_ARGUMENT>message =</NAMED_ARGUMENT> <SMART_CAST_RECEIVER>toString</SMART_CAST_RECEIVER>())
     }
     else {
@@ -98,6 +98,12 @@ var <PACKAGE_PROPERTY_CUSTOM_PROPERTY_DECLARATION><MUTABLE_VARIABLE>globalCounte
 
 <KEYWORD>typealias</KEYWORD> <TYPE_ALIAS>Predicate</TYPE_ALIAS><<TYPE_PARAMETER>T</TYPE_PARAMETER>> = (<TYPE_PARAMETER>T</TYPE_PARAMETER>) -> <CLASS>Boolean</CLASS>
 <KEYWORD>fun</KEYWORD> <FUNCTION_DECLARATION>baz</FUNCTION_DECLARATION>(<PARAMETER>p</PARAMETER>: <TYPE_ALIAS>Predicate</TYPE_ALIAS><<CLASS>Int</CLASS>>) = <PARAMETER><VARIABLE_AS_FUNCTION_CALL>p</VARIABLE_AS_FUNCTION_CALL></PARAMETER>(<NUMBER>42</NUMBER>)
+
+<KEYWORD>suspend</KEYWORD> <KEYWORD>fun</KEYWORD> <FUNCTION_DECLARATION>suspendCall</FUNCTION_DECLARATION>() = 
+  <SUSPEND_FUNCTION_CALL>suspendFn</SUSPEND_FUNCTION_CALL>()
+
+<KEYWORD>suspend</KEYWORD> <KEYWORD>fun</KEYWORD> <FUNCTION_DECLARATION>suspendFn</FUNCTION_DECLARATION>() {}
+
 """
     }
 
@@ -175,6 +181,7 @@ var <PACKAGE_PROPERTY_CUSTOM_PROPERTY_DECLARATION><MUTABLE_VARIABLE>globalCounte
             KotlinBundle.message("options.kotlin.attribute.descriptor.fun") to KotlinHighlightingColors.FUNCTION_DECLARATION,
             KotlinBundle.message("options.kotlin.attribute.descriptor.fun.call") to KotlinHighlightingColors.FUNCTION_CALL,
             KotlinBundle.message("options.kotlin.attribute.descriptor.dynamic.fun.call") to KotlinHighlightingColors.DYNAMIC_FUNCTION_CALL,
+            KotlinBundle.message("options.kotlin.attribute.descriptor.suspend.fun.call") to KotlinHighlightingColors.SUSPEND_FUNCTION_CALL,
             KotlinBundle.message("options.kotlin.attribute.descriptor.package.fun.call") to KotlinHighlightingColors.PACKAGE_FUNCTION_CALL,
             KotlinBundle.message("options.kotlin.attribute.descriptor.extension.fun.call") to KotlinHighlightingColors.EXTENSION_FUNCTION_CALL,
             KotlinBundle.message("options.kotlin.attribute.descriptor.constructor.call") to KotlinHighlightingColors.CONSTRUCTOR_CALL,

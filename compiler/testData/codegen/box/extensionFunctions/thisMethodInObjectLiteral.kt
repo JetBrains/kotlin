@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 class Test {
     private fun <T : Any> T.self() = object{
         fun calc() : T {

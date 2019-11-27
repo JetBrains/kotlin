@@ -4,5 +4,5 @@ interface T {
 
 class GC() : T {
     override val v: Int
-        get() = <selection><caret>TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.</selection>
+        get() = <selection><caret>TODO("Not yet implemented")</selection>
 }

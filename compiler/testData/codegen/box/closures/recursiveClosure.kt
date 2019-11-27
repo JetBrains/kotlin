@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 fun foo(s: String): String {
     fun bar(count: Int): String =
         if (count == 0) s else bar(count - 1)

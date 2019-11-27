@@ -40,6 +40,8 @@ import com.intellij.usages.rules.UsageGroupingRule
 import com.intellij.util.CommonProcessors
 import org.jetbrains.kotlin.idea.core.util.clearDialogsResults
 import org.jetbrains.kotlin.idea.core.util.setDialogsResult
+import org.jetbrains.kotlin.idea.findUsages.dialogs.KotlinFindPropertyUsagesDialog
+import org.jetbrains.kotlin.idea.findUsages.handlers.KotlinFindMemberUsagesHandler
 import org.jetbrains.kotlin.idea.refactoring.CHECK_SUPER_METHODS_YES_NO_DIALOG
 import org.jetbrains.kotlin.idea.search.usagesSearch.ExpressionsOfTypeProcessor
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
@@ -53,6 +55,21 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 import java.util.*
 
+abstract class AbstractFindUsagesWithDisableComponentSearchTest : AbstractFindUsagesTest() {
+
+    override fun <T : PsiElement> doTest(path: String) {
+        val oldValue = KotlinFindMemberUsagesHandler.forceDisableComponentAndDestructionSearch
+        try {
+            KotlinFindMemberUsagesHandler.forceDisableComponentAndDestructionSearch = true
+            super.doTest<T>(path)
+        } finally {
+            KotlinFindMemberUsagesHandler.forceDisableComponentAndDestructionSearch = oldValue
+        }
+    }
+
+    override val prefixForResults = "DisabledComponents."
+}
+
 abstract class AbstractFindUsagesTest : KotlinLightCodeInsightFixtureTestCase() {
 
     override fun getProjectDescriptor(): LightProjectDescriptor = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
@@ -61,7 +78,9 @@ abstract class AbstractFindUsagesTest : KotlinLightCodeInsightFixtureTestCase() 
     protected open fun extraConfig(path: String) {
     }
 
-    protected fun <T : PsiElement> doTest(path: String) {
+    protected open val prefixForResults = ""
+
+    protected open fun <T : PsiElement> doTest(path: String) {
         val mainFile = File(path)
         val mainFileName = mainFile.name
         val mainFileText = FileUtil.loadFile(mainFile, true)
@@ -124,16 +143,17 @@ abstract class AbstractFindUsagesTest : KotlinLightCodeInsightFixtureTestCase() 
             val options = parser?.parse(mainFileText, project)
 
             // Ensure that search by sources (if present) and decompiled declarations gives the same results
+            val prefixForCheck = prefix + prefixForResults
             if (isLibraryElement) {
                 val originalElement = caretElement.originalElement
-                findUsagesAndCheckResults(mainFileText, prefix, rootPath, originalElement, options, project)
+                findUsagesAndCheckResults(mainFileText, prefixForCheck, rootPath, originalElement, options, project)
 
                 val navigationElement = caretElement.navigationElement
                 if (navigationElement !== originalElement) {
-                    findUsagesAndCheckResults(mainFileText, prefix, rootPath, navigationElement, options, project)
+                    findUsagesAndCheckResults(mainFileText, prefixForCheck, rootPath, navigationElement, options, project)
                 }
             } else {
-                findUsagesAndCheckResults(mainFileText, prefix, rootPath, caretElement, options, project)
+                findUsagesAndCheckResults(mainFileText, prefixForCheck, rootPath, caretElement, options, project)
             }
         } finally {
             fixtureClasses.forEach { TestFixtureExtension.unloadFixture(it) }

@@ -16,7 +16,7 @@ FILE: genericPropertyAccess.kt
         }
 
         public final override fun foo(): R|T| {
-            ^foo this@R|/Base|.R|/Base.x|
+            ^foo this@R|/Base|.R|FakeOverride</Base.x: R|T|>|
         }
 
     }

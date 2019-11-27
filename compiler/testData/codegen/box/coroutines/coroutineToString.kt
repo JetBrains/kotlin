@@ -1,7 +1,9 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
 // WITH_COROUTINES
 package test
+
 import helpers.*
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
@@ -29,5 +31,5 @@ fun box(): String {
         result = A<String>().bar()
     }
 
-    return if (result == "Continuation at test.A.bar(coroutineToString.kt:14)") "OK" else "Fail: $result"
+    return if (result == "Continuation at test.A.bar(coroutineToString.kt:16)") "OK" else "Fail: $result"
 }

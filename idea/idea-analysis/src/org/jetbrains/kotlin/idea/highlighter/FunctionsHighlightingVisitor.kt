@@ -79,12 +79,13 @@ internal class FunctionsHighlightingVisitor(holder: AnnotationHolder, bindingCon
 
         @Suppress("DEPRECATION")
         val extensions = Extensions.getExtensions(HighlighterExtension.EP_NAME)
-        
+
         val key = extensions.firstNotNullResult { extension ->
             extension.highlightCall(callee, resolvedCall)
         } ?: when {
             calleeDescriptor.fqNameOrNull() == KOTLIN_SUSPEND_BUILT_IN_FUNCTION_FQ_NAME -> KEYWORD
             calleeDescriptor.isDynamic() -> DYNAMIC_FUNCTION_CALL
+            calleeDescriptor is FunctionDescriptor && calleeDescriptor.isSuspend -> SUSPEND_FUNCTION_CALL
             resolvedCall is VariableAsFunctionResolvedCall -> {
                 val container = calleeDescriptor.containingDeclaration
                 val containedInFunctionClassOrSubclass = container is ClassDescriptor && container.defaultType.isFunctionTypeOrSubtype

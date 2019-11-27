@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
-import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.lexer.KtTokens.OPEN_QUOTE
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtStringTemplateEntryWithExpression
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 import org.jetbrains.kotlin.psi.KtUnaryExpression
 import org.jetbrains.kotlin.resolve.constants.evaluate.*
@@ -105,8 +106,8 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
             this
         ).apply {
             target = FirFunctionTarget(labelName)
-            val lastFunction = context.firFunctions.lastOrNull()
             if (labelName == null) {
+                val lastFunction = context.firFunctions.lastOrNull { !(it is FirAnonymousFunction && it.isLambda) }
                 if (lastFunction != null) {
                     target.bind(lastFunction)
                 } else {
@@ -157,7 +158,7 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
         }
         return FirResolvedTypeRefImpl(
             this?.toFirSourceElement(),
-            ConeClassTypeImpl(
+            ConeClassLikeTypeImpl(
                 firClass.symbol.toLookupTag(),
                 typeParameters.map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false) }.toTypedArray(),
                 false
@@ -289,7 +290,12 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
                 }
                 SHORT_STRING_TEMPLATE_ENTRY, LONG_STRING_TEMPLATE_ENTRY -> {
                     hasExpressions = true
-                    entry.convertTemplateEntry("Incorrect template argument")
+                    val firExpression = entry.convertTemplateEntry("Incorrect template argument")
+                    val source = firExpression.source
+                    FirFunctionCallImpl(source).apply {
+                        explicitReceiver = firExpression
+                        calleeReference = FirSimpleNamedReference(source, Name.identifier("toString"), candidateSymbol = null)
+                    }
                 }
                 else -> {
                     hasExpressions = true

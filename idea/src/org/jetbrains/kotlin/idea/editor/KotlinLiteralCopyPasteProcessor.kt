@@ -28,7 +28,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.editor.fixers.range
-import org.jetbrains.kotlin.idea.inspections.collections.isCalling
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -132,11 +131,13 @@ class KotlinLiteralCopyPasteProcessor : CopyPastePreProcessor {
             return text
         }
 
+        val templateTokenSequence = TemplateTokenSequence(text)
+
         return if (beginTp.isSingleQuoted()) {
             val res = StringBuilder()
             val lineBreak = "\\n\"+\n \""
             var endsInLineBreak = false
-            TemplateTokenSequence(text).forEach {
+            templateTokenSequence.forEach {
                 when (it) {
                     is LiteralChunk -> StringUtil.escapeStringCharacters(it.text.length, it.text, "\$\"", res)
                     is EntryChunk -> res.append(it.text)
@@ -150,9 +151,16 @@ class KotlinLiteralCopyPasteProcessor : CopyPastePreProcessor {
                 res.toString()
             }
         } else {
+            fun TemplateChunk?.indent() = when (this) {
+                is LiteralChunk -> this.text
+                is EntryChunk -> this.text
+                else -> ""
+            }.takeWhile { it.isWhitespace() }
+
             val indent =
                 if (beginTp.firstChild?.text == "\"\"\"" &&
-                    beginTp.getQualifiedExpressionForReceiver()?.callExpression?.calleeExpression?.text == "trimIndent"
+                    beginTp.getQualifiedExpressionForReceiver()?.callExpression?.calleeExpression?.text == "trimIndent" &&
+                    templateTokenSequence.firstOrNull()?.indent() == templateTokenSequence.lastOrNull()?.indent()
                 ) {
                     begin.parent?.prevSibling?.takeIf { it.text != "\n" }?.text
                 } else {
@@ -160,7 +168,7 @@ class KotlinLiteralCopyPasteProcessor : CopyPastePreProcessor {
                 } ?: ""
 
             val tripleQuoteRe = Regex("[\"]{3,}")
-            TemplateTokenSequence(text).mapIndexed { index, chunk ->
+            templateTokenSequence.mapIndexed { index, chunk ->
                 when (chunk) {
                     is LiteralChunk -> {
                         val replaced = chunk.text.replace("\$", "\${'$'}").let { escapedDollar ->

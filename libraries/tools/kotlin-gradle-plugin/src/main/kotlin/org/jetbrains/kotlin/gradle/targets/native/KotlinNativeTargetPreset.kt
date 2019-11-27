@@ -3,17 +3,21 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
+@file:Suppress("PackageDirectoryMismatch")
+
+// Old package for compatibility
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import org.jetbrains.kotlin.compilerRunner.konanHome
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.native.DisabledNativeTargetsReporter
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
+import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
@@ -69,7 +73,7 @@ abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
         filesList?.map { dir -> dependencies.create(files(dir)) } ?: emptyList()
     }
 
-    protected abstract fun createTargetConfigurator() : KotlinTargetConfigurator<T>
+    protected abstract fun createTargetConfigurator(): KotlinTargetConfigurator<T>
 
     protected abstract fun instantiateTarget(name: String): T
 
@@ -87,8 +91,20 @@ abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
 
         createTargetConfigurator().configureTarget(result)
 
-        // Allow IDE to resolve the libraries provided by the compiler by adding them into dependencies.
+        addDependenciesOnLibrariesFromDistribution(result)
 
+        if (!konanTarget.enabledOnCurrentHost) {
+            with(HostManager()) {
+                val supportedHosts = enabledByHost.filterValues { konanTarget in it }.keys
+                DisabledNativeTargetsReporter.reportDisabledTarget(project, result, supportedHosts)
+            }
+        }
+
+        return result
+    }
+
+    // Allow IDE to resolve the libraries provided by the compiler by adding them into dependencies.
+    private fun addDependenciesOnLibrariesFromDistribution(result: T) {
         result.compilations.all { compilation ->
             val target = compilation.konanTarget
             project.whenEvaluated {
@@ -103,19 +119,55 @@ abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
             }
         }
 
-        if (!konanTarget.enabledOnCurrentHost) {
-            with(HostManager()) {
-                val supportedHosts = enabledByHost.filterValues { konanTarget in it }.keys
-                DisabledNativeTargetsReporter.reportDisabledTarget(project, result, supportedHosts)
-            }
-        }
+        // Add dependencies to stdlib-native for intermediate single-backend source-sets (like 'allNative')
+        project.whenEvaluated {
+            val compilationsBySourceSets = CompilationSourceSetUtil.compilationsBySourceSets(this)
 
-        return result
+            fun KotlinSourceSet.isIntermediateNativeSourceSet(): Boolean {
+                val compilations = compilationsBySourceSets[this] ?: return false
+
+                if (compilations.all { it.defaultSourceSet == this })
+                    return false
+
+                return compilations.all { it.target.platformType == KotlinPlatformType.native }
+            }
+
+            val stdlib = defaultLibs(stdlibOnly = true).singleOrNull() ?: run {
+                warnAboutMissingNativeStdlib(project)
+                return@whenEvaluated
+            }
+
+            project.kotlinExtension.sourceSets
+                .filter { it.isIntermediateNativeSourceSet() }
+                .forEach {
+                    it.dependencies { implementation(stdlib) }
+                }
+        }
     }
 
     companion object {
         private const val KOTLIN_NATIVE_HOME_PRIVATE_PROPERTY = "konanHome"
+
+        private fun warnAboutMissingNativeStdlib(project: Project) {
+            if (!project.hasProperty("kotlin.native.nostdlib")) {
+                SingleWarningPerBuild.show(
+                    project,
+                    buildString {
+                        append(NO_NATIVE_STDLIB_WARNING)
+                        if (PropertiesProvider(project).nativeHome != null)
+                            append(NO_NATIVE_STDLIB_PROPERTY_WARNING)
+                    }
+                )
+            }
+        }
+
+        internal const val NO_NATIVE_STDLIB_WARNING =
+            "The Kotlin/Native distribution used in this build does not provide the standard library. "
+
+        internal const val NO_NATIVE_STDLIB_PROPERTY_WARNING =
+            "Make sure that the '${PropertiesProvider.KOTLIN_NATIVE_HOME}' property points to a valid Kotlin/Native distribution."
     }
+
 }
 
 open class KotlinNativeTargetPreset(name: String, project: Project, konanTarget: KonanTarget, kotlinPluginVersion: String) :

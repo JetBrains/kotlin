@@ -2,7 +2,8 @@ FILE fqName:<root> fileName:/vararg.kt
   PROPERTY name:test1 visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Array<kotlin.String> visibility:private [final,static]
       EXPRESSION_BODY
-        CALL 'public final fun arrayOf (elements: kotlin.Array<out T of <uninitialized parent>>): kotlin.Array<T of <uninitialized parent>> [inline] declared in kotlin' type=kotlin.Array<kotlin.String> origin=null
+        CALL 'public final fun arrayOf <T> (elements: kotlin.Array<out T of kotlin.arrayOf>): kotlin.Array<T of kotlin.arrayOf> [inline] declared in kotlin' type=kotlin.Array<kotlin.String> origin=null
+          <T>: kotlin.String
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:kotlin.Array<kotlin.String>
       correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [val]
       BLOCK_BODY

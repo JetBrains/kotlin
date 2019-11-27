@@ -783,7 +783,7 @@ class TypedHandlerTest : KotlinLightCodeInsightTestCase() {
             """
                 |class A(
                 |		a: Int,
-                |<caret>
+                |		<caret>
                 |)
                 """,
             enableSmartEnterWithTabs()
@@ -801,7 +801,56 @@ class TypedHandlerTest : KotlinLightCodeInsightTestCase() {
             """
                 |fun method(
                 |         arg1: String,
-                |<caret>
+                |         <caret>
+                |) {}
+                """,
+            enableSmartEnterWithTabs()
+        )
+    }
+
+    fun testEnterWithoutLineBreakBeforeClosingBracketInMethodParameters() {
+        doTypeTest(
+            '\n',
+            """
+                |fun method(
+                |         arg1: String,<caret>) {}
+                """,
+            """
+                |fun method(
+                |         arg1: String,
+                |<caret>) {}
+                """,
+            enableSmartEnterWithTabs()
+        )
+    }
+
+    fun testEnterWithTrailingCommaAndWhitespaceBeforeLineBreak() {
+        doTypeTest(
+            '\n',
+            """
+                |fun method(
+                |         arg1: String, <caret>
+                |) {}
+                """,
+            """
+                |fun method(
+                |         arg1: String, 
+                |         <caret>
+                |) {}
+                """,
+            enableSmartEnterWithTabs()
+        )
+    }
+
+    fun testSmartEnterBetweenOpeningAndClosingBrackets() {
+        doTypeTest(
+            '\n',
+            """
+                |fun method(<caret>) {}
+                """,
+            """
+                |fun method(
+                |		<caret>
                 |) {}
                 """,
             enableSmartEnterWithTabs()

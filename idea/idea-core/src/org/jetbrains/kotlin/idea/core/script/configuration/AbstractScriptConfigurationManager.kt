@@ -5,11 +5,14 @@
 
 package org.jetbrains.kotlin.idea.core.script.configuration
 
+import com.intellij.ProjectTopics
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
+import com.intellij.openapi.roots.ModuleRootEvent
+import com.intellij.openapi.roots.ModuleRootListener
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.PsiFile
@@ -21,6 +24,7 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.core.script.*
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager.Companion.toVfsRoots
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationCache
+import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationCacheScope
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationSnapshot
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationState
 import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptConfigurationUpdater
@@ -127,13 +131,8 @@ internal abstract class AbstractScriptConfigurationManager(
             return reloadIfOutOfDate(files, false)
         }
 
-        override fun forceConfigurationReload(file: KtFile) {
-            val virtualFile = file.originalFile.virtualFile ?: return
-            cache.markOutOfDate(virtualFile)
-
-            rootsIndexer.transaction {
-                reloadOutOfDateConfiguration(file, loadEvenWillNotBeApplied = true)
-            }
+        override fun postponeConfigurationReload(scope: ScriptConfigurationCacheScope) {
+            cache.markOutOfDate(scope)
         }
     }
 
@@ -207,6 +206,15 @@ internal abstract class AbstractScriptConfigurationManager(
         return classpathRoots.hasNotCachedRoots(configuration)
     }
 
+    init {
+        val connection = project.messageBus.connect()
+        connection.subscribe(ProjectTopics.PROJECT_ROOTS, object : ModuleRootListener {
+            override fun rootsChanged(event: ModuleRootEvent) {
+                clearClassRootsCaches()
+            }
+        })
+    }
+
     /**
      * Clear configuration caches
      * Start re-highlighting for opened scripts
@@ -214,7 +222,7 @@ internal abstract class AbstractScriptConfigurationManager(
     override fun clearConfigurationCachesAndRehighlight() {
         ScriptDependenciesModificationTracker.getInstance(project).incModificationCount()
 
-        // todo: invalidate caches?
+        clearClassRootsCaches()
 
         if (project.isOpen) {
             val openedScripts = FileEditorManager.getInstance(project).openFiles.filterNot { it.isNonScript() }
@@ -254,10 +262,16 @@ internal abstract class AbstractScriptConfigurationManager(
                 val value2 = _classpathRoots
                 if (value2 != null) return value2
 
-                val value3 = ScriptClassRootsCache(project, cache)
+                val value3 = newClassRootsCache()
                 _classpathRoots = value3
                 return value3
             }
+        }
+
+    private fun newClassRootsCache() =
+        object : ScriptClassRootsCache(project, cache.allApplied()) {
+            override fun getConfiguration(file: VirtualFile) =
+                this@AbstractScriptConfigurationManager.getConfiguration(file)
         }
 
     private fun clearClassRootsCaches() {
@@ -279,7 +293,7 @@ internal abstract class AbstractScriptConfigurationManager(
 
     override fun getScriptSdk(file: VirtualFile): Sdk? = classpathRoots.getScriptSdk(file)
 
-    override fun getFirstScriptsSdk(): Sdk? = classpathRoots.getFirstScriptsSdk()
+    override fun getFirstScriptsSdk(): Sdk? = classpathRoots.firstScriptSdk
 
     override fun getScriptDependenciesClassFilesScope(file: VirtualFile): GlobalSearchScope =
         classpathRoots.getScriptDependenciesClassFilesScope(file)

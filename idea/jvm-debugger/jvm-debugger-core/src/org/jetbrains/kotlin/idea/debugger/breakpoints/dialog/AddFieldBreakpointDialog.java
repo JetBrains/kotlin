@@ -20,14 +20,16 @@ import com.intellij.debugger.DebuggerBundle;
 import com.intellij.ide.util.MemberChooser;
 import com.intellij.ide.util.TreeClassChooser;
 import com.intellij.ide.util.TreeClassChooserFactory;
+import com.intellij.openapi.application.TransactionGuard;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
-import kotlin.Unit;
+import com.intellij.ui.DocumentAdapter;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.core.util.DescriptorMemberChooserObject;
-import org.jetbrains.kotlin.idea.core.util.UiUtilsKt;
 import org.jetbrains.kotlin.psi.KtProperty;
 
 import javax.swing.*;
@@ -49,13 +51,12 @@ public abstract class AddFieldBreakpointDialog extends DialogWrapper {
 
     @Override
     protected JComponent createCenterPanel() {
-        UiUtilsKt.onTextChange(
-                myClassChooser.getTextField(),
-                (DocumentEvent e) -> {
-                    updateUI();
-                    return Unit.INSTANCE;
-                }
-        );
+    myClassChooser.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
+        @Override
+        public void textChanged(@NotNull DocumentEvent event) {
+            updateUI();
+        }
+    });
 
         myClassChooser.addActionListener(e -> {
             PsiClass currentClass = getSelectedClass();
@@ -79,19 +80,17 @@ public abstract class AddFieldBreakpointDialog extends DialogWrapper {
 
         myFieldChooser.addActionListener(e -> {
             PsiClass selectedClass = getSelectedClass();
-            if (selectedClass == null) {
-                return;
-            }
-
-            DescriptorMemberChooserObject[] properties = FieldBreakpointDialogUtilKt.collectProperties(selectedClass);
-            MemberChooser<DescriptorMemberChooserObject> chooser = new MemberChooser<>(properties, false, false, myProject);
-            chooser.setTitle(DebuggerBundle.message("add.field.breakpoint.dialog.field.chooser.title", properties.length));
-            chooser.setCopyJavadocVisible(false);
-            chooser.show();
-            List<DescriptorMemberChooserObject> selectedElements = chooser.getSelectedElements();
-            if (selectedElements != null && selectedElements.size() == 1) {
-                KtProperty field = (KtProperty) selectedElements.get(0).getElement();
-                myFieldChooser.setText(field.getName());
+            if (selectedClass != null) {
+                DescriptorMemberChooserObject[] properties = FieldBreakpointDialogUtilKt.collectProperties(selectedClass);
+                MemberChooser<DescriptorMemberChooserObject> chooser = new MemberChooser<>(properties, false, false, myProject);
+                chooser.setTitle(DebuggerBundle.message("add.field.breakpoint.dialog.field.chooser.title", properties.length));
+                chooser.setCopyJavadocVisible(false);
+                TransactionGuard.getInstance().submitTransactionAndWait(chooser::show);
+                List<DescriptorMemberChooserObject> selectedElements = chooser.getSelectedElements();
+                if (selectedElements != null && selectedElements.size() == 1) {
+                    KtProperty field = (KtProperty) selectedElements.get(0).getElement();
+                    myFieldChooser.setText(field.getName());
+                }
             }
         });
         myFieldChooser.setEnabled(false);
@@ -104,9 +103,9 @@ public abstract class AddFieldBreakpointDialog extends DialogWrapper {
     }
 
     private PsiClass getSelectedClass() {
-        PsiManager psiManager = PsiManager.getInstance(myProject);
-        String classQName = myClassChooser.getText();
-        if (classQName.isEmpty()) {
+    PsiManager psiManager = PsiManager.getInstance(myProject);
+    String classQName = myClassChooser.getText();
+    if (StringUtil.isEmpty(classQName)) {
             return null;
         }
         return JavaPsiFacade.getInstance(psiManager.getProject()).findClass(classQName, GlobalSearchScope.allScope(myProject));

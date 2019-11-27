@@ -17,16 +17,14 @@ import com.intellij.psi.search.NonClasspathDirectoriesScope
 import com.intellij.util.containers.ConcurrentFactoryMap
 import org.jetbrains.kotlin.idea.caches.project.getAllProjectSdks
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
-import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationCache
 import org.jetbrains.kotlin.idea.core.script.debug
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 
-internal class ScriptClassRootsCache(
+internal abstract class ScriptClassRootsCache(
     private val project: Project,
-    private val cache: ScriptConfigurationCache
+    val all: Collection<Pair<VirtualFile, ScriptCompilationConfigurationWrapper>>
 ) {
-    private val all: Collection<Pair<VirtualFile, ScriptCompilationConfigurationWrapper>> get() = cache.allApplied()
-    private fun getConfiguration(file: VirtualFile): ScriptCompilationConfigurationWrapper? = cache[file]?.applied?.configuration
+    protected abstract fun getConfiguration(file: VirtualFile): ScriptCompilationConfigurationWrapper?
 
     private fun getScriptSdk(compilationConfiguration: ScriptCompilationConfigurationWrapper?): Sdk? {
         // workaround for mismatched gradle wrapper and plugin version
@@ -48,9 +46,9 @@ internal class ScriptClassRootsCache(
 
     fun getScriptSdk(file: VirtualFile): Sdk? = scriptsSdksCache[file]
 
-    fun getFirstScriptsSdk(): Sdk? {
-        val firstCachedScript = all.firstOrNull()?.first ?: return null
-        return scriptsSdksCache[firstCachedScript]
+    val firstScriptSdk: Sdk? by lazy {
+        val firstCachedScript = all.firstOrNull() ?: return@lazy null
+        return@lazy getScriptSdk(firstCachedScript.second)
     }
 
     private val allSdks by lazy {

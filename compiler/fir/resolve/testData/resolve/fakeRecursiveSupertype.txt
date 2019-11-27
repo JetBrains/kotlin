@@ -1,5 +1,5 @@
 FILE: fakeRecursiveSupertype.kt
-    public final class My : R|class error: Recursion detected: R|My|| {
+    public final class My : R|class error: Loop in supertype: /My -> /My| {
         public constructor(): R|My| {
             super<R|My|>()
         }
@@ -11,7 +11,7 @@ FILE: fakeRecursiveSupertype.kt
         }
 
     }
-    public final class His : R|class error: Recursion detected: R|Your|| {
+    public final class His : R|class error: Loop in supertype: /His -> /Your| {
         public constructor(): R|His| {
             super<R|Your|>()
         }

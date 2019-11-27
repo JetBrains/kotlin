@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 class Greeter(var name : String) {
     fun greet() {
         name = name.plus("")

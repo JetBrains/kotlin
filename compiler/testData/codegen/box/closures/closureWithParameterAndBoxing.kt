@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 fun box() : String {
     return if (apply( 5, {arg: Int -> arg + 13 } ) == 18) "OK" else "fail"
 }

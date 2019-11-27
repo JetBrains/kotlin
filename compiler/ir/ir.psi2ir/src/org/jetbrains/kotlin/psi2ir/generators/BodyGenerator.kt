@@ -61,7 +61,7 @@ class BodyGenerator(
             val irBody = statementGenerator.generateStatement(ktBody)
             irBlockBody.statements.add(
                 if (ktBody.isUsedAsExpression(context.bindingContext) && irBody is IrExpression)
-                    generateReturnExpression(irBody.startOffset, irBody.endOffset, irBody)
+                    generateReturnExpression(irBody.endOffset, irBody.endOffset, irBody)
                 else
                     irBody
             )
@@ -261,8 +261,7 @@ class BodyGenerator(
             IrDelegatingConstructorCallImpl(
                 ktElement.pureStartOffset, ktElement.pureEndOffset,
                 context.irBuiltIns.unitType,
-                context.symbolTable.referenceConstructor(anyConstructor),
-                anyConstructor
+                context.symbolTable.referenceConstructor(anyConstructor)
             )
         )
     }

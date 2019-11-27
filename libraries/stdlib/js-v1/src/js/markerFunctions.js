@@ -71,6 +71,10 @@ Kotlin.setCoroutineResult = function(value, qualifier) {
     throwMarkerError();
 };
 
+Kotlin.getReifiedTypeParameterKType = function(typeParameter) {
+    throwMarkerError();
+};
+
 function throwMarkerError() {
     throw new Error(
         "This marker function should never been called. " +

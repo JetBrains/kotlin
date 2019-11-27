@@ -8,56 +8,53 @@ digraph implicitReceiverAsWhenSubject_kt {
     0 [label="Enter function test_1" style="filled" fillcolor=red];
     subgraph cluster_1 {
       color=blue
-      1 [label="Enter block"];
+      1 [label="Enter when"];
+      2 [label="Access variable this@R|/test_1|"];
       subgraph cluster_2 {
         color=blue
-        2 [label="Enter when"];
-        3 [label="Access variable this@R|/test_1|"];
-        subgraph cluster_3 {
-          color=blue
-          4 [label="Enter when branch condition "];
-          5 [label="Type operator: List<*>"];
-          6 [label="Exit when branch condition"];
-        }
-        subgraph cluster_4 {
-          color=blue
-          7 [label="Enter when branch condition "];
-          8 [label="Type operator: String"];
-          9 [label="Exit when branch condition"];
-        }
-        subgraph cluster_5 {
-          color=blue
-          10 [label="Enter when branch condition else"];
-          11 [label="Exit when branch condition"];
-        }
-        12 [label="Enter when branch result"];
-        subgraph cluster_6 {
-          color=blue
-          13 [label="Enter block"];
-          14 [label="Const: Int(0)"];
-          15 [label="Exit block"];
-        }
-        16 [label="Exit when branch result"];
-        17 [label="Enter when branch result"];
-        subgraph cluster_7 {
-          color=blue
-          18 [label="Enter block"];
-          19 [label="Access variable R|kotlin/String.length|"];
-          20 [label="Exit block"];
-        }
-        21 [label="Exit when branch result"];
-        22 [label="Enter when branch result"];
-        subgraph cluster_8 {
-          color=blue
-          23 [label="Enter block"];
-          24 [label="Access variable this@R|/test_1|"];
-          25 [label="Access variable R|kotlin/collections/List.size|"];
-          26 [label="Exit block"];
-        }
-        27 [label="Exit when branch result"];
-        28 [label="Exit when"];
+        3 [label="Enter when branch condition "];
+        4 [label="Type operator: List<*>"];
+        5 [label="Exit when branch condition"];
       }
-      29 [label="Jump: ^test_1 when (this@R|/test_1|) {
+      subgraph cluster_3 {
+        color=blue
+        6 [label="Enter when branch condition "];
+        7 [label="Type operator: String"];
+        8 [label="Exit when branch condition"];
+      }
+      subgraph cluster_4 {
+        color=blue
+        9 [label="Enter when branch condition else"];
+        10 [label="Exit when branch condition"];
+      }
+      11 [label="Enter when branch result"];
+      subgraph cluster_5 {
+        color=blue
+        12 [label="Enter block"];
+        13 [label="Const: Int(0)"];
+        14 [label="Exit block"];
+      }
+      15 [label="Exit when branch result"];
+      16 [label="Enter when branch result"];
+      subgraph cluster_6 {
+        color=blue
+        17 [label="Enter block"];
+        18 [label="Access variable R|kotlin/String.length|"];
+        19 [label="Exit block"];
+      }
+      20 [label="Exit when branch result"];
+      21 [label="Enter when branch result"];
+      subgraph cluster_7 {
+        color=blue
+        22 [label="Enter block"];
+        23 [label="Access variable this@R|/test_1|"];
+        24 [label="Access variable R|kotlin/collections/List.size|"];
+        25 [label="Exit block"];
+      }
+      26 [label="Exit when branch result"];
+      27 [label="Exit when"];
+    }
+    28 [label="Jump: ^test_1 when (this@R|/test_1|) {
     ($subj$ is R|kotlin/collections/List<*>|) ->  {
         this@R|/test_1|.R|kotlin/collections/List.size|
     }
@@ -69,10 +66,8 @@ digraph implicitReceiverAsWhenSubject_kt {
     }
 }
 "];
-      30 [label="Stub" style="filled" fillcolor=gray];
-      31 [label="Exit block" style="filled" fillcolor=gray];
-    }
-    32 [label="Exit function test_1" style="filled" fillcolor=red];
+    29 [label="Stub" style="filled" fillcolor=gray];
+    30 [label="Exit function test_1" style="filled" fillcolor=red];
   }
 
   0 -> {1};
@@ -80,95 +75,90 @@ digraph implicitReceiverAsWhenSubject_kt {
   2 -> {3};
   3 -> {4};
   4 -> {5};
-  5 -> {6};
-  6 -> {22 7};
+  5 -> {21 6};
+  6 -> {7};
   7 -> {8};
-  8 -> {9};
-  9 -> {17 10};
+  8 -> {16 9};
+  9 -> {10};
   10 -> {11};
   11 -> {12};
   12 -> {13};
   13 -> {14};
   14 -> {15};
-  15 -> {16};
-  16 -> {28};
+  15 -> {27};
+  16 -> {17};
   17 -> {18};
   18 -> {19};
   19 -> {20};
-  20 -> {21};
-  21 -> {28};
+  20 -> {27};
+  21 -> {22};
   22 -> {23};
   23 -> {24};
   24 -> {25};
   25 -> {26};
   26 -> {27};
   27 -> {28};
-  28 -> {29};
-  29 -> {32};
+  28 -> {30};
+  28 -> {29} [style=dotted];
   29 -> {30} [style=dotted];
-  30 -> {31} [style=dotted];
-  31 -> {32} [style=dotted];
 
-  subgraph cluster_9 {
+  subgraph cluster_8 {
     color=red
-    33 [label="Enter function test_2" style="filled" fillcolor=red];
-    subgraph cluster_10 {
+    31 [label="Enter function test_2" style="filled" fillcolor=red];
+    subgraph cluster_9 {
       color=blue
-      34 [label="Enter block"];
+      32 [label="Enter when"];
+      33 [label="Access variable this@R|/test_2|"];
+      34 [label="Variable declaration: lval x: R|kotlin/Any|"];
+      subgraph cluster_10 {
+        color=blue
+        35 [label="Enter when branch condition "];
+        36 [label="Type operator: List<*>"];
+        37 [label="Exit when branch condition"];
+      }
       subgraph cluster_11 {
         color=blue
-        35 [label="Enter when"];
-        36 [label="Access variable this@R|/test_2|"];
-        37 [label="Variable declaration: lval x: R|kotlin/Any|"];
-        subgraph cluster_12 {
-          color=blue
-          38 [label="Enter when branch condition "];
-          39 [label="Type operator: List<*>"];
-          40 [label="Exit when branch condition"];
-        }
-        subgraph cluster_13 {
-          color=blue
-          41 [label="Enter when branch condition "];
-          42 [label="Type operator: String"];
-          43 [label="Exit when branch condition"];
-        }
-        subgraph cluster_14 {
-          color=blue
-          44 [label="Enter when branch condition else"];
-          45 [label="Exit when branch condition"];
-        }
-        46 [label="Enter when branch result"];
-        subgraph cluster_15 {
-          color=blue
-          47 [label="Enter block"];
-          48 [label="Const: Int(0)"];
-          49 [label="Exit block"];
-        }
-        50 [label="Exit when branch result"];
-        51 [label="Enter when branch result"];
-        subgraph cluster_16 {
-          color=blue
-          52 [label="Enter block"];
-          53 [label="Access variable R|<local>/x|"];
-          54 [label="Access variable R|kotlin/String.length|"];
-          55 [label="Access variable R|kotlin/String.length|"];
-          56 [label="Exit block"];
-        }
-        57 [label="Exit when branch result"];
-        58 [label="Enter when branch result"];
-        subgraph cluster_17 {
-          color=blue
-          59 [label="Enter block"];
-          60 [label="Access variable R|<local>/x|"];
-          61 [label="Access variable R|kotlin/collections/List.size|"];
-          62 [label="Access variable this@R|/test_2|"];
-          63 [label="Access variable R|kotlin/collections/List.size|"];
-          64 [label="Exit block"];
-        }
-        65 [label="Exit when branch result"];
-        66 [label="Exit when"];
+        38 [label="Enter when branch condition "];
+        39 [label="Type operator: String"];
+        40 [label="Exit when branch condition"];
       }
-      67 [label="Jump: ^test_2 when (lval x: R|kotlin/Any| = this@R|/test_2|) {
+      subgraph cluster_12 {
+        color=blue
+        41 [label="Enter when branch condition else"];
+        42 [label="Exit when branch condition"];
+      }
+      43 [label="Enter when branch result"];
+      subgraph cluster_13 {
+        color=blue
+        44 [label="Enter block"];
+        45 [label="Const: Int(0)"];
+        46 [label="Exit block"];
+      }
+      47 [label="Exit when branch result"];
+      48 [label="Enter when branch result"];
+      subgraph cluster_14 {
+        color=blue
+        49 [label="Enter block"];
+        50 [label="Access variable R|<local>/x|"];
+        51 [label="Access variable R|kotlin/String.length|"];
+        52 [label="Access variable R|kotlin/String.length|"];
+        53 [label="Exit block"];
+      }
+      54 [label="Exit when branch result"];
+      55 [label="Enter when branch result"];
+      subgraph cluster_15 {
+        color=blue
+        56 [label="Enter block"];
+        57 [label="Access variable R|<local>/x|"];
+        58 [label="Access variable R|kotlin/collections/List.size|"];
+        59 [label="Access variable this@R|/test_2|"];
+        60 [label="Access variable R|kotlin/collections/List.size|"];
+        61 [label="Exit block"];
+      }
+      62 [label="Exit when branch result"];
+      63 [label="Exit when"];
+    }
+    64 [label="Jump: ^test_2 when (lval x: R|kotlin/Any| = this@R|/test_2|) {
     ($subj$ is R|kotlin/collections/List<*>|) ->  {
         R|<local>/x|.R|kotlin/collections/List.size|
         this@R|/test_2|.R|kotlin/collections/List.size|
@@ -182,49 +172,45 @@ digraph implicitReceiverAsWhenSubject_kt {
     }
 }
 "];
-      68 [label="Stub" style="filled" fillcolor=gray];
-      69 [label="Exit block" style="filled" fillcolor=gray];
-    }
-    70 [label="Exit function test_2" style="filled" fillcolor=red];
+    65 [label="Stub" style="filled" fillcolor=gray];
+    66 [label="Exit function test_2" style="filled" fillcolor=red];
   }
 
+  31 -> {32};
+  32 -> {33};
   33 -> {34};
   34 -> {35};
   35 -> {36};
   36 -> {37};
-  37 -> {38};
+  37 -> {55 38};
   38 -> {39};
   39 -> {40};
-  40 -> {58 41};
+  40 -> {48 41};
   41 -> {42};
   42 -> {43};
-  43 -> {51 44};
+  43 -> {44};
   44 -> {45};
   45 -> {46};
   46 -> {47};
-  47 -> {48};
+  47 -> {63};
   48 -> {49};
   49 -> {50};
-  50 -> {66};
+  50 -> {51};
   51 -> {52};
   52 -> {53};
   53 -> {54};
-  54 -> {55};
+  54 -> {63};
   55 -> {56};
   56 -> {57};
-  57 -> {66};
+  57 -> {58};
   58 -> {59};
   59 -> {60};
   60 -> {61};
   61 -> {62};
   62 -> {63};
   63 -> {64};
-  64 -> {65};
-  65 -> {66};
-  66 -> {67};
-  67 -> {70};
-  67 -> {68} [style=dotted];
-  68 -> {69} [style=dotted];
-  69 -> {70} [style=dotted];
+  64 -> {66};
+  64 -> {65} [style=dotted];
+  65 -> {66} [style=dotted];
 
 }

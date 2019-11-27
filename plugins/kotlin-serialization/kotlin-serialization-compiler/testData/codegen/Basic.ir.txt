@@ -137,7 +137,7 @@ public final class ListOfUsers$$serializer : java/lang/Object, kotlinx/serializa
         LABEL (L9)
     }
 
-    public java.lang.Object deserialize(kotlinx.serialization.Decoder decoder) {
+    public java.lang.Object deserialize(kotlinx.serialization.Decoder p0) {
         LABEL (L0)
           ALOAD (0)
           ALOAD (1)
@@ -150,7 +150,7 @@ public final class ListOfUsers$$serializer : java/lang/Object, kotlinx/serializa
 
     public ListOfUsers patch(kotlinx.serialization.Decoder decoder, ListOfUsers old)
 
-    public java.lang.Object patch(kotlinx.serialization.Decoder decoder, java.lang.Object old)
+    public java.lang.Object patch(kotlinx.serialization.Decoder p0, java.lang.Object p1)
 
     public void serialize(kotlinx.serialization.Encoder encoder, ListOfUsers obj) {
         LABEL (L0)
@@ -186,11 +186,13 @@ public final class ListOfUsers$$serializer : java/lang/Object, kotlinx/serializa
           ALOAD (4)
           ALOAD (3)
           INVOKEINTERFACE (kotlinx/serialization/CompositeEncoder, endStructure, (Lkotlinx/serialization/SerialDescriptor;)V)
-          RETURN
         LABEL (L2)
+        LINENUMBER (13)
+          RETURN
+        LABEL (L3)
     }
 
-    public void serialize(kotlinx.serialization.Encoder encoder, java.lang.Object obj) {
+    public void serialize(kotlinx.serialization.Encoder p0, java.lang.Object p1) {
         LABEL (L0)
           ALOAD (0)
           ALOAD (1)
@@ -213,7 +215,7 @@ public final class ListOfUsers$Companion : java/lang/Object {
         LABEL (L2)
     }
 
-    public void <init>(kotlin.jvm.internal.DefaultConstructorMarker marker) {
+    public void <init>(kotlin.jvm.internal.DefaultConstructorMarker p0) {
         LABEL (L0)
           ALOAD (0)
           INVOKESPECIAL (ListOfUsers$Companion, <init>, ()V)
@@ -282,7 +284,7 @@ public final class ListOfUsers : java/lang/Object {
         LABEL (L4)
     }
 
-    public final static java.util.List access$prop$getList$3(ListOfUsers $this)
+    public final static java.util.List access$prop$getList$3(ListOfUsers p0)
 
     public final java.util.List getList()
 }
@@ -419,7 +421,7 @@ public final class OptionalUser$$serializer : java/lang/Object, kotlinx/serializ
         LABEL (L9)
     }
 
-    public java.lang.Object deserialize(kotlinx.serialization.Decoder decoder) {
+    public java.lang.Object deserialize(kotlinx.serialization.Decoder p0) {
         LABEL (L0)
           ALOAD (0)
           ALOAD (1)
@@ -432,7 +434,7 @@ public final class OptionalUser$$serializer : java/lang/Object, kotlinx/serializ
 
     public OptionalUser patch(kotlinx.serialization.Decoder decoder, OptionalUser old)
 
-    public java.lang.Object patch(kotlinx.serialization.Decoder decoder, java.lang.Object old)
+    public java.lang.Object patch(kotlinx.serialization.Decoder p0, java.lang.Object p1)
 
     public void serialize(kotlinx.serialization.Encoder encoder, OptionalUser obj) {
         LABEL (L0)
@@ -487,11 +489,13 @@ public final class OptionalUser$$serializer : java/lang/Object, kotlinx/serializ
           ALOAD (4)
           ALOAD (3)
           INVOKEINTERFACE (kotlinx/serialization/CompositeEncoder, endStructure, (Lkotlinx/serialization/SerialDescriptor;)V)
-          RETURN
         LABEL (L7)
+        LINENUMBER (10)
+          RETURN
+        LABEL (L8)
     }
 
-    public void serialize(kotlinx.serialization.Encoder encoder, java.lang.Object obj) {
+    public void serialize(kotlinx.serialization.Encoder p0, java.lang.Object p1) {
         LABEL (L0)
           ALOAD (0)
           ALOAD (1)
@@ -514,7 +518,7 @@ public final class OptionalUser$Companion : java/lang/Object {
         LABEL (L2)
     }
 
-    public void <init>(kotlin.jvm.internal.DefaultConstructorMarker marker) {
+    public void <init>(kotlin.jvm.internal.DefaultConstructorMarker p0) {
         LABEL (L0)
           ALOAD (0)
           INVOKESPECIAL (OptionalUser$Companion, <init>, ()V)
@@ -557,7 +561,7 @@ public final class OptionalUser : java/lang/Object {
         LABEL (L3)
     }
 
-    public void <init>(User user, int $mask0, kotlin.jvm.internal.DefaultConstructorMarker $marker) {
+    public void <init>(User user, int p1, kotlin.jvm.internal.DefaultConstructorMarker p2) {
         LABEL (L0)
         LINENUMBER (10)
           ILOAD (2)
@@ -621,7 +625,7 @@ public final class OptionalUser : java/lang/Object {
         LABEL (L1)
     }
 
-    public final static User access$prop$getUser$2(OptionalUser $this)
+    public final static User access$prop$getUser$2(OptionalUser p0)
 
     public final User getUser()
 }
@@ -780,7 +784,7 @@ public final class User$$serializer : java/lang/Object, kotlinx/serialization/in
         LABEL (L10)
     }
 
-    public java.lang.Object deserialize(kotlinx.serialization.Decoder decoder) {
+    public java.lang.Object deserialize(kotlinx.serialization.Decoder p0) {
         LABEL (L0)
           ALOAD (0)
           ALOAD (1)
@@ -793,7 +797,7 @@ public final class User$$serializer : java/lang/Object, kotlinx/serialization/in
 
     public User patch(kotlinx.serialization.Decoder decoder, User old)
 
-    public java.lang.Object patch(kotlinx.serialization.Decoder decoder, java.lang.Object old)
+    public java.lang.Object patch(kotlinx.serialization.Decoder p0, java.lang.Object p1)
 
     public void serialize(kotlinx.serialization.Encoder encoder, User obj) {
         LABEL (L0)
@@ -829,11 +833,13 @@ public final class User$$serializer : java/lang/Object, kotlinx/serialization/in
           ALOAD (4)
           ALOAD (3)
           INVOKEINTERFACE (kotlinx/serialization/CompositeEncoder, endStructure, (Lkotlinx/serialization/SerialDescriptor;)V)
-          RETURN
         LABEL (L2)
+        LINENUMBER (7)
+          RETURN
+        LABEL (L3)
     }
 
-    public void serialize(kotlinx.serialization.Encoder encoder, java.lang.Object obj) {
+    public void serialize(kotlinx.serialization.Encoder p0, java.lang.Object p1) {
         LABEL (L0)
           ALOAD (0)
           ALOAD (1)
@@ -856,7 +862,7 @@ public final class User$Companion : java/lang/Object {
         LABEL (L2)
     }
 
-    public void <init>(kotlin.jvm.internal.DefaultConstructorMarker marker) {
+    public void <init>(kotlin.jvm.internal.DefaultConstructorMarker p0) {
         LABEL (L0)
           ALOAD (0)
           INVOKESPECIAL (User$Companion, <init>, ()V)
@@ -950,9 +956,9 @@ public final class User : java/lang/Object {
         LABEL (L6)
     }
 
-    public final static java.lang.String access$prop$getFirstName$0(User $this)
+    public final static java.lang.String access$prop$getFirstName$0(User p0)
 
-    public final static java.lang.String access$prop$getLastName$1(User $this)
+    public final static java.lang.String access$prop$getLastName$1(User p0)
 
     public final java.lang.String getFirstName()
 

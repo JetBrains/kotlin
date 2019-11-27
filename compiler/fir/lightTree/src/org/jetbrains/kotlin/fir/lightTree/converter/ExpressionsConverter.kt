@@ -127,7 +127,7 @@ class ExpressionsConverter(
             }
         }
 
-        return FirAnonymousFunctionImpl(null, session, implicitType, implicitType, FirAnonymousFunctionSymbol()).apply {
+        return FirAnonymousFunctionImpl(null, session, implicitType, implicitType, FirAnonymousFunctionSymbol(), isLambda = true).apply {
             context.firFunctions += this
             var destructuringBlock: FirExpression? = null
             for (valueParameter in valueParameterList) {
@@ -434,30 +434,43 @@ class ExpressionsConverter(
         val firTypeArguments = mutableListOf<FirTypeProjection>()
         val valueArguments = mutableListOf<LighterASTNode>()
         var additionalArgument: FirExpression? = null
+        var hasArguments = false
         callSuffix.forEachChildren {
             when (it.tokenType) {
                 REFERENCE_EXPRESSION -> name = it.asText
                 TYPE_ARGUMENT_LIST -> firTypeArguments += declarationsConverter.convertTypeArguments(it)
-                VALUE_ARGUMENT_LIST, LAMBDA_ARGUMENT -> valueArguments += it
+                VALUE_ARGUMENT_LIST, LAMBDA_ARGUMENT -> {
+                    hasArguments = true
+                    valueArguments += it
+                }
                 else -> if (it.tokenType != TokenType.ERROR_ELEMENT) additionalArgument =
                     getAsFirExpression(it, "Incorrect invoke receiver")
             }
         }
 
-        return FirFunctionCallImpl(null).apply {
-            this.calleeReference = when {
-                name != null -> FirSimpleNamedReference(null, name.nameAsSafeName(), null)
-                additionalArgument != null -> {
-                    explicitReceiver = additionalArgument!!
-                    FirSimpleNamedReference(null, OperatorNameConventions.INVOKE, null)
-                }
-                else -> FirErrorNamedReferenceImpl(null, FirSimpleDiagnostic("Call has no callee", DiagnosticKind.Syntax))
+        val (calleeReference, explicitReceiver) = when {
+            name != null -> FirSimpleNamedReference(null, name.nameAsSafeName(), null) to null
+            additionalArgument != null -> {
+                FirSimpleNamedReference(null, OperatorNameConventions.INVOKE, null) to additionalArgument!!
             }
+            else -> FirErrorNamedReferenceImpl(null, FirSimpleDiagnostic("Call has no callee", DiagnosticKind.Syntax)) to null
+        }
 
-            context.firFunctionCalls += this
-            this.extractArgumentsFrom(valueArguments.flatMap { convertValueArguments(it) }, stubMode)
+        return if (hasArguments) {
+            FirFunctionCallImpl(null).apply {
+                this.calleeReference = calleeReference
+
+                context.firFunctionCalls += this
+                this.extractArgumentsFrom(valueArguments.flatMap { convertValueArguments(it) }, stubMode)
+                context.firFunctionCalls.removeLast()
+            }
+        } else {
+            FirQualifiedAccessExpressionImpl(null).apply {
+                this.calleeReference = calleeReference
+            }
+        }.apply {
+            this.explicitReceiver = explicitReceiver
             typeArguments += firTypeArguments
-            context.firFunctionCalls.removeLast()
         }
     }
 

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.debugger.evaluate.compilation
 import com.intellij.debugger.engine.evaluation.EvaluateExceptionUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.getCallLabelForLambdaArgument
 import org.jetbrains.kotlin.descriptors.*
@@ -195,6 +196,9 @@ class CodeFragmentParameterAnalyzer(
                     if (descriptor is FunctionDescriptor && descriptor.isSuspend) {
                         evaluationStatus.error(EvaluationError.SuspendCall)
                         throw EvaluateExceptionUtil.createEvaluateException("Evaluation of 'suspend' calls is not supported")
+                    }
+                    if (descriptor is ConstructorDescriptor && KotlinBuiltIns.isNothing(descriptor.returnType)) {
+                        throw EvaluateExceptionUtil.createEvaluateException("'Nothing' can't be instantiated")
                     }
                 }
 

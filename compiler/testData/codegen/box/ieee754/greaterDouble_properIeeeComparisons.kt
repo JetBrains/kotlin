@@ -1,4 +1,5 @@
 // !LANGUAGE: +ProperIeee754Comparisons
+// IGNORE_BACKEND_FIR: JVM_IR
 
 fun greater1(a: Double, b: Double) = a > b
 

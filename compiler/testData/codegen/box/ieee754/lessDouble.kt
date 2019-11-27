@@ -1,4 +1,5 @@
 // !LANGUAGE: -ProperIeee754Comparisons
+// IGNORE_BACKEND_FIR: JVM_IR
 // DONT_TARGET_EXACT_BACKEND: JS_IR
 
 fun less1(a: Double, b: Double) = a < b

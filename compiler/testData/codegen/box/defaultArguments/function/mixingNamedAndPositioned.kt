@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 fun foo(a: String = "Companion", b: Int = 1, c: Long = 2): String {
   return "$a $b $c"
 }

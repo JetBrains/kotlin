@@ -27,16 +27,17 @@ class FirFunctionCallImpl(
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     override var safe: Boolean = false
+    override val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
     override var explicitReceiver: FirExpression? = null
     override var dispatchReceiver: FirExpression = FirNoReceiverExpression
     override var extensionReceiver: FirExpression = FirNoReceiverExpression
     override val arguments: MutableList<FirExpression> = mutableListOf()
-    override val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
     override lateinit var calleeReference: FirNamedReference
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         typeRef.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
+        typeArguments.forEach { it.accept(visitor, data) }
         explicitReceiver?.accept(visitor, data)
         if (dispatchReceiver !== explicitReceiver) {
             dispatchReceiver.accept(visitor, data)
@@ -45,13 +46,13 @@ class FirFunctionCallImpl(
             extensionReceiver.accept(visitor, data)
         }
         arguments.forEach { it.accept(visitor, data) }
-        typeArguments.forEach { it.accept(visitor, data) }
         calleeReference.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirFunctionCallImpl {
         typeRef = typeRef.transformSingle(transformer, data)
         annotations.transformInplace(transformer, data)
+        transformTypeArguments(transformer, data)
         explicitReceiver = explicitReceiver?.transformSingle(transformer, data)
         if (dispatchReceiver !== explicitReceiver) {
             dispatchReceiver = dispatchReceiver.transformSingle(transformer, data)
@@ -60,8 +61,12 @@ class FirFunctionCallImpl(
             extensionReceiver = extensionReceiver.transformSingle(transformer, data)
         }
         transformArguments(transformer, data)
-        transformTypeArguments(transformer, data)
         transformCalleeReference(transformer, data)
+        return this
+    }
+
+    override fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirFunctionCallImpl {
+        typeArguments.transformInplace(transformer, data)
         return this
     }
 
@@ -82,11 +87,6 @@ class FirFunctionCallImpl(
 
     override fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirFunctionCallImpl {
         arguments.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirFunctionCallImpl {
-        typeArguments.transformInplace(transformer, data)
         return this
     }
 

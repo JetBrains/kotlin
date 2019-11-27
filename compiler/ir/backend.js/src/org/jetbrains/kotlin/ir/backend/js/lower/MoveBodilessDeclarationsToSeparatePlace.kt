@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.symbols.IrExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
+import org.jetbrains.kotlin.ir.util.UniqId
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.util.transformFlat
@@ -49,6 +50,10 @@ private class DescriptorlessExternalPackageFragmentSymbol : IrExternalPackageFra
     private var _owner: IrExternalPackageFragment? = null
     override val owner get() = _owner!!
 
+    override var uniqId: UniqId
+        get() = error("Operation is unsupported")
+        set(value) { error("Operation is unsupported") }
+
     override val isBound get() = _owner != null
 
     override fun bind(owner: IrExternalPackageFragment) {
@@ -67,8 +72,11 @@ private class DescriptorlessIrFileSymbol : IrFileSymbol {
     private var _owner: IrFile? = null
     override val owner get() = _owner!!
 
-    override val isBound get() = _owner != null
+    override var uniqId: UniqId
+        get() = error("Operation is unsupported")
+        set(value) { error("Operation is unsupported") }
 
+    override val isBound get() = _owner != null
 }
 
 

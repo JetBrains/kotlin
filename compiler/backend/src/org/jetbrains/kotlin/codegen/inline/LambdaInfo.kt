@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.codegen.coroutines.getOrCreateJvmSuspendFunctionView
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.isReleaseCoroutines
+import org.jetbrains.kotlin.coroutines.isSuspendLambda
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
@@ -40,6 +41,8 @@ interface FunctionalArgument
 abstract class LambdaInfo(@JvmField val isCrossInline: Boolean) : FunctionalArgument, ReturnLabelOwner {
 
     abstract val isBoundCallableReference: Boolean
+
+    abstract val isSuspend: Boolean
 
     abstract val lambdaClassType: Type
 
@@ -82,7 +85,20 @@ abstract class LambdaInfo(@JvmField val isCrossInline: Boolean) : FunctionalArgu
 class NonInlineableArgumentForInlineableParameterCalledInSuspend(val isSuspend: Boolean) : FunctionalArgument
 object NonInlineableArgumentForInlineableSuspendParameter : FunctionalArgument
 
-class DefaultLambda(
+
+class PsiDefaultLambda(
+    lambdaClassType: Type,
+    capturedArgs: Array<Type>,
+    parameterDescriptor: ValueParameterDescriptor,
+    offset: Int,
+    needReification: Boolean
+) : DefaultLambda(lambdaClassType, capturedArgs, parameterDescriptor, offset, needReification) {
+    override fun mapAsmSignature(sourceCompiler: SourceCompilerForInline): Method {
+        return sourceCompiler.state.typeMapper.mapSignatureSkipGeneric(invokeMethodDescriptor).asmMethod
+    }
+}
+
+abstract class DefaultLambda(
     override val lambdaClassType: Type,
     private val capturedArgs: Array<Type>,
     val parameterDescriptor: ValueParameterDescriptor,
@@ -90,23 +106,25 @@ class DefaultLambda(
     val needReification: Boolean
 ) : LambdaInfo(parameterDescriptor.isCrossinline) {
 
-    override var isBoundCallableReference by Delegates.notNull<Boolean>()
+    final override var isBoundCallableReference by Delegates.notNull<Boolean>()
         private set
 
     val parameterOffsetsInDefault: MutableList<Int> = arrayListOf()
 
-    override lateinit var invokeMethod: Method
+    final override lateinit var invokeMethod: Method
         private set
 
     override lateinit var invokeMethodDescriptor: FunctionDescriptor
 
-    override lateinit var capturedVars: List<CapturedParamDesc>
+    final override lateinit var capturedVars: List<CapturedParamDesc>
         private set
 
     override fun isReturnFromMe(labelName: String): Boolean = false
 
     var originalBoundReceiverType: Type? = null
         private set
+
+    override val isSuspend = parameterDescriptor.isSuspendLambda
 
     override fun generateLambdaBody(sourceCompiler: SourceCompilerForInline, reifiedTypeInliner: ReifiedTypeInliner<*>) {
         val classReader = buildClassReaderByInternalName(sourceCompiler.state, lambdaClassType.internalName)
@@ -163,12 +181,13 @@ class DefaultLambda(
         isBoundCallableReference = (isFunctionReference || isPropertyReference) && capturedVars.isNotEmpty()
 
         val methodName = (if (isPropertyReference) OperatorNameConventions.GET else OperatorNameConventions.INVOKE).asString()
-        val signature = sourceCompiler.state.typeMapper.mapSignatureSkipGeneric(invokeMethodDescriptor).asmMethod.descriptor
+
+        val signature = mapAsmSignature(sourceCompiler)
 
         node = getMethodNode(
             classReader.b,
             methodName,
-            signature,
+            signature.descriptor,
             lambdaClassType,
             signatureAmbiguity = true
         ) ?: error("Can't find method '$methodName$signature' in '${classReader.className}'")
@@ -180,6 +199,8 @@ class DefaultLambda(
             reifiedTypeInliner.reifyInstructions(node.node)
         }
     }
+
+    protected abstract fun mapAsmSignature(sourceCompiler: SourceCompilerForInline): Method
 }
 
 internal fun Type.boxReceiverForBoundReference() =
@@ -218,6 +239,8 @@ class PsiExpressionLambda(
 
     private val labels: Set<String>
 
+    override val isSuspend: Boolean
+
     var closure: CalculatedClosure
         private set
 
@@ -253,6 +276,7 @@ class PsiExpressionLambda(
 
         labels = InlineCodegen.getDeclarationLabels(expression, invokeMethodDescriptor)
         invokeMethod = typeMapper.mapAsmMethod(invokeMethodDescriptor)
+        isSuspend = invokeMethodDescriptor.isSuspend
     }
 
     override val capturedVars: List<CapturedParamDesc> by lazy {

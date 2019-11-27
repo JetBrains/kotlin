@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
@@ -52,13 +51,13 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                 Key(
                     kotlinJvmInternalUnsafe,
                     null,
-                    "monitorEnter",
+                    "access\$monitorEnter\$0",
                     listOf(KotlinBuiltIns.FQ_NAMES.any.toSafe())
                 ) to MonitorInstruction.MONITOR_ENTER,
                 Key(
                     kotlinJvmInternalUnsafe,
                     null,
-                    "monitorExit",
+                    "access\$monitorExit\$1",
                     listOf(KotlinBuiltIns.FQ_NAMES.any.toSafe())
                 ) to MonitorInstruction.MONITOR_EXIT,
                 Key(
@@ -81,14 +80,16 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                 ) to Clone,
                 irBuiltIns.eqeqSymbol.toKey()!! to Equals(KtTokens.EQEQ),
                 irBuiltIns.eqeqeqSymbol.toKey()!! to Equals(KtTokens.EQEQEQ),
-                irBuiltIns.ieee754equalsFunByOperandType[irBuiltIns.float]!!.toKey()!! to Ieee754Equals(Type.FLOAT_TYPE),
-                irBuiltIns.ieee754equalsFunByOperandType[irBuiltIns.double]!!.toKey()!! to Ieee754Equals(Type.DOUBLE_TYPE),
+                irBuiltIns.ieee754equalsFunByOperandType[irBuiltIns.floatClass]!!.toKey()!! to Ieee754Equals(Type.FLOAT_TYPE),
+                irBuiltIns.ieee754equalsFunByOperandType[irBuiltIns.doubleClass]!!.toKey()!! to Ieee754Equals(Type.DOUBLE_TYPE),
                 irBuiltIns.booleanNotSymbol.toKey()!! to Not,
                 irBuiltIns.enumValueOfSymbol.toKey()!! to IrEnumValueOf,
                 irBuiltIns.noWhenBranchMatchedExceptionSymbol.toKey()!! to IrNoWhenBranchMatchedException,
                 irBuiltIns.illegalArgumentExceptionSymbol.toKey()!! to IrIllegalArgumentException,
                 irBuiltIns.andandSymbol.toKey()!! to AndAnd,
                 irBuiltIns.ororSymbol.toKey()!! to OrOr,
+                irBuiltIns.dataClassArrayMemberHashCodeSymbol.toKey()!! to IrDataClassArrayMemberHashCode,
+                irBuiltIns.dataClassArrayMemberToStringSymbol.toKey()!! to IrDataClassArrayMemberToString,
                 symbols.unsafeCoerceIntrinsic.toKey()!! to UnsafeCoerce,
                 symbols.signatureStringIntrinsic.toKey()!! to SignatureString,
                 symbols.reassignParameterIntrinsic.toKey()!! to ReassignParameter
@@ -240,11 +241,11 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
 
 
         private fun primitiveComparisonIntrinsics(
-            typeToIrFun: Map<SimpleType, IrSimpleFunctionSymbol>,
+            typeToIrFun: Map<IrClassifierSymbol, IrSimpleFunctionSymbol>,
             operator: KtSingleValueToken
         ): List<Pair<Key, PrimitiveComparison>> =
             typeToIrFun.map { (type, irFunSymbol) ->
-                irFunSymbol.toKey()!! to PrimitiveComparison(type, operator)
+                irFunSymbol.toKey()!! to PrimitiveComparison(type.descriptor.defaultType, operator)
             }
     }
 }

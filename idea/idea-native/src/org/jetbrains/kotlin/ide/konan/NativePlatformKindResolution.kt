@@ -30,7 +30,9 @@ import org.jetbrains.kotlin.descriptors.konan.KlibModuleOrigin
 import org.jetbrains.kotlin.ide.konan.NativeLibraryInfo.Companion.safeAbiVersion
 import org.jetbrains.kotlin.ide.konan.NativeLibraryInfo.Companion.isCompatible
 import org.jetbrains.kotlin.ide.konan.analyzer.NativeResolverForModuleFactory
+import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.LibraryInfo
+import org.jetbrains.kotlin.idea.caches.project.SdkInfo
 import org.jetbrains.kotlin.idea.caches.project.lazyClosure
 import org.jetbrains.kotlin.idea.caches.resolve.BuiltInsCacheKey
 import org.jetbrains.kotlin.idea.compiler.IDELanguageSettingsProvider
@@ -130,7 +132,7 @@ class NativePlatformKindResolution : IdePlatformKindResolution {
 
     override fun getKeyForBuiltIns(moduleInfo: ModuleInfo): BuiltInsCacheKey = NativeBuiltInsCacheKey
 
-    override fun createBuiltIns(moduleInfo: ModuleInfo, projectContext: ProjectContext) =
+    override fun createBuiltIns(moduleInfo: ModuleInfo, projectContext: ProjectContext, sdkDependency: SdkInfo?) =
         createKotlinNativeBuiltIns(moduleInfo, projectContext)
 
     object NativeBuiltInsCacheKey : BuiltInsCacheKey

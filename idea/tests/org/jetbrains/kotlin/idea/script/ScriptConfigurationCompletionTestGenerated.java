@@ -37,4 +37,9 @@ public class ScriptConfigurationCompletionTestGenerated extends AbstractScriptCo
     public void testConflictingModuleJavaLib() throws Exception {
         runTest("idea/testData/script/definition/completion/conflictingModuleJavaLib/");
     }
+
+    @TestMetadata("implicitReceiver")
+    public void testImplicitReceiver() throws Exception {
+        runTest("idea/testData/script/definition/completion/implicitReceiver/");
+    }
 }

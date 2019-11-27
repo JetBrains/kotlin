@@ -10,6 +10,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.PsiUtil
 import com.intellij.refactoring.PackageWrapper
 import com.intellij.refactoring.copy.CopyHandler
 import com.intellij.refactoring.move.moveClassesOrPackages.MultipleRootsMoveDestination
@@ -21,6 +23,7 @@ import org.jetbrains.kotlin.idea.refactoring.AbstractMultifileRefactoringTest
 import org.jetbrains.kotlin.idea.refactoring.copy.CopyKotlinDeclarationsHandler.Companion.newName
 import org.jetbrains.kotlin.idea.refactoring.runRefactoringTest
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.utils.ifEmpty
 
 private enum class CopyAction : AbstractMultifileRefactoringTest.RefactoringAction {
@@ -32,7 +35,11 @@ private enum class CopyAction : AbstractMultifileRefactoringTest.RefactoringActi
                 if (virtualFile.isDirectory) virtualFile.toPsiDirectory(project)!! else virtualFile.toPsiFile(project)!!
             }
 
-            DEFAULT.runRefactoring(rootDir, mainFile, elementsToCopy, config)
+            val typesToCopy = if (config.getNullableString("extractClassOrObject") == "true")
+                elementsToCopy.flatMap { PsiTreeUtil.collectElementsOfType(it, KtClassOrObject::class.java) }
+            else elementsToCopy
+
+            DEFAULT.runRefactoring(rootDir, mainFile, typesToCopy, config)
         }
     },
 

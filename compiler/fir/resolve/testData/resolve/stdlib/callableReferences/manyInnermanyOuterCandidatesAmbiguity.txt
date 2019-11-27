@@ -10,5 +10,5 @@ FILE: manyInnermanyOuterCandidatesAmbiguity.kt
         ^bar Int(1)
     }
     public final fun main(): R|kotlin/Unit| {
-        <Ambiguity: foo, [/foo, /foo]>#(::bar#)
+        <Ambiguity: foo, [/foo, /foo]>#(::<Unresolved reference: bar>#)
     }

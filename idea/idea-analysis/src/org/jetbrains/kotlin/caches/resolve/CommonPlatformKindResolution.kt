@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analyzer.common.CommonResolverForModuleFactory
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.context.ProjectContext
+import org.jetbrains.kotlin.idea.caches.project.SdkInfo
 import org.jetbrains.kotlin.idea.caches.resolve.BuiltInsCacheKey
 import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
 import org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind
@@ -34,7 +35,7 @@ class CommonPlatformKindResolution : IdePlatformKindResolution {
 
     override fun getKeyForBuiltIns(moduleInfo: ModuleInfo): BuiltInsCacheKey = BuiltInsCacheKey.DefaultBuiltInsKey
 
-    override fun createBuiltIns(moduleInfo: ModuleInfo, projectContext: ProjectContext): KotlinBuiltIns {
+    override fun createBuiltIns(moduleInfo: ModuleInfo, projectContext: ProjectContext, sdkDependency: SdkInfo?): KotlinBuiltIns {
         return DefaultBuiltIns.Instance
     }
 

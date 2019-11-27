@@ -13,9 +13,10 @@ val jarBaseName = property("archivesBaseName") as String
 val proguardLibraryJars by configurations.creating
 
 dependencies {
-    compileOnly("org.apache.ivy:ivy:2.4.0")
+    compileOnly("org.apache.ivy:ivy:2.5.0")
     compileOnly(project(":compiler:cli-common"))
     compileOnly(project(":kotlin-scripting-jvm-host"))
+    compileOnly(project(":kotlin-scripting-dependencies"))
     compileOnly(project(":kotlin-script-util"))
     testCompile(project(":kotlin-scripting-jvm-host"))
     testCompile(project(":kotlin-script-util"))
@@ -26,8 +27,9 @@ dependencies {
     embedded(project(":kotlin-scripting-common")) { isTransitive = false }
     embedded(project(":kotlin-scripting-jvm")) { isTransitive = false }
     embedded(project(":kotlin-scripting-jvm-host")) { isTransitive = false }
+    embedded(project(":kotlin-scripting-dependencies")) { isTransitive = false }
     embedded(project(":kotlin-script-util")) { isTransitive = false }
-    embedded("org.apache.ivy:ivy:2.4.0")
+    embedded("org.apache.ivy:ivy:2.5.0")
     embedded(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
     proguardLibraryJars(files(firstFromJavaHomeThatExists("jre/lib/rt.jar", "../Classes/classes.jar"),
                               firstFromJavaHomeThatExists("jre/lib/jsse.jar", "../Classes/jsse.jar"),

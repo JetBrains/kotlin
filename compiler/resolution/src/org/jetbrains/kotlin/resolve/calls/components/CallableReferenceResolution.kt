@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastI
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.UnwrappedType
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.checker.captureFromExpression
 import org.jetbrains.kotlin.types.expressions.CoercionStrategy
 import org.jetbrains.kotlin.types.typeUtil.immediateSupertypes
@@ -178,7 +179,8 @@ class CallableReferencesCandidateFactory(
             candidateDescriptor,
             dispatchCallableReceiver,
             extensionCallableReceiver,
-            expectedType
+            expectedType,
+            callComponents.builtIns
         )
 
         if (defaults != 0 &&
@@ -224,10 +226,15 @@ class CallableReferencesCandidateFactory(
         )
     }
 
+    private enum class VarargMappingState {
+        UNMAPPED, MAPPED_WITH_PLAIN_ARGS, MAPPED_WITH_ARRAY
+    }
+
     private fun getArgumentAndReturnTypeUseMappingByExpectedType(
         descriptor: FunctionDescriptor,
         expectedType: UnwrappedType?,
-        unboundReceiverCount: Int
+        unboundReceiverCount: Int,
+        builtins: KotlinBuiltIns
     ): Triple<Array<KotlinType>, CoercionStrategy, Int>? {
         val inputOutputTypes = extractInputOutputTypesFromCallableReferenceExpectedType(expectedType) ?: return null
 
@@ -244,13 +251,29 @@ class CallableReferencesCandidateFactory(
          * fun foo(a: A, b: B = B(), vararg c: C)
          */
         var defaults = 0
+        var varargMappingState = VarargMappingState.UNMAPPED
         val mappedArguments = arrayOfNulls<KotlinType?>(fakeArguments.size)
+
         for ((valueParameter, resolvedArgument) in argumentMapping.parameterToCallArgumentMap) {
             for (fakeArgument in resolvedArgument.arguments) {
                 val index = (fakeArgument as FakeKotlinCallArgumentForCallableReference).index
                 val substitutedParameter = descriptor.valueParameters.getOrNull(valueParameter.index) ?: continue
 
-                mappedArguments[index] = substitutedParameter.varargElementType ?: substitutedParameter.type
+                val mappedArgument: KotlinType?
+                if (substitutedParameter.isVararg) {
+                    val (varargType, newVarargMappingState) = varargParameterTypeByExpectedParameter(
+                        inputOutputTypes.inputTypes[index],
+                        substitutedParameter,
+                        varargMappingState,
+                        builtins
+                    )
+                    varargMappingState = newVarargMappingState
+                    mappedArgument = varargType
+                } else {
+                    mappedArgument = substitutedParameter.type
+                }
+
+                mappedArguments[index] = mappedArgument
             }
             if (resolvedArgument == ResolvedCallArgument.DefaultArgument) defaults++
         }
@@ -265,11 +288,42 @@ class CallableReferencesCandidateFactory(
         return Triple(mappedArguments as Array<KotlinType>, coercion, defaults)
     }
 
+    private fun varargParameterTypeByExpectedParameter(
+        expectedParameterType: KotlinType,
+        substitutedParameter: ValueParameterDescriptor,
+        varargMappingState: VarargMappingState,
+        builtins: KotlinBuiltIns
+    ): Pair<KotlinType?, VarargMappingState> {
+        val elementType = substitutedParameter.varargElementType
+            ?: error("Vararg parameter $substitutedParameter does not have vararg type")
+
+        return when (varargMappingState) {
+            VarargMappingState.UNMAPPED -> {
+                if (KotlinBuiltIns.isArrayOrPrimitiveArray(expectedParameterType)) {
+                    val arrayType = builtins.getPrimitiveArrayKotlinTypeByPrimitiveKotlinType(elementType)
+                        ?: builtins.getArrayType(Variance.OUT_VARIANCE, elementType)
+                    arrayType to VarargMappingState.MAPPED_WITH_ARRAY
+                } else {
+                    elementType to VarargMappingState.MAPPED_WITH_PLAIN_ARGS
+                }
+            }
+            VarargMappingState.MAPPED_WITH_PLAIN_ARGS -> {
+                if (KotlinBuiltIns.isArrayOrPrimitiveArray(expectedParameterType))
+                    null to VarargMappingState.MAPPED_WITH_PLAIN_ARGS
+                else
+                    elementType to VarargMappingState.MAPPED_WITH_PLAIN_ARGS
+            }
+            VarargMappingState.MAPPED_WITH_ARRAY ->
+                null to VarargMappingState.MAPPED_WITH_ARRAY
+        }
+    }
+
     private fun buildReflectionType(
         descriptor: CallableDescriptor,
         dispatchReceiver: CallableReceiver?,
         extensionReceiver: CallableReceiver?,
-        expectedType: UnwrappedType?
+        expectedType: UnwrappedType?,
+        builtins: KotlinBuiltIns
     ): Pair<UnwrappedType, /*defaults*/ Int> {
         val argumentsAndReceivers = ArrayList<KotlinType>(descriptor.valueParameters.size + 2)
 
@@ -281,7 +335,7 @@ class CallableReferencesCandidateFactory(
         }
 
         val descriptorReturnType = descriptor.returnType
-                ?: ErrorUtils.createErrorType("Error return type for descriptor: $descriptor")
+            ?: ErrorUtils.createErrorType("Error return type for descriptor: $descriptor")
 
         when (descriptor) {
             is PropertyDescriptor -> {
@@ -305,7 +359,8 @@ class CallableReferencesCandidateFactory(
                 val defaults: Int
                 val argumentsAndExpectedTypeCoercion = getArgumentAndReturnTypeUseMappingByExpectedType(
                     descriptor, expectedType,
-                    unboundReceiverCount = argumentsAndReceivers.size
+                    unboundReceiverCount = argumentsAndReceivers.size,
+                    builtins = builtins
                 )
 
                 if (argumentsAndExpectedTypeCoercion == null) {

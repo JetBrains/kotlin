@@ -27,6 +27,14 @@ abstract class HighlightingVisitor protected constructor(
     private val holder: AnnotationHolder
 ) : KtVisitorVoid() {
 
+    protected fun createInfoAnnotation(element: PsiElement, textAttributes: TextAttributesKey, message: String? = null) {
+        createInfoAnnotation(element.textRange, textAttributes, message)
+    }
+
+    protected fun createInfoAnnotation(range: TextRange, textAttributes: TextAttributesKey, message: String? = null) {
+        createInfoAnnotation(range, message).textAttributes = textAttributes
+    }
+
     protected fun createInfoAnnotation(element: PsiElement, message: String? = null): Annotation =
         createInfoAnnotation(element.textRange, message)
 
@@ -35,13 +43,13 @@ abstract class HighlightingVisitor protected constructor(
 
     protected fun highlightName(element: PsiElement, attributesKey: TextAttributesKey, message: String? = null) {
         if (NameHighlighter.namesHighlightingEnabled && !element.textRange.isEmpty) {
-            createInfoAnnotation(element, message).textAttributes = attributesKey
+            createInfoAnnotation(element, attributesKey, message)
         }
     }
 
     protected fun highlightName(textRange: TextRange, attributesKey: TextAttributesKey, message: String? = null) {
         if (NameHighlighter.namesHighlightingEnabled) {
-            createInfoAnnotation(textRange, message).textAttributes = attributesKey
+            createInfoAnnotation(textRange, attributesKey, message)
         }
     }
 }

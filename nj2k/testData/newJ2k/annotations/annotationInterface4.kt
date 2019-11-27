@@ -1,4 +1,5 @@
 internal annotation class Anon(vararg val value: String, val x: Int = 1)
+
 @Anon("a", "b")
 internal interface I1
 

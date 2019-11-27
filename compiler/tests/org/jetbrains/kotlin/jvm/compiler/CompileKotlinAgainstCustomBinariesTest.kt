@@ -199,6 +199,30 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         doTestBrokenLibrary("library", "test/Super.class")
     }
 
+    fun testIncompleteHierarchyMissingInterface() {
+        doTestBrokenLibrary("library", "test/A.class")
+    }
+
+    fun testIncompleteHierarchyOnlyImport() {
+        doTestBrokenLibrary("library", "test/Super.class")
+    }
+
+    fun testMissingStaticClass() {
+        doTestBrokenLibrary("library", "test/C\$D.class")
+    }
+
+    fun testIncompleteHierarchyNoErrors() {
+        doTestBrokenLibrary("library", "test/Super.class")
+    }
+
+    fun testIncompleteHierarchyErrorPositions() {
+        doTestBrokenLibrary("library", "test/Super.class")
+    }
+
+    fun testIncompleteHierarchyOfEnclosingClass() {
+        doTestBrokenLibrary("library", "test/Super.class")
+    }
+
     fun testMissingDependencySimple() {
         doTestBrokenLibrary("library", "a/A.class")
     }

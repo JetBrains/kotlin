@@ -98,13 +98,18 @@ abstract class KotlinLibrarySearchPathResolver<L: KotlinLibrary>(
 
     override fun resolve(unresolved: UnresolvedLibrary, isDefaultLink: Boolean): L {
         val givenPath = unresolved.path
-        val fileSequence = resolutionSequence(givenPath)
-        val matching = fileSequence.map { libraryBuilder(it, isDefaultLink) }
-            .map { it.takeIf { libraryMatch(it, unresolved) } }
-            .filterNotNull()
+        try {
+            val fileSequence = resolutionSequence(givenPath)
+            val matching = fileSequence.map { libraryBuilder(it, isDefaultLink) }
+                .map { it.takeIf { libraryMatch(it, unresolved) } }
+                .filterNotNull()
 
-        return matching.firstOrNull() ?: run {
-            logger.fatal("Could not find \"$givenPath\" in ${searchRoots.map { it.absolutePath }}.")
+            return matching.firstOrNull() ?: run {
+                logger.fatal("Could not find \"$givenPath\" in ${searchRoots.map { it.absolutePath }}.")
+            }
+        } catch (e: Throwable) {
+            logger.error("Failed to resolve Kotlin library: $givenPath")
+            throw e
         }
     }
 

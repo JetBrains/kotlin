@@ -28,7 +28,8 @@ open class FirNamedFunctionSymbol(
 ) : FirFunctionSymbol<FirSimpleFunction>(callableId)
 
 class FirConstructorSymbol(
-    callableId: CallableId
+    callableId: CallableId,
+    override val overriddenSymbol: FirConstructorSymbol? = null
 ) : FirFunctionSymbol<FirConstructor>(callableId)
 
 class FirAccessorSymbol(

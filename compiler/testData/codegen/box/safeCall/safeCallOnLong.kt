@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 fun f(b : Long.(Long)->Long) = 1L?.b(2L)
 
 fun box(): String {

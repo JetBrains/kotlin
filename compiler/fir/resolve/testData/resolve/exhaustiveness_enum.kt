@@ -47,3 +47,10 @@ fun test_2(e: Enum?) {
         else -> 4
     }
 }
+
+fun test_3(e: Enum) {
+    val a = when (e) {
+        Enum.A, Enum.B -> 1
+        Enum.C -> 2
+    }
+}

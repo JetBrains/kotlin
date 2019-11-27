@@ -29,7 +29,9 @@ abstract class YarnBasics : NpmApi {
 
         project.execWithProgress(description) { exec ->
             exec.executable = nodeJsEnv.nodeExecutable
-            exec.args = listOf(yarnEnv.home.resolve("bin/yarn.js").absolutePath) + args
+            exec.args = listOf(yarnEnv.home.resolve("bin/yarn.js").absolutePath) +
+                    args +
+                    if (project.logger.isDebugEnabled) "--verbose" else ""
             exec.workingDir = dir
         }
     }
@@ -67,8 +69,7 @@ abstract class YarnBasics : NpmApi {
                         val scopedName = dep.scopedName
                         val child = NpmDependency(
                             src.project,
-                            scopedName.scope,
-                            scopedName.name,
+                            scopedName.toString(),
                             dep.version ?: "*"
                         )
                         child.parent = src

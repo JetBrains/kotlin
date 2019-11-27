@@ -1,7 +1,7 @@
 public open class Some : R|kotlin/Any| {
     public open operator fun foo(param: R|kotlin/Int|): R|kotlin/Boolean|
 
-    public open operator fun bar(arr: R|kotlin/IntArray|): R|kotlin/Array<ft<kotlin/String, kotlin/String?>!>|
+    public open operator fun bar(arr: R|ft<kotlin/IntArray, kotlin/IntArray?>!|): R|ft<kotlin/Array<ft<kotlin/String, kotlin/String?>!>, kotlin/Array<out ft<kotlin/String, kotlin/String?>!>?>!|
 
     public constructor(): R|Some|
 

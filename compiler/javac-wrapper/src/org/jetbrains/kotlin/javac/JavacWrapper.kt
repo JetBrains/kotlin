@@ -102,6 +102,8 @@ class JavacWrapper(
         override fun parseFiles(files: Iterable<JavaFileObject>?) = compilationUnits
     }
 
+    private val aptOn = arguments == null || "-proc:none" !in arguments
+
     private val fileManager = context[JavaFileManager::class.java] as JavacFileManager
 
     init {
@@ -168,7 +170,9 @@ class JavacWrapper(
         if (javaFilesNumber == 0) return true
 
         setClassPathForCompilation(outDir)
-        makeOutputDirectoryClassesVisible()
+        if (!aptOn) {
+            makeOutputDirectoryClassesVisible()
+        }
 
         val outputPath =
             // Includes a hack with 'takeIf' for CLI test, to have stable string here (independent from random test directory)
@@ -371,7 +375,9 @@ class JavacWrapper(
                 // This line is necessary for e.g. CliTestGenerated.jvm.javacKotlinJavaInterdependency to work
                 // In general, it makes compiled Kotlin classes from the module visible for javac
                 // It's necessary when javac work with APT (without -proc:none flag)
-                fileManager.setLocation(CLASS_PATH, fileManager.getLocation(CLASS_PATH) + outputDir)
+                if (aptOn) {
+                    fileManager.setLocation(CLASS_PATH, fileManager.getLocation(CLASS_PATH) + outputDir)
+                }
             }
             outputDir.mkdirs()
             fileManager.setLocation(CLASS_OUTPUT, listOf(outputDir))

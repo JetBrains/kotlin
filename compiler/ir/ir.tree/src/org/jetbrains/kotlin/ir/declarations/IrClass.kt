@@ -32,7 +32,7 @@ interface IrClass :
     override var visibility: Visibility
 
     val kind: ClassKind
-    val modality: Modality
+    var modality: Modality
     val isCompanion: Boolean
     val isInner: Boolean
     val isData: Boolean

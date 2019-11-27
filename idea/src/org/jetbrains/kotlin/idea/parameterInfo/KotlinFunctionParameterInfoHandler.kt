@@ -19,6 +19,9 @@ package org.jetbrains.kotlin.idea.parameterInfo
 import com.intellij.codeInsight.CodeInsightBundle
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.lang.parameterInfo.*
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.util.PsiTreeUtil
@@ -48,6 +51,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.components.hasDefaultValue
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
@@ -97,7 +101,7 @@ class KotlinArrayAccessParameterInfoHandler :
 abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement, TArgument : KtElement>(
     private val argumentListClass: KClass<TArgumentList>,
     private val argumentClass: KClass<TArgument>
-) : ParameterInfoHandlerWithTabActionSupport<TArgumentList, FunctionDescriptor, TArgument> {
+) : ParameterInfoHandlerWithTabActionSupport<TArgumentList, KotlinParameterInfoWithCallHandlerBase.CallInfo, TArgument> {
 
     companion object {
         @JvmField
@@ -169,7 +173,7 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
             call.explicitReceiver as? ReceiverValue
         )
 
-        context.itemsToShow = shadowedDeclarationsFilter.filter(candidates).toTypedArray()
+        context.itemsToShow = shadowedDeclarationsFilter.filter(candidates).map { CallInfo(it) }.toTypedArray()
         return argumentList
     }
 
@@ -179,6 +183,25 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
         }
         val parameterIndex = getParameterIndex(context, argumentList)
         context.setCurrentParameter(parameterIndex)
+
+        val bindingContext = argumentList.analyze(BodyResolveMode.PARTIAL)
+        val call = findCall(argumentList, bindingContext) ?: return
+        val resolutionFacade = argumentList.getResolutionFacade()
+
+        val task = Runnable {
+            runReadAction {
+                context.objectsToView.forEach { resolveCallInfo(it as CallInfo, call, bindingContext, resolutionFacade) }
+            }
+        }
+
+        if (ApplicationManager.getApplication()?.isDispatchThread == true) {
+            ProgressManager.getInstance().runProcessWithProgressSynchronously(
+                task,
+                "Calculating parameter info", true, argumentList.project
+            )
+        } else {
+            task.run()
+        }
     }
 
     protected open fun getParameterIndex(context: UpdateParameterInfoContext, argumentList: TArgumentList): Int {
@@ -188,29 +211,28 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
             .count { it.node.elementType == KtTokens.COMMA }
     }
 
-    override fun updateUI(itemToShow: FunctionDescriptor, context: ParameterInfoUIContext) {
+    override fun updateUI(itemToShow: CallInfo, context: ParameterInfoUIContext) {
         if (!updateUIOrFail(itemToShow, context)) {
             context.isUIComponentEnabled = false
             return
         }
     }
 
-    private fun updateUIOrFail(itemToShow: FunctionDescriptor, context: ParameterInfoUIContext): Boolean {
+    private fun updateUIOrFail(itemToShow: CallInfo, context: ParameterInfoUIContext): Boolean {
         if (context.parameterOwner == null || !context.parameterOwner.isValid) return false
         if (!argumentListClass.java.isInstance(context.parameterOwner)) return false
+        val call = itemToShow.call ?: return false
+
         @Suppress("UNCHECKED_CAST")
         val argumentList = context.parameterOwner as TArgumentList
 
         val currentArgumentIndex = context.currentParameterIndex
         if (currentArgumentIndex < 0) return false // by some strange reason we are invoked with currentParameterIndex == -1 during initialization
 
-        val bindingContext = argumentList.analyze(BodyResolveMode.PARTIAL)
-        val call = findCall(argumentList, bindingContext) ?: return false
-
         val project = argumentList.project
 
         val (substitutedDescriptor, argumentToParameter, highlightParameterIndex, isGrey) = matchCallWithSignature(
-            call, itemToShow, currentArgumentIndex, bindingContext, argumentList.getResolutionFacade()
+            itemToShow, currentArgumentIndex
         ) ?: return false
 
         var boldStartOffset = -1
@@ -267,12 +289,9 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
         }
 
 
-        val color = if (isResolvedToDescriptor(call, itemToShow, bindingContext))
-            GREEN_BACKGROUND
-        else
-            context.defaultParameterColor
+        val color = if (itemToShow.isResolvedToDescriptor) GREEN_BACKGROUND else context.defaultParameterColor
 
-        val isDeprecated = KotlinBuiltIns.isDeprecated(itemToShow)
+        val isDeprecated = KotlinBuiltIns.isDeprecated(substitutedDescriptor)
 
         context.setupUIComponentPresentation(text, boldStartOffset, boldEndOffset, isGrey, isDeprecated, false, color)
 
@@ -359,64 +378,138 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
         val isGrey: Boolean
     )
 
-    private fun matchCallWithSignature(
+    data class CallInfo(
+        val overload: FunctionDescriptor? = null,
+        var call: Call? = null,
+        var resolvedCall: ResolvedCall<FunctionDescriptor>? = null,
+        var arguments: List<ValueArgument> = emptyList(),
+        var dummyArgument: ValueArgument? = null,
+        var dummyResolvedCall: ResolvedCall<FunctionDescriptor>? = null,
+        var isResolvedToDescriptor: Boolean = false,
+        var isGreyArgumentIndex: Int = -1
+    )
+
+    private fun resolveCallInfo(
+        info: CallInfo,
         call: Call,
-        overload: FunctionDescriptor,
-        currentArgumentIndex: Int,
         bindingContext: BindingContext,
         resolutionFacade: ResolutionFacade
-    ): SignatureInfo? {
-        if (currentArgumentIndex == 0 && call.valueArguments.isEmpty() && overload.valueParameters.isEmpty()) {
-            return SignatureInfo(overload, { null }, null, isGrey = false)
-        }
-
+    ) {
+        val overload = info.overload ?: return
         val isArraySetMethod = call.callType == Call.CallType.ARRAY_SET_METHOD
 
-        val arguments = call.valueArguments.let { args ->
+        fun calculateArgument(c: Call) = c.valueArguments.let { args ->
             // For array set method call, we're only interested in the arguments in brackets which are all except the last one
-            if (isArraySetMethod) args.dropLast(1) else args
+            if (c.callType == Call.CallType.ARRAY_SET_METHOD) args.dropLast(1) else args
         }
 
-        assert(arguments.size >= currentArgumentIndex)
+        val arguments = calculateArgument(call)
 
-        val callToUse: Call
-        val currentArgument: ValueArgument
-        if (arguments.size > currentArgumentIndex) {
-            currentArgument = arguments[currentArgumentIndex]
-            callToUse = call
-        } else {
-            // add dummy current argument if we don't have one
-            currentArgument = object : ValueArgument {
-                override fun getArgumentExpression(): KtExpression? = null
-                override fun getArgumentName(): ValueArgumentName? = null
-                override fun isNamed(): Boolean = false
-                override fun asElement(): KtElement = call.callElement // is a hack but what to do?
-                override fun getSpreadElement(): LeafPsiElement? = null
-                override fun isExternal() = false
-            }
-            callToUse = object : DelegatingCall(call) {
-                val argumentsWithCurrent =
-                    arguments + currentArgument +
-                            // For array set method call, also add the argument in the right-hand side
-                            (if (isArraySetMethod) listOf(call.valueArguments.last()) else listOf())
+        val resolvedCall = resolvedCall(call, bindingContext, resolutionFacade, overload) ?: return
 
-                override fun getValueArguments() = argumentsWithCurrent
-                override fun getFunctionLiteralArguments() = emptyList<LambdaArgument>()
-                override fun getValueArgumentList(): KtValueArgumentList? = null
-            }
+        // add dummy current argument if we don't have one
+        val dummyArgument = object : ValueArgument {
+            override fun getArgumentExpression(): KtExpression? = null
+            override fun getArgumentName(): ValueArgumentName? = null
+            override fun isNamed(): Boolean = false
+            override fun asElement(): KtElement = call.callElement // is a hack but what to do?
+            override fun getSpreadElement(): LeafPsiElement? = null
+            override fun isExternal() = false
         }
 
-        val candidates = callToUse.resolveCandidates(bindingContext, resolutionFacade)
+        val dummyResolvedCall =
+            dummyResolvedCall(call, arguments, dummyArgument, isArraySetMethod, bindingContext, resolutionFacade, overload)
+
+        val resultingDescriptor = resolvedCall.resultingDescriptor
+
+        val resolvedToDescriptor = isResolvedToDescriptor(call, resultingDescriptor, bindingContext)
+
+        // grey out if not all arguments are matched
+        val isGreyArgumentIndex = arguments.indexOfFirst { argument ->
+            resolvedCall.getArgumentMapping(argument).isError() &&
+                    !argument.hasError(bindingContext) /* ignore arguments that have error type */
+        }
+
+        with(info) {
+            this.call = call
+            this.resolvedCall = resolvedCall
+            this.arguments = arguments
+            this.dummyArgument = dummyArgument
+            this.dummyResolvedCall = dummyResolvedCall
+            this.isResolvedToDescriptor = resolvedToDescriptor
+            this.isGreyArgumentIndex = isGreyArgumentIndex
+        }
+    }
+
+    private fun dummyResolvedCall(
+        call: Call,
+        arguments: List<ValueArgument>,
+        dummyArgument: ValueArgument,
+        isArraySetMethod: Boolean,
+        bindingContext: BindingContext,
+        resolutionFacade: ResolutionFacade,
+        overload: FunctionDescriptor
+    ): ResolvedCall<FunctionDescriptor>? {
+        val callToUse = object : DelegatingCall(call) {
+            val argumentsWithCurrent =
+                arguments + dummyArgument +
+                        // For array set method call, also add the argument in the right-hand side
+                        (if (isArraySetMethod) listOf(call.valueArguments.last()) else listOf())
+
+            override fun getValueArguments() = argumentsWithCurrent
+            override fun getFunctionLiteralArguments() = emptyList<LambdaArgument>()
+            override fun getValueArgumentList(): KtValueArgumentList? = null
+        }
+
+        return resolvedCall(callToUse, bindingContext, resolutionFacade, overload)
+    }
+
+    private fun resolvedCall(
+        call: Call,
+        bindingContext: BindingContext,
+        resolutionFacade: ResolutionFacade,
+        overload: FunctionDescriptor
+    ): ResolvedCall<FunctionDescriptor>? {
+        val candidates = call.resolveCandidates(bindingContext, resolutionFacade)
+
         // First try to find strictly matching descriptor, then one with the same declaration.
         // The second way is needed for the case when the descriptor was invalidated and new one has been built.
         // See testLocalFunctionBug().
-        val resolvedCall = candidates.firstOrNull { it.resultingDescriptor.original == overload.original }
+
+        return candidates.firstOrNull { it.resultingDescriptor.original == overload.original }
             ?: candidates.firstOrNull { descriptorsEqual(it.resultingDescriptor, overload) }
-            ?: return null
-        val resultingDescriptor = resolvedCall.resultingDescriptor
+            ?: null
+    }
+
+    private fun matchCallWithSignature(
+        info: CallInfo,
+        currentArgumentIndex: Int
+    ): SignatureInfo? {
+        val call = info.call ?: return null
+        val resolvedCall = info.resolvedCall ?: return null
+        if (currentArgumentIndex == 0 && call.valueArguments.isEmpty() && resolvedCall.resultingDescriptor.valueParameters.isEmpty()) {
+            return SignatureInfo(resolvedCall.resultingDescriptor, { null }, null, isGrey = false)
+        }
+
+        val arguments = info.arguments
+
+        assert(arguments.size >= currentArgumentIndex) {
+            "currentArgumentIndex: $currentArgumentIndex has to be not more than number of arguments ${arguments.size}"
+        }
+
+        val callToUse: ResolvedCall<FunctionDescriptor>
+        val currentArgument = if (arguments.size > currentArgumentIndex) {
+            callToUse = resolvedCall
+            arguments[currentArgumentIndex]
+        } else {
+            callToUse = info.dummyResolvedCall ?: return null
+            info.dummyArgument ?: return null
+        }
+
+        val resultingDescriptor = callToUse.resultingDescriptor
 
         fun argumentToParameter(argument: ValueArgument): ValueParameterDescriptor? {
-            return (resolvedCall.getArgumentMapping(argument) as? ArgumentMatch)?.valueParameter
+            return (callToUse.getArgumentMapping(argument) as? ArgumentMatch)?.valueParameter
         }
 
         val highlightParameterIndex = argumentToParameter(currentArgument)?.index
@@ -428,10 +521,7 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
         }
 
         // grey out if not all arguments before the current are matched
-        val isGrey = argumentsBeforeCurrent.any { argument ->
-            resolvedCall.getArgumentMapping(argument).isError() &&
-                    !argument.hasError(bindingContext) /* ignore arguments that have error type */
-        }
+        val isGrey = info.isGreyArgumentIndex in 0 until currentArgumentIndex
         return SignatureInfo(resultingDescriptor, ::argumentToParameter, highlightParameterIndex, isGrey)
     }
 

@@ -1,0 +1,63 @@
+FILE: k.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|k/A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val p1: <ERROR TYPE REF: Inapplicable(HIDDEN): [j/JavaPackageLocal.javaPPackage]> = Q|j/JavaPackageLocal|.<Inapplicable(HIDDEN): [j/JavaPackageLocal.javaPPackage]>#
+            public get(): <ERROR TYPE REF: Inapplicable(HIDDEN): [j/JavaPackageLocal.javaPPackage]>
+
+        public final val p2: <ERROR TYPE REF: Inapplicable(HIDDEN): [j/JavaProtected.javaPProtectedStatic]> = Q|j/JavaProtected|.<Inapplicable(HIDDEN): [j/JavaProtected.javaPProtectedStatic]>#
+            public get(): <ERROR TYPE REF: Inapplicable(HIDDEN): [j/JavaProtected.javaPProtectedStatic]>
+
+        public final val p3: <ERROR TYPE REF: Inapplicable(HIDDEN): [j/JavaProtected.javaPProtectedPackage]> = R|j/JavaProtected.JavaProtected|().<Inapplicable(HIDDEN): [j/JavaProtected.javaPProtectedPackage]>#
+            public get(): <ERROR TYPE REF: Inapplicable(HIDDEN): [j/JavaProtected.javaPProtectedPackage]>
+
+        public final fun test(): R|kotlin/Unit| {
+            Q|j/JavaProtected|.<Inapplicable(HIDDEN): [j/JavaProtected.javaMProtectedStatic]>#()
+            Q|j/JavaPackageLocal|.<Inapplicable(HIDDEN): [j/JavaPackageLocal.javaMPackage]>#()
+        }
+
+    }
+    public final class B : R|j/JavaProtected| {
+        public constructor(): R|k/B| {
+            super<R|j/JavaProtected|>()
+        }
+
+        public final val p1: <ERROR TYPE REF: Inapplicable(HIDDEN): [j/JavaPackageLocal.javaPPackage]> = Q|j/JavaPackageLocal|.<Inapplicable(HIDDEN): [j/JavaPackageLocal.javaPPackage]>#
+            public get(): <ERROR TYPE REF: Inapplicable(HIDDEN): [j/JavaPackageLocal.javaPPackage]>
+
+        public final val p2: R|kotlin/Int| = Q|j/JavaProtected|.R|j/JavaProtected.javaPProtectedStatic|
+            public get(): R|kotlin/Int|
+
+        public final val p3: R|kotlin/Int| = this@R|j/JavaProtected|.R|j/JavaProtected.javaPProtectedPackage|
+            public get(): R|kotlin/Int|
+
+        public final fun test(): R|kotlin/Unit| {
+            Q|j/JavaProtected|.R|j/JavaProtected.javaMProtectedStatic|()
+            Q|j/JavaPackageLocal|.<Inapplicable(HIDDEN): [j/JavaPackageLocal.javaMPackage]>#()
+        }
+
+    }
+FILE: j.kt
+    public final class C : R|kotlin/Any| {
+        public constructor(): R|j/C| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val p1: R|kotlin/Int| = Q|j/JavaPackageLocal|.R|j/JavaPackageLocal.javaPPackage|
+            public get(): R|kotlin/Int|
+
+        public final val p2: R|kotlin/Int| = Q|j/JavaProtected|.R|j/JavaProtected.javaPProtectedStatic|
+            public get(): R|kotlin/Int|
+
+        public final val p3: R|kotlin/Int| = R|j/JavaProtected.JavaProtected|().R|j/JavaProtected.javaPProtectedPackage|
+            public get(): R|kotlin/Int|
+
+        public final fun test(): R|kotlin/Unit| {
+            Q|j/JavaProtected|.R|j/JavaProtected.javaMProtectedStatic|()
+            Q|j/JavaProtected|.R|j/JavaProtected.javaMProtectedStatic|()
+            Q|j/JavaPackageLocal|.R|j/JavaPackageLocal.javaMPackage|()
+        }
+
+    }

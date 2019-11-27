@@ -2,11 +2,11 @@ FILE: main.kt
     public final fun foo(m: R|MyRunnable|): R|kotlin/Unit| {
     }
     public final fun main(): R|kotlin/Unit| {
-        Q|JavaUsage|.<Inapplicable(INAPPLICABLE): [/JavaUsage.foo]>#(<L> = foo@fun <implicit>.<anonymous>(x: <ERROR TYPE REF: Unsupported: implicit VP type>): R|kotlin/Boolean| {
+        Q|JavaUsage|.<Inapplicable(INAPPLICABLE): [/JavaUsage.foo]>#(<L> = foo@fun <anonymous>(x: R|class error: No type for parameter|): R|kotlin/Boolean| {
             >(R|<local>/x|, Int(1))
         }
         )
-        Q|JavaUsage|.<Inapplicable(INAPPLICABLE): [/JavaUsage.foo]>#(foo@fun <implicit>.<anonymous>(): R|kotlin/Boolean| {
+        Q|JavaUsage|.<Inapplicable(INAPPLICABLE): [/JavaUsage.foo]>#(foo@fun <anonymous>(): R|kotlin/Boolean| {
             >(<Unresolved name: it>#, Int(1))
         }
         )

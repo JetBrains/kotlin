@@ -34,15 +34,15 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
 
             add(irBuiltIns.booleanNotSymbol, intrinsics.jsNot)
 
-            add(irBuiltIns.lessFunByOperandType.filterKeys { it != irBuiltIns.long }, intrinsics.jsLt)
-            add(irBuiltIns.lessOrEqualFunByOperandType.filterKeys { it != irBuiltIns.long }, intrinsics.jsLtEq)
-            add(irBuiltIns.greaterFunByOperandType.filterKeys { it != irBuiltIns.long }, intrinsics.jsGt)
-            add(irBuiltIns.greaterOrEqualFunByOperandType.filterKeys { it != irBuiltIns.long }, intrinsics.jsGtEq)
+            add(irBuiltIns.lessFunByOperandType.filterKeys { it != irBuiltIns.longClass }, intrinsics.jsLt)
+            add(irBuiltIns.lessOrEqualFunByOperandType.filterKeys { it != irBuiltIns.longClass }, intrinsics.jsLtEq)
+            add(irBuiltIns.greaterFunByOperandType.filterKeys { it != irBuiltIns.longClass }, intrinsics.jsGt)
+            add(irBuiltIns.greaterOrEqualFunByOperandType.filterKeys { it != irBuiltIns.longClass }, intrinsics.jsGtEq)
 
-            add(irBuiltIns.lessFunByOperandType[irBuiltIns.long]!!, transformLongComparison(intrinsics.jsLt))
-            add(irBuiltIns.lessOrEqualFunByOperandType[irBuiltIns.long]!!, transformLongComparison(intrinsics.jsLtEq))
-            add(irBuiltIns.greaterFunByOperandType[irBuiltIns.long]!!, transformLongComparison(intrinsics.jsGt))
-            add(irBuiltIns.greaterOrEqualFunByOperandType[irBuiltIns.long]!!, transformLongComparison(intrinsics.jsGtEq))
+            add(irBuiltIns.lessFunByOperandType[irBuiltIns.longClass]!!, transformLongComparison(intrinsics.jsLt))
+            add(irBuiltIns.lessOrEqualFunByOperandType[irBuiltIns.longClass]!!, transformLongComparison(intrinsics.jsLtEq))
+            add(irBuiltIns.greaterFunByOperandType[irBuiltIns.longClass]!!, transformLongComparison(intrinsics.jsGt))
+            add(irBuiltIns.greaterOrEqualFunByOperandType[irBuiltIns.longClass]!!, transformLongComparison(intrinsics.jsGtEq))
         }
     }
 

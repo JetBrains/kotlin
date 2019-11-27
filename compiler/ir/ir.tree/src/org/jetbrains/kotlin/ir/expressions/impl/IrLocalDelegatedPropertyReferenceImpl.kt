@@ -38,9 +38,6 @@ class IrLocalDelegatedPropertyReferenceImpl(
     IrNoArgumentsCallableReferenceBase(startOffset, endOffset, type, 0, origin),
     IrLocalDelegatedPropertyReference {
 
-    override val descriptor: VariableDescriptorWithAccessors
-        get() = symbol.descriptor
-
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitLocalDelegatedPropertyReference(this, data)
 }

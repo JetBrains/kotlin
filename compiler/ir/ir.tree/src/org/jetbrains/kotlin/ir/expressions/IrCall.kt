@@ -16,10 +16,8 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 
 interface IrCall : IrFunctionAccessExpression {
-    val superQualifier: ClassDescriptor?
     val superQualifierSymbol: IrClassSymbol?
 }

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedClassDescriptor
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.backend.jvm.lower.buildAssertionsDisabledField
@@ -24,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.descriptors.WrappedClassDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
@@ -52,6 +52,7 @@ open class ClassCodegen protected constructor(
     internal val irClass: IrClass,
     val context: JvmBackendContext,
     private val parentClassCodegen: ClassCodegen? = null,
+    private val parentFunction: IrFunction? = null,
     private val withinInline: Boolean = false
 ) : InnerClassConsumer {
     private val innerClasses = mutableListOf<IrClass>()
@@ -121,7 +122,7 @@ open class ClassCodegen protected constructor(
 
         val nestedClasses = irClass.declarations.mapNotNull { declaration ->
             if (declaration is IrClass) {
-                ClassCodegen(declaration, context, this)
+                ClassCodegen(declaration, context, this, withinInline = withinInline)
             } else null
         }
 
@@ -213,6 +214,10 @@ open class ClassCodegen protected constructor(
                 writeKotlinMetadata(visitor, state, KotlinClassHeader.Kind.CLASS, 0) {
                     AsmUtil.writeAnnotationData(it, serializer, classProto)
                 }
+
+                assert(irClass !in context.classNameOverride) {
+                    "JvmPackageName is not supported for classes: ${irClass.render()}"
+                }
             }
             is MetadataSource.File -> {
                 val packageFqName = irClass.getPackageFragment()!!.fqName
@@ -229,7 +234,9 @@ open class ClassCodegen protected constructor(
                         av.visit(JvmAnnotationNames.METADATA_MULTIFILE_CLASS_NAME_FIELD_NAME, facadeClassName.internalName)
                     }
 
-                    // TODO: JvmPackageName
+                    if (irClass in context.classNameOverride) {
+                        av.visit(JvmAnnotationNames.METADATA_PACKAGE_NAME_FIELD_NAME, irClass.fqNameWhenAvailable!!.parent().asString())
+                    }
                 }
             }
             else -> {
@@ -303,8 +310,8 @@ open class ClassCodegen protected constructor(
         }
     }
 
-    fun generateLocalClass(klass: IrClass, withinInline: Boolean): ReifiedTypeParametersUsages {
-        return ClassCodegen(klass, context, this, withinInline = withinInline || this.withinInline).generate()
+    fun generateLocalClass(klass: IrClass, parentFunction: IrFunction): ReifiedTypeParametersUsages {
+        return ClassCodegen(klass, context, this, parentFunction, withinInline = withinInline || parentFunction.isInline).generate()
     }
 
     private fun generateField(field: IrField) {
@@ -404,12 +411,9 @@ open class ClassCodegen protected constructor(
         // or constructor, the name and type of the function is recorded as well.
         if (parentClassCodegen != null) {
             val outerClassName = parentClassCodegen.type.internalName
-            // TODO: Since the class could have been reparented in lowerings, this could
-            // be a class instead of the actual function that the class is nested inside
-            // in the source.
-            val containingDeclaration = irClass.symbol.owner.parent
-            if (containingDeclaration is IrFunction) {
-                val method = methodSignatureMapper.mapAsmMethod(containingDeclaration)
+            val enclosingFunction = context.customEnclosingFunction[irClass.attributeOwnerId] ?: parentFunction
+            if (enclosingFunction != null) {
+                val method = methodSignatureMapper.mapAsmMethod(enclosingFunction)
                 visitor.visitOuterClass(outerClassName, method.name, method.descriptor)
             } else if (irClass.isAnonymousObject) {
                 visitor.visitOuterClass(outerClassName, null, null)

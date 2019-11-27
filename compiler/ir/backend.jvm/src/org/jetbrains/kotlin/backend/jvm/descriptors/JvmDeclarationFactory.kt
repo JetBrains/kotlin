@@ -6,12 +6,11 @@
 package org.jetbrains.kotlin.backend.jvm.descriptors
 
 import org.jetbrains.kotlin.backend.common.DescriptorsToIrRemapper
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedClassConstructorDescriptor
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedClassDescriptor
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.MethodSignatureMapper
+import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
+import org.jetbrains.kotlin.backend.jvm.ir.replaceThisByStaticReference
 import org.jetbrains.kotlin.builtins.CompanionObjectMapping.isMappedIntrinsicCompanionObject
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -21,6 +20,10 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.setSourceRange
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
+import org.jetbrains.kotlin.ir.descriptors.WrappedClassConstructorDescriptor
+import org.jetbrains.kotlin.ir.descriptors.WrappedClassDescriptor
+import org.jetbrains.kotlin.ir.descriptors.WrappedValueParameterDescriptor
+import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
@@ -33,8 +36,10 @@ class JvmDeclarationFactory(
     private val methodSignatureMapper: MethodSignatureMapper
 ) : DeclarationFactory {
     private val singletonFieldDeclarations = HashMap<IrSymbolOwner, IrField>()
+    private val interfaceCompanionFieldDeclarations = HashMap<IrSymbolOwner, IrField>()
     private val outerThisDeclarations = HashMap<IrClass, IrField>()
     private val innerClassConstructors = HashMap<IrConstructor, IrConstructor>()
+    private val staticBackingFields = HashMap<IrProperty, IrField>()
 
     private val defaultImplsMethods = HashMap<IrSimpleFunction, IrSimpleFunction>()
     private val defaultImplsClasses = HashMap<IrClass, IrClass>()
@@ -133,9 +138,56 @@ class JvmDeclarationFactory(
             }
         }
 
+    fun getPrivateFieldForObjectInstance(singleton: IrClass): IrField =
+        if (singleton.isCompanion && singleton.parentAsClass.isJvmInterface)
+            interfaceCompanionFieldDeclarations.getOrPut(singleton) {
+                buildField {
+                    name = Name.identifier("\$\$INSTANCE")
+                    type = singleton.defaultType
+                    origin = JvmLoweredDeclarationOrigin.INTERFACE_COMPANION_PRIVATE_INSTANCE
+                    isFinal = true
+                    isStatic = true
+                    visibility = JavaVisibilities.PACKAGE_VISIBILITY
+                }.apply {
+                    parent = singleton
+                }
+            }
+        else
+            getFieldForObjectInstance(singleton)
+
+    fun getStaticBackingField(irProperty: IrProperty): IrField? {
+        // Only fields defined directly in objects should be made static.
+        // Fake overrides never point to those, as objects are final.
+        if (irProperty.origin == IrDeclarationOrigin.FAKE_OVERRIDE) return null
+        val oldField = irProperty.backingField ?: return null
+        val oldParent = irProperty.parent as? IrClass ?: return null
+        if (!oldParent.isObject) return null
+        return staticBackingFields.getOrPut(irProperty) {
+            buildField {
+                updateFrom(oldField)
+                name = oldField.name
+                isStatic = true
+            }.apply {
+                // We don't move fields to interfaces unless all fields are annotated with @JvmField.
+                // It is an error to annotate only some of the fields of an interface companion with
+                // @JvmField, so checking the current field only should be enough.
+                val hasJvmField = oldField.hasAnnotation(JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME)
+                parent = if (oldParent.isCompanion && (!oldParent.parentAsClass.isJvmInterface || hasJvmField))
+                    oldParent.parentAsClass
+                else
+                    oldParent
+                annotations += oldField.annotations
+                initializer = oldField.initializer
+                    ?.replaceThisByStaticReference(this@JvmDeclarationFactory, oldParent, oldParent.thisReceiver!!)
+                    ?.deepCopyWithSymbols(this) as IrExpressionBody?
+                (this as IrFieldImpl).metadata = oldField.metadata
+            }
+        }
+    }
+
     fun getDefaultImplsFunction(interfaceFun: IrSimpleFunction): IrSimpleFunction {
         val parent = interfaceFun.parentAsClass
-        assert(parent.isInterface) { "Parent of ${interfaceFun.dump()} should be interface" }
+        assert(parent.isJvmInterface) { "Parent of ${interfaceFun.dump()} should be interface" }
         return defaultImplsMethods.getOrPut(interfaceFun) {
             val defaultImpls = getDefaultImplsClass(interfaceFun.parentAsClass)
 

@@ -1,0 +1,39 @@
+FILE: returnValuesFromLambda.kt
+    public abstract interface A : R|kotlin/Any| {
+    }
+    public final class B : R|A| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class C : R|A| {
+        public constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun test_1(b: R|kotlin/Boolean|): R|kotlin/Unit| {
+        lval x: R|A| = R|kotlin/run|<R|A|>(<L> = run@fun <anonymous>(): R|C| <kind=EXACTLY_ONCE>  {
+            when () {
+                R|<local>/b| ->  {
+                    ^@run R|/B.B|()
+                }
+            }
+
+            R|/C.C|()
+        }
+        )
+    }
+    public final fun test_2(): R|kotlin/Unit| {
+        lval x: R|C| = R|kotlin/run|<R|C|>(<L> = run@fun <anonymous>(): R|C| <kind=EXACTLY_ONCE>  {
+            ^@run R|/C.C|()
+        }
+        )
+    }
+    public final fun test_3(): R|kotlin/Unit| {
+        lval x: R|kotlin/Nothing| = R|kotlin/run|<R|kotlin/Nothing|>(<L> = run@fun <anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+            ^test_3 Unit
+        }
+        )
+    }

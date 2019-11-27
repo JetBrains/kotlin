@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 var z = "0"
 var l = 0L
 

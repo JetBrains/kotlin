@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 // KT-5869
 
 operator fun <T> Iterator<T>.iterator(): Iterator<T> = this

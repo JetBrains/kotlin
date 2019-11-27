@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 class C
 
 operator fun C.compareTo(o: C) : Int {

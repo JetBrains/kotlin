@@ -20,9 +20,12 @@ import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
-import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.name.Name
@@ -46,21 +49,21 @@ class FirSamResolverImpl(
 
     override fun getFunctionTypeForPossibleSamType(type: ConeKotlinType): ConeKotlinType? {
         return when (type) {
-            is ConeClassType -> getFunctionTypeForPossibleSamType(type)
+            is ConeClassLikeType -> getFunctionTypeForPossibleSamType(type)
             is ConeFlexibleType -> ConeFlexibleType(
                 getFunctionTypeForPossibleSamType(type.lowerBound) ?: return null,
                 getFunctionTypeForPossibleSamType(type.upperBound) ?: return null
             )
             is ConeClassErrorType, is ConeStubType -> null
             // TODO: support those types as well
-            is ConeAbbreviatedType, is ConeTypeParameterType, is ConeTypeVariableType,
+            is ConeTypeParameterType, is ConeTypeVariableType,
             is ConeCapturedType, is ConeDefinitelyNotNullType, is ConeIntersectionType -> null
             // TODO: Thing of getting rid of this branch since ConeLookupTagBasedType should be a sealed class
             is ConeLookupTagBasedType -> null
         }
     }
 
-    private fun getFunctionTypeForPossibleSamType(type: ConeClassType): ConeLookupTagBasedType? {
+    private fun getFunctionTypeForPossibleSamType(type: ConeClassLikeType): ConeLookupTagBasedType? {
         val firRegularClass =
             firSession.firSymbolProvider
                 .getSymbolByLookupTag(type.lookupTag)
@@ -74,7 +77,7 @@ class FirSamResolverImpl(
                     .map { it.symbol }
                     .zip(type.typeArguments.map {
                         (it as? ConeTypedProjection)?.type
-                            ?: ConeClassTypeImpl(ConeClassLikeLookupTagImpl(StandardClassIds.Any), emptyArray(), isNullable = true)
+                            ?: ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(StandardClassIds.Any), emptyArray(), isNullable = true)
                     })
                     .toMap()
             )
@@ -143,7 +146,7 @@ class FirSamResolverImpl(
 
         val substitutedFunctionType = substitutor.substituteOrSelf(functionType)
         val substitutedReturnType =
-            ConeClassTypeImpl(
+            ConeClassLikeTypeImpl(
                 firRegularClass.symbol.toLookupTag(), newTypeParameterTypes.toTypedArray(), isNullable = false
             )
 

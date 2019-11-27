@@ -14,29 +14,29 @@ class Test : A {
     }
 
     override fun a7() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        TODO("Not yet implemented")
     }
 
     override fun a8() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        TODO("Not yet implemented")
     }
 
     override fun a1() {
-        <selection><caret>TODO("not implemented") //To change body of created functions use File | Settings | File Templates.</selection>
+        <selection><caret>TODO("Not yet implemented")</selection>
     }
 
     override fun a2() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        TODO("Not yet implemented")
     }
 
     override fun a3() {
     }
 
     override fun a4() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        TODO("Not yet implemented")
     }
 
     override fun a5() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        TODO("Not yet implemented")
     }
 }

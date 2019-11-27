@@ -1,0 +1,26 @@
+FILE: main.kt
+    public final fun test_1(x: R|A|): R|kotlin/Unit| {
+        lval str1: <ERROR TYPE REF: Unresolved name: vmParameters> = R|<local>/x|.<Unresolved name: vmParameters>#
+        lval str2: R|ft<kotlin/String, kotlin/String?>!| = R|<local>/x|.R|/A.vMParameters|
+    }
+    public final fun test_2(x: R|B|): R|kotlin/Unit| {
+        lval int: R|ft<kotlin/Int, kotlin/Int?>!| = R|<local>/x|.R|/B.vmParameters|
+        lval error: <ERROR TYPE REF: Unresolved name: vMParameters> = R|<local>/x|.<Unresolved name: vMParameters>#
+    }
+    public final fun test_3(x: R|C|): R|kotlin/Unit| {
+        lval error: R|ft<kotlin/Int, kotlin/Int?>!| = R|<local>/x|.R|/C.vmParameters|
+        lval int: R|ft<kotlin/String, kotlin/String?>!| = R|<local>/x|.R|/C.vMParameters|
+    }
+    public final class Foo : R|kotlin/Any| {
+        public constructor(): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun getX(): R|kotlin/Int| {
+            ^getX Int(1)
+        }
+
+    }
+    public final fun test_4(foo: R|Foo|): R|kotlin/Unit| {
+        R|<local>/foo|.R|/Foo.x|
+    }

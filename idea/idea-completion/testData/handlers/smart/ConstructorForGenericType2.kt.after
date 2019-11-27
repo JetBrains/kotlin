@@ -3,7 +3,7 @@ fun registerHandler(handler: Handler<out Message>) {}
 fun test() {
     registerHandler(object : Handler<Message> {
         override fun handle(e: Message) {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            TODO("Not yet implemented")
         }
     })
 }

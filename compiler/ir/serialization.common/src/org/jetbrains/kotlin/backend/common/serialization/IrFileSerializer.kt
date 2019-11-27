@@ -738,6 +738,8 @@ open class IrFileSerializer(
             ProtoTypeOperator.SAM_CONVERSION
         IrTypeOperator.IMPLICIT_DYNAMIC_CAST ->
             ProtoTypeOperator.IMPLICIT_DYNAMIC_CAST
+        IrTypeOperator.REINTERPRET_CAST ->
+            error("Unreachable execution")
     }
 
     private fun serializeTypeOp(expression: IrTypeOperatorCall): ProtoTypeOp {
@@ -1294,7 +1296,7 @@ open class IrFileSerializer(
         // Make sure that all top level properties are initialized on library's load.
         file.declarations
             .filterIsInstance<IrProperty>()
-            .filter { it.backingField?.initializer != null && !it.isConst }
+            .filter { it.backingField?.initializer != null }
             .forEach { proto.addExplicitlyExportedToCompiler(serializeIrSymbol(it.backingField!!.symbol)) }
 
         // TODO: Konan specific

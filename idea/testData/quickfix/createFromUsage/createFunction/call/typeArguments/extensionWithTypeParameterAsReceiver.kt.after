@@ -4,5 +4,5 @@ fun <T> foo(t: T) {
 }
 
 private fun <T> T.bar() {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    TODO("Not yet implemented")
 }

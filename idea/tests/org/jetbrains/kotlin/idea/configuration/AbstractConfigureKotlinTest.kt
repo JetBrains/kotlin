@@ -10,7 +10,6 @@ import com.intellij.openapi.application.PathMacros
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.io.FileUtil
@@ -22,6 +21,7 @@ import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.configuration.KotlinWithLibraryConfigurator.FileState
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
@@ -49,9 +49,11 @@ abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
         KotlinSdkType.setUpIfNeeded()
 
         ApplicationManager.getApplication().runWriteAction {
-            ProjectJdkTable.getInstance().addJdk(PluginTestCaseBase.mockJdk6())
-            ProjectJdkTable.getInstance().addJdk(PluginTestCaseBase.mockJdk8())
-            ProjectJdkTable.getInstance().addJdk(PluginTestCaseBase.mockJdk9())
+            val jdkTable = getProjectJdkTableSafe()
+
+            jdkTable.addJdk(PluginTestCaseBase.mockJdk6())
+            jdkTable.addJdk(PluginTestCaseBase.mockJdk8())
+            jdkTable.addJdk(PluginTestCaseBase.mockJdk9())
         }
 
         PluginTestCaseBase.clearSdkTable(testRootDisposable)

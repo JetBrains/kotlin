@@ -1,0 +1,8 @@
+error: supertypes of the following classes cannot be resolved. Please make sure you have the required dependencies in the classpath:
+    class test.SubClass, unresolved supertypes: test.Super
+    class test.SubObject, unresolved supertypes: test.Super
+
+compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyOfEnclosingClass/source.kt:6:16: error: cannot access 'test.Super' which is a supertype of 'test.SubClass'. Check your module classpath for missing or conflicting dependencies
+    SubClass().Inner() // Error - dispatch receiver misses supertype
+               ^
+COMPILATION_ERROR

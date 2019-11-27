@@ -24,15 +24,7 @@ interface CommandLineProcessor {
     val pluginOptions: Collection<AbstractCliOption>
 
     @Throws(CliOptionProcessingException::class)
-    fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) {
-        @Suppress("DEPRECATION")
-        processOption(option as CliOption, value, configuration)
-    }
-
-    // TODO remove processOption(AbstractCliOption, ...) implementation after removal of this.
-    @Deprecated("Implement processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) instead.")
-    @Throws(CliOptionProcessingException::class)
-    fun processOption(option: CliOption, value: String, configuration: CompilerConfiguration) {}
+    fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration)
 
     fun <T> CompilerConfiguration.appendList(option: CompilerConfigurationKey<List<T>>, value: T) {
         val paths = getList(option).asMutableList()

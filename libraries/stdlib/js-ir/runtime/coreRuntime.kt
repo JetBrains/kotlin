@@ -55,7 +55,7 @@ fun hashCode(obj: dynamic): Int {
     }
 }
 
-private var POW_2_32 = 4294967296
+private var POW_2_32 = 4294967296.0
 private var OBJECT_HASH_CODE_PROPERTY_NAME = "kotlinHashCodeValue$"
 
 fun getObjectHashCode(obj: dynamic): Int {
@@ -83,7 +83,9 @@ fun identityHashCode(obj: Any?): Int = getObjectHashCode(obj)
 
 internal fun captureStack(instance: Throwable) {
     if (js("Error").captureStackTrace != null) {
-        js("Error").captureStackTrace(instance, instance::class.js)
+        // TODO Why we generated get kclass for throwable in original code?
+        js("Error").captureStackTrace(instance, instance.asDynamic().constructor)
+//        js("Error").captureStackTrace(instance, instance::class.js)
     } else {
         instance.asDynamic().stack = js("new Error()").stack
     }

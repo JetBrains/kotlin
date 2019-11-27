@@ -1,4 +1,4 @@
 // x: to be implemented
 actual var x: Int
-    get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+    get() = TODO("Not yet implemented")
     set(value) {}

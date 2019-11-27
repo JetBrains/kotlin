@@ -6,18 +6,25 @@
 package org.jetbrains.kotlin.ir.backend.js
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.ir.backend.js.export.isExported
 import org.jetbrains.kotlin.ir.backend.js.lower.moveBodilessDeclarationsToSeparatePlace
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.backend.js.utils.JsMainFunctionDetector
 import org.jetbrains.kotlin.ir.backend.js.utils.NameTables
+import org.jetbrains.kotlin.ir.backend.js.utils.isJsExport
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
+import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.DFS
@@ -32,7 +39,8 @@ fun sortDependencies(dependencies: Collection<IrModuleFragment>): Collection<IrM
 }
 
 class CompilerResult(
-    val jsCode: String,
+    val jsCode: String?,
+    val dceJsCode: String?,
     val tsDefinitions: String? = null
 )
 
@@ -44,7 +52,9 @@ fun compile(
     allDependencies: KotlinLibraryResolveResult,
     friendDependencies: List<KotlinLibrary>,
     mainArguments: List<String>?,
-    exportedDeclarations: Set<FqName> = emptySet()
+    exportedDeclarations: Set<FqName> = emptySet(),
+    generateFullJs: Boolean = true,
+    generateDceJs: Boolean = false
 ): CompilerResult {
     val (moduleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer) =
         loadIr(project, files, configuration, allDependencies, friendDependencies)
@@ -57,12 +67,7 @@ fun compile(
 
     // Load declarations referenced during `context` initialization
     dependencyModules.forEach {
-        ExternalDependenciesGenerator(
-            it.descriptor,
-            symbolTable,
-            irBuiltIns,
-            deserializer = deserializer
-        ).generateUnboundSymbolsAsDependencies()
+        ExternalDependenciesGenerator(it.descriptor, symbolTable, irBuiltIns, deserializer).generateUnboundSymbolsAsDependencies()
     }
 
     val irFiles = dependencyModules.flatMap { it.files } + moduleFragment.files
@@ -71,11 +76,7 @@ fun compile(
     moduleFragment.files += irFiles
 
     // Create stubs
-    ExternalDependenciesGenerator(
-        moduleDescriptor = moduleDescriptor,
-        symbolTable = symbolTable,
-        irBuiltIns = irBuiltIns
-    ).generateUnboundSymbolsAsDependencies()
+    ExternalDependenciesGenerator(moduleDescriptor, symbolTable, irBuiltIns).generateUnboundSymbolsAsDependencies()
     moduleFragment.patchDeclarationParents()
 
     moveBodilessDeclarationsToSeparatePlace(context, moduleFragment)
@@ -83,7 +84,7 @@ fun compile(
     jsPhases.invokeToplevel(phaseConfig, context, moduleFragment)
 
     val transformer = IrModuleToJsTransformer(context, mainFunction, mainArguments)
-    return transformer.generateModule(moduleFragment)
+    return transformer.generateModule(moduleFragment, generateFullJs, generateDceJs)
 }
 
 fun generateJsCode(
@@ -95,5 +96,5 @@ fun generateJsCode(
     jsPhases.invokeToplevel(PhaseConfig(jsPhases), context, moduleFragment)
 
     val transformer = IrModuleToJsTransformer(context, null, null, true, nameTables)
-    return transformer.generateModule(moduleFragment).jsCode
+    return transformer.generateModule(moduleFragment).jsCode!!
 }

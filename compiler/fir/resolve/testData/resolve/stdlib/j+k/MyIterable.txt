@@ -2,11 +2,11 @@ FILE: test.kt
     public abstract interface UseIterable : R|MyIterable<kotlin/String>| {
         public open fun test(): R|kotlin/Unit| {
             lval it: R|kotlin/collections/MutableIterator<kotlin/String>| = this@R|kotlin/collections/MutableIterable|.R|FakeOverride<kotlin/collections/MutableIterable.iterator: R|kotlin/collections/MutableIterator<kotlin/String>|>|()
-            lval split: <ERROR TYPE REF: Empty diagnostic> = <Unresolved name: spliterator>#()
+            lval split: <ERROR TYPE REF: Unresolved name: spliterator> = <Unresolved name: spliterator>#()
         }
 
     }
     public final fun test(some: R|kotlin/collections/Iterable<kotlin/String>|): R|kotlin/Unit| {
         lval it: R|kotlin/collections/Iterator<kotlin/String>| = R|<local>/some|.R|FakeOverride<kotlin/collections/Iterable.iterator: R|kotlin/collections/Iterator<kotlin/String>|>|()
-        lval split: <ERROR TYPE REF: Empty diagnostic> = R|<local>/some|.<Unresolved name: spliterator>#()
+        lval split: <ERROR TYPE REF: Unresolved name: spliterator> = R|<local>/some|.<Unresolved name: spliterator>#()
     }

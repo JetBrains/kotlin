@@ -149,6 +149,9 @@ fun CFGNode<*>.render(): String =
                 is EnterContractNode -> "Enter contract"
                 is ExitContractNode -> "Exit contract"
 
+                is EnterSafeCallNode -> "Enter safe call"
+                is ExitSafeCallNode -> "Exit safe call"
+
                 else -> TODO(this@render.toString())
             }
         )

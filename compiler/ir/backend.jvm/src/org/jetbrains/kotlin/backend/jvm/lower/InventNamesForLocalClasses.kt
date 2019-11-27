@@ -11,13 +11,14 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
+import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isAnonymousObject
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.org.objectweb.asm.Type
 
 val inventNamesForLocalClassesPhase = makeIrFilePhase<JvmBackendContext>(
     { context -> InventNamesForLocalClasses(context) },
@@ -63,7 +64,7 @@ class InventNamesForLocalClasses(private val context: JvmBackendContext) : FileL
             }
 
             val internalName = inventName(declaration.name, data)
-            context.putLocalClassInfo(declaration, JvmBackendContext.LocalClassInfo(internalName))
+            context.putLocalClassType(declaration, Type.getObjectType(internalName))
 
             val newData = data.withName(internalName)
 
@@ -130,14 +131,14 @@ class InventNamesForLocalClasses(private val context: JvmBackendContext) : FileL
 
         override fun visitFunctionReference(expression: IrFunctionReference, data: Data) {
             val internalName = localFunctionNames[expression.symbol] ?: inventName(null, data)
-            context.putLocalClassInfo(expression, JvmBackendContext.LocalClassInfo(internalName))
+            context.putLocalClassType(expression, Type.getObjectType(internalName))
 
             expression.acceptChildren(this, data)
         }
 
         override fun visitPropertyReference(expression: IrPropertyReference, data: Data) {
             val internalName = inventName(null, data)
-            context.putLocalClassInfo(expression, JvmBackendContext.LocalClassInfo(internalName))
+            context.putLocalClassType(expression, Type.getObjectType(internalName))
 
             expression.acceptChildren(this, data)
         }

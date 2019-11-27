@@ -28,6 +28,31 @@ public class SmartSelectionTestGenerated extends AbstractSmartSelectionTest {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/smartSelection"), Pattern.compile("^([^.]+)\\.kt$"), true);
     }
 
+    @TestMetadata("beforeComment.kt")
+    public void testBeforeComment() throws Exception {
+        runTest("idea/testData/smartSelection/beforeComment.kt");
+    }
+
+    @TestMetadata("beforeKDocComment.kt")
+    public void testBeforeKDocComment() throws Exception {
+        runTest("idea/testData/smartSelection/beforeKDocComment.kt");
+    }
+
+    @TestMetadata("beforeRightParenthesis.kt")
+    public void testBeforeRightParenthesis() throws Exception {
+        runTest("idea/testData/smartSelection/beforeRightParenthesis.kt");
+    }
+
+    @TestMetadata("beforeRightParenthesis2.kt")
+    public void testBeforeRightParenthesis2() throws Exception {
+        runTest("idea/testData/smartSelection/beforeRightParenthesis2.kt");
+    }
+
+    @TestMetadata("beforeRightParenthesis3.kt")
+    public void testBeforeRightParenthesis3() throws Exception {
+        runTest("idea/testData/smartSelection/beforeRightParenthesis3.kt");
+    }
+
     @TestMetadata("commentsAndExtraSpaces.kt")
     public void testCommentsAndExtraSpaces() throws Exception {
         runTest("idea/testData/smartSelection/commentsAndExtraSpaces.kt");

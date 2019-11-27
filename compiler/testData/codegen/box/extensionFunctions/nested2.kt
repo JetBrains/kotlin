@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 fun box() : String {
   val y = 12
   val op = { x:Int -> (x + y).toString() }

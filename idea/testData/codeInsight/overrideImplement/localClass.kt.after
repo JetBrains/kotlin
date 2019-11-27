@@ -7,7 +7,7 @@ fun f() {
 
     object : C<R>() {
         override fun f(a: R) {
-            <selection><caret>TODO("not implemented") //To change body of created functions use File | Settings | File Templates.</selection>
+            <selection><caret>TODO("Not yet implemented")</selection>
         }
     }
 }

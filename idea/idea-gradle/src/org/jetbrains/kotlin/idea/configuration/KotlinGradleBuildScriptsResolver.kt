@@ -12,7 +12,8 @@ import com.intellij.util.Consumer
 import org.gradle.tooling.model.idea.IdeaProject
 import org.gradle.tooling.model.kotlin.dsl.KotlinDslModelsParameters.*
 import org.gradle.tooling.model.kotlin.dsl.KotlinDslScriptsModel
-import org.jetbrains.kotlin.idea.util.NotNullableCopyableDataNodeUserDataProperty
+import org.jetbrains.kotlin.idea.scripting.gradle.kotlinDslScriptsModelImportSupported
+import org.jetbrains.kotlin.idea.scripting.gradle.minimal_gradle_version_supported
 import org.jetbrains.plugins.gradle.model.ProjectImportExtraModelProvider
 import org.jetbrains.plugins.gradle.service.project.AbstractProjectResolverExtension
 
@@ -31,7 +32,9 @@ class KotlinGradleBuildScriptsResolver : AbstractProjectResolverExtension() {
     }
 
     override fun enhanceTaskProcessing(taskNames: MutableList<String>, jvmParametersSetup: String?, initScriptConsumer: Consumer<String>) {
-        initScriptConsumer.consume("startParameter.taskNames += [\"${PREPARATION_TASK_NAME}\"]")
+        initScriptConsumer.consume(
+            "if (org.gradle.util.GradleVersion.current() >= org.gradle.util.GradleVersion.version(\"$minimal_gradle_version_supported\")) startParameter.taskNames += [\"${PREPARATION_TASK_NAME}\"]"
+        )
     }
 
     override fun getExtraModelProvider(): ProjectImportExtraModelProvider {
@@ -41,9 +44,11 @@ class KotlinGradleBuildScriptsResolver : AbstractProjectResolverExtension() {
     override fun populateProjectExtraModels(gradleProject: IdeaProject, ideProject: DataNode<ProjectData>) {
         super.populateProjectExtraModels(gradleProject, ideProject)
 
-        resolverCtx.getExtraProject(null, KotlinDslScriptsModel::class.java)?.let { model ->
-            // we need a copy to avoid memory leak, as model is java rmi proxy object
-            ideProject.gradleKotlinBuildScripts = copy(model)
+        if (kotlinDslScriptsModelImportSupported(resolverCtx.projectGradleVersion)) {
+            resolverCtx.getExtraProject(null, KotlinDslScriptsModel::class.java)?.let { model ->
+                // we need a copy to avoid memory leak, as model is java rmi proxy object
+                ideProject.gradleKotlinBuildScripts = copy(model)
+            }
         }
     }
 

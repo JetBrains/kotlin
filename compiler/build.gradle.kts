@@ -48,6 +48,7 @@ dependencies {
     testCompile(projectTests(":compiler:fir:psi2fir"))
     testCompile(projectTests(":compiler:fir:fir2ir"))
     testCompile(projectTests(":compiler:fir:resolve"))
+    testCompile(projectTests(":compiler:fir:lightTree"))
     testCompile(projectTests(":compiler:visualizer"))
     testCompile(projectTests(":generators:test-generator"))
     testCompile(project(":compiler:ir.ir2cfg"))

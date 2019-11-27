@@ -1,15 +1,11 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.*
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedClassConstructorDescriptor
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedClassDescriptor
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedFieldDescriptor
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -21,6 +17,10 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
+import org.jetbrains.kotlin.ir.descriptors.WrappedClassConstructorDescriptor
+import org.jetbrains.kotlin.ir.descriptors.WrappedClassDescriptor
+import org.jetbrains.kotlin.ir.descriptors.WrappedFieldDescriptor
+import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
@@ -56,6 +57,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
 
     protected abstract fun initializeStateMachine(coroutineConstructors: List<IrConstructor>, coroutineClassThis: IrValueDeclaration)
 
+    protected open fun IrBuilderWithScope.generateDelegatedCall(expectedType: IrType, delegatingCall: IrExpression): IrExpression = delegatingCall
 
     private val builtCoroutines = mutableMapOf<IrFunction, BuiltCoroutine>()
     private val suspendLambdas = mutableMapOf<IrFunction, IrFunctionReference>()
@@ -227,7 +229,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
             val statements = (irFunction.body as IrBlockBody).statements
             val lastStatement = statements.last()
             assert(lastStatement == delegatingCall || lastStatement is IrReturn) { "Unexpected statement $lastStatement" }
-            statements[statements.lastIndex] = irReturn(returnValue)
+            statements[statements.lastIndex] = irReturn(generateDelegatedCall(irFunction.returnType, returnValue))
         }
     }
 
@@ -319,7 +321,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
         private val coroutineConstructors = mutableListOf<IrConstructor>()
 
         fun build(): BuiltCoroutine {
-            val superTypes = mutableListOf(coroutineBaseClass.owner.defaultType)
+            val superTypes = mutableListOf(coroutineBaseClass.defaultType)
             var suspendFunctionClass: IrClass? = null
             var functionClass: IrClass? = null
             val suspendFunctionClassTypeArguments: List<IrType>?
@@ -550,7 +552,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 Name.identifier("invoke"),
                 Visibilities.PROTECTED,
                 Modality.FINAL,
-                irFunction.returnType,
+                context.irBuiltIns.anyNType,
                 isInline = false,
                 isExternal = false,
                 isTailrec = false,

@@ -203,7 +203,8 @@ class CheckIrElementVisitor(
             IrTypeOperator.IMPLICIT_COERCION_TO_UNIT,
             IrTypeOperator.IMPLICIT_INTEGER_COERCION,
             IrTypeOperator.SAM_CONVERSION,
-            IrTypeOperator.IMPLICIT_DYNAMIC_CAST ->
+            IrTypeOperator.IMPLICIT_DYNAMIC_CAST,
+            IrTypeOperator.REINTERPRET_CAST ->
                 typeOperand
 
             IrTypeOperator.SAFE_CAST ->
@@ -294,7 +295,7 @@ class CheckIrElementVisitor(
         super.visitDeclarationReference(expression)
 
         // TODO: Fix unbound external declarations
-        if (expression.descriptor.isEffectivelyExternal())
+        if (expression.symbol.descriptor.isEffectivelyExternal())
             return
 
         // TODO: Fix unbound dynamic filed declarations

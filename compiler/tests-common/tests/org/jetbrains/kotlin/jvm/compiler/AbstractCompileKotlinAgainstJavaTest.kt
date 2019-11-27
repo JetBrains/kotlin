@@ -17,10 +17,14 @@
 package org.jetbrains.kotlin.jvm.compiler
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.codegen.GenerationUtils
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.javac.JavacWrapper
+import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.renderer.AnnotationArgumentsRenderingPolicy
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
@@ -28,20 +32,25 @@ import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
 import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils.*
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.validateAndCompareDescriptorWithFile
 import org.junit.Assert
 import java.io.File
-import java.io.IOException
 import java.lang.annotation.Retention
 
 abstract class AbstractCompileKotlinAgainstJavaTest : TestCaseWithTmpdir() {
 
-    @Throws(IOException::class)
-    protected fun doTest(ktFilePath: String) {
+    protected fun doTestWithoutAPT(ktFilePath: String) {
+        doTest(ktFilePath, aptMode = false)
+    }
+
+    protected fun doTestWithAPT(ktFilePath: String) {
+        doTest(ktFilePath, aptMode = true)
+    }
+
+    private fun doTest(ktFilePath: String, aptMode: Boolean) {
         Assert.assertTrue(ktFilePath.endsWith(".kt"))
         val ktFile = File(ktFilePath)
         val javaFile = File(ktFilePath.replaceFirst("\\.kt$".toRegex(), ".java"))
@@ -50,7 +59,8 @@ abstract class AbstractCompileKotlinAgainstJavaTest : TestCaseWithTmpdir() {
         val compiledSuccessfully = compileKotlinWithJava(
             listOf(javaFile),
             listOf(ktFile),
-            out, testRootDisposable
+            out, testRootDisposable,
+            aptMode
         )
         if (!compiledSuccessfully) return
 
@@ -62,7 +72,7 @@ abstract class AbstractCompileKotlinAgainstJavaTest : TestCaseWithTmpdir() {
 
         environment.configuration.put(JVMConfigurationKeys.USE_JAVAC, true)
         environment.configuration.put(JVMConfigurationKeys.OUTPUT_DIRECTORY, out)
-        environment.registerJavac(emptyList<File>(), bootClasspath = listOf(KotlinTestUtils.findMockJdkRtJar()))
+        environment.registerJavac(emptyList(), bootClasspath = listOf(findMockJdkRtJar()))
 
         val analysisResult = JvmResolveUtil.analyze(environment)
         val packageView = analysisResult.moduleDescriptor.getPackage(LoadDescriptorUtil.TEST_PACKAGE_FQNAME)
@@ -72,31 +82,37 @@ abstract class AbstractCompileKotlinAgainstJavaTest : TestCaseWithTmpdir() {
         validateAndCompareDescriptorWithFile(packageView, CONFIGURATION, expectedFile)
     }
 
-    @Throws(IOException::class)
     fun compileKotlinWithJava(
         javaFiles: List<File>,
-        ktFiles: List<File>,
+        kotlinFiles: List<File>,
         outDir: File,
-        disposable: Disposable
+        disposable: Disposable,
+        aptMode: Boolean
     ): Boolean {
         val environment = createEnvironmentWithMockJdkAndIdeaAnnotations(disposable)
         environment.configuration.put(JVMConfigurationKeys.USE_JAVAC, true)
         environment.configuration.put(JVMConfigurationKeys.COMPILE_JAVA, true)
-        environment.configuration.put(JVMConfigurationKeys.OUTPUT_DIRECTORY, outDir)
+        val ktFiles = kotlinFiles.map { kotlinFile: File ->
+            createFile(kotlinFile.name, FileUtil.loadFile(kotlinFile, true), environment.project)
+        }
         environment.registerJavac(
             javaFiles = javaFiles,
-            kotlinFiles = listOf(KotlinTestUtils.loadJetFile(environment.project, ktFiles.first())),
-            arguments = arrayOf("-proc:none"),
-            bootClasspath = listOf(KotlinTestUtils.findMockJdkRtJar())
+            kotlinFiles = ktFiles,
+            arguments = if (aptMode) arrayOf() else arrayOf("-proc:none"),
+            bootClasspath = listOf(findMockJdkRtJar())
         )
-        if (!ktFiles.isEmpty()) {
-            LoadDescriptorUtil.compileKotlinToDirAndGetModule(ktFiles, outDir, environment)
+        ModuleVisibilityManager.SERVICE.getInstance(environment.project).addModule(
+            ModuleBuilder("module for test", tmpdir.absolutePath, "test")
+        )
+
+        if (kotlinFiles.isNotEmpty()) {
+            GenerationUtils.compileFilesTo(ktFiles, environment, outDir)
         } else {
             val mkdirs = outDir.mkdirs()
             assert(mkdirs) { "Not created: $outDir" }
         }
 
-        return JavacWrapper.getInstance(environment.project).use { it.compile() }
+        return JavacWrapper.getInstance(environment.project).use { it.compile(outDir) }
     }
 
     companion object {

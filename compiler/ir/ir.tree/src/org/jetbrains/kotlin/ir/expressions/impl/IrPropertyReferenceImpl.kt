@@ -31,7 +31,6 @@ class IrPropertyReferenceImpl(
     endOffset: Int,
     type: IrType,
     override val symbol: IrPropertySymbol,
-    override val descriptor: PropertyDescriptor,
     typeArgumentsCount: Int,
     override val field: IrFieldSymbol?,
     override val getter: IrSimpleFunctionSymbol?,
@@ -40,22 +39,6 @@ class IrPropertyReferenceImpl(
 ) :
     IrNoArgumentsCallableReferenceBase(startOffset, endOffset, type, typeArgumentsCount, origin),
     IrPropertyReference {
-
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        type: IrType,
-        symbol: IrPropertySymbol,
-        typeArgumentsCount: Int,
-        field: IrFieldSymbol?,
-        getter: IrSimpleFunctionSymbol?,
-        setter: IrSimpleFunctionSymbol?,
-        origin: IrStatementOrigin? = null
-    ) : this(
-        startOffset, endOffset, type,
-        symbol, symbol.descriptor,
-        typeArgumentsCount, field, getter, setter, origin
-    )
 
     @Deprecated(message = "Don't use descriptor-based API for IrPropertyReference", level = DeprecationLevel.WARNING)
     constructor(

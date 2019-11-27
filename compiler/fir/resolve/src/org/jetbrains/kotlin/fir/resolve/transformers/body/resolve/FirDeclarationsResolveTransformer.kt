@@ -183,13 +183,12 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
     }
 
     private fun prepareLocalClassForBodyResolve(klass: FirClass<*>) {
-        if (klass.supertypesComputationStatus == SupertypesComputationStatus.NOT_COMPUTED) {
+        if (klass.superTypeRefs.any { it !is FirResolvedTypeRef }) {
             klass.replaceSuperTypeRefs(
                 klass.superTypeRefs.map { superTypeRef ->
                     this.transformer.transformTypeRef(superTypeRef, ResolutionMode.ContextIndependent).single
                 }
             )
-            klass.replaceSupertypesComputationStatus(SupertypesComputationStatus.COMPUTED)
         }
         if (klass is FirRegularClass) {
             klass.transformStatus(transformer, klass.resolveStatus(klass.status).mode())

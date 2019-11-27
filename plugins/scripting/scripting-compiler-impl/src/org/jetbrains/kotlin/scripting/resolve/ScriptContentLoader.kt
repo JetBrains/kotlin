@@ -12,7 +12,6 @@ import java.io.File
 import kotlin.script.dependencies.ScriptContents
 import kotlin.script.experimental.dependencies.DependenciesResolver
 import kotlin.script.experimental.dependencies.DependenciesResolver.ResolveResult.Failure
-import kotlin.script.experimental.dependencies.ScriptDependencies
 import kotlin.script.experimental.dependencies.ScriptReport
 
 class ScriptContentLoader(private val project: Project) {
@@ -52,14 +51,6 @@ class ScriptContentLoader(private val project: Project) {
 
     fun getEnvironment(scriptDef: KotlinScriptDefinition) =
         (scriptDef as? KotlinScriptDefinitionFromAnnotatedTemplate)?.environment.orEmpty()
-}
-
-fun ScriptDependencies.adjustByDefinition(
-    scriptDef: KotlinScriptDefinition
-): ScriptDependencies {
-    val additionalClasspath = (scriptDef as? KotlinScriptDefinitionFromAnnotatedTemplate)?.templateClasspath ?: return this
-    if (additionalClasspath.isEmpty()) return this
-    return copy(classpath = additionalClasspath + classpath)
 }
 
 fun Throwable.asResolveFailure(scriptDef: KotlinScriptDefinition): Failure {

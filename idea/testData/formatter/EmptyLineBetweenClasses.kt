@@ -10,6 +10,7 @@ class E
     : Some
 class F
 
+// test
 fun some() = 1
 class G
 fun some() = 1

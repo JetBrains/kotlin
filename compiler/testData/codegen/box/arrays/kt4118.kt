@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 fun Array<String>.test1(): Array<String> {
     val func = { i:Int  -> this}
     return func(1)

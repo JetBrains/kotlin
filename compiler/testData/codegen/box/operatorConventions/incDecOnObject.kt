@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 class X(var value: Long)
 
 operator fun X.inc(): X {

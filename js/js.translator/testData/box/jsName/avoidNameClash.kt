@@ -1,5 +1,6 @@
 // EXPECTED_REACHABLE_NODES: 1290
 
+@JsExport
 object A {
     @JsName("js_method") fun f() = "method"
 

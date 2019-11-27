@@ -1,0 +1,24 @@
+FILE: delayedAssignment.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(): R|kotlin/Unit| {
+        }
+
+    }
+    public final fun test(b: R|kotlin/Boolean|): R|kotlin/Unit| {
+        lval a: R|A?|
+        when () {
+            R|<local>/b| ->  {
+                R|<local>/a| = R|/A.A|()
+                R|<local>/a|.R|/A.foo|()
+            }
+            else ->  {
+                R|<local>/a| = Null(null)
+            }
+        }
+
+        R|<local>/a|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()
+    }

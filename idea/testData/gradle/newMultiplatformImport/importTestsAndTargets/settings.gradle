@@ -1,18 +1,2 @@
-pluginManagement {
-    repositories {
-
-        mavenLocal()
-
-        maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
-
-        mavenCentral()
-
-        maven { url 'https://plugins.gradle.org/m2/' }
-
-
-    }
-}
 rootProject.name = 'project'
-
-
 enableFeaturePreview('GRADLE_METADATA')

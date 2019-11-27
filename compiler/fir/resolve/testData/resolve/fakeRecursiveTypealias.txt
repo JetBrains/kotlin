@@ -1,3 +1,3 @@
 FILE: fakeRecursiveTypealias.kt
     public final typealias My = R|class error: Symbol not found, for `incorrect.directory.My`|
-    public final typealias Your = R|class error: Recursion detected: R|Your||
+    public final typealias Your = R|class error: Loop in supertype: /Your -> /Your|

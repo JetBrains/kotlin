@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
-import org.jetbrains.kotlin.fir.declarations.SupertypesComputationStatus
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
@@ -40,7 +39,6 @@ class FirEnumEntryImpl(
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
     override var status: FirDeclarationStatus = FirDeclarationStatusImpl(Visibilities.UNKNOWN, Modality.FINAL)
-    override var supertypesComputationStatus: SupertypesComputationStatus = SupertypesComputationStatus.NOT_COMPUTED
     override val classKind: ClassKind get() = ClassKind.ENUM_ENTRY
     override val declarations: MutableList<FirDeclaration> = mutableListOf()
     override val companionObject: FirRegularClass? get() = null
@@ -85,10 +83,6 @@ class FirEnumEntryImpl(
 
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
         resolvePhase = newResolvePhase
-    }
-
-    override fun replaceSupertypesComputationStatus(newSupertypesComputationStatus: SupertypesComputationStatus) {
-        supertypesComputationStatus = newSupertypesComputationStatus
     }
 
     override fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>) {

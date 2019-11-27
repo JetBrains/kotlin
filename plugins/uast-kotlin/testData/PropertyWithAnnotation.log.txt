@@ -7,17 +7,17 @@ UFile (package = )
         UField (name = prop3)
             UAnnotation (fqName = org.jetbrains.annotations.NotNull)
             ULiteralExpression (value = 0)
-        UAnnotationMethod (name = getProp1)
-        UAnnotationMethod (name = getProp2)
+        UMethod (name = getProp1)
+        UMethod (name = getProp2)
             UAnnotation (fqName = TestAnnotation)
             UBlockExpression
                 UReturnExpression
                     ULiteralExpression (value = 0)
-        UAnnotationMethod (name = getProp3)
+        UMethod (name = getProp3)
             UBlockExpression
                 UReturnExpression
                     ULiteralExpression (value = 0)
-        UAnnotationMethod (name = setProp3)
+        UMethod (name = setProp3)
             UAnnotation (fqName = TestAnnotation)
             UParameter (name = value)
                 UAnnotation (fqName = org.jetbrains.annotations.NotNull)

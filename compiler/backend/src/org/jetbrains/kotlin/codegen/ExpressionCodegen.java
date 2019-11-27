@@ -1473,7 +1473,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         markLineNumber(element, false);
     }
 
-    public void markLineNumber(@NotNull KtElement statement, boolean markEndOffset) {
+    public void markLineNumber(@NotNull PsiElement statement, boolean markEndOffset) {
         if (!shouldMarkLineNumbers) return;
 
         Integer lineNumber = CodegenUtil.getLineNumberForElement(statement, markEndOffset);
@@ -5071,11 +5071,11 @@ The "returned" value of try expression with no finally is either the last expres
     private StackValue generateWhenCondition(KtExpression subjectExpression, Type subjectType, KotlinType subjectKotlinType, int subjectLocal, KtWhenCondition condition) {
         if (condition instanceof KtWhenConditionInRange) {
             KtWhenConditionInRange conditionInRange = (KtWhenConditionInRange) condition;
-            return generateIn(StackValue.local(subjectLocal, subjectType),
+            return generateIn(StackValue.local(subjectLocal, subjectType, subjectKotlinType),
                               conditionInRange.getRangeExpression(),
                               conditionInRange.getOperationReference());
         }
-        StackValue.Local match = subjectLocal == -1 ? null : StackValue.local(subjectLocal, subjectType);
+        StackValue.Local match = subjectLocal == -1 ? null : StackValue.local(subjectLocal, subjectType, subjectKotlinType);
         if (condition instanceof KtWhenConditionIsPattern) {
             KtWhenConditionIsPattern patternCondition = (KtWhenConditionIsPattern) condition;
             return generateIsCheck(match, patternCondition.getTypeReference(), patternCondition.isNegated());

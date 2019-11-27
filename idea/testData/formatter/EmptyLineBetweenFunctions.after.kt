@@ -27,6 +27,9 @@ fun f6() = 1
 
 fun f7() = 8
 
+// test
+fun f8() = 42
+
 // Two lines between
 fun l1() {}
 

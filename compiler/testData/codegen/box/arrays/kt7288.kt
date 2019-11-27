@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 fun test(b: Boolean): String {
     val a = if (b) IntArray(5) else LongArray(5)
     if (a is IntArray) {

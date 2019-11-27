@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 class MyList<T>() {
     var value: T? = null
 

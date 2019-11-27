@@ -6,19 +6,25 @@
 package org.jetbrains.kotlin.fir.types.impl
 
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.ConeKotlinTypeProjection
+import org.jetbrains.kotlin.fir.types.ConeNullability
 
-open class ConeClassTypeImpl(
+open class ConeClassLikeTypeImpl(
     override val lookupTag: ConeClassLikeLookupTag,
     override val typeArguments: Array<out ConeKotlinTypeProjection>,
     isNullable: Boolean
-) : ConeClassType() {
+) : ConeClassLikeType() {
     override val nullability: ConeNullability = ConeNullability.create(isNullable)
+
+    // Cached expanded type and the relevant session
+    var cachedExpandedType: Pair<*, ConeClassLikeType>? = null
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as ConeClassTypeImpl
+        other as ConeClassLikeTypeImpl
 
         if (lookupTag != other.lookupTag) return false
         if (!typeArguments.contentEquals(other.typeArguments)) return false
@@ -33,18 +39,4 @@ open class ConeClassTypeImpl(
         result = 31 * result + nullability.hashCode()
         return result
     }
-
-
 }
-
-class ConeAbbreviatedTypeImpl(
-    override val abbreviationLookupTag: ConeClassLikeLookupTag,
-    override val typeArguments: Array<out ConeKotlinTypeProjection>,
-    isNullable: Boolean
-) : ConeAbbreviatedType() {
-    override val lookupTag: ConeClassLikeLookupTag
-        get() = abbreviationLookupTag
-
-    override val nullability: ConeNullability = ConeNullability.create(isNullable)
-}
-

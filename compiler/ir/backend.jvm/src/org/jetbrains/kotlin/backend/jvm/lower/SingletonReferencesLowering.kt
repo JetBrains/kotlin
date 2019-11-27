@@ -52,18 +52,28 @@ private class SingletonReferencesLowering(val context: JvmBackendContext) : File
     }
 
     override fun visitGetObjectValue(expression: IrGetObjectValue): IrExpression {
-        val instanceField = context.declarationFactory.getFieldForObjectInstance(expression.symbol.owner)
+        // When in an instance method of the object, use the dispatch receiver. Do not use the dispatch
+        // receiver in the constructor, as in the case of an `object` the only way it can be used is
+        // in a super constructor call argument (=> it has JVM type "uninitialized this" and is not usable)
+        // while for a `companion object` all initializers are in `<clinit>` and have no receiver at all.
+        thisOfClass(expression.symbol.owner, false)?.let {
+            return IrGetValueImpl(expression.startOffset, expression.endOffset, it.symbol)
+        }
+        val instanceField = if (allScopes.any { it.irElement == expression.symbol.owner })
+            context.declarationFactory.getPrivateFieldForObjectInstance(expression.symbol.owner) // Constructor or static method.
+        else
+            context.declarationFactory.getFieldForObjectInstance(expression.symbol.owner) // Not in object scope at all.
         return IrGetFieldImpl(expression.startOffset, expression.endOffset, instanceField.symbol, expression.type)
     }
 
-    // `this` is generally available while the reference is within the lexical scope of the containing enum entry.
-    private fun thisOfClass(declaration: IrClass?): IrValueParameter? {
+    // `this` is generally available while the reference is within the lexical scope of the containing class.
+    private fun thisOfClass(declaration: IrClass?, allowConstructorReceiver: Boolean = true): IrValueParameter? {
         if (declaration == null) return null
         for (scope in allScopes.reversed()) {
             when (val element = scope.irElement) {
                 is IrFunction ->
                     element.dispatchReceiverParameter?.let { if (it.type.classOrNull == declaration.symbol) return it }
-                is IrClass -> if (element == declaration) return element.thisReceiver
+                is IrClass -> if (allowConstructorReceiver && element == declaration) return element.thisReceiver
             }
         }
         return null

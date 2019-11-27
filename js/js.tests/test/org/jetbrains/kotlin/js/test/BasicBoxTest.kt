@@ -55,16 +55,15 @@ import org.jetbrains.kotlin.serialization.js.JsModuleDescriptor
 import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.serialization.js.ModuleKind
-import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.TestFiles
-import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
-import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.JsMetadataVersion
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadata
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
-import java.io.*
+import java.io.ByteArrayOutputStream
+import java.io.Closeable
+import java.io.File
+import java.io.PrintStream
 import java.lang.Boolean.getBoolean
 import java.nio.charset.Charset
 import java.util.regex.Pattern
@@ -88,6 +87,7 @@ abstract class BasicBoxTest(
 
     protected open val runMinifierByDefault: Boolean = false
     protected open val skipMinification = getBoolean("kotlin.js.skipMinificationTest")
+    protected open val runIrDce: Boolean = false
 
     protected open val incrementalCompilationChecksEnabled = true
 
@@ -104,6 +104,7 @@ abstract class BasicBoxTest(
     open fun doTest(filePath: String, expectedResult: String, mainCallParameters: MainCallParameters, coroutinesPackage: String = "") {
         val file = File(filePath)
         val outputDir = getOutputDir(file)
+        val dceOutputDir = getOutputDir(file, testGroupOutputDirForMinification)
         var fileContent = KotlinTestUtils.doLoadFile(file)
         if (coroutinesPackage.isNotEmpty()) {
             fileContent = fileContent.replace("COROUTINES_PACKAGE", coroutinesPackage)
@@ -155,12 +156,13 @@ abstract class BasicBoxTest(
                 val friends = module.friends.map { modules[it]?.outputFileName(outputDir) + ".meta.js" }
 
                 val outputFileName = module.outputFileName(outputDir) + ".js"
+                val dceOutputFileName = module.outputFileName(dceOutputDir) + ".js"
                 val isMainModule = mainModuleName == module.name
                 generateJavaScriptFile(
-                    file.parent, module, outputFileName, dependencies, allDependencies, friends, modules.size > 1,
-                    !SKIP_SOURCEMAP_REMAPPING.matcher(fileContent).find(),
-                    outputPrefixFile, outputPostfixFile, actualMainCallParameters, testPackage, testFunction,
-                    needsFullIrRuntime, isMainModule
+                    testFactory.tmpDir,
+                    file.parent, module, outputFileName, dceOutputFileName, dependencies, allDependencies, friends, modules.size > 1,
+                    !SKIP_SOURCEMAP_REMAPPING.matcher(fileContent).find(), outputPrefixFile, outputPostfixFile,
+                    actualMainCallParameters, testPackage, testFunction, needsFullIrRuntime, isMainModule
                 )
 
                 when {
@@ -213,6 +215,9 @@ abstract class BasicBoxTest(
             val allJsFiles = additionalFiles + inputJsFiles + generatedJsFiles.map { it.first } + globalCommonFiles + localCommonFiles +
                              additionalCommonFiles + additionalMainFiles
 
+            val dceAllJsFiles = additionalFiles + inputJsFiles + generatedJsFiles.map { it.first.replace(outputDir.absolutePath, dceOutputDir.absolutePath) } +
+                    globalCommonFiles + localCommonFiles + additionalCommonFiles + additionalMainFiles
+
             val dontRunGeneratedCode = InTextDirectivesUtils.dontRunGeneratedCode(targetBackend, file)
 
             if (!dontRunGeneratedCode && generateNodeJsRunner && !SKIP_NODE_JS.matcher(fileContent).find()) {
@@ -224,6 +229,10 @@ abstract class BasicBoxTest(
 
             if (!dontRunGeneratedCode) {
                 runGeneratedCode(allJsFiles, testModuleName, testPackage, testFunction, expectedResult, withModuleSystem)
+
+                if (runIrDce) {
+                    runGeneratedCode(dceAllJsFiles, testModuleName, testPackage, testFunction, expectedResult, withModuleSystem)
+                }
             }
 
             performAdditionalChecks(generatedJsFiles.map { it.first }, outputPrefixFile, outputPostfixFile)
@@ -337,9 +346,11 @@ abstract class BasicBoxTest(
     private fun TestModule.outputFileName(directory: File) = directory.absolutePath + "/" + outputFileSimpleName() + "_v5"
 
     private fun generateJavaScriptFile(
+        tmpDir: File,
         directory: String,
         module: TestModule,
         outputFileName: String,
+        dceOutputFileName: String,
         dependencies: List<String>,
         allDependencies: List<String>,
         friends: List<String>,
@@ -367,18 +378,19 @@ abstract class BasicBoxTest(
         val psiFiles = createPsiFiles(allSourceFiles.sortedBy { it.canonicalPath }.map { it.canonicalPath })
 
         val sourceDirs = (testFiles + additionalFiles).map { File(it).parent }.distinct()
-        val config = createConfig(sourceDirs, module, dependencies, allDependencies, friends, multiModule, incrementalData = null)
+        val config = createConfig(sourceDirs, module, dependencies, allDependencies, friends, multiModule, tmpDir, incrementalData = null)
         val outputFile = File(outputFileName)
+        val dceOutputFile = File(dceOutputFileName)
 
         val incrementalData = IncrementalData()
         translateFiles(
-            psiFiles.map(TranslationUnit::SourceFile), outputFile, config, outputPrefixFile, outputPostfixFile,
+            psiFiles.map(TranslationUnit::SourceFile), outputFile, dceOutputFile, config, outputPrefixFile, outputPostfixFile,
             mainCallParameters, incrementalData, remap, testPackage, testFunction, needsFullIrRuntime, isMainModule
         )
 
         if (incrementalCompilationChecksEnabled && module.hasFilesToRecompile) {
             checkIncrementalCompilation(
-                sourceDirs, module, kotlinFiles, dependencies, allDependencies, friends, multiModule, remap,
+                sourceDirs, module, kotlinFiles, dependencies, allDependencies, friends, multiModule, tmpDir, remap,
                 outputFile, outputPrefixFile, outputPostfixFile, mainCallParameters, incrementalData, testPackage, testFunction, needsFullIrRuntime
             )
         }
@@ -392,6 +404,7 @@ abstract class BasicBoxTest(
         allDependencies: List<String>,
         friends: List<String>,
         multiModule: Boolean,
+        tmpDir: File,
         remap: Boolean,
         outputFile: File,
         outputPrefixFile: File?,
@@ -418,11 +431,11 @@ abstract class BasicBoxTest(
                 .sortedBy { it.canonicalPath }
                 .map { sourceToTranslationUnit[it]!! }
 
-        val recompiledConfig = createConfig(sourceDirs, module, dependencies, allDependencies, friends, multiModule, incrementalData)
+        val recompiledConfig = createConfig(sourceDirs, module, dependencies, allDependencies, friends, multiModule, tmpDir, incrementalData)
         val recompiledOutputFile = File(outputFile.parentFile, outputFile.nameWithoutExtension + "-recompiled.js")
 
         translateFiles(
-            translationUnits, recompiledOutputFile, recompiledConfig, outputPrefixFile, outputPostfixFile,
+            translationUnits, recompiledOutputFile, recompiledOutputFile, recompiledConfig, outputPrefixFile, outputPostfixFile,
             mainCallParameters, incrementalData, remap, testPackage, testFunction, needsFullIrRuntime, false
         )
 
@@ -484,6 +497,7 @@ abstract class BasicBoxTest(
     protected open fun translateFiles(
         units: List<TranslationUnit>,
         outputFile: File,
+        dceOutputFile: File,
         config: JsConfig,
         outputPrefixFile: File?,
         outputPostfixFile: File?,
@@ -629,8 +643,8 @@ abstract class BasicBoxTest(
     private fun createPsiFiles(fileNames: List<String>): List<KtFile> = fileNames.map(this::createPsiFile)
 
     private fun createConfig(
-            sourceDirs: List<String>, module: TestModule, dependencies: List<String>, allDependencies: List<String>, friends: List<String>,
-            multiModule: Boolean, incrementalData: IncrementalData?
+        sourceDirs: List<String>, module: TestModule, dependencies: List<String>, allDependencies: List<String>, friends: List<String>,
+        multiModule: Boolean, tmpDir: File, incrementalData: IncrementalData?
     ): JsConfig {
         val configuration = environment.configuration.copy()
 
@@ -671,6 +685,16 @@ abstract class BasicBoxTest(
         configuration.put(JSConfigurationKeys.SOURCE_MAP_EMBED_SOURCES, module.sourceMapSourceEmbedding)
 
         configuration.put(JSConfigurationKeys.TYPED_ARRAYS_ENABLED, typedArraysEnabled)
+
+        configuration.put(JSConfigurationKeys.GENERATE_REGION_COMMENTS, true)
+
+        configuration.put(
+            JSConfigurationKeys.FILE_PATHS_PREFIX_MAP,
+            mapOf(
+                tmpDir.absolutePath to "<TMP>",
+                File(".").absolutePath.removeSuffix(".") to ""
+            )
+        )
 
         return JsConfig(project, configuration, METADATA_CACHE, (JsConfig.JS_STDLIB + JsConfig.JS_KOTLIN_TEST).toSet())
     }

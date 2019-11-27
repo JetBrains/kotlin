@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.idea.configuration
 
-import com.intellij.openapi.projectRoots.ProjectJdkTable
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
+import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.junit.Assert
 import org.junit.runner.RunWith
@@ -15,6 +15,6 @@ import org.junit.runner.RunWith
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class AutoConfigureKotlinSdkOnStartupTest : AbstractConfigureKotlinInTempDirTest() {
     fun testKotlinSdkAdded() {
-        Assert.assertTrue(ProjectJdkTable.getInstance().allJdks.any { it.sdkType is KotlinSdkType })
+        Assert.assertTrue(getProjectJdkTableSafe().allJdks.any { it.sdkType is KotlinSdkType })
     }
 }

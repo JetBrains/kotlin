@@ -49,7 +49,7 @@ FILE fqName:<root> fileName:/classLiteralInAnnotation.kt
   FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
   FUN name:test2 visibility:public modality:FINAL <T> () returnType:<uninitialized parent>.<anonymous> [inline]
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test2 <T> (): <uninitialized parent>.<anonymous> [inline] declared in <root>'
         BLOCK type=<root>.test2.<no name provided> origin=OBJECT_LITERAL

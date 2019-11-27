@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 var flag = true
 
 fun exit(): Nothing = null!!

@@ -6,6 +6,6 @@ abstract class A {
 
 class B : A() {
     override fun foo() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        TODO("Not yet implemented")
     }
 }

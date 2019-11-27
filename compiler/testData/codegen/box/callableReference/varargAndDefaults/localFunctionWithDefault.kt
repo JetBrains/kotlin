@@ -1,4 +1,5 @@
 // !LANGUAGE: +NewInference +FunctionReferenceWithDefaultValueAsOtherType
+// IGNORE_BACKEND_FIR: JVM_IR
 // IGNORE_BACKEND: JS
 
 fun call0(f: (String) -> String, x: String): String = f(x)

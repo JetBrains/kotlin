@@ -19,7 +19,6 @@ class IrConstructorCallImpl(
     endOffset: Int,
     type: IrType,
     override val symbol: IrConstructorSymbol,
-    override val descriptor: ClassConstructorDescriptor,
     typeArgumentsCount: Int,
     override val constructorTypeArgumentsCount: Int,
     valueArgumentsCount: Int,
@@ -32,29 +31,6 @@ class IrConstructorCallImpl(
         visitor.visitConstructorCall(this, data)
 
     companion object {
-        fun fromSubstitutedDescriptor(
-            startOffset: Int,
-            endOffset: Int,
-            type: IrType,
-            constructorSymbol: IrConstructorSymbol,
-            constructorDescriptor: ClassConstructorDescriptor,
-            origin: IrStatementOrigin? = null
-        ): IrConstructorCallImpl {
-            val classTypeParametersCount = constructorDescriptor.constructedClass.original.declaredTypeParameters.size
-            val totalTypeParametersCount = constructorDescriptor.typeParameters.size
-            val valueParametersCount = constructorDescriptor.valueParameters.size
-
-            return IrConstructorCallImpl(
-                startOffset, endOffset,
-                type,
-                constructorSymbol,
-                constructorDescriptor,
-                totalTypeParametersCount,
-                totalTypeParametersCount - classTypeParametersCount,
-                valueParametersCount,
-                origin
-            )
-        }
 
         fun fromSymbolDescriptor(
             startOffset: Int,
@@ -62,19 +38,31 @@ class IrConstructorCallImpl(
             type: IrType,
             constructorSymbol: IrConstructorSymbol,
             origin: IrStatementOrigin? = null
-        ): IrConstructorCallImpl =
-            fromSubstitutedDescriptor(startOffset, endOffset, type, constructorSymbol, constructorSymbol.descriptor, origin)
+        ): IrConstructorCallImpl {
+            val constructorDescriptor = constructorSymbol.descriptor
+            val classTypeParametersCount = constructorDescriptor.constructedClass.original.declaredTypeParameters.size
+            val totalTypeParametersCount = constructorDescriptor.typeParameters.size
+            val valueParametersCount = constructorDescriptor.valueParameters.size
+            return IrConstructorCallImpl(
+                startOffset, endOffset,
+                type,
+                constructorSymbol,
+                totalTypeParametersCount,
+                totalTypeParametersCount - classTypeParametersCount,
+                valueParametersCount,
+                origin
+            )
+        }
 
         fun fromSymbolOwner(
             startOffset: Int,
             endOffset: Int,
             type: IrType,
             constructorSymbol: IrConstructorSymbol,
+            classTypeParametersCount: Int,
             origin: IrStatementOrigin? = null
         ): IrConstructorCallImpl {
             val constructor = constructorSymbol.owner
-            val constructedClass = constructor.parentAsClass
-            val classTypeParametersCount = constructedClass.typeParameters.size
             val constructorTypeParametersCount = constructor.typeParameters.size
             val totalTypeParametersCount = classTypeParametersCount + constructorTypeParametersCount
             val valueParametersCount = constructor.valueParameters.size
@@ -83,7 +71,6 @@ class IrConstructorCallImpl(
                 startOffset, endOffset,
                 type,
                 constructorSymbol,
-                constructorSymbol.descriptor,
                 totalTypeParametersCount,
                 constructorTypeParametersCount,
                 valueParametersCount,
@@ -92,11 +79,19 @@ class IrConstructorCallImpl(
         }
 
         fun fromSymbolOwner(
+            startOffset: Int,
+            endOffset: Int,
             type: IrType,
             constructorSymbol: IrConstructorSymbol,
             origin: IrStatementOrigin? = null
-        ) =
-            fromSymbolOwner(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, constructorSymbol, origin)
+        ): IrConstructorCallImpl {
+            val constructedClass = constructorSymbol.owner.parentAsClass
+            val classTypeParametersCount = constructedClass.typeParameters.size
+            return fromSymbolOwner(startOffset, endOffset, type, constructorSymbol, classTypeParametersCount, origin)
+        }
+
+        fun fromSymbolOwner(type: IrType, constructorSymbol: IrConstructorSymbol, origin: IrStatementOrigin? = null) =
+            fromSymbolOwner(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, constructorSymbol, constructorSymbol.owner.parentAsClass.typeParameters.size, origin)
     }
 }
 

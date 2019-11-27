@@ -54,6 +54,14 @@
                 text="Report as incompatible API">
         </action>
 
+        <group id="Kotlin.XDebugger.Actions">
+<!--            TODO(design)-->
+            <action id="Kotlin.XDebugger.CoroutinesDump"
+                class="org.jetbrains.kotlin.idea.debugger.coroutines.CoroutineDumpAction"
+            text="Get Coroutines Dump"
+            icon="/org/jetbrains/kotlin/idea/icons/kotlin.png"/>
+        </group>
+
         <action id="Kotlin.XDebugger.ToggleKotlinVariableView"
                 class="org.jetbrains.kotlin.idea.debugger.ToggleKotlinVariablesView"
                 text="Show Kotlin Variables Only">
@@ -103,6 +111,7 @@
         <debugger.javaBreakpointHandlerFactory implementation="org.jetbrains.kotlin.idea.debugger.breakpoints.KotlinFunctionBreakpointHandlerFactory"/>
         <debugger.jvmSteppingCommandProvider implementation="org.jetbrains.kotlin.idea.debugger.stepping.KotlinSteppingCommandProvider"/>
         <debugger.simplePropertyGetterProvider implementation="org.jetbrains.kotlin.idea.debugger.stepping.KotlinSimpleGetterProvider"/>
+        <runConfigurationExtension implementation="org.jetbrains.kotlin.idea.debugger.coroutines.CoroutinesDebugConfigurationExtension"/>
 
         <framework.type implementation="org.jetbrains.kotlin.idea.framework.JavaFrameworkType"/>
         <projectTemplatesFactory implementation="org.jetbrains.kotlin.idea.framework.KotlinTemplatesFactory" />
@@ -179,6 +188,10 @@
 
       <registryKey key="kotlin.jps.instrument.bytecode"
                    description="Enable bytecode instrumentation for Kotlin classes"
+                   defaultValue="false"
+                   restartRequired="false"/>
+      <registryKey key="kotlin.debugger.coroutines"
+                   description="Enable debugging for coroutines in Kotlin/JVM"
                    defaultValue="false"
                    restartRequired="false"/>
     </extensions>

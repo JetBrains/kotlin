@@ -47,7 +47,7 @@ abstract class KotlinSyntheticTypeComponentProviderBase: SyntheticTypeComponentP
                 return false
             }
 
-            return !typeComponent.declaringType().allLineLocations().any { it.lineNumber() != 1 }
+            return !typeComponent.declaringType().safeAllLineLocations().any { it.lineNumber() != 1 }
         }
         catch(e: AbsentInformationException) {
             return false

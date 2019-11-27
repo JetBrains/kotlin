@@ -1,4 +1,4 @@
 public abstract interface SubclassOfMapEntry<K, V> : R|kotlin/collections/MutableMap.MutableEntry<K, V>| {
-    public abstract operator fun setValue(value: R|V|): R|V|
+    public abstract operator fun setValue(value: R|V!|): R|V!|
 
 }

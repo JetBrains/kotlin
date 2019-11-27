@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.serialization.DescriptorUniqIdAware
 import org.jetbrains.kotlin.backend.common.serialization.DeserializedDescriptorUniqIdAware
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.util.KotlinMangler
 
 class JsDescriptorReferenceDeserializer(
     currentModule: ModuleDescriptor,

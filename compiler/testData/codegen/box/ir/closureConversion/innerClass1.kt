@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 class Outer {
     val x = "O"
     inner class Inner {

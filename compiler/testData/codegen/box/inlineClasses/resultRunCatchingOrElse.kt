@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 inline class Result<out T>(val value: Any?) {
     fun exceptionOrNull(): Throwable? =
         when (value) {

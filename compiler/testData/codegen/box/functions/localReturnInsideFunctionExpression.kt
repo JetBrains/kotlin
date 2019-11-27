@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 fun simple() = fun (): Boolean { return true }
 
 fun withLabel() = l@ fun (): Boolean { return@l true }

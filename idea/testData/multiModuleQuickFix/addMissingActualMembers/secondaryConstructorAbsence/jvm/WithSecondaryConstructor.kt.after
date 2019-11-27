@@ -7,6 +7,6 @@ actual class WithSecondaryConstructor {
     val z: Double = 3.14
 
     actual constructor(x: Int, s: String) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        TODO("Not yet implemented")
     }
 }

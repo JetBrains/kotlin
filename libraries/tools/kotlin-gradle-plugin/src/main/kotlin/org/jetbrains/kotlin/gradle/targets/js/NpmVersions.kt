@@ -24,7 +24,7 @@ class NpmVersions {
     //  https://github.com/webpack-contrib/source-map-loader/pull/91
     val kotlinSourceMapLoader = KotlinGradleNpmPackage("source-map-loader")
     val sourceMapLoader = NpmPackageVersion("source-map-loader", "0.2.4")
-    val sourceMapSupport = NpmPackageVersion("source-map-support", "0.5.13")
+    val sourceMapSupport = NpmPackageVersion("source-map-support", "0.5.16")
 
     val mocha = NpmPackageVersion("mocha", "6.2.2")
 
@@ -54,7 +54,7 @@ interface RequiredKotlinJsDependency {
 
 data class NpmPackageVersion(val name: String, var version: String) : RequiredKotlinJsDependency {
     override fun createDependency(project: Project, scope: NpmDependency.Scope): Dependency =
-        NpmDependency(project, null, name, version, scope)
+        NpmDependency(project, name, version, scope)
 }
 
 data class KotlinGradleNpmPackage(val simpleModuleName: String) : RequiredKotlinJsDependency {

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 sealed class A {
     class B : A()
 

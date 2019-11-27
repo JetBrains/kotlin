@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpressionWithCopy
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
@@ -36,6 +37,8 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
     private val shortMask get() = JsIrBuilder.buildInt(context.irBuiltIns.intType, 0xFFFF)
 
     private val calculator = JsIrArithBuilder(context)
+
+    private val devMode = context.devMode
 
     //NOTE: Should we define JS-own functions similar to current implementation?
     private val throwCCE = context.ir.symbols.ThrowTypeCastException
@@ -71,8 +74,8 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
                 super.visitTypeOperator(expression, data)
 
                 return when (expression.operator) {
-                    IrTypeOperator.IMPLICIT_CAST -> lowerImplicitCast(expression)
-                    IrTypeOperator.IMPLICIT_DYNAMIC_CAST -> lowerImplicitDynamicCast(expression)
+                    IrTypeOperator.IMPLICIT_CAST -> lowerImplicitCast(expression, data)
+                    IrTypeOperator.IMPLICIT_DYNAMIC_CAST -> lowerImplicitDynamicCast(expression, data)
                     IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> lowerCoercionToUnit(expression)
                     IrTypeOperator.IMPLICIT_INTEGER_COERCION -> lowerIntegerCoercion(expression, data)
                     IrTypeOperator.IMPLICIT_NOTNULL -> lowerImplicitNotNull(expression, data)
@@ -80,6 +83,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
                     IrTypeOperator.NOT_INSTANCEOF -> lowerInstanceOf(expression, data, true)
                     IrTypeOperator.CAST -> lowerCast(expression, data, false)
                     IrTypeOperator.SAFE_CAST -> lowerCast(expression, data, true)
+                    IrTypeOperator.REINTERPRET_CAST -> expression
                     IrTypeOperator.SAM_CONVERSION -> TODO("SAM conversion: ${expression.render()}")
                 }
             }
@@ -98,13 +102,26 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
                 return expression.run { IrCompositeImpl(startOffset, endOffset, typeOperand, null, newStatements) }
             }
 
+            private fun needBoxingOrUnboxing(fromType: IrType, toType: IrType): Boolean {
+                return ((fromType.getInlinedClass() != null) xor (toType.getInlinedClass() != null)) || (fromType.isUnit() && !toType.isUnit())
+            }
+
+            private fun IrTypeOperatorCall.wrapWithUnsafeCast(arg: IrExpression): IrExpression {
+                // TODO: there is possible some situation which could be visible for AutoboxingLowering
+                // They are: 1. Inline classes, 2. Unit materialization. Using unsafe cast makes lowering work wrong.
+                return if (!needBoxingOrUnboxing(arg.type, typeOperand)) {
+                    IrTypeOperatorCallImpl(startOffset, endOffset, type, IrTypeOperator.REINTERPRET_CAST, typeOperand, arg)
+                } else arg
+            }
+
             private fun lowerCast(
                 expression: IrTypeOperatorCall,
                 declaration: IrDeclarationParent,
                 isSafe: Boolean
             ): IrExpression {
-                assert(expression.operator == IrTypeOperator.CAST || expression.operator == IrTypeOperator.SAFE_CAST)
-                assert((expression.operator == IrTypeOperator.SAFE_CAST) == isSafe)
+                val operator = expression.operator
+                assert(operator == IrTypeOperator.CAST || operator == IrTypeOperator.SAFE_CAST || operator == IrTypeOperator.IMPLICIT_CAST || operator == IrTypeOperator.IMPLICIT_DYNAMIC_CAST)
+                assert((operator == IrTypeOperator.SAFE_CAST) == isSafe)
 
                 val toType = expression.typeOperand
                 val failResult = if (isSafe) litNull else JsIrBuilder.buildCall(throwCCE)
@@ -113,23 +130,23 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
 
                 val argument = cacheValue(expression.argument, newStatements, declaration)
                 val check = generateTypeCheck(argument, toType)
+                val castedValue = expression.wrapWithUnsafeCast(argument())
 
-                newStatements += JsIrBuilder.buildIfElse(expression.type, check, argument(), failResult)
+                newStatements += JsIrBuilder.buildIfElse(expression.type, check, castedValue, failResult)
 
                 return expression.run {
                     IrCompositeImpl(startOffset, endOffset, expression.type, null, newStatements)
                 }
             }
 
-            private fun lowerImplicitCast(expression: IrTypeOperatorCall) = expression.run {
+            private fun lowerImplicitCast(expression: IrTypeOperatorCall, data: IrDeclarationParent) = expression.run {
                 assert(operator == IrTypeOperator.IMPLICIT_CAST)
-                argument
+                if (devMode) lowerCast(expression, data, false) else wrapWithUnsafeCast(argument)
             }
 
-            private fun lowerImplicitDynamicCast(expression: IrTypeOperatorCall) = expression.run {
-                // TODO check argument
+            private fun lowerImplicitDynamicCast(expression: IrTypeOperatorCall, data: IrDeclarationParent) = expression.run {
                 assert(operator == IrTypeOperator.IMPLICIT_DYNAMIC_CAST)
-                argument
+                if (devMode) lowerCast(expression, data, false) else wrapWithUnsafeCast(argument)
             }
 
             // Note: native `instanceOf` is not used which is important because of null-behaviour

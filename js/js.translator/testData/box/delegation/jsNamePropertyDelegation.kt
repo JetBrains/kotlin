@@ -3,6 +3,7 @@ package foo
 
 import kotlin.reflect.KProperty
 
+@JsExport
 class A {
     @JsName("xx") val x: Int by B(23)
 

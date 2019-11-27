@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.BackendContext
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.ir.IrElement
@@ -32,8 +31,6 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -42,11 +39,11 @@ import org.jetbrains.kotlin.name.Name
 class IrLoweringContext(backendContext: BackendContext) : IrGeneratorContextBase(backendContext.irBuiltIns)
 
 class DeclarationIrBuilder(
-    backendContext: BackendContext,
+    generatorContext: IrGeneratorContext,
     symbol: IrSymbol,
     startOffset: Int = UNDEFINED_OFFSET, endOffset: Int = UNDEFINED_OFFSET
 ) : IrBuilderWithScope(
-    IrLoweringContext(backendContext),
+    generatorContext,
     Scope(symbol),
     startOffset,
     endOffset
@@ -76,7 +73,7 @@ fun BackendContext.createIrBuilder(
     startOffset: Int = UNDEFINED_OFFSET,
     endOffset: Int = UNDEFINED_OFFSET
 ) =
-    DeclarationIrBuilder(this, symbol, startOffset, endOffset)
+    DeclarationIrBuilder(IrLoweringContext(this), symbol, startOffset, endOffset)
 
 
 fun <T : IrBuilder> T.at(element: IrElement) = this.at(element.startOffset, element.endOffset)
@@ -212,31 +209,4 @@ fun ParameterDescriptor.copyAsValueParameter(newOwner: CallableDescriptor, index
         source = source
     )
     else -> throw Error("Unexpected parameter descriptor: $this")
-}
-
-fun IrBody.replaceThisByStaticReference(
-    context: CommonBackendContext,
-    irClass: IrClass,
-    oldThisReceiverParameter: IrValueParameter
-): IrBody =
-    transform(ReplaceThisByStaticReference(context, irClass, oldThisReceiverParameter), null)
-
-private class ReplaceThisByStaticReference(
-    val context: CommonBackendContext,
-    val irClass: IrClass,
-    val oldThisReceiverParameter: IrValueParameter
-) : IrElementTransformer<Nothing?> {
-    override fun visitGetValue(expression: IrGetValue, data: Nothing?): IrExpression {
-        val irGetValue = expression
-        if (irGetValue.symbol == oldThisReceiverParameter.symbol) {
-            val instanceField = context.declarationFactory.getFieldForObjectInstance(irClass)
-            return IrGetFieldImpl(
-                expression.startOffset,
-                expression.endOffset,
-                instanceField.symbol,
-                irClass.defaultType
-            )
-        }
-        return super.visitGetValue(irGetValue, data)
-    }
 }

@@ -7,9 +7,6 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import gnu.trove.TObjectIntHashMap
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedClassConstructorDescriptor
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedFieldDescriptor
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
@@ -23,6 +20,9 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
+import org.jetbrains.kotlin.ir.descriptors.WrappedClassConstructorDescriptor
+import org.jetbrains.kotlin.ir.descriptors.WrappedFieldDescriptor
+import org.jetbrains.kotlin.ir.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
@@ -35,8 +35,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.TypeProjectionImpl
-import org.jetbrains.kotlin.types.TypeSubstitutor
 import java.util.*
 
 internal val enumClassPhase = makeIrFilePhase(
@@ -271,7 +269,6 @@ private class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringP
                     endOffset,
                     context.irBuiltIns.unitType,
                     enumConstructorCall.symbol,
-                    enumConstructorCall.descriptor,
                     enumConstructorCall.typeArgumentsCount
                 )
 
@@ -309,7 +306,6 @@ private class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringP
                     endOffset,
                     context.irBuiltIns.unitType,
                     loweredDelegatedConstructor.symbol,
-                    loweredDelegatedConstructor.descriptor,
                     loweredDelegatedConstructor.typeParameters.size
                 )
 
@@ -370,7 +366,6 @@ private class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringP
                     endOffset,
                     context.irBuiltIns.unitType,
                     loweredConstructor.symbol,
-                    loweredConstructor.descriptor,
                     loweredConstructor.typeParameters.size
                 )
         }
@@ -475,21 +470,13 @@ private class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringP
 
             private fun createEnumValueOfBody(): IrBody {
                 val enumValueOf = context.irBuiltIns.enumValueOfSymbol
-                val returnType = irClass.defaultType
-
-                val unsubstitutedValueOfDescriptor = enumValueOf.descriptor
-                val typeParameter0 = unsubstitutedValueOfDescriptor.typeParameters[0]
-                val enumClassType = irClass.descriptor.defaultType
-                val typeSubstitutor = TypeSubstitutor.create(mapOf(typeParameter0.typeConstructor to TypeProjectionImpl(enumClassType)))
-                val substitutedValueOfDescriptor = unsubstitutedValueOfDescriptor.substitute(typeSubstitutor)!!
 
                 val irValueOfCall =
                     IrCallImpl(
                         UNDEFINED_OFFSET,
                         UNDEFINED_OFFSET,
-                        returnType,
+                        irClass.defaultType,
                         enumValueOf,
-                        substitutedValueOfDescriptor,
                         enumValueOf.owner.typeParameters.size
                     )
                 irValueOfCall.putTypeArgument(0, irClass.defaultType)
@@ -503,7 +490,7 @@ private class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringP
                         IrReturnImpl(
                             UNDEFINED_OFFSET,
                             UNDEFINED_OFFSET,
-                            returnType,
+                            context.irBuiltIns.nothingType,
                             valueOfFunction.symbol,
                             irValueOfCall
                         )
@@ -515,7 +502,8 @@ private class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringP
                 val cloneFun = context.irBuiltIns.arrayClass.owner.functions.find { it.name.asString() == "clone" }!!
                 val returnType = valuesFunction.symbol.owner.returnType
                 val irCloneValues =
-                    IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, returnType, cloneFun.symbol, cloneFun.descriptor, 0).apply {
+                    IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, returnType, cloneFun.symbol, 1).apply {
+                        putTypeArgument(0, irClass.defaultType)
                         dispatchReceiver =
                             IrGetFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, valuesField.symbol, valuesField.symbol.owner.type)
                     }
@@ -526,7 +514,7 @@ private class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringP
                         IrReturnImpl(
                             UNDEFINED_OFFSET,
                             UNDEFINED_OFFSET,
-                            returnType,
+                            context.irBuiltIns.nothingType,
                             valuesFunction.symbol,
                             irCloneValues
                         )
@@ -535,6 +523,4 @@ private class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringP
             }
         }
     }
-
-
 }

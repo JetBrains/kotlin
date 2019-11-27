@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.toFirSourceElement
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
@@ -63,7 +63,7 @@ internal fun ClassId.toConeKotlinType(
     isNullable: Boolean
 ): ConeLookupTagBasedType {
     val lookupTag = ConeClassLikeLookupTagImpl(this)
-    return ConeClassTypeImpl(lookupTag, typeArguments, isNullable)
+    return ConeClassLikeTypeImpl(lookupTag, typeArguments, isNullable)
 }
 
 internal fun FirTypeRef.toNotNullConeKotlinType(
@@ -180,7 +180,7 @@ internal fun JavaAnnotation.toFirAnnotationCall(
         source = null, useSiteTarget = null,
         annotationTypeRef = FirResolvedTypeRefImpl(
             source = null,
-            type = ConeClassTypeImpl(FirRegularClassSymbol(classId!!).toLookupTag(), emptyArray(), isNullable = false)
+            type = ConeClassLikeTypeImpl(FirRegularClassSymbol(classId!!).toLookupTag(), emptyArray(), isNullable = false)
         )
     ).apply {
         for (argument in this@toFirAnnotationCall.arguments) {

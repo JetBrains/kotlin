@@ -1,7 +1,7 @@
 FILE fqName:<root> fileName:/thisOfGenericOuterClass.kt
   CLASS CLASS name:Outer modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
     CONSTRUCTOR visibility:public <> (x:T of <uninitialized parent>) returnType:<root>.Outer<T of <uninitialized parent>> [primary]
       VALUE_PARAMETER name:x index:0 type:T of <uninitialized parent>
       BLOCK_BODY
@@ -72,7 +72,7 @@ FILE fqName:<root> fileName:/thisOfGenericOuterClass.kt
             CONSTRUCTOR visibility:private <> () returnType:<root>.Outer.Inner<kotlin.Int> [primary]
               BLOCK_BODY
                 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (y: kotlin.Int) [primary] declared in <root>.Outer.Inner'
-                  y: CONST Int type=<uninitialized parent>.<anonymous> value=42
+                  y: CONST Int type=kotlin.Int value=42
                 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Outer.Inner<kotlin.Int>]'
             PROPERTY name:xx visibility:public modality:FINAL [val]
               FIELD PROPERTY_BACKING_FIELD name:xx type:kotlin.Int visibility:private [final]

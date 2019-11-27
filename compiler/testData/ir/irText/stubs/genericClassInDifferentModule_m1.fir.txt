@@ -1,7 +1,7 @@
 FILE fqName:<root> fileName:/genericClassInDifferentModule_m1.kt
   CLASS CLASS name:Base modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Base
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
     CONSTRUCTOR visibility:public <> (x:T of <uninitialized parent>) returnType:<root>.Base<T of <uninitialized parent>> [primary]
       VALUE_PARAMETER name:x index:0 type:T of <uninitialized parent>
       BLOCK_BODY
@@ -19,7 +19,7 @@ FILE fqName:<root> fileName:/genericClassInDifferentModule_m1.kt
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Base visibility:private [final]' type=T of <root>.Base origin=null
               receiver: GET_VAR '<this>: <root>.Base declared in <root>.Base.<get-x>' type=<root>.Base origin=null
     FUN name:foo visibility:public modality:ABSTRACT <Y> ($this:<root>.Base, y:Y of <root>.Base.foo) returnType:T of <root>.Base
-      TYPE_PARAMETER name:Y index:0 variance: superTypes:[]
+      TYPE_PARAMETER name:Y index:0 variance: superTypes:[kotlin.Any?]
       $this: VALUE_PARAMETER name:<this> type:<root>.Base
       VALUE_PARAMETER name:y index:0 type:Y of <root>.Base.foo
     PROPERTY name:bar visibility:public modality:ABSTRACT [var]

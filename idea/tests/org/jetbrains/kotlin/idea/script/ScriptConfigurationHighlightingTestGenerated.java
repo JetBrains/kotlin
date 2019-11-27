@@ -95,6 +95,11 @@ public class ScriptConfigurationHighlightingTestGenerated extends AbstractScript
             runTest("idea/testData/script/definition/highlighting/errorResolver/");
         }
 
+        @TestMetadata("implicitReceiver")
+        public void testImplicitReceiver() throws Exception {
+            runTest("idea/testData/script/definition/highlighting/implicitReceiver/");
+        }
+
         @TestMetadata("javaNestedClass")
         public void testJavaNestedClass() throws Exception {
             runTest("idea/testData/script/definition/highlighting/javaNestedClass/");

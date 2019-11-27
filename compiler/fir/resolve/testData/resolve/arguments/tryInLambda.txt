@@ -1,0 +1,18 @@
+FILE: tryInLambda.kt
+    public final fun <T> myRun(block: R|() -> T|): R|T| {
+        ^myRun R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|T|>|()
+    }
+    public final fun foo(): R|kotlin/Unit| {
+    }
+    public final fun test(): R|kotlin/Unit| {
+        R|/myRun|<R|kotlin/Unit|>(<L> = myRun@fun <anonymous>(): R|kotlin/Unit| {
+            try {
+                lval x: R|kotlin/Int| = Int(1)
+            }
+            catch (e: R|kotlin/Exception|) {
+                R|/foo|()
+            }
+
+        }
+        )
+    }

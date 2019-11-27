@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 fun box(): String {
     val a = 1
     val explicitlyReturned = run1 f@{

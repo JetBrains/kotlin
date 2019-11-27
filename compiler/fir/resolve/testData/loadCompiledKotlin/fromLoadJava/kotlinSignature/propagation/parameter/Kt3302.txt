@@ -14,7 +14,7 @@ public abstract interface Kt3302 : R|kotlin/Any| {
     public abstract interface LinkedHashMap<K, V> : R|kotlin/Any| {
         public abstract fun dummy(): R|kotlin/Unit|
 
-        public abstract fun put(key: R|K|, value: R|V|): R|V|
+        public abstract fun put(key: R|K|, value: R|V|): R|V?|
 
     }
 

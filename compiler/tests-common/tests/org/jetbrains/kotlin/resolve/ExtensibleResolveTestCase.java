@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.resolve;
 
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
+import org.jetbrains.kotlin.config.CompilerConfiguration;
+import org.jetbrains.kotlin.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.KotlinTestWithEnvironment;
-import org.jetbrains.kotlin.test.TestFiles;
+import org.jetbrains.kotlin.test.*;
 
 import java.io.File;
 import java.util.List;
@@ -23,7 +23,9 @@ public abstract class ExtensibleResolveTestCase extends KotlinTestWithEnvironmen
 
     @Override
     protected KotlinCoreEnvironment createEnvironment() {
-        return createEnvironmentWithMockJdk(ConfigurationKind.JDK_ONLY);
+        CompilerConfiguration configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK);
+        configuration.put(JVMConfigurationKeys.USE_PSI_CLASS_FILES_READING, true);
+        return KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
     }
 
     @Override

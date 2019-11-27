@@ -1,0 +1,146 @@
+digraph returnValuesFromLambda_kt {
+  graph [splines=ortho nodesep=3]
+  node [shape=box penwidth=2]
+  edge [penwidth=2]
+
+  subgraph cluster_0 {
+    color=red
+    0 [label="Enter function <init>" style="filled" fillcolor=red];
+    1 [label="Exit function <init>" style="filled" fillcolor=red];
+  }
+
+  0 -> {1};
+
+  subgraph cluster_1 {
+    color=red
+    2 [label="Enter function <init>" style="filled" fillcolor=red];
+    3 [label="Exit function <init>" style="filled" fillcolor=red];
+  }
+
+  2 -> {3};
+
+  subgraph cluster_2 {
+    color=red
+    4 [label="Enter function test_1" style="filled" fillcolor=red];
+    subgraph cluster_3 {
+      color=blue
+      5 [label="Enter function anonymousFunction"];
+      subgraph cluster_4 {
+        color=blue
+        6 [label="Enter when"];
+        subgraph cluster_5 {
+          color=blue
+          7 [label="Enter when branch condition "];
+          8 [label="Access variable R|<local>/b|"];
+          9 [label="Exit when branch condition"];
+        }
+        10 [label="Synthetic else branch"];
+        11 [label="Enter when branch result"];
+        subgraph cluster_6 {
+          color=blue
+          12 [label="Enter block"];
+          13 [label="Function call: R|/B.B|()"];
+          14 [label="Jump: ^@run R|/B.B|()"];
+          15 [label="Stub" style="filled" fillcolor=gray];
+          16 [label="Exit block" style="filled" fillcolor=gray];
+        }
+        17 [label="Exit when branch result" style="filled" fillcolor=gray];
+        18 [label="Exit when"];
+      }
+      19 [label="Function call: R|/C.C|()"];
+      20 [label="Exit function anonymousFunction"];
+    }
+    21 [label="Function call: R|kotlin/run|<R|A|>(<L> = run@fun <anonymous>(): R|C| <kind=EXACTLY_ONCE>  {
+    when () {
+        R|<local>/b| ->  {
+            ^@run R|/B.B|()
+        }
+    }
+
+    R|/C.C|()
+}
+)"];
+    22 [label="Variable declaration: lval x: R|A|"];
+    23 [label="Exit function test_1" style="filled" fillcolor=red];
+  }
+
+  4 -> {5};
+  5 -> {6};
+  6 -> {7};
+  7 -> {8};
+  8 -> {9};
+  9 -> {11 10};
+  10 -> {18};
+  11 -> {12};
+  12 -> {13};
+  13 -> {14};
+  14 -> {20};
+  14 -> {15} [style=dotted];
+  15 -> {16} [style=dotted];
+  16 -> {17} [style=dotted];
+  17 -> {18} [style=dotted];
+  18 -> {19};
+  19 -> {20};
+  20 -> {21};
+  21 -> {22};
+  22 -> {23};
+
+  subgraph cluster_7 {
+    color=red
+    24 [label="Enter function test_2" style="filled" fillcolor=red];
+    subgraph cluster_8 {
+      color=blue
+      25 [label="Enter function anonymousFunction"];
+      26 [label="Function call: R|/C.C|()"];
+      27 [label="Jump: ^@run R|/C.C|()"];
+      28 [label="Stub" style="filled" fillcolor=gray];
+      29 [label="Exit function anonymousFunction"];
+    }
+    30 [label="Function call: R|kotlin/run|<R|C|>(<L> = run@fun <anonymous>(): R|C| <kind=EXACTLY_ONCE>  {
+    ^@run R|/C.C|()
+}
+)"];
+    31 [label="Variable declaration: lval x: R|C|"];
+    32 [label="Exit function test_2" style="filled" fillcolor=red];
+  }
+
+  24 -> {25};
+  25 -> {26};
+  26 -> {27};
+  27 -> {29};
+  27 -> {28} [style=dotted];
+  28 -> {29} [style=dotted];
+  29 -> {30};
+  30 -> {31};
+  31 -> {32};
+
+  subgraph cluster_9 {
+    color=red
+    33 [label="Enter function test_3" style="filled" fillcolor=red];
+    subgraph cluster_10 {
+      color=blue
+      34 [label="Enter function anonymousFunction"];
+      35 [label="Jump: ^test_3 Unit"];
+      36 [label="Stub" style="filled" fillcolor=gray];
+      37 [label="Exit function anonymousFunction" style="filled" fillcolor=gray];
+    }
+    38 [label="Function call: R|kotlin/run|<R|kotlin/Nothing|>(<L> = run@fun <anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+    ^test_3 Unit
+}
+)" style="filled" fillcolor=gray];
+    39 [label="Stub" style="filled" fillcolor=gray];
+    40 [label="Variable declaration: lval x: R|kotlin/Nothing|" style="filled" fillcolor=gray];
+    41 [label="Exit function test_3" style="filled" fillcolor=red];
+  }
+
+  33 -> {34};
+  34 -> {35};
+  35 -> {41};
+  35 -> {36} [style=dotted];
+  36 -> {37} [style=dotted];
+  37 -> {38} [style=dotted];
+  38 -> {41 39} [style=dotted];
+  39 -> {40} [style=dotted];
+  40 -> {41} [style=dotted];
+
+}

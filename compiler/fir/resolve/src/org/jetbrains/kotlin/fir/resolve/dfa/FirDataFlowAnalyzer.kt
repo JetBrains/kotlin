@@ -16,18 +16,19 @@ import org.jetbrains.kotlin.fir.references.impl.FirExplicitThisReference
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.ImplicitReceiverStackImpl
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
+import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.dfa.Condition.*
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.resolve.dfa.contracts.buildContractFir
 import org.jetbrains.kotlin.fir.resolve.dfa.contracts.createArgumentsMapping
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
+import org.jetbrains.kotlin.fir.resolve.withNullability
+import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.coneTypeSafe
-import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
-import org.jetbrains.kotlin.fir.types.isMarkedNullable
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.name.FqName
@@ -78,13 +79,16 @@ class FirDataFlowAnalyzer(private val components: FirAbstractBodyResolveTransfor
 
     fun exitFunction(function: FirFunction<*>): ControlFlowGraph? {
         val (node, graph) = graphBuilder.exitFunction(function)
-        node.mergeIncomingFlow()
+        if (function.body == null) {
+            node.mergeIncomingFlow()
+        }
         for (valueParameter in function.valueParameters) {
             variableStorage.removeRealVariable(valueParameter.symbol)
         }
         if (graphBuilder.isTopLevel()) {
             flowOnNodes.clear()
             variableStorage.reset()
+            graphBuilder.reset()
         }
         return graph
     }
@@ -104,11 +108,31 @@ class FirDataFlowAnalyzer(private val components: FirAbstractBodyResolveTransfor
     // ----------------------------------- Block -----------------------------------
 
     fun enterBlock(block: FirBlock) {
-        graphBuilder.enterBlock(block).mergeIncomingFlow()
+        graphBuilder.enterBlock(block)?.mergeIncomingFlow()
     }
 
     fun exitBlock(block: FirBlock) {
         graphBuilder.exitBlock(block).mergeIncomingFlow()
+    }
+
+    private fun FirElement.extractReturnType(target: FirFunction<*>?): ConeKotlinType? {
+        return when (this) {
+            is FirReturnExpression -> {
+                if (this.target.labeledElement == target) {
+                    result.extractReturnType(target)
+                } else {
+                    result.resultType.coneTypeSafe()
+                }
+            }
+            is FirExpression -> {
+                typeRef.coneTypeSafe()
+            }
+            else -> session.builtinTypes.unitType.type
+        }
+    }
+
+    fun returnExpressionsOfAnonymousFunction(function: FirAnonymousFunction): List<FirStatement> {
+        return graphBuilder.returnExpressionsOfAnonymousFunction(function)
     }
 
     // ----------------------------------- Operator call -----------------------------------
@@ -394,6 +418,15 @@ class FirDataFlowAnalyzer(private val components: FirAbstractBodyResolveTransfor
         val (loopConditionExitNode, loopBlockEnterNode) = graphBuilder.exitWhileLoopCondition(loop)
         loopConditionExitNode.mergeIncomingFlow()
         loopBlockEnterNode.mergeIncomingFlow()
+        variableStorage[loop.condition]?.let { conditionVariable ->
+            loopBlockEnterNode.flow = logicSystem.approveFactsInsideFlow(
+                conditionVariable,
+                EqTrue,
+                loopBlockEnterNode.flow,
+                shouldForkFlow = false,
+                shouldRemoveSynthetics = true
+            )
+        }
     }
 
     fun exitWhileLoop(loop: FirLoop) {
@@ -459,21 +492,63 @@ class FirDataFlowAnalyzer(private val components: FirAbstractBodyResolveTransfor
 
     // ----------------------------------- Resolvable call -----------------------------------
 
-    fun exitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression) {
-        graphBuilder.exitQualifiedAccessExpression(qualifiedAccessExpression).mergeIncomingFlow()
+    private fun enterSafeCall(qualifiedAccess: FirQualifiedAccess) {
+        if (!qualifiedAccess.safe) return
+        val node = graphBuilder.enterSafeCall(qualifiedAccess).mergeIncomingFlow()
+        val previousNode = node.alivePreviousNodes.first()
+        val shouldFork: Boolean
+        var flow= if (previousNode is ExitSafeCallNode) {
+            shouldFork = false
+            previousNode.alivePreviousNodes.getOrNull(1)?.flow ?: node.flow
+        } else {
+            shouldFork = true
+            node.flow
+        }
+        qualifiedAccess.explicitReceiver?.let {
+            val type = it.typeRef.coneTypeSafe<ConeKotlinType>()
+                ?.takeIf { it.isMarkedNullable }
+                ?.withNullability(ConeNullability.NOT_NULL)
+                ?: return@let
+
+            when (val variable = getOrCreateVariable(it)) {
+                is RealDataFlowVariable -> {
+                    if (shouldFork) {
+                        flow = logicSystem.forkFlow(flow)
+                    }
+                    logicSystem.addApprovedInfo(flow, variable, FirDataFlowInfo(setOf(type), emptySet()))
+                }
+                is SyntheticDataFlowVariable -> {
+                    flow = logicSystem.approveFactsInsideFlow(variable, NotEqNull, flow, shouldFork, true)
+                }
+            }
+        }
+
+        node.flow = flow
     }
 
-    fun enterFunctionCall(functionCall: FirFunctionCall) {
-        // TODO: add processing in-place lambdas
+    private fun exitSafeCall(qualifiedAccess: FirQualifiedAccess) {
+        if (!qualifiedAccess.safe) return
+        graphBuilder.exitSafeCall(qualifiedAccess).mergeIncomingFlow()
+    }
+
+    fun enterQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression) {
+        enterSafeCall(qualifiedAccessExpression)
+    }
+
+    fun exitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression) {
+        graphBuilder.exitQualifiedAccessExpression(qualifiedAccessExpression).mergeIncomingFlow()
+        exitSafeCall(qualifiedAccessExpression)
     }
 
     fun exitFunctionCall(functionCall: FirFunctionCall) {
         val node = graphBuilder.exitFunctionCall(functionCall).mergeIncomingFlow()
         if (functionCall.isBooleanNot()) {
             exitBooleanNot(functionCall, node)
-            return
         }
         processConditionalContract(functionCall)
+        if (functionCall.safe) {
+            exitSafeCall(functionCall)
+        }
     }
 
     private fun processConditionalContract(functionCall: FirFunctionCall) {
@@ -533,10 +608,11 @@ class FirDataFlowAnalyzer(private val components: FirAbstractBodyResolveTransfor
 
     private val FirResolvable.resolvedSymbol: AbstractFirBasedSymbol<*>?
         get() = calleeReference.let {
-            if (it is FirExplicitThisReference) {
-                it.boundSymbol
-            } else {
-                (it as? FirResolvedNamedReference)?.resolvedSymbol
+            when (it) {
+                is FirExplicitThisReference -> it.boundSymbol
+                is FirResolvedNamedReference -> it.resolvedSymbol
+                is FirNamedReferenceWithCandidate -> it.candidateSymbol
+                else -> null
             }
         }
 
@@ -575,10 +651,22 @@ class FirDataFlowAnalyzer(private val components: FirAbstractBodyResolveTransfor
     }
 
     fun exitVariableAssignment(assignment: FirVariableAssignment) {
-        graphBuilder.exitVariableAssignment(assignment).mergeIncomingFlow()
-        val lhsVariable = variableStorage[assignment.resolvedSymbol ?: return] ?: return
-        val rhsVariable = variableStorage[assignment.rValue.resolvedSymbol ?: return]?.takeIf { !it.isSynthetic() } ?: return
-        variableStorage.rebindAliasVariable(lhsVariable, rhsVariable)
+        val node = graphBuilder.exitVariableAssignment(assignment).mergeIncomingFlow()
+        val lhsSymbol: AbstractFirBasedSymbol<*> = (assignment.lValue as? FirResolvedNamedReference)?.resolvedSymbol ?: return
+        val lhsVariable = getOrCreateRealVariable(lhsSymbol.fir) ?: return
+        val rhsSymbol = assignment.rValue.resolvedSymbol
+        val rhsVariable = rhsSymbol?.let { variableStorage[it]?.takeIf { !it.isSynthetic() } }
+        if (rhsVariable == null) {
+            val type = assignment.rValue.typeRef.coneTypeSafe<ConeKotlinType>() ?: return
+            logicSystem.addApprovedInfo(
+                node.flow,
+                lhsVariable,
+                FirDataFlowInfo(setOf(type), emptySet())
+            )
+            return
+        } else {
+            variableStorage.rebindAliasVariable(lhsVariable, rhsVariable)
+        }
     }
 
     fun exitThrowExceptionNode(throwExpression: FirThrowExpression) {
@@ -757,7 +845,7 @@ class FirDataFlowAnalyzer(private val components: FirAbstractBodyResolveTransfor
 
     private val FirElement.realVariable: RealDataFlowVariable?
         get() {
-            val symbol: AbstractFirBasedSymbol<*> = if (this is FirThisReceiverExpressionImpl) {
+            val symbol: AbstractFirBasedSymbol<*> = if (this is FirThisReceiverExpression) {
                 calleeReference.boundSymbol
             } else {
                 resolvedSymbol

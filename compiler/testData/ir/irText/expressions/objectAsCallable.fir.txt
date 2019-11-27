@@ -100,7 +100,7 @@ FILE fqName:<root> fileName:/objectAsCallable.kt
   PROPERTY name:test1 visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test1 type:IrErrorType visibility:private [final,static]
       EXPRESSION_BODY
-        ERROR_CALL 'Unresolved reference: <Inapplicable(PARAMETER_MAPPING_ERROR): [/A.A]>#' type=IrErrorType
+        ERROR_CALL 'Unresolved reference: <Inapplicable(HIDDEN): [/A.A]>#' type=IrErrorType
           CONST Int type=kotlin.Int value=42
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:IrErrorType
       correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [val]

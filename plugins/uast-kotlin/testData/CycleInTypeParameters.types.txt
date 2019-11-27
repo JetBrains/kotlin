@@ -5,6 +5,6 @@ UFile (package = ) [public final class CycleInTypeParametersKt {...]
             UBinaryExpressionWithType [null as? Device<?>] : PsiType:Device<?>
                 ULiteralExpression (value = null) [null] : PsiType:Void
                 UTypeReferenceExpression (name = Device<?>) [Device<?>]
-        UAnnotationMethod (name = getA) [public static final fun getA() : Device<?> = UastEmptyExpression]
+        UMethod (name = getA) [public static final fun getA() : Device<?> = UastEmptyExpression]
     UClass (name = Device) [public final class Device {...}]
-        UAnnotationMethod (name = Device) [public fun Device() = UastEmptyExpression]
+        UMethod (name = Device) [public fun Device() = UastEmptyExpression]

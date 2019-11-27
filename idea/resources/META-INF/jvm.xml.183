@@ -59,6 +59,14 @@
                 text="Report as incompatible API">
         </action>
 
+        <group id="Kotlin.XDebugger.Actions">
+<!--            TODO(design)-->
+            <action id="Kotlin.XDebugger.CoroutinesDump"
+                class="org.jetbrains.kotlin.idea.debugger.coroutines.CoroutineDumpAction"
+            text="Get Coroutines Dump"
+            icon="/org/jetbrains/kotlin/idea/icons/kotlin.png"/>
+        </group>
+
         <action id="Kotlin.XDebugger.ToggleKotlinVariableView"
                 class="org.jetbrains.kotlin.idea.debugger.ToggleKotlinVariablesView"
                 text="Show Kotlin Variables Only">

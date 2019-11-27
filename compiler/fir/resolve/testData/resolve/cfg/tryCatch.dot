@@ -8,320 +8,299 @@ digraph tryCatch_kt {
     0 [label="Enter function test_1" style="filled" fillcolor=red];
     subgraph cluster_1 {
       color=blue
-      1 [label="Enter block"];
+      1 [label="Try expression enter"];
       subgraph cluster_2 {
         color=blue
-        2 [label="Try expression enter"];
+        2 [label="Try main block enter"];
         subgraph cluster_3 {
           color=blue
-          3 [label="Try main block enter"];
-          subgraph cluster_4 {
-            color=blue
-            4 [label="Enter block"];
-            5 [label="Const: Int(1)"];
-            6 [label="Variable declaration: lval x: R|kotlin/Int|"];
-            7 [label="Exit block"];
-          }
-          8 [label="Try main block exit"];
+          3 [label="Enter block"];
+          4 [label="Const: Int(1)"];
+          5 [label="Variable declaration: lval x: R|kotlin/Int|"];
+          6 [label="Exit block"];
         }
+        7 [label="Try main block exit"];
+      }
+      subgraph cluster_4 {
+        color=blue
+        8 [label="Catch enter"];
         subgraph cluster_5 {
           color=blue
-          9 [label="Catch enter"];
-          subgraph cluster_6 {
-            color=blue
-            10 [label="Enter block"];
-            11 [label="Const: Int(3)"];
-            12 [label="Variable declaration: lval z: R|kotlin/Int|"];
-            13 [label="Exit block"];
-          }
-          14 [label="Catch exit"];
+          9 [label="Enter block"];
+          10 [label="Const: Int(3)"];
+          11 [label="Variable declaration: lval z: R|kotlin/Int|"];
+          12 [label="Exit block"];
         }
+        13 [label="Catch exit"];
+      }
+      subgraph cluster_6 {
+        color=blue
+        14 [label="Catch enter"];
         subgraph cluster_7 {
           color=blue
-          15 [label="Catch enter"];
-          subgraph cluster_8 {
-            color=blue
-            16 [label="Enter block"];
-            17 [label="Const: Int(2)"];
-            18 [label="Variable declaration: lval y: R|kotlin/Int|"];
-            19 [label="Exit block"];
-          }
-          20 [label="Catch exit"];
+          15 [label="Enter block"];
+          16 [label="Const: Int(2)"];
+          17 [label="Variable declaration: lval y: R|kotlin/Int|"];
+          18 [label="Exit block"];
         }
-        21 [label="Try expression exit"];
+        19 [label="Catch exit"];
       }
-      22 [label="Exit block"];
+      20 [label="Try expression exit"];
     }
-    23 [label="Exit function test_1" style="filled" fillcolor=red];
+    21 [label="Exit function test_1" style="filled" fillcolor=red];
   }
 
   0 -> {1};
   1 -> {2};
-  2 -> {3};
-  3 -> {23 15 9 4};
+  2 -> {21 14 8 3};
+  3 -> {4};
   4 -> {5};
   5 -> {6};
   6 -> {7};
-  7 -> {8};
-  8 -> {21};
-  9 -> {23 10};
+  7 -> {20};
+  8 -> {21 9};
+  9 -> {10};
   10 -> {11};
   11 -> {12};
   12 -> {13};
-  13 -> {14};
-  14 -> {21};
-  15 -> {23 16};
+  13 -> {20};
+  14 -> {21 15};
+  15 -> {16};
   16 -> {17};
   17 -> {18};
   18 -> {19};
   19 -> {20};
   20 -> {21};
-  21 -> {22};
-  22 -> {23};
 
-  subgraph cluster_9 {
+  subgraph cluster_8 {
     color=red
-    24 [label="Enter function test_2" style="filled" fillcolor=red];
-    subgraph cluster_10 {
+    22 [label="Enter function test_2" style="filled" fillcolor=red];
+    subgraph cluster_9 {
       color=blue
-      25 [label="Enter block"];
-      subgraph cluster_11 {
+      23 [label="Try expression enter"];
+      subgraph cluster_10 {
         color=blue
-        26 [label="Try expression enter"];
-        subgraph cluster_12 {
+        24 [label="Try main block enter"];
+        subgraph cluster_11 {
           color=blue
-          27 [label="Try main block enter"];
-          subgraph cluster_13 {
-            color=blue
-            28 [label="Enter block"];
-            29 [label="Const: Int(1)"];
-            30 [label="Exit block"];
-          }
-          31 [label="Try main block exit"];
+          25 [label="Enter block"];
+          26 [label="Const: Int(1)"];
+          27 [label="Exit block"];
         }
-        subgraph cluster_14 {
-          color=blue
-          32 [label="Catch enter"];
-          subgraph cluster_15 {
-            color=blue
-            33 [label="Enter block"];
-            34 [label="Const: Int(2)"];
-            35 [label="Exit block"];
-          }
-          36 [label="Catch exit"];
-        }
-        37 [label="Try expression exit"];
+        28 [label="Try main block exit"];
       }
-      38 [label="Variable declaration: lval x: R|kotlin/Int|"];
-      39 [label="Exit block"];
+      subgraph cluster_12 {
+        color=blue
+        29 [label="Catch enter"];
+        subgraph cluster_13 {
+          color=blue
+          30 [label="Enter block"];
+          31 [label="Const: Int(2)"];
+          32 [label="Exit block"];
+        }
+        33 [label="Catch exit"];
+      }
+      34 [label="Try expression exit"];
     }
-    40 [label="Exit function test_2" style="filled" fillcolor=red];
+    35 [label="Variable declaration: lval x: R|kotlin/Int|"];
+    36 [label="Exit function test_2" style="filled" fillcolor=red];
   }
 
-  24 -> {25};
+  22 -> {23};
+  23 -> {24};
+  24 -> {36 29 25};
   25 -> {26};
   26 -> {27};
-  27 -> {40 32 28};
-  28 -> {29};
-  29 -> {30};
+  27 -> {28};
+  28 -> {34};
+  29 -> {36 30};
   30 -> {31};
-  31 -> {37};
-  32 -> {40 33};
+  31 -> {32};
+  32 -> {33};
   33 -> {34};
   34 -> {35};
   35 -> {36};
-  36 -> {37};
+
+  subgraph cluster_14 {
+    color=red
+    37 [label="Enter function test_3" style="filled" fillcolor=red];
+    subgraph cluster_15 {
+      color=blue
+      38 [label="Enter while loop"];
+      subgraph cluster_16 {
+        color=blue
+        39 [label="Enter loop condition"];
+        40 [label="Const: Boolean(true)"];
+        41 [label="Exit loop condition"];
+      }
+      subgraph cluster_17 {
+        color=blue
+        42 [label="Enter loop block"];
+        subgraph cluster_18 {
+          color=blue
+          43 [label="Enter block"];
+          subgraph cluster_19 {
+            color=blue
+            44 [label="Try expression enter"];
+            subgraph cluster_20 {
+              color=blue
+              45 [label="Try main block enter"];
+              subgraph cluster_21 {
+                color=blue
+                46 [label="Enter block"];
+                subgraph cluster_22 {
+                  color=blue
+                  47 [label="Enter when"];
+                  subgraph cluster_23 {
+                    color=blue
+                    48 [label="Enter when branch condition "];
+                    49 [label="Access variable R|<local>/b|"];
+                    50 [label="Exit when branch condition"];
+                  }
+                  51 [label="Synthetic else branch"];
+                  52 [label="Enter when branch result"];
+                  subgraph cluster_24 {
+                    color=blue
+                    53 [label="Enter block"];
+                    54 [label="Jump: ^test_3 Unit"];
+                    55 [label="Stub" style="filled" fillcolor=gray];
+                    56 [label="Exit block" style="filled" fillcolor=gray];
+                  }
+                  57 [label="Exit when branch result" style="filled" fillcolor=gray];
+                  58 [label="Exit when"];
+                }
+                59 [label="Const: Int(1)"];
+                60 [label="Variable declaration: lval x: R|kotlin/Int|"];
+                subgraph cluster_25 {
+                  color=blue
+                  61 [label="Enter when"];
+                  subgraph cluster_26 {
+                    color=blue
+                    62 [label="Enter when branch condition "];
+                    63 [label="Access variable R|<local>/b|"];
+                    64 [label="Function call: R|<local>/b|.R|kotlin/Boolean.not|()"];
+                    65 [label="Exit when branch condition"];
+                  }
+                  66 [label="Synthetic else branch"];
+                  67 [label="Enter when branch result"];
+                  subgraph cluster_27 {
+                    color=blue
+                    68 [label="Enter block"];
+                    69 [label="Jump: break@@@[Boolean(true)] "];
+                    70 [label="Stub" style="filled" fillcolor=gray];
+                    71 [label="Exit block" style="filled" fillcolor=gray];
+                  }
+                  72 [label="Exit when branch result" style="filled" fillcolor=gray];
+                  73 [label="Exit when"];
+                }
+                74 [label="Exit block"];
+              }
+              75 [label="Try main block exit"];
+            }
+            subgraph cluster_28 {
+              color=blue
+              76 [label="Catch enter"];
+              subgraph cluster_29 {
+                color=blue
+                77 [label="Enter block"];
+                78 [label="Jump: break@@@[Boolean(true)] "];
+                79 [label="Stub" style="filled" fillcolor=gray];
+                80 [label="Exit block" style="filled" fillcolor=gray];
+              }
+              81 [label="Catch exit" style="filled" fillcolor=gray];
+            }
+            subgraph cluster_30 {
+              color=blue
+              82 [label="Catch enter"];
+              subgraph cluster_31 {
+                color=blue
+                83 [label="Enter block"];
+                84 [label="Jump: continue@@@[Boolean(true)] "];
+                85 [label="Stub" style="filled" fillcolor=gray];
+                86 [label="Exit block" style="filled" fillcolor=gray];
+              }
+              87 [label="Catch exit" style="filled" fillcolor=gray];
+            }
+            88 [label="Try expression exit"];
+          }
+          89 [label="Const: Int(2)"];
+          90 [label="Variable declaration: lval y: R|kotlin/Int|"];
+          91 [label="Exit block"];
+        }
+        92 [label="Exit loop block"];
+      }
+      93 [label="Stub" style="filled" fillcolor=gray];
+      94 [label="Exit whileloop"];
+    }
+    95 [label="Const: Int(3)"];
+    96 [label="Variable declaration: lval z: R|kotlin/Int|"];
+    97 [label="Exit function test_3" style="filled" fillcolor=red];
+  }
+
   37 -> {38};
   38 -> {39};
   39 -> {40};
-
-  subgraph cluster_16 {
-    color=red
-    41 [label="Enter function test_3" style="filled" fillcolor=red];
-    subgraph cluster_17 {
-      color=blue
-      42 [label="Enter block"];
-      subgraph cluster_18 {
-        color=blue
-        43 [label="Enter while loop"];
-        subgraph cluster_19 {
-          color=blue
-          44 [label="Enter loop condition"];
-          45 [label="Const: Boolean(true)"];
-          46 [label="Exit loop condition"];
-        }
-        subgraph cluster_20 {
-          color=blue
-          47 [label="Enter loop block"];
-          subgraph cluster_21 {
-            color=blue
-            48 [label="Enter block"];
-            subgraph cluster_22 {
-              color=blue
-              49 [label="Try expression enter"];
-              subgraph cluster_23 {
-                color=blue
-                50 [label="Try main block enter"];
-                subgraph cluster_24 {
-                  color=blue
-                  51 [label="Enter block"];
-                  subgraph cluster_25 {
-                    color=blue
-                    52 [label="Enter when"];
-                    subgraph cluster_26 {
-                      color=blue
-                      53 [label="Enter when branch condition "];
-                      54 [label="Access variable R|<local>/b|"];
-                      55 [label="Exit when branch condition"];
-                    }
-                    56 [label="Synthetic else branch"];
-                    57 [label="Enter when branch result"];
-                    subgraph cluster_27 {
-                      color=blue
-                      58 [label="Enter block"];
-                      59 [label="Jump: ^test_3 Unit"];
-                      60 [label="Stub" style="filled" fillcolor=gray];
-                      61 [label="Exit block" style="filled" fillcolor=gray];
-                    }
-                    62 [label="Exit when branch result" style="filled" fillcolor=gray];
-                    63 [label="Exit when"];
-                  }
-                  64 [label="Const: Int(1)"];
-                  65 [label="Variable declaration: lval x: R|kotlin/Int|"];
-                  subgraph cluster_28 {
-                    color=blue
-                    66 [label="Enter when"];
-                    subgraph cluster_29 {
-                      color=blue
-                      67 [label="Enter when branch condition "];
-                      68 [label="Access variable R|<local>/b|"];
-                      69 [label="Function call: R|<local>/b|.R|kotlin/Boolean.not|()"];
-                      70 [label="Exit when branch condition"];
-                    }
-                    71 [label="Synthetic else branch"];
-                    72 [label="Enter when branch result"];
-                    subgraph cluster_30 {
-                      color=blue
-                      73 [label="Enter block"];
-                      74 [label="Jump: break@@@[Boolean(true)] "];
-                      75 [label="Stub" style="filled" fillcolor=gray];
-                      76 [label="Exit block" style="filled" fillcolor=gray];
-                    }
-                    77 [label="Exit when branch result" style="filled" fillcolor=gray];
-                    78 [label="Exit when"];
-                  }
-                  79 [label="Exit block"];
-                }
-                80 [label="Try main block exit"];
-              }
-              subgraph cluster_31 {
-                color=blue
-                81 [label="Catch enter"];
-                subgraph cluster_32 {
-                  color=blue
-                  82 [label="Enter block"];
-                  83 [label="Jump: break@@@[Boolean(true)] "];
-                  84 [label="Stub" style="filled" fillcolor=gray];
-                  85 [label="Exit block" style="filled" fillcolor=gray];
-                }
-                86 [label="Catch exit" style="filled" fillcolor=gray];
-              }
-              subgraph cluster_33 {
-                color=blue
-                87 [label="Catch enter"];
-                subgraph cluster_34 {
-                  color=blue
-                  88 [label="Enter block"];
-                  89 [label="Jump: continue@@@[Boolean(true)] "];
-                  90 [label="Stub" style="filled" fillcolor=gray];
-                  91 [label="Exit block" style="filled" fillcolor=gray];
-                }
-                92 [label="Catch exit" style="filled" fillcolor=gray];
-              }
-              93 [label="Try expression exit"];
-            }
-            94 [label="Const: Int(2)"];
-            95 [label="Variable declaration: lval y: R|kotlin/Int|"];
-            96 [label="Exit block"];
-          }
-          97 [label="Exit loop block"];
-        }
-        98 [label="Stub" style="filled" fillcolor=gray];
-        99 [label="Exit whileloop"];
-      }
-      100 [label="Const: Int(3)"];
-      101 [label="Variable declaration: lval z: R|kotlin/Int|"];
-      102 [label="Exit block"];
-    }
-    103 [label="Exit function test_3" style="filled" fillcolor=red];
-  }
-
+  40 -> {41};
   41 -> {42};
+  41 -> {93} [style=dotted];
   42 -> {43};
   43 -> {44};
   44 -> {45};
-  45 -> {46};
+  45 -> {97 82 76 46};
   46 -> {47};
-  46 -> {98} [style=dotted];
   47 -> {48};
   48 -> {49};
   49 -> {50};
-  50 -> {103 87 81 51};
-  51 -> {52};
+  50 -> {52 51};
+  51 -> {58};
   52 -> {53};
   53 -> {54};
-  54 -> {55};
-  55 -> {57 56};
-  56 -> {63};
-  57 -> {58};
+  54 -> {97};
+  54 -> {55} [style=dotted];
+  55 -> {56} [style=dotted];
+  56 -> {57} [style=dotted];
+  57 -> {58} [style=dotted];
   58 -> {59};
-  59 -> {103};
-  59 -> {60} [style=dotted];
-  60 -> {61} [style=dotted];
-  61 -> {62} [style=dotted];
-  62 -> {63} [style=dotted];
+  59 -> {60};
+  60 -> {61};
+  61 -> {62};
+  62 -> {63};
   63 -> {64};
   64 -> {65};
-  65 -> {66};
-  66 -> {67};
+  65 -> {67 66};
+  66 -> {73};
   67 -> {68};
   68 -> {69};
-  69 -> {70};
-  70 -> {72 71};
-  71 -> {78};
-  72 -> {73};
+  69 -> {94};
+  69 -> {70} [style=dotted];
+  70 -> {71} [style=dotted];
+  71 -> {72} [style=dotted];
+  72 -> {73} [style=dotted];
   73 -> {74};
-  74 -> {99};
-  74 -> {75} [style=dotted];
-  75 -> {76} [style=dotted];
-  76 -> {77} [style=dotted];
-  77 -> {78} [style=dotted];
-  78 -> {79};
-  79 -> {80};
-  80 -> {93};
-  81 -> {103 82};
-  82 -> {83};
-  83 -> {99};
-  83 -> {84} [style=dotted];
+  74 -> {75};
+  75 -> {88};
+  76 -> {97 77};
+  77 -> {78};
+  78 -> {94};
+  78 -> {79} [style=dotted];
+  79 -> {80} [style=dotted];
+  80 -> {81} [style=dotted];
+  81 -> {88} [style=dotted];
+  82 -> {97 83};
+  83 -> {84};
+  84 -> {38};
   84 -> {85} [style=dotted];
   85 -> {86} [style=dotted];
-  86 -> {93} [style=dotted];
-  87 -> {103 88};
+  86 -> {87} [style=dotted];
+  87 -> {88} [style=dotted];
   88 -> {89};
-  89 -> {43};
-  89 -> {90} [style=dotted];
-  90 -> {91} [style=dotted];
-  91 -> {92} [style=dotted];
-  92 -> {93} [style=dotted];
-  93 -> {94};
+  89 -> {90};
+  90 -> {91};
+  91 -> {92};
+  92 -> {39};
+  93 -> {94} [style=dotted];
   94 -> {95};
   95 -> {96};
   96 -> {97};
-  97 -> {44};
-  98 -> {99} [style=dotted];
-  99 -> {100};
-  100 -> {101};
-  101 -> {102};
-  102 -> {103};
 
 }

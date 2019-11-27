@@ -235,7 +235,7 @@ class JvmSymbols(
     }
 
     val suspendLambdaClass: IrClassSymbol = createClass(FqName("kotlin.coroutines.jvm.internal.SuspendLambda")) { klass ->
-        klass.superTypes += suspendFunctionInterface.typeWith()
+        klass.superTypes += suspendFunctionInterface.defaultType
         klass.addConstructor().apply {
             addValueParameter("arity", irBuiltIns.intType)
             addValueParameter("completion", continuationClass.typeWith(irBuiltIns.anyNType).makeNullable())
@@ -255,7 +255,7 @@ class JvmSymbols(
     private fun generateCallableReferenceMethods(klass: IrClass) {
         klass.addFunction("getSignature", irBuiltIns.stringType, Modality.OPEN)
         klass.addFunction("getName", irBuiltIns.stringType, Modality.OPEN)
-        klass.addFunction("getOwner", irBuiltIns.kDeclarationContainerClass.typeWith(), Modality.OPEN)
+        klass.addFunction("getOwner", irBuiltIns.kDeclarationContainerClass.defaultType, Modality.OPEN)
     }
 
     val functionReference: IrClassSymbol = createClass(FqName("kotlin.jvm.internal.FunctionReference")) { klass ->
@@ -328,97 +328,101 @@ class JvmSymbols(
         val impl: Boolean
     )
 
-    private val propertyReferenceClasses = storageManager.createMemoizedFunction { key: PropertyReferenceKey ->
-        val (mutable, n, impl) = key
-        val className = buildString {
-            if (mutable) append("Mutable")
-            append("PropertyReference")
-            append(n)
-            if (impl) append("Impl")
-        }
-        createClass(FqName("kotlin.jvm.internal.$className")) { klass ->
-            if (impl) {
-                klass.addConstructor().apply {
-                    addValueParameter("owner", irBuiltIns.kDeclarationContainerClass.typeWith())
-                    addValueParameter("name", irBuiltIns.stringType)
-                    addValueParameter("string", irBuiltIns.stringType)
-                }
-            } else {
-                klass.addConstructor()
+    private val propertyReferenceClassCache = mutableMapOf<PropertyReferenceKey, IrClassSymbol>()
 
-                klass.addConstructor().apply {
-                    addValueParameter("receiver", irBuiltIns.anyNType)
-                }
+    fun getPropertyReferenceClass(mutable: Boolean, parameterCount: Int, impl: Boolean): IrClassSymbol {
+        val key = PropertyReferenceKey(mutable, parameterCount, impl)
+        return propertyReferenceClassCache.getOrPut(key) {
+            val className = buildString {
+                if (mutable) append("Mutable")
+                append("PropertyReference")
+                append(parameterCount)
+                if (impl) append("Impl")
             }
 
-            val receiverFieldName = Name.identifier("receiver")
-            klass.addProperty {
-                name = receiverFieldName
-            }.apply {
-                backingField = buildField {
+            createClass(
+                FqName("kotlin.jvm.internal.$className"),
+                classModality = if (impl) Modality.FINAL else Modality.ABSTRACT
+            ) { klass ->
+                if (impl) {
+                    klass.addConstructor().apply {
+                        addValueParameter("owner", irBuiltIns.kDeclarationContainerClass.defaultType)
+                        addValueParameter("name", irBuiltIns.stringType)
+                        addValueParameter("string", irBuiltIns.stringType)
+                    }
+                    klass.superTypes += getPropertyReferenceClass(mutable, parameterCount, false).defaultType
+                } else {
+                    klass.addConstructor()
+
+                    klass.addConstructor().apply {
+                        addValueParameter("receiver", irBuiltIns.anyNType)
+                    }
+                }
+
+                val receiverFieldName = Name.identifier("receiver")
+                klass.addProperty {
                     name = receiverFieldName
-                    type = irBuiltIns.anyNType
-                    visibility = Visibilities.PROTECTED
-                }.also { field ->
-                    field.parent = klass
+                }.apply {
+                    backingField = buildField {
+                        name = receiverFieldName
+                        type = irBuiltIns.anyNType
+                        visibility = Visibilities.PROTECTED
+                    }.also { field ->
+                        field.parent = klass
+                    }
                 }
-            }
 
-            generateCallableReferenceMethods(klass)
+                generateCallableReferenceMethods(klass)
 
-            // To avoid hassle with generic type parameters, we pretend that PropertyReferenceN.get takes and returns `Any?`
-            // (similarly with set). This should be enough for the JVM IR backend to generate correct calls and bridges.
-            klass.addFunction("get", irBuiltIns.anyNType, Modality.ABSTRACT).apply {
-                for (i in 0 until n) {
-                    addValueParameter("receiver$i", irBuiltIns.anyNType)
-                }
-            }
-
-            // invoke redirects to get
-            klass.addFunction("invoke", irBuiltIns.anyNType, Modality.FINAL).apply {
-                for (i in 0 until n) {
-                    addValueParameter("receiver$i", irBuiltIns.anyNType)
-                }
-            }
-
-            if (mutable) {
-                klass.addFunction("set", irBuiltIns.unitType, Modality.ABSTRACT).apply {
-                    for (i in 0 until n) {
+                // To avoid hassle with generic type parameters, we pretend that PropertyReferenceN.get takes and returns `Any?`
+                // (similarly with set). This should be enough for the JVM IR backend to generate correct calls and bridges.
+                klass.addFunction("get", irBuiltIns.anyNType, Modality.ABSTRACT).apply {
+                    for (i in 0 until parameterCount) {
                         addValueParameter("receiver$i", irBuiltIns.anyNType)
                     }
-                    addValueParameter("value", irBuiltIns.anyNType)
+                }
+
+                // invoke redirects to get
+                klass.addFunction("invoke", irBuiltIns.anyNType, Modality.FINAL).apply {
+                    for (i in 0 until parameterCount) {
+                        addValueParameter("receiver$i", irBuiltIns.anyNType)
+                    }
+                }
+
+                if (mutable) {
+                    klass.addFunction("set", irBuiltIns.unitType, Modality.ABSTRACT).apply {
+                        for (i in 0 until parameterCount) {
+                            addValueParameter("receiver$i", irBuiltIns.anyNType)
+                        }
+                        addValueParameter("value", irBuiltIns.anyNType)
+                    }
                 }
             }
         }
     }
 
-    fun getPropertyReferenceClass(mutable: Boolean, parameterCount: Int, impl: Boolean): IrClassSymbol =
-        propertyReferenceClasses(PropertyReferenceKey(mutable, parameterCount, impl))
-
     val reflection: IrClassSymbol = createClass(FqName("kotlin.jvm.internal.Reflection")) { klass ->
-        // We use raw types for java.lang.Class and kotlin.reflect.KClass here for simplicity and because this is what's used
-        // at declaration site at kotlin.jvm.internal.Reflection.
-        val rawJavaLangClass = javaLangClass.typeWith()
-        val rawKClass = irBuiltIns.kClassClass.typeWith()
+        val javaLangClassType = javaLangClass.starProjectedType
+        val kClassType = irBuiltIns.kClassClass.starProjectedType
 
-        klass.addFunction("getOrCreateKotlinPackage", irBuiltIns.kDeclarationContainerClass.typeWith(), isStatic = true).apply {
-            addValueParameter("javaClass", rawJavaLangClass)
+        klass.addFunction("getOrCreateKotlinPackage", irBuiltIns.kDeclarationContainerClass.defaultType, isStatic = true).apply {
+            addValueParameter("javaClass", javaLangClassType)
             addValueParameter("moduleName", irBuiltIns.stringType)
         }
 
-        klass.addFunction("getOrCreateKotlinClass", rawKClass, isStatic = true).apply {
-            addValueParameter("javaClass", rawJavaLangClass)
+        klass.addFunction("getOrCreateKotlinClass", kClassType, isStatic = true).apply {
+            addValueParameter("javaClass", javaLangClassType)
         }
 
-        klass.addFunction("getOrCreateKotlinClasses", irBuiltIns.arrayClass.typeWith(rawKClass), isStatic = true).apply {
-            addValueParameter("javaClasses", irBuiltIns.arrayClass.typeWith(rawJavaLangClass))
+        klass.addFunction("getOrCreateKotlinClasses", irBuiltIns.arrayClass.typeWith(kClassType), isStatic = true).apply {
+            addValueParameter("javaClasses", irBuiltIns.arrayClass.typeWith(javaLangClassType))
         }
 
         for (mutable in listOf(false, true)) {
             for (n in 0..2) {
                 val functionName = (if (mutable) "mutableProperty" else "property") + n
-                klass.addFunction(functionName, irBuiltIns.getKPropertyClass(mutable, n).typeWith(), isStatic = true).apply {
-                    addValueParameter("p", getPropertyReferenceClass(mutable, n, impl = false).typeWith())
+                klass.addFunction(functionName, irBuiltIns.getKPropertyClass(mutable, n).starProjectedType, isStatic = true).apply {
+                    addValueParameter("p", getPropertyReferenceClass(mutable, n, impl = false).defaultType)
                 }
             }
         }
@@ -459,14 +463,15 @@ class JvmSymbols(
         klass.origin = JvmLoweredDeclarationOrigin.TO_ARRAY
 
         val arrayType = irBuiltIns.arrayClass.typeWith(irBuiltIns.anyNType)
+        val collectionType = irBuiltIns.collectionClass.starProjectedType
         klass.addFunction("toArray", arrayType, isStatic = true).apply {
             origin = JvmLoweredDeclarationOrigin.TO_ARRAY
-            addValueParameter("collection", irBuiltIns.collectionClass.owner.typeWith(), JvmLoweredDeclarationOrigin.TO_ARRAY)
+            addValueParameter("collection", collectionType, JvmLoweredDeclarationOrigin.TO_ARRAY)
         }
         klass.addFunction("toArray", arrayType, isStatic = true).apply {
             origin = JvmLoweredDeclarationOrigin.TO_ARRAY
-            addValueParameter("collection", irBuiltIns.collectionClass.owner.typeWith(), JvmLoweredDeclarationOrigin.TO_ARRAY)
-            addValueParameter("array", arrayType, JvmLoweredDeclarationOrigin.TO_ARRAY)
+            addValueParameter("collection", collectionType, JvmLoweredDeclarationOrigin.TO_ARRAY)
+            addValueParameter("array", arrayType.makeNullable(), JvmLoweredDeclarationOrigin.TO_ARRAY)
         }
     }
 
@@ -482,8 +487,8 @@ class JvmSymbols(
         }.apply {
             parent = kotlinJvmPackage
             addGetter().apply {
-                addExtensionReceiver(irBuiltIns.kClassClass.typeWith())
-                returnType = javaLangClass.typeWith()
+                addExtensionReceiver(irBuiltIns.kClassClass.starProjectedType)
+                returnType = javaLangClass.starProjectedType
             }
         }.symbol
 
@@ -525,7 +530,7 @@ class JvmSymbols(
                 addValueParameter("element", irType)
             }
 
-            klass.addFunction("toArray", irBuiltIns.primitiveArrayForType.getValue(irType).owner.typeWith())
+            klass.addFunction("toArray", irBuiltIns.primitiveArrayForType.getValue(irType).defaultType)
         }
     }
 

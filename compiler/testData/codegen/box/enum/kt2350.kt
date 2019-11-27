@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 enum class A(val b: String) {
     E1("OK"){ override fun t() = b };
 

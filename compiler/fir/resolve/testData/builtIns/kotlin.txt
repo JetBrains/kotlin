@@ -1,6 +1,6 @@
 public final inline fun <reified T> arrayOf(vararg elements: R|kotlin/Array<out T>|): R|kotlin/Array<T>|
 
-public final fun <reified T> arrayOfNulls(size: R|kotlin/Int|): R|kotlin/Array<T>|
+public final fun <reified T> arrayOfNulls(size: R|kotlin/Int|): R|kotlin/Array<T?>|
 
 public final fun booleanArrayOf(vararg elements: R|kotlin/BooleanArray|): R|kotlin/BooleanArray|
 
@@ -1306,3 +1306,4 @@ public final object Unit : R|kotlin/Any| {
     public constructor(): R|kotlin/UnsafeVariance|
 
 }
+

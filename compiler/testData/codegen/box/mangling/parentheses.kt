@@ -1,4 +1,5 @@
 // !SANITIZE_PARENTHESES
+// IGNORE_BACKEND_FIR: JVM_IR
 // IGNORE_BACKEND: JS, JS_IR
 
 // Sanitization is needed here because DxChecker reports ParseException on parentheses in names.

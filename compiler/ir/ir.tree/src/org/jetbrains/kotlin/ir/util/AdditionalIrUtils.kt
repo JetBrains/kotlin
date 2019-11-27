@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.ir.util
 
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.SourceRangeInfo
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -13,7 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import java.io.File
 
@@ -124,8 +126,25 @@ fun IrDeclaration.findTopLevelDeclaration(): IrDeclaration = when {
         (this.parent as IrDeclaration).findTopLevelDeclaration()
 }
 
-val IrDeclaration.isAnonymousObject get() = DescriptorUtils.isAnonymousObject(this.descriptor)
-val IrDeclaration.isLocal get() = DescriptorUtils.isLocal(this.descriptor)
+val IrDeclaration.isAnonymousObject get() = this is IrClass && name == SpecialNames.NO_NAME_PROVIDED
+
+val IrDeclaration.isLocal: Boolean
+    get() {
+        var current: IrElement = this
+        while (current !is IrPackageFragment) {
+            require(current is IrDeclaration)
+
+            if (current is IrDeclarationWithVisibility) {
+                if (current.visibility == Visibilities.LOCAL) return true
+            }
+
+            if (current.isAnonymousObject) return true
+
+            current = current.parent
+        }
+
+        return false
+    }
 
 val IrDeclaration.module get() = this.descriptor.module
 

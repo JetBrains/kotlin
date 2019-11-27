@@ -26,9 +26,13 @@ import org.junit.runner.Runner;
 import org.junit.runner.manipulation.*;
 import org.junit.runner.notification.RunNotifier;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static org.jetbrains.kotlin.test.JUnit3RunnerWithInners.isTestMethod;
 
 /**
@@ -45,6 +49,7 @@ public class JUnit3RunnerWithInnersForJPS extends Runner implements Filterable, 
     public JUnit3RunnerWithInnersForJPS(Class<?> klass) {
         this.klass = klass;
         requestedRunners.add(klass);
+        ensureCompilerXmlExists();
     }
 
     @Override
@@ -74,6 +79,22 @@ public class JUnit3RunnerWithInnersForJPS extends Runner implements Filterable, 
     protected void initialize() {
         if (delegateRunner != null) return;
         delegateRunner = new JUnit38ClassRunner(getCollectedTests());
+    }
+
+    /**
+     * compiler.xml needs to be in both compiler & ide module for tests execution.
+     * To avoid file duplication copy it to the out dir idea module before test execution.
+     */
+    private static void ensureCompilerXmlExists() {
+        String compilerXmlSourcePath = "compiler/cli/cli-common/resources/META-INF/extensions/compiler.xml";
+        String compilerXmlTargetPath = "out/production/kotlin.idea.main/META-INF/extensions/compiler.xml";
+
+        try {
+            Files.copy(Paths.get(compilerXmlSourcePath), Paths.get(compilerXmlTargetPath), REPLACE_EXISTING);
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private Test getCollectedTests() {

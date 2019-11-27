@@ -11,3 +11,12 @@ enum class SimpleEnum { A, B }
 
 @Serializable
 enum class ExplicitlyMarkedEnum { @SerialId(10) A, B}
+
+@Serializable(EnumSerializer::class)
+enum class ExplicitlyMarkedEnumCustom { @SerialId(10) A, B}
+
+object EnumSerializer: KSerializer<ExplicitlyMarkedEnumCustom> {
+    override val descriptor = TODO()
+    override fun serialize(encoder: Encoder, obj: ExplicitlyMarkedEnumCustom) = TODO()
+    override fun deserialize(decoder: Decoder): ExplicitlyMarkedEnumCustom = TODO()
+}

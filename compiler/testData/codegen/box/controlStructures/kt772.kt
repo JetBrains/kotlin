@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 package demo2
 
 fun print(o : Any?) {}

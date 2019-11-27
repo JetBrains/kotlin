@@ -42,14 +42,9 @@ internal class VariablesHighlightingVisitor(holder: AnnotationHolder, bindingCon
 
     override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
         val target = bindingContext.get(REFERENCE_TARGET, expression) ?: return
-        if (target is ValueParameterDescriptor) {
-            if (bindingContext.get(AUTO_CREATED_IT, target) == true) {
-                createInfoAnnotation(expression, "Automatically declared based on the expected type")
-                        .textAttributes = FUNCTION_LITERAL_DEFAULT_PARAMETER
-            }
-        }
-
-        if (expression.parent !is KtValueArgumentName) { // highlighted separately
+        if (target is ValueParameterDescriptor && bindingContext.get(AUTO_CREATED_IT, target) == true) {
+            createInfoAnnotation(expression, FUNCTION_LITERAL_DEFAULT_PARAMETER, "Automatically declared based on the expected type")
+        } else if (expression.parent !is KtValueArgumentName) { // highlighted separately
             highlightVariable(expression, target)
         }
 
@@ -156,7 +151,7 @@ internal class VariablesHighlightingVisitor(holder: AnnotationHolder, bindingCon
 
                 val parent = elementToHighlight.parent
                 if (!(parent is PsiNameIdentifierOwner && parent.nameIdentifier == elementToHighlight)) {
-                    createInfoAnnotation(elementToHighlight, msg).textAttributes = WRAPPED_INTO_REF
+                    createInfoAnnotation(elementToHighlight, WRAPPED_INTO_REF, msg)
                     return
                 }
             }

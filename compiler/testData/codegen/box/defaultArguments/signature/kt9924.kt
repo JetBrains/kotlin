@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 abstract class A<T> {
     abstract fun test(a: T, b:Boolean = false) : String
 }

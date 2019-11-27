@@ -1,9 +1,9 @@
 // No lines
 fun f1() {}
-
 val p1 = 1
 fun f2() {}
 
+// test
 fun f3() = 1
 val p2 = 1
 fun f4() = 1

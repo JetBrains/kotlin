@@ -28,29 +28,26 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializableCodegen
 import org.jetbrains.kotlinx.serialization.compiler.diagnostic.serializableAnnotationIsUseless
+import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.MISSING_FIELD_EXC
 
 class SerializableIrGenerator(
     val irClass: IrClass,
-    override val compilerContext: BackendContext,
+    override val compilerContext: SerializationPluginContext,
     bindingContext: BindingContext
 ) : SerializableCodegen(irClass.descriptor, bindingContext), IrBuilderExtension {
-    override val translator: TypeTranslator = compilerContext.createTypeTranslator(serializableDescriptor.module)
-    private val _table = SymbolTable()
-    override val BackendContext.localSymbolTable: SymbolTable
-        get() = _table
 
     override fun generateInternalConstructor(constructorDescriptor: ClassConstructorDescriptor) =
-        irClass.contributeConstructor(constructorDescriptor, fromStubs = true, overwriteValueParameters = true) { ctor ->
+        irClass.contributeConstructor(constructorDescriptor, overwriteValueParameters = true) { ctor ->
             val transformFieldInitializer = buildInitializersRemapping(irClass)
 
             // Missing field exception parts
             val exceptionCtor =
                 serializableDescriptor.getClassFromSerializationPackage(MISSING_FIELD_EXC)
                     .unsubstitutedPrimaryConstructor!!
-            val exceptionCtorRef = compilerContext.externalSymbols.referenceConstructor(exceptionCtor)
-            val exceptionType = exceptionCtorRef.owner.returnType
+            val exceptionCtorRef = compilerContext.symbolTable.referenceConstructor(exceptionCtor)
+            val exceptionType = exceptionCtor.returnType.toIrType()
 
             val serializableProperties = properties.serializableProperties
             val seenVarsOffset = serializableProperties.bitMaskSlotCount()
@@ -114,13 +111,12 @@ class SerializableIrGenerator(
     private fun IrBlockBodyBuilder.generateSuperNonSerializableCall(superClass: ClassDescriptor) {
         val suitableCtor = superClass.constructors.singleOrNull { it.valueParameters.size == 0 }
             ?: throw IllegalArgumentException("Non-serializable parent of serializable $serializableDescriptor must have no arg constructor")
-        val ctorRef = compilerContext.externalSymbols.referenceConstructor(suitableCtor)
+        val ctorRef = compilerContext.symbolTable.referenceConstructor(suitableCtor)
         val call = IrDelegatingConstructorCallImpl(
             startOffset,
             endOffset,
             compilerContext.irBuiltIns.unitType,
-            ctorRef,
-            suitableCtor
+            ctorRef
         )
         call.insertTypeArgumentsForSuperClass(superClass)
         +call
@@ -142,7 +138,7 @@ class SerializableIrGenerator(
         propertiesStart: Int
     ): Int {
         check(superClass.isInternalSerializable)
-        val superCtorRef = compilerContext.externalSymbols.serializableSyntheticConstructor(superClass)
+        val superCtorRef = compilerContext.symbolTable.serializableSyntheticConstructor(superClass)
         val superProperties = bindingContext.serializablePropertiesFor(superClass).serializableProperties
         val superSlots = superProperties.bitMaskSlotCount()
         val arguments = allValueParameters.subList(0, superSlots) +
@@ -152,8 +148,7 @@ class SerializableIrGenerator(
             startOffset,
             endOffset,
             compilerContext.irBuiltIns.unitType,
-            superCtorRef,
-            superCtorRef.owner.descriptor
+            superCtorRef
         )
         arguments.forEachIndexed { index, parameter -> call.putValueArgument(index, irGet(parameter)) }
         call.insertTypeArgumentsForSuperClass(superClass)
@@ -168,7 +163,7 @@ class SerializableIrGenerator(
     companion object {
         fun generate(
             irClass: IrClass,
-            context: BackendContext,
+            context: SerializationPluginContext,
             bindingContext: BindingContext
         ) {
             val serializableClass = irClass.descriptor

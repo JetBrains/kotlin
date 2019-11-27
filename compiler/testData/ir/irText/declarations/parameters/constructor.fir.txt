@@ -1,8 +1,8 @@
 FILE fqName:<root> fileName:/constructor.kt
   CLASS CLASS name:Test1 modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test1
-    TYPE_PARAMETER name:T1 index:0 variance: superTypes:[]
-    TYPE_PARAMETER name:T2 index:1 variance: superTypes:[]
+    TYPE_PARAMETER name:T1 index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:T2 index:1 variance: superTypes:[kotlin.Any?]
     CONSTRUCTOR visibility:public <> (x:T1 of <uninitialized parent>, y:T2 of <uninitialized parent>) returnType:<root>.Test1<T1 of <uninitialized parent>, T2 of <uninitialized parent>> [primary]
       VALUE_PARAMETER name:x index:0 type:T1 of <uninitialized parent>
       VALUE_PARAMETER name:y index:1 type:T2 of <uninitialized parent>
@@ -65,7 +65,7 @@ FILE fqName:<root> fileName:/constructor.kt
               receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.<get-y>' type=<root>.Test2 origin=null
     CLASS CLASS name:TestInner modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test2.TestInner
-      TYPE_PARAMETER name:Z index:0 variance: superTypes:[]
+      TYPE_PARAMETER name:Z index:0 variance: superTypes:[kotlin.Any?]
       CONSTRUCTOR visibility:public <> (z:Z of <uninitialized parent>) returnType:<root>.Test2.TestInner<Z of <uninitialized parent>> [primary]
         VALUE_PARAMETER name:z index:0 type:Z of <uninitialized parent>
         BLOCK_BODY
@@ -162,7 +162,7 @@ FILE fqName:<root> fileName:/constructor.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:Test4 modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test4
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
     CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:<root>.Test4<T of <uninitialized parent>> [primary]
       VALUE_PARAMETER name:x index:0 type:kotlin.Int
       BLOCK_BODY

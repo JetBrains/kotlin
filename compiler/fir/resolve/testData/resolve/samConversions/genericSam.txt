@@ -8,7 +8,7 @@ FILE: main.kt
             R|<local>/x|.R|kotlin/Number.toInt|().R|kotlin/Any.toString|()
         }
         )
-        Q|JavaUsage|.<Inapplicable(INAPPLICABLE): [/JavaUsage.foo2]>#(<L> = foo2@fun <implicit>.<anonymous>(x: R|kotlin/Int|): R|kotlin/String| {
+        Q|JavaUsage|.<Inapplicable(INAPPLICABLE): [/JavaUsage.foo2]>#(<L> = foo2@fun <anonymous>(x: R|kotlin/Int|): R|kotlin/String| {
             R|<local>/x|.R|kotlin/Any.toString|()
         }
         )
