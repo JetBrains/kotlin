@@ -469,12 +469,20 @@ fun mirror(declarationMapper: DeclarationMapper, type: Type): TypeMirror = when 
 
         val name = type.def.name
         when (baseType) {
-            is TypeMirror.ByValue -> TypeMirror.ByValue(
-                    Classifier.topLevel(pkg, "${name}Var").typeAbbreviation(baseType.pointedType),
-                    baseType.info,
-                    Classifier.topLevel(pkg, name).typeAbbreviation(baseType.valueType),
-                    nullable = baseType.nullable
-            )
+            is TypeMirror.ByValue -> {
+                val valueType = Classifier.topLevel(pkg, name).typeAbbreviation(baseType.valueType)
+                val underlyingPointedType = if (baseType.info is TypeInfo.Pointer) {
+                    KotlinTypes.cPointerVarOf.typeWith(valueType)
+                } else {
+                    baseType.pointedType
+                }
+                val pointedType = Classifier.topLevel(pkg, "${name}Var").typeAbbreviation(underlyingPointedType)
+                TypeMirror.ByValue(
+                        pointedType,
+                        baseType.info,
+                        valueType,
+                        nullable = baseType.nullable)
+            }
 
             is TypeMirror.ByRef -> TypeMirror.ByRef(
                     Classifier.topLevel(pkg, name).typeAbbreviation(baseType.pointedType),
