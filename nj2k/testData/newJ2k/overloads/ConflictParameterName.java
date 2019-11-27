@@ -24,11 +24,13 @@ public class Test {
         public boolean f = true;
     }
 
+    private final int getG() { return 1; }
+
     public void foo() {
-        foo(a, this.b, c(), isD(), e.ee, new F().f);
+        foo(a, this.b, c(), isD(), e.ee, new F().f, getG());
     }
 
-    public void foo(boolean a, boolean b, boolean c, boolean isD, boolean e, boolean f) {
+    public void foo(boolean a, boolean b, boolean c, boolean isD, boolean e, boolean f, int g) {
     }
 
     public void bar() {
