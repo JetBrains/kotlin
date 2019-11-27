@@ -913,6 +913,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/resolve/testData/resolve/problems/receiverWithCapturedType.kt");
         }
 
+        @TestMetadata("samConversionInConstructorCall.kt")
+        public void testSamConversionInConstructorCall() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/problems/samConversionInConstructorCall.kt");
+        }
+
         @TestMetadata("syntheticsVsNormalProperties.kt")
         public void testSyntheticsVsNormalProperties() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/problems/syntheticsVsNormalProperties.kt");
