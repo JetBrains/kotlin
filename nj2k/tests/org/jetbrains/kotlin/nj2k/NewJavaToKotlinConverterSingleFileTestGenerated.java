@@ -4044,6 +4044,11 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
             runTest("nj2k/testData/newJ2k/overloads/Annotations.java");
         }
 
+        @TestMetadata("ConflictParameterName.java")
+        public void testConflictParameterName() throws Exception {
+            runTest("nj2k/testData/newJ2k/overloads/ConflictParameterName.java");
+        }
+
         @TestMetadata("Override.java")
         public void testOverride() throws Exception {
             runTest("nj2k/testData/newJ2k/overloads/Override.java");
