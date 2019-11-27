@@ -873,6 +873,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/resolve/testData/resolve/problems/asImports.kt");
         }
 
+        @TestMetadata("definitelyNotNullAmbiguity.kt")
+        public void testDefinitelyNotNullAmbiguity() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/problems/definitelyNotNullAmbiguity.kt");
+        }
+
         @TestMetadata("invokeOfLambdaWithReceiver.kt")
         public void testInvokeOfLambdaWithReceiver() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/problems/invokeOfLambdaWithReceiver.kt");
