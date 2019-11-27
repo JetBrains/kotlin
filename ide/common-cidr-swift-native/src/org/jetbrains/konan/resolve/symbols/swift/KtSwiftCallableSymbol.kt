@@ -23,6 +23,8 @@ abstract class KtSwiftCallableSymbol : KtSwiftMemberSymbol, SwiftCallableSymbol 
     // beware: necessary for compiler to generate valid code
     abstract override val swiftDeclaredType: SwiftFunctionType
 
+    override fun isCallable(): Boolean = true
+
     override fun getThrowKind(): SwiftCallableSymbol.ThrowKind = SwiftCallableSymbol.ThrowKind.NONE
 
     override fun getGenericParametersInfo(): SwiftGenericParametersInfo = SwiftGenericParametersInfo.EMPTY
