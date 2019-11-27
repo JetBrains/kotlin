@@ -45,7 +45,8 @@ private val FAKE_CAPTURED_TYPE_CLASS_DESCRIPTOR
                         this, Annotations.EMPTY, 
                         false, Variance.IN_VARIANCE, 
                         Name.identifier("Projection"), 
-                        /* index = */ 0
+                        /* index = */ 0,
+                        LockBasedStorageManager.NO_LOCKS
                     ).let(::listOf)
             )
             createTypeConstructor()
