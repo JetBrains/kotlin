@@ -107,17 +107,17 @@ public class CodeStyleFacadeImpl extends CodeStyleFacade {
   }
 
   @Override
-  public boolean useSpaceBeforeComma(PsiFile psiFile, Language language) {
+  public boolean useSpaceBeforeComma(@NotNull PsiFile psiFile, @NotNull Language language) {
     return CodeStyle.getLanguageSettings(psiFile, language).SPACE_BEFORE_COMMA;
   }
 
   @Override
-  public boolean useSpaceAfterComma(PsiFile psiFile, Language language) {
+  public boolean useSpaceAfterComma(@NotNull PsiFile psiFile, @NotNull Language language) {
     return CodeStyle.getLanguageSettings(psiFile, language).SPACE_AFTER_COMMA;
   }
 
   @Override
-  public boolean useSpaceAroundAssignmentOperators(PsiFile psiFile, Language language) {
+  public boolean useSpaceAroundAssignmentOperators(@NotNull PsiFile psiFile, @NotNull Language language) {
     return CodeStyle.getLanguageSettings(psiFile, language).SPACE_AROUND_ASSIGNMENT_OPERATORS;
   }
 }
