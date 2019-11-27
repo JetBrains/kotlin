@@ -1070,6 +1070,7 @@ open class IrFileSerializer(
             .setIsTailrec(declaration.isTailrec)
             .setIsSuspend(declaration.isSuspend)
             .setIsFakeOverride(declaration.isFakeOverride)
+            .setIsOperator(declaration.isOperator)
 
         declaration.overriddenSymbols.forEach {
             proto.addOverridden(serializeIrSymbol(it))

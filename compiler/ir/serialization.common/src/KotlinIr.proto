@@ -528,6 +528,7 @@ message IrFunction {
   repeated int32 overridden = 5;
   //optional UniqId corresponding_property = 7;
   required bool is_fake_override = 8;
+  required bool is_operator = 9;
 }
 
 message IrConstructor {

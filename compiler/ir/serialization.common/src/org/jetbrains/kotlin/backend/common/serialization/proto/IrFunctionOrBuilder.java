@@ -72,4 +72,13 @@ public interface IrFunctionOrBuilder extends
    * </pre>
    */
   boolean getIsFakeOverride();
+
+  /**
+   * <code>required bool is_operator = 9;</code>
+   */
+  boolean hasIsOperator();
+  /**
+   * <code>required bool is_operator = 9;</code>
+   */
+  boolean getIsOperator();
 }
