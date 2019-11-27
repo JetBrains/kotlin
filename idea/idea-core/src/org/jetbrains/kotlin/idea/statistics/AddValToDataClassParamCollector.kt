@@ -9,13 +9,19 @@ object AddValToDataClassParamCollector {
 
     fun log(timeStarted: Long, timeFinished: Long, isValAdded: Boolean, onSymbol: Char, isBeforeTyping: Boolean) {
 
+        val symbol = when (onSymbol) {
+            ',' -> "comma"
+            ')' -> "bracket"
+            else -> "unknown"
+        }
+
         val data = mapOf(
             "lagging" to (timeFinished - timeStarted).toString(),
             "isValAdded" to isValAdded.toString(),
-            "onSymbol" to onSymbol.toString(),
+            "onSymbol" to symbol,
             "isBeforeTyping" to isBeforeTyping.toString()
         )
 
-        KotlinFUSLogger.log(FUSEventGroups.Editor, "addValToDataClassParameters", data)
+        KotlinFUSLogger.log(FUSEventGroups.Editor, "AddValToDataClassParameters", data)
     }
 }
