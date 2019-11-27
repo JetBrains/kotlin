@@ -44,15 +44,15 @@ public final class IntentionManagerImpl extends IntentionManager implements Disp
   public IntentionManagerImpl() {
     List<IntentionAction> actions = new ArrayList<>();
     actions.add(new EditInspectionToolsSettingsInSuppressedPlaceIntention());
-    IntentionManager.EP_INTENTION_ACTIONS.forEachExtensionSafe(extension -> {
-      actions.add(new IntentionActionWrapper(extension, extension.getCategories()));
-    });
+    IntentionManager.EP_INTENTION_ACTIONS.forEachExtensionSafe(extension ->
+      actions.add(new IntentionActionWrapper(extension))
+    );
     myActions = ContainerUtil.createLockFreeCopyOnWriteList(actions);
 
     IntentionManager.EP_INTENTION_ACTIONS.addExtensionPointListener(new ExtensionPointListener<IntentionActionBean>() {
       @Override
       public void extensionAdded(@NotNull IntentionActionBean extension, @NotNull PluginDescriptor pluginDescriptor) {
-        myActions.add(new IntentionActionWrapper(extension, extension.getCategories()));
+        myActions.add(new IntentionActionWrapper(extension));
       }
 
       @Override

@@ -70,13 +70,13 @@ public final class IntentionManagerSettings implements PersistentStateComponent<
   public void dispose() {
   }
 
-  private void registerMetaDataForEP(IntentionActionBean extension) {
+  private void registerMetaDataForEP(@NotNull IntentionActionBean extension) {
     String[] categories = extension.getCategories();
     if (categories == null) {
       return;
     }
 
-    IntentionActionWrapper instance = new IntentionActionWrapper(extension, categories);
+    IntentionActionWrapper instance = new IntentionActionWrapper(extension);
     String descriptionDirectoryName = extension.getDescriptionDirectoryName();
     if (descriptionDirectoryName == null) {
       descriptionDirectoryName = instance.getDescriptionDirectoryName();

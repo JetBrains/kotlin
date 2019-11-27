@@ -17,13 +17,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class IntentionActionWrapper implements IntentionAction, ShortcutProvider, IntentionActionDelegate {
-  private final String[] myCategories;
   private final IntentionActionBean myExtension;
   private String myFullFamilyName;
 
-  IntentionActionWrapper(@NotNull IntentionActionBean extension, String[] categories) {
+  IntentionActionWrapper(@NotNull IntentionActionBean extension) {
     myExtension = extension;
-    myCategories = categories;
   }
 
   @NotNull
@@ -73,6 +71,7 @@ public final class IntentionActionWrapper implements IntentionAction, ShortcutPr
   public String getFullFamilyName(){
     String result = myFullFamilyName;
     if (result == null) {
+      String[] myCategories = myExtension.getCategories();
       myFullFamilyName = result = myCategories != null ? StringUtil.join(myCategories, "/") + "/" + getFamilyName() : getFamilyName();
     }
     return result;
