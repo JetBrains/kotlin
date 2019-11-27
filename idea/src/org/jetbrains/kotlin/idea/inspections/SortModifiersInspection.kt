@@ -5,75 +5,48 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
-import com.intellij.codeInspection.*
+import com.intellij.codeInspection.CleanupLocalInspectionTool
+import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtAnnotation
+import org.jetbrains.kotlin.psi.KtAnnotationEntry
+import org.jetbrains.kotlin.psi.KtModifierList
+import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.psi.addRemoveModifier.sortModifiers
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-class SortModifiersInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
-
-    override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
-        return object : KtVisitorVoid() {
-            override fun visitModifierList(list: KtModifierList) {
-                super.visitModifierList(list)
-
-                val modifierElements = list.allChildren.toList()
-                var modifiersBeforeAnnotations = false
-                var seenModifiers = false
-                for (modifierElement in modifierElements) {
-                    if (modifierElement.node.elementType is KtModifierKeywordToken) {
-                        seenModifiers = true
-                    } else if (seenModifiers && (modifierElement is KtAnnotationEntry || modifierElement is KtAnnotation)) {
-                        modifiersBeforeAnnotations = true
-                    }
-                }
-
-                val modifiers = modifierElements.asSequence().mapNotNull { it.node.elementType as? KtModifierKeywordToken }.toList()
-                if (modifiers.isEmpty()) return
-
-                val startElement = modifierElements.firstOrNull { it.node.elementType is KtModifierKeywordToken } ?: return
-                val endElement = modifierElements.lastOrNull { it.node.elementType is KtModifierKeywordToken } ?: return
-                val rangeInElement = TextRange(startElement.startOffset, endElement.endOffset).shiftLeft(list.startOffset)
-
-                val sortedModifiers = sortModifiers(modifiers)
-                if (modifiers == sortedModifiers && !modifiersBeforeAnnotations) return
-
-                val message = if (modifiersBeforeAnnotations)
-                    "Modifiers should follow annotations"
-                else
-                    "Non-canonical modifiers order"
-
-                val descriptor = holder.manager.createProblemDescriptor(
-                    list,
-                    rangeInElement,
-                    message,
-                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                    isOnTheFly,
-                    SortModifiersFix(sortedModifiers)
-                )
-                holder.registerProblem(descriptor)
-            }
-        }
+class SortModifiersInspection : AbstractApplicabilityBasedInspection<KtModifierList>(
+    KtModifierList::class.java
+), CleanupLocalInspectionTool {
+    override fun isApplicable(element: KtModifierList): Boolean {
+        val modifiers = element.modifierKeywordTokens()
+        if (modifiers.isEmpty()) return false
+        val sortedModifiers = sortModifiers(modifiers)
+        if (modifiers == sortedModifiers && !element.modifiersBeforeAnnotations()) return false
+        return true
     }
-}
 
-private class SortModifiersFix(private val modifiers: List<KtModifierKeywordToken>) : LocalQuickFix {
-    override fun getName() = "Sort modifiers"
+    override fun inspectionHighlightRangeInElement(element: KtModifierList): TextRange? {
+        val modifierElements = element.allChildren.toList()
+        val startElement = modifierElements.firstOrNull { it.node.elementType is KtModifierKeywordToken } ?: return null
+        val endElement = modifierElements.lastOrNull { it.node.elementType is KtModifierKeywordToken } ?: return null
+        return TextRange(startElement.startOffset, endElement.endOffset).shiftLeft(element.startOffset)
+    }
 
-    override fun getFamilyName() = name
+    override fun inspectionText(element: KtModifierList) =
+        if (element.modifiersBeforeAnnotations()) "Modifiers should follow annotations" else "Non-canonical modifiers order"
 
-    override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-        val list = descriptor.psiElement as? KtModifierList ?: return
-        val owner = list.parent as? KtModifierListOwner ?: return
+    override val defaultFixText = "Sort modifiers"
 
-        val existingModifiers = modifiers.filter { owner.hasModifier(it) }
+    override fun applyTo(element: KtModifierList, project: Project, editor: Editor?) {
+        val owner = element.parent as? KtModifierListOwner ?: return
+        val sortedModifiers = sortModifiers(element.modifierKeywordTokens())
+        val existingModifiers = sortedModifiers.filter { owner.hasModifier(it) }
         existingModifiers.forEach { owner.removeModifier(it) }
         // We add visibility / modality modifiers after all others,
         // because they can be redundant or not depending on others (e.g. override)
@@ -82,5 +55,22 @@ private class SortModifiersFix(private val modifiers: List<KtModifierKeywordToke
             .let { it.second + it.first }
             .forEach { owner.addModifier(it) }
     }
-}
 
+    private fun KtModifierList.modifierKeywordTokens(): List<KtModifierKeywordToken> {
+        return allChildren.mapNotNull { it.node.elementType as? KtModifierKeywordToken }.toList()
+    }
+
+    private fun KtModifierList.modifiersBeforeAnnotations(): Boolean {
+        val modifierElements = this.allChildren.toList()
+        var modifiersBeforeAnnotations = false
+        var seenModifiers = false
+        for (modifierElement in modifierElements) {
+            if (modifierElement.node.elementType is KtModifierKeywordToken) {
+                seenModifiers = true
+            } else if (seenModifiers && (modifierElement is KtAnnotationEntry || modifierElement is KtAnnotation)) {
+                modifiersBeforeAnnotations = true
+            }
+        }
+        return modifiersBeforeAnnotations
+    }
+}

@@ -4226,6 +4226,11 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
             runTest("nj2k/testData/newJ2k/postProcessing/RedunduntTypeCastAndProhibitedInline.java");
         }
 
+        @TestMetadata("SortModifiers.java")
+        public void testSortModifiers() throws Exception {
+            runTest("nj2k/testData/newJ2k/postProcessing/SortModifiers.java");
+        }
+
         @TestMetadata("SyntheticExtensionPropertyAccess.java")
         public void testSyntheticExtensionPropertyAccess() throws Exception {
             runTest("nj2k/testData/newJ2k/postProcessing/SyntheticExtensionPropertyAccess.java");
