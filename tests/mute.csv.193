@@ -106,7 +106,6 @@ org.jetbrains.kotlin.idea.navigation.KotlinGotoImplementationMultiModuleTestGene
 org.jetbrains.kotlin.idea.parameterInfo.ParameterInfoTestGenerated.WithLib1.testUseJavaFromLib, KT-34542, FAIL
 org.jetbrains.kotlin.idea.parameterInfo.ParameterInfoTestGenerated.WithLib2.testUseJavaSAMFromLib, KT-34542, FAIL
 org.jetbrains.kotlin.idea.parameterInfo.ParameterInfoTestGenerated.WithLib3.testUseJavaSAMFromLib, KT-34542, FAIL
-org.jetbrains.kotlin.idea.quickfix.QuickFixMultiFileTestGenerated.AddAnnotationTarget.testWithJava, Unprocessed
 org.jetbrains.kotlin.idea.quickfix.QuickFixMultiFileTestGenerated.ChangeSignature.Jk.testJkKeepValOnParameterTypeChange, Unprocessed
 org.jetbrains.kotlin.idea.quickfix.QuickFixMultiModuleTestGenerated.Other.testConvertActualSealedClassToEnum, Enum reorder
 org.jetbrains.kotlin.idea.quickfix.QuickFixMultiModuleTestGenerated.Other.testConvertExpectSealedClassToEnum, Enum reorder
