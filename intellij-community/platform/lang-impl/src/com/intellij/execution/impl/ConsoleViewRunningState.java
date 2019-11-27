@@ -7,6 +7,7 @@ import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.encoding.EncodingManager;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 
 import java.io.IOException;
@@ -36,16 +37,15 @@ public class ConsoleViewRunningState extends ConsoleState {
     }
   };
 
-  public ConsoleViewRunningState(final ConsoleViewImpl console,
-                                 final ProcessHandler processHandler,
-                                 final ConsoleState finishedStated,
-                                 final boolean attachToStdOut,
-                                 final boolean attachToStdIn) {
-
+  public ConsoleViewRunningState(@NotNull ConsoleViewImpl console,
+                                 @NotNull ProcessHandler processHandler,
+                                 @NotNull ConsoleState finishedStated,
+                                 boolean attachToStdOut,
+                                 boolean attachToStdIn) {
     myConsole = console;
     myProcessHandler = processHandler;
     myFinishedStated = finishedStated;
-    myStreamsSynchronizer = new ProcessStreamsSynchronizer(console);
+    myStreamsSynchronizer = attachToStdOut ? new ProcessStreamsSynchronizer(console) : null;
 
     // attach to process stdout
     if (attachToStdOut) {
@@ -117,7 +117,7 @@ public class ConsoleViewRunningState extends ConsoleState {
   }
 
   @TestOnly
-  @NotNull
+  @Nullable
   ProcessStreamsSynchronizer getStreamsSynchronizer() {
     return myStreamsSynchronizer;
   }
