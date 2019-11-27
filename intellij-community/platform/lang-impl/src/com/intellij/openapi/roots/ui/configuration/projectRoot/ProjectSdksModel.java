@@ -22,14 +22,12 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.Consumer;
 import com.intellij.util.EventDispatcher;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author anna
@@ -239,41 +237,101 @@ public class ProjectSdksModel implements SdkModel {
     createAddActions(group, parent, null, updateTree, filter);
   }
 
+  @NotNull
+  private static List<SdkType> getAddableSdkTypes(@Nullable Condition<? super SdkTypeId> filter) {
+    return ContainerUtil.filter(SdkType.getAllTypes(), type ->
+      type.allowCreationByUser() && (filter == null || filter.value(type))
+    );
+  }
+
   public void createAddActions(@NotNull DefaultActionGroup group,
                                @NotNull final JComponent parent,
                                @Nullable final Sdk selectedSdk,
                                @NotNull final Consumer<? super Sdk> updateTree,
                                @Nullable Condition<? super SdkTypeId> filter) {
-    final SdkType[] types = SdkType.getAllTypes();
-    for (final SdkType type : types) {
-      if (!type.allowCreationByUser()) continue;
-      if (filter != null && !filter.value(type)) continue;
 
-      SdkDownload downloadExtension = SdkDownload.EP_NAME.findFirstSafe(it -> it.supportsDownload(type));
-      if (downloadExtension != null) {
-        String downloadText = ProjectBundle.message("sdk.configure.download.action", type.getPresentableName());
+    Map<SdkType, AnAction> downloadActions = createDownloadActions(parent, selectedSdk, updateTree, filter);
+    Map<SdkType, AnAction> defaultAddActions = createDefaultAddActions(updateTree, filter);
+    Map<SdkType, AnAction> customAddActions = createCustomAddActions(parent, selectedSdk, updateTree, filter);
 
-        AnAction downloadAction = new DumbAwareAction(downloadText, null, downloadExtension.getIconForDownloadAction(type)) {
-          @Override
-          public void actionPerformed(@NotNull AnActionEvent e) {
-            doDownload(downloadExtension, parent, selectedSdk, type, updateTree);
-          }
-        };
+    for (SdkType type : getAddableSdkTypes(filter)) {
+      AnAction downloadAction = downloadActions.get(type);
+      if (downloadAction != null) {
         group.add(downloadAction);
       }
+      AnAction defaultAction = defaultAddActions.get(type);
+      if (defaultAction != null) {
+        group.add(defaultAction);
+      }
+      AnAction customAction = customAddActions.get(type);
+      if (customAction != null) {
+        group.add(customAction);
+      }
+    }
+  }
 
-      String addOnDiskText = !type.supportsCustomCreateUI() && downloadExtension != null
-                             ? ProjectBundle.message("sdk.configure.add.fromDisk.action", type.getPresentableName())
-                             : ProjectBundle.message("sdk.configure.add.default.action", type.getPresentableName());
+  @NotNull
+  public Map<SdkType, AnAction> createDownloadActions(@NotNull final JComponent parent,
+                                                      @Nullable final Sdk selectedSdk,
+                                                      @NotNull final Consumer<? super Sdk> updateTree,
+                                                      @Nullable Condition<? super SdkTypeId> filter) {
+    Map<SdkType, AnAction> result = new LinkedHashMap<>();
+    for (final SdkType type : getAddableSdkTypes(filter)) {
+      SdkDownload downloadExtension = SdkDownload.EP_NAME.findFirstSafe(it -> it.supportsDownload(type));
+      if (downloadExtension == null) continue;
 
+      String downloadText = ProjectBundle.message("sdk.configure.download.action", type.getPresentableName());
+
+      AnAction downloadAction = new DumbAwareAction(downloadText, null, downloadExtension.getIconForDownloadAction(type)) {
+        @Override
+        public void actionPerformed(@NotNull AnActionEvent e) {
+          doDownload(downloadExtension, parent, selectedSdk, type, updateTree);
+        }
+      };
+
+      result.put(type, downloadAction);
+    }
+    return result;
+  }
+
+  @NotNull
+  public Map<SdkType, AnAction> createDefaultAddActions(@NotNull final Consumer<? super Sdk> updateTree,
+                                                        @Nullable Condition<? super SdkTypeId> filter) {
+    Map<SdkType, AnAction> result = new LinkedHashMap<>();
+    for (final SdkType type : getAddableSdkTypes(filter)) {
+      if (type.supportsCustomCreateUI()) continue;
+
+      String addOnDiskText = ProjectBundle.message("sdk.configure.add.fromDisk.action", type.getPresentableName());
       AnAction addAction = new DumbAwareAction(addOnDiskText, null, type.getIconForAddAction()) {
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
-          doAdd(parent, selectedSdk, type, updateTree);
+          SdkConfigurationUtil.selectSdkHome(type, home -> addSdk(type, home, updateTree));
         }
       };
-      group.add(addAction);
+      result.put(type, addAction);
     }
+    return result;
+  }
+
+  @NotNull
+  public Map<SdkType, AnAction> createCustomAddActions(@NotNull final JComponent parent,
+                                                       @Nullable final Sdk selectedSdk,
+                                                       @NotNull final Consumer<? super Sdk> updateTree,
+                                                       @Nullable Condition<? super SdkTypeId> filter) {
+    Map<SdkType, AnAction> result = new LinkedHashMap<>();
+    for (final SdkType type : getAddableSdkTypes(filter)) {
+      if (!type.supportsCustomCreateUI()) continue;
+
+      String addOnDiskText = ProjectBundle.message("sdk.configure.add.default.action", type.getPresentableName());
+      AnAction addAction = new DumbAwareAction(addOnDiskText, null, type.getIconForAddAction()) {
+        @Override
+        public void actionPerformed(@NotNull AnActionEvent e) {
+          type.showCustomCreateUI(ProjectSdksModel.this, parent, selectedSdk, sdk -> setupSdk(sdk, updateTree));
+        }
+      };
+      result.put(type, addAction);
+    }
+    return result;
   }
 
   public void doAdd(@NotNull JComponent parent, @NotNull final SdkType type, @NotNull final Consumer<? super Sdk> callback) {
