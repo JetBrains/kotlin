@@ -731,23 +731,26 @@ internal class WithIndexHandler(context: CommonBackendContext, private val visit
     }
 }
 
-/** Builds a [HeaderInfo] for iterables not handled by more specialized handlers. */
-internal class DefaultIterableHandler(private val context: CommonBackendContext) : ExpressionHandler {
+/** Builds a [HeaderInfo] for Iterables not handled by more specialized handlers. */
+internal open class DefaultIterableHandler(private val context: CommonBackendContext) : ExpressionHandler {
 
-    override fun matchIterable(expression: IrExpression) = true
+    protected open val iterableClassSymbol = context.ir.symbols.iterable
+
+    override fun matchIterable(expression: IrExpression) = expression.type.isSubtypeOfClass(iterableClassSymbol)
 
     override fun build(expression: IrExpression, scopeOwner: IrSymbol): HeaderInfo? =
         with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {
-            val iterableClass = expression.type.getClass()!!
-            val iterator =
-                irCall(iterableClass.functions.single {
-                    it.name == OperatorNameConventions.ITERATOR &&
-                            it.valueParameters.isEmpty()
-                }).apply {
-                    dispatchReceiver = expression
-                }
+            // The lowering operates on subtypes of Iterable. Therefore, the IrType could be
+            // a type parameter bounded by Iterable. When that is the case, we cannot get
+            // the class from the type and instead uses the Iterable.iterator() function.
+            val iteratorFun = expression.type.getClass()?.functions?.single {
+                it.name == OperatorNameConventions.ITERATOR &&
+                        it.valueParameters.isEmpty()
+            } ?: iterableClassSymbol.getSimpleFunction(OperatorNameConventions.ITERATOR.asString())!!.owner
             IterableHeaderInfo(
-                scope.createTmpVariable(iterator, nameHint = "iterator")
+                scope.createTmpVariable(irCall(iteratorFun).apply { dispatchReceiver = expression }, nameHint = "iterator")
             )
         }
 }
+
+// TODO: Handle Sequences by extending DefaultIterableHandler.
