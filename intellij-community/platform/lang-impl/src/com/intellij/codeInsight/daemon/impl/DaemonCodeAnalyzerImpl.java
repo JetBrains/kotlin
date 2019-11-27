@@ -12,9 +12,6 @@ import com.intellij.codeInsight.intention.impl.IntentionHintComponent;
 import com.intellij.codeInspection.ex.GlobalInspectionContextBase;
 import com.intellij.diagnostic.ThreadDumper;
 import com.intellij.ide.PowerSaveMode;
-import com.intellij.ide.plugins.DynamicPluginListener;
-import com.intellij.ide.plugins.IdeaPluginDescriptor;
-import com.intellij.ide.plugins.PluginManager;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.Application;
@@ -326,7 +323,7 @@ public class DaemonCodeAnalyzerImpl extends DaemonCodeAnalyzerEx implements Pers
     }
 
     myUpdateRunnableFuture.cancel(false);
-
+    waitForTermination(); // previous passes can be canceled but still in flight. wait for them to avoid interference
     fileStatusMap.allowDirt(canChangeDocument);
     final DaemonProgressIndicator progress = createUpdateProgress(map.keySet());
     myPassExecutorService.submitPasses(map, progress);
