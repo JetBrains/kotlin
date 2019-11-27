@@ -1371,11 +1371,13 @@ class SmartEnterTest : KotlinLightCodeInsightFixtureTestCase() {
     fun testObjectExpressionBody1() = doFileTest(
             """
             interface I
+
             val a = object : I<caret>
             """
             ,
             """
             interface I
+
             val a = object : I {
                 <caret>
             }
@@ -1385,6 +1387,7 @@ class SmartEnterTest : KotlinLightCodeInsightFixtureTestCase() {
     fun testObjectExpressionBody2() = doFileTest(
             """
             interface I
+
             val a = object : I<caret>
 
             val b = ""
@@ -1392,6 +1395,7 @@ class SmartEnterTest : KotlinLightCodeInsightFixtureTestCase() {
             ,
             """
             interface I
+
             val a = object : I {
                 <caret>
             }
@@ -1414,15 +1418,29 @@ class SmartEnterTest : KotlinLightCodeInsightFixtureTestCase() {
         """
     )
 
-    fun testClassBodyHasNotInitializedSuperType() = doFileTest(
+    fun testClassBodyHasInitializedSuperType2() = doFileTest(
         """
             open class A
-            class B : A<caret>
+            class B : A(<caret>)
         """
         ,
         """
             open class A
             class B : A() {
+                <caret>
+            }
+        """
+    )
+
+    fun testClassBodyHasNotInitializedSuperType() = doFileTest(
+        """
+            interface A
+            class B : A<caret>
+        """
+        ,
+        """
+            interface A
+            class B : A {
                 <caret>
             }
         """
@@ -1430,12 +1448,12 @@ class SmartEnterTest : KotlinLightCodeInsightFixtureTestCase() {
 
     fun testClassBodyHasNotInitializedSuperType2() = doFileTest(
         """
-            sealed class A(val s: String)
+            open class A
             class B : A<caret>
         """
         ,
         """
-            sealed class A(val s: String)
+            open class A
             class B : A() {
                 <caret>
             }
@@ -1443,6 +1461,19 @@ class SmartEnterTest : KotlinLightCodeInsightFixtureTestCase() {
     )
 
     fun testClassBodyHasNotInitializedSuperType3() = doFileTest(
+        """
+            sealed class AAAA(val s: String)
+            class B : AAAA<caret>
+        """
+        ,
+        """
+            sealed class AAAA(val s: String)
+            class B : AAAA(<caret>) {
+            }
+        """
+    )
+
+    fun testClassBodyHasNotInitializedSuperType4() = doFileTest(
         """
             interface I
             interface J
@@ -1456,6 +1487,23 @@ class SmartEnterTest : KotlinLightCodeInsightFixtureTestCase() {
             abstract class A
             class B : I, A(), J {
                 <caret>
+            }
+        """
+    )
+
+    fun testClassBodyHasNotInitializedSuperType5() = doFileTest(
+        """
+            interface I
+            interface J
+            open class A(val s: String)
+            class B : I, A, J<caret>
+        """
+        ,
+        """
+            interface I
+            interface J
+            open class A(val s: String)
+            class B : I, A(<caret>), J {
             }
         """
     )

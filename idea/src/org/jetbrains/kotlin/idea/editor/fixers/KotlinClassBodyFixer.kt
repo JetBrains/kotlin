@@ -18,19 +18,24 @@ package org.jetbrains.kotlin.idea.editor.fixers
 
 import com.intellij.lang.SmartEnterProcessorWithFixers
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.idea.caches.resolve.allowResolveInWriteAction
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.editor.KotlinSmartEnterHandler
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtSuperTypeCallEntry
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getPrevSiblingIgnoringWhitespaceAndComments
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 class KotlinClassBodyFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterHandler>() {
     override fun apply(editor: Editor, processor: KotlinSmartEnterHandler, psiElement: PsiElement) {
         if (psiElement !is KtClassOrObject) return
+        val declarationKeyword = psiElement.getDeclarationKeyword() ?: return
 
         val body = psiElement.body
         if (!body?.text.isNullOrBlank()) return
@@ -43,20 +48,29 @@ class KotlinClassBodyFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnte
             }
         }
 
-        val notInitializedSuperType = allowResolveInWriteAction {
-            psiElement.superTypeListEntries.firstOrNull {
-                if (it is KtSuperTypeCallEntry) return@firstOrNull false
-                (it.typeAsUserType?.referenceExpression?.mainReference?.resolve() as? KtClass)?.isInterface() != true
-            }            
+        val task = {
+            val notInitializedSuperType = psiElement.superTypeListEntries.firstNotNullResult {
+                if (it is KtSuperTypeCallEntry) return@firstNotNullResult null
+                val ktClass = it.typeAsUserType?.referenceExpression?.mainReference?.resolve() as? KtClass ?: return@firstNotNullResult null
+                if (ktClass.isInterface()) return@firstNotNullResult null
+                val descriptor = ktClass.descriptor as? ClassDescriptor ?: return@firstNotNullResult null
+                it to descriptor
+            }
+            val (superType, superTypeDescriptor) = notInitializedSuperType ?: (null to null)
+            val isExistsSuperTypeCtorParams = superTypeDescriptor?.constructors?.any { it.valueParameters.isNotEmpty() } == true
+            editor.document.insertString(endOffset, "{\n}")
+            if (superType != null) {
+                val superTypeEndOffset = superType.endOffset
+                editor.document.insertString(superTypeEndOffset, "()")
+                if (isExistsSuperTypeCtorParams) {
+                    editor.caretModel.moveToOffset(superTypeEndOffset + 1)
+                } else {
+                    editor.caretModel.moveToOffset(declarationKeyword.startOffset)
+                }
+            } else {
+                editor.caretModel.moveToOffset(declarationKeyword.startOffset)
+            }
         }
-        if (notInitializedSuperType != null) {
-            editor.document.insertString(notInitializedSuperType.endOffset, "()")
-            endOffset += 2
-        }
-
-        editor.caretModel.moveToOffset(endOffset - 1)
-
-        // Insert '\n' to force a multiline body, otherwise there will be an empty body on one line and a caret on the next one.
-        editor.document.insertString(endOffset, "{\n}")
+        ProgressManager.getInstance().runProcessWithProgressSynchronously(task, "Adding class body ...", true, psiElement.project)
     }
 }

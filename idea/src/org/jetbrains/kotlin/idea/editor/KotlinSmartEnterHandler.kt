@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.idea.editor.fixers.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 class KotlinSmartEnterHandler : SmartEnterProcessorWithFixers() {
     init {
@@ -137,6 +138,10 @@ class KotlinSmartEnterHandler : SmartEnterProcessorWithFixers() {
 
         override fun doEnter(atCaret: PsiElement, file: PsiFile?, editor: Editor, modified: Boolean): Boolean {
             if (modified && atCaret is KtCallExpression) return true
+
+            if (modified && atCaret is KtClass &&
+                atCaret.findElementAt(editor.caretModel.offset - atCaret.startOffset)?.getStrictParentOfType<KtSuperTypeCallEntry>() != null
+            ) return true
 
             val block = getControlStatementBlock(editor.caretModel.offset, atCaret) as? KtBlockExpression
             if (block != null) {
