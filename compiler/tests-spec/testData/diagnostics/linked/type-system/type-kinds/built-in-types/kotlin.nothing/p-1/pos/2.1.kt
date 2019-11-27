@@ -24,7 +24,7 @@ fun case1(c: Case1) {
 
 // TESTCASE NUMBER: 2
 class Case2 {
-    var data: String
+    var data: String? = null
 }
 
 fun case2(c: Case2) {
@@ -34,7 +34,7 @@ fun case2(c: Case2) {
 
 // TESTCASE NUMBER: 3
 class Case3() {
-    val dataFunction = fail("fail msg")
+    val dataFunction : Nothing = fail("fail msg")
 }
 
 fun fail(msg: String): Nothing {
@@ -42,6 +42,5 @@ fun fail(msg: String): Nothing {
 }
 
 fun case3(c: Case3) {
-    val testValue = c.dataFunction()
-    checkType<Nothing>(testValue)
+    c.dataFunction checkType { check<Nothing>() }
 }
