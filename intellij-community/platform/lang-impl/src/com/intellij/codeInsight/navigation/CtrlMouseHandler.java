@@ -40,12 +40,14 @@ import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.keymap.Keymap;
 import com.intellij.openapi.keymap.KeymapManager;
 import com.intellij.openapi.keymap.KeymapUtil;
-import com.intellij.openapi.project.DumbAwareRunnable;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
-import com.intellij.openapi.util.*;
+import com.intellij.openapi.util.Comparing;
+import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.pom.Navigatable;
@@ -185,7 +187,7 @@ public final class CtrlMouseHandler {
 
   public CtrlMouseHandler(@NotNull Project project) {
     myProject = project;
-    StartupManager.getInstance(project).registerPostStartupActivity((DumbAwareRunnable)() -> {
+    StartupManager.getInstance(project).registerPostStartupDumbAwareActivity(() -> {
       EditorEventMulticaster eventMulticaster = EditorFactory.getInstance().getEventMulticaster();
       eventMulticaster.addEditorMouseListener(myEditorMouseAdapter, project);
       eventMulticaster.addEditorMouseMotionListener(myEditorMouseMotionListener, project);

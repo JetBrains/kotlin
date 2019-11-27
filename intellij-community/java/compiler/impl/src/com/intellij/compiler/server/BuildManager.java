@@ -1671,14 +1671,17 @@ public final class BuildManager implements Disposable {
         cancelPreloadedBuilds(projectPath);
         myProjectDataMap.remove(projectPath);
       });
-      StartupManager.getInstance(project).registerPostStartupActivity(() -> {
+
+      // not dumb-aware to schedule after indexing is completed
+      StartupManager.getInstance(project).registerStartupActivity(() -> {
         runCommand(() -> {
-          final File projectSystemDir = getProjectSystemDirectory(project);
+          File projectSystemDir = getProjectSystemDirectory(project);
           if (projectSystemDir != null) {
             updateUsageFile(project, projectSystemDir);
           }
         });
-        scheduleAutoMake(); // run automake after project opened
+        // run automake after project opened
+        scheduleAutoMake();
       });
     }
 

@@ -12,7 +12,6 @@ import com.intellij.openapi.options.Scheme
 import com.intellij.openapi.options.SchemeManager
 import com.intellij.openapi.options.SchemeManagerFactory
 import com.intellij.openapi.options.SchemeProcessor
-import com.intellij.openapi.project.DumbAwareRunnable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.util.SmartList
@@ -140,7 +139,7 @@ sealed class SchemeManagerFactoryBase : SchemeManagerFactory(), com.intellij.ope
           addVfsListener(schemeManager)
         }
         else {
-          startupManager.registerPostStartupActivity(DumbAwareRunnable { addVfsListener(schemeManager) })
+          startupManager.registerPostStartupDumbAwareActivity { addVfsListener(schemeManager) }
         }
       }
     }
@@ -158,6 +157,6 @@ sealed class SchemeManagerFactoryBase : SchemeManagerFactory(), com.intellij.ope
 
   @TestOnly
   class TestSchemeManagerFactory(private val basePath: Path) : SchemeManagerFactoryBase() {
-    override fun pathToFile(path: String) = basePath.resolve(path)!!
+    override fun pathToFile(path: String) = basePath.resolve(path)
   }
 }
