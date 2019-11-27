@@ -92,8 +92,11 @@ private fun KtAnnotationEntry.getRequiredAnnotationTargets(annotationClass: KtCl
         }
     }.flatten().toSet()
     val annotationTargetValueNames = AnnotationTarget.values().map { it.name }
-    return (requiredTargets + otherReferenceRequiredTargets).asSequence().distinct().filter { it.name in annotationTargetValueNames }
-        .toList().sorted()
+    return (requiredTargets + otherReferenceRequiredTargets).asSequence()
+        .distinct()
+        .filter { it.name in annotationTargetValueNames }
+        .sorted()
+        .toList()
 }
 
 private fun getActualTargetList(annotated: PsiTarget): AnnotationChecker.Companion.TargetList {
