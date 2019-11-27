@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.konan.target
 
+import org.jetbrains.kotlin.konan.KonanExternalToolFailure
+import org.jetbrains.kotlin.konan.MissingXcodeException
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.file.File
 
@@ -69,8 +71,11 @@ private object CurrentXcode : Xcode {
                 .removePrefix("Xcode ")
     }
 
-    private fun xcrun(vararg args: String): String =
-            Command("/usr/bin/xcrun", *args).getOutputLines().first() // TODO: handle execution error
+    private fun xcrun(vararg args: String): String = try {
+            Command("/usr/bin/xcrun", *args).getOutputLines().first()
+        } catch(e: KonanExternalToolFailure) {
+            throw MissingXcodeException("An error occurred during an xcrun execution. Make sure that Xcode and its command line tools are properly installed.", e)
+        }
 
     private fun getSdkPath(sdk: String) = xcrun("--sdk",  sdk, "--show-sdk-path")
 }

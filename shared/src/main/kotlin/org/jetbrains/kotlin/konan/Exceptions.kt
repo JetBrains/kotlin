@@ -22,7 +22,12 @@ package org.jetbrains.kotlin.konan
 open class KonanException(message: String = "", cause: Throwable? = null) : Exception(message, cause)
 
 /**
- * An error occured during external tool invocation. Such as non-zero exit code. 
+ * An error occurred during external tool invocation. Such as non-zero exit code.
  */
 class KonanExternalToolFailure(message: String, val toolName: String, cause: Throwable? = null) : KonanException(message, cause)
+
+/**
+ * An exception indicating a failed attempt to access some parts of Xcode (e.g. get SDK paths or version).
+ */
+class MissingXcodeException(message: String, cause: Throwable? = null) : KonanException(message, cause)
 
