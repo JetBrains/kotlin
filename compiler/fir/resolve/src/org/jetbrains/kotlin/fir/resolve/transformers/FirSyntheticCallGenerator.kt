@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.copy
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.addDefaultBoundIfNecessary
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirSimpleFunctionImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirTypeParameterImpl
@@ -143,7 +144,9 @@ class FirSyntheticCallGenerator(
     private fun generateSyntheticSelectFunction(callableId: CallableId, isVararg: Boolean = true): FirSimpleFunctionImpl {
         val functionSymbol = FirSyntheticFunctionSymbol(callableId)
         val typeParameterSymbol = FirTypeParameterSymbol()
-        val typeParameter = FirTypeParameterImpl(null, session, Name.identifier("K"), typeParameterSymbol, Variance.INVARIANT, false)
+        val typeParameter = FirTypeParameterImpl(null, session, Name.identifier("K"), typeParameterSymbol, Variance.INVARIANT, false).apply {
+            addDefaultBoundIfNecessary()
+        }
 
         val returnType = FirResolvedTypeRefImpl(null, ConeTypeParameterTypeImpl(typeParameterSymbol.toLookupTag(), false))
 
