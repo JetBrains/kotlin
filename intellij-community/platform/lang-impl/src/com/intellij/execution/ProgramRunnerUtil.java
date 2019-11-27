@@ -26,7 +26,7 @@ import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
-public class ProgramRunnerUtil {
+public final class ProgramRunnerUtil {
   private static final Logger LOG = Logger.getInstance(ProgramRunnerUtil.class);
 
   private ProgramRunnerUtil() { }
@@ -181,14 +181,13 @@ public class ProgramRunnerUtil {
     executeConfiguration(builder.contentToReuse(null).dataContext(null).activeTarget().build(), true, true);
   }
 
-  public static Icon getConfigurationIcon(RunnerAndConfigurationSettings settings, boolean invalid) {
+  @NotNull
+  public static Icon getConfigurationIcon(@NotNull RunnerAndConfigurationSettings settings, boolean invalid) {
     Icon icon = getRawIcon(settings);
-
-    final Icon configurationIcon = settings.isTemporary() ?  getTemporaryIcon(icon): icon;
+    Icon configurationIcon = settings.isTemporary() ? getTemporaryIcon(icon) : icon;
     if (invalid) {
       return LayeredIcon.create(configurationIcon, AllIcons.RunConfigurations.InvalidConfigurationLayer);
     }
-
     return configurationIcon;
   }
 
