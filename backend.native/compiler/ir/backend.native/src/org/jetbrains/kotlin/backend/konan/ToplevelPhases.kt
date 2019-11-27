@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
+import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorTable
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer
@@ -193,6 +194,16 @@ internal val psiToIrPhase = konanUnitPhase(
             irModules = deserializer.modules.filterValues { llvmModuleSpecification.containsModule(it) }
             ir.symbols = symbols
 
+            val extensions = IrGenerationExtension.getInstances(config.project)
+            extensions.forEach { extension ->
+                extension.generate(irModule!!, IrPluginContext(irModule!!.descriptor,
+                        bindingContext, config.languageVersionSettings,
+                        symbolTable,
+                        generatorContext.typeTranslator,
+                        irBuiltIns
+                ))
+
+            }
             functionIrClassFactory.module =
                     (listOf(irModule!!) + deserializer.modules.values)
                             .single { it.descriptor.isKonanStdlib() }
@@ -210,19 +221,6 @@ internal val destroySymbolTablePhase = konanUnitPhase(
         name = "DestroySymbolTable",
         description = "Destroy SymbolTable",
         prerequisite = setOf(createSymbolTablePhase)
-)
-
-internal val irGeneratorPluginsPhase = konanUnitPhase(
-        op = {
-            val extensions = IrGenerationExtension.getInstances(config.project)
-            extensions.forEach { extension ->
-                irModule!!.files.forEach {
-                    irFile -> extension.generate(irFile, this, bindingContext)
-                }
-            }
-        },
-        name = "IrGeneratorPlugins",
-        description = "Plugged-in ir generators"
 )
 
 // TODO: We copy default value expressions from expects to actuals before IR serialization,
@@ -406,7 +404,6 @@ val toplevelPhase: CompilerPhase<*, Unit, Unit> = namedUnitPhase(
                 buildCExportsPhase then
                 psiToIrPhase then
                 destroySymbolTablePhase then
-                irGeneratorPluginsPhase then
                 copyDefaultValuesToActualPhase then
                 serializerPhase then
                 namedUnitPhase(
