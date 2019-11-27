@@ -15,10 +15,17 @@ fun builder(c: suspend () -> Unit) {
     c.startCoroutine(EmptyContinuation)
 }
 
-suspend fun foo(c: suspend Double.(Long, Int, String) -> String) = (1.0).c(56L, 55, "abc")
+class Controller {
+    var result = ""
+
+    override fun toString() = "Controller"
+}
+
+val controller = Controller()
+
+suspend fun foo(c: suspend Controller.(Long, Int, String) -> String) = controller.c(56L, 55, "abc")
 
 fun box(): String {
-    var result = ""
     var final = ""
 
     builder {
@@ -28,7 +35,8 @@ fun box(): String {
         }
     }
 
-    if (result != "1.0#56#55#abc" && result != "1#56#55#abc") return "fail: $result"
+    if (controller.result != "Controller#56#55#abc") return "fail: ${controller.result}"
 
     return final
 }
+

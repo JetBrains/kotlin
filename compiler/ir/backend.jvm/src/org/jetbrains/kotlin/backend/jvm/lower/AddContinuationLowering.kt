@@ -128,9 +128,15 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
             if (info.arity <= 1) {
                 val singleParameterField = receiverField ?: parametersWithoutArguments.singleOrNull()
                 val create = addCreate(constructor, suspendLambda, info, parametersWithArguments, singleParameterField)
-                addInvoke(create, invokeSuspend, invokeToOverride, singleParameterField, emptyList(), isConstructorCall = false)
+                addInvokeCallingCreate(create, invokeSuspend, invokeToOverride, singleParameterField)
             } else {
-                addInvoke(constructor, invokeSuspend, invokeToOverride, receiverField, parametersWithoutArguments, isConstructorCall = true)
+                addInvokeCallingConstructor(
+                    constructor,
+                    invokeSuspend,
+                    invokeToOverride,
+                    parametersWithArguments,
+                    listOfNotNull(receiverField) + parametersWithoutArguments
+                )
             }
 
             context.suspendLambdaToOriginalFunctionMap[this] = info.function
@@ -199,37 +205,69 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
             function.valueParameters.mapTo(valueParameters) { it.copyTo(this) }
         }
 
-    private fun IrClass.addInvoke(
+    // Invoke function in lambdas is responsible for
+    //   1) calling `create`
+    //   2) starting newly created coroutine by calling `invokeSuspend`.
+    // Thus, it creates a clone of suspend lambda and starts it.
+    private fun IrClass.addInvokeCallingCreate(
         create: IrFunction,
         invokeSuspend: IrFunction,
         invokeToOverride: IrSimpleFunctionSymbol,
-        receiverField: IrField?,
-        parametersWithoutArguments: List<IrField>,
-        isConstructorCall: Boolean
+        receiverField: IrField?
     ) {
         val unitClass = context.irBuiltIns.unitClass
         val unitField = context.declarationFactory.getFieldForObjectInstance(unitClass.owner)
         addFunctionOverride(invokeToOverride.owner).also { function ->
             function.body = context.createIrBuilder(function.symbol).irBlockBody {
+                // Call `create`
                 val newlyCreatedObject = irTemporary(irCall(create).also { createCall ->
-                    if (!isConstructorCall) {
-                        createCall.dispatchReceiver = irGet(function.dispatchReceiverParameter!!)
-                    }
+                    createCall.dispatchReceiver = irGet(function.dispatchReceiverParameter!!)
                     if (receiverField != null) {
                         createCall.putValueArgument(0, irGet(function.valueParameters[0]))
                     }
                     createCall.putValueArgument(if (receiverField != null) 1 else 0, irGet(function.valueParameters.last()))
                 }, "create")
-                // In old BE 'create' function was responsible for putting arguments into fields, but in IR_BE we do not generate create,
-                // unless suspend lambda has no or one parameter, including extension receiver
-                // This is because 'create' is called only from 'createCoroutineUnintercepted' from stdlib. And we have only versions
-                // for suspend lambdas without parameters and for ones with exactly one parameter (or extension receiver).
-                // Thus, we put arguments into fields in 'invoke'.
+                // Start coroutine
+                +irReturn(irCall(invokeSuspend).also { invokeSuspendCall ->
+                    invokeSuspendCall.dispatchReceiver = irGet(newlyCreatedObject)
+                    invokeSuspendCall.putValueArgument(0, irGetField(null, unitField))
+                })
+            }
+        }
+    }
+
+    // The same as @see addInvokeCallingCreate, but without `create`.
+    // In old BE 'create' function was responsible for putting arguments into fields, but in IR_BE we do not generate create,
+    // unless suspend lambda has no or one parameter, including extension receiver.
+    // This is because 'create' is called only from 'createCoroutineUnintercepted' from stdlib. And we have only versions
+    // for suspend lambdas without parameters and for ones with exactly one parameter (or extension receiver).
+    // And since we still value method count, we do not want to inflate it with unnecessary functions.
+    // Thus, we put arguments into fields in 'invoke', instead of `create`.
+    private fun IrClass.addInvokeCallingConstructor(
+        constructor: IrFunction,
+        invokeSuspend: IrFunction,
+        invokeToOverride: IrSimpleFunctionSymbol,
+        parametersWithArguments: List<IrField>,
+        parametersWithoutArguments: List<IrField>
+    ) {
+        val unitClass = context.irBuiltIns.unitClass
+        val unitField = context.declarationFactory.getFieldForObjectInstance(unitClass.owner)
+        addFunctionOverride(invokeToOverride.owner).also { function ->
+            function.body = context.createIrBuilder(function.symbol).irBlockBody {
+                // Create a copy
+                val newlyCreatedObject = irTemporary(irCall(constructor).also { constructorCall ->
+                    for ((index, field) in parametersWithArguments.withIndex()) {
+                        constructorCall.putValueArgument(index, irGetField(irGet(function.dispatchReceiverParameter!!), field))
+                    }
+                    constructorCall.putValueArgument(parametersWithArguments.size, irGet(function.valueParameters.last()))
+                }, "constructor")
+                // Move parameters into fields (instead of `create`)
                 if (parametersWithoutArguments.isNotEmpty()) {
-                    for ((index, param) in function.valueParameters.drop(if (receiverField != null) 1 else 0).dropLast(1).withIndex()) {
+                    for ((index, param) in function.valueParameters.dropLast(1).withIndex()) {
                         +irSetField(irGet(newlyCreatedObject), parametersWithoutArguments[index], irGet(param))
                     }
                 }
+                // Start coroutine
                 +irReturn(irCall(invokeSuspend).also { invokeSuspendCall ->
                     invokeSuspendCall.dispatchReceiver = irGet(newlyCreatedObject)
                     invokeSuspendCall.putValueArgument(0, irGetField(null, unitField))
