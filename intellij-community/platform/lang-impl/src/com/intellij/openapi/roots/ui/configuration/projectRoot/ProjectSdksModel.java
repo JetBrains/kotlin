@@ -23,6 +23,7 @@ import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.Consumer;
 import com.intellij.util.EventDispatcher;
 import com.intellij.util.containers.ContainerUtil;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -250,9 +251,8 @@ public class ProjectSdksModel implements SdkModel {
                                @NotNull final Consumer<? super Sdk> updateTree,
                                @Nullable Condition<? super SdkTypeId> filter) {
 
-    Map<SdkType, AnAction> downloadActions = createDownloadActions(parent, selectedSdk, updateTree, filter);
-    Map<SdkType, AnAction> defaultAddActions = createDefaultAddActions(updateTree, filter);
-    Map<SdkType, AnAction> customAddActions = createCustomAddActions(parent, selectedSdk, updateTree, filter);
+    Map<SdkType, NewSdkAction> downloadActions = createDownloadActions(parent, selectedSdk, updateTree, filter);
+    Map<SdkType, NewSdkAction> defaultAddActions = createAddActions(parent, selectedSdk, updateTree, filter);
 
     for (SdkType type : getAddableSdkTypes(filter)) {
       AnAction downloadAction = downloadActions.get(type);
@@ -263,26 +263,37 @@ public class ProjectSdksModel implements SdkModel {
       if (defaultAction != null) {
         group.add(defaultAction);
       }
-      AnAction customAction = customAddActions.get(type);
-      if (customAction != null) {
-        group.add(customAction);
-      }
+    }
+  }
+
+  public static abstract class NewSdkAction extends DumbAwareAction {
+    private final SdkType mySdkType;
+
+    private NewSdkAction(@NotNull SdkType sdkType,
+                         @Nls(capitalization = Nls.Capitalization.Title) @Nullable String text,
+                         @Nullable Icon icon) {
+      super(text, null, icon);
+      mySdkType = sdkType;
+    }
+
+    @NotNull
+    public SdkType getSdkType() {
+      return mySdkType;
     }
   }
 
   @NotNull
-  public Map<SdkType, AnAction> createDownloadActions(@NotNull final JComponent parent,
-                                                      @Nullable final Sdk selectedSdk,
-                                                      @NotNull final Consumer<? super Sdk> updateTree,
-                                                      @Nullable Condition<? super SdkTypeId> filter) {
-    Map<SdkType, AnAction> result = new LinkedHashMap<>();
+  public Map<SdkType, NewSdkAction> createDownloadActions(@NotNull final JComponent parent,
+                                                          @Nullable final Sdk selectedSdk,
+                                                          @NotNull final Consumer<? super Sdk> updateTree,
+                                                          @Nullable Condition<? super SdkTypeId> filter) {
+    Map<SdkType, NewSdkAction> result = new LinkedHashMap<>();
     for (final SdkType type : getAddableSdkTypes(filter)) {
       SdkDownload downloadExtension = SdkDownload.EP_NAME.findFirstSafe(it -> it.supportsDownload(type));
       if (downloadExtension == null) continue;
 
       String downloadText = ProjectBundle.message("sdk.configure.download.action", type.getPresentableName());
-
-      AnAction downloadAction = new DumbAwareAction(downloadText, null, downloadExtension.getIconForDownloadAction(type)) {
+      NewSdkAction downloadAction = new NewSdkAction(type, downloadText, downloadExtension.getIconForDownloadAction(type)) {
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
           doDownload(downloadExtension, parent, selectedSdk, type, updateTree);
@@ -295,38 +306,22 @@ public class ProjectSdksModel implements SdkModel {
   }
 
   @NotNull
-  public Map<SdkType, AnAction> createDefaultAddActions(@NotNull final Consumer<? super Sdk> updateTree,
-                                                        @Nullable Condition<? super SdkTypeId> filter) {
-    Map<SdkType, AnAction> result = new LinkedHashMap<>();
+  public Map<SdkType, NewSdkAction> createAddActions(@NotNull final JComponent parent,
+                                                     @Nullable final Sdk selectedSdk,
+                                                     @NotNull final Consumer<? super Sdk> updateTree,
+                                                     @Nullable Condition<? super SdkTypeId> filter) {
+    Map<SdkType, NewSdkAction> result = new LinkedHashMap<>();
     for (final SdkType type : getAddableSdkTypes(filter)) {
-      if (type.supportsCustomCreateUI()) continue;
-
-      String addOnDiskText = ProjectBundle.message("sdk.configure.add.fromDisk.action", type.getPresentableName());
-      AnAction addAction = new DumbAwareAction(addOnDiskText, null, type.getIconForAddAction()) {
-        @Override
-        public void actionPerformed(@NotNull AnActionEvent e) {
-          SdkConfigurationUtil.selectSdkHome(type, home -> addSdk(type, home, updateTree));
-        }
-      };
-      result.put(type, addAction);
-    }
-    return result;
-  }
-
-  @NotNull
-  public Map<SdkType, AnAction> createCustomAddActions(@NotNull final JComponent parent,
-                                                       @Nullable final Sdk selectedSdk,
-                                                       @NotNull final Consumer<? super Sdk> updateTree,
-                                                       @Nullable Condition<? super SdkTypeId> filter) {
-    Map<SdkType, AnAction> result = new LinkedHashMap<>();
-    for (final SdkType type : getAddableSdkTypes(filter)) {
-      if (!type.supportsCustomCreateUI()) continue;
-
       String addOnDiskText = ProjectBundle.message("sdk.configure.add.default.action", type.getPresentableName());
-      AnAction addAction = new DumbAwareAction(addOnDiskText, null, type.getIconForAddAction()) {
+
+      NewSdkAction addAction = new NewSdkAction(type, addOnDiskText, type.getIconForAddAction()) {
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
-          type.showCustomCreateUI(ProjectSdksModel.this, parent, selectedSdk, sdk -> setupSdk(sdk, updateTree));
+          if (type.supportsCustomCreateUI()) {
+            type.showCustomCreateUI(ProjectSdksModel.this, parent, selectedSdk, sdk -> setupSdk(sdk, updateTree));
+          } else {
+            SdkConfigurationUtil.selectSdkHome(type, home -> addSdk(type, home, updateTree));
+          }
         }
       };
       result.put(type, addAction);
