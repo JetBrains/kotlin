@@ -310,6 +310,11 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             runTest("idea/testData/formatter/EnumArguments.after.kt");
         }
 
+        @TestMetadata("EnumEntiesWithComments.after.kt")
+        public void testEnumEntiesWithComments() throws Exception {
+            runTest("idea/testData/formatter/EnumEntiesWithComments.after.kt");
+        }
+
         @TestMetadata("EnumInitializerList.after.kt")
         public void testEnumInitializerList() throws Exception {
             runTest("idea/testData/formatter/EnumInitializerList.after.kt");
