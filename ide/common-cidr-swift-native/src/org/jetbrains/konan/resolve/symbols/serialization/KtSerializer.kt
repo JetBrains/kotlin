@@ -52,7 +52,7 @@ class KtSerializer : SerializerProvider {
     }
 
 
-    override fun getVersion(): Int = 2
+    override fun getVersion(): Int = 3
 
     companion object {
         @JvmStatic

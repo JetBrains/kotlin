@@ -30,7 +30,7 @@ class StubToSwiftSymbolTranslator(val project: Project) {
     fun translateMember(stub: Stub<*>, clazz: SwiftTypeSymbol, file: VirtualFile): SwiftMemberSymbol? {
         return when (stub) {
             is ObjCMethod -> {
-                val isConstructor = stub.descriptor is ConstructorDescriptor && stub.name.startsWith("init")
+                val isConstructor = stub.swiftName == "init" // works due to the attributes set by Kotlin ObjC export
                 when (isConstructor) {
                     true -> KtSwiftInitializerSymbol(stub, file, project, clazz)
                     false -> KtSwiftMethodSymbol(stub, file, project, clazz)
@@ -39,7 +39,7 @@ class StubToSwiftSymbolTranslator(val project: Project) {
                     val returnType = stub.returnType.convertType(method)
                     method.swiftType = SwiftTypeFactory.getInstance().run {
                         val functionType = createFunctionType(createDomainType(parameters), returnType, false)
-                        when (isConstructor) {
+                        when (isConstructor || !stub.isInstanceMethod) {
                             true -> functionType
                             false -> createImplicitSelfMethodType(functionType)
                         }
