@@ -10,10 +10,6 @@
 
 - [`KT-34923`](https://youtrack.jetbrains.com/issue/KT-34923) [Regression] KtUltraLightMethod.hasModifierProperty("native") returns false for external Kotlin functions
 
-### IDE. Gradle. Script
-
-- [`KT-31767`](https://youtrack.jetbrains.com/issue/KT-31767) Gradle Kotlin DSL new project template: use settings.gradle.kts
-- [`KT-33451`](https://youtrack.jetbrains.com/issue/KT-33451) Conform Kotlin DSL file templates of Kotlin and Gradle IntelliJ plugins
 
 ### Libraries
 
@@ -22,13 +18,6 @@
 ### Tools. Compiler Plugins
 
 - [`KT-34991`](https://youtrack.jetbrains.com/issue/KT-34991) kotlinx.serialization: False warning "Explicit @Serializable annotation on enum class is required when @SerialName or @SerialInfo annotations are used on its members"
-
-### Tools. Gradle. Native
-
-- [`KT-33076`](https://youtrack.jetbrains.com/issue/KT-33076) MPP Gradle plugin: Produce final native binaries from compilation output instead of sources
-- [`KT-33645`](https://youtrack.jetbrains.com/issue/KT-33645) Kotlin/Native: Compilation failure if a library passed by the -Xinclude option contains a constructor annotated with @OverrideInit
-- [`KT-34259`](https://youtrack.jetbrains.com/issue/KT-34259) MPP Gradle plugin: Support fat frameworks for watchOS and tvOS
-- [`KT-34329`](https://youtrack.jetbrains.com/issue/KT-34329) Support watchOS and tvOS in CocoaPods Gradle plugin
 
 ### Tools. J2K
 
@@ -171,6 +160,7 @@
 
 - [`KT-31766`](https://youtrack.jetbrains.com/issue/KT-31766) Gradle Kotlin DSL new project template: use type-safe model accessors
 - [`KT-34463`](https://youtrack.jetbrains.com/issue/KT-34463) New Gradle-based project template misses pluginManagement{} block in EAP branch
+- [`KT-31767`](https://youtrack.jetbrains.com/issue/KT-31767) Gradle Kotlin DSL new project template: use settings.gradle.kts
 
 ### IDE. Inspections and Intentions
 
@@ -457,6 +447,13 @@
 
 - [`KT-34006`](https://youtrack.jetbrains.com/issue/KT-34006) Maven plugin do not consider .kts files as Kotlin sources
 - [`KT-34011`](https://youtrack.jetbrains.com/issue/KT-34011) Kotlin scripting plugin is not loaded by default from kotlin maven plugin
+
+### Tools. Gradle. Native
+
+- [`KT-33076`](https://youtrack.jetbrains.com/issue/KT-33076) MPP Gradle plugin: Produce final native binaries from compilation output instead of sources
+- [`KT-33645`](https://youtrack.jetbrains.com/issue/KT-33645) Kotlin/Native: Compilation failure if a library passed by the -Xinclude option contains a constructor annotated with @OverrideInit
+- [`KT-34259`](https://youtrack.jetbrains.com/issue/KT-34259) MPP Gradle plugin: Support fat frameworks for watchOS and tvOS
+- [`KT-34329`](https://youtrack.jetbrains.com/issue/KT-34329) Support watchOS and tvOS in CocoaPods Gradle plugin
 
 ### Tools. REPL
 
