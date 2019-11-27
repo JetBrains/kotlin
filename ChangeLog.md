@@ -395,6 +395,13 @@
 - [`KT-34460`](https://youtrack.jetbrains.com/issue/KT-34460) NPM packages clash if declared in dependencies and devDependencies both
 - [`KT-34555`](https://youtrack.jetbrains.com/issue/KT-34555) [Kotlin/JS] Unsafe webpack config merge
 
+### Tools. Gradle. Native
+
+- [`KT-33076`](https://youtrack.jetbrains.com/issue/KT-33076) MPP Gradle plugin: Produce final native binaries from compilation output instead of sources
+- [`KT-33645`](https://youtrack.jetbrains.com/issue/KT-33645) Kotlin/Native: Compilation failure if a library passed by the -Xinclude option contains a constructor annotated with @OverrideInit
+- [`KT-34259`](https://youtrack.jetbrains.com/issue/KT-34259) MPP Gradle plugin: Support fat frameworks for watchOS and tvOS
+- [`KT-34329`](https://youtrack.jetbrains.com/issue/KT-34329) Support watchOS and tvOS in CocoaPods Gradle plugin
+
 ### Tools. J2K
 
 #### New Features
@@ -447,13 +454,6 @@
 
 - [`KT-34006`](https://youtrack.jetbrains.com/issue/KT-34006) Maven plugin do not consider .kts files as Kotlin sources
 - [`KT-34011`](https://youtrack.jetbrains.com/issue/KT-34011) Kotlin scripting plugin is not loaded by default from kotlin maven plugin
-
-### Tools. Gradle. Native
-
-- [`KT-33076`](https://youtrack.jetbrains.com/issue/KT-33076) MPP Gradle plugin: Produce final native binaries from compilation output instead of sources
-- [`KT-33645`](https://youtrack.jetbrains.com/issue/KT-33645) Kotlin/Native: Compilation failure if a library passed by the -Xinclude option contains a constructor annotated with @OverrideInit
-- [`KT-34259`](https://youtrack.jetbrains.com/issue/KT-34259) MPP Gradle plugin: Support fat frameworks for watchOS and tvOS
-- [`KT-34329`](https://youtrack.jetbrains.com/issue/KT-34329) Support watchOS and tvOS in CocoaPods Gradle plugin
 
 ### Tools. REPL
 
