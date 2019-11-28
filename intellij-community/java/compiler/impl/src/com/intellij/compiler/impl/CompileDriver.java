@@ -597,6 +597,8 @@ public final class CompileDriver {
             if (!task.execute(context)) {
               return false;
             }
+          } catch (ProcessCanceledException e){
+            throw e;
           }
           catch (Throwable t) {
             LOG.error("Error executing task", t);
