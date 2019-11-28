@@ -4,7 +4,7 @@ UFile (package = )
             UBlockExpression
                 UDeclarationsExpression
                     UClass (name = Local)
-                        UMethod (name = LocalDeclarationsKt$foo$Local)
+                        UMethod (name = Local)
                 UDeclarationsExpression
                     UVariable (name = bar)
                         ULambdaExpression

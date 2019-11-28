@@ -43,8 +43,6 @@ bar -> UMethod (name = bar)
     cons -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
     object -> UClass (name = null)
     A -> UObjectLiteralExpression
-innerObject -> UClass (name = innerObject)
-A -> UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 1))
 InnerClass -> UClass (name = InnerClass)
 A -> UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 1))
 cons -> UMethod (name = cons)

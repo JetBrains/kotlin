@@ -290,7 +290,6 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
         doTest("SuperCalls") { _, file ->
             file.checkUastSuperTypes("B", listOf("A"))
             file.checkUastSuperTypes("O", listOf("A"))
-            file.checkUastSuperTypes("innerObject ", listOf("A"))
             file.checkUastSuperTypes("InnerClass", listOf("A"))
             file.checkUastSuperTypes("object : A(\"textForAnon\")", listOf("A"))
         }
@@ -427,7 +426,6 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
         )
         assertArguments(listOf("\"%i %i %i\"", "\"\".chunked(2).toTypedArray()"), "format(\"%i %i %i\", *\"\".chunked(2).toTypedArray())")
         assertArguments(listOf("\"def\"", "8", "7.0"), "with2Receivers(8, 7.0F)")
-        assertArguments(listOf("\"foo\"", "1"), "object : Parent(b = 1, a = \"foo\")\n")
     }
 
     @Test

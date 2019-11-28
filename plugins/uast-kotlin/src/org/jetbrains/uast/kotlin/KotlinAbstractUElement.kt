@@ -19,7 +19,7 @@ package org.jetbrains.uast.kotlin
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.asJava.LightClassUtil
-import org.jetbrains.kotlin.asJava.classes.KtLightClassForLocalDeclaration
+import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.toLightGetter
 import org.jetbrains.kotlin.asJava.toLightSetter
@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isPropertyParameter
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.uast.*
 import org.jetbrains.uast.kotlin.expressions.KotlinLocalFunctionULambdaExpression
 import org.jetbrains.uast.kotlin.expressions.KotlinUElvisExpression
@@ -61,9 +62,10 @@ abstract class KotlinAbstractUElement(private val givenParent: UElement?) : Kotl
 
         }
 
-        if (psi is KtLightClassForLocalDeclaration) {
-            val originParent = psi.kotlinOrigin.parent
+        if (psi is KtLightElement<*, *> && sourcePsi.safeAs<KtClassOrObject>()?.isLocal == true) {
+            val originParent = psi.kotlinOrigin?.parent
             parent = when (originParent) {
+                null -> parent
                 is KtClassBody -> originParent.parent
                 else -> originParent
             }
