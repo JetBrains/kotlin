@@ -117,6 +117,7 @@ class KotlinLibraryResolverImpl<L: KotlinLibrary>(
             newDependencies = newDependencies.map { library: KotlinResolvedLibraryImpl ->
                 library.library.unresolvedDependencies.asSequence()
 
+                        .filterNot { searchPathResolver.isProvidedByDefault(it) }
                         .map { KotlinResolvedLibraryImpl(searchPathResolver.resolve(it)) }
                         .map { resolved ->
                             val absoluteFile = resolved.library.libraryFile.absoluteFile

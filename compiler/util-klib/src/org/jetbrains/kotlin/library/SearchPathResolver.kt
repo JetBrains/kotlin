@@ -15,6 +15,7 @@ interface SearchPathResolver<L: KotlinLibrary> : WithLogger {
     fun resolve(givenPath: String): L
     fun defaultLinks(noStdLib: Boolean, noDefaultLibs: Boolean, noEndorsedLibs: Boolean): List<L>
     fun libraryMatch(candidate: L, unresolved: UnresolvedLibrary): Boolean
+    fun isProvidedByDefault(unresolved: UnresolvedLibrary): Boolean = false
 }
 
 interface SearchPathResolverWithAttributes<L: KotlinLibrary>: SearchPathResolver<L> {
