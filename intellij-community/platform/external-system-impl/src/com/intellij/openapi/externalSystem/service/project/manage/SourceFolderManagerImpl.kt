@@ -4,7 +4,7 @@ package com.intellij.openapi.externalSystem.service.project.manage
 import com.intellij.ProjectTopics
 import com.intellij.ide.projectView.actions.MarkRootActionBase
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.application.TransactionGuard
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
@@ -47,10 +47,9 @@ class SourceFolderManagerImpl(private val project: Project) : SourceFolderManage
       sourceFolders[url] = SourceFolderModel(module, url, type)
       addUrlToModuleModel(module, url)
     }
-    TransactionGuard.getInstance().submitTransactionLater(this, Runnable {
-      val virtualFileManager = VirtualFileManager.getInstance()
-      virtualFileManager.refreshAndFindFileByUrl(url)
-    })
+    ApplicationManager.getApplication().invokeLater(Runnable {
+      VirtualFileManager.getInstance().refreshAndFindFileByUrl(url)
+    }, project.disposed)
   }
 
   override fun setSourceFolderPackagePrefix(url: String, packagePrefix: String?) {
