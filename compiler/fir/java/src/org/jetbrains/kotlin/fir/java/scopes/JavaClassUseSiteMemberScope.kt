@@ -100,7 +100,7 @@ class JavaClassUseSiteMemberScope(
                 processor(it)
             } else {
                 val overriddenBy = it.getOverridden(overrideCandidates)
-                if (overriddenBy == null && it is FirVariableSymbol<*>) {
+                if (overriddenBy == null) {
                     processor(it)
                 } else {
                     NEXT

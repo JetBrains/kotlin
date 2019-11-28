@@ -111,7 +111,7 @@ class JavaClassEnhancementScope(
                 ) as FirAccessorSymbol
             }
             else -> {
-                if (original is FirPropertySymbol) return original
+                if (original is FirPropertySymbol || original is FirAccessorSymbol) return original
                 error("Can't make enhancement for $original: `${firElement.render()}`")
             }
         }
