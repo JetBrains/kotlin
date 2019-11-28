@@ -118,7 +118,7 @@ public class SliceManager implements PersistentStateComponent<SliceManager.Store
     }
     String desc = ElementDescriptionUtil.getElementDescription(element, RefactoringDescriptionLocation.WITHOUT_PARENT);
     return "<html><body>" +
-           (prefix == null ? "" : prefix) + StringUtil.first(desc, 100, true)+(suffix == null ? "" : suffix) +
+           (prefix == null ? "" : prefix) + StringUtil.first(desc, 100, true) + (suffix == null ? "" : suffix) +
            "</body></html>";
   }
 
