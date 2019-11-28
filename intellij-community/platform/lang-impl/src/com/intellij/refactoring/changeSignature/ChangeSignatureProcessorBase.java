@@ -37,7 +37,6 @@ import com.intellij.refactoring.util.MoveRenameUsageInfo;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.containers.MultiMap;
-import java.util.HashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -53,15 +52,8 @@ public abstract class ChangeSignatureProcessorBase extends BaseRefactoringProces
   protected final ChangeInfo myChangeInfo;
   protected final PsiManager myManager;
 
-
   protected ChangeSignatureProcessorBase(Project project, ChangeInfo changeInfo) {
     super(project);
-    myChangeInfo = changeInfo;
-    myManager = PsiManager.getInstance(project);
-  }
-
-  protected ChangeSignatureProcessorBase(Project project, @Nullable Runnable prepareSuccessfulCallback, ChangeInfo changeInfo) {
-    super(project, prepareSuccessfulCallback);
     myChangeInfo = changeInfo;
     myManager = PsiManager.getInstance(project);
   }
@@ -79,7 +71,7 @@ public abstract class ChangeSignatureProcessorBase extends BaseRefactoringProces
       final MultiMap<PsiElement, String> conflicts = usageProcessor.findConflicts(changeInfo, refUsages);
       for (PsiElement key : conflicts.keySet()) {
         Collection<String> collection = conflictDescriptions.get(key);
-        if (collection.isEmpty()) collection = new java.util.HashSet<>();
+        if (collection.isEmpty()) collection = new HashSet<>();
         collection.addAll(conflicts.get(key));
         conflictDescriptions.put(key, collection);
       }
