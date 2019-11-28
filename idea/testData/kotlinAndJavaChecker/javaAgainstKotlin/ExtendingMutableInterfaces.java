@@ -8,7 +8,7 @@ public class EtendingMutableInterfaces {
 
         }
 
-        // Compiler bug causes remove(int) to clash <info descr="Open in browser (Ctrl+Click, Ctrl+B)">https://youtrack.jetbrains.com/issue/KT-17782</info>
+        // Compiler bug causes remove(int) to clash, see KT-17782
         //public static class ExtendCList1<E> extends CMutableList<E> {
         //
         //}
