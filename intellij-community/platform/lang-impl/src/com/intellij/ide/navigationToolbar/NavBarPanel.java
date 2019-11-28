@@ -420,12 +420,6 @@ public class NavBarPanel extends JPanel implements DataProvider, PopupOwner, Dis
     }
   }
 
-
-  @Nullable
-  Window getWindow() {
-    return !isShowing() ? null : (Window)UIUtil.findUltimateParent(this);
-  }
-
   void installPopupHandler(@NotNull JComponent component, int index) {
     ActionManager actionManager = ActionManager.getInstance();
     PopupHandler.installPopupHandler(component, new ActionGroup() {
