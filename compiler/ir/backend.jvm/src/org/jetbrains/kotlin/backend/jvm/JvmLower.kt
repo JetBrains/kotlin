@@ -291,6 +291,7 @@ private val jvmFilePhases =
         checkLocalNamesWithOldBackendPhase then
 
         mainMethodGenerationPhase then
+        fakeInliningLocalVariablesLowering then
 
         makePatchParentsPhase(3)
 

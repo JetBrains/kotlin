@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 
 inline fun <reified T> foo(default: T): T {
     var t: T
