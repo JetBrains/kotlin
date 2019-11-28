@@ -893,6 +893,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/resolve/testData/resolve/problems/javaFieldVsAccessor.kt");
         }
 
+        @TestMetadata("javaStaticScopeInheritance.kt")
+        public void testJavaStaticScopeInheritance() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/problems/javaStaticScopeInheritance.kt");
+        }
+
         @TestMetadata("localFunctionsHiding.kt")
         public void testLocalFunctionsHiding() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/problems/localFunctionsHiding.kt");
