@@ -59,7 +59,7 @@ class ConvertMemberToExtensionIntention :
         if (element.receiverTypeReference != null) return false
         if (element.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return false
         when (element) {
-            is KtProperty -> if (element.hasInitializer()) return false
+            is KtProperty -> if (element.hasInitializer() || element.hasDelegate()) return false
             is KtSecondaryConstructor -> return false
         }
         return true
