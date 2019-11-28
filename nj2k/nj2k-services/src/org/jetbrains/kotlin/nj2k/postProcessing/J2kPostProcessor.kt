@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.postProcessing.processings.*
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.parents
 
 class NewJ2kPostProcessor : PostProcessor {
     @Suppress("PrivatePropertyName")
@@ -222,7 +223,9 @@ private val inspectionLikePostProcessingGroup =
         inspectionBasedProcessing(ReplaceGuardClauseWithFunctionCallInspection()),
         inspectionBasedProcessing(SortModifiersInspection()),
         intentionBasedProcessing(ConvertToRawStringTemplateIntention()) { element ->
-            ConvertToStringTemplateIntention.buildReplacement(element).entries.any {
+            element.parents.none {
+                (it as? KtProperty)?.hasModifier(KtTokens.CONST_KEYWORD) == true
+            } && ConvertToStringTemplateIntention.buildReplacement(element).entries.any {
                 (it as? KtEscapeStringTemplateEntry)?.unescapedValue == "\n"
             }
         },
