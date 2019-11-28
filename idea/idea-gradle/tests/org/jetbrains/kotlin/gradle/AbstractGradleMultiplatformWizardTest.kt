@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.idea.codeInsight.gradle.ExternalSystemImportingTestC
 import org.jetbrains.kotlin.idea.codeInsight.gradle.GradleImportingTestCase
 import org.jetbrains.kotlin.idea.configuration.KotlinGradleAbstractMultiplatformModuleBuilder
 import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
+import org.jetbrains.kotlin.test.isIgnoredInDatabaseWithLog
 import org.jetbrains.plugins.gradle.service.execution.GradleExecutionHelper
 import org.jetbrains.plugins.gradle.settings.DistributionType
 import org.jetbrains.plugins.gradle.settings.GradleExecutionSettings
@@ -254,6 +255,10 @@ abstract class AbstractGradleMultiplatformWizardTest : ProjectWizardTestCase<Abs
 
             FileTypeManager.getInstance().associateExtension(GroovyFileType.GROOVY_FILE_TYPE, "gradle")
         }
+    }
+
+    override fun shouldRunTest(): Boolean {
+        return super.shouldRunTest() && !isIgnoredInDatabaseWithLog(this)
     }
 
     companion object {

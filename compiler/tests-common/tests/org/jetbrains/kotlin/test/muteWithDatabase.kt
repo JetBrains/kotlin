@@ -165,9 +165,18 @@ class RunnerFactoryWithMuteInDatabase: ParametersRunnerFactory {
     }
 }
 
-private fun isIgnoredInDatabaseWithLog(child: FrameworkMethod): Boolean {
+fun isIgnoredInDatabaseWithLog(child: FrameworkMethod): Boolean {
     if (isMutedInDatabase(child.method)) {
         System.err.println(mutedMessage(testKey(child.method)))
+        return true
+    }
+
+    return false
+}
+
+fun isIgnoredInDatabaseWithLog(testCase: TestCase): Boolean {
+    if (isMutedInDatabase(testCase)) {
+        System.err.println(mutedMessage(testKey(testCase)))
         return true
     }
 
