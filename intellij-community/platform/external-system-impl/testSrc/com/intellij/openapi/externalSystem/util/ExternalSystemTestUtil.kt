@@ -17,7 +17,7 @@ fun Project.use(save: Boolean = false, action: (Project) -> Unit) {
         projectManager.closeAndDispose(project)
       }
       else {
-        projectManager.forceCloseProject(project, true)
+        projectManager.forceCloseProject(project)
       }
     }
   }

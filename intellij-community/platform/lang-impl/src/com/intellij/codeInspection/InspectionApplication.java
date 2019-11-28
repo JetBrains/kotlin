@@ -583,10 +583,7 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
 
   private static void closeProject(@NotNull Project project) {
     if (!project.isDisposed()) {
-      // see PlatformTestUtil.forceCloseProjectWithoutSaving about why we don't dispose as part of forceCloseProject
-      ProjectManagerEx.getInstanceEx().forceCloseProject(project, false /* do not dispose */);
-      // explicitly dispose because `dispose` option for forceCloseProject doesn't work todo why?
-      ApplicationManager.getApplication().runWriteAction(() -> Disposer.dispose(project));
+      ProjectManagerEx.getInstanceEx().forceCloseProject(project);
     }
   }
 

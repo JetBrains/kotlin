@@ -567,7 +567,7 @@ public class GradleSettingsImportingTest extends GradleSettingsImportingTestCase
       assertFalse(sourceFolderManager.isDisposed());
     }
     finally {
-      application.invokeAndWait(() -> ProjectManagerEx.getInstanceEx().forceCloseProject(project, true));
+      application.invokeAndWait(() -> ProjectManagerEx.getInstanceEx().forceCloseProject(project));
     }
     assertTrue(project.isDisposed());
     assertTrue(sourceFolderManager.isDisposed());

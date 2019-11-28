@@ -71,8 +71,6 @@ import com.intellij.profile.ProfileChangeAdapter;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.PsiManagerEx;
 import com.intellij.psi.impl.PsiModificationTrackerImpl;
-import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.util.CachedValuesManagerImpl;
 import com.intellij.util.KeyedLazyInstance;
 import com.intellij.util.messages.MessageBus;
 import com.intellij.util.messages.MessageBusConnection;
@@ -120,7 +118,7 @@ public final class DaemonListeners implements Disposable {
       return;
     }
 
-    MessageBusConnection connection = messageBus.connect(this);
+    MessageBusConnection connection = messageBus.connect();
     connection.subscribe(AppLifecycleListener.TOPIC, new AppLifecycleListener() {
       @Override
       public void appClosing() {
@@ -247,7 +245,7 @@ public final class DaemonListeners implements Disposable {
     connection.subscribe(CommandListener.TOPIC, new MyCommandListener());
     connection.subscribe(ProfileChangeAdapter.TOPIC, new MyProfileChangeListener());
 
-    ApplicationManager.getApplication().addApplicationListener(new MyApplicationListener(), this);
+    ApplicationManager.getApplication().addApplicationListener(new MyApplicationListener(), project);
 
     connection.subscribe(TodoConfiguration.PROPERTY_CHANGE, new MyTodoListener());
 
@@ -643,7 +641,7 @@ public final class DaemonListeners implements Disposable {
   }
 
   private void stopDaemonAndRestartAllFiles(@NotNull String reason) {
-    if (myDaemonCodeAnalyzer.doRestart()) {
+    if (myDaemonCodeAnalyzer.doRestart() && !myProject.isDisposed()) {
       myDaemonEventPublisher.daemonCancelEventOccurred(reason);
     }
   }
