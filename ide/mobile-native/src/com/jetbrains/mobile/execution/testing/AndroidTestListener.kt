@@ -1,0 +1,79 @@
+/*
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package com.jetbrains.mobile.execution.testing
+
+import com.android.ddmlib.testrunner.ITestRunListener
+import com.android.ddmlib.testrunner.TestIdentifier
+import com.intellij.execution.process.ProcessOutputType
+import com.intellij.execution.testframework.sm.ServiceMessageBuilder
+import com.jetbrains.mobile.execution.AndroidProcessHandler
+
+class AndroidTestListener(private val handler: AndroidProcessHandler) : ITestRunListener {
+    private var testSuite: Pair<String, /* startedTime: */ Long>? = null
+    private var testStartedTime: Long? = null
+
+    private fun ServiceMessageBuilder.send() {
+        handler.notifyTextAvailable(toString() + "\n", ProcessOutputType.SYSTEM)
+    }
+
+    private fun suiteFinished() {
+        testSuite?.let {
+            ServiceMessageBuilder.testSuiteFinished(it.first)
+                .addAttribute("duration", (System.currentTimeMillis() - it.second).toString())
+                .send()
+        }
+    }
+
+    override fun testRunStarted(runName: String, testCount: Int) {
+        ServiceMessageBuilder("enteredTheMatrix").send()
+    }
+
+    override fun testStarted(test: TestIdentifier) {
+        if (testSuite?.first != test.className) {
+            suiteFinished()
+            ServiceMessageBuilder.testSuiteStarted(test.className).send()
+            testSuite = test.className to System.currentTimeMillis()
+        }
+        testStartedTime = System.currentTimeMillis()
+        ServiceMessageBuilder.testStarted(test.testName).send()
+    }
+
+    override fun testFailed(test: TestIdentifier, trace: String) {
+        ServiceMessageBuilder.testFailed(test.testName)
+            .addAttribute("message", trace)
+            .send()
+    }
+
+    override fun testEnded(test: TestIdentifier, testMetrics: Map<String, String>) {
+        ServiceMessageBuilder.testFinished(test.testName)
+            .addAttribute("duration", (System.currentTimeMillis() - testStartedTime!!).toString())
+            .send()
+    }
+
+    override fun testIgnored(test: TestIdentifier) {
+        ServiceMessageBuilder.testIgnored(test.testName).send()
+    }
+
+    override fun testAssumptionFailure(test: TestIdentifier, trace: String) {
+        ServiceMessageBuilder.testIgnored(test.testName)
+            .addAttribute("message", trace)
+            .send()
+    }
+
+    override fun testRunFailed(errorMessage: String) {
+        handler.notifyTextAvailable("Execution failed: $errorMessage", ProcessOutputType.SYSTEM)
+        handler.destroyProcess()
+    }
+
+    override fun testRunStopped(elapsedTime: Long) {
+        handler.destroyProcess()
+    }
+
+    override fun testRunEnded(elapsedTime: Long, runMetrics: Map<String, String>) {
+        suiteFinished()
+        handler.destroyProcess()
+    }
+}

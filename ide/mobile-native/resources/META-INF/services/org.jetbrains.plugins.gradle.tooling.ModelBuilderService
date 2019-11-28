@@ -1,2 +1,2 @@
 com.jetbrains.cidr.apple.gradle.AppleProjectModelBuilder
-org.jetbrains.konan.gradle.AndroidProjectModelBuilder
+com.jetbrains.mobile.gradle.AndroidProjectModelBuilder

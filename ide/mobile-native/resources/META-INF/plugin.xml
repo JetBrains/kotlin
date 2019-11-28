@@ -26,21 +26,21 @@
   </application-components>
 
   <extensions defaultExtensionNs="com.intellij">
-    <configurationType implementation="org.jetbrains.konan.execution.MobileAppRunConfigurationType"/>
-    <configurationType implementation="org.jetbrains.konan.execution.testing.MobileTestRunConfigurationType"/>
-    <stepsBeforeRunProvider implementation="org.jetbrains.konan.execution.MobileBeforeRunTaskProvider"/>
+    <configurationType implementation="com.jetbrains.mobile.execution.MobileAppRunConfigurationType"/>
+    <configurationType implementation="com.jetbrains.mobile.execution.testing.MobileTestRunConfigurationType"/>
+    <stepsBeforeRunProvider implementation="com.jetbrains.mobile.execution.MobileBeforeRunTaskProvider"/>
 
-    <applicationService serviceImplementation="org.jetbrains.konan.execution.testing.AppleXCTestLocator"
+    <applicationService serviceImplementation="com.jetbrains.mobile.execution.testing.AppleXCTestLocator"
                         serviceInterface="com.jetbrains.cidr.execution.testing.xctest.OCUnitTestLocator"/>
 
-    <programRunner implementation="org.jetbrains.konan.execution.MobileRunner" order="first"/>
+    <programRunner implementation="com.jetbrains.mobile.execution.MobileRunner" order="first"/>
 
     <applicationService serviceInterface="com.jetbrains.cidr.OCPathManagerCustomization"
-                        serviceImplementation="org.jetbrains.konan.PathManagerCustomization" overrides="true"/>
-    <applicationService serviceImplementation="org.jetbrains.konan.execution.DeviceService"/>
-    <executionTargetProvider implementation="org.jetbrains.konan.execution.DeviceExecutionTargetProvider"/>
+                        serviceImplementation="com.jetbrains.mobile.PathManagerCustomization" overrides="true"/>
+    <applicationService serviceImplementation="com.jetbrains.mobile.execution.DeviceService"/>
+    <executionTargetProvider implementation="com.jetbrains.mobile.execution.DeviceExecutionTargetProvider"/>
 
-    <externalProjectDataService implementation="org.jetbrains.konan.gradle.AndroidProjectDataService"/>
+    <externalProjectDataService implementation="com.jetbrains.mobile.gradle.AndroidProjectDataService"/>
 
     <!-- apple gradle project model -->
     <externalProjectDataService implementation="com.jetbrains.cidr.apple.gradle.AppleProjectDataService"/>
@@ -68,21 +68,21 @@
   </extensions>
 
   <extensions defaultExtensionNs="cidr.lang">
-    <testFramework implementation="org.jetbrains.konan.execution.testing.AppleXCTestFramework"/>
+    <testFramework implementation="com.jetbrains.mobile.execution.testing.AppleXCTestFramework"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains.konan">
-    <konanConsumer implementation="org.jetbrains.konan.bridging.MobileKonanConsumer"/>
+    <konanConsumer implementation="com.jetbrains.mobile.bridging.MobileKonanConsumer"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">
     <projectResolve implementation="com.jetbrains.cidr.apple.gradle.AppleProjectResolver"/>
-    <projectResolve implementation="org.jetbrains.konan.gradle.AndroidProjectResolver"/>
+    <projectResolve implementation="com.jetbrains.mobile.gradle.AndroidProjectResolver"/>
   </extensions>
 
   <extensions defaultExtensionNs="cidr.lang">
     <moduleMapManagerRequestor implementation="com.jetbrains.cidr.apple.gradle.GradleAppleModuleMapManagerRequestor"/>
-    <customHeaderProvider implementation="org.jetbrains.konan.bridging.MobileKonanFrameworkHeaderProvider"/>
+    <customHeaderProvider implementation="com.jetbrains.mobile.bridging.MobileKonanFrameworkHeaderProvider"/>
     <!-- swift -->
     <swiftSourceModuleProvider implementation="com.jetbrains.swift.codeinsight.resolve.MobileSwiftSourceModuleProvider"/>
     <customHeaderProvider implementation="com.jetbrains.swift.bridging.MobileSwiftBridgeHeaderProvider"/>

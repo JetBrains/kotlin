@@ -15,6 +15,7 @@ import com.jetbrains.cidr.lang.OCLog
 import com.jetbrains.cidr.lang.symbols.symtable.FileSymbolTable
 import com.jetbrains.cidr.lang.symbols.symtable.FileSymbolTablesCache
 import com.jetbrains.cidr.lang.workspace.OCResolveConfiguration
+import com.jetbrains.mobile.bridging.MobileKonanSwiftModule
 import com.jetbrains.swift.codeinsight.resolve.module.SwiftSourceModuleFile
 import com.jetbrains.swift.psi.SwiftFile
 import com.jetbrains.swift.symbols.SwiftAttributesInfo
@@ -22,8 +23,6 @@ import com.jetbrains.swift.symbols.SwiftBridgeVirtualFile
 import com.jetbrains.swift.symbols.SwiftModuleSymbol
 import com.jetbrains.swift.symbols.impl.SwiftSourceModuleSymbol
 import com.jetbrains.swift.symbols.impl.SymbolProps
-import org.jetbrains.konan.bridging.MobileKonanSwiftModule
-import org.jetbrains.konan.getKonanFrameworkTargets
 
 class MobileSwiftSourceModule(private val config: OCResolveConfiguration) : SwiftModule, UserDataHolderBase() {
     private val project: Project
