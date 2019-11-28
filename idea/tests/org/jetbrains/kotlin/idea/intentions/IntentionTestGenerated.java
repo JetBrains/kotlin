@@ -8282,6 +8282,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/intentions/declarations/convertMemberToExtension"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
             }
 
+            @TestMetadata("delegatedProperty.kt")
+            public void testDelegatedProperty() throws Exception {
+                runTest("idea/testData/intentions/declarations/convertMemberToExtension/delegatedProperty.kt");
+            }
+
             @TestMetadata("explicitUnit.kt")
             public void testExplicitUnit() throws Exception {
                 runTest("idea/testData/intentions/declarations/convertMemberToExtension/explicitUnit.kt");
