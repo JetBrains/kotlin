@@ -132,7 +132,13 @@ export class ExactFilter implements KotlinTestsFilter {
     }
 
     containsTest(fqn: string): boolean {
-        return fqn === this.fqn;
+        if (fqn === this.fqn) {
+            return true
+        }
+
+        // Exact filter by class name only
+        const regexp = RegExp(`^${escapeRegExp(this.fqn + ".")}\\w+$`);
+        return regexp.test(fqn)
     }
 }
 
