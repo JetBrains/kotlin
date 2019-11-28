@@ -18,7 +18,6 @@ package com.intellij.codeEditor.printing;
 
 import com.intellij.CommonBundle;
 import com.intellij.openapi.actionSystem.*;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -33,7 +32,7 @@ public class ExportToHTMLAction extends AnAction {
   public void actionPerformed(@NotNull AnActionEvent e) {
     DataContext dataContext = e.getDataContext();
     try {
-      ExportToHTMLManager.executeExport(dataContext);
+      new ExportToHTMLManager().executeExport(dataContext);
     }
     catch (FileNotFoundException ex) {
       JOptionPane.showMessageDialog(null, CodeEditorBundle.message("file.not.found", ex.getMessage()),
