@@ -178,7 +178,7 @@ internal class JvmTypeExtension : JvmTypeExtensionVisitor(), KmTypeExtension {
 }
 
 internal class JvmTypeAliasExtension : JvmTypeAliasExtensionVisitor(), KmTypeAliasExtension {
-    override fun accept(visitor: KmTypeExtensionVisitor) {
+    override fun accept(visitor: KmTypeAliasExtensionVisitor) {
         require(visitor is JvmTypeAliasExtensionVisitor)
         visitor.visitEnd()
     }
