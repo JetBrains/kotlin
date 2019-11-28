@@ -11,6 +11,12 @@
         {
           "specVersion": "0.1-213",
           "casesNumber": 0,
+          "description": "two values are equal (\u003d\u003d\u003d) or non-equal (!\u003d\u003d) by reference",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 0,
           "description": "check if values are non-equal (!\u003d\u003d) by reference",
           "unexpectedBehaviour": false
         },
@@ -35,12 +41,6 @@
         }
       ],
       "3": [
-        {
-          "specVersion": "0.1-213",
-          "casesNumber": 0,
-          "description": "two values are equal (\u003d\u003d\u003d) or non-equal (!\u003d\u003d) by reference",
-          "unexpectedBehaviour": false
-        },
         {
           "specVersion": "0.1-213",
           "casesNumber": 0,
