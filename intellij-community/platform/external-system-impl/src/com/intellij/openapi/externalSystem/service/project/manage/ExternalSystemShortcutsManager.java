@@ -3,7 +3,6 @@ package com.intellij.openapi.externalSystem.service.project.manage;
 
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.Shortcut;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.externalSystem.model.DataNode;
 import com.intellij.openapi.externalSystem.model.ProjectSystemId;
 import com.intellij.openapi.externalSystem.model.task.TaskData;
@@ -36,7 +35,7 @@ public class ExternalSystemShortcutsManager implements Disposable {
   }
 
   public void init() {
-    ApplicationManager.getApplication().getMessageBus().connect(this).subscribe(KeymapManagerListener.TOPIC, new KeymapManagerListener() {
+    myProject.getMessageBus().connect(this).subscribe(KeymapManagerListener.TOPIC, new KeymapManagerListener() {
       @Override
       public void activeKeymapChanged(Keymap keymap) {
         fireShortcutsUpdated();
