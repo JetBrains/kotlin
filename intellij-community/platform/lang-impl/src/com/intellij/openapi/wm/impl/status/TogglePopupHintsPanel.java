@@ -1,5 +1,4 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-
 package com.intellij.openapi.wm.impl.status;
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
@@ -25,7 +24,6 @@ import com.intellij.profile.codeInspection.InspectionProjectProfileManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.ui.UIBundle;
-import com.intellij.ui.awt.RelativePoint;
 import com.intellij.util.Consumer;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +33,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 
-public class TogglePopupHintsPanel extends EditorBasedWidget implements StatusBarWidget.Multiframe, StatusBarWidget.IconPresentation {
+public final class TogglePopupHintsPanel extends EditorBasedWidget implements StatusBarWidget.Multiframe, StatusBarWidget.IconPresentation {
   private Icon myCurrentIcon;
   private String myToolTipText;
 
@@ -48,7 +46,6 @@ public class TogglePopupHintsPanel extends EditorBasedWidget implements StatusBa
   public void selectionChanged(@NotNull FileEditorManagerEvent event) {
     updateStatus();
   }
-
 
   @Override
   public void fileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
@@ -126,8 +123,6 @@ public class TogglePopupHintsPanel extends EditorBasedWidget implements StatusBa
   public void updateStatus() {
     UIUtil.invokeLaterIfNeeded(() -> updateStatus(getCurrentFile()));
   }
-
-
 
   private void updateStatus(PsiFile file) {
     if (isDisposed()) return;
