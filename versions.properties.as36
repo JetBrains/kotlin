@@ -22,3 +22,5 @@ versions.lldbFrontend.windows.artifact=lldb-frontend.zip!x64/bin/LLDBFrontend.ex
 versions.lldbFrontend.windows.repo=ijplatform_master_CIDR_InternalTools_LLDBFrontendWin
 versions.lldbFrontend.linux.artifact=LLDBFrontend
 versions.lldbFrontend.linux.repo=ijplatform_master_CIDR_InternalTools_LLDBFrontendLinux
+
+versions.cidrForAS=193.4944

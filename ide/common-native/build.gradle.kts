@@ -8,10 +8,8 @@ val addIdeaNativeModuleDeps: (Project) -> Unit by ultimateTools
 val cidrUnscrambledJarDir: File? by rootProject.extra
 val intellijBranch: Int by rootProject.extra
 
-dependencies {
-    addCidrDeps(project)
-    addIdeaNativeModuleDeps(project)
-}
+addCidrDeps(project)
+addIdeaNativeModuleDeps(project)
 
 // TODO: don't use check for existence of `cidrUnscrambledJarDir` directory,
 // it will give the wrong results after switching flags in local.properties

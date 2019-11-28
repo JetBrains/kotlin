@@ -7,7 +7,13 @@
   <description>Provides functionality for development of Kotlin MPP applications for mobile targets.</description>
   <idea-version since-build="192.0"/>
 
+  <project-components>
+    <component>
+      <implementation-class>com.jetbrains.konan.MPPWorkspace</implementation-class>
+    </component>
+  </project-components>
+
   <extensions defaultExtensionNs="com.intellij">
-    <externalProjectDataService implementation="com.jetbrains.konan.ASKonanProjectDataService"/>
+    <externalProjectDataService implementation="com.jetbrains.konan.MPPProjectDataService"/>
   </extensions>
 </idea-plugin>

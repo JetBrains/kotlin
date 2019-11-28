@@ -49,6 +49,22 @@ val cidrPluginsEnabled: Boolean? by rootProject.extra
 
 val javaApiArtifacts = listOf("java-api", "java-impl")
 
+data class IDE(val name: String, val version: String)
+
+fun guessIDEParams(): IDE {
+    if (rootProject.extra.has("versions.cidrForAS")) {
+        return IDE("android-studio-ide", rootProject.extra["versions.androidStudioBuild"] as String)
+    }
+
+    val ideName = if ((rootProject.extra["intellijUltimateEnabled"] as? Boolean) == true)
+        "ideaIU"
+    else
+        "ideaIC"
+
+    val ideVersion = rootProject.extra["versions.intellijSdk"] as String
+    return IDE(ideName, ideVersion)
+}
+
 fun addIdeaNativeModuleDepsComposite(project: Project) = with(project) {
     dependencies {
         // Gradle projects with Kotlin/Native-specific logic
@@ -58,11 +74,8 @@ fun addIdeaNativeModuleDepsComposite(project: Project) = with(project) {
         add("compile", project(":idea:kotlin-gradle-tooling"))
         add("compile", project(":kotlin-native:kotlin-native-utils"))
 
-        // Detect IDE name and version
-        // TODO: add dependency on base project artifacts
-        val intellijUltimateEnabled: Boolean? by rootProject.extra
-        val ideName = if (intellijUltimateEnabled == true) "ideaIU" else "ideaIC" // TODO: what if AndroidStudio?
-        val ideVersion = rootProject.extra["versions.intellijSdk"] as String
+        val (ideName, ideVersion) = guessIDEParams()
+
         val ideBranch = ijProductBranch(ideVersion)
         val javaModuleName = if (ideBranch >= 192) "java" else ideName
 
@@ -147,12 +160,15 @@ fun addIdeaNativeModuleDeps(project: Project) =
     if (isStandaloneBuild) addIdeaNativeModuleDepsStandalone(project) else addIdeaNativeModuleDepsComposite(project)
 
 fun addCidrDeps(project: Project) = with(project) {
-    dependencies {
-        val cidrUnscrambledJarDir: File? by rootProject.extra
-        val nativeDebugPluginDir: File? by rootProject.extra
-        if (nativeDebugPluginDir?.exists() == true) { // Idea Ultimate build
+    val cidrUnscrambledJarDir: File? by rootProject.extra
+    val nativeDebugPluginDir: File? by rootProject.extra
+
+    if (nativeDebugPluginDir?.exists() == true) { // Idea Ultimate build
+        dependencies {
             add("compile", fileTree(nativeDebugPluginDir!!) { include("**/*.jar") })
-        } else if (cidrUnscrambledJarDir?.exists() == true) { // CIDR build
+        }
+    } else if (cidrUnscrambledJarDir?.exists() == true) { // CIDR build
+        dependencies {
             add("compile", fileTree(cidrUnscrambledJarDir!!) { include("**/*.jar") })
         }
     }
