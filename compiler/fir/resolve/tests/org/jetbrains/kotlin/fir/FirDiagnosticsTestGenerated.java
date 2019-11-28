@@ -873,6 +873,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/resolve/testData/resolve/problems/asImports.kt");
         }
 
+        @TestMetadata("defaultJavaImportHiding.kt")
+        public void testDefaultJavaImportHiding() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/problems/defaultJavaImportHiding.kt");
+        }
+
         @TestMetadata("definitelyNotNullAmbiguity.kt")
         public void testDefinitelyNotNullAmbiguity() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/problems/definitelyNotNullAmbiguity.kt");
