@@ -122,7 +122,7 @@ public abstract class ProjectViewSelectInTarget extends SelectInTargetPsiWrapper
     PsiElement toSelect = null;
     for (TreeStructureProvider provider : getProvidersDumbAware()) {
       if (provider instanceof SelectableTreeStructureProvider) {
-        toSelect = ((SelectableTreeStructureProvider) provider).getTopLevelElement(element);
+        toSelect = ((SelectableTreeStructureProvider)provider).getTopLevelElement(element);
       }
       if (toSelect != null) {
         if (!toSelect.isValid()) {
