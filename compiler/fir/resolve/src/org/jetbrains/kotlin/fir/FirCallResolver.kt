@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
+import org.jetbrains.kotlin.resolve.descriptorUtil.HIDES_MEMBERS_NAME_LIST
 
 class FirCallResolver(
     components: BodyResolveComponents,
@@ -92,7 +93,11 @@ class FirCallResolver(
         towerResolver.reset()
 
         val consumer = createFunctionConsumer(session, name, info, this, towerResolver.collector, towerResolver)
-        val result = towerResolver.runResolver(consumer, implicitReceiverStack.receiversAsReversed())
+        val result = towerResolver.runResolver(
+            consumer,
+            implicitReceiverStack.receiversAsReversed(),
+            shouldProcessExtensionsBeforeMembers = name in HIDES_MEMBERS_NAME_LIST
+        )
         val bestCandidates = result.bestCandidates()
         val reducedCandidates = if (result.currentApplicability < CandidateApplicability.SYNTHETIC_RESOLVED) {
             bestCandidates.toSet()

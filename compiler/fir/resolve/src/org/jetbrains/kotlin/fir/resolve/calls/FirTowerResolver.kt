@@ -140,6 +140,39 @@ class FirTowerResolver(
         return group
     }
 
+    private fun processTopLevelScope(
+        towerDataConsumer: TowerDataConsumer,
+        topLevelScope: FirScope,
+        oldGroup: Int,
+        extensionsOnly: Boolean = false
+    ): Int {
+        var group = oldGroup
+        // Top-level extensions via implicit receiver
+        // fun Foo.bar() {}
+        // class Foo {
+        //     fun test() { bar() }
+        // }
+        for (implicitReceiverValue in implicitReceiverValues) {
+            if (towerDataConsumer.consume(
+                    TOWER_LEVEL,
+                    ScopeTowerLevel(
+                        session, components, topLevelScope,
+                        implicitExtensionReceiver = implicitReceiverValue,
+                        extensionsOnly = extensionsOnly
+                    ),
+                    group++
+                ) == NONE
+            ) {
+                return group
+            }
+        }
+        // Member of top-level scope & importing scope
+        // val x = 0
+        // fun test() { x }
+        towerDataConsumer.consume(TOWER_LEVEL, ScopeTowerLevel(session, components, topLevelScope), group++)
+        return group
+    }
+
     fun reset() {
         collector.newDataSet()
     }
@@ -148,11 +181,23 @@ class FirTowerResolver(
     private lateinit var towerDataConsumer: TowerDataConsumer
     private lateinit var implicitReceiverValues: List<ImplicitReceiverValue<*>>
 
-    fun runResolver(consumer: TowerDataConsumer, implicitReceiverValues: List<ImplicitReceiverValue<*>>): CandidateCollector {
+    fun runResolver(
+        consumer: TowerDataConsumer,
+        implicitReceiverValues: List<ImplicitReceiverValue<*>>,
+        shouldProcessExtensionsBeforeMembers: Boolean = false
+    ): CandidateCollector {
         this.implicitReceiverValues = implicitReceiverValues
         towerDataConsumer = consumer
 
         var group = 0
+
+        // Specific case when extension should be processed before members (Kotlin forEach vs Java forEach)
+        if (shouldProcessExtensionsBeforeMembers) {
+            for (topLevelScope in topLevelScopes) {
+                group = processTopLevelScope(towerDataConsumer, topLevelScope, group, extensionsOnly = true)
+            }
+        }
+
         // Member of explicit receiver' type (this stage does nothing without explicit receiver)
         // class Foo(val x: Int)
         // fun test(f: Foo) { f.x }
@@ -200,26 +245,8 @@ class FirTowerResolver(
             }
         }
 
-        topLevelScopeLoop@ for (scope in topLevelScopes) {
-            // Top-level extensions via implicit receiver
-            // fun Foo.bar() {}
-            // class Foo {
-            //     fun test() { bar() }
-            // }
-            for (implicitReceiverValue in implicitReceiverValues) {
-                if (towerDataConsumer.consume(
-                        TOWER_LEVEL,
-                        ScopeTowerLevel(session, components, scope, implicitExtensionReceiver = implicitReceiverValue),
-                        group++
-                    ) == NONE
-                ) {
-                    continue@topLevelScopeLoop
-                }
-            }
-            // Member of top-level scope & importing scope
-            // val x = 0
-            // fun test() { x }
-            towerDataConsumer.consume(TOWER_LEVEL, ScopeTowerLevel(session, components, scope), group++)
+        for (topLevelScope in topLevelScopes) {
+            group = processTopLevelScope(towerDataConsumer, topLevelScope, group)
         }
 
         return collector

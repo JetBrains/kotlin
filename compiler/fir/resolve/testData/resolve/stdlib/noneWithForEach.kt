@@ -7,10 +7,10 @@ fun foo(conflicting: List<Diagnostic>) {
     conflicting.groupBy {
         it.name
     }.forEach {
-        val diagnostics = <!UNRESOLVED_REFERENCE!>it<!>.<!UNRESOLVED_REFERENCE!>value<!>
+        val diagnostics = it.value
         filtered.addAll(
-            diagnostics.<!AMBIGUITY!>filter<!> { me ->
-                diagnostics.<!AMBIGUITY!>none<!> { other ->
+            diagnostics.filter { me ->
+                diagnostics.none { other ->
                     me != other
                 }
             }

@@ -150,12 +150,14 @@ class MemberScopeTowerLevel(
 // (if explicit receiver exists, it always *should* be an extension receiver)
 class ScopeTowerLevel(
     session: FirSession,
-    val bodyResolveComponents: BodyResolveComponents,
+    private val bodyResolveComponents: BodyResolveComponents,
     val scope: FirScope,
-    val implicitExtensionReceiver: ImplicitReceiverValue<*>? = null
+    val implicitExtensionReceiver: ImplicitReceiverValue<*>? = null,
+    private val extensionsOnly: Boolean = false
 ) : SessionBasedTowerLevel(session) {
     private fun FirCallableSymbol<*>.hasConsistentReceivers(extensionReceiver: ReceiverValue?): Boolean =
         when {
+            extensionsOnly && !hasExtensionReceiver() -> false
             !hasConsistentExtensionReceiver(extensionReceiver) -> false
             scope is FirAbstractImportingScope -> true
             else -> dispatchReceiverValue().let { it == null || it.klassSymbol.fir.classKind == ClassKind.OBJECT }

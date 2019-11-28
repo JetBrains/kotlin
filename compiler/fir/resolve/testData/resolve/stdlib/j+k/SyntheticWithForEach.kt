@@ -17,7 +17,7 @@ fun <D : Any> Call<D>.testForEach() {
         value.length
     }
     arguments.forEach {
-        <!UNRESOLVED_REFERENCE!>it<!>.<!UNRESOLVED_REFERENCE!>key<!>.<!UNRESOLVED_REFERENCE!>length<!>
-        <!UNRESOLVED_REFERENCE!>it<!>.<!UNRESOLVED_REFERENCE!>value<!>.<!UNRESOLVED_REFERENCE!>length<!>
+        it.key.length
+        it.value.length
     }
 }
