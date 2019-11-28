@@ -366,14 +366,12 @@ public final class DaemonListeners implements Disposable {
     connection.subscribe(DynamicPluginListener.TOPIC, new DynamicPluginListener() {
       @Override
       public void pluginLoaded(@NotNull IdeaPluginDescriptor pluginDescriptor) {
-        ((CachedValuesManagerImpl)CachedValuesManager.getManager(myProject)).clearCachedValues();
         ((PsiModificationTrackerImpl)PsiManager.getInstance(myProject).getModificationTracker()).incCounter();
         stopDaemonAndRestartAllFiles("Plugin installed");
       }
 
       @Override
       public void beforePluginUnload(@NotNull IdeaPluginDescriptor pluginDescriptor, boolean isUpdate) {
-        ((CachedValuesManagerImpl)CachedValuesManager.getManager(myProject)).clearCachedValues();
         ((PsiModificationTrackerImpl)PsiManager.getInstance(myProject).getModificationTracker()).incCounter();
         stopDaemonAndRestartAllFiles("Plugin will be uninstalled");
         removeQuickFixesContributedByPlugin(pluginDescriptor);
