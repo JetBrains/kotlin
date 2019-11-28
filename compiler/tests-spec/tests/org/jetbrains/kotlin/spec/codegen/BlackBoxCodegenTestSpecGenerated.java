@@ -126,6 +126,11 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                                 runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1/pos/1.6.kt");
                             }
 
+                            @TestMetadata("1.7.kt")
+                            public void test1_7() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1/pos/1.7.kt");
+                            }
+
                             public void testAllFilesPresentInPos() throws Exception {
                                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), true);
                             }
