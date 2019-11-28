@@ -14,6 +14,7 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.file.PsiDirectoryFactory;
 import org.jetbrains.annotations.NotNull;
@@ -90,38 +91,43 @@ class ExportToHTMLManager {
 
     PsiDocumentManager.getInstance(project).commitAllDocuments();
     final String outputDirectoryName = exportToHTMLSettings.OUTPUT_DIRECTORY;
-    if (exportToHTMLSettings.getPrintScope() != PrintSettings.PRINT_DIRECTORY) {
-      if (psiFile == null || psiFile.getText() == null) {
-        return;
-      }
-      final String dirName = constructOutputDirectory(psiFile, outputDirectoryName);
-      HTMLTextPainter textPainter = new HTMLTextPainter(psiFile, project, exportToHTMLSettings.PRINT_LINE_NUMBERS);
-      if (exportToHTMLSettings.getPrintScope() == PrintSettings.PRINT_SELECTED_TEXT &&
-          editor != null &&
-          editor.getSelectionModel().hasSelection()) {
-        int firstLine = editor.getDocument().getLineNumber(editor.getSelectionModel().getSelectionStart());
-        textPainter.setSegment(editor.getSelectionModel().getSelectionStart(), editor.getSelectionModel().getSelectionEnd(), firstLine);
-      }
+    try {
+      if (exportToHTMLSettings.getPrintScope() != PrintSettings.PRINT_DIRECTORY) {
+        if (psiFile == null || psiFile.getText() == null) {
+          return;
+        }
+        final String dirName = constructOutputDirectory(psiFile, outputDirectoryName);
+        HTMLTextPainter textPainter = new HTMLTextPainter(psiFile, project, exportToHTMLSettings.PRINT_LINE_NUMBERS);
+        if (exportToHTMLSettings.getPrintScope() == PrintSettings.PRINT_SELECTED_TEXT &&
+            editor != null &&
+            editor.getSelectionModel().hasSelection()) {
+          int firstLine = editor.getDocument().getLineNumber(editor.getSelectionModel().getSelectionStart());
+          textPainter.setSegment(editor.getSelectionModel().getSelectionStart(), editor.getSelectionModel().getSelectionEnd(), firstLine);
+        }
 
-      try {
-        String htmlFile = doPaint(dirName, textPainter, null);
-        if (exportToHTMLSettings.OPEN_IN_BROWSER) {
-          BrowserUtil.browse(htmlFile);
+        try {
+          String htmlFile = doPaint(dirName, textPainter, null);
+          if (exportToHTMLSettings.OPEN_IN_BROWSER) {
+            BrowserUtil.browse(htmlFile);
+          }
+        }
+        catch (IOException e) {
+          LOG.error(e);
         }
       }
-      catch (IOException e) {
-        LOG.error(e);
+      else {
+        myLastException = null;
+        ExportRunnable exportRunnable =
+          new ExportRunnable(exportToHTMLSettings, psiDirectory, outputDirectoryName, project);
+        ProgressManager.getInstance()
+          .runProcessWithProgressSynchronously(exportRunnable, CodeEditorBundle.message("export.to.html.title"), true, project);
+        if (myLastException != null) {
+          throw myLastException;
+        }
       }
     }
-    else {
-      myLastException = null;
-      ExportRunnable exportRunnable =
-        new ExportRunnable(exportToHTMLSettings, psiDirectory, outputDirectoryName, project);
-      ProgressManager.getInstance()
-        .runProcessWithProgressSynchronously(exportRunnable, CodeEditorBundle.message("export.to.html.title"), true, project);
-      if (myLastException != null) {
-        throw myLastException;
-      }
+    finally {
+      LocalFileSystem.getInstance().refreshIoFiles(Collections.singleton(new File(outputDirectoryName)), true, false, null);
     }
   }
 
