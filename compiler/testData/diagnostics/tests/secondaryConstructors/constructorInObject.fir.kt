@@ -5,7 +5,7 @@ object A {
 
 enum class B {
     X() {
-        constructor()
+        <!CONSTRUCTOR_IN_OBJECT!>constructor()<!>
     }
 }
 

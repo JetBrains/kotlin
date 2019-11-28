@@ -16,12 +16,12 @@ enum class C {
 
     E4 {
         fun c() {
-            this.<!UNRESOLVED_REFERENCE!>B<!>()
+            this.B()
 
             C.A()
             A()
             //TODO: should be resolved with error
-            this.<!UNRESOLVED_REFERENCE!>A<!>()
+            this.A()
         }
     };
 
@@ -45,6 +45,6 @@ fun f() {
     C.A()
     C.<!UNRESOLVED_REFERENCE!>B<!>()
 
-    C.E3.O_O
-    C.E3.G()
+    C.E3.<!UNRESOLVED_REFERENCE!>O_O<!>
+    C.E3.<!UNRESOLVED_REFERENCE!>G<!>()
 }

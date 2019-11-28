@@ -272,9 +272,6 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         )
     }
 
-    override fun visitEnumEntry(enumEntry: FirEnumEntry) {
-        visitRegularClass(enumEntry)
-    }
 
 
     private fun List<FirDeclaration>.renderDeclarations() {

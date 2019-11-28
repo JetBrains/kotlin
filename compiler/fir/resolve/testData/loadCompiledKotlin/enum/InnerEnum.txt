@@ -4,8 +4,10 @@ public final class A : R|kotlin/Any| {
     public final enum class E : R|kotlin/Enum<test/A.E>| {
         private constructor(): R|test/A.E|
 
-        public? final enum entry ENTRY : R|test/A.E| {
+        public final static val ENTRY: R|test/A.E| = object : R|test/A.E| {
         }
+
+
 
     }
 

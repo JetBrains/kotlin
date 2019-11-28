@@ -1,8 +1,10 @@
 public final enum class E : R|kotlin/Enum<test/E>| {
     private constructor(): R|test/E|
 
-    public? final enum entry CAKE : R|test/E| {
+    public final static val CAKE: R|test/E| = object : R|test/E| {
     }
+
+
 
 }
 
@@ -28,3 +30,4 @@ public final annotation class EnumArrayAnno : R|kotlin/Annotation| {
     public constructor(vararg value: R|kotlin/Array<out test/E>|): R|test/EnumArrayAnno|
 
 }
+

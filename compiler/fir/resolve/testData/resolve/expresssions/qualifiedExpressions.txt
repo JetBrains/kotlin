@@ -33,12 +33,14 @@ FILE: qualifiedExpressions.kt
             super<R|kotlin/Any|>()
         }
 
-        public final enum entry entry : R|kotlin/Any| {
-            public constructor(): R|a/b/E.entry| {
-                super<R|kotlin/Any|>()
+        public final static val entry: R|a/b/E| = object : R|a/b/E| {
+            private constructor(): R|anonymous| {
+                super<R|a/b/E|>()
             }
 
         }
+
+
 
         public final static fun values(): R|kotlin/Array<a/b/E>| {
         }
@@ -58,6 +60,6 @@ FILE: qualifiedExpressions.kt
         lval x: R|kotlin/Int| = Q|a/b|.R|a/b/f|
         Q|a/b/C|.R|a/b/C.Companion.foo|()
         R|a/b/C.C|().R|a/b/C.foo|()
-        lval e: R|a/b/E| = Q|a/b/E.entry|
-        lval e1: R|a/b/E| = Q|a/b/E.entry|
+        lval e: R|a/b/E| = Q|a/b/E|.R|a/b/E.entry|
+        lval e1: R|a/b/E| = Q|a/b/E|.R|a/b/E.entry|
     }

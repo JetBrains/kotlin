@@ -133,7 +133,6 @@ class FirStatusResolveTransformer : FirAbstractTreeTransformer<FirDeclarationSta
 
         private fun FirDeclaration.resolveModality(containingClass: FirRegularClass?): Modality {
             return when (this) {
-                is FirEnumEntry -> Modality.FINAL
                 is FirRegularClass -> if (classKind == ClassKind.INTERFACE) Modality.ABSTRACT else Modality.FINAL
                 is FirCallableMemberDeclaration<*> -> {
                     when {

@@ -1,6 +1,6 @@
 enum interface Some {
     // Enum part
-    D;
+    <!UNRESOLVED_REFERENCE!>D;<!>
 
     // Interface like part
     fun test()

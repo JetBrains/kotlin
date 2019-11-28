@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.visitors
 
-import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
 import org.jetbrains.kotlin.fir.declarations.FirSealedClass
 import org.jetbrains.kotlin.fir.expressions.*
@@ -73,9 +72,6 @@ abstract class FirDefaultTransformer<D> : FirTransformer<D>() {
         return transformJump(breakExpression, data)
     }
 
-    override fun transformEnumEntry(enumEntry: FirEnumEntry, data: D): CompositeTransformResult<FirStatement> {
-        return transformRegularClass(enumEntry, data)
-    }
 
     override fun transformLambdaArgumentExpression(lambdaArgumentExpression: FirLambdaArgumentExpression, data: D): CompositeTransformResult<FirStatement> {
         return transformWrappedArgumentExpression(lambdaArgumentExpression, data)

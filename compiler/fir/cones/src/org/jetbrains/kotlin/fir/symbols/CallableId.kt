@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.name.Name
 data class CallableId(val packageName: FqName, val className: FqName?, val callableName: Name) {
     val classId: ClassId? get() = className?.let { ClassId(packageName, it, false) }
 
+    constructor(classId: ClassId, callableName: Name) : this(classId.packageFqName, classId.relativeClassName, callableName)
+
     constructor(packageName: FqName, callableName: Name) : this(packageName, null, callableName)
 
     @Deprecated("TODO: Better solution for local callables?")

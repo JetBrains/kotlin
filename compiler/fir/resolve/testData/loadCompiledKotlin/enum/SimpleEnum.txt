@@ -1,8 +1,10 @@
 public final enum class MyEnum : R|kotlin/Enum<test/MyEnum>| {
     private constructor(): R|test/MyEnum|
 
-    public? final enum entry ENTRY : R|test/MyEnum| {
+    public final static val ENTRY: R|test/MyEnum| = object : R|test/MyEnum| {
     }
+
+
 
 }
 

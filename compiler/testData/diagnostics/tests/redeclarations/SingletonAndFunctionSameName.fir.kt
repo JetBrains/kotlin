@@ -17,5 +17,5 @@ enum class En {
 
     fun ENTRY() = 42
 
-    fun SUBCLASS() = <!AMBIGUITY!>ENTRY<!>()
+    fun SUBCLASS() = ENTRY()
 }

@@ -6,8 +6,10 @@
 public final enum class E : R|kotlin/Enum<test/E>| {
     private constructor(): R|test/E|
 
-    public? final enum entry ENTRY : R|test/E| {
+    public final static val ENTRY: R|test/E| = object : R|test/E| {
     }
+
+
 
 }
 
@@ -37,3 +39,4 @@ public final annotation class StringOptions : R|kotlin/Annotation| {
     public constructor(vararg option: R|kotlin/Array<out kotlin/String>|): R|test/StringOptions|
 
 }
+

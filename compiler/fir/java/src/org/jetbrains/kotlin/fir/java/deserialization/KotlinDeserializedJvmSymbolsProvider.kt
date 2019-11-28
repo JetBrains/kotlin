@@ -10,7 +10,6 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirEnumEntryImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirSimpleFunctionImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirPropertyImpl
 import org.jetbrains.kotlin.fir.deserialization.FirDeserializationContext
@@ -212,11 +211,6 @@ class KotlinDeserializedJvmSymbolsProvider(
                         ).firstOrNull()
 
                     this.calleeReference = when {
-                        entryClassSymbol != null && (entryClassSymbol as? FirClassSymbol)?.fir is FirEnumEntry -> {
-                            FirResolvedNamedReferenceImpl(
-                                null, name, entryClassSymbol
-                            )
-                        }
                         entryCallableSymbol != null -> {
                             FirResolvedNamedReferenceImpl(
                                 null, name, entryCallableSymbol
@@ -340,9 +334,7 @@ class KotlinDeserializedJvmSymbolsProvider(
                 kotlinScopeProvider,
                 parentContext, this::findAndDeserializeClass
             )
-            symbol.fir.declarations.filterIsInstance<FirEnumEntryImpl>().forEach {
-                classesCache[it.symbol.classId] = it.symbol
-            }
+
             classesCache[classId] = symbol
             val annotations = mutableListOf<FirAnnotationCall>()
             kotlinJvmBinaryClass.loadClassAnnotations(object : KotlinJvmBinaryClass.AnnotationVisitor {

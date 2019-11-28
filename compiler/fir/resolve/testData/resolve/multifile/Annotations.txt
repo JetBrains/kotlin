@@ -1,5 +1,5 @@
 FILE: annotations.kt
-    @R|kotlin/annotation/Target|(Q|kotlin/annotation/AnnotationTarget.FILE|, Q|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|) public final annotation class Simple : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|) public final annotation class Simple : R|kotlin/Annotation| {
         public constructor(): R|annotations/Simple| {
             super<R|kotlin/Any|>()
         }

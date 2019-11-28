@@ -365,11 +365,11 @@ internal fun ConeKotlinType.lexicalCastFrom(session: FirSession, value: String):
     val firElement = lookupTag.toSymbol(session)?.fir
     if (firElement is FirRegularClass && firElement.classKind == ClassKind.ENUM_CLASS) {
         val name = Name.identifier(value)
-        val firEnumEntry = firElement.declarations.filterIsInstance<FirEnumEntry>().find { it.name == name }
+        val firEnumEntry = firElement.collectEnumEntries().find { it.callableId.callableName == name }
 
         return if (firEnumEntry != null) FirQualifiedAccessExpressionImpl(null).apply {
-            calleeReference = FirSimpleNamedReference(
-                null, name, null // TODO: , firEnumEntry.symbol
+            calleeReference = FirResolvedNamedReferenceImpl(
+                null, name, firEnumEntry
             )
         } else if (firElement is FirJavaClass) {
             val firStaticProperty = firElement.declarations.filterIsInstance<FirJavaField>().find {

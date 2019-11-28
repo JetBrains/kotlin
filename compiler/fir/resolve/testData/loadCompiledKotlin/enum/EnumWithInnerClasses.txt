@@ -19,11 +19,15 @@ public final enum class Enum : R|kotlin/Enum<test/Enum>| {
     public abstract interface Trait : R|kotlin/Any| {
     }
 
-    public? final enum entry ENTRY1 : R|test/Enum| {
+    public final static val ENTRY1: R|test/Enum| = object : R|test/Enum| {
     }
 
-    public? final enum entry ENTRY2 : R|test/Enum| {
+
+
+    public final static val ENTRY2: R|test/Enum| = object : R|test/Enum| {
     }
+
+
 
 }
 

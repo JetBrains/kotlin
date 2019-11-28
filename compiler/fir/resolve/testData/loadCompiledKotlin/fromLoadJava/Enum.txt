@@ -1,11 +1,15 @@
 public final enum class Test : R|kotlin/Enum<test/Test>| {
     private constructor(a: R|kotlin/Int|): R|test/Test|
 
-    public? final enum entry A : R|test/Test| {
+    public final static val A: R|test/Test| = object : R|test/Test| {
     }
 
-    public? final enum entry B : R|test/Test| {
+
+
+    public final static val B: R|test/Test| = object : R|test/Test| {
     }
+
+
 
 }
 

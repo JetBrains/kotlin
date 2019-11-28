@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirSealedClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
-import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
 import org.jetbrains.kotlin.fir.declarations.FirMemberFunction
@@ -254,10 +253,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitTypeAlias(typeAlias: FirTypeAlias) {
         visitElement(typeAlias)
-    }
-
-    open fun visitEnumEntry(enumEntry: FirEnumEntry) {
-        visitElement(enumEntry)
     }
 
     open fun <F : FirFunction<F>> visitFunction(function: FirFunction<F>) {
@@ -710,10 +705,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitTypeAlias(typeAlias: FirTypeAlias, data: Nothing?) {
         visitTypeAlias(typeAlias)
-    }
-
-    final override fun visitEnumEntry(enumEntry: FirEnumEntry, data: Nothing?) {
-        visitEnumEntry(enumEntry)
     }
 
     final override fun <F : FirFunction<F>> visitFunction(function: FirFunction<F>, data: Nothing?) {

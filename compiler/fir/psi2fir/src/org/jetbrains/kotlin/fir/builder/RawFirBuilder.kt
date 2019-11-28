@@ -137,6 +137,7 @@ class RawFirBuilder(session: FirSession, val scopeProvider: FirScopeProvider, va
                     owner,
                     hasPrimaryConstructor
                 )
+                is KtEnumEntry -> toFirEnumEntry(delegatedSelfType!!)
                 else -> convert<FirDeclaration>()
             }
         }
@@ -321,7 +322,10 @@ class RawFirBuilder(session: FirSession, val scopeProvider: FirScopeProvider, va
         }
 
         private fun KtClassOrObject.extractSuperTypeListEntriesTo(
-            container: FirModifiableClass<*>, delegatedSelfTypeRef: FirTypeRef?, classKind: ClassKind
+            container: FirModifiableClass<*>,
+            delegatedSelfTypeRef: FirTypeRef?,
+            delegatedEnumSuperTypeRef: FirTypeRef?,
+            classKind: ClassKind
         ): FirTypeRef? {
             var superTypeCallEntry: KtSuperTypeCallEntry? = null
             var delegatedSuperTypeRef: FirTypeRef? = null
@@ -367,7 +371,13 @@ class RawFirBuilder(session: FirSession, val scopeProvider: FirScopeProvider, va
                 }
             }
 
-            val defaultDelegatedSuperTypeRef = implicitAnyType
+            val defaultDelegatedSuperTypeRef =
+                when {
+                    classKind == ClassKind.ENUM_ENTRY && this is KtClass -> delegatedEnumSuperTypeRef ?: implicitAnyType
+                    else -> implicitAnyType
+                }
+
+
             if (container.superTypeRefs.isEmpty()) {
                 container.superTypeRefs += defaultDelegatedSuperTypeRef
             }
@@ -454,27 +464,45 @@ class RawFirBuilder(session: FirSession, val scopeProvider: FirScopeProvider, va
             return firFile
         }
 
-        override fun visitEnumEntry(enumEntry: KtEnumEntry, data: Unit): FirElement {
-            return withChildClassName(enumEntry.nameAsSafeName) {
-                val firEnumEntry = FirEnumEntryImpl(
-                    enumEntry.toFirSourceElement(),
-                    session,
-                    enumEntry.nameAsSafeName,
-                    scopeProvider,
-                    FirRegularClassSymbol(context.currentClassId)
+        private fun KtEnumEntry.toFirEnumEntry(delegatedEnumSelfTypeRef: FirTypeRef): FirDeclaration {
+            val obj = FirAnonymousObjectImpl(
+                source = toFirSourceElement(),
+                session,
+                ClassKind.ENUM_ENTRY,
+                scopeProvider,
+                FirAnonymousObjectSymbol()
+            )
+            val delegatedEntrySelfType =
+                FirResolvedTypeRefImpl(source = null, ConeClassLikeTypeImpl(obj.symbol.toLookupTag(), emptyArray(), isNullable = false))
+
+            extractSuperTypeListEntriesTo(obj, delegatedEntrySelfType, delegatedEnumSelfTypeRef, ClassKind.ENUM_ENTRY)
+
+            for (declaration in declarations) {
+                obj.declarations += declaration.toFirDeclaration(
+                    delegatedEnumSelfTypeRef,
+                    delegatedSelfType = null,
+                    this,
+                    hasPrimaryConstructor = false
                 )
-                enumEntry.extractAnnotationsTo(firEnumEntry)
-                val delegatedSelfType = enumEntry.toDelegatedSelfType(firEnumEntry)
-                val delegatedSuperType = enumEntry.extractSuperTypeListEntriesTo(firEnumEntry, delegatedSelfType, ClassKind.ENUM_ENTRY)
-                for (declaration in enumEntry.declarations) {
-                    firEnumEntry.addDeclaration(
-                        declaration.toFirDeclaration(
-                            delegatedSuperType, delegatedSelfType, enumEntry, hasPrimaryConstructor = true
-                        )
-                    )
-                }
-                firEnumEntry
             }
+
+            return FirPropertyImpl(
+                source = toFirSourceElement(),
+                session,
+                delegatedEnumSelfTypeRef,
+                receiverTypeRef = null,
+                name = nameAsSafeName,
+                initializer = obj,
+                delegate = null,
+                isVar = false,
+                isLocal = false,
+                status = FirDeclarationStatusImpl(
+                    Visibilities.PUBLIC, Modality.FINAL
+                ).apply {
+                    isStatic = true
+                },
+                symbol = FirPropertySymbol(callableIdForName(nameAsSafeName))
+            )
         }
 
         override fun visitClassOrObject(classOrObject: KtClassOrObject, data: Unit): FirElement {
@@ -525,7 +553,7 @@ class RawFirBuilder(session: FirSession, val scopeProvider: FirScopeProvider, va
                 classOrObject.extractAnnotationsTo(firClass)
                 classOrObject.extractTypeParametersTo(firClass)
                 val delegatedSelfType = classOrObject.toDelegatedSelfType(firClass)
-                val delegatedSuperType = classOrObject.extractSuperTypeListEntriesTo(firClass, delegatedSelfType, classKind)
+                val delegatedSuperType = classOrObject.extractSuperTypeListEntriesTo(firClass, delegatedSelfType, null, classKind)
                 val primaryConstructor = classOrObject.primaryConstructor
                 val firPrimaryConstructor = firClass.declarations.firstOrNull() as? FirConstructor
                 if (primaryConstructor != null && firPrimaryConstructor != null) {
@@ -568,9 +596,11 @@ class RawFirBuilder(session: FirSession, val scopeProvider: FirScopeProvider, va
         override fun visitObjectLiteralExpression(expression: KtObjectLiteralExpression, data: Unit): FirElement {
             val objectDeclaration = expression.objectDeclaration
             return withChildClassName(ANONYMOUS_OBJECT_NAME) {
-                FirAnonymousObjectImpl(expression.toFirSourceElement(), session, scopeProvider, FirAnonymousObjectSymbol()).apply {
+                FirAnonymousObjectImpl(
+                    expression.toFirSourceElement(), session, ClassKind.OBJECT, scopeProvider, FirAnonymousObjectSymbol()
+                ).apply {
                     objectDeclaration.extractAnnotationsTo(this)
-                    objectDeclaration.extractSuperTypeListEntriesTo(this, null, ClassKind.CLASS)
+                    objectDeclaration.extractSuperTypeListEntriesTo(this, null, null, ClassKind.CLASS)
                     this.typeRef = superTypeRefs.first() // TODO
 
                     for (declaration in objectDeclaration.declarations) {

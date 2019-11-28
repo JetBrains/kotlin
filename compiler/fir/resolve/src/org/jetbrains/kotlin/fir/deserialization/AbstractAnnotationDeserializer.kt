@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.fir.deserialization
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.collectEnumEntries
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
@@ -19,7 +21,6 @@ import org.jetbrains.kotlin.fir.resolve.constructType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.FirUnresolvedSymbolError
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirErrorTypeRefImpl
@@ -133,10 +134,14 @@ abstract class AbstractAnnotationDeserializer(
             ENUM -> FirFunctionCallImpl(null).apply {
                 val classId = nameResolver.getClassId(value.classId)
                 val entryName = nameResolver.getName(value.enumValueId)
-                val entryClassId = classId.createNestedClassId(entryName)
-                val entryLookupTag = ConeClassLikeLookupTagImpl(entryClassId)
-                val entrySymbol = entryLookupTag.toSymbol(this@AbstractAnnotationDeserializer.session)
-                this.calleeReference = entrySymbol?.let {
+
+
+                val enumLookupTag = ConeClassLikeLookupTagImpl(classId)
+                val enumSymbol = enumLookupTag.toSymbol(this@AbstractAnnotationDeserializer.session)
+                val firClass = enumSymbol?.fir as? FirRegularClass
+                val enumEntries = firClass?.collectEnumEntries() ?: emptyList()
+                val enumEntrySymbol = enumEntries.find { it.callableId.callableName == entryName }
+                this.calleeReference = enumEntrySymbol?.let {
                     FirResolvedNamedReferenceImpl(null, entryName, it)
                 } ?: FirErrorNamedReferenceImpl(
                     null,
