@@ -1,6 +1,6 @@
 UFile (package = )
     UClass (name = BitwiseKt)
-        UAnnotationMethod (name = foo)
+        UMethod (name = foo)
             UBlockExpression
                 UDeclarationsExpression
                     ULocalVariable (name = mask)
@@ -48,7 +48,7 @@ UFile (package = )
                                 USimpleNameReferenceExpression (identifier = zebra)
                                 USimpleNameReferenceExpression (identifier = signed)
                             USimpleNameReferenceExpression (identifier = one)
-        UAnnotationMethod (name = bar)
+        UMethod (name = bar)
             UBlockExpression
                 UDeclarationsExpression
                     ULocalVariable (name = mask)
