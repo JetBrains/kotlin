@@ -1,6 +1,6 @@
 package org.jetbrains.kotlin.konan.library
 
-import org.jetbrains.kotlin.konan.KonanVersion
+import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.impl.KonanLibraryImpl
 import org.jetbrains.kotlin.konan.library.impl.createKonanLibrary
@@ -21,7 +21,7 @@ fun defaultResolver(
         repositories: List<String>,
         target: KonanTarget,
         distribution: Distribution = Distribution(),
-        compatibleCompilerVersions: List<KonanVersion> = emptyList()
+        compatibleCompilerVersions: List<CompilerVersion> = emptyList()
 ): SearchPathResolverWithTarget<KonanLibrary> = defaultResolver(repositories, emptyList(), target, distribution, compatibleCompilerVersions)
 
 fun defaultResolver(
@@ -29,7 +29,7 @@ fun defaultResolver(
     directLibs: List<String>,
     target: KonanTarget,
     distribution: Distribution,
-    compatibleCompilerVersions: List<KonanVersion> = emptyList(),
+    compatibleCompilerVersions: List<CompilerVersion> = emptyList(),
     logger: Logger = DummyLogger,
     skipCurrentDir: Boolean = false
 ): SearchPathResolverWithTarget<KonanLibrary> = KonanLibraryProperResolver(
@@ -68,7 +68,7 @@ internal class KonanLibraryProperResolver(
     directLibs: List<String>,
     override val target: KonanTarget,
     knownAbiVersions: List<KotlinAbiVersion>?,
-    knownCompilerVersions: List<KonanVersion>?,
+    knownCompilerVersions: List<CompilerVersion>?,
     distributionKlib: String?,
     localKonanDir: String?,
     skipCurrentDir: Boolean,

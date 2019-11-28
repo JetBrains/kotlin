@@ -5,12 +5,14 @@
 package org.jetbrains.kotlin.backend.konan
 
 import llvm.*
+import org.jetbrains.kotlin.backend.common.serialization.KlibIrVersion
+import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.Llvm
 import org.jetbrains.kotlin.backend.konan.llvm.objc.linkObjC
 import org.jetbrains.kotlin.konan.CURRENT
 import org.jetbrains.kotlin.library.KotlinAbiVersion
-import org.jetbrains.kotlin.konan.KonanVersion
+import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.file.isBitcode
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
@@ -122,12 +124,16 @@ internal fun produceOutput(context: Context) {
             val libraryName = context.config.moduleId
             val neededLibraries = context.librariesWithDependencies
             val abiVersion = KotlinAbiVersion.CURRENT
-            val compilerVersion = KonanVersion.CURRENT
+            val compilerVersion = CompilerVersion.CURRENT.toString()
             val libraryVersion = config.get(KonanConfigKeys.LIBRARY_VERSION)
-            val versions = KonanLibraryVersioning(
+            val metadataVersion = KlibMetadataVersion.INSTANCE.toString()
+            val irVersion = KlibIrVersion.INSTANCE.toString()
+            val versions = KotlinLibraryVersioning(
                 abiVersion = abiVersion,
                 libraryVersion = libraryVersion,
-                compilerVersion = compilerVersion
+                compilerVersion = compilerVersion,
+                metadataVersion = metadataVersion,
+                irVersion = irVersion
             )
             val target = context.config.target
             val nopack = config.getBoolean(KonanConfigKeys.NOPACK)

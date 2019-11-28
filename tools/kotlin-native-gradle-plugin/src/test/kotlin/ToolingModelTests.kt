@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.gradle.plugin.konan.KonanPlugin
 import org.jetbrains.kotlin.gradle.plugin.konan.konanArtifactsContainer
 import org.jetbrains.kotlin.gradle.plugin.model.KonanToolingModelBuilder
 import org.jetbrains.kotlin.konan.CURRENT
-import org.jetbrains.kotlin.konan.KonanVersion
+import org.jetbrains.kotlin.konan.CompilerVersion
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import java.io.File
@@ -92,7 +92,7 @@ open class ToolingModelTests {
     @Test
     fun `The model should contain the same data as the Gradle tasks`() {
         val project = KonanProject.createEmpty(projectDirectory, listOf("host", "wasm32")).apply {
-            val konanVersion = KonanVersion.CURRENT.toString()
+            val konanVersion = CompilerVersion.CURRENT.toString()
             generateSrcFile(listOf("src", "foo1"), "foo1.kt", "fun foo1() = 0")
             generateSrcFile(listOf("src", "foo1"), "foo11.kt", "fun foo11() = 0")
             generateSrcFile(listOf("src", "foo2"), "foo2.kt", "fun foo2() = 0")

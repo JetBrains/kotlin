@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.gradle.plugin.konan.KonanInteropSpec.IncludeDirector
 import org.jetbrains.kotlin.gradle.plugin.model.KonanModelArtifact
 import org.jetbrains.kotlin.gradle.plugin.model.KonanModelArtifactImpl
 import org.jetbrains.kotlin.konan.CURRENT
-import org.jetbrains.kotlin.konan.KonanVersion
+import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.library.defaultResolver
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Distribution

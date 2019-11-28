@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.konan.CURRENT
-import org.jetbrains.kotlin.konan.KonanVersion
+import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
@@ -47,7 +47,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                            @Nullable paths: KotlinPaths?): ExitCode {
 
         if (arguments.version) {
-            println("Kotlin/Native: ${KonanVersion.CURRENT}")
+            println("Kotlin/Native: ${CompilerVersion.CURRENT}")
             return ExitCode.OK
         }
 
@@ -82,7 +82,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 |Compilation failed: ${e.message}
 
                 | * Source files: ${environment.getSourceFiles().joinToString(transform = KtFile::getName)}
-                | * Compiler version info: Konan: ${KonanVersion.CURRENT} / Kotlin: ${KotlinVersion.CURRENT}
+                | * Compiler version info: Konan: ${CompilerVersion.CURRENT} / Kotlin: ${KotlinVersion.CURRENT}
                 | * Output kind: ${configuration.get(KonanConfigKeys.PRODUCE)}
 
                 """.trimMargin())

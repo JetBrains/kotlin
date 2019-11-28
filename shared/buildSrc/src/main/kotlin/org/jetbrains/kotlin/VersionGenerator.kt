@@ -16,7 +16,7 @@ open class VersionGenerator: DefaultTask() {
     @OutputDirectory
     val versionSourceDirectory = project.file("build/generated")
     @OutputFile
-    val versionFile:File = project.file("${versionSourceDirectory.path}/org/jetbrains/kotlin/konan/KonanVersionGenerated.kt")
+    val versionFile:File = project.file("${versionSourceDirectory.path}/org/jetbrains/kotlin/konan/CompilerVersionGenerated.kt")
 
     val konanVersion: String
         @Input get() = project.properties["konanVersion"].toString()
@@ -49,11 +49,11 @@ open class VersionGenerator: DefaultTask() {
                 + """
                    |package org.jetbrains.kotlin.konan
                    |
-                   |internal val currentKonanVersion: KonanVersion =
-                   |    KonanVersionImpl($meta, $major, $minor, $maintenance, $build)
+                   |internal val currentCompilerVersion: CompilerVersion =
+                   |    CompilerVersionImpl($meta, $major, $minor, $maintenance, $build)
                    |
-                   |val KonanVersion.Companion.CURRENT: KonanVersion
-                   |    get() = currentKonanVersion
+                   |val CompilerVersion.Companion.CURRENT: CompilerVersion
+                   |    get() = currentCompilerVersion
                 """.trimMargin()
             }
             versionFile.printWriter().use {

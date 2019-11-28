@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.model
 
-import org.jetbrains.kotlin.konan.KonanVersion
+import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import java.io.File
 import java.io.Serializable
@@ -27,7 +27,7 @@ import java.io.Serializable
  */
 interface KonanModel : Serializable {
     val konanHome: File
-    val konanVersion: KonanVersion
+    val konanVersion: CompilerVersion
     val languageVersion: String?
     val apiVersion: String?
 

@@ -25,7 +25,7 @@ import org.gradle.api.tasks.Internal
 import org.jetbrains.kotlin.gradle.plugin.tasks.KonanArtifactWithLibrariesTask
 import org.jetbrains.kotlin.gradle.plugin.tasks.KonanBuildingTask
 import org.jetbrains.kotlin.konan.*
-import org.jetbrains.kotlin.konan.KonanVersion
+import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.library.defaultResolver
 import org.jetbrains.kotlin.konan.library.impl.KonanLibraryImpl
 import org.jetbrains.kotlin.konan.target.Distribution

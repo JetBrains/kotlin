@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.util.Logger
 import kotlin.system.exitProcess
 import org.jetbrains.kotlin.library.toUnresolvedLibraries
-import org.jetbrains.kotlin.konan.KonanVersion
+import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.resolver.impl.libraryResolver
 import org.jetbrains.kotlin.library.UnresolvedLibrary
@@ -54,7 +54,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     val needCompilerVerification: Boolean
         get() = configuration.get(KonanConfigKeys.VERIFY_COMPILER) ?:
             (configuration.getBoolean(KonanConfigKeys.OPTIMIZATION) ||
-                KonanVersion.CURRENT.meta != MetaVersion.RELEASE)
+                CompilerVersion.CURRENT.meta != MetaVersion.RELEASE)
 
     init {
         if (!platformManager.isEnabled(target)) {
@@ -112,8 +112,8 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             }
         }
 
-    private val compatibleCompilerVersions: List<KonanVersion> =
-        configuration.getList(KonanConfigKeys.COMPATIBLE_COMPILER_VERSIONS).map { it.parseKonanVersion() }
+    private val compatibleCompilerVersions: List<CompilerVersion> =
+        configuration.getList(KonanConfigKeys.COMPATIBLE_COMPILER_VERSIONS).map { it.parseCompilerVersion() }
 
     private val resolver = defaultResolver(
         repositories,

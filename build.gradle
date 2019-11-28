@@ -76,7 +76,7 @@ ext {
     kotlinNativeUtilsModule="org.jetbrains.kotlin:kotlin-native-utils:${kotlinVersion}"
     kotlinUtilKliMetadatabModule="org.jetbrains.kotlin:kotlin-util-klib-metadata:${kotlinVersion}"
 
-    konanVersionFull = KonanVersionGeneratedKt.getCurrentKonanVersion()
+    konanVersionFull = CompilerVersionGeneratedKt.getCurrentCompilerVersion()
     gradlePluginVersion = konanVersionFull
 }
 
@@ -631,7 +631,7 @@ task uploadBundle {
     }
 }
 
-task teamcityKonanVersion {
+task teamcityCompilerVersion {
     doLast {
         println("##teamcity[setParameter name='kotlin.native.version.base' value='$konanVersion']")
         println("##teamcity[setParameter name='kotlin.native.version.full' value='$konanVersionFull']")
@@ -650,7 +650,7 @@ task clean {
 
 task pusher(type: KotlinBuildPusher){
     kotlinVersion = project.kotlinVersion
-    konanVersion = KonanVersionGeneratedKt.getCurrentKonanVersion()
+    konanVersion = CompilerVersionGeneratedKt.getCurrentCompilerVersion()
     buildServer = "buildserver.labs.intellij.net"
     compilerConfigurationId = System.getenv("TEAMCITY_COMPILER_ID") ?: "Kotlin_KotlinDev_Compiler"
     overrideConfigurationId = System.getenv("TEAMCITY_OVERRIDE_NATIVE_ID") ?: "Kotlin_KotlinDev_DeployMavenArtifacts_OverrideNative"

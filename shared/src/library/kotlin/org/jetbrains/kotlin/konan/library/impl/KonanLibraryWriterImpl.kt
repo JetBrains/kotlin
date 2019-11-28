@@ -20,14 +20,13 @@ class KonanLibraryLayoutForWriter(
     override val target: KonanTarget
 ) : KonanLibraryLayout, KotlinLibraryLayoutForWriter(libDir)
 
-
 /**
  * Requires non-null [target].
  */
 class KonanLibraryWriterImpl(
         libDir: File,
         moduleName: String,
-        versions: KonanLibraryVersioning,
+        versions: KotlinLibraryVersioning,
         target: KonanTarget,
         nopack: Boolean = false,
 
@@ -46,7 +45,7 @@ fun buildLibrary(
     linkDependencies: List<KonanLibrary>,
     metadata: SerializedMetadata,
     ir: SerializedIrModule,
-    versions: KonanLibraryVersioning,
+    versions: KotlinLibraryVersioning,
     target: KonanTarget,
     output: String,
     moduleName: String,

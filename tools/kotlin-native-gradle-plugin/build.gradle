@@ -44,7 +44,7 @@ apply plugin: 'groovy'
 apply plugin: 'com.github.johnrengelman.shadow'
 
 group = 'org.jetbrains.kotlin'
-version = KonanVersionGeneratedKt.getCurrentKonanVersion()
+version = CompilerVersionGeneratedKt.getCurrentCompilerVersion()
 
 repositories {
     mavenCentral()

@@ -35,8 +35,8 @@ import org.jetbrains.kotlin.gradle.plugin.konan.KonanPlugin.Companion.COMPILE_AL
 import org.jetbrains.kotlin.gradle.plugin.model.KonanToolingModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.tasks.*
 import org.jetbrains.kotlin.konan.CURRENT
-import org.jetbrains.kotlin.konan.KonanVersion
-import org.jetbrains.kotlin.konan.parseKonanVersion
+import org.jetbrains.kotlin.konan.CompilerVersion
+import org.jetbrains.kotlin.konan.parseCompilerVersion
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.buildDistribution
@@ -89,10 +89,10 @@ internal val Project.konanHome: String
         return project.file(getProperty(KonanPlugin.ProjectProperty.KONAN_HOME)).canonicalPath
     }
 
-internal val Project.konanVersion: KonanVersion
+internal val Project.konanVersion: CompilerVersion
     get() = project.findProperty(KonanPlugin.ProjectProperty.KONAN_VERSION)
-        ?.toString()?.let { KonanVersion.fromString(it) }
-        ?: KonanVersion.CURRENT
+        ?.toString()?.let { CompilerVersion.fromString(it) }
+        ?: CompilerVersion.CURRENT
 
 internal val Project.konanBuildRoot          get() = buildDir.resolve("konan")
 internal val Project.konanBinBaseDir         get() = konanBuildRoot.resolve("bin")
@@ -233,7 +233,7 @@ internal fun dumpProperties(task: Task) {
             println("target             : $target")
             println("languageVersion    : $languageVersion")
             println("apiVersion         : $apiVersion")
-            println("konanVersion       : ${KonanVersion.CURRENT}")
+            println("konanVersion       : ${CompilerVersion.CURRENT}")
             println("konanHome          : $konanHome")
             println()
         }
@@ -254,7 +254,7 @@ internal fun dumpProperties(task: Task) {
             println("linkerOpts         : $linkerOpts")
             println("headers            : ${headers.dump()}")
             println("linkFiles          : ${linkFiles.dump()}")
-            println("konanVersion       : ${KonanVersion.CURRENT}")
+            println("konanVersion       : ${CompilerVersion.CURRENT}")
             println("konanHome          : $konanHome")
             println()
         }
