@@ -133,6 +133,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         runTest("compiler/fir/resolve/testData/resolve/stdlib/multipleImplicitReceivers.kt");
     }
 
+    @TestMetadata("noneWithForEach.kt")
+    public void testNoneWithForEach() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/stdlib/noneWithForEach.kt");
+    }
+
     @TestMetadata("nullableTypeParameter.kt")
     public void testNullableTypeParameter() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/stdlib/nullableTypeParameter.kt");
@@ -522,6 +527,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         @TestMetadata("StaticGenericMethod.kt")
         public void testStaticGenericMethod() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/stdlib/j+k/StaticGenericMethod.kt");
+        }
+
+        @TestMetadata("SyntheticWithForEach.kt")
+        public void testSyntheticWithForEach() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/stdlib/j+k/SyntheticWithForEach.kt");
         }
 
         @TestMetadata("typeParameterUse.kt")

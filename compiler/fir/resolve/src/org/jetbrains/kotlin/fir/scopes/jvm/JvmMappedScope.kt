@@ -15,14 +15,14 @@ import org.jetbrains.kotlin.name.Name
 
 class JvmMappedScope(
     private val declaredMemberScope: FirScope,
-    private val javaMappedScope: FirScope,
+    private val javaMappedClassUseSiteScope: FirScope,
     private val whiteListSignaturesByName: Map<Name, List<String>>
 ) : FirScope() {
 
     override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> ProcessorAction): ProcessorAction {
         val whiteListSignatures = whiteListSignaturesByName[name]
             ?: return declaredMemberScope.processFunctionsByName(name, processor)
-        if (!javaMappedScope.processFunctionsByName(name) { symbol ->
+        if (!javaMappedClassUseSiteScope.processFunctionsByName(name) { symbol ->
                 val jvmSignature = symbol.fir.computeJvmDescriptor()
                 if (jvmSignature !in whiteListSignatures) {
                     ProcessorAction.NEXT

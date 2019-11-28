@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.fir.scopes.jvm.JvmMappedScope
 import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassErrorType
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -57,11 +59,12 @@ abstract class FirSymbolProvider : FirSessionComponent {
     ): FirScope?
 
     protected fun wrapScopeWithJvmMapped(
-        classId: ClassId,
+        klass: FirClass<*>,
         declaredMemberScope: FirScope,
         useSiteSession: FirSession,
         scopeSession: ScopeSession
     ): FirScope {
+        val classId = klass.classId
         val javaClassId = JavaToKotlinClassMap.mapKotlinToJava(classId.asSingleFqName().toUnsafe())
             ?: return declaredMemberScope
         val symbolProvider = useSiteSession.firSymbolProvider
@@ -69,8 +72,17 @@ abstract class FirSymbolProvider : FirSessionComponent {
             ?: return declaredMemberScope
         val preparedSignatures = JvmMappedScope.prepareSignatures(javaClass)
         return if (preparedSignatures.isNotEmpty()) {
-            symbolProvider.getClassUseSiteMemberScope(javaClassId, useSiteSession, scopeSession)?.let {
-                JvmMappedScope(declaredMemberScope, it, preparedSignatures)
+            symbolProvider.getClassUseSiteMemberScope(javaClassId, useSiteSession, scopeSession)?.let { javaClassUseSiteScope ->
+                val jvmMappedScope = JvmMappedScope(declaredMemberScope, javaClassUseSiteScope, preparedSignatures)
+                if (klass !is FirRegularClass) {
+                    jvmMappedScope
+                } else {
+                    // We should substitute Java type parameters with base Kotlin type parameters to match overrides perfectly
+                    (klass.symbol.constructType(
+                        klass.typeParameters.map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false) }.toTypedArray(),
+                        false
+                    ) as ConeClassLikeType).wrapSubstitutionScopeIfNeed(useSiteSession, jvmMappedScope, klass, scopeSession)
+                }
             } ?: declaredMemberScope
         } else {
             declaredMemberScope
@@ -82,7 +94,7 @@ abstract class FirSymbolProvider : FirSessionComponent {
 
             val declaredScope = declaredMemberScope(klass)
             val wrappedDeclaredScope = wrapScopeWithJvmMapped(
-                klass.classId, declaredScope, useSiteSession, scopeSession
+                klass, declaredScope, useSiteSession, scopeSession
             )
             val scopes = lookupSuperTypes(klass, lookupInterfaces = true, deep = false, useSiteSession = useSiteSession)
                 .mapNotNull { useSiteSuperType ->

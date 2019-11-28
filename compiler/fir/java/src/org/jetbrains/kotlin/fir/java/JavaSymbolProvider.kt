@@ -100,7 +100,7 @@ class JavaSymbolProvider(
                 useLazyNestedClassifierScope = regularClass is FirJavaClass,
                 existingNames = (regularClass as? FirJavaClass)?.existingNestedClassifierNames
             )
-            val wrappedDeclaredScope = wrapScopeWithJvmMapped(regularClass.classId, declaredScope, useSiteSession, scopeSession)
+            val wrappedDeclaredScope = wrapScopeWithJvmMapped(regularClass, declaredScope, useSiteSession, scopeSession)
             val superTypeEnhancementScopes =
                 lookupSuperTypes(regularClass, lookupInterfaces = true, deep = false, useSiteSession = useSiteSession)
                     .mapNotNull { useSiteSuperType ->
