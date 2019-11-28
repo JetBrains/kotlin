@@ -1,4 +1,5 @@
 // WITH_RUNTIME
+// FULL_JDK
 
 /*
  * KOTLIN CODEGEN BOX SPEC TEST (POSITIVE)
@@ -9,6 +10,7 @@
  * DESCRIPTION:
  */
 
+import java.util.*
 
 fun box() : String{
     val deque1 = ArrayDeque<Any>()
@@ -26,6 +28,6 @@ fun box() : String{
     return "NOK"
 }
 
-fun <T> move(from: Queue<out T>, to: Queue<in T>) {
+fun <T> move(from: ArrayDeque<out T>, to: ArrayDeque<in T>) {
     to.add(from.last())
 }
