@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.backend.konan.serialization
 
 import org.jetbrains.kotlin.backend.common.LoggingContext
+import org.jetbrains.kotlin.backend.common.descriptors.propertyIfAccessor
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.konan.descriptors.isFromInteropLibrary
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -22,7 +23,8 @@ private class KonanDeclarationTable(
      */
     override fun tryComputeBackendSpecificUniqId(declaration: IrDeclaration): UniqId? {
         return if (declaration.descriptor.module.isFromInteropLibrary()) {
-            UniqId(declaration.descriptor.getUniqId() ?: error("No uniq id found for ${declaration.descriptor}"))
+            // Property accessor doesn't provide UniqId so we need to get it from the property itself.
+            UniqId(declaration.descriptor.propertyIfAccessor.getUniqId() ?: error("No uniq id found for ${declaration.descriptor}"))
         } else {
             null
         }
