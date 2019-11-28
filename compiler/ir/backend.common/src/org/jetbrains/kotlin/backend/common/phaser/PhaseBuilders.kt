@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.phaser
 
+import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower
@@ -174,7 +175,11 @@ fun <Context : CommonBackendContext> performByIrFile(
             input: IrModuleFragment
         ): IrModuleFragment {
             for (irFile in input.files) {
-                lower.invoke(phaseConfig, phaserState.changeType(), context, irFile)
+                try {
+                    lower.invoke(phaseConfig, phaserState.changeType(), context, irFile)
+                } catch (e: Throwable) {
+                    CodegenUtil.reportBackendException(e, "IR lowering", irFile.fileEntry.name)
+                }
             }
 
             // TODO: no guarantee that module identity is preserved by `lower`

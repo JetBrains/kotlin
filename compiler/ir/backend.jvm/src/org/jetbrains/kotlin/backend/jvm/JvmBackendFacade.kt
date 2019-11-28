@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
+import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen
 import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmMangler
-import org.jetbrains.kotlin.codegen.CompilationErrorHandler
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -71,11 +71,7 @@ object JvmBackendFacade {
             context.typeMapper.mapType(context.referenceClass(descriptor).defaultType)
         }
 
-        try {
-            JvmLower(context).lower(irModuleFragment)
-        } catch (e: Throwable) {
-            CompilationErrorHandler.reportException(e, null)
-        }
+        JvmLower(context).lower(irModuleFragment)
 
         for (generateMultifileFacade in listOf(true, false)) {
             for (irFile in irModuleFragment.files) {
@@ -95,7 +91,7 @@ object JvmBackendFacade {
                     }
                     state.afterIndependentPart()
                 } catch (e: Throwable) {
-                    CompilationErrorHandler.reportException(e, null) // TODO ktFile.virtualFile.url
+                    CodegenUtil.reportBackendException(e, "code generation", irFile.fileEntry.name)
                 }
             }
         }

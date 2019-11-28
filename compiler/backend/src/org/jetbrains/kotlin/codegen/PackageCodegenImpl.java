@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.SmartList;
@@ -28,7 +27,6 @@ import org.jetbrains.kotlin.codegen.context.PackageContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
-import org.jetbrains.kotlin.diagnostics.DiagnosticUtils;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.name.FqName;
@@ -73,12 +71,7 @@ public class PackageCodegenImpl implements PackageCodegen {
             }
             catch (Throwable e) {
                 VirtualFile vFile = file.getVirtualFile();
-                CompilationErrorHandler.reportException(e, vFile == null ? "no file" : vFile.getUrl());
-                DiagnosticUtils.throwIfRunningOnServer(e);
-                if (ApplicationManager.getApplication().isInternal()) {
-                    //noinspection CallToPrintStackTrace
-                    e.printStackTrace();
-                }
+                CodegenUtil.reportBackendException(e, "file facade code generation", vFile == null ? null : vFile.getUrl());
             }
         }
     }

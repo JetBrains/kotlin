@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.codegen
 
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.codegen.context.FieldOwnerContext
@@ -25,7 +24,6 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
@@ -171,11 +169,7 @@ class MultifileClassCodegenImpl(
             } catch (e: ProcessCanceledException) {
                 throw e
             } catch (e: Throwable) {
-                CompilationErrorHandler.reportException(e, file.virtualFile?.url ?: "no file")
-                DiagnosticUtils.throwIfRunningOnServer(e)
-                if (ApplicationManager.getApplication().isInternal) {
-                    e.printStackTrace()
-                }
+                CodegenUtil.reportBackendException(e, "multi-file class part code generation", file.virtualFile?.url)
             }
         }
     }
@@ -288,7 +282,7 @@ class MultifileClassCodegenImpl(
     }
 
     object DelegateToCompiledMemberGenerationStrategy : FunctionGenerationStrategy() {
-        override fun skipNotNullAssertionsForParameters(): kotlin.Boolean {
+        override fun skipNotNullAssertionsForParameters(): Boolean {
             throw IllegalStateException("shouldn't be called")
         }
 

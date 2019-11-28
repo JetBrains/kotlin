@@ -23,7 +23,9 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.util.getExceptionMessage
 import org.jetbrains.kotlin.utils.DFS
+import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
 object CodegenUtil {
     @JvmStatic
@@ -234,6 +236,17 @@ object CodegenUtil {
             listOf(this),
             { current -> current.overriddenDescriptors.map(ValueParameterDescriptor::getOriginal) },
             { it.declaresDefaultValue() }
+        )
+    }
+
+    @JvmStatic
+    fun reportBackendException(exception: Throwable, phase: String, fileUrl: String?): Nothing {
+        // CompilationException (the only KotlinExceptionWithAttachments possible here) is already supposed
+        // to have all information about the context.
+        if (exception is KotlinExceptionWithAttachments) throw exception
+        throw IllegalStateException(
+            getExceptionMessage("Backend", "Exception during $phase", exception, fileUrl),
+            exception
         )
     }
 }
