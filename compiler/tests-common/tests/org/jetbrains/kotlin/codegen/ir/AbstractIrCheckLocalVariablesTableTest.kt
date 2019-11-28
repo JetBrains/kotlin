@@ -30,15 +30,25 @@ abstract class AbstractIrCheckLocalVariablesTableTest : AbstractCheckLocalVariab
 
     private fun getActualVariablesAsList(list: List<LocalVariable>): List<String> {
         return list.map { it.toString() }
-            .map { line -> line.replaceFirst("INDEX=\\d+".toRegex(), "INDEX=*") } // Ignore index
+            // Ignore local index.
+            .map { line -> line.replaceFirst("INDEX=\\d+".toRegex(), "INDEX=*") }
+            // Ignore the names of local functions which have integer names in
+            // the current backend and more descriptive names with the JVM_IR
+            // backend.
+            .map { line -> line.replace("\\\$\\d+".toRegex(), "\\\$*") }
+            .map { line -> line.replace("\\\$lambda-\\d+".toRegex(), "\\\$*") }
             .sorted()
     }
 
     private fun getExpectedVariablesAsList(testFile: File): List<String> {
         return testFile.readLines()
             .filter { line -> line.startsWith("// VARIABLE ") }
-            .filter { !it.contains("NAME=\$i\$") }
-            .map { line -> line.replaceFirst("INDEX=\\d+".toRegex(), "INDEX=*") } // Ignore index
+            // Ignore local index.
+            .map { line -> line.replaceFirst("INDEX=\\d+".toRegex(), "INDEX=*") }
+            // Ignore the names of local functions which have integer names in
+            // the current backend and more descriptive names with the JVM_IR
+            // backend.
+            .map { line -> line.replace("\\\$\\d+".toRegex(), "\\\$*") }
             .sorted()
     }
 

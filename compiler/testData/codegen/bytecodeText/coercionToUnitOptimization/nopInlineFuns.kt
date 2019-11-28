@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 fun test() {
     val a = inlineFunInt { 1 }
     val b = simpleFunInt { 1 }
