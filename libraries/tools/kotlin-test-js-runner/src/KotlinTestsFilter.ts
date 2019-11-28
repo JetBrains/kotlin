@@ -137,7 +137,7 @@ export class ExactFilter implements KotlinTestsFilter {
         }
 
         // Exact filter by class name only
-        const regexp = RegExp(`^${escapeRegExp(this.fqn + ".")}\\w+$`);
+        const regexp = RegExp(`^${escapeRegExp(this.fqn + ".")}[^\.]+$`);
         return regexp.test(fqn)
     }
 }
