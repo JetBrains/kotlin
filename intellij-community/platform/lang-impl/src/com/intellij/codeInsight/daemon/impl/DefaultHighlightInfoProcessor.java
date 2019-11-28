@@ -99,17 +99,14 @@ public class DefaultHighlightInfoProcessor extends HighlightInfoProcessor {
   public void allHighlightsForRangeAreProduced(@NotNull HighlightingSession session,
                                                @NotNull TextRange elementRange,
                                                @Nullable List<? extends HighlightInfo> infos) {
-    PsiFile psiFile = session.getPsiFile();
-    killAbandonedHighlightsUnder(psiFile, elementRange, infos, session);
+    killAbandonedHighlightsUnder(session.getProject(), session.getDocument(), elementRange, infos, session);
   }
 
-  private static void killAbandonedHighlightsUnder(@NotNull PsiFile psiFile,
+  private static void killAbandonedHighlightsUnder(@NotNull Project project,
+                                                   @NotNull Document document,
                                                    @NotNull final TextRange range,
                                                    @Nullable final List<? extends HighlightInfo> infos,
                                                    @NotNull final HighlightingSession highlightingSession) {
-    final Project project = psiFile.getProject();
-    final Document document = PsiDocumentManager.getInstance(project).getDocument(psiFile);
-    if (document == null) return;
     DaemonCodeAnalyzerEx.processHighlights(document, project, null, range.getStartOffset(), range.getEndOffset(), existing -> {
         if (existing.isBijective() &&
             existing.getGroup() == Pass.UPDATE_ALL &&
