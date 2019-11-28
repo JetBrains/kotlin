@@ -7680,6 +7680,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 runTest("testData/intentions/declarations/convertMemberToExtension/abstractProperty.kt");
             }
 
+            @TestMetadata("delegatedProperty.kt")
+            public void testDelegatedProperty() throws Exception {
+                runTest("testData/intentions/declarations/convertMemberToExtension/delegatedProperty.kt");
+            }
+
             @TestMetadata("explicitUnit.kt")
             public void testExplicitUnit() throws Exception {
                 runTest("testData/intentions/declarations/convertMemberToExtension/explicitUnit.kt");
