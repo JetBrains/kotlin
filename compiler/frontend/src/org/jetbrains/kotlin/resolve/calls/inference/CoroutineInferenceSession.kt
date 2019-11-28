@@ -206,7 +206,7 @@ class CoroutineInferenceSession(
         val atomCompleter = createResolvedAtomCompleter(resultingSubstitutor, completedCall.context)
         val resultCallAtom = completedCall.callResolutionResult.resultCallAtom
 
-        for (subResolvedAtom in resultCallAtom.subResolvedAtoms) {
+        resultCallAtom.subResolvedAtoms?.forEach { subResolvedAtom ->
             atomCompleter.completeAll(subResolvedAtom)
         }
         atomCompleter.completeResolvedCall(resultCallAtom, completedCall.callResolutionResult.diagnostics)

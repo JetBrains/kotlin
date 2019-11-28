@@ -139,7 +139,7 @@ class KotlinToResolvedCallTransformer(
                 )
 
                 if (!ErrorUtils.isError(candidate.candidateDescriptor)) {
-                    for (subKtPrimitive in candidate.subResolvedAtoms) {
+                    candidate.subResolvedAtoms?.forEach { subKtPrimitive ->
                         ktPrimitiveCompleter.completeAll(subKtPrimitive)
                     }
                 }

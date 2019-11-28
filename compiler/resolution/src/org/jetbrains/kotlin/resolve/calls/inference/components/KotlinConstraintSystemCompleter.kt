@@ -145,7 +145,7 @@ class KotlinConstraintSystemCompleter(
             to.addIfNotNull(this.safeAs<PostponedResolvedAtom>()?.takeUnless { it.analyzed })
 
             if (analyzed) {
-                subResolvedAtoms.forEach { it.process(to) }
+                subResolvedAtoms?.forEach { it.process(to) }
             }
         }
 
@@ -177,7 +177,7 @@ class KotlinConstraintSystemCompleter(
             }
 
             if (analyzed) {
-                subResolvedAtoms.forEach { it.process(to) }
+                subResolvedAtoms?.forEach { it.process(to) }
             }
         }
 
@@ -257,7 +257,7 @@ class KotlinConstraintSystemCompleter(
                 return this
             }
 
-            subResolvedAtoms.forEach { subResolvedAtom ->
+            subResolvedAtoms?.forEach { subResolvedAtom ->
                 subResolvedAtom.check()?.let { result -> return@check result }
             }
 

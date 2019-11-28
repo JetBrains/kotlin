@@ -37,7 +37,7 @@ sealed class ResolvedAtom {
     var analyzed: Boolean = false
         private set
 
-    lateinit var subResolvedAtoms: List<ResolvedAtom>
+    var subResolvedAtoms: List<ResolvedAtom>? = null
         private set
 
     protected open fun setAnalyzedResults(subResolvedAtoms: List<ResolvedAtom>) {

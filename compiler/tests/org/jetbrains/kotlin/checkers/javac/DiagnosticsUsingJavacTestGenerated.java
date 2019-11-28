@@ -8019,6 +8019,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/functionLiterals/LabeledFunctionLiterals.kt");
             }
 
+            @TestMetadata("prematurelyAnalyzingLambdaWhileFixingTypeVariableForAnotherArgument.kt")
+            public void testPrematurelyAnalyzingLambdaWhileFixingTypeVariableForAnotherArgument() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/functionLiterals/prematurelyAnalyzingLambdaWhileFixingTypeVariableForAnotherArgument.kt");
+            }
+
             @TestMetadata("returnNull.kt")
             public void testReturnNull() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/functionLiterals/returnNull.kt");
