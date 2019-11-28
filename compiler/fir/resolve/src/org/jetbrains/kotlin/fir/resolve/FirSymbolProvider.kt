@@ -77,7 +77,8 @@ abstract class FirSymbolProvider : FirSessionComponent {
                 if (klass !is FirRegularClass) {
                     jvmMappedScope
                 } else {
-                    // We should substitute Java type parameters with base Kotlin type parameters to match overrides perfectly
+                    // We should substitute Java type parameters with base Kotlin type parameters to match overrides properly
+                    // It's necessary for MutableMap, which has *two* JavaMappedScope inside (one for itself and another for base Map)
                     (klass.symbol.constructType(
                         klass.typeParameters.map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false) }.toTypedArray(),
                         false
