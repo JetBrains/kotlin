@@ -649,9 +649,13 @@ class Fir2IrVisitor(
         }
         return returnExpression.convertWithOffsets { startOffset, endOffset ->
             val result = returnExpression.result
+            val descriptor = irTarget.descriptor
             IrReturnImpl(
                 startOffset, endOffset, nothingType,
-                symbolTable.referenceSimpleFunction(irTarget.descriptor),
+                when (descriptor) {
+                    is ClassConstructorDescriptor -> symbolTable.referenceConstructor(descriptor)
+                    else -> symbolTable.referenceSimpleFunction(descriptor)
+                },
                 result.toIrExpression()
             )
         }
