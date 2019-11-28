@@ -27,7 +27,8 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 class ExecutionManagerKtImpl(project: Project) : ExecutionManagerImpl(project) {
   @set:TestOnly
-  @Volatile var forceCompilationInTests: Boolean = false
+  @Volatile
+  var forceCompilationInTests: Boolean = false
 
   override fun startRunProfile(starter: RunProfileStarter, state: RunProfileState, environment: ExecutionEnvironment) {
     val activity = triggerUsage(environment)
@@ -38,7 +39,6 @@ class ExecutionManagerKtImpl(project: Project) : ExecutionManagerImpl(project) {
       reuseContent.executionId = environment.executionId
       environment.contentToReuse = reuseContent
     }
-
 
     val executor = environment.executor
     project.messageBus.syncPublisher(ExecutionManager.EXECUTION_TOPIC).processStartScheduled(executor.id, environment)
