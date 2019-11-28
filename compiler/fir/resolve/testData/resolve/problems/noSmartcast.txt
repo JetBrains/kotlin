@@ -8,7 +8,7 @@ FILE: noSmartcast.kt
     }
     public final fun test(a: R|kotlin/Any|): R|kotlin/Unit| {
         when () {
-            R|/takeA|(when (lval <elvis>: R|A?| = (R|<local>/a| as R|A?|)) {
+            R|/takeA|(when (lval <elvis>: R|A?| = (R|<local>/a| as? R|A|)) {
                 ==($subj$, Null(null)) ->  {
                     ^test Unit
                 }
@@ -17,7 +17,7 @@ FILE: noSmartcast.kt
                 }
             }
             ) ->  {
-                R|<local>/a|.R|/A.foo|()
+                R|<local>/a|.<Unresolved name: foo>#()
             }
         }
 
