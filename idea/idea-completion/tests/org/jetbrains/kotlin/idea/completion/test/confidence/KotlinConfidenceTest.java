@@ -155,7 +155,7 @@ public class KotlinConfidenceTest extends LightCompletionTestCase {
         new CodeCompletionHandlerBase(CompletionType.BASIC, false, true, true).invokeCompletion(
                 getProject(), getEditor(), 0, false);
 
-        LookupImpl lookup = (LookupImpl) LookupManager.getActiveLookup(myEditor);
+        LookupImpl lookup = (LookupImpl) LookupManager.getActiveLookup(getEditor());
         myItems = lookup == null ? null : lookup.getItems().toArray(LookupElement.EMPTY_ARRAY);
         myPrefix = lookup == null ? null : lookup.itemPattern(lookup.getItems().get(0));
     }

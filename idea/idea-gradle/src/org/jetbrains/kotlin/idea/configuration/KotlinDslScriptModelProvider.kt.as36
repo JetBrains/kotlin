@@ -6,28 +6,28 @@
 package org.jetbrains.kotlin.idea.configuration
 
 import org.gradle.tooling.BuildController
-import org.gradle.tooling.model.Model
-import org.gradle.tooling.model.gradle.GradleBuild
+import org.gradle.tooling.model.idea.IdeaModule
+import org.gradle.tooling.model.idea.IdeaProject
 import org.gradle.tooling.model.kotlin.dsl.KotlinDslScriptsModel
-import org.jetbrains.plugins.gradle.model.ProjectImportModelProvider
+import org.jetbrains.plugins.gradle.model.ProjectImportExtraModelProvider
 
-class KotlinDslScriptModelProvider : ProjectImportModelProvider {
+class KotlinDslScriptModelProvider : ProjectImportExtraModelProvider {
     private val kotlinDslScriptModelClass: Class<*> = KotlinDslScriptsModel::class.java
 
     override fun populateBuildModels(
         controller: BuildController,
-        buildModel: GradleBuild,
-        consumer: ProjectImportModelProvider.BuildModelConsumer
+        project: IdeaProject,
+        consumer: ProjectImportExtraModelProvider.BuildModelConsumer
     ) {
         val model = controller.findModel(kotlinDslScriptModelClass)
         if (model != null) {
-            consumer.consume(buildModel, model, kotlinDslScriptModelClass)
+            consumer.consume(null, model, kotlinDslScriptModelClass)
         }
     }
 
     override fun populateProjectModels(
         controller: BuildController,
-        projectModel: Model,
-        modelConsumer: ProjectImportModelProvider.ProjectModelConsumer
+        module: IdeaModule?,
+        modelConsumer: ProjectImportExtraModelProvider.ProjectModelConsumer
     ) = Unit
 }

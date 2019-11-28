@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.editor;
 
+import com.intellij.application.options.CodeStyle;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.testFramework.EditorTestUtil;
@@ -53,9 +54,9 @@ public class KotlinCommenterTest extends KotlinLightCodeInsightTestCase {
     private void doLineCommentTest() throws Exception {
         configure();
 
-        CodeStyleSettings codeStyleSettings = FormatSettingsUtil.getSettings(getProject());
+        CodeStyleSettings codeStyleSettings = CodeStyle.getSettings(getProject_());
         try {
-            String text = myFile.getText();
+            String text = getFile_().getText();
 
             SettingsConfigurator configurator = FormatSettingsUtil.createConfigurator(text, codeStyleSettings);
             configurator.configureSettings();

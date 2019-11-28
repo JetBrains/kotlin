@@ -14,7 +14,7 @@ import org.gradle.tooling.model.kotlin.dsl.KotlinDslModelsParameters.*
 import org.gradle.tooling.model.kotlin.dsl.KotlinDslScriptsModel
 import org.jetbrains.kotlin.idea.scripting.gradle.kotlinDslScriptsModelImportSupported
 import org.jetbrains.kotlin.idea.scripting.gradle.minimal_gradle_version_supported
-import org.jetbrains.plugins.gradle.model.ProjectImportExtraModelProvider
+import org.jetbrains.plugins.gradle.model.ProjectImportModelProvider
 import org.jetbrains.plugins.gradle.service.project.AbstractProjectResolverExtension
 
 class KotlinGradleBuildScriptsResolver : AbstractProjectResolverExtension() {
@@ -37,7 +37,7 @@ class KotlinGradleBuildScriptsResolver : AbstractProjectResolverExtension() {
         )
     }
 
-    override fun getExtraModelProvider(): ProjectImportExtraModelProvider {
+    override fun getModelProvider(): ProjectImportModelProvider {
         return KotlinDslScriptModelProvider()
     }
 

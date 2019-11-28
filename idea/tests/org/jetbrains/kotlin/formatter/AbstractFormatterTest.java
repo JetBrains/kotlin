@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.formatter;
 
+import com.intellij.application.options.CodeStyle;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.editor.Document;
@@ -46,13 +47,13 @@ public abstract class AbstractFormatterTest extends KotlinLightIdeaTestCase {
         ACTIONS.put(Action.REFORMAT, new TestFormatAction() {
             @Override
             public void run(PsiFile psiFile, int startOffset, int endOffset) {
-                CodeStyleManager.getInstance(getProject()).reformatText(psiFile, startOffset, endOffset);
+                CodeStyleManager.getInstance(psiFile.getProject()).reformatText(psiFile, startOffset, endOffset);
             }
         });
         ACTIONS.put(Action.INDENT, new TestFormatAction() {
             @Override
             public void run(PsiFile psiFile, int startOffset, int endOffset) {
-                CodeStyleManager.getInstance(getProject()).adjustLineIndent(psiFile, startOffset);
+                CodeStyleManager.getInstance(psiFile.getProject()).adjustLineIndent(psiFile, startOffset);
             }
         });
     }
@@ -131,7 +132,7 @@ public abstract class AbstractFormatterTest extends KotlinLightIdeaTestCase {
         String testFileExtension = expectedFileNameWithExtension.substring(expectedFileNameWithExtension.lastIndexOf("."));
         String originalFileText = FileUtil.loadFile(new File(testFileName + testFileExtension), true);
 
-        CodeStyleSettings codeStyleSettings = FormatSettingsUtil.getSettings(getProject());
+        CodeStyleSettings codeStyleSettings = CodeStyle.getSettings(getProject_());
         try {
             Integer rightMargin = InTextDirectivesUtils.getPrefixedInt(originalFileText, "// RIGHT_MARGIN: ");
             if (rightMargin != null) {
