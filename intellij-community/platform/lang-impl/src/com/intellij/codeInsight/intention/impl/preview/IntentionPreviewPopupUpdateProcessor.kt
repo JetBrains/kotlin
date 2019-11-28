@@ -41,6 +41,7 @@ internal class IntentionPreviewPopupUpdateProcessor(private val project: Project
 
       popup = JBPopupFactory.getInstance().createComponentPopupBuilder(component, null)
         .setCancelCallback { cancel() }
+        .addUserData(IntentionPreviewPopupKey())
         .createPopup()
 
       PopupPositionManager.positionPopupInBestPosition(popup, originalEditor, null)
@@ -116,4 +117,6 @@ internal class IntentionPreviewPopupUpdateProcessor(private val project: Project
   companion object {
     private val ESCAPE_SHORTCUT_TEXT = KeymapUtil.getPreferredShortcutText(ESCAPE.shortcuts)
   }
+
+  class IntentionPreviewPopupKey
 }

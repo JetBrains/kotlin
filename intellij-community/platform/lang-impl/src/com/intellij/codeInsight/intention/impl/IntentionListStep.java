@@ -7,6 +7,7 @@ import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.codeInsight.intention.AbstractEmptyIntentionAction;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInsight.intention.IntentionActionDelegate;
+import com.intellij.codeInsight.intention.impl.preview.IntentionPreviewPopupUpdateProcessor;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
@@ -75,10 +76,23 @@ public class IntentionListStep implements ListPopupStep<IntentionActionWithTextC
     }
 
     if (hasSubstep(action)) {
+      //close intention preview popup if any
+      closeIntentionPreviewPopup();
+
       return getSubStep(action, action.getToolName());
     }
 
     return FINAL_CHOICE;
+  }
+
+  private static void closeIntentionPreviewPopup() {
+    ApplicationManager.getApplication().invokeLater(() -> {
+      List<JBPopup> popups = StackingPopupDispatcher.getInstance().getPopupStream()
+        .filter(popup -> popup.getUserData(IntentionPreviewPopupUpdateProcessor.IntentionPreviewPopupKey.class) != null)
+        .collect(Collectors.toList());
+
+      popups.forEach(popup -> { popup.cancel(); });
+    });
   }
 
   @Override
