@@ -28,7 +28,11 @@ class KotlinNonJvmGutterConfigurator : AbstractProjectResolverExtension() {
                 }
                 
                 gradle.afterProject { project ->
+                    // Test task should have some parameters
+                    // Create dummy task to consume outputs by Test task
                     project.tasks.create("nonJvmTestIdeSupportDummy")
+                    
+                    // IDEA now process filter parameters only for Test tasks
                     project.tasks.create('nonJvmTestIdeSupport', Test) {
                         testClassesDirs = project.tasks["nonJvmTestIdeSupportDummy"].outputs.files
                         classpath = project.tasks["nonJvmTestIdeSupportDummy"].outputs.files
