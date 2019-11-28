@@ -1,17 +1,22 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.issue
 
+import com.intellij.build.BuildView
 import com.intellij.build.issue.BuildIssue
 import com.intellij.build.issue.BuildIssueQuickFix
 import com.intellij.execution.runners.ExecutionUtil
+import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DataProvider
 import com.intellij.openapi.actionSystem.LangDataKeys
+import com.intellij.openapi.externalSystem.util.ExternalSystemBundle
 import com.intellij.openapi.project.Project
 import com.intellij.pom.Navigatable
 import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.plugins.gradle.issue.quickfix.ReimportQuickFix.Companion.requestImport
 import org.jetbrains.plugins.gradle.settings.GradleSettings
+import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.CompletableFuture.runAsync
 
 @ApiStatus.Internal
 abstract class UnresolvedDependencyIssue(dependencyName: String) : BuildIssue {
@@ -50,11 +55,7 @@ class UnresolvedDependencySyncIssue(dependencyName: String,
     override val id = offlineQuickFixId
     override fun runQuickFix(project: Project, dataProvider: DataProvider): CompletableFuture<*> {
       GradleSettings.getInstance(project).isOfflineWork = false
-      val environment = LangDataKeys.EXECUTION_ENVIRONMENT.getData(dataProvider)
-      if (environment != null) {
-        return CompletableFuture.runAsync { ExecutionUtil.restart(environment) }
-      }
-      return requestImport(project, projectPath)
+      return tryRerun(dataProvider) ?: requestImport(project, projectPath)
     }
   }
 }
@@ -63,18 +64,31 @@ class UnresolvedDependencySyncIssue(dependencyName: String,
 class UnresolvedDependencyBuildIssue(dependencyName: String,
                                      failureMessage: String?,
                                      isOfflineMode: Boolean) : UnresolvedDependencyIssue(dependencyName) {
-  override val quickFixes = if (isOfflineMode) listOf<BuildIssueQuickFix>(DisableOfflineAndReimport()) else emptyList()
+  override val quickFixes = if (isOfflineMode) listOf<BuildIssueQuickFix>(DisableOfflineAndRerun()) else emptyList()
   override val description: String = buildDescription(failureMessage, isOfflineMode, "Disable offline mode and rerun the build")
 
-  inner class DisableOfflineAndReimport : BuildIssueQuickFix {
+  inner class DisableOfflineAndRerun : BuildIssueQuickFix {
     override val id = offlineQuickFixId
     override fun runQuickFix(project: Project, dataProvider: DataProvider): CompletableFuture<*> {
       GradleSettings.getInstance(project).isOfflineWork = false
-      val environment = LangDataKeys.EXECUTION_ENVIRONMENT.getData(dataProvider)
-      if (environment != null) {
-        return CompletableFuture.runAsync { ExecutionUtil.restart(environment) }
-      }
-      return CompletableFuture.completedFuture(null)
+      return tryRerun(dataProvider) ?: CompletableFuture.completedFuture(null)
     }
   }
+}
+
+private fun tryRerun(dataProvider: DataProvider): CompletableFuture<*>? {
+  val environment = LangDataKeys.EXECUTION_ENVIRONMENT.getData(dataProvider)
+  if (environment != null) {
+    return runAsync { ExecutionUtil.restart(environment) }
+  }
+  val restartActions = BuildView.RESTART_ACTIONS.getData(dataProvider)
+  val reimportActionText = ExternalSystemBundle.message("action.refresh.project.text", GradleConstants.SYSTEM_ID.readableName)
+  restartActions?.find { it.templateText == reimportActionText }?.let { action ->
+    val actionEvent = AnActionEvent.createFromAnAction(action, null, "BuildView", dataProvider::getData)
+    action.update(actionEvent)
+    if (actionEvent.presentation.isEnabledAndVisible) {
+      return runAsync { action.actionPerformed(actionEvent) }
+    }
+  }
+  return null
 }

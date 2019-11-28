@@ -59,6 +59,9 @@ import java.util.function.Supplier;
 public class BuildView extends CompositeView<ExecutionConsole>
   implements BuildProgressListener, ConsoleView, DataProvider, Filterable<ExecutionNode>, OccurenceNavigator {
   public static final String CONSOLE_VIEW_NAME = "consoleView";
+  @ApiStatus.Experimental
+  public static final DataKey<AnAction[]> RESTART_ACTIONS = DataKey.create("restart actions");
+
   private final AtomicReference<StartBuildEvent> myStartBuildEventRef = new AtomicReference<>();
   private final BuildDescriptor myBuildDescriptor;
   private final Project myProject;
@@ -358,12 +361,17 @@ public class BuildView extends CompositeView<ExecutionConsole>
     Object data = super.getData(dataId);
     if (data != null) return data;
     StartBuildEvent startBuildEvent = myStartBuildEventRef.get();
-    if (startBuildEvent != null && LangDataKeys.RUN_PROFILE.is(dataId)) {
-      ExecutionEnvironment environment = startBuildEvent.getExecutionEnvironment();
-      return environment == null ? null : environment.getRunProfile();
-    }
-    if (startBuildEvent != null && LangDataKeys.EXECUTION_ENVIRONMENT.is(dataId)) {
-      return startBuildEvent.getExecutionEnvironment();
+    if (startBuildEvent != null) {
+      if (LangDataKeys.RUN_PROFILE.is(dataId)) {
+        ExecutionEnvironment environment = startBuildEvent.getExecutionEnvironment();
+        return environment == null ? null : environment.getRunProfile();
+      }
+      if (LangDataKeys.EXECUTION_ENVIRONMENT.is(dataId)) {
+        return startBuildEvent.getExecutionEnvironment();
+      }
+      if (RESTART_ACTIONS.is(dataId)) {
+        return startBuildEvent.getRestartActions();
+      }
     }
     return null;
   }

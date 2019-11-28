@@ -239,6 +239,7 @@ open class GradleOutputParsersMessagesImportingTest : BuildViewMessagesImporting
                                "Possible solution:\n" +
                                " - Disable offline mode and rerun the build\n" +
                                "\n")
+    assertSyncViewRerunActions() // quick fix above uses Sync view 'rerun' action to restart import with changes offline mode
 
     // check unresolved dependency for disabled offline mode
     GradleSystemSettings.getInstance().isOfflineWork = false

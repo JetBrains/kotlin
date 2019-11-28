@@ -2,6 +2,7 @@
 package org.jetbrains.plugins.gradle.importing
 
 import com.intellij.build.*
+import com.intellij.openapi.externalSystem.util.ExternalSystemBundle
 import com.intellij.openapi.project.Project
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.replaceService
@@ -9,7 +10,7 @@ import com.intellij.testFramework.runInEdtAndGet
 import com.intellij.util.concurrency.Semaphore
 import com.intellij.util.ui.tree.TreeUtil
 import junit.framework.TestCase
-import org.assertj.core.api.Assertions
+import org.jetbrains.plugins.gradle.util.GradleConstants
 import javax.swing.tree.DefaultMutableTreeNode
 
 abstract class BuildViewMessagesImportingTestCase : GradleImportingTestCase() {
@@ -47,6 +48,14 @@ abstract class BuildViewMessagesImportingTestCase : GradleImportingTestCase() {
 
   protected fun assertSyncViewSelectedNode(nodeText: String, consoleText: String) {
     assertExecutionTreeNode(syncViewManager, nodeText, consoleText, true)
+  }
+
+  protected fun assertSyncViewRerunActions() {
+    val buildView = syncViewManager.buildsMap[syncViewManager.getRecentBuild()]
+    val rerunActions = BuildView.RESTART_ACTIONS.getData(buildView!!)!!
+    assertSize(1, rerunActions)
+    val reimportActionText = ExternalSystemBundle.message("action.refresh.project.text", GradleConstants.SYSTEM_ID.readableName)
+    assertEquals(reimportActionText, rerunActions[0].templateText)
   }
 
   protected fun assertBuildViewSelectedNode(nodeText: String, consoleText: String) {
