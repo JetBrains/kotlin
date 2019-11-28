@@ -87,7 +87,7 @@ abstract class AbstractConeSubstitutor : ConeSubstitutor() {
     }
 
     private fun ConeDefinitelyNotNullType.substituteOriginal(): ConeDefinitelyNotNullType? {
-        return ConeDefinitelyNotNullType.create(substituteType(original)?.withNullability(ConeNullability.NOT_NULL) ?: original)
+        return ConeDefinitelyNotNullType.create(substituteOrNull(original)?.withNullability(ConeNullability.NOT_NULL) ?: original)
     }
 
     private fun ConeFlexibleType.substituteBounds(): ConeFlexibleType? {

@@ -16,7 +16,7 @@ FILE: test.kt
     private final val DERIVED_FACTORY: R|DiagnosticFactory0<DerivedElement>| = R|/DiagnosticFactory0.DiagnosticFactory0|<R|DerivedElement|>()
         private get(): R|DiagnosticFactory0<DerivedElement>|
     public final fun createViaFactory(d: R|EmptyDiagnostic|): R|kotlin/Unit| {
-        lval casted: R|Diagnostic<*>!| = R|/DERIVED_FACTORY|.R|FakeOverride</DiagnosticFactory.cast: R|Diagnostic<*>!|>|(R|<local>/d|)
-        lval element: R|Element!| = R|<local>/casted|.R|/Diagnostic.element|
-        <Inapplicable(INAPPLICABLE): [/Fix.Fix]>#(R|<local>/element|)
+        lval casted: R|Diagnostic<DerivedElement>!| = R|/DERIVED_FACTORY|.R|FakeOverride</DiagnosticFactory.cast: R|Diagnostic<DerivedElement>!|>|(R|<local>/d|)
+        lval element: R|DerivedElement!| = R|<local>/casted|.R|/Diagnostic.element|
+        R|/Fix.Fix|(R|<local>/element|)
     }
