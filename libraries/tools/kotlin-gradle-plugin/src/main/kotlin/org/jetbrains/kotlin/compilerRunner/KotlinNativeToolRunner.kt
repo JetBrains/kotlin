@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.KOTLIN_NATIVE_HOME
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
-import org.jetbrains.kotlin.konan.KonanVersion
+import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
@@ -43,9 +43,9 @@ internal val Project.konanHome: String
         file(it).absolutePath
     } ?: NativeCompilerDownloader(project).compilerDirectory.absolutePath
 
-internal val Project.konanVersion: KonanVersion
+internal val Project.konanVersion: CompilerVersion
     get() = PropertiesProvider(this).nativeVersion?.let {
-        KonanVersion.fromString(it.toString())
+        CompilerVersion.fromString(it.toString())
     } ?: NativeCompilerDownloader.DEFAULT_KONAN_VERSION
 
 internal val Project.disableKonanDaemon: Boolean

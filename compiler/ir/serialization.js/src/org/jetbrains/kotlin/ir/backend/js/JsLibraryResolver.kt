@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js
 
-import org.jetbrains.kotlin.konan.KonanVersion
+import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -20,7 +20,7 @@ class JsLibraryResolver(
     repositories: List<String>,
     directLibs: List<String>,
     knownAbiVersions: List<KotlinAbiVersion>?,
-    knownCompilerVersions: List<KonanVersion>?,
+    knownCompilerVersions: List<CompilerVersion>?,
     distributionKlib: String?,
     localKotlinDir: String?,
     skipCurrentDir: Boolean,
@@ -49,7 +49,7 @@ fun jsResolveLibraries(libraries: List<String>, logger: Logger): KotlinLibraryRe
         repositories = emptyList(),
         directLibs = libraryAbsolutePaths,
         knownAbiVersions = listOf(KotlinAbiVersion.CURRENT),
-        knownCompilerVersions = emptyList<KonanVersion>(),
+        knownCompilerVersions = emptyList<CompilerVersion>(),
         distributionKlib = null,
         localKotlinDir = null,
         skipCurrentDir = false,

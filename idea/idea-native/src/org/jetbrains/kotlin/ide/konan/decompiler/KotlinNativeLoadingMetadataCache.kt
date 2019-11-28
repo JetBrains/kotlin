@@ -39,7 +39,7 @@ class KotlinNativeLoadingMetadataCache : BaseComponent {
 
     private val packageFragmentCache = createConcurrentWeakValueMap<CacheKey, CacheValue<ProtoBuf.PackageFragment>>()
     private val moduleHeaderCache = createConcurrentWeakValueMap<CacheKey, CacheValue<KlibMetadataProtoBuf.Header>>()
-    private val libraryVersioningCache = createConcurrentWeakValueMap<CacheKey, CacheValue<KonanLibraryVersioning>>()
+    private val libraryVersioningCache = createConcurrentWeakValueMap<CacheKey, CacheValue<KotlinLibraryVersioning>>()
 
     fun getCachedPackageFragment(packageFragmentFile: VirtualFile): ProtoBuf.PackageFragment? {
         check(packageFragmentFile.extension == KLIB_METADATA_FILE_EXTENSION) {
@@ -93,7 +93,7 @@ class KotlinNativeLoadingMetadataCache : BaseComponent {
         }
     }
 
-    private fun computeLibraryVersioning(manifestFile: VirtualFile): KonanLibraryVersioning? = try {
+    private fun computeLibraryVersioning(manifestFile: VirtualFile): KotlinLibraryVersioning? = try {
         Properties().apply { manifestFile.inputStream.use { load(it) } }.readKonanLibraryVersioning()
     } catch (_: IOException) {
         // ignore and cache null value

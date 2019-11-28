@@ -18,8 +18,7 @@ import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSetti
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.targets.native.internal.parseKotlinNativeStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
-import org.jetbrains.kotlin.konan.KonanVersion
-import org.jetbrains.kotlin.konan.MetaVersion
+import org.jetbrains.kotlin.konan.CompilerVersion
 import java.io.File
 import java.util.concurrent.Callable
 
@@ -101,7 +100,7 @@ open class KotlinNativeTest : KotlinTest() {
     // KonanVersion doesn't provide an API to compare versions,
     // so we have to transform it to KotlinVersion first.
     // Note: this check doesn't take into account the meta version (release, eap, dev).
-    private fun KonanVersion.isAtLeast(major: Int, minor: Int, patch: Int): Boolean =
+    private fun CompilerVersion.isAtLeast(major: Int, minor: Int, patch: Int): Boolean =
         KotlinVersion(this.major, this.minor, this.maintenance).isAtLeast(major, minor, patch)
 
     override fun createTestExecutionSpec(): TCServiceMessagesTestExecutionSpec {

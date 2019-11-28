@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.konan.library.lite
 
-import org.jetbrains.kotlin.konan.KonanVersion
+import org.jetbrains.kotlin.konan.CompilerVersion
 import org.junit.Test
 import org.junit.Assert.*
 
@@ -24,7 +24,7 @@ class LiteKonanDistributionTests {
     private companion object {
         const val expectedVersionString = "1.2.3-release-5678"
 
-        val expectedVersion: KonanVersion
-            get() = KonanVersion.fromString(expectedVersionString)
+        val expectedVersion: CompilerVersion
+            get() = CompilerVersion.fromString(expectedVersionString)
     }
 }

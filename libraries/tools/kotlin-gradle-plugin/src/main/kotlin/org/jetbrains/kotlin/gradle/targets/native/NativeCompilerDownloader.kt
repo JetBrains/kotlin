@@ -6,18 +6,15 @@
 @file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.utils
 
-import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.artifacts.repositories.ArtifactRepository
-import org.gradle.api.artifacts.repositories.IvyArtifactRepository
-import org.gradle.api.artifacts.repositories.IvyPatternRepositoryLayout
 import org.gradle.api.file.FileTree
 import org.gradle.api.logging.Logger
 import org.jetbrains.kotlin.compilerRunner.KonanCompilerRunner
 import org.jetbrains.kotlin.compilerRunner.konanVersion
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-import org.jetbrains.kotlin.konan.KonanVersion
+import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.MetaVersion
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
@@ -25,12 +22,12 @@ import java.io.File
 
 class NativeCompilerDownloader(
     val project: Project,
-    private val compilerVersion: KonanVersion = project.konanVersion
+    private val compilerVersion: CompilerVersion = project.konanVersion
 ) {
 
     companion object {
-        internal val DEFAULT_KONAN_VERSION: KonanVersion by lazy {
-            KonanVersion.fromString(loadPropertyFromResources("project.properties", "kotlin.native.version"))
+        internal val DEFAULT_KONAN_VERSION: CompilerVersion by lazy {
+            CompilerVersion.fromString(loadPropertyFromResources("project.properties", "kotlin.native.version"))
         }
 
         private const val BASE_DOWNLOAD_URL = "https://download.jetbrains.com/kotlin/native/builds"

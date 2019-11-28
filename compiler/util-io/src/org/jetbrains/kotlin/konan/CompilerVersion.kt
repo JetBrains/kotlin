@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.konan
 
 import java.io.Serializable
 
-interface KonanVersion : Serializable {
+interface CompilerVersion : Serializable {
     val meta: MetaVersion
     val major: Int
     val minor: Int
@@ -20,12 +20,12 @@ interface KonanVersion : Serializable {
         // major.minor.patch-meta-build where patch, meta and build are optional.
         private val versionPattern = "(\\d+)\\.(\\d+)(?:\\.(\\d+))?(?:-(\\p{Alpha}\\p{Alnum}*))?(?:-(\\d+))?".toRegex()
 
-        fun fromString(version: String): KonanVersion {
+        fun fromString(version: String): CompilerVersion {
             val (major, minor, maintenance, metaString, build) =
                     versionPattern.matchEntire(version)?.destructured
                         ?: throw IllegalArgumentException("Cannot parse Kotlin/Native version: $version")
 
-            return KonanVersionImpl(
+            return CompilerVersionImpl(
                 MetaVersion.findAppropriate(metaString),
                 major.toInt(),
                 minor.toInt(),
@@ -36,15 +36,15 @@ interface KonanVersion : Serializable {
     }
 }
 
-fun String.parseKonanVersion() = KonanVersion.fromString(this)
+fun String.parseCompilerVersion() = CompilerVersion.fromString(this)
 
-data class KonanVersionImpl(
+data class CompilerVersionImpl(
     override val meta: MetaVersion = MetaVersion.DEV,
     override val major: Int,
     override val minor: Int,
     override val maintenance: Int,
     override val build: Int = -1
-) : KonanVersion {
+) : CompilerVersion {
 
     override fun toString(showMeta: Boolean, showBuild: Boolean) = buildString {
         append(major)

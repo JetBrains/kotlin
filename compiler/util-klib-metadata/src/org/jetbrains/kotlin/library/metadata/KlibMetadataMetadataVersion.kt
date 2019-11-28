@@ -5,17 +5,27 @@
 
 package org.jetbrains.kotlin.backend.common.serialization.metadata
 
+import org.jetbrains.kotlin.library.KLIB_PROPERTY_METADATA_VERSION
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 
 class KlibMetadataVersion(vararg numbers: Int) : BinaryVersion(*numbers) {
 
-    override fun isCompatible(): Boolean = this.major == 1 && this.minor == 0
+    override fun isCompatible(): Boolean = isCompatibleTo(INSTANCE)
 
     companion object {
         @JvmField
         val INSTANCE = KlibMetadataVersion(1, 0, 0)
 
         @JvmField
-        val INVALID_VERSION = KlibMetadataVersion()
+        val INVALID_VERSION = KlibMetadataVersion(-1, -1, -1)
     }
 }
+
+val KotlinLibrary.metadataVersion: KlibMetadataVersion
+    get() {
+        val versionString = manifestProperties.getProperty(KLIB_PROPERTY_METADATA_VERSION)
+        val versionIntArray = BinaryVersion.parseVersionArray(versionString)
+            ?: error("Could not parse ir version: $versionString")
+        return KlibMetadataVersion(*versionIntArray)
+    }
