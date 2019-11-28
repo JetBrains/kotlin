@@ -310,7 +310,6 @@ public class FilePathCompletionContributor extends CompletionContributor {
       myFile = file;
     }
 
-    @SuppressWarnings({"HardCodedStringLiteral"})
     @Override
     public String toString() {
       return String.format("%s%s", myName, myInfo == null ? "" : " (" + myInfo + ")");

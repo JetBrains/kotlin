@@ -17,40 +17,23 @@
 package com.intellij.psi.impl.source.resolve.reference.impl.providers;
 
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.file.FileLookupInfoProvider;
+import com.intellij.util.ArrayUtil;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author spleaner
  */
-public class FileInfoManager implements Disposable {
-  private final Map<FileType, FileLookupInfoProvider> myFileType2InfoProvider = new HashMap<>();
-
-  public FileInfoManager() {
-    for (FileLookupInfoProvider provider : FileLookupInfoProvider.EP_NAME.getExtensions()) {
-      for (FileType type : provider.getFileTypes()) {
-        myFileType2InfoProvider.put(type, provider);
-      }
-    }
-
-    FileLookupInfoProvider.EP_NAME.addExtensionPointListener(
-      (e, pd) -> { for (FileType type : e.getFileTypes()) myFileType2InfoProvider.put(type, e); },
-      (e, pd) -> { for (FileType type : e.getFileTypes()) myFileType2InfoProvider.remove(type); }, 
-      this);
-  }
-
+public class FileInfoManager {
   public static FileInfoManager getFileInfoManager() {
     return ServiceManager.getService(FileInfoManager.class);
   }
@@ -61,26 +44,30 @@ public class FileInfoManager implements Disposable {
     }
 
     final PsiFile file = (PsiFile)psiElement;
-    return getFileInfoManager()._getLookupItem(file, file.getName(), file.getIcon(0));
+    return _getLookupItem(file, file.getName(), file.getIcon(0));
   }
 
   @Nullable
   public static String getFileAdditionalInfo(PsiElement psiElement) {
-    return getFileInfoManager()._getInfo(psiElement);
+    return _getInfo(psiElement);
   }
 
   @Nullable
-  private String _getInfo(PsiElement psiElement) {
+  private static String _getInfo(PsiElement psiElement) {
     if (!(psiElement instanceof PsiFile) || !(psiElement.isPhysical())) {
       return null;
     }
 
     final PsiFile psiFile = (PsiFile)psiElement;
-    final FileLookupInfoProvider provider = myFileType2InfoProvider.get(psiFile.getFileType());
+
+    FileLookupInfoProvider provider =
+      ContainerUtil.find(FileLookupInfoProvider.EP_NAME.getExtensionList(),
+                         p -> ArrayUtil.find(p.getFileTypes(), psiFile.getFileType()) != -1);
+
     if (provider != null) {
-      final VirtualFile virtualFile = psiFile.getVirtualFile();
+      VirtualFile virtualFile = psiFile.getVirtualFile();
       if (virtualFile != null) {
-        final Pair<String, String> info = provider.getLookupInfo(virtualFile, psiElement.getProject());
+        Pair<String, String> info = provider.getLookupInfo(virtualFile, psiElement.getProject());
         return Pair.getSecond(info);
       }
     }
@@ -92,11 +79,10 @@ public class FileInfoManager implements Disposable {
     if (!(psiElement instanceof PsiFile) || !(psiElement.isPhysical())) {
       return LookupElementBuilder.create(psiElement, encoded).withIcon(icon);
     }
-
-    return getFileInfoManager()._getLookupItem((PsiFile)psiElement, encoded, icon);
+    return _getLookupItem((PsiFile)psiElement, encoded, icon);
   }
 
-  public LookupElementBuilder _getLookupItem(@NotNull final PsiFile file, String name, Icon icon) {
+  public static LookupElementBuilder _getLookupItem(@NotNull final PsiFile file, String name, Icon icon) {
     LookupElementBuilder builder = LookupElementBuilder.create(file, name).withIcon(icon);
 
     final String info = _getInfo(file);
@@ -105,10 +91,5 @@ public class FileInfoManager implements Disposable {
     }
 
     return builder;
-  }
-
-  @Override
-  public void dispose() {
-    myFileType2InfoProvider.clear();
   }
 }
