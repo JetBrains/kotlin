@@ -11,23 +11,26 @@ import com.intellij.lang.Language;
 import com.intellij.lang.parameterInfo.LanguageParameterInfo;
 import com.intellij.lang.parameterInfo.ParameterInfoHandler;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.event.VisibleAreaListener;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
+import com.intellij.openapi.progress.util.ProgressIndicatorUtils;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.wm.IdeFocusManager;
-import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.ui.LightweightHint;
 import com.intellij.util.Consumer;
 import com.intellij.util.ObjectUtils;
+import com.intellij.util.concurrency.AppExecutorUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -79,103 +82,100 @@ public class ShowParameterInfoHandler implements CodeInsightActionHandler {
                             boolean requestFocus, boolean singleParameterHint,
                             String progressTitle,
                             Consumer<IndexNotReadyException> indexNotReadyExceptionConsumer) {
-    ApplicationManager.getApplication().assertIsDispatchThread();
-    PsiDocumentManager.getInstance(project).commitAllDocuments();
+    final Component focusOwner = IdeFocusManager.getInstance(project).getFocusOwner();
+    final DumbService dumbService = DumbService.getInstance(project);
 
-    final int offset = editor.getCaretModel().getOffset();
-    final int fileLength = file.getTextLength();
-    if (fileLength == 0) return;
-
-    final ShowParameterInfoContext context = new ShowParameterInfoContext(
-      editor,
-      project,
-      file,
-      offset,
-      lbraceOffset,
-      requestFocus,
-      singleParameterHint
-    );
-
-    context.setHighlightedElement(highlightedElement);
-    context.setRequestFocus(requestFocus);
-
-    // file.findElementAt(file.getTextLength()) returns null but we may need to show parameter info at EOF offset (for example in SQL)
-    final int offsetForLangDetection = offset > 0 && offset == fileLength ? offset - 1 : offset;
-    final Language language = PsiUtilCore.getLanguageAtOffset(file, offsetForLangDetection);
-
-    final ParameterInfoHandler<PsiElement, Object>[] handlers =
-      ObjectUtils.notNull(getHandlers(project, language, file.getViewProvider().getBaseLanguage()), EMPTY_HANDLERS);
+    final int initialOffset = editor.getCaretModel().getOffset();
 
     Lookup lookup = LookupManager.getInstance(project).getActiveLookup();
-
-    if (lookup != null) {
-      LookupElement item = lookup.getCurrentItem();
-
-      if (item != null) {
-        for (ParameterInfoHandler<PsiElement, Object> handler : handlers) {
-          if (handler.couldShowInLookup()) {
-            final Object[] items = handler.getParametersForLookup(item, context);
-            if (items != null && items.length > 0) {
-              showLookupEditorHint(items, editor, handler, requestFocus);
-            }
-            return;
-          }
-        }
-      }
-      return;
-    }
-
-    final Component focusOwner = IdeFocusManager.getInstance(project).getFocusOwner();
+    LookupElement lookupElement = lookup != null ? lookup.getCurrentItem() : null;
 
     ProgressManager.getInstance().run(
       new Task.Backgroundable(project, progressTitle, true) {
         @Override
         public void run(@NotNull ProgressIndicator indicator) {
-          PsiElement element = null;
-          ParameterInfoHandler<PsiElement, Object> handler = null;
+          final VisibleAreaListener visibleAreaListener = e -> indicator.cancel();
 
-          DumbService dumbService = DumbService.getInstance(project);
-          dumbService.setAlternativeResolveEnabled(true);
+          editor.getScrollingModel().addVisibleAreaListener(visibleAreaListener);
 
-          try {
-            for (int i = 0; i < handlers.length; i++) {
-              final ParameterInfoHandler<PsiElement, Object> h = handlers[i];
-              handler = h;
-              element = ReadAction
-                .nonBlocking(() -> {
-                  try {
-                    return h.findElementForParameterInfo(context);
-                  }
-                  catch (IndexNotReadyException e) {
-                    indexNotReadyExceptionConsumer.consume(e);
+          ProgressIndicatorUtils.awaitWithCheckCanceled(ReadAction
+          .nonBlocking(() -> {
+            final int offset = editor.getCaretModel().getOffset();
+            final int fileLength = file.getTextLength();
+            if (fileLength == 0) return null;
+
+            // file.findElementAt(file.getTextLength()) returns null but we may need to show parameter info at EOF offset (for example in SQL)
+            final int offsetForLangDetection = offset > 0 && offset == fileLength ? offset - 1 : offset;
+            final Language language = PsiUtilCore.getLanguageAtOffset(file, offsetForLangDetection);
+
+            final ShowParameterInfoContext context = new ShowParameterInfoContext(
+              editor,
+              project,
+              file,
+              offset,
+              lbraceOffset,
+              requestFocus,
+              singleParameterHint
+            );
+
+            context.setHighlightedElement(highlightedElement);
+            context.setRequestFocus(requestFocus);
+
+            final ParameterInfoHandler<PsiElement, Object>[] handlers =
+              ObjectUtils.notNull(getHandlers(project, language, file.getViewProvider().getBaseLanguage()), EMPTY_HANDLERS);
+
+            if (lookup != null) {
+              if (lookupElement != null) {
+                for (ParameterInfoHandler<PsiElement, Object> handler : handlers) {
+                  if (handler.couldShowInLookup()) {
+                    final Object[] items = handler.getParametersForLookup(lookupElement, context);
+                    if (items != null && items.length > 0) {
+                      return (Runnable)() -> {
+                        showLookupEditorHint(items, editor, handler, requestFocus);
+                      };
+                    }
                     return null;
                   }
-                })
-                .cancelWith(indicator)
-                .expireWhen(() -> editor.getCaretModel().getOffset() != offset)
-                .executeSynchronously();
+                }
+              }
+              return null;
+            }
 
-              if (element != null) {
-                break;
+            dumbService.setAlternativeResolveEnabled(true);
+            try {
+              for (int i = 0; i < handlers.length; i++) {
+                ParameterInfoHandler<PsiElement, Object> handler = handlers[i];
+                PsiElement element = handler.findElementForParameterInfo(context);
+                if (element != null) {
+                  return (Runnable)() -> {
+                    if (element.isValid()) {
+                      handler.showParameterInfo(element, context);
+                    }
+                  };
+                }
               }
             }
-          }
-          finally {
-            dumbService.setAlternativeResolveEnabled(false);
-          }
-
-          if (element != null && !indicator.isCanceled()) {
-            final PsiElement el = element;
-            final ParameterInfoHandler<PsiElement, Object> h = handler;
-            ApplicationManager.getApplication().invokeLater(() -> {
-              if (!el.isValid()) return;
-
-              if (editor.getCaretModel().getOffset() != context.getOffset() ||
-                  !Objects.equals(focusOwner, IdeFocusManager.getInstance(project).getFocusOwner())) return;
-
-              h.showParameterInfo(el, context);
-            });
-          }
+            catch (IndexNotReadyException e) {
+              indexNotReadyExceptionConsumer.consume(e);
+            }
+            finally {
+              dumbService.setAlternativeResolveEnabled(false);
+            }
+            return null;
+          })
+          .withDocumentsCommitted(project)
+          .finishOnUiThread(
+            ModalityState.defaultModalityState(),
+            continuation -> {
+              if (continuation != null && Objects.equals(focusOwner, IdeFocusManager.getInstance(project).getFocusOwner())) {
+                continuation.run();
+              }
+            })
+          .cancelWith(indicator)
+          .expireWhen(() -> editor.getCaretModel().getOffset() != initialOffset)
+          .coalesceBy(ShowParameterInfoHandler.class, editor)
+          .submit(AppExecutorUtil.getAppExecutorService())
+          .onProcessed(ignore -> editor.getScrollingModel().removeVisibleAreaListener(visibleAreaListener)));
         }
       }
     );
