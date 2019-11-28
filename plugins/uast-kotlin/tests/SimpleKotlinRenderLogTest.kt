@@ -1,18 +1,27 @@
 package org.jetbrains.uast.test.kotlin
 
+import org.jetbrains.uast.UFile
 import org.jetbrains.uast.kotlin.KotlinConverter
 import org.junit.Test
 
-class SimpleKotlinRenderLogTest : AbstractKotlinRenderLogTest() {
-    @Test fun testLocalDeclarations() = doTest("LocalDeclarations")
+class SimpleKotlinRenderLogTest : AbstractKotlinUastTest(), AbstractKotlinRenderLogTest {
 
-    @Test fun testSimple() = doTest("Simple")
+    override fun check(testName: String, file: UFile) = super.check(testName, file)
 
-    @Test fun testWhenIs() = doTest("WhenIs")
+    @Test
+    fun testLocalDeclarations() = doTest("LocalDeclarations")
 
-    @Test fun testDefaultImpls() = doTest("DefaultImpls")
+    @Test
+    fun testSimple() = doTest("Simple")
 
-    @Test fun testBitwise() = doTest("Bitwise")
+    @Test
+    fun testWhenIs() = doTest("WhenIs")
+
+    @Test
+    fun testDefaultImpls() = doTest("DefaultImpls")
+
+    @Test
+    fun testBitwise() = doTest("Bitwise")
 
     @Test fun testElvis() = doTest("Elvis")
 

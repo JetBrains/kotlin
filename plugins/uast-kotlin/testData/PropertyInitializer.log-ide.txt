@@ -1,0 +1,14 @@
+UFile (package = )
+    UClass (name = TestPropertyInitializer)
+        UMethod (name = getWithSetter)
+            UBlockExpression
+                UReturnExpression
+                    USimpleNameReferenceExpression (identifier = field)
+        UMethod (name = setWithSetter)
+            UParameter (name = p)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UBlockExpression
+                UBinaryExpression (operator = =)
+                    USimpleNameReferenceExpression (identifier = field)
+                    USimpleNameReferenceExpression (identifier = p)
+        UMethod (name = TestPropertyInitializer)

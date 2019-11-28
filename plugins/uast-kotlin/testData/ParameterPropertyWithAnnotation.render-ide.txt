@@ -1,0 +1,30 @@
+public abstract annotation MyAnnotation {
+}
+
+public abstract annotation MyAnnotation2 {
+}
+
+public abstract annotation MyAnnotation3 {
+}
+
+public abstract annotation MyAnnotation4 {
+}
+
+public abstract annotation MyAnnotation5 {
+}
+
+public final class Test1 {
+    @org.jetbrains.annotations.NotNull private var bar: int
+    public final fun getBar() : int = UastEmptyExpression
+    public final fun setBar(@null bar: int) : void = UastEmptyExpression
+    public fun Test1(@org.jetbrains.annotations.NotNull @MyAnnotation bar: int) = UastEmptyExpression
+}
+
+public final class Test2 {
+    @org.jetbrains.annotations.NotNull @MyAnnotation5 private var bar: int
+    @MyAnnotation
+    public final fun getBar() : int = UastEmptyExpression
+    @MyAnnotation2
+    public final fun setBar(@MyAnnotation3 @null bar: int) : void = UastEmptyExpression
+    public fun Test2(@org.jetbrains.annotations.NotNull bar: int) = UastEmptyExpression
+}

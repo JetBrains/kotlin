@@ -19,7 +19,7 @@ import java.io.File
 abstract class AbstractKotlinResolveEverythingTest : AbstractKotlinUastTest() {
 
     private fun getTestFile(testName: String, ext: String) =
-        File(File(AbstractKotlinUastTest.TEST_KOTLIN_MODEL_DIR, testName).canonicalPath + '.' + ext)
+        File(File(TEST_KOTLIN_MODEL_DIR, testName).canonicalPath + '.' + ext)
 
 
     private fun UFile.resolvableWithTargets() = object : IndentedPrintingVisitor(KtBlockExpression::class) {

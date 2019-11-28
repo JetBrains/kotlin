@@ -31,5 +31,5 @@ open class Parent(a: String, b: Int)
 
 fun objectLiteral() {
 
-    object : Parent(b = 1, a = "foo")
+    object : Parent(b = 1, a = "foo") { }
 }

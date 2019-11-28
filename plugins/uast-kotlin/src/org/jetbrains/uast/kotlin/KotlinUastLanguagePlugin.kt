@@ -21,6 +21,7 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiEnumConstant
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.annotations.TestOnly
@@ -450,7 +451,7 @@ internal object KotlinConverter {
 
     private fun convertEnumEntry(original: KtEnumEntry, givenParent: UElement?): UElement? {
         return LightClassUtil.getLightClassBackingField(original)?.let { psiField ->
-            if (psiField is KtLightFieldImpl.KtLightEnumConstant) {
+            if (psiField is KtLightField && psiField is PsiEnumConstant) {
                 KotlinUEnumConstant(psiField, psiField.kotlinOrigin, givenParent)
             } else {
                 null
@@ -489,8 +490,11 @@ internal object KotlinConverter {
                     }
                     else -> el<UClass> { KotlinUClass.create(original, givenParent) }
                 }
-                is KtLightFieldImpl.KtLightEnumConstant -> el<UEnumConstant>(buildKtOpt(original.kotlinOrigin, ::KotlinUEnumConstant))
-                is KtLightField -> el<UField>(buildKtOpt(original.kotlinOrigin, ::KotlinUField))
+                is KtLightField ->
+                    if (original is PsiEnumConstant)
+                        el<UEnumConstant>(buildKtOpt(original.kotlinOrigin, ::KotlinUEnumConstant))
+                    else
+                        el<UField>(buildKtOpt(original.kotlinOrigin, ::KotlinUField))
                 is KtLightParameter -> el<UParameter>(buildKtOpt(original.kotlinOrigin, ::KotlinUParameter))
                 is UastKotlinPsiParameter -> el<UParameter>(buildKt(original.ktParameter, ::KotlinUParameter))
                 is UastKotlinPsiVariable -> el<UVariable>(buildKt(original.ktElement, ::KotlinUVariable))

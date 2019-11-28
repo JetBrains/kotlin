@@ -24,5 +24,4 @@ cons -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
 A -> USimpleNameReferenceExpression (identifier = A) from KtObjectLiteralExpression
 A -> UObjectLiteralExpression from KtNameReferenceExpression
 A -> UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 1)) from KtNameReferenceExpression
-A -> UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 1)) from KtNameReferenceExpression
 A -> USimpleNameReferenceExpression (identifier = A) from KtNameReferenceExpression
