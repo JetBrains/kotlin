@@ -520,7 +520,7 @@ public class LocalInspectionsPass extends ProgressableTextEditorHighlightingPass
                                              @NotNull PsiElement element, boolean ignoreSuppressed) {
     LocalInspectionTool tool = toolWrapper.getTool();
     if (ignoreSuppressed && SuppressionUtil.inspectionResultSuppressed(element, tool)) {
-      mySuppressedElements.computeIfAbsent(toolWrapper.getID(), shortName -> new HashSet<>()).add(element);
+      registerSuppressedElements(toolWrapper, element);
       return;
     }
     HighlightInfoType level = ProblemDescriptorUtil.highlightTypeFromDescriptor(descriptor, severity, mySeverityRegistrar);
@@ -567,6 +567,15 @@ public class LocalInspectionsPass extends ProgressableTextEditorHighlightingPass
       return;
     }
     injectToHost(outInfos, ilManager, file, documentRange, toolWrapper, element, fixes, info);
+  }
+
+  private void registerSuppressedElements(@NotNull LocalInspectionToolWrapper toolWrapper,
+                                          @NotNull PsiElement element) {
+    mySuppressedElements.computeIfAbsent(toolWrapper.getID(), shortName -> new HashSet<>()).add(element);
+    String alternativeID = toolWrapper.getAlternativeID();
+    if (alternativeID != null) {
+      mySuppressedElements.computeIfAbsent(alternativeID, shortName -> new HashSet<>()).add(element);
+    }
   }
 
   private static void injectToHost(@NotNull List<? super HighlightInfo> outInfos,
@@ -754,7 +763,7 @@ public class LocalInspectionsPass extends ProgressableTextEditorHighlightingPass
         @Override
         public void registerProblem(@NotNull ProblemDescriptor descriptor) {
           if (host != null && myIgnoreSuppressed && SuppressionUtil.inspectionResultSuppressed(host, tool)) {
-            mySuppressedElements.computeIfAbsent(wrapper.getID(), shortName -> new HashSet<>()).add(host);
+            registerSuppressedElements(wrapper, host);
             return;
           }
           super.registerProblem(descriptor);
