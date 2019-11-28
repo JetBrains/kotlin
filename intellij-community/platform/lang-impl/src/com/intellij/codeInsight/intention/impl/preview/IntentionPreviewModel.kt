@@ -33,11 +33,11 @@ internal class IntentionPreviewModel {
       })
     }
 
-    fun createEditors(project: Project, originalFile: PsiFile, pair: Pair<PsiFile?, List<LineFragment>>?): List<EditorEx> {
-      if (pair == null) return emptyList()
+    fun createEditors(project: Project, originalFile: PsiFile, result: IntentionPreviewResult?): List<EditorEx> {
+      if (result == null) return emptyList()
 
-      val psiFileCopy: PsiFile? = pair.first
-      val lines: List<LineFragment> = pair.second
+      val psiFileCopy: PsiFile? = result.psiFile
+      val lines: List<LineFragment> = result.lineFragments
 
       if (psiFileCopy == null) return emptyList()
 
@@ -64,7 +64,7 @@ internal class IntentionPreviewModel {
       val editorFactory = EditorFactory.getInstance()
       val document = editorFactory.createDocument(text)
       val editor = (editorFactory.createEditor(document, project, fileType, false) as EditorEx)
-        .also { it.setBorder(JBUI.Borders.empty(2, 0, 2, 0)) }
+        .apply { setBorder(JBUI.Borders.empty(2, 0, 2, 0)) }
 
       editor.settings.apply {
         isLineNumbersShown = true
@@ -78,9 +78,9 @@ internal class IntentionPreviewModel {
         isAdditionalPageAtBottom = false
       }
 
-      editor.gutterComponentEx.also {
-        it.setPaintBackground(false)
-        it.setLineNumberConvertor { line -> line + lineShift }
+      editor.gutterComponentEx.apply {
+        setPaintBackground(false)
+        setLineNumberConvertor { line -> line + lineShift }
       }
 
       return editor

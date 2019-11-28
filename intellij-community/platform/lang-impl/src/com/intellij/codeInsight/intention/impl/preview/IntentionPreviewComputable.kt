@@ -23,16 +23,16 @@ import java.util.concurrent.Callable
 internal class IntentionPreviewComputable(private val project: Project,
                                           private val action: IntentionAction,
                                           private val originalFile: PsiFile,
-                                          private val originalEditor: Editor) : Callable<Pair<PsiFile?, List<LineFragment>>> {
-  override fun call(): Pair<PsiFile?, List<LineFragment>> {
+                                          private val originalEditor: Editor) : Callable<IntentionPreviewResult?> {
+  override fun call(): IntentionPreviewResult? {
     val psiFileCopy = nonPhysicalPsiCopy(originalFile, project)
     ProgressManager.checkCanceled()
     val editorCopy = IntentionPreviewEditor(psiFileCopy, originalEditor.caretModel.offset)
 
     try {
-      val action = findCopyIntention(project, editorCopy, psiFileCopy, action) ?: throw ProcessCanceledException()
+      val action = findCopyIntention(project, editorCopy, psiFileCopy, action) ?: return null
       val fileEditorPair = ShowIntentionActionsHandler.chooseFileForAction(psiFileCopy, editorCopy, action)
-                           ?: throw ProcessCanceledException()
+                           ?: return null
 
       val writable = originalEditor.document.isWritable
       try {
@@ -45,7 +45,7 @@ internal class IntentionPreviewComputable(private val project: Project,
         originalEditor.document.setReadOnly(!writable)
       }
 
-      return Pair<PsiFile?, List<LineFragment>>(
+      return IntentionPreviewResult(
         psiFileCopy,
         ComparisonManager.getInstance().compareLines(originalFile.text, editorCopy.document.text, ComparisonPolicy.TRIM_WHITESPACES,
                                                      DumbProgressIndicator.INSTANCE)
@@ -88,3 +88,5 @@ internal class IntentionPreviewComputable(private val project: Project,
     }
   }
 }
+
+data class IntentionPreviewResult(val psiFile: PsiFile?, val lineFragments: List<LineFragment>)

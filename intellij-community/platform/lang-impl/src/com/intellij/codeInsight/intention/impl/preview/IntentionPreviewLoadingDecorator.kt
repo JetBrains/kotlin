@@ -9,6 +9,7 @@ import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.ui.components.panels.OpaquePanel
 import com.intellij.util.ui.AsyncProcessIcon
 import java.awt.BorderLayout
+import java.awt.Color
 import java.awt.FlowLayout
 import javax.swing.JLabel
 import javax.swing.JPanel
@@ -16,17 +17,18 @@ import javax.swing.JPanel
 internal class IntentionPreviewLoadingDecorator(panel: JPanel, project: Project) :
   LoadingDecorator(panel, project, 500, false, AsyncProcessIcon("IntentionPreviewProcessLoading")) {
   override fun customizeLoadingLayer(parent: JPanel, text: JLabel, icon: AsyncProcessIcon): NonOpaquePanel {
+    val editorBackground = EditorColorsManager.getInstance().globalScheme.defaultBackground
     val iconNonOpaquePanel = OpaquePanel(FlowLayout(FlowLayout.RIGHT, 2, 2))
-      .also {
-        it.add(icon, BorderLayout.NORTH)
-        it.background = EditorColorsManager.getInstance().globalScheme.defaultBackground
+      .apply {
+        add(icon, BorderLayout.NORTH)
+        background = editorBackground
       }
 
-    icon.background = ColorUtil.withAlpha(EditorColorsManager.getInstance().globalScheme.defaultBackground, 0.0)
+    icon.background = editorBackground.withAlpha(0.0)
     icon.isOpaque = true
 
     val opaquePanel = OpaquePanel()
-    opaquePanel.background = ColorUtil.withAlpha(EditorColorsManager.getInstance().globalScheme.defaultBackground, 0.6)
+    opaquePanel.background = editorBackground.withAlpha(0.6)
 
     val nonOpaquePanel = NonOpaquePanel(BorderLayout())
     nonOpaquePanel.add(iconNonOpaquePanel, BorderLayout.EAST)
@@ -37,4 +39,6 @@ internal class IntentionPreviewLoadingDecorator(panel: JPanel, project: Project)
 
     return nonOpaquePanel
   }
+
+  fun Color.withAlpha(alpha: Double) = ColorUtil.withAlpha(this, alpha)
 }
