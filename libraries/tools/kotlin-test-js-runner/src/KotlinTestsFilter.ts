@@ -49,7 +49,7 @@ export function runWithFilter(
             path.push(name);
 
             try {
-                if (path.length > 1 && everyOfJsOrJavaNames((value) => !filter.mayContainTestsFromSuite(value)))
+                if (path.length > 0 && everyOfJsOrJavaNames((value) => !filter.mayContainTestsFromSuite(value)))
                     return;
 
                 runner.suite(name, isIgnored, fn);
@@ -105,12 +105,11 @@ export class StartsWithFilter implements KotlinTestsFilter {
     }
 
     isPrefixMatched(fqn: string): boolean {
-        console.error("fqn", fqn);
-        return startsWith(fqn + ".", this.prefix);
+        return startsWith(this.prefix, fqn)
+            || startsWith(fqn, this.prefix);
     }
 
     mayContainTestsFromSuite(fqn: string): boolean {
-        console.error("Prefix", this.prefix);
         return this.isPrefixMatched(fqn);
     }
 
