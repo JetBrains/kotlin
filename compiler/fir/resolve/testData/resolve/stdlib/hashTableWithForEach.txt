@@ -1,0 +1,46 @@
+FILE: hashTableWithForEach.kt
+    private final val DEBUG: R|kotlin/Boolean| = Boolean(true)
+        private get(): R|kotlin/Boolean|
+    public abstract class SomeHashTable<K : R|kotlin/Any|, V : R|kotlin/Any|> : R|kotlin/collections/AbstractMutableMap<K, V>| {
+        public constructor<K : R|kotlin/Any|, V : R|kotlin/Any|>(): R|SomeHashTable<K, V>| {
+            super<R|kotlin/collections/AbstractMutableMap<K, V>|>()
+        }
+
+        public open override fun forEach(action: R|java/util/function/BiConsumer<in K, in V>|): R|kotlin/Unit| {
+        }
+
+        public open override val entries: R|kotlin/collections/MutableSet<kotlin/collections/MutableMap.MutableEntry<K, V>>|
+            public get(): R|kotlin/collections/MutableSet<kotlin/collections/MutableMap.MutableEntry<K, V>>| {
+                when () {
+                    R|/DEBUG| ->  {
+                        ^ Q|java/util/Collections|.R|java/util/Collections.unmodifiableSet|<R|kotlin/collections/MutableMap.MutableEntry<K, V>|>(R|kotlin/collections/mutableSetOf|<R|kotlin/collections/MutableMap.MutableEntry<K, V>|>().R|kotlin/apply|<R|kotlin/collections/MutableSet<kotlin/collections/MutableMap.MutableEntry<K, V>>|>(<L> = apply@fun R|kotlin/collections/MutableSet<kotlin/collections/MutableMap.MutableEntry<K, V>>|.<anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+                            this@R|/SomeHashTable|.R|FakeOverride</SomeHashTable.forEach: R|kotlin/Unit|>|(<L> = forEach@fun <anonymous>(key: R|K!|, value: R|V!|): R|kotlin/Unit| {
+                                this@R|kotlin/collections/MutableSet|.R|FakeOverride<kotlin/collections/MutableSet.add: R|kotlin/Boolean|>|(R|/SomeHashTable.Entry.Entry|<R|K|, R|V|>(R|<local>/key|, R|<local>/value|))
+                            }
+                            )
+                        }
+                        ))
+                    }
+                }
+
+                throw R|java/lang/UnsupportedOperationException.UnsupportedOperationException|()
+            }
+
+        private final class Entry<K, V> : R|kotlin/collections/MutableMap.MutableEntry<K, V>| {
+            public constructor<K, V>(key: R|K|, value: R|V|): R|SomeHashTable.Entry<K, V>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final override val key: R|K| = R|<local>/key|
+                public get(): R|K|
+
+            public final override val value: R|V| = R|<local>/value|
+                public get(): R|V|
+
+            public final override fun setValue(newValue: R|V|): R|V| {
+                ^setValue throw R|java/lang/UnsupportedOperationException.UnsupportedOperationException|()
+            }
+
+        }
+
+    }

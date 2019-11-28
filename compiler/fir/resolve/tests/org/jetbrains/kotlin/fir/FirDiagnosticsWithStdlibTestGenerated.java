@@ -98,6 +98,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         runTest("compiler/fir/resolve/testData/resolve/stdlib/hashSet.kt");
     }
 
+    @TestMetadata("hashTableWithForEach.kt")
+    public void testHashTableWithForEach() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/stdlib/hashTableWithForEach.kt");
+    }
+
     @TestMetadata("helloWorld.kt")
     public void testHelloWorld() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/stdlib/helloWorld.kt");
@@ -171,6 +176,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
     @TestMetadata("typeAliasDeserialization.kt")
     public void testTypeAliasDeserialization() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/stdlib/typeAliasDeserialization.kt");
+    }
+
+    @TestMetadata("typeAliasWithForEach.kt")
+    public void testTypeAliasWithForEach() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/stdlib/typeAliasWithForEach.kt");
     }
 
     @TestMetadata("typeParameterDerived.kt")
