@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.library.KLIB_PROPERTY_METADATA_VERSION
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 
-class KlibMetadataVersion(vararg numbers: Int) : BinaryVersion(*numbers) {
+class KlibMetadataVersion(major: Int, minor: Int, patch: Int) : BinaryVersion(major, minor, patch) {
 
     override fun isCompatible(): Boolean = isCompatibleTo(INSTANCE)
 
@@ -22,10 +22,15 @@ class KlibMetadataVersion(vararg numbers: Int) : BinaryVersion(*numbers) {
     }
 }
 
+fun KlibMetadataVersion(vararg values: Int): KlibMetadataVersion {
+    if (values.size != 3) error("Metadata version should be in major.minor.patch format: $values")
+    return KlibMetadataVersion(values[0], values[1], values[2])
+}
+
 val KotlinLibrary.metadataVersion: KlibMetadataVersion
     get() {
         val versionString = manifestProperties.getProperty(KLIB_PROPERTY_METADATA_VERSION)
         val versionIntArray = BinaryVersion.parseVersionArray(versionString)
-            ?: error("Could not parse ir version: $versionString")
+            ?: error("Could not parse metadata version: $versionString")
         return KlibMetadataVersion(*versionIntArray)
     }

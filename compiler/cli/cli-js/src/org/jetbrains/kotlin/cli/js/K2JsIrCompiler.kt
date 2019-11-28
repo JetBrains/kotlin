@@ -314,7 +314,6 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
     }
 
     override fun createMetadataVersion(versionArray: IntArray): BinaryVersion {
-        // TODO: Support metadata versions for klibs
         return KlibMetadataVersion(*versionArray)
     }
 
