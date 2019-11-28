@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.serialization.DescriptorTable
 import org.jetbrains.kotlin.backend.common.serialization.isExpectMember
 import org.jetbrains.kotlin.backend.common.serialization.isSerializableExpectClass
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataSerializer
+import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor

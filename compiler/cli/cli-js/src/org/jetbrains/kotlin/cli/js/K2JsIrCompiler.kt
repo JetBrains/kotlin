@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.cli.js
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.ExitCode.COMPILATION_ERROR
 import org.jetbrains.kotlin.cli.common.ExitCode.OK
@@ -317,7 +318,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
     override fun createMetadataVersion(versionArray: IntArray): BinaryVersion {
         // TODO: Support metadata versions for klibs
-        return JsMetadataVersion(*versionArray)
+        return KlibMetadataVersion(*versionArray)
     }
 
     override fun MutableList<String>.addPlatformOptions(arguments: K2JSCompilerArguments) {}

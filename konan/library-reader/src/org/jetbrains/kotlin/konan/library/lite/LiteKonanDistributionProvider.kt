@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.konan.library.lite
 
-import org.jetbrains.kotlin.konan.KonanVersion
+import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
 import org.jetbrains.kotlin.konan.library.konanCommonLibraryPath
 import java.io.File
@@ -17,7 +17,7 @@ object LiteKonanDistributionProvider {
 
         return LiteKonanDistribution(
             konanHomeDir,
-            KonanVersion.fromString(stdlib.compilerVersion),
+            CompilerVersion.fromString(stdlib.compilerVersion),
             stdlib.compilerVersion
         )
     }

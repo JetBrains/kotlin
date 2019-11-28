@@ -8,6 +8,8 @@ const val KLIB_PROPERTY_ABI_VERSION = "abi_version"
 const val KLIB_PROPERTY_COMPILER_VERSION = "compiler_version"
 const val KLIB_PROPERTY_DEPENDENCY_VERSION = "dependency_version"
 const val KLIB_PROPERTY_LIBRARY_VERSION = "library_version"
+const val KLIB_PROPERTY_METADATA_VERSION = "metadata_version"
+const val KLIB_PROPERTY_IR_VERSION = "ir_version"
 const val KLIB_PROPERTY_UNIQUE_NAME = "unique_name"
 const val KLIB_PROPERTY_DEPENDS = "depends"
 const val KLIB_PROPERTY_PACKAGE = "package"
@@ -21,7 +23,7 @@ const val KLIB_PROPERTY_EXPORT_FORWARD_DECLARATIONS = "exportForwardDeclarations
 interface BaseKotlinLibrary {
     val libraryName: String
     val libraryFile: File
-    val versions: KonanLibraryVersioning
+    val versions: KotlinLibraryVersioning
     // Whether this library is default (provided by distribution)?
     val isDefault: Boolean
     val manifestProperties: Properties
