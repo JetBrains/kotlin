@@ -72,19 +72,14 @@ internal class IntentionPreviewPopupUpdateProcessor(private val project: Project
   }
 
   private fun renderPreview(result: IntentionPreviewResult?) {
-    try {
-      val editors = IntentionPreviewModel.createEditors(project, originalFile, result)
-      if (editors.isEmpty()) {
-        select(NO_PREVIEW)
-        return
-      }
-
-      editorsToRelease.addAll(editors)
-      select(index, editors)
-    }
-    catch (e: Exception) {
+    val editors = IntentionPreviewModel.createEditors(project, originalFile, result)
+    if (editors.isEmpty()) {
       select(NO_PREVIEW)
+      return
     }
+
+    editorsToRelease.addAll(editors)
+    select(index, editors)
   }
 
   fun setup(updateAdvertiser: (String) -> Unit, parentIndex: Int) {
@@ -118,5 +113,5 @@ internal class IntentionPreviewPopupUpdateProcessor(private val project: Project
     private val ESCAPE_SHORTCUT_TEXT = KeymapUtil.getPreferredShortcutText(ESCAPE.shortcuts)
   }
 
-  class IntentionPreviewPopupKey
+  internal class IntentionPreviewPopupKey
 }

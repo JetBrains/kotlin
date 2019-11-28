@@ -22,7 +22,7 @@ internal class IntentionPreviewEditorsPanel(val editors: List<EditorEx>) : JPane
 
   private fun createSeparatorLine(colorsScheme: EditorColorsScheme): JPanel {
     var color = colorsScheme.getColor(CodeInsightColors.METHOD_SEPARATORS_COLOR)
-    color = color?.let { JBColor.namedColor("Group.separatorColor", JBColor(Gray.xCD, Gray.x51)) }
+    color = color ?: JBColor.namedColor("Group.separatorColor", JBColor(Gray.xCD, Gray.x51))
 
     return JBUI.Panels.simplePanel().withBorder(JBUI.Borders.customLine(color, 1, 0, 0, 0))
   }

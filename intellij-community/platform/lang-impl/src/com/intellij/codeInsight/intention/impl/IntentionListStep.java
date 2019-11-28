@@ -76,7 +76,6 @@ public class IntentionListStep implements ListPopupStep<IntentionActionWithTextC
     }
 
     if (hasSubstep(action)) {
-      //close intention preview popup if any
       closeIntentionPreviewPopup();
 
       return getSubStep(action, action.getToolName());

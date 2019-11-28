@@ -19,7 +19,6 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
 import java.util.concurrent.Callable
 
-
 internal class IntentionPreviewComputable(private val project: Project,
                                           private val action: IntentionAction,
                                           private val originalFile: PsiFile,
@@ -52,11 +51,14 @@ internal class IntentionPreviewComputable(private val project: Project,
       )
     }
     catch (e: IntentionPreviewUnsupportedOperationException) {
-      throw ProcessCanceledException()
+      return null
+    }
+    catch (e: ProcessCanceledException) {
+      throw e
     }
     catch (e: Exception) {
       LOG.debug("There are exceptions on invocation the intention: '${action.text}' on a copy of the file.", e)
-      throw ProcessCanceledException(e)
+      return null
     }
   }
 
@@ -89,4 +91,4 @@ internal class IntentionPreviewComputable(private val project: Project,
   }
 }
 
-data class IntentionPreviewResult(val psiFile: PsiFile?, val lineFragments: List<LineFragment>)
+internal data class IntentionPreviewResult(val psiFile: PsiFile?, val lineFragments: List<LineFragment>)
