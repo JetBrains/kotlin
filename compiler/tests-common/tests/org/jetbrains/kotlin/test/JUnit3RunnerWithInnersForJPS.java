@@ -96,7 +96,9 @@ public class JUnit3RunnerWithInnersForJPS extends Runner implements Filterable, 
         String compilerXmlTargetPath = baseDir + "/META-INF/extensions/compiler.xml";
 
         try {
-            Files.copy(Paths.get(compilerXmlSourcePath), Paths.get(compilerXmlTargetPath), REPLACE_EXISTING);
+            Path targetPath = Paths.get(compilerXmlTargetPath);
+            Files.createDirectories(targetPath.getParent());
+            Files.copy(Paths.get(compilerXmlSourcePath),targetPath, REPLACE_EXISTING);
         }
         catch (IOException e) {
             throw new RuntimeException(e);
