@@ -984,10 +984,10 @@ public class SearchEverywhereAction extends AnAction implements CustomComponentA
       //  editor.setBorder(new MacIntelliJTextBorder());
       //}
       //else
-        if (!UIUtil.isUnderWin10LookAndFeel()){
-        editor.setUI((DarculaTextFieldUI)DarculaTextFieldUI.createUI(editor));
-        editor.setBorder(new DarculaTextBorder());
-      }
+      //  if (!UIUtil.isUnderWin10LookAndFeel()){
+      //  editor.setUI((DarculaTextFieldUI)DarculaTextFieldUI.createUI(editor));
+      //  editor.setBorder(new DarculaTextBorder());
+      //}
 
       editor.putClientProperty("JTextField.Search.noBorderRing", Boolean.TRUE);
       if (StartupUiUtil.isUnderDarcula()) {
