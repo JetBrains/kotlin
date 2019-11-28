@@ -53,11 +53,7 @@ class FirCallCompletionResultsWriterTransformer(
             FirSimpleDiagnostic("Callee reference to candidate without return type: ${candidateFir.render()}")
         )
 
-        val initialType = calleeReference.candidate.substitutor.substituteOrNull(typeRef.type)
-        val finalType = finalSubstitutor.substituteOrNull(initialType)
-
-        val resultType = typeRef.withReplacedConeType(finalType)
-        qualifiedAccessExpression.replaceTypeRef(resultType)
+        qualifiedAccessExpression.replaceTypeRefWithSubstituted(calleeReference, typeRef)
 
         return qualifiedAccessExpression.transformCalleeReference(
             StoreCalleeReference,
@@ -67,6 +63,24 @@ class FirCallCompletionResultsWriterTransformer(
                 calleeReference.candidateSymbol
             )
         ).compose()
+    }
+
+    private fun <D : FirExpression> D.replaceTypeRefWithSubstituted(
+        calleeReference: FirNamedReferenceWithCandidate,
+        typeRef: FirResolvedTypeRef
+    ): D {
+        val resultTypeRef = typeRef.substituteTypeRef(calleeReference.candidate)
+        replaceTypeRef(resultTypeRef)
+        return this
+    }
+
+    private fun FirResolvedTypeRef.substituteTypeRef(
+        candidate: Candidate
+    ): FirResolvedTypeRef {
+        val initialType = candidate.substitutor.substituteOrNull(type)
+        val finalType = finalSubstitutor.substituteOrNull(initialType)
+
+        return withReplacedConeType(finalType)
     }
 
     override fun transformCallableReferenceAccess(
@@ -149,10 +163,7 @@ class FirCallCompletionResultsWriterTransformer(
             }
         }
 
-        val initialType = subCandidate.substitutor.substituteOrNull(typeRef.type)
-        val finalType = finalSubstitutor.substituteOrNull(initialType)
-
-        val resultType = typeRef.withReplacedConeType(finalType)
+        val resultType = typeRef.substituteTypeRef(subCandidate)
 
         return functionCall.copy(
             resultType = resultType,
@@ -216,10 +227,7 @@ class FirCallCompletionResultsWriterTransformer(
 
         val typeRef = typeCalculator.tryCalculateReturnType(declaration)
 
-        val initialType = subCandidate.substitutor.substituteOrNull(typeRef.type)
-        val finalType = finalSubstitutor.substituteOrNull(initialType)
-
-        whenExpression.resultType = typeRef.withReplacedConeType(finalType)
+        whenExpression.resultType = typeRef.substituteTypeRef(subCandidate)
 
         return whenExpression.transformCalleeReference(
             StoreCalleeReference,
@@ -242,10 +250,7 @@ class FirCallCompletionResultsWriterTransformer(
 
         val typeRef = typeCalculator.tryCalculateReturnType(declaration)
 
-        val initialType = subCandidate.substitutor.substituteOrNull(typeRef.type)
-        val finalType = finalSubstitutor.substituteOrNull(initialType)
-
-        tryExpression.resultType = typeRef.withReplacedConeType(finalType)
+        tryExpression.resultType = typeRef.substituteTypeRef(subCandidate)
         return tryExpression.transformCalleeReference(
             StoreCalleeReference,
             FirResolvedNamedReferenceImpl(
