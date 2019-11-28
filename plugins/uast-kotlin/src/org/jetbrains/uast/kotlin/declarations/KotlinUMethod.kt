@@ -16,6 +16,7 @@
 
 package org.jetbrains.uast.kotlin.declarations
 
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiNameIdentifierOwner
@@ -26,6 +27,8 @@ import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.elements.isGetter
 import org.jetbrains.kotlin.asJava.elements.isSetter
+import org.jetbrains.kotlin.asJava.findFacadeClass
+import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
@@ -151,11 +154,18 @@ open class KotlinUAnnotationMethod(
 
 }
 
-private fun buildLightMethodFake(original: KtFunction): PsiMethod = LightMethodBuilder(
+private fun buildLightMethodFake(original: KtFunction): PsiMethod = object : LightMethodBuilder(
     original.manager, original.language, original.name,
     LightParameterListBuilder(original.manager, original.language),
     LightModifierList(original.manager)
-)
+) {
+
+    init {
+        containingClass = original.containingClassOrObject?.toLightClass() ?: original.containingKtFile.findFacadeClass()
+    }
+
+    override fun getParent(): PsiElement? = containingClass
+}
 
 class KotlinUMethodWithFakeLightDelegate(val original: KtFunction, givenParent: UElement?) :
     KotlinUMethod(buildLightMethodFake(original), original, givenParent) {
