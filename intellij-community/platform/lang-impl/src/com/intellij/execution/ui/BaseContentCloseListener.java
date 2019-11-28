@@ -31,7 +31,7 @@ public abstract class BaseContentCloseListener extends ContentManagerAdapter imp
   private Content myContent;
   private final Project myProject;
 
-  public BaseContentCloseListener(@NotNull final Content content, @NotNull final Project project) {
+  public BaseContentCloseListener(@NotNull Content content, @NotNull Project project) {
     myContent = content;
     myProject = project;
     final ContentManager contentManager = content.getManager();
@@ -77,13 +77,17 @@ public abstract class BaseContentCloseListener extends ContentManagerAdapter imp
   }
 
   @Override
-  public void projectClosed(@NotNull final Project project) {
-    if (myContent == null || project != myProject) return;
+  public void projectClosed(@NotNull Project project) {
+    if (myContent == null || project != myProject) {
+      return;
+    }
+
     ContentManager contentManager = myContent.getManager();
     if (contentManager != null) {
       contentManager.removeContent(myContent, true);
     }
-    dispose(); // Dispose content even if content manager refused to.
+    // dispose content even if content manager refused to
+    dispose();
   }
 
   @Override

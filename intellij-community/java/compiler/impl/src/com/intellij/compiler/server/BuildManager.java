@@ -1475,7 +1475,7 @@ public final class BuildManager implements Disposable {
     }
   }
 
-  private static class NotifyingMessageHandler extends DelegatingMessageHandler {
+  private static final class NotifyingMessageHandler extends DelegatingMessageHandler {
     private final Project myProject;
     private final BuilderMessageHandler myDelegateHandler;
     private final boolean myIsAutomake;
@@ -1549,7 +1549,7 @@ public final class BuildManager implements Disposable {
     }
   }
 
-  private class ProjectWatcher implements ProjectManagerListener {
+  private final class ProjectWatcher implements ProjectManagerListener {
     private final Map<Project, MessageBusConnection> myConnections = new HashMap<>();
 
     @Override

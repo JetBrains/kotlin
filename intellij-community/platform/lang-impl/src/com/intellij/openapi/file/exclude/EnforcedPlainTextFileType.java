@@ -7,12 +7,11 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public class EnforcedPlainTextFileType implements FileType {
+public final class EnforcedPlainTextFileType implements FileType {
   public static final FileType INSTANCE = new EnforcedPlainTextFileType();
 
-  private final EnforcedPlainTextFileTypeManager myTypeManager = EnforcedPlainTextFileTypeManager.getInstance();
-
   private EnforcedPlainTextFileType() {
+    EnforcedPlainTextFileTypeManager.getInstance();
   }
 
   @NotNull

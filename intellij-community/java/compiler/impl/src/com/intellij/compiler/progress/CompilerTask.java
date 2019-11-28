@@ -47,7 +47,6 @@ import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.ui.MessageCategory;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -57,7 +56,7 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class CompilerTask extends Task.Backgroundable {
+public final class CompilerTask extends Task.Backgroundable {
   private static final Logger LOG = Logger.getInstance(CompilerTask.class);
   private static final Key<Object> CONTENT_ID_KEY = Key.create("CONTENT_ID");
   private static final Key<Object> SESSION_ID_KEY = Key.create("SESSION_ID");
@@ -143,8 +142,8 @@ public class CompilerTask extends Task.Backgroundable {
     return myIndicator;
   }
 
+  @NotNull
   @Override
-  @Nullable
   public NotificationInfo getNotificationInfo() {
     return new NotificationInfo(myErrorCount > 0? "Compiler (errors)" : "Compiler (success)", "Compilation Finished", myErrorCount + " Errors, " + myWarningCount + " Warnings", true);
   }
@@ -152,17 +151,16 @@ public class CompilerTask extends Task.Backgroundable {
   private CloseListener myCloseListener;
 
   @Override
-  public void run(@NotNull final ProgressIndicator indicator) {
+  public void run(@NotNull ProgressIndicator indicator) {
     myIndicator = indicator;
     myIndicator.setIndeterminate(false);
 
-    final ProjectManager projectManager = ProjectManager.getInstance();
-    projectManager.addProjectManagerListener(myProject, myCloseListener = new CloseListener());
+    myCloseListener = new CloseListener();
+    ProjectManager.getInstance().addProjectManagerListener(myProject, myCloseListener);
 
-    final Semaphore semaphore = ((CompilerManagerImpl)CompilerManager.getInstance(myProject)).getCompilationSemaphore();
+    Semaphore semaphore = ((CompilerManagerImpl)CompilerManager.getInstance(myProject)).getCompilationSemaphore();
     boolean acquired = false;
     try {
-
       try {
         while (!acquired) {
           acquired = semaphore.tryAcquire(300, TimeUnit.MILLISECONDS);
@@ -189,7 +187,7 @@ public class CompilerTask extends Task.Backgroundable {
     finally {
       try {
         indicator.stop();
-        projectManager.removeProjectManagerListener(myProject, myCloseListener);
+        ProjectManager.getInstance().removeProjectManagerListener(myProject, myCloseListener);
       }
       finally {
         if (acquired) {
@@ -554,7 +552,7 @@ public class CompilerTask extends Task.Backgroundable {
     return TextRange.EMPTY_RANGE;
   }
 
-  private class CloseListener extends ContentManagerAdapter implements ProjectManagerListener {
+  private final class CloseListener extends ContentManagerAdapter implements ProjectManagerListener {
     private Content myContent;
     private ContentManager myContentManager;
     private boolean myIsApplicationExitingOrProjectClosing = false;

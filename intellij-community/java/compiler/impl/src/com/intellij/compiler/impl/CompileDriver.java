@@ -58,13 +58,13 @@ import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import java.awt.*;
 import java.lang.ref.WeakReference;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static org.jetbrains.jps.api.CmdlineRemoteProto.Message.ControllerMessage.ParametersMessage.TargetTypeBuildScope;
 
-public class CompileDriver {
+public final class CompileDriver {
   private static final Logger LOG = Logger.getInstance(CompileDriver.class);
 
   private static final Key<Boolean> COMPILATION_STARTED_AUTOMATICALLY = Key.create("compilation_started_automatically");
@@ -611,9 +611,6 @@ public class CompileDriver {
       StatusBar statusBar = WindowManager.getInstance().getStatusBar(myProject);
       if (statusBar != null) {
         statusBar.setInfo("");
-      }
-      if (progressIndicator instanceof CompilerTask) {
-        ApplicationManager.getApplication().invokeLater(((CompilerTask)progressIndicator)::showCompilerContent);
       }
     }
     return true;
