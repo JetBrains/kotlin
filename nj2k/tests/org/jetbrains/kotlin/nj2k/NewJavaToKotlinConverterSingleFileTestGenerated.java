@@ -4176,6 +4176,11 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
             runTest("nj2k/testData/newJ2k/postProcessing/AnonymousObject.java");
         }
 
+        @TestMetadata("ConvertConcatenationToRawString.java")
+        public void testConvertConcatenationToRawString() throws Exception {
+            runTest("nj2k/testData/newJ2k/postProcessing/ConvertConcatenationToRawString.java");
+        }
+
         @TestMetadata("GetOperator.java")
         public void testGetOperator() throws Exception {
             runTest("nj2k/testData/newJ2k/postProcessing/GetOperator.java");

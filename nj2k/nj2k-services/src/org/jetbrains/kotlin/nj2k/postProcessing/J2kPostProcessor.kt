@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.nj2k.postProcessing
 
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.editor.RangeMarker
 import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
@@ -30,6 +29,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.postProcessing.processings.*
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.parents
 
 class NewJ2kPostProcessor : PostProcessor {
     @Suppress("PrivatePropertyName")
@@ -221,7 +221,15 @@ private val inspectionLikePostProcessingGroup =
         RemoveForExpressionLoopParameterTypeProcessing(),
         intentionBasedProcessing(ReplaceMapGetOrDefaultIntention()),
         inspectionBasedProcessing(ReplaceGuardClauseWithFunctionCallInspection()),
-        inspectionBasedProcessing(SortModifiersInspection())
+        inspectionBasedProcessing(SortModifiersInspection()),
+        intentionBasedProcessing(ConvertToRawStringTemplateIntention()) { element ->
+            element.parents.none {
+                (it as? KtProperty)?.hasModifier(KtTokens.CONST_KEYWORD) == true
+            } && ConvertToStringTemplateIntention.buildReplacement(element).entries.any {
+                (it as? KtEscapeStringTemplateEntry)?.unescapedValue == "\n"
+            }
+        },
+        intentionBasedProcessing(IndentRawStringIntention())
     )
 
 
