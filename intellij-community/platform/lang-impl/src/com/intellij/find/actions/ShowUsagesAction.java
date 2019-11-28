@@ -19,7 +19,6 @@ import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogg
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
-import com.intellij.openapi.application.TransactionGuard;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorLocation;
@@ -419,7 +418,8 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
     }
     return new InplaceButton("Settings..." + shortcutText, AllIcons.General.Settings, e -> {
       int minWidth = myWidth;
-      TransactionGuard.getInstance().submitTransactionLater(handler.getProject(), () -> showDialogAndFindUsages(handler, popupPosition, editor, maxUsages, minWidth));
+      ApplicationManager.getApplication().invokeLater(() -> showDialogAndFindUsages(handler, popupPosition, editor, maxUsages, minWidth),
+                                                      handler.getProject().getDisposed());
       cancelAction.run();
     });
   }
@@ -854,9 +854,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
                         @NotNull FindUsagesHandler handler,
                         int maxUsages,
                         @NotNull FindUsagesOptions options) {
-    int minWidth = myWidth;
-    TransactionGuard.submitTransaction(handler.getProject(), () ->
-      showElementUsages(editor, popupPosition, handler, maxUsages + getUsagesPageSize(), options, minWidth));
+    showElementUsages(editor, popupPosition, handler, maxUsages + getUsagesPageSize(), options, myWidth);
   }
 
   private static void addUsageNodes(@NotNull GroupNode root, @NotNull final UsageViewImpl usageView, @NotNull List<? super UsageNode> outNodes) {
