@@ -77,4 +77,6 @@ class GradleSettingsCollector : ProjectUsagesCollector() {
   private fun anonymizeGradleVersion(version : GradleVersion) : String {
     return Version.parseVersion(version.version)?.toCompactString() ?: "unknown"
   }
+
+  override fun getVersion(): Int = 2
 }
