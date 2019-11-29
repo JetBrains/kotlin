@@ -109,10 +109,10 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
                 }
 
                 /**
-                 * 3) Private methods, default parameter dispatchers (without @JvmDefault)
+                 * 3) Private methods (without @JvmDefault), default parameter dispatchers (without @JvmDefault)
                  *    and $annotation methods are always moved without bridges
                  */
-                Visibilities.isPrivate(function.visibility)
+                (Visibilities.isPrivate(function.visibility) && !function.hasJvmDefault())
                         || (function.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER && !function.hasJvmDefault())
                         || function.origin == JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_ANNOTATIONS -> {
                     val defaultImpl = createDefaultImpl(function)

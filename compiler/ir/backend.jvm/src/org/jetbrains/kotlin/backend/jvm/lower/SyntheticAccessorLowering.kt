@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
 import org.jetbrains.kotlin.backend.jvm.intrinsics.receiverAndArgs
 import org.jetbrains.kotlin.backend.jvm.ir.IrInlineReferenceLocator
+import org.jetbrains.kotlin.backend.jvm.ir.hasJvmDefault
 import org.jetbrains.kotlin.backend.jvm.ir.isLambda
 import org.jetbrains.kotlin.backend.jvm.ir.shouldBeHidden
 import org.jetbrains.kotlin.descriptors.Modality
@@ -447,8 +448,10 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
     private fun IrFunction.accessorName(superQualifier: IrClassSymbol?): Name {
         val jvmName = context.methodSignatureMapper.mapFunctionName(this)
         val suffix = when {
-            // The only function accessors placed on interfaces are for JvmDefault implementations
-            parent.safeAs<IrClass>()?.isJvmInterface == true -> "\$jd"
+            // The only function accessors placed on interfaces are for private functions and JvmDefault implementations.
+            // The two cannot clash.
+            parentAsClass.isJvmInterface && Visibilities.isPrivate(visibility) -> ""
+            parentAsClass.isJvmInterface && hasJvmDefault() -> "\$jd"
 
             // Accessor for _s_uper-qualified call
             superQualifier != null -> "\$s" + superQualifier.descriptor.name.asString().hashCode()
