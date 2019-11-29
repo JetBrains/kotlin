@@ -2577,6 +2577,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/constructorBridge.kt");
         }
 
+        @TestMetadata("constructorWithDefaultArguments.kt")
+        public void testConstructorWithDefaultArguments() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/constructorWithDefaultArguments.kt");
+        }
+
         @TestMetadata("defaultParametersDontBox.kt")
         public void testDefaultParametersDontBox() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/defaultParametersDontBox.kt");
