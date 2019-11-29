@@ -17,6 +17,7 @@ import com.intellij.ui.DarculaColors;
 import com.intellij.ui.Gray;
 import com.intellij.ui.HoverHyperlinkLabel;
 import com.intellij.ui.JBColor;
+import com.intellij.ui.paint.LinePainter2D;
 import com.intellij.ui.roots.FilePathClipper;
 import com.intellij.ui.roots.IconActionComponent;
 import com.intellij.ui.roots.ResizingWrapper;
@@ -327,7 +328,7 @@ public abstract class ContentRootPanel extends JPanel {
       if (StartupUiUtil.isUnderDarcula()) {
         UIUtil.drawDottedLine(g, x1, y1, x2, y2, null, g.getColor());
       } else {
-        UIUtil.drawLine(g, x1, y1, x2, y2);
+        LinePainter2D.paint((Graphics2D)g, x1, y1, x2, y2);
       }
 
       g.setStroke(saved);
