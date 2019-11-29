@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.IrInlineReferenceLocator
 import org.jetbrains.kotlin.ir.builders.createTmpVariable
 import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irInt
+import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -78,7 +79,7 @@ internal class FakeInliningLocalVariablesLowering(val context: JvmBackendContext
                 // it will materialize in the code.
                 createTmpVariable(irInt(0), name, origin = IrDeclarationOrigin.DEFINED)
                 if (body is IrExpressionBody) {
-                    +(body as IrExpressionBody).expression
+                    +irReturn((body as IrExpressionBody).expression)
                 } else {
                     (body as IrBlockBody).statements.forEach { +it }
                 }
