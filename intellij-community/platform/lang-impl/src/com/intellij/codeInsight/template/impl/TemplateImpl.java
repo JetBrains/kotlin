@@ -438,7 +438,17 @@ public class TemplateImpl extends Template implements SchemeElement {
     for (Segment v : mySegments) {
       if (SELECTION.equals(v.name)) return true;
     }
+    return ContainerUtil.exists(getVariables(),
+                                v -> containsSelection(v.getExpression()) || containsSelection(v.getDefaultValueExpression()));
+  }
 
+  private static boolean containsSelection(Expression expression) {
+    if (expression instanceof VariableNode) {
+      return SELECTION.equals(((VariableNode)expression).getName());
+    }
+    if (expression instanceof MacroCallNode) {
+      return ContainerUtil.exists(((MacroCallNode)expression).getParameters(), TemplateImpl::containsSelection);
+    }
     return false;
   }
 
