@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeFirstWord
 class SyntheticPropertySymbol(
     callableId: CallableId,
     override val accessorId: CallableId
-) : FirNamedFunctionSymbol(callableId), AccessorSymbol
+) : FirNamedFunctionSymbol(callableId), AccessorSymbol, SyntheticSymbol
 
 class FirSyntheticFunctionSymbol(
     callableId: CallableId

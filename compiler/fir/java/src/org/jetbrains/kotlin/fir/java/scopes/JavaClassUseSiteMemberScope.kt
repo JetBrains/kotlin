@@ -53,24 +53,23 @@ class JavaClassUseSiteMemberScope(
         }
     }
 
-    private fun processAccessorFunction(
+    private fun generateAccessorSymbol(
         functionSymbol: FirFunctionSymbol<*>,
         syntheticPropertyName: Name,
         overrideCandidates: MutableSet<FirCallableSymbol<*>>,
-        processor: (FirCallableSymbol<*>) -> ProcessorAction,
         isGetter: Boolean
-    ): ProcessorAction {
+    ): FirAccessorSymbol? {
         if (functionSymbol is FirNamedFunctionSymbol) {
             val fir = functionSymbol.fir
             if (fir.isStatic) {
-                return NEXT
+                return null
             }
             when (isGetter) {
                 true -> if (fir.valueParameters.isNotEmpty()) {
-                    return NEXT
+                    return null
                 }
                 false -> if (fir.valueParameters.size != 1) {
-                    return NEXT
+                    return null
                 }
             }
         }
@@ -82,7 +81,7 @@ class JavaClassUseSiteMemberScope(
         if (functionSymbol is FirNamedFunctionSymbol) {
             functionSymbol.fir.let { callableMember -> accessorSymbol.bind(callableMember) }
         }
-        return processor(accessorSymbol)
+        return accessorSymbol
     }
 
     private fun processAccessorFunctionsAndPropertiesByName(
@@ -100,10 +99,16 @@ class JavaClassUseSiteMemberScope(
         ) return STOP
         if (klass is FirJavaClass) {
             for (getterName in getterNames) {
-                if (!declaredMemberScope.processFunctionsByName(getterName) { functionSymbol ->
-                        processAccessorFunction(functionSymbol, propertyName, overrideCandidates, processor, isGetter = true)
+                declaredMemberScope.processFunctionsByName(getterName) { functionSymbol ->
+                    val accessorSymbol = generateAccessorSymbol(
+                        functionSymbol, propertyName, overrideCandidates, isGetter = true
+                    )
+                    if (accessorSymbol != null) {
+                        // NB: accessor should not be processed directly unless we find matching property symbol in supertype
+                        overrideCandidates += accessorSymbol
                     }
-                ) return STOP
+                    NEXT
+                }
             }
         }
 
@@ -112,11 +117,10 @@ class JavaClassUseSiteMemberScope(
             if (firCallableMember?.isStatic == true) {
                 processor(it)
             } else {
-                val overriddenBy = it.getOverridden(overrideCandidates)
-                if (overriddenBy == null) {
-                    processor(it)
-                } else {
-                    NEXT
+                when (val overriddenBy = it.getOverridden(overrideCandidates)) {
+                    null -> processor(it)
+                    is FirAccessorSymbol -> processor(overriddenBy)
+                    else -> NEXT
                 }
             }
         }
@@ -149,7 +153,7 @@ class JavaClassUseSiteMemberScope(
 
     override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> ProcessorAction): ProcessorAction {
         // Do not generate accessors at all?
-        if (true) {
+        if (name.isSpecial) {
             return processAccessorFunctionsAndPropertiesByName(name, emptyList(), null, processor)
         }
         val getterNames = FirSyntheticPropertiesScope.possibleGetterNamesByPropertyName(name)
