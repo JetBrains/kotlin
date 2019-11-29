@@ -4,6 +4,7 @@ package com.intellij.ide.actions;
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VFileProperty;
@@ -13,6 +14,8 @@ import com.intellij.psi.util.PsiUtilCore;
 import org.jetbrains.annotations.NotNull;
 
 public class GoToLinkTargetAction extends DumbAwareAction {
+  private static final Logger LOG = Logger.getInstance(GoToLinkTargetAction.class);
+
   @Override
   public void update(@NotNull AnActionEvent e) {
     Project project = getEventProject(e);
@@ -27,6 +30,7 @@ public class GoToLinkTargetAction extends DumbAwareAction {
     if (project != null && file != null && file.is(VFileProperty.SYMLINK)) {
       VirtualFile target = file.getCanonicalFile();
       PsiFileSystemItem psiFile = PsiUtilCore.findFileSystemItem(project, target);
+      if (LOG.isDebugEnabled()) LOG.debug(file + " -> " + target + " (" + psiFile + ")");
       if (psiFile != null) {
         ProjectView.getInstance(project).select(psiFile, target, false);
       }
