@@ -1,0 +1,16 @@
+FILE: Derived.kt
+    public final class Derived : R|Base| {
+        public constructor(): R|Derived| {
+            super<R|Base|>()
+        }
+
+        public final override fun getSomething(): R|kotlin/String| {
+            ^getSomething String(42)
+        }
+
+    }
+    public final fun test(): R|kotlin/Unit| {
+        lval d: R|Derived| = R|/Derived.Derived|()
+        lval res1: R|ft<kotlin/String, kotlin/String?>!| = R|<local>/d|.R|/Base.something|
+        lval res2: R|kotlin/String| = R|<local>/d|.R|/Derived.getSomething|()
+    }

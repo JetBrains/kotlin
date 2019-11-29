@@ -514,6 +514,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/outerObject.kt");
         }
 
+        @TestMetadata("overriddenJavaGetter.kt")
+        public void testOverriddenJavaGetter() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/overriddenJavaGetter.kt");
+        }
+
         @TestMetadata("privateObjectLiteral.kt")
         public void testPrivateObjectLiteral() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/privateObjectLiteral.kt");
