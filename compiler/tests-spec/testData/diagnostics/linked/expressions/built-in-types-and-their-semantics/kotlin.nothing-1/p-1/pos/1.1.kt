@@ -8,8 +8,7 @@
  * SPEC VERSION: 0.1-213
  * PLACE: expressions, built-in-types-and-their-semantics, kotlin.nothing-1 -> paragraph 1 -> sentence 1
  * NUMBER: 1
- * DESCRIPTION: check he type of break, continue and return expressions is the Nothing type
- * HELPERS: checkType
+ * DESCRIPTION: check the type of jump expressions is Nothing and code placed on the left side of expression will never be executed
  */
 
 
@@ -22,11 +21,11 @@ fun case1() {
         k.name
         loop@ for (i in men) {
             i.name
-            <!UNREACHABLE_CODE!>val valeua : Int =<!>      <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>break@loop<!>
+            <!UNREACHABLE_CODE!>val valeua : Int =<!>     break@loop
             <!UNREACHABLE_CODE!>i.name<!>
         }
         k.name
-        val s = k.name ?: <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>break<!>
+        val s = k.name ?: break
         k.name
     }
     val a = 1
@@ -42,10 +41,11 @@ fun case2() {
     for (k in men) {
         loop@ for (i in men) {
             i.name
-            <!UNREACHABLE_CODE!>val valeua : Int =<!>     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>continue@loop<!>
+            <!UNREACHABLE_CODE!>val val1 =<!>    continue@loop
+            <!UNREACHABLE_CODE!>val1<!>
             <!UNREACHABLE_CODE!>i.name<!>
         }
-        val s = k.name ?: <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>continue<!>
+        val s = k.name ?: continue
         k.name
     }
     val a = 1
@@ -59,11 +59,11 @@ fun case3() {
 
         listOf(1, 2, 3, 4, 5).forEach lit@{
             it
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>return@lit<!>
+            return@lit
             <!UNREACHABLE_CODE!>print(it)<!>
         }
         val y = x
-        if (x == 3) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>return<!>
+        if (x == 3) return
     }
     val a = 1
 }
