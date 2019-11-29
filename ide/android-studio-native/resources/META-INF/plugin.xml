@@ -15,5 +15,7 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <externalProjectDataService implementation="com.jetbrains.konan.MPPProjectDataService"/>
+    <configurationType implementation="com.jetbrains.mpp.MobileRunConfigurationType"/>
+    <stepsBeforeRunProvider implementation="com.jetbrains.mpp.BuildIOSAppTaskProvider"/>
   </extensions>
 </idea-plugin>
