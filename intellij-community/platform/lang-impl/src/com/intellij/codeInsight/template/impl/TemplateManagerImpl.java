@@ -14,7 +14,6 @@ import com.intellij.openapi.editor.*;
 import com.intellij.openapi.editor.event.EditorFactoryEvent;
 import com.intellij.openapi.editor.event.EditorFactoryListener;
 import com.intellij.openapi.extensions.ExtensionPoint;
-import com.intellij.openapi.extensions.ExtensionPointAdapter;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.*;
 import com.intellij.psi.PsiCompiledElement;
@@ -65,14 +64,12 @@ public class TemplateManagerImpl extends TemplateManager implements Disposable {
     };
     EditorFactory.getInstance().addEditorFactoryListener(myEditorFactoryListener, myProject);
 
-    TemplateContextType.EP_NAME.addExtensionPointListener(new ExtensionPointAdapter<TemplateContextType>() {
-      @Override
-      public void extensionListChanged() {
+    TemplateContextType.EP_NAME.addExtensionPointListener(
+      (e, pd) -> {
         for (TemplateContextType type : getAllContextTypes()) {
           type.clearCachedBaseContextType();
         }
-      }
-    }, this);
+      }, this);
   }
 
   @Override
