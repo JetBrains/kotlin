@@ -4,9 +4,6 @@ package com.intellij.openapi.externalSystem.view;
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.openapi.externalSystem.model.DataNode;
 import com.intellij.openapi.externalSystem.model.project.ProjectData;
-import com.intellij.openapi.externalSystem.settings.AbstractExternalSystemSettings;
-import com.intellij.openapi.externalSystem.settings.ExternalProjectSettings;
-import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NonNls;
@@ -67,17 +64,7 @@ public class ProjectNode extends ExternalSystemNode<ProjectData> {
 
   @Override
   protected void doUpdate() {
-    String autoImportHint = null;
-    final ProjectData projectData = getData();
-    if (projectData != null) {
-      final AbstractExternalSystemSettings externalSystemSettings =
-        ExternalSystemApiUtil.getSettings(getExternalProjectsView().getProject(), getData().getOwner());
-      final ExternalProjectSettings projectSettings =
-        externalSystemSettings.getLinkedProjectSettings(projectData.getLinkedExternalProjectPath());
-      if (projectSettings != null && projectSettings.isUseAutoImport()) autoImportHint = "auto-import enabled";
-    }
-
-    setNameAndTooltip(getName(), myTooltipCache, autoImportHint);
+    setNameAndTooltip(getName(), myTooltipCache);
   }
 
   private String makeDescription() {

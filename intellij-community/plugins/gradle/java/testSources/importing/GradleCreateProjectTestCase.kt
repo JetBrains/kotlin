@@ -69,7 +69,6 @@ abstract class GradleCreateProjectTestCase : GradleImportingTestCase() {
     val settings = getSettings(this, GradleConstants.SYSTEM_ID) as GradleSettings
     val projectSettings = settings.getLinkedProjectSettings(externalProjectPath)!!
     assertEquals(projectSettings.externalProjectPath, externalProjectPath)
-    assertEquals(projectSettings.isUseAutoImport, false)
     assertEquals(projectSettings.isUseQualifiedModuleNames, true)
     assertEquals(settings.storeProjectFilesExternally, true)
   }

@@ -85,7 +85,6 @@ internal class GradleOpenProjectProvider : AbstractOpenProjectProvider() {
 
   private fun GradleProjectSettings.setupGradleProjectSettings(projectDirectory: String, project: Project, projectSdk: Sdk? = null) {
     externalProjectPath = projectDirectory
-    isUseAutoImport = false
     isUseQualifiedModuleNames = true
     distributionType = GradleEnvironment.Headless.GRADLE_DISTRIBUTION_TYPE?.let(DistributionType::valueOf)
                        ?: DistributionType.DEFAULT_WRAPPED

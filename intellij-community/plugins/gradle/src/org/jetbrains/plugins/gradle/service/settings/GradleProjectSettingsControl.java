@@ -21,7 +21,7 @@ public class GradleProjectSettingsControl extends AbstractExternalProjectSetting
   }
 
   public GradleProjectSettingsControl(@NotNull GradleProjectSettingsControlBuilder builder) {
-    super(null, builder.getInitialSettings(), builder.getExternalSystemSettingsControlCustomizer());
+    super(null, builder.getInitialSettings());
     myBuilder = builder;
   }
 
