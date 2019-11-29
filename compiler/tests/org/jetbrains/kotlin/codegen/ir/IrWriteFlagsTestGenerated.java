@@ -776,6 +776,11 @@ public class IrWriteFlagsTestGenerated extends AbstractIrWriteFlagsTest {
                 runTest("compiler/testData/writeFlags/jvm8/defaults/onlyJvmDefaultsOnInterface.kt");
             }
 
+            @TestMetadata("privateAccessorNaming.kt")
+            public void testPrivateAccessorNaming() throws Exception {
+                runTest("compiler/testData/writeFlags/jvm8/defaults/privateAccessorNaming.kt");
+            }
+
             @TestMetadata("propertyAnnotation.kt")
             public void testPropertyAnnotation() throws Exception {
                 runTest("compiler/testData/writeFlags/jvm8/defaults/propertyAnnotation.kt");

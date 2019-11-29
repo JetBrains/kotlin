@@ -115,7 +115,11 @@ open class FunctionCodegen(
             irFunction.origin == IrDeclarationOrigin.BRIDGE_SPECIAL
         ) Opcodes.ACC_BRIDGE else 0
         val modalityFlag = when ((irFunction as? IrSimpleFunction)?.modality) {
-            Modality.FINAL -> if (!classCodegen.irClass.isAnnotationClass || irFunction.isStatic) Opcodes.ACC_FINAL else Opcodes.ACC_ABSTRACT
+            Modality.FINAL -> when {
+                classCodegen.irClass.isInterface && irFunction.body != null -> 0
+                !classCodegen.irClass.isAnnotationClass || irFunction.isStatic -> Opcodes.ACC_FINAL
+                else -> Opcodes.ACC_ABSTRACT
+            }
             Modality.ABSTRACT -> Opcodes.ACC_ABSTRACT
             else -> if (classCodegen.irClass.isJvmInterface && irFunction.body == null) Opcodes.ACC_ABSTRACT else 0 //TODO transform interface modality on lowering to DefaultImpls
         }
