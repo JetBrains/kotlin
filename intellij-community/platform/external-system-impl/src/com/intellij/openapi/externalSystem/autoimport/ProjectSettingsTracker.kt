@@ -18,6 +18,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.observable.operations.AnonymousParallelOperationTrace
 import com.intellij.openapi.observable.operations.CompoundParallelOperationTrace
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
@@ -104,7 +105,7 @@ class ProjectSettingsTracker(
         settingsFilesCRC.updateAndGet { newSettingsFilesCRC + it }
         if (!hasChanges(newSettingsFilesCRC)) {
           modificationType.set(null)
-          status.markReverted(currentTime())
+          status.markSynchronized(currentTime())
         }
       }.finishOnUiThread {
         applyChangesOperation.finishTask()
@@ -122,7 +123,7 @@ class ProjectSettingsTracker(
         }
       }.finishOnUiThread {
         projectTracker.scheduleProjectRefresh()
-      }.submit(parentDisposable)
+      }.submit()
     }
   }
 
@@ -154,7 +155,7 @@ class ProjectSettingsTracker(
       application.invokeAndWait(action)
     }
     else {
-      application.invokeLater(action)
+      application.invokeLater(action, { Disposer.isDisposed(parentDisposable) })
     }
   }
 
