@@ -124,7 +124,11 @@ export class StartsWithFilter implements KotlinTestsFilter {
 }
 
 export class ExactFilter implements KotlinTestsFilter {
+    private readonly classNameOnlyRegExp: RegExp;
+
     constructor(public fqn: string) {
+        // Exact filter by class name only
+        this.classNameOnlyRegExp = RegExp(`^${escapeRegExp(this.fqn + ".")}[^\.]+$`);
     }
 
     mayContainTestsFromSuite(fqn: string): boolean {
@@ -136,9 +140,7 @@ export class ExactFilter implements KotlinTestsFilter {
             return true
         }
 
-        // Exact filter by class name only
-        const regexp = RegExp(`^${escapeRegExp(this.fqn + ".")}[^\.]+$`);
-        return regexp.test(fqn)
+        return this.classNameOnlyRegExp.test(fqn)
     }
 }
 
