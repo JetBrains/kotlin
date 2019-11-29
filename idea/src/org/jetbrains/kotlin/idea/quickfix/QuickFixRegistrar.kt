@@ -168,6 +168,8 @@ class QuickFixRegistrar : QuickFixContributor {
         NAMED_PARAMETER_NOT_FOUND.registerFactory(ImportForMismatchingArgumentsFix)
         NONE_APPLICABLE.registerFactory(ImportForMismatchingArgumentsFix)
         WRONG_NUMBER_OF_TYPE_ARGUMENTS.registerFactory(ImportForMismatchingArgumentsFix)
+        NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER.registerFactory(ImportForMismatchingArgumentsFix)
+        TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER.registerFactory(ImportForMismatchingArgumentsFix)
 
         UNRESOLVED_REFERENCE_WRONG_RECEIVER.registerFactory(ImportFix)
 
