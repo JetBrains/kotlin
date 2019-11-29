@@ -29,7 +29,8 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 val varargPhase = makeIrFilePhase(
     ::VarargLowering,
     name = "VarargLowering",
-    description = "Replace varargs with array arguments and lower arrayOf calls"
+    description = "Replace varargs with array arguments and lower arrayOf calls",
+    prerequisite = setOf(polymorphicSignaturePhase)
 )
 
 private class VarargLowering(val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {

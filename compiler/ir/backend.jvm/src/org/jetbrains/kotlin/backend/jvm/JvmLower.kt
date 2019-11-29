@@ -231,6 +231,7 @@ private val jvmFilePhases =
         inventNamesForLocalClassesPhase then
         kCallableNamePropertyPhase then
         annotationPhase then
+        polymorphicSignaturePhase then
         varargPhase then
         arrayConstructorPhase then
         checkNotNullPhase then

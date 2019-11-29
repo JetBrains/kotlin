@@ -50,7 +50,8 @@ class MemoizedInlineClassReplacements {
                 !it.hasMangledParameters ||
                         it.isSyntheticInlineClassMember ||
                         it.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA ||
-                        it.origin == IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR -> null
+                        it.origin == IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR ||
+                        it.origin == JvmLoweredDeclarationOrigin.POLYMORPHIC_SIGNATURE_INSTANTIATION -> null
                 it.hasMethodReplacement -> createMethodReplacement(it)
                 it.hasStaticReplacement -> createStaticReplacement(it)
                 else -> null
