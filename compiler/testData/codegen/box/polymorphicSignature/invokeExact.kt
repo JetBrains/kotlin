@@ -1,7 +1,6 @@
 // !LANGUAGE: +PolymorphicSignature
 // IGNORE_BACKEND_FIR: JVM_IR
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND: JVM_IR
 // FULL_JDK
 // SKIP_JDK6
 // WITH_RUNTIME
@@ -11,6 +10,11 @@ import java.lang.invoke.MethodType
 
 class C {
     fun foo(s: String, d: Double, x: Int): String = "$s$d$x"
+
+    companion object {
+        @JvmStatic
+        fun bar(): Any = "OK"
+    }
 }
 
 fun box(): String {
@@ -19,5 +23,9 @@ fun box(): String {
         MethodType.methodType(String::class.java, String::class.java, Double::class.java, Int::class.java)
     )
     val result: String = mh.invokeExact(C(), "Hello", 0.01, 42) as String
-    return if (result == "Hello0.0142") "OK" else "Fail: $result"
+    if (result != "Hello0.0142") return "Fail 1: $result"
+
+    val mh2 = MethodHandles.lookup().findStatic(C::class.java, "bar", MethodType.methodType(Object::class.java))
+    val result2 = mh2.invokeExact() is String
+    return if (result2) "OK" else "Fail 2"
 }
