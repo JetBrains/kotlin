@@ -153,7 +153,8 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                 )
             ) {
                 it.dependsOn(
-                    nodeJs.npmInstallTask
+                    nodeJs.npmInstallTask,
+                    target.project.tasks.getByName(compilation.processResourcesTaskName)
                 )
 
                 it.configureOptimization(kind)
@@ -178,6 +179,14 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
                 commonWebpackConfigurations.forEach { configure ->
                     it.configure()
+                }
+
+                it.doLast { _ ->
+                    compilation.output.resourcesDir
+                        .copyRecursively(
+                            target = it.destinationDirectory!!,
+                            overwrite = true
+                        )
                 }
             }
 
