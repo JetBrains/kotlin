@@ -12,7 +12,7 @@
 
 fun box(): String {
     val person = Person("Elvis")
-    person.name ?: throwException("Name is required")
+    person.name
     try {
         person.name = null
         person.name ?: throwException("Name is required")

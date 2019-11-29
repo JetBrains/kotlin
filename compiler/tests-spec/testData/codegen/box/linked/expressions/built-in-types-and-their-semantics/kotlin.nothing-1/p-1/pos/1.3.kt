@@ -11,7 +11,6 @@
 
 fun box(): String {
     val bar = ::exit
-    if (bar !is () -> Nothing) return "NOK"
     try {
         bar()
     } catch (e: NotImplementedError) {

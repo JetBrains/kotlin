@@ -9,20 +9,16 @@
  * DESCRIPTION:
  */
 
-
 fun box(): String {
     val c = Class()
-    if (c.data !is () -> Nothing) return "NOK"
-    val e1 : () -> Nothing = c.exception as () -> Nothing as? () -> Nothing ?: return "NOK"
-    val v = c.value as () -> Nothing as? () -> Nothing ?: return "NOK"
     try {
         c.data.invoke()
     } catch (e: IllegalArgumentException) {
         try {
-            e1.invoke()
+            c.exception.invoke()
         } catch (e: IllegalArgumentException) {
             try {
-                v()
+                c.value()
             } catch (e: NotImplementedError) {
                 return "OK"
             }
