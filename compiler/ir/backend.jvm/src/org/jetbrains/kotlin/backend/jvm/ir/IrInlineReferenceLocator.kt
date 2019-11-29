@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
-internal class IrInlineReferenceLocator(private val context: JvmBackendContext) : IrElementVisitorVoidWithContext() {
+internal open class IrInlineReferenceLocator(private val context: JvmBackendContext) : IrElementVisitorVoidWithContext() {
     val inlineReferences = mutableSetOf<IrCallableReference>()
 
     // For crossinline lambdas, the call site is null as it's probably in a separate class somewhere.
@@ -36,7 +36,7 @@ internal class IrInlineReferenceLocator(private val context: JvmBackendContext) 
                     continue
 
                 if (valueArgument is IrPropertyReference) {
-                    inlineReferences.add(valueArgument)
+                    handleInlineFunctionCallableReferenceParam(valueArgument)
                     continue
                 }
 
@@ -46,14 +46,22 @@ internal class IrInlineReferenceLocator(private val context: JvmBackendContext) 
                     else -> null
                 } ?: continue
 
-                inlineReferences.add(reference)
+                handleInlineFunctionCallableReferenceParam(reference)
                 if (valueArgument is IrBlock && valueArgument.origin.isLambda) {
-                    lambdaToCallSite[reference.symbol.owner] =
-                        if (parameter.isCrossinline) null else currentScope!!.irElement as IrDeclaration
+                    val declaration = if (parameter.isCrossinline) null else currentScope!!.irElement as IrDeclaration
+                    handleInlineFunctionLambdaParam(reference.symbol.owner, function, declaration)
                 }
             }
         }
         return super.visitFunctionAccess(expression)
+    }
+
+    open fun handleInlineFunctionCallableReferenceParam(valueArgument: IrCallableReference) {
+        inlineReferences.add(valueArgument)
+    }
+
+    open fun handleInlineFunctionLambdaParam(lambda: IrFunction, callee: IrFunction, callSite: IrDeclaration?) {
+        lambdaToCallSite[lambda] = callSite
     }
 
     companion object {

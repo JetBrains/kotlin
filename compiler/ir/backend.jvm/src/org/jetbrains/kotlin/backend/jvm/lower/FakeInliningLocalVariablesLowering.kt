@@ -10,15 +10,20 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.codegen.mapClass
-import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.backend.jvm.ir.IrInlineReferenceLocator
+import org.jetbrains.kotlin.ir.builders.createTmpVariable
+import org.jetbrains.kotlin.ir.builders.irBlockBody
+import org.jetbrains.kotlin.ir.builders.irInt
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrBlockBody
+import org.jetbrains.kotlin.ir.expressions.IrCallableReference
+import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
 
 internal val fakeInliningLocalVariablesLowering = makeIrFilePhase(
@@ -27,38 +32,26 @@ internal val fakeInliningLocalVariablesLowering = makeIrFilePhase(
     description = "Add fake locals to identify the range of inlined functions and lambdas"
 )
 
-internal class FakeInliningLocalVariablesLowering(val context: JvmBackendContext) : IrElementVisitorVoid, FileLoweringPass {
+internal class FakeInliningLocalVariablesLowering(val context: JvmBackendContext) : IrInlineReferenceLocator(context), FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        irFile.acceptChildrenVoid(this)
+        irFile.acceptVoid(this)
     }
 
-    override fun visitElement(element: IrElement) {
-        element.acceptChildrenVoid(this)
-    }
-
-    override fun visitCall(expression: IrCall) {
-        expression.acceptChildrenVoid(this)
-        val callee = expression.symbol.owner
-        if (callee.isInline) {
-            for (i in 0 until expression.valueArgumentsCount) {
-                val argument = expression.getValueArgument(i)
-                if ((argument is IrBlock) && argument.origin == IrStatementOrigin.LAMBDA) {
-                    val lastStatement = argument.statements.last()
-                    if (lastStatement is IrFunctionReference) {
-                        val localFunForLambda = lastStatement.symbol.owner
-                        if (localFunForLambda.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA) {
-                            localFunForLambda.addFakeInliningLocalVariablesForArguments(callee)
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    override fun visitFunction(declaration: IrFunction) {
+    override fun visitFunctionNew(declaration: IrFunction) {
         declaration.acceptChildrenVoid(this)
         if (declaration.isInline && !declaration.origin.isSynthetic && declaration.body != null) {
             declaration.addFakeInliningLocalVariables()
+        }
+    }
+
+    override fun handleInlineFunctionCallableReferenceParam(valueArgument: IrCallableReference) {
+        // Do not record inline function callable reference parameters. They will not be used.
+    }
+
+    override fun handleInlineFunctionLambdaParam(lambda: IrFunction, callee: IrFunction, callSite: IrDeclaration?) {
+        // Do not record lambda parameters. Instead deal with them now.
+        if (lambda.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA) {
+            lambda.addFakeInliningLocalVariablesForArguments(callee)
         }
     }
 
