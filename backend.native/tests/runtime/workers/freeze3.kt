@@ -18,7 +18,9 @@ object Mutable {
     var x = 2
 }
 
-@Test fun runTest() {
+val topLevelInline: ULong = 0xc3a5c85c97cb3127U
+
+@Test fun runTest1() {
     assertEquals(1, AnObject.x)
     if (Platform.memoryModel == MemoryModel.STRICT) {
         assertFailsWith<InvalidMutabilityException> {
@@ -34,3 +36,15 @@ object Mutable {
     assertEquals(3, Mutable.x)
     println("OK")
 }
+
+@Test fun runTest2() {
+    val ok = AtomicInt(0)
+    withWorker() {
+     executeAfter(0, {
+      assertEquals(0xc3a5c85c97cb3127U, topLevelInline) 
+      ok.increment()
+     }.freeze())
+   }
+   assertEquals(1, ok.value)
+}
+

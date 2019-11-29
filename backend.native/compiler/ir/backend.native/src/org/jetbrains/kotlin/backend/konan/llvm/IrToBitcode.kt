@@ -58,7 +58,7 @@ internal val IrField.storageClass: FieldStorage get() {
 }
 
 val IrField.isMainOnlyNonPrimitive get() = when  {
-        KotlinBuiltIns.isPrimitiveType(descriptor.type) -> false
+        descriptor.type.computePrimitiveBinaryTypeOrNull() != null -> false
         else -> storageClass == FieldStorage.MAIN_THREAD
     }
 
