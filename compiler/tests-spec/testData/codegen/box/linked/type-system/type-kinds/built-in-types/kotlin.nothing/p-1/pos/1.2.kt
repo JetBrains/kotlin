@@ -6,7 +6,7 @@
  * SPEC VERSION: 0.1-213
  * PLACE: type-system, type-kinds, built-in-types, kotlin.nothing -> paragraph 1 -> sentence 1
  * NUMBER: 2
- * DESCRIPTION: todo
+ * DESCRIPTION: check the allowance of returning Nothing where String is expected
  */
 
 
