@@ -1,0 +1,13 @@
+FILE: main.kt
+    public final class MyMapEntry : R|Test.MapEntryImpl| {
+        public constructor(): R|MyMapEntry| {
+            super<R|Test.MapEntryImpl|>()
+        }
+
+    }
+    public final fun test(): R|kotlin/Unit| {
+        lval b: R|MyMapEntry| = R|/MyMapEntry.MyMapEntry|()
+        R|<local>/b|.R|/Test.MapEntryImpl.key|
+        R|<local>/b|.R|/Test.MapEntryImpl.value|
+        R|<local>/b|.R|/Test.MapEntryImpl.setValue|(Null(null))
+    }

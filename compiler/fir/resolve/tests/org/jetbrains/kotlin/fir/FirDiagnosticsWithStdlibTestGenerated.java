@@ -489,6 +489,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
             runTest("compiler/fir/resolve/testData/resolve/stdlib/j+k/LoggerInstance.kt");
         }
 
+        @TestMetadata("MapEntry.kt")
+        public void testMapEntry() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/stdlib/j+k/MapEntry.kt");
+        }
+
         @TestMetadata("MyException.kt")
         public void testMyException() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/stdlib/j+k/MyException.kt");
