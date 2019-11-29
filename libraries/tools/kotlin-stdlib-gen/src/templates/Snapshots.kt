@@ -205,6 +205,11 @@ object Snapshots : TemplateGroupBase() {
             The returned map preserves the entry iteration order of the original ${f.collection}.
             """
         }
+        sample(when (family) {
+            CharSequences -> "samples.text.Strings.associate"
+            ArraysOfObjects, ArraysOfPrimitives -> "samples.collections.Arrays.Transformations.associateArrayOfPrimitives"
+            else -> "samples.collections.Collections.Transformations.associate"
+        })
         body {
             """
             val capacity = mapCapacity(collectionSizeOrDefault(10)).coerceAtLeast(16)
@@ -247,6 +252,11 @@ object Snapshots : TemplateGroupBase() {
             If any of two pairs would have the same key the last one gets added to the map.
             """
         }
+        sample(when (family) {
+            CharSequences -> "samples.text.Strings.associateTo"
+            ArraysOfObjects, ArraysOfPrimitives -> "samples.collections.Arrays.Transformations.associateArrayOfPrimitivesTo"
+            else -> "samples.collections.Collections.Transformations.associateTo"
+        })
         body {
             """
             for (element in this) {
@@ -273,6 +283,11 @@ object Snapshots : TemplateGroupBase() {
             The returned map preserves the entry iteration order of the original ${f.collection}.
             """
         }
+        sample(when (family) {
+            CharSequences -> "samples.text.Strings.associateBy"
+            ArraysOfObjects, ArraysOfPrimitives -> "samples.collections.Arrays.Transformations.associateArrayOfPrimitivesBy"
+            else -> "samples.collections.Collections.Transformations.associateBy"
+        })
         returns("Map<K, T>")
 
         // Collection size helper methods are private, so we fall back to the calculation from HashSet's Collection
@@ -319,6 +334,11 @@ object Snapshots : TemplateGroupBase() {
             If any two ${f.element.pluralize()} would have the same key returned by [keySelector] the last one gets added to the map.
             """
         }
+        sample(when (family) {
+            CharSequences -> "samples.text.Strings.associateByTo"
+            ArraysOfObjects, ArraysOfPrimitives -> "samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByTo"
+            else -> "samples.collections.Collections.Transformations.associateByTo"
+        })
         body {
             """
             for (element in this) {
@@ -345,6 +365,11 @@ object Snapshots : TemplateGroupBase() {
             The returned map preserves the entry iteration order of the original ${f.collection}.
             """
         }
+        sample(when (family) {
+            CharSequences -> "samples.text.Strings.associateByWithValueTransform"
+            ArraysOfObjects, ArraysOfPrimitives -> "samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByWithValueTransform"
+            else -> "samples.collections.Collections.Transformations.associateByWithValueTransform"
+        })
         returns("Map<K, V>")
 
         /**
@@ -396,6 +421,11 @@ object Snapshots : TemplateGroupBase() {
             If any two ${f.element.pluralize()} would have the same key returned by [keySelector] the last one gets added to the map.
             """
         }
+        sample(when (family) {
+            CharSequences -> "samples.text.Strings.associateByToWithValueTransform"
+            ArraysOfObjects, ArraysOfPrimitives -> "samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByToWithValueTransform"
+            else -> "samples.collections.Collections.Transformations.associateByToWithValueTransform"
+        })
         body {
             """
             for (element in this) {
@@ -458,6 +488,10 @@ object Snapshots : TemplateGroupBase() {
             If any two ${f.element.pluralize()} are equal, the last one overwrites the former value in the map.
             """
         }
+        sample(when (family) {
+            CharSequences -> "samples.text.Strings.associateWithTo"
+            else -> "samples.collections.Collections.Transformations.associateWithTo"
+        })
         body {
             """
             for (element in this) {

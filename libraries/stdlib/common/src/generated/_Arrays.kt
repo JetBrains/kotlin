@@ -7145,6 +7145,8 @@ public expect fun CharArray.toTypedArray(): Array<Char>
  * If any of two pairs would have the same key the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitives
  */
 public inline fun <T, K, V> Array<out T>.associate(transform: (T) -> Pair<K, V>): Map<K, V> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7158,6 +7160,8 @@ public inline fun <T, K, V> Array<out T>.associate(transform: (T) -> Pair<K, V>)
  * If any of two pairs would have the same key the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitives
  */
 public inline fun <K, V> ByteArray.associate(transform: (Byte) -> Pair<K, V>): Map<K, V> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7171,6 +7175,8 @@ public inline fun <K, V> ByteArray.associate(transform: (Byte) -> Pair<K, V>): M
  * If any of two pairs would have the same key the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitives
  */
 public inline fun <K, V> ShortArray.associate(transform: (Short) -> Pair<K, V>): Map<K, V> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7184,6 +7190,8 @@ public inline fun <K, V> ShortArray.associate(transform: (Short) -> Pair<K, V>):
  * If any of two pairs would have the same key the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitives
  */
 public inline fun <K, V> IntArray.associate(transform: (Int) -> Pair<K, V>): Map<K, V> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7197,6 +7205,8 @@ public inline fun <K, V> IntArray.associate(transform: (Int) -> Pair<K, V>): Map
  * If any of two pairs would have the same key the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitives
  */
 public inline fun <K, V> LongArray.associate(transform: (Long) -> Pair<K, V>): Map<K, V> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7210,6 +7220,8 @@ public inline fun <K, V> LongArray.associate(transform: (Long) -> Pair<K, V>): M
  * If any of two pairs would have the same key the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitives
  */
 public inline fun <K, V> FloatArray.associate(transform: (Float) -> Pair<K, V>): Map<K, V> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7223,6 +7235,8 @@ public inline fun <K, V> FloatArray.associate(transform: (Float) -> Pair<K, V>):
  * If any of two pairs would have the same key the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitives
  */
 public inline fun <K, V> DoubleArray.associate(transform: (Double) -> Pair<K, V>): Map<K, V> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7236,6 +7250,8 @@ public inline fun <K, V> DoubleArray.associate(transform: (Double) -> Pair<K, V>
  * If any of two pairs would have the same key the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitives
  */
 public inline fun <K, V> BooleanArray.associate(transform: (Boolean) -> Pair<K, V>): Map<K, V> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7249,6 +7265,8 @@ public inline fun <K, V> BooleanArray.associate(transform: (Boolean) -> Pair<K, 
  * If any of two pairs would have the same key the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitives
  */
 public inline fun <K, V> CharArray.associate(transform: (Char) -> Pair<K, V>): Map<K, V> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7262,6 +7280,8 @@ public inline fun <K, V> CharArray.associate(transform: (Char) -> Pair<K, V>): M
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesBy
  */
 public inline fun <T, K> Array<out T>.associateBy(keySelector: (T) -> K): Map<K, T> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7275,6 +7295,8 @@ public inline fun <T, K> Array<out T>.associateBy(keySelector: (T) -> K): Map<K,
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesBy
  */
 public inline fun <K> ByteArray.associateBy(keySelector: (Byte) -> K): Map<K, Byte> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7288,6 +7310,8 @@ public inline fun <K> ByteArray.associateBy(keySelector: (Byte) -> K): Map<K, By
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesBy
  */
 public inline fun <K> ShortArray.associateBy(keySelector: (Short) -> K): Map<K, Short> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7301,6 +7325,8 @@ public inline fun <K> ShortArray.associateBy(keySelector: (Short) -> K): Map<K, 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesBy
  */
 public inline fun <K> IntArray.associateBy(keySelector: (Int) -> K): Map<K, Int> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7314,6 +7340,8 @@ public inline fun <K> IntArray.associateBy(keySelector: (Int) -> K): Map<K, Int>
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesBy
  */
 public inline fun <K> LongArray.associateBy(keySelector: (Long) -> K): Map<K, Long> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7327,6 +7355,8 @@ public inline fun <K> LongArray.associateBy(keySelector: (Long) -> K): Map<K, Lo
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesBy
  */
 public inline fun <K> FloatArray.associateBy(keySelector: (Float) -> K): Map<K, Float> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7340,6 +7370,8 @@ public inline fun <K> FloatArray.associateBy(keySelector: (Float) -> K): Map<K, 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesBy
  */
 public inline fun <K> DoubleArray.associateBy(keySelector: (Double) -> K): Map<K, Double> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7353,6 +7385,8 @@ public inline fun <K> DoubleArray.associateBy(keySelector: (Double) -> K): Map<K
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesBy
  */
 public inline fun <K> BooleanArray.associateBy(keySelector: (Boolean) -> K): Map<K, Boolean> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7366,6 +7400,8 @@ public inline fun <K> BooleanArray.associateBy(keySelector: (Boolean) -> K): Map
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesBy
  */
 public inline fun <K> CharArray.associateBy(keySelector: (Char) -> K): Map<K, Char> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7378,6 +7414,8 @@ public inline fun <K> CharArray.associateBy(keySelector: (Char) -> K): Map<K, Ch
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByWithValueTransform
  */
 public inline fun <T, K, V> Array<out T>.associateBy(keySelector: (T) -> K, valueTransform: (T) -> V): Map<K, V> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7390,6 +7428,8 @@ public inline fun <T, K, V> Array<out T>.associateBy(keySelector: (T) -> K, valu
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByWithValueTransform
  */
 public inline fun <K, V> ByteArray.associateBy(keySelector: (Byte) -> K, valueTransform: (Byte) -> V): Map<K, V> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7402,6 +7442,8 @@ public inline fun <K, V> ByteArray.associateBy(keySelector: (Byte) -> K, valueTr
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByWithValueTransform
  */
 public inline fun <K, V> ShortArray.associateBy(keySelector: (Short) -> K, valueTransform: (Short) -> V): Map<K, V> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7414,6 +7456,8 @@ public inline fun <K, V> ShortArray.associateBy(keySelector: (Short) -> K, value
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByWithValueTransform
  */
 public inline fun <K, V> IntArray.associateBy(keySelector: (Int) -> K, valueTransform: (Int) -> V): Map<K, V> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7426,6 +7470,8 @@ public inline fun <K, V> IntArray.associateBy(keySelector: (Int) -> K, valueTran
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByWithValueTransform
  */
 public inline fun <K, V> LongArray.associateBy(keySelector: (Long) -> K, valueTransform: (Long) -> V): Map<K, V> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7438,6 +7484,8 @@ public inline fun <K, V> LongArray.associateBy(keySelector: (Long) -> K, valueTr
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByWithValueTransform
  */
 public inline fun <K, V> FloatArray.associateBy(keySelector: (Float) -> K, valueTransform: (Float) -> V): Map<K, V> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7450,6 +7498,8 @@ public inline fun <K, V> FloatArray.associateBy(keySelector: (Float) -> K, value
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByWithValueTransform
  */
 public inline fun <K, V> DoubleArray.associateBy(keySelector: (Double) -> K, valueTransform: (Double) -> V): Map<K, V> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7462,6 +7512,8 @@ public inline fun <K, V> DoubleArray.associateBy(keySelector: (Double) -> K, val
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByWithValueTransform
  */
 public inline fun <K, V> BooleanArray.associateBy(keySelector: (Boolean) -> K, valueTransform: (Boolean) -> V): Map<K, V> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7474,6 +7526,8 @@ public inline fun <K, V> BooleanArray.associateBy(keySelector: (Boolean) -> K, v
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByWithValueTransform
  */
 public inline fun <K, V> CharArray.associateBy(keySelector: (Char) -> K, valueTransform: (Char) -> V): Map<K, V> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7486,6 +7540,8 @@ public inline fun <K, V> CharArray.associateBy(keySelector: (Char) -> K, valueTr
  * and value is the element itself.
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByTo
  */
 public inline fun <T, K, M : MutableMap<in K, in T>> Array<out T>.associateByTo(destination: M, keySelector: (T) -> K): M {
     for (element in this) {
@@ -7500,6 +7556,8 @@ public inline fun <T, K, M : MutableMap<in K, in T>> Array<out T>.associateByTo(
  * and value is the element itself.
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByTo
  */
 public inline fun <K, M : MutableMap<in K, in Byte>> ByteArray.associateByTo(destination: M, keySelector: (Byte) -> K): M {
     for (element in this) {
@@ -7514,6 +7572,8 @@ public inline fun <K, M : MutableMap<in K, in Byte>> ByteArray.associateByTo(des
  * and value is the element itself.
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByTo
  */
 public inline fun <K, M : MutableMap<in K, in Short>> ShortArray.associateByTo(destination: M, keySelector: (Short) -> K): M {
     for (element in this) {
@@ -7528,6 +7588,8 @@ public inline fun <K, M : MutableMap<in K, in Short>> ShortArray.associateByTo(d
  * and value is the element itself.
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByTo
  */
 public inline fun <K, M : MutableMap<in K, in Int>> IntArray.associateByTo(destination: M, keySelector: (Int) -> K): M {
     for (element in this) {
@@ -7542,6 +7604,8 @@ public inline fun <K, M : MutableMap<in K, in Int>> IntArray.associateByTo(desti
  * and value is the element itself.
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByTo
  */
 public inline fun <K, M : MutableMap<in K, in Long>> LongArray.associateByTo(destination: M, keySelector: (Long) -> K): M {
     for (element in this) {
@@ -7556,6 +7620,8 @@ public inline fun <K, M : MutableMap<in K, in Long>> LongArray.associateByTo(des
  * and value is the element itself.
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByTo
  */
 public inline fun <K, M : MutableMap<in K, in Float>> FloatArray.associateByTo(destination: M, keySelector: (Float) -> K): M {
     for (element in this) {
@@ -7570,6 +7636,8 @@ public inline fun <K, M : MutableMap<in K, in Float>> FloatArray.associateByTo(d
  * and value is the element itself.
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByTo
  */
 public inline fun <K, M : MutableMap<in K, in Double>> DoubleArray.associateByTo(destination: M, keySelector: (Double) -> K): M {
     for (element in this) {
@@ -7584,6 +7652,8 @@ public inline fun <K, M : MutableMap<in K, in Double>> DoubleArray.associateByTo
  * and value is the element itself.
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByTo
  */
 public inline fun <K, M : MutableMap<in K, in Boolean>> BooleanArray.associateByTo(destination: M, keySelector: (Boolean) -> K): M {
     for (element in this) {
@@ -7598,6 +7668,8 @@ public inline fun <K, M : MutableMap<in K, in Boolean>> BooleanArray.associateBy
  * and value is the element itself.
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByTo
  */
 public inline fun <K, M : MutableMap<in K, in Char>> CharArray.associateByTo(destination: M, keySelector: (Char) -> K): M {
     for (element in this) {
@@ -7612,6 +7684,8 @@ public inline fun <K, M : MutableMap<in K, in Char>> CharArray.associateByTo(des
  * and value is provided by the [valueTransform] function applied to elements of the given array.
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByToWithValueTransform
  */
 public inline fun <T, K, V, M : MutableMap<in K, in V>> Array<out T>.associateByTo(destination: M, keySelector: (T) -> K, valueTransform: (T) -> V): M {
     for (element in this) {
@@ -7626,6 +7700,8 @@ public inline fun <T, K, V, M : MutableMap<in K, in V>> Array<out T>.associateBy
  * and value is provided by the [valueTransform] function applied to elements of the given array.
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByToWithValueTransform
  */
 public inline fun <K, V, M : MutableMap<in K, in V>> ByteArray.associateByTo(destination: M, keySelector: (Byte) -> K, valueTransform: (Byte) -> V): M {
     for (element in this) {
@@ -7640,6 +7716,8 @@ public inline fun <K, V, M : MutableMap<in K, in V>> ByteArray.associateByTo(des
  * and value is provided by the [valueTransform] function applied to elements of the given array.
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByToWithValueTransform
  */
 public inline fun <K, V, M : MutableMap<in K, in V>> ShortArray.associateByTo(destination: M, keySelector: (Short) -> K, valueTransform: (Short) -> V): M {
     for (element in this) {
@@ -7654,6 +7732,8 @@ public inline fun <K, V, M : MutableMap<in K, in V>> ShortArray.associateByTo(de
  * and value is provided by the [valueTransform] function applied to elements of the given array.
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByToWithValueTransform
  */
 public inline fun <K, V, M : MutableMap<in K, in V>> IntArray.associateByTo(destination: M, keySelector: (Int) -> K, valueTransform: (Int) -> V): M {
     for (element in this) {
@@ -7668,6 +7748,8 @@ public inline fun <K, V, M : MutableMap<in K, in V>> IntArray.associateByTo(dest
  * and value is provided by the [valueTransform] function applied to elements of the given array.
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByToWithValueTransform
  */
 public inline fun <K, V, M : MutableMap<in K, in V>> LongArray.associateByTo(destination: M, keySelector: (Long) -> K, valueTransform: (Long) -> V): M {
     for (element in this) {
@@ -7682,6 +7764,8 @@ public inline fun <K, V, M : MutableMap<in K, in V>> LongArray.associateByTo(des
  * and value is provided by the [valueTransform] function applied to elements of the given array.
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByToWithValueTransform
  */
 public inline fun <K, V, M : MutableMap<in K, in V>> FloatArray.associateByTo(destination: M, keySelector: (Float) -> K, valueTransform: (Float) -> V): M {
     for (element in this) {
@@ -7696,6 +7780,8 @@ public inline fun <K, V, M : MutableMap<in K, in V>> FloatArray.associateByTo(de
  * and value is provided by the [valueTransform] function applied to elements of the given array.
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByToWithValueTransform
  */
 public inline fun <K, V, M : MutableMap<in K, in V>> DoubleArray.associateByTo(destination: M, keySelector: (Double) -> K, valueTransform: (Double) -> V): M {
     for (element in this) {
@@ -7710,6 +7796,8 @@ public inline fun <K, V, M : MutableMap<in K, in V>> DoubleArray.associateByTo(d
  * and value is provided by the [valueTransform] function applied to elements of the given array.
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByToWithValueTransform
  */
 public inline fun <K, V, M : MutableMap<in K, in V>> BooleanArray.associateByTo(destination: M, keySelector: (Boolean) -> K, valueTransform: (Boolean) -> V): M {
     for (element in this) {
@@ -7724,6 +7812,8 @@ public inline fun <K, V, M : MutableMap<in K, in V>> BooleanArray.associateByTo(
  * and value is provided by the [valueTransform] function applied to elements of the given array.
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByToWithValueTransform
  */
 public inline fun <K, V, M : MutableMap<in K, in V>> CharArray.associateByTo(destination: M, keySelector: (Char) -> K, valueTransform: (Char) -> V): M {
     for (element in this) {
@@ -7737,6 +7827,8 @@ public inline fun <K, V, M : MutableMap<in K, in V>> CharArray.associateByTo(des
  * provided by [transform] function applied to each element of the given array.
  * 
  * If any of two pairs would have the same key the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesTo
  */
 public inline fun <T, K, V, M : MutableMap<in K, in V>> Array<out T>.associateTo(destination: M, transform: (T) -> Pair<K, V>): M {
     for (element in this) {
@@ -7750,6 +7842,8 @@ public inline fun <T, K, V, M : MutableMap<in K, in V>> Array<out T>.associateTo
  * provided by [transform] function applied to each element of the given array.
  * 
  * If any of two pairs would have the same key the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesTo
  */
 public inline fun <K, V, M : MutableMap<in K, in V>> ByteArray.associateTo(destination: M, transform: (Byte) -> Pair<K, V>): M {
     for (element in this) {
@@ -7763,6 +7857,8 @@ public inline fun <K, V, M : MutableMap<in K, in V>> ByteArray.associateTo(desti
  * provided by [transform] function applied to each element of the given array.
  * 
  * If any of two pairs would have the same key the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesTo
  */
 public inline fun <K, V, M : MutableMap<in K, in V>> ShortArray.associateTo(destination: M, transform: (Short) -> Pair<K, V>): M {
     for (element in this) {
@@ -7776,6 +7872,8 @@ public inline fun <K, V, M : MutableMap<in K, in V>> ShortArray.associateTo(dest
  * provided by [transform] function applied to each element of the given array.
  * 
  * If any of two pairs would have the same key the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesTo
  */
 public inline fun <K, V, M : MutableMap<in K, in V>> IntArray.associateTo(destination: M, transform: (Int) -> Pair<K, V>): M {
     for (element in this) {
@@ -7789,6 +7887,8 @@ public inline fun <K, V, M : MutableMap<in K, in V>> IntArray.associateTo(destin
  * provided by [transform] function applied to each element of the given array.
  * 
  * If any of two pairs would have the same key the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesTo
  */
 public inline fun <K, V, M : MutableMap<in K, in V>> LongArray.associateTo(destination: M, transform: (Long) -> Pair<K, V>): M {
     for (element in this) {
@@ -7802,6 +7902,8 @@ public inline fun <K, V, M : MutableMap<in K, in V>> LongArray.associateTo(desti
  * provided by [transform] function applied to each element of the given array.
  * 
  * If any of two pairs would have the same key the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesTo
  */
 public inline fun <K, V, M : MutableMap<in K, in V>> FloatArray.associateTo(destination: M, transform: (Float) -> Pair<K, V>): M {
     for (element in this) {
@@ -7815,6 +7917,8 @@ public inline fun <K, V, M : MutableMap<in K, in V>> FloatArray.associateTo(dest
  * provided by [transform] function applied to each element of the given array.
  * 
  * If any of two pairs would have the same key the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesTo
  */
 public inline fun <K, V, M : MutableMap<in K, in V>> DoubleArray.associateTo(destination: M, transform: (Double) -> Pair<K, V>): M {
     for (element in this) {
@@ -7828,6 +7932,8 @@ public inline fun <K, V, M : MutableMap<in K, in V>> DoubleArray.associateTo(des
  * provided by [transform] function applied to each element of the given array.
  * 
  * If any of two pairs would have the same key the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesTo
  */
 public inline fun <K, V, M : MutableMap<in K, in V>> BooleanArray.associateTo(destination: M, transform: (Boolean) -> Pair<K, V>): M {
     for (element in this) {
@@ -7841,6 +7947,8 @@ public inline fun <K, V, M : MutableMap<in K, in V>> BooleanArray.associateTo(de
  * provided by [transform] function applied to each element of the given array.
  * 
  * If any of two pairs would have the same key the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesTo
  */
 public inline fun <K, V, M : MutableMap<in K, in V>> CharArray.associateTo(destination: M, transform: (Char) -> Pair<K, V>): M {
     for (element in this) {

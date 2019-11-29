@@ -1056,6 +1056,8 @@ public fun Collection<Short>.toShortArray(): ShortArray {
  * If any of two pairs would have the same key the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original collection.
+ * 
+ * @sample samples.collections.Collections.Transformations.associate
  */
 public inline fun <T, K, V> Iterable<T>.associate(transform: (T) -> Pair<K, V>): Map<K, V> {
     val capacity = mapCapacity(collectionSizeOrDefault(10)).coerceAtLeast(16)
@@ -1069,6 +1071,8 @@ public inline fun <T, K, V> Iterable<T>.associate(transform: (T) -> Pair<K, V>):
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original collection.
+ * 
+ * @sample samples.collections.Collections.Transformations.associateBy
  */
 public inline fun <T, K> Iterable<T>.associateBy(keySelector: (T) -> K): Map<K, T> {
     val capacity = mapCapacity(collectionSizeOrDefault(10)).coerceAtLeast(16)
@@ -1081,6 +1085,8 @@ public inline fun <T, K> Iterable<T>.associateBy(keySelector: (T) -> K): Map<K, 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original collection.
+ * 
+ * @sample samples.collections.Collections.Transformations.associateByWithValueTransform
  */
 public inline fun <T, K, V> Iterable<T>.associateBy(keySelector: (T) -> K, valueTransform: (T) -> V): Map<K, V> {
     val capacity = mapCapacity(collectionSizeOrDefault(10)).coerceAtLeast(16)
@@ -1093,6 +1099,8 @@ public inline fun <T, K, V> Iterable<T>.associateBy(keySelector: (T) -> K, value
  * and value is the element itself.
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ * 
+ * @sample samples.collections.Collections.Transformations.associateByTo
  */
 public inline fun <T, K, M : MutableMap<in K, in T>> Iterable<T>.associateByTo(destination: M, keySelector: (T) -> K): M {
     for (element in this) {
@@ -1107,6 +1115,8 @@ public inline fun <T, K, M : MutableMap<in K, in T>> Iterable<T>.associateByTo(d
  * and value is provided by the [valueTransform] function applied to elements of the given collection.
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ * 
+ * @sample samples.collections.Collections.Transformations.associateByToWithValueTransform
  */
 public inline fun <T, K, V, M : MutableMap<in K, in V>> Iterable<T>.associateByTo(destination: M, keySelector: (T) -> K, valueTransform: (T) -> V): M {
     for (element in this) {
@@ -1120,6 +1130,8 @@ public inline fun <T, K, V, M : MutableMap<in K, in V>> Iterable<T>.associateByT
  * provided by [transform] function applied to each element of the given collection.
  * 
  * If any of two pairs would have the same key the last one gets added to the map.
+ * 
+ * @sample samples.collections.Collections.Transformations.associateTo
  */
 public inline fun <T, K, V, M : MutableMap<in K, in V>> Iterable<T>.associateTo(destination: M, transform: (T) -> Pair<K, V>): M {
     for (element in this) {
@@ -1149,6 +1161,8 @@ public inline fun <K, V> Iterable<K>.associateWith(valueSelector: (K) -> V): Map
  * where key is the element itself and value is provided by the [valueSelector] function applied to that key.
  * 
  * If any two elements are equal, the last one overwrites the former value in the map.
+ * 
+ * @sample samples.collections.Collections.Transformations.associateWithTo
  */
 @SinceKotlin("1.3")
 public inline fun <K, V, M : MutableMap<in K, in V>> Iterable<K>.associateWithTo(destination: M, valueSelector: (K) -> V): M {
