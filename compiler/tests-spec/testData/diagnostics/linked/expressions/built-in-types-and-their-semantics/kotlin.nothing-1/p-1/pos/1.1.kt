@@ -45,7 +45,7 @@ fun case2() {
             <!UNREACHABLE_CODE!>val valeua : Int =<!>     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>continue@loop<!>
             <!UNREACHABLE_CODE!>i.name<!>
         }
-        val s = k.name ?: <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>break<!>
+        val s = k.name ?: <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>continue<!>
         k.name
     }
     val a = 1
