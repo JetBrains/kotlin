@@ -32,7 +32,8 @@ class JavaMapForEachInspection : AbstractApplicabilityBasedInspection<KtDotQuali
         if (calleeExpression.text != "forEach") return false
 
         val lambda = callExpression.lambda() ?: return false
-        if (lambda.valueParameters.size != 2) return false
+        val lambdaParameters = lambda.valueParameters
+        if (lambdaParameters.size != 2 || lambdaParameters.any { it.destructuringDeclaration != null }) return false
 
         val context = element.analyze(BodyResolveMode.PARTIAL)
         if (!element.receiverExpression.getType(context).isMap(DefaultBuiltIns.Instance)) return false
