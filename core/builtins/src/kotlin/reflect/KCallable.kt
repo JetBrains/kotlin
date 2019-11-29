@@ -29,6 +29,14 @@ public actual interface KCallable<out R> : KAnnotatedElement {
     public val parameters: List<KParameter>
 
     /**
+     * Parameters required to make a call to this callable.
+     * If this callable requires a `this` instance or an extension receiver parameter,
+     * they come first in the list in that order.
+     */
+    public val parameterCount: Int
+
+
+    /**
      * The type of values returned by this callable.
      */
     public val returnType: KType

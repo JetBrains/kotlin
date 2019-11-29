@@ -49,7 +49,7 @@ abstract class IntentionBasedInspection<TElement : PsiElement> private construct
 
     val intention: SelfTargetingRangeIntention<TElement> by lazy {
         val intentionClass = intentionInfo.intention
-        intentionClass.constructors.single { it.parameters.isEmpty() }.call().apply {
+        intentionClass.constructors.single { it.parameterCount == 0 }.call().apply {
             inspection = this@IntentionBasedInspection
         }
     }

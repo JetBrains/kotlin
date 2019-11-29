@@ -70,6 +70,30 @@ internal abstract class KCallableImpl<out R> : KCallable<R> {
     override val parameters: List<KParameter>
         get() = _parameters()
 
+    private val _parameterCount = ReflectProperties.lazySoft {
+        val descriptor = descriptor
+        var result = 0
+
+        if (!isBound) {
+            val instanceReceiver = descriptor.instanceReceiverParameter
+            if (instanceReceiver != null) {
+                result++
+            }
+
+            val extensionReceiver = descriptor.extensionReceiverParameter
+            if (extensionReceiver != null) {
+                result++
+            }
+        }
+
+        result += descriptor.valueParameters.size
+
+        result
+    }
+
+    override val parameterCount: Int
+        get() = _parameterCount()
+
     private val _returnType = ReflectProperties.lazySoft {
         KTypeImpl(descriptor.returnType!!) {
             extractContinuationArgument() ?: caller.returnType

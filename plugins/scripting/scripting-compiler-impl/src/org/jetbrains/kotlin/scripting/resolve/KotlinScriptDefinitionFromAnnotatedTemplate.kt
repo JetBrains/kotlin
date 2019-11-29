@@ -88,7 +88,7 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
 
         fun sameSignature(left: KFunction<*>, right: KFunction<*>): Boolean =
                 left.name == right.name &&
-                left.parameters.size == right.parameters.size &&
+                left.parameterCount == right.parameterCount &&
                 left.parameters.zip(right.parameters).all {
                     it.first.kind == KParameter.Kind.INSTANCE ||
                     it.first.type == it.second.type

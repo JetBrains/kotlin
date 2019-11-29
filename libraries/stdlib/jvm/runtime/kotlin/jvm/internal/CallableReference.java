@@ -7,7 +7,12 @@ package kotlin.jvm.internal;
 
 import kotlin.SinceKotlin;
 import kotlin.jvm.KotlinReflectionNotSupportedError;
-import kotlin.reflect.*;
+import kotlin.reflect.KCallable;
+import kotlin.reflect.KDeclarationContainer;
+import kotlin.reflect.KParameter;
+import kotlin.reflect.KType;
+import kotlin.reflect.KTypeParameter;
+import kotlin.reflect.KVisibility;
 
 import java.io.ObjectStreamException;
 import java.io.Serializable;
@@ -115,6 +120,11 @@ public abstract class CallableReference implements KCallable, Serializable {
     @Override
     public List<KParameter> getParameters() {
         return getReflected().getParameters();
+    }
+
+    @Override
+    public int getParameterCount() {
+        return getReflected().getParameterCount();
     }
 
     @Override
