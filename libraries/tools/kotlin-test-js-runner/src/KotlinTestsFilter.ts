@@ -22,6 +22,7 @@ export function runWithFilter(
         return path.join('.')
     }
 
+    // In Java (Gradle, IDEA) inner classes uses `$` as separator
     function javaClassName() {
         const javaClassName = `${path.slice(1).join('$')}`;
 
