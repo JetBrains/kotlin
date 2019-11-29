@@ -36,7 +36,7 @@ for (incl in ijTestIncludes) {
 gradle.taskGraph.beforeTask { Task task ->
   task.onlyIf { !skipExecution }
 
-  if (task instanceof Test) {
+  if (task instanceof AbstractTestTask) {
     try {
       if(ijTestIncludes != ['*'] && ijTestFilteringSupported) {
         task.filter {
