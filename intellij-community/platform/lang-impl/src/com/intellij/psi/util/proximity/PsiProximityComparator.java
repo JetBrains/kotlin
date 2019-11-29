@@ -37,8 +37,6 @@ import java.util.Map;
 public class PsiProximityComparator implements Comparator<Object> {
   public static final Key<ProximityStatistician> STATISTICS_KEY = Key.create("proximity");
   public static final Key<ProximityWeigher> WEIGHER_KEY = Key.create("proximity");
-  @SuppressWarnings("unchecked") private static final Weigher<PsiElement, ProximityLocation>[] PROXIMITY_WEIGHERS =
-    WeighingService.getWeighers(WEIGHER_KEY).toArray(new Weigher[0]);
   private static final Key<Module> MODULE_BY_LOCATION = Key.create("ModuleByLocation");
   private final PsiElement myContext;
 
@@ -101,6 +99,6 @@ public class PsiProximityComparator implements Comparator<Object> {
 
     return new WeighingComparable<>(elementComputable,
                                     new ProximityLocation(context, contextModule, processingContext),
-                                    PROXIMITY_WEIGHERS);
+                                    WeighingService.getWeighers(WEIGHER_KEY).toArray(new Weigher[0]));
   }
 }
