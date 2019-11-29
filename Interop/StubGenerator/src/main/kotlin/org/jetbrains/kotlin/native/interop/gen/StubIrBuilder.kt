@@ -221,7 +221,11 @@ class StubsBuildingContextImpl(
         get() = stubIrContext.getKotlinName(this)
 
     override fun tryCreateIntegralStub(type: Type, value: Long): IntegralConstantStub? {
-        val integerType = type.unwrapTypedefs() as? IntegerType ?: return null
+        val integerType = when (val unwrappedType = type.unwrapTypedefs()) {
+            is IntegerType -> unwrappedType
+            CharType -> IntegerType(1, true, "char")
+            else -> return null
+        }
         val size = integerType.size
         if (size != 1 && size != 2 && size != 4 && size != 8) return null
         return IntegralConstantStub(value, size, declarationMapper.isMappedToSigned(integerType))

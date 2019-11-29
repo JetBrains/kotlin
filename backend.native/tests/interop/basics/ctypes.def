@@ -71,6 +71,23 @@ enum NonStrictEnum2 {
     NonStrictEnum2B __attribute__((unused)) = 1
 };
 
+// KT-34025
+typedef char Char;
+enum EnumCharBase : Char {
+    EnumCharBaseA,
+    EnumCharBaseB
+};
+
+static int sendEnum(enum EnumCharBase x) {
+	return (int)x + 2;
+}
+
+enum EnumExplicitChar : char {
+	EnumExplicitCharA = 'a',
+	EnumExplicitCharB = 'b',
+	EnumExplicitCharDup = 'a'
+};
+
 typedef float __attribute__ ((__vector_size__ (16)))   KVector4f;
 typedef int   __attribute__ ((__vector_size__ (16)))   KVector4i32;
 
