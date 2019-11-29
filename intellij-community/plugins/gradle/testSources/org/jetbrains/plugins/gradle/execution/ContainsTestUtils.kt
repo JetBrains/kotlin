@@ -22,12 +22,11 @@ inline fun <reified T> assertCollection(actual: Collection<T>, vararg elements: 
   val unexpected = actual.toMutableList()
   unexpected.retainAll(negative)
   expected.removeAll(actual)
-  when {
-    expected.isEmpty() && unexpected.isEmpty() -> return
-    expected.isEmpty() -> throw AssertionError("\nunexpected but found: $unexpected")
-    unexpected.isEmpty() -> throw AssertionError("\nexpected but not found: $expected")
-    else -> throw AssertionError("\nexpected but not found: $expected\nunexpected but found: $unexpected")
-  }
+  if (expected.isEmpty() && unexpected.isEmpty()) return
+  val messageActualPart = "\nactual: $actual"
+  val messageExpectedPart = if (expected.isEmpty()) "" else "\nexpected but not found: $expected"
+  val messageUnexpectedPart = if (unexpected.isEmpty()) "" else "\nunexpected but found: $unexpected"
+  throw AssertionError(messageExpectedPart + messageUnexpectedPart + messageActualPart)
 }
 
 fun partition(element: Any?): Pair<List<Any?>, List<Any?>> =

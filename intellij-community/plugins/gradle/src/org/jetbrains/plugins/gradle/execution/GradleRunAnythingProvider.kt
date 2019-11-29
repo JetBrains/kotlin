@@ -37,9 +37,8 @@ import org.jetbrains.plugins.gradle.settings.GradleSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import org.jetbrains.plugins.gradle.util.GradleConstants.SYSTEM_ID
 import org.jetbrains.plugins.gradle.util.GradleUtil
-import java.util.*
+import java.util.concurrent.ConcurrentLinkedQueue
 import javax.swing.Icon
-import kotlin.collections.LinkedHashMap
 
 
 class GradleRunAnythingProvider : RunAnythingCommandLineProvider() {
@@ -133,7 +132,7 @@ class GradleRunAnythingProvider : RunAnythingCommandLineProvider() {
       !commandLine.toComplete.contains(".") -> "*"
       else -> substringBeforeLast(commandLine.toComplete, ".") + "."
     }
-    val result = ArrayList<String>()
+    val result = ConcurrentLinkedQueue<String>()
     val model = GotoClassModel2(context.project)
     val parameters = FindSymbolParameters.simple(context.project, false)
     model.processNames({ result.add("$callChain$it") }, parameters)
