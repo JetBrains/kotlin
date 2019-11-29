@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.idea.configuration
 import com.intellij.util.Consumer
 import org.jetbrains.plugins.gradle.service.project.AbstractProjectResolverExtension
 
+// TODO: Now IDEA can provide filter from gutters only for Test task (JVM tests)
+//  Need to create fake Test task to copy filters from it to custom non-JVM test task
 class KotlinNonJvmGutterConfigurator : AbstractProjectResolverExtension() {
     override fun enhanceTaskProcessing(taskNames: MutableList<String>, jvmParametersSetup: String?, initScriptConsumer: Consumer<String>) {
         initScriptConsumer.consume(
