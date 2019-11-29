@@ -6,11 +6,14 @@
 package kotlin.random
 
 /**
- * Random number generator, algorithm "xorwow" from p. 5 of Marsaglia, "Xorshift RNGs".
+ * Random number generator, using Marsaglia's "xorwow" algorithm
  *
- * Cycles after 2^160 * (2^32-1) repetitions.
+ * Cycles after 2^192 - 2^32 repetitions.
  *
- * See http://www.jstatsoft.org/v08/i14/paper for details.
+ * For more details, see Marsaglia, George (July 2003). "Xorshift RNGs". Journal of Statistical Software. 8 (14). doi:10.18637/jss.v008.i14
+ *
+ * Available at https://www.jstatsoft.org/v08/i14/paper
+ *
  */
 internal class XorWowRandom
 internal constructor(
@@ -33,6 +36,8 @@ internal constructor(
     }
 
     override fun nextInt(): Int {
+        // Equivalent to the xorxow algorithm
+        // From Marsaglia, G. 2003. Xorshift RNGs. J. Statis. Soft. 8, 14, p. 5
         var t = x
         t = t xor (t ushr 2)
         x = y
