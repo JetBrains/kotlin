@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import org.jetbrains.kotlin.konan.target.presetName
 
 class KotlinMultiplatformPlugin(
@@ -139,18 +139,22 @@ class KotlinMultiplatformPlugin(
             add(KotlinJvmWithJavaTargetPreset(project, kotlinPluginVersion))
 
             // Note: modifying these sets should also be reflected in the DSL code generator, see 'presetEntries.kt'
-            val testableNativeTargets = setOf(KonanTarget.LINUX_X64, KonanTarget.MACOS_X64, KonanTarget.MINGW_X64)
-            val disabledNativeTargets = setOf(KonanTarget.WATCHOS_X64)
+            val nativeTargetsWithHostTests = setOf(LINUX_X64, MACOS_X64, MINGW_X64)
+            val nativeTargetsWithSimulatorTests = setOf(IOS_X64, WATCHOS_X86, TVOS_X64)
+            val disabledNativeTargets = setOf(WATCHOS_X64)
 
             HostManager().targets
-                .filter { (_, target) -> target !in disabledNativeTargets }
-                .forEach { (_, target) ->
-                    add(
-                        if (target in testableNativeTargets)
-                            KotlinNativeTargetWithTestsPreset(target.presetName, project, target, kotlinPluginVersion)
-                        else
-                            KotlinNativeTargetPreset(target.presetName, project, target, kotlinPluginVersion)
-                    )
+                .filter { (_, konanTarget) -> konanTarget !in disabledNativeTargets }
+                .forEach { (_, konanTarget) ->
+                    val targetToAdd = when (konanTarget) {
+                        in nativeTargetsWithHostTests ->
+                            KotlinNativeTargetWithHostTestsPreset(konanTarget.presetName, project, konanTarget, kotlinPluginVersion)
+                        in nativeTargetsWithSimulatorTests ->
+                            KotlinNativeTargetWithSimulatorTestsPreset(konanTarget.presetName, project, konanTarget, kotlinPluginVersion)
+                        else -> KotlinNativeTargetPreset(konanTarget.presetName, project, konanTarget, kotlinPluginVersion)
+                    }
+
+                    add(targetToAdd)
                 }
         }
     }

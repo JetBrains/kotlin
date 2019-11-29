@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.native.DisabledNativeTargetsReporter
+import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeHostTestRun
+import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeSimulatorTestRun
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -181,15 +183,28 @@ open class KotlinNativeTargetPreset(name: String, project: Project, konanTarget:
     }
 }
 
-open class KotlinNativeTargetWithTestsPreset(name: String, project: Project, konanTarget: KonanTarget, kotlinPluginVersion: String) :
-    AbstractKotlinNativeTargetPreset<KotlinNativeTargetWithTests>(name, project, konanTarget, kotlinPluginVersion) {
+open class KotlinNativeTargetWithHostTestsPreset(name: String, project: Project, konanTarget: KonanTarget, kotlinPluginVersion: String) :
+    AbstractKotlinNativeTargetPreset<KotlinNativeTargetWithTests<KotlinNativeHostTestRun>>(name, project, konanTarget, kotlinPluginVersion) {
 
-    override fun createTargetConfigurator(): KotlinTargetConfigurator<KotlinNativeTargetWithTests> =
-        KotlinNativeTargetWithTestsConfigurator(kotlinPluginVersion)
+    override fun createTargetConfigurator(): KotlinTargetConfigurator<KotlinNativeTargetWithTests<KotlinNativeHostTestRun>> =
+        KotlinNativeTargetWithHostTestsConfigurator(kotlinPluginVersion)
 
-    override fun instantiateTarget(name: String): KotlinNativeTargetWithTests {
-        return project.objects.newInstance(KotlinNativeTargetWithTests::class.java, project, konanTarget)
-    }
+    @Suppress("UNCHECKED_CAST")
+    override fun instantiateTarget(name: String): KotlinNativeTargetWithTests<KotlinNativeHostTestRun> =
+        project.objects.newInstance(KotlinNativeTargetWithTests::class.java, project, konanTarget)
+                as KotlinNativeTargetWithTests<KotlinNativeHostTestRun>
+}
+
+open class KotlinNativeTargetWithSimulatorTestsPreset(name: String, project: Project, konanTarget: KonanTarget, kotlinPluginVersion: String) :
+    AbstractKotlinNativeTargetPreset<KotlinNativeTargetWithTests<KotlinNativeSimulatorTestRun>>(name, project, konanTarget, kotlinPluginVersion) {
+
+    override fun createTargetConfigurator(): KotlinTargetConfigurator<KotlinNativeTargetWithTests<KotlinNativeSimulatorTestRun>> =
+        KotlinNativeTargetWithSimulatorTestsConfigurator(kotlinPluginVersion)
+
+    @Suppress("UNCHECKED_CAST")
+    override fun instantiateTarget(name: String): KotlinNativeTargetWithTests<KotlinNativeSimulatorTestRun> =
+        project.objects.newInstance(KotlinNativeTargetWithTests::class.java, project, konanTarget)
+                as KotlinNativeTargetWithTests<KotlinNativeSimulatorTestRun>
 }
 
 internal val KonanTarget.isCurrentHost: Boolean

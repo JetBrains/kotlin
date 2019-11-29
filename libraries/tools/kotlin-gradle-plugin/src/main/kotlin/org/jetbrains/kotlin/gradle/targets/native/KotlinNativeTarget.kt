@@ -65,11 +65,12 @@ open class KotlinNativeTarget @Inject constructor(
     }
 }
 
-open class KotlinNativeTargetWithTests @Inject constructor(
+// TODO: Add separate classes for corresponding targets?
+open class KotlinNativeTargetWithTests<T : KotlinNativeBinaryTestRun> @Inject constructor(
     project: Project,
     konanTarget: KonanTarget
-) : KotlinNativeTarget(project, konanTarget), KotlinTargetWithTests<NativeBinaryTestRunSource, KotlinNativeBinaryTestRun> {
+) : KotlinNativeTarget(project, konanTarget), KotlinTargetWithTests<NativeBinaryTestRunSource, T> {
 
-    override lateinit var testRuns: NamedDomainObjectContainer<KotlinNativeBinaryTestRun>
+    override lateinit var testRuns: NamedDomainObjectContainer<T>
         internal set
 }

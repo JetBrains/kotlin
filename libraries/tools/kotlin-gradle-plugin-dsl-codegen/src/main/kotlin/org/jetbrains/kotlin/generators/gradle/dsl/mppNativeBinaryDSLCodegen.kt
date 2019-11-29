@@ -149,7 +149,7 @@ fun generateAbstractKotlinNativeBinaryContainer() {
 
     val classProperties = listOf(
         "abstract val project: Project",
-        "abstract val target: ${typeName(KOTLIN_NATIVE_TARGET_CLASS_FQNAME).shortName()}"
+        "abstract val target: ${typeName(NativeFQNames.Targets.base).shortName()}"
     ).joinToString(separator = "\n") { it.indented(4) }
 
     val nativeBinary = nativeBinaryBaseClass.renderShort()

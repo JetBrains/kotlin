@@ -1280,7 +1280,7 @@ class NewMultiplatformIT : BaseGradleIT() {
 
     @Test
     fun testNativeTests() = with(Project("new-mpp-native-tests", gradleVersion)) {
-        val testTasks = listOf("macos64Test", "linux64Test", "mingw64Test")
+        val testTasks = listOf("macos64Test", "linux64Test", "mingw64Test", "iosTest")
         val hostTestTask = "${nativeHostTargetName}Test"
 
         val suffix = if (isWindows) "exe" else "kexe"
@@ -1305,7 +1305,16 @@ class NewMultiplatformIT : BaseGradleIT() {
 
         build("check") {
             assertSuccessful()
-            assertTasksExecuted(":$hostTestTask")
+
+            val testsToExecute = mutableListOf(":$hostTestTask")
+            if (HostManager.hostIsMac) {
+                testsToExecute.add(":iosTest")
+            }
+            val testsToSkip = testTasks.map { ":$it" } - testsToExecute
+
+            assertTasksExecuted(*testsToExecute.toTypedArray())
+            assertTasksSkipped(*testsToSkip.toTypedArray())
+
             assertFileExists(defaultOutputFile)
             assertTestResults("testProject/new-mpp-native-tests/TEST-TestKt.xml", hostTestTask)
         }
@@ -2122,8 +2131,8 @@ class NewMultiplatformIT : BaseGradleIT() {
         gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
 
         // TOOD: add Kotlin/JS tests once they can be tested without much performance overhead
-        val testTasks =
-            arrayOf(":jvmTest", ":${nativeHostTargetName}Test", ":jvmIntegrationTest", ":${nativeHostTargetName}IntegrationTest")
+        val targetsToTest = listOf("jvm", nativeHostTargetName) + listOf("ios").takeIf { HostManager.hostIsMac }.orEmpty()
+        val testTasks = targetsToTest.flatMap { listOf(":${it}Test", ":${it}IntegrationTest") }.toTypedArray()
 
         build(*testTasks) {
             assertSuccessful()
@@ -2139,11 +2148,12 @@ class NewMultiplatformIT : BaseGradleIT() {
                     .resolve("build/reports/tests/${targetName}Test/classes/com.example.HelloTest.html")
                     .readText()
 
-                if (targetName != nativeHostTargetName) // TODO: fix exclude patterns for the Kotlin/Native test tasks
+                if (targetName != nativeHostTargetName && targetName != "ios") // TODO: fix exclude patterns for the Kotlin/Native test tasks
                     assertTrue("secondTest" !in classReportHtml, "Test report should not contain 'secondTest':\n$classReportHtml")
             }
-            checkUnitTestOutput("jvm")
-            checkUnitTestOutput(nativeHostTargetName)
+            targetsToTest.forEach {
+                checkUnitTestOutput(it)
+            }
 
             fun checkIntegrationTestOutput(targetName: String) {
                 val classReportHtml = projectDir
@@ -2154,8 +2164,9 @@ class NewMultiplatformIT : BaseGradleIT() {
                 assertTrue("secondTest" !in classReportHtml, "Test report should not contain 'secondTest':\n$classReportHtml")
                 assertTrue("thirdTest" !in classReportHtml, "Test report should not contain 'thirdTest':\n$classReportHtml")
             }
-            checkIntegrationTestOutput("jvm")
-            checkIntegrationTestOutput(nativeHostTargetName)
+            targetsToTest.forEach {
+                checkIntegrationTestOutput(it)
+            }
         }
     }
 }
