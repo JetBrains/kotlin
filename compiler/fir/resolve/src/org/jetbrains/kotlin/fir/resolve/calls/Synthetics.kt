@@ -66,22 +66,25 @@ class FirSyntheticPropertiesScope(
         }
         return ProcessorAction.NEXT
     }
-}
 
-fun possibleGetterNamesByPropertyName(name: Name): List<Name> {
-    if (name.isSpecial) return emptyList()
-    val identifier = name.identifier
-    val capitalizedAsciiName = identifier.capitalizeAsciiOnly()
-    val capitalizedFirstWordName = identifier.capitalizeFirstWord(asciiOnly = true)
-    return listOfNotNull(
-        Name.identifier(GETTER_PREFIX + capitalizedAsciiName),
-        if (capitalizedFirstWordName == capitalizedAsciiName) null else Name.identifier(GETTER_PREFIX + capitalizedFirstWordName),
-        name.takeIf { identifier.startsWith(IS_PREFIX) }
-    ).filter {
-        propertyNameByGetMethodName(it) == name
+    companion object {
+        fun possibleGetterNamesByPropertyName(name: Name): List<Name> {
+            if (name.isSpecial) return emptyList()
+            val identifier = name.identifier
+            val capitalizedAsciiName = identifier.capitalizeAsciiOnly()
+            val capitalizedFirstWordName = identifier.capitalizeFirstWord(asciiOnly = true)
+            return listOfNotNull(
+                Name.identifier(GETTER_PREFIX + capitalizedAsciiName),
+                if (capitalizedFirstWordName == capitalizedAsciiName) null else Name.identifier(GETTER_PREFIX + capitalizedFirstWordName),
+                name.takeIf { identifier.startsWith(IS_PREFIX) }
+            ).filter {
+                propertyNameByGetMethodName(it) == name
+            }
+        }
+
+        private const val GETTER_PREFIX = "get"
+
+        private const val IS_PREFIX = "is"
     }
 }
 
-private const val GETTER_PREFIX = "get"
-
-private const val IS_PREFIX = "is"

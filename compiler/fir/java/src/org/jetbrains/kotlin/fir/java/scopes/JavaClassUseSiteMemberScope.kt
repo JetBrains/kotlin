@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaValueParameter
-import org.jetbrains.kotlin.fir.resolve.calls.possibleGetterNamesByPropertyName
+import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticPropertiesScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction.NEXT
@@ -152,7 +152,7 @@ class JavaClassUseSiteMemberScope(
         if (true) {
             return processAccessorFunctionsAndPropertiesByName(name, emptyList(), null, processor)
         }
-        val getterNames = possibleGetterNamesByPropertyName(name)
+        val getterNames = FirSyntheticPropertiesScope.possibleGetterNamesByPropertyName(name)
         val setterName = Name.identifier(SETTER_PREFIX + name.identifier.capitalize())
         return processAccessorFunctionsAndPropertiesByName(name, getterNames, setterName, processor)
     }
