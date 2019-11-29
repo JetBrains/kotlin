@@ -17,6 +17,16 @@ export default [
         plugins: plugins()
     },
     {
+        input: './nodejs-idle.ts',
+        output: {
+            file: 'lib/kotlin-test-nodejs-idle-runner.js',
+            format: 'cjs',
+            banner: '#!/usr/bin/env node',
+            sourcemap: true
+        },
+        plugins: plugins()
+    },
+    {
         input: './karma.ts',
         output: {
             file: 'lib/kotlin-test-karma-runner.js',
