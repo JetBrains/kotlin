@@ -677,6 +677,10 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         generator.checkEmptyLoop(loopExit);
 
         v.mark(loopEntry);
+        resetLastLineNumber();
+        markStartLineNumber(generator.getForExpression());
+        v.nop();
+
         generator.checkPreCondition(loopExit);
 
         // Some forms of for-loop can be optimized as post-condition loops.
@@ -1507,8 +1511,12 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             }
         } else {
             //if it used as argument of infix call (in this case lineNumber for simple inlineCall also would be reset)
-            myLastLineNumber = -1;
+            resetLastLineNumber();
         }
+    }
+
+    private void resetLastLineNumber() {
+        myLastLineNumber = -1;
     }
 
     @Override
