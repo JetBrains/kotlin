@@ -975,6 +975,7 @@ public class DefaultErrorMessages {
         MAP.put(INLINE_PROPERTY_WITH_BACKING_FIELD, "Inline property cannot have backing field");
         MAP.put(NON_INTERNAL_PUBLISHED_API, "@PublishedApi annotation is only applicable for internal declaration");
         MAP.put(PROTECTED_CALL_FROM_PUBLIC_INLINE, "Protected function call from public-API inline function is deprecated", NAME);
+        MAP.put(PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR, "Protected function call from public-API inline function is prohibited", NAME);
         MAP.put(INVALID_DEFAULT_FUNCTIONAL_PARAMETER_FOR_INLINE, "Invalid default value for inline parameter: ''{0}''. Only lambdas, anonymous functions, and callable references are supported", ELEMENT_TEXT, SHORT_NAMES_IN_TYPES);
         MAP.put(NOT_SUPPORTED_INLINE_PARAMETER_IN_INLINE_PARAMETER_DEFAULT_VALUE, "Usage of inline parameter ''{0}'' in default value for another inline parameter is not supported", ELEMENT_TEXT, SHORT_NAMES_IN_TYPES);
         //Inline non locals

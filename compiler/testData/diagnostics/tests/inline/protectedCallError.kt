@@ -1,3 +1,4 @@
+// !LANGUAGE: +ProhibitProtectedCallFromInline
 // !DIAGNOSTICS: -EXPOSED_PARAMETER_TYPE -NOTHING_TO_INLINE
 
 // FILE: JavaClass.java
@@ -17,10 +18,10 @@ open class A {
         protected set(<!UNUSED_PARAMETER!>value<!>) {}
 
     inline fun call() {
-        <!PROTECTED_CALL_FROM_PUBLIC_INLINE!>test<!>()
-        <!PROTECTED_CALL_FROM_PUBLIC_INLINE!>z<!>
+        <!PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR!>test<!>()
+        <!PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR!>z<!>
         zVar
-        <!PROTECTED_CALL_FROM_PUBLIC_INLINE!>zVar<!> = "123"
+        <!PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR!>zVar<!> = "123"
     }
 
     internal inline fun callFromInternal() {
@@ -31,10 +32,10 @@ open class A {
 
     @PublishedApi
     internal inline fun callFromPublished() {
-        <!PROTECTED_CALL_FROM_PUBLIC_INLINE!>test<!>()
-        <!PROTECTED_CALL_FROM_PUBLIC_INLINE!>z<!>
+        <!PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR!>test<!>()
+        <!PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR!>z<!>
         zVar
-        <!PROTECTED_CALL_FROM_PUBLIC_INLINE!>zVar<!> = "123"
+        <!PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR!>zVar<!> = "123"
     }
 
     protected inline fun callFromProtected() {
@@ -47,13 +48,13 @@ open class A {
 
 class B : A() {
     inline fun testB() {
-        <!PROTECTED_CALL_FROM_PUBLIC_INLINE!>test<!>()
+        <!PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR!>test<!>()
     }
 }
 
 class C : JavaClass() {
     inline fun call() {
-        <!PROTECTED_CALL_FROM_PUBLIC_INLINE!>bind<!>()
+        <!PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR!>bind<!>()
     }
 
     internal inline fun callFromInternal() {
@@ -66,7 +67,7 @@ class C : JavaClass() {
 
     @PublishedApi
     internal inline fun callFromPublished() {
-        <!PROTECTED_CALL_FROM_PUBLIC_INLINE!>bind<!>()
+        <!PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR!>bind<!>()
     }
 }
 

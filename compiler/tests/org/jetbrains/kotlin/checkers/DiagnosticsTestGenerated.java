@@ -11312,9 +11312,14 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/inline/propagation.kt");
             }
 
-            @TestMetadata("protectedDepecation.kt")
-            public void testProtectedDepecation() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/inline/protectedDepecation.kt");
+            @TestMetadata("protectedCallDepecation.kt")
+            public void testProtectedCallDepecation() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inline/protectedCallDepecation.kt");
+            }
+
+            @TestMetadata("protectedCallError.kt")
+            public void testProtectedCallError() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inline/protectedCallError.kt");
             }
 
             @TestMetadata("publishedApi.kt")

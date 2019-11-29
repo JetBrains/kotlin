@@ -1086,6 +1086,7 @@ public interface Errors {
     DiagnosticFactory0<KtDeclaration> INLINE_PROPERTY_WITH_BACKING_FIELD = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
     DiagnosticFactory0<KtAnnotationEntry> NON_INTERNAL_PUBLISHED_API = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<PsiElement, CallableDescriptor> PROTECTED_CALL_FROM_PUBLIC_INLINE = DiagnosticFactory1.create(WARNING);
+    DiagnosticFactory1<PsiElement, CallableDescriptor> PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory2<KtElement, KtExpression, DeclarationDescriptor> INVALID_DEFAULT_FUNCTIONAL_PARAMETER_FOR_INLINE = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory2<KtElement, KtExpression, DeclarationDescriptor> NOT_SUPPORTED_INLINE_PARAMETER_IN_INLINE_PARAMETER_DEFAULT_VALUE = DiagnosticFactory2.create(ERROR);
 
