@@ -60,11 +60,17 @@ abstract class AbstractScriptEvaluationExtension : ScriptEvaluationExtension {
                 val scriptFile = File(arguments.freeArgs.first())
                 val script = scriptFile.toScriptSource()
 
-                if (scriptFile.isDirectory || !scriptDefinitionProvider.isScript(script)) {
+                val error = when {
+                    !scriptFile.exists() -> "Script file not found: ${arguments.freeArgs.first()}"
+                    scriptFile.isDirectory  -> "Script argument points to a directory: ${arguments.freeArgs.first()}"
+                    !scriptDefinitionProvider.isScript(script) -> "Unrecognized script file: ${arguments.freeArgs.first()}"
+                    else -> null
+                }
+                if (error != null) {
                     val extensionHint =
                         if (configuration.get(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS)?.let { it.size == 1 && it.first().isDefault } == true) " (.kts)"
                         else ""
-                    messageCollector.report(CompilerMessageSeverity.ERROR, "Specify path to the script file$extensionHint as the first argument")
+                    messageCollector.report(CompilerMessageSeverity.ERROR, "$error; Specify path to the script file$extensionHint as the first argument")
                     return ExitCode.COMPILATION_ERROR
                 }
                 script

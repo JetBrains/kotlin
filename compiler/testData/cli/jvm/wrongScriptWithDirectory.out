@@ -1,2 +1,2 @@
-error: specify path to the script file as the first argument
+error: script argument points to a directory: $TESTDATA_DIR$/wrongAbiVersionLib; Specify path to the script file as the first argument
 COMPILATION_ERROR
