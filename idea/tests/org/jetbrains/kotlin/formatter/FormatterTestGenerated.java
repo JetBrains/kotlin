@@ -165,6 +165,11 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             runTest("idea/testData/formatter/ColonSpaces.after.kt");
         }
 
+        @TestMetadata("CommentAfterPackage.after.kt")
+        public void testCommentAfterPackage() throws Exception {
+            runTest("idea/testData/formatter/CommentAfterPackage.after.kt");
+        }
+
         @TestMetadata("CommentInExpressionBodies.after.kt")
         public void testCommentInExpressionBodies() throws Exception {
             runTest("idea/testData/formatter/CommentInExpressionBodies.after.kt");
@@ -953,6 +958,21 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             @TestMetadata("beforePackage.after.kt")
             public void testBeforePackage() throws Exception {
                 runTest("idea/testData/formatter/fileAnnotations/beforePackage.after.kt");
+            }
+
+            @TestMetadata("commentAfter.after.kt")
+            public void testCommentAfter() throws Exception {
+                runTest("idea/testData/formatter/fileAnnotations/commentAfter.after.kt");
+            }
+
+            @TestMetadata("commentAfter2.after.kt")
+            public void testCommentAfter2() throws Exception {
+                runTest("idea/testData/formatter/fileAnnotations/commentAfter2.after.kt");
+            }
+
+            @TestMetadata("commentAfter3.after.kt")
+            public void testCommentAfter3() throws Exception {
+                runTest("idea/testData/formatter/fileAnnotations/commentAfter3.after.kt");
             }
 
             @TestMetadata("inEmptyFile.after.kt")

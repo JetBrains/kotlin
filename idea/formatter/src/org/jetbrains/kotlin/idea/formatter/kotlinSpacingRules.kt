@@ -53,9 +53,6 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
     return rules(kotlinCommonSettings, builderUtil) {
         simple {
             before(FILE_ANNOTATION_LIST).lineBreakInCode()
-            after(FILE_ANNOTATION_LIST).blankLines(1)
-
-            after(PACKAGE_DIRECTIVE).blankLines(1)
             between(IMPORT_DIRECTIVE, IMPORT_DIRECTIVE).lineBreakInCode()
             after(IMPORT_LIST).blankLines(1)
         }
@@ -98,7 +95,14 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
                     else -> null
                 }
             }
+        }
 
+        simple {
+            after(FILE_ANNOTATION_LIST).blankLines(1)
+            after(PACKAGE_DIRECTIVE).blankLines(1)
+        }
+
+        custom {
             inPosition(leftSet = DECLARATIONS, rightSet = DECLARATIONS).customRule(fun(
                 _: ASTBlock,
                 _: ASTBlock,

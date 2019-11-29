@@ -1,7 +1,5 @@
 // ERROR: Class 'A' is not abstract and does not implement abstract member public abstract fun run(): Unit defined in java.lang.Runnable
-package foo
-
-// we use package 'foo'
+package foo // we use package 'foo'
 
 // imports:
 import java.util.ArrayList // we need ArrayList
