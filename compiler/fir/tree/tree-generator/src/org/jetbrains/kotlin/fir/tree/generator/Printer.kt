@@ -30,7 +30,7 @@ val GENERATED_MESSAGE = """
      */
      """.trimIndent()
 
-fun printElements(builder: AbstractFirTreeBuilder, generationPath: String) {
+fun printElements(builder: AbstractFirTreeBuilder, generationPath: File) {
     builder.elements.forEach { it.generateCode(generationPath) }
     builder.elements.flatMap { it.allImplementations }.forEach { it.generateCode(generationPath) }
 
@@ -49,8 +49,8 @@ fun PrintWriter.printGeneratedMessage() {
     println()
 }
 
-fun printVisitor(elements: List<Element>, generationPath: String) {
-    val dir = File(generationPath + VISITOR_PACKAGE.replace(".", "/"))
+fun printVisitor(elements: List<Element>, generationPath: File) {
+    val dir = File(generationPath, VISITOR_PACKAGE.replace(".", "/"))
     dir.mkdirs()
     File(dir, "FirVisitor.kt").printWriter().use { printer ->
         with(printer) {
@@ -80,8 +80,8 @@ fun printVisitor(elements: List<Element>, generationPath: String) {
     }
 }
 
-fun printVisitorVoid(elements: List<Element>, generationPath: String) {
-    val dir = File(generationPath + VISITOR_PACKAGE.replace(".", "/"))
+fun printVisitorVoid(elements: List<Element>, generationPath: File) {
+    val dir = File(generationPath, VISITOR_PACKAGE.replace(".", "/"))
     dir.mkdirs()
     File(dir, "FirVisitorVoid.kt").printWriter().use { printer ->
         with(printer) {
@@ -128,8 +128,8 @@ fun printVisitorVoid(elements: List<Element>, generationPath: String) {
     }
 }
 
-fun Element.generateCode(generationPath: String) {
-    val dir = File(generationPath + packageName.replace(".", "/"))
+fun Element.generateCode(generationPath: File) {
+    val dir = generationPath.resolve(packageName.replace(".", "/"))
     dir.mkdirs()
     val file = File(dir, "$type.kt")
     file.printWriter().use { printer ->
@@ -148,8 +148,8 @@ fun Element.generateCode(generationPath: String) {
     }
 }
 
-fun Implementation.generateCode(generationPath: String) {
-    val dir = File(generationPath + packageName.replace(".", "/"))
+fun Implementation.generateCode(generationPath: File) {
+    val dir = generationPath.resolve(packageName.replace(".", "/"))
     dir.mkdirs()
     val file = File(dir, "$type.kt")
     file.printWriter().use { printer ->
@@ -578,8 +578,8 @@ fun Field.replaceFunctionDeclaration(): String {
     return "fun replace$capName(new$capName: $typeWithArgumentsWithoutNullablity)"
 }
 
-fun printTransformer(elements: List<Element>, generationPath: String) {
-    val dir = File(generationPath + VISITOR_PACKAGE.replace(".", "/"))
+fun printTransformer(elements: List<Element>, generationPath: File) {
+    val dir = File(generationPath, VISITOR_PACKAGE.replace(".", "/"))
     dir.mkdirs()
     File(dir, "FirTransformer.kt").printWriter().use { printer ->
         with(printer) {
