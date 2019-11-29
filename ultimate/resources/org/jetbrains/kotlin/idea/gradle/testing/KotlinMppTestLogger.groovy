@@ -17,7 +17,7 @@ class KotlinMppTestLogger {
         xml.event(type: testEventType) {
             test(id: testDescriptor.id, parentId: testDescriptor.parent?.id ?: '') {
                 if (testDescriptor) {
-                    descriptor(name: testDescriptor.name ?: '', className: testDescriptor.className ?: '')
+                    descriptor(name: testDescriptor.displayName ?: '', className: testDescriptor.classDisplayName ?: '')
                 }
                 if (testEvent) {
                     def message = escapeCdata(testEvent.message)
