@@ -13,10 +13,8 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrConst
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrGetField
+import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.isStringClassType
@@ -43,13 +41,16 @@ fun IrField.constantValue(context: JvmBackendContext? = null): IrConst<*>? {
     return if (implicitConst || correspondingPropertySymbol?.owner?.isConst == true) value else null
 }
 
+private fun <T> IrConst<T>.copyWithOffsets(startOffset: Int, endOffset: Int) =
+    IrConstImpl(startOffset, endOffset, type, kind, value)
+
 class ConstLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), FileLoweringPass {
     override fun lower(irFile: IrFile) = irFile.transformChildrenVoid()
 
     private fun IrExpression.lowerConstRead(field: IrField?): IrExpression? {
         val value = field?.constantValue() ?: return null
         return if (context.state.shouldInlineConstVals)
-            value.copy()
+            value.copyWithOffsets(startOffset, endOffset)
         else
             IrGetFieldImpl(startOffset, endOffset, field.symbol, field.type)
     }
