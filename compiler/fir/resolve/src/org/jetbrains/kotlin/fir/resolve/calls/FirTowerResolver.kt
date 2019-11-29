@@ -222,7 +222,7 @@ class FirTowerResolver(
             }
             val implicitScope = implicitReceiverValue.implicitScope
             if (implicitScope != null) {
-                // Regular implicit receiver scope (outer objects only?)
+                // Regular implicit receiver scope (outer objects, statics)
                 // object Outer {
                 //     val x = 0
                 //     class Nested { val y = x }

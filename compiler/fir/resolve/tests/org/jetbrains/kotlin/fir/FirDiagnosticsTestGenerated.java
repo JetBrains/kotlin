@@ -73,6 +73,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         runTest("compiler/fir/resolve/testData/resolve/enum.kt");
     }
 
+    @TestMetadata("enumWithCompanion.kt")
+    public void testEnumWithCompanion() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/enumWithCompanion.kt");
+    }
+
     @TestMetadata("exhaustiveness_boolean.kt")
     public void testExhaustiveness_boolean() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/exhaustiveness_boolean.kt");

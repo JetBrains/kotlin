@@ -1,0 +1,50 @@
+FILE: enumWithCompanion.kt
+    public final enum class EC : R|kotlin/Enum<EC>| {
+        private constructor(): R|EC| {
+            super<R|kotlin/Enum<EC>|>()
+        }
+
+        public final static val A: R|EC| = object : R|EC| {
+            private constructor(): R|EC| {
+                super<R|EC|>()
+            }
+
+        }
+
+
+
+        public final static val B: R|EC| = object : R|EC| {
+            private constructor(): R|EC| {
+                super<R|EC|>()
+            }
+
+        }
+
+
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|EC.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun u(ec: R|EC|): R|kotlin/Boolean| {
+                ^u when (R|<local>/ec|) {
+                    ==($subj$, R|/EC.A|) ->  {
+                        Boolean(true)
+                    }
+                    ==($subj$, R|/EC.B|) ->  {
+                        Boolean(false)
+                    }
+                }
+
+            }
+
+        }
+
+        public final static fun values(): R|kotlin/Array<EC>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|EC| {
+        }
+
+    }
