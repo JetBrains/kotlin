@@ -3406,6 +3406,21 @@ public abstract class IntentionTestGenerated extends AbstractIntentionTest {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
+            @TestMetadata("leftParOnSameLine.kt")
+            public void testLeftParOnSameLine() throws Exception {
+                runTest("idea/testData/intentions/chop/argumentList/leftParOnSameLine.kt");
+            }
+
+            @TestMetadata("parOnSameLine.kt")
+            public void testParOnSameLine() throws Exception {
+                runTest("idea/testData/intentions/chop/argumentList/parOnSameLine.kt");
+            }
+
+            @TestMetadata("rightParOnSameLine.kt")
+            public void testRightParOnSameLine() throws Exception {
+                runTest("idea/testData/intentions/chop/argumentList/rightParOnSameLine.kt");
+            }
+
             @TestMetadata("threeArgs.kt")
             public void testThreeArgs() throws Exception {
                 runTest("testData/intentions/chop/argumentList/threeArgs.kt");
@@ -3444,9 +3459,24 @@ public abstract class IntentionTestGenerated extends AbstractIntentionTest {
                 runTest("testData/intentions/chop/parameterList/hasSomeLineBreaks2.kt");
             }
 
+            @TestMetadata("leftParOnSameLine.kt")
+            public void testLeftParOnSameLine() throws Exception {
+                runTest("idea/testData/intentions/chop/parameterList/leftParOnSameLine.kt");
+            }
+
             @TestMetadata("oneParameter.kt")
             public void testOneParameter() throws Exception {
                 runTest("testData/intentions/chop/parameterList/oneParameter.kt");
+            }
+
+            @TestMetadata("parOnSameLine.kt")
+            public void testParOnSameLine() throws Exception {
+                runTest("idea/testData/intentions/chop/parameterList/parOnSameLine.kt");
+            }
+
+            @TestMetadata("rightParOnSameLine.kt")
+            public void testRightParOnSameLine() throws Exception {
+                runTest("idea/testData/intentions/chop/parameterList/rightParOnSameLine.kt");
             }
 
             @TestMetadata("threeParameters.kt")
