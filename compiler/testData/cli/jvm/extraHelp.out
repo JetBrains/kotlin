@@ -42,6 +42,7 @@ where advanced options include:
                                                            in the interface (annotating an existing method can break binary compatibility)
                              -Xjvm-default=compatibility   Allow usages of @JvmDefault; generate a compatibility accessor
                                                            in the 'DefaultImpls' class in addition to the interface method
+  -Xklib=<path>              Paths to cross-platform libraries in .klib format
   -Xno-call-assertions       Don't generate not-null assertions for arguments of platform types
   -Xno-exception-on-explicit-equals-for-boxed-null
                              Do not throw NPE on explicit 'equals' call for null receiver of platform boxed primitive type

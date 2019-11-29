@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.types.KotlinType
@@ -632,3 +634,37 @@ val IrFunctionReference.typeSubstitutionMap: Map<IrTypeParameterSymbol, IrType>
 
 val IrFunctionAccessExpression.typeSubstitutionMap: Map<IrTypeParameterSymbol, IrType>
     get() = getTypeSubstitutionMap(symbol.owner)
+
+fun SymbolTable.referenceMember(descriptor: DeclarationDescriptor): IrSymbol =
+    descriptor.accept(
+        object : DeclarationDescriptorVisitorEmptyBodies<IrSymbol, Unit?>() {
+            override fun visitClassDescriptor(descriptor: ClassDescriptor, data: Unit?) =
+                if (DescriptorUtils.isEnumEntry(descriptor))
+                    referenceEnumEntry(descriptor)
+                else
+                    referenceClass(descriptor)
+
+            override fun visitConstructorDescriptor(constructorDescriptor: ConstructorDescriptor, data: Unit?) =
+                referenceConstructor(descriptor as ClassConstructorDescriptor)
+
+            override fun visitFunctionDescriptor(descriptor: FunctionDescriptor, data: Unit?) = referenceSimpleFunction(descriptor)
+
+            override fun visitPropertyDescriptor(descriptor: PropertyDescriptor, data: Unit?) = referenceProperty(descriptor)
+
+            override fun visitTypeParameterDescriptor(descriptor: TypeParameterDescriptor, data: Unit?) = referenceTypeParameter(descriptor)
+
+            override fun visitTypeAliasDescriptor(descriptor: TypeAliasDescriptor, data: Unit?) = referenceTypeAlias(descriptor)
+
+            override fun visitDeclarationDescriptor(descriptor: DeclarationDescriptor?, data: Unit?): IrSymbol {
+                throw AssertionError("Unexpected member descriptor: $descriptor")
+            }
+        },
+        null
+    )
+
+fun SymbolTable.findOrDeclareExternalPackageFragment(descriptor: PackageFragmentDescriptor) =
+    referenceExternalPackageFragment(descriptor).also {
+        if (!it.isBound) {
+            declareExternalPackageFragment(descriptor)
+        }
+    }.owner

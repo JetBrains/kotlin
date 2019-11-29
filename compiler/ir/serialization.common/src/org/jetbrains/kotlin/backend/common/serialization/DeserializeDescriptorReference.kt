@@ -27,11 +27,11 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 abstract class DescriptorReferenceDeserializer(
     val currentModule: ModuleDescriptor,
     val mangler: KotlinMangler,
-    val builtIns: IrBuiltIns,
+    val builtIns: IrBuiltIns?,
     val resolvedForwardDeclarations: MutableMap<UniqId, UniqId>
 ) : DescriptorUniqIdAware {
 
-    protected open fun resolveSpecialDescriptor(fqn: FqName) = builtIns.builtIns.getBuiltInClassByFqName(fqn)
+    protected open fun resolveSpecialDescriptor(fqn: FqName) = builtIns!!.builtIns.getBuiltInClassByFqName(fqn)
     open fun checkIfSpecialDescriptorId(id: Long) = with(mangler) { id.isSpecial }
 
     protected open fun getDescriptorIdOrNull(descriptor: DeclarationDescriptor) =

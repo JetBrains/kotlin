@@ -21,18 +21,26 @@ import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclaration
 import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
+import org.jetbrains.kotlin.fileClasses.JvmSimpleFileClassInfo
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.descriptors.WrappedClassDescriptor
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
+import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
+import java.io.File
 import java.util.*
 
 internal val fileClassPhase = makeIrModulePhase(
@@ -71,10 +79,21 @@ private class FileClassLowering(val context: JvmBackendContext) : FileLoweringPa
 
     private fun createFileClass(irFile: IrFile, fileClassMembers: List<IrDeclaration>): IrClass {
         val fileEntry = irFile.fileEntry
-        val ktFile = context.psiSourceManager.getKtFile(fileEntry as PsiSourceManager.PsiFileEntry)
-            ?: throw AssertionError("Unexpected file entry: $fileEntry")
-        val fileClassInfo = JvmFileClassUtil.getFileClassInfoNoResolve(ktFile)
-        val descriptor = WrappedClassDescriptor(sourceElement = KotlinSourceElement(ktFile))
+        val fileClassInfo: JvmFileClassInfo?
+        val descriptor: ClassDescriptor
+        when (fileEntry) {
+            is PsiSourceManager.PsiFileEntry -> {
+                val ktFile = context.psiSourceManager.getKtFile(fileEntry as PsiSourceManager.PsiFileEntry)
+                    ?: throw AssertionError("Unexpected file entry: $fileEntry")
+                fileClassInfo = JvmFileClassUtil.getFileClassInfoNoResolve(ktFile)
+                descriptor = WrappedClassDescriptor(sourceElement = KotlinSourceElement(ktFile))
+            }
+            is NaiveSourceBasedFileEntryImpl -> {
+                fileClassInfo = JvmSimpleFileClassInfo(PackagePartClassUtils.getPackagePartFqName(irFile.fqName, fileEntry.name), false)
+                descriptor = WrappedClassDescriptor()
+            }
+            else -> error("unknown kind of file entry: $fileEntry")
+        }
         return IrClassImpl(
             0, fileEntry.maxOffset,
             IrDeclarationOrigin.FILE_CLASS,

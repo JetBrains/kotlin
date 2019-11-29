@@ -282,7 +282,7 @@ open class ClassCodegen protected constructor(
         if (entry is MultifileFacadeFileEntry) {
             return entry.partFiles.flatMap { it.loadSourceFilesInfo() }
         }
-        return listOf(File(context.psiSourceManager.getFileEntry(this)!!.name))
+        return listOfNotNull(context.psiSourceManager.getFileEntry(this)?.let { File(it.name) })
     }
 
     companion object {
