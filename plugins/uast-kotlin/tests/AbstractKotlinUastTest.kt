@@ -14,7 +14,7 @@ import java.io.File
 abstract class AbstractKotlinUastTest : KotlinLightCodeInsightFixtureTestCase() {
 
     override fun getProjectDescriptor(): LightProjectDescriptor =
-        KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
+        KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE_FULL_JDK
 
     override fun setUp() {
         super.setUp()
