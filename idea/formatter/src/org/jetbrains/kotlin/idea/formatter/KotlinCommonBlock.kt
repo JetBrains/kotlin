@@ -126,7 +126,9 @@ abstract class KotlinCommonBlock(
         var currentNode: ASTNode? = this
         while (currentNode != null) {
             if (currentNode.elementType in QUALIFIED_EXPRESSIONS) return true
-            if (currentNode.elementType != PARENTHESIZED && currentNode.psi?.safeAs<KtPostfixExpression>()?.operationToken != EXCLEXCL) return false
+            if (currentNode.elementType != PARENTHESIZED && currentNode.psi?.safeAs<KtPostfixExpression>()
+                    ?.operationToken != EXCLEXCL
+            ) return false
             currentNode = currentNode.treeParent
         }
 
@@ -149,6 +151,7 @@ abstract class KotlinCommonBlock(
 
     private fun ASTBlock.processBlock(indent: Indent, wrap: Wrap?): ASTBlock {
         val currentNode = requireNode()
+
         @Suppress("UNCHECKED_CAST")
         val subBlocks = subBlocks as List<ASTBlock>
         val elementType = currentNode.elementType
@@ -681,7 +684,9 @@ abstract class KotlinCommonBlock(
                 }
                 if (nodePsi.operationToken == ELVIS && nodePsi.getStrictParentOfType<KtStringTemplateExpression>() == null) {
                     return { childElement ->
-                        if (childElement.elementType == OPERATION_REFERENCE && (childElement.psi as? KtOperationReferenceExpression)?.operationSignTokenType == ELVIS) {
+                        if (childElement.elementType == OPERATION_REFERENCE && (childElement.psi as? KtOperationReferenceExpression)
+                                ?.operationSignTokenType == ELVIS
+                        ) {
                             Wrap.createWrap(settings.kotlinCustomSettings.WRAP_ELVIS_EXPRESSIONS, true)
                         } else {
                             null

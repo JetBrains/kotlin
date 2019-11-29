@@ -612,7 +612,9 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
                 val prevSibling = rightParenthesis?.prevSibling
                 val spaces = if (kotlinCustomSettings.SPACE_BEFORE_EXTEND_COLON) 1 else 0
                 // TODO This should use DependentSpacingRule, but it doesn't set keepLineBreaks to false if max LFs is 0
-                if ((prevSibling as? PsiWhiteSpace)?.textContains('\n') == true || kotlinCommonSettings.METHOD_PARAMETERS_RPAREN_ON_NEXT_LINE) {
+                if ((prevSibling as? PsiWhiteSpace)?.textContains('\n') == true || kotlinCommonSettings
+                        .METHOD_PARAMETERS_RPAREN_ON_NEXT_LINE
+                ) {
                     createSpacing(spaces, keepLineBreaks = false)
                 } else {
                     createSpacing(spaces)
