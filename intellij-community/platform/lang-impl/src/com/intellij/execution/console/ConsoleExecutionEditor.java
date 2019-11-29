@@ -140,8 +140,7 @@ public class ConsoleExecutionEditor implements Disposable {
   }
 
   public void setPrompt(@Nullable String prompt) {
-    // always add space to the prompt otherwise it may look ugly
-    setPromptInner(prompt != null && !prompt.endsWith(" ") ? prompt + " " : prompt);
+    setPromptInner(prompt);
   }
 
 

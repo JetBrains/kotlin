@@ -23,10 +23,11 @@ class ConsolePromptDecorator(private val myEditorEx: EditorEx) : EditorLinePaint
   var mainPrompt: String = "> "
     get() = if (myEditorEx.isRendererMode) "" else field
     set(mainPrompt) {
-      if (this.mainPrompt != mainPrompt) {
+      val mainPromptWrapped = wrapPrompt(mainPrompt)
+      if (this.mainPrompt != mainPromptWrapped) {
         // to be compatible with LanguageConsoleView we should reset the indent prompt
         indentPrompt = ""
-        field = mainPrompt
+        field = mainPromptWrapped
         update()
       }
     }
@@ -41,13 +42,17 @@ class ConsolePromptDecorator(private val myEditorEx: EditorEx) : EditorLinePaint
   var indentPrompt: String = ""
     get() = if (myEditorEx.isRendererMode) "" else field
     set(indentPrompt) {
-      field = indentPrompt
+      val indentPromptWrapped = wrapPrompt(indentPrompt)
+      field = indentPromptWrapped
       update()
     }
 
   init {
     myEditorEx.colorsScheme.setColor(promptColor, this.promptAttributes.attributes.foregroundColor)
   }
+
+  // always add space to the prompt otherwise it may look ugly
+  private fun wrapPrompt(prompt: String) = if (!prompt.endsWith(" ")) "$prompt " else prompt
 
   override fun getLineExtensions(project: Project, file: VirtualFile, lineNumber: Int): Collection<LineExtensionInfo>? = null
 
