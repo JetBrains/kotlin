@@ -512,16 +512,25 @@ internal abstract class IndicesHandler(protected val context: CommonBackendConte
 internal class CollectionIndicesHandler(context: CommonBackendContext) : IndicesHandler(context) {
 
     override val matcher = SimpleCalleeMatcher {
-        extensionReceiver { it != null && it.type.run { isArray() || isPrimitiveArray() || isCollection() } }
+        extensionReceiver { it?.type?.isCollection() == true }
         fqName { it == FqName("kotlin.collections.<get-indices>") }
         parameterCount { it == 0 }
     }
 
-    // The lowering operates on subtypes of Collection. Therefore, the IrType could be
-    // a type parameter bounded by Collection. When that is the case, we cannot get
-    // the class from the type and instead uses the Collection getter.
-    override val IrType.sizePropertyGetter
-        get() = getClass()?.getPropertyGetter("size")?.owner ?: context.ir.symbols.collection.getPropertyGetter("size")!!.owner
+    override val IrType.sizePropertyGetter: IrSimpleFunction
+        get() = context.ir.symbols.collection.getPropertyGetter("size")!!.owner
+}
+
+internal class ArrayIndicesHandler(context: CommonBackendContext) : IndicesHandler(context) {
+
+    override val matcher = SimpleCalleeMatcher {
+        extensionReceiver { it != null && it.type.run { isArray() || isPrimitiveArray() } }
+        fqName { it == FqName("kotlin.collections.<get-indices>") }
+        parameterCount { it == 0 }
+    }
+
+    override val IrType.sizePropertyGetter: IrSimpleFunction
+        get() = getClass()!!.getPropertyGetter("size")!!.owner
 }
 
 internal class CharSequenceIndicesHandler(context: CommonBackendContext) : IndicesHandler(context) {
@@ -532,11 +541,8 @@ internal class CharSequenceIndicesHandler(context: CommonBackendContext) : Indic
         parameterCount { it == 0 }
     }
 
-    // The lowering operates on subtypes of CharSequence. Therefore, the IrType could be
-    // a type parameter bounded by CharSequence. When that is the case, we cannot get
-    // the class from the type and instead uses the CharSequence getter.
-    override val IrType.sizePropertyGetter
-        get() = getClass()?.getPropertyGetter("length")?.owner ?: context.ir.symbols.charSequence.getPropertyGetter("length")!!.owner
+    override val IrType.sizePropertyGetter: IrSimpleFunction
+        get() = context.ir.symbols.charSequence.getPropertyGetter("length")!!.owner
 }
 
 /** Builds a [HeaderInfo] for calls to reverse an iterable. */
@@ -673,18 +679,11 @@ internal open class CharSequenceIterationHandler(context: CommonBackendContext, 
         parameterCount { it == 0 }
     }
 
-    // The lowering operates on subtypes of CharSequence. Therefore, the IrType could be
-    // a type parameter bounded by CharSequence. When that is the case, we cannot get
-    // the class from the type and instead uses the CharSequence getter and function.
-    override val IrType.sizePropertyGetter
-        get() = getClass()?.getPropertyGetter("length")?.owner ?: context.ir.symbols.charSequence.getPropertyGetter("length")!!.owner
+    override val IrType.sizePropertyGetter: IrSimpleFunction
+        get() = context.ir.symbols.charSequence.getPropertyGetter("length")!!.owner
 
-    override val IrType.getFunction
-        get() = getClass()?.functions?.single {
-            it.name == OperatorNameConventions.GET &&
-                    it.valueParameters.size == 1 &&
-                    it.valueParameters[0].type.isInt()
-        } ?: context.ir.symbols.charSequence.getSimpleFunction(OperatorNameConventions.GET.asString())!!.owner
+    override val IrType.getFunction: IrSimpleFunction
+        get() = context.ir.symbols.charSequence.getSimpleFunction(OperatorNameConventions.GET.asString())!!.owner
 }
 
 /**
@@ -694,6 +693,12 @@ internal open class CharSequenceIterationHandler(context: CommonBackendContext, 
  */
 internal class StringIterationHandler(context: CommonBackendContext) : CharSequenceIterationHandler(context, canCacheLast = true) {
     override fun matchIterable(expression: IrExpression) = expression.type.isString()
+
+    override val IrType.sizePropertyGetter: IrSimpleFunction
+        get() = context.ir.symbols.string.getPropertyGetter("length")!!.owner
+
+    override val IrType.getFunction: IrSimpleFunction
+        get() = context.ir.symbols.string.getSimpleFunction(OperatorNameConventions.GET.asString())!!.owner
 }
 
 /** Builds a [HeaderInfo] for calls to `withIndex()`. */
@@ -740,13 +745,7 @@ internal open class DefaultIterableHandler(private val context: CommonBackendCon
 
     override fun build(expression: IrExpression, scopeOwner: IrSymbol): HeaderInfo? =
         with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {
-            // The lowering operates on subtypes of Iterable. Therefore, the IrType could be
-            // a type parameter bounded by Iterable. When that is the case, we cannot get
-            // the class from the type and instead uses the Iterable.iterator() function.
-            val iteratorFun = expression.type.getClass()?.functions?.single {
-                it.name == OperatorNameConventions.ITERATOR &&
-                        it.valueParameters.isEmpty()
-            } ?: iterableClassSymbol.getSimpleFunction(OperatorNameConventions.ITERATOR.asString())!!.owner
+            val iteratorFun = iterableClassSymbol.getSimpleFunction(OperatorNameConventions.ITERATOR.asString())!!.owner
             IterableHeaderInfo(
                 scope.createTmpVariable(irCall(iteratorFun).apply { dispatchReceiver = expression }, nameHint = "iterator")
             )
