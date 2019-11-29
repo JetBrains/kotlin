@@ -315,7 +315,7 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
                         }
                         // After the checks, insert the orignal method body.
                         if (body is IrExpressionBody) {
-                            +(body as IrExpressionBody).expression
+                            +irReturn((body as IrExpressionBody).expression)
                         } else {
                             (body as IrBlockBody).statements.forEach { +it }
                         }
