@@ -7,7 +7,7 @@ FILE: main.kt
     }
     public final fun test(): R|kotlin/Unit| {
         lval b: R|MyMapEntry| = R|/MyMapEntry.MyMapEntry|()
-        R|<local>/b|.R|/Test.MapEntryImpl.key|
-        R|<local>/b|.R|/Test.MapEntryImpl.value|
+        R|<local>/b|.R|FakeOverride<kotlin/collections/Map.Entry.key: R|kotlin/String|>|
+        R|<local>/b|.R|FakeOverride<kotlin/collections/Map.Entry.value: R|kotlin/String|>|
         R|<local>/b|.R|/Test.MapEntryImpl.setValue|(Null(null))
     }

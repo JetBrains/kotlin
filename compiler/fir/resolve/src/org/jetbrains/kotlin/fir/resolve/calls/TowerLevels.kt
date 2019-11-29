@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
-import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorWithJump
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractImportingScope
@@ -114,7 +113,10 @@ class MemberScopeTowerLevel(
                 }
             }.stop()
         ) return ProcessorAction.STOP
-        return ProcessorAction.NEXT
+        val withSynthetic = FirSyntheticPropertiesScope(session, scope)
+        return withSynthetic.processScopeMembers { symbol ->
+            output.consumeCandidate(symbol, symbol.dispatchReceiverValue(), implicitExtensionReceiver)
+        }
     }
 
     override fun <T : AbstractFirBasedSymbol<*>> processElementsByName(

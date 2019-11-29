@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaValueParameter
+import org.jetbrains.kotlin.fir.resolve.calls.possibleGetterNamesByPropertyName
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction.NEXT
@@ -23,10 +24,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirSuperTypeScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
-import org.jetbrains.kotlin.load.java.propertyNameByGetMethodName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeFirstWord
 
 class JavaClassUseSiteMemberScope(
     klass: FirRegularClass,
@@ -150,28 +148,16 @@ class JavaClassUseSiteMemberScope(
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> ProcessorAction): ProcessorAction {
-        if (name.isSpecial) {
+        // Do not generate accessors at all?
+        if (true) {
             return processAccessorFunctionsAndPropertiesByName(name, emptyList(), null, processor)
         }
-        val identifier = name.identifier
-        val capitalizedAsciiName = identifier.capitalizeAsciiOnly()
-        val capitalizedFirstWordName = identifier.capitalizeFirstWord(asciiOnly = true)
-        val getterNames = listOfNotNull(
-            Name.identifier(GETTER_PREFIX + capitalizedAsciiName),
-            if (capitalizedFirstWordName == capitalizedAsciiName) null else Name.identifier(GETTER_PREFIX + capitalizedFirstWordName),
-            name.takeIf { identifier.startsWith(IS_PREFIX) }
-        ).filter {
-            propertyNameByGetMethodName(it) == name
-        }
-        val setterName = Name.identifier(SETTER_PREFIX + identifier.capitalize())
+        val getterNames = possibleGetterNamesByPropertyName(name)
+        val setterName = Name.identifier(SETTER_PREFIX + name.identifier.capitalize())
         return processAccessorFunctionsAndPropertiesByName(name, getterNames, setterName, processor)
     }
 
     companion object {
-        private const val GETTER_PREFIX = "get"
-
         private const val SETTER_PREFIX = "set"
-
-        private const val IS_PREFIX = "is"
     }
 }

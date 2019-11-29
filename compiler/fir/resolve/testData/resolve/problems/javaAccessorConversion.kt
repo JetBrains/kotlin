@@ -74,7 +74,7 @@ class Foo {
 }
 
 fun test_4(foo: Foo) {
-    foo.<!UNRESOLVED_REFERENCE!>x<!> // should be error
+    foo.x // should be error
 }
 
 fun test_5(x: D) {
