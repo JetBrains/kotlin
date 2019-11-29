@@ -360,13 +360,17 @@ class Strings {
 
     @Sample
     fun indexOf() {
-        fun getSubstringDetails(str: String, toFind: String): String {
-            return "Found $toFind in $str at position ${str.indexOf(toFind)}"
+        fun matchDetails(inputString: String, whatToFind: String, startIndex: Int = 0): String {
+            val matchIndex = inputString.indexOf(whatToFind, startIndex)
+            return "Searching for '$whatToFind' in '$inputString' starting at position $startIndex: " +
+                    if (matchIndex >= 0) "Found at $matchIndex" else "Not found"
         }
 
-        val str = "Kotlin"
-        val toFind = "otli"
+        val inputString = "Never ever give up"
+        val toFind = "ever"
 
-        assertPrints(getSubstringDetails(str, toFind), "Found otli in Kotlin at position 1")
+        assertPrints(matchDetails(inputString, toFind), "Searching for 'ever' in 'Never ever give up' starting at position 0: Found at 1")
+        assertPrints(matchDetails(inputString, toFind, 2), "Searching for 'ever' in 'Never ever give up' starting at position 2: Found at 6")
+        assertPrints(matchDetails(inputString, toFind, 10), "Searching for 'ever' in 'Never ever give up' starting at position 10: Not found")
     }
 }
