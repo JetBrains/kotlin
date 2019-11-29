@@ -133,7 +133,7 @@ abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTest
         }
 
         configureMultiFileTest(subFiles, beforeFile)
-        configureCompilerOptions(multiFileText, project, module)
+        val configured = configureCompilerOptions(multiFileText, project, module)
 
         CommandProcessor.getInstance().executeCommand(project, {
             try {
@@ -179,6 +179,10 @@ abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTest
             } catch (e: Throwable) {
                 e.printStackTrace()
                 TestCase.fail(getTestName(true))
+            } finally {
+                if (configured) {
+                    rollbackCompilerOptions(project, myFixture.module)
+                }
             }
         }, "", "")
     }
@@ -186,8 +190,6 @@ abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTest
     private fun doTest(beforeFileName: String) {
         val mainFile = File(beforeFileName)
         val originalFileText = FileUtil.loadFile(mainFile, true)
-        val configured = configureCompilerOptions(originalFileText, project, module)
-
         val mainFileDir = mainFile.parentFile!!
 
         val mainFileName = mainFile.name
@@ -202,6 +204,8 @@ abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTest
         extraFiles.mapTo(testFiles) { file -> file.name }
 
         myFixture.configureByFiles(*testFiles.toTypedArray())
+
+        val configured = configureCompilerOptions(originalFileText, project, module)
 
         CommandProcessor.getInstance().executeCommand(project, {
             try {

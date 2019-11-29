@@ -351,6 +351,8 @@ abstract class AbstractExtractionTest : KotlinLightCodeInsightFixtureTestCase() 
             checkExtract(ExtractTestFiles(path, fixture.configureByFile(mainFileName), extraFilesToPsi), checkAdditionalAfterdata, action)
         }
         finally {
+            ConfigLibraryUtil.unconfigureLibrariesByDirective(module, fileText)
+
             if (addKotlinRuntime) {
                 ConfigLibraryUtil.unConfigureKotlinRuntimeAndSdk(module, PluginTestCaseBase.mockJdk())
             }
