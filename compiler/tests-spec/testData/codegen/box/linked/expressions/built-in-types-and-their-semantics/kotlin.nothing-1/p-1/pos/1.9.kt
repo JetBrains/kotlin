@@ -13,7 +13,6 @@
 fun box(): String {
     try {
         val city = City()
-        city.index
     } catch (e: NotImplementedError) {
         val city = City("", 1)
 

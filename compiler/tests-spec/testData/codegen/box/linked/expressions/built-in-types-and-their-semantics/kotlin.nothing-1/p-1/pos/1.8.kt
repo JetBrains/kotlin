@@ -12,25 +12,23 @@
 fun box(): String {
     val c = Class()
     try {
-        c.data.invoke()
+        val a: () -> Nothing = c.data
+        a.invoke()
     } catch (e: IllegalArgumentException) {
         try {
-            c.exception.invoke()
-        } catch (e: IllegalArgumentException) {
-            try {
-                c.value()
-            } catch (e: NotImplementedError) {
-                return "OK"
-            }
+            val d: () -> Nothing = c.value
+            d()
+        } catch (e: NotImplementedError) {
+            return "OK"
         }
+
     }
     return "NOK"
 }
 
 open class Class() {
-    var data: () -> Nothing = { throwException("boo") as Nothing }
-    var exception: () -> CharSequence = { throwException("foo") as String }
-    val value: () -> Any
+    var data: () -> Nothing = { throwException("data") as Nothing }
+    val value: () -> Nothing
         get() = { TODO() as Nothing }
 }
 
