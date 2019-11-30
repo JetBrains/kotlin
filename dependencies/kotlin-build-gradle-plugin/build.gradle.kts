@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "1.3.50"
+    kotlin("jvm") version embeddedKotlinVersion
     `maven-publish`
 }
 
@@ -11,7 +11,6 @@ repositories {
 }
 
 dependencies {
-    implementation(kotlin("stdlib-jdk8"))
     implementation(gradleApi())
 }
 
