@@ -197,21 +197,22 @@ class KotlinCodeBlockModificationListener(
             return inBlockElements.isNotEmpty()
         }
 
-        fun isFormattingChange(changeSet: TreeChangeEvent): Boolean =
-            changeSet.changedElements.all {
-                changeSet.getChangesByElement(it).affectedChildren.all { c -> c is PsiWhiteSpace }
-            }
-
-        fun isCommentChange(changeSet: TreeChangeEvent): Boolean =
+        private fun isCommentChange(changeSet: TreeChangeEvent): Boolean =
             changeSet.changedElements.all { changedElement ->
                 val changesByElement = changeSet.getChangesByElement(changedElement)
                 changesByElement.affectedChildren.all { affectedChild ->
+                    if (!(affectedChild is PsiComment || affectedChild is KDoc)) return@all false
                     val changeByChild = changesByElement.getChangeByChild(affectedChild)
                     return@all if (changeByChild is ChangeInfoImpl) {
-                        changeByChild.oldChild is PsiComment && changeByChild.newChild is PsiComment ||
-                                changeByChild.oldChild is KDoc && changeByChild.newChild is KDoc
+                        val oldChild = changeByChild.oldChild
+                        oldChild is PsiComment || oldChild is KDoc
                     } else false
                 }
+            }
+
+        private fun isFormattingChange(changeSet: TreeChangeEvent): Boolean =
+            changeSet.changedElements.all {
+                changeSet.getChangesByElement(it).affectedChildren.all { c -> c is PsiWhiteSpace }
             }
 
         fun getInsideCodeBlockModificationScope(element: PsiElement): BlockModificationScopeElement? {

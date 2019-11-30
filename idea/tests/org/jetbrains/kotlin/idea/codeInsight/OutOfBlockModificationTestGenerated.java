@@ -348,6 +348,11 @@ public class OutOfBlockModificationTestGenerated extends AbstractOutOfBlockModif
         runTest("idea/testData/codeInsight/outOfBlock/StringInSuperConstroctorCall.kt");
     }
 
+    @TestMetadata("Uncomment.kt")
+    public void testUncomment() throws Exception {
+        runTest("idea/testData/codeInsight/outOfBlock/Uncomment.kt");
+    }
+
     @TestMetadata("WholeFileChanged.kt")
     public void testWholeFileChanged() throws Exception {
         runTest("idea/testData/codeInsight/outOfBlock/WholeFileChanged.kt");
