@@ -83,6 +83,10 @@ class KotlinBuildProperties(
     val jsIrDist: Boolean get() = getBoolean("kotlin.stdlib.js.ir.dist")
 
     val jarCompression: Boolean get() = getBoolean("kotlin.build.jar.compression", isTeamcityBuild)
+
+    val buildCacheUrl: String? = get("kotlin.build.cache.url") as String?
+
+    val pushToBuildCache: Boolean = getBoolean("kotlin.build.cache.push", isTeamcityBuild)
 }
 
 private const val extensionName = "kotlinBuildProperties"
