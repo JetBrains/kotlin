@@ -26,6 +26,24 @@ buildscript {
 
 def buildProperties = BuildPropertiesKt.getKotlinBuildPropertiesForSettings(settings)
 
+logger.info("buildCacheUrl=${buildProperties.buildCacheUrl}")
+logger.info("pushToBuildCache=${buildProperties.pushToBuildCache}")
+
+buildCache {
+    if (buildProperties.isTeamcityBuild) {
+        local {
+            enabled = false
+        }
+    }
+
+    if (buildProperties.buildCacheUrl != null) {
+        remote(HttpBuildCache) {
+            url = buildProperties.buildCacheUrl
+            push = buildProperties.pushToBuildCache
+        }
+    }
+}
+
 include "prepare-deps"
 
 if (buildProperties.includeCidrPlugins) {

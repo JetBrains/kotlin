@@ -46,6 +46,26 @@ gradleEnterprise {
     }
 }
 
+def buildProperties = BuildPropertiesKt.getKotlinBuildPropertiesForSettings(settings)
+
+logger.info("buildCacheUrl=${buildProperties.buildCacheUrl}")
+logger.info("pushToBuildCache=${buildProperties.pushToBuildCache}")
+
+buildCache {
+    if (buildProperties.isTeamcityBuild) {
+        local {
+            enabled = false
+        }
+    }
+
+    if (buildProperties.buildCacheUrl != null) {
+        remote(HttpBuildCache) {
+            url = buildProperties.buildCacheUrl
+            push = buildProperties.pushToBuildCache
+        }
+    }
+}
+
 // modules
 include ":kotlin-build-common",
         ":benchmarks",
@@ -270,9 +290,7 @@ include ":kotlin-build-common",
         ":kotlin-serialization-unshaded",
         ":kotlin-serialization:plugin-marker"
 
-def flags = BuildPropertiesKt.getKotlinBuildPropertiesForSettings(settings)
-
-if (flags.includeCidrPlugins) {
+if (buildProperties.includeCidrPlugins) {
     logger.info("Including CIDR plugins in settings.gradle")
     include ":kotlin-ultimate:ide:cidr-gradle-tooling",
             ":kotlin-ultimate:ide:common-native",
@@ -289,7 +307,7 @@ if (flags.includeCidrPlugins) {
     logger.info("NOT including CIDR plugins in settings.gradle")
 }
 
-if (flags.includeUltimate) {
+if (buildProperties.includeUltimate) {
     include ":kotlin-ultimate:ultimate",
             ":kotlin-ultimate:ultimate:ultimate-runner",
             ":kotlin-ultimate:ide:common-native",
@@ -300,7 +318,7 @@ if (flags.includeUltimate) {
     logger.info("NOT including extension for IJ Ultimate in settings.gradle")
 }
 
-if (flags.inJpsBuildIdeaSync) {
+if (buildProperties.inJpsBuildIdeaSync) {
     include ":kotlin-stdlib:jps-build"
     project(":kotlin-stdlib:jps-build").projectDir = "$rootDir/libraries/stdlib/jps-build" as File
 } else {
