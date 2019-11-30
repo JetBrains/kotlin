@@ -11,73 +11,40 @@ pluginManagement {
     }
 }
 
+buildscript {
+    repositories {
+        if (cacheRedirectorEnabled == 'true') {
+            maven { url "https://cache-redirector.jetbrains.com/kotlin.bintray.com/kotlin-dependencies" }
+        } else {
+            maven { url "https://kotlin.bintray.com/kotlin-dependencies" }
+        }
+    }
+    dependencies {
+        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.2")
+    }
+}
+
+def buildProperties = BuildPropertiesKt.getKotlinBuildPropertiesForSettings(settings)
+
 include "prepare-deps"
 
-def flags = new LocalBuildProperties(settings as Settings)
-
-if (flags.includeCidrPlugins) {
+if (buildProperties.includeCidrPlugins) {
     logger.info("Including CIDR plugins in buildSrc/settings.gradle")
     include ":prepare-deps:kotlin-native-platform-deps"
-    project(":prepare-deps:kotlin-native-platform-deps").projectDir = file("${flags.propertiesProvider.rootProjectDir}/kotlin-ultimate/buildSrc/prepare-deps/kotlin-native-platform-deps")
+    project(":prepare-deps:kotlin-native-platform-deps").projectDir =
+            file("${buildProperties.propertiesProvider.rootProjectDir}/kotlin-ultimate/buildSrc/prepare-deps/kotlin-native-platform-deps")
 } else {
     logger.info("NOT including CIDR plugins in buildSrc/settings.gradle")
 }
 
-if (flags.hasKotlinUltimate) {
+if (buildProperties.includeUltimate) {
     logger.info("Including extension for IJ Ultimate in buildSrc/settings.gradle")
     include ":prepare-deps:lldb-frontend"
     include ":prepare-deps:native-debug-plugin"
-    project(":prepare-deps:lldb-frontend").projectDir = file("${flags.propertiesProvider.rootProjectDir}/kotlin-ultimate/buildSrc/prepare-deps/lldb-frontend")
-    project(":prepare-deps:native-debug-plugin").projectDir = file("${flags.propertiesProvider.rootProjectDir}/kotlin-ultimate/buildSrc/prepare-deps/native-debug-plugin")
+    project(":prepare-deps:lldb-frontend").projectDir =
+            file("${buildProperties.propertiesProvider.rootProjectDir}/kotlin-ultimate/buildSrc/prepare-deps/lldb-frontend")
+    project(":prepare-deps:native-debug-plugin").projectDir =
+            file("${buildProperties.propertiesProvider.rootProjectDir}/kotlin-ultimate/buildSrc/prepare-deps/native-debug-plugin")
 } else {
     logger.info("Not including extension for IJ Ultimate in buildSrc/settings.gradle")
-}
-
-
-class LocalBuildPropertiesProvider {
-    private Settings settings
-    private Properties localProperties = new Properties()
-
-    File rootProjectDir
-
-    LocalBuildPropertiesProvider(Settings settings) {
-        this.settings = settings
-        this.rootProjectDir = settings.rootProject.projectDir.parentFile
-        
-        File propertiesFile = new File(rootProjectDir, 'local.properties')
-        if (propertiesFile.isFile()) {
-            propertiesFile.withInputStream { localProperties.load(it) }
-        }
-    }
-    
-    String getString(String name) {
-        if (settings.hasProperty(name)) {
-            return settings[name]?.toString()
-        } else {
-            return localProperties[name]?.toString()
-        }
-    }
-    
-    Boolean getBoolean(String name) {
-        def property = getString(name)
-        if (property == null) {
-            return false
-        } else {
-            return Boolean.parseBoolean(property.trim())
-        }
-    }
-}
-
-class LocalBuildProperties {
-    LocalBuildPropertiesProvider propertiesProvider
-    
-    boolean includeCidrPlugins
-
-    boolean hasKotlinUltimate
-
-    LocalBuildProperties(Settings settings) {
-        propertiesProvider = new LocalBuildPropertiesProvider(settings)
-        hasKotlinUltimate = new File(propertiesProvider.rootProjectDir, 'kotlin-ultimate').exists()
-        includeCidrPlugins = propertiesProvider.getBoolean('cidrPluginsEnabled') && hasKotlinUltimate
-    }
 }

@@ -31,7 +31,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.1")
+        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.2")
     }
 }
 
