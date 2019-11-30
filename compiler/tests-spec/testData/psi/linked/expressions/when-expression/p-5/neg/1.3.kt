@@ -9,7 +9,7 @@
 
 fun case_1() {
     when (value) {
-        -10000, value.getInt(11), Int.MIN_VALUE, -> return ""
+        -10000, value.getInt(11), Int.MIN_VALUE,, -> return ""
         21, , -> return ""
         , , -> return ""
         , value.getInt(11) -> return ""
