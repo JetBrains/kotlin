@@ -22,6 +22,7 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Objects;
 
 public abstract class AbstractDiagnostic<E extends PsiElement> implements ParametrizedDiagnostic<E> {
     private final E psiElement;
@@ -70,5 +71,20 @@ public abstract class AbstractDiagnostic<E extends PsiElement> implements Parame
     public boolean isValid() {
         if (!getFactory().isValid(this)) return false;
         return true;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AbstractDiagnostic<?> that = (AbstractDiagnostic<?>) o;
+        return Objects.equals(psiElement, that.psiElement) &&
+               Objects.equals(factory, that.factory) &&
+               severity == that.severity;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(psiElement, factory, severity);
     }
 }

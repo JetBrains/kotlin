@@ -113,7 +113,7 @@ open class KotlinPsiChecker : Annotator, HighlightRangeExtension {
     protected open fun shouldSuppressUnusedParameter(parameter: KtParameter): Boolean = false
 
     fun annotateElement(element: PsiElement, holder: AnnotationHolder, diagnostics: Diagnostics) {
-        val diagnosticsForElement = diagnostics.forElement(element)
+        val diagnosticsForElement = diagnostics.forElement(element).toSet()
 
         if (element is KtNameReferenceExpression) {
             val unresolved = diagnostics.any { it.factory == Errors.UNRESOLVED_REFERENCE }
