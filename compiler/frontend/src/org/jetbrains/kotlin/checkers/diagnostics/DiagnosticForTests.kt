@@ -16,8 +16,9 @@ import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.psi.KtElement
 
 class DebugInfoDiagnostic(element: KtElement, factory: DiagnosticFactory<*>) : AbstractDiagnosticForTests(element, factory)
-class SyntaxErrorDiagnostic(errorElement: PsiErrorElement) : AbstractDiagnosticForTests(errorElement,
-                                                                                                                                  SyntaxErrorDiagnosticFactory.INSTANCE
+class SyntaxErrorDiagnostic(errorElement: PsiErrorElement) : AbstractDiagnosticForTests(
+    errorElement,
+    SyntaxErrorDiagnosticFactory.INSTANCE
 )
 
 open class AbstractDiagnosticForTests(private val element: PsiElement, private val factory: DiagnosticFactory<*>) : Diagnostic {
