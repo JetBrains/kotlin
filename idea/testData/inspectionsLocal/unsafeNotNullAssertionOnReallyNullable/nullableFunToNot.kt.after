@@ -1,11 +1,16 @@
+// SKIP_ERRORS_AFTER
+
 class A {
-    fun unsafeCall()
+    fun unsafeCall(){}
 }
 
-fun getNull():A?{
-    return null
+class B {
+    fun returnA(): A {
+        return null
+    }
 }
 
-fun unsafeFoo(): A {
-    return getNull()<caret>!!
+fun unsafeFoo() {
+    val b = B()
+    b.returnA()!!.unsafeCall()
 }

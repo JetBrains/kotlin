@@ -1,5 +1,6 @@
-class A{
-    fun unsafeCall()
+// SKIP_ERRORS_AFTER
+class A {
+    fun unsafeCall() {}
 }
 
 fun unsafe() {

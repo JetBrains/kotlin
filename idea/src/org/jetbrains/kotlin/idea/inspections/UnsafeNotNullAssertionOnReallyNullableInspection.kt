@@ -9,10 +9,12 @@ import com.intellij.codeInspection.IntentionWrapper
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
-import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.quickfix.ChangeCallableReturnTypeFix
+import org.jetbrains.kotlin.idea.quickfix.ChangeParameterTypeFix
 import org.jetbrains.kotlin.idea.quickfix.ChangeVariableTypeFix
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -33,80 +35,52 @@ class UnsafeNotNullAssertionOnReallyNullableInspection : AbstractKotlinInspectio
             when (val base = expression.baseExpression) {
                 is KtNameReferenceExpression -> {
                     when (val basePsi = base.mainReference.resolve()) {
-//                        TODO:
-//                        is KtParameter -> {
-//                            val baseExpressionDescriptor = context[BindingContext.VALUE_PARAMETER, basePsi]
-//                            if (baseExpressionDescriptor is ValueParameterDescriptorImpl) (baseExpressionDescriptor.returnType) else "Kek"
-//                            val fix =
-//                        }
+                        is KtParameter -> {
+                            val baseExpressionDescriptor = context[BindingContext.VALUE_PARAMETER, basePsi]
+                            if (baseExpressionDescriptor is ValueParameterDescriptorImpl) {
+                                val fix = ChangeParameterTypeFix(
+                                    basePsi,
+                                    TypeUtils.makeNotNullable(baseExpressionDescriptor.returnType)
+                                )
+                                holder.registerProblem(
+                                    expression, "Unsafe using of '!!' operator",
+                                    ProblemHighlightType.WEAK_WARNING, IntentionWrapper(fix, basePsi.containingFile)
+                                )
+                            }
+                        }
                         is KtProperty -> {
-                            val propertyDescriptor = context[BindingContext.REFERENCE_TARGET, base] as LocalVariableDescriptor
+                            val rawDescriptor = context[BindingContext.REFERENCE_TARGET, base]
+                            val propertyDescriptor = rawDescriptor as CallableDescriptor
                             val declaration = basePsi as KtVariableDeclaration
                             val fix = ChangeVariableTypeFix.OnType(
                                 declaration,
-                                TypeUtils.makeNotNullable(propertyDescriptor.returnType)
+                                TypeUtils.makeNotNullable(propertyDescriptor.returnType ?: return)
                             )
                             holder.registerProblem(
                                 expression, "Unsafe using of '!!' operator",
                                 ProblemHighlightType.WEAK_WARNING, IntentionWrapper(fix, declaration.containingFile)
                             )
                         }
-//                        else -> {
-//
-//                        }
                     }
                 }
                 is KtCallExpression -> {
-                    val basePsi = base.calleeExpression?.mainReference?.resolve() ?: return
-                    val fooDescriptor = context[BindingContext.FUNCTION, basePsi] ?: return
-                    val fix = ChangeCallableReturnTypeFix.OnType(
-                        base.calleeExpression?.mainReference?.resolve() as? KtFunction ?: return,
-                        TypeUtils.makeNotNullable(fooDescriptor.returnType!!)
+                    registerChangeCallableReturnFix(
+                        expression,
+                        base,
+                        context,
+                        holder
                     )
-                    holder.registerProblem(
-                        expression.operationReference, "Unsafe using of '!!' operator",
-                        ProblemHighlightType.WEAK_WARNING, IntentionWrapper(fix, expression.containingFile)
+                }
+                is KtDotQualifiedExpression -> {
+                    registerChangeCallableReturnFix(
+                        expression,
+                        //TODO: add reference type loop
+                        base.selectorExpression as? KtCallExpression ?: return,
+                        context,
+                        holder
                     )
                 }
             }
-
-//            is KtNameReferenceExpression -> (expression.baseExpression as KtNameReferenceExpression).mainReference.resolve() is KtParameter
-
-//            val context = postfixExpression.analyze(BodyResolveMode.PARTIAL_WITH_DIAGNOSTICS)
-//            val base = postfixExpression.baseExpression
-
-//            val context = expression.analyze(BodyResolveMode.PARTIAL_WITH_DIAGNOSTICS)
-//            val param= ((expression.baseExpression as KtNameReferenceExpression).mainReference.resolve() as KtParameter)
-//            val baseExpressionDescriptor = context[BindingContext.VALUE_PARAMETER, param]
-//            if(baseExpressionDescriptor is ValueParameterDescriptorImpl) (baseExpressionDescriptor.returnType) else "Kek"
-
-
-//            is KtCallExpression
-//            is KtNameReferenceExpression -> (expression.baseExpression as KtNameReferenceExpression).mainReference.resolve() is KtParameter
-
-//            val context = postfixExpression.analyze(BodyResolveMode.PARTIAL_WITH_DIAGNOSTICS)
-//            val base = postfixExpression.baseExpression
-
-//            val context = expression.analyze(BodyResolveMode.PARTIAL_WITH_DIAGNOSTICS)
-//            val param= ((expression.baseExpression as KtNameReferenceExpression).mainReference.resolve() as KtParameter)
-//            val baseExpressionDescriptor = context[BindingContext.VALUE_PARAMETER, param]
-//            if(baseExpressionDescriptor is ValueParameterDescriptorImpl) (baseExpressionDescriptor.returnType) else "Kek"
-//// experiments woth local var begins
-//            val myRef = postfixExpression.baseExpression as KtNameReferenceExpression
-////            myRef.mainReference.resolve()
-//            val propertyDescriptor = context[BindingContext.REFERENCE_TARGET, myRef] as LocalVariableDescriptor
-//            val psiProperty = propertyDescriptor.source.getPsi()
-//            val declaration = psiProperty as? KtProperty as KtVariableDeclaration
-//            val changeValFix = ChangeVariableTypeFix.OnType(
-//                declaration,
-//                propertyDescriptor.returnType.constructor.declarationDescriptor?.builtIns?.stringType ?: return
-//            )
-//            holder.registerProblem(
-//                expression, "Unsafe using of '!!' operator",
-//                ProblemHighlightType.WEAK_WARNING, IntentionWrapper(changeValFix, declaration.containingFile)
-//            )
-//// experiments woth local var ends
-
 //            holder.registerProblem(
 //                expression,
 //                "Unsafe using of '!!' operator",
@@ -116,6 +90,24 @@ class UnsafeNotNullAssertionOnReallyNullableInspection : AbstractKotlinInspectio
         })
     }
 
+    private fun registerChangeCallableReturnFix(
+        postfixExpression: KtPostfixExpression,
+        callExpression: KtCallExpression,
+        context: BindingContext,
+        holder: ProblemsHolder
+    ) {
+        val basePsi = callExpression.calleeExpression?.mainReference?.resolve() ?: return
+        val fooDescriptor = context[BindingContext.FUNCTION, basePsi] ?: return
+        val fix = ChangeCallableReturnTypeFix.OnType(
+            callExpression.calleeExpression?.mainReference?.resolve() as? KtFunction ?: return,
+            TypeUtils.makeNotNullable(fooDescriptor.returnType!!)
+        )
+        holder.registerProblem(
+            postfixExpression.operationReference, "Unsafe using of '!!' operator",
+            ProblemHighlightType.WEAK_WARNING, IntentionWrapper(fix, postfixExpression.containingFile)
+        )
+
+    }
 }
 
 //TODO:
