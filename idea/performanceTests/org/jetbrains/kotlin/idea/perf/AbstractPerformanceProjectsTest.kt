@@ -213,7 +213,7 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
                     }.get()
 
                     val modules = ModuleManager.getInstance(project).modules
-                    assertTrue("project has to have at least one module", modules.isNotEmpty())
+                    assertTrue("project $name has to have at least one module", modules.isNotEmpty())
 
                     logMessage { "modules of $name: ${modules.map { m -> m.name }}" }
 
