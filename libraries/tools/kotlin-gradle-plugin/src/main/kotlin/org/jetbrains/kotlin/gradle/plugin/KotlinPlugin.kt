@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.gradle.internal.checkAndroidAnnotationProcessorDepen
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.logging.kotlinWarn
 import org.jetbrains.kotlin.gradle.model.builder.KotlinModelBuilder
-import org.jetbrains.kotlin.gradle.model.builder.KotlinMppAndroidSourceSetBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
@@ -819,13 +818,11 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
 
     fun configureTarget(kotlinAndroidTarget: KotlinAndroidTarget) {
         val project = kotlinAndroidTarget.project
-        val ext = project.extensions.getByName("android") as BaseExtension
+        val androidExtension = project.extensions.getByName("android") as BaseExtension
 
-        val createdSourceSets = KotlinMppAndroidSourceSetBuilder.configureSourceSets(
-            project = project,
-            androidTargetName = kotlinAndroidTarget.disambiguationClassifier.toString(),
-            kotlinMppSourceSets = project.kotlinExtension.sourceSets,
-            androidSourceSets = ext.sourceSets
+        val createdSourceSets = AndroidKotlinSourceSetBuilder(kotlinAndroidTarget).createKotlinSourceSets(
+            kotlinSourceSets = project.kotlinExtension.sourceSets,
+            androidSourceSets = androidExtension.sourceSets
         )
 
         createdSourceSets.forEach { (androidSourceSet, kotlinMppSourceSet) ->
@@ -847,7 +844,7 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
         }
 
         kotlinOptions.noJdk = true
-        ext.addExtension(KOTLIN_OPTIONS_DSL_NAME, kotlinOptions)
+        androidExtension.addExtension(KOTLIN_OPTIONS_DSL_NAME, kotlinOptions)
 
         val androidPluginIds = listOf(
             "android", "com.android.application", "android-library", "com.android.library",
@@ -885,7 +882,7 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
         project.whenEvaluated {
             forEachVariant { variant ->
                 val compilation = kotlinAndroidTarget.compilations.getByName(getVariantName(variant))
-                postprocessVariant(variant, compilation, project, ext, plugin)
+                postprocessVariant(variant, compilation, project, androidExtension, plugin)
 
                 val subpluginEnvironment = SubpluginEnvironment.loadSubplugins(project, kotlinConfigurationTools.kotlinPluginVersion)
                 applySubplugins(project, compilation, variant, subpluginEnvironment)
