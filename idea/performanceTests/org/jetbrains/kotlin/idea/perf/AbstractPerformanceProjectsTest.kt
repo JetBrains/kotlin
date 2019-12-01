@@ -157,11 +157,12 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
         var lastProject: Project? = null
         var counter = 0
 
-        stats.perfTest<Unit, Project>(
-            warmUpIterations = warmUpIterations,
-            iterations = iterations,
-            testName = "open project${if (note.isNotEmpty()) " $note" else ""}",
-            test = {
+        performanceTest<Unit, Project> {
+            name("open project${if (note.isNotEmpty()) " $note" else ""}")
+            stats(stats)
+            warmUpIterations(warmUpIterations)
+            iterations(iterations)
+            test {
                 val project = if (!simpleModule) {
                     val project = loadProjectWithName(name = name, path = path)
                     assertNotNull("project $name at $path is not loaded", project)
@@ -196,8 +197,8 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
                 }
 
                 it.value = project
-            },
-            tearDown = {
+            }
+            tearDown {
                 it.value?.let { project ->
 
                     runAndMeasure("refresh gradle project $name") {
@@ -234,7 +235,7 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
                     counter++
                 }
             }
-        )
+        }
 
         // indexing
         lastProject?.let { project ->
@@ -305,11 +306,12 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
         note: String = ""
     ) {
         assertTrue("lookupElements has to be not empty", lookupElements.isNotEmpty())
-        stats.perfTest<Pair<String, Fixture>, Array<LookupElement>>(
-            warmUpIterations = 8,
-            iterations = 15,
-            testName = "typeAndAutocomplete ${notePrefix(note)}$fileName",
-            setUp = {
+        performanceTest<Pair<String, Fixture>, Array<LookupElement>> {
+            name("typeAndAutocomplete ${notePrefix(note)}$fileName")
+            stats(stats)
+            warmUpIterations(8)
+            iterations(15)
+            setUp {
                 val fixture = openFixture(project, fileName)
                 val editor = fixture.editor
 
@@ -340,12 +342,12 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
                 fixture.type(insertString)
 
                 it.setUpValue = Pair(initialText, fixture)
-            },
-            test = {
+            }
+            test {
                 val fixture = it.setUpValue!!.second
                 it.value = fixture.complete()
-            },
-            tearDown = {
+            }
+            tearDown {
                 val items = it.value?.map { e -> e.lookupString }?.toList() ?: emptyList()
                 try {
                     for (lookupElement in lookupElements) {
@@ -357,9 +359,9 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
                     }
                     commitAllDocuments()
                 }
-            },
-            profileEnabled = true
-        )
+            }
+            profileEnabled(true)
+        }
     }
 
     fun perfTypeAndHighlight(
@@ -388,11 +390,12 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
         revertChangesAtTheEnd: Boolean = true,
         note: String = ""
     ) {
-        stats.perfTest<Pair<String, Fixture>, List<HighlightInfo>>(
-            warmUpIterations = 8,
-            iterations = 15,
-            testName = "typeAndHighlight ${notePrefix(note)}$fileName",
-            setUp = {
+        performanceTest<Pair<String, Fixture>, List<HighlightInfo>> {
+            name("typeAndHighlight ${notePrefix(note)}$fileName")
+            stats(stats)
+            warmUpIterations(8)
+            iterations(15)
+            setUp {
                 val fixture = openFixture(project, fileName)
                 val editor = fixture.editor
 
@@ -423,12 +426,12 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
                 fixture.type(insertString)
 
                 it.setUpValue = Pair(initialText, fixture)
-            },
-            test = {
+            }
+            test {
                 val fixture = it.setUpValue!!.second
                 it.value = fixture.doHighlighting()
-            },
-            tearDown = {
+            }
+            tearDown {
                 it.value?.let { list ->
                     assertNotEmpty(list)
                 }
@@ -436,9 +439,9 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
                     pair.second.revertChanges(revertChangesAtTheEnd, pair.first)
                 }
                 commitAllDocuments()
-            },
-            profileEnabled = true
-        )
+            }
+            profileEnabled(true)
+        }
     }
 
     fun perfCopyAndPaste(
@@ -468,11 +471,12 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
         targetFinalMarker: String? = null,
         note: String = ""
     ) {
-        stats.perfTest<Pair<Array<Fixture>, String>, Boolean>(
-            warmUpIterations = 8,
-            iterations = 15,
-            testName = "${notePrefix(note)}$sourceFileName",
-            setUp = {
+        performanceTest<Pair<Array<Fixture>, String>, Boolean> {
+            name("${notePrefix(note)}$sourceFileName")
+            stats(stats)
+            warmUpIterations(8)
+            iterations(15)
+            setUp {
                 val fixture1 = openFixture(project, sourceFileName)
                 val fixture2 = openFixture(project, targetFileName)
 
@@ -485,16 +489,16 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
                 fixture2.selectMarkers(targetInitialMarker, targetFinalMarker)
 
                 it.setUpValue = Pair(arrayOf(fixture1, fixture2), initialText2)
-            },
-            test = {
+            }
+            test {
                 it.setUpValue?.let { setUpValue ->
                     val fixture1 = setUpValue.first[0]
                     val fixture2 = setUpValue.first[1]
                     it.value = fixture1.performEditorAction(IdeActions.ACTION_COPY) &&
                             fixture2.performEditorAction(IdeActions.ACTION_PASTE)
                 }
-            },
-            tearDown = {
+            }
+            tearDown {
                 try {
                     commitAllDocuments()
                     it.value?.let { performed ->
@@ -510,9 +514,9 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
                     }
                     commitAllDocuments()
                 }
-            },
-            profileEnabled = true
-        )
+            }
+            profileEnabled(true)
+        }
     }
 
     private fun updateScriptDependenciesIfNeeded(
@@ -560,25 +564,26 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
         return highlightFile {
             val isWarmUp = note == WARM_UP
             var highlightInfos: List<HighlightInfo> = emptyList()
-            stats.perfTest<EditorFile, List<HighlightInfo>>(
-                warmUpIterations = if (isWarmUp) 1 else 3,
-                iterations = if (isWarmUp) 2 else 10,
-                testName = "highlighting ${notePrefix(note)}${simpleFilename(fileName)}",
-                setUp = {
+            performanceTest<EditorFile, List<HighlightInfo>> {
+                name("highlighting ${notePrefix(note)}${simpleFilename(fileName)}")
+                stats(stats)
+                warmUpIterations(if (isWarmUp) 1 else 3)
+                iterations(if (isWarmUp) 2 else 10)
+                setUp {
                     it.setUpValue = openFileInEditor(project, fileName)
-                },
-                test = {
+                }
+                test {
                     val file = it.setUpValue
                     it.value = highlightFile(project, file!!.psiFile)
-                },
-                tearDown = {
+                }
+                tearDown {
                     highlightInfos = it.value ?: emptyList()
                     commitAllDocuments()
                     FileEditorManager.getInstance(project).closeFile(it.setUpValue!!.psiFile.virtualFile)
                     PsiManager.getInstance(project).dropPsiCaches()
-                },
-                profileEnabled = !isWarmUp
-            )
+                }
+                profileEnabled(!isWarmUp)
+            }
             highlightInfos
         }
     }
@@ -610,19 +615,20 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
         note: String = ""
     ) {
         if (!isAKotlinScriptFile(fileName)) return
-        stats.perfTest<EditorFile, EditorFile>(
-            testName = "updateScriptDependencies ${notePrefix(note)}${simpleFilename(fileName)}",
-            setUp = { it.setUpValue = openFileInEditor(project, fileName) },
-            test = {
+        performanceTest<EditorFile, EditorFile> {
+            name("updateScriptDependencies ${notePrefix(note)}${simpleFilename(fileName)}")
+            stats(stats)
+            setUp { it.setUpValue = openFileInEditor(project, fileName) }
+            test {
                 ScriptConfigurationManager.updateScriptDependenciesSynchronously(it.setUpValue!!.psiFile, project)
                 it.value = it.setUpValue
-            },
-            tearDown = {
+            }
+            tearDown {
                 it.setUpValue?.let { ef -> cleanupCaches(project, ef.psiFile.virtualFile) }
                 it.value?.let { v -> assertNotNull(v) }
-            },
-            profileEnabled = true
-        )
+            }
+            profileEnabled(true)
+        }
     }
 
     fun notePrefix(note: String) = if (note.isNotEmpty()) {

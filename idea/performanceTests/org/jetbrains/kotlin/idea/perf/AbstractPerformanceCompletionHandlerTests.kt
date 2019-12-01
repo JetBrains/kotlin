@@ -13,8 +13,6 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.idea.completion.test.ExpectedCompletionUtils
 import org.jetbrains.kotlin.idea.completion.test.configureWithExtraFile
 import org.jetbrains.kotlin.idea.completion.test.handlers.AbstractCompletionHandlerTest.Companion.CODE_STYLE_SETTING_PREFIX
-import org.jetbrains.kotlin.idea.completion.test.handlers.AbstractCompletionHandlerTest.Companion.COMPLETION_CHARS_PREFIX
-import org.jetbrains.kotlin.idea.completion.test.handlers.AbstractCompletionHandlerTest.Companion.COMPLETION_CHAR_PREFIX
 import org.jetbrains.kotlin.idea.completion.test.handlers.AbstractCompletionHandlerTest.Companion.ELEMENT_TEXT_PREFIX
 import org.jetbrains.kotlin.idea.completion.test.handlers.AbstractCompletionHandlerTest.Companion.INVOCATION_COUNT_PREFIX
 import org.jetbrains.kotlin.idea.completion.test.handlers.AbstractCompletionHandlerTest.Companion.LOOKUP_STRING_PREFIX
@@ -116,23 +114,21 @@ abstract class AbstractPerformanceCompletionHandlerTests(
         tailText: String?,
         completionChars: String
     ) {
-
-        val testName = getTestName(false)
-
-        val stats = stats()
-        stats.perfTest<Unit, Unit>(
-            testName = testName,
-            setUp = {
+        performanceTest<Unit, Unit> {
+            name(getTestName(false))
+            stats(stats())
+            setUp {
                 setUpFixture(testPath)
-            },
-            test = {
+            }
+            test {
                 perfTestCore(completionType, time, lookupString, itemText, tailText, completionChars)
-            },
-            tearDown = {
+            }
+            tearDown {
                 runWriteAction {
                     myFixture.file.delete()
                 }
-            })
+            }
+        }
     }
 
     private fun perfTestCore(

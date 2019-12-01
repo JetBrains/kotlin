@@ -248,15 +248,16 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
                 val warmUpIterations = 3
                 val iterations = 10
 
-                stats.perfTest(
-                    warmUpIterations = warmUpIterations,
-                    iterations = iterations,
-                    testName = testName,
-                    setUp = perfKtsFileAnalysisSetUp(project, fileName),
-                    test = perfKtsFileAnalysisTest(),
-                    tearDown = perfKtsFileAnalysisTearDown(extraTimingsNs, project),
-                    profileEnabled = true
-                )
+                performanceTest<Fixture, Pair<Long, List<HighlightInfo>>> {
+                    name(testName)
+                    stats(stats)
+                    warmUpIterations(warmUpIterations)
+                    iterations(iterations)
+                    setUp(perfKtsFileAnalysisSetUp(project, fileName))
+                    test(perfKtsFileAnalysisTest())
+                    tearDown(perfKtsFileAnalysisTearDown(extraTimingsNs, project))
+                    profileEnabled(true)
+                }
 
                 extraStats.printWarmUpTimings(
                     "annotator",
