@@ -818,17 +818,22 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
 
     fun configureTarget(kotlinAndroidTarget: KotlinAndroidTarget) {
         val project = kotlinAndroidTarget.project
+
         val androidExtension = project.extensions.getByName("android") as BaseExtension
+        val initialAndroidSourceSets = androidExtension.sourceSets.toSet()
+        createKotlinSourceSets(kotlinAndroidTarget, initialAndroidSourceSets)
 
-        val createdSourceSets = AndroidKotlinSourceSetBuilder(kotlinAndroidTarget).createKotlinSourceSets(
-            kotlinSourceSets = project.kotlinExtension.sourceSets,
-            androidSourceSets = androidExtension.sourceSets
-        )
+        // Some Android source sets are created after evaluation
+        project.afterEvaluate {
+            val addedAndroidSourceSets = androidExtension.sourceSets - initialAndroidSourceSets
+            createKotlinSourceSets(kotlinAndroidTarget, addedAndroidSourceSets)
+        }
 
-        createdSourceSets.forEach { (androidSourceSet, kotlinMppSourceSet) ->
-            androidSourceSet.addConvention(KOTLIN_DSL_NAME, kotlinMppSourceSet)
-            ifKaptEnabled(project) {
-                Kapt3KotlinGradleSubplugin.createAptConfigurationIfNeeded(project, androidSourceSet.name)
+        project.whenEvaluated {
+            androidExtension.sourceSets.forEach { androidSourceSet ->
+                ifKaptEnabled(project) {
+                    Kapt3KotlinGradleSubplugin.createAptConfigurationIfNeeded(project, androidSourceSet.name)
+                }
             }
         }
 
@@ -891,6 +896,16 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
 
             addKotlinDependenciesToAndroidSourceSets(project, kotlinAndroidTarget)
         }
+    }
+
+    private fun createKotlinSourceSets(
+        kotlinAndroidTarget: KotlinAndroidTarget,
+        androidSourceSets: Set<AndroidSourceSet>
+    ): Map<AndroidSourceSet, KotlinSourceSet> {
+        return AndroidKotlinSourceSetBuilder(kotlinAndroidTarget).createKotlinSourceSets(
+            kotlinSourceSets = kotlinAndroidTarget.project.kotlinExtension.sourceSets,
+            androidSourceSets = androidSourceSets
+        )
     }
 
     /**

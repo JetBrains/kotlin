@@ -17,8 +17,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.utils.keysToMap
 
-private typealias AndroidSourceSets = NamedDomainObjectContainer<AndroidSourceSet>
-
 private typealias KotlinSourceSets = NamedDomainObjectContainer<KotlinSourceSet>
 
 internal fun AndroidKotlinSourceSetBuilder(target: KotlinAndroidTarget): AndroidKotlinSourceSetBuilder {
@@ -32,7 +30,7 @@ internal fun AndroidKotlinSourceSetBuilder(target: KotlinAndroidTarget): Android
 internal interface AndroidKotlinSourceSetBuilder {
     fun createKotlinSourceSets(
         kotlinSourceSets: KotlinSourceSets,
-        androidSourceSets: AndroidSourceSets
+        androidSourceSets: Set<AndroidSourceSet>
     ): Map<AndroidSourceSet, KotlinSourceSet>
 }
 
@@ -41,15 +39,16 @@ internal class SinglePlatformAndroidKotlinSourceSetBuilder(private val project: 
 
     override fun createKotlinSourceSets(
         kotlinSourceSets: KotlinSourceSets,
-        androidSourceSets: AndroidSourceSets
+        androidSourceSets: Set<AndroidSourceSet>
     ): Map<AndroidSourceSet, KotlinSourceSet> {
         logger.kotlinDebug("Creating source sets for ${androidSourceSets.map { it.name }}")
-        return androidSourceSets.keysToMap { sourceSet ->
-            logger.kotlinDebug("Creating KotlinBaseSourceSet for source set ${sourceSet.name}")
-            kotlinSourceSets.maybeCreate(sourceSet.name).apply {
-                kotlin.srcDir(project.file(project.file("src/${sourceSet.name}/kotlin")))
-                kotlin.srcDirs(sourceSet.java.srcDirs)
-                sourceSet.java.srcDirs(*(kotlin.srcDirs - sourceSet.java.srcDirs).toTypedArray())
+        return androidSourceSets.keysToMap { androidSourceSet ->
+            logger.kotlinDebug("Creating KotlinBaseSourceSet for source set ${androidSourceSet.name}")
+            kotlinSourceSets.maybeCreate(androidSourceSet.name).apply {
+                kotlin.srcDir(project.file(project.file("src/${androidSourceSet.name}/kotlin")))
+                kotlin.srcDirs(androidSourceSet.java.srcDirs)
+                androidSourceSet.java.srcDirs(*(kotlin.srcDirs - androidSourceSet.java.srcDirs).toTypedArray())
+                androidSourceSet.addConvention(KOTLIN_DSL_NAME, this)
             }
         }
     }
@@ -63,24 +62,25 @@ internal class MppAndroidKotlinSourceSetBuilder(
 
     override fun createKotlinSourceSets(
         kotlinSourceSets: KotlinSourceSets,
-        androidSourceSets: AndroidSourceSets
+        androidSourceSets: Set<AndroidSourceSet>
     ): Map<AndroidSourceSet, KotlinSourceSet> {
         logger.kotlinDebug("Creating source sets for ${androidSourceSets.map { it.name }}")
         return androidSourceSets.keysToMap { androidSourceSet ->
-            createKotlinSourceSet(
+            createAndConfigureKotlinSourceSet(
                 kotlinSourceSets = kotlinSourceSets,
                 androidSourceSet = androidSourceSet
             )
         }
     }
 
-    private fun createKotlinSourceSet(
+    private fun createAndConfigureKotlinSourceSet(
         kotlinSourceSets: KotlinSourceSets,
         androidSourceSet: AndroidSourceSet
     ): KotlinSourceSet {
-        val kotlinSourceSet = createKotlinMppSourceSet(androidTargetName, kotlinSourceSets, androidSourceSet)
+        val kotlinSourceSet = createKotlinSourceSet(androidTargetName, kotlinSourceSets, androidSourceSet)
         registerKotlinSourceSetInAndroidSourceSet(project, kotlinSourceSet, androidSourceSet)
         registerKotlinResourcesInAndroidResources(kotlinSourceSet, androidSourceSet)
+        androidSourceSet.addConvention(KOTLIN_DSL_NAME, kotlinSourceSet)
         with(KotlinMppLegacyAndroidSourceSetSupport) {
             configureLegacySourceSetSupport(project, kotlinSourceSet, androidSourceSet)
             configureAndroidManifest(project, kotlinSourceSet, androidSourceSet)
@@ -88,14 +88,14 @@ internal class MppAndroidKotlinSourceSetBuilder(
         return kotlinSourceSet
     }
 
-    private fun createKotlinMppSourceSet(
+    private fun createKotlinSourceSet(
         androidTargetName: String,
         kotlinSourceSets: KotlinSourceSets,
         androidSourceSet: AndroidSourceSet
     ): KotlinSourceSet {
         val sourceSetType = AndroidMppSourceSetType(androidSourceSet)
         val kotlinSourceSetName = sourceSetType.kotlinSourceSetName(androidTargetName, androidSourceSet)
-        logger.kotlinDebug("Creating KotlinSourceSet for Android source set ${androidSourceSet.name}")
+        logger.kotlinDebug("Creating KotlinSourceSet $kotlinSourceSetName for Android source set ${androidSourceSet.name}")
         return kotlinSourceSets.maybeCreate(kotlinSourceSetName)
     }
 
