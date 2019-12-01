@@ -2,16 +2,16 @@
 package com.intellij.codeInsight.hints.settings.providers
 
 import com.intellij.codeInsight.hints.InlayParameterHintsExtension
-import com.intellij.codeInsight.hints.settings.InlayProviderSettingsModel
-import com.intellij.codeInsight.hints.settings.language.ParameterInlayProviderSettingsModel
 import com.intellij.codeInsight.hints.getBaseLanguagesWithProviders
+import com.intellij.codeInsight.hints.settings.InlayProviderSettingsModel
 import com.intellij.codeInsight.hints.settings.InlaySettingsProvider
+import com.intellij.codeInsight.hints.settings.language.ParameterInlayProviderSettingsModel
 import com.intellij.lang.Language
 import com.intellij.openapi.project.Project
 
 class ParameterInlaySettingsProvider : InlaySettingsProvider {
   override fun createModels(project: Project, language: Language): List<InlayProviderSettingsModel> {
-      val provider = InlayParameterHintsExtension.forLanguage(language)
+    val provider = InlayParameterHintsExtension.forLanguage(language)
     if (provider != null) {
       return listOf(ParameterInlayProviderSettingsModel(provider, language))
     }
