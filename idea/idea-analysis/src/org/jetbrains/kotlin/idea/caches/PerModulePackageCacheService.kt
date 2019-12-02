@@ -68,7 +68,7 @@ class KotlinPackageContentModificationListener(private val project: Project) : D
                         .filter { (it.isValid || it !is VFileCreateEvent) && it.file != null }
                         .filter {
                             val vFile = it.file!!
-                            vFile.isDirectory || FileTypeRegistry.getInstance().getFileTypeByFileName(vFile.nameSequence) == KotlinFileType.INSTANCE
+                            vFile.isDirectory || vFile.fileType == KotlinFileType.INSTANCE
                         }
                         .filter {
                             when (val origin = it.requestor) {
@@ -221,7 +221,7 @@ class ImplicitPackagePrefixCache(private val project: Project) {
     }
 
     internal fun update(ktFile: KtFile) {
-        val parent = ktFile.virtualFile.parent
+        val parent = ktFile.virtualFile?.parent ?: return
         if (ktFile.sourceRoot == parent) {
             implicitPackageCache[parent]?.updateFile(ktFile)
         }
