@@ -221,5 +221,40 @@ $ ./gradlew backend.native:tests:runExternal -Ptest_two_stage=true 2>&1 | tee lo
 
 ```
 
+## LLVM
+
+Following compiler phases control different parts of LLVM pipeline:
+1. `LinkBitcodeDependencies`. Linkage of produced bitcode with runtime and some other dependencies.
+2. `BitcodeOptimization`. Running LLVM optimization pipeline.
+3. `ObjectFiles`. Compilation of bitcode with Clang.
+
+For example, pass `-Xdisable-phases=BitcodeOptimization` to skip optimization pipeline.
+Note that disabling `LinkBitcodeDependencies` or `ObjectFiles` will break compilation pipeline.
+
+By default, compiler takes options for Clang from [konan.properties](konan/konan.properties) file
+by combining `clangFlags.<TARGET>` and `clang<Noopt/Opt/Debug>Flags.<TARGET>` properties.
+To override this behaviour, one can specify flag `-Xoverride-clang-options=<arg1, ..., argN>`.
+
+Please note:
+1. Kotlin Native passes bitcode files to Clang instead of C or C++, so many flags won't work.
+2. `-c` should be passed because Kotlin/Native calls linker by itself.
+
+Another useful compiler option is `-Xtemporary-files-dir=<PATH>` which allows
+to specify a directory for intermediate compiler artifacts like bitcode and object files.
 
 
+#### Example 1. Bitcode right after IR to Bitcode translation.
+```shell script
+konanc main.kt -produce bitcode -o bitcode.bc
+```
+
+#### Example 2. Bitcode after LLVM optimizations.
+```shell script
+konanc main.kt -Xtemporary-files-dir=<PATH> -o <OUTPUT_NAME>
+```
+`<PATH>/<OUTPUT_NAME>.kt.bc` will contain bitcode after LLVM optimization pipeline.
+
+#### Example 3. Replace predefined LLVM pipeline with Clang options.
+```shell script
+konanc main.kt -Xdisable-phases=BitcodeOptimization -Xoverride-clang-options=-c,-O2
+```
