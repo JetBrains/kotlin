@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.cli.common.repl.LineId
 import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
-import org.jetbrains.kotlin.codegen.CompilationErrorHandler
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
@@ -150,12 +149,7 @@ class KJvmReplCompilerImpl(val hostConfiguration: ScriptingHostConfiguration) : 
                 scriptSpecific.earlierScriptsForReplInterpreter = history.map { it.item }
                 beforeCompile()
             }
-            KotlinCodegenFacade.generatePackage(
-                generationState,
-                snippetKtFile.script!!.containingKtFile.packageFqName,
-                sourceFiles,
-                CompilationErrorHandler.THROW_EXCEPTION
-            )
+            KotlinCodegenFacade.generatePackage(generationState, snippetKtFile.script!!.containingKtFile.packageFqName, sourceFiles)
 
             history.push(LineId(codeLine), scriptDescriptor)
 

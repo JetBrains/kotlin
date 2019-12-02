@@ -20,13 +20,14 @@ import org.jetbrains.kotlin.util.ExceptionUtilKt;
 
 import static org.jetbrains.kotlin.utils.ExceptionUtilsKt.rethrow;
 
-public interface CompilationErrorHandler {
-    CompilationErrorHandler THROW_EXCEPTION = (exception, fileUrl) -> {
+public class CompilationErrorHandler {
+    public static void reportException(Throwable exception, String fileUrl) {
         // CompilationException is already supposed to have all information about the context
         if (exception instanceof CompilationException) {
             try {
                 throw exception;
-            } catch (Throwable t) {
+            }
+            catch (Throwable t) {
                 throw rethrow(t);
             }
         }
@@ -35,7 +36,5 @@ public interface CompilationErrorHandler {
                 ExceptionUtilKt.getExceptionMessage("Backend", "Exception during code generation", exception, fileUrl),
                 exception
         );
-    };
-
-    void reportException(Throwable exception, String fileUrl);
+    }
 }

@@ -139,9 +139,7 @@ object GenerationUtils {
         ).build()
 
         generationState.beforeCompile()
-        codegenFactory.generateModuleInFrontendIRMode(
-            generationState, moduleFragment, CompilationErrorHandler.THROW_EXCEPTION, symbolTable, sourceManager
-        )
+        codegenFactory.generateModuleInFrontendIRMode(generationState, moduleFragment, symbolTable, sourceManager)
         generationState.factory.done()
         return generationState
     }
@@ -170,7 +168,7 @@ object GenerationUtils {
             else DefaultCodegenFactory
         ).isIrBackend(isIrBackend).build()
         if (analysisResult.shouldGenerateCode) {
-            KotlinCodegenFacade.compileCorrectFiles(generationState, CompilationErrorHandler.THROW_EXCEPTION)
+            KotlinCodegenFacade.compileCorrectFiles(generationState)
         }
         return generationState
     }

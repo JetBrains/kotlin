@@ -15,7 +15,6 @@ import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
-import org.jetbrains.kotlin.codegen.CompilationErrorHandler
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.filterClassFiles
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -131,7 +130,7 @@ class KtScratchExecutionSession(
             CompilerConfiguration.EMPTY
         ).generateDeclaredClassFilter(generateClassFilter).build()
 
-        KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION)
+        KotlinCodegenFacade.compileCorrectFiles(state)
 
         return writeClassFilesToTempDir(state)
     }

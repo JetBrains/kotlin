@@ -16,11 +16,10 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
 
 public interface PackageCodegen {
-    void generate(@NotNull CompilationErrorHandler errorHandler);
+    void generate();
 
     PackageFragmentDescriptor getPackageFragment();
 }

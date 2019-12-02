@@ -61,7 +61,7 @@ public class PackageCodegenImpl implements PackageCodegen {
     }
 
     @Override
-    public void generate(@NotNull CompilationErrorHandler errorHandler) {
+    public void generate() {
         for (KtFile file : files) {
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
             try {
@@ -73,7 +73,7 @@ public class PackageCodegenImpl implements PackageCodegen {
             }
             catch (Throwable e) {
                 VirtualFile vFile = file.getVirtualFile();
-                errorHandler.reportException(e, vFile == null ? "no file" : vFile.getUrl());
+                CompilationErrorHandler.reportException(e, vFile == null ? "no file" : vFile.getUrl());
                 DiagnosticUtils.throwIfRunningOnServer(e);
                 if (ApplicationManager.getApplication().isInternal()) {
                     //noinspection CallToPrintStackTrace

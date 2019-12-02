@@ -15,21 +15,16 @@ import org.jetbrains.kotlin.codegen.CompilationErrorHandler
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.generateTypicalIrProviderList
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 
 object JvmBackendFacade {
-    fun doGenerateFiles(
-        files: Collection<KtFile>,
-        state: GenerationState,
-        errorHandler: CompilationErrorHandler,
-        phaseConfig: PhaseConfig
-    ) {
+    fun doGenerateFiles(files: Collection<KtFile>, state: GenerationState, phaseConfig: PhaseConfig) {
         val extensions = JvmGeneratorExtensions()
         val psi2ir = Psi2IrTranslator(state.languageVersionSettings, mangler = JvmMangler)
         val psi2irContext = psi2ir.createGeneratorContext(state.module, state.bindingContext, extensions = extensions)
@@ -55,14 +50,11 @@ object JvmBackendFacade {
             extensions = extensions
         )
         val irModuleFragment = psi2ir.generateModuleFragment(psi2irContext, files, irProviders = irProviders)
-        doGenerateFilesInternal(
-            state, errorHandler, irModuleFragment, psi2irContext.symbolTable, psi2irContext.sourceManager, phaseConfig, extensions
-        )
+        doGenerateFilesInternal(state, irModuleFragment, psi2irContext.symbolTable, psi2irContext.sourceManager, phaseConfig, extensions)
     }
 
     internal fun doGenerateFilesInternal(
         state: GenerationState,
-        errorHandler: CompilationErrorHandler,
         irModuleFragment: IrModuleFragment,
         symbolTable: SymbolTable,
         sourceManager: PsiSourceManager,
@@ -82,7 +74,7 @@ object JvmBackendFacade {
         try {
             JvmLower(context).lower(irModuleFragment)
         } catch (e: Throwable) {
-            errorHandler.reportException(e, null)
+            CompilationErrorHandler.reportException(e, null)
         }
 
         for (generateMultifileFacade in listOf(true, false)) {
@@ -103,7 +95,7 @@ object JvmBackendFacade {
                     }
                     state.afterIndependentPart()
                 } catch (e: Throwable) {
-                    errorHandler.reportException(e, null) // TODO ktFile.virtualFile.url
+                    CompilationErrorHandler.reportException(e, null) // TODO ktFile.virtualFile.url
                 }
             }
         }

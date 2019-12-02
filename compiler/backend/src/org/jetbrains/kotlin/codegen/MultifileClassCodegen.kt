@@ -54,7 +54,8 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 
 interface MultifileClassCodegen {
-    fun generate(errorHandler: CompilationErrorHandler)
+    fun generate()
+
     fun generateClassOrObject(classOrObject: KtClassOrObject, packagePartContext: FieldOwnerContext<PackageFragmentDescriptor>)
 }
 
@@ -147,10 +148,10 @@ class MultifileClassCodegenImpl(
         }
     }
 
-    override fun generate(errorHandler: CompilationErrorHandler) {
+    override fun generate() {
         assert(delegateGenerationTasks.isEmpty()) { "generate() is called twice for facade class $facadeFqName" }
 
-        generateCodeForSourceFiles(errorHandler)
+        generateCodeForSourceFiles()
 
         generateDelegatesToPreviouslyCompiledParts()
 
@@ -161,7 +162,7 @@ class MultifileClassCodegenImpl(
         done()
     }
 
-    private fun generateCodeForSourceFiles(errorHandler: CompilationErrorHandler) {
+    private fun generateCodeForSourceFiles() {
         for (file in files) {
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
             try {
@@ -170,7 +171,7 @@ class MultifileClassCodegenImpl(
             } catch (e: ProcessCanceledException) {
                 throw e
             } catch (e: Throwable) {
-                errorHandler.reportException(e, file.virtualFile?.url ?: "no file")
+                CompilationErrorHandler.reportException(e, file.virtualFile?.url ?: "no file")
                 DiagnosticUtils.throwIfRunningOnServer(e)
                 if (ApplicationManager.getApplication().isInternal) {
                     e.printStackTrace()

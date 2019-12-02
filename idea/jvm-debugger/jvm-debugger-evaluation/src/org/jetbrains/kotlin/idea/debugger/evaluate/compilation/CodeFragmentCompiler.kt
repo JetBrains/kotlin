@@ -15,11 +15,13 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.*
-import org.jetbrains.kotlin.idea.debugger.evaluate.*
+import org.jetbrains.kotlin.idea.debugger.evaluate.EvaluationStatus
+import org.jetbrains.kotlin.idea.debugger.evaluate.ExecutionContext
 import org.jetbrains.kotlin.idea.debugger.evaluate.classLoading.ClassToLoad
 import org.jetbrains.kotlin.idea.debugger.evaluate.classLoading.GENERATED_CLASS_NAME
 import org.jetbrains.kotlin.idea.debugger.evaluate.classLoading.GENERATED_FUNCTION_NAME
 import org.jetbrains.kotlin.idea.debugger.evaluate.compilation.CompiledDataDescriptor.MethodSignature
+import org.jetbrains.kotlin.idea.debugger.evaluate.getResolutionFacadeForCodeFragment
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.incremental.components.LookupLocation
@@ -87,7 +89,7 @@ class CodeFragmentCompiler(private val executionContext: ExecutionContext, priva
         CodeFragmentCodegen.setCodeFragmentInfo(codeFragment, codegenInfo)
 
         try {
-            KotlinCodegenFacade.compileCorrectFiles(generationState, CompilationErrorHandler.THROW_EXCEPTION)
+            KotlinCodegenFacade.compileCorrectFiles(generationState)
 
             val classes = generationState.factory.asList().filterClassFiles()
                 .map { ClassToLoad(it.internalClassName, it.relativePath, it.asByteArray()) }

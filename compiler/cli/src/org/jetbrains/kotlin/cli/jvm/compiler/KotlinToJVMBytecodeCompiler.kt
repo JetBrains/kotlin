@@ -362,9 +362,7 @@ object KotlinToJVMBytecodeCompiler {
             val performanceManager = environment.configuration.get(CLIConfigurationKeys.PERF_MANAGER)
             performanceManager?.notifyGenerationStarted()
             generationState.beforeCompile()
-            codegenFactory.generateModuleInFrontendIRMode(
-                generationState, moduleFragment, CompilationErrorHandler.THROW_EXCEPTION, symbolTable, sourceManager
-            )
+            codegenFactory.generateModuleInFrontendIRMode(generationState, moduleFragment, symbolTable, sourceManager)
             CodegenFactory.doCheckCancelled(generationState)
             generationState.factory.done()
             performanceManager?.notifyGenerationFinished(
@@ -633,7 +631,7 @@ object KotlinToJVMBytecodeCompiler {
         val performanceManager = environment.configuration.get(CLIConfigurationKeys.PERF_MANAGER)
         performanceManager?.notifyGenerationStarted()
 
-        KotlinCodegenFacade.compileCorrectFiles(generationState, CompilationErrorHandler.THROW_EXCEPTION)
+        KotlinCodegenFacade.compileCorrectFiles(generationState)
 
         performanceManager?.notifyGenerationFinished(
             sourceFiles.size,
