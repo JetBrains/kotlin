@@ -1,13 +1,14 @@
+/*
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+@file:Suppress("unused", "MemberVisibilityCanBePrivate")
+
 import org.gradle.api.Project
 import org.gradle.api.initialization.Settings
 import org.gradle.api.internal.DynamicObjectAware
 import java.io.File
 import java.util.*
-
-/*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
- * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
- */
 
 interface PropertiesProvider {
     val rootProjectDir: File
@@ -93,7 +94,7 @@ private const val extensionName = "kotlinBuildProperties"
 
 class ProjectProperties(val project: Project) : PropertiesProvider {
     override val rootProjectDir: File
-        get() = project.projectDir
+        get() = project.rootProject.projectDir.let { if (it.name == "buildSrc") it.parentFile else it }
 
     override fun getProperty(key: String): Any? = project.findProperty(key)
 }
@@ -106,7 +107,7 @@ val Project.kotlinBuildProperties: KotlinBuildProperties
 
 class SettingsProperties(val settings: Settings) : PropertiesProvider {
     override val rootProjectDir: File
-        get() = settings.rootDir
+        get() = settings.rootDir.let { if (it.name == "buildSrc") it.parentFile else it }
 
     override fun getProperty(key: String): Any? {
         val obj = (settings as DynamicObjectAware).asDynamicObject
