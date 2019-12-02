@@ -16,9 +16,12 @@
 
 package org.jetbrains.kotlin.resolve.calls
 
-import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.*
+import org.jetbrains.kotlin.types.AbstractNullabilityChecker
 import org.jetbrains.kotlin.types.AbstractNullabilityChecker.hasPathByNotMarkedNullableNodes
+import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
+import org.jetbrains.kotlin.types.UnwrappedType
+import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext
 import org.jetbrains.kotlin.types.model.*
 
 object NewCommonSuperTypeCalculator {
@@ -174,7 +177,8 @@ object NewCommonSuperTypeCalculator {
     }
 
     private fun TypeSystemCommonSuperTypesContext.isCapturedStubType(type: SimpleTypeMarker): Boolean {
-        val projectedType = type.asCapturedType()?.typeConstructor()?.projection()?.getType() ?: return false
+        val projectedType =
+            type.asCapturedType()?.typeConstructor()?.projection()?.takeUnless { it.isStarProjection() }?.getType() ?: return false
         return projectedType.asSimpleType()?.isStubType() == true
     }
 
