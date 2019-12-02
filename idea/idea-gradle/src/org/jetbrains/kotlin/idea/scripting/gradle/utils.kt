@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScriptInitializer
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 
+private val sections = arrayListOf("buildscript", "plugins", "initscript", "pluginManagement")
+
 fun isGradleKotlinScript(virtualFile: VirtualFile) = virtualFile.name.endsWith(".gradle.kts")
 
 fun getGradleScriptInputsStamp(
@@ -38,8 +40,8 @@ fun getGradleScriptInputsStamp(
                 ?.getChildrenOfType<KtScriptInitializer>()
                 ?.forEach {
                     val call = it.children.singleOrNull() as? KtCallExpression
-                    val callRef = call?.firstChild?.text
-                    if (callRef == "buildscript" || callRef == "plugins") {
+                    val callRef = call?.firstChild?.text ?: return@forEach
+                    if (callRef in sections) {
                         result.append(callRef)
                         val lambda = call.lambdaArguments.singleOrNull()
                         lambda?.accept(object : PsiRecursiveElementVisitor(false) {
