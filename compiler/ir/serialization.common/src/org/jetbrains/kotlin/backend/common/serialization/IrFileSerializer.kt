@@ -1269,6 +1269,7 @@ open class IrFileSerializer(
 
     open fun backendSpecificExplicitRoot(declaration: IrFunction) = false
     open fun backendSpecificExplicitRoot(declaration: IrClass) = false
+    open fun keepOrderOfProperties(property: IrProperty): Boolean = !property.isConst
 
     fun serializeIrFile(file: IrFile): SerializedIrFile {
         val topLevelDeclarations = mutableListOf<SerializedDeclaration>()
@@ -1297,7 +1298,7 @@ open class IrFileSerializer(
         // Make sure that all top level properties are initialized on library's load.
         file.declarations
             .filterIsInstance<IrProperty>()
-            .filter { it.backingField?.initializer != null }
+            .filter { it.backingField?.initializer != null && keepOrderOfProperties(it) }
             .forEach { proto.addExplicitlyExportedToCompiler(serializeIrSymbol(it.backingField!!.symbol)) }
 
         // TODO: Konan specific

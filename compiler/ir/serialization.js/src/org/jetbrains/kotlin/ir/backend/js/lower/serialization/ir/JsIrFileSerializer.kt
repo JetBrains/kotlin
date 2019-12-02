@@ -8,9 +8,14 @@ package org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.serialization.IrFileSerializer
 import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
+import org.jetbrains.kotlin.ir.declarations.IrProperty
 
 class JsIrFileSerializer(
     logger: LoggingContext,
     declarationTable: DeclarationTable,
     bodiesOnlyForInlines: Boolean = false
-) : IrFileSerializer(logger, declarationTable, bodiesOnlyForInlines)
+) : IrFileSerializer(logger, declarationTable, bodiesOnlyForInlines) {
+
+    // Temporary keep order of any property, even of constants
+    override fun keepOrderOfProperties(property: IrProperty): Boolean = true
+}
