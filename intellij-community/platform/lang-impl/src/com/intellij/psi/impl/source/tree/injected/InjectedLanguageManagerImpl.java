@@ -392,8 +392,8 @@ public class InjectedLanguageManagerImpl extends InjectedLanguageManager impleme
   }
 
   @TestOnly
-  public static void checkInjectorsAreDisposed(@Nullable Project project) {
-    InjectedLanguageManagerImpl cachedManager = project == null ? null : (InjectedLanguageManagerImpl)project.getUserData(INSTANCE_CACHE);
+  public static void checkInjectorsAreDisposed(@NotNull Project project) {
+    InjectedLanguageManagerImpl cachedManager = (InjectedLanguageManagerImpl)project.getUserData(INSTANCE_CACHE);
     if (cachedManager == null) {
       return;
     }
