@@ -617,7 +617,7 @@ dependencies {
 
 </div>
 
-The the [example project](https://github.com/ilmat192/kotlin-native-serialization-sample) for details.
+The [example project](https://github.com/ilmat192/kotlin-native-serialization-sample) for details.
 
 ### DSL example
 
