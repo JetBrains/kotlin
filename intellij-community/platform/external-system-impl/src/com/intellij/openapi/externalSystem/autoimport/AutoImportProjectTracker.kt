@@ -149,7 +149,7 @@ class AutoImportProjectTracker(private val project: Project) : ExternalSystemPro
     settingsTracker.beforeApplyChanges { projectRefreshOperation.startTask(id) }
     settingsTracker.afterApplyChanges { projectRefreshOperation.finishTask(id) }
 
-    Disposer.register(project, Disposable { remove(projectId) })
+    Disposer.register(project, parentDisposable)
     projectAware.subscribe(createProjectRefreshListener(projectData), parentDisposable)
     Disposer.register(parentDisposable, Disposable { notificationAware.notificationExpire(projectId) })
 
