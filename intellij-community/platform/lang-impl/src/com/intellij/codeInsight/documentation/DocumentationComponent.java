@@ -127,7 +127,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
   private SmartPsiElementPointer<PsiElement> myElement;
   private long myModificationCount;
 
-  public static final String QUICK_DOC_FONT_SIZE_PROPERTY = "quick.doc.font.size";
+  private static final String QUICK_DOC_FONT_SIZE_PROPERTY = "quick.doc.font.size";
 
   private final Stack<Context> myBackStack = new Stack<>();
   private final Stack<Context> myForwardStack = new Stack<>();
@@ -668,7 +668,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
     return FontSize.SMALL;
   }
 
-  public void setQuickDocFontSize(@NotNull FontSize fontSize) {
+  public static void setQuickDocFontSize(@NotNull FontSize fontSize) {
     PropertiesComponent.getInstance().setValue(QUICK_DOC_FONT_SIZE_PROPERTY, fontSize.toString());
   }
 

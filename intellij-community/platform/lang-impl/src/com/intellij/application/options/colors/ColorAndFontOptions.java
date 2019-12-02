@@ -977,7 +977,6 @@ public class ColorAndFontOptions extends SearchableConfigurable.Parent.Abstract
         setFontPreferences(parentScheme.getFontPreferences());
       }
 
-      setQuickDocFontSize(parentScheme.getQuickDocFontSize());
       myName = parentScheme.getName();
 
       RainbowHighlighter.transferRainbowState(this, parentScheme);
