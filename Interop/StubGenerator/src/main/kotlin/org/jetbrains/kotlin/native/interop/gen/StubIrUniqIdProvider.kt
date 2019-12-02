@@ -51,5 +51,11 @@ internal class StubIrUniqIdProvider {
                 ?: error("Unexpected origin ${typeAlias.origin} for typealias ${typeAlias.alias.fqName}.")
     }.toUniqId()
 
-    private fun String.toUniqId() = UniqId(cityHash64())
+    /**
+     * MSB should be set to 1 for public declarations.
+     * @see org.jetbrains.kotlin.ir.util.UniqId
+     */
+    private fun Long.markAsPublic() = this or (1L shl 63)
+
+    private fun String.toUniqId() = UniqId(cityHash64().markAsPublic())
 }
