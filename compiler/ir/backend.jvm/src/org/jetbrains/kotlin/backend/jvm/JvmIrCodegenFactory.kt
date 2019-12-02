@@ -45,7 +45,9 @@ class JvmIrCodegenFactory(private val phaseConfig: PhaseConfig) : CodegenFactory
             irModuleFragment.descriptor, irModuleFragment.irBuiltins, symbolTable, extensions = extensions
         )
         ExternalDependenciesGenerator(symbolTable, irProviders).generateUnboundSymbolsAsDependencies()
-        JvmBackendFacade.doGenerateFilesInternal(state, irModuleFragment, symbolTable, sourceManager, phaseConfig, extensions)
+        JvmBackendFacade.doGenerateFilesInternal(
+            state, irModuleFragment, symbolTable, sourceManager, phaseConfig, irProviders, extensions
+        )
     }
 
     override fun createPackageCodegen(state: GenerationState, files: Collection<KtFile>, fqName: FqName): PackageCodegen {

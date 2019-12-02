@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -66,7 +65,7 @@ class JvmBackendContext(
 
     override val ir = JvmIr(irModuleFragment, this.symbolTable)
 
-    val irIntrinsics = IrIntrinsicMethods(irBuiltIns, ir.symbols)
+    val irIntrinsics by lazy { IrIntrinsicMethods(irBuiltIns, ir.symbols) }
 
     private val localClassType = mutableMapOf<IrAttributeContainer, Type>()
 
@@ -115,16 +114,16 @@ class JvmBackendContext(
     }
 
     internal fun referenceClass(descriptor: ClassDescriptor): IrClassSymbol =
-        symbolTable.referenceClass(descriptor)
+        symbolTable.lazyWrapper.referenceClass(descriptor)
 
     internal fun referenceTypeParameter(descriptor: TypeParameterDescriptor): IrTypeParameterSymbol =
-        symbolTable.referenceTypeParameter(descriptor)
+        symbolTable.lazyWrapper.referenceTypeParameter(descriptor)
 
     internal fun referenceFunction(descriptor: FunctionDescriptor): IrFunctionSymbol =
         if (descriptor is ClassConstructorDescriptor)
-            symbolTable.referenceConstructor(descriptor)
+            symbolTable.lazyWrapper.referenceConstructor(descriptor)
         else
-            symbolTable.referenceSimpleFunction(descriptor)
+            symbolTable.lazyWrapper.referenceSimpleFunction(descriptor)
 
     override fun log(message: () -> String) {
         /*TODO*/
