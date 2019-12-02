@@ -722,6 +722,29 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         }
     }
 
+    @TestMetadata("compiler/fir/resolve/testData/resolve/inference")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Inference extends AbstractFirDiagnosticsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInInference() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/inference"), Pattern.compile("^([^.]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("receiverWithCapturedType.kt")
+        public void testReceiverWithCapturedType() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/inference/receiverWithCapturedType.kt");
+        }
+
+        @TestMetadata("simpleCapturedTypes.kt")
+        public void testSimpleCapturedTypes() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/inference/simpleCapturedTypes.kt");
+        }
+    }
+
     @TestMetadata("compiler/fir/resolve/testData/resolve/multifile")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -926,11 +949,6 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         @TestMetadata("propertyFromJavaPlusAssign.kt")
         public void testPropertyFromJavaPlusAssign() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/problems/propertyFromJavaPlusAssign.kt");
-        }
-
-        @TestMetadata("receiverWithCapturedType.kt")
-        public void testReceiverWithCapturedType() throws Exception {
-            runTest("compiler/fir/resolve/testData/resolve/problems/receiverWithCapturedType.kt");
         }
 
         @TestMetadata("samConversionInConstructorCall.kt")

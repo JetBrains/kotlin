@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
+import org.jetbrains.kotlin.types.model.CaptureStatus
 
 
 fun Candidate.resolveArgumentExpression(
@@ -144,7 +145,7 @@ private fun Candidate.resolveBlockArgument(
     }
 }
 
-fun resolveSubCallArgument(
+fun Candidate.resolveSubCallArgument(
     csBuilder: ConstraintSystemBuilder,
     argument: FirResolvable,
     expectedType: ConeKotlinType,
@@ -169,7 +170,7 @@ fun resolveSubCallArgument(
     resolvePlainArgumentType(csBuilder, argumentType, expectedType, sink, isReceiver, isDispatch, isSafeCall)
 }
 
-fun resolvePlainExpressionArgument(
+fun Candidate.resolvePlainExpressionArgument(
     csBuilder: ConstraintSystemBuilder,
     argument: FirExpression,
     expectedType: ConeKotlinType?,
@@ -184,7 +185,7 @@ fun resolvePlainExpressionArgument(
     resolvePlainArgumentType(csBuilder, argumentType, expectedType, sink, isReceiver, isDispatch, isSafeCall)
 }
 
-fun resolvePlainArgumentType(
+fun Candidate.resolvePlainArgumentType(
     csBuilder: ConstraintSystemBuilder,
     argumentType: ConeKotlinType,
     expectedType: ConeKotlinType,
@@ -195,15 +196,25 @@ fun resolvePlainArgumentType(
 ) {
     val position = SimpleConstraintSystemConstraintPosition //TODO
 
+    val capturedType = prepareCapturedType(argumentType, sink.components.session)
+
     val nullableExpectedType = expectedType.withNullability(ConeNullability.NULLABLE)
     if (isReceiver && isSafeCall) {
-        if (!isDispatch && !csBuilder.addSubtypeConstraintIfCompatible(argumentType, nullableExpectedType, position)) {
+        if (!isDispatch && !csBuilder.addSubtypeConstraintIfCompatible(capturedType, nullableExpectedType, position)) {
             sink.reportApplicability(CandidateApplicability.WRONG_RECEIVER) // TODO
         }
         return
     }
 
-    checkApplicabilityForArgumentType(csBuilder, argumentType, expectedType, position, isReceiver, isDispatch, nullableExpectedType, sink)
+    checkApplicabilityForArgumentType(csBuilder, capturedType, expectedType, position, isReceiver, isDispatch, nullableExpectedType, sink)
+}
+
+fun Candidate.prepareCapturedType(argumentType: ConeKotlinType, session: FirSession): ConeKotlinType {
+    if (argumentType.typeArguments.isEmpty() || argumentType !is ConeClassLikeType) return argumentType
+
+    return bodyResolveComponents.inferenceComponents.ctx.captureFromArguments(
+        argumentType, CaptureStatus.FROM_EXPRESSION
+    ) as? ConeKotlinType ?: argumentType
 }
 
 private fun checkApplicabilityForArgumentType(

@@ -22,11 +22,9 @@ import org.jetbrains.kotlin.fir.resolve.transformers.MapArguments
 import org.jetbrains.kotlin.fir.resolve.transformers.StoreType
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.typeFromCallee
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
-import org.jetbrains.kotlin.fir.returnExpressions
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -39,6 +37,7 @@ import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
+import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.StubTypeMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 
@@ -97,7 +96,10 @@ class FirCallCompleter(
             val finalSubstitutor =
                 candidate.system.asReadOnlyStorage().buildAbstractResultingSubstitutor(inferenceComponents.ctx) as ConeSubstitutor
             return call.transformSingle(
-                FirCallCompletionResultsWriterTransformer(session, finalSubstitutor, returnTypeCalculator),
+                FirCallCompletionResultsWriterTransformer(
+                    session, finalSubstitutor, returnTypeCalculator,
+                    inferenceComponents.approximator
+                ),
                 null
             )
         }
@@ -126,7 +128,7 @@ class FirCallCompleter(
                     FirValueParameterImpl(
                         null,
                         session,
-                        FirResolvedTypeRefImpl(null, itType),
+                        FirResolvedTypeRefImpl(null, itType.approximateLambdaInputType()),
                         name,
                         FirVariableSymbol(name),
                         defaultValue = null,
@@ -141,9 +143,14 @@ class FirCallCompleter(
             val expectedReturnTypeRef = expectedReturnType?.let { lambdaArgument.returnTypeRef.resolvedTypeFromPrototype(it) }
 
             val newLambdaExpression = lambdaArgument.copy(
-                receiverTypeRef = receiverType?.let { lambdaArgument.receiverTypeRef?.resolvedTypeFromPrototype(it) },
+                receiverTypeRef = receiverType?.let {
+                    lambdaArgument.receiverTypeRef?.resolvedTypeFromPrototype(it.approximateLambdaInputType())
+                },
                 valueParameters = lambdaArgument.valueParameters.mapIndexed { index, parameter ->
-                    parameter.transformReturnTypeRef(StoreType, parameter.returnTypeRef.resolvedTypeFromPrototype(parameters[index]))
+                    parameter.transformReturnTypeRef(
+                        StoreType,
+                        parameter.returnTypeRef.resolvedTypeFromPrototype(parameters[index].approximateLambdaInputType())
+                    )
                     parameter
                 } + listOfNotNull(itParam),
                 returnTypeRef = expectedReturnTypeRef ?: noExpectedType
@@ -156,4 +163,9 @@ class FirCallCompleter(
             return returnArguments to InferenceSession.default
         }
     }
+
+    private fun ConeKotlinType.approximateLambdaInputType(): ConeKotlinType =
+        inferenceComponents.approximator.approximateToSuperType(
+            this, TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference
+        ) as ConeKotlinType? ?: this
 }

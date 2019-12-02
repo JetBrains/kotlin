@@ -12,7 +12,7 @@ fun <D : CallableDescriptor> ResolvedCall<D>.updateD(d: D): D {
 }
 
 fun test_1_1(resolvedCall: ResolvedCall<out CallableDescriptor>) {
-    resolvedCall.<!INAPPLICABLE_CANDIDATE!>getParameterForArgument<!>() // should be ok
+    resolvedCall.getParameterForArgument() // should be ok
 }
 
 fun test_1_2(resolvedCall: ResolvedCall<in CallableDescriptor>) {

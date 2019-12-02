@@ -29,12 +29,15 @@ import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.fir.types.impl.FirTypeProjectionWithVarianceImpl
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.compose
+import org.jetbrains.kotlin.types.AbstractTypeApproximator
+import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.Variance
 
 class FirCallCompletionResultsWriterTransformer(
     override val session: FirSession,
     private val finalSubstitutor: ConeSubstitutor,
-    private val typeCalculator: ReturnTypeCalculator
+    private val typeCalculator: ReturnTypeCalculator,
+    private val typeApproximator: AbstractTypeApproximator
 ) : FirAbstractTreeTransformer<Nothing?>(phase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) {
 
     override fun transformQualifiedAccessExpression(
@@ -78,7 +81,11 @@ class FirCallCompletionResultsWriterTransformer(
         candidate: Candidate
     ): FirResolvedTypeRef {
         val initialType = candidate.substitutor.substituteOrNull(type)
-        val finalType = finalSubstitutor.substituteOrNull(initialType)
+        val finalType = finalSubstitutor.substituteOrNull(initialType)?.let { substitutedType ->
+            typeApproximator.approximateToSuperType(
+                substitutedType, TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference
+            ) as ConeKotlinType? ?: substitutedType
+        }
 
         return withReplacedConeType(finalType)
     }
