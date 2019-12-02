@@ -40,11 +40,11 @@ val myCbTabExistsBracketsAndQuotes = CheckboxDescriptor(ApplicationBundle.messag
 val myCbEnableAddingCaretsOnDoubleCtrlArrows = CheckboxDescriptor(ApplicationBundle.message("checkbox.enable.double.ctrl", KeyEvent.getKeyText(ModifierKeyDoubleClickHandler.getMultiCaretActionModifier())),
                                                                   PropertyBinding(editorSettings::addCaretsOnDoubleCtrl, editorSettings::setAddCaretsOnDoubleCtrl))
 val myCbSmartIndentOnEnter = CheckboxDescriptor(ApplicationBundle.message("checkbox.smart.indent"),
-                                                codeInsightSettings::AUTOCOMPLETE_ON_SMART_TYPE_COMPLETION.toBinding())
+                                                codeInsightSettings::SMART_INDENT_ON_ENTER.toBinding())
 val myCbInsertPairCurlyBraceOnEnter = CheckboxDescriptor(ApplicationBundle.message("checkbox.insert.pair.curly.brace"),
                                                          codeInsightSettings::INSERT_BRACE_ON_ENTER.toBinding())
 val myCbInsertJavadocStubOnEnter = CheckboxDescriptor(ApplicationBundle.message("checkbox.javadoc.stub.after.slash.star.star"),
-                                                      codeInsightSettings::SMART_INDENT_ON_ENTER.toBinding())
+                                                      codeInsightSettings::JAVADOC_STUB_ON_ENTER.toBinding())
 
 val childOptions = EditorSmartKeysConfigurable().configurables
   .map { c -> if (c is ConfigurableWrapper) c.configurable else c }
