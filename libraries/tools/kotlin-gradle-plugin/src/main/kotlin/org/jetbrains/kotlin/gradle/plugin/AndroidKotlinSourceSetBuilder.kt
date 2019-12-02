@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.MppAndroidKotlinSourceSetBuilder.Andro
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.utils.keysToMap
+import java.io.File
 
 private typealias KotlinSourceSets = NamedDomainObjectContainer<KotlinSourceSet>
 
@@ -78,13 +79,13 @@ internal class MppAndroidKotlinSourceSetBuilder(
         androidSourceSet: AndroidSourceSet
     ): KotlinSourceSet {
         val kotlinSourceSet = createKotlinSourceSet(androidTargetName, kotlinSourceSets, androidSourceSet)
-        registerKotlinSourceSetInAndroidSourceSet(project, kotlinSourceSet, androidSourceSet)
-        registerKotlinResourcesInAndroidResources(kotlinSourceSet, androidSourceSet)
-        androidSourceSet.addConvention(KOTLIN_DSL_NAME, kotlinSourceSet)
+        registerKotlinSourceSetInAndroidSourceSet(kotlinSourceSet, androidSourceSet)
+        registerSecondaryAndroidSourceSets(kotlinSourceSet, androidSourceSet)
         with(KotlinMppLegacyAndroidSourceSetSupport) {
             configureLegacySourceSetSupport(project, kotlinSourceSet, androidSourceSet)
             configureAndroidManifest(project, kotlinSourceSet, androidSourceSet)
         }
+        androidSourceSet.addConvention(KOTLIN_DSL_NAME, kotlinSourceSet)
         return kotlinSourceSet
     }
 
@@ -100,7 +101,6 @@ internal class MppAndroidKotlinSourceSetBuilder(
     }
 
     private fun registerKotlinSourceSetInAndroidSourceSet(
-        project: Project,
         kotlinSourceSet: KotlinSourceSet,
         androidSourceSet: AndroidSourceSet
     ) = kotlinSourceSet.kotlin.srcDirs.forEach { kotlinSourceDir ->
@@ -111,8 +111,40 @@ internal class MppAndroidKotlinSourceSetBuilder(
         )
     }
 
-    private fun registerKotlinResourcesInAndroidResources(kotlinSourceSet: KotlinSourceSet, androidSourceSet: AndroidSourceSet) {
+    private fun registerSecondaryAndroidSourceSets(kotlinSourceSet: KotlinSourceSet, androidSourceSet: AndroidSourceSet) {
         androidSourceSet.resources.srcDirs(*kotlinSourceSet.resources.toList().toTypedArray())
+        if (androidSourceSet.resources.srcDirs.isNotEmpty()) {
+            androidSourceSet.resources.srcDir(kotlinSourceSet.sourceFolderFor("resources"))
+            kotlinSourceSet.resources.srcDirs(androidSourceSet.resources.srcDirs - kotlinSourceSet.resources.srcDirs)
+        }
+
+        if (androidSourceSet.assets.srcDirs.isNotEmpty()) {
+            androidSourceSet.assets.srcDir(kotlinSourceSet.sourceFolderFor("assets"))
+        }
+
+        if (androidSourceSet.res.srcDirs.isNotEmpty()) {
+            androidSourceSet.res.srcDir(kotlinSourceSet.sourceFolderFor("res"))
+        }
+
+        if (androidSourceSet.aidl.srcDirs.isNotEmpty()) {
+            androidSourceSet.aidl.srcDir(kotlinSourceSet.sourceFolderFor("aidl"))
+        }
+
+        if (androidSourceSet.renderscript.srcDirs.isNotEmpty()) {
+            androidSourceSet.renderscript.srcDir(kotlinSourceSet.sourceFolderFor("rs"))
+        }
+
+        if (androidSourceSet.jni.srcDirs.isNotEmpty()) {
+            androidSourceSet.jni.srcDir(kotlinSourceSet.sourceFolderFor("jni"))
+        }
+
+        if (androidSourceSet.jniLibs.srcDirs.isNotEmpty()) {
+            androidSourceSet.jniLibs.srcDir(kotlinSourceSet.sourceFolderFor("jniLibs"))
+        }
+    }
+
+    private fun KotlinSourceSet.sourceFolderFor(type: String): File {
+        return project.file("src/${this.name}/$type")
     }
 
     private fun AndroidMppSourceSetType(androidSourceSet: AndroidSourceSet): AndroidMppSourceSetType {
