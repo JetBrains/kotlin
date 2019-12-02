@@ -132,7 +132,7 @@ private class ObjCMethodStubBuilder(
                     MemberStubModality.OVERRIDE
                 } else when (container) {
                     is ObjCClass -> MemberStubModality.OPEN
-                    is ObjCProtocol -> MemberStubModality.OPEN
+                    is ObjCProtocol -> MemberStubModality.ABSTRACT
                 }
             }
             is ObjCCategory -> MemberStubModality.FINAL

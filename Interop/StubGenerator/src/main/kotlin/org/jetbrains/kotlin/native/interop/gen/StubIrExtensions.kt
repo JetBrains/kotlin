@@ -55,7 +55,7 @@ val StubContainer.defaultMemberModality: MemberStubModality
     get() = when (this) {
         is SimpleStubContainer -> MemberStubModality.FINAL
         is ClassStub.Simple -> if (this.modality == ClassStubModality.INTERFACE) {
-            MemberStubModality.OPEN
+            MemberStubModality.ABSTRACT
         } else {
             MemberStubModality.FINAL
         }

@@ -116,7 +116,8 @@ private val FunctionStub.flags: Flags
             Flag.Function.IS_EXTERNAL,
             Flag.HAS_ANNOTATIONS.takeIf { annotations.isNotEmpty() },
             Flag.IS_FINAL.takeIf { modality == MemberStubModality.FINAL },
-            Flag.IS_OPEN.takeIf { modality == MemberStubModality.OPEN }
+            Flag.IS_OPEN.takeIf { modality == MemberStubModality.OPEN },
+            Flag.IS_ABSTRACT.takeIf { modality == MemberStubModality.ABSTRACT }
     ).let { flagsOf(*it.toTypedArray()) }
 
 private val Classifier.fqNameSerialized: String

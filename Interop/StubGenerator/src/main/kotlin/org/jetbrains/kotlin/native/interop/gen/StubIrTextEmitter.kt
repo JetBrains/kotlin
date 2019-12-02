@@ -361,6 +361,7 @@ class StubIrTextEmitter(
                     MemberStubModality.OVERRIDE -> "override "
                     MemberStubModality.OPEN -> "open "
                     MemberStubModality.FINAL -> "final "
+                    MemberStubModality.ABSTRACT -> "abstract "
                 }
 
     private fun renderVisibilityModifier(visibilityModifier: VisibilityModifier) = when (visibilityModifier) {
