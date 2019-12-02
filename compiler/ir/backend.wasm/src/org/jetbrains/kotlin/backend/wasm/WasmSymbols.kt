@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
+import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.types.SimpleType
 
 class WasmSymbols(
     context: WasmBackendContext,
-    private val symbolTable: ReferenceSymbolTable
+    private val symbolTable: SymbolTable
 ) : Symbols<WasmBackendContext>(context, symbolTable) {
 
     override val ThrowNullPointerException

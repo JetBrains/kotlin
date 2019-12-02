@@ -46,7 +46,7 @@ class JvmBackendContext(
     val psiSourceManager: PsiSourceManager,
     override val irBuiltIns: IrBuiltIns,
     irModuleFragment: IrModuleFragment,
-    symbolTable: SymbolTable,
+    private val symbolTable: SymbolTable,
     val phaseConfig: PhaseConfig,
     // If the JVM fqname of a class differs from what is implied by its parent, e.g. if it's a file class
     // annotated with @JvmPackageName, the correct name is recorded here.
@@ -64,7 +64,6 @@ class JvmBackendContext(
     override val declarationFactory: JvmDeclarationFactory = JvmDeclarationFactory(methodSignatureMapper)
     override val sharedVariablesManager = JvmSharedVariablesManager(state.module, builtIns, irBuiltIns)
 
-    private val symbolTable = symbolTable.lazyWrapper
     override val ir = JvmIr(irModuleFragment, this.symbolTable)
 
     val irIntrinsics = IrIntrinsicMethods(irBuiltIns, ir.symbols)
@@ -147,7 +146,7 @@ class JvmBackendContext(
 
     inner class JvmIr(
         irModuleFragment: IrModuleFragment,
-        symbolTable: ReferenceSymbolTable
+        symbolTable: SymbolTable
     ) : Ir<JvmBackendContext>(this, irModuleFragment) {
         override val symbols = JvmSymbols(this@JvmBackendContext, symbolTable)
 

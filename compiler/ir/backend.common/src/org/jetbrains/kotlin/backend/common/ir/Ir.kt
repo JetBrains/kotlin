@@ -19,10 +19,7 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
-import org.jetbrains.kotlin.ir.util.getPackageFragment
-import org.jetbrains.kotlin.ir.util.referenceFunction
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.components.isVararg
@@ -47,7 +44,7 @@ abstract class Ir<out T : CommonBackendContext>(val context: T, val irModule: Ir
 /**
  * Symbols for builtins that are available without any context and are not specific to any backend
  */
-open class BuiltinSymbolsBase(protected val builtIns: KotlinBuiltIns, private val symbolTable: ReferenceSymbolTable) {
+open class BuiltinSymbolsBase(protected val builtIns: KotlinBuiltIns, private val symbolTable: SymbolTable) {
     protected fun builtInsPackage(vararg packageNameSegments: String) =
         builtIns.builtInsModule.getPackage(FqName.fromSegments(listOf(*packageNameSegments))).memberScope
 
@@ -201,8 +198,8 @@ open class BuiltinSymbolsBase(protected val builtIns: KotlinBuiltIns, private va
     val intAnd = getBinaryOperator(OperatorNameConventions.AND, builtIns.intType, builtIns.intType)
     val intPlusInt = getBinaryOperator(OperatorNameConventions.PLUS, builtIns.intType, builtIns.intType)
 
-    open fun functionN(n: Int): IrClassSymbol = symbolTable.referenceClass(builtIns.getFunction(n))
-    open fun suspendFunctionN(n: Int): IrClassSymbol = symbolTable.referenceClass(builtIns.getSuspendFunction(n))
+    open fun functionN(n: Int): IrClassSymbol = symbolTable.lazyWrapper.referenceClass(builtIns.getFunction(n))
+    open fun suspendFunctionN(n: Int): IrClassSymbol = symbolTable.lazyWrapper.referenceClass(builtIns.getSuspendFunction(n))
 
     fun kproperty0(): IrClassSymbol = symbolTable.referenceClass(builtIns.kProperty0)
     fun kproperty1(): IrClassSymbol = symbolTable.referenceClass(builtIns.kProperty1)
@@ -226,7 +223,7 @@ open class BuiltinSymbolsBase(protected val builtIns: KotlinBuiltIns, private va
 
 // Some symbols below are used in kotlin-native, so they can't be private
 @Suppress("MemberVisibilityCanBePrivate", "PropertyName")
-abstract class Symbols<out T : CommonBackendContext>(val context: T, symbolTable: ReferenceSymbolTable) :
+abstract class Symbols<out T : CommonBackendContext>(val context: T, symbolTable: SymbolTable) :
     BuiltinSymbolsBase(context.builtIns, symbolTable) {
     abstract val ThrowNullPointerException: IrFunctionSymbol
     abstract val ThrowNoWhenBranchMatchedException: IrFunctionSymbol
