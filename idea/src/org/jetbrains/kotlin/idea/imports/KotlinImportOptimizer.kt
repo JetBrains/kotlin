@@ -1,23 +1,13 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.imports
 
 import com.intellij.lang.ImportOptimizer
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiDocumentManager
@@ -86,9 +76,7 @@ class KotlinImportOptimizer : ImportOptimizer {
 
         //TODO: keep existing imports? at least aliases (comments)
 
-        ProgressIndicatorProvider.getInstance().progressIndicator?.text = "Collect unused imports for ${file.name}"
-
-        val descriptorsToImport = collectDescriptorsToImport(file)
+        val descriptorsToImport = collectDescriptorsToImport(file, true)
 
         val imports = prepareOptimizedImports(file, descriptorsToImport) ?: return null
         val intersect = imports.intersect(oldImports.map { it.importPath })
@@ -101,10 +89,8 @@ class KotlinImportOptimizer : ImportOptimizer {
 
     private data class OptimizeInformation(val add: Int, val remove: Int, val imports: List<ImportPath>)
 
-    private class CollectUsedDescriptorsVisitor(file: KtFile) : KtVisitorVoid() {
-        private val elementsSize: Int
-
-        init {
+    private class CollectUsedDescriptorsVisitor(file: KtFile, val progressIndicator: ProgressIndicator? = null) : KtVisitorVoid() {
+        private val elementsSize: Int = if (progressIndicator != null) {
             var size = 0
             file.accept(object : KtVisitorVoid() {
                 override fun visitElement(element: PsiElement) {
@@ -112,7 +98,9 @@ class KotlinImportOptimizer : ImportOptimizer {
                     element.acceptChildren(this)
                 }
             })
-            elementsSize = size
+            size
+        } else {
+            0
         }
 
         private var elementProgress: Int = 0
@@ -133,7 +121,7 @@ class KotlinImportOptimizer : ImportOptimizer {
         override fun visitElement(element: PsiElement) {
             ProgressIndicatorProvider.checkCanceled()
             elementProgress += 1
-            ProgressIndicatorProvider.getInstance().progressIndicator?.fraction = elementProgress / elementsSize.toDouble()
+            progressIndicator?.fraction = elementProgress / elementsSize.toDouble()
 
             element.acceptChildren(this)
         }
@@ -200,10 +188,9 @@ class KotlinImportOptimizer : ImportOptimizer {
             val noImportsScope = resolutionScope.replaceImportingScopes(null)
 
             if (isInScope(noImportsScope)) return true
-            if (target !is ClassDescriptor) { // classes not accessible through receivers, only their constructors
-                if (resolutionScope.getImplicitReceiversHierarchy().any { isInScope(it.type.memberScope.memberScopeAsImportingScope()) }) return true
-            }
-            return false
+            // classes not accessible through receivers, only their constructors
+            return if (target is ClassDescriptor) false
+            else resolutionScope.getImplicitReceiversHierarchy().any { isInScope(it.type.memberScope.memberScopeAsImportingScope()) }
         }
 
         private class AbstractReferenceImpl(private val reference: KtReference) : OptimizedImportsBuilder.AbstractReference {
@@ -230,8 +217,12 @@ class KotlinImportOptimizer : ImportOptimizer {
     }
 
     companion object {
-        fun collectDescriptorsToImport(file: KtFile): OptimizedImportsBuilder.InputData {
-            val visitor = CollectUsedDescriptorsVisitor(file)
+        fun collectDescriptorsToImport(file: KtFile, inProgressBar: Boolean = false): OptimizedImportsBuilder.InputData {
+            val progressIndicator = if (inProgressBar) ProgressIndicatorProvider.getInstance().progressIndicator else null
+            progressIndicator?.text = "Collect imports for ${file.name}"
+            progressIndicator?.isIndeterminate = false
+
+            val visitor = CollectUsedDescriptorsVisitor(file, progressIndicator)
             file.accept(visitor)
             return visitor.data
         }
