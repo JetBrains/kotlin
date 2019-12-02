@@ -165,6 +165,9 @@ class NewConstraintSystemImpl(
         }
 
     override fun addOtherSystem(otherSystem: ConstraintStorage) {
+        otherSystem.allTypeVariables.forEach {
+            transactionRegisterVariable(it.value)
+        }
         storage.allTypeVariables.putAll(otherSystem.allTypeVariables)
         for ((variable, constraints) in otherSystem.notFixedTypeVariables) {
             notFixedTypeVariables[variable] = MutableVariableWithConstraints(constraints.typeVariable, constraints.constraints)
