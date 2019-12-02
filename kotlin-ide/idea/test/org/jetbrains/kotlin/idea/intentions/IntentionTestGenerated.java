@@ -9660,6 +9660,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
+        @TestMetadata("hasEndOfLineComment.kt")
+        public void testHasEndOfLineComment() throws Exception {
+            runTest("testData/intentions/joinArgumentList/hasEndOfLineComment.kt");
+        }
+
         @TestMetadata("hasLineBreakBeforeFirstArg.kt")
         public void testHasLineBreakBeforeFirstArg() throws Exception {
             runTest("testData/intentions/joinArgumentList/hasLineBreakBeforeFirstArg.kt");
@@ -9849,6 +9854,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
     public static class JoinParameterList extends AbstractIntentionTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        @TestMetadata("hasEndOfLineComment.kt")
+        public void testHasEndOfLineComment() throws Exception {
+            runTest("testData/intentions/joinParameterList/hasEndOfLineComment.kt");
         }
 
         @TestMetadata("hasLineBreakBeforeFirstParam.kt")
