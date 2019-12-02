@@ -3432,6 +3432,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/collectionLiterals/collectionLiteralsAsPrimitiveArrays.kt");
             }
 
+            @TestMetadata("collectionLiteralsOutsideOfAnnotations.kt")
+            public void testCollectionLiteralsOutsideOfAnnotations() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/collectionLiterals/collectionLiteralsOutsideOfAnnotations.kt");
+            }
+
             @TestMetadata("collectionLiteralsWithVarargs.kt")
             public void testCollectionLiteralsWithVarargs() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/collectionLiterals/collectionLiteralsWithVarargs.kt");

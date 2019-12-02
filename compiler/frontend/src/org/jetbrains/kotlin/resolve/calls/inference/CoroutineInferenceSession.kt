@@ -107,6 +107,8 @@ class CoroutineInferenceSession(
         return commonSystem.fixedTypeVariables.cast() // TODO: SUB
     }
 
+    override fun shouldCompleteResolvedSubAtomsOf(resolvedCallAtom: ResolvedCallAtom) = true
+
     private fun createNonFixedTypeToVariableSubstitutor(): NewTypeSubstitutorByConstructorMap {
         val bindings = hashMapOf<TypeConstructor, UnwrappedType>()
         for ((variable, nonFixedType) in stubsForPostponedVariables) {

@@ -73,6 +73,8 @@ class ResolvedAtomCompleter(
     }
 
     fun completeAll(resolvedAtom: ResolvedAtom) {
+        if (!resolvedAtom.analyzed)
+            return
         resolvedAtom.subResolvedAtoms?.forEach { subKtPrimitive ->
             completeAll(subKtPrimitive)
         }

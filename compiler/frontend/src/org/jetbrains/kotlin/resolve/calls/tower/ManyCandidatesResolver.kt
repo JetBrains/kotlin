@@ -61,6 +61,8 @@ abstract class ManyCandidatesResolver<D : CallableDescriptor>(
     override fun callCompleted(resolvedAtom: ResolvedAtom): Boolean =
         !completedCalls.add(resolvedAtom)
 
+    override fun shouldCompleteResolvedSubAtomsOf(resolvedCallAtom: ResolvedCallAtom) = true
+
     fun resolveCandidates(resolutionCallbacks: KotlinResolutionCallbacks): List<ResolutionResultCallInfo<D>> {
         val resolvedCallsInfo = partiallyResolvedCallsInfo.toList()
 
