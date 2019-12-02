@@ -6,7 +6,6 @@ import com.intellij.lang.Language;
 import com.intellij.lang.findUsages.DescriptiveNameUtil;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.TransactionGuard;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.command.impl.FinishMarkAction;
 import com.intellij.openapi.command.impl.StartMarkAction;
@@ -227,7 +226,7 @@ public class MemberInplaceRenamer extends VariableInplaceRenamer {
             performRunnable.run();
           }
           else {
-            TransactionGuard.getInstance().submitTransactionLater(myProject, performRunnable);
+            ApplicationManager.getApplication().invokeLater(performRunnable, myProject.getDisposed());
           }
         }
       }
