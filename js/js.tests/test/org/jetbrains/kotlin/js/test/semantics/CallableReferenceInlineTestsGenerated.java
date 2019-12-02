@@ -69,6 +69,11 @@ public class CallableReferenceInlineTestsGenerated extends AbstractCallableRefer
         runTest("compiler/testData/codegen/boxInline/callableReference/kt16411.kt");
     }
 
+    @TestMetadata("kt35101.kt")
+    public void testKt35101() throws Exception {
+        runTest("compiler/testData/codegen/boxInline/callableReference/kt35101.kt");
+    }
+
     @TestMetadata("propertyIntrinsic.kt")
     public void testPropertyIntrinsic() throws Exception {
         runTest("compiler/testData/codegen/boxInline/callableReference/propertyIntrinsic.kt");

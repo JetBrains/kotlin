@@ -133,12 +133,6 @@ open class InlineLambdaSourceMapper(
     parent: SourceMapper, smap: SMAPAndMethodNode
 ) : NestedSourceMapper(parent, smap.sortedRanges, smap.classSMAP.sourceInfo) {
 
-    init {
-        assert(ranges.isNotEmpty()) {
-            "Mapping ranges should be presented in inline lambda: ${smap.node}"
-        }
-    }
-
     override fun mapLineNumber(lineNumber: Int): Int {
         if (ranges.firstOrNull()?.contains(lineNumber) == true) {
             //don't remap origin lambda line numbers
