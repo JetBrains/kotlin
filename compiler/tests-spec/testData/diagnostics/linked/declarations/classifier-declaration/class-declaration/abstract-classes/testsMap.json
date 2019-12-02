@@ -1,0 +1,116 @@
+{
+  "1": {
+    "neg": {
+      "2": [
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 1,
+          "description": "check abstract classes cannot be instantiated directly",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "1": [
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 1,
+          "description": "check abstract classes cannot be instantiated directly",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-1/neg/2.1.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 1,
+          "description": "check abstract classes can have abstract not implemented members",
+          "unexpectedBehaviour": false
+        }
+      ]
+    },
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 1,
+          "description": "check abstract classes can have abstract not implemented members",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  },
+  "2": {
+    "neg": {
+      "1": [
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 1,
+          "description": "check abstract classes can have abstract not implemented members",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-1/neg/1.1.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 2,
+          "description": "Abstract classes may contain one or more abstract members, which should be implemented in a subtype of this abstract class",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 1,
+          "description": "Abstract classes may contain abstract members, which should be implemented in an anonymous class that inherits from that abstract type",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 1,
+          "description": "attempt to implement abstract members with invalid types",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 2,
+          "description": "Abstract classes may contain one or more abstract members, which should be implemented in a subtype of this abstract class",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 1,
+          "description": "Abstract classes may contain one or more abstract members, which should be implemented in a subtype of this abstract class",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 1,
+          "description": "Abstract classes may contain abstract members, which should be implemented in an inner class that inherits from that abstract type",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 1,
+          "description": "Abstract classes may contain one or more abstract members, which should be implemented in a subtype of this abstract class",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 2,
+          "description": "Abstract classes may contain one or more abstract members, which should be implemented in a subtype of this abstract class",
+          "unexpectedBehaviour": false
+        }
+      ]
+    },
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 1,
+          "description": "Abstract classes may contain one or more abstract members, which should be implemented in a subtype of this abstract class",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 2,
+          "description": "Abstract classes may contain one or more abstract members, which should be implemented in a subtype of this abstract class",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}
