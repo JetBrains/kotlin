@@ -43,3 +43,6 @@ internal fun File.isParentOf(childCandidate: File, strict: Boolean = false): Boo
         childCandidatePath.startsWith(parentPath)
     }
 }
+
+internal fun File.canonicalPathWithoutExtension(): String =
+    canonicalPath.substringBeforeLast(".")

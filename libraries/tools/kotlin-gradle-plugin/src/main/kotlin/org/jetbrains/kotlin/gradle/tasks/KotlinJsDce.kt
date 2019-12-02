@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDceOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDceOptionsImpl
 import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
+import org.jetbrains.kotlin.gradle.utils.canonicalPathWithoutExtension
 import java.io.File
 
 @CacheableTask
@@ -97,6 +98,6 @@ open class KotlinJsDce : AbstractKotlinCompileTool<K2JSDceArguments>(), KotlinJs
             return false
         }
 
-        return File("${file.nameWithoutExtension}.meta.js").exists()
+        return File("${file.canonicalPathWithoutExtension()}.meta.js").exists()
     }
 }
