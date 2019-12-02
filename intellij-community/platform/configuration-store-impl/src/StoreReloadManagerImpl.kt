@@ -50,7 +50,7 @@ private val CHANGED_SCHEMES_KEY = Key<LinkedHashMap<SchemeChangeApplicator, Link
 @ApiStatus.Internal
 open class StoreReloadManagerImpl : StoreReloadManager, Disposable {
   private val reloadBlockCount = AtomicInteger()
-  private val blockStackTrace = AtomicReference<String?>()
+  private val blockStackTrace = AtomicReference<Throwable?>()
   private val changedApplicationFiles = LinkedHashSet<StateStorage>()
 
   private val changedFilesAlarm = SingleAlarm(Runnable {
@@ -132,14 +132,14 @@ open class StoreReloadManagerImpl : StoreReloadManager, Disposable {
 
   override fun blockReloadingProjectOnExternalChanges() {
     if (reloadBlockCount.getAndIncrement() == 0 && !ApplicationInfoImpl.isInStressTest()) {
-      blockStackTrace.set(ExceptionUtil.currentStackTrace())
+      blockStackTrace.set(Throwable())
     }
   }
 
   override fun unblockReloadingProjectOnExternalChanges() {
     val counter = reloadBlockCount.get()
     if (counter <= 0) {
-      LOG.error("Block counter $counter must be > 0, first block stack trace: ${blockStackTrace.get()}")
+      LOG.error("Block counter $counter must be > 0, first block stack trace: ${blockStackTrace.get()?.let { ExceptionUtil.getThrowableText(it) }}")
     }
 
     if (reloadBlockCount.decrementAndGet() != 0) {
