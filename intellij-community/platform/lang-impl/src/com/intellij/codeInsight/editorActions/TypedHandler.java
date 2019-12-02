@@ -16,6 +16,8 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
+import com.intellij.openapi.command.impl.UndoManagerImpl;
+import com.intellij.openapi.command.undo.UndoManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.*;
 import com.intellij.openapi.editor.actionSystem.ActionPlan;
@@ -166,7 +168,7 @@ public class TypedHandler extends TypedActionHandlerBase {
       }
 
       if (!editor.isInsertMode()) {
-        type(originalEditor, charTyped);
+        type(originalEditor, project, charTyped);
         return;
       }
 
@@ -188,11 +190,11 @@ public class TypedHandler extends TypedActionHandlerBase {
         }
       }
       else if ('"' == charTyped || '\'' == charTyped || '`' == charTyped/* || '/' == charTyped*/) {
-        if (handleQuote(editor, charTyped, file)) return;
+        if (handleQuote(editor, project, charTyped, file)) return;
       }
 
       long modificationStampBeforeTyping = editor.getDocument().getModificationStamp();
-      type(originalEditor, charTyped);
+      type(originalEditor, project, charTyped);
       AutoHardWrapHandler.getInstance().wrapLineIfNecessary(originalEditor, dataContext, modificationStampBeforeTyping);
 
       if (editor.isDisposed()) { // can be that injected editor disappear
@@ -238,9 +240,10 @@ public class TypedHandler extends TypedActionHandlerBase {
     return false;
   }
 
-  private static void type(Editor editor, char charTyped) {
+  private static void type(Editor editor, Project project, char charTyped) {
     CommandProcessor.getInstance().setCurrentCommandName(EditorBundle.message("typing.in.editor.command.name"));
     EditorModificationUtil.insertStringAtCaret(editor, String.valueOf(charTyped), true, true);
+    ((UndoManagerImpl)UndoManager.getInstance(project)).addDocumentAsAffected(editor.getDocument());
   }
 
   private static void autoPopupParameterInfo(@NotNull Editor editor, char charTyped, @NotNull Project project, @NotNull PsiFile file) {
@@ -431,7 +434,7 @@ public class TypedHandler extends TypedActionHandlerBase {
       if (lparenthOffset < 0) return false;
     }
 
-    iterator = ((EditorEx) editor).getHighlighter().createIterator(lparenthOffset);
+    iterator = ((EditorEx)editor).getHighlighter().createIterator(lparenthOffset);
     boolean matched = BraceMatchingUtil.matchBrace(text, fileType, iterator, true, true);
 
     if (!matched) return false;
@@ -440,7 +443,10 @@ public class TypedHandler extends TypedActionHandlerBase {
     return true;
   }
 
-  private static boolean handleQuote(@NotNull Editor editor, char quote, @NotNull PsiFile file) {
+  private static boolean handleQuote(@NotNull Editor editor,
+                                     Project project,
+                                     char quote,
+                                     @NotNull PsiFile file) {
     if (!CodeInsightSettings.getInstance().AUTOINSERT_PAIR_QUOTE) return false;
     final QuoteHandler quoteHandler = getQuoteHandler(file, editor);
     if (quoteHandler == null) return false;
@@ -473,7 +479,7 @@ public class TypedHandler extends TypedActionHandlerBase {
       }
     }
 
-    type(editor, quote);
+    type(editor, project, quote);
     offset = editor.getCaretModel().getOffset();
 
     if (quoteHandler instanceof MultiCharQuoteHandler) {
