@@ -20,7 +20,6 @@ import com.intellij.openapi.actionSystem.OverridingAction;
 import com.intellij.openapi.actionSystem.impl.ActionManagerImpl;
 import com.intellij.openapi.application.AppUIExecutor;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.TransactionGuard;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.application.impl.ApplicationInfoImpl;
 import com.intellij.openapi.command.CommandProcessor;
@@ -38,6 +37,7 @@ import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.registry.Registry;
@@ -545,7 +545,7 @@ public class CodeCompletionHandlerBase {
     if (laterRunnable != null) {
       ActionTracker tracker = new ActionTracker(indicator.getEditor(), indicator);
       Runnable wrapper = () -> {
-        if (!indicator.getProject().isDisposed() && !tracker.hasAnythingHappened()) {
+        if (!Disposer.isDisposed(indicator) && !indicator.getProject().isDisposed() && !tracker.hasAnythingHappened()) {
           laterRunnable.run();
         }
         indicator.disposeIndicator();
@@ -554,7 +554,7 @@ public class CodeCompletionHandlerBase {
         wrapper.run();
       }
       else {
-        TransactionGuard.getInstance().submitTransactionLater(indicator, wrapper);
+        ApplicationManager.getApplication().invokeLater(wrapper);
       }
     }
     else {
