@@ -150,7 +150,8 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
         val basePluginConvention = project.convention.plugins["base"] as BasePluginConvention?
 
-        distribution.directory = distribution.directory ?: project.buildDir.resolve(basePluginConvention!!.distsDirName)
+        val baseDist = project.buildDir.resolve(basePluginConvention!!.distsDirName)
+        distribution.directory = distribution.directory ?: baseDist
 
         val distributionTask = project.registerTask<Copy>(
             disambiguateCamelCased(
@@ -158,7 +159,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
             )
         ) {
             it.from(compilation.output.resourcesDir)
-            it.into(distribution.directory!!)
+            it.into(distribution.directory ?: baseDist)
         }
 
         val assembleTask = project.tasks.getByName(LifecycleBasePlugin.ASSEMBLE_TASK_NAME)
