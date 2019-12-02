@@ -244,6 +244,18 @@ internal val cStubsPhase = makeKonanModuleOpPhase(
         op = { context, _ -> produceCStubs(context) }
 )
 
+internal val linkBitcodeDependenciesPhase = makeKonanModuleOpPhase(
+        name = "LinkBitcodeDependencies",
+        description = "Link bitcode dependencies",
+        op = { context, _ -> linkBitcodeDependencies(context) }
+)
+
+internal val bitcodeOptimizationPhase = makeKonanModuleOpPhase(
+        name = "BitcodeOptimization",
+        description = "Optimize bitcode",
+        op = { context, _ -> runLlvmOptimizationPipeline(context) }
+)
+
 internal val produceOutputPhase = makeKonanModuleOpPhase(
         name = "ProduceOutput",
         description = "Produce output",

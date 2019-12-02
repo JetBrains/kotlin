@@ -86,6 +86,25 @@ private fun insertAliasToEntryPoint(context: Context) {
     LLVMAddAlias(module, LLVMTypeOf(entryPoint)!!, entryPoint, "main")
 }
 
+internal fun linkBitcodeDependencies(context: Context) {
+    val config = context.config.configuration
+    val tempFiles = context.config.tempFiles
+    val produce = config.get(KonanConfigKeys.PRODUCE)
+
+    val generatedBitcodeFiles =
+            if (produce == CompilerOutputKind.DYNAMIC || produce == CompilerOutputKind.STATIC) {
+                produceCAdapterBitcode(
+                        context.config.clang,
+                        tempFiles.cAdapterCppName,
+                        tempFiles.cAdapterBitcodeName)
+                listOf(tempFiles.cAdapterBitcodeName)
+            } else emptyList()
+    if (produce == CompilerOutputKind.FRAMEWORK && context.config.produceStaticFramework) {
+        embedAppleLinkerOptionsToBitcode(context.llvm, context.config)
+    }
+    linkAllDependencies(context, generatedBitcodeFiles)
+}
+
 internal fun produceOutput(context: Context) {
 
     val config = context.config.configuration
@@ -101,19 +120,6 @@ internal fun produceOutput(context: Context) {
         CompilerOutputKind.PROGRAM -> {
             val output = tempFiles.nativeBinaryFileName
             context.bitcodeFileName = output
-            val generatedBitcodeFiles =
-                if (produce == CompilerOutputKind.DYNAMIC || produce == CompilerOutputKind.STATIC) {
-                    produceCAdapterBitcode(
-                        context.config.clang,
-                        tempFiles.cAdapterCppName,
-                        tempFiles.cAdapterBitcodeName)
-                    listOf(tempFiles.cAdapterBitcodeName)
-                } else emptyList()
-            if (produce == CompilerOutputKind.FRAMEWORK && context.config.produceStaticFramework) {
-                embedAppleLinkerOptionsToBitcode(context.llvm, context.config)
-            }
-            linkAllDependencies(context, generatedBitcodeFiles)
-            runLlvmOptimizationPipeline(context)
             // Insert `_main` after pipeline so we won't worry about optimizations
             // corrupting entry point.
             insertAliasToEntryPoint(context)

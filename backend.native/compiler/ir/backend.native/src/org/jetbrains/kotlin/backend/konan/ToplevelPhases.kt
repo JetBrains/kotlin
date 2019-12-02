@@ -271,13 +271,6 @@ internal val linkerPhase = konanUnitPhase(
         description = "Linker"
 )
 
-internal val linkPhase = namedUnitPhase(
-        name = "Link",
-        description = "Link stage",
-        lower = objectFilesPhase then
-                linkerPhase
-)
-
 internal val allLoweringsPhase = namedIrModulePhase(
         name = "IrLowering",
         description = "IR Lowering",
@@ -428,11 +421,14 @@ val toplevelPhase: CompilerPhase<*, Unit, Unit> = namedUnitPhase(
                                 bitcodePhase then
                                 verifyBitcodePhase then
                                 printBitcodePhase then
+                                linkBitcodeDependenciesPhase then
+                                bitcodeOptimizationPhase then
                                 produceOutputPhase then
                                 disposeLLVMPhase then
                                 unitSink()
                 ) then
-                linkPhase
+                objectFilesPhase then
+                linkerPhase
 )
 
 internal fun PhaseConfig.disableIf(phase: AnyNamedPhase, condition: Boolean) {
@@ -455,7 +451,10 @@ internal fun PhaseConfig.konanPhasesConfig(config: KonanConfig) {
         disableIf(dependenciesLowerPhase, config.produce == CompilerOutputKind.LIBRARY)
         disableUnless(entryPointPhase, config.produce == CompilerOutputKind.PROGRAM)
         disableIf(bitcodePhase, config.produce == CompilerOutputKind.LIBRARY)
-        disableUnless(linkPhase, config.produce.involvesLinkStage)
+        disableUnless(bitcodeOptimizationPhase, config.produce.involvesLinkStage)
+        disableUnless(linkBitcodeDependenciesPhase, config.produce.involvesLinkStage)
+        disableUnless(objectFilesPhase, config.produce.involvesLinkStage)
+        disableUnless(linkerPhase, config.produce.involvesLinkStage)
         disableIf(testProcessorPhase, getNotNull(KonanConfigKeys.GENERATE_TEST_RUNNER) == TestRunnerKind.NONE)
         disableUnless(buildDFGPhase, getBoolean(KonanConfigKeys.OPTIMIZATION))
         disableUnless(devirtualizationPhase, getBoolean(KonanConfigKeys.OPTIMIZATION))
