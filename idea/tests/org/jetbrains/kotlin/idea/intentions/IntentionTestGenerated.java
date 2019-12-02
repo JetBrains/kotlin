@@ -10826,6 +10826,16 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/joinDeclarationAndAssignment/usedLocal2.kt");
         }
 
+        @TestMetadata("usedLocal3.kt")
+        public void testUsedLocal3() throws Exception {
+            runTest("idea/testData/intentions/joinDeclarationAndAssignment/usedLocal3.kt");
+        }
+
+        @TestMetadata("usedLocal4.kt")
+        public void testUsedLocal4() throws Exception {
+            runTest("idea/testData/intentions/joinDeclarationAndAssignment/usedLocal4.kt");
+        }
+
         @TestMetadata("varReassignment.kt")
         public void testVarReassignment() throws Exception {
             runTest("idea/testData/intentions/joinDeclarationAndAssignment/varReassignment.kt");
