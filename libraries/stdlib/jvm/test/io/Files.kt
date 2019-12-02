@@ -32,10 +32,10 @@ class FilesTest {
         }
 
         val dir2 = createTempDir("temp")
-        assertTrue(dir2.exists() && dir2.isDirectory && dir2.name.endsWith(".tmp"))
+        assertTrue(dir2.exists() && dir2.isDirectory && dir2.name.startsWith("temp") && dir2.name.endsWith(".tmp"))
 
         val dir3 = createTempDir()
-        assertTrue(dir3.exists() && dir3.isDirectory)
+        assertTrue(dir3.exists() && dir3.isDirectory && dir3.name.startsWith("tmp") && dir3.name.endsWith(".tmp"))
 
         dir1.delete()
         dir2.delete()
@@ -51,10 +51,10 @@ class FilesTest {
         }
 
         val file2 = createTempFile("temp")
-        assertTrue(file2.exists() && file2.name.endsWith(".tmp"))
+        assertTrue(file2.exists() && file2.name.startsWith("temp") && file2.name.endsWith(".tmp"))
 
         val file3 = createTempFile()
-        assertTrue(file3.exists())
+        assertTrue(file3.exists() && file3.name.startsWith("tmp") && file3.name.endsWith(".tmp"))
 
         file1.delete()
         file2.delete()
