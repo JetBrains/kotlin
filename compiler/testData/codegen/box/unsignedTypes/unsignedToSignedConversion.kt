@@ -1,5 +1,5 @@
 // WITH_RUNTIME
-// IGNORE_BACKEND: JS_IR
+// KJS_WITH_FULL_RUNTIME
 // IGNORE_BACKEND_FIR: JVM_IR
 
 fun takeUByte(u: UByte) = u.toByte()
