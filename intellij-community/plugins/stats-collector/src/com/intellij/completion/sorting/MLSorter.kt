@@ -122,7 +122,7 @@ class MLSorter : CompletionFinalSorter() {
       val position = positionsBefore.getValue(element)
       val (relevance, additional) = RelevanceUtil.asRelevanceMaps(relevanceObjects.getOrDefault(element, emptyList()))
       SessionFactorsUtils.saveElementFactorsTo(additional, lookupStorage, element)
-      calculateAdditionalFeaturesTo(additional, element, prefixLength, position, parameters)
+      calculateAdditionalFeaturesTo(additional, element, prefixLength, position, items.size, parameters)
       val score = when {
         rankingModel != null -> tracker.measure {
           calculateElementScore(rankingModel, element, position, features.withElementFeatures(relevance, additional), prefixLength)
@@ -161,9 +161,11 @@ class MLSorter : CompletionFinalSorter() {
     lookupElement: LookupElement,
     prefixLength: Int,
     position: Int,
+    itemsCount: Int,
     parameters: CompletionParameters) {
 
     additionalMap["position"] = position
+    additionalMap["relative_position"] = position.toDouble() / itemsCount
     additionalMap["query_length"] = prefixLength
     additionalMap["result_length"] = lookupElement.lookupString.length
     additionalMap["auto_popup"] = parameters.isAutoPopup
