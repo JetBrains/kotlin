@@ -182,11 +182,14 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                 }
 
                 it.doLast { _ ->
-                    compilation.output.resourcesDir
-                        .copyRecursively(
-                            target = it.destinationDirectory!!,
-                            overwrite = true
-                        )
+                    val resourcesDir = compilation.output.resourcesDir
+                    if (resourcesDir.exists()) {
+                        resourcesDir
+                            .copyRecursively(
+                                target = it.destinationDirectory!!,
+                                overwrite = true
+                            )
+                    }
                 }
             }
 

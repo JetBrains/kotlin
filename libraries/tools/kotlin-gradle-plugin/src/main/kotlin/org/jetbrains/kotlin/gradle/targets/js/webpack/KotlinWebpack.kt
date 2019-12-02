@@ -101,6 +101,16 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
     open val evaluatedConfigFile: File
         @OutputFile get() = reportDir.resolve("webpack.config.evaluated.js")
 
+    val resourcesDir: File?
+        @Optional
+        @InputDirectory
+        get() {
+            val resourcesDir = compilation.output.resourcesDir
+            return if (resourcesDir.exists()) {
+                resourcesDir
+            } else null
+        }
+
     @Input
     var bin: String = "webpack/bin/webpack.js"
 
