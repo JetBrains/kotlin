@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
+import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
 import org.jetbrains.kotlin.fir.resolve.constructType
 import org.jetbrains.kotlin.fir.resolve.createFunctionalType
@@ -199,6 +200,7 @@ class ResolvedLambdaAtom(
 ) : PostponedResolvedAtomMarker {
 
     override var analyzed: Boolean = false
+    lateinit var returnStatements: List<FirStatement>
 
 //    lateinit var resultArguments: List<KotlinCallArgument>
 //        private set

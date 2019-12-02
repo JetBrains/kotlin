@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.FirCallResolver
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
-import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.references.impl.FirErrorNamedReferenceImpl
@@ -177,6 +176,7 @@ class PostponedArgumentsAnalyzer(
         }
 
         lambda.analyzed = true
+        lambda.returnStatements = returnArguments
         //lambda.setAnalyzedResults(returnArguments, subResolvedKtPrimitives)
 
 //        if (inferenceSession != null) {

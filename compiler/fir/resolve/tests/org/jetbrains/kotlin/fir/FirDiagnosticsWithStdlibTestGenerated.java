@@ -576,5 +576,10 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         public void testCloneArray() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/stdlib/problems/cloneArray.kt");
         }
+
+        @TestMetadata("tryWithLambdaInside.kt")
+        public void testTryWithLambdaInside() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/stdlib/problems/tryWithLambdaInside.kt");
+        }
     }
 }
