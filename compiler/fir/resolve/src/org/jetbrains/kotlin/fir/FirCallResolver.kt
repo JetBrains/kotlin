@@ -185,7 +185,7 @@ class FirCallResolver(
         if (qualifiedAccess.explicitReceiver == null &&
             (reducedCandidates.size <= 1 && result.currentApplicability < CandidateApplicability.SYNTHETIC_RESOLVED)
         ) {
-            qualifiedResolver.tryResolveAsQualifier()?.let { return it }
+            qualifiedResolver.tryResolveAsQualifier(qualifiedAccess.source)?.let { return it }
         }
 
         val referencedSymbol = when (nameReference) {
