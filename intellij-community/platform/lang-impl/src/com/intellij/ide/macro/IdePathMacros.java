@@ -7,9 +7,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Set;
 
 final class IdePathMacros extends PathMacrosImpl {
-  @NotNull
   @Override
-  public Set<String> getToolMacroNames() {
-    return MacroManager.getInstance().getMacroNames();
+  public void removeToolMacroNames(@NotNull Set<String> result) {
+    for (Macro macro : MacroManager.getInstance().getMacros()) {
+      result.remove(macro.getName());
+    }
   }
 }
