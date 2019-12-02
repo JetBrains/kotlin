@@ -107,6 +107,14 @@ public class SdkDownloadTracker implements Disposable {
   }
 
   /**
+   * Checks if there is an activity for a given Sdk
+   * @return true is there is an activity
+   */
+  public boolean isDownloading(@NotNull Sdk sdk) {
+    return findTask(sdk) != null;
+  }
+
+  /**
    * Checks if there is an activity for a given Sdk and subscribes a listeners if there is an activity
    *
    * @param sdk                        the Sdk instance that to check (it could be it's #clone())
