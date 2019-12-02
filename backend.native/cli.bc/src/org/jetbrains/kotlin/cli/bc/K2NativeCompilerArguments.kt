@@ -231,6 +231,9 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xobjc-generics", description = "Enable experimental generics support for framework header")
     var objcGenerics: Boolean = false
 
+    @Argument(value="-Xoverride-clang-options", valueDescription = "<arg1,arg2,...>", description = "Explicit list of Clang options")
+    var clangOptions: Array<String>? = null
+
     override fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> =
             super.configureAnalysisFlags(collector).also {
                 val useExperimental = it[AnalysisFlags.useExperimental] as List<*>

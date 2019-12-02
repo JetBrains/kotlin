@@ -18,6 +18,9 @@ internal class BitcodeCompiler(val context: Context) {
     private val optimize = context.shouldOptimize()
     private val debug = context.config.debug
 
+    private val overrideClangOptions =
+            context.configuration.getList(KonanConfigKeys.OVERRIDE_CLANG_OPTIONS)
+
     private fun MutableList<String>.addNonEmpty(elements: List<String>) {
         addAll(elements.filter { it.isNotEmpty() })
     }
@@ -58,7 +61,8 @@ internal class BitcodeCompiler(val context: Context) {
             }
             else -> context.llvm.targetTriple
         }
-        val flags = mutableListOf<String>().apply {
+        val flags = overrideClangOptions.takeIf(List<String>::isNotEmpty)
+                ?: mutableListOf<String>().apply {
             addNonEmpty(configurables.clangFlags)
             addNonEmpty(listOf("-triple", targetTriple))
             if (configurables is ZephyrConfigurables) {

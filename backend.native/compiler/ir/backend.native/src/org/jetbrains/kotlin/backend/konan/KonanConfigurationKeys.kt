@@ -84,6 +84,8 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("optimized compilation")
         val OUTPUT: CompilerConfigurationKey<String> 
                 = CompilerConfigurationKey.create("program or library name")
+        val OVERRIDE_CLANG_OPTIONS: CompilerConfigurationKey<List<String>>
+                = CompilerConfigurationKey.create("arguments for clang")
         val PRINT_BITCODE: CompilerConfigurationKey<Boolean> 
                 = CompilerConfigurationKey.create("print bitcode")
         val PRINT_DESCRIPTORS: CompilerConfigurationKey<Boolean>
