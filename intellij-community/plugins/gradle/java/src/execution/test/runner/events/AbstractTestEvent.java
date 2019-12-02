@@ -76,4 +76,8 @@ public abstract class AbstractTestEvent implements TestEvent {
   protected String decode(String s) {
     return new String(Base64.getDecoder().decode(s), StandardCharsets.UTF_8);
   }
+
+  protected boolean showInternalTestNodes() {
+    return GradleConsoleProperties.SHOW_INTERNAL_TEST_NODES.value(getProperties());
+  }
 }
