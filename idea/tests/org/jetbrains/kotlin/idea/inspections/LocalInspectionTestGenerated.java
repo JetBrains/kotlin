@@ -12394,6 +12394,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/unsafeNotNullAssertionOnReallyNullable/localPropToNotNullable.kt");
         }
 
+        @TestMetadata("nullableClassPropertyToNot.kt")
+        public void testNullableClassPropertyToNot() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unsafeNotNullAssertionOnReallyNullable/nullableClassPropertyToNot.kt");
+        }
+
         @TestMetadata("nullableFunToNot.kt")
         public void testNullableFunToNot() throws Exception {
             runTest("idea/testData/inspectionsLocal/unsafeNotNullAssertionOnReallyNullable/nullableFunToNot.kt");
