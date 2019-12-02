@@ -50,3 +50,21 @@ fun case2() {
     if (<!TYPE_MISMATCH, TYPE_MISMATCH!>a<!>) { "true" } else "false"
     checkSubtype<Boolean>(<!TYPE_MISMATCH!>a<!>)
 }
+
+// TESTCASE NUMBER: 3
+// FILE: JavaClassCase3.java
+public class JavaClassCase3{
+    public static <T> T id(T x) {
+        return null;
+    }
+}
+
+// FILE: KotlinClassCase3.kt
+// TESTCASE NUMBER: 3
+fun case3() {
+    val x = JavaClassCase3.id(null) // Nothing!
+    <!DEBUG_INFO_CONSTANT, DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!>
+    val a = if (<!DEBUG_INFO_CONSTANT, TYPE_MISMATCH, TYPE_MISMATCH!>x<!>) {
+        "NOK"
+    } else "NOK"
+}

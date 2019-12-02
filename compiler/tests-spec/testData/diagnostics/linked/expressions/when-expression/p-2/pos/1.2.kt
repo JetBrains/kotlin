@@ -1,19 +1,19 @@
 // SKIP_TXT
 
 /*
- * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
+ * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-100
  * PLACE: expressions, when-expression -> paragraph 2 -> sentence 1
- * NUMBER: 1
- * DESCRIPTION: Forbidden break and continue in the control structure body of when.
+ * NUMBER: 2
+ * DESCRIPTION: Allowed break and continue in the control structure body of when.
  */
 
 // TESTCASE NUMBER: 1
 fun case_1(value_1: Int): String {
     while (true) {
         when {
-            value_1 == 1 -> <!BREAK_OR_CONTINUE_IN_WHEN!>break<!>
+            value_1 == 1 -> break
         }
     }
 
@@ -24,7 +24,7 @@ fun case_1(value_1: Int): String {
 fun case_2(value_1: Int): String {
     while (true) {
         when {
-            value_1 == 1 -> <!BREAK_OR_CONTINUE_IN_WHEN!>continue<!>
+            value_1 == 1 -> continue
         }
     }
 

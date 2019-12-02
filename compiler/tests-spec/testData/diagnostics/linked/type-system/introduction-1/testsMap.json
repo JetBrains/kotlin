@@ -62,18 +62,5 @@
         }
       ]
     }
-  },
-  "5": {
-    "pos": {
-      "2": [
-        {
-          "specVersion": "0.1-152",
-          "casesNumber": 0,
-          "description": "Kt9929",
-          "path": "compiler/testData/diagnostics/tests/when/kt9929.kt",
-          "unexpectedBehaviour": false
-        }
-      ]
-    }
   }
 }

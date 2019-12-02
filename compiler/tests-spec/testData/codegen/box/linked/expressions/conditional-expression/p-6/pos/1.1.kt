@@ -1,4 +1,3 @@
-// !LANGUAGE: +NewInference
 // FULL_JDK
 // WITH_RUNTIME
 
@@ -13,24 +12,17 @@
 
 // FILE: JavaClass.java
 public class JavaClass{
-    public static <T> T id(T x) {
-        return null;
-    }
-
+    public Boolean x;
 }
 
 // FILE: KotlinClass.kt
 import java.lang.IllegalStateException
 
 fun box(): String {
-    val x = JavaClass.id(null) // Nothing!
-
     return try {
-        val a = if (x) {
-            "NOK"
-        } else "NOK"
+        val a = if (JavaClass().x) { "NOK" } else "NOK"
         a
-    } catch (e: java.lang.IllegalStateException) {
+    } catch (e: java.lang.NullPointerException) {
         "OK"
     }
 }
