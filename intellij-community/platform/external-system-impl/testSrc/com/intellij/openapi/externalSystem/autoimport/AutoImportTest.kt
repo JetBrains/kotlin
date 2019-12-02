@@ -21,6 +21,13 @@ class AutoImportTest : AutoImportTestCase() {
       settingsFile.replaceString("hi", "hello")
       assertState(refresh = 2, notified = false, event = "revert changes")
 
+      settingsFile.appendString("\n ")
+      assertState(refresh = 2, notified = false, event = "empty modification")
+      settingsFile.replaceString("println", "print ln")
+      assertState(refresh = 2, notified = true, event = "split token by space")
+      settingsFile.replaceString("print ln", "println")
+      assertState(refresh = 2, notified = false, event = "revert modification")
+
       settingsFile.appendString(" ")
       assertState(refresh = 2, notified = false, event = "empty modification")
       settingsFile.appendString("//It is comment")

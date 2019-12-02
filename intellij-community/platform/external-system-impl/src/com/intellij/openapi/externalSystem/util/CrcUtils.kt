@@ -15,6 +15,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import java.util.zip.CRC32
 
@@ -50,15 +51,25 @@ private fun doCalculateCrc(project: Project, charSequence: CharSequence, fileTyp
   ProgressManager.checkCanceled()
   while (true) {
     val tokenType = lexer.tokenType ?: break
-    if (!ignoredTokens.contains(tokenType)) {
-      for (ch in charSequence.subSequence(lexer.tokenStart, lexer.tokenEnd)) {
-        crc32.update(ch.toInt())
-      }
-    }
+    val tokenText = charSequence.subSequence(lexer.tokenStart, lexer.tokenEnd)
+    crc32.update(tokenType, tokenText, ignoredTokens)
     lexer.advance()
     ProgressManager.checkCanceled()
   }
   return crc32.value
+}
+
+private fun CRC32.update(tokenType: IElementType, tokenText: CharSequence, ignoredTokens: TokenSet) {
+  if (ignoredTokens.contains(tokenType)) return
+  if (tokenText.isBlank()) return
+  update(tokenText)
+}
+
+private fun CRC32.update(charSequence: CharSequence) {
+  update(charSequence.length)
+  for (ch in charSequence) {
+    update(ch.toInt())
+  }
 }
 
 private fun getParserDefinition(fileType: FileType): ParserDefinition? {
