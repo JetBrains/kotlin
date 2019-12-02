@@ -125,9 +125,6 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
     private fun IrFunction.isPublishedApi(): Boolean =
         propertyIfAccessor.annotations.hasAnnotation(KotlinBuiltIns.FQ_NAMES.publishedApi)
 
-    fun mapAnnotationParameterName(field: IrField): String =
-        mapFunctionName(field.correspondingPropertySymbol!!.owner.getter ?: error("No getter for annotation property: ${field.render()}"))
-
     fun mapReturnType(declaration: IrDeclaration, sw: JvmSignatureWriter? = null): Type {
         if (declaration !is IrFunction) {
             require(declaration is IrField) { "Unsupported declaration: $declaration" }
