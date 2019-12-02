@@ -48,17 +48,13 @@ class Psi2IrTranslator(
         moduleDescriptor: ModuleDescriptor,
         ktFiles: Collection<KtFile>,
         bindingContext: BindingContext,
-        generatorExtensions: GeneratorExtensions,
-        stubGeneratorExtensions: StubGeneratorExtensions
+        generatorExtensions: GeneratorExtensions
     ): IrModuleFragment {
         val context = createGeneratorContext(moduleDescriptor, bindingContext, extensions = generatorExtensions)
-        return generateModuleFragment(
-            context, ktFiles,
-            irProviders = generateTypicalIrProviderList(
-                moduleDescriptor, context.irBuiltIns, context.symbolTable,
-                extensions = stubGeneratorExtensions
-            )
+        val irProviders = generateTypicalIrProviderList(
+            moduleDescriptor, context.irBuiltIns, context.symbolTable, extensions = generatorExtensions
         )
+        return generateModuleFragment(context, ktFiles, irProviders)
     }
 
     fun createGeneratorContext(

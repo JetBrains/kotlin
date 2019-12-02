@@ -41,13 +41,13 @@ class JvmIrCodegenFactory(private val phaseConfig: PhaseConfig) : CodegenFactory
         symbolTable: SymbolTable,
         sourceManager: PsiSourceManager
     ) {
-        val stubGeneratorExtensions = JvmStubGeneratorExtensions()
+        val extensions = JvmGeneratorExtensions()
         val irProviders = generateTypicalIrProviderList(
-            irModuleFragment.descriptor, irModuleFragment.irBuiltins, symbolTable, extensions = stubGeneratorExtensions
+            irModuleFragment.descriptor, irModuleFragment.irBuiltins, symbolTable, extensions = extensions
         )
         ExternalDependenciesGenerator(symbolTable, irProviders).generateUnboundSymbolsAsDependencies()
         JvmBackendFacade.doGenerateFilesInternal(
-            state, errorHandler, irModuleFragment, symbolTable, sourceManager, phaseConfig, stubGeneratorExtensions
+            state, errorHandler, irModuleFragment, symbolTable, sourceManager, phaseConfig, extensions
         )
     }
 

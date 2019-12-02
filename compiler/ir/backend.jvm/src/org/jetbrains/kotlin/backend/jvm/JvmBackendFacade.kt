@@ -30,9 +30,9 @@ object JvmBackendFacade {
         errorHandler: CompilationErrorHandler,
         phaseConfig: PhaseConfig
     ) {
+        val extensions = JvmGeneratorExtensions()
         val psi2ir = Psi2IrTranslator(state.languageVersionSettings, mangler = JvmMangler)
-        val psi2irContext = psi2ir.createGeneratorContext(state.module, state.bindingContext, extensions = JvmGeneratorExtensions)
-        val extensions = JvmStubGeneratorExtensions()
+        val psi2irContext = psi2ir.createGeneratorContext(state.module, state.bindingContext, extensions = extensions)
 
         for (extension in IrGenerationExtension.getInstances(state.project)) {
             psi2ir.addPostprocessingStep { module ->
@@ -67,7 +67,7 @@ object JvmBackendFacade {
         symbolTable: SymbolTable,
         sourceManager: PsiSourceManager,
         phaseConfig: PhaseConfig,
-        extensions: JvmStubGeneratorExtensions = JvmStubGeneratorExtensions()
+        extensions: JvmGeneratorExtensions
     ) {
         val context = JvmBackendContext(
             state, sourceManager, irModuleFragment.irBuiltins, irModuleFragment, symbolTable, phaseConfig, extensions.classNameOverride
