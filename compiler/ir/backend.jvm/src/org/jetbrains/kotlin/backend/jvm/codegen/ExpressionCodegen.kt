@@ -215,7 +215,7 @@ class ExpressionCodegen(
             return
 
         val notCallableFromJava = inlinedInto != null ||
-                Visibilities.isPrivate(irFunction.visibility) ||
+                (Visibilities.isPrivate(irFunction.visibility) && !(irFunction is IrSimpleFunction && irFunction.isOperator)) ||
                 irFunction.origin.isSynthetic ||
                 // TODO: refine this condition to not generate nullability assertions on parameters
                 //       corresponding to captured variables and anonymous object super constructor arguments
