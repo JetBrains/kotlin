@@ -3879,6 +3879,11 @@ public class IrBlackBoxInlineCodegenTestGenerated extends AbstractIrBlackBoxInli
                 runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/stateMachine/insideObject.kt", "kotlin.coroutines");
             }
 
+            @TestMetadata("lambdaTransformation.kt")
+            public void testLambdaTransformation() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/suspend/stateMachine/lambdaTransformation.kt");
+            }
+
             @TestMetadata("normalInline.kt")
             public void testNormalInline_1_3() throws Exception {
                 runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/stateMachine/normalInline.kt", "kotlin.coroutines");

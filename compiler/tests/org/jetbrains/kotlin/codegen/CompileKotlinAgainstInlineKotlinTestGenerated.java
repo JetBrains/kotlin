@@ -4089,6 +4089,11 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
                 runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/stateMachine/insideObject.kt", "kotlin.coroutines");
             }
 
+            @TestMetadata("lambdaTransformation.kt")
+            public void testLambdaTransformation() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/suspend/stateMachine/lambdaTransformation.kt");
+            }
+
             @TestMetadata("normalInline.kt")
             public void testNormalInline_1_2() throws Exception {
                 runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/stateMachine/normalInline.kt", "kotlin.coroutines.experimental");
