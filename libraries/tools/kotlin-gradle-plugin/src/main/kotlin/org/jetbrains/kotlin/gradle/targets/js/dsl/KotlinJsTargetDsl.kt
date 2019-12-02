@@ -54,6 +54,16 @@ interface KotlinJsBrowserDsl : KotlinJsSubTargetDsl {
         }
     }
 
+    @ExperimentalDistributionDsl
+    fun distribution(body: Distribution.() -> Unit)
+
+    @ExperimentalDistributionDsl
+    fun distribution(fn: Closure<*>) {
+        distribution {
+            ConfigureUtil.configure(fn, this)
+        }
+    }
+
     fun webpackTask(body: KotlinWebpack.() -> Unit)
     fun webpackTask(fn: Closure<*>) {
         webpackTask {
