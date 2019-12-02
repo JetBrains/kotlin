@@ -137,62 +137,66 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
   }
 
   private void registerToolWindow(String toolWindowId, boolean active) {
-    ToolWindowManagerEx toolWindowManager = ToolWindowManagerEx.getInstanceEx(myProject);
-    if (toolWindowManager == null) return;
+    AppUIUtil.invokeOnEdt(() -> {
+      ToolWindowManagerEx toolWindowManager = ToolWindowManagerEx.getInstanceEx(myProject);
+      if (toolWindowManager == null) return;
 
-    toolWindowManager.invokeLater(() -> {
-      if (myProject.isDisposed()) return;
+      toolWindowManager.invokeLater(() -> {
+        if (myProject.isDisposed()) return;
 
-      if (!myActivationActionsRegistered) {
-        myActivationActionsRegistered = true;
-        Collection<ServiceViewContributor<?>> contributors = myGroups.get(getToolWindowId());
-        if (contributors != null) {
-          registerActivateByContributorActions(myProject, contributors);
+        if (!myActivationActionsRegistered) {
+          myActivationActionsRegistered = true;
+          Collection<ServiceViewContributor<?>> contributors = myGroups.get(getToolWindowId());
+          if (contributors != null) {
+            registerActivateByContributorActions(myProject, contributors);
+          }
         }
-      }
 
-      myRegisteringToolWindowAvailable = active;
-      try {
-        ToolWindowEP bean = createToolWindowBean(toolWindowId);
-        toolWindowManager.initToolWindow(bean);
-        ToolWindow toolWindow = toolWindowManager.getToolWindow(toolWindowId);
-        assert toolWindow != null : String.format("Tool window with id '%s' not registered", toolWindowId);
-        toolWindow.setAvailable(true, null);
-        if (active) {
-          myActiveToolWindowIds.add(toolWindowId);
+        myRegisteringToolWindowAvailable = active;
+        try {
+          ToolWindowEP bean = createToolWindowBean(toolWindowId);
+          toolWindowManager.initToolWindow(bean);
+          ToolWindow toolWindow = toolWindowManager.getToolWindow(toolWindowId);
+          assert toolWindow != null : String.format("Tool window with id '%s' not registered", toolWindowId);
+          toolWindow.setAvailable(true, null);
+          if (active) {
+            myActiveToolWindowIds.add(toolWindowId);
+          }
+          else {
+            hideToolWindow(toolWindowId, toolWindow);
+          }
         }
-        else {
-          hideToolWindow(toolWindowId, toolWindow);
+        finally {
+          myRegisteringToolWindowAvailable = false;
         }
-      }
-      finally {
-        myRegisteringToolWindowAvailable = false;
-      }
-    });
+      });
+    }, myProject.getDisposed());
   }
 
   private void updateToolWindow(@NotNull String toolWindowId, boolean active, boolean show) {
-    ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(myProject);
-    if (toolWindowManager == null) return;
+    AppUIUtil.invokeOnEdt(() -> {
+      ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(myProject);
+      if (toolWindowManager == null) return;
 
-    toolWindowManager.invokeLater(() -> {
-      if (myProject.isDisposed()) return;
+      toolWindowManager.invokeLater(() -> {
+        if (myProject.isDisposed()) return;
 
-      ToolWindow toolWindow = toolWindowManager.getToolWindow(toolWindowId);
-      if (toolWindow == null) return;
+        ToolWindow toolWindow = toolWindowManager.getToolWindow(toolWindowId);
+        if (toolWindow == null) return;
 
-      if (active) {
-        boolean doShow = show && !myActiveToolWindowIds.contains(toolWindowId) && !toolWindow.isShowStripeButton();
-        myActiveToolWindowIds.add(toolWindowId);
-        if (doShow) {
-          toolWindow.show(null);
+        if (active) {
+          boolean doShow = show && !myActiveToolWindowIds.contains(toolWindowId) && !toolWindow.isShowStripeButton();
+          myActiveToolWindowIds.add(toolWindowId);
+          if (doShow) {
+            toolWindow.show(null);
+          }
         }
-      }
-      else if (myActiveToolWindowIds.remove(toolWindowId)) {
-        // Hide tool window only if model roots became empty and there were some services shown before update.
-        hideToolWindow(toolWindowId, toolWindow);
-      }
-    });
+        else if (myActiveToolWindowIds.remove(toolWindowId)) {
+          // Hide tool window only if model roots became empty and there were some services shown before update.
+          hideToolWindow(toolWindowId, toolWindow);
+        }
+      });
+    }, myProject.getDisposed());
   }
 
   private void hideToolWindow(String toolWindowId, ToolWindow toolWindow) {
