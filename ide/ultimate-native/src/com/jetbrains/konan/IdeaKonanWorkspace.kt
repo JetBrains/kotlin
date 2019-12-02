@@ -10,8 +10,8 @@ import com.intellij.notification.NotificationType
 import com.intellij.openapi.components.*
 import com.intellij.openapi.project.Project
 import org.jdom.Element
-import org.jetbrains.kotlin.konan.KonanVersion
-import org.jetbrains.kotlin.konan.KonanVersionImpl
+import org.jetbrains.kotlin.konan.CompilerVersion
+import org.jetbrains.kotlin.konan.CompilerVersionImpl
 import org.jetbrains.kotlin.konan.MetaVersion
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
@@ -19,9 +19,9 @@ import java.io.File
 import java.util.*
 import kotlin.collections.HashSet
 
-private val DEBUG_POSSIBLE = KonanVersionImpl(MetaVersion.DEV, 1, 3, 60, -1)
+private val DEBUG_POSSIBLE = CompilerVersionImpl(MetaVersion.DEV, 1, 3, 60, -1)
 
-fun compare(lhs: KonanVersion, rhs: KonanVersion): Int {
+fun compare(lhs: CompilerVersion, rhs: CompilerVersion): Int {
     if (lhs.major != rhs.major) return lhs.major - rhs.major
     if (lhs.minor != rhs.minor) return lhs.minor - rhs.minor
     if (lhs.maintenance != rhs.maintenance) return lhs.maintenance - rhs.maintenance
@@ -67,7 +67,7 @@ class IdeaKonanWorkspace(val project: Project) : PersistentStateComponent<Elemen
             return DependencyDirectories.defaultDependenciesRoot.resolve(lldbRelative)
         }
 
-    var konanVersion: KonanVersion? = null
+    var konanVersion: CompilerVersion? = null
         set(value) {
             value?.let {
                 if (compare(it, DEBUG_POSSIBLE) < 0) {
