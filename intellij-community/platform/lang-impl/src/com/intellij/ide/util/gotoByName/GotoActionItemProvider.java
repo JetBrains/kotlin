@@ -17,6 +17,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NotNullLazyValue;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.codeStyle.NameUtil;
 import com.intellij.psi.codeStyle.WordPrefixMatcher;
@@ -127,11 +128,13 @@ public class GotoActionItemProvider implements ChooseByNameItemProvider {
     List<Object> options = new ArrayList<>();
     final Set<String> words = registrar.getProcessedWords(pattern);
     Set<OptionDescription> optionDescriptions = null;
-    final String actionManagerName = myActionManager.getComponentName();
+    String actionManagerName = myActionManager.getComponentName();
+    boolean filterOutInspections = Registry.is("go.to.action.filter.out.inspections", true);
     for (String word : words) {
       final Set<OptionDescription> descriptions = registrar.getAcceptableDescriptions(word);
       if (descriptions != null) {
-        descriptions.removeIf(description -> actionManagerName.equals(description.getPath()));
+        descriptions.removeIf(description -> actionManagerName.equals(description.getPath()) ||
+                                             filterOutInspections && "Inspections".equals(description.getGroupName()));
         if (!descriptions.isEmpty()) {
           if (optionDescriptions == null) {
             optionDescriptions = descriptions;
@@ -140,7 +143,8 @@ public class GotoActionItemProvider implements ChooseByNameItemProvider {
             optionDescriptions.retainAll(descriptions);
           }
         }
-      } else {
+      }
+      else {
         optionDescriptions = null;
         break;
       }
