@@ -6,7 +6,13 @@
 package org.jetbrains.kotlin.test
 
 import junit.framework.TestCase
+import org.junit.runner.Runner
+import org.junit.runners.model.FrameworkMethod
+import org.junit.runners.parameterized.BlockJUnit4ClassRunnerWithParameters
+import org.junit.runners.parameterized.ParametersRunnerFactory
+import org.junit.runners.parameterized.TestWithParameters
 import java.io.File
+import java.lang.reflect.Method
 
 private class AutoMute(
     val file: String,
@@ -47,11 +53,11 @@ private class MutedSet(muted: List<MutedTest>) {
             .groupBy { it.methodName } // Method name -> List of muted tests
             .mapValues { (_, tests) -> tests.groupBy { it.simpleClassName } }
 
-    fun mutedTest(testCase: TestCase): MutedTest? {
-        val mutedTests = cache[testCase.name]?.get(testCase.javaClass.simpleName) ?: return null
+    fun mutedTest(testClass: Class<*>, methodName: String): MutedTest? {
+        val mutedTests = cache[methodName]?.get(testClass.simpleName) ?: return null
 
         return mutedTests.firstOrNull { mutedTest ->
-            testCase.javaClass.canonicalName.endsWith(mutedTest.classNameKey)
+            testClass.canonicalName.endsWith(mutedTest.classNameKey)
         }
     }
 }
@@ -106,13 +112,23 @@ private val mutedSet by lazy {
 }
 
 internal fun isMutedInDatabase(testCase: TestCase): Boolean {
-    val mutedTest = mutedSet.mutedTest(testCase)
+    return isMutedInDatabase(testCase.javaClass, testCase.name)
+}
+
+fun isMutedInDatabase(method: Method): Boolean {
+    return isMutedInDatabase(method.declaringClass, method.name)
+}
+
+fun isMutedInDatabase(testClass: Class<*>, methodName: String): Boolean {
+    val mutedTest = mutedSet.mutedTest(testClass, methodName)
     return mutedTest != null && !mutedTest.hasFailFile
 }
 
 internal fun wrapWithMuteInDatabase(testCase: TestCase, f: () -> Unit): (() -> Unit)? {
     if (isMutedInDatabase(testCase)) {
-        return { MUTED_DO_TEST_LAMBDA(testCase) }
+        return {
+            System.err.println(mutedMessage(testKey(testCase)))
+        }
     }
 
     val doAutoMute = DO_AUTO_MUTE ?: return null
@@ -134,11 +150,29 @@ internal fun wrapWithMuteInDatabase(testCase: TestCase, f: () -> Unit): (() -> U
     }
 }
 
-internal val MUTED_DO_TEST_LAMBDA = { testCase: TestCase ->
-    System.err.println("MUTED TEST: ${testKey(testCase)}")
-}
+private fun mutedMessage(key: String) = "MUTED TEST: $key"
 
 private fun testKey(testCase: TestCase) = "${testCase::class.java.canonicalName}.${testCase.name}"
+private fun testKey(method: Method) = "${method.declaringClass.canonicalName}.${method.name}"
+
+class RunnerFactoryWithMuteInDatabase: ParametersRunnerFactory {
+    override fun createRunnerForTestWithParameters(test: TestWithParameters?): Runner {
+        return object : BlockJUnit4ClassRunnerWithParameters(test) {
+            override fun isIgnored(child: FrameworkMethod): Boolean {
+                return super.isIgnored(child) || isIgnoredInDatabaseWithLog(child)
+            }
+        }
+    }
+}
+
+private fun isIgnoredInDatabaseWithLog(child: FrameworkMethod): Boolean {
+    if (isMutedInDatabase(child.method)) {
+        System.err.println(mutedMessage(testKey(child.method)))
+        return true
+    }
+
+    return false
+}
 
 fun TestCase.runTest(test: () -> Unit) {
     (wrapWithMuteInDatabase(this, test) ?: test).invoke()
