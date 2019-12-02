@@ -68,6 +68,11 @@ interface WeakModelProvider : RankingModelProvider {
       return EP_NAME.extensions().asSequence().filter { it !is WeakModelProvider || it.canBeUsed() }
     }
 
+    @JvmStatic
+    fun enabledByDefault(): List<String> {
+      return availableProviders().filter { it.isEnabledByDefault }.map { it.displayNameInSettings }.toList()
+    }
+
     @TestOnly
     fun registerProvider(provider: RankingModelProvider, parentDisposable: Disposable) {
       val extensionPoint = Extensions.getRootArea().getExtensionPoint(EP_NAME)
