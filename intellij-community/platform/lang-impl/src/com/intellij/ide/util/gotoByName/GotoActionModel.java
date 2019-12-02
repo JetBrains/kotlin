@@ -825,8 +825,12 @@ public class GotoActionModel implements ChooseByNameModel, Comparator<Object>, D
 
     private static String cutName(String name, String shortcutText, JList list, JPanel panel, SimpleColoredComponent nameComponent) {
       if (!list.isShowing() || list.getWidth() <= 0) {
-        return StringUtil.first(name, 60, true); //fallback to previous behaviour
+        return StringUtil.first(name, 60, true); // fallback to previous behaviour
       }
+      
+      // we have a min size for SE, which is ~40 symbols, don't spend time for trimming, let's use a shortcut
+      if (name.length() < 40) return name;
+      
       int freeSpace = calcFreeSpace(list, panel, nameComponent, shortcutText);
 
       if (freeSpace <= 0) {
