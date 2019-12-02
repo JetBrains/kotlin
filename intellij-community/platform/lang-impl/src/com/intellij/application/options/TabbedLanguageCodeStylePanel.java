@@ -29,8 +29,11 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.psi.codeStyle.*;
 import com.intellij.ui.ScrollPaneFactory;
 import com.intellij.ui.TabbedPaneWrapper;
+import com.intellij.ui.TitledSeparator;
 import com.intellij.util.EventDispatcher;
 import com.intellij.util.ObjectUtils;
+import com.intellij.util.containers.JBTreeTraverser;
+import com.intellij.util.containers.TreeTraversal;
 import com.intellij.util.ui.EmptyIcon;
 import com.intellij.util.ui.GraphicsUtil;
 import org.jetbrains.annotations.NotNull;
@@ -133,9 +136,16 @@ public abstract class TabbedLanguageCodeStylePanel extends CodeStyleAbstractPane
   public void showSetFrom(Component component) {
     initCopyFromMenu();
     DefaultActionGroup group = new DefaultActionGroup();
-    for (Component c : myCopyFromMenu.getComponents()) {
+    JBTreeTraverser<Component> traverser = JBTreeTraverser.<Component>of(
+      o -> o instanceof JMenu ? new Component[] { new TitledSeparator(((JMenu)o).getText()), ((JMenu)o).getPopupMenu()} :
+           o instanceof JPopupMenu ? ((JPopupMenu)o).getComponents() : null)
+        .withRoot(myCopyFromMenu);
+    for (Component c : traverser.traverse(TreeTraversal.LEAVES_DFS)) {
       if (c instanceof JSeparator) {
         group.addSeparator();
+      }
+      else if (c instanceof TitledSeparator) {
+        group.addSeparator(((TitledSeparator)c).getText());
       }
       else if (c instanceof JMenuItem) {
         group.add(new DumbAwareAction(((JMenuItem)c).getText(), "", ObjectUtils.notNull(((JMenuItem)c).getIcon(), EmptyIcon.ICON_16)) {
