@@ -8,9 +8,10 @@ package org.jetbrains.kotlin.psi2ir.generators
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.ir.util.StubGeneratorExtensions
 import org.jetbrains.kotlin.types.KotlinType
 
-open class GeneratorExtensions {
+open class GeneratorExtensions : StubGeneratorExtensions() {
     open val samConversion: SamConversion
         get() = SamConversion
 
@@ -29,6 +30,4 @@ open class GeneratorExtensions {
     }
 
     open fun computeFieldVisibility(descriptor: PropertyDescriptor): Visibility? = null
-
-    open fun isPropertyWithPlatformField(descriptor: PropertyDescriptor): Boolean = false
 }

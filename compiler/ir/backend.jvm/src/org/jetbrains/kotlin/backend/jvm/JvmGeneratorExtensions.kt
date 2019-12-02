@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.util.StubGeneratorExtensions
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.sam.SamAdapterDescriptor
@@ -29,7 +28,9 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.Variance
 
-object JvmGeneratorExtensions : GeneratorExtensions() {
+class JvmGeneratorExtensions(private val generateFacades: Boolean = true) : GeneratorExtensions() {
+    val classNameOverride = mutableMapOf<IrClass, JvmClassName>()
+
     override val samConversion: SamConversion
         get() = JvmSamConversion
 
@@ -66,13 +67,6 @@ object JvmGeneratorExtensions : GeneratorExtensions() {
         else
             null
 
-    override fun isPropertyWithPlatformField(descriptor: PropertyDescriptor): Boolean =
-        descriptor.hasJvmFieldAnnotation()
-}
-
-class JvmStubGeneratorExtensions : StubGeneratorExtensions() {
-    val classNameOverride = mutableMapOf<IrClass, JvmClassName>()
-
     override fun computeExternalDeclarationOrigin(descriptor: DeclarationDescriptor): IrDeclarationOrigin? =
         if (descriptor is JavaCallableMemberDescriptor)
             IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
@@ -80,6 +74,7 @@ class JvmStubGeneratorExtensions : StubGeneratorExtensions() {
             IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
 
     override fun generateFacadeClass(source: DeserializedContainerSource): IrClass? {
+        if (!generateFacades) return null
         val jvmPackagePartSource = source as? JvmPackagePartSource ?: return null
         val facadeName = jvmPackagePartSource.facadeClassName ?: jvmPackagePartSource.className
         return buildClass {
