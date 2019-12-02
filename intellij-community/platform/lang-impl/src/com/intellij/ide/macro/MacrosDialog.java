@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.macro;
 
 import com.intellij.ide.DataManager;
@@ -25,7 +25,6 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -89,8 +88,7 @@ public final class MacrosDialog extends DialogWrapper {
     setTitle(IdeBundle.message("title.macros"));
     setOKButtonText(IdeBundle.message("button.insert"));
 
-    List<Macro> macros = new ArrayList<>(MacroManager.getInstance().getMacros());
-    macros = ContainerUtil.filter(macros, macro -> MacroFilter.GLOBAL.accept(macro));
+    List<Macro> macros = ContainerUtil.filter(MacroManager.getInstance().getMacros(), macro -> MacroFilter.GLOBAL.accept(macro));
     Collections.sort(macros, new Comparator<Macro>() {
       @Override
       public int compare(Macro macro1, Macro macro2) {
@@ -111,10 +109,10 @@ public final class MacrosDialog extends DialogWrapper {
     }
 
     addListeners();
-    if (myMacrosModel.size() > 0){
+    if (myMacrosModel.size() > 0) {
       myMacrosList.setSelectedIndex(0);
     }
-    else{
+    else {
       setOKActionEnabled(false);
     }
   }

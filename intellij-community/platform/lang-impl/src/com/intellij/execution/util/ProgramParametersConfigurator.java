@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.util;
 
 import com.intellij.execution.CommonProgramRunConfigurationParameters;
@@ -28,7 +28,6 @@ import org.jetbrains.annotations.SystemIndependent;
 import org.jetbrains.jps.model.serialization.PathMacroUtil;
 
 import java.io.File;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -68,21 +67,23 @@ public class ProgramParametersConfigurator {
   }
 
   public static String expandMacros(@Nullable String path) {
-    if (path != null && Registry.is("allow.macros.for.run.configurations")) {
-      Collection<Macro> macros = MacroManager.getInstance().getMacros();
-      for (Macro macro : macros) {
-        String template = "$" + macro.getName() + "$";
-        for (int index = path.indexOf(template);
-             index != -1 && index < path.length() + template.length();
-             index = path.indexOf(template, index)) {
-          String value = StringUtil.notNullize(macro instanceof PromptMacro ? ((PromptMacro)macro).promptUser() :
-                                               macro.preview());
-          if (StringUtil.containsWhitespaces(value)) {
-            value = "\"" + value + "\"";
-          }
-          path = path.substring(0, index) + value + path.substring(index + template.length());
-          index += value.length();
+    if (path == null || !Registry.is("allow.macros.for.run.configurations")) {
+      return path;
+    }
+
+    for (Macro macro : MacroManager.getInstance().getMacros()) {
+      String template = "$" + macro.getName() + "$";
+      for (int index = path.indexOf(template);
+           index != -1 && index < path.length() + template.length();
+           index = path.indexOf(template, index)) {
+        String value = StringUtil.notNullize(macro instanceof PromptMacro ? ((PromptMacro)macro).promptUser() :
+                                             macro.preview());
+        if (StringUtil.containsWhitespaces(value)) {
+          value = "\"" + value + "\"";
         }
+        path = path.substring(0, index) + value + path.substring(index + template.length());
+        //noinspection AssignmentToForLoopParameter
+        index += value.length();
       }
     }
     return path;
