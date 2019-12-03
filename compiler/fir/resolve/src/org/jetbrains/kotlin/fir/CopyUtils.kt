@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirAnonymousFunctionImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirTypeParameterImpl
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.impl.FirCheckNotNullCallImpl
 import org.jetbrains.kotlin.fir.expressions.impl.FirFunctionCallImpl
 import org.jetbrains.kotlin.fir.expressions.impl.FirTryExpressionImpl
 import org.jetbrains.kotlin.fir.expressions.impl.FirWhenExpressionImpl
@@ -117,6 +118,17 @@ fun FirTryExpression.copy(
 ): FirTryExpressionImpl = FirTryExpressionImpl(source, tryBlock, finallyBlock).apply {
     this.calleeReference = calleeReference
     this@apply.catches.addAll(this@copy.catches)
+    this.typeRef = resultType
+    this.annotations += annotations
+}
+
+fun FirCheckNotNullCall.copy(
+    resultType: FirTypeRef = this.typeRef,
+    calleeReference: FirReference = this.calleeReference,
+    annotations: List<FirAnnotationCall> = this.annotations
+): FirCheckNotNullCallImpl = FirCheckNotNullCallImpl(source).apply {
+    this.calleeReference = calleeReference
+    this@apply.arguments.addAll(this@copy.arguments)
     this.typeRef = resultType
     this.annotations += annotations
 }

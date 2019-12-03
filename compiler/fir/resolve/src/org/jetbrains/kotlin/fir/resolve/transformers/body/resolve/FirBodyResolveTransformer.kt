@@ -113,6 +113,13 @@ open class FirBodyResolveTransformer(
         return expressionsTransformer.transformTypeOperatorCall(typeOperatorCall, data)
     }
 
+    override fun transformCheckNotNullCall(
+        checkNotNullCall: FirCheckNotNullCall,
+        data: ResolutionMode
+    ): CompositeTransformResult<FirStatement> {
+        return expressionsTransformer.transformCheckNotNullCall(checkNotNullCall, data)
+    }
+
     override fun transformBinaryLogicExpression(
         binaryLogicExpression: FirBinaryLogicExpression,
         data: ResolutionMode

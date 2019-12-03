@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 operator fun Int?.inc() = this!!.inc()
 
 public fun box() : String {

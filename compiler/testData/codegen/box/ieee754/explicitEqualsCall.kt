@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 fun equals1(a: Double, b: Double) = a.equals(b)
 
 fun equals2(a: Double?, b: Double?) = a!!.equals(b!!)

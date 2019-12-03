@@ -1,14 +1,6 @@
 FILE: lambdaInUnresolvedCall.kt
     public final fun <R> materialize(): R|R| {
-        ^materialize when (lval <bangbang>: R|kotlin/Nothing?| = Null(null)) {
-            ==($subj$, Null(null)) ->  {
-                throw <Unresolved name: KotlinNullPointerException>#()
-            }
-            else ->  {
-                R|<local>/<bangbang>|
-            }
-        }
-
+        ^materialize Null(null)!!
     }
     public final fun test_1(): R|kotlin/Unit| {
         <Unresolved name: myRun>#(<L> = myRun@fun <anonymous>(): R|kotlin/Int| {

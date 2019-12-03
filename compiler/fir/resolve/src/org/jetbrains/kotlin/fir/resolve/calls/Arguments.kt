@@ -44,7 +44,7 @@ fun Candidate.resolveArgumentExpression(
     typeProvider: (FirExpression) -> FirTypeRef?
 ) {
     return when (argument) {
-        is FirFunctionCall, is FirWhenExpression, is FirTryExpression -> resolveSubCallArgument(
+        is FirFunctionCall, is FirWhenExpression, is FirTryExpression, is FirCheckNotNullCall -> resolveSubCallArgument(
             csBuilder,
             argument as FirResolvable,
             expectedType,

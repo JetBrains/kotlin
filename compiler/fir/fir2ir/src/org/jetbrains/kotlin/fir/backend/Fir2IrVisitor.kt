@@ -45,11 +45,8 @@ import org.jetbrains.kotlin.ir.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classifierOrFail
-import org.jetbrains.kotlin.ir.types.classifierOrNull
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
-import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
@@ -1286,6 +1283,20 @@ class Fir2IrVisitor(
                 startOffset, endOffset, irType, irTypeOperator, irTypeOperand,
                 typeOperatorCall.argument.toIrExpression()
             )
+        }
+    }
+
+    override fun visitCheckNotNullCall(checkNotNullCall: FirCheckNotNullCall, data: Any?): IrElement {
+        return checkNotNullCall.convertWithOffsets { startOffset, endOffset ->
+            IrCallImpl(
+                startOffset, endOffset,
+                checkNotNullCall.typeRef.toIrType(session, declarationStorage),
+                irBuiltIns.checkNotNullSymbol,
+                IrStatementOrigin.EXCLEXCL
+            ).apply {
+                putTypeArgument(0, checkNotNullCall.argument.typeRef.toIrType(session, declarationStorage).makeNotNull())
+                putValueArgument(0, checkNotNullCall.argument.toIrExpression())
+            }
         }
     }
 

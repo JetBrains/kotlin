@@ -1,14 +1,6 @@
 FILE: delegatingConstructorCall.kt
     public final fun <K> materialize(): R|K| {
-        ^materialize when (lval <bangbang>: R|kotlin/Nothing?| = Null(null)) {
-            ==($subj$, Null(null)) ->  {
-                throw <Unresolved name: KotlinNullPointerException>#()
-            }
-            else ->  {
-                R|<local>/<bangbang>|
-            }
-        }
-
+        ^materialize Null(null)!!
     }
     public open class A1 : R|kotlin/Any| {
         public constructor(x: R|kotlin/String|): R|A1| {

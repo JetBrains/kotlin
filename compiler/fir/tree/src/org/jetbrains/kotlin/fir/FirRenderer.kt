@@ -923,6 +923,11 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         }
     }
 
+    override fun visitCheckNotNullCall(checkNotNullCall: FirCheckNotNullCall) {
+        checkNotNullCall.argument.accept(this)
+        print("!!")
+    }
+
     override fun visitCallableReferenceAccess(callableReferenceAccess: FirCallableReferenceAccess) {
         callableReferenceAccess.annotations.renderAnnotations()
         callableReferenceAccess.explicitReceiver?.accept(this)

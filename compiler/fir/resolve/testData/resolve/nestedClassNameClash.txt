@@ -1,25 +1,9 @@
 FILE: nestedClassNameClash.kt
     public final fun <T> listOf(): R|kotlin/collections/List<T>| {
-        ^listOf when (lval <bangbang>: R|kotlin/Nothing?| = Null(null)) {
-            ==($subj$, Null(null)) ->  {
-                throw <Unresolved name: KotlinNullPointerException>#()
-            }
-            else ->  {
-                R|<local>/<bangbang>|
-            }
-        }
-
+        ^listOf Null(null)!!
     }
     public final fun <T> materialize(): R|T| {
-        ^materialize when (lval <bangbang>: R|kotlin/Nothing?| = Null(null)) {
-            ==($subj$, Null(null)) ->  {
-                throw <Unresolved name: KotlinNullPointerException>#()
-            }
-            else ->  {
-                R|<local>/<bangbang>|
-            }
-        }
-
+        ^materialize Null(null)!!
     }
     public final class Result : R|kotlin/Any| {
         public constructor(): R|Result| {

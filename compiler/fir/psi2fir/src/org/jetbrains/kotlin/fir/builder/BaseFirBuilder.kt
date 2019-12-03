@@ -167,18 +167,6 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
             ?: emptyList()
     }
 
-    fun T?.bangBangToWhen(parent: KtUnaryExpression?, convert: T?.(String) -> FirExpression): FirWhenExpression {
-        val source = parent.getSourceOrNull()
-        return this.convert("No operand").generateNotNullOrOther(
-            session,
-            FirThrowExpressionImpl(
-                source, FirFunctionCallImpl(source).apply {
-                    calleeReference = FirSimpleNamedReference(source, KNPE, null)
-                }
-            ), "bangbang", source
-        )
-    }
-
     fun FirAbstractLoop.configure(generateBlock: () -> FirBlock): FirAbstractLoop {
         label = context.firLabels.pop()
         context.firLoops += this
