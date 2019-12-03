@@ -298,4 +298,23 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext,
     override fun TypeConstructorMarker.isCapturedTypeConstructor(): Boolean {
         return this is ConeCapturedTypeConstructor
     }
+
+    override fun TypeConstructorMarker.getApproximatedIntegerLiteralType(): KotlinTypeMarker {
+        TODO()
+    }
+
+    override fun KotlinTypeMarker.removeExactAnnotation(): KotlinTypeMarker {
+        // TODO
+        return this
+    }
+
+    override fun TypeConstructorMarker.toErrorType(): SimpleTypeMarker {
+        require(this is ErrorTypeConstructor)
+        return ConeClassErrorType(reason)
+    }
+
+    override fun findCommonIntegerLiteralTypesSuperType(explicitSupertypes: List<SimpleTypeMarker>): SimpleTypeMarker? {
+        // TODO: implement
+        return null
+    }
 }

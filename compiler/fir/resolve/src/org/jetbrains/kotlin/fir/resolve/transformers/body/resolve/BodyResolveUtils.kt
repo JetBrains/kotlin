@@ -43,26 +43,8 @@ internal interface UniversalConeInferenceContext :
 internal fun FirSession.inferenceContext(): UniversalConeInferenceContext {
     val session = this
     return object : UniversalConeInferenceContext {
-        override fun findCommonIntegerLiteralTypesSuperType(explicitSupertypes: List<SimpleTypeMarker>): SimpleTypeMarker? {
-            // TODO: implement
-            return null
-        }
-
-        override fun TypeConstructorMarker.getApproximatedIntegerLiteralType(): KotlinTypeMarker {
-            TODO("not implemented")
-        }
-
         override val session: FirSession
             get() = session
-
-        override fun KotlinTypeMarker.removeExactAnnotation(): KotlinTypeMarker {
-            return this
-        }
-
-        override fun TypeConstructorMarker.toErrorType(): SimpleTypeMarker {
-            require(this is ErrorTypeConstructor)
-            return ConeClassErrorType(reason)
-        }
     }
 }
 

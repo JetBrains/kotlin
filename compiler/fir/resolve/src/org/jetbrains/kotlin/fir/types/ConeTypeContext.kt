@@ -496,7 +496,7 @@ class ConeTypeCheckerContext(
     override val isErrorTypeEqualsToAnything: Boolean,
     override val isStubTypeEqualsToAnything: Boolean,
     override val session: FirSession
-) : AbstractTypeCheckerContext(), ConeTypeContext {
+) : AbstractTypeCheckerContext(), ConeInferenceContext {
     override fun substitutionSupertypePolicy(type: SimpleTypeMarker): SupertypesPolicy {
         if (type.argumentsCount() == 0) return SupertypesPolicy.LowerIfFlexible
         require(type is ConeKotlinType)
@@ -530,7 +530,7 @@ class ConeTypeCheckerContext(
     }
 
     override fun prepareType(type: KotlinTypeMarker): KotlinTypeMarker {
-        return super<ConeTypeContext>.prepareType(type)
+        return super<ConeInferenceContext>.prepareType(type)
     }
 
     override fun refineType(type: KotlinTypeMarker): KotlinTypeMarker {
