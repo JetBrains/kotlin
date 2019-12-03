@@ -39,6 +39,24 @@ class BuildOutputInstantReaderImplTest {
   }
 
   @Test
+  fun `test reading with too greedy parser`() {
+    val greedyParser = BuildOutputParser { _, reader, _ ->
+      var count = 0
+      while (count <= pushBackBufferSize && reader.readLine() != null) {
+        count++
+      }
+      reader.pushBack(count)
+      return@BuildOutputParser false
+    }
+
+    doTest(mutableListOf(
+      createParser("[info]", INFO),
+      greedyParser,
+      createParser("[error]", ERROR),
+      createParser("[warning]", WARNING)), false)
+  }
+
+  @Test
   fun `test bad parser pushed back too many lines`() {
     val badParser = BuildOutputParser { _, reader, _ ->
       reader.pushBack(pushBackBufferSize * 2)
@@ -87,7 +105,7 @@ class BuildOutputInstantReaderImplTest {
   }
 
   companion object {
-    private fun doTest(parsers: MutableList<BuildOutputParser>) {
+    private fun doTest(parsers: MutableList<BuildOutputParser>, assertUnparsedLines: Boolean = true) {
       val messages = mutableListOf<String>()
 
       val unparsedLines = mutableListOf<String>()
@@ -126,7 +144,9 @@ class BuildOutputInstantReaderImplTest {
       }
       outputReader.append(inputData).closeAndGetFuture().get()
 
-      Assert.assertEquals(trashOut + trashOut, unparsedLines)
+      if (assertUnparsedLines) {
+        Assert.assertEquals(trashOut + trashOut, unparsedLines)
+      }
       Assert.assertEquals("""
         error1
         info1

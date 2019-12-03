@@ -154,6 +154,9 @@ open class BuildOutputInstantReaderImpl @JvmOverloads constructor(
 
   override fun pushBack(numberOfLines: Int) {
     readLinesBufferPosition += numberOfLines
+    if (readLinesBufferPosition >= pushBackBufferSize) {
+      readLinesBufferPosition = pushBackBufferSize - 1
+    }
   }
 
   @ApiStatus.Experimental
