@@ -8,6 +8,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.application.impl.NonBlockingReadActionImpl;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.event.DocumentEvent;
@@ -146,7 +147,7 @@ public final class PsiDocumentManagerImpl extends PsiDocumentManagerBase {
   @TestOnly
   public void clearUncommittedDocuments() {
     super.clearUncommittedDocuments();
-    ((DocumentCommitThread)myDocumentCommitProcessor).clearQueue();
+    NonBlockingReadActionImpl.cancelAllTasks();
   }
 
   @NotNull
