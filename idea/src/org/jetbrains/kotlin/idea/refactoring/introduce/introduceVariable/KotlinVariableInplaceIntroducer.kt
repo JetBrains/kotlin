@@ -15,7 +15,6 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiReference
-import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil
 import com.intellij.ui.NonFocusableCheckBox
 import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyIntention
 import org.jetbrains.kotlin.idea.refactoring.introduce.AbstractKotlinInplaceIntroducer
@@ -26,6 +25,7 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.psi.psiUtil.isIdentifier
 import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -34,7 +34,7 @@ import java.util.*
 import javax.swing.JCheckBox
 
 class KotlinVariableInplaceIntroducer(
-    val addedVariable: KtProperty,
+    addedVariable: KtProperty,
     originalExpression: KtExpression?,
     occurrencesToReplace: Array<KtExpression>,
     suggestedNames: Collection<String>,
@@ -55,6 +55,8 @@ class KotlinVariableInplaceIntroducer(
 ) {
     private val suggestedNames = suggestedNames.toTypedArray()
     private var expressionTypeCheckBox: JCheckBox? = null
+    private val addedVariablePointer = addedVariable.createSmartPointer()
+    private val addedVariable get() = addedVariablePointer.element
 
     init {
         initFormComponents {
@@ -103,8 +105,9 @@ class KotlinVariableInplaceIntroducer(
     override fun createFieldToStartTemplateOn(replaceAll: Boolean, names: Array<out String>) = addedVariable
 
     override fun addAdditionalVariables(builder: TemplateBuilderImpl) {
-        addedVariable.typeReference?.let {
-            val expression = SpecifyTypeExplicitlyIntention.createTypeExpressionForTemplate(expressionType!!, addedVariable) ?: return@let
+        val variable = addedVariable ?: return
+        variable.typeReference?.let {
+            val expression = SpecifyTypeExplicitlyIntention.createTypeExpressionForTemplate(expressionType!!, variable) ?: return@let
             builder.replaceElement(it, "TypeReferenceVariable", expression, false)
         }
     }
@@ -120,10 +123,11 @@ class KotlinVariableInplaceIntroducer(
         myEditor.caretModel.moveToOffset(nameIdentifier!!.startOffset)
 
         val result = super.buildTemplateAndStart(refs, stringUsages, scope, containingFile)
-
-        val templateState = TemplateManagerImpl.getTemplateState(InjectedLanguageUtil.getTopLevelEditor(myEditor))
-        if (templateState != null && addedVariable.typeReference != null) {
-            templateState.addTemplateStateListener(SpecifyTypeExplicitlyIntention.createTypeReferencePostprocessor(addedVariable))
+        val templateState = TemplateManagerImpl
+            .getTemplateState(com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil.getTopLevelEditor(myEditor))
+        val variable = addedVariable
+        if (templateState != null && variable?.typeReference != null) {
+            templateState.addTemplateStateListener(SpecifyTypeExplicitlyIntention.createTypeReferencePostprocessor(variable))
         }
 
         return result
@@ -153,7 +157,7 @@ class KotlinVariableInplaceIntroducer(
         val replacement = KtPsiFactory(myProject).createExpression(newName)
 
         runWriteAction {
-            addedVariable.setName(newName)
+            addedVariable?.setName(newName)
             occurrences.forEach {
                 if (it.isValid) {
                     it.replace(replacement)
@@ -165,7 +169,7 @@ class KotlinVariableInplaceIntroducer(
     override fun moveOffsetAfter(success: Boolean) {
         super.moveOffsetAfter(success)
         if (success) {
-            postProcess(addedVariable)
+            addedVariable?.let { postProcess(it) }
         }
     }
 }
