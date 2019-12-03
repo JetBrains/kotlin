@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.conversion.copy
 import com.intellij.codeInsight.editorActions.CopyPastePostProcessor
 import com.intellij.codeInsight.editorActions.TextBlockTransferableData
 import com.intellij.ide.highlighter.JavaFileType
+import com.intellij.openapi.diagnostic.ControlFlowException
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.RangeMarker
@@ -90,6 +91,7 @@ class ConvertTextJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransf
                 return listOf(MyTransferableData(text))
             }
         } catch (e: Throwable) {
+            if (e is ControlFlowException) throw e
             LOG.error(e)
         }
         return emptyList()

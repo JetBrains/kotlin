@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.refactoring.cutPaste
 
 import com.intellij.codeInsight.editorActions.CopyPastePostProcessor
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.diagnostic.ControlFlowException
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.RangeMarker
@@ -80,6 +81,7 @@ class MoveDeclarationsCopyPasteProcessor : CopyPastePostProcessor<MoveDeclaratio
                 return listOf(content.getTransferData(MoveDeclarationsTransferableData.DATA_FLAVOR) as MoveDeclarationsTransferableData)
             }
         } catch (e: Throwable) {
+            if (e is ControlFlowException) throw e
             LOG.error(e)
         }
         return emptyList()
