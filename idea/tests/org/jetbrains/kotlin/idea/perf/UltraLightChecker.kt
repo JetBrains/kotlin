@@ -11,9 +11,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Conditions
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.*
-import com.intellij.psi.impl.light.LightElement
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.PairProcessor
 import com.intellij.util.ref.DebugReflectionUtil
@@ -80,6 +78,13 @@ object UltraLightChecker {
     fun checkClassEquivalence(ktClass: KtClassOrObject): KtUltraLightClass? {
         val gold = KtLightClassForSourceDeclaration.createNoCache(ktClass, forceUsingOldLightClasses = true)
         val ultraLightClass = LightClassGenerationSupport.getInstance(ktClass.project).createUltraLightClass(ktClass) ?: return null
+
+        val secondULInstance = LightClassGenerationSupport.getInstance(ktClass.project).createUltraLightClass(ktClass)
+        Assert.assertNotNull(secondULInstance)
+        Assert.assertTrue(ultraLightClass !== secondULInstance)
+        secondULInstance!!
+        Assert.assertEquals(ultraLightClass.ownMethods.size, secondULInstance.ownMethods.size)
+        Assert.assertTrue(ultraLightClass.ownMethods.containsAll(secondULInstance.ownMethods))
 
         checkClassEquivalenceByRendering(gold, ultraLightClass)
 

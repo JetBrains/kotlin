@@ -403,7 +403,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
         }
         val primary = classOrObject.primaryConstructor
         if (primary != null && shouldGenerateNoArgOverload(primary)) {
-            result.add(noArgConstructor(primary.simpleVisibility(), primary))
+            result.add(noArgConstructor(primary.simpleVisibility(), primary, METHOD_INDEX_FOR_NO_ARG_OVERLOAD_CTOR))
         }
         return result
     }
@@ -425,15 +425,20 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
                 classOrObject is KtEnumEntry -> PsiModifier.PACKAGE_LOCAL
                 else -> PsiModifier.PUBLIC
             }
-        return noArgConstructor(visibility, classOrObject)
+        return noArgConstructor(visibility, classOrObject, METHOD_INDEX_FOR_DEFAULT_CTOR)
     }
 
-    private fun noArgConstructor(visibility: String, declaration: KtDeclaration): KtUltraLightMethod =
+    private fun noArgConstructor(
+        visibility: String,
+        declaration: KtDeclaration,
+        methodIndex: Int
+    ): KtUltraLightMethod =
         KtUltraLightMethodForSourceDeclaration(
             LightMethodBuilder(manager, language, name.orEmpty()).setConstructor(true).addModifier(visibility),
             declaration,
             support,
-            this
+            this,
+            methodIndex
         )
 
     private fun isHiddenByDeprecation(declaration: KtDeclaration): Boolean {
