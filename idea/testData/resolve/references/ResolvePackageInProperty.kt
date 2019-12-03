@@ -1,3 +1,5 @@
+// IGNORE_FIR
+
 package test1.test2
 
 class Some()

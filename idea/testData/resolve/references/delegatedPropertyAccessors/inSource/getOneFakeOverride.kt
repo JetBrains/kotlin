@@ -1,3 +1,5 @@
+// IGNORE_FIR
+
 var x : Int <caret>by Baz()
 
 interface Foo {

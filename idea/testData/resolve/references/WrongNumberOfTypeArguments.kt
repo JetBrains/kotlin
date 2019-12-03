@@ -1,3 +1,5 @@
+// IGNORE_FIR
+
 package foo
 
 class A
