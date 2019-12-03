@@ -26,11 +26,20 @@ public class GotoSymbolModel2 extends FilteringGotoByModel<Language> {
   public GotoSymbolModel2(@NotNull Project project, @NotNull ChooseByNameContributor[] contributors) {
     super(project, contributors);
     myAllContributors = false;
+    addEpListener(project);
   }
 
   public GotoSymbolModel2(@NotNull Project project) {
     super(project, new ChooseByNameContributor[0]);
     myAllContributors = true;
+    addEpListener(project);
+  }
+
+  private void addEpListener(@NotNull Project project) {
+    ChooseByNameContributor.CLASS_EP_NAME.addExtensionPointListener(
+      (e, pd) -> { mySeparators = null; },
+      (e, pd) -> { mySeparators = null; },
+      project);
   }
 
   @Override
