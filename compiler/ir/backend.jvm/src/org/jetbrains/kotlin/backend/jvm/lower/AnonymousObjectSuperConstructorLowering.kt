@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irTemporary
@@ -72,7 +73,9 @@ private class AnonymousObjectSuperConstructorLowering(val context: JvmBackendCon
         val newArguments = mutableListOf<IrExpression>()
         fun addArgument(value: IrExpression): IrValueParameter {
             newArguments.add(value)
-            return objectConstructor.addValueParameter("\$super_call_param\$${newArguments.size}", value.type)
+            return objectConstructor.addValueParameter(
+                "\$super_call_param\$${newArguments.size}", value.type, JvmLoweredDeclarationOrigin.OBJECT_SUPER_CONSTRUCTOR_PARAMETER
+            )
         }
 
         fun IrDelegatingConstructorCall.transform(lift: List<IrVariable>) = apply {

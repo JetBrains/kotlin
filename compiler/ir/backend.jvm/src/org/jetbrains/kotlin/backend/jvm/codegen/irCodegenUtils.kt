@@ -7,14 +7,15 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.backend.common.ir.ir2string
+import org.jetbrains.kotlin.backend.common.lower.BOUND_RECEIVER_PARAMETER
+import org.jetbrains.kotlin.backend.common.lower.BOUND_VALUE_PARAMETER
 import org.jetbrains.kotlin.backend.common.lower.allOverridden
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.*
-import org.jetbrains.kotlin.codegen.AsmUtil.LABELED_THIS_PARAMETER
-import org.jetbrains.kotlin.codegen.AsmUtil.RECEIVER_PARAMETER_NAME
 import org.jetbrains.kotlin.codegen.inline.DefaultSourceMapper
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -413,78 +414,42 @@ fun IrClass.isOptionalAnnotationClass(): Boolean =
 
 /* From generateJava8ParameterNames.kt */
 
-fun generateParameterNames(
-    irFunction: IrFunction,
-    mv: MethodVisitor,
-    jvmSignature: JvmMethodSignature,
-    state: GenerationState
-) {
+fun generateParameterNames(irFunction: IrFunction, mv: MethodVisitor, jvmSignature: JvmMethodSignature, state: GenerationState) {
     val iterator = irFunction.valueParameters.iterator()
     val kotlinParameterTypes = jvmSignature.valueParameters
-    var isEnumName = true
 
     kotlinParameterTypes.forEachIndexed { index, parameterSignature ->
-        val kind = parameterSignature.kind
-
-        val name = when (kind) {
-            JvmMethodParameterKind.ENUM_NAME_OR_ORDINAL -> {
-                isEnumName = !isEnumName
-                if (!isEnumName) "\$enum\$name" else "\$enum\$ordinal"
-            }
-            JvmMethodParameterKind.RECEIVER -> {
-                getNameForReceiverParameter(irFunction, state.languageVersionSettings)
-            }
-            JvmMethodParameterKind.OUTER -> AsmUtil.CAPTURED_THIS_FIELD
-            JvmMethodParameterKind.VALUE -> iterator.next().name.asString()
-
-            JvmMethodParameterKind.CONSTRUCTOR_MARKER,
-            JvmMethodParameterKind.SUPER_CALL_PARAM,
-            JvmMethodParameterKind.CAPTURED_LOCAL_VARIABLE,
-            JvmMethodParameterKind.THIS -> {
-                //we can't generate null name cause of jdk problem #9045294
-                "arg" + index
-            }
+        val irParameter = when (parameterSignature.kind) {
+            JvmMethodParameterKind.RECEIVER -> irFunction.extensionReceiverParameter!!
+            else -> iterator.next()
         }
-
-        //A construct emitted by a Java compiler must be marked as synthetic if it does not correspond to a construct declared explicitly or
-        // implicitly in source code, unless the emitted construct is a class initialization method (JVMS §2.9).
-        //A construct emitted by a Java compiler must be marked as mandated if it corresponds to a formal parameter
+        val name = when {
+            irParameter == irFunction.extensionReceiverParameter -> getNameForReceiverParameter(irFunction, state.languageVersionSettings)
+            irParameter.origin == JvmLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS -> AsmUtil.CAPTURED_THIS_FIELD
+            else -> irParameter.name.asString()
+        }
+        // A construct emitted by a Java compiler must be marked as synthetic if it does not correspond to a construct declared
+        // explicitly or implicitly in source code, unless the emitted construct is a class initialization method (JVMS §2.9).
+        // A construct emitted by a Java compiler must be marked as mandated if it corresponds to a formal parameter
         // declared implicitly in source code (§8.8.1, §8.8.9, §8.9.3, §15.9.5.1).
-        val access = when (kind) {
-            JvmMethodParameterKind.ENUM_NAME_OR_ORDINAL -> Opcodes.ACC_SYNTHETIC
-            JvmMethodParameterKind.RECEIVER -> Opcodes.ACC_MANDATED
-            JvmMethodParameterKind.OUTER -> Opcodes.ACC_MANDATED
-            JvmMethodParameterKind.VALUE -> 0
-
-            JvmMethodParameterKind.CONSTRUCTOR_MARKER,
-            JvmMethodParameterKind.SUPER_CALL_PARAM,
-            JvmMethodParameterKind.CAPTURED_LOCAL_VARIABLE,
-            JvmMethodParameterKind.THIS -> Opcodes.ACC_SYNTHETIC
+        val access = when {
+            irParameter == irFunction.extensionReceiverParameter -> Opcodes.ACC_MANDATED
+            irParameter.origin == JvmLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS -> Opcodes.ACC_MANDATED
+            // TODO mark these backend-common origins as synthetic? (note: ExpressionCodegen is still expected
+            //      to generate LVT entries for them)
+            irParameter.origin == IrDeclarationOrigin.MOVED_RECEIVER_PARAMETER -> Opcodes.ACC_SYNTHETIC
+            irParameter.origin == BOUND_VALUE_PARAMETER -> Opcodes.ACC_SYNTHETIC
+            irParameter.origin == BOUND_RECEIVER_PARAMETER -> Opcodes.ACC_SYNTHETIC
+            irParameter.origin.isSynthetic -> Opcodes.ACC_SYNTHETIC
+            else -> 0
         }
-
         mv.visitParameter(name, access)
     }
 }
 
-/* From AsmUtil.java */
-
-fun getNameForReceiverParameter(
-    irFunction: IrFunction,
-    languageVersionSettings: LanguageVersionSettings
-): String {
-    return getLabeledThisNameForReceiver(
-        irFunction, languageVersionSettings, LABELED_THIS_PARAMETER, RECEIVER_PARAMETER_NAME
-    )
-}
-
-private fun getLabeledThisNameForReceiver(
-    irFunction: IrFunction,
-    languageVersionSettings: LanguageVersionSettings,
-    prefix: String,
-    defaultName: String
-): String {
+private fun getNameForReceiverParameter(irFunction: IrFunction, languageVersionSettings: LanguageVersionSettings): String {
     if (!languageVersionSettings.supportsFeature(LanguageFeature.NewCapturedReceiverFieldNamingConvention)) {
-        return defaultName
+        return AsmUtil.RECEIVER_PARAMETER_NAME
     }
 
     // Current codegen never touches CALL_LABEL_FOR_LAMBDA_ARGUMENT
@@ -497,17 +462,10 @@ private fun getLabeledThisNameForReceiver(
 
 //    val callableName = irFunction.descriptor.safeAs<VariableAccessorDescriptor>()?.correspondingVariable?.name ?: irFunction.descriptor.name
     val callableName = irFunction.safeAs<IrSimpleFunction>()?.correspondingPropertySymbol?.owner?.name ?: irFunction.name
-
-    return if (callableName.isSpecial) {
-        defaultName
-    } else getLabeledThisName(callableName.asString(), prefix, defaultName)
-
-}
-
-fun getLabeledThisName(callableName: String, prefix: String, defaultName: String): String {
-    return if (!Name.isValidIdentifier(callableName)) {
-        defaultName
-    } else prefix + mangleNameIfNeeded(callableName)
+    return if (callableName.isSpecial || !Name.isValidIdentifier(callableName.asString()))
+        AsmUtil.RECEIVER_PARAMETER_NAME
+    else
+        AsmUtil.LABELED_THIS_PARAMETER + mangleNameIfNeeded(callableName.asString())
 }
 
 val IrAnnotationContainer.deprecationFlags: Int

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.irArray
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -169,9 +170,9 @@ private class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringP
             val descriptor = WrappedValueParameterDescriptor()
             return IrValueParameterImpl(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                IrDeclarationOrigin.DEFINED,
+                JvmLoweredDeclarationOrigin.ENUM_CONSTRUCTOR_SYNTHETIC_PARAMETER,
                 IrValueParameterSymbolImpl(descriptor),
-                Name.identifier("name"),
+                Name.identifier("\$enum\$name"),
                 index = 0,
                 type = context.irBuiltIns.stringType,
                 varargElementType = null,
@@ -187,9 +188,9 @@ private class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringP
             val descriptor = WrappedValueParameterDescriptor()
             return IrValueParameterImpl(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                IrDeclarationOrigin.DEFINED,
+                JvmLoweredDeclarationOrigin.ENUM_CONSTRUCTOR_SYNTHETIC_PARAMETER,
                 IrValueParameterSymbolImpl(descriptor),
-                Name.identifier("ordinal"),
+                Name.identifier("\$enum\$ordinal"),
                 index = 1,
                 type = context.irBuiltIns.intType,
                 varargElementType = null,
