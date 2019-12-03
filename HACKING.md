@@ -189,7 +189,7 @@ Otherwise issues will arise.
 Direct `kotlin-native` build to the kotlin with `kotlinProjectPath` in native's `gradle.properties`.
 
 Now you have the kotlin + kotlin-native combination that is known to build.
-Apply your fix on top of both workspaces and run 
+Apply your fix on top of both workspaces and run
 ```
 $ ./gradlew dist
 ```
@@ -203,7 +203,7 @@ For a quick check use:
 $ ./gradlew sanity 2>&1 | tee log
 ```
 
-For a longer, more thorough testing build the complete build. Make sure you are runing it on a osx. 
+For a longer, more thorough testing build the complete build. Make sure you are running it on a macOS. 
 
 
 Have a complete build:
