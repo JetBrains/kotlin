@@ -356,6 +356,10 @@ public final class PushedFilePropertiesUpdaterImpl extends PushedFilePropertiesU
   }
 
   private void applyPushersToFile(final VirtualFile fileOrDir, @NotNull List<? extends FilePropertyPusher<?>> pushers, final Object[] moduleValues) {
+    if (fileOrDir.isDirectory()) {
+      fileOrDir.getChildren(); // outside read action to avoid freezes
+    }
+
     ApplicationManager.getApplication().runReadAction(() -> {
       ProgressManager.checkCanceled();
       if (!fileOrDir.isValid()) return;
