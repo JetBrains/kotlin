@@ -44,6 +44,8 @@ dependencies {
     compileOnly(project(":kotlin-annotation-processing"))
     compileOnly(project(":kotlin-annotation-processing-gradle"))
     compileOnly(project(":kotlin-scripting-compiler"))
+    compileOnly(project(":kotlin-gradle-statistics"))
+    embedded(project(":kotlin-gradle-statistics"))
 
     compile("com.google.code.gson:gson:${rootProject.extra["versions.jar.gson"]}")
     compile("de.undercouch:gradle-download-task:4.0.2")
