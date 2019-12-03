@@ -204,6 +204,7 @@ class AutoImportProjectTracker(private val project: Project) : ExternalSystemPro
     LOG.debug("Project tracker initialization")
     val connections = ApplicationManager.getApplication().messageBus.connect(project)
     connections.subscribe(BatchFileChangeListener.TOPIC, createProjectChangesListener())
+    dispatcher.usePassThroughInUnitTestMode()
     dispatcher.activate()
   }
 
@@ -217,7 +218,6 @@ class AutoImportProjectTracker(private val project: Project) : ExternalSystemPro
   }
 
   init {
-    dispatcher.usePassThroughInUnitTestMode()
     val notificationAware = ProjectNotificationAware.getInstance(project)
     projectRefreshOperation.beforeOperation { LOG.debug("Project refresh started") }
     projectRefreshOperation.beforeOperation { notificationAware.notificationExpire() }
