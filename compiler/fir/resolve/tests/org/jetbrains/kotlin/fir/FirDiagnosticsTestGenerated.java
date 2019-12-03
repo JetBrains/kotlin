@@ -489,6 +489,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/localInnerClass.kt");
         }
 
+        @TestMetadata("localObjects.kt")
+        public void testLocalObjects() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/localObjects.kt");
+        }
+
         @TestMetadata("localScopes.kt")
         public void testLocalScopes() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/localScopes.kt");

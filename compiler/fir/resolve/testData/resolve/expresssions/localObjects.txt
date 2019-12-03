@@ -1,0 +1,44 @@
+FILE: localObjects.kt
+    public final object A : R|kotlin/Any| {
+        private constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Int| = Int(0)
+            public get(): R|kotlin/Int|
+
+    }
+    public open class Foo : R|kotlin/Any| {
+        public constructor(): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(): R|kotlin/Int| {
+            ^foo Int(1)
+        }
+
+    }
+    public final fun test(): R|kotlin/Unit| {
+        Q|A|.R|/A.x|
+        lval b: R|anonymous| = object : R|Foo| {
+            private constructor(): R|Foo| {
+                super<R|Foo|>()
+            }
+
+        }
+
+        R|<local>/b|.R|/Foo.foo|()
+        local final object B : R|kotlin/Any| {
+            private constructor(): R|B| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun foo(): R|kotlin/Unit| {
+            }
+
+        }
+
+        Q|B|.R|/B.foo|()
+    }
+    public final val bb: <ERROR TYPE REF: Unresolved name: foo> = <Unresolved name: B>#.<Unresolved name: foo>#()
+        public get(): <ERROR TYPE REF: Unresolved name: foo>

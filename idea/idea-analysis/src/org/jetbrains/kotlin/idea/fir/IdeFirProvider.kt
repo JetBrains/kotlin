@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.idea.stubindex.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 
 class IdeFirProvider(
@@ -79,6 +81,20 @@ class IdeFirProvider(
     override fun getFirClassifierContainerFileIfAny(fqName: ClassId): FirFile? {
         getFirClassifierByFqName(fqName)
         return cacheProvider.getFirClassifierContainerFileIfAny(fqName)
+    }
+
+    override fun getFirClassifierContainerFile(symbol: FirClassLikeSymbol<*>): FirFile {
+        return getFirClassifierContainerFileIfAny(symbol)
+            ?: error("Couldn't find container for ${symbol.classId}")
+    }
+
+    override fun getFirClassifierContainerFileIfAny(symbol: FirClassLikeSymbol<*>): FirFile? {
+        val psi = symbol.fir.source?.psi
+        if (psi is KtClassOrObject && psi.isLocal) {
+            val ktFile = psi.containingKtFile
+            return getOrBuildFile(ktFile)
+        }
+        return getFirClassifierContainerFileIfAny(symbol.classId)
     }
 
     override fun getFirCallableContainerFile(symbol: FirCallableSymbol<*>): FirFile? {
