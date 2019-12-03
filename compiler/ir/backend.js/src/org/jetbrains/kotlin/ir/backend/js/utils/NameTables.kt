@@ -274,9 +274,9 @@ class NameTables(
 
         if (field.isEffectivelyExternal()) {
             memberNames.declareStableName(signature, field.name.identifier)
+        } else {
+            memberNames.declareFreshName(signature, "_" + sanitizeName(field.name.asString()))
         }
-
-        memberNames.declareFreshName(signature, "_" + sanitizeName(field.name.asString()))
     }
 
     private fun generateNameForMemberFunction(declaration: IrSimpleFunction) {
