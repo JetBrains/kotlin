@@ -11,13 +11,5 @@ FILE: nullability.kt
 
     }
     public? final? fun bang(arg: Int?): <implicit> {
-        ^bang when (lval <bangbang>: <implicit> = arg#) {
-            ==($subj$, Null(null)) ->  {
-                throw KotlinNullPointerException#()
-            }
-            else ->  {
-                R|<local>/<bangbang>|
-            }
-        }
-
+        ^bang arg#!!
     }

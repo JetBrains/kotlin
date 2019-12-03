@@ -7,15 +7,7 @@ FILE: factoryFunctionOverloads.kt
 
     }
     public final fun A(b: R|B?|, flag: R|kotlin/Boolean| = Boolean(true)): R|A| {
-        ^A R|/A.A|(when (lval <bangbang>: R|B?| = R|<local>/b|) {
-            ==($subj$, Null(null)) ->  {
-                throw R|kotlin/KotlinNullPointerException.KotlinNullPointerException|()
-            }
-            else ->  {
-                R|<local>/<bangbang>|
-            }
-        }
-        , R|<local>/flag|)
+        ^A R|/A.A|(R|<local>/b|!!, R|<local>/flag|)
     }
     public final fun A(c: R|C|, flag: R|kotlin/Boolean| = Boolean(true)): R|A| {
         ^A R|/A.A|(R|<local>/c|.R|/C.b|, R|<local>/flag|)

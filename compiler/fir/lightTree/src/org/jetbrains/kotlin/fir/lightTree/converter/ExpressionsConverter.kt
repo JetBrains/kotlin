@@ -306,28 +306,33 @@ class ExpressionsConverter(
         }
 
         val operationToken = operationTokenName.getOperationSymbol()
-        if (operationToken == EXCLEXCL) {
-            return argument.bangBangToWhen(null) { getAsFirExpression(this, it) }
-        }
-
         val conventionCallName = operationToken.toUnaryName()
-        return if (conventionCallName != null) {
-            if (operationToken in OperatorConventions.INCREMENT_OPERATIONS) {
-                return generateIncrementOrDecrementBlock(
-                    null,
-                    argument,
-                    callName = conventionCallName,
-                    prefix = unaryExpression.tokenType == PREFIX_EXPRESSION
-                ) { getAsFirExpression(this) }
+        return when {
+            operationToken == EXCLEXCL -> {
+                FirCheckNotNullCallImpl(null).apply {
+                    arguments += getAsFirExpression<FirExpression>(argument, "No operand")
+                }
+
             }
-            FirFunctionCallImpl(null).apply {
-                calleeReference = FirSimpleNamedReference(null, conventionCallName, null)
-                explicitReceiver = getAsFirExpression(argument, "No operand")
+            conventionCallName != null -> {
+                if (operationToken in OperatorConventions.INCREMENT_OPERATIONS) {
+                    return generateIncrementOrDecrementBlock(
+                        null,
+                        argument,
+                        callName = conventionCallName,
+                        prefix = unaryExpression.tokenType == PREFIX_EXPRESSION
+                    ) { getAsFirExpression(this) }
+                }
+                FirFunctionCallImpl(null).apply {
+                    calleeReference = FirSimpleNamedReference(null, conventionCallName, null)
+                    explicitReceiver = getAsFirExpression(argument, "No operand")
+                }
             }
-        } else {
-            val firOperation = operationToken.toFirOperation()
-            FirOperatorCallImpl(null, firOperation).apply {
-                arguments += getAsFirExpression<FirExpression>(argument, "No operand")
+            else -> {
+                val firOperation = operationToken.toFirOperation()
+                FirOperatorCallImpl(null, firOperation).apply {
+                    arguments += getAsFirExpression<FirExpression>(argument, "No operand")
+                }
             }
         }
     }

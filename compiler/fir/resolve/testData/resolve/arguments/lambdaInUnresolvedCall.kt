@@ -1,4 +1,4 @@
-fun <R> materialize(): R = <!UNRESOLVED_REFERENCE!>null!!<!>
+fun <R> materialize(): R = null!!
 
 fun test_1() {
     <!UNRESOLVED_REFERENCE!>myRun<!> {

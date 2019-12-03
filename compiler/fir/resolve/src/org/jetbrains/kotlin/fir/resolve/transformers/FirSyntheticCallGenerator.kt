@@ -16,10 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirSimpleFunctionImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirTypeParameterImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
-import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirTryExpression
-import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirFunctionCallImpl
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.impl.FirStubReference
@@ -28,6 +25,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleter
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
+import org.jetbrains.kotlin.fir.resolve.withNullability
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.SyntheticCallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -51,6 +49,7 @@ class FirSyntheticCallGenerator(
     private val whenSelectFunction: FirSimpleFunctionImpl = generateSyntheticSelectFunction(SyntheticCallableId.WHEN)
     private val trySelectFunction: FirSimpleFunctionImpl = generateSyntheticSelectFunction(SyntheticCallableId.TRY)
     private val idFunction: FirSimpleFunctionImpl = generateSyntheticSelectFunction(SyntheticCallableId.ID)
+    private val checkNotNullFunction: FirSimpleFunctionImpl = generateSyntheticCheckNotNullFunction()
 
     fun generateCalleeForWhenExpression(whenExpression: FirWhenExpression): FirWhenExpression? {
         val stubReference = whenExpression.calleeReference
@@ -88,6 +87,19 @@ class FirSyntheticCallGenerator(
         ) ?: return null // TODO
 
         return tryExpression.transformCalleeReference(UpdateReference, reference)
+    }
+
+    fun generateCalleeForCheckNotNullCall(checkNotNullCall: FirCheckNotNullCall): FirCheckNotNullCall? {
+        val stubReference = checkNotNullCall.calleeReference
+        if (stubReference !is FirStubReference) return null
+
+        val reference = generateCalleeReferenceWithCandidate(
+            checkNotNullFunction,
+            checkNotNullCall.arguments,
+            SyntheticCallableId.CHECK_NOT_NULL.callableName
+        ) ?: return null // TODO
+
+        return checkNotNullCall.transformCalleeReference(UpdateReference, reference)
     }
 
     fun resolveCallableReferenceWithSyntheticOuterCall(
@@ -140,12 +152,15 @@ class FirSyntheticCallGenerator(
         implicitReceiverStack = implicitReceiverStack
     ) { it.resultType }
 
-    private fun generateSyntheticSelectFunction(callableId: CallableId, isVararg: Boolean = true): FirSimpleFunctionImpl {
+    private fun generateSyntheticSelectFunction(callableId: CallableId): FirSimpleFunctionImpl {
+        // Synthetic function signature:
+        //   fun <K> select(vararg values: K): K
         val functionSymbol = FirSyntheticFunctionSymbol(callableId)
         val typeParameterSymbol = FirTypeParameterSymbol()
-        val typeParameter = FirTypeParameterImpl(null, session, Name.identifier("K"), typeParameterSymbol, Variance.INVARIANT, false).apply {
-            addDefaultBoundIfNecessary()
-        }
+        val typeParameter =
+            FirTypeParameterImpl(null, session, Name.identifier("K"), typeParameterSymbol, Variance.INVARIANT, false).apply {
+                addDefaultBoundIfNecessary()
+            }
 
         val returnType = FirResolvedTypeRefImpl(null, ConeTypeParameterTypeImpl(typeParameterSymbol.toLookupTag(), false))
 
@@ -154,7 +169,38 @@ class FirSyntheticCallGenerator(
 
         return generateMemberFunction(session, functionSymbol, callableId.callableName, typeArgument.typeRef).apply {
             typeParameters += typeParameter
-            valueParameters += argumentType.toValueParameter(session, "branches", isVararg)
+            valueParameters += argumentType.toValueParameter(session, "branches", isVararg = true)
+        }
+    }
+
+    private fun generateSyntheticCheckNotNullFunction(): FirSimpleFunctionImpl {
+        // Synthetic function signature:
+        //   fun <K> checkNotNull(arg: K?): K
+        //
+        // Note: The upper bound of `K` cannot be `Any` because of the following case:
+        //   fun <X> test(a: X) = a!!
+        // `X` is not a subtype of `Any` and hence cannot satisfy `K` if it had an upper bound of `Any`.
+        val functionSymbol = FirSyntheticFunctionSymbol(SyntheticCallableId.CHECK_NOT_NULL)
+        val typeParameterSymbol = FirTypeParameterSymbol()
+        val typeParameter =
+            FirTypeParameterImpl(null, session, Name.identifier("K"), typeParameterSymbol, Variance.INVARIANT, false).apply {
+                addDefaultBoundIfNecessary()
+            }
+
+        val returnType = FirResolvedTypeRefImpl(null, ConeTypeParameterTypeImpl(typeParameterSymbol.toLookupTag(), false))
+
+        val argumentType =
+            FirResolvedTypeRefImpl(null, returnType.coneTypeUnsafe<ConeKotlinType>().withNullability(ConeNullability.NULLABLE))
+        val typeArgument = FirTypeProjectionWithVarianceImpl(null, returnType, Variance.INVARIANT)
+
+        return generateMemberFunction(
+            session,
+            functionSymbol,
+            SyntheticCallableId.CHECK_NOT_NULL.callableName,
+            typeArgument.typeRef
+        ).apply {
+            typeParameters += typeParameter
+            valueParameters += argumentType.toValueParameter(session, "arg")
         }
     }
 

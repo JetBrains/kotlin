@@ -245,6 +245,11 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             defaultNoReceivers()
         }
 
+        impl(checkNotNullCall) {
+            default("calleeReference", "FirStubReference()")
+            useTypes(stubReferenceType)
+        }
+
         noImpl(expressionWithSmartcast)
 
         impl(getClassCall) {

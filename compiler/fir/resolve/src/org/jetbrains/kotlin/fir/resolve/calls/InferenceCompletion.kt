@@ -246,6 +246,11 @@ class ConstraintSystemCompleter(val components: InferenceComponents) {
                 catches.forEach { it.block.processAllContainingCallCandidates(processBlocks, processor) }
             }
 
+            is FirCheckNotNullCall -> {
+                processCandidateIfApplicable(processor)
+                this.arguments.forEach { it.processAllContainingCallCandidates(processBlocks, processor) }
+            }
+
             is FirQualifiedAccessExpression -> {
                 processCandidateIfApplicable(processor)
             }

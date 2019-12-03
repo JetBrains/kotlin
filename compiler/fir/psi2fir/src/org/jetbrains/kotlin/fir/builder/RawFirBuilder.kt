@@ -1222,28 +1222,33 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
         override fun visitUnaryExpression(expression: KtUnaryExpression, data: Unit): FirElement {
             val operationToken = expression.operationToken
             val argument = expression.baseExpression
-            if (operationToken == EXCLEXCL) {
-                return expression.baseExpression.bangBangToWhen(expression) { (this as KtExpression).toFirExpression(it) }
-            }
             val conventionCallName = operationToken.toUnaryName()
-            return if (conventionCallName != null) {
-                if (operationToken in OperatorConventions.INCREMENT_OPERATIONS) {
-                    return generateIncrementOrDecrementBlock(
-                        expression, argument,
-                        callName = conventionCallName,
-                        prefix = expression is KtPrefixExpression
-                    ) { (this as KtExpression).toFirExpression("Incorrect expression inside inc/dec") }
+            return when {
+                operationToken == EXCLEXCL -> {
+                    FirCheckNotNullCallImpl(expression.toFirSourceElement()).apply {
+                        arguments += argument.toFirExpression("No operand")
+                    }
                 }
-                FirFunctionCallImpl(expression.toFirSourceElement()).apply {
-                    calleeReference = FirSimpleNamedReference(
-                        expression.operationReference.toFirSourceElement(), conventionCallName, null
-                    )
-                    explicitReceiver = argument.toFirExpression("No operand")
+                conventionCallName != null -> {
+                    if (operationToken in OperatorConventions.INCREMENT_OPERATIONS) {
+                        return generateIncrementOrDecrementBlock(
+                            expression, argument,
+                            callName = conventionCallName,
+                            prefix = expression is KtPrefixExpression
+                        ) { (this as KtExpression).toFirExpression("Incorrect expression inside inc/dec") }
+                    }
+                    FirFunctionCallImpl(expression.toFirSourceElement()).apply {
+                        calleeReference = FirSimpleNamedReference(
+                            expression.operationReference.toFirSourceElement(), conventionCallName, null
+                        )
+                        explicitReceiver = argument.toFirExpression("No operand")
+                    }
                 }
-            } else {
-                val firOperation = operationToken.toFirOperation()
-                FirOperatorCallImpl(expression.toFirSourceElement(), firOperation).apply {
-                    arguments += argument.toFirExpression("No operand")
+                else -> {
+                    val firOperation = operationToken.toFirOperation()
+                    FirOperatorCallImpl(expression.toFirSourceElement(), firOperation).apply {
+                        arguments += argument.toFirExpression("No operand")
+                    }
                 }
             }
         }

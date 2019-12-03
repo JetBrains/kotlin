@@ -287,6 +287,31 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
         return resolved.transform(integerLiteralTypeApproximator, null)
     }
 
+    override fun transformCheckNotNullCall(
+        checkNotNullCall: FirCheckNotNullCall,
+        data: ResolutionMode
+    ): CompositeTransformResult<FirStatement> {
+        // Resolve the return type of a call to the synthetic function with signature:
+        //   fun <K> checkNotNull(arg: K?): K
+        // ...in order to get the not-nullable type of the argument.
+
+        if (checkNotNullCall.calleeReference is FirResolvedNamedReference && checkNotNullCall.resultType !is FirImplicitTypeRef) {
+            return checkNotNullCall.compose()
+        }
+
+        checkNotNullCall.transformArguments(transformer, ResolutionMode.ContextDependent)
+
+        val result = components.syntheticCallGenerator.generateCalleeForCheckNotNullCall(checkNotNullCall)?.let {
+            callCompleter.completeCall(it, data.expectedType)
+        } ?: run {
+            checkNotNullCall.resultType =
+                FirErrorTypeRefImpl(null, FirSimpleDiagnostic("Can't resolve !! operator call", DiagnosticKind.InferenceError))
+            checkNotNullCall
+        }
+        // TODO: Data flow analysis
+        return result.compose()
+    }
+
     override fun transformBinaryLogicExpression(
         binaryLogicExpression: FirBinaryLogicExpression,
         data: ResolutionMode

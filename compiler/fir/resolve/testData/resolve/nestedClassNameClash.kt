@@ -1,6 +1,6 @@
-fun <T> listOf(): List<T> = <!UNRESOLVED_REFERENCE!>null!!<!>
+fun <T> listOf(): List<T> = null!!
 
-fun <T> materialize(): T = <!UNRESOLVED_REFERENCE!>null!!<!>
+fun <T> materialize(): T = null!!
 
 class Result
 

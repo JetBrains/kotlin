@@ -1,4 +1,4 @@
-fun <K> materialize(): K = <!UNRESOLVED_REFERENCE!>null!!<!>
+fun <K> materialize(): K = null!!
 
 open class A1(val x: String)
 class B1 : A1(materialize())
