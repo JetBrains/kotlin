@@ -158,7 +158,6 @@ public class ProjectSdksModel implements SdkModel {
         if (ArrayUtilRt.find(allJdks, projectJdk) == -1) {
           jdkTable.addJdk(projectJdk);
           jdkTable.updateJdk(projectJdk, myProjectSdks.get(projectJdk));
-          SdkDownloadTracker.getInstance().startSdkDownloadIfNeeded(projectJdk);
         }
       }
     });
@@ -399,6 +398,7 @@ public class ProjectSdksModel implements SdkModel {
     if (editableSdk != null) {
       tracker.registerEditableSdk(sdk, editableSdk);
     }
+    tracker.startSdkDownloadIfNeeded(sdk);
   }
 
   private void setupSdk(@NotNull Sdk newJdk, @Nullable Consumer<? super Sdk> callback) {
