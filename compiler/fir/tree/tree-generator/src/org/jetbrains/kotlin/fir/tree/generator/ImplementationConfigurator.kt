@@ -575,6 +575,16 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
 
         noImpl(userTypeRef)
+
+//        impl(delegatedConstructorCall) {
+//            defaultTrue("safe", withGetter = true)
+//            listOf("dispatchReceiver", "extensionReceiver", "explicitReceiver").forEach {
+//                default(it) {
+//                    value = "FirNoReceiverExpression"
+//                    withGetter = true
+//                }
+//            }
+//        }
     }
 
     private fun findImplementationsWithAnnotations(implementationPredicate: (Implementation) -> Boolean): Collection<Implementation> {

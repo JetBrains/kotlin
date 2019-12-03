@@ -26,33 +26,33 @@ class FirDelegatedConstructorCallImpl(
     override var constructedTypeRef: FirTypeRef,
     override val isThis: Boolean
 ) : FirDelegatedConstructorCall(), FirCallWithArgumentList, FirAbstractAnnotatedElement {
+    override var calleeReference: FirReference = if (isThis) FirExplicitThisReference(source, null) else FirExplicitSuperReference(source, constructedTypeRef)
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     override val arguments: MutableList<FirExpression> = mutableListOf()
     override val isSuper: Boolean get() = !isThis
-    override var calleeReference: FirReference = if (isThis) FirExplicitThisReference(source, null) else FirExplicitSuperReference(source, constructedTypeRef)
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
+        calleeReference.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
         arguments.forEach { it.accept(visitor, data) }
         constructedTypeRef.accept(visitor, data)
-        calleeReference.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirDelegatedConstructorCallImpl {
+        transformCalleeReference(transformer, data)
         annotations.transformInplace(transformer, data)
         transformArguments(transformer, data)
         constructedTypeRef = constructedTypeRef.transformSingle(transformer, data)
-        transformCalleeReference(transformer, data)
-        return this
-    }
-
-    override fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirDelegatedConstructorCallImpl {
-        arguments.transformInplace(transformer, data)
         return this
     }
 
     override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirDelegatedConstructorCallImpl {
         calleeReference = calleeReference.transformSingle(transformer, data)
+        return this
+    }
+
+    override fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirDelegatedConstructorCallImpl {
+        arguments.transformInplace(transformer, data)
         return this
     }
 }

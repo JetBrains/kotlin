@@ -238,11 +238,7 @@ class FirResolveBench(val withProgress: Boolean) {
                     }
 
                     override fun visitImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef) {
-                        if (implicitTypeRef is FirResolvedTypeRef) {
-                            visitResolvedTypeRef(implicitTypeRef)
-                        } else {
-                            visitTypeRef(implicitTypeRef)
-                        }
+                        visitTypeRef(implicitTypeRef)
                     }
 
                     override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef) {

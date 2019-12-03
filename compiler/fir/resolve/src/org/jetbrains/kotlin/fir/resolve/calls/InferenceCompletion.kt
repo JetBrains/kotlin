@@ -259,6 +259,11 @@ class ConstraintSystemCompleter(val components: InferenceComponents) {
                     this.returnExpressions().forEach { it.processAllContainingCallCandidates(processBlocks, processor) }
                 }
             }
+
+            is FirDelegatedConstructorCall -> {
+                processCandidateIfApplicable(processor)
+                this.arguments.forEach { it.processAllContainingCallCandidates(processBlocks, processor) }
+            }
         }
     }
 

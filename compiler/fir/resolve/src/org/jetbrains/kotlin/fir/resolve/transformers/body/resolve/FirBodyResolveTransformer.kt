@@ -147,6 +147,13 @@ open class FirBodyResolveTransformer(
         return expressionsTransformer.transformAnnotationCall(annotationCall, data)
     }
 
+    override fun transformDelegatedConstructorCall(
+        delegatedConstructorCall: FirDelegatedConstructorCall,
+        data: ResolutionMode
+    ): CompositeTransformResult<FirStatement> {
+        return expressionsTransformer.transformDelegatedConstructorCall(delegatedConstructorCall, data)
+    }
+
     // ------------------------------------- Declarations -------------------------------------
 
     override fun transformDeclaration(declaration: FirDeclaration, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {

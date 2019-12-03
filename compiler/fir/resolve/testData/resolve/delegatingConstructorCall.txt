@@ -1,0 +1,76 @@
+FILE: delegatingConstructorCall.kt
+    public final fun <K> materialize(): R|K| {
+        ^materialize when (lval <bangbang>: R|kotlin/Nothing?| = Null(null)) {
+            ==($subj$, Null(null)) ->  {
+                throw <Unresolved name: KotlinNullPointerException>#()
+            }
+            else ->  {
+                R|<local>/<bangbang>|
+            }
+        }
+
+    }
+    public open class A1 : R|kotlin/Any| {
+        public constructor(x: R|kotlin/String|): R|A1| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/String| = R|<local>/x|
+            public get(): R|kotlin/String|
+
+    }
+    public final class B1 : R|A1| {
+        public constructor(): R|B1| {
+            super<R|A1|>(R|/materialize|<R|kotlin/String|>())
+        }
+
+    }
+    public open class A2 : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Int|): R|A2| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Int| = R|<local>/x|
+            public get(): R|kotlin/Int|
+
+    }
+    public final class B2 : R|A2| {
+        public constructor(): R|B2| {
+            super<R|A2|>(Int(1).R|kotlin/Int.plus|(Int(1)))
+        }
+
+    }
+    public open class A3 : R|kotlin/Any| {
+        public constructor(x: R|kotlin/String|, y: R|kotlin/String| = String()): R|A3| {
+            super<R|kotlin/Any|>()
+        }
+
+        public constructor(x: R|kotlin/String|, b: R|kotlin/Boolean| = Boolean(true)): R|A3| {
+            this<R|A3|>(R|<local>/x|, R|<local>/x|)
+        }
+
+    }
+    public final class B3_1 : R|A3| {
+        public constructor(): R|B3_1| {
+            super<R|A3|>(String())
+        }
+
+    }
+    public final class B3_2 : R|A3| {
+        public constructor(): R|B3_2| {
+            super<R|A3|>(String(), String(asas))
+        }
+
+    }
+    public final class B3_3 : R|A3| {
+        public constructor(): R|B3_3| {
+            super<R|A3|>(String(), Boolean(true))
+        }
+
+    }
+    public final class B3_4 : R|A3| {
+        public constructor(): R|B3_4| {
+            super<R|A3|>(String(), Q|kotlin/Unit|)
+        }
+
+    }

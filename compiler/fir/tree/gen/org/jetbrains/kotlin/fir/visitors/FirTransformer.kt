@@ -71,7 +71,6 @@ import org.jetbrains.kotlin.fir.expressions.FirOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirTypeOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenBranch
-import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessWithoutCallee
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.FirArrayOfCall
@@ -81,6 +80,7 @@ import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirComponentCall
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
@@ -388,10 +388,6 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformElement(whenBranch, data)
     }
 
-    open fun transformDelegatedConstructorCall(delegatedConstructorCall: FirDelegatedConstructorCall, data: D): CompositeTransformResult<FirStatement> {
-        return transformElement(delegatedConstructorCall, data)
-    }
-
     open fun transformQualifiedAccessWithoutCallee(qualifiedAccessWithoutCallee: FirQualifiedAccessWithoutCallee, data: D): CompositeTransformResult<FirStatement> {
         return transformElement(qualifiedAccessWithoutCallee, data)
     }
@@ -426,6 +422,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
 
     open fun transformFunctionCall(functionCall: FirFunctionCall, data: D): CompositeTransformResult<FirStatement> {
         return transformElement(functionCall, data)
+    }
+
+    open fun transformDelegatedConstructorCall(delegatedConstructorCall: FirDelegatedConstructorCall, data: D): CompositeTransformResult<FirStatement> {
+        return transformElement(delegatedConstructorCall, data)
     }
 
     open fun transformComponentCall(componentCall: FirComponentCall, data: D): CompositeTransformResult<FirStatement> {
@@ -836,10 +836,6 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformWhenBranch(whenBranch, data)
     }
 
-    final override fun visitDelegatedConstructorCall(delegatedConstructorCall: FirDelegatedConstructorCall, data: D): CompositeTransformResult<FirStatement> {
-        return transformDelegatedConstructorCall(delegatedConstructorCall, data)
-    }
-
     final override fun visitQualifiedAccessWithoutCallee(qualifiedAccessWithoutCallee: FirQualifiedAccessWithoutCallee, data: D): CompositeTransformResult<FirStatement> {
         return transformQualifiedAccessWithoutCallee(qualifiedAccessWithoutCallee, data)
     }
@@ -874,6 +870,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
 
     final override fun visitFunctionCall(functionCall: FirFunctionCall, data: D): CompositeTransformResult<FirStatement> {
         return transformFunctionCall(functionCall, data)
+    }
+
+    final override fun visitDelegatedConstructorCall(delegatedConstructorCall: FirDelegatedConstructorCall, data: D): CompositeTransformResult<FirStatement> {
+        return transformDelegatedConstructorCall(delegatedConstructorCall, data)
     }
 
     final override fun visitComponentCall(componentCall: FirComponentCall, data: D): CompositeTransformResult<FirStatement> {

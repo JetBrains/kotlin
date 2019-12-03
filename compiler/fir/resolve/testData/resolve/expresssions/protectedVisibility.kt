@@ -56,7 +56,7 @@ open class Generic<T>(val x: T) {
     protected open fun foo(): T = x
 }
 
-class DerivedGeneric : Generic<Int>() {
+class DerivedGeneric : Generic<Int>(1) {
     override fun foo(): Int {
         return super.foo()
     }

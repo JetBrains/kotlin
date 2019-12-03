@@ -84,7 +84,6 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val typeOperatorCall = element("TypeOperatorCall", Expression, expression, call)
     val whenExpression = element("WhenExpression", Expression, expression, resolvable)
     val whenBranch = element("WhenBranch", Expression)
-    val delegatedConstructorCall = element("DelegatedConstructorCall", Expression, call)
     val qualifiedAccessWithoutCallee = element("QualifiedAccessWithoutCallee", Expression, statement)
     val qualifiedAccess = element("QualifiedAccess", Expression, qualifiedAccessWithoutCallee, resolvable)
 
@@ -95,6 +94,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val errorFunction = element("ErrorFunction", Declaration, function, diagnosticHolder)
     val qualifiedAccessExpression = element("QualifiedAccessExpression", Expression, expression, qualifiedAccess)
     val functionCall = element("FunctionCall", Expression, qualifiedAccessExpression, call)
+    val delegatedConstructorCall = element("DelegatedConstructorCall", Expression, resolvable, call)
     val componentCall = element("ComponentCall", Expression, functionCall)
     val callableReferenceAccess = element("CallableReferenceAccess", Expression, qualifiedAccessExpression)
     val thisReceiverExpression = element("ThisReceiverExpression", Expression, qualifiedAccessExpression)

@@ -71,7 +71,6 @@ import org.jetbrains.kotlin.fir.expressions.FirOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirTypeOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenBranch
-import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessWithoutCallee
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.FirArrayOfCall
@@ -81,6 +80,7 @@ import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirComponentCall
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
@@ -386,10 +386,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(whenBranch)
     }
 
-    open fun visitDelegatedConstructorCall(delegatedConstructorCall: FirDelegatedConstructorCall) {
-        visitElement(delegatedConstructorCall)
-    }
-
     open fun visitQualifiedAccessWithoutCallee(qualifiedAccessWithoutCallee: FirQualifiedAccessWithoutCallee) {
         visitElement(qualifiedAccessWithoutCallee)
     }
@@ -424,6 +420,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitFunctionCall(functionCall: FirFunctionCall) {
         visitElement(functionCall)
+    }
+
+    open fun visitDelegatedConstructorCall(delegatedConstructorCall: FirDelegatedConstructorCall) {
+        visitElement(delegatedConstructorCall)
     }
 
     open fun visitComponentCall(componentCall: FirComponentCall) {
@@ -834,10 +834,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitWhenBranch(whenBranch)
     }
 
-    final override fun visitDelegatedConstructorCall(delegatedConstructorCall: FirDelegatedConstructorCall, data: Nothing?) {
-        visitDelegatedConstructorCall(delegatedConstructorCall)
-    }
-
     final override fun visitQualifiedAccessWithoutCallee(qualifiedAccessWithoutCallee: FirQualifiedAccessWithoutCallee, data: Nothing?) {
         visitQualifiedAccessWithoutCallee(qualifiedAccessWithoutCallee)
     }
@@ -872,6 +868,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitFunctionCall(functionCall: FirFunctionCall, data: Nothing?) {
         visitFunctionCall(functionCall)
+    }
+
+    final override fun visitDelegatedConstructorCall(delegatedConstructorCall: FirDelegatedConstructorCall, data: Nothing?) {
+        visitDelegatedConstructorCall(delegatedConstructorCall)
     }
 
     final override fun visitComponentCall(componentCall: FirComponentCall, data: Nothing?) {

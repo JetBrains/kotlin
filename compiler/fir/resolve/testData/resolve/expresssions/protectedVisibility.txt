@@ -97,7 +97,7 @@ FILE: protectedVisibility.kt
     }
     public final class DerivedGeneric : R|Generic<kotlin/Int>| {
         public constructor(): R|DerivedGeneric| {
-            super<R|Generic<kotlin/Int>|>()
+            super<R|Generic<kotlin/Int>|>(Int(1))
         }
 
         public final override fun foo(): R|kotlin/Int| {

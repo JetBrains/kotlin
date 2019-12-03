@@ -186,6 +186,21 @@ class FirCallCompletionResultsWriterTransformer(
 
     }
 
+    override fun transformDelegatedConstructorCall(
+        delegatedConstructorCall: FirDelegatedConstructorCall,
+        data: Nothing?
+    ): CompositeTransformResult<FirStatement> {
+        val calleeReference = delegatedConstructorCall.calleeReference as? FirNamedReferenceWithCandidate ?: return delegatedConstructorCall.compose()
+
+        val subCandidate = calleeReference.candidate
+        val result = delegatedConstructorCall.transformArguments(this, data)
+        return result.transformCalleeReference(StoreCalleeReference, FirResolvedNamedReferenceImpl(
+            calleeReference.source,
+            calleeReference.name,
+            calleeReference.candidateSymbol
+        )).compose()
+    }
+
     private fun computeTypeArguments(
         candidate: Candidate
     ): List<ConeKotlinType> {

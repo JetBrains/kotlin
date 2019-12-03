@@ -53,6 +53,16 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         runTest("compiler/fir/resolve/testData/resolve/delegatedSuperType.kt");
     }
 
+    @TestMetadata("delegatingConstructorCall.kt")
+    public void testDelegatingConstructorCall() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/delegatingConstructorCall.kt");
+    }
+
+    @TestMetadata("delegatingConstructorsAndTypeAliases.kt")
+    public void testDelegatingConstructorsAndTypeAliases() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/delegatingConstructorsAndTypeAliases.kt");
+    }
+
     @TestMetadata("derivedClass.kt")
     public void testDerivedClass() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/derivedClass.kt");

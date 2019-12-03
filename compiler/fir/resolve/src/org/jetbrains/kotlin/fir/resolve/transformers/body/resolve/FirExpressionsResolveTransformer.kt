@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirVariableAssignmentImpl
 import org.jetbrains.kotlin.fir.references.FirDelegateFieldReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
+import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.references.impl.FirErrorNamedReferenceImpl
 import org.jetbrains.kotlin.fir.references.impl.FirExplicitThisReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
@@ -30,18 +31,19 @@ import org.jetbrains.kotlin.fir.resolve.transformers.StoreReceiver
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLookupTagWithFixedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.symbols.invoke
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
-import org.jetbrains.kotlin.fir.types.impl.FirErrorTypeRefImpl
-import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
+import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.compose
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.Variance
 
 class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) : FirPartialBodyResolveTransformer(transformer) {
     private val callResolver: FirCallResolver get() = components.callResolver
@@ -424,6 +426,58 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
         return (annotationCall.transformChildren(transformer, data) as FirAnnotationCall).also {
             dataFlowAnalyzer.exitAnnotationCall(it)
         }.compose()
+    }
+
+    private fun ConeKotlinTypeProjection.toFirTypeProjection(): FirTypeProjection = when (this) {
+        is ConeStarProjection -> FirStarProjectionImpl(null)
+        else -> {
+            val variance = when (kind) {
+                ProjectionKind.IN -> Variance.IN_VARIANCE
+                ProjectionKind.OUT -> Variance.OUT_VARIANCE
+                ProjectionKind.INVARIANT -> Variance.INVARIANT
+                ProjectionKind.STAR -> throw IllegalStateException()
+            }
+            val type = when (this) {
+                is ConeKotlinTypeProjectionIn -> type
+                is ConeKotlinTypeProjectionOut -> type
+                is ConeStarProjection -> throw IllegalStateException()
+                else -> this as ConeKotlinType
+            }
+            FirTypeProjectionWithVarianceImpl(
+                null, FirResolvedTypeRefImpl(null, type), variance
+            )
+        }
+    }
+
+    override fun transformDelegatedConstructorCall(
+        delegatedConstructorCall: FirDelegatedConstructorCall,
+        data: ResolutionMode
+    ): CompositeTransformResult<FirStatement> {
+        if (transformer.implicitTypeOnly) return delegatedConstructorCall.compose()
+        delegatedConstructorCall.transformChildren(transformer, ResolutionMode.ContextDependent)
+        val typeArguments: List<FirTypeProjection>
+        val symbol: FirClassSymbol<*> = when (val reference = delegatedConstructorCall.calleeReference) {
+            is FirThisReference -> {
+                typeArguments = emptyList()
+                reference.boundSymbol as? FirClassSymbol<*> ?: return delegatedConstructorCall.compose()
+            }
+            is FirSuperReference -> {
+                // TODO: unresolved supertype
+                val supertype = reference.superTypeRef.coneTypeSafe<ConeClassLikeType>() ?: return delegatedConstructorCall.compose()
+                typeArguments = supertype.typeArguments.takeIf { it.isNotEmpty() }?.map { it.toFirTypeProjection() } ?: emptyList()
+                val expandedSupertype = supertype.fullyExpandedType(session)
+                val lookupTag = expandedSupertype.lookupTag
+                if (lookupTag is ConeClassLookupTagWithFixedSymbol) {
+                    lookupTag.symbol
+                } else {
+                    // TODO: support locals
+                    symbolProvider.getSymbolByLookupTag(lookupTag) ?: return delegatedConstructorCall.compose()
+                } as FirClassSymbol<*>
+            }
+            else -> return delegatedConstructorCall.compose()
+        }
+        val result = callResolver.resolveDelegatingConstructorCall(delegatedConstructorCall, symbol, typeArguments) ?: return delegatedConstructorCall.compose()
+        return callCompleter.completeCall(result, noExpectedType).compose()
     }
 
     // ------------------------------------------------------------------------------------------------

@@ -19,10 +19,12 @@ import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionWithSmartcastImpl
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.calls.ConeInferenceContext
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
+import org.jetbrains.kotlin.fir.resolve.diagnostics.FirUnresolvedNameError
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
@@ -35,6 +37,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirErrorTypeRefImpl
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -344,6 +347,9 @@ fun <T : FirResolvable> BodyResolveComponents.typeFromCallee(access: T): FirReso
             val labelName = newCallee.labelName
             val implicitReceiver = implicitReceiverStack[labelName]
             FirResolvedTypeRefImpl(null, implicitReceiver?.type ?: ConeKotlinErrorType("Unresolved this@$labelName"))
+        }
+        is FirSuperReference -> {
+            newCallee.superTypeRef as? FirResolvedTypeRef ?: FirErrorTypeRefImpl(newCallee.source, FirUnresolvedNameError(Name.identifier("super")))
         }
         else -> error("Failed to extract type from: $newCallee")
     }
