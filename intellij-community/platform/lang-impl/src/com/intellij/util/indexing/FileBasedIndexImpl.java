@@ -99,6 +99,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.function.IntPredicate;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -110,7 +111,7 @@ import static com.intellij.serviceContainer.PlatformComponentManagerImplKt.handl
 public final class FileBasedIndexImpl extends FileBasedIndex {
   private static final ThreadLocal<VirtualFile> ourIndexedFile = new ThreadLocal<>();
   private static final ThreadLocal<VirtualFile> ourFileToBeIndexed = new ThreadLocal<>();
-  private static final ThreadLocal<Boolean> ourDumbModeIgnored = new ThreadLocal<>();
+  private static final ThreadLocal<DumbModeAccessType> ourDumbModeAccessType = new ThreadLocal<>();
   static final Logger LOG = Logger.getInstance(FileBasedIndexImpl.class);
   private static final String CORRUPTION_MARKER_NAME = "corruption.marker";
   private static final NotificationGroup NOTIFICATIONS = new NotificationGroup("Indexing", NotificationDisplayType.BALLOON, false);
@@ -698,8 +699,13 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
   public <K, V> Map<K, V> getFileData(@NotNull ID<K, V> id, @NotNull VirtualFile virtualFile, @NotNull Project project) {
     if (!(virtualFile instanceof VirtualFileWithId)) return Collections.emptyMap();
     int fileId = getFileId(virtualFile);
-    Map<K, V> map = processExceptions(id, virtualFile, GlobalSearchScope.fileScope(project, virtualFile), index -> index.getIndexedFileData(fileId));
-    return ContainerUtil.notNullize(map);
+
+    // TODO revise behaviour later
+    if (getAccessibleFileIdFilter(project).test(fileId)) {
+      Map<K, V> map = processExceptions(id, virtualFile, GlobalSearchScope.fileScope(project, virtualFile), index -> index.getIndexedFileData(fileId));
+      return ContainerUtil.notNullize(map);
+    }
+    return Collections.emptyMap();
   }
 
   private static final ThreadLocal<Integer> myUpToDateCheckState = new ThreadLocal<>();
@@ -765,7 +771,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
     if (filter == GlobalSearchScope.EMPTY_SCOPE) {
       return;
     }
-    if (ourDumbModeIgnored.get() != Boolean.TRUE && ActionUtil.isDumbMode(project)) {
+    if (ourDumbModeAccessType.get() == null && ActionUtil.isDumbMode(project)) {
       handleDumbMode(project);
     }
 
@@ -781,7 +787,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
           if (!RebuildStatus.isOk(indexId)) {
             throw new ServiceNotReadyException();
           }
-          if (ourDumbModeIgnored.get() != Boolean.TRUE) {
+          if (ourDumbModeAccessType.get() == null) {
             forceUpdate(project, filter, restrictedFile);
           }
           if (!areUnsavedDocumentsIndexed(indexId)) { // todo: check scope ?
@@ -903,11 +909,14 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
                                          @NotNull K key,
                                          @NotNull Project project,
                                          @NotNull IdValueProcessor<? super V> processor) {
+    IntPredicate accessibleFileFilter = getAccessibleFileIdFilter(project);
+
     return processValueIterator(indexId, key, null, GlobalSearchScope.allScope(project), valueIt -> {
       while (valueIt.hasNext()) {
         V value = valueIt.next();
         for (ValueContainer.IntIterator inputIdsIterator = valueIt.getInputIdsIterator(); inputIdsIterator.hasNext(); ) {
-          if (!processor.process(inputIdsIterator.next(), value)) {
+          int id = inputIdsIterator.next();
+          if (accessibleFileFilter.test(id) && !processor.process(id, value)) {
             return false;
           }
           ProgressManager.checkCanceled();
@@ -956,6 +965,9 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
     if (!(restrictToFile instanceof VirtualFileWithId)) return true;
 
     int restrictedFileId = getFileId(restrictToFile);
+
+    if (!getAccessibleFileIdFilter(scope.getProject()).test(restrictedFileId)) return true;
+
     return processValueIterator(indexId, dataKey, restrictToFile, scope, valueIt -> {
       while (valueIt.hasNext()) {
         V value = valueIt.next();
@@ -976,13 +988,14 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
                                               @NotNull ValueProcessor<? super V> processor) {
     PersistentFS fs = (PersistentFS)ManagingFS.getInstance();
     IdFilter filter = idFilter != null ? idFilter : projectIndexableFiles(scope.getProject());
+    IntPredicate accessibleFileFilter = getAccessibleFileIdFilter(scope.getProject());
 
     return processValueIterator(indexId, dataKey, null, scope, valueIt -> {
       while (valueIt.hasNext()) {
         final V value = valueIt.next();
         for (final ValueContainer.IntIterator inputIdsIterator = valueIt.getInputIdsIterator(); inputIdsIterator.hasNext(); ) {
           final int id = inputIdsIterator.next();
-          if (filter != null && !filter.containsFileId(id)) continue;
+          if (!accessibleFileFilter.test(id) || (filter != null && !filter.containsFileId(id))) continue;
           VirtualFile file = IndexInfrastructure.findFileByIdIfCached(fs, id);
           if (file != null && scope.accept(file)) {
             if (!processor.process(file, value)) {
@@ -1141,12 +1154,15 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
                                                              @NotNull final GlobalSearchScope filter,
                                                              @Nullable final Condition<? super V> valueChecker,
                                                              @Nullable final ProjectIndexableFilesFilter projectFilesFilter) {
+    IntPredicate accessibleFileFilter = getAccessibleFileIdFilter(filter.getProject());
     ThrowableConvertor<UpdatableIndex<K, V, FileContent>, TIntHashSet, StorageException> convertor =
       index -> InvertedIndexUtil.collectInputIdsContainingAllKeys(index, dataKeys, __ -> {
                                                                     ProgressManager.checkCanceled();
                                                                     return true;
                                                                   }, valueChecker,
-                                                projectFilesFilter == null ? null : projectFilesFilter::containsFileId);
+                                                projectFilesFilter == null ? accessibleFileFilter::test : id -> {
+                                                  return projectFilesFilter.containsFileId(id) && accessibleFileFilter.test(id);
+                                                });
 
     return processExceptions(indexId, null, filter, convertor);
   }
@@ -1190,15 +1206,20 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
   @ApiStatus.Internal
   @ApiStatus.Experimental
   @Override
-  public void ignoreDumbMode(@NotNull Runnable runnable, @NotNull Project project) {
+  public void ignoreDumbMode(@NotNull Runnable runnable,
+                             @NotNull Project project,
+                             @NotNull DumbModeAccessType dumbModeAccessType) {
     assert ApplicationManager.getApplication().isReadAccessAllowed();
     if (DumbService.isDumb(project) && FileBasedIndex.isIndexAccessDuringDumbModeEnabled()) {
-      ourDumbModeIgnored.set(Boolean.TRUE);
+      if (ourDumbModeAccessType.get() != null) {
+        throw new AssertionError("reentrant dumb mode ignorance");
+      }
+      ourDumbModeAccessType.set(dumbModeAccessType);
       try {
         runnable.run();
       }
       finally {
-        ourDumbModeIgnored.set(null);
+        ourDumbModeAccessType.set(null);
       }
     } else {
       runnable.run();
@@ -1766,6 +1787,11 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
     return file != null ? file : ourFileToBeIndexed.get();
   }
 
+  @Override
+  public DumbModeAccessType getCurrentDumbModeAccessType() {
+    return ourDumbModeAccessType.get();
+  }
+
   private class VirtualFileUpdateTask extends UpdateTask<VirtualFile> {
     @Override
     void doProcess(VirtualFile item, Project project) {
@@ -2025,7 +2051,11 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
     }
 
     public boolean containsFile(VirtualFile file) {
-      return myFilesToUpdate.containsKey(getIdMaskingNonIdBasedFile(file));
+      return containsFileId(getIdMaskingNonIdBasedFile(file));
+    }
+
+    public boolean containsFileId(int fileId) {
+      return myFilesToUpdate.containsKey(fileId);
     }
 
     Collection<VirtualFile> getAllFilesToUpdate() {
@@ -2617,6 +2647,23 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
     }
     catch (Throwable ignore) {
     }
+  }
+
+  @ApiStatus.Internal
+  @NotNull
+  public IntPredicate getAccessibleFileIdFilter(@Nullable Project project) {
+    boolean dumb = ActionUtil.isDumbMode(project);
+    if (!dumb) return f -> true;
+
+    DumbModeAccessType dumbModeAccessType = getCurrentDumbModeAccessType();
+    if (dumbModeAccessType == null) {
+      throw new IllegalStateException("index access is not allowed in dumb mode");
+    }
+
+    if (dumbModeAccessType == DumbModeAccessType.RAW_INDEX_DATA_ACCEPTABLE) return f -> true;
+
+    assert dumbModeAccessType == DumbModeAccessType.RELIABLE_DATA_ONLY;
+    return fileId -> !getChangedFilesCollector().containsFileId(fileId);
   }
 
   @TestOnly

@@ -20,7 +20,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.ManagingFS;
-import com.intellij.openapi.vfs.newvfs.impl.VirtualFileSystemEntry;
 import com.intellij.openapi.vfs.newvfs.persistent.PersistentFS;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -52,6 +51,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
+import java.util.function.IntPredicate;
 
 @State(name = "FileBasedIndex", storages = {
   @Storage(value = StoragePathMacros.CACHE_FILE),
@@ -368,24 +368,27 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
                                                                @NotNull final Class<Psi> requiredClass,
                                                                @NotNull final Processor<? super Psi> processor) {
     boolean dumb = DumbService.isDumb(project);
+    if (dumb) {
+      DumbModeAccessType accessType = FileBasedIndex.getInstance().getCurrentDumbModeAccessType();
+      if (accessType == DumbModeAccessType.RAW_INDEX_DATA_ACCEPTABLE) {
+        throw new AssertionError("raw index data access is not available for StubIndex");
+      }
+    }
+
     IdIterator ids = getContainingIds(indexKey, key, project, idFilter, scope);
     PersistentFS fs = (PersistentFS)ManagingFS.getInstance();
+    IntPredicate accessibleFileFilter = ((FileBasedIndexImpl)FileBasedIndex.getInstance()).getAccessibleFileIdFilter(project);
     // already ensured up-to-date in getContainingIds() method
     try {
       while (ids.hasNext()) {
         int id = ids.next();
         ProgressManager.checkCanceled();
+        if (!accessibleFileFilter.test(id)) {
+          continue;
+        }
         VirtualFile file = IndexInfrastructure.findFileByIdIfCached(fs, id);
         if (file == null || (scope != null && !scope.contains(file))) {
           continue;
-        }
-        if (dumb) {
-          if (!(file instanceof VirtualFileSystemEntry) || !((VirtualFileSystemEntry)file).isFileIndexed()) {
-            continue;
-          }
-          if (((FileBasedIndexImpl)FileBasedIndex.getInstance()).getChangedFilesCollector().containsFile(file)) {
-            continue;
-          }
         }
 
         StubIdList list = myCachedStubIds.get(indexKey).getValue().computeIfAbsent(new CompositeKey(key, id), __ -> {
