@@ -1818,6 +1818,7 @@ public inline fun <T, C : Iterable<T>> C.onEach(action: (T) -> Unit): C {
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
+ * @throws UnsupportedOperationException if the collection is empty.
  */
 public inline fun <S, T : S> Iterable<T>.reduce(operation: (acc: S, T) -> S): S {
     val iterator = this.iterator()
@@ -1834,6 +1835,7 @@ public inline fun <S, T : S> Iterable<T>.reduce(operation: (acc: S, T) -> S): S 
  * to current accumulator value and each element with its index in the original collection.
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself and calculates the next accumulator value.
+ * @throws UnsupportedOperationException if the collection is empty.
  */
 public inline fun <S, T : S> Iterable<T>.reduceIndexed(operation: (index: Int, acc: S, T) -> S): S {
     val iterator = this.iterator()
@@ -1848,6 +1850,7 @@ public inline fun <S, T : S> Iterable<T>.reduceIndexed(operation: (index: Int, a
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
+ * @throws UnsupportedOperationException if the list is empty.
  */
 public inline fun <S, T : S> List<T>.reduceRight(operation: (T, acc: S) -> S): S {
     val iterator = listIterator(size)
@@ -1865,6 +1868,7 @@ public inline fun <S, T : S> List<T>.reduceRight(operation: (T, acc: S) -> S): S
  * to each element with its index in the original list and current accumulator value.
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
+ * @throws UnsupportedOperationException if the list is empty.
  */
 public inline fun <S, T : S> List<T>.reduceRightIndexed(operation: (index: Int, T, acc: S) -> S): S {
     val iterator = listIterator(size)

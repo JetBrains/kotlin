@@ -1330,6 +1330,7 @@ public fun <T> Sequence<T>.onEach(action: (T) -> Unit): Sequence<T> {
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
+ * @throws UnsupportedOperationException if the sequence is empty.
  *
  * The operation is _terminal_.
  */
@@ -1348,6 +1349,7 @@ public inline fun <S, T : S> Sequence<T>.reduce(operation: (acc: S, T) -> S): S 
  * to current accumulator value and each element with its index in the original sequence.
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself and calculates the next accumulator value.
+ * @throws UnsupportedOperationException if the sequence is empty.
  *
  * The operation is _terminal_.
  */

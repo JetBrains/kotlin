@@ -5472,6 +5472,7 @@ public inline fun UShortArray.none(predicate: (UShort) -> Boolean): Boolean {
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
+ * @throws UnsupportedOperationException if the array is empty.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -5488,6 +5489,7 @@ public inline fun UIntArray.reduce(operation: (acc: UInt, UInt) -> UInt): UInt {
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
+ * @throws UnsupportedOperationException if the array is empty.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -5504,6 +5506,7 @@ public inline fun ULongArray.reduce(operation: (acc: ULong, ULong) -> ULong): UL
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
+ * @throws UnsupportedOperationException if the array is empty.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -5520,6 +5523,7 @@ public inline fun UByteArray.reduce(operation: (acc: UByte, UByte) -> UByte): UB
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
+ * @throws UnsupportedOperationException if the array is empty.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -5539,6 +5543,7 @@ public inline fun UShortArray.reduce(operation: (acc: UShort, UShort) -> UShort)
  * to current accumulator value and each element with its index in the original array.
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself and calculates the next accumulator value.
+ * @throws UnsupportedOperationException if the array is empty.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -5558,6 +5563,7 @@ public inline fun UIntArray.reduceIndexed(operation: (index: Int, acc: UInt, UIn
  * to current accumulator value and each element with its index in the original array.
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself and calculates the next accumulator value.
+ * @throws UnsupportedOperationException if the array is empty.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -5577,6 +5583,7 @@ public inline fun ULongArray.reduceIndexed(operation: (index: Int, acc: ULong, U
  * to current accumulator value and each element with its index in the original array.
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself and calculates the next accumulator value.
+ * @throws UnsupportedOperationException if the array is empty.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -5596,6 +5603,7 @@ public inline fun UByteArray.reduceIndexed(operation: (index: Int, acc: UByte, U
  * to current accumulator value and each element with its index in the original array.
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself and calculates the next accumulator value.
+ * @throws UnsupportedOperationException if the array is empty.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -5612,6 +5620,7 @@ public inline fun UShortArray.reduceIndexed(operation: (index: Int, acc: UShort,
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
+ * @throws UnsupportedOperationException if the array is empty.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -5628,6 +5637,7 @@ public inline fun UIntArray.reduceRight(operation: (UInt, acc: UInt) -> UInt): U
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
+ * @throws UnsupportedOperationException if the array is empty.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -5644,6 +5654,7 @@ public inline fun ULongArray.reduceRight(operation: (ULong, acc: ULong) -> ULong
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
+ * @throws UnsupportedOperationException if the array is empty.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -5660,6 +5671,7 @@ public inline fun UByteArray.reduceRight(operation: (UByte, acc: UByte) -> UByte
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
+ * @throws UnsupportedOperationException if the array is empty.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -5679,6 +5691,7 @@ public inline fun UShortArray.reduceRight(operation: (UShort, acc: UShort) -> US
  * to each element with its index in the original array and current accumulator value.
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
+ * @throws UnsupportedOperationException if the array is empty.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -5699,6 +5712,7 @@ public inline fun UIntArray.reduceRightIndexed(operation: (index: Int, UInt, acc
  * to each element with its index in the original array and current accumulator value.
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
+ * @throws UnsupportedOperationException if the array is empty.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -5719,6 +5733,7 @@ public inline fun ULongArray.reduceRightIndexed(operation: (index: Int, ULong, a
  * to each element with its index in the original array and current accumulator value.
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
+ * @throws UnsupportedOperationException if the array is empty.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -5739,6 +5754,7 @@ public inline fun UByteArray.reduceRightIndexed(operation: (index: Int, UByte, a
  * to each element with its index in the original array and current accumulator value.
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
+ * @throws UnsupportedOperationException if the array is empty.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes

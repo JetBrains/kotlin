@@ -644,6 +644,7 @@ object Aggregates : TemplateGroupBase() {
             to current accumulator value and each ${f.element} with its index in the original ${f.collection}.
             @param [operation] function that takes the index of ${f.element.prefixWithArticle()}, current accumulator value
             and the ${f.element} itself and calculates the next accumulator value.
+            @throws UnsupportedOperationException if the ${f.collection} is empty.
             """
         }
         returns("T")
@@ -672,6 +673,7 @@ object Aggregates : TemplateGroupBase() {
             to current accumulator value and each ${f.element} with its index in the original ${f.collection}.
             @param [operation] function that takes the index of ${f.element.prefixWithArticle()}, current accumulator value
             and the ${f.element} itself and calculates the next accumulator value.
+            @throws UnsupportedOperationException if the ${f.collection} is empty.
             """
         }
         typeParam("S")
@@ -717,6 +719,7 @@ object Aggregates : TemplateGroupBase() {
             to each ${f.element} with its index in the original ${f.collection} and current accumulator value.
             @param [operation] function that takes the index of ${f.element.prefixWithArticle()}, the ${f.element} itself
             and current accumulator value, and calculates the next accumulator value.
+            @throws UnsupportedOperationException if the ${f.collection} is empty.
             """
         }
         returns("T")
@@ -747,6 +750,7 @@ object Aggregates : TemplateGroupBase() {
             to each ${f.element} with its index in the original ${f.collection} and current accumulator value.
             @param [operation] function that takes the index of ${f.element.prefixWithArticle()}, the ${f.element} itself
             and current accumulator value, and calculates the next accumulator value.
+            @throws UnsupportedOperationException if the ${f.collection} is empty.
             """
         }
         typeParam("S")
@@ -789,7 +793,12 @@ object Aggregates : TemplateGroupBase() {
         inline()
         specialFor(ArraysOfUnsigned) { inlineOnly() }
 
-        doc { "Accumulates value starting with the first ${f.element} and applying [operation] from left to right to current accumulator value and each ${f.element}." }
+        doc {
+            """
+            Accumulates value starting with the first ${f.element} and applying [operation] from left to right to current accumulator value and each ${f.element}.
+            @throws UnsupportedOperationException if the ${f.collection} is empty.
+            """
+        }
         returns("T")
         body {
             """
@@ -810,7 +819,12 @@ object Aggregates : TemplateGroupBase() {
     } builder {
         inline()
 
-        doc { "Accumulates value starting with the first ${f.element} and applying [operation] from left to right to current accumulator value and each ${f.element}." }
+        doc {
+            """
+            Accumulates value starting with the first ${f.element} and applying [operation] from left to right to current accumulator value and each ${f.element}.
+            @throws UnsupportedOperationException if the ${f.collection} is empty.
+            """
+        }
         typeParam("S")
         typeParam("T : S")
         returns("S")
@@ -846,7 +860,12 @@ object Aggregates : TemplateGroupBase() {
         inline()
         specialFor(ArraysOfUnsigned) { inlineOnly() }
 
-        doc { "Accumulates value starting with last ${f.element} and applying [operation] from right to left to each ${f.element} and current accumulator value." }
+        doc {
+            """
+            Accumulates value starting with last ${f.element} and applying [operation] from right to left to each ${f.element} and current accumulator value.
+            @throws UnsupportedOperationException if the ${f.collection} is empty.
+            """
+        }
         returns("T")
         body {
             """
@@ -867,7 +886,12 @@ object Aggregates : TemplateGroupBase() {
         include(Lists, ArraysOfObjects)
     } builder {
         inline()
-        doc { "Accumulates value starting with last ${f.element} and applying [operation] from right to left to each ${f.element} and current accumulator value." }
+        doc {
+            """
+            Accumulates value starting with last ${f.element} and applying [operation] from right to left to each ${f.element} and current accumulator value.
+            @throws UnsupportedOperationException if the ${f.collection} is empty.
+            """
+        }
         typeParam("S")
         typeParam("T : S")
         returns("S")
