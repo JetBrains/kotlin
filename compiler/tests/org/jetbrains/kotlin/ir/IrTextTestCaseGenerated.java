@@ -1670,6 +1670,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/types/asOnPlatformType.kt");
         }
 
+        @TestMetadata("enhancedNullability.kt")
+        public void testEnhancedNullability() throws Exception {
+            runTest("compiler/testData/ir/irText/types/enhancedNullability.kt");
+        }
+
         @TestMetadata("explicitEqualsAndCompareToCallsOnPlatformTypeReceiver.kt")
         public void testExplicitEqualsAndCompareToCallsOnPlatformTypeReceiver() throws Exception {
             runTest("compiler/testData/ir/irText/types/explicitEqualsAndCompareToCallsOnPlatformTypeReceiver.kt");

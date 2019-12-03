@@ -50,7 +50,7 @@ fun insertImplicitCasts(element: IrElement, context: GeneratorContext) {
             context.irBuiltIns,
             context.typeTranslator,
             context.callToSubstitutedDescriptorMap,
-            context.extensions.samConversion
+            context.extensions
         ),
         null
     )
@@ -61,7 +61,7 @@ open class InsertImplicitCasts(
     private val irBuiltIns: IrBuiltIns,
     private val typeTranslator: TypeTranslator,
     private val callToSubstitutedDescriptorMap: Map<IrMemberAccessExpression, CallableDescriptor>,
-    private val samConversion: GeneratorExtensions.SamConversion
+    private val generatorExtensions: GeneratorExtensions
 ) : IrElementTransformerVoid() {
 
     private fun KotlinType.toIrType() = typeTranslator.translateType(this)
@@ -191,10 +191,13 @@ open class InsertImplicitCasts(
             finallyExpression = finallyExpression?.coerceToUnit()
         }
 
+    private fun KotlinType.getSubstitutedFunctionTypeForSamType() =
+        generatorExtensions.samConversion.getSubstitutedFunctionTypeForSamType(this)
+
     override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression =
         when (expression.operator) {
             IrTypeOperator.SAM_CONVERSION -> expression.transformPostfix {
-                argument = argument.cast(samConversion.getSubstitutedFunctionTypeForSamType(typeOperand.originalKotlinType!!))
+                argument = argument.cast(typeOperand.originalKotlinType!!.getSubstitutedFunctionTypeForSamType())
             }
 
             IrTypeOperator.IMPLICIT_CAST -> {
@@ -251,7 +254,8 @@ open class InsertImplicitCasts(
                 else
                     implicitCast(expectedType, IrTypeOperator.IMPLICIT_DYNAMIC_CAST)
 
-            valueType.isNullabilityFlexible() && valueType.containsNull() && !expectedType.containsNull() ->
+            (valueType.isNullabilityFlexible() && valueType.containsNull() || valueType.hasEnhancedNullability()) &&
+                    !expectedType.containsNull() ->
                 implicitNonNull(valueType, expectedType)
 
             KotlinTypeChecker.DEFAULT.isSubtypeOf(valueType, expectedType.makeNullable()) ->
@@ -267,8 +271,12 @@ open class InsertImplicitCasts(
         }
     }
 
+    private fun KotlinType.hasEnhancedNullability() =
+        generatorExtensions.enhancedNullability.hasEnhancedNullability(this)
+
     private fun IrExpression.implicitNonNull(valueType: KotlinType, expectedType: KotlinType): IrExpression {
-        val nonNullValueType = valueType.upperIfFlexible().makeNotNullable()
+        val nonNullFlexibleType = valueType.upperIfFlexible().makeNotNullable()
+        val nonNullValueType = generatorExtensions.enhancedNullability.stripEnhancedNullability(nonNullFlexibleType)
         return implicitCast(nonNullValueType, IrTypeOperator.IMPLICIT_NOTNULL).cast(expectedType)
     }
 

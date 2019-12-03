@@ -1,7 +1,6 @@
 // !API_VERSION: LATEST
 // IGNORE_BACKEND_FIR: JVM_IR
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND: JVM_IR
 // FILE: A.java
 
 import org.jetbrains.annotations.NotNull;
