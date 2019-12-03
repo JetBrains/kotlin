@@ -1,10 +1,18 @@
 package org.jetbrains.uast.test.kotlin
 
 import org.jetbrains.uast.UFile
-import org.jetbrains.uast.kotlin.KotlinConverter
 import org.junit.Test
+import java.io.File
 
-class SimpleKotlinRenderLogTest : AbstractKotlinUastTest(), AbstractKotlinRenderLogTest {
+class KotlinIDERenderLogTest : AbstractKotlinUastLightCodeInsightFixtureTest(), AbstractKotlinRenderLogTest {
+
+    override fun getTestFile(testName: String, ext: String): File {
+        if (ext.endsWith(".txt")) {
+            val testFile = super.getTestFile(testName, ext.removeSuffix(".txt") + "-ide.txt")
+            if (testFile.exists()) return testFile
+        }
+        return super.getTestFile(testName, ext)
+    }
 
     override fun check(testName: String, file: UFile) = super.check(testName, file)
 
@@ -23,48 +31,67 @@ class SimpleKotlinRenderLogTest : AbstractKotlinUastTest(), AbstractKotlinRender
     @Test
     fun testBitwise() = doTest("Bitwise")
 
-    @Test fun testElvis() = doTest("Elvis")
+    @Test
+    fun testElvis() = doTest("Elvis")
 
-    @Test fun testPropertyAccessors() = doTest("PropertyAccessors")
+    @Test
+    fun testPropertyAccessors() = doTest("PropertyAccessors")
 
-    @Test fun testPropertyInitializer() = doTest("PropertyInitializer")
+    @Test
+    fun testPropertyInitializer() = doTest("PropertyInitializer")
 
-    @Test fun testPropertyInitializerWithoutSetter() = doTest("PropertyInitializerWithoutSetter")
+    @Test
+    fun testPropertyInitializerWithoutSetter() = doTest("PropertyInitializerWithoutSetter")
 
-    @Test fun testAnnotationParameters() = doTest("AnnotationParameters")
+    @Test
+    fun testAnnotationParameters() = doTest("AnnotationParameters")
 
-    @Test fun testEnumValueMembers() = doTest("EnumValueMembers")
+    @Test
+    fun testEnumValueMembers() = doTest("EnumValueMembers")
 
-    @Test fun testStringTemplate() = doTest("StringTemplate")
+    @Test
+    fun testStringTemplate() = doTest("StringTemplate")
 
-    @Test fun testStringTemplateComplex() = doTest("StringTemplateComplex")
+    @Test
+    fun testStringTemplateComplex() = doTest("StringTemplateComplex")
 
     @Test
     fun testStringTemplateComplexForUInjectionHost() = withForceUInjectionHostValue {
         doTest("StringTemplateComplexForUInjectionHost")
     }
 
-    @Test fun testQualifiedConstructorCall() = doTest("QualifiedConstructorCall")
+    @Test
+    fun testQualifiedConstructorCall() = doTest("QualifiedConstructorCall")
 
-    @Test fun testPropertyDelegate() = doTest("PropertyDelegate")
+    @Test
+    fun testPropertyDelegate() = doTest("PropertyDelegate")
 
-    @Test fun testLocalVariableWithAnnotation() = doTest("LocalVariableWithAnnotation")
+    @Test
+    fun testLocalVariableWithAnnotation() = doTest("LocalVariableWithAnnotation")
 
-    @Test fun testPropertyWithAnnotation() = doTest("PropertyWithAnnotation")
+    @Test
+    fun testPropertyWithAnnotation() = doTest("PropertyWithAnnotation")
 
-    @Test fun testIfStatement() = doTest("IfStatement")
+    @Test
+    fun testIfStatement() = doTest("IfStatement")
 
-    @Test fun testInnerClasses() = doTest("InnerClasses")
+    @Test
+    fun testInnerClasses() = doTest("InnerClasses")
 
-    @Test fun testSimpleScript() = doTest("SimpleScript") { testName, file -> check(testName, file, false) }
+    @Test
+    fun testSimpleScript() = doTest("SimpleScript") { testName, file -> check(testName, file, false) }
 
-    @Test fun testDestructuringDeclaration() = doTest("DestructuringDeclaration")
+    @Test
+    fun testDestructuringDeclaration() = doTest("DestructuringDeclaration")
 
-    @Test fun testDefaultParameterValues() = doTest("DefaultParameterValues")
+    @Test
+    fun testDefaultParameterValues() = doTest("DefaultParameterValues")
 
-    @Test fun testParameterPropertyWithAnnotation() = doTest("ParameterPropertyWithAnnotation")
+    @Test
+    fun testParameterPropertyWithAnnotation() = doTest("ParameterPropertyWithAnnotation")
 
-    @Test fun testParametersWithDefaultValues() = doTest("ParametersWithDefaultValues")
+    @Test
+    fun testParametersWithDefaultValues() = doTest("ParametersWithDefaultValues")
 
     @Test
     fun testUnexpectedContainer() = doTest("UnexpectedContainerException")
@@ -122,14 +149,4 @@ class SimpleKotlinRenderLogTest : AbstractKotlinUastTest(), AbstractKotlinRender
 
     @Test
     fun testDeprecatedHidden() = doTest("DeprecatedHidden")
-}
-
-fun withForceUInjectionHostValue(call: () -> Unit) {
-    val prev = KotlinConverter.forceUInjectionHost
-    KotlinConverter.forceUInjectionHost = true
-    try {
-        call.invoke()
-    } finally {
-        KotlinConverter.forceUInjectionHost = prev
-    }
 }

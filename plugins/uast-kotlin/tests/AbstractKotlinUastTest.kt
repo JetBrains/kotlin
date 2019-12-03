@@ -5,10 +5,8 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.util.io.URLUtil
 import org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettings
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
@@ -21,8 +19,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.project.NewInferenceForIDEAnalysisComponent
-import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.script.loadScriptingPlugin
@@ -30,8 +26,6 @@ import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
-import org.jetbrains.uast.UFile
-import org.jetbrains.uast.UastFacade
 import org.jetbrains.uast.UastLanguagePlugin
 import org.jetbrains.uast.evaluation.UEvaluatorExtension
 import org.jetbrains.uast.kotlin.KotlinUastLanguagePlugin
@@ -43,53 +37,7 @@ import org.jetbrains.uast.test.env.kotlin.AbstractCoreEnvironment
 import org.jetbrains.uast.test.env.kotlin.AbstractUastTest
 import java.io.File
 
-abstract class AbstractKotlinUastTest : KotlinLightCodeInsightFixtureTestCase() {
-
-    override fun getProjectDescriptor(): LightProjectDescriptor =
-        KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE_FULL_JDK
-
-    override fun setUp() {
-        super.setUp()
-        Registry.get("kotlin.uast.multiresolve.enabled").setValue(true, testRootDisposable)
-    }
-
-    protected companion object {
-        val TEST_KOTLIN_MODEL_DIR = File("plugins/uast-kotlin/testData")
-    }
-
-    fun getVirtualFile(testName: String): VirtualFile {
-        val testFile = TEST_KOTLIN_MODEL_DIR.listFiles { pathname -> pathname.nameWithoutExtension == testName }.first()
-
-
-        val vfs = VirtualFileManager.getInstance().getFileSystem(URLUtil.FILE_PROTOCOL)
-
-//        val ideaProject = project
-//        ideaProject.baseDir = vfs.findFileByPath(TEST_KOTLIN_MODEL_DIR.canonicalPath)
-
-        return vfs.findFileByPath(testFile.canonicalPath)!!
-    }
-
-    abstract fun check(testName: String, file: UFile)
-
-    fun doTest(testName: String, checkCallback: (String, UFile) -> Unit = { testName, file -> check(testName, file) }) {
-
-        Registry.get("kotlin.use.ultra.light.classes").let {
-            println("\"kotlin.use.ultra.light.classes\" = $it")
-        }
-
-        val virtualFile = getVirtualFile(testName)
-
-        val psiFile = this.myFixture.configureByFile(virtualFile.canonicalPath!!) ?: error("Can't get psi file for $testName")
-        val uFile = UastFacade.convertElementWithParent(psiFile, null) ?: error("Can't get UFile for $testName")
-        checkCallback(testName, uFile as UFile)
-    }
-
-}
-
-abstract class AbstractKotlinUastTest0 : AbstractUastTest() {
-    protected companion object {
-        val TEST_KOTLIN_MODEL_DIR = File("plugins/uast-kotlin/testData")
-    }
+abstract class AbstractKotlinUastTest : AbstractUastTest() {
 
     private lateinit var compilerConfiguration: CompilerConfiguration
     private var kotlinCoreEnvironment: KotlinCoreEnvironment? = null
@@ -101,7 +49,7 @@ abstract class AbstractKotlinUastTest0 : AbstractUastTest() {
 
         initializeKotlinEnvironment()
 
-//        enableNewTypeInferenceIfNeeded()
+        enableNewTypeInferenceIfNeeded()
 
         val trace = NoScopeRecordCliBindingTrace()
 
@@ -215,3 +163,5 @@ abstract class AbstractKotlinUastTest0 : AbstractUastTest() {
         }
     }
 }
+
+val TEST_KOTLIN_MODEL_DIR = File("plugins/uast-kotlin/testData")

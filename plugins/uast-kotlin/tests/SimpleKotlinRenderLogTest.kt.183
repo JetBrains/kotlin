@@ -1,8 +1,12 @@
 package org.jetbrains.uast.test.kotlin
 
+import org.jetbrains.uast.UFile
 import org.junit.Test
 
-class SimpleKotlinRenderLogTest : AbstractKotlinRenderLogTest() {
+class SimpleKotlinRenderLogTest : AbstractKotlinUastTest(), AbstractKotlinRenderLogTest {
+
+    override fun check(testName: String, file: UFile) = super.check(testName, file)
+
     @Test fun testLocalDeclarations() = doTest("LocalDeclarations")
 
     @Test fun testSimple() = doTest("Simple")
