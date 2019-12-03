@@ -102,7 +102,7 @@ public final class EnforcedPlainTextFileTypeManager {
     });
   }
 
-  void ensureProjectFileUpToDate(@NotNull Project project) {
+  private void ensureProjectFileUpToDate(@NotNull Project project) {
     int i = ArrayUtil.indexOf(explicitlyMarkedProjects, project);
     ProjectPlainTextFileTypeManager projectPlainTextFileTypeManager = ProjectPlainTextFileTypeManager.getInstance(project);
     if (i == -1) {
