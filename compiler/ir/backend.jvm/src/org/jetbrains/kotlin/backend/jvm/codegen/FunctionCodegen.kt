@@ -5,15 +5,21 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
+import org.jetbrains.kotlin.backend.common.lower.BOUND_RECEIVER_PARAMETER
+import org.jetbrains.kotlin.backend.common.lower.BOUND_VALUE_PARAMETER
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.ClassBuilderMode
+import org.jetbrains.kotlin.codegen.mangleNameIfNeeded
+import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.visitAnnotableParameterCount
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.annotations.STRICTFP_ANNOTATION_FQ_NAME
@@ -206,7 +212,7 @@ open class FunctionCodegen(
 }
 
 // Borrowed from org.jetbrains.kotlin.codegen.FunctionCodegen.java
-fun generateParameterAnnotations(
+private fun generateParameterAnnotations(
     irFunction: IrFunction,
     mv: MethodVisitor,
     jvmSignature: JvmMethodSignature,
@@ -220,7 +226,9 @@ fun generateParameterAnnotations(
         val kind = parameterSignature.kind
         if (kind.isSkippedInGenericSignature) {
             if (AsmUtil.IS_BUILT_WITH_ASM6) {
-                markEnumOrInnerConstructorParameterAsSynthetic(mv, i, ClassBuilderMode.FULL)
+                // This is needed to avoid RuntimeInvisibleParameterAnnotations error in javac:
+                // see MethodWriter.visitParameterAnnotation()
+                mv.visitParameterAnnotation(i, "Ljava/lang/Synthetic;", true)?.visitEnd()
             } else {
                 syntheticParameterCount++
             }
@@ -249,13 +257,52 @@ fun generateParameterAnnotations(
     }
 }
 
-private fun markEnumOrInnerConstructorParameterAsSynthetic(mv: MethodVisitor, i: Int, mode: ClassBuilderMode) {
-    // IDEA's ClsPsi builder fails to annotate synthetic parameters
-    if (mode === ClassBuilderMode.LIGHT_CLASSES) return
+private fun generateParameterNames(irFunction: IrFunction, mv: MethodVisitor, jvmSignature: JvmMethodSignature, state: GenerationState) {
+    val iterator = irFunction.valueParameters.iterator()
+    for (parameterSignature in jvmSignature.valueParameters) {
+        val irParameter = when (parameterSignature.kind) {
+            JvmMethodParameterKind.RECEIVER -> irFunction.extensionReceiverParameter!!
+            else -> iterator.next()
+        }
+        val name = when (parameterSignature.kind) {
+            JvmMethodParameterKind.RECEIVER -> getNameForReceiverParameter(irFunction, state)
+            else -> irParameter.name.asString()
+        }
+        // A construct emitted by a Java compiler must be marked as synthetic if it does not correspond to a construct declared
+        // explicitly or implicitly in source code, unless the emitted construct is a class initialization method (JVMS §2.9).
+        // A construct emitted by a Java compiler must be marked as mandated if it corresponds to a formal parameter
+        // declared implicitly in source code (§8.8.1, §8.8.9, §8.9.3, §15.9.5.1).
+        val access = when {
+            irParameter == irFunction.extensionReceiverParameter -> Opcodes.ACC_MANDATED
+            irParameter.origin == JvmLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS -> Opcodes.ACC_MANDATED
+            // TODO mark these backend-common origins as synthetic? (note: ExpressionCodegen is still expected
+            //      to generate LVT entries for them)
+            irParameter.origin == IrDeclarationOrigin.MOVED_RECEIVER_PARAMETER -> Opcodes.ACC_SYNTHETIC
+            irParameter.origin == BOUND_VALUE_PARAMETER -> Opcodes.ACC_SYNTHETIC
+            irParameter.origin == BOUND_RECEIVER_PARAMETER -> Opcodes.ACC_SYNTHETIC
+            irParameter.origin.isSynthetic -> Opcodes.ACC_SYNTHETIC
+            else -> 0
+        }
+        mv.visitParameter(name, access)
+    }
+}
 
-    // This is needed to avoid RuntimeInvisibleParameterAnnotations error in javac:
-    // see MethodWriter.visitParameterAnnotation()
+private fun getNameForReceiverParameter(irFunction: IrFunction, state: GenerationState): String {
+    if (!state.languageVersionSettings.supportsFeature(LanguageFeature.NewCapturedReceiverFieldNamingConvention)) {
+        return AsmUtil.RECEIVER_PARAMETER_NAME
+    }
 
-    val av = mv.visitParameterAnnotation(i, "Ljava/lang/Synthetic;", true)
-    av?.visitEnd()
+    // Current codegen never touches CALL_LABEL_FOR_LAMBDA_ARGUMENT
+//    if (irFunction is IrSimpleFunction) {
+//        val labelName = bindingContext.get(CodegenBinding.CALL_LABEL_FOR_LAMBDA_ARGUMENT, irFunction.descriptor)
+//        if (labelName != null) {
+//            return getLabeledThisName(labelName, prefix, defaultName)
+//        }
+//    }
+
+    val callableName = irFunction.safeAs<IrSimpleFunction>()?.correspondingPropertySymbol?.owner?.name ?: irFunction.name
+    return if (callableName.isSpecial || !Name.isValidIdentifier(callableName.asString()))
+        AsmUtil.RECEIVER_PARAMETER_NAME
+    else
+        AsmUtil.LABELED_THIS_PARAMETER + mangleNameIfNeeded(callableName.asString())
 }
