@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
+import org.jetbrains.kotlin.fir.resolve.diagnostics.collectors.FirDiagnosticsCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDesignatedBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.runResolve
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
@@ -101,14 +102,30 @@ fun KtClassOrObject.getOrBuildFir(
     return firClass
 }
 
+private fun KtFile.getOrBuildRawFirFile(state: FirResolveState): Pair<IdeFirProvider, FirFile> {
+    val session = state.getSession(this)
+    val firProvider = FirProvider.getInstance(session) as IdeFirProvider
+    return firProvider to firProvider.getOrBuildFile(this)
+}
+
 fun KtFile.getOrBuildFir(
     state: FirResolveState,
     phase: FirResolvePhase = FirResolvePhase.DECLARATIONS
 ): FirFile {
-    val session = state.getSession(this)
-    val firProvider = FirProvider.getInstance(session) as IdeFirProvider
-    val firFile = firProvider.getOrBuildFile(this)
+    val (firProvider, firFile) = getOrBuildRawFirFile(state)
     firFile.runResolve(firFile, firProvider, phase, state)
+    return firFile
+}
+
+fun KtFile.getOrBuildFirWithDiagnostics(state: FirResolveState): FirFile {
+    // TODO: consider adding some locks
+    val (_, firFile) = getOrBuildRawFirFile(state)
+    firFile.runResolve(toPhase = FirResolvePhase.BODY_RESOLVE, fromPhase = firFile.resolvePhase)
+
+    if (state.hasDiagnosticsForFile(this)) return firFile
+
+    val coneDiagnostics = FirDiagnosticsCollector.create().collectDiagnostics(firFile)
+    state.setDiagnosticsForFile(this, firFile, coneDiagnostics)
     return firFile
 }
 
@@ -120,33 +137,34 @@ private fun FirDeclaration.runResolve(
 ) {
     val nonLazyPhase = minOf(toPhase, FirResolvePhase.DECLARATIONS)
     file.runResolve(toPhase = nonLazyPhase, fromPhase = this.resolvePhase)
-    if (toPhase > nonLazyPhase) {
-        val designation = mutableListOf<FirElement>()
-        designation += file
-        if (this !is FirFile) {
-            val id = when (this) {
-                is FirCallableDeclaration<*> -> {
-                    this.symbol.callableId.classId
-                }
-                is FirRegularClass -> {
-                    this.symbol.classId
-                }
-                else -> error("Unsupported: ${render()}")
+    if (toPhase <= nonLazyPhase) return
+    val designation = mutableListOf<FirDeclaration>(file)
+    if (this !is FirFile) {
+        val id = when (this) {
+            is FirCallableDeclaration<*> -> {
+                this.symbol.callableId.classId
             }
-            val outerClasses = generateSequence(id) { classId ->
-                classId.outerClassId
-            }.mapTo(mutableListOf()) { firProvider.getFirClassifierByFqName(it)!! }
-            designation += outerClasses.asReversed()
-            if (this is FirCallableDeclaration<*>) {
-                designation += this
+            is FirRegularClass -> {
+                this.symbol.classId
             }
+            else -> error("Unsupported: ${render()}")
         }
-        val transformer = FirDesignatedBodyResolveTransformer(
-            designation.iterator(), state.getSession(psi as KtElement),
-            implicitTypeOnly = toPhase == FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE
-        )
-        file.transform<FirFile, ResolutionMode>(transformer, ResolutionMode.ContextDependent)
+        val outerClasses = generateSequence(id) { classId ->
+            classId.outerClassId
+        }.mapTo(mutableListOf()) { firProvider.getFirClassifierByFqName(it)!! }
+        designation += outerClasses.asReversed()
+        if (this is FirCallableDeclaration<*>) {
+            designation += this
+        }
     }
+    if (designation.all { it.resolvePhase >= toPhase }) {
+        return
+    }
+    val transformer = FirDesignatedBodyResolveTransformer(
+        designation.iterator(), state.getSession(psi as KtElement),
+        implicitTypeOnly = toPhase == FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE
+    )
+    file.transform<FirFile, ResolutionMode>(transformer, ResolutionMode.ContextDependent)
 }
 
 fun KtElement.getOrBuildFir(

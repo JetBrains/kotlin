@@ -43,13 +43,13 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithAllCompilerChecks
+import org.jetbrains.kotlin.idea.fir.FirResolution
+import org.jetbrains.kotlin.idea.fir.firResolveState
+import org.jetbrains.kotlin.idea.fir.getOrBuildFirWithDiagnostics
 import org.jetbrains.kotlin.idea.inspections.KotlinUniversalQuickFix
 import org.jetbrains.kotlin.idea.quickfix.QuickFixes
 import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtNameReferenceExpression
-import org.jetbrains.kotlin.psi.KtParameter
-import org.jetbrains.kotlin.psi.KtReferenceExpression
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.types.KotlinType
@@ -63,7 +63,19 @@ open class KotlinPsiChecker : Annotator, HighlightRangeExtension {
 
         if (!KotlinHighlightingUtil.shouldHighlight(file)) return
 
-        val analysisResult = file.analyzeWithAllCompilerChecks()
+        if (FirResolution.enabled) {
+            annotateElementUsingFrontendIR(element, file, holder)
+        } else {
+            annotateElement(element, file, holder)
+        }
+    }
+
+    private fun annotateElement(
+        element: PsiElement,
+        containingFile: KtFile,
+        holder: AnnotationHolder
+    ) {
+        val analysisResult = containingFile.analyzeWithAllCompilerChecks()
         if (analysisResult.isError()) {
             throw ProcessCanceledException(analysisResult.error)
         }
@@ -73,6 +85,25 @@ open class KotlinPsiChecker : Annotator, HighlightRangeExtension {
         getAfterAnalysisVisitor(holder, bindingContext).forEach { visitor -> element.accept(visitor) }
 
         annotateElement(element, holder, bindingContext.diagnostics)
+    }
+
+    private fun annotateElementUsingFrontendIR(
+        element: PsiElement,
+        containingFile: KtFile,
+        holder: AnnotationHolder
+    ) {
+        if (element !is KtElement) return
+        val state = containingFile.firResolveState()
+        containingFile.getOrBuildFirWithDiagnostics(state)
+
+        val diagnostics = state.getDiagnostics(element)
+        if (diagnostics.isEmpty()) return
+
+        if (KotlinHighlightingUtil.shouldHighlightErrors(element)) {
+            ElementAnnotator(element, holder) { param ->
+                shouldSuppressUnusedParameter(param)
+            }.registerDiagnosticsAnnotations(diagnostics)
+        }
     }
 
     override fun isForceHighlightParents(file: PsiFile): Boolean {
