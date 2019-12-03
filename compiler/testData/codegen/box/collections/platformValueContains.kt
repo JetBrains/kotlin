@@ -1,6 +1,9 @@
 // IGNORE_BACKEND_FIR: JVM_IR
 // TARGET_BACKEND: JVM
 
+// IGNORE_BACKEND: JVM_IR
+// ^ TODO: decide whether special bridges are part of "common Kotlin" or Kotlin/JVM
+
 // FILE: J.java
 
 import java.util.*;
