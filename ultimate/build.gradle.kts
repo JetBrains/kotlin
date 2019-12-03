@@ -1,6 +1,3 @@
-
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-
 description = "Kotlin IDEA Ultimate plugin"
 
 plugins {
@@ -62,6 +59,9 @@ dependencies {
 
         Platform[193].orHigher {
             compileOnly(intellijUltimatePluginDep("gradle-java"))
+            compileOnly(intellijUltimateDep()) {
+                includeJars("platform-ide-util-io")
+            }
         }
 
         compileOnly(intellijUltimatePluginDep("CSS"))
@@ -93,7 +93,9 @@ dependencies {
     testCompile(project(":idea:idea-gradle-native")) { isTransitive = false }
 
     if (intellijUltimateEnabled) {
-        testCompileOnly(intellijUltimateDep()) { includeJars("platform-api", "platform-impl", "gson", "trove4j", "openapi", "idea", "util", "jdom", rootProject = rootProject) }
+        testCompileOnly(intellijUltimateDep()) {
+            includeJars("platform-api", "platform-impl", "gson", "trove4j", "openapi", "idea", "util", "jdom", rootProject = rootProject)
+        }
     }
     testCompile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
 

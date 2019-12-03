@@ -90,7 +90,7 @@ fun addIdeaNativeModuleDepsComposite(project: Project) = with(project) {
             isTransitive = false
         }
 
-        val ijPlatformDependencies = listOf(
+        val ijPlatformDependencies = mutableListOf(
             "idea",
             "openapi",
             "platform-api",
@@ -98,10 +98,23 @@ fun addIdeaNativeModuleDepsComposite(project: Project) = with(project) {
             "util",
             "extensions",
             "jdom"
-        ) + if (ideBranch >= 192)
-            listOf("intellij-dvcs", "platform-concurrency", "platform-core-ui", "platform-util-ui", "platform-util-ex")
-        else
-            emptyList()
+        )
+
+        if (ideBranch >= 192) {
+            ijPlatformDependencies += listOf(
+                "intellij-dvcs",
+                "platform-concurrency",
+                "platform-core-ui",
+                "platform-util-ui",
+                "platform-util-ex"
+            )
+        }
+
+        if (ideBranch >= 193) {
+            ijPlatformDependencies += listOf(
+                "platform-ide-util-io"
+            )
+        }
 
         add("compile", "kotlin.build:$ideName:$ideVersion") {
             ijPlatformDependencies.forEach { jarName ->
