@@ -8,6 +8,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.ValidationInfo
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.annotations.ApiStatus
@@ -37,7 +38,10 @@ fun canLinkAndRefreshGradleProject(projectFilePath: String, project: Project, sh
 fun linkAndRefreshGradleProject(projectFilePath: String, project: Project) {
   val localFileSystem = LocalFileSystem.getInstance()
   val projectFile = localFileSystem.refreshAndFindFileByPath(projectFilePath)
-  if (projectFile == null) throw IllegalArgumentException(ExternalSystemBundle.message("error.project.does.not.exist"))
+  if (projectFile == null) {
+    val shortPath = FileUtil.getLocationRelativeToUserHome(FileUtil.toSystemDependentName(projectFilePath), false)
+    throw IllegalArgumentException(ExternalSystemBundle.message("error.project.does.not.exist", "Gradle", shortPath))
+  }
   GradleOpenProjectProvider().linkToExistingProject(projectFile, project)
 }
 
@@ -48,7 +52,10 @@ private fun validateGradleProject(projectFilePath: String, project: Project): Va
   val systemSettings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID)
   val localFileSystem = LocalFileSystem.getInstance()
   val projectFile = localFileSystem.refreshAndFindFileByPath(projectFilePath)
-  if (projectFile == null) return ValidationInfo(ExternalSystemBundle.message("error.project.does.not.exist"))
+  if (projectFile == null) {
+    val shortPath = FileUtil.getLocationRelativeToUserHome(FileUtil.toSystemDependentName(projectFilePath), false)
+    return ValidationInfo(ExternalSystemBundle.message("error.project.does.not.exist", "Gradle", shortPath))
+  }
   val projectDirectory = if (projectFile.isDirectory) projectFile else projectFile.parent
   val projectSettings = systemSettings.getLinkedProjectSettings(projectDirectory.path)
   if (projectSettings != null) return ValidationInfo(ExternalSystemBundle.message("error.project.already.registered"))
