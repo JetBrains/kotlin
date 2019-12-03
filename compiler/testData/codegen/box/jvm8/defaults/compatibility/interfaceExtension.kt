@@ -5,8 +5,10 @@
 // WITH_RUNTIME
 interface A {
     @JvmDefault
-    fun String.foo() = "OK"
+    fun String.foo(k: String) = "O" + k
 }
 
 fun box(): String =
-    object : A { fun box() = "FAIL".foo() }.box()
+    object : A {
+        fun box() = "FAIL".foo("K")
+    }.box()
