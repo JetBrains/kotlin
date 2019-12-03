@@ -12,8 +12,8 @@ import com.jetbrains.cidr.lang.symbols.objc.SelectorPartSymbolImpl
 import org.jetbrains.konan.resolve.symbols.objc.*
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 
-class StubToOCSymbolTranslator(val project: Project) {
-    fun translate(stub: Stub<*>, file: VirtualFile): OCSymbol? {
+class KtOCSymbolTranslator(val project: Project) : KtFileTranslator() {
+    override fun translate(stub: Stub<*>, file: VirtualFile): OCSymbol? {
         return when (stub) {
             is ObjCProtocol -> KtOCProtocolSymbol(stub, project, file)
             is ObjCInterface -> KtOCInterfaceSymbol(stub, project, file)

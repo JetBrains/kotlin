@@ -17,7 +17,7 @@
   </extensions>
 
   <extensions defaultExtensionNs="cidr.lang">
-    <symbolTableProvider implementation="org.jetbrains.konan.resolve.konan.KonanBridgeSymbolTableProvider" order="before OCSymbolTableProvider"/>
+    <symbolTableProvider implementation="org.jetbrains.konan.resolve.konan.KonanBridgeSymbolTableProvider" order="before OCSymbolTableProvider, before SwiftObjcSymbolTableProvider"/>
     <symbolTableProvider implementation="org.jetbrains.konan.resolve.KtSymbolTableProvider"/>
     <symbolTableProvider implementation="org.jetbrains.konan.resolve.konan.KonanKNMSymbolTableProvider"/>
     <serializerProvider implementation="org.jetbrains.konan.resolve.symbols.serialization.KtSerializer"/>

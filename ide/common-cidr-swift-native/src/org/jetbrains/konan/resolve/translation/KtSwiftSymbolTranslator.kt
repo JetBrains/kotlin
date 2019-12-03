@@ -7,10 +7,9 @@ import com.jetbrains.swift.psi.types.SwiftTypeFactory
 import com.jetbrains.swift.symbols.*
 import org.jetbrains.konan.resolve.symbols.swift.*
 import org.jetbrains.kotlin.backend.konan.objcexport.*
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 
-class StubToSwiftSymbolTranslator(val project: Project) {
-    fun translate(stub: Stub<*>, file: VirtualFile): SwiftSymbol? {
+class KtSwiftSymbolTranslator(val project: Project) : KtFileTranslator() {
+    override fun translate(stub: Stub<*>, file: VirtualFile): SwiftSymbol? {
         return when (stub) {
             is ObjCProtocol -> KtSwiftProtocolSymbol(stub, project, file)
             is ObjCInterface -> {

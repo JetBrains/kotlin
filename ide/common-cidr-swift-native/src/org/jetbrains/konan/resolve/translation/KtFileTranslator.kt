@@ -1,8 +1,10 @@
 package org.jetbrains.konan.resolve.translation
 
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.cidr.lang.CLanguageKind
+import com.jetbrains.cidr.lang.preprocessor.OCInclusionContext
 import com.jetbrains.cidr.lang.symbols.OCSymbol
+import com.jetbrains.swift.languageKind.SwiftLanguageKind
 import org.jetbrains.konan.resolve.konan.KonanTarget
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportLazy
@@ -15,15 +17,15 @@ import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 
-class KtFileTranslator(val project: Project) {
-    private val stubToOCSymbolTranslator = StubToOCSymbolTranslator(project)
-    private val stubToSwiftSymbolTranslator = StubToSwiftSymbolTranslator(project)
+abstract class KtFileTranslator {
+    fun translate(file: KtFile, target: KonanTarget): Sequence<OCSymbol> =
+        createStubProvider(file, target).translate(file).translate(file.virtualFile)
 
-    fun translate(file: KtFile, target: KonanTarget): Sequence<OCSymbol> = createStubProvider(file, target).translate(file).asSequence().translate(file.virtualFile)
-    fun translateBase(file: KtFile, target: KonanTarget): Sequence<OCSymbol> = createStubProvider(file, target).generateBase().asSequence().translate(file.virtualFile)
+    fun translateBase(file: KtFile, target: KonanTarget): Sequence<OCSymbol> =
+        createStubProvider(file, target).generateBase().translate(file.virtualFile)
 
-    private fun Sequence<Stub<*>>.translate(file: VirtualFile): Sequence<OCSymbol> = mapNotNull { stubToOCSymbolTranslator.translate(it, file) } +
-                                                                                     mapNotNull { stubToSwiftSymbolTranslator.translate(it, file) }
+    private fun Collection<Stub<*>>.translate(file: VirtualFile): Sequence<OCSymbol> = asSequence().mapNotNull { translate(it, file) }
+    protected abstract fun translate(stub: Stub<*>, file: VirtualFile): OCSymbol?
 
     private fun createStubProvider(file: KtFile, target: KonanTarget): ObjCExportLazy {
         val configuration = object : ObjCExportLazy.Configuration {
@@ -55,5 +57,16 @@ class KtFileTranslator(val project: Project) {
     private object SilentWarningCollector : ObjCExportWarningCollector {
         override fun reportWarning(text: String) {}
         override fun reportWarning(method: FunctionDescriptor, text: String) {}
+    }
+
+    companion object {
+        internal fun isSupported(context: OCInclusionContext): Boolean =
+            context.languageKind.let { it == SwiftLanguageKind.SWIFT || it is CLanguageKind }
+
+        internal fun createTranslator(context: OCInclusionContext): KtFileTranslator = when (context.languageKind) {
+            SwiftLanguageKind.SWIFT -> KtSwiftSymbolTranslator(context.project)
+            is CLanguageKind -> KtOCSymbolTranslator(context.project)
+            else -> throw UnsupportedOperationException("Unsupported language kind ${context.languageKind}")
+        }
     }
 }

@@ -13,11 +13,8 @@ import com.jetbrains.swift.codeinsight.resolve.SwiftModule
 import com.jetbrains.swift.languageKind.SwiftLanguageKind
 import com.jetbrains.swift.symbols.SwiftAttributesInfo
 import com.jetbrains.swift.symbols.SwiftModuleSymbol
-import com.jetbrains.swift.symbols.SwiftSymbol
 import com.jetbrains.swift.symbols.impl.SwiftSourceModuleSymbol
 import com.jetbrains.swift.symbols.impl.SymbolProps
-import org.jetbrains.konan.resolve.symbols.KtFileReferenceSymbol
-import org.jetbrains.konan.resolve.translation.KtFrameworkTranslator
 
 abstract class KonanSwiftModule : SwiftModule, UserDataHolder by UserDataHolderBase() {
     protected abstract val project: Project
@@ -38,31 +35,17 @@ abstract class KonanSwiftModule : SwiftModule, UserDataHolder by UserDataHolderB
 
     override fun buildModuleCache(): SwiftGlobalSymbols {
         val file = konanBridgeFile() ?: return SwiftGlobalSymbols.EMPTY
-
-        val swiftSymbols = SwiftGlobalSymbolsImpl(this)
-        val processor = SwiftGlobalSymbolsImpl.SymbolProcessor(swiftSymbols)
-
-        val psiManager = PsiManager.getInstance(project)
-        KtFrameworkTranslator(project).translateModule(file).forEach { symbol ->
-            when (symbol) {
-                is SwiftSymbol -> processor.process(symbol)
-                is KtFileReferenceSymbol -> processFile(symbol, psiManager, file, processor)
-            }
-        }
-
-        return swiftSymbols
-    }
-
-    private fun processFile(
-        symbol: KtFileReferenceSymbol,
-        psiManager: PsiManager,
-        bridgeFile: KonanBridgeVirtualFile,
-        processor: SwiftGlobalSymbolsImpl.SymbolProcessor
-    ) {
-        val file = symbol.targetFile
-        val psiFile = psiManager.findFile(file) ?: return
+        val psiFile = PsiManager.getInstance(project).findFile(file) ?: return SwiftGlobalSymbols.EMPTY
         val context = OCInclusionContext.empty(SwiftLanguageKind.SWIFT, psiFile)
-        context.addProcessedFile(bridgeFile)
-        FileSymbolTable.forFile(file, context)?.processFile(processor)
+        val table = FileSymbolTable.forFile(file, context)?.takeIf { !it.isEmpty } ?: return SwiftGlobalSymbols.EMPTY
+
+        val bridgedSymbols = SwiftGlobalSymbolsImpl(SwiftGlobalSymbols.SymbolsOrigin.OBJC, this)
+        val processor = SwiftGlobalSymbolsImpl.SymbolProcessor(bridgedSymbols, false)
+        val state = FileSymbolTable.ProcessingState(context, false)
+        table.processSymbols(processor, null, state, null, null, null)
+
+        if (!processor.isAnyProcessed) return SwiftGlobalSymbols.EMPTY
+        bridgedSymbols.compact()
+        return bridgedSymbols
     }
 }

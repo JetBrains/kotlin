@@ -25,19 +25,19 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
 import org.jetbrains.plugins.gradle.util.GradleConstants
 
-class KtFrameworkTranslator(val project: Project) {
-    fun translateModule(konanFile: KonanBridgeVirtualFile): Sequence<OCSymbol> {
-        val sources = collectSources(konanFile)
+object KtFrameworkTranslator {
+    fun translateModule(project: Project, konanFile: KonanBridgeVirtualFile, translator: KtFileTranslator): Sequence<OCSymbol> {
+        val sources = collectSources(project, konanFile)
         val ktFile = sources.firstOrNull()?.let { PsiManager.getInstance(project).findFile(it) } as? KtFile
                      ?: return emptySequence()
 
-        val baseDeclarations = KtFileTranslator(project).translateBase(ktFile, konanFile.target)
+        val baseDeclarations = translator.translateBase(ktFile, konanFile.target)
         val includes = sources.asSequence().map { include(konanFile, it) }
 
         return baseDeclarations + includes
     }
 
-    private fun collectSources(konanFile: KonanBridgeVirtualFile): List<VirtualFile> {
+    private fun collectSources(project: Project, konanFile: KonanBridgeVirtualFile): List<VirtualFile> {
         val projectNode = ProjectDataManager.getInstance().getExternalProjectsData(project, GradleConstants.SYSTEM_ID).first().externalProjectStructure as DataNode<*>
         val moduleNode = ExternalSystemApiUtil.find(projectNode, ProjectKeys.MODULE) {
             it.data.id == konanFile.target.moduleId

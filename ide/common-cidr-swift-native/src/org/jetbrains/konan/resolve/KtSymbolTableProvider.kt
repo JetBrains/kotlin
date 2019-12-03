@@ -12,7 +12,6 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.PsiTreeChangeEventImpl
 import com.jetbrains.cidr.CidrLog
-import com.jetbrains.cidr.lang.CLanguageKind
 import com.jetbrains.cidr.lang.preprocessor.OCInclusionContext
 import com.jetbrains.cidr.lang.symbols.symtable.ContextSignature
 import com.jetbrains.cidr.lang.symbols.symtable.FileSymbolTable
@@ -26,24 +25,20 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 class KtSymbolTableProvider : SymbolTableProvider() {
     override fun isSource(file: PsiFile): Boolean = file is KtFile
 
-    override fun isSource(project: Project, file: VirtualFile): Boolean {
-        //todo[medvedev] check if the source is from common or ios module
-        return FileTypeManager.getInstance().isFileOfType(file, KotlinFileType.INSTANCE)
-    }
+    //todo[medvedev] check if the source is from common or ios module
+    override fun isSource(project: Project, file: VirtualFile): Boolean =
+        FileTypeManager.getInstance().isFileOfType(file, KotlinFileType.INSTANCE)
 
+    //todo[medvedev] check if the source is from common or ios module
     override fun isSource(project: Project, file: VirtualFile, inclusionContext: OCInclusionContext): Boolean =
-        isSource(project, file) // && inclusionContext.processedFiles.any { it is KonanBridgeVirtualFile }
+        KtFileTranslator.isSupported(inclusionContext) && getBridgeFile(inclusionContext) != null && isSource(project, file)
 
     override fun onOutOfCodeBlockModification(project: Project, file: PsiFile?) {
-        if (file != null && isSource(file)) {
-            KtModificationCount.getInstance(project).inc()
-        }
+        if (file != null && isSource(file)) KtModificationCount.getInstance(project).inc()
     }
 
-    override fun isOutOfCodeBlockChange(event: PsiTreeChangeEventImpl): Boolean {
-        //todo[medvedev] proper check for out of code block modification
-        return true
-    }
+    //todo[medvedev] proper check for out of code block modification
+    override fun isOutOfCodeBlockChange(event: PsiTreeChangeEventImpl): Boolean = true
 
     override fun calcTableUsingPSI(file: PsiFile, virtualFile: VirtualFile, context: OCInclusionContext): FileSymbolTable {
         CidrLog.LOG.error("should not be called for this file: " + file.name)
@@ -51,17 +46,18 @@ class KtSymbolTableProvider : SymbolTableProvider() {
     }
 
     override fun calcTable(virtualFile: VirtualFile, context: OCInclusionContext): FileSymbolTable {
-        val target = context.processedFiles.firstIsInstanceOrNull<KonanBridgeVirtualFile>()?.target
-            ?: TODO("Cannot build file symbol table without target")
+        val target = checkNotNull(getBridgeFile(context)).target
 
-        val signature = ContextSignature(CLanguageKind.OBJ_C, emptyMap(), emptySet(), emptyList(), false, null, false)
+        val signature = ContextSignature(context.languageKind, emptyMap(), emptySet(), emptyList(), false, null, false)
         val table = FileSymbolTable(virtualFile, signature)
         val project = context.project
         val psi = PsiManager.getInstance(project).findFile(virtualFile) as? KtFile ?: return table
-        val translator = KtFileTranslator(project)
 
-        translator.translate(psi, target).forEach { symbol -> table.append(symbol) }
+        val fileTranslator = KtFileTranslator.createTranslator(context)
+        fileTranslator.translate(psi, target).forEach { symbol -> table.append(symbol) }
 
         return table
     }
+
+    private fun getBridgeFile(context: OCInclusionContext): KonanBridgeVirtualFile? = context.processedFiles.firstIsInstanceOrNull()
 }

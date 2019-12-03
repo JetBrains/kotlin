@@ -11,25 +11,19 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.PsiTreeChangeEventImpl
 import com.jetbrains.cidr.CidrLog
-import com.jetbrains.cidr.lang.CLanguageKind
 import com.jetbrains.cidr.lang.preprocessor.OCInclusionContext
 import com.jetbrains.cidr.lang.symbols.symtable.ContextSignature
 import com.jetbrains.cidr.lang.symbols.symtable.FileSymbolTable
 import com.jetbrains.cidr.lang.symbols.symtable.OCSymbolTablesBuildingActivity
 import com.jetbrains.cidr.lang.symbols.symtable.SymbolTableProvider
+import org.jetbrains.konan.resolve.translation.KtFileTranslator
 import org.jetbrains.konan.resolve.translation.KtFrameworkTranslator
 
 class KonanBridgeSymbolTableProvider : SymbolTableProvider() {
-    public override fun isSource(file: PsiFile): Boolean {
-        return file is KonanBridgePsiFile
-    }
-
-    override fun isSource(project: Project, virtualFile: VirtualFile): Boolean {
-        return virtualFile is KonanBridgeVirtualFile
-    }
-
+    override fun isSource(file: PsiFile): Boolean = file is KonanBridgePsiFile
+    override fun isSource(project: Project, virtualFile: VirtualFile): Boolean = virtualFile is KonanBridgeVirtualFile
     override fun isSource(project: Project, virtualFile: VirtualFile, inclusionContext: OCInclusionContext): Boolean =
-        isSource(project, virtualFile)
+        KtFileTranslator.isSupported(inclusionContext) && isSource(project, virtualFile)
 
     override fun onOutOfCodeBlockModification(project: Project, file: PsiFile?) {
         //nothing here
@@ -45,10 +39,11 @@ class KonanBridgeSymbolTableProvider : SymbolTableProvider() {
     override fun calcTable(virtualFile: VirtualFile, context: OCInclusionContext): FileSymbolTable {
         virtualFile as KonanBridgeVirtualFile
 
-        val signature = ContextSignature(CLanguageKind.OBJ_C, emptyMap(), emptySet(), emptyList(), false, null, false)
+        val signature = ContextSignature(context.languageKind, emptyMap(), emptySet(), emptyList(), false, null, false)
         val result = FileSymbolTable(virtualFile, signature)
 
-        KtFrameworkTranslator(context.project).translateModule(virtualFile).forEach { result.append(it) }
+        val fileTranslator = KtFileTranslator.createTranslator(context)
+        KtFrameworkTranslator.translateModule(context.project, virtualFile, fileTranslator).forEach { result.append(it) }
 
         return result
     }

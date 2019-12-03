@@ -18,7 +18,7 @@ import com.jetbrains.cidr.lang.symbols.objc.OCClassSymbol
 import com.jetbrains.cidr.lang.symbols.objc.OCImplementationSymbol
 import com.jetbrains.cidr.lang.symbols.objc.OCMemberSymbol
 import com.jetbrains.cidr.lang.types.OCObjectType
-import org.jetbrains.konan.resolve.translation.StubToOCSymbolTranslator
+import org.jetbrains.konan.resolve.translation.KtOCSymbolTranslator
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCClass
 
 abstract class KtOCClassSymbol<State: KtOCClassSymbol.ClassState, Stub : ObjCClass<*>>
@@ -83,7 +83,7 @@ abstract class KtOCClassSymbol<State: KtOCClassSymbol.ClassState, Stub : ObjCCla
 
         constructor(clazz: KtOCClassSymbol<*, *>, stub: ObjCClass<*>, project: Project) : super(stub) {
             this.protocolNames = stub.superProtocols
-            val translator = StubToOCSymbolTranslator(project)
+            val translator = KtOCSymbolTranslator(project)
             var map: MostlySingularMultiMap<String, OCMemberSymbol>? = null
             for (member in stub.members) {
                 val translatedMember = translator.translateMember(member, clazz, clazz.containingFile)
