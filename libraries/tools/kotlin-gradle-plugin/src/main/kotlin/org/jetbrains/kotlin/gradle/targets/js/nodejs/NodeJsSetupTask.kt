@@ -7,8 +7,10 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
+import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import org.jetbrains.kotlin.gradle.utils.patternLayoutCompatible
+import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
 import java.io.File
 import java.net.URI
 
@@ -52,7 +54,13 @@ open class NodeJsSetupTask : DefaultTask() {
         val dep = this.project.dependencies.create(ivyDependency)
         val conf = this.project.configurations.detachedConfiguration(dep)
         conf.isTransitive = false
+
+        val startDownloadTime = System.currentTimeMillis()
         val result = conf.resolve().single()
+
+        KotlinBuildStatsService.getInstance()
+            ?.report(NumericalMetrics.ARTIFACTS_DOWNLOAD_SPEED, result.length() * 1000 / (System.currentTimeMillis() - startDownloadTime))
+
         project.repositories.remove(repo)
 
         project.logger.kotlinInfo("Using node distribution from '$result'")
