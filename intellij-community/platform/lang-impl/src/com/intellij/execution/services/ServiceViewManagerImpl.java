@@ -51,7 +51,6 @@ import org.jetbrains.concurrency.Promise;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @State(name = "ServiceViewManager", storages = @Storage(StoragePathMacros.WORKSPACE_FILE))
 public final class ServiceViewManagerImpl implements ServiceViewManager, PersistentStateComponent<ServiceViewManagerImpl.State> {
@@ -90,8 +89,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
         updateToolWindow(toolWindowId, true, show);
       }
       else {
-        Set<? extends ServiceViewContributor<?>> activeContributors =
-          myModel.getRoots().stream().map(root -> root.getRootContributor()).collect(Collectors.toSet());
+        Set<? extends ServiceViewContributor<?>> activeContributors = getActiveContributors();
         Collection<ServiceViewContributor<?>> toolWindowContributors = myGroups.get(toolWindowId);
         updateToolWindow(toolWindowId, ContainerUtil.intersects(activeContributors, toolWindowContributors), false);
       }
@@ -106,8 +104,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
 
   private void initRoots() {
     myModel.getInvoker().invokeLater(() -> myModel.initRoots().onSuccess(o -> {
-      Set<? extends ServiceViewContributor<?>> activeContributors =
-        ContainerUtil.map2Set(myModel.getRoots(), ServiceViewItem::getRootContributor);
+      Set<? extends ServiceViewContributor<?>> activeContributors = getActiveContributors();
       Map<String, Boolean> toolWindowIds = new HashMap<>();
       for (ServiceViewContributor<?> contributor : ServiceModel.getContributors()) {
         String toolWindowId = getToolWindowId(contributor.getClass());
@@ -122,6 +119,10 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
         registerToolWindow(entry.getKey(), entry.getValue());
       }
     }));
+  }
+
+  private Set<? extends ServiceViewContributor<?>> getActiveContributors() {
+    return ContainerUtil.map2Set(myModel.getRoots(), ServiceViewItem::getRootContributor);
   }
 
   @Nullable
@@ -424,7 +425,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
       );
       if (fileItem != null) {
         Promise<Void> promise = select(fileItem.getValue(), fileItem.getRootContributor().getClass(), false, false);
-        promise.onSuccess(o -> result.setResult(null)).onError(result::setError);
+        promise.processed(result);
       }
     });
     return result;
