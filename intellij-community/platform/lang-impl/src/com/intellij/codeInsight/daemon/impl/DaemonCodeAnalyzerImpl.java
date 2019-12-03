@@ -588,10 +588,10 @@ public final class DaemonCodeAnalyzerImpl extends DaemonCodeAnalyzerEx implement
     DaemonProgressIndicator updateProgress = myUpdateProgress;
     if (myDisposed) return false;
     boolean wasCanceled = updateProgress.isCanceled();
-    myPassExecutorService.cancelAll(false);
     if (!wasCanceled) {
       PassExecutorService.log(updateProgress, null, "Cancel", reason, toRestartAlarm);
       updateProgress.cancel();
+      myPassExecutorService.cancelAll(false);
       return true;
     }
     return false;
@@ -680,7 +680,7 @@ public final class DaemonCodeAnalyzerImpl extends DaemonCodeAnalyzerEx implement
     return ((IntentionsUIImpl)IntentionsUI.getInstance(myProject)).getLastIntentionHint();
   }
 
-  @Nullable
+  @NotNull
   @Override
   public Element getState() {
     Element state = new Element("state");
