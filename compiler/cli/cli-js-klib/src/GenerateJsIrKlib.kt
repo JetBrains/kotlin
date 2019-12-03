@@ -104,12 +104,14 @@ fun main(args: Array<String>) {
     var outputPath: String? = null
     val dependencies = mutableListOf<String>()
     val commonSources = mutableListOf<String>()
+    var moduleName: String? = null
 
     var index = 0
     while (index < args.size) {
         val arg = args[index++]
 
         when (arg) {
+            "-n" -> moduleName = args[index++]
             "-o" -> outputPath = args[index++]
             "-d" -> dependencies += args[index++]
             "-c" -> commonSources += args[index++]
@@ -121,11 +123,15 @@ fun main(args: Array<String>) {
         error("Please set path to .klm file: `-o some/dir/module-name.klm`")
     }
 
+    if (moduleName == null) {
+        error("Please set module name: `-n module-name`")
+    }
+
     val resolvedLibraries = jsResolveLibraries(
         dependencies, messageCollectorLogger(MessageCollector.NONE)
     )
 
-    buildKLib(File(outputPath).absolutePath, listOfKtFilesFrom(inputFiles), outputPath, resolvedLibraries, listOfKtFilesFrom(commonSources))
+    buildKLib(moduleName, listOfKtFilesFrom(inputFiles), outputPath, resolvedLibraries, listOfKtFilesFrom(commonSources))
 }
 
 // Copied here from `K2JsIrCompiler` instead of reusing in order to avoid circular dependencies between Gradle tasks
