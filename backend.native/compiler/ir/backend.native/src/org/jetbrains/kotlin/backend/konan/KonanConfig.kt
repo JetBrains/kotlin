@@ -127,7 +127,10 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     internal val objCNativeLibrary: String =
             File(distribution.defaultNatives(target)).child("objc.bc").absolutePath
 
-    internal val nativeLibraries: List<String> = 
+    internal val exceptionsSupportNativeLibrary: String =
+            File(distribution.defaultNatives(target)).child("exceptionsSupport.bc").absolutePath
+
+    internal val nativeLibraries: List<String> =
         configuration.getList(KonanConfigKeys.NATIVE_LIBRARY_FILES)
 
     internal val includeBinaries: List<String> = 

@@ -68,7 +68,8 @@ private fun linkAllDependencies(context: Context, generatedBitcodeFiles: List<St
 
     val bitcodeLibraries = context.llvm.bitcodeToLink.map { it.bitcodePaths }.flatten().filter { it.isBitcode }
     val additionalBitcodeFilesToLink = context.llvm.additionalProducedBitcodeFiles
-    val bitcodeFiles = (nativeLibraries + generatedBitcodeFiles + additionalBitcodeFilesToLink + bitcodeLibraries).toSet()
+    val exceptionsSupportNativeLibrary = config.exceptionsSupportNativeLibrary
+    val bitcodeFiles = (nativeLibraries + exceptionsSupportNativeLibrary + generatedBitcodeFiles + additionalBitcodeFilesToLink + bitcodeLibraries).toSet()
 
     val llvmModule = context.llvmModule!!
     bitcodeFiles.forEach {
