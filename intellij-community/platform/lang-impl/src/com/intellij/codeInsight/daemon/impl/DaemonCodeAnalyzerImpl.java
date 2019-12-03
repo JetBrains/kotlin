@@ -330,16 +330,14 @@ public final class DaemonCodeAnalyzerImpl extends DaemonCodeAnalyzerEx implement
     try {
       long start = System.currentTimeMillis();
       while (progress.isRunning() && System.currentTimeMillis() < start + 10*60*1000) {
-        wrap(() -> {
-          progress.checkCanceled();
-          if (callbackWhileWaiting != null) {
-            callbackWhileWaiting.run();
-          }
-          waitInOtherThread(50, canChangeDocument);
-          UIUtil.dispatchAllInvocationEvents();
-          Throwable savedException = PassExecutorService.getSavedException(progress);
-          if (savedException != null) throw savedException;
-        });
+        progress.checkCanceled();
+        if (callbackWhileWaiting != null) {
+          callbackWhileWaiting.run();
+        }
+        waitInOtherThread(50, canChangeDocument);
+        UIUtil.dispatchAllInvocationEvents();
+        Throwable savedException = PassExecutorService.getSavedException(progress);
+        if (savedException != null) throw savedException;
       }
       if (progress.isRunning() && !progress.isCanceled()) {
         throw new RuntimeException("Highlighting still running after " +(System.currentTimeMillis()-start)/1000 + " seconds." +
@@ -351,15 +349,20 @@ public final class DaemonCodeAnalyzerImpl extends DaemonCodeAnalyzerEx implement
       }
 
       HighlightingSessionImpl session = (HighlightingSessionImpl)HighlightingSessionImpl.getOrCreateHighlightingSession(file, progress, null);
-      wrap(() -> {
-        if (!waitInOtherThread(60000, canChangeDocument)) {
-          throw new TimeoutException("Unable to complete in 60s");
-        }
-        session.waitForHighlightInfosApplied();
-      });
+      if (!waitInOtherThread(60000, canChangeDocument)) {
+        throw new TimeoutException("Unable to complete in 60s");
+      }
+      session.waitForHighlightInfosApplied();
       UIUtil.dispatchAllInvocationEvents();
       UIUtil.dispatchAllInvocationEvents();
       assert progress.isCanceled() && progress.isDisposed();
+    }
+    catch (Throwable e) {
+      if (e instanceof ExecutionException) e = e.getCause();
+      if (progress.isCanceled() && progress.isRunning()) {
+        e.addSuppressed(new RuntimeException("Daemon progress was canceled unexpectedly: " + progress));
+      }
+      ExceptionUtil.rethrow(e);
     }
     finally {
       DaemonProgressIndicator.setDebug(false);
@@ -906,18 +909,5 @@ public final class DaemonCodeAnalyzerImpl extends DaemonCodeAnalyzerEx implement
       }
     }
     return result;
-  }
-
-  @TestOnly
-  private static void wrap(@NotNull ThrowableRunnable<?> runnable) {
-    try {
-      runnable.run();
-    }
-    catch (RuntimeException | Error e) {
-      throw e;
-    }
-    catch (Throwable e) {
-      throw new RuntimeException(e);
-    }
   }
 }
