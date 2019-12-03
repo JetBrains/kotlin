@@ -1,7 +1,6 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
-import org.jetbrains.kotlin.gradle.model.KotlinProject
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Test
@@ -41,8 +40,15 @@ open class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT() {
             assertSuccessful()
         }
 
-        getModels(KotlinProject::class.java).getModel(":lib")?.run {
-            // TODO: Why is this always null :(
+        build("sourceSets") {
+            assertContains("Java sources: [lib/src/androidTest/java, lib/src/androidAndroidTest/kotlin]")
+            assertContains("Java sources: [lib/src/androidTestDebug/java, lib/src/androidAndroidTestDebug/kotlin]")
+            assertContains("Java sources: [lib/src/debug/java, lib/src/androidDebug/kotlin, lib/src/debug/kotlin]")
+            assertContains("Java sources: [lib/src/main/java, lib/src/androidMain/kotlin, lib/src/main/kotlin]")
+            assertContains("Java sources: [lib/src/release/java, lib/src/androidRelease/kotlin, lib/src/release/kotlin]")
+            assertContains("Java sources: [lib/src/test/java, lib/src/androidTest/kotlin, lib/src/test/kotlin]")
+            assertContains("Java sources: [lib/src/testDebug/java, lib/src/androidTestDebug/kotlin, lib/src/testDebug/kotlin]")
+            assertContains("Java sources: [lib/src/testRelease/java, lib/src/androidTestRelease/kotlin, lib/src/testRelease/kotlin]")
         }
     }
 

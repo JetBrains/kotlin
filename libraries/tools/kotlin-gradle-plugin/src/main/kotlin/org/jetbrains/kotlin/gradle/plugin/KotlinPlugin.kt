@@ -743,15 +743,17 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
         ext.sourceSets.all { androidSourceSet ->
             logger.kotlinDebug("Creating KotlinBaseSourceSet for source set $androidSourceSet")
             val kotlinSourceSet = project.kotlinExtension.sourceSets.maybeCreate(kotlinSourceSetName(androidSourceSet)).apply {
-                /* Avoiding conflicts like the "androidTest" kotlin source set vs "androidTest" android source set. */
-                if (kotlinAndroidTarget.disambiguationClassifier != null && androidSourceSet.name in kotlinSourceSetNames) {
-                    /* In case of conflict: Remove ambiguous source dirs from the Android source set */
-                    androidSourceSet.java.setSrcDirs(emptyList<File>())
-                } else {
+
+                // Avoid overlapping source directories like src/androidTest/kotlin which would otherwise be present  in the
+                // androidTest and androidAndroidTest kotlin source sets
+                if (kotlinAndroidTarget.disambiguationClassifier == null || androidSourceSet.name !in kotlinSourceSetNames) {
                     kotlin.srcDir(project.file(project.file("src/${androidSourceSet.name}/kotlin")))
-                    kotlin.srcDirs(androidSourceSet.java.srcDirs)
                 }
 
+                // Adding all java source directories to the kotlin source set:
+                // This could be confusing because "src/androidTest/java" will belong to the androidAndroidTest kotlin source set
+                // instead of the androidTest one for example. Keeping backwards compatibility for now.
+                kotlin.srcDirs(androidSourceSet.java.srcDirs)
                 androidSourceSet.java.srcDirs(*(kotlin.srcDirs - androidSourceSet.java.srcDirs).toTypedArray())
             }
             androidSourceSet.addConvention(KOTLIN_DSL_NAME, kotlinSourceSet)
