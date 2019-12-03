@@ -16,6 +16,7 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.util.ui.JBUI
+import java.awt.Dimension
 
 internal class IntentionPreviewModel {
   companion object {
@@ -76,6 +77,11 @@ internal class IntentionPreviewModel {
         isRightMarginShown = false
         isUseSoftWraps = false
         isAdditionalPageAtBottom = false
+      }
+
+      if (text.length > 80) {
+        editor.component.preferredSize = Dimension(600, 80)
+        editor.settings.isUseSoftWraps = true
       }
 
       editor.gutterComponentEx.apply {
