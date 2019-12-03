@@ -45,7 +45,7 @@ internal class KonanSymbols(
         private val symbolTable: SymbolTable,
         lazySymbolTable: ReferenceSymbolTable,
         val functionIrClassFactory: BuiltInFictitiousFunctionIrClassFactory
-): Symbols<Context>(context, lazySymbolTable) {
+): Symbols<Context>(context, symbolTable) {
 
     val entryPoint = findMainEntryPoint(context)?.let { symbolTable.referenceSimpleFunction(it) }
 
