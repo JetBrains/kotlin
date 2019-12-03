@@ -7,20 +7,14 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.backend.common.ir.ir2string
-import org.jetbrains.kotlin.backend.common.lower.BOUND_RECEIVER_PARAMETER
-import org.jetbrains.kotlin.backend.common.lower.BOUND_VALUE_PARAMETER
 import org.jetbrains.kotlin.backend.common.lower.allOverridden
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.inline.DefaultSourceMapper
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
-import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
 import org.jetbrains.kotlin.descriptors.Modality
@@ -35,16 +29,12 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.inline.INLINE_ONLY_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmClassSignature
-import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
-import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 
@@ -411,62 +401,6 @@ fun IrClass.isOptionalAnnotationClass(): Boolean =
 //        }
 
 //        JvmDeclarationOrigin(OTHER, element, descriptor)
-
-/* From generateJava8ParameterNames.kt */
-
-fun generateParameterNames(irFunction: IrFunction, mv: MethodVisitor, jvmSignature: JvmMethodSignature, state: GenerationState) {
-    val iterator = irFunction.valueParameters.iterator()
-    val kotlinParameterTypes = jvmSignature.valueParameters
-
-    kotlinParameterTypes.forEachIndexed { index, parameterSignature ->
-        val irParameter = when (parameterSignature.kind) {
-            JvmMethodParameterKind.RECEIVER -> irFunction.extensionReceiverParameter!!
-            else -> iterator.next()
-        }
-        val name = when {
-            irParameter == irFunction.extensionReceiverParameter -> getNameForReceiverParameter(irFunction, state.languageVersionSettings)
-            irParameter.origin == JvmLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS -> AsmUtil.CAPTURED_THIS_FIELD
-            else -> irParameter.name.asString()
-        }
-        // A construct emitted by a Java compiler must be marked as synthetic if it does not correspond to a construct declared
-        // explicitly or implicitly in source code, unless the emitted construct is a class initialization method (JVMS §2.9).
-        // A construct emitted by a Java compiler must be marked as mandated if it corresponds to a formal parameter
-        // declared implicitly in source code (§8.8.1, §8.8.9, §8.9.3, §15.9.5.1).
-        val access = when {
-            irParameter == irFunction.extensionReceiverParameter -> Opcodes.ACC_MANDATED
-            irParameter.origin == JvmLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS -> Opcodes.ACC_MANDATED
-            // TODO mark these backend-common origins as synthetic? (note: ExpressionCodegen is still expected
-            //      to generate LVT entries for them)
-            irParameter.origin == IrDeclarationOrigin.MOVED_RECEIVER_PARAMETER -> Opcodes.ACC_SYNTHETIC
-            irParameter.origin == BOUND_VALUE_PARAMETER -> Opcodes.ACC_SYNTHETIC
-            irParameter.origin == BOUND_RECEIVER_PARAMETER -> Opcodes.ACC_SYNTHETIC
-            irParameter.origin.isSynthetic -> Opcodes.ACC_SYNTHETIC
-            else -> 0
-        }
-        mv.visitParameter(name, access)
-    }
-}
-
-private fun getNameForReceiverParameter(irFunction: IrFunction, languageVersionSettings: LanguageVersionSettings): String {
-    if (!languageVersionSettings.supportsFeature(LanguageFeature.NewCapturedReceiverFieldNamingConvention)) {
-        return AsmUtil.RECEIVER_PARAMETER_NAME
-    }
-
-    // Current codegen never touches CALL_LABEL_FOR_LAMBDA_ARGUMENT
-//    if (irFunction is IrSimpleFunction) {
-//        val labelName = bindingContext.get(CodegenBinding.CALL_LABEL_FOR_LAMBDA_ARGUMENT, irFunction.descriptor)
-//        if (labelName != null) {
-//            return getLabeledThisName(labelName, prefix, defaultName)
-//        }
-//    }
-
-//    val callableName = irFunction.descriptor.safeAs<VariableAccessorDescriptor>()?.correspondingVariable?.name ?: irFunction.descriptor.name
-    val callableName = irFunction.safeAs<IrSimpleFunction>()?.correspondingPropertySymbol?.owner?.name ?: irFunction.name
-    return if (callableName.isSpecial || !Name.isValidIdentifier(callableName.asString()))
-        AsmUtil.RECEIVER_PARAMETER_NAME
-    else
-        AsmUtil.LABELED_THIS_PARAMETER + mangleNameIfNeeded(callableName.asString())
-}
 
 val IrAnnotationContainer.deprecationFlags: Int
     get() {
