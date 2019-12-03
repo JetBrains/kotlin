@@ -32,6 +32,7 @@ buildscript {
 }
 
 apply plugin: 'konan'
+apply plugin: 'kotlin'
 
 configurations {
     cli_bc
@@ -4047,4 +4048,49 @@ task buildKonanTests { t ->
     project.tasks
             .matching { !(it instanceof KonanStandaloneTest) && it instanceof KonanLocalTest }
             .forEach { it.dependsOn(t) }
+}
+
+
+sourceSets {
+    nopPlugin {
+        kotlin {
+            srcDir 'extensions/nop/src/main/kotlin'
+        }
+    }
+}
+
+Task pluginTest(String name, String pluginName, Closure configureClosure) {
+    def jarTask = project.tasks.create("jar-$pluginName", Jar).configure {
+        it.dependsOn("compile${pluginName.capitalize()}Kotlin")
+        from {
+            sourceSets[pluginName].output
+        }
+        baseName = pluginName
+        destinationDirectory = buildDir
+    }
+    def taskName = "$name-with-$pluginName"
+    return KotlinNativeTestKt.createTest(project, taskName, KonanStandaloneTest) { task ->
+        task.configure(configureClosure)
+        task.dependsOn(jarTask)
+        if (task.enabled) {
+            konanArtifacts {
+                program(taskName, targets: [target.name]) {
+                    baseDir   "$testOutputLocal/$taskName"
+                    srcFiles  task.getSources()
+                    extraOpts task.flags + "-Xplugin=$buildDir/nop-plugin.jar"
+                    extraOpts project.globalTestArgs
+                }
+            }
+        }
+    }
+}
+
+pluginTest("runtime_basic_init", "nopPlugin") {
+    disabled = (project.testTarget == 'wasm32')
+    source = "runtime/basic/hello3.kt"
+    flags = ["-tr"]
+}
+
+dependencies {
+    nopPluginCompile kotlinCompilerModule
 }
