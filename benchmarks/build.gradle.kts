@@ -1,8 +1,8 @@
 import kotlinx.benchmark.gradle.benchmark
 
-val benchmarks_version = "0.2.0-dev-4"
+val benchmarks_version = "0.2.0-dev-7"
 buildscript {
-    val benchmarks_version = "0.2.0-dev-4"
+    val benchmarks_version = "0.2.0-dev-7"
 
     repositories {
         val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
