@@ -19,7 +19,12 @@ abstract class AbstractFirReferenceResolveTest : AbstractReferenceResolveTest() 
         assert(path.endsWith(".kt")) { path }
         myFixture.configureWithExtraFile(path, ".Data")
         if (InTextDirectivesUtils.isDirectiveDefined(myFixture.file.text, "IGNORE_FIR")) {
-            return
+            try {
+                performChecks()
+            } catch (t: Throwable) {
+                return
+            }
+            throw AssertionError("Looks like test is passing, please remove IGNORE_FIR")
         }
         performChecks()
     }
