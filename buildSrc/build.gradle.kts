@@ -93,18 +93,18 @@ repositories {
 }
 
 dependencies {
-    compile(kotlin("stdlib", embeddedKotlinVersion))
-    compile("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.1")
+    implementation(kotlin("stdlib", embeddedKotlinVersion))
+    implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.1")
 
-    compile("net.rubygrapefruit:native-platform:${property("versions.native-platform")}")
-    compile("net.rubygrapefruit:native-platform-windows-amd64:${property("versions.native-platform")}")
-    compile("net.rubygrapefruit:native-platform-windows-i386:${property("versions.native-platform")}")
-    compile("com.jakewharton.dex:dex-method-list:3.0.0")
+    implementation("net.rubygrapefruit:native-platform:${property("versions.native-platform")}")
+    implementation("net.rubygrapefruit:native-platform-windows-amd64:${property("versions.native-platform")}")
+    implementation("net.rubygrapefruit:native-platform-windows-i386:${property("versions.native-platform")}")
+    implementation("com.jakewharton.dex:dex-method-list:3.0.0")
 
-    compile("com.github.jengelman.gradle.plugins:shadow:${property("versions.shadow")}")
-    compile("org.jetbrains.intellij.deps:asm-all:7.0.1")
+    implementation("com.github.jengelman.gradle.plugins:shadow:${property("versions.shadow")}")
+    implementation("org.jetbrains.intellij.deps:asm-all:7.0.1")
 
-    compile("gradle.plugin.org.jetbrains.gradle.plugin.idea-ext:gradle-idea-ext:0.5")
+    implementation("gradle.plugin.org.jetbrains.gradle.plugin.idea-ext:gradle-idea-ext:0.5")
 }
 
 samWithReceiver {
