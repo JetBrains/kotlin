@@ -19,6 +19,7 @@ import com.intellij.openapi.observable.operations.CompoundParallelOperationTrace
 import com.intellij.openapi.observable.properties.AtomicBooleanProperty
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.util.LocalTimeCounter.currentTime
 import com.intellij.util.ui.update.MergingUpdateQueue
 import com.intellij.util.ui.update.Update
@@ -99,7 +100,7 @@ class AutoImportProjectTracker(private val project: Project) : ExternalSystemPro
 
   private fun refreshProject() {
     LOG.debug("Incremental project refresh")
-    if (isDisabled.get()) return
+    if (isDisabled.get() || Registry.`is`("external.system.auto.import.disabled")) return
     if (!projectChangeOperation.isOperationCompleted()) return
     for (projectData in projectDataMap.values) {
       val projectId = projectData.projectAware.projectId.readableName
@@ -115,6 +116,7 @@ class AutoImportProjectTracker(private val project: Project) : ExternalSystemPro
 
   private fun updateProjectNotification() {
     LOG.debug("Notification status update")
+    if (isDisabled.get() || Registry.`is`("external.system.auto.import.disabled")) return
     val notificationAware = ProjectNotificationAware.getInstance(project)
     for ((projectId, data) in projectDataMap) {
       when (data.isUpToDate()) {
