@@ -101,7 +101,9 @@ public class ProjectRootManagerComponent extends ProjectRootManagerImpl implemen
     }, project);
 
     if (!myProject.isDefault()) {
-      StartupManager.getInstance(project).registerStartupActivity(() -> myStartupActivityPerformed = true);
+      StartupManager.getInstance(project).registerStartupActivity(() -> {
+        myStartupActivityPerformed = true;
+      });
     }
 
     connection.subscribe(BatchUpdateListener.TOPIC, new BatchUpdateListener() {

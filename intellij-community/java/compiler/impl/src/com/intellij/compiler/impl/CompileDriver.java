@@ -246,9 +246,9 @@ public final class CompileDriver {
     buildManager.cancelAutoMakeTasks(myProject);
     return buildManager.scheduleBuild(myProject, compileContext.isRebuild(), compileContext.isMake(), onlyCheckUpToDate, scopes, paths, builderParams, new DefaultMessageHandler(myProject) {
       @Override
-      public void sessionTerminated(@NotNull final UUID sessionId) {
+      public void sessionTerminated(@NotNull UUID sessionId) {
         if (compileContext.shouldUpdateProblemsView()) {
-          final ProblemsView view = ProblemsView.SERVICE.getInstance(myProject);
+          ProblemsView view = ProblemsView.SERVICE.getInstance(myProject);
           view.clearProgress();
           view.clearOldMessages(compileContext.getCompileScope(), compileContext.getSessionId());
         }

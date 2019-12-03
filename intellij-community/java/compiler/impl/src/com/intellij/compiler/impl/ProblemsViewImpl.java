@@ -8,6 +8,8 @@ import com.intellij.ide.errorTreeView.ErrorTreeElementKind;
 import com.intellij.ide.errorTreeView.ErrorViewStructure;
 import com.intellij.ide.errorTreeView.GroupingElement;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.compiler.CompileScope;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
@@ -16,10 +18,10 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.pom.Navigatable;
+import com.intellij.ui.AppUIUtil;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.util.concurrency.SequentialTaskExecutor;
-import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,37 +32,44 @@ import java.util.concurrent.ExecutorService;
 /**
  * @author Eugene Zhuravlev
  */
-public class ProblemsViewImpl extends ProblemsView{
+final class ProblemsViewImpl extends ProblemsView {
   private static final String PROBLEMS_TOOLWINDOW_ID = "Problems";
 
-  private final ProblemsViewPanel myPanel;
+  private ProblemsViewPanel myPanel;
   private final ExecutorService myViewUpdater = SequentialTaskExecutor.createSequentialApplicationPoolExecutor("ProblemsView Pool");
 
-  public ProblemsViewImpl(final Project project) {
+  ProblemsViewImpl(@NotNull Project project) {
     super(project);
-    myPanel = new ProblemsViewPanel(project);
-    Disposer.register(project, new Disposable() {
-      @Override
-      public void dispose() {
-        Disposer.dispose(myPanel);
-      }
+
+    Disposer.register(project, () -> myViewUpdater.shutdownNow());
+    myViewUpdater.execute(() -> {
+      ApplicationManager.getApplication().invokeAndWait(() -> {
+        if (!project.isDisposed()) {
+          myPanel = new ProblemsViewPanel(project);
+          Disposer.register(project, myPanel);
+        }
+      }, ModalityState.NON_MODAL);
     });
-    UIUtil.invokeLaterIfNeeded(() -> {
-      if (project.isDisposed()) {
-        return;
-      }
-      final ToolWindow tw = ToolWindowManager.getInstance(project).registerToolWindow(PROBLEMS_TOOLWINDOW_ID, false, ToolWindowAnchor.BOTTOM, project, true);
-      final Content content = ContentFactory.SERVICE.getInstance().createContent(myPanel, "", false);
+
+    AppUIUtil.invokeLaterIfProjectAlive(project, () -> {
+      ToolWindow toolWindow = ToolWindowManager.getInstance(project).registerToolWindow(PROBLEMS_TOOLWINDOW_ID, false, ToolWindowAnchor.BOTTOM, project, true);
+      Content content = ContentFactory.SERVICE.getInstance().createContent(myPanel, "", false);
       content.setHelpId("reference.problems.tool.window");
       // todo: setup content?
-      tw.getContentManager().addContent(content);
+      toolWindow.getContentManager().addContent(content);
       Disposer.register(project, new Disposable() {
         @Override
         public void dispose() {
-          tw.getContentManager().removeAllContents(true);
+          toolWindow.getContentManager().removeAllContents(true);
         }
       });
-      updateIcon();
+
+      if (myPanel == null) {
+        myViewUpdater.execute(() -> doUpdateIcon(toolWindow));
+      }
+      else {
+        doUpdateIcon(toolWindow);
+      }
     });
   }
 
@@ -99,12 +108,11 @@ public class ProblemsViewImpl extends ProblemsView{
   }
 
   @Override
-  public void addMessage(final int type,
-                         @NotNull final String[] text,
-                         @Nullable final String groupName,
-                         @Nullable final Navigatable navigatable,
-                         @Nullable final String exportTextPrefix, @Nullable final String rendererTextPrefix, @Nullable final UUID sessionId) {
-
+  public void addMessage(int type,
+                         @NotNull String[] text,
+                         @Nullable String groupName,
+                         @Nullable Navigatable navigatable,
+                         @Nullable String exportTextPrefix, @Nullable String rendererTextPrefix, @Nullable UUID sessionId) {
     myViewUpdater.execute(() -> {
       final ErrorViewStructure structure = myPanel.getErrorViewStructure();
       final GroupingElement group = structure.lookupGroupingElement(groupName);
@@ -122,29 +130,44 @@ public class ProblemsViewImpl extends ProblemsView{
   }
 
   private void updateIcon() {
-    UIUtil.invokeLaterIfNeeded(() -> {
-      if (!myProject.isDisposed()) {
-        final ToolWindow tw = ToolWindowManager.getInstance(myProject).getToolWindow(PROBLEMS_TOOLWINDOW_ID);
-        if (tw != null) {
-          final boolean active = myPanel.getErrorViewStructure().hasMessages(EnumSet.of(ErrorTreeElementKind.ERROR, ErrorTreeElementKind.WARNING, ErrorTreeElementKind.NOTE));
-          tw.setIcon(active ? AllIcons.Toolwindows.Problems : AllIcons.Toolwindows.ProblemsEmpty);
-        }
+    AppUIUtil.invokeLaterIfProjectAlive(myProject, () -> {
+      ToolWindow toolWindow = ToolWindowManager.getInstance(myProject).getToolWindow(PROBLEMS_TOOLWINDOW_ID);
+      if (toolWindow != null) {
+        doUpdateIcon(toolWindow);
       }
     });
   }
 
+  private void doUpdateIcon(@NotNull ToolWindow toolWindow) {
+    boolean active = myPanel.getErrorViewStructure().hasMessages(
+      EnumSet.of(ErrorTreeElementKind.ERROR, ErrorTreeElementKind.WARNING, ErrorTreeElementKind.NOTE));
+    toolWindow.setIcon(active ? AllIcons.Toolwindows.Problems : AllIcons.Toolwindows.ProblemsEmpty);
+  }
+
   @Override
   public void setProgress(String text, float fraction) {
-    myPanel.setProgress(text, fraction);
+    if (myPanel == null) {
+      myViewUpdater.execute(() -> myPanel.setProgress(text, fraction));
+    }
+    else {
+      myPanel.setProgress(text, fraction);
+    }
   }
 
   @Override
   public void setProgress(String text) {
-    myPanel.setProgressText(text);
+    if (myPanel == null) {
+      myViewUpdater.execute(() -> myPanel.setProgressText(text));
+    }
+    else {
+      myPanel.setProgressText(text);
+    }
   }
 
   @Override
   public void clearProgress() {
-    myPanel.clearProgressData();
+    if (myPanel != null) {
+      myPanel.clearProgressData();
+    }
   }
 }

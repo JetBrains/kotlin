@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.startup;
 
 import com.intellij.execution.*;
@@ -9,6 +9,7 @@ import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupActivity;
+import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.util.Alarm;
@@ -17,14 +18,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author Irina.Chernushina on 8/19/2015.
- */
-public class ProjectStartupRunner implements StartupActivity.DumbAware {
+final class ProjectStartupRunner implements StartupActivity.DumbAware {
   @Override
-  public void runActivity(@NotNull final Project project) {
-    final ProjectStartupTaskManager projectStartupTaskManager = ProjectStartupTaskManager.getInstance(project);
-    if (projectStartupTaskManager.isEmpty()) return;
+  public void runActivity(@NotNull Project project) {
+    ProjectStartupTaskManager projectStartupTaskManager = ProjectStartupTaskManager.getInstance(project);
+    if (projectStartupTaskManager.isEmpty()) {
+      return;
+    }
 
     project.getMessageBus().connect().subscribe(RunManagerListener.TOPIC, new RunManagerListener() {
       @Override
@@ -46,7 +46,7 @@ public class ProjectStartupRunner implements StartupActivity.DumbAware {
       }
     });
 
-    projectStartupTaskManager.waitForExecutionReady(() -> runActivities(project));
+    StartupManager.getInstance(project).runAfterOpened(() -> runActivities(project));
   }
 
   private static void runActivities(final Project project) {

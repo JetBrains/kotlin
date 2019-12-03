@@ -10,7 +10,8 @@ import com.intellij.ide.DataManager;
 import com.intellij.ide.impl.ContentManagerWatcher;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.DataProvider;
-import com.intellij.openapi.project.DumbAwareRunnable;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.ActionCallback;
@@ -46,7 +47,6 @@ import static com.intellij.util.ContentUtilEx.getFullName;
  * @author Vladislav.Soroka
  */
 public class BuildContentManagerImpl implements BuildContentManager {
-
   public static final String Build = "Build";
   public static final String Sync = "Sync";
   public static final String Run = "Run";
@@ -63,42 +63,47 @@ public class BuildContentManagerImpl implements BuildContentManager {
     init(project);
   }
 
-  private void init(Project project) {
+  private void init(@NotNull Project project) {
     myProject = project;
-    if (project.isDefault()) return;
+    if (project.isDefault()) {
+      return;
+    }
 
-    StartupManager.getInstance(project).runWhenProjectIsInitialized((DumbAwareRunnable)() -> {
-      ToolWindow toolWindow = ToolWindowManager.getInstance(project)
-        .registerToolWindow(ToolWindowId.BUILD, true, ToolWindowAnchor.BOTTOM, project, true);
-      toolWindow.setIcon(AllIcons.Toolwindows.ToolWindowBuild);
-      toolWindow.setAvailable(true, null);
-      toolWindow.hide(null);
-      myToolWindow = toolWindow;
-      ContentManager contentManager = myToolWindow.getContentManager();
-      contentManager.addDataProvider(new DataProvider() {
-        private int myInsideGetData = 0;
+    StartupManager.getInstance(project).runAfterOpened(() -> {
+      ApplicationManager.getApplication().invokeLater(() -> {
+        ToolWindow toolWindow = ToolWindowManager.getInstance(project)
+          .registerToolWindow(ToolWindowId.BUILD, true, ToolWindowAnchor.BOTTOM, project, true);
+        toolWindow.setIcon(AllIcons.Toolwindows.ToolWindowBuild);
+        toolWindow.setAvailable(true, null);
+        toolWindow.hide(null);
+        myToolWindow = toolWindow;
+        ContentManager contentManager = myToolWindow.getContentManager();
+        contentManager.addDataProvider(new DataProvider() {
+          private int myInsideGetData = 0;
 
-        @Override
-        public Object getData(@NotNull String dataId) {
-          myInsideGetData++;
-          try {
-            return myInsideGetData == 1 ? DataManager.getInstance().getDataContext(contentManager.getComponent()).getData(dataId) : null;
+          @Override
+          public Object getData(@NotNull String dataId) {
+            myInsideGetData++;
+            try {
+              return myInsideGetData == 1 ? DataManager.getInstance().getDataContext(contentManager.getComponent()).getData(dataId) : null;
+            }
+            finally {
+              myInsideGetData--;
+            }
           }
-          finally {
-            myInsideGetData--;
-          }
+        });
+
+        new ContentManagerWatcher(toolWindow, contentManager);
+
+        for (Runnable postponedRunnable : myPostponedRunnables) {
+          postponedRunnable.run();
         }
-      });
-      new ContentManagerWatcher(toolWindow, contentManager);
-
-      for (Runnable postponedRunnable : myPostponedRunnables) {
-        postponedRunnable.run();
-      }
-      myPostponedRunnables.clear();
+        myPostponedRunnables.clear();
+      }, ModalityState.NON_MODAL, project.getDisposed());
     });
   }
 
-  public Promise<Void> runWhenInitialized(final Runnable runnable) {
+  public Promise<Void> runWhenInitialized(@NotNull Runnable runnable) {
     if (myToolWindow != null) {
       runnable.run();
       return Promises.resolvedPromise(null);

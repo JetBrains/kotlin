@@ -8,72 +8,78 @@ package com.intellij.util.indexing;
 import com.google.common.annotations.VisibleForTesting;
 import com.intellij.diagnostic.PerformanceWatcher;
 import com.intellij.ide.IdeBundle;
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.TransactionGuard;
+import com.intellij.openapi.components.Service;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.*;
 import com.intellij.openapi.roots.ContentIterator;
 import com.intellij.openapi.roots.impl.PushedFilePropertiesUpdater;
-import com.intellij.openapi.startup.StartupManager;
+import com.intellij.openapi.startup.StartupActivity;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileVisitor;
 import com.intellij.util.Processor;
+import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
-public final class FileBasedIndexProjectHandler implements IndexableFileSet, Disposable {
+@Service
+public final class FileBasedIndexProjectHandler implements IndexableFileSet {
   private static final Logger LOG = Logger.getInstance(FileBasedIndexProjectHandler.class);
 
-  private final FileBasedIndex myIndex;
   private final FileBasedIndexScanRunnableCollector myCollector;
 
-  public FileBasedIndexProjectHandler(@NotNull Project project) {
-    myIndex = FileBasedIndex.getInstance();
-    myCollector = FileBasedIndexScanRunnableCollector.getInstance(project);
+  // not clear for what it should be as pre-startup activity instead of direct execution in this constructor, but for now leave old logic as is
+  static final class FileBasedIndexProjectHandlerPreStartupActivity implements StartupActivity {
+    @Override
+    public void runActivity(@NotNull Project project) {
+      MessageBusConnection busConnection = project.getMessageBus().connect();
+      if (ApplicationManager.getApplication().isInternal()) {
+        busConnection.subscribe(DumbService.DUMB_MODE, new DumbService.DumbModeListener() {
+          @Override
+          public void exitDumbMode() {
+            LOG.info("Has changed files: " + (createChangedFilesIndexingTask(project) != null) + "; project=" + project);
+          }
+        });
+      }
 
-    if (ApplicationManager.getApplication().isInternal()) {
-      project.getMessageBus().connect().subscribe(DumbService.DUMB_MODE, new DumbService.DumbModeListener() {
+      FileBasedIndex fileBasedIndex = FileBasedIndex.getInstance();
+      PushedFilePropertiesUpdater.getInstance(project).initializeProperties();
+
+      // schedule dumb mode start after the read action we're currently in
+      if (fileBasedIndex instanceof FileBasedIndexImpl) {
+        DumbService.getInstance(project).queueTask(new UnindexedFilesUpdater(project));
+      }
+
+      FileBasedIndexProjectHandler handler = project.getService(FileBasedIndexProjectHandler.class);
+      fileBasedIndex.registerIndexableSet(handler, project);
+      // done mostly for tests. In real life this is no-op, because the set was removed on project closing
+      Disposer.register(project, () -> {
+        fileBasedIndex.removeIndexableSet(handler);
+      });
+      busConnection.subscribe(ProjectManager.TOPIC, new ProjectManagerListener() {
+        private boolean removed;
+
         @Override
-        public void exitDumbMode() {
-          LOG.info("Has changed files: " + (createChangedFilesIndexingTask(project) != null) + "; project=" + project);
+        public void projectClosing(@NotNull Project eventProject) {
+          if (eventProject == project && !removed) {
+            removed = true;
+            fileBasedIndex.removeIndexableSet(handler);
+          }
         }
       });
     }
+  }
 
-    StartupManager startupManager = StartupManager.getInstance(project);
-    if (startupManager != null) {
-      startupManager.registerPreStartupActivity(() -> {
-        PushedFilePropertiesUpdater.getInstance(project).initializeProperties();
-
-        // schedule dumb mode start after the read action we're currently in
-        TransactionGuard.submitTransaction(project, () -> {
-          if (FileBasedIndex.getInstance() instanceof FileBasedIndexImpl) {
-            DumbService.getInstance(project).queueTask(new UnindexedFilesUpdater(project));
-          }
-        });
-
-        myIndex.registerIndexableSet(this, project);
-        project.getMessageBus().connect().subscribe(ProjectManager.TOPIC, new ProjectManagerListener() {
-          private boolean removed;
-
-          @Override
-          public void projectClosing(@NotNull Project eventProject) {
-            if (eventProject == project && !removed) {
-              removed = true;
-              myIndex.removeIndexableSet(FileBasedIndexProjectHandler.this);
-            }
-          }
-        });
-      });
-    }
+  private FileBasedIndexProjectHandler(@NotNull Project project) {
+    myCollector = FileBasedIndexScanRunnableCollector.getInstance(project);
   }
 
   @Override
@@ -95,12 +101,6 @@ public final class FileBasedIndexProjectHandler implements IndexableFileSet, Dis
     });
   }
 
-  @Override
-  public void dispose() {
-    // done mostly for tests. In real life this is no-op, because the set was removed on project closing
-    myIndex.removeIndexableSet(this);
-  }
-
   @ApiStatus.Internal
   public static final int ourMinFilesToStartDumMode = Registry.intValue("ide.dumb.mode.minFilesToStart", 20);
   private static final int ourMinFilesSizeToStartDumMode = Registry.intValue("ide.dumb.mode.minFilesSizeToStart", 1048576);
@@ -117,7 +117,7 @@ public final class FileBasedIndexProjectHandler implements IndexableFileSet, Dis
       return null;
     }
 
-    return new DumbModeTask(project.getComponent(FileBasedIndexProjectHandler.class)) {
+    return new DumbModeTask(project.getService(FileBasedIndexProjectHandler.class)) {
       @Override
       public void performInDumbMode(@NotNull ProgressIndicator indicator) {
         long start = System.currentTimeMillis();

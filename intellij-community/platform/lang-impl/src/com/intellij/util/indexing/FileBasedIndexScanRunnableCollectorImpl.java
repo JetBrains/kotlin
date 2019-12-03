@@ -14,11 +14,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public final class FileBasedIndexScanRunnableCollectorImpl extends FileBasedIndexScanRunnableCollector {
+final class FileBasedIndexScanRunnableCollectorImpl extends FileBasedIndexScanRunnableCollector {
   private final Project myProject;
   private final ProjectFileIndex myProjectFileIndex;
 
-  public FileBasedIndexScanRunnableCollectorImpl(Project project) {
+  FileBasedIndexScanRunnableCollectorImpl(@NotNull Project project) {
     myProject = project;
     myProjectFileIndex = ProjectFileIndex.getInstance(myProject);
   }
@@ -33,7 +33,7 @@ public final class FileBasedIndexScanRunnableCollectorImpl extends FileBasedInde
 
   @Override
   public List<Runnable> collectScanRootRunnables(@NotNull ContentIterator processor, ProgressIndicator indicator) {
-    return ReadAction.compute(()-> {
+    return ReadAction.compute(() -> {
       if (myProject.isDisposed()) {
         return Collections.emptyList();
       }
@@ -85,21 +85,21 @@ public final class FileBasedIndexScanRunnableCollectorImpl extends FileBasedInde
       for (final Module module : ModuleManager.getInstance(myProject).getModules()) {
         OrderEntry[] orderEntries = ModuleRootManager.getInstance(module).getOrderEntries();
         for (OrderEntry orderEntry : orderEntries) {
-          if (orderEntry instanceof LibraryOrSdkOrderEntry) {
-            if (orderEntry.isValid()) {
-              final LibraryOrSdkOrderEntry entry = (LibraryOrSdkOrderEntry)orderEntry;
-              final VirtualFile[] libSources = entry.getRootFiles(OrderRootType.SOURCES);
-              final VirtualFile[] libClasses = entry.getRootFiles(OrderRootType.CLASSES);
-              for (VirtualFile[] roots : new VirtualFile[][]{libSources, libClasses}) {
-                for (final VirtualFile root : roots) {
-                  // do not try to visit under-content-roots because the first task took care of that already
-                  if (!myProjectFileIndex.isInContent(root) && visitedRoots.add(root)) {
-                    tasks.add(() -> {
-                      if (myProject.isDisposed() || module.isDisposed() || !root.isValid()) return;
-                      FileBasedIndex.iterateRecursively(root, processor, indicator, visitedRoots, myProjectFileIndex);
-                    });
-                  }
-                }
+          if (!(orderEntry instanceof LibraryOrSdkOrderEntry) || !orderEntry.isValid()) {
+            continue;
+          }
+
+          final LibraryOrSdkOrderEntry entry = (LibraryOrSdkOrderEntry)orderEntry;
+          final VirtualFile[] libSources = entry.getRootFiles(OrderRootType.SOURCES);
+          final VirtualFile[] libClasses = entry.getRootFiles(OrderRootType.CLASSES);
+          for (VirtualFile[] roots : new VirtualFile[][]{libSources, libClasses}) {
+            for (final VirtualFile root : roots) {
+              // do not try to visit under-content-roots because the first task took care of that already
+              if (!myProjectFileIndex.isInContent(root) && visitedRoots.add(root)) {
+                tasks.add(() -> {
+                  if (myProject.isDisposed() || module.isDisposed() || !root.isValid()) return;
+                  FileBasedIndex.iterateRecursively(root, processor, indicator, visitedRoots, myProjectFileIndex);
+                });
               }
             }
           }

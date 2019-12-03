@@ -50,10 +50,10 @@ final class IdeStartupScripts implements ApplicationInitializedListener {
         if (future == null) {
           future = ApplicationManager.getApplication().executeOnPooledThread(() -> prepareScriptsAndEngines());
         }
-        StartupManager.getInstance(project).runWhenProjectIsInitialized(() -> {
-          if (!project.isOpen()) return;
+
+        StartupManager.getInstance(project).runAfterOpened(() -> {
           connection.disconnect();
-          runAllScriptsImpl(project, future);
+          ApplicationManager.getApplication().executeOnPooledThread(() -> runAllScriptsImpl(project, future));
         });
       }
     });
