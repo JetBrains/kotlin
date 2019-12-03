@@ -79,7 +79,7 @@ open class KotlinPsiChecker : Annotator, HighlightRangeExtension {
         return file is KtFile
     }
 
-    open protected fun shouldSuppressUnusedParameter(parameter: KtParameter): Boolean = false
+    protected open fun shouldSuppressUnusedParameter(parameter: KtParameter): Boolean = false
 
     fun annotateElement(element: PsiElement, holder: AnnotationHolder, diagnostics: Diagnostics) {
         val diagnosticsForElement = diagnostics.forElement(element)
@@ -92,20 +92,22 @@ open class KotlinPsiChecker : Annotator, HighlightRangeExtension {
         if (diagnosticsForElement.isEmpty()) return
 
         if (KotlinHighlightingUtil.shouldHighlightErrors(element)) {
-            ElementAnnotator(element, holder, { param -> shouldSuppressUnusedParameter(param) }).registerDiagnosticsAnnotations(diagnosticsForElement)
+            ElementAnnotator(element, holder) { param ->
+                shouldSuppressUnusedParameter(param)
+            }.registerDiagnosticsAnnotations(diagnosticsForElement)
         }
     }
 
     companion object {
         fun getAfterAnalysisVisitor(holder: AnnotationHolder, bindingContext: BindingContext) = arrayOf(
-                PropertiesHighlightingVisitor(holder, bindingContext),
-                FunctionsHighlightingVisitor(holder, bindingContext),
-                VariablesHighlightingVisitor(holder, bindingContext),
-                TypeKindHighlightingVisitor(holder, bindingContext)
+            PropertiesHighlightingVisitor(holder, bindingContext),
+            FunctionsHighlightingVisitor(holder, bindingContext),
+            VariablesHighlightingVisitor(holder, bindingContext),
+            TypeKindHighlightingVisitor(holder, bindingContext)
         )
 
         fun createQuickFixes(diagnostic: Diagnostic): Collection<IntentionAction> =
-                createQuickFixes(listOfNotNull(diagnostic))[diagnostic]
+            createQuickFixes(listOfNotNull(diagnostic))[diagnostic]
 
         private val UNRESOLVED_KEY = Key<Unit>("KotlinPsiChecker.UNRESOLVED_KEY")
 
@@ -122,10 +124,9 @@ private fun createQuickFixes(similarDiagnostics: Collection<Diagnostic>): MultiM
     val intentionActionsFactories = QuickFixes.getInstance().getActionFactories(factory)
     for (intentionActionsFactory in intentionActionsFactories) {
         val allProblemsActions = intentionActionsFactory.createActionsForAllProblems(similarDiagnostics)
-        if (!allProblemsActions.isEmpty()) {
+        if (allProblemsActions.isNotEmpty()) {
             actions.putValues(first, allProblemsActions)
-        }
-        else {
+        } else {
             for (diagnostic in similarDiagnostics) {
                 actions.putValues(diagnostic, intentionActionsFactory.createActions(diagnostic))
             }
@@ -142,12 +143,12 @@ private fun createQuickFixes(similarDiagnostics: Collection<Diagnostic>): MultiM
 }
 
 private fun Diagnostic.getRealDiagnosticFactory(): DiagnosticFactory<*> =
-        when (factory) {
-            Errors.PLUGIN_ERROR -> Errors.PLUGIN_ERROR.cast(this).a.factory
-            Errors.PLUGIN_WARNING -> Errors.PLUGIN_WARNING.cast(this).a.factory
-            Errors.PLUGIN_INFO -> Errors.PLUGIN_INFO.cast(this).a.factory
-            else -> factory
-        }
+    when (factory) {
+        Errors.PLUGIN_ERROR -> Errors.PLUGIN_ERROR.cast(this).a.factory
+        Errors.PLUGIN_WARNING -> Errors.PLUGIN_WARNING.cast(this).a.factory
+        Errors.PLUGIN_INFO -> Errors.PLUGIN_INFO.cast(this).a.factory
+        else -> factory
+    }
 
 private object NoDeclarationDescriptorsChecker {
     private val LOG = Logger.getInstance(NoDeclarationDescriptorsChecker::class.java)
@@ -168,9 +169,11 @@ private object NoDeclarationDescriptorsChecker {
         when (type) {
             is Class<*> -> {
                 if (DeclarationDescriptor::class.java.isAssignableFrom(type) || KotlinType::class.java.isAssignableFrom(type)) {
-                    LOG.error("QuickFix class ${field.declaringClass.name} contains field ${field.name} that holds ${type.simpleName}. "
-                              + "This leads to holding too much memory through this quick-fix instance. "
-                              + "Possible solution can be wrapping it using KotlinIntentionActionFactoryWithDelegate.")
+                    LOG.error(
+                        "QuickFix class ${field.declaringClass.name} contains field ${field.name} that holds ${type.simpleName}. "
+                                + "This leads to holding too much memory through this quick-fix instance. "
+                                + "Possible solution can be wrapping it using KotlinIntentionActionFactoryWithDelegate."
+                    )
                 }
 
                 if (IntentionAction::class.java.isAssignableFrom(type)) {
@@ -192,9 +195,11 @@ private object NoDeclarationDescriptorsChecker {
     }
 }
 
-private class ElementAnnotator(private val element: PsiElement,
-                               private val holder: AnnotationHolder,
-                               private val shouldSuppressUnusedParameter: (KtParameter) -> Boolean) {
+private class ElementAnnotator(
+    private val element: PsiElement,
+    private val holder: AnnotationHolder,
+    private val shouldSuppressUnusedParameter: (KtParameter) -> Boolean
+) {
     fun registerDiagnosticsAnnotations(diagnostics: Collection<Diagnostic>) {
         diagnostics.groupBy { it.factory }.forEach { group -> registerDiagnosticAnnotations(group.value) }
     }
@@ -220,26 +225,30 @@ private class ElementAnnotator(private val element: PsiElement,
                         val reference = referenceExpression.mainReference
                         if (reference is MultiRangeReference) {
                             AnnotationPresentationInfo(
-                                    ranges = reference.ranges.map { it.shiftRight(referenceExpression.textOffset) },
-                                    highlightType = ProblemHighlightType.LIKE_UNKNOWN_SYMBOL)
-                        }
-                        else {
+                                ranges = reference.ranges.map { it.shiftRight(referenceExpression.textOffset) },
+                                highlightType = ProblemHighlightType.LIKE_UNKNOWN_SYMBOL
+                            )
+                        } else {
                             AnnotationPresentationInfo(ranges, highlightType = ProblemHighlightType.LIKE_UNKNOWN_SYMBOL)
                         }
                     }
 
-                    Errors.ILLEGAL_ESCAPE -> AnnotationPresentationInfo(ranges, textAttributes = KotlinHighlightingColors.INVALID_STRING_ESCAPE)
+                    Errors.ILLEGAL_ESCAPE -> AnnotationPresentationInfo(
+                        ranges, textAttributes = KotlinHighlightingColors.INVALID_STRING_ESCAPE
+                    )
 
                     Errors.REDECLARATION -> AnnotationPresentationInfo(
-                            ranges = listOf(diagnostic.textRanges.first()), nonDefaultMessage = "")
+                        ranges = listOf(diagnostic.textRanges.first()), nonDefaultMessage = ""
+                    )
 
                     else -> {
                         AnnotationPresentationInfo(
-                                ranges,
-                                highlightType = if (factory == Errors.INVISIBLE_REFERENCE)
-                                    ProblemHighlightType.LIKE_UNKNOWN_SYMBOL
-                                else
-                                    null)
+                            ranges,
+                            highlightType = if (factory == Errors.INVISIBLE_REFERENCE)
+                                ProblemHighlightType.LIKE_UNKNOWN_SYMBOL
+                            else
+                                null
+                        )
                     }
                 }
             }
@@ -249,17 +258,17 @@ private class ElementAnnotator(private val element: PsiElement,
                 }
 
                 AnnotationPresentationInfo(
-                        ranges,
-                        textAttributes = when (factory) {
-                            Errors.DEPRECATION -> CodeInsightColors.DEPRECATED_ATTRIBUTES
-                            Errors.UNUSED_ANONYMOUS_PARAMETER -> CodeInsightColors.WEAK_WARNING_ATTRIBUTES
-                            else -> null
-                        },
-                        highlightType = when (factory) {
-                            in Errors.UNUSED_ELEMENT_DIAGNOSTICS -> ProblemHighlightType.LIKE_UNUSED_SYMBOL
-                            Errors.UNUSED_ANONYMOUS_PARAMETER -> ProblemHighlightType.WEAK_WARNING
-                            else -> null
-                        }
+                    ranges,
+                    textAttributes = when (factory) {
+                        Errors.DEPRECATION -> CodeInsightColors.DEPRECATED_ATTRIBUTES
+                        Errors.UNUSED_ANONYMOUS_PARAMETER -> CodeInsightColors.WEAK_WARNING_ATTRIBUTES
+                        else -> null
+                    },
+                    highlightType = when (factory) {
+                        in Errors.UNUSED_ELEMENT_DIAGNOSTICS -> ProblemHighlightType.LIKE_UNUSED_SYMBOL
+                        Errors.UNUSED_ANONYMOUS_PARAMETER -> ProblemHighlightType.WEAK_WARNING
+                        else -> null
+                    }
                 )
             }
             Severity.INFO -> AnnotationPresentationInfo(ranges, highlightType = ProblemHighlightType.INFORMATION)
@@ -271,8 +280,7 @@ private class ElementAnnotator(private val element: PsiElement,
     private fun setUpAnnotations(diagnostics: List<Diagnostic>, data: AnnotationPresentationInfo) {
         val fixesMap = try {
             createQuickFixes(diagnostics)
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             if (e is ControlFlowException) {
                 throw e
             }
@@ -310,10 +318,10 @@ private class ElementAnnotator(private val element: PsiElement,
 }
 
 private class AnnotationPresentationInfo(
-        val ranges: List<TextRange>,
-        val nonDefaultMessage: String? = null,
-        val highlightType: ProblemHighlightType? = null,
-        val textAttributes: TextAttributesKey? = null
+    val ranges: List<TextRange>,
+    val nonDefaultMessage: String? = null,
+    val highlightType: ProblemHighlightType? = null,
+    val textAttributes: TextAttributesKey? = null
 ) {
 
     fun create(diagnostic: Diagnostic, range: TextRange, holder: AnnotationHolder): Annotation {
@@ -324,8 +332,7 @@ private class AnnotationPresentationInfo(
             Severity.WARNING -> {
                 if (highlightType == ProblemHighlightType.WEAK_WARNING) {
                     holder.createWeakWarningAnnotation(range, defaultMessage)
-                }
-                else {
+                } else {
                     holder.createWarningAnnotation(range, defaultMessage)
                 }
             }
@@ -351,8 +358,7 @@ private class AnnotationPresentationInfo(
             val factoryName = diagnostic.factory.name
             message = if (message.startsWith("<html>")) {
                 "<html>[$factoryName] ${message.substring("<html>".length)}"
-            }
-            else {
+            } else {
                 "[$factoryName] $message"
             }
         }
