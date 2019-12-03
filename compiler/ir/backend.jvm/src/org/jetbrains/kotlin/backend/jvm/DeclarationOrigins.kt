@@ -49,4 +49,6 @@ interface JvmLoweredDeclarationOrigin : IrDeclarationOrigin {
     object SUSPEND_IMPL_STATIC_FUNCTION : IrDeclarationOriginImpl("SUSPEND_IMPL_STATIC_FUNCTION", isSynthetic = true)
     object INTERFACE_COMPANION_PRIVATE_INSTANCE : IrDeclarationOriginImpl("INTERFACE_COMPANION_PRIVATE_INSTANCE", isSynthetic = true)
     object POLYMORPHIC_SIGNATURE_INSTANTIATION : IrDeclarationOriginImpl("POLYMORPHIC_SIGNATURE_INSTANTIATION", isSynthetic = true)
+    object ENUM_CONSTRUCTOR_SYNTHETIC_PARAMETER : IrDeclarationOriginImpl("ENUM_CONSTRUCTOR_SYNTHETIC_PARAMETER", isSynthetic = true)
+    object OBJECT_SUPER_CONSTRUCTOR_PARAMETER : IrDeclarationOriginImpl("OBJECT_SUPER_CONSTURCTOR_PARAMETER", isSynthetic = true)
 }

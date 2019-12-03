@@ -31,7 +31,8 @@ interface IrDeclarationOrigin {
     object FUNCTION_FOR_DEFAULT_PARAMETER : IrDeclarationOriginImpl("FUNCTION_FOR_DEFAULT_PARAMETER", isSynthetic = true)
     object MASK_FOR_DEFAULT_FUNCTION : IrDeclarationOriginImpl("MASK_FOR_DEFAULT_FUNCTION", isSynthetic = true)
     object DEFAULT_CONSTRUCTOR_MARKER : IrDeclarationOriginImpl("DEFAULT_CONSTRUCTOR_MARKER", isSynthetic = true)
-    object METHOD_HANDLER_IN_DEFAULT_FUNCTION :  IrDeclarationOriginImpl("METHOD_HANDLER_IN_DEFAULT_FUNCTION", isSynthetic = true)
+    object METHOD_HANDLER_IN_DEFAULT_FUNCTION : IrDeclarationOriginImpl("METHOD_HANDLER_IN_DEFAULT_FUNCTION", isSynthetic = true)
+    object MOVED_RECEIVER_PARAMETER : IrDeclarationOriginImpl("MOVED_RECEIVER_PARAMETER")
 
     object FILE_CLASS : IrDeclarationOriginImpl("FILE_CLASS")
     object GENERATED_DATA_CLASS_MEMBER : IrDeclarationOriginImpl("GENERATED_DATA_CLASS_MEMBER")

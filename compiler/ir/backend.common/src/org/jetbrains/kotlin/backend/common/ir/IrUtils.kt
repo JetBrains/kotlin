@@ -544,12 +544,14 @@ fun createStaticFunctionWithReceivers(
             this,
             name = Name.identifier("this"),
             index = offset++,
-            type = dispatchReceiverType!!
+            type = dispatchReceiverType!!,
+            origin = IrDeclarationOrigin.MOVED_RECEIVER_PARAMETER
         )
         val extensionReceiver = oldFunction.extensionReceiverParameter?.copyTo(
             this,
             name = Name.identifier("receiver"),
-            index = offset++
+            index = offset++,
+            origin = IrDeclarationOrigin.MOVED_RECEIVER_PARAMETER
         )
         valueParameters.addAll(listOfNotNull(dispatchReceiver, extensionReceiver) +
                                        oldFunction.valueParameters.map { it.copyTo(this, index = it.index + offset) }

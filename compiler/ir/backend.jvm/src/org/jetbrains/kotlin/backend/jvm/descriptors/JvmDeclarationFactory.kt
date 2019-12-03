@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.jvm.codegen.MethodSignatureMapper
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
 import org.jetbrains.kotlin.backend.jvm.ir.replaceThisByStaticReference
 import org.jetbrains.kotlin.builtins.CompanionObjectMapping.isMappedIntrinsicCompanionObject
+import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -107,7 +108,7 @@ class JvmDeclarationFactory(
             val outerThisValueParameter = IrValueParameterImpl(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, JvmLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS,
                 IrValueParameterSymbolImpl(outerThisDescriptor),
-                Name.identifier("\$outer"),
+                Name.identifier(AsmUtil.CAPTURED_THIS_FIELD),
                 0,
                 type = outerThisType,
                 varargElementType = null,
