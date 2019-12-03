@@ -72,7 +72,7 @@ internal class DebugInfo internal constructor(override val context: Context):Con
     val llvmTypes = mapOf<IrType, LLVMTypeRef>(
             context.irBuiltIns.booleanType to context.llvm.llvmInt8,
             context.irBuiltIns.byteType    to context.llvm.llvmInt8,
-            context.irBuiltIns.charType    to context.llvm.llvmInt8,
+            context.irBuiltIns.charType    to context.llvm.llvmInt16,
             context.irBuiltIns.shortType   to context.llvm.llvmInt16,
             context.irBuiltIns.intType     to context.llvm.llvmInt32,
             context.irBuiltIns.longType    to context.llvm.llvmInt64,
