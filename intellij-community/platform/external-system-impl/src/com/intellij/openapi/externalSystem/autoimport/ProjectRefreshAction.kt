@@ -27,6 +27,7 @@ class ProjectRefreshAction : DumbAwareAction() {
       e.presentation.description = getNotificationDescription(systemIds)
       e.presentation.icon = getNotificationIcon(systemIds)
     }
+    e.presentation.isEnabled = notificationAware.isNotificationVisible()
   }
 
   private fun getNotificationText(systemIds: Set<ProjectSystemId>): String {

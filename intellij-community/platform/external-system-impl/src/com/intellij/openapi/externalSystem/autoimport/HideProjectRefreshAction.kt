@@ -13,6 +13,12 @@ class HideProjectRefreshAction : DumbAwareAction() {
     notificationAware.hideNotification()
   }
 
+  override fun update(e: AnActionEvent) {
+    val project = e.project ?: return
+    val notificationAware = ProjectNotificationAware.getInstance(project)
+    e.presentation.isEnabled = notificationAware.isNotificationVisible()
+  }
+
   init {
     templatePresentation.text = ExternalSystemBundle.message("external.system.reload.notification.action.hide.text")
     templatePresentation.icon = AllIcons.Actions.Close
