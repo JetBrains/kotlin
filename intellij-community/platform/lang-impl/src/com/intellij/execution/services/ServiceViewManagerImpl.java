@@ -107,7 +107,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
   private void initRoots() {
     myModel.getInvoker().invokeLater(() -> myModel.initRoots().onSuccess(o -> {
       Set<? extends ServiceViewContributor<?>> activeContributors =
-        myModel.getRoots().stream().map(root -> root.getRootContributor()).collect(Collectors.toSet());
+        ContainerUtil.map2Set(myModel.getRoots(), ServiceViewItem::getRootContributor);
       Map<String, Boolean> toolWindowIds = new HashMap<>();
       for (ServiceViewContributor<?> contributor : ServiceModel.getContributors()) {
         String toolWindowId = getToolWindowId(contributor.getClass());
