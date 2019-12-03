@@ -2,10 +2,10 @@
 package com.intellij.codeInsight.editorActions;
 
 import com.intellij.codeInsight.AutoPopupController;
-import com.intellij.codeInsight.AutoPopupControllerImpl;
 import com.intellij.codeInsight.completion.impl.CompletionServiceImpl;
 import com.intellij.codeInsight.lookup.LookupManager;
 import com.intellij.codeInsight.lookup.impl.LookupImpl;
+import com.intellij.openapi.application.AppUIExecutor;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -53,7 +53,7 @@ public class CompletionAutoPopupHandler extends TypedHandlerDelegate {
    * @deprecated can be emulated with {@link com.intellij.openapi.application.AppUIExecutor}
    */
   @Deprecated
-  public static void runLaterWithCommitted(@NotNull final Project project, final Document document, @NotNull final Runnable runnable) {
-    AutoPopupControllerImpl.runTransactionWithEverythingCommitted(project, runnable);
+  public static void runLaterWithCommitted(@NotNull Project project, @SuppressWarnings("unused") Document document, @NotNull Runnable runnable) {
+    AppUIExecutor.onUiThread().later().withDocumentsCommitted(project).execute(runnable);
   }
 }

@@ -15,6 +15,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManagerListener;
+import com.intellij.openapi.project.ex.ProjectEx;
 import com.intellij.openapi.roots.GeneratedSourcesFilter;
 import com.intellij.openapi.roots.ModuleRootEvent;
 import com.intellij.openapi.roots.ModuleRootListener;
@@ -42,7 +43,7 @@ public final class GeneratedSourceFileChangeTrackerImpl extends GeneratedSourceF
 
   public GeneratedSourceFileChangeTrackerImpl(@NotNull Project project) {
     myProject = project;
-    myCheckingQueue = new SingleAlarm(this::checkFiles, 500, Alarm.ThreadToUse.POOLED_THREAD, project);
+    myCheckingQueue = new SingleAlarm(this::checkFiles, 500, Alarm.ThreadToUse.POOLED_THREAD, ((ProjectEx)project).getEarlyDisposable());
   }
 
   @TestOnly
