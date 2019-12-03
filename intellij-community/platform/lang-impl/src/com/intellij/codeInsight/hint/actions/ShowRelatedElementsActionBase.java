@@ -125,12 +125,7 @@ public abstract class ShowRelatedElementsActionBase extends DumbAwareAction impl
     List<ImplementationViewElement> impls = session.getImplementationElements();
     if (impls.size() == 0) return;
     Project project = session.getProject();
-
-    FeatureUsageTracker.getInstance().triggerFeatureUsed(getFeatureUsageTrackerKey());
-    if (LookupManager.getInstance(project).getActiveLookup() != null) {
-      FeatureUsageTracker.getInstance().triggerFeatureUsed(getFeatureUsageTrackerKeyForLookup());
-    }
-
+    triggerFeatureUsed(project);
     VirtualFile virtualFile = session.getFile();
     int index = 0;
     if (invokedFromEditor && virtualFile != null && impls.size() > 1) {
@@ -200,11 +195,14 @@ public abstract class ShowRelatedElementsActionBase extends DumbAwareAction impl
     }
   }
 
-  @NotNull
-  protected abstract String getFeatureUsageTrackerKey();
+  protected abstract void triggerFeatureUsed(@NotNull Project project);
 
-  @NotNull
-  protected abstract String getFeatureUsageTrackerKeyForLookup();
+  protected static void triggerFeatureUsed(@NotNull Project project, @NotNull String key, @NotNull String keyForLookup) {
+    FeatureUsageTracker.getInstance().triggerFeatureUsed(key);
+    if (LookupManager.getInstance(project).getActiveLookup() != null) {
+      FeatureUsageTracker.getInstance().triggerFeatureUsed(keyForLookup);
+    }
+  }
 
   @NotNull
   protected abstract String getPopupTitle(@NotNull ImplementationViewSession session);

@@ -4,6 +4,7 @@ package com.intellij.codeInsight.hint.actions;
 import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.hint.ImplementationViewSession;
 import com.intellij.codeInsight.hint.ImplementationViewSessionFactory;
+import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,15 +27,8 @@ public class ShowImplementationsAction extends ShowRelatedElementsActionBase {
   }
 
   @Override
-  @NotNull
-  protected String getFeatureUsageTrackerKey() {
-    return CODEASSISTS_QUICKDEFINITION_FEATURE;
-  }
-
-  @Override
-  @NotNull
-  protected String getFeatureUsageTrackerKeyForLookup() {
-    return CODEASSISTS_QUICKDEFINITION_LOOKUP_FEATURE;
+  protected void triggerFeatureUsed(@NotNull Project project) {
+    triggerFeatureUsed(project, CODEASSISTS_QUICKDEFINITION_FEATURE, CODEASSISTS_QUICKDEFINITION_LOOKUP_FEATURE);
   }
 
   @Override

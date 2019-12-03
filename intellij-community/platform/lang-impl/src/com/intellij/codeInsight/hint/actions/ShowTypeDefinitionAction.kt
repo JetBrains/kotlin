@@ -34,13 +34,7 @@ open class ShowTypeDefinitionAction : ShowRelatedElementsActionBase() {
     return CodeInsightBundle.message("type.definition.view.title", session.text)
   }
 
-  override fun getFeatureUsageTrackerKey(): String {
-    return "codeassists.quick.type.definition"
-  }
-
-  override fun getFeatureUsageTrackerKeyForLookup(): String {
-    return "codeassists.quick.type.definition.lookup"
-  }
+  override fun triggerFeatureUsed(project: Project) {}
 
   override fun getIndexNotReadyMessage(): String {
     return CodeInsightBundle.message("show.type.definition.index.not.ready")
