@@ -550,7 +550,7 @@ class StateMachineBuilder(
 
     // TODO: should it be lowered before?
     override fun visitStringConcatenation(expression: IrStringConcatenation) {
-        assert(expression in suspendableNodes)
+        if (expression !in suspendableNodes) return addStatement(expression)
 
         val arguments = arrayOfNulls<IrExpression>(expression.arguments.size)
 
