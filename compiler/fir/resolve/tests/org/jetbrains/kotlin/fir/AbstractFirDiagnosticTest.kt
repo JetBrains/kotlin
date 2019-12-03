@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.resolve.diagnostics.collectors.AbstractDiagnosticCollector
+import org.jetbrains.kotlin.fir.resolve.diagnostics.collectors.FirDiagnosticsCollector
 import org.jetbrains.kotlin.fir.resolve.diagnostics.collectors.ParallelDiagnosticsCollector
 import org.jetbrains.kotlin.fir.resolve.diagnostics.collectors.registerAllComponents
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveTransformer
@@ -50,9 +51,6 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
     }
 
     private fun createCollector(): AbstractDiagnosticCollector {
-//        val collector = SimpleDiagnosticsCollector()
-        val collector = ParallelDiagnosticsCollector(4)
-        collector.registerAllComponents()
-        return collector
+        return FirDiagnosticsCollector.create()
     }
 }
