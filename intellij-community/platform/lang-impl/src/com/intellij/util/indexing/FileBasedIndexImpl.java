@@ -2657,7 +2657,8 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
 
     DumbModeAccessType dumbModeAccessType = getCurrentDumbModeAccessType();
     if (dumbModeAccessType == null) {
-      throw new IllegalStateException("index access is not allowed in dumb mode");
+      //throw new IllegalStateException("index access is not allowed in dumb mode");
+      return f -> true;
     }
 
     if (dumbModeAccessType == DumbModeAccessType.RAW_INDEX_DATA_ACCEPTABLE) return f -> true;
