@@ -35,7 +35,7 @@ public class UpdateRunningApplicationAction extends AnAction {
       final RunningApplicationUpdater updater = findUpdater(project, processHandler);
       if (updater != null) {
         presentation.setEnabled(processHandler.isStartNotified() && !processHandler.isProcessTerminating()
-                                && !processHandler.isProcessTerminated() && updater.isEnabled());
+                                && !processHandler.isProcessTerminated());
         presentation.setText(updater.getDescription());
       }
       else {
@@ -93,8 +93,8 @@ public class UpdateRunningApplicationAction extends AnAction {
     if (contentDescriptor != null) {
       final RunningApplicationUpdater updater = findUpdater(project, contentDescriptor.getProcessHandler());
 
-      if (updater != null && updater.isEnabled()) {
-        updater.performUpdate();
+      if (updater != null) {
+        updater.performUpdate(e);
         return;
       }
     }
@@ -118,13 +118,13 @@ public class UpdateRunningApplicationAction extends AnAction {
 
           @Override
           public PopupStep onChosen(final RunningApplicationUpdater selectedValue, boolean finalChoice) {
-            return doFinalStep(() -> selectedValue.performUpdate());
+            return doFinalStep(() -> selectedValue.performUpdate(e));
           }
         });
       popup.showCenteredInCurrentWindow(project);
     }
     else {
-      updaters.get(0).performUpdate();
+      updaters.get(0).performUpdate(e);
     }
   }
 }
