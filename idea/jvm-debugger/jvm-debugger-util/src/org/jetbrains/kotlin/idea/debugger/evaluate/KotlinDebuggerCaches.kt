@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.idea.debugger.BytecodeDebugInfo
 import org.jetbrains.kotlin.idea.debugger.createWeakBytecodeDebugInfoStorage
 import org.jetbrains.kotlin.idea.debugger.evaluate.compilation.CompiledDataDescriptor
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.idea.util.runReadActionInSmartMode
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
@@ -158,7 +159,8 @@ class KotlinDebuggerCaches(project: Project) {
         }
 
         fun getOrCreateTypeMapper(psiElement: PsiElement): KotlinTypeMapper {
-            val cache = getInstance(runReadAction { psiElement.project })
+            val project = runReadAction { psiElement.project }
+            val cache = getInstance(project)
 
             val file = runReadAction { psiElement.containingFile as KtFile }
             val isInLibrary = runReadAction { LibraryUtil.findLibraryEntry(file.virtualFile, file.project) } != null
@@ -170,11 +172,13 @@ class KotlinDebuggerCaches(project: Project) {
             val cachedValue = typeMappersCache[key]
             if (cachedValue != null) return cachedValue
 
-            val newValue = if (!isInLibrary) {
-                createTypeMapperForSourceFile(file)
-            } else {
-                val element = getElementToCreateTypeMapperForLibraryFile(psiElement)
-                createTypeMapperForLibraryFile(element, file)
+            val newValue = project.runReadActionInSmartMode {
+                if (!isInLibrary) {
+                    createTypeMapperForSourceFile(file)
+                } else {
+                    val element = getElementToCreateTypeMapperForLibraryFile(psiElement)
+                    createTypeMapperForLibraryFile(element, file)
+                }
             }
 
             typeMappersCache[key] = newValue
