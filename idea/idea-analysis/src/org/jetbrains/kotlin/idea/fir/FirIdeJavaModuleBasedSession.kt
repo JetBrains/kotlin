@@ -30,7 +30,6 @@ class FirIdeJavaModuleBasedSession(
 
 
     init {
-        sessionProvider.sessionCache[moduleInfo] = this
         registerComponent(
             FirProvider::class,
             IdeFirProvider(project, scope, RawFirBuilder(this, stubMode = false), this)

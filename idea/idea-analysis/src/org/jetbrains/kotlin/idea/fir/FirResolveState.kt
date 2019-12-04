@@ -25,22 +25,35 @@ private fun createLibrarySession(moduleInfo: IdeaModuleInfo, project: Project, p
     return FirLibrarySession.create(moduleInfo, provider, contentScope, project, IDEPackagePartProvider(contentScope))
 }
 
+private fun getOrCreateIdeSession(
+    sessionProvider: FirProjectSessionProvider,
+    project: Project,
+    moduleInfo: ModuleSourceInfo
+): FirSession {
+    sessionProvider.getSession(moduleInfo)?.let { return it }
+    return synchronized(moduleInfo.module) {
+        sessionProvider.getSession(moduleInfo) ?: FirIdeJavaModuleBasedSession(
+            project, moduleInfo, sessionProvider, moduleInfo.contentScope()
+        ).also { moduleBasedSession ->
+            val ideaModuleInfo = moduleInfo.cast<IdeaModuleInfo>()
+            ideaModuleInfo.dependenciesWithoutSelf().forEach {
+                if (it is IdeaModuleInfo && it.isLibraryClasses()) {
+                    // TODO: consider caching / synchronization here
+                    createLibrarySession(it, project, sessionProvider)
+                }
+            }
+            sessionProvider.sessionCache[moduleInfo] = moduleBasedSession
+        }
+    }
+}
+
 interface FirResolveState {
     val sessionProvider: FirSessionProvider
 
     fun getSession(psi: KtElement): FirSession {
         val sessionProvider = sessionProvider as FirProjectSessionProvider
         val moduleInfo = psi.getModuleInfo() as ModuleSourceInfo
-        return sessionProvider.getSession(moduleInfo) ?: FirIdeJavaModuleBasedSession(
-            psi.project, moduleInfo, sessionProvider, moduleInfo.contentScope()
-        ).also {
-            val ideaModuleInfo = moduleInfo.cast<IdeaModuleInfo>()
-            ideaModuleInfo.dependenciesWithoutSelf().forEach {
-                if (it is IdeaModuleInfo && it.isLibraryClasses()) {
-                    createLibrarySession(it, psi.project, sessionProvider)
-                }
-            }
-        }
+        return getOrCreateIdeSession(sessionProvider, psi.project, moduleInfo)
     }
 
     operator fun get(psi: KtElement): FirElement?

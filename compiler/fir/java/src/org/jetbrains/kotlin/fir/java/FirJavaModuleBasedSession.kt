@@ -72,7 +72,6 @@ class FirLibrarySession private constructor(
 
 
     init {
-        sessionProvider.sessionCache[moduleInfo] = this
         val javaSymbolProvider = JavaSymbolProvider(this, sessionProvider.project, scope)
 
         registerComponent(
@@ -98,6 +97,8 @@ class FirLibrarySession private constructor(
             FirCorrespondingSupertypesCache::class,
             FirCorrespondingSupertypesCache(this)
         )
+
+        sessionProvider.sessionCache[moduleInfo] = this
     }
 
     companion object {
