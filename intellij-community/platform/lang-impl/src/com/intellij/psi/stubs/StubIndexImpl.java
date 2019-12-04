@@ -570,8 +570,8 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
     return IdIterator.EMPTY;
   }
 
-  @Override
-  public void initializeComponent() {
+  void initializeStubIndexes() {
+    assert !myInitialized;
     // ensure that FileBasedIndex task "FileIndexDataInitialization" submitted first
     FileBasedIndex.getInstance();
     myStateFuture = IndexInfrastructure.submitGenesisTask(new StubIndexInitialization());
@@ -590,6 +590,15 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
     for (UpdatableIndex<?, ?, ?> index : getAsyncState().myIndices.values()) {
       index.dispose();
     }
+
+    clearState();
+  }
+
+  private void clearState() {
+    myCachedStubIds.clear();
+    myStateFuture = null;
+    myState = null;
+    myInitialized = false;
   }
 
   void setDataBufferingEnabled(final boolean enabled) {
