@@ -422,6 +422,26 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
     return used;
   }
 
+  @NotNull
+  private static Icon removeVisibilityIfNeeded(@Nullable Editor editor, @NotNull Icon icon, @NotNull Icon standard) {
+    if (!Registry.is("ide.completion.show.visibility.icon")) {
+      if (icon instanceof RowIcon) {
+        RowIcon rowIcon = (RowIcon)icon;
+        if (rowIcon.getIconCount() >= 1) {
+          Icon firstIcon = rowIcon.getIcon(0);
+          if (firstIcon != null) {
+            return Registry.is("editor.scale.completion.icons") ?
+                   EditorUtil.scaleIconAccordingEditorFont(firstIcon, editor) : firstIcon;
+          }
+        }
+      }
+      else if (icon.getIconWidth() > standard.getIconWidth() || icon.getIconHeight() > standard.getIconHeight()) {
+        icon = IconUtil.cropIcon(icon, new Rectangle(standard.getIconWidth(), standard.getIconHeight()));
+      }
+    }
+    return icon;
+  }
+
   public static Icon augmentIcon(@Nullable Editor editor, @Nullable Icon icon, @NotNull Icon standard) {
     if (Registry.is("editor.scale.completion.icons")) {
       standard = EditorUtil.scaleIconAccordingEditorFont(standard, editor);
@@ -431,21 +451,7 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
       return standard;
     }
 
-    if (!Registry.is("ide.completion.show.visibility.icon")) {
-      if (icon instanceof RowIcon) {
-        RowIcon rowIcon = (RowIcon)icon;
-        if (rowIcon.getIconCount() >= 1) {
-          Icon firstIcon = rowIcon.getIcon(0);
-          if (firstIcon != null) {
-            icon = Registry.is("editor.scale.completion.icons") ?
-                   EditorUtil.scaleIconAccordingEditorFont(firstIcon, editor) : firstIcon;
-          }
-        }
-      }
-      else if (icon.getIconWidth() > standard.getIconWidth() || icon.getIconHeight() > standard.getIconHeight()) {
-        icon = IconUtil.cropIcon(icon, new Rectangle(standard.getIconWidth(), standard.getIconHeight()));
-      }
-    }
+    icon = removeVisibilityIfNeeded(editor, icon, standard);
 
     if (icon.getIconHeight() < standard.getIconHeight() || icon.getIconWidth() < standard.getIconWidth()) {
       final LayeredIcon layeredIcon = new LayeredIcon(2);
@@ -483,8 +489,9 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
 
 
   int updateMaximumWidth(final LookupElementPresentation p, LookupElement item) {
-    final Icon icon = p.getIcon();
+    Icon icon = p.getIcon();
     if (icon != null && (icon.getIconWidth() > myEmptyIcon.getIconWidth() || icon.getIconHeight() > myEmptyIcon.getIconHeight())) {
+      icon = removeVisibilityIfNeeded(myLookup.getEditor(), icon, myEmptyIcon);
       myEmptyIcon = EmptyIcon.create(Math.max(icon.getIconWidth(), myEmptyIcon.getIconWidth()),
                                      Math.max(icon.getIconHeight(), myEmptyIcon.getIconHeight()));
 
