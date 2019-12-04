@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.resolve.calls.components
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.annotations.FilteredAnnotations
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubsystemFromArgument
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
@@ -72,6 +74,8 @@ class PostponedArgumentsAnalyzer(
 
         fun substitute(type: UnwrappedType) = currentSubstitutor.safeSubstitute(c, type) as UnwrappedType
 
+        // Expected type has a higher priority against which lambda should be analyzed
+        // Mostly, this is needed to report more specific diagnostics on lambda parameters
         fun expectedOrActualType(expected: UnwrappedType?, actual: UnwrappedType?): UnwrappedType? {
             val expectedSubstituted = expected?.let(::substitute)
             return if (expectedSubstituted != null && c.canBeProper(expectedSubstituted)) expectedSubstituted else actual?.let(::substitute)
@@ -79,14 +83,22 @@ class PostponedArgumentsAnalyzer(
 
         val builtIns = c.getBuilder().builtIns
 
-        // Expected type has a higher priority against which lambda should be analyzed
-        // Mostly, this is needed to report more specific diagnostics on lambda parameters
-        val receiver = expectedOrActualType(lambda.expectedType.receiver(), lambda.receiver)
-
         val expectedParameters = lambda.expectedType.valueParameters()
+        val expectedReceiver = lambda.expectedType.receiver()
+
+        val receiver = lambda.receiver?.let {
+            expectedOrActualType(expectedReceiver ?: expectedParameters?.getOrNull(0), lambda.receiver)
+        }
+
+        val expectedParametersToMatchAgainst = when {
+            receiver == null && expectedReceiver != null && expectedParameters != null -> listOf(expectedReceiver) + expectedParameters
+            receiver == null && expectedReceiver != null -> listOf(expectedReceiver)
+            receiver != null && expectedReceiver == null -> expectedParameters?.drop(1)
+            else -> expectedParameters
+        }
 
         val parameters =
-            expectedParameters?.mapIndexed { index, expected ->
+            expectedParametersToMatchAgainst?.mapIndexed { index, expected ->
                 expectedOrActualType(expected, lambda.parameters.getOrNull(index)) ?: builtIns.nothingType
             } ?: lambda.parameters.map(::substitute)
 
@@ -101,13 +113,18 @@ class PostponedArgumentsAnalyzer(
             else -> null
         }
 
+        val convertedAnnotations = lambda.expectedType?.annotations?.let { annotations ->
+            if (receiver != null || expectedReceiver == null) annotations
+            else FilteredAnnotations(annotations, true) { it != KotlinBuiltIns.FQ_NAMES.extensionFunctionType }
+        }
+
         val (returnArguments, inferenceSession) = resolutionCallbacks.analyzeAndGetLambdaReturnArguments(
             lambda.atom,
             lambda.isSuspend,
             receiver,
             parameters,
             expectedTypeForReturnArguments,
-            lambda.expectedType?.annotations ?: Annotations.EMPTY,
+            convertedAnnotations ?: Annotations.EMPTY,
             stubsForPostponedVariables.cast()
         )
 
