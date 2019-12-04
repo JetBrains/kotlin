@@ -79,6 +79,7 @@ private class PackageInfo(val fqName: FqName, val moduleInfo: ModuleInfo) {
         it.mkdirs()
     }
     val errors = mutableMapOf<String, Int>().withDefault { 0 }
+    val implicits = mutableMapOf<String, Int>().withDefault { 0 }
 }
 
 private class ModuleInfo(val name: String, outputRoot: File) {
@@ -88,6 +89,9 @@ private class ModuleInfo(val name: String, outputRoot: File) {
     }
     val errors: Map<FqName, Int> by lazy {
         packages.mapValues { (_, packageInfo) -> packageInfo.errors.values.sum() }.withDefault { 0 }
+    }
+    val implicits: Map<FqName, Int> by lazy {
+        packages.mapValues { (_, packageInfo) -> packageInfo.implicits.values.sum() }.withDefault { 0 }
     }
 }
 
@@ -118,7 +122,7 @@ private class SupplementaryGenerator(val outputRoot: File) {
                             ) {
                                 +packageInfo.fqName.asString()
                             }
-                            addErrors(moduleInfo.errors.getValue(packageInfo.fqName))
+                            addErrors(moduleInfo.errors.getValue(packageInfo.fqName), moduleInfo.implicits.getValue(packageInfo.fqName))
                         }
                     }
                 }
@@ -126,9 +130,12 @@ private class SupplementaryGenerator(val outputRoot: File) {
         }
     }
 
-    fun LI.addErrors(errors: Int) {
+    fun LI.addErrors(errors: Int, implicits: Int) {
         if (errors > 0) {
             span(classes = "error-counter") { +(errors.toString()) }
+        }
+        if (implicits > 0) {
+            span(classes = "implicit-counter") { +(implicits.toString()) }
         }
     }
 
@@ -167,7 +174,7 @@ private class SupplementaryGenerator(val outputRoot: File) {
                     for (file in packageInfo.contents) {
                         li {
                             a(href = "./$file.fir.html", classes = "container-ref") { +file }
-                            addErrors(packageInfo.errors.getValue(file))
+                            addErrors(packageInfo.errors.getValue(file), packageInfo.implicits.getValue(file))
                         }
                     }
                 }
@@ -190,7 +197,7 @@ private class SupplementaryGenerator(val outputRoot: File) {
                     for (module in modules) {
                         li {
                             a(href = linkToIndex(module, outputRoot), classes = "container-ref") { +module.name }
-                            addErrors(module.errors.values.sum())
+                            addErrors(module.errors.values.sum(), module.implicits.values.sum())
                         }
                     }
                 }
@@ -296,6 +303,7 @@ class MultiModuleHtmlFirDump(private val outputRoot: File) {
         dumpOutput.writeText(builder.toString())
         packageForFile(file).apply {
             errors[file.name] = dumper.errors
+            implicits[file.name] = dumper.implicits
         }
     }
 
@@ -395,12 +403,15 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
     var errors: Int = 0
         private set
 
-    fun generate(element: FirFile, builder: StringBuilder): Int {
+    var implicits: Int = 0
+        private set
+
+    fun generate(element: FirFile, builder: StringBuilder) {
         errors = 0
+        implicits = 0
         builder.appendHTML().html {
             generate(element)
         }
-        return errors
     }
 
     private fun FlowContent.keyword(text: String) {
@@ -794,7 +805,10 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         when (typeRef) {
             is FirErrorTypeRef -> error { +typeRef.diagnostic.reason }
             is FirResolvedTypeRef -> generate(typeRef.type)
-            is FirImplicitTypeRef -> unresolved { keyword("<implicit>") }
+            is FirImplicitTypeRef -> unresolved {
+                implicits++
+                keyword("<implicit>")
+            }
             is FirUserTypeRef -> unresolved {
                 generateList(typeRef.qualifier, separator = ".") {
                     simpleName(it.name)

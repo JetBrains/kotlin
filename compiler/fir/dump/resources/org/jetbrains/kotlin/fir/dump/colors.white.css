@@ -72,6 +72,12 @@
 
 .white .error-counter {
     color: #f00;
+    padding-left: 15px;
+}
+
+.white .implicit-counter {
+    color: aqua;
+    padding-left: 15px;
 }
 
 .white .diagnostic-hover {
