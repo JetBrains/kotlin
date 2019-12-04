@@ -52,6 +52,8 @@ private class FirApplySupertypesTransformer(
     }
 
     override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirDeclaration> {
+        file.replaceResolvePhase(FirResolvePhase.SUPER_TYPES)
+
         return (file.transformChildren(this, null) as FirFile).compose()
     }
 

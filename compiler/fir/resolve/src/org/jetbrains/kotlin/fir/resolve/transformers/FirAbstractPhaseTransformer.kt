@@ -32,6 +32,13 @@ abstract class FirAbstractPhaseTransformer<D>(
             return phasedFir(session, requiredPhase)
         }
 
+    override fun transformFile(file: FirFile, data: D): CompositeTransformResult<FirFile> {
+        file.replaceResolvePhase(transformerPhase)
+
+        @Suppress("UNCHECKED_CAST")
+        return super.transformFile(file, data) as CompositeTransformResult<FirFile>
+    }
+
     override fun transformDeclaration(declaration: FirDeclaration, data: D): CompositeTransformResult<FirDeclaration> {
         declaration.replaceResolvePhase(transformerPhase)
 

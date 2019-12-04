@@ -41,8 +41,7 @@ open class FirBodyResolveTransformer(
         components.file = file
         return withScopeCleanup(components.topLevelScopes) {
             components.topLevelScopes.addImportingScopes(file, session, components.scopeSession)
-            @Suppress("UNCHECKED_CAST")
-            super.transformFile(file, data) as CompositeTransformResult<FirFile>
+            super.transformFile(file, data)
         }
     }
 

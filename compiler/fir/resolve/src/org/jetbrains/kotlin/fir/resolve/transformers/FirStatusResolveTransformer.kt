@@ -26,7 +26,7 @@ class FirStatusResolveTransformer : FirAbstractTreeTransformer<FirDeclarationSta
 
     override fun transformFile(file: FirFile, data: FirDeclarationStatus?): CompositeTransformResult<FirFile> {
         session = file.session
-        return transformElement(file, data)
+        return super.transformFile(file, data)
     }
 
     override fun transformDeclarationStatus(
