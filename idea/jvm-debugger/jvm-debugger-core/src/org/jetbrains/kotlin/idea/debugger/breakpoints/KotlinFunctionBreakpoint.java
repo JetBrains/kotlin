@@ -28,6 +28,7 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.progress.*;
 import com.intellij.openapi.progress.impl.BackgroundableProcessIndicator;
 import com.intellij.openapi.progress.util.ProgressWindow;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
@@ -111,7 +112,7 @@ public class KotlinFunctionBreakpoint extends BreakpointWithHighlighter<JavaMeth
             public void run(@NotNull ProgressIndicator indicator) {
                 SourcePosition sourcePosition = KotlinFunctionBreakpoint.this.getSourcePosition();
                 MethodDescriptor descriptor = sourcePosition == null
-                        ? null : ReadAction.compute(() -> getMethodDescriptor(project, sourcePosition));
+                        ? null : DumbService.getInstance(project).runReadActionInSmartMode(() -> getMethodDescriptor(project, sourcePosition));
 
                 ProgressIndicatorProvider.checkCanceled();
 
@@ -156,7 +157,7 @@ public class KotlinFunctionBreakpoint extends BreakpointWithHighlighter<JavaMeth
             return null;
         }
 
-        return ReadAction.compute(() -> LightClassUtilsKt.toLightClass(declaration));
+        return DumbService.getInstance(myProject).runReadActionInSmartMode(() -> LightClassUtilsKt.toLightClass(declaration));
     }
 
     // MODIFICATION: End Kotlin implementation
@@ -238,7 +239,7 @@ public class KotlinFunctionBreakpoint extends BreakpointWithHighlighter<JavaMeth
             DebugProcessImpl debugProcess,
             boolean forPreparedClass
     ) {
-        return ReadAction.compute(() -> {
+        return DumbService.getInstance(debugProcess.getProject()).runReadActionInSmartMode(() -> {
             JavaDebugProcess process = debugProcess.getXdebugProcess();
             return process != null
                    && debugProcess.isAttached()
@@ -535,7 +536,7 @@ public class KotlinFunctionBreakpoint extends BreakpointWithHighlighter<JavaMeth
         //final int endOffset = document.getLineEndOffset(sourcePosition);
         //final MethodDescriptor descriptor = docManager.commitAndRunReadAction(new Computable<MethodDescriptor>() {
         // conflicts with readAction on initial breakpoints creation
-        MethodDescriptor descriptor = ReadAction.compute(() -> {
+        MethodDescriptor descriptor = DumbService.getInstance(project).runReadActionInSmartMode(() -> {
             // MODIFICATION: Start Kotlin implementation
             PsiMethod method = resolveJvmMethodFromKotlinDeclaration(project, sourcePosition);
             // MODIFICATION: End Kotlin implementation
