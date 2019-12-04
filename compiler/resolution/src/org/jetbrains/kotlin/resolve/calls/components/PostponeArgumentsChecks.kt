@@ -170,18 +170,6 @@ private fun extractLambdaInfoFromFunctionalType(
     )
 }
 
-private fun extractLambdaParameters(expectedType: UnwrappedType, argument: LambdaKotlinCallArgument): List<UnwrappedType> {
-    val parametersTypes = argument.parametersTypes
-    val expectedParameters = expectedType.getValueParameterTypesFromFunctionType()
-    if (parametersTypes == null) {
-        return expectedParameters.map { it.type.unwrap() }
-    }
-
-    return parametersTypes.mapIndexed { index, type ->
-        type ?: expectedParameters.getOrNull(index)?.type?.unwrap() ?: expectedType.builtIns.nullableAnyType
-    }
-}
-
 fun LambdaWithTypeVariableAsExpectedTypeAtom.transformToResolvedLambda(
     csBuilder: ConstraintSystemBuilder,
     expectedType: UnwrappedType? = null,
@@ -194,7 +182,7 @@ fun LambdaWithTypeVariableAsExpectedTypeAtom.transformToResolvedLambda(
         atom,
         fixedExpectedType,
         forceResolution = true,
-        returnTypeVariable
+        returnTypeVariable = returnTypeVariable
     ) as ResolvedLambdaAtom
 
     setAnalyzed(resolvedLambdaAtom)
