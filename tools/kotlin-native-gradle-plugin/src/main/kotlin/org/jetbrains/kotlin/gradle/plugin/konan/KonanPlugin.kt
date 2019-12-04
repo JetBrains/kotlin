@@ -299,7 +299,6 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
         KONAN_CONFIGURATION_BUILD_DIR  ("konan.configuration.build.dir"),
         KONAN_DEBUGGING_SYMBOLS        ("konan.debugging.symbols"),
         KONAN_OPTIMIZATIONS_ENABLE     ("konan.optimizations.enable"),
-        KONAN_PUBLICATION_ENABLED      ("konan.publication.enabled")
     }
 
     companion object {
@@ -337,12 +336,12 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
         project.tasks.create(KONAN_DOWNLOAD_TASK_NAME, KonanCompilerDownloadTask::class.java)
         project.tasks.create(KONAN_GENERATE_CMAKE_TASK_NAME, KonanGenerateCMakeTask::class.java)
         project.extensions.create(KONAN_EXTENSION_NAME, KonanExtension::class.java)
-        val container = project.extensions.create(KonanArtifactContainer::class.java, ARTIFACTS_CONTAINER_NAME, KonanArtifactContainer::class.java, project)
-        val isPublicationEnabled = project.gradle.services.get(FeaturePreviews::class.java).isFeatureEnabled(FeaturePreviews.Feature.GRADLE_METADATA)
-        project.setProperty(ProjectProperty.KONAN_PUBLICATION_ENABLED, isPublicationEnabled)
-        if (!isPublicationEnabled) {
-            project.logger.warn("feature GRADLE_METADATA is not enabled: publication is disabled")
-        }
+        val container = project.extensions.create(
+                KonanArtifactContainer::class.java,
+                ARTIFACTS_CONTAINER_NAME,
+                KonanArtifactContainer::class.java,
+                project
+        )
 
         project.warnAboutDeprecatedProperty(ProjectProperty.KONAN_HOME)
 
@@ -378,8 +377,6 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
         // Enable multiplatform support
         project.pluginManager.apply(KotlinNativePlatformPlugin::class.java)
         project.afterEvaluate {
-            if (!isPublicationEnabled)
-                return@afterEvaluate
             project.pluginManager.withPlugin("maven-publish") {
                 container.all { buildingConfig ->
                     val konanSoftwareComponent = buildingConfig.mainVariant
