@@ -73,10 +73,9 @@ class FirBodyResolveTransformerAdapter : FirTransformer<Nothing?>() {
     }
 
     override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirFile> {
-        // Despite of real phase is EXPRESSIONS, we state IMPLICIT_TYPES here, because DECLARATIONS previous phase is OK for us
         val transformer = FirBodyResolveTransformer(
             file.session,
-            phase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE,
+            phase = FirResolvePhase.BODY_RESOLVE,
             implicitTypeOnly = false,
             scopeSession = scopeSession
         )
