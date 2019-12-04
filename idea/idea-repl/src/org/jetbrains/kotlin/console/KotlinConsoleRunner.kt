@@ -54,7 +54,7 @@ import org.jetbrains.kotlin.idea.caches.trackers.KOTLIN_CONSOLE_KEY
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionContributor
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionSourceAsContributor
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager
-import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.idea.util.runReadActionInSmartMode
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtFile
@@ -264,7 +264,7 @@ class KotlinConsoleRunner(
     }
 
     fun successfulLine(text: String) {
-        runReadAction {
+        project.runReadActionInSmartMode {
             val lineNumber = replState.successfulLinesCount + 1
             val virtualFile =
                 LightVirtualFile(
