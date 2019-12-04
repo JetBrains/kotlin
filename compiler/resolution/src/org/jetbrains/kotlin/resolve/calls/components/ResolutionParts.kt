@@ -294,7 +294,11 @@ private fun KotlinResolutionCandidate.getExpectedTypeWithSAMConversion(
     argument: KotlinCallArgument,
     candidateParameter: ParameterDescriptor
 ): UnwrappedType? {
-    if (!callComponents.languageVersionSettings.supportsFeature(LanguageFeature.SamConversionPerArgument)) return null
+    val generatingAdditionalSamCandidateIsEnabled =
+        !callComponents.languageVersionSettings.supportsFeature(LanguageFeature.SamConversionPerArgument) &&
+                !callComponents.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitVarargAsArrayAfterSamArgument)
+
+    if (generatingAdditionalSamCandidateIsEnabled) return null
     if (!callComponents.samConversionTransformer.shouldRunSamConversionForFunction(resolvedCall.candidateDescriptor)) return null
 
     val argumentIsFunctional = when (argument) {

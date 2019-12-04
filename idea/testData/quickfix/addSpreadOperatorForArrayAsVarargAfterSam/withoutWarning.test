@@ -1,0 +1,18 @@
+// FILE: test.before.kt
+// "Add a spread operator before an array passing as vararg" "false"
+// ACTION: Add explicit type arguments
+// ACTION: Introduce import alias
+// ACTION: Introduce local variable
+// ACTION: Put arguments on separate lines
+// WITH_RUNTIME
+
+fun main() {
+    Test.foo({}, <caret>arrayOf())
+}
+
+// FILE: Test.java
+public class Test {
+    public static String foo(Runnable r, String... strs) {
+        return null;
+    }
+}

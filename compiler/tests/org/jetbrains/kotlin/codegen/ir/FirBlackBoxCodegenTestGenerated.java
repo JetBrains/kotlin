@@ -24283,6 +24283,16 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/sam"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
+        @TestMetadata("arrayAsVarargAfterSamArgument.kt")
+        public void testArrayAsVarargAfterSamArgument() throws Exception {
+            runTest("compiler/testData/codegen/box/sam/arrayAsVarargAfterSamArgument.kt");
+        }
+
+        @TestMetadata("arrayAsVarargAfterSamArgumentWithoutSamConversionsPerArgument.kt")
+        public void testArrayAsVarargAfterSamArgumentWithoutSamConversionsPerArgument() throws Exception {
+            runTest("compiler/testData/codegen/box/sam/arrayAsVarargAfterSamArgumentWithoutSamConversionsPerArgument.kt");
+        }
+
         @TestMetadata("castFromAny.kt")
         public void testCastFromAny() throws Exception {
             runTest("compiler/testData/codegen/box/sam/castFromAny.kt");

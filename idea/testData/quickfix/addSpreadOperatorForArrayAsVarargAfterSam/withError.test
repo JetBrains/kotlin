@@ -1,0 +1,21 @@
+// FILE: test.before.kt
+// "Add a spread operator before an array passing as vararg" "false"
+// ACTION: Add 'toString()' call
+// ACTION: Create member function 'Test.foo'
+// ACTION: Introduce import alias
+// ACTION: Introduce local variable
+// ACTION: Put arguments on separate lines
+// ERROR: Type mismatch: inferred type is Array<???> but String! was expected
+// COMPILER_ARGUMENTS: -XXLanguage:+NewInference -XXLanguage:+SamConversionForKotlinFunctions -XXLanguage:+SamConversionPerArgument -XXLanguage:+ProhibitVarargAsArrayAfterSamArgument
+// WITH_RUNTIME
+
+fun main() {
+    Test.foo({}, <caret>arrayOf())
+}
+
+// FILE: Test.java
+public class Test {
+    public static String foo(Runnable r, String... strs) {
+        return null;
+    }
+}

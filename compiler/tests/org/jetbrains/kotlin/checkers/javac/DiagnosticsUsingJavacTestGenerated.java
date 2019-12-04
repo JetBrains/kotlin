@@ -18605,6 +18605,21 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/samConversions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
             }
 
+            @TestMetadata("arrayAsVarargAfterSamArgument.kt")
+            public void testArrayAsVarargAfterSamArgument() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/samConversions/arrayAsVarargAfterSamArgument.kt");
+            }
+
+            @TestMetadata("arrayAsVarargAfterSamArgumentProhibited.kt")
+            public void testArrayAsVarargAfterSamArgumentProhibited() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/samConversions/arrayAsVarargAfterSamArgumentProhibited.kt");
+            }
+
+            @TestMetadata("arrayAsVarargAfterSamArgumentWithoutSamConversionsPerArgument.kt")
+            public void testArrayAsVarargAfterSamArgumentWithoutSamConversionsPerArgument() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/samConversions/arrayAsVarargAfterSamArgumentWithoutSamConversionsPerArgument.kt");
+            }
+
             @TestMetadata("checkSamConversionsAreDisabledByDefault.kt")
             public void testCheckSamConversionsAreDisabledByDefault() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/samConversions/checkSamConversionsAreDisabledByDefault.kt");

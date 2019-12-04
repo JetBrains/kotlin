@@ -175,6 +175,10 @@ class DiagnosticReporterByTrackingStrategy(
                 }
 
             }
+
+            ResolvedToSamWithVarargDiagnostic::class.java -> {
+                trace.report(TYPE_INFERENCE_CANDIDATE_WITH_SAM_AND_VARARG.on(callArgument.psiCallArgument.valueArgument.asElement()))
+            }
         }
     }
 

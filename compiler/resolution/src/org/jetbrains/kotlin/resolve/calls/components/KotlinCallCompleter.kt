@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.resolve.calls.components
 
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor
 import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
@@ -45,6 +47,7 @@ class KotlinCallCompleter(
 
         candidate.addExpectedTypeConstraint(returnType, expectedType)
         candidate.addExpectedTypeFromCastConstraint(returnType, resolutionCallbacks)
+        candidate.checkSamWithVararg(diagnosticHolder)
 
         return if (resolutionCallbacks.inferenceSession.shouldRunCompletion(candidate))
             candidate.runCompletion(
@@ -54,6 +57,22 @@ class KotlinCallCompleter(
             )
         else
             candidate.asCallResolutionResult(ConstraintSystemCompletionMode.PARTIAL, diagnosticHolder)
+    }
+
+    private fun KotlinResolutionCandidate.checkSamWithVararg(diagnosticHolder: KotlinDiagnosticsHolder.SimpleHolder) {
+        val samConversionPerArgumentWithWarningsForVarargAfterSam =
+            callComponents.languageVersionSettings.supportsFeature(LanguageFeature.SamConversionPerArgument) &&
+                    !callComponents.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitVarargAsArrayAfterSamArgument)
+
+        if (samConversionPerArgumentWithWarningsForVarargAfterSam && resolvedCall.candidateDescriptor is SyntheticMemberDescriptor<*>) {
+            val declarationDescriptor = resolvedCall.candidateDescriptor.baseDescriptorForSynthetic as? FunctionDescriptor ?: return
+
+            if (declarationDescriptor.valueParameters.lastOrNull()?.isVararg == true) {
+                diagnosticHolder.addDiagnostic(
+                    ResolvedToSamWithVarargDiagnostic(resolvedCall.atom.argumentsInParenthesis.lastOrNull() ?: return)
+                )
+            }
+        }
     }
 
     fun createAllCandidatesResult(

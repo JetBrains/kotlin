@@ -1,0 +1,27 @@
+// FILE: test.before.kt
+// "Add a spread operator before an array passing as vararg" "true"
+// WARNING: Please use spread operator to pass an array as vararg. It will be an error in 1.5.
+// COMPILER_ARGUMENTS: -XXLanguage:+NewInference -XXLanguage:+SamConversionForKotlinFunctions -XXLanguage:+SamConversionPerArgument
+// WITH_RUNTIME
+
+fun main() {
+    Test.foo({}, <caret>arrayOf())
+}
+
+// FILE: Test.java
+public class Test {
+    public static String foo(Runnable r, String... strs) {
+        return null;
+    }
+}
+
+// FILE: test.after.kt
+// "Add a spread operator before an array passing as vararg" "true"
+// WARNING: Please use spread operator to pass an array as vararg. It will be an error in 1.5.
+// COMPILER_ARGUMENTS: -XXLanguage:+NewInference -XXLanguage:+SamConversionForKotlinFunctions -XXLanguage:+SamConversionPerArgument
+// WITH_RUNTIME
+
+fun main() {
+    Test.foo({}, <caret>*arrayOf())
+}
+

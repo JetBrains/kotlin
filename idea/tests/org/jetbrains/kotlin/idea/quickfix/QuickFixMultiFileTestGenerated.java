@@ -324,6 +324,34 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/addSpreadOperatorForArrayAsVarargAfterSam")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AddSpreadOperatorForArrayAsVarargAfterSam extends AbstractQuickFixMultiFileTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTestWithExtraFile, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInAddSpreadOperatorForArrayAsVarargAfterSam() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addSpreadOperatorForArrayAsVarargAfterSam"), Pattern.compile("^(\\w+)\\.((before\\.Main\\.\\w+)|(test))$"), true);
+        }
+
+        @TestMetadata("withError.test")
+        public void testWithError() throws Exception {
+            runTest("idea/testData/quickfix/addSpreadOperatorForArrayAsVarargAfterSam/withError.test");
+        }
+
+        @TestMetadata("withWarning.test")
+        public void testWithWarning() throws Exception {
+            runTest("idea/testData/quickfix/addSpreadOperatorForArrayAsVarargAfterSam/withWarning.test");
+        }
+
+        @TestMetadata("withoutWarning.test")
+        public void testWithoutWarning() throws Exception {
+            runTest("idea/testData/quickfix/addSpreadOperatorForArrayAsVarargAfterSam/withoutWarning.test");
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/addStarProjections")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

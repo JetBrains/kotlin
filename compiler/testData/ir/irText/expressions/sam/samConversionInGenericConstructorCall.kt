@@ -1,4 +1,4 @@
-// !LANGUAGE: +NewInference +SamConversionPerArgument
+// !LANGUAGE: +NewInference +SamConversionPerArgument +ProhibitVarargAsArrayAfterSamArgument
 // FILE: samConversionInGenericConstructorCall.kt
 fun test1(f: (String) -> String) = C(f)
 

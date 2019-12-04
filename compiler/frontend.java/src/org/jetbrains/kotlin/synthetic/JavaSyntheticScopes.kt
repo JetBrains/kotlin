@@ -46,7 +46,8 @@ class JavaSyntheticScopes(
 
     init {
         val samConversionPerArgumentIsEnabled =
-            languageVersionSettings.supportsFeature(LanguageFeature.SamConversionPerArgument)
+            languageVersionSettings.supportsFeature(LanguageFeature.SamConversionPerArgument) &&
+                    languageVersionSettings.supportsFeature(LanguageFeature.ProhibitVarargAsArrayAfterSamArgument)
 
         val javaSyntheticPropertiesScope = JavaSyntheticPropertiesScope(storageManager, lookupTracker)
         val scopesFromExtensions = SyntheticScopeProviderExtension
@@ -59,7 +60,10 @@ class JavaSyntheticScopes(
             samConventionResolver,
             deprecationResolver,
             lookupTracker,
-            samViaSyntheticScopeDisabled = samConversionPerArgumentIsEnabled
+            samViaSyntheticScopeDisabled = samConversionPerArgumentIsEnabled,
+            shouldGenerateCandidateForVarargAfterSam = !languageVersionSettings.supportsFeature(
+                LanguageFeature.ProhibitVarargAsArrayAfterSamArgument
+            )
         )
 
         scopes = listOf(javaSyntheticPropertiesScope, samAdapterFunctionsScope) + scopesFromExtensions
@@ -70,7 +74,8 @@ class JavaSyntheticScopes(
                 samConventionResolver,
                 deprecationResolver,
                 lookupTracker,
-                samViaSyntheticScopeDisabled = false
+                samViaSyntheticScopeDisabled = false,
+                shouldGenerateCandidateForVarargAfterSam = false
             )
 
             scopesWithForceEnabledSamAdapters =

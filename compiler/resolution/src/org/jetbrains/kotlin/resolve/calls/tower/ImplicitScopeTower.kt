@@ -83,6 +83,7 @@ enum class ResolutionCandidateApplicability {
     INAPPLICABLE_ARGUMENTS_MAPPING_ERROR, // arguments not mapped to parameters (i.e. different size of arguments and parameters)
     INAPPLICABLE_WRONG_RECEIVER, // receiver not matched
     HIDDEN, // removed from resolve
+    RESOLVED_TO_SAM_WITH_VARARG, // migration warning up to 1.5 (when resolve to function with SAM conversion and array without spread as vararg)
 }
 
 abstract class ResolutionDiagnostic(candidateApplicability: ResolutionCandidateApplicability) :

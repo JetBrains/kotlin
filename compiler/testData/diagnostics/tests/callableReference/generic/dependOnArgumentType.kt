@@ -1,4 +1,4 @@
-// !LANGUAGE: +SamConversionPerArgument +NewInference
+// !LANGUAGE: +SamConversionPerArgument +NewInference +ProhibitVarargAsArrayAfterSamArgument
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 // FILE: A.java

@@ -132,10 +132,12 @@ class RedundantSamConstructorInspection : AbstractKotlinInspection() {
 
             if (!resolutionResults.isSuccess) return false
 
+            val generatingAdditionalSamCandidateIsDisabled =
+                parentCall.languageVersionSettings.supportsFeature(LanguageFeature.SamConversionPerArgument) ||
+                        parentCall.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitVarargAsArrayAfterSamArgument)
+
             val samAdapterOriginalDescriptor =
-                if (parentCall.languageVersionSettings.supportsFeature(LanguageFeature.SamConversionPerArgument) &&
-                    resolutionResults.resultingCall is NewResolvedCallImpl<*>
-                ) {
+                if (generatingAdditionalSamCandidateIsDisabled && resolutionResults.resultingCall is NewResolvedCallImpl<*>) {
                     resolutionResults.resultingDescriptor
                 } else {
                     SamCodegenUtil.getOriginalIfSamAdapter(resolutionResults.resultingDescriptor) ?: return false
