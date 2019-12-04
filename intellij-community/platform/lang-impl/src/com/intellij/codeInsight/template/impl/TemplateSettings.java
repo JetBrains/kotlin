@@ -280,9 +280,10 @@ public final class TemplateSettings implements PersistentStateComponent<Template
       @Override
       public void extensionListChanged() {
         for (TemplateImpl template : myTemplates.values()) {
-          for (Variable variable : template.getVariables()) {
-            variable.dropParsedData();
-          }
+          template.dropParsedData();
+        }
+        for (TemplateImpl template : myDefaultTemplates.values()) {
+          template.dropParsedData();
         }
       }
     }, ApplicationManager.getApplication());
