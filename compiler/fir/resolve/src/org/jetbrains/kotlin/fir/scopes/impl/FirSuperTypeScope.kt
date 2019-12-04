@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.name.Name
 
-open class FirSuperTypeScope(
+class FirSuperTypeScope(
     session: FirSession,
     overrideChecker: FirOverrideChecker,
     val scopes: List<FirScope>

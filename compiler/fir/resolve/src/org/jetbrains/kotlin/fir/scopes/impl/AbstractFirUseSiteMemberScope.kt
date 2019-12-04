@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.name.Name
 abstract class AbstractFirUseSiteMemberScope(
     session: FirSession,
     overrideChecker: FirOverrideChecker,
-    protected val superTypesScope: FirSuperTypeScope,
+    protected val superTypesScope: FirScope,
     protected val declaredMemberScope: FirScope
 ) : AbstractFirOverrideScope(session, overrideChecker) {
 
