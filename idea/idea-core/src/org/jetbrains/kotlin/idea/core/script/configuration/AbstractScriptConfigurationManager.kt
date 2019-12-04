@@ -222,12 +222,18 @@ internal abstract class AbstractScriptConfigurationManager(
     override fun clearConfigurationCachesAndRehighlight() {
         ScriptDependenciesModificationTracker.getInstance(project).incModificationCount()
 
+        // todo: cache.clear()
         clearClassRootsCaches()
 
         if (project.isOpen) {
             val openedScripts = FileEditorManager.getInstance(project).openFiles.filterNot { it.isNonScript() }
             updateHighlighting(openedScripts)
         }
+    }
+
+    @TestOnly
+    internal fun clearCaches() {
+        cache.clear()
     }
 
     private fun updateHighlighting(files: List<VirtualFile>) {
