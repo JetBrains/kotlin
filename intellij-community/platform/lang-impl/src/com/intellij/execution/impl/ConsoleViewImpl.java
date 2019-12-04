@@ -1267,7 +1267,7 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
       final Editor editor = consoleView.myEditor;
 
       if (IncrementalSearchHandler.isHintVisible(editor)) {
-        getDefaultActionHandler().execute(editor, context);
+        getDefaultActionHandler().execute(editor, null, context);
         return;
       }
 
@@ -1298,7 +1298,7 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
       final Editor editor = consoleView.myEditor;
 
       if (IncrementalSearchHandler.isHintVisible(editor)) {
-        getDefaultActionHandler().execute(editor, context);
+        getDefaultActionHandler().execute(editor, null, context);
         return;
       }
 

@@ -23,10 +23,12 @@ import com.intellij.codeInsight.template.impl.TemplateManagerImpl;
 import com.intellij.codeInsight.template.impl.TemplateState;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.command.CommandProcessor;
+import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class EscapeHandler extends EditorActionHandler {
   private final EditorActionHandler myOriginalHandler;
@@ -36,7 +38,7 @@ public class EscapeHandler extends EditorActionHandler {
   }
 
   @Override
-  public void execute(@NotNull Editor editor, DataContext dataContext) {
+  public void doExecute(@NotNull Editor editor, @Nullable Caret caret, DataContext dataContext) {
     TemplateState templateState = TemplateManagerImpl.getTemplateState(editor);
     if (templateState != null && !templateState.isFinished()) {
       SelectionModel selectionModel = editor.getSelectionModel();
@@ -54,17 +56,17 @@ public class EscapeHandler extends EditorActionHandler {
       }
     }
 
-    if (myOriginalHandler.isEnabled(editor, dataContext)) {
-      myOriginalHandler.execute(editor, dataContext);
+    if (myOriginalHandler.isEnabled(editor, caret, dataContext)) {
+      myOriginalHandler.execute(editor, caret, dataContext);
     }
   }
 
   @Override
-  public boolean isEnabled(Editor editor, DataContext dataContext) {
+  public boolean isEnabledForCaret(@NotNull Editor editor, @NotNull Caret caret, DataContext dataContext) {
     final TemplateState templateState = TemplateManagerImpl.getTemplateState(editor);
     if (templateState != null && !templateState.isFinished()) {
       return true;
     }
-    return myOriginalHandler.isEnabled(editor, dataContext);
+    return myOriginalHandler.isEnabled(editor, caret, dataContext);
   }
 }

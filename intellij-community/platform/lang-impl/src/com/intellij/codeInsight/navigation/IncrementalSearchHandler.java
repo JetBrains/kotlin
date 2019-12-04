@@ -424,9 +424,9 @@ public class IncrementalSearchHandler {
     }
 
     @Override
-    public boolean isEnabled(Editor editor, DataContext dataContext) {
+    public boolean isEnabledForCaret(@NotNull Editor editor, @NotNull Caret caret, DataContext dataContext) {
       PerEditorSearchData data = editor.getUserData(SEARCH_DATA_IN_EDITOR_VIEW_KEY);
-      return data != null && data.hint != null || myOriginalHandler.isEnabled(editor, dataContext);
+      return data != null && data.hint != null || myOriginalHandler.isEnabled(editor, caret, dataContext);
     }
   }
 
@@ -457,9 +457,9 @@ public class IncrementalSearchHandler {
     }
 
     @Override
-    public boolean isEnabled(Editor editor, DataContext dataContext) {
+    public boolean isEnabledForCaret(@NotNull Editor editor, @NotNull Caret caret, DataContext dataContext) {
       PerEditorSearchData data = editor.getUserData(SEARCH_DATA_IN_EDITOR_VIEW_KEY);
-      return data != null && data.hint != null || myOriginalHandler.isEnabled(editor, dataContext);
+      return data != null && data.hint != null || myOriginalHandler.isEnabled(editor, caret, dataContext);
     }
   }
 }

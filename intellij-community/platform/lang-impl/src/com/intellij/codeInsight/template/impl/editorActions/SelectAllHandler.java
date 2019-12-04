@@ -19,10 +19,12 @@ package com.intellij.codeInsight.template.impl.editorActions;
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl;
 import com.intellij.codeInsight.template.impl.TemplateState;
 import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler;
 import com.intellij.openapi.util.TextRange;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class SelectAllHandler extends EditorActionHandler {
   private final EditorActionHandler myOriginalHandler;
@@ -32,7 +34,7 @@ public class SelectAllHandler extends EditorActionHandler {
   }
 
   @Override
-  public void execute(@NotNull Editor editor, DataContext dataContext) {
+  public void doExecute(@NotNull Editor editor, @Nullable Caret caret, DataContext dataContext) {
     final TemplateState templateState = TemplateManagerImpl.getTemplateState(editor);
     if (templateState != null && !templateState.isFinished()) {
       final TextRange range = templateState.getCurrentVariableRange();
@@ -42,6 +44,6 @@ public class SelectAllHandler extends EditorActionHandler {
         return;
       }
     }
-    myOriginalHandler.execute(editor, dataContext);
+    myOriginalHandler.execute(editor, caret, dataContext);
   }
 }

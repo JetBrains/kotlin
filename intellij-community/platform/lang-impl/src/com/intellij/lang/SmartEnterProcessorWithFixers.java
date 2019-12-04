@@ -54,7 +54,7 @@ public abstract class SmartEnterProcessorWithFixers extends SmartEnterProcessor 
   private final List<FixEnterProcessor> myAfterEnterProcessors = new ArrayList<>();
 
   protected static void plainEnter(@NotNull final Editor editor) {
-    getEnterHandler().execute(editor, ((EditorEx)editor).getDataContext());
+    getEnterHandler().execute(editor, editor.getCaretModel().getCurrentCaret(), ((EditorEx)editor).getDataContext());
   }
 
   protected static EditorActionHandler getEnterHandler() {

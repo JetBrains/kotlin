@@ -21,6 +21,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiUtilBase;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Moves caret to the the matching brace:
@@ -39,7 +40,7 @@ public class MatchBraceAction extends EditorAction {
     }
 
     @Override
-    public void execute(@NotNull Editor editor, DataContext dataContext) {
+    public void doExecute(@NotNull Editor editor, @Nullable Caret caret, DataContext dataContext) {
       final PsiFile file = CommonDataKeys.PSI_FILE.getData(dataContext);
       if (file == null) return;
 
