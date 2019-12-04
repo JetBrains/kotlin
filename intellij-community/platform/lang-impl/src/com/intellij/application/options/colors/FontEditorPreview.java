@@ -16,19 +16,18 @@
 
 package com.intellij.application.options.colors;
 
-import com.intellij.codeInsight.daemon.impl.SeverityRegistrar;
-import com.intellij.codeInsight.daemon.impl.TrafficLightRenderer;
-import com.intellij.openapi.Disposable;
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.editor.*;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.ex.EditorMarkupModel;
-import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.editor.markup.ErrorStripeRenderer;
 import com.intellij.util.EventDispatcher;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.awt.*;
 import java.util.function.Supplier;
 
@@ -66,19 +65,9 @@ public class FontEditorPreview implements PreviewPanel{
   }
 
   static void installTrafficLights(@NotNull EditorEx editor) {
-    TrafficLightRenderer renderer = new TrafficLightRenderer(null, null) {
-      @NotNull
-      @Override
-      protected DaemonCodeAnalyzerStatus getDaemonCodeAnalyzerStatus(@NotNull SeverityRegistrar severityRegistrar) {
-        DaemonCodeAnalyzerStatus status = new DaemonCodeAnalyzerStatus();
-        status.errorAnalyzingFinished = true;
-        status.errorCount = new int[]{1, 2};
-        return status;
-      }
-    };
-    Disposer.register((Disposable)editor.getCaretModel(), renderer);
-    ((EditorMarkupModel)editor.getMarkupModel()).setErrorStripeRenderer(renderer);
-    ((EditorMarkupModel)editor.getMarkupModel()).setErrorStripeVisible(true);
+    EditorMarkupModel markupModel = (EditorMarkupModel)editor.getMarkupModel();
+    markupModel.setErrorStripeRenderer(new DumbTrafficLightRenderer());
+    markupModel.setErrorStripeVisible(true);
   }
 
   static Editor createPreviewEditor(String text, int column, int line, int selectedLine, EditorColorsScheme scheme, boolean editable) {
@@ -138,5 +127,13 @@ public class FontEditorPreview implements PreviewPanel{
   public void disposeUIResources() {
     EditorFactory editorFactory = EditorFactory.getInstance();
     editorFactory.releaseEditor(myEditor);
+  }
+
+  private static class DumbTrafficLightRenderer implements ErrorStripeRenderer {
+    @Override
+    public void paint(Component c, Graphics g, Rectangle r) {
+      Icon icon = AllIcons.General.InspectionsOK;
+      icon.paintIcon(c, g, r.x, r.y);
+    }
   }
 }
