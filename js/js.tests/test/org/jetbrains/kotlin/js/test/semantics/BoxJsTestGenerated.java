@@ -4492,6 +4492,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             runTest("js/js.translator/testData/box/inlineMultiModule/topLevelNestedInline.kt");
         }
 
+        @TestMetadata("typeParametersMangling.kt")
+        public void testTypeParametersMangling() throws Exception {
+            runTest("js/js.translator/testData/box/inlineMultiModule/typeParametersMangling.kt");
+        }
+
         @TestMetadata("typealiases.kt")
         public void testTypealiases() throws Exception {
             runTest("js/js.translator/testData/box/inlineMultiModule/typealiases.kt");

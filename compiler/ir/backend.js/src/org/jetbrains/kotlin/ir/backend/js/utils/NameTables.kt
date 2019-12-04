@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.ir.isMethodOfAny
 import org.jetbrains.kotlin.backend.common.ir.isTopLevel
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsMangler
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerForBE
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.types.isUnit
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 fun <T> mapToKey(declaration: T): String {
-    return with(JsMangler) {
+    return with(JsManglerForBE) {
         if (declaration is IrDeclaration && isPublic(declaration)) {
             declaration.hashedMangle.toString()
         } else if (declaration is Signature) {
@@ -32,7 +32,7 @@ fun <T> mapToKey(declaration: T): String {
     }
 }
 
-fun JsMangler.isPublic(declaration: IrDeclaration) =
+fun JsManglerForBE.isPublic(declaration: IrDeclaration) =
     declaration.isExported() && declaration !is IrScript && declaration !is IrVariable && declaration !is IrValueParameter
 
 class NameTable<T>(
