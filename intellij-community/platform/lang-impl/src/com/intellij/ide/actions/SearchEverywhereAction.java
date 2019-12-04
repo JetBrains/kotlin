@@ -979,12 +979,8 @@ public class SearchEverywhereAction extends AnAction implements CustomComponentA
       JTextField editor = getTextEditor();
       editor.setOpaque(false);
       editor.putClientProperty(SearchEverywhereUI.SEARCH_EVERYWHERE_SEARCH_FILED_KEY, true);
-      if (!UIUtil.isUnderWin10LookAndFeel()){
-        editor.setUI((DarculaTextFieldUI)DarculaTextFieldUI.createUI(editor));
-        editor.setBorder(new DarculaTextBorder());
-      }
-
       editor.putClientProperty("JTextField.Search.noBorderRing", Boolean.TRUE);
+
       if (StartupUiUtil.isUnderDarcula()) {
         editor.setBackground(Gray._45);
         editor.setForeground(Gray._240);

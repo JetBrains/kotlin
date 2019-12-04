@@ -54,7 +54,7 @@ public class SearchTextArea extends NonOpaquePanel implements PropertyChangeList
   private final boolean mySearchMode;
   private final boolean myInfoMode;
   private final JLabel myInfoLabel;
-  private final JPanel myIconsPanel;
+  private final JPanel myIconsPanel = new NonOpaquePanel();
   private final ActionButton myNewLineButton;
   private final ActionButton myClearButton;
   private final JBScrollPane myScrollPane;
@@ -180,7 +180,6 @@ public class SearchTextArea extends NonOpaquePanel implements PropertyChangeList
     myClearButton = createButton(new ClearAction());
     myNewLineButton = createButton(new NewLineAction());
     myNewLineButton.setVisible(searchMode);
-    myIconsPanel = new NonOpaquePanel();
 
     updateLayout();
   }
