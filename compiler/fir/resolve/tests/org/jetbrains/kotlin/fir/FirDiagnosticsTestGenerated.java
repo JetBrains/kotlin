@@ -389,6 +389,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/expresssions"), Pattern.compile("^([^.]+)\\.kt$"), true);
         }
 
+        @TestMetadata("annotationWithReturn.kt")
+        public void testAnnotationWithReturn() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/annotationWithReturn.kt");
+        }
+
         @TestMetadata("annotations.kt")
         public void testAnnotations() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/annotations.kt");

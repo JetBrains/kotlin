@@ -103,7 +103,6 @@ class InvokeReceiverCandidateCollector(
                 session,
                 invokeCallInfo.containingFile,
                 invokeCallInfo.implicitReceiverStack,
-                invokeCallInfo.containingDeclaration,
                 invokeCallInfo.expectedType,
                 invokeCallInfo.outerCSBuilder,
                 invokeCallInfo.lhs,

@@ -72,7 +72,6 @@ fun createFunctionConsumer(
         bodyResolveComponents.session,
         callInfo.containingFile,
         callInfo.implicitReceiverStack,
-        callInfo.containingDeclaration,
         callInfo.expectedType,
         callInfo.outerCSBuilder,
         callInfo.lhs,
