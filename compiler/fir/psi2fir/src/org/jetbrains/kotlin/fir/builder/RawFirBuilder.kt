@@ -352,7 +352,10 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
                         isNullable = false
                     )
                 )
-                this is KtClass && classKind == ClassKind.ANNOTATION_CLASS -> implicitAnnotationType
+                this is KtClass && classKind == ClassKind.ANNOTATION_CLASS -> {
+                    container.superTypeRefs += implicitAnnotationType
+                    implicitAnyType
+                }
                 else -> implicitAnyType
             }
             // TODO: for enum / annotations, it *should* be empty

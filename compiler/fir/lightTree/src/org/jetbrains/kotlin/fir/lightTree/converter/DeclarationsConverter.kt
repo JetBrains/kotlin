@@ -397,7 +397,10 @@ class DeclarationsConverter(
                             isNullable = false
                         )
                     )
-                modifiers.isAnnotation() && (classKind == ClassKind.ANNOTATION_CLASS) -> implicitAnnotationType
+                modifiers.isAnnotation() && (classKind == ClassKind.ANNOTATION_CLASS) -> {
+                    superTypeRefs += implicitAnnotationType
+                    implicitAnyType
+                }
                 else -> implicitAnyType
             }
 
