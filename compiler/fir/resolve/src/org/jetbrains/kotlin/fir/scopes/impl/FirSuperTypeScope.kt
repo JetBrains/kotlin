@@ -27,43 +27,30 @@ class FirSuperTypeScope private constructor(
     private val absentClassifiers = mutableSetOf<Name>()
 
     override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> ProcessorAction): ProcessorAction {
-        if (name in absentFunctions) {
-            return ProcessorAction.NEXT
-        }
-        val accepted = HashSet<FirFunctionSymbol<*>>()
-        val pending = mutableListOf<FirFunctionSymbol<*>>()
-        var empty = true
-        for (scope in scopes) {
-            if (scope.processFunctionsByName(name) { functionSymbol ->
-                    empty = false
-                    if (functionSymbol !in accepted && functionSymbol.getOverridden(accepted) == null) {
-                        pending += functionSymbol
-                        processor(functionSymbol)
-                    } else {
-                        ProcessorAction.NEXT
-                    }
-                }.stop()
-            ) {
-                return ProcessorAction.STOP
-            }
-            accepted += pending
-            pending.clear()
-        }
-        if (empty) {
-            absentFunctions += name
-        }
+        processCallablesByName(name, processor, absentFunctions, FirScope::processFunctionsByName)?.let { return it }
         return super.processFunctionsByName(name, processor)
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> ProcessorAction): ProcessorAction {
-        if (name in absentProperties) {
+        processCallablesByName(name, processor, absentProperties, FirScope::processPropertiesByName)?.let { return it }
+        return super.processPropertiesByName(name, processor)
+    }
+
+    private inline fun <D : FirCallableSymbol<*>> processCallablesByName(
+        name: Name,
+        noinline processor: (D) -> ProcessorAction,
+        absentNames: MutableSet<Name>,
+        processCallables: FirScope.(Name, (D) -> ProcessorAction) -> ProcessorAction
+    ): ProcessorAction? {
+        if (name in absentNames) {
             return ProcessorAction.NEXT
         }
+
         val accepted = HashSet<FirCallableSymbol<*>>()
         val pending = mutableListOf<FirCallableSymbol<*>>()
         var empty = true
         for (scope in scopes) {
-            if (scope.processPropertiesByName(name) {
+            if (scope.processCallables(name) {
                     empty = false
                     if (it !in accepted && it.getOverridden(accepted) == null) {
                         pending += it
@@ -79,9 +66,10 @@ class FirSuperTypeScope private constructor(
             pending.clear()
         }
         if (empty) {
-            absentProperties += name
+            absentNames += name
         }
-        return super.processPropertiesByName(name, processor)
+
+        return null
     }
 
     override fun processClassifiersByName(name: Name, processor: (FirClassifierSymbol<*>) -> ProcessorAction): ProcessorAction {
