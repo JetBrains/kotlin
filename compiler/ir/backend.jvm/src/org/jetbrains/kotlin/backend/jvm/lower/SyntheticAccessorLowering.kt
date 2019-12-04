@@ -276,16 +276,15 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
         }.symbol
 
     private fun createAccessorBodyForGetter(targetField: IrField, accessor: IrSimpleFunction): IrBody {
-        val resolvedTargetField = targetField.resolveFakeOverride()!!
         val maybeDispatchReceiver =
-            if (resolvedTargetField.isStatic) null
+            if (targetField.isStatic) null
             else IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, accessor.valueParameters[0].symbol)
         return IrExpressionBodyImpl(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET,
             IrGetFieldImpl(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                resolvedTargetField.symbol,
-                resolvedTargetField.type,
+                targetField.symbol,
+                targetField.type,
                 maybeDispatchReceiver
             )
         )
@@ -314,19 +313,18 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
         }.symbol
 
     private fun createAccessorBodyForSetter(targetField: IrField, accessor: IrSimpleFunction): IrBody {
-        val resolvedTargetField = targetField.resolveFakeOverride()!!
         val maybeDispatchReceiver =
-            if (resolvedTargetField.isStatic) null
+            if (targetField.isStatic) null
             else IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, accessor.valueParameters[0].symbol)
         val value = IrGetValueImpl(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-            accessor.valueParameters[if (resolvedTargetField.isStatic) 0 else 1].symbol
+            accessor.valueParameters[if (targetField.isStatic) 0 else 1].symbol
         )
         return IrExpressionBodyImpl(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET,
             IrSetFieldImpl(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                resolvedTargetField.symbol,
+                targetField.symbol,
                 maybeDispatchReceiver,
                 value,
                 context.irBuiltIns.unitType

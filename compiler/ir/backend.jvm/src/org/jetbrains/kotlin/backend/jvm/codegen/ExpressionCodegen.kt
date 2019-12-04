@@ -470,22 +470,31 @@ class ExpressionCodegen(
 
         val realField = callee.resolveFakeOverride()!!
         val fieldType = typeMapper.mapType(realField.type)
-        val ownerType = typeMapper.mapClass(callee.parentAsClass).internalName
+        val ownerType = typeMapper.mapClass(callee.parentAsClass)
         val fieldName = realField.name.asString()
         val isStatic = expression.receiver == null
         expression.markLineNumber(startOffset = true)
-        expression.receiver?.accept(this, data)?.materialize()
+        // For dynamic dispatch calls, cast the receiver to the owner's type. This is needed for
+        // fake overrides because the original descriptor that the IR was generated from has the superclass
+        // as the dispatch receiver parameter type, not the actual class that contains the fake override.
+        // In patterns like `if (x is B) x.f` where `f` is a protected field defined in `B`'s superclass `A`,
+        // this mismatch causes `x` to be casted to `A` in IR while the `GETFIELD` is of `B.f`.
+        // NOTE: there is a similar hack in `visitFunctionAccess` for cases where `f` is a function.
+        if (expression.superQualifierSymbol == null)
+            expression.receiver?.accept(this, data)?.coerce(ownerType, callee.parentAsClass.defaultType)?.materialize()
+        else
+            expression.receiver?.accept(this, data)?.materialize()
         return if (expression is IrSetField) {
             expression.value.accept(this, data).coerce(fieldType, callee.type).materialize()
             when {
-                isStatic -> mv.putstatic(ownerType, fieldName, fieldType.descriptor)
-                else -> mv.putfield(ownerType, fieldName, fieldType.descriptor)
+                isStatic -> mv.putstatic(ownerType.internalName, fieldName, fieldType.descriptor)
+                else -> mv.putfield(ownerType.internalName, fieldName, fieldType.descriptor)
             }
             defaultValue(expression.type)
         } else {
             when {
-                isStatic -> mv.getstatic(ownerType, fieldName, fieldType.descriptor)
-                else -> mv.getfield(ownerType, fieldName, fieldType.descriptor)
+                isStatic -> mv.getstatic(ownerType.internalName, fieldName, fieldType.descriptor)
+                else -> mv.getfield(ownerType.internalName, fieldName, fieldType.descriptor)
             }
             MaterialValue(this, fieldType, callee.type).coerce(expression.type)
         }
