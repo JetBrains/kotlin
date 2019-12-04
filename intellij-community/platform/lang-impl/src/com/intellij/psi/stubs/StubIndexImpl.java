@@ -73,17 +73,13 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
     return new CachedValueImpl<>(() -> new CachedValueProvider.Result<>(ContainerUtil.newConcurrentMap(), tracker));
   }, ContainerUtil::newConcurrentMap);
 
-  private final StubProcessingHelper myStubProcessingHelper;
+  private final StubProcessingHelper myStubProcessingHelper = new StubProcessingHelper();
   private final IndexAccessValidator myAccessValidator = new IndexAccessValidator();
   private volatile Future<AsyncState> myStateFuture;
   private volatile AsyncState myState;
   private volatile boolean myInitialized;
 
   private StubIndexState myPreviouslyRegistered;
-
-  public StubIndexImpl() {
-    myStubProcessingHelper = new StubProcessingHelper();
-  }
 
   @Nullable
   static StubIndexImpl getInstanceOrInvalidate() {
