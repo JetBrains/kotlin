@@ -6,12 +6,19 @@
 package org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir
 
 import org.jetbrains.kotlin.backend.common.serialization.KotlinManglerImpl
-import org.jetbrains.kotlin.backend.common.serialization.cityHash64
+import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.isInlined
 
-object JsMangler : KotlinManglerImpl() {
+abstract class AbstractJsMangler : KotlinManglerImpl() {
     override val IrType.isInlined: Boolean
         get() = this.isInlined()
 }
 
+object JsMangler : AbstractJsMangler()
+
+object JsManglerForBE : AbstractJsMangler() {
+
+    override fun mangleTypeParameter(typeParameter: IrTypeParameter, typeParameterNamer: (IrTypeParameter) -> String): String =
+        typeParameter.name.asString()
+}
