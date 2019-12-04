@@ -508,14 +508,44 @@ class KotlinInjectionTest : AbstractInjectionTest() {
             )
         }
 
+    fun testKotlinAnnotationsPatternNamedArrayLiteral() {
+        doAnnotationInjectionTest(
+            patternLanguage = "kotlin",
+            injectedLanguage = RegExpLanguage.INSTANCE.id,
+            pattern = """kotlinParameter().ofFunction(0, kotlinFunction().withName("Matches").definedInClass("Matches"))""",
+            kotlinCode = """
+                        annotation class Matches(val pattern: Array<String>)
+
+                        @Matches(pattern = ["[A-Z]<caret>[a-z]+"])
+                        val name = "John"
+                                    """
+        )
+    }
+
+    fun testKotlinAnnotationsPatternNamedArray() {
+        doAnnotationInjectionTest(
+            patternLanguage = "kotlin",
+            injectedLanguage = RegExpLanguage.INSTANCE.id,
+            pattern = """kotlinParameter().ofFunction(0, kotlinFunction().withName("Matches").definedInClass("Matches"))""",
+            kotlinCode = """
+                        annotation class Matches(val pattern: Array<String>)
+
+                        @Matches(pattern = arrayOf("[A-Z]<caret>[a-z]+"))
+                        val name = "John"
+                                    """
+        )
+    }
+
 
     fun testInjectionInJavaAnnotation() {
 
-        myFixture.addClass("""
+        myFixture.addClass(
+            """
                 @interface InHtml {
                     String value();
                 }
-                """)
+                """
+        )
 
         doAnnotationInjectionTest(
                 injectedLanguage = HTMLLanguage.INSTANCE.id,
@@ -545,6 +575,46 @@ class KotlinInjectionTest : AbstractInjectionTest() {
                                             import myinjection.InHtml
 
                                             @InHtml(html = "<htm<caret>l></html>")
+                                            fun foo() {
+                                            }
+                                            """)
+    }
+
+    fun testInjectionInJavaAnnotationWithNamedParamArray() {
+        myFixture.addClass("""
+                            package myinjection;
+
+                            @interface InHtml {
+                            String[] htmls();
+                            }
+                            """)
+        doAnnotationInjectionTest(
+                injectedLanguage = HTMLLanguage.INSTANCE.id,
+                pattern = """psiMethod().withName("htmls").withParameters().definedInClass("myinjection.InHtml")""",
+                kotlinCode = """
+                                            import myinjection.InHtml
+
+                                            @InHtml(htmls = arrayOf("<br/>", "<htm<caret>l></html>"))
+                                            fun foo() {
+                                            }
+                                            """)
+    }
+
+    fun testInjectionInJavaAnnotationWithNamedParamLiterals() {
+        myFixture.addClass("""
+                            package myinjection;
+
+                            @interface InHtml {
+                            String[] htmls();
+                            }
+                            """)
+        doAnnotationInjectionTest(
+                injectedLanguage = HTMLLanguage.INSTANCE.id,
+                pattern = """psiMethod().withName("htmls").withParameters().definedInClass("myinjection.InHtml")""",
+                kotlinCode = """
+                                            import myinjection.InHtml
+
+                                            @InHtml(htmls = ["<br/>", "<htm<caret>l></html>"])
                                             fun foo() {
                                             }
                                             """)
