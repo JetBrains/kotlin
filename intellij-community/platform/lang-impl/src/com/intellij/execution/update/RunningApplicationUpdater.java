@@ -19,7 +19,6 @@ public interface RunningApplicationUpdater {
 
   /**
    * The method is called on performing update running application action.
-   * @param event
    */
   void performUpdate(AnActionEvent event);
 }
