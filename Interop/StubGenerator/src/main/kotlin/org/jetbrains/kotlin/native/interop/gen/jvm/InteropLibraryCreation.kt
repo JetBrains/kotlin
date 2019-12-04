@@ -4,7 +4,11 @@
  */
 package org.jetbrains.kotlin.native.interop.gen.jvm
 
+import kotlinx.metadata.*
+import kotlinx.metadata.klib.KlibModuleFragmentWriteStrategy
 import kotlinx.metadata.klib.KlibModuleMetadata
+import kotlinx.metadata.klib.className
+import kotlinx.metadata.klib.fqName
 import org.jetbrains.kotlin.backend.common.serialization.KlibIrVersion
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.konan.CURRENT
@@ -44,12 +48,46 @@ fun createInteropLibrary(arguments: LibraryCreationArguments) {
             version,
             arguments.target
     ).apply {
-        // TODO: Add write strategy that splits big fragments.
-        val metadata = arguments.metadata.write()
+        val metadata = arguments.metadata.write(ChunkingWriteStrategy())
         addMetadata(SerializedMetadata(metadata.header, metadata.fragments, metadata.fragmentNames))
         addNativeBitcode(arguments.nativeBitcodePath)
         addManifestAddend(arguments.manifest)
         addLinkDependencies(arguments.dependencies)
         commit()
+    }
+}
+
+// TODO: Consider adding it to kotlinx-metadata-klib.
+class ChunkingWriteStrategy(
+        private val classesChunkSize: Int = 128,
+        private val packagesChunkSize: Int = 128
+) : KlibModuleFragmentWriteStrategy {
+
+    override fun processPackageParts(parts: List<KmModuleFragment>): List<KmModuleFragment> {
+        if (parts.isEmpty()) return emptyList()
+        val fqName = parts.first().fqName
+                ?: error("KmModuleFragment should have a not-null fqName!")
+        val classFragments = parts.flatMap(KmModuleFragment::classes)
+                .chunked(classesChunkSize) { chunk ->
+                    KmModuleFragment().also { fragment ->
+                        fragment.fqName = fqName
+                        fragment.classes += chunk
+                        chunk.mapTo(fragment.className, KmClass::name)
+                    }
+                }
+        val packageFragments = parts.mapNotNull(KmModuleFragment::pkg)
+                .flatMap { it.functions + it.typeAliases + it.properties }
+                .chunked(packagesChunkSize) { chunk ->
+                    KmModuleFragment().also { fragment ->
+                        fragment.fqName = fqName
+                        fragment.pkg = KmPackage().also { pkg ->
+                            pkg.fqName = fqName
+                            pkg.properties += chunk.filterIsInstance<KmProperty>()
+                            pkg.functions += chunk.filterIsInstance<KmFunction>()
+                            pkg.typeAliases += chunk.filterIsInstance<KmTypeAlias>()
+                        }
+                    }
+                }
+        return classFragments + packageFragments
     }
 }
