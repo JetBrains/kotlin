@@ -448,11 +448,8 @@ public class ColorAndFontOptions extends SearchableConfigurable.Parent.Abstract
       }
       return f1.getPanelDisplayName().compareToIgnoreCase(f2.getPanelDisplayName());
     });
-    List<ColorAndFontPanelFactory> result = new ArrayList<>(extensions);
 
-    result.add(new ScopeColorsPageFactory());
-
-    return result;
+    return new ArrayList<>(extensions);
   }
 
   private static class FontConfigurableFactory implements ColorAndFontPanelFactoryEx {
