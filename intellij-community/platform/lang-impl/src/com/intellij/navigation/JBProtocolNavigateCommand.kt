@@ -2,6 +2,7 @@
 package com.intellij.navigation
 
 import com.intellij.ide.IdeBundle
+import com.intellij.ide.RecentProjectListActionProvider
 import com.intellij.ide.RecentProjectsManagerBase
 import com.intellij.ide.ReopenProjectAction
 import com.intellij.ide.actions.searcheverywhere.SymbolSearchEverywhereContributor
@@ -56,8 +57,7 @@ open class JBProtocolNavigateCommand : JBProtocolCommand(NAVIGATE_COMMAND) {
       return
     }
 
-    val recentProjectManager = RecentProjectsManagerBase.instanceEx
-    val recentProjectsActions = recentProjectManager.getRecentProjectsActions(false)
+    val recentProjectsActions = RecentProjectListActionProvider.getInstance().getActions(false)
     for (recentProjectAction in recentProjectsActions) {
       if (recentProjectAction !is ReopenProjectAction || recentProjectAction.projectName != projectName) {
         continue
@@ -68,7 +68,7 @@ open class JBProtocolNavigateCommand : JBProtocolCommand(NAVIGATE_COMMAND) {
       } ?: run {
         ApplicationManager.getApplication().invokeLater(
           {
-            recentProjectManager.openProject(Paths.get(recentProjectAction.projectPath), OpenProjectTask())?.let {
+            RecentProjectsManagerBase.instanceEx.openProject(Paths.get(recentProjectAction.projectPath), OpenProjectTask())?.let {
               StartupManager.getInstance(it).registerPostStartupActivity { findAndNavigateToReference(it, parameters) }
             }
           }, ModalityState.NON_MODAL)

@@ -1,8 +1,8 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.actions.runAnything.activity;
 
 import com.intellij.ide.IdeBundle;
-import com.intellij.ide.RecentProjectsManager;
+import com.intellij.ide.RecentProjectListActionProvider;
 import com.intellij.ide.ReopenProjectAction;
 import com.intellij.ide.actions.runAnything.RunAnythingContext;
 import com.intellij.ide.actions.runAnything.items.RunAnythingItem;
@@ -15,16 +15,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class RunAnythingRecentProjectProvider extends RunAnythingAnActionProvider<AnAction> {
   @NotNull
   @Override
   public Collection<AnAction> getValues(@NotNull DataContext dataContext, @NotNull String pattern) {
-    return Arrays.stream(RecentProjectsManager.getInstance().getRecentProjectsActions(false)).collect(Collectors.toList());
+    return RecentProjectListActionProvider.getInstance().getActions(false);
   }
 
   @NotNull
