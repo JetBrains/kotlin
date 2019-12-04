@@ -619,6 +619,10 @@ fun main(args: Array<String>) {
             model("codeInsight/outOfBlock", pattern = KT_OR_KTS)
         }
 
+        testClass<AbstractChangeLocalityDetectorTest> {
+            model("codeInsight/changeLocality", pattern = KT_OR_KTS)
+        }
+
         testClass<AbstractDataFlowValueRenderingTest> {
             model("dataFlowValueRendering")
         }

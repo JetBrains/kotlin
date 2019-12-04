@@ -1,5 +1,7 @@
-// OUT_OF_CODE_BLOCK: FALSE
-// ERROR: Unresolved reference: awhen
+// OUT_OF_CODE_BLOCK: TRUE
+// TYPE: 'z'
+// ERROR: Unresolved reference: zwhen
+
 enum class A {
     e1, e2, e3
 }
@@ -13,3 +15,6 @@ val B.foo: Int
             A.e2 -> 4
         }
     }
+
+// TODO: Investigate
+// SKIP_ANALYZE_CHECK

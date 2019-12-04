@@ -178,6 +178,11 @@ public class OutOfBlockModificationTestGenerated extends AbstractOutOfBlockModif
         runTest("idea/testData/codeInsight/outOfBlock/InMethod.kt");
     }
 
+    @TestMetadata("InMethodUnreacableCode.kt")
+    public void testInMethodUnreacableCode() throws Exception {
+        runTest("idea/testData/codeInsight/outOfBlock/InMethodUnreacableCode.kt");
+    }
+
     @TestMetadata("InNestedClass.kt")
     public void testInNestedClass() throws Exception {
         runTest("idea/testData/codeInsight/outOfBlock/InNestedClass.kt");

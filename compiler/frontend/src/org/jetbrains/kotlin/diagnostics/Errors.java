@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.diagnostics;
 
 import com.google.common.collect.ImmutableSet;
-import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import kotlin.Pair;
@@ -37,6 +36,7 @@ import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.jetbrains.kotlin.diagnostics.PositioningStrategies.*;
 import static org.jetbrains.kotlin.diagnostics.Severity.*;
@@ -884,7 +884,7 @@ public interface Errors {
 
     // Control flow / Data flow
 
-    DiagnosticFactory1<KtElement, List<TextRange>> UNREACHABLE_CODE = DiagnosticFactory1.create(
+    DiagnosticFactory2<KtElement, Set<KtElement>, Set<KtElement>> UNREACHABLE_CODE = DiagnosticFactory2.create(
             WARNING, PositioningStrategies.UNREACHABLE_CODE);
 
     DiagnosticFactory0<KtVariableDeclaration> VARIABLE_WITH_NO_TYPE_NO_INITIALIZER = DiagnosticFactory0.create(ERROR, DECLARATION_NAME);
