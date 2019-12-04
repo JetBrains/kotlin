@@ -1,6 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
-// Missing IMPLICIT_NOTNULL casts
-
 class A<T> {
     fun add(element: T) {}
 }

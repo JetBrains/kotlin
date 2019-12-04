@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
-// Missing IMPLICIT_NOTNULL casts
 // FILE: A.java
 import org.jetbrains.annotations.NotNull;
 

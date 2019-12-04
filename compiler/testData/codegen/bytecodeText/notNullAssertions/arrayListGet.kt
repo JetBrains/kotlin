@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
-// Missing IMPLICIT_NOTNULL casts
 import java.util.ArrayList
 
 fun foo(): Any {
