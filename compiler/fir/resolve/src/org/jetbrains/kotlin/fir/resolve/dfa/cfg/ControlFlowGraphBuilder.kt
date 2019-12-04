@@ -229,6 +229,12 @@ class ControlFlowGraphBuilder {
         return node
     }
 
+    // ----------------------------------- Check not null call -----------------------------------
+
+    fun exitCheckNotNullCall(checkNotNullCall: FirCheckNotNullCall): CheckNotNullCallNode {
+        return createCheckNotNullCallNode(checkNotNullCall).also { addNewSimpleNode(it) }
+    }
+
     // ----------------------------------- When -----------------------------------
 
     fun enterWhenExpression(whenExpression: FirWhenExpression): WhenEnterNode {

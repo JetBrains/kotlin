@@ -125,6 +125,10 @@ class OperatorCallNode(owner: ControlFlowGraph, override val fir: FirOperatorCal
 class JumpNode(owner: ControlFlowGraph, override val fir: FirJump<*>, level: Int) : CFGNode<FirJump<*>>(owner, level)
 class ConstExpressionNode(owner: ControlFlowGraph, override val fir: FirConstExpression<*>, level: Int) : CFGNode<FirConstExpression<*>>(owner, level)
 
+// ----------------------------------- Check not null call -----------------------------------
+
+class CheckNotNullCallNode(owner: ControlFlowGraph, override val fir: FirCheckNotNullCall, level: Int) : CFGNode<FirCheckNotNullCall>(owner, level)
+
 // ----------------------------------- Resolvable call -----------------------------------
 
 class QualifiedAccessNode(

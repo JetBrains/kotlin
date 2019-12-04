@@ -110,6 +110,7 @@ fun CFGNode<*>.render(): String =
                 is TypeOperatorCallNode -> "Type operator: \"${fir.psi?.text?.toString() ?: fir.render()}\""
                 is JumpNode -> "Jump: ${fir.render()}"
                 is StubNode -> "Stub"
+                is CheckNotNullCallNode -> "Check not null: ${fir.render()}"
 
                 is ConstExpressionNode -> "Const: ${fir.render()}"
                 is VariableDeclarationNode ->
