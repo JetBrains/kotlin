@@ -40,18 +40,18 @@ import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.jdkHome
 import kotlin.script.experimental.jvm.jvm
 
-class KotlinGradleBuildScriptsDataService : AbstractProjectDataService<GradleSourceSetData, Void>() {
-    override fun getTargetDataKey(): Key<GradleSourceSetData> = GradleSourceSetData.KEY
+class KotlinGradleBuildScriptsDataService : AbstractProjectDataService<ProjectData, Void>() {
+    override fun getTargetDataKey(): Key<ProjectData> = ProjectKeys.PROJECT
 
     override fun onSuccessImport(
-        imported: MutableCollection<DataNode<GradleSourceSetData>>,
+        imported: MutableCollection<DataNode<ProjectData>>,
         projectData: ProjectData?,
         project: Project,
         modelsProvider: IdeModelsProvider
     ) {
         super.onSuccessImport(imported, projectData, project, modelsProvider)
 
-        val projectDataNode = imported.firstNotNullResult { ExternalSystemApiUtil.findParent(it, ProjectKeys.PROJECT) } ?: return
+        val projectDataNode = imported.singleOrNull() ?: return
         val buildScripts = projectDataNode.gradleKotlinBuildScripts ?: return
 
         val gradleSettings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID)
