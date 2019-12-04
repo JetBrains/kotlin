@@ -2,6 +2,7 @@
 package com.intellij.openapi.externalSystem.autoimport
 
 import com.intellij.openapi.externalSystem.model.ProjectSystemId
+import com.intellij.openapi.vfs.VfsUtil
 import org.junit.Test
 import java.io.File
 
@@ -41,6 +42,53 @@ class AutoImportTest : AutoImportTestCase() {
 
       refreshProject()
       assertState(refresh = 3, notified = false, event = "empty project refresh")
+    }
+  }
+
+  @Test
+  fun `test simple modification tracking in xml`() {
+    simpleTest("settings.xml") { settingsFile ->
+      assertState(refresh = 1, notified = false, event = "register project without cache")
+
+      settingsFile.replaceContent("""
+        <element>
+          <name description="This is a my super name">my-name</name>
+        </element>
+      """.trimIndent())
+      assertState(refresh = 1, notified = true, event = "modification")
+      refreshProject()
+      assertState(refresh = 2, notified = false, event = "refresh project")
+
+      settingsFile.replaceString("my-name", "my name")
+      assertState(refresh = 2, notified = true, event = "replace by space")
+      settingsFile.replaceString("my name", "my-name")
+      assertState(refresh = 2, notified = false, event = "revert modification")
+      settingsFile.replaceString("my-name", "my - name")
+      assertState(refresh = 2, notified = true, event = "split token by spaces")
+      settingsFile.replaceString("my - name", "my-name")
+      assertState(refresh = 2, notified = false, event = "revert modification")
+      settingsFile.insertStringAfter("my-name", " ")
+      assertState(refresh = 2, notified = false, event = "append space after text")
+      settingsFile.insertStringAfter("</name>", " ")
+      assertState(refresh = 2, notified = false, event = "append space after tag")
+      settingsFile.insertStringAfter("</name>", "\n  ")
+      assertState(refresh = 2, notified = false, event = "append empty line in file")
+      settingsFile.replaceString("</name>", "</n am e>")
+      assertState(refresh = 2, notified = true, event = "split tag by spaces")
+      settingsFile.replaceString("</n am e>", "</name>")
+      assertState(refresh = 2, notified = false, event = "revert modification")
+      settingsFile.replaceString("</name>", "</ name >")
+      assertState(refresh = 2, notified = false, event = "expand tag brackets by spaces")
+      settingsFile.replaceString("=", " = ")
+      assertState(refresh = 2, notified = false, event = "expand attribute definition")
+      settingsFile.replaceString("my super name", "my  super  name")
+      assertState(refresh = 2, notified = true, event = "expand space inside attribute value")
+      settingsFile.replaceString("my  super  name", "my super name")
+      assertState(refresh = 2, notified = false, event = "revert modification")
+      settingsFile.insertStringAfter("my super name", " ")
+      assertState(refresh = 2, notified = true, event = "insert space in end of attribute")
+      settingsFile.replaceString("my super name \"", "my super name\"")
+      assertState(refresh = 2, notified = false, event = "revert modification")
     }
   }
 

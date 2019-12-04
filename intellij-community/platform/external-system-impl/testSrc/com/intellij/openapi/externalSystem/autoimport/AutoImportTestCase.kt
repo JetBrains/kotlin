@@ -111,8 +111,10 @@ abstract class AutoImportTestCase : ExternalSystemTestCase() {
   protected fun VirtualFile.insertStringAfter(prefix: String, string: String) =
     runWriteAction {
       val text = VfsUtil.loadText(this)
-      val after = text.removePrefix(prefix)
-      VfsUtil.saveText(this, prefix + string + after)
+      val offset = text.indexOf(prefix)
+      val before = text.substring(0, offset)
+      val after = text.substring(offset + prefix.length, text.length)
+      VfsUtil.saveText(this, before + prefix + string + after)
     }
 
   protected fun VirtualFile.appendString(string: String) =
