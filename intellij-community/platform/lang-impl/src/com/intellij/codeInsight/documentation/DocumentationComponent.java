@@ -127,7 +127,8 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
   private SmartPsiElementPointer<PsiElement> myElement;
   private long myModificationCount;
 
-  private static final String QUICK_DOC_FONT_SIZE_PROPERTY = "quick.doc.font.size";
+  private static final String QUICK_DOC_FONT_SIZE_OLD_PROPERTY = "quick.doc.font.size";
+  private static final String QUICK_DOC_FONT_SIZE_PROPERTY = "quick.doc.font.size.v2";
 
   private final Stack<Context> myBackStack = new Stack<>();
   private final Stack<Context> myForwardStack = new Stack<>();
@@ -656,16 +657,31 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
 
   @NotNull
   public static FontSize getQuickDocFontSize() {
-    String strValue = PropertiesComponent.getInstance().getValue(QUICK_DOC_FONT_SIZE_PROPERTY);
+    FontSize fontSize = readFontSizeFromSettings(QUICK_DOC_FONT_SIZE_PROPERTY);
+    if (fontSize != null) return fontSize;
+    FontSize oldFontSize = readFontSizeFromSettings(QUICK_DOC_FONT_SIZE_OLD_PROPERTY);
+    if (oldFontSize != null) {
+      // migrate old-scale setting
+      PropertiesComponent.getInstance().unsetValue(QUICK_DOC_FONT_SIZE_OLD_PROPERTY);
+      FontSize newFontSize = oldFontSize == FontSize.X_LARGE ? FontSize.XX_LARGE
+                                                             : oldFontSize == FontSize.LARGE ? FontSize.X_LARGE
+                                                                                             : oldFontSize;
+      setQuickDocFontSize(newFontSize);
+      return newFontSize;
+    }
+    return FontSize.SMALL;
+  }
+
+  @Nullable
+  private static FontSize readFontSizeFromSettings(@NotNull String propertyName) {
+    String strValue = PropertiesComponent.getInstance().getValue(propertyName);
     if (strValue != null) {
       try {
         return FontSize.valueOf(strValue);
       }
-      catch (IllegalArgumentException iae) {
-        // ignore, fall back to default font.
-      }
+      catch (IllegalArgumentException ignored) {}
     }
-    return FontSize.SMALL;
+    return null;
   }
 
   public static void setQuickDocFontSize(@NotNull FontSize fontSize) {
