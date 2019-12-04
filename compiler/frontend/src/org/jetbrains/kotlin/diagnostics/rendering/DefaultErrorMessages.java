@@ -351,7 +351,7 @@ public class DefaultErrorMessages {
         MAP.put(VAL_OR_VAR_ON_CATCH_PARAMETER, "''{0}'' on catch parameter is not allowed", TO_STRING);
         MAP.put(VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER, "''{0}'' on secondary constructor parameter is not allowed", TO_STRING);
 
-        MAP.put(UNREACHABLE_CODE, "Unreachable code", TO_STRING);
+        MAP.put(UNREACHABLE_CODE, "Unreachable code", EMPTY, EMPTY);
 
         MAP.put(MANY_COMPANION_OBJECTS, "Only one companion object is allowed per class");
 

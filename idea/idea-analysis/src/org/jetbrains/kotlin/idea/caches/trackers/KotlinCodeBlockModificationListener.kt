@@ -93,8 +93,9 @@ class KotlinCodeBlockModificationListener(
 
                 // skip change if it contains only virtual/fake change
                 if (changedElements.isNotEmpty() &&
-                    // ignore formatting (whitespaces etc)
+                    // ignore formatting (whitespaces etc) change
                     (isFormattingChange(changeSet) ||
+                            // ignore comment change
                             isCommentChange(changeSet) ||
                             changedElements.all { !it.psi.isPhysical })
                 ) return
@@ -215,6 +216,20 @@ class KotlinCodeBlockModificationListener(
                 changeSet.getChangesByElement(it).affectedChildren.all { c -> c is PsiWhiteSpace }
             }
 
+        /**
+         * Has to be aligned with [getInsideCodeBlockModificationScope] :
+         *
+         * result of analysis has to be reflected in dirty scope,
+         * the only difference is whitespaces and comments
+         */
+        fun getInsideCodeBlockModificationDirtyScope(element: PsiElement): PsiElement? {
+            if (!element.isPhysical) return null
+            // dirty scope for whitespaces and comments is the element itself
+            if (element is PsiWhiteSpace || element is PsiComment || element is KDoc) return element
+
+            return getInsideCodeBlockModificationScope(element)?.blockDeclaration ?: null
+        }
+
         fun getInsideCodeBlockModificationScope(element: PsiElement): BlockModificationScopeElement? {
             val lambda = element.getTopmostParentOfType<KtLambdaExpression>()
             if (lambda is KtLambdaExpression) {
@@ -259,13 +274,10 @@ class KotlinCodeBlockModificationListener(
                                     val declaration = if (blockDeclaration.initializer != null)
                                         blockDeclaration
                                     else
-                                        KtPsiUtil.getTopmostParentOfTypes(
-                                            blockDeclaration,
-                                            // property could be initialized on a class level
-                                            KtClass::class.java,
-                                            // ktFile to check top level property declarations
-                                            KtFile::class.java
-                                        ) as KtElement
+                                    // property could be initialized on a class level
+                                        KtPsiUtil.getTopmostParentOfTypes(blockDeclaration, KtClass::class.java) as? KtElement ?:
+                                        // ktFile to check top level property declarations
+                                        return null
                                     return BlockModificationScopeElement(declaration, expression)
                                 }
                         }
