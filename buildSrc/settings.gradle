@@ -30,10 +30,8 @@ logger.info("buildCacheUrl=${buildProperties.buildCacheUrl}")
 logger.info("pushToBuildCache=${buildProperties.pushToBuildCache}")
 
 buildCache {
-    if (buildProperties.isTeamcityBuild) {
-        local {
-            enabled = false
-        }
+    local {
+        enabled = buildProperties.localBuildCacheEnabled
     }
 
     if (buildProperties.buildCacheUrl != null) {
