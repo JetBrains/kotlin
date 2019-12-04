@@ -63,6 +63,10 @@ class CoroutineTransformerMethodVisitor(
     // These two are needed to report diagnostics about suspension points inside critical section
     private val element: KtElement,
     private val diagnostics: DiagnosticSink,
+    // Since tail-call optimization of functions with Unit return type relies on ability of call-site to recognize them,
+    // in order to ignore return value and push Unit, when we cannot ensure this ability, for example, when the function overrides function,
+    // returning Any, we need to disable tail-call optimization for these functions.
+    private val disableTailCallOptimizationForFunctionReturningUnit: Boolean,
     // It's only matters for named functions, may differ from '!isStatic(access)' in case of DefaultImpls
     private val needDispatchReceiver: Boolean = false,
     // May differ from containingClassInternalName in case of DefaultImpls
@@ -111,7 +115,8 @@ class CoroutineTransformerMethodVisitor(
             val examiner = MethodNodeExaminer(
                 languageVersionSettings,
                 containingClassInternalName,
-                methodNode
+                methodNode,
+                disableTailCallOptimizationForFunctionReturningUnit
             )
             if (examiner.allSuspensionPointsAreTailCalls(suspensionPoints)) {
                 examiner.replacePopsBeforeSafeUnitInstancesWithCoroutineSuspendedChecks()
@@ -899,7 +904,8 @@ class CoroutineTransformerMethodVisitor(
 private class MethodNodeExaminer(
     val languageVersionSettings: LanguageVersionSettings,
     val containingClassInternalName: String,
-    val methodNode: MethodNode
+    val methodNode: MethodNode,
+    disableTailCallOptimizationForFunctionReturningUnit: Boolean
 ) {
     private val sourceFrames: Array<Frame<SourceValue>?> =
         MethodTransformer.analyze(containingClassInternalName, methodNode, IgnoringCopyOperationSourceInterpreter())
@@ -912,25 +918,27 @@ private class MethodNodeExaminer(
     private val meaningfulPredecessorsCache = hashMapOf<AbstractInsnNode, List<AbstractInsnNode>>()
 
     init {
-        // retrieve all POP insns
-        val pops = methodNode.instructions.asSequence().filter { it.opcode == Opcodes.POP }
-        // for each of them check that all successors are PUSH Unit
-        val popsBeforeUnitInstances = pops.map { it to it.meaningfulSuccessors() }
-            .filter { (_, succs) -> succs.all { it.isUnitInstance() } }
-            .map { it.first }.toList()
-        for (pop in popsBeforeUnitInstances) {
-            val units = pop.meaningfulSuccessors()
-            val allUnitsAreSafe = units.all { unit ->
-                // check no other predecessor exists
-                unit.meaningfulPredecessors().all { it in popsBeforeUnitInstances } &&
-                        // check they have only returns among successors
-                        unit.meaningfulSuccessors().all { it.opcode == Opcodes.ARETURN }
+        if (!disableTailCallOptimizationForFunctionReturningUnit) {
+            // retrieve all POP insns
+            val pops = methodNode.instructions.asSequence().filter { it.opcode == Opcodes.POP }
+            // for each of them check that all successors are PUSH Unit
+            val popsBeforeUnitInstances = pops.map { it to it.meaningfulSuccessors() }
+                .filter { (_, succs) -> succs.all { it.isUnitInstance() } }
+                .map { it.first }.toList()
+            for (pop in popsBeforeUnitInstances) {
+                val units = pop.meaningfulSuccessors()
+                val allUnitsAreSafe = units.all { unit ->
+                    // check no other predecessor exists
+                    unit.meaningfulPredecessors().all { it in popsBeforeUnitInstances } &&
+                            // check they have only returns among successors
+                            unit.meaningfulSuccessors().all { it.opcode == Opcodes.ARETURN }
+                }
+                if (!allUnitsAreSafe) continue
+                // save them all to the properties
+                popsBeforeSafeUnitInstances += pop
+                safeUnitInstances += units
+                units.flatMapTo(areturnsAfterSafeUnitInstances) { it.meaningfulSuccessors() }
             }
-            if (!allUnitsAreSafe) continue
-            // save them all to the properties
-            popsBeforeSafeUnitInstances += pop
-            safeUnitInstances += units
-            units.flatMapTo(areturnsAfterSafeUnitInstances) { it.meaningfulSuccessors() }
         }
     }
 

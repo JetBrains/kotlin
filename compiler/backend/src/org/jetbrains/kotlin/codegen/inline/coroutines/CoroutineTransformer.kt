@@ -17,11 +17,20 @@ import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.load.kotlin.FileBasedKotlinClass
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
+import org.jetbrains.kotlin.load.kotlin.header.ReadKotlinClassHeaderAnnotationVisitor
+import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.*
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
+import org.jetbrains.kotlin.serialization.deserialization.getClassId
+import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.utils.addToStdlib.cast
-import org.jetbrains.org.objectweb.asm.MethodVisitor
-import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.tree.*
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import org.jetbrains.org.objectweb.asm.tree.analysis.SourceInterpreter
@@ -108,7 +117,8 @@ class CoroutineTransformer(
                     languageVersionSettings = state.languageVersionSettings,
                     shouldPreserveClassInitialization = state.constructorCallNormalizationMode.shouldPreserveClassInitialization,
                     containingClassInternalName = classBuilder.thisName,
-                    isForNamedFunction = false
+                    isForNamedFunction = false,
+                    disableTailCallOptimizationForFunctionReturningUnit = false
                 )
             )
 
@@ -137,6 +147,8 @@ class CoroutineTransformer(
                 ArrayUtil.toStringArray(node.exceptions)
             )
         ) {
+            // If the node already has state-machine, it is safer to generate state-machine.
+            val disableTailCallOptimization = methods.find { it.name == name && it.desc == node.desc }?.let { isStateMachine(it) } ?: false
             val stateMachineBuilder = surroundNoinlineCallsWithMarkers(
                 node,
                 CoroutineTransformerMethodVisitor(
@@ -149,7 +161,8 @@ class CoroutineTransformer(
                     containingClassInternalName = classBuilder.thisName,
                     isForNamedFunction = true,
                     needDispatchReceiver = true,
-                    internalNameForDispatchReceiver = classBuilder.thisName
+                    internalNameForDispatchReceiver = classBuilder.thisName,
+                    disableTailCallOptimizationForFunctionReturningUnit = disableTailCallOptimization
                 )
             )
 
