@@ -27,10 +27,11 @@ import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.stubindex.*
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.idea.util.runReadActionInSmartMode
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.utils.sure
 import java.util.*
@@ -39,9 +40,8 @@ class IDEKotlinAsJavaSupport(private val project: Project) : KotlinAsJavaSupport
     private val psiManager: PsiManager = PsiManager.getInstance(project)
 
     override fun getFacadeNames(packageFqName: FqName, scope: GlobalSearchScope): Collection<String> {
-        val facadeFilesInPackage = runReadAction {
-            KotlinFileFacadeClassByPackageIndex.getInstance()
-                .get(packageFqName.asString(), project, scope)
+        val facadeFilesInPackage = project.runReadActionInSmartMode {
+            KotlinFileFacadeClassByPackageIndex.getInstance().get(packageFqName.asString(), project, scope)
         }
         return facadeFilesInPackage.map { it.javaFileFacadeFqName.shortName().asString() }.toSet()
     }
@@ -63,7 +63,7 @@ class IDEKotlinAsJavaSupport(private val project: Project) : KotlinAsJavaSupport
     }
 
     override fun findClassOrObjectDeclarations(fqName: FqName, searchScope: GlobalSearchScope): Collection<KtClassOrObject> {
-        return runReadAction {
+        return project.runReadActionInSmartMode {
             KotlinFullClassNameIndex.getInstance().get(
                 fqName.asString(),
                 project,
@@ -73,7 +73,7 @@ class IDEKotlinAsJavaSupport(private val project: Project) : KotlinAsJavaSupport
     }
 
     override fun findFilesForPackage(fqName: FqName, searchScope: GlobalSearchScope): Collection<KtFile> {
-        return runReadAction {
+        return project.runReadActionInSmartMode {
             PackageIndexUtil.findFilesWithExactPackage(
                 fqName,
                 KotlinSourceFilterScope.sourceAndClassFiles(
