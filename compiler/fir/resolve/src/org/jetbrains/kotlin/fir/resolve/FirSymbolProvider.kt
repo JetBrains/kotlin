@@ -18,7 +18,9 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirStandardOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.impl.FirSuperTypeScope
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.jvm.JvmMappedScope
-import org.jetbrains.kotlin.fir.symbols.*
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
+import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
+import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTagWithFixedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassErrorType
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
@@ -110,7 +112,7 @@ abstract class FirSymbolProvider : FirSessionComponent {
                 }
             FirClassUseSiteMemberScope(
                 useSiteSession,
-                FirSuperTypeScope(useSiteSession, FirStandardOverrideChecker(useSiteSession), scopes),
+                FirSuperTypeScope.prepareSupertypeScope(useSiteSession, FirStandardOverrideChecker(useSiteSession), scopes),
                 wrappedDeclaredScope
             )
         }

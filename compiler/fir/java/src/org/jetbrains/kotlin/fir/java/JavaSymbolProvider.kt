@@ -121,7 +121,7 @@ class JavaSymbolProvider(
                     }
             JavaClassUseSiteMemberScope(
                 regularClass, useSiteSession,
-                FirSuperTypeScope(
+                FirSuperTypeScope.prepareSupertypeScope(
                     useSiteSession,
                     JavaOverrideChecker(
                         useSiteSession, if (regularClass is FirJavaClass) regularClass

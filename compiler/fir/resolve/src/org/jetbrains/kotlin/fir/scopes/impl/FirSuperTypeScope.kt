@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.name.Name
 
-class FirSuperTypeScope(
+class FirSuperTypeScope private constructor(
     session: FirSession,
     overrideChecker: FirOverrideChecker,
     val scopes: List<FirScope>
@@ -111,5 +111,17 @@ class FirSuperTypeScope(
             absentClassifiers += name
         }
         return super.processClassifiersByName(name, processor)
+    }
+
+    companion object {
+        fun prepareSupertypeScope(
+            session: FirSession,
+            overrideChecker: FirOverrideChecker,
+            scopes: List<FirScope>
+        ): FirScope {
+            scopes.singleOrNull()?.let { return it }
+
+            return FirSuperTypeScope(session, overrideChecker, scopes)
+        }
     }
 }
