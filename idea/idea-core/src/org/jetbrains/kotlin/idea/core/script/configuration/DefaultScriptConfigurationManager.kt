@@ -26,10 +26,8 @@ import org.jetbrains.kotlin.idea.core.script.configuration.loader.DefaultScriptC
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptConfigurationLoader
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptConfigurationLoadingContext
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptOutsiderFileConfigurationLoader
-import org.jetbrains.kotlin.idea.core.script.configuration.utils.BackgroundExecutor
+import org.jetbrains.kotlin.idea.core.script.configuration.utils.*
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.DefaultBackgroundExecutor
-import org.jetbrains.kotlin.idea.core.script.configuration.utils.TestingBackgroundExecutor
-import org.jetbrains.kotlin.idea.core.script.configuration.utils.isUnitTestModeWithoutScriptLoadingNotification
 import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.idea.core.util.EDT
 import org.jetbrains.kotlin.psi.KtFile
@@ -309,27 +307,6 @@ internal class DefaultScriptConfigurationManager(project: Project) :
                 EditorNotifications.getInstance(project).updateAllNotifications()
             }
         }
-    }
-
-    private fun areSimilar(old: ScriptCompilationConfigurationWrapper, new: ScriptCompilationConfigurationWrapper): Boolean {
-        if (old.script != new.script) return false
-
-        val oldConfig = old.configuration
-        val newConfig = new.configuration
-
-        if (oldConfig == newConfig) return true
-        if (oldConfig == null || newConfig == null) return false
-
-        if (oldConfig[ScriptCompilationConfiguration.jvm.jdkHome] != newConfig[ScriptCompilationConfiguration.jvm.jdkHome]) return false
-
-        // there is differences how script definition classpath is added to script classpath in old and new scripting API,
-        // so it's important to compare the resulting classpath list, not only the value of key
-        if (oldConfig[ScriptCompilationConfiguration.dependencies].toClassPathOrEmpty() != newConfig[ScriptCompilationConfiguration.dependencies].toClassPathOrEmpty()) return false
-
-        if (oldConfig[ScriptCompilationConfiguration.ide.dependenciesSources] != newConfig[ScriptCompilationConfiguration.ide.dependenciesSources]) return false
-        if (oldConfig[ScriptCompilationConfiguration.defaultImports] != newConfig[ScriptCompilationConfiguration.defaultImports]) return false
-
-        return true
     }
 }
 
