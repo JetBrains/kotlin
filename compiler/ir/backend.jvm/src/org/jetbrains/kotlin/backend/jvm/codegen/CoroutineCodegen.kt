@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.createType
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
+import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -40,6 +41,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.org.objectweb.asm.MethodVisitor
+import org.jetbrains.org.objectweb.asm.Opcodes
 
 internal fun generateStateMachineForNamedFunction(
     irFunction: IrFunction,
@@ -58,7 +60,7 @@ internal fun generateStateMachineForNamedFunction(
     val languageVersionSettings = state.languageVersionSettings
     assert(languageVersionSettings.isReleaseCoroutines()) { "Experimental coroutines are unsupported in JVM_IR backend" }
     return CoroutineTransformerMethodVisitor(
-        methodVisitor, access, signature.asmMethod.name, signature.asmMethod.descriptor, null, null,
+        methodVisitor, access, signature.asmMethod.name, signature.asmMethod.descriptor, signature.genericsSignature, null,
         obtainClassBuilderForCoroutineState = { continuationClassBuilder!! },
         element = element,
         diagnostics = state.diagnostics,
@@ -69,7 +71,11 @@ internal fun generateStateMachineForNamedFunction(
         needDispatchReceiver = irFunction.dispatchReceiverParameter != null
                 || irFunction.origin == JvmLoweredDeclarationOrigin.SUSPEND_IMPL_STATIC_FUNCTION,
         internalNameForDispatchReceiver = classCodegen.visitor.thisName,
-        putContinuationParameterToLvt = false
+        putContinuationParameterToLvt = false,
+        disableTailCallOptimizationForFunctionReturningUnit = irFunction.returnType.isUnit() &&
+                (irFunction as? IrSimpleFunction)?.overriddenSymbols?.let { symbols ->
+                    symbols.isNotEmpty() && symbols.any { !it.owner.returnType.isUnit() }
+                } == true
     )
 }
 
@@ -84,14 +90,15 @@ internal fun generateStateMachineForLambda(
     val languageVersionSettings = state.languageVersionSettings
     assert(languageVersionSettings.isReleaseCoroutines()) { "Experimental coroutines are unsupported in JVM_IR backend" }
     return CoroutineTransformerMethodVisitor(
-        methodVisitor, access, signature.asmMethod.name, signature.asmMethod.descriptor, null, null,
+        methodVisitor, access, signature.asmMethod.name, signature.asmMethod.descriptor, signature.genericsSignature, null,
         obtainClassBuilderForCoroutineState = { classCodegen.visitor },
         element = element,
         diagnostics = state.diagnostics,
         languageVersionSettings = languageVersionSettings,
         shouldPreserveClassInitialization = state.constructorCallNormalizationMode.shouldPreserveClassInitialization,
         containingClassInternalName = classCodegen.visitor.thisName,
-        isForNamedFunction = false
+        isForNamedFunction = false,
+        disableTailCallOptimizationForFunctionReturningUnit = false
     )
 }
 

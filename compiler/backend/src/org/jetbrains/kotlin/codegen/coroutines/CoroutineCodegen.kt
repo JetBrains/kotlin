@@ -475,7 +475,8 @@ class CoroutineCodegenForLambda private constructor(
                         shouldPreserveClassInitialization = constructorCallNormalizationMode.shouldPreserveClassInitialization,
                         containingClassInternalName = v.thisName,
                         isForNamedFunction = false,
-                        languageVersionSettings = languageVersionSettings
+                        languageVersionSettings = languageVersionSettings,
+                        disableTailCallOptimizationForFunctionReturningUnit = false
                     )
                     return if (forInline) AddEndLabelMethodVisitor(
                         MethodNodeCopyingMethodVisitor(
