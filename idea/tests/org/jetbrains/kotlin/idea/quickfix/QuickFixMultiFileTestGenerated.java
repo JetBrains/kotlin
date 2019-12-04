@@ -3712,6 +3712,19 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/redundantConst")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RedundantConst extends AbstractQuickFixMultiFileTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTestWithExtraFile, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInRedundantConst() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/redundantConst"), Pattern.compile("^(\\w+)\\.((before\\.Main\\.\\w+)|(test))$"), null, true);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/redundantFun")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
