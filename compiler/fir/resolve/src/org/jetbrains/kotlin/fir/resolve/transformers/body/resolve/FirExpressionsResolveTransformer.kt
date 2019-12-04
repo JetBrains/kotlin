@@ -308,7 +308,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
                 FirErrorTypeRefImpl(null, FirSimpleDiagnostic("Can't resolve !! operator call", DiagnosticKind.InferenceError))
             checkNotNullCall
         }
-        // TODO: Data flow analysis
+        dataFlowAnalyzer.exitCheckNotNullCall(result)
         return result.compose()
     }
 

@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.fir.resolve.dfa
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSymbolOwner
-import org.jetbrains.kotlin.fir.contracts.description.*
+import org.jetbrains.kotlin.fir.contracts.description.ConeBooleanConstantReference
+import org.jetbrains.kotlin.fir.contracts.description.ConeConditionalEffectDeclaration
+import org.jetbrains.kotlin.fir.contracts.description.ConeConstantReference
+import org.jetbrains.kotlin.fir.contracts.description.ConeReturnsEffectDeclaration
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirThisReceiverExpressionImpl
@@ -24,10 +27,10 @@ import org.jetbrains.kotlin.fir.resolve.dfa.contracts.createArgumentsMapping
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.withNullability
-import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.FqName
@@ -143,7 +146,7 @@ class FirDataFlowAnalyzer(private val components: FirAbstractBodyResolveTransfor
 
         if (typeOperatorCall.operation !in FirOperation.TYPES) return
         val type = typeOperatorCall.conversionTypeRef.coneTypeSafe<ConeKotlinType>() ?: return
-        val operandVariable = getOrCreateRealVariable(typeOperatorCall.argument)?.variableUnderAlias ?: return
+        val operandVariable = getOrCreateRealVariable(typeOperatorCall.argument) ?: return
 
         val flow = node.flow
         when (typeOperatorCall.operation) {
@@ -337,6 +340,19 @@ class FirDataFlowAnalyzer(private val components: FirAbstractBodyResolveTransfor
 
     fun exitJump(jump: FirJump<*>) {
         graphBuilder.exitJump(jump).mergeIncomingFlow()
+    }
+
+    // ----------------------------------- Check not null call -----------------------------------
+
+    fun exitCheckNotNullCall(checkNotNullCall: FirCheckNotNullCall) {
+        // Add `Any` to the set of possible types; the intersection type `T? & Any` will be reduced to `T` after smartcast.
+        val node = graphBuilder.exitCheckNotNullCall(checkNotNullCall).mergeIncomingFlow()
+        val operandVariable = getOrCreateRealVariable(checkNotNullCall.argument) ?: return
+        logicSystem.addApprovedInfo(
+            node.flow,
+            operandVariable,
+            FirDataFlowInfo(setOf(session.builtinTypes.anyType.coneTypeUnsafe()), emptySet())
+        )
     }
 
     // ----------------------------------- When -----------------------------------
@@ -837,7 +853,7 @@ class FirDataFlowAnalyzer(private val components: FirAbstractBodyResolveTransfor
         if (fir is FirThisReceiverExpressionImpl) {
             return variableStorage.getOrCreateNewThisRealVariable(fir.calleeReference.boundSymbol ?: return null)
         }
-        val symbol: AbstractFirBasedSymbol<*> = fir.resolvedSymbol ?: return null
+        val symbol = fir.resolvedSymbol as? FirVariableSymbol<*> ?: return null
         return variableStorage.getOrCreateNewRealVariable(symbol).variableUnderAlias
     }
 

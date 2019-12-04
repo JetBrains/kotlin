@@ -34,6 +34,9 @@ fun ControlFlowGraphBuilder.createWhenBranchConditionExitNode(fir: FirWhenBranch
 fun ControlFlowGraphBuilder.createJumpNode(fir: FirJump<*>): JumpNode =
     JumpNode(graph, fir, levelCounter)
 
+fun ControlFlowGraphBuilder.createCheckNotNullCallNode(fir: FirCheckNotNullCall): CheckNotNullCallNode =
+    CheckNotNullCallNode(graph, fir, levelCounter)
+
 fun ControlFlowGraphBuilder.createQualifiedAccessNode(fir: FirQualifiedAccessExpression): QualifiedAccessNode =
     QualifiedAccessNode(graph, fir, levelCounter)
 

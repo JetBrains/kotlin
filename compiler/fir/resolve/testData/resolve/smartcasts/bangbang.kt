@@ -41,3 +41,11 @@ fun test_5(a: A?, b: Boolean) {
     }
     a.<!INAPPLICABLE_CANDIDATE!>foo<!>()
 }
+
+fun <X : A?> test_6(x: X) {
+    x!!.foo()
+}
+
+fun <X : A> test_7(x: X?) {
+    x!!.foo()
+}
