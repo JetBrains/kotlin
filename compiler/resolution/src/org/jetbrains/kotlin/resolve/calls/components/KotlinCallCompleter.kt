@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode
+import org.jetbrains.kotlin.resolve.calls.inference.components.TrivialConstraintTypeInferenceOracle
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage.Empty.hasContradiction
 import org.jetbrains.kotlin.resolve.calls.inference.model.ExpectedTypeConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.model.*
@@ -27,7 +28,8 @@ import org.jetbrains.kotlin.types.typeUtil.contains
 
 class KotlinCallCompleter(
     private val postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
-    private val kotlinConstraintSystemCompleter: KotlinConstraintSystemCompleter
+    private val kotlinConstraintSystemCompleter: KotlinConstraintSystemCompleter,
+    private val trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle
 ) {
 
     fun runCompletion(
@@ -261,7 +263,8 @@ class KotlinCallCompleter(
         return constraints.isNotEmpty() && constraints.anyOrAll(requireAll = typeVariable.hasExactAnnotation()) {
             !it.type.typeConstructor(context).isIntegerLiteralTypeConstructor(context) &&
                     (it.kind.isLower() || it.kind.isEqual()) &&
-                    csBuilder.isProperType(it.type)
+                    csBuilder.isProperType(it.type) &&
+                    !trivialConstraintTypeInferenceOracle.isNotInterestingConstraint(it)
         }
     }
 
