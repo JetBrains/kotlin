@@ -691,6 +691,7 @@ public class GotoActionModel implements ChooseByNameModel, Comparator<Object>, D
   }
 
   public static class GotoActionListCellRenderer extends DefaultListCellRenderer {
+    public static final Border TOGGLE_BUTTON_BORDER = JBUI.Borders.empty(0, 2);
     private final Function<? super OptionDescription, String> myGroupNamer;
     private final boolean myUseListFont;
 
@@ -878,7 +879,7 @@ public class GotoActionModel implements ChooseByNameModel, Comparator<Object>, D
       OnOffButton button = new OnOffButton();
       button.setSelected(selected);
       panel.add(button, BorderLayout.EAST);
-      panel.setBorder(JBUI.Borders.empty(0, 2));
+      panel.setBorder(TOGGLE_BUTTON_BORDER);
     }
 
     @NotNull
