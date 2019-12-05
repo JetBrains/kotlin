@@ -284,7 +284,7 @@ public expect val String.Companion.CASE_INSENSITIVE_ORDER: Comparator<String>
 /**
  * Returns `true` if the contents of this string is equal to the word "true", ignoring case, and `false` otherwise.
  */
-expect fun String.toBoolean(): Boolean
+expect fun String?.toBoolean(): Boolean
 
 /**
  * Parses the string as a signed [Byte] number and returns the result.

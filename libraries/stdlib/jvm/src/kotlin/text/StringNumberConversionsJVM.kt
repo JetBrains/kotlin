@@ -49,7 +49,7 @@ public actual inline fun Long.toString(radix: Int): String = java.lang.Long.toSt
  * Returns `true` if the contents of this string is equal to the word "true", ignoring case, and `false` otherwise.
  */
 @kotlin.internal.InlineOnly
-public actual inline fun String.toBoolean(): Boolean = java.lang.Boolean.parseBoolean(this)
+public actual inline fun String?.toBoolean(): Boolean = java.lang.Boolean.parseBoolean(this)
 
 /**
  * Parses the string as a signed [Byte] number and returns the result.
