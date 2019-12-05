@@ -106,38 +106,7 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
     }
 
     override fun visitWhen(expression: IrWhen, context: JsGenerationContext): JsStatement {
-        if (expression.origin == COROUTINE_SWITCH) return toSwitch(expression, context)
-        return expression.toJsNode(this, context, ::JsIf) ?: JsEmpty
-    }
-
-    private fun toSwitch(expression: IrWhen, context: JsGenerationContext): JsStatement {
-        var expr: IrExpression? = null
-        val cases = expression.branches.map {
-            val body = it.result
-            val id = if (isElseBranch(it)) null else {
-                val call = it.condition as IrCall
-                expr = call.getValueArgument(0) as IrExpression
-                call.getValueArgument(1)
-            }
-            Pair(id, body)
-        }
-
-        val exprTransformer = IrElementToJsExpressionTransformer()
-        val jsExpr = expr!!.accept(exprTransformer, context)
-
-        return JsSwitch(jsExpr, cases.map { (id, body) ->
-
-            val jsId = id?.accept(exprTransformer, context)
-            val jsBody = body.accept(this, context).asBlock()
-            val case: JsSwitchMember
-            if (jsId == null) {
-                case = JsDefault()
-            } else {
-                case = JsCase().also { it.caseExpression = jsId }
-            }
-
-            case.also { it.statements += jsBody.statements }
-        })
+        return SwitchOptimizer(context).tryOptimize(expression) ?: expression.toJsNode(this, context, ::JsIf) ?: JsEmpty
     }
 
     override fun visitWhileLoop(loop: IrWhileLoop, context: JsGenerationContext): JsStatement {
