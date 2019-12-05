@@ -57,7 +57,7 @@ class MobileSwiftBridgeHeaderProvider : CustomHeaderProvider() {
         val targetName = items[1]
         val headerName = OCIncludeHelpers.adjustHeaderName(items[2])
 
-        val config = GradleAppleWorkspace.getInstance(project).getConfiguration(project, targetName) ?: return null
+        val config = GradleAppleWorkspace.getInstance(project).getConfiguration(targetName) ?: return null
         return SwiftModuleManager.getInstance(project).getSourceModule(config)?.getBridgeFile(headerName)
     }
 

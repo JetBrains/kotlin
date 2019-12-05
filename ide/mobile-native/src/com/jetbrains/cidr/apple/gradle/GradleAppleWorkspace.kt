@@ -232,7 +232,7 @@ class GradleAppleWorkspace(private val project: Project) : PersistentStateCompon
         null
     }
 
-    fun getConfiguration(project: Project, targetName: String) = synchronized(this) {
+    fun getConfiguration(targetName: String) = synchronized(this) {
         for ((id, data) in configurationData) {
             if (data.target.name == targetName) return@synchronized OCWorkspace.getInstance(project).getConfigurationById(id)
         }
