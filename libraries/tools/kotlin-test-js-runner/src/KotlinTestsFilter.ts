@@ -2,7 +2,7 @@ import {escapeRegExp, startsWith, trim} from "./utils";
 import {KotlinTestRunner} from "./KotlinTestRunner";
 
 export interface KotlinTestsFilter {
-    mayContainTestsFromSuite(fqn: string): boolean;
+    mayContainTestsFromSuite(fqn: string, alternativeFqn?: string): boolean;
 
     containsTest(fqn: string): boolean;
 }
@@ -42,7 +42,9 @@ export function runWithFilter(
         predicate: (value: string) => boolean
     ): boolean {
         return [jsClassName(), javaClassName()]
-            .every(value => predicate(value))
+            .every(value => {
+                return predicate(value);
+            })
     }
 
     return {
@@ -50,8 +52,9 @@ export function runWithFilter(
             path.push(name);
 
             try {
-                if (path.length > 0 && everyOfJsOrJavaNames((value) => !filter.mayContainTestsFromSuite(value)))
+                if (path.length > 0 && !filter.mayContainTestsFromSuite(jsClassName(), javaClassName())) {
                     return;
+                }
 
                 runner.suite(name, isIgnored, fn);
             } finally {
@@ -84,7 +87,7 @@ export function newKotlinTestsFilter(wildcard: string | null): KotlinTestsFilter
         // by adding explicit prefix matcher to not visit unneeded suites
         // (RegExpKotlinTestsFilter doesn't support suites matching)
         const [prefix, rest] = wildcard.split('*', 2);
-        return new StartsWithFilter(prefix, rest ? new RegExpKotlinTestsFilter(wildcard) : null)
+        return new StartsWithFilter(prefix.slice(0, -1), rest ? new RegExpKotlinTestsFilter(wildcard) : null)
     }
 }
 
@@ -115,7 +118,7 @@ export class StartsWithFilter implements KotlinTestsFilter {
     }
 
     containsAllTestsFromSuite(fqn: string): boolean {
-        return this.filter == null && this.isPrefixMatched(fqn);
+        return this.filter == null && startsWith(fqn, this.prefix);
     }
 
     containsTest(fqn: string): boolean {
@@ -182,12 +185,16 @@ export class CompositeTestFilter implements KotlinTestsFilter {
         })
     }
 
-    mayContainTestsFromSuite(fqn: string): boolean {
+    mayContainTestsFromSuite(fqn: string, alternativeFqn: string): boolean {
         for (const excl of this.excludePrefix) {
-            if (excl.containsAllTestsFromSuite(fqn)) return false
+            if (excl.containsAllTestsFromSuite(fqn) || excl.containsAllTestsFromSuite(alternativeFqn)) {
+                return false
+            }
         }
         for (const incl of this.include) {
-            if (incl.mayContainTestsFromSuite(fqn)) return true
+            if (incl.mayContainTestsFromSuite(fqn) || incl.mayContainTestsFromSuite(alternativeFqn)) {
+                return true
+            }
         }
         return false;
     }
