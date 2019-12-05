@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
+import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemHighlightType.GENERIC_ERROR_OR_WARNING
 import com.intellij.codeInspection.ProblemHighlightType.INFORMATION
 import com.intellij.codeInspection.ProblemsHolder
@@ -34,6 +35,38 @@ class ReplaceAssociateFunctionInspection : AbstractKotlinInspection() {
         private val associateFunctionNames = listOf("associate", "associateTo")
         private val associateFqNames = listOf(FqName("kotlin.collections.associate"), FqName("kotlin.sequences.associate"))
         private val associateToFqNames = listOf(FqName("kotlin.collections.associateTo"), FqName("kotlin.sequences.associateTo"))
+
+        fun getAssociateFunctionAndProblemHighlightType(
+            dotQualifiedExpression: KtDotQualifiedExpression,
+            context: BindingContext = dotQualifiedExpression.analyze(BodyResolveMode.PARTIAL)
+        ): Pair<AssociateFunction, ProblemHighlightType>? {
+            val callExpression = dotQualifiedExpression.callExpression ?: return null
+            val lambda = callExpression.lambda() ?: return null
+            if (lambda.valueParameters.size > 1) return null
+            val functionLiteral = lambda.functionLiteral
+            if (functionLiteral.anyDescendantOfType<KtReturnExpression> { it.labelQualifier != null }) return null
+            val lastStatement = functionLiteral.lastStatement() ?: return null
+            val (keySelector, valueTransform) = lastStatement.pair(context) ?: return null
+            val lambdaParameter = context[BindingContext.FUNCTION, functionLiteral]?.valueParameters?.singleOrNull() ?: return null
+            return when {
+                keySelector.isReferenceTo(lambdaParameter, context) -> {
+                    val receiver =
+                        dotQualifiedExpression.receiverExpression.getResolvedCall(context)?.resultingDescriptor?.returnType ?: return null
+                    if (KotlinBuiltIns.isArray(receiver) || KotlinBuiltIns.isPrimitiveArray(receiver)) return null
+                    ASSOCIATE_WITH to GENERIC_ERROR_OR_WARNING
+                }
+                valueTransform.isReferenceTo(lambdaParameter, context) ->
+                    ASSOCIATE_BY to GENERIC_ERROR_OR_WARNING
+                else -> {
+                    if (functionLiteral.bodyExpression?.statements?.size != 1) return null
+                    ASSOCIATE_BY_KEY_AND_VALUE to INFORMATION
+                }
+            }
+        }
+
+        private fun KtExpression.isReferenceTo(descriptor: ValueParameterDescriptor, context: BindingContext): Boolean {
+            return (this as? KtNameReferenceExpression)?.getResolvedCall(context)?.resultingDescriptor == descriptor
+        }
     }
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) = dotQualifiedExpressionVisitor(fun(dotQualifiedExpression) {
@@ -48,27 +81,7 @@ class ReplaceAssociateFunctionInspection : AbstractKotlinInspection() {
         val isAssociateTo = fqName in associateToFqNames
         if (!isAssociate && !isAssociateTo) return
 
-        val lambda = callExpression.lambda() ?: return
-        if (lambda.valueParameters.size > 1) return
-        val functionLiteral = lambda.functionLiteral
-        if (functionLiteral.anyDescendantOfType<KtReturnExpression> { it.labelQualifier != null }) return
-        val lastStatement = functionLiteral.lastStatement() ?: return
-        val (keySelector, valueTransform) = lastStatement.pair(context) ?: return
-        val lambdaParameter = context[BindingContext.FUNCTION, functionLiteral]?.valueParameters?.singleOrNull() ?: return
-
-        val (associateFunction, highlightType) = when {
-            keySelector.isReferenceTo(lambdaParameter, context) -> {
-                val receiver = dotQualifiedExpression.receiverExpression.getResolvedCall(context)?.resultingDescriptor?.returnType ?: return
-                if (KotlinBuiltIns.isArray(receiver) || KotlinBuiltIns.isPrimitiveArray(receiver)) return
-                ASSOCIATE_WITH to GENERIC_ERROR_OR_WARNING
-            }
-            valueTransform.isReferenceTo(lambdaParameter, context) ->
-                ASSOCIATE_BY to GENERIC_ERROR_OR_WARNING
-            else -> {
-                if (functionLiteral.bodyExpression?.statements?.size != 1) return
-                ASSOCIATE_BY_KEY_AND_VALUE to INFORMATION
-            }
-        }
+        val (associateFunction, highlightType) = getAssociateFunctionAndProblemHighlightType(dotQualifiedExpression, context) ?: return
         holder.registerProblemWithoutOfflineInformation(
             calleeExpression,
             KotlinBundle.message("replace.0.with.1", calleeExpression.text, associateFunction.name(isAssociateTo)),
@@ -77,13 +90,9 @@ class ReplaceAssociateFunctionInspection : AbstractKotlinInspection() {
             ReplaceAssociateFunctionFix(associateFunction, isAssociateTo)
         )
     })
-
-    private fun KtExpression.isReferenceTo(descriptor: ValueParameterDescriptor, context: BindingContext): Boolean {
-        return (this as? KtNameReferenceExpression)?.getResolvedCall(context)?.resultingDescriptor == descriptor
-    }
 }
 
-private class ReplaceAssociateFunctionFix(private val function: AssociateFunction, private val hasDestination: Boolean) : LocalQuickFix {
+class ReplaceAssociateFunctionFix(private val function: AssociateFunction, private val hasDestination: Boolean) : LocalQuickFix {
     private val functionName = function.name(hasDestination)
 
     override fun getName() = KotlinBundle.message("replace.with.0", functionName)
@@ -156,9 +165,17 @@ private class ReplaceAssociateFunctionFix(private val function: AssociateFunctio
         }
         appendFixedText(")")
     }
+
+    companion object {
+        fun replaceLastStatementForAssociateFunction(callExpression: KtCallExpression, function: AssociateFunction) {
+            val lastStatement = callExpression.lambda()?.functionLiteral?.lastStatement() ?: return
+            val (keySelector, valueTransform) = lastStatement.pair() ?: return
+            lastStatement.replace(if (function == ASSOCIATE_WITH) valueTransform else keySelector)
+        }
+    }
 }
 
-private enum class AssociateFunction(private val functionName: String) {
+enum class AssociateFunction(val functionName: String) {
     ASSOCIATE_WITH("associateWith"), ASSOCIATE_BY("associateBy"), ASSOCIATE_BY_KEY_AND_VALUE("associateBy");
 
     fun name(hasDestination: Boolean): String {

@@ -9,14 +9,17 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import org.jetbrains.kotlin.backend.common.descriptors.isSuspend
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.inspections.AssociateFunction
+import org.jetbrains.kotlin.idea.inspections.ReplaceAssociateFunctionFix
+import org.jetbrains.kotlin.idea.inspections.ReplaceAssociateFunctionInspection
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtCallExpression
-import org.jetbrains.kotlin.psi.KtVisitorVoid
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.psi.qualifiedExpressionVisitor
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -26,7 +29,7 @@ import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 class SimplifiableCallChainInspection : AbstractCallChainChecker() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): KtVisitorVoid {
         return qualifiedExpressionVisitor(fun(expression) {
-            val conversion = findQualifiedConversion(expression, conversionGroups) check@{ conversion, firstResolvedCall, _, context ->
+            var conversion = findQualifiedConversion(expression, conversionGroups) check@{ conversion, firstResolvedCall, _, context ->
                 // Do not apply on maps due to lack of relevant stdlib functions
                 val firstReceiverType = firstResolvedCall.extensionReceiver?.type
                 if (firstReceiverType != null) {
@@ -42,9 +45,14 @@ class SimplifiableCallChainInspection : AbstractCallChainChecker() {
                         }
                     ) return@check false
                 }
-
+                if (conversion.replacement == "associate" &&
+                    expression.languageVersionSettings.languageVersion < LanguageVersion.KOTLIN_1_3
+                ) return@check false
                 return@check conversion.enableSuspendFunctionCall || !containsSuspendFunctionCall(firstResolvedCall, context)
             } ?: return
+
+            val associateFunction = getAssociateFunction(conversion, expression.receiverExpression)
+            if (associateFunction != null) conversion = conversion.copy(replacement = associateFunction.functionName)
 
             val replacement = conversion.replacement
             val descriptor = holder.manager.createProblemDescriptor(
@@ -62,6 +70,9 @@ class SimplifiableCallChainInspection : AbstractCallChainChecker() {
                             lastArgument.replace(createArgument(argumentExpression, lastArgumentName))
                         }
                     }
+                    if (associateFunction != null) {
+                        ReplaceAssociateFunctionFix.replaceLastStatementForAssociateFunction(callExpression, associateFunction)
+                    }
                 }
             )
             holder.registerProblem(descriptor)
@@ -72,6 +83,16 @@ class SimplifiableCallChainInspection : AbstractCallChainChecker() {
         return resolvedCall.call.callElement.anyDescendantOfType<KtCallExpression> {
             it.getResolvedCall(context)?.resultingDescriptor?.isSuspend == true
         }
+    }
+
+    private fun getAssociateFunction(conversion: Conversion, expression: KtExpression): AssociateFunction? {
+        if (conversion.replacement != "associate") return null
+        if (expression !is KtDotQualifiedExpression) return null
+        val (associateFunction, problemHighlightType) =
+            ReplaceAssociateFunctionInspection.getAssociateFunctionAndProblemHighlightType(expression) ?: return null
+        if (problemHighlightType == ProblemHighlightType.INFORMATION) return null
+        if (associateFunction != AssociateFunction.ASSOCIATE_WITH && associateFunction != AssociateFunction.ASSOCIATE_BY) return null
+        return associateFunction
     }
 
     private val conversionGroups = conversions.group()
@@ -116,6 +137,7 @@ class SimplifiableCallChainInspection : AbstractCallChainChecker() {
             Conversion("kotlin.collections.map", "kotlin.collections.joinTo", "joinTo", enableSuspendFunctionCall = false),
             Conversion("kotlin.collections.map", "kotlin.collections.joinToString", "joinToString", enableSuspendFunctionCall = false),
             Conversion("kotlin.collections.map", "kotlin.collections.filterNotNull", "mapNotNull"),
+            Conversion("kotlin.collections.map", "kotlin.collections.toMap", "associate"),
 
             Conversion("kotlin.collections.listOf", "kotlin.collections.filterNotNull", "listOfNotNull")
         )
