@@ -1,5 +1,7 @@
+// !WITH_NEW_INFERENCE
+
 fun test1() {
-    if (<!UNRESOLVED_REFERENCE!>rr<!>) {
+    <!NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>if (<!UNRESOLVED_REFERENCE!>rr<!>) {
         if (<!UNRESOLVED_REFERENCE!>l<!>) {
             <!UNRESOLVED_REFERENCE!>a<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>q<!>()
         }
@@ -14,7 +16,7 @@ fun test1() {
         else {
             <!UNRESOLVED_REFERENCE!>a<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>u<!>()
         }
-    }
+    }<!>
 }
 
 fun test2(l: List<<!UNRESOLVED_REFERENCE!>AA<!>>) {
