@@ -80,9 +80,15 @@ fun KtCallableDeclaration.getOrBuildFir(
 
     val firProvider = FirProvider.getInstance(session) as IdeFirProvider
     val firFile = firProvider.getOrBuildFile(file)
-    val memberSymbol = firFile.findCallableMember(firProvider, this, packageFqName, klassFqName, declName).symbol
-    memberSymbol.fir.runResolve(firFile, firProvider, phase, state)
-    return memberSymbol.fir
+    val firMemberSymbol = firFile.findCallableMember(firProvider, this, packageFqName, klassFqName, declName).symbol
+    val firMemberDeclaration = firMemberSymbol.fir
+    if (firMemberDeclaration.resolvePhase >= phase) {
+        return firMemberDeclaration
+    }
+    synchronized(firFile) {
+        firMemberDeclaration.runResolve(firFile, firProvider, phase, state)
+    }
+    return firMemberDeclaration
 }
 
 fun KtClassOrObject.getOrBuildFir(
@@ -98,7 +104,12 @@ fun KtClassOrObject.getOrBuildFir(
     val firProvider = FirProvider.getInstance(session) as IdeFirProvider
     val firFile = firProvider.getOrBuildFile(file)
     val firClass = firProvider.getFirClassifierByFqName(ClassId(packageFqName, klassFqName, false)) as FirRegularClass
-    firClass.runResolve(firFile, firProvider, phase, state)
+    if (firClass.resolvePhase >= phase) {
+        return firClass
+    }
+    synchronized(firFile) {
+        firClass.runResolve(firFile, firProvider, phase, state)
+    }
     return firClass
 }
 
@@ -113,14 +124,23 @@ fun KtFile.getOrBuildFir(
     phase: FirResolvePhase = FirResolvePhase.DECLARATIONS
 ): FirFile {
     val (firProvider, firFile) = getOrBuildRawFirFile(state)
-    firFile.runResolve(firFile, firProvider, phase, state)
+    if (phase <= FirResolvePhase.DECLARATIONS && firFile.resolvePhase >= phase) {
+        return firFile
+    }
+    synchronized(firFile) {
+        firFile.runResolve(firFile, firProvider, phase, state)
+    }
     return firFile
 }
 
 fun KtFile.getOrBuildFirWithDiagnostics(state: FirResolveState): FirFile {
-    // TODO: consider adding some locks
     val (_, firFile) = getOrBuildRawFirFile(state)
-    firFile.runResolve(toPhase = FirResolvePhase.BODY_RESOLVE, fromPhase = firFile.resolvePhase)
+    val currentResolvePhase = firFile.resolvePhase
+    if (currentResolvePhase < FirResolvePhase.BODY_RESOLVE) {
+        synchronized(firFile) {
+            firFile.runResolve(toPhase = FirResolvePhase.BODY_RESOLVE, fromPhase = currentResolvePhase)
+        }
+    }
 
     if (state.hasDiagnosticsForFile(this)) return firFile
 
