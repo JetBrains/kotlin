@@ -39,7 +39,7 @@ FILE fqName:<root> fileName:/fakeOverrides.kt
   CLASS CLASS name:CFoo modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CFoo
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
-    CONSTRUCTOR visibility:public <> () returnType:<root>.CFoo<T of <uninitialized parent>> [primary]
+    CONSTRUCTOR visibility:public <> () returnType:<root>.CFoo<T of <root>.CFoo> [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:CFoo modality:ABSTRACT visibility:public superTypes:[kotlin.Any]'

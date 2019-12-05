@@ -44,7 +44,7 @@ FILE fqName:<root> fileName:/implicitCastToTypeParameter.kt
   CLASS CLASS name:Bar modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Bar
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
-    CONSTRUCTOR visibility:public <> () returnType:<root>.Bar<T of <uninitialized parent>> [primary]
+    CONSTRUCTOR visibility:public <> () returnType:<root>.Bar<T of <root>.Bar> [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Bar modality:FINAL visibility:public superTypes:[kotlin.Any]'

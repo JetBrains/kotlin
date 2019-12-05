@@ -113,6 +113,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         runTest("compiler/fir/resolve/testData/resolve/functionTypes.kt");
     }
 
+    @TestMetadata("genericConstructors.kt")
+    public void testGenericConstructors() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/genericConstructors.kt");
+    }
+
     @TestMetadata("genericFunctions.kt")
     public void testGenericFunctions() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/genericFunctions.kt");

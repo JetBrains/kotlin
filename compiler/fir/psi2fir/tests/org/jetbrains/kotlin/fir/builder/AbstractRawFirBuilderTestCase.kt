@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.FirSessionBase
 import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirWrappedDelegateExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
@@ -134,16 +135,14 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
         override fun visitElement(element: FirElement) {
             // NB: types are reused sometimes (e.g. in accessors)
             if (!result.add(element)) {
-                if (element !is FirTypeRef && element !is FirNoReceiverExpression && element !is FirEmptyContractDescription && !element.isExtensionFunctionAnnotation) {
-                    val elementDump = StringBuilder().also { element.accept(FirRenderer(it)) }.toString()
-                    throw AssertionError("FirElement ${element.javaClass} is visited twice: $elementDump")
-                }
+                throwTwiceVisitingError(element)
             } else if (element !is FirWrappedDelegateExpression) {
                 element.acceptChildren(this)
             } else {
                 element.delegateProvider.accept(this)
             }
         }
+
     }
 
     private class ConsistencyTransformer : FirTransformer<Unit>() {
@@ -151,10 +150,7 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
 
         override fun <E : FirElement> transformElement(element: E, data: Unit): CompositeTransformResult<E> {
             if (!result.add(element)) {
-                if (element !is FirTypeRef && element !is FirNoReceiverExpression && element !is FirEmptyContractDescription && !element.isExtensionFunctionAnnotation) {
-                    val elementDump = StringBuilder().also { element.accept(FirRenderer(it)) }.toString()
-                    throw AssertionError("FirElement ${element.javaClass} is visited twice: $elementDump")
-                }
+                throwTwiceVisitingError(element)
             } else if (element !is FirWrappedDelegateExpressionImpl) {
                 element.transformChildren(this, Unit)
             } else {
@@ -170,6 +166,17 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
     }
 
 }
+
+private fun throwTwiceVisitingError(element: FirElement) {
+    if (element is FirTypeRef || element is FirNoReceiverExpression || element is FirTypeParameter ||
+        element is FirEmptyContractDescription || element.isExtensionFunctionAnnotation
+    ) {
+        return
+    }
+    val elementDump = StringBuilder().also { element.accept(FirRenderer(it)) }.toString()
+    throw AssertionError("FirElement ${element.javaClass} is visited twice: $elementDump")
+}
+
 
 private val FirElement.isExtensionFunctionAnnotation: Boolean
     get() = (this as? FirAnnotationCall)?.isExtensionFunctionAnnotationCall == true

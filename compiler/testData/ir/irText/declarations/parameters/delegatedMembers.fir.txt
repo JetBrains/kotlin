@@ -30,8 +30,8 @@ FILE fqName:<root> fileName:/delegatedMembers.kt
   CLASS CLASS name:Test modality:FINAL visibility:public superTypes:[<root>.IBase<TT of <root>.Test>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test
     TYPE_PARAMETER name:TT index:0 variance: superTypes:[kotlin.Any?]
-    CONSTRUCTOR visibility:public <> (impl:<root>.IBase<TT of <uninitialized parent>>) returnType:<root>.Test<TT of <uninitialized parent>> [primary]
-      VALUE_PARAMETER name:impl index:0 type:<root>.IBase<TT of <uninitialized parent>>
+    CONSTRUCTOR visibility:public <> (impl:<root>.IBase<TT of <root>.Test>) returnType:<root>.Test<TT of <root>.Test> [primary]
+      VALUE_PARAMETER name:impl index:0 type:<root>.IBase<TT of <root>.Test>
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test modality:FINAL visibility:public superTypes:[<root>.IBase<TT of <root>.Test>]'

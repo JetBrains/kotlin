@@ -2,15 +2,15 @@ FILE fqName:<root> fileName:/typeAliasCtorForGenericClass.kt
   CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
     TYPE_PARAMETER name:Q index:0 variance: superTypes:[kotlin.Any?]
-    CONSTRUCTOR visibility:public <> (q:Q of <uninitialized parent>) returnType:<root>.A<Q of <uninitialized parent>> [primary]
-      VALUE_PARAMETER name:q index:0 type:Q of <uninitialized parent>
+    CONSTRUCTOR visibility:public <> (q:Q of <root>.A) returnType:<root>.A<Q of <root>.A> [primary]
+      VALUE_PARAMETER name:q index:0 type:Q of <root>.A
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:q visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:q type:Q of <root>.A visibility:private [final]
         EXPRESSION_BODY
-          GET_VAR 'q: Q of <uninitialized parent> declared in <root>.A.<init>' type=Q of <uninitialized parent> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+          GET_VAR 'q: Q of <root>.A declared in <root>.A.<init>' type=Q of <root>.A origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-q> visibility:public modality:FINAL <> ($this:<root>.A) returnType:Q of <root>.A
         correspondingProperty: PROPERTY name:q visibility:public modality:FINAL [val]
         $this: VALUE_PARAMETER name:<this> type:<root>.A
@@ -34,10 +34,10 @@ FILE fqName:<root> fileName:/typeAliasCtorForGenericClass.kt
   FUN name:bar visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:b type:<root>.A<kotlin.Int> [val]
-        CONSTRUCTOR_CALL 'public constructor <init> (q: Q of <uninitialized parent>) [primary] declared in <root>.A' type=<root>.A<kotlin.Int> origin=null
+        CONSTRUCTOR_CALL 'public constructor <init> (q: X of <uninitialized parent>) declared in <root>.A' type=<root>.A<kotlin.Int> origin=null
           <class: Q>: kotlin.Int
           q: CONST Int type=kotlin.Int value=2
       VAR name:b2 type:<root>.A<<root>.A<kotlin.Int>> [val]
-        CONSTRUCTOR_CALL 'public constructor <init> (q: Q of <uninitialized parent>) [primary] declared in <root>.A' type=<root>.A<<root>.A<kotlin.Int>> origin=null
-          <class: Q>: <root>.A<kotlin.Int>
+        CONSTRUCTOR_CALL 'public constructor <init> (q: <root>.A<T of <uninitialized parent>>) declared in <root>.A' type=<root>.A<<root>.A<kotlin.Int>> origin=null
+          <class: Q>: kotlin.Int
           q: GET_VAR 'val b: <root>.A<kotlin.Int> [val] declared in <root>.bar' type=<root>.A<kotlin.Int> origin=null

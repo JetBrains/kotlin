@@ -1,0 +1,36 @@
+FILE: genericConstructors.kt
+    public final class A<T> : R|kotlin/Any| {
+        public constructor<T>(t: R|T|): R|A<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(x: R|T|): R|kotlin/Unit| {
+        }
+
+    }
+    public abstract class B<E> : R|kotlin/Any| {
+        public constructor<E>(e: R|E|): R|B<E>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val myE: R|E| = this@R|/B|.R|FakeOverride</B.id: R|E|>|(R|<local>/e|)
+            public get(): R|E|
+
+        public final val a: R|A<E>| = R|/A.A|<R|E|>(R|<local>/e|)
+            public get(): R|A<E>|
+
+        public final fun id(e: R|E|): R|E| {
+            ^id R|<local>/e|
+        }
+
+    }
+    public final class C : R|B<kotlin/String>| {
+        public constructor(): R|C| {
+            super<R|B<kotlin/String>|>(String())
+        }
+
+        public final fun bar(): R|kotlin/Unit| {
+            this@R|/B|.R|FakeOverride</B.a: R|A<kotlin/String>|>|.R|FakeOverride</A.foo: R|kotlin/Unit|>|(String())
+        }
+
+    }
