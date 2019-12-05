@@ -313,14 +313,11 @@ public final class DaemonListeners implements Disposable {
       }
     }, this);
 
-    LaterInvocator.addModalityStateListener(new ModalityStateListener() {
-      @Override
-      public void beforeModalityStateChanged(boolean __1) {
-        // before showing dialog we are in non-modal context yet, and before closing dialog we are still in modal context
-        boolean inModalContext = Registry.is("ide.perProjectModality") || LaterInvocator.isInModalContext();
-        DaemonListeners.this.stopDaemon(inModalContext, "Modality change. Was modal: " + inModalContext);
-        myDaemonCodeAnalyzer.setUpdateByTimerEnabled(inModalContext);
-      }
+    LaterInvocator.addModalityStateListener(__ -> {
+      // before showing dialog we are in non-modal context yet, and before closing dialog we are still in modal context
+      boolean inModalContext = Registry.is("ide.perProjectModality") || LaterInvocator.isInModalContext();
+      stopDaemon(inModalContext, "Modality change. Was modal: " + inModalContext);
+      myDaemonCodeAnalyzer.setUpdateByTimerEnabled(inModalContext);
     }, this);
 
     connection.subscribe(SeverityRegistrar.SEVERITIES_CHANGED_TOPIC, () -> stopDaemonAndRestartAllFiles("Severities changed"));
