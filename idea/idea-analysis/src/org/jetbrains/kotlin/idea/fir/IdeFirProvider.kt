@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.idea.stubindex.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
 class IdeFirProvider(
@@ -74,12 +74,12 @@ class IdeFirProvider(
     }
 
     override fun getFirClassifierContainerFile(fqName: ClassId): FirFile {
-        getFirClassifierByFqName(fqName)
+        getFirClassifierByFqName(fqName) // Necessary to ensure cacheProvider contains this classifier
         return cacheProvider.getFirClassifierContainerFile(fqName)
     }
 
     override fun getFirClassifierContainerFileIfAny(fqName: ClassId): FirFile? {
-        getFirClassifierByFqName(fqName)
+        getFirClassifierByFqName(fqName) // Necessary to ensure cacheProvider contains this classifier
         return cacheProvider.getFirClassifierContainerFileIfAny(fqName)
     }
 
@@ -90,7 +90,7 @@ class IdeFirProvider(
 
     override fun getFirClassifierContainerFileIfAny(symbol: FirClassLikeSymbol<*>): FirFile? {
         val psi = symbol.fir.source?.psi
-        if (psi is KtClassOrObject && psi.isLocal) {
+        if (psi is KtElement) {
             val ktFile = psi.containingKtFile
             return getOrBuildFile(ktFile)
         }
