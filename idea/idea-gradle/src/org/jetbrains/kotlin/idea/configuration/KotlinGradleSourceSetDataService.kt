@@ -94,9 +94,10 @@ class KotlinGradleProjectSettingsDataService : AbstractProjectDataService<Projec
         project: Project,
         modelsProvider: IdeModifiableModelsProvider
     ) {
-        val allSettings = modelsProvider.modules.mapNotNull {
+        val allSettings = modelsProvider.modules.mapNotNull { module ->
+            if (module.isDisposed) return@mapNotNull null
             val settings = modelsProvider
-                .getModifiableFacetModel(it)
+                .getModifiableFacetModel(module)
                 .findFacet(KotlinFacetType.TYPE_ID, KotlinFacetType.INSTANCE.defaultFacetName)
                 ?.configuration
                 ?.settings ?: return@mapNotNull null
