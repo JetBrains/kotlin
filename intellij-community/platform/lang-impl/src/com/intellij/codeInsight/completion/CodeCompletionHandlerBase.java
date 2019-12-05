@@ -165,7 +165,11 @@ public class CodeCompletionHandlerBase {
       boolean hasValidContext = context != null;
       if (!hasValidContext) {
         final PsiFile psiFile = PsiUtilBase.getPsiFileInEditor(caret, project);
-        context = new CompletionInitializationContextImpl(editor, caret, psiFile, completionType, invocationCount);
+        Language language = null;
+        if (psiFile != null) {
+          language = psiFile.getLanguage();
+        }
+        context = new CompletionInitializationContextImpl(editor, caret, language, psiFile, completionType, invocationCount);
       }
 
       doComplete(context, hasModifiers, hasValidContext, startingTime);

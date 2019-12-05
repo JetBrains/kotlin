@@ -2,6 +2,7 @@
 package com.intellij.codeInsight.completion;
 
 import com.intellij.injected.editor.DocumentWindow;
+import com.intellij.lang.Language;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.diagnostic.Logger;
@@ -60,19 +61,21 @@ public class CompletionInitializationUtil {
                                                                           @NotNull Caret caret,
                                                                           CompletionType completionType) {
     final Ref<CompletionContributor> current = Ref.create(null);
-    CompletionInitializationContextImpl context = new CompletionInitializationContextImpl(editor, caret, psiFile, completionType, invocationCount) {
-      CompletionContributor dummyIdentifierChanger;
+    Language language = psiFile.getLanguage();
+    CompletionInitializationContextImpl context =
+      new CompletionInitializationContextImpl(editor, caret, language, psiFile, completionType, invocationCount) {
+        CompletionContributor dummyIdentifierChanger;
 
-      @Override
-      public void setDummyIdentifier(@NotNull String dummyIdentifier) {
-        super.setDummyIdentifier(dummyIdentifier);
+        @Override
+        public void setDummyIdentifier(@NotNull String dummyIdentifier) {
+          super.setDummyIdentifier(dummyIdentifier);
 
-        if (dummyIdentifierChanger != null) {
-          LOG.error("Changing the dummy identifier twice, already changed by " + dummyIdentifierChanger);
+          if (dummyIdentifierChanger != null) {
+            LOG.error("Changing the dummy identifier twice, already changed by " + dummyIdentifierChanger);
+          }
+          dummyIdentifierChanger = current.get();
         }
-        dummyIdentifierChanger = current.get();
-      }
-    };
+      };
     Project project = psiFile.getProject();
     for (final CompletionContributor contributor : CompletionContributor.forLanguageHonorDumbness(context.getPositionLanguage(), project)) {
       current.set(contributor);
