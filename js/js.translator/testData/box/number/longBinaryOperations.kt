@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1230
+// EXPECTED_REACHABLE_NODES: 1379
 package foo
 
 fun fact(n: Int): Long = if (n == 1) 1L else n * fact(n - 1)

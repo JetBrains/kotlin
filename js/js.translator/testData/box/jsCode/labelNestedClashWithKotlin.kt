@@ -1,5 +1,5 @@
 // IGNORE_BACKEND: JS_IR
-// EXPECTED_REACHABLE_NODES: 1229
+// EXPECTED_REACHABLE_NODES: 1416
 package foo
 
 fun box(): String {

@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1230
+// EXPECTED_REACHABLE_NODES: 1417
 // see KT-7683
 // WhenTranslator must recognize KtWhenConditionInRange and produce faster code when matched expression is Int
 package foo

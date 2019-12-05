@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1203
+// EXPECTED_REACHABLE_NODES: 1379
 
 external interface Foo {
     var externalProperty: String?

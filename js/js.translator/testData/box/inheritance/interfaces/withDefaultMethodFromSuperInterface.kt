@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1235
+// EXPECTED_REACHABLE_NODES: 1383
 interface I {
     fun foo() = "OK"
 }

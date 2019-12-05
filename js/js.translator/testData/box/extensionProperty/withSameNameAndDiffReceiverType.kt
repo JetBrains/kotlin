@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1196
+// EXPECTED_REACHABLE_NODES: 1373
 object Foo {
     val value = "O"
 }

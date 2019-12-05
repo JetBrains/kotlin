@@ -1,5 +1,5 @@
 // KJS_WITH_FULL_RUNTIME
-// EXPECTED_REACHABLE_NODES: 1542
+// EXPECTED_REACHABLE_NODES: 1702
 package foo
 
 import kotlin.comparisons.*

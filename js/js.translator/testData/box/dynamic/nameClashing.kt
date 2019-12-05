@@ -1,5 +1,5 @@
 // DONT_TARGET_EXACT_BACKEND: JS_IR
-// EXPECTED_REACHABLE_NODES: 1241
+// EXPECTED_REACHABLE_NODES: 1430
 
 // Not targeting JS_IR because it's too implementaion-specific
 // for legacy JS backend

@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1250
+// EXPECTED_REACHABLE_NODES: 1400
 
 // Unmute when JS_IR supports release coroutines
 

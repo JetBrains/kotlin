@@ -1,6 +1,6 @@
 // IGNORE_BACKEND: JS_IR
 // KJS_WITH_FULL_RUNTIME
-// EXPECTED_REACHABLE_NODES: 1530
+// EXPECTED_REACHABLE_NODES: 1687
 external fun p(m: String): String
 
 var log = ""
