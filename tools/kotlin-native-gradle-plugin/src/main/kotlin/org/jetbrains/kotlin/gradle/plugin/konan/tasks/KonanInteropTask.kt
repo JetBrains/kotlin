@@ -23,6 +23,7 @@ import org.gradle.api.tasks.*
 import org.gradle.util.ConfigureUtil
 import org.gradle.workers.IsolationMode
 import org.gradle.workers.WorkAction
+import org.gradle.workers.WorkParameters
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.gradle.plugin.konan.*
 import org.jetbrains.kotlin.gradle.plugin.konan.KonanInteropSpec.IncludeDirectoriesSpec
@@ -192,15 +193,15 @@ open class KonanInteropTask @Inject constructor(@Internal val workerExecutor: Wo
     }
     // endregion
 
-    internal class RunTool @Inject constructor(
-            val taskName: String,
-            val args: List<String>
-    ) : Runnable {
+    internal interface RunToolParameters: WorkParameters {
+        var taskName: String
+        var args: List<String>
+    }
 
-
-        override fun run() {
-            val toolRunner = interchangeBox.remove(taskName) ?: error(":(")
-            toolRunner.run(args)
+    internal abstract class RunTool @Inject constructor() : WorkAction<RunToolParameters> {
+        override fun execute() {
+            val toolRunner = interchangeBox.remove(parameters.taskName) ?: error(":(")
+            toolRunner.run(parameters.args)
         }
     }
 
@@ -211,10 +212,11 @@ open class KonanInteropTask @Inject constructor(@Internal val workerExecutor: Wo
         }
         val args = buildArgs()
         if (enableParallel) {
+            val workQueue = workerExecutor.noIsolation()
             interchangeBox[this.path] = toolRunner
-            workerExecutor.submit(RunTool::class.java) {
-                it.isolationMode = IsolationMode.NONE
-                it.params(this.path, args)
+            workQueue.submit(RunTool::class.java) {
+                it.taskName = this.path
+                it.args = args
             }
         } else {
             toolRunner.run(args)
