@@ -131,9 +131,9 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
                                     KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                                 }
 
-                                @TestMetadata("1.1.kt")
-                                public void test1_1() throws Exception {
-                                    runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-1/pos/1.1.kt");
+                                @TestMetadata("2.1.kt")
+                                public void test2_1() throws Exception {
+                                    runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-1/pos/2.1.kt");
                                 }
 
                                 public void testAllFilesPresentInPos() throws Exception {
@@ -165,6 +165,11 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
                                 @TestMetadata("1.1.kt")
                                 public void test1_1() throws Exception {
                                     runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/neg/1.1.kt");
+                                }
+
+                                @TestMetadata("1.10.kt")
+                                public void test1_10() throws Exception {
+                                    runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/neg/1.10.kt");
                                 }
 
                                 @TestMetadata("1.2.kt")
@@ -202,6 +207,11 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
                                     runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/neg/1.8.kt");
                                 }
 
+                                @TestMetadata("1.9.kt")
+                                public void test1_9() throws Exception {
+                                    runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/neg/1.9.kt");
+                                }
+
                                 public void testAllFilesPresentInNeg() throws Exception {
                                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/neg"), Pattern.compile("^(.+)\\.kt$"), true);
                                 }
@@ -223,6 +233,16 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
                                 @TestMetadata("1.2.kt")
                                 public void test1_2() throws Exception {
                                     runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/pos/1.2.kt");
+                                }
+
+                                @TestMetadata("1.3.kt")
+                                public void test1_3() throws Exception {
+                                    runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/pos/1.3.kt");
+                                }
+
+                                @TestMetadata("1.4.kt")
+                                public void test1_4() throws Exception {
+                                    runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/pos/1.4.kt");
                                 }
 
                                 public void testAllFilesPresentInPos() throws Exception {
