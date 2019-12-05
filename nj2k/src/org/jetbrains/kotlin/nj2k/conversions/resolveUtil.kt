@@ -71,13 +71,15 @@ class JKResolver(val project: Project, module: Module?, private val contextEleme
         KotlinTopLevelPropertyFqnNameIndex.getInstance()[fqName.asString(), project, scope].firstOrNull()
 
 
-    private fun resolveFqName(fqName: FqName): PsiElement? =
-        constructImportDirectiveWithContext(fqName)
+    private fun resolveFqName(fqName: FqName): PsiElement? {
+        if (fqName.isRoot) return null
+        return constructImportDirectiveWithContext(fqName)
             .getChildOfType<KtDotQualifiedExpression>()
             ?.selectorExpression
             ?.let {
                 it.references.mapNotNull { it.resolve() }.firstOrNull()
             }
+    }
 
 
     private fun constructImportDirectiveWithContext(fqName: FqName): KtImportDirective {
