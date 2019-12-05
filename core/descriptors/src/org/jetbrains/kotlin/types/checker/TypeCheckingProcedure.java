@@ -102,14 +102,16 @@ public class TypeCheckingProcedure {
             if (typeProjection1.isStarProjection() && typeProjection2.isStarProjection()) {
                 continue;
             }
-            TypeParameterDescriptor typeParameter1 = constructor1.getParameters().get(i);
-            TypeParameterDescriptor typeParameter2 = constructor2.getParameters().get(i);
+            if(constructor1.getParameters().size() > i) {
+                TypeParameterDescriptor typeParameter1 = constructor1.getParameters().get(i);
+                TypeParameterDescriptor typeParameter2 = constructor2.getParameters().get(i);
 
-            if (capture(typeProjection1, typeProjection2, typeParameter1)) {
-                continue;
-            }
-            if (getEffectiveProjectionKind(typeParameter1, typeProjection1) != getEffectiveProjectionKind(typeParameter2, typeProjection2)) {
-                return false;
+                if (capture(typeProjection1, typeProjection2, typeParameter1)) {
+                    continue;
+                }
+                if (getEffectiveProjectionKind(typeParameter1, typeProjection1) != getEffectiveProjectionKind(typeParameter2, typeProjection2)) {
+                    return false;
+                }
             }
 
             if (!constraints.assertEqualTypes(typeProjection1.getType(), typeProjection2.getType(), this)) {
