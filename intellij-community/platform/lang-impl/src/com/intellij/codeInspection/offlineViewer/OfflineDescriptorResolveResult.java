@@ -172,7 +172,7 @@ public class OfflineDescriptorResolveResult {
         for (Pair<PsiElement, TextRange> file : injectedPsiFiles) {
           file.getFirst().accept(new PsiRecursiveElementWalkingVisitor() {
             @Override
-            public void visitElement(PsiElement element) {
+            public void visitElement(@NotNull PsiElement element) {
               element.accept(visitor);
               super.visitElement(element);
             }

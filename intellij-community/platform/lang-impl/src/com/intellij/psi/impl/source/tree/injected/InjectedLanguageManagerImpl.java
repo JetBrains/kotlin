@@ -227,7 +227,7 @@ public class InjectedLanguageManagerImpl extends InjectedLanguageManager impleme
     // gather text from (patched) leaves
     injectedNode.accept(new PsiRecursiveElementWalkingVisitor() {
       @Override
-      public void visitElement(PsiElement element) {
+      public void visitElement(@NotNull PsiElement element) {
         String leafText = InjectedLanguageUtil.getUnescapedLeafText(element, false);
         if (leafText != null) {
           text.append(leafText);

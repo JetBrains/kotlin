@@ -1010,7 +1010,7 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextBase {
       scope.accept(new PsiElementVisitor() {
         private int myCount;
         @Override
-        public void visitFile(PsiFile file) {
+        public void visitFile(@NotNull PsiFile file) {
           progressIndicator.setFraction((double)++myCount / fileCount);
           if (isBinary(file)) return;
           final List<LocalInspectionToolWrapper> lTools = new ArrayList<>();

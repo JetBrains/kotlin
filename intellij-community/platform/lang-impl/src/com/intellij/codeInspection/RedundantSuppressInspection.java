@@ -99,7 +99,7 @@ public class RedundantSuppressInspection extends GlobalSimpleInspectionTool {
     final Map<PsiElement, Collection<String>> suppressedScopes = new THashMap<>();
     psiElement.accept(new PsiRecursiveElementWalkingVisitor() {
       @Override
-      public void visitElement(PsiElement element) {
+      public void visitElement(@NotNull PsiElement element) {
         super.visitElement(element);
         collectSuppressions(element, suppressedScopes, IGNORE_ALL, extension);
       }
@@ -342,7 +342,7 @@ public class RedundantSuppressInspection extends GlobalSimpleInspectionTool {
       return new PsiElementVisitor() {
 
         @Override
-        public void visitElement(PsiElement element) {
+        public void visitElement(@NotNull PsiElement element) {
           super.visitElement(element);
           HashMap<PsiElement, Collection<String>> scopes = new HashMap<>();
           boolean suppressAll = collectSuppressions(element, scopes, IGNORE_ALL, mySuppressor);

@@ -82,7 +82,7 @@ public final class TodoFileNode extends PsiFileNode {
 
     psiFile.accept(new PsiRecursiveElementWalkingVisitor() {
       @Override
-      public void visitElement(PsiElement element) {
+      public void visitElement(@NotNull PsiElement element) {
         if (element instanceof PsiLanguageInjectionHost) {
           InjectedLanguageManager.getInstance(psiFile.getProject()).enumerate(element, (injectedPsi, places) -> {
             if (places.size() == 1) {

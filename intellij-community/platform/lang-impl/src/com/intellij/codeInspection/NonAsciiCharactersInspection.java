@@ -77,7 +77,7 @@ public class NonAsciiCharactersInspection extends LocalInspectionTool {
     if (!isFileWorthIt(session.getFile())) return PsiElementVisitor.EMPTY_VISITOR;
     return new PsiElementVisitor() {
       @Override
-      public void visitElement(PsiElement element) {
+      public void visitElement(@NotNull PsiElement element) {
         if (CHECK_FOR_NOT_ASCII_IDENTIFIER_NAME || CHECK_FOR_DIFFERENT_LANGUAGES_IN_IDENTIFIER_NAME) {
           PsiElement parent = element.getParent();
           PsiElement identifier;
@@ -108,7 +108,7 @@ public class NonAsciiCharactersInspection extends LocalInspectionTool {
       }
 
       @Override
-      public void visitFile(PsiFile file) {
+      public void visitFile(@NotNull PsiFile file) {
         super.visitFile(file);
         if (CHECK_FOR_FILES_CONTAINING_BOM) {
           VirtualFile virtualFile = file.getVirtualFile();

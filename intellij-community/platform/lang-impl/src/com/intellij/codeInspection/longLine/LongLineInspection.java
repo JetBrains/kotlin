@@ -87,7 +87,7 @@ public class LongLineInspection extends LocalInspectionTool {
 
     return new PsiElementVisitor() {
       @Override
-      public void visitElement(PsiElement element) {
+      public void visitElement(@NotNull PsiElement element) {
         int length = element.getTextLength();
         if (element.getTextLength() != 0 && element.getFirstChild() == null && !ignoreFor(element)) {
           int offset = element.getTextOffset();

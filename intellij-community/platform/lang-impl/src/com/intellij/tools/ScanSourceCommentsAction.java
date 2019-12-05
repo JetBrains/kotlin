@@ -104,7 +104,7 @@ public class ScanSourceCommentsAction extends AnAction {
         for (PsiFile root : psiFile.getViewProvider().getAllFiles()) {
           root.accept(new PsiRecursiveElementWalkingVisitor() {
             @Override
-            public void visitComment(PsiComment comment) {
+            public void visitComment(@NotNull PsiComment comment) {
               commentFound(vFile, comment.getText());
             }
           });

@@ -77,7 +77,7 @@ public class SimpleDuplicatesFinder {
   private void deannotatePattern() {
     for (final PsiElement patternComponent : myPattern) {
       patternComponent.accept(new PsiRecursiveElementWalkingVisitor() {
-        @Override public void visitElement(PsiElement element) {
+        @Override public void visitElement(@NotNull PsiElement element) {
           if (element.getUserData(PARAMETER) != null) {
             element.putUserData(PARAMETER, null);
           }
@@ -90,7 +90,7 @@ public class SimpleDuplicatesFinder {
     for (final PsiElement patternComponent : myPattern) {
       patternComponent.accept(new PsiRecursiveElementWalkingVisitor() {
         @Override
-        public void visitElement(PsiElement element) {
+        public void visitElement(@NotNull PsiElement element) {
           super.visitElement(element);
           if (myParameters.contains(element.getText())) {
             element.putUserData(PARAMETER, element);
