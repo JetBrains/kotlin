@@ -10,7 +10,6 @@
  * RELEVANT PLACES: declarations, classifier-declaration, class-declaration, abstract-classes -> paragraph 1 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION: check abstract classes cannot be instantiated directly
- * ISSUES: KT-27825
  */
 
 // TESTCASE NUMBER: 1

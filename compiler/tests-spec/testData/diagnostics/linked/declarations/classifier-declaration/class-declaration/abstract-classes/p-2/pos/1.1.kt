@@ -9,7 +9,6 @@
  * PLACE: declarations, classifier-declaration, class-declaration, abstract-classes -> paragraph 2 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION: Abstract classes may contain one or more abstract members, which should be implemented in a subtype of this abstract class
- * ISSUES: KT-27825
  */
 
 abstract class Base {

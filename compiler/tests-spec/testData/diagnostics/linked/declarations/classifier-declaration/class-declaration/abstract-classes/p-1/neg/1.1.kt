@@ -10,7 +10,6 @@
  * RELEVANT PLACES: declarations, classifier-declaration, class-declaration, abstract-classes -> paragraph 2 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION: check abstract classes can have abstract not implemented members
- * ISSUES: KT-27825
  */
 
 // TESTCASE NUMBER: 1

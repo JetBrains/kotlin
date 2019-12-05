@@ -9,7 +9,6 @@
  * PLACE: declarations, classifier-declaration, class-declaration, abstract-classes -> paragraph 2 -> sentence 1
  * NUMBER: 4
  * DESCRIPTION: Abstract classes may contain abstract members, which should be implemented in an inner class that inherits from that abstract type
- * ISSUES: KT-27825
  */
 
 class MainClass {
