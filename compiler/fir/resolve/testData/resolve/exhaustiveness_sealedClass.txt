@@ -1,6 +1,6 @@
 FILE: exhaustiveness_sealedClass.kt
     public sealed class Base : R|kotlin/Any| {
-        private constructor(): R|Base| {
+        public constructor(): R|Base| {
             super<R|kotlin/Any|>()
         }
 
