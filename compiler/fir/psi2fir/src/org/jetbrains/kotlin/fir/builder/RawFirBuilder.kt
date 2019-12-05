@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.*
+import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -343,22 +344,29 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
                 }
             }
 
-            val defaultDelegatedSuperTypeRef = when {
-                this is KtClass && classKind == ClassKind.ENUM_CLASS -> FirResolvedTypeRefImpl(
-                    null,
-                    ConeClassLikeTypeImpl(
-                        implicitEnumType.type.lookupTag,
-                        delegatedSelfTypeRef?.coneTypeUnsafe<ConeKotlinType>()?.let { arrayOf(it) } ?: emptyArray(),
-                        isNullable = false
+            when {
+                this is KtClass && classKind == ClassKind.ENUM_CLASS -> {
+                    /*
+                     * kotlin.Enum constructor has (name: String, ordinal: Int) signature,
+                     *   so we should generate non-trivial constructors for enum and it's entry
+                     *   for correct resolve of super constructor call or just call kotlin.Any constructor
+                     *   and convert it to right call at backend, because of it doesn't affects frontend work
+                     */
+                    container.superTypeRefs += FirResolvedTypeRefImpl(
+                        null,
+                        ConeClassLikeTypeImpl(
+                            implicitEnumType.type.lookupTag,
+                            delegatedSelfTypeRef?.coneTypeUnsafe<ConeKotlinType>()?.let { arrayOf(it) } ?: emptyArray(),
+                            isNullable = false
+                        )
                     )
-                )
+                }
                 this is KtClass && classKind == ClassKind.ANNOTATION_CLASS -> {
                     container.superTypeRefs += implicitAnnotationType
-                    implicitAnyType
                 }
-                else -> implicitAnyType
             }
-            // TODO: for enum / annotations, it *should* be empty
+
+            val defaultDelegatedSuperTypeRef = implicitAnyType
             if (container.superTypeRefs.isEmpty()) {
                 container.superTypeRefs += defaultDelegatedSuperTypeRef
             }

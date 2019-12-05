@@ -3,8 +3,7 @@ FILE fqName:<root> fileName:/enumEntry.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Z
     CONSTRUCTOR visibility:private <> () returnType:<root>.Z [primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, ordinal: kotlin.Int) [primary] declared in kotlin.Enum'
-          <E>: <none>
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:Z modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.Z>]'
     CLASS ENUM_ENTRY name:ENTRY modality:FINAL visibility:public superTypes:[kotlin.Any]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Z.ENTRY

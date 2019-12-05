@@ -1,7 +1,7 @@
 FILE: enums.kt
     public? final? enum class Order : R|kotlin/Enum<Order>| {
         private constructor(): R|Order| {
-            super<R|kotlin/Enum<Order>|>()
+            super<R|kotlin/Any|>()
         }
 
         public? final enum entry FIRST : R|kotlin/Any| {
@@ -34,7 +34,7 @@ FILE: enums.kt
     }
     public? final? enum class Planet : R|kotlin/Enum<Planet>| {
         public? constructor(m: Double, r: Double): R|Planet| {
-            super<R|kotlin/Enum<Planet>|>()
+            super<R|kotlin/Any|>()
         }
 
         public? final? val m: Double = R|<local>/m|

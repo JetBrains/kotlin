@@ -72,8 +72,7 @@ FILE fqName:<root> fileName:/classes.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestEnumClass
     CONSTRUCTOR visibility:private <> () returnType:<root>.TestEnumClass [primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, ordinal: kotlin.Int) [primary] declared in kotlin.Enum'
-          <E>: <none>
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:TestEnumClass modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.TestEnumClass>]'
     FUN name:values visibility:public modality:FINAL <> ($this:<root>.TestEnumClass) returnType:kotlin.Array<<root>.TestEnumClass>
       $this: VALUE_PARAMETER name:<this> type:<root>.TestEnumClass
