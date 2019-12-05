@@ -9,7 +9,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.fir.FirModuleBasedSession
-import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.FirProvider
@@ -32,7 +31,7 @@ class FirIdeJavaModuleBasedSession(
     init {
         registerComponent(
             FirProvider::class,
-            IdeFirProvider(project, scope, RawFirBuilder(this, stubMode = false), this)
+            IdeFirProvider(project, scope, this)
         )
         registerComponent(
             FirSymbolProvider::class,

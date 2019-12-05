@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.psi.KtFile
 class IdeFirProvider(
     val project: Project,
     val scope: GlobalSearchScope,
-    val builder: RawFirBuilder,
     val session: FirSession
 ) : FirProvider() {
     private val cacheProvider = FirProviderImpl(session)
@@ -51,10 +50,13 @@ class IdeFirProvider(
     }
 
     fun getOrBuildFile(ktFile: KtFile): FirFile {
-        return files.getOrPut(ktFile) {
-            val file = builder.buildFirFile(ktFile)
-            cacheProvider.recordFile(file)
-            file
+        files[ktFile]?.let { return it }
+        return synchronized(ktFile) {
+            files.getOrPut(ktFile) {
+                val file = RawFirBuilder(session, stubMode = false).buildFirFile(ktFile)
+                cacheProvider.recordFile(file)
+                file
+            }
         }
     }
 
