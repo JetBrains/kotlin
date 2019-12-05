@@ -4,7 +4,7 @@ FILE: annotationWithReturn.kt
         public get(): R|kotlin/Int|
     public final annotation class Some : R|kotlin/Annotation| {
         public constructor(value: R|kotlin/Int|): R|Some| {
-            super<R|kotlin/Annotation|>()
+            super<R|kotlin/Any|>()
         }
 
         public final val value: R|kotlin/Int| = R|<local>/value|
