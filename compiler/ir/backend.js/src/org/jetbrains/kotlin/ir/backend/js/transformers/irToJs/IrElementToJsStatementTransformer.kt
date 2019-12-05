@@ -5,15 +5,13 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
-import org.jetbrains.kotlin.backend.common.ir.isElseBranch
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.COROUTINE_SWITCH
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.types.isAny
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.constructedClassType
 import org.jetbrains.kotlin.js.backend.ast.*
 
@@ -51,17 +49,52 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
         return JsContinue(context.getNameForLoop(jump.loop)?.let { JsNameRef(it) })
     }
 
+    private fun IrExpression.maybeOptimizeIntoSwitch(context: JsGenerationContext, transformer: (JsExpression) -> JsStatement): JsStatement {
+        if (this is IrWhen) {
+            val stmtTransformer = { stmt: JsStatement -> transformer((stmt as JsExpressionStatement).expression) }
+            SwitchOptimizer(context, stmtTransformer).tryOptimize(this)?.let { return it }
+        }
+
+        return transformer(accept(IrElementToJsExpressionTransformer(), context))
+    }
+
+    override fun visitSetField(expression: IrSetField, context: JsGenerationContext): JsStatement {
+        val fieldName = context.getNameForField(expression.symbol.owner)
+        val expressionTransformer = IrElementToJsExpressionTransformer()
+        val dest = JsNameRef(fieldName, expression.receiver?.accept(expressionTransformer, context))
+        return expression.value.maybeOptimizeIntoSwitch(context) { jsAssignment(dest, it).makeStmt() }
+    }
+
+    override fun visitSetVariable(expression: IrSetVariable, context: JsGenerationContext): JsStatement {
+        val ref = JsNameRef(context.getNameForValueDeclaration(expression.symbol.owner))
+        return expression.value.maybeOptimizeIntoSwitch(context) { JsBinaryOperation(JsBinaryOperator.ASG, ref, it).makeStmt() }
+    }
+
     override fun visitReturn(expression: IrReturn, context: JsGenerationContext): JsStatement {
-        return JsReturn(expression.value.accept(IrElementToJsExpressionTransformer(), context))
+        return expression.value.maybeOptimizeIntoSwitch(context) { JsReturn(it) }
     }
 
     override fun visitThrow(expression: IrThrow, context: JsGenerationContext): JsStatement {
-        return JsThrow(expression.value.accept(IrElementToJsExpressionTransformer(), context))
+        return expression.value.maybeOptimizeIntoSwitch(context) { JsThrow(it) }
     }
 
     override fun visitVariable(declaration: IrVariable, context: JsGenerationContext): JsStatement {
         val varName = context.getNameForValueDeclaration(declaration)
-        return jsVar(varName, declaration.initializer, context)
+        val value = declaration.initializer
+
+        if (value is IrWhen) {
+            val varRef = varName.makeRef()
+            val transformer = { stmt: JsStatement ->
+                val expr = (stmt as JsExpressionStatement).expression
+                JsBinaryOperation(JsBinaryOperator.ASG, varRef, expr).makeStmt()
+            }
+
+            SwitchOptimizer(context, transformer).tryOptimize(value)?.let {
+                return JsBlock(JsVars(JsVars.JsVar(varName)), it)
+            }
+        }
+
+        return jsVar(varName, value, context)
     }
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, context: JsGenerationContext): JsStatement {
