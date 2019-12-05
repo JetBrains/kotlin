@@ -2148,8 +2148,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                     .resolve("build/reports/tests/${targetName}Test/classes/com.example.HelloTest.html")
                     .readText()
 
-                if (targetName != nativeHostTargetName && targetName != "ios") // TODO: fix exclude patterns for the Kotlin/Native test tasks
-                    assertTrue("secondTest" !in classReportHtml, "Test report should not contain 'secondTest':\n$classReportHtml")
+                assertTrue("secondTest" !in classReportHtml, "Test report should not contain 'secondTest':\n$classReportHtml")
             }
             targetsToTest.forEach {
                 checkUnitTestOutput(it)
