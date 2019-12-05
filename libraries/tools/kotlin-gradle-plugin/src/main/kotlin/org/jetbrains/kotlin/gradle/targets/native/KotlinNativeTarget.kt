@@ -16,8 +16,9 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinNativeBinaryContainer
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests
 import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeBinaryTestRun
+import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeHostTestRun
+import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeSimulatorTestRun
 import org.jetbrains.kotlin.gradle.targets.native.NativeBinaryTestRunSource
-import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import javax.inject.Inject
 
@@ -65,8 +66,7 @@ open class KotlinNativeTarget @Inject constructor(
     }
 }
 
-// TODO: Add separate classes for corresponding targets?
-open class KotlinNativeTargetWithTests<T : KotlinNativeBinaryTestRun> @Inject constructor(
+abstract class KotlinNativeTargetWithTests<T : KotlinNativeBinaryTestRun>(
     project: Project,
     konanTarget: KonanTarget
 ) : KotlinNativeTarget(project, konanTarget), KotlinTargetWithTests<NativeBinaryTestRunSource, T> {
@@ -74,3 +74,9 @@ open class KotlinNativeTargetWithTests<T : KotlinNativeBinaryTestRun> @Inject co
     override lateinit var testRuns: NamedDomainObjectContainer<T>
         internal set
 }
+
+open class KotlinNativeTargetWithHostTests @Inject constructor(project: Project, konanTarget: KonanTarget) :
+    KotlinNativeTargetWithTests<KotlinNativeHostTestRun>(project, konanTarget)
+
+open class KotlinNativeTargetWithSimulatorTests @Inject constructor(project: Project, konanTarget: KonanTarget) :
+    KotlinNativeTargetWithTests<KotlinNativeSimulatorTestRun>(project, konanTarget)

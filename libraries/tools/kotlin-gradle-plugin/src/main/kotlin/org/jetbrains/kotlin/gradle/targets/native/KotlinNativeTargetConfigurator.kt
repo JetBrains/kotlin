@@ -394,16 +394,19 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget>(
     }
 }
 
-abstract class KotlinNativeTargetWithTestsConfigurator<TaskType : KotlinNativeTest, TestRunType : KotlinNativeBinaryTestRun>(
+abstract class KotlinNativeTargetWithTestsConfigurator<
+        TargetType : KotlinNativeTargetWithTests<TestRunType>,
+        TestRunType : KotlinNativeBinaryTestRun,
+        TaskType : KotlinNativeTest>(
     kotlinPluginVersion: String
-) : KotlinNativeTargetConfigurator<KotlinNativeTargetWithTests<TestRunType>>(kotlinPluginVersion),
-    KotlinTargetWithTestsConfigurator<TestRunType, KotlinNativeTargetWithTests<TestRunType>> {
+) : KotlinNativeTargetConfigurator<TargetType>(kotlinPluginVersion),
+    KotlinTargetWithTestsConfigurator<TestRunType, TargetType> {
 
     abstract val testTaskClass: Class<TaskType>
 
-    abstract fun isTestTaskEnabled(target: KotlinNativeTargetWithTests<*>): Boolean
+    abstract fun isTestTaskEnabled(target: TargetType): Boolean
 
-    protected open fun configureTestTask(target: KotlinNativeTargetWithTests<*>, testTask: TaskType) {
+    protected open fun configureTestTask(target: TargetType, testTask: TaskType) {
         testTask.group = LifecycleBasePlugin.VERIFICATION_GROUP
         testTask.description = "Executes Kotlin/Native unit tests for target ${target.name}."
         testTask.targetName = target.name
@@ -415,7 +418,7 @@ abstract class KotlinNativeTargetWithTestsConfigurator<TaskType : KotlinNativeTe
         testTask.configureConventions()
     }
 
-    protected open fun configureTestRun(target: KotlinNativeTargetWithTests<*>, testRun: AbstractKotlinNativeTestRun<TaskType>) {
+    protected open fun configureTestRun(target: TargetType, testRun: AbstractKotlinNativeTestRun<TaskType>) {
         with(testRun) {
             val project = target.project
 
@@ -433,7 +436,12 @@ abstract class KotlinNativeTargetWithTestsConfigurator<TaskType : KotlinNativeTe
 }
 
 class KotlinNativeTargetWithHostTestsConfigurator(kotlinPluginVersion: String) :
-    KotlinNativeTargetWithTestsConfigurator<KotlinNativeHostTest, KotlinNativeHostTestRun>(kotlinPluginVersion) {
+    KotlinNativeTargetWithTestsConfigurator<
+            KotlinNativeTargetWithHostTests,
+            KotlinNativeHostTestRun,
+            KotlinNativeHostTest>(
+        kotlinPluginVersion
+    ) {
 
     override val testTaskClass: Class<KotlinNativeHostTest>
         get() = KotlinNativeHostTest::class.java
@@ -441,18 +449,23 @@ class KotlinNativeTargetWithHostTestsConfigurator(kotlinPluginVersion: String) :
     override val testRunClass: Class<KotlinNativeHostTestRun>
         get() = KotlinNativeHostTestRun::class.java
 
-    override fun isTestTaskEnabled(target: KotlinNativeTargetWithTests<*>): Boolean =
+    override fun isTestTaskEnabled(target: KotlinNativeTargetWithHostTests): Boolean =
         target.konanTarget.isCurrentHost
 
     override fun createTestRun(
         name: String,
-        target: KotlinNativeTargetWithTests<KotlinNativeHostTestRun>
+        target: KotlinNativeTargetWithHostTests
     ): KotlinNativeHostTestRun =
         DefaultHostTestRun(name, target).apply { configureTestRun(target, this) }
 }
 
 class KotlinNativeTargetWithSimulatorTestsConfigurator(kotlinPluginVersion: String) :
-    KotlinNativeTargetWithTestsConfigurator<KotlinNativeSimulatorTest, KotlinNativeSimulatorTestRun>(kotlinPluginVersion) {
+    KotlinNativeTargetWithTestsConfigurator<
+            KotlinNativeTargetWithSimulatorTests,
+            KotlinNativeSimulatorTestRun,
+            KotlinNativeSimulatorTest>(
+        kotlinPluginVersion
+    ) {
 
     override val testTaskClass: Class<KotlinNativeSimulatorTest>
         get() = KotlinNativeSimulatorTest::class.java
@@ -460,10 +473,10 @@ class KotlinNativeTargetWithSimulatorTestsConfigurator(kotlinPluginVersion: Stri
     override val testRunClass: Class<KotlinNativeSimulatorTestRun>
         get() = KotlinNativeSimulatorTestRun::class.java
 
-    override fun isTestTaskEnabled(target: KotlinNativeTargetWithTests<*>): Boolean =
+    override fun isTestTaskEnabled(target: KotlinNativeTargetWithSimulatorTests): Boolean =
         HostManager.hostIsMac
 
-    override fun configureTestTask(target: KotlinNativeTargetWithTests<*>, testTask: KotlinNativeSimulatorTest) {
+    override fun configureTestTask(target: KotlinNativeTargetWithSimulatorTests, testTask: KotlinNativeSimulatorTest) {
         super.configureTestTask(target, testTask)
 
         testTask.deviceId = when (target.konanTarget) {
@@ -476,7 +489,7 @@ class KotlinNativeTargetWithSimulatorTestsConfigurator(kotlinPluginVersion: Stri
 
     override fun createTestRun(
         name: String,
-        target: KotlinNativeTargetWithTests<KotlinNativeSimulatorTestRun>
+        target: KotlinNativeTargetWithSimulatorTests
     ): KotlinNativeSimulatorTestRun =
         DefaultSimulatorTestRun(name, target).apply { configureTestRun(target, this) }
 }

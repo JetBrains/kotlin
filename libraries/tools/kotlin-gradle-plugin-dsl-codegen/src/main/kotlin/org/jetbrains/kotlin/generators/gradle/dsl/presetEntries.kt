@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.generators.gradle.dsl
 
 import org.jetbrains.kotlin.generators.gradle.dsl.NativeFQNames.Presets
 import org.jetbrains.kotlin.generators.gradle.dsl.NativeFQNames.Targets
-import org.jetbrains.kotlin.generators.gradle.dsl.NativeFQNames.TestRuns
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
@@ -23,22 +22,16 @@ internal fun KotlinPresetEntry.typeNames(): Set<TypeName> = setOf(presetType, ta
 internal const val MPP_PACKAGE = "org.jetbrains.kotlin.gradle.plugin.mpp"
 
 internal object NativeFQNames {
-    const val nativePackage = "org.jetbrains.kotlin.gradle.targets.native"
-
     object Targets {
         const val base = "$MPP_PACKAGE.KotlinNativeTarget"
-        const val withTests = "$MPP_PACKAGE.KotlinNativeTargetWithTests"
+        const val withHostTests = "$MPP_PACKAGE.KotlinNativeTargetWithHostTests"
+        const val withSimulatorTests = "$MPP_PACKAGE.KotlinNativeTargetWithSimulatorTests"
     }
 
     object Presets {
         const val simple = "$MPP_PACKAGE.KotlinNativeTargetPreset"
         const val withHostTests = "$MPP_PACKAGE.KotlinNativeTargetWithHostTestsPreset"
         const val withSimulatorTests = "$MPP_PACKAGE.KotlinNativeTargetWithSimulatorTestsPreset"
-    }
-
-    object TestRuns {
-        const val host = "$nativePackage.KotlinNativeHostTestRun"
-        const val simulator = "$nativePackage.KotlinNativeSimulatorTestRun"
     }
 }
 
@@ -71,14 +64,14 @@ internal val nativePresetEntries = HostManager().targets
 
         val (presetType, targetType) = when (target) {
             in nativeTargetsWithHostTests ->
-                typeName(Presets.withHostTests) to typeName(Targets.withTests, TestRuns.host)
+                Presets.withHostTests to Targets.withHostTests
             in nativeTargetsWithSimulatorTests ->
-                typeName(Presets.withSimulatorTests) to typeName(Targets.withTests, TestRuns.simulator)
+                Presets.withSimulatorTests to Targets.withSimulatorTests
             else ->
-                typeName(Presets.simple) to typeName(Targets.base)
+                Presets.simple to Targets.base
         }
 
-        KotlinPresetEntry(target.presetName, presetType, targetType)
+        KotlinPresetEntry(target.presetName, typeName(presetType), typeName(targetType))
     }
 
 internal val allPresetEntries = listOf(
