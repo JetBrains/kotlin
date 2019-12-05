@@ -873,6 +873,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/resolve/testData/resolve/overrides/simpleFakeOverride.kt");
         }
 
+        @TestMetadata("simpleMostSpecific.kt")
+        public void testSimpleMostSpecific() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/overrides/simpleMostSpecific.kt");
+        }
+
         @TestMetadata("supertypeGenerics.kt")
         public void testSupertypeGenerics() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/overrides/supertypeGenerics.kt");

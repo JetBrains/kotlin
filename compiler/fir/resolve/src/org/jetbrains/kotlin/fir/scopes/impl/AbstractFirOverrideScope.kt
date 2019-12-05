@@ -25,7 +25,7 @@ abstract class AbstractFirOverrideScope(val session: FirSession, protected val o
         return overrideChecker.isOverriddenProperty(overrideCandidate, baseDeclaration)
     }
 
-    private fun similarFunctionsOrBothProperties(
+    protected fun similarFunctionsOrBothProperties(
         overrideCandidate: FirCallableMemberDeclaration<*>,
         baseDeclaration: FirCallableMemberDeclaration<*>
     ): Boolean {

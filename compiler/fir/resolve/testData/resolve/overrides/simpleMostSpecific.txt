@@ -1,0 +1,86 @@
+FILE: simpleMostSpecific.kt
+    public abstract interface A : R|kotlin/Any| {
+        public abstract val x: R|kotlin/CharSequence|
+            public get(): R|kotlin/CharSequence|
+
+        public abstract fun foo(): R|kotlin/String?|
+
+        public abstract fun <T, F> bar(x: R|T|, y: R|F|): R|F?|
+
+    }
+    public abstract interface B : R|kotlin/Any| {
+        public abstract var x: R|kotlin/String|
+            public get(): R|kotlin/String|
+            public set(value: R|kotlin/String|): R|kotlin/Unit|
+
+        public abstract fun foo(): R|kotlin/String|
+
+        public abstract fun <X, Y> bar(x: R|X|, y: R|Y|): R|Y|
+
+    }
+    public abstract interface C : R|kotlin/Any| {
+        public abstract val x: R|kotlin/String|
+            public get(): R|kotlin/String|
+
+    }
+    public abstract interface D1 : R|A|, R|B| {
+    }
+    public abstract interface D2 : R|B|, R|A| {
+    }
+    public abstract interface D3 : R|A|, R|C| {
+    }
+    public final fun main(d1: R|D1|, d2: R|D2|, d3: R|D3|): R|kotlin/Unit| {
+        R|<local>/d1|.R|/B.x|.R|tests/_checkType/checkType|<R|kotlin/String|>(<L> = checkType@fun R|tests/_checkType/Inv<kotlin/String>|.<anonymous>(): R|kotlin/Unit| {
+            this@R|special/anonymous|.R|tests/_checkType/_|<R|kotlin/String|>()
+        }
+        )
+        R|<local>/d1|.R|/B.x| = String()
+        R|<local>/d1|.R|/B.foo|().R|tests/_checkType/checkType|<R|kotlin/String|>(<L> = checkType@fun R|tests/_checkType/Inv<kotlin/String>|.<anonymous>(): R|kotlin/Unit| {
+            this@R|special/anonymous|.R|tests/_checkType/_|<R|kotlin/String|>()
+        }
+        )
+        R|<local>/d1|.R|/B.bar|<R|kotlin/Int|, R|kotlin/String|>(Int(1), String()).R|tests/_checkType/checkType|<R|kotlin/String|>(<L> = checkType@fun R|tests/_checkType/Inv<kotlin/String>|.<anonymous>(): R|kotlin/Unit| {
+            this@R|special/anonymous|.R|tests/_checkType/_|<R|kotlin/String|>()
+        }
+        )
+        R|<local>/d2|.R|/B.x|.R|tests/_checkType/checkType|<R|kotlin/String|>(<L> = checkType@fun R|tests/_checkType/Inv<kotlin/String>|.<anonymous>(): R|kotlin/Unit| {
+            this@R|special/anonymous|.R|tests/_checkType/_|<R|kotlin/String|>()
+        }
+        )
+        R|<local>/d2|.R|/B.x| = String()
+        R|<local>/d2|.R|/B.foo|().R|tests/_checkType/checkType|<R|kotlin/String|>(<L> = checkType@fun R|tests/_checkType/Inv<kotlin/String>|.<anonymous>(): R|kotlin/Unit| {
+            this@R|special/anonymous|.R|tests/_checkType/_|<R|kotlin/String|>()
+        }
+        )
+        R|<local>/d2|.R|/B.bar|<R|kotlin/Int|, R|kotlin/String|>(Int(1), String()).R|tests/_checkType/checkType|<R|kotlin/String|>(<L> = checkType@fun R|tests/_checkType/Inv<kotlin/String>|.<anonymous>(): R|kotlin/Unit| {
+            this@R|special/anonymous|.R|tests/_checkType/_|<R|kotlin/String|>()
+        }
+        )
+        R|<local>/d3|.R|/C.x|.R|tests/_checkType/checkType|<R|kotlin/String|>(<L> = checkType@fun R|tests/_checkType/Inv<kotlin/String>|.<anonymous>(): R|kotlin/Unit| {
+            this@R|special/anonymous|.R|tests/_checkType/_|<R|kotlin/String|>()
+        }
+        )
+        R|<local>/d3|.R|/C.x| = String()
+        R|<local>/d3|.R|/A.foo|().R|tests/_checkType/checkType|<R|kotlin/String?|>(<L> = checkType@fun R|tests/_checkType/Inv<kotlin/String?>|.<anonymous>(): R|kotlin/Unit| {
+            this@R|special/anonymous|.R|tests/_checkType/_|<R|kotlin/String?|>()
+        }
+        )
+        R|<local>/d3|.R|/A.bar|<R|kotlin/Int|, R|kotlin/String|>(Int(1), String()).R|tests/_checkType/checkType|<R|kotlin/String?|>(<L> = checkType@fun R|tests/_checkType/Inv<kotlin/String?>|.<anonymous>(): R|kotlin/Unit| {
+            this@R|special/anonymous|.R|tests/_checkType/_|<R|kotlin/String?|>()
+        }
+        )
+    }
+FILE: CHECK_TYPE.kt
+    public final fun <T> checkSubtype(t: R|T|): R|T| {
+        ^checkSubtype R|<local>/t|
+    }
+    public final class Inv<T> : R|kotlin/Any| {
+        public constructor<T>(): R|tests/_checkType/Inv<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun <E> R|tests/_checkType/Inv<E>|._(): R|kotlin/Unit| {
+    }
+    public final infix fun <T> R|T|.checkType(f: R|tests/_checkType/Inv<T>.() -> kotlin/Unit|): R|kotlin/Unit| {
+    }
