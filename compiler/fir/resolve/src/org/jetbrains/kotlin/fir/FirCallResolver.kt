@@ -283,8 +283,7 @@ class FirCallResolver(
             typeArguments = typeArguments,
             session,
             file,
-            implicitReceiverStack,
-            container
+            implicitReceiverStack
         ) { it.resultType }
         val candidateFactory = CandidateFactory(this, callInfo)
         val candidates = mutableListOf<Candidate>()
