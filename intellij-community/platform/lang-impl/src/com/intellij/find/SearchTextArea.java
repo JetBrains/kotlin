@@ -224,7 +224,7 @@ public class SearchTextArea extends NonOpaquePanel implements PropertyChangeList
   }
 
   protected boolean isNewLineAvailable() {
-    return Registry.is("ide.find.show.add.newline.hint") && myMultilineEnabled;
+    return myMultilineEnabled;
   }
 
   private void updateIconsLayout() {
