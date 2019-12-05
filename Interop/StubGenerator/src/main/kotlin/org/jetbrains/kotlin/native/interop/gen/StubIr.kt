@@ -229,16 +229,8 @@ enum class VisibilityModifier {
     PRIVATE, PROTECTED, INTERNAL, PUBLIC
 }
 
-class ConstructorParameterStub(val name: String, val type: StubType, val qualifier: Qualifier = Qualifier.NONE) {
-    sealed class Qualifier {
-        class VAL(val overrides: Boolean) : Qualifier()
-        class VAR(val overrides: Boolean) : Qualifier()
-        object NONE : Qualifier()
-    }
-}
-
 class GetConstructorParameter(
-        val constructorParameterStub: ConstructorParameterStub
+        val constructorParameterStub: FunctionParameterStub
 ) : ValueStub()
 
 class SuperClassInit(
@@ -256,7 +248,7 @@ sealed class ClassStub : StubContainer(), StubElementWithOrigin, AnnotationHolde
     class Simple(
             val classifier: Classifier,
             val modality: ClassStubModality,
-            val constructorParameters: List<ConstructorParameterStub> = emptyList(),
+            val constructorParameters: List<FunctionParameterStub> = emptyList(),
             override val superClassInit: SuperClassInit? = null,
             override val interfaces: List<StubType> = emptyList(),
             override val properties: List<PropertyStub> = emptyList(),
@@ -284,7 +276,7 @@ sealed class ClassStub : StubContainer(), StubElementWithOrigin, AnnotationHolde
     class Enum(
             val classifier: Classifier,
             val entries: List<EnumEntryStub>,
-            val constructorParameters: List<ConstructorParameterStub> = emptyList(),
+            val constructorParameters: List<FunctionParameterStub> = emptyList(),
             override val superClassInit: SuperClassInit? = null,
             override val interfaces: List<StubType> = emptyList(),
             override val properties: List<PropertyStub> = emptyList(),
@@ -339,6 +331,11 @@ sealed class PropertyAccessor : FunctionalStub {
         class SimpleGetter(
                 override val annotations: List<AnnotationStub> = emptyList(),
                 val constant: ConstantStub? = null
+        ) : Getter()
+
+        class GetConstructorParameter(
+                val constructorParameter: FunctionParameterStub,
+                override val annotations: List<AnnotationStub> = emptyList()
         ) : Getter()
 
         class ExternalGetter(

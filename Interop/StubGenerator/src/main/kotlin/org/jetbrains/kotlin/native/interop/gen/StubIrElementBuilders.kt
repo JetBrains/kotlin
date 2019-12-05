@@ -120,7 +120,7 @@ internal class StructStubBuilder(
 
         val superClass = context.platform.getRuntimeType("CStructVar")
         require(superClass is ClassifierStubType)
-        val rawPtrConstructorParam = ConstructorParameterStub("rawPtr", context.platform.getRuntimeType("NativePtr"))
+        val rawPtrConstructorParam = FunctionParameterStub("rawPtr", context.platform.getRuntimeType("NativePtr"))
         val superClassInit = SuperClassInit(superClass, listOf(GetConstructorParameter(rawPtrConstructorParam)))
 
         val companionSuper = superClass.nested("Type")
@@ -173,7 +173,7 @@ internal class StructStubBuilder(
         KotlinPlatform.JVM -> {
             val classifier = context.getKotlinClassForPointed(s)
             val superClass = context.platform.getRuntimeType("COpaque")
-            val rawPtrConstructorParam = ConstructorParameterStub("rawPtr", context.platform.getRuntimeType("NativePtr"))
+            val rawPtrConstructorParam = FunctionParameterStub("rawPtr", context.platform.getRuntimeType("NativePtr"))
             val superClassInit = SuperClassInit(superClass, listOf(GetConstructorParameter(rawPtrConstructorParam)))
             val origin = StubOrigin.Struct(s)
             listOf(ClassStub.Simple(classifier, ClassStubModality.NONE, listOf(rawPtrConstructorParam), superClassInit, origin = origin))
@@ -194,8 +194,14 @@ internal class EnumStubBuilder(
         val baseType = baseTypeMirror.argType.toStubIrType()
 
         val clazz = (context.mirror(EnumType(enumDef)) as TypeMirror.ByValue).valueType.classifier
-        val qualifier = ConstructorParameterStub.Qualifier.VAL(overrides = true)
-        val valueParamStub = ConstructorParameterStub("value", baseType, qualifier)
+        val constructorParameter = FunctionParameterStub("value", baseType)
+
+        val valueProperty = PropertyStub(
+                name = "value",
+                type = baseType,
+                kind = PropertyStub.Kind.Val(PropertyAccessor.Getter.GetConstructorParameter(constructorParameter)),
+                modality = MemberStubModality.OVERRIDE,
+                origin = StubOrigin.None)
 
         val canonicalsByValue = enumDef.constants
                 .groupingBy { it.value }
@@ -216,8 +222,9 @@ internal class EnumStubBuilder(
         }
 
         val enum = ClassStub.Enum(clazz, canonicalEntries,
+                properties = listOf(valueProperty),
                 origin = StubOrigin.Enum(enumDef),
-                constructorParameters = listOf(valueParamStub),
+                constructorParameters = listOf(constructorParameter),
                 interfaces = listOf(context.platform.getRuntimeType("CEnum"))
         )
         context.bridgeComponentsBuilder.enumToTypeMirror[enum] = baseTypeMirror

@@ -205,61 +205,8 @@ class StubIrTextEmitter(
             }
         }
 
-        override fun visitProperty(element: PropertyStub, owner: StubContainer?) {
-            if (element in bridgeBuilderResult.excludedStubs) return
-
-            val modality = renderMemberModality(element.modality, owner)
-            val receiver = if (element.receiverType != null) "${renderStubType(element.receiverType)}." else ""
-            val name = if (owner?.isTopLevelContainer == true) {
-                getTopLevelPropertyDeclarationName(kotlinFile, element.name)
-            } else {
-                element.name.asSimpleName()
-            }
-            val header = "$receiver$name: ${renderStubType(element.type)}"
-
-            if (element.kind is PropertyStub.Kind.Val && !nativeBridges.isSupported(element.kind.getter)
-                    || element.kind is PropertyStub.Kind.Var && !nativeBridges.isSupported(element.kind.getter)) {
-                out(annotationForUnableToImport)
-                out("val $header")
-                out("    get() = TODO()")
-            } else {
-                element.annotations.forEach {
-                    out(renderAnnotation(it))
-                }
-                when (val kind = element.kind) {
-                    is PropertyStub.Kind.Constant -> {
-                        out("${modality}const val $header = ${renderValueUsage(kind.constant)}")
-                    }
-                    is PropertyStub.Kind.Val -> {
-                        val shouldWriteInline = kind.getter is PropertyAccessor.Getter.SimpleGetter && kind.getter.constant != null
-                        if (shouldWriteInline) {
-                            out("${modality}val $header ${renderGetter(kind.getter)}")
-                        } else {
-                            out("${modality}val $header")
-                            indent {
-                                out(renderGetter(kind.getter))
-                            }
-                        }
-                    }
-                    is PropertyStub.Kind.Var -> {
-                        val isSupported = nativeBridges.isSupported(kind.setter)
-                        val variableKind = if (isSupported) "var" else "val"
-
-                        out("$modality$variableKind $header")
-                        indent {
-                            out(renderGetter(kind.getter))
-                            if (isSupported) {
-                                out(renderSetter(kind.setter))
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        // Try to use the provided name. If failed, mangle it with underscore and try again:
-        private tailrec fun getTopLevelPropertyDeclarationName(scope: KotlinScope, name: String): String =
-                scope.declareProperty(name) ?: getTopLevelPropertyDeclarationName(scope, name + "_")
+        override fun visitProperty(element: PropertyStub, owner: StubContainer?) =
+            emitProperty(element, owner)
 
         override fun visitConstructor(constructorStub: ConstructorStub, owner: StubContainer?) {
             constructorStub.annotations.forEach {
@@ -319,6 +266,11 @@ class StubIrTextEmitter(
 
         out(";")
         emitEmptyLine()
+        enum.properties.forEach {
+            emitProperty(it, enum)
+            emitEmptyLine()
+        }
+
         block("companion object") {
             enum.entries.forEach { entry ->
                 entry.aliases.forEach {
@@ -337,6 +289,67 @@ class StubIrTextEmitter(
             out("var value: $simpleKotlinName")
             out("    get() = byValue(this.reinterpret<$basePointedTypeName>().value)")
             out("    set(value) { this.reinterpret<$basePointedTypeName>().value = value.value }")
+        }
+    }
+
+    // Try to use the provided name. If failed, mangle it with underscore and try again:
+    private tailrec fun getTopLevelPropertyDeclarationName(scope: KotlinScope, name: String): String =
+            scope.declareProperty(name) ?: getTopLevelPropertyDeclarationName(scope, name + "_")
+
+    private fun emitProperty(element: PropertyStub, owner: StubContainer?) {
+        if (element in bridgeBuilderResult.excludedStubs) return
+
+        val modality = renderMemberModality(element.modality, owner)
+        val receiver = if (element.receiverType != null) "${renderStubType(element.receiverType)}." else ""
+        val name = if (owner?.isTopLevelContainer == true) {
+            getTopLevelPropertyDeclarationName(kotlinFile, element.name)
+        } else {
+            element.name.asSimpleName()
+        }
+        val header = "$receiver$name: ${renderStubType(element.type)}"
+
+        if (element.kind is PropertyStub.Kind.Val && !nativeBridges.isSupported(element.kind.getter)
+                || element.kind is PropertyStub.Kind.Var && !nativeBridges.isSupported(element.kind.getter)) {
+            out(annotationForUnableToImport)
+            out("val $header")
+            out("    get() = TODO()")
+        } else {
+            element.annotations.forEach {
+                out(renderAnnotation(it))
+            }
+            when (val kind = element.kind) {
+                is PropertyStub.Kind.Constant -> {
+                    out("${modality}const val $header = ${renderValueUsage(kind.constant)}")
+                }
+                is PropertyStub.Kind.Val -> {
+                    val shouldWriteInline = kind.getter.let {
+                        (it is PropertyAccessor.Getter.SimpleGetter && it.constant != null)
+                                // We should render access to constructor parameter inline.
+                                // Otherwise, it may be access to the property itself. (val f: Any get() = f)
+                                || it is PropertyAccessor.Getter.GetConstructorParameter
+                    }
+                    if (shouldWriteInline) {
+                        out("${modality}val $header ${renderGetter(kind.getter)}")
+                    } else {
+                        out("${modality}val $header")
+                        indent {
+                            out(renderGetter(kind.getter))
+                        }
+                    }
+                }
+                is PropertyStub.Kind.Var -> {
+                    val isSupported = nativeBridges.isSupported(kind.setter)
+                    val variableKind = if (isSupported) "var" else "val"
+
+                    out("$modality$variableKind $header")
+                    indent {
+                        out(renderGetter(kind.getter))
+                        if (isSupported) {
+                            out(renderSetter(kind.setter))
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -405,21 +418,12 @@ class StubIrTextEmitter(
         ClassStubModality.NONE -> "class "
     }
 
-    private fun renderConstructorParams(parameters: List<ConstructorParameterStub>): String =
+    private fun renderConstructorParams(parameters: List<FunctionParameterStub>): String =
             if (parameters.isEmpty()) {
                 ""
             } else {
-                parameters.joinToString(prefix = "(", postfix = ")") { renderConstructorParameter(it) }
+                parameters.joinToString(prefix = "(", postfix = ")") { renderFunctionParameter(it) }
             }
-
-    private fun renderConstructorParameter(parameterStub: ConstructorParameterStub): String {
-        val prefix = when (parameterStub.qualifier) {
-            is ConstructorParameterStub.Qualifier.VAL -> if (parameterStub.qualifier.overrides) "override val " else "val "
-            is ConstructorParameterStub.Qualifier.VAR -> if (parameterStub.qualifier.overrides) "override var " else "var "
-            ConstructorParameterStub.Qualifier.NONE -> ""
-        }
-        return "$prefix${parameterStub.name.asSimpleName()}: ${renderStubType(parameterStub.type)}"
-    }
 
     private fun renderSuperInit(superClassInit: SuperClassInit): String {
         val parameters = superClassInit.arguments.joinToString(prefix = "(", postfix = ")") { renderValueUsage(it) }
@@ -514,10 +518,14 @@ class StubIrTextEmitter(
     private fun renderGetter(accessor: PropertyAccessor.Getter): String {
         val annotations = accessor.annotations.joinToString(separator = "") { renderAnnotation(it) + " " }
 
-        return annotations + if (accessor is PropertyAccessor.Getter.ExternalGetter) {
-            "external get"
-        } else {
-            "get() = ${renderPropertyAccessorBody(accessor)}"
+        return annotations + when (accessor) {
+            is PropertyAccessor.Getter.ExternalGetter -> {
+                "external get"
+            }
+            is PropertyAccessor.Getter.GetConstructorParameter -> "= ${renderPropertyAccessorBody(accessor)}"
+            else -> {
+                "get() = ${renderPropertyAccessorBody(accessor)}"
+            }
         }
     }
 
@@ -538,6 +546,8 @@ class StubIrTextEmitter(
                 else -> error("Bridge body for getter was not generated")
             }
         }
+
+        is PropertyAccessor.Getter.GetConstructorParameter -> accessor.constructorParameter.name
 
         is PropertyAccessor.Getter.ArrayMemberAt -> "arrayMemberAt(${accessor.offset})"
 
