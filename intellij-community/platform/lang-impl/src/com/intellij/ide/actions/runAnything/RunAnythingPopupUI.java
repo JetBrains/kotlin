@@ -42,25 +42,20 @@ import com.intellij.ui.components.JBTextField;
 import com.intellij.ui.components.fields.ExtendableTextComponent;
 import com.intellij.ui.components.fields.ExtendableTextField;
 import com.intellij.ui.components.panels.NonOpaquePanel;
-import com.intellij.util.ArrayUtil;
-import com.intellij.util.BooleanFunction;
-import com.intellij.util.Consumer;
-import com.intellij.util.ObjectUtils;
+import com.intellij.util.*;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.StartupUiUtil;
 import com.intellij.util.ui.StatusText;
 import com.intellij.util.ui.UIUtil;
-import one.util.streamex.IntStreamEx;
+import one.util.streamex.StreamEx;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.accessibility.Accessible;
 import javax.swing.*;
 import javax.swing.border.Border;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
@@ -101,6 +96,7 @@ public class RunAnythingPopupUI extends BigPopupUI {
   private final List<RunAnythingContext> myAvailableExecutingContexts = new ArrayList<>();
   private RunAnythingChooseContextAction myChooseContextAction;
   private final EmptyProgressIndicator myProgressIndicator = new EmptyProgressIndicator();
+  private final Alarm myListRenderingAlarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD);
 
   @Nullable
   public String getUserInputText() {
@@ -137,7 +133,10 @@ public class RunAnythingPopupUI extends BigPopupUI {
             myLastInputText = null;
             clearSelection();
 
-            rebuildList();
+            //invoke later here allows to get correct pattern from mySearchField
+            ApplicationManager.getApplication().invokeLater(() -> {
+              rebuildList();
+            });
           }
 
           if (!isHelpMode(pattern)) {
@@ -233,17 +232,12 @@ public class RunAnythingPopupUI extends BigPopupUI {
     ActionCallback callback = new ActionCallback();
     ApplicationManager.getApplication().executeOnPooledThread(() -> {
       try {
-        ArrayList<RunAnythingItem> items =
-          IntStreamEx.range(0, myListModel.size())
-            .mapToObj(i -> myListModel.getElementAt(i))
-            .select(RunAnythingItem.class)
-            .collect(Collectors.toCollection(ArrayList::new));
-
+        List<RunAnythingItem> items = StreamEx.of(myListModel.getItems()).select(RunAnythingItem.class).collect(Collectors.toList());
         RunAnythingGroup.SearchResult result;
         try {
-          EmptyProgressIndicator progressIndicator = new EmptyProgressIndicator();
-          result = ProgressManager.getInstance()
-            .runProcess(() -> group.getItems(getDataContext(), items, trimHelpPattern(getSearchPattern()), true), progressIndicator);
+          result = ProgressManager.getInstance().runProcess(
+            () -> group.getItems(getDataContext(), items,
+                                 trimHelpPattern(getSearchPattern()), true), new EmptyProgressIndicator());
         }
         catch (ProcessCanceledException e) {
           return;
@@ -254,7 +248,7 @@ public class RunAnythingPopupUI extends BigPopupUI {
             int shift = 0;
             int i = index + 1;
             for (Object o : result) {
-              myListModel.insertElementAt(o, i);
+              myListModel.add(i, o);
               shift++;
               i++;
             }
@@ -369,6 +363,7 @@ public class RunAnythingPopupUI extends BigPopupUI {
     ApplicationManager.getApplication().assertIsDispatchThread();
 
     myProgressIndicator.cancel();
+    myListRenderingAlarm.cancelAllRequests();
     myResultsList.getEmptyText().setText("Searching...");
 
     if (DumbService.getInstance(myProject).isDumb()) {
@@ -381,18 +376,42 @@ public class RunAnythingPopupUI extends BigPopupUI {
       try {
         myListModel = ProgressManager.getInstance()
           .runProcess(new RunAnythingCalcThread(myProject, getDataContext(), getSearchPattern()), myProgressIndicator);
+        myProgressIndicator.checkCanceled();
       }
       catch (ProcessCanceledException e) {
         return;
       }
 
-      ApplicationManager.getApplication().invokeLater(() -> {
+      myListRenderingAlarm.addRequest(() -> {
+        if (myProgressIndicator.isRunning() || myProgressIndicator.isCanceled()) {
+          return;
+        }
         addListDataListener(myListModel);
         myResultsList.setModel(myListModel);
         myListModel.update();
+      }, 150);
+    });
+  }
 
-        updateViewType(myListModel.size() == 0 ? ViewType.SHORT : ViewType.FULL);
-      });
+  @Override
+  protected void addListDataListener(@NotNull AbstractListModel<Object> model) {
+    model.addListDataListener(new ListDataListener() {
+      @Override
+      public void intervalAdded(ListDataEvent e) {
+        updateViewType(ViewType.FULL);
+      }
+
+      @Override
+      public void intervalRemoved(ListDataEvent e) {
+        if (myResultsList.isEmpty()) {
+          updateViewType(ViewType.SHORT);
+        }
+      }
+
+      @Override
+      public void contentsChanged(ListDataEvent e) {
+        updateViewType(myResultsList.isEmpty() ? ViewType.SHORT : ViewType.FULL);
+      }
     });
   }
 
@@ -738,7 +757,7 @@ public class RunAnythingPopupUI extends BigPopupUI {
 
       model.remove(index);
       model.shiftIndexes(index, -1);
-      if (model.size() > 0) ScrollingUtil.selectItem(myResultsList, index < model.size() ? index : index - 1);
+      if (!model.isEmpty()) ScrollingUtil.selectItem(myResultsList, index < model.getSize() ? index : index - 1);
     }).registerCustomShortcutSet(CustomShortcutSet.fromString("shift BACK_SPACE"), mySearchField, this);
 
     myProject.getMessageBus().connect(this).subscribe(DumbService.DUMB_MODE, new DumbService.DumbModeListener() {

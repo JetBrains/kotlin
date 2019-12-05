@@ -6,26 +6,20 @@ import com.intellij.ide.actions.runAnything.groups.RunAnythingCompletionGroup;
 import com.intellij.ide.actions.runAnything.groups.RunAnythingGroup;
 import com.intellij.ide.actions.runAnything.groups.RunAnythingHelpGroup;
 import com.intellij.ide.actions.runAnything.groups.RunAnythingRecentGroup;
-import com.intellij.util.ReflectionUtil;
+import com.intellij.ui.CollectionListModel;
 import com.intellij.util.containers.ContainerUtil;
 import one.util.streamex.StreamEx;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Vector;
 
 @SuppressWarnings("unchecked")
-public abstract class RunAnythingSearchListModel extends DefaultListModel<Object> {
-  @SuppressWarnings("UseOfObsoleteCollectionType")
-  Vector myDelegate;
-
+public abstract class RunAnythingSearchListModel extends CollectionListModel<Object> {
   protected RunAnythingSearchListModel() {
     super();
-    myDelegate = ReflectionUtil.getField(DefaultListModel.class, this, Vector.class, "delegate");
     clearIndexes();
   }
 
@@ -80,11 +74,6 @@ public abstract class RunAnythingSearchListModel extends DefaultListModel<Object
       if (all[i] != -1 && all[i] < index) return all[i];
     }
     return all[all.length - 1];
-  }
-
-  @Override
-  public void addElement(Object obj) {
-    myDelegate.add(obj);
   }
 
   public void update() {

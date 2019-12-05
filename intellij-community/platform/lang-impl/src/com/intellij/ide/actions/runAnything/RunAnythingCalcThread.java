@@ -41,7 +41,7 @@ class RunAnythingCalcThread implements Computable<RunAnythingSearchListModel> {
       items = buildAllGroups(model);
     }
 
-    items.forEach(element -> model.addElement(element));
+    model.addAll(0, items);
 
     return model;
   }
