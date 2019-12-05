@@ -48,7 +48,12 @@ internal val Project.simpleOsName
 /** A task with a KonanTarget specified. */
 abstract class KonanTargetableTask: DefaultTask() {
 
-    @Input internal lateinit var konanTarget: KonanTarget
+    @get:Input
+    val konanTargetName: String
+        get() = konanTarget.name
+
+    @get:Internal
+    internal lateinit var konanTarget: KonanTarget
 
     internal open fun init(target: KonanTarget) {
         this.konanTarget = target

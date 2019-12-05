@@ -36,8 +36,8 @@ import java.io.File
  */
 abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
 
-    @Internal override val toolRunner =
-        KonanCompilerRunner(project, project.konanExtension.jvmArgs)
+    @get:Internal
+    override val toolRunner = KonanCompilerRunner(project, project.konanExtension.jvmArgs)
 
     abstract val produce: CompilerOutputKind
         @Internal get
@@ -56,13 +56,13 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
 
     @Internal var enableMultiplatform = false
 
-    internal val commonSrcFiles_ = mutableSetOf<FileCollection>()
+    private val commonSrcFiles_ = mutableSetOf<FileCollection>()
     val commonSrcFiles: Collection<FileCollection>
         @Internal get() = if (enableMultiplatform) commonSrcFiles_ else emptyList()
 
     // Other compilation parameters -------------------------------------------
 
-    protected val srcFiles_ = mutableSetOf<FileCollection>()
+    private val srcFiles_ = mutableSetOf<FileCollection>()
     val srcFiles: Collection<FileCollection>
         @Internal get() = srcFiles_.takeIf { !it.isEmpty() } ?: listOf(project.konanDefaultSrcFiles)
 
@@ -70,7 +70,7 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
         @InputFiles get() = listOf(srcFiles, commonSrcFiles).flatten()
 
     private val allSourceFiles: List<File>
-        @Internal get() = allSources
+        get() = allSources
                 .flatMap { it.files }
                 .filter { it.name.endsWith(".kt") }
 
@@ -101,6 +101,7 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
      * In regular (one-stage) compilation, sources are directly compiled into a final native binary.
      * In two-stage compilation, sources are compiled into a klib first and then a final native binary is produced from this klib.
      */
+    @get:Input
     abstract val enableTwoStageCompilation: Boolean
 
     protected fun directoryToKt(dir: Any) = project.fileTree(dir).apply {
@@ -377,6 +378,7 @@ abstract class KonanCompileNativeBinary: KonanCompileTask() {
 open class KonanCompileProgramTask: KonanCompileNativeBinary() {
     override val produce: CompilerOutputKind get() = CompilerOutputKind.PROGRAM
 
+    @Internal
     var runTask: Exec? = null
 
     inner class RunArgumentProvider(): CommandLineArgumentProvider {
