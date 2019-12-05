@@ -80,6 +80,11 @@
     padding-left: 15px;
 }
 
+.white .unresolved-counter {
+    color: #d42eff;
+    padding-left: 15px;
+}
+
 .white .diagnostic-hover {
     background-color: #eaeaea;
     color: #000;

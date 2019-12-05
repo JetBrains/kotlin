@@ -90,6 +90,11 @@ body.dark {
     padding-left: 15px;
 }
 
+.dark .unresolved-counter {
+    color: #d42eff;
+    padding-left: 15px;
+}
+
 .dark .diagnostic-hover {
     background-color: #3a3a3a;
     color: #dfdfdf;
