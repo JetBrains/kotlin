@@ -3,7 +3,7 @@ package com.intellij.ide.actions.runAnything.groups;
 
 import com.intellij.ide.actions.runAnything.items.RunAnythingItem;
 import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.psi.codeStyle.NameUtil;
 import com.intellij.util.Function;
 import gnu.trove.TIntArrayList;
@@ -60,13 +60,11 @@ public abstract class RunAnythingGroup {
    * @param model               needed to avoid adding duplicates into the list
    * @param pattern             input search string
    * @param isInsertionMode     if true gets {@link #getMaxItemsToInsert()} group items, else limits to {@link #getMaxInitialItems()}
-   * @param progressIndicator   checks 'load more' calculation process to be cancelled
    */
   public abstract SearchResult getItems(@NotNull DataContext dataContext,
                                         @NotNull List<RunAnythingItem> model,
                                         @NotNull String pattern,
-                                        boolean isInsertionMode,
-                                        @NotNull ProgressIndicator progressIndicator);
+                                        boolean isInsertionMode);
 
   /**
    * Resets current group 'load more..' {@link #myMoreIndex} index.
@@ -196,15 +194,13 @@ public abstract class RunAnythingGroup {
    * @param dataContext
    * @param model               needed to avoid adding duplicates into the list
    * @param pattern             input search string
-   * @param progressIndicator   checks if 'load more' process was cancelled
    */
   public final synchronized void collectItems(@NotNull DataContext dataContext,
                                               @NotNull List<RunAnythingItem> model,
-                                              @NotNull String pattern,
-                                              @NotNull ProgressIndicator progressIndicator) {
-    SearchResult result = getItems(dataContext, model, pattern, false, progressIndicator);
+                                              @NotNull String pattern) {
+    SearchResult result = getItems(dataContext, model, pattern, false);
 
-    progressIndicator.checkCanceled();
+    ProgressManager.checkCanceled();
     if (!result.isEmpty()) {
       myTitleIndex = model.size();
       model.addAll(result);

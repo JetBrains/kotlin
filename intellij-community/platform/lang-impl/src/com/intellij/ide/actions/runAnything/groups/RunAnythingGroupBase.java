@@ -3,7 +3,7 @@ package com.intellij.ide.actions.runAnything.groups;
 
 import com.intellij.ide.actions.runAnything.items.RunAnythingItem;
 import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.util.text.Matcher;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,9 +24,8 @@ public abstract class RunAnythingGroupBase extends RunAnythingGroup {
   public SearchResult getItems(@NotNull DataContext dataContext,
                                @NotNull List<RunAnythingItem> model,
                                @NotNull String pattern,
-                               boolean isInsertionMode,
-                               @NotNull ProgressIndicator progressIndicator) {
-    progressIndicator.checkCanceled();
+                               boolean isInsertionMode) {
+    ProgressManager.checkCanceled();
     SearchResult result = new SearchResult();
     for (RunAnythingItem item : getGroupItems(dataContext, pattern)) {
       Matcher matcher = getMatcher(dataContext, pattern);
@@ -34,7 +33,7 @@ public abstract class RunAnythingGroupBase extends RunAnythingGroup {
         matcher = RUN_ANYTHING_MATCHER_BUILDER.fun(pattern).build();
       }
       if (addToList(model, result, item.getCommand(), isInsertionMode, item, matcher)) break;
-      progressIndicator.checkCanceled();
+      ProgressManager.checkCanceled();
     }
 
     return result;
