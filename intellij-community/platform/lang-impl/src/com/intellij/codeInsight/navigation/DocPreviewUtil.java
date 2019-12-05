@@ -4,6 +4,7 @@ package com.intellij.codeInsight.navigation;
 import com.intellij.codeInsight.documentation.DocumentationManagerProtocol;
 import com.intellij.lang.documentation.DocumentationProvider;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import gnu.trove.TIntHashSet;
 import org.jetbrains.annotations.NotNull;
@@ -97,16 +98,16 @@ public class DocPreviewUtil {
     Map<String, String> toAdd = new HashMap<>();
     for (Map.Entry<String, String> entry : links.entrySet()) {
       String shortName = parseShortName(entry.getKey());
-      if (shortName != null) {
+      if (!StringUtil.isEmpty(shortName)) {
         toAdd.put(shortName, entry.getValue());
       }
       String longName = parseLongName(entry.getKey(), entry.getValue());
-      if (longName != null) {
+      if (!StringUtil.isEmpty(longName)) {
         toAdd.put(longName, entry.getValue());
       }
     }
     links.putAll(toAdd);
-    if (qName != null) {
+    if (!StringUtil.isEmpty(qName)) {
       links.put(qName, DocumentationManagerProtocol.PSI_ELEMENT_PROTOCOL + qName);
     }
 

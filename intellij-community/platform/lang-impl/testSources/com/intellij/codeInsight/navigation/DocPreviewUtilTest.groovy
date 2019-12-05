@@ -191,4 +191,13 @@ var abc: A &amp; B &amp; C'''
 
     assertEquals(expected, DocPreviewUtil.buildPreview(header, null, fullText))
   }
+
+  @Test
+  void "empty qName doesn't hang"() {
+    def header = '''Header'''
+    def fullText = '''FullText'''
+    def expected = '''Header'''
+
+    assertEquals(expected, DocPreviewUtil.buildPreview(header, "", fullText))
+  }
 }
