@@ -93,7 +93,7 @@ class LiftReturnOrAssignmentInspection @JvmOverloads constructor(private val ski
         override fun getFamilyName() = name
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-            BranchedFoldingUtils.foldToAssignment(descriptor.psiElement as KtExpression)
+            BranchedFoldingUtils.tryFoldToAssignment(descriptor.psiElement as KtExpression)
         }
     }
 
