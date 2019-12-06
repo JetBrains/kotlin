@@ -32,8 +32,10 @@ class IdeFirProvider(
     val session: FirSession
 ) : FirProvider() {
     private val cacheProvider = FirProviderImpl(session)
-    // TODO: invalidation?
-    private val files = mutableMapOf<KtFile, FirFile>()
+
+    data class FirFileWithStamp(val file: FirFile, val stamp: Long)
+
+    private val files = mutableMapOf<KtFile, FirFileWithStamp>()
 
     override fun getFirClassifierByFqName(classId: ClassId): FirClassLikeDeclaration<*>? {
         return cacheProvider.getFirClassifierByFqName(classId) ?: run {
@@ -54,17 +56,31 @@ class IdeFirProvider(
     }
 
     fun getOrBuildFile(ktFile: KtFile): FirFile {
-        files[ktFile]?.let { return it }
+        val modificationStamp = ktFile.modificationStamp
+        files[ktFile]?.let { (firFile, stamp) ->
+            if (stamp == modificationStamp) {
+                return firFile
+            }
+        }
         return synchronized(ktFile) {
-            files.getOrPut(ktFile) {
+            var fileWithStamp = files[ktFile]
+            if (fileWithStamp != null && fileWithStamp.stamp == modificationStamp) {
+                fileWithStamp.file
+            } else {
                 val file = RawFirBuilder(session, stubMode = false).buildFirFile(ktFile)
                 cacheProvider.recordFile(file)
+                fileWithStamp = FirFileWithStamp(file, modificationStamp)
+                files[ktFile] = fileWithStamp
                 file
             }
         }
     }
 
-    fun getFile(ktFile: KtFile): FirFile? = files[ktFile]
+    fun getFile(ktFile: KtFile): FirFile? {
+        val (firFile, stamp) = files[ktFile] ?: return null
+        if (stamp == ktFile.modificationStamp) return firFile
+        return null
+    }
 
     override fun getClassLikeSymbolByFqName(classId: ClassId): FirClassLikeSymbol<*>? {
         return getFirClassifierByFqName(classId)?.symbol

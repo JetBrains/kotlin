@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.idea.fir
 
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -75,7 +77,7 @@ class FirResolveStateImpl(override val sessionProvider: FirSessionProvider) : Fi
 
     private val diagnosticCache = mutableMapOf<KtElement, MutableList<Diagnostic>>()
 
-    private val diagnosedFiles = mutableSetOf<KtFile>()
+    private val diagnosedFiles = mutableMapOf<KtFile, Long>()
 
     override fun get(psi: KtElement): FirElement? = cache[psi]
 
@@ -84,7 +86,20 @@ class FirResolveStateImpl(override val sessionProvider: FirSessionProvider) : Fi
     }
 
     override fun hasDiagnosticsForFile(file: KtFile): Boolean {
-        return file in diagnosedFiles
+        val previousStamp = diagnosedFiles[file] ?: return false
+        if (file.modificationStamp == previousStamp) {
+            return true
+        }
+        diagnosedFiles.remove(file)
+        file.accept(object : PsiElementVisitor() {
+            override fun visitElement(element: PsiElement) {
+                cache.remove(element)
+                diagnosticCache.remove(element)
+                element.acceptChildren(this)
+                super.visitElement(element)
+            }
+        })
+        return false
     }
 
     override fun record(psi: KtElement, fir: FirElement) {
@@ -101,7 +116,7 @@ class FirResolveStateImpl(override val sessionProvider: FirSessionProvider) : Fi
             (diagnostic.source.psi as? KtElement)?.let { record(it, diagnostic.diagnostic) }
         }
 
-        diagnosedFiles += file
+        diagnosedFiles[file] = file.modificationStamp
     }
 }
 
