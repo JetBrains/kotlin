@@ -31,6 +31,7 @@ import com.intellij.openapi.editor.EditorModificationUtil;
 import com.intellij.openapi.editor.actionSystem.EditorActionManager;
 import com.intellij.openapi.editor.actionSystem.TypedAction;
 import com.intellij.openapi.editor.ex.DocumentEx;
+import com.intellij.openapi.editor.ex.util.EditorUtil;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.progress.util.ProgressIndicatorUtils;
 import com.intellij.openapi.project.DumbService;
@@ -159,6 +160,7 @@ public class CodeCompletionHandlerBase {
     long startingTime = System.currentTimeMillis();
 
     Runnable initCmd = () -> {
+      WriteAction.run(() -> EditorUtil.fillVirtualSpaceUntilCaret(editor));
       CompletionInitializationContextImpl context = withTimeout(calcSyncTimeOut(startingTime), () ->
         CompletionInitializationUtil.createCompletionInitializationContext(project, editor, caret, invocationCount, completionType));
 
