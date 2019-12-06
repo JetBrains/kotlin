@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <results>
-  <testsuite name="org.foo.test.TestKt" tests="2" skipped="0" failures="0" errors="0" timestamp="..." hostname="..." time="...">
+  <testsuite name="org.foo.test.TestKt" tests="3" skipped="0" failures="1" errors="0" timestamp="..." hostname="..." time="...">
     <properties/>
     <testcase name="fooTest" classname="org.foo.test.TestKt" time="..."/>
     <testcase name="barTest" classname="org.foo.test.TestKt" time="..."/>
+    <testcase name="fail" classname="org.foo.test.TestKt" time="...">
+      <failure message="..." type="kotlin.IllegalStateException">...</failure>
+    </testcase>
     <system-out><![CDATA[Foo call
 Bar call]]></system-out>
     <system-err/>

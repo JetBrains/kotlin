@@ -48,6 +48,13 @@ kotlin {
     }
 }
 
+// Check that test events are correctly reported in CLI.
+configure([macos64Test, linux64Test, mingw64Test, iosTest]){
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}
+
 // Check that getting a test binary in an old way fails showing the corresponding warning
 task checkOldGet {
     doLast {
