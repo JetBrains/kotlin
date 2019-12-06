@@ -87,6 +87,10 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
             val returnTypeRef = property.returnTypeRef
             if (returnTypeRef !is FirImplicitTypeRef && implicitTypeOnly) return@withScopeCleanup property.compose()
             if (property.resolvePhase == transformerPhase) return@withScopeCleanup property.compose()
+            if (property.resolvePhase == FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE && transformerPhase == FirResolvePhase.BODY_RESOLVE) {
+                property.replaceResolvePhase(transformerPhase)
+                return@withScopeCleanup property.compose()
+            }
             dataFlowAnalyzer.enterProperty(property)
             if (returnTypeRef is FirImplicitTypeRef) {
                 property.transformReturnTypeRef(StoreType, FirComputingImplicitTypeRef)
