@@ -176,7 +176,7 @@ public class SelectionQuotingTypedHandler extends TypedHandlerDelegate {
    */
   @SuppressWarnings("SpellCheckingInspection")
   @Deprecated
-  @ApiStatus.ScheduledForRemoval(inVersion = "2019.3")
+  @ApiStatus.ScheduledForRemoval(inVersion = "2020.3")
   public static abstract class DequotingFilter extends UnquotingFilter {
   }
 }
