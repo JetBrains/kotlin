@@ -17,7 +17,7 @@
 package com.intellij.ide.highlighter.custom.impl;
 
 import com.intellij.codeInsight.editorActions.TypedHandler;
-import com.intellij.ide.highlighter.FileTypeRegistrar;
+import com.intellij.ide.highlighter.FileTypeRegistrator;
 import com.intellij.ide.highlighter.custom.SyntaxTable;
 import com.intellij.lang.Commenter;
 import com.intellij.openapi.fileTypes.FileType;
@@ -25,7 +25,7 @@ import com.intellij.openapi.fileTypes.impl.AbstractFileType;
 import com.intellij.openapi.fileTypes.impl.CustomSyntaxTableFileType;
 import org.jetbrains.annotations.NotNull;
 
-public class StandardFileTypeRegistrar implements FileTypeRegistrar {
+public class StandardFileTypeRegistrator implements FileTypeRegistrator {
   @Override
   public void initFileType(@NotNull final FileType fileType) {
     if (fileType instanceof AbstractFileType) {
