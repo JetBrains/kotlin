@@ -61,7 +61,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.LockSupport;
 
-public class ParameterInfoController extends UserDataHolderBase implements VisibleAreaListener, Disposable {
+public class ParameterInfoController extends UserDataHolderBase implements Disposable {
   private static final Logger LOG = Logger.getInstance(ParameterInfoController.class);
   private static final String WHITESPACE = " \t";
   private final Project myProject;
@@ -162,7 +162,6 @@ public class ParameterInfoController extends UserDataHolderBase implements Visib
       }
     };
     myEditor.getCaretModel().addCaretListener(myEditorCaretListener);
-    myEditor.getScrollingModel().addVisibleAreaListener(this);
 
     myEditor.getDocument().addDocumentListener(new DocumentListener() {
       @Override
@@ -218,12 +217,6 @@ public class ParameterInfoController extends UserDataHolderBase implements Visib
     List<ParameterInfoController> allControllers = getAllControllers(myEditor);
     allControllers.remove(this);
     myEditor.getCaretModel().removeCaretListener(myEditorCaretListener);
-    myEditor.getScrollingModel().removeVisibleAreaListener(this);
-  }
-
-  @Override
-  public void visibleAreaChanged(@NotNull VisibleAreaEvent e) {
-    if (Registry.is("editor.keep.completion.hints.even.longer")) rescheduleUpdate();
   }
 
   public void showHint(boolean requestFocus, boolean singleParameterInfo) {
