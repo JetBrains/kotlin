@@ -333,7 +333,7 @@ class NameTables(
         val name = memberNames.names[signature] ?: mappedNames[mapToKey(signature)]
 
         require(name != null) {
-            "Can't find name for member field $field"
+            "Can't find name for member field ${field.render()}"
         }
         return name
     }
