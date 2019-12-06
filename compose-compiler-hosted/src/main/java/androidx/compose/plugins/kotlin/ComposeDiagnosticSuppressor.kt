@@ -70,10 +70,9 @@ open class ComposeDiagnosticSuppressor : DiagnosticSuppressor {
                     "trace to resolve ktx call",
                     functionCall
                 )
-                if (call != null) return ComposableAnnotationChecker.get(
-                    diagnostic.psiElement.project
-                ).shouldInvokeAsTag(temporaryTrace, call)
-                return false
+                if (call != null) {
+                    return ComposableAnnotationChecker().shouldInvokeAsTag(temporaryTrace, call)
+                }
             }
         }
         return false
