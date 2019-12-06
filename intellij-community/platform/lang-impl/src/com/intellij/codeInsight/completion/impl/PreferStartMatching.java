@@ -1,5 +1,6 @@
 package com.intellij.codeInsight.completion.impl;
 
+import com.intellij.codeInsight.completion.CompletionService;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementWeigher;
 import com.intellij.codeInsight.lookup.WeighingContext;
@@ -16,6 +17,6 @@ public class PreferStartMatching extends LookupElementWeigher {
 
   @Override
   public Comparable weigh(@NotNull LookupElement element, @NotNull WeighingContext context) {
-    return !CompletionServiceImpl.isStartMatch(element, context);
+    return !CompletionService.isStartMatch(element, context);
   }
 }

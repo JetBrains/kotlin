@@ -2,7 +2,10 @@
 package com.intellij.codeInsight.completion.impl;
 
 import com.intellij.codeInsight.completion.*;
-import com.intellij.codeInsight.lookup.*;
+import com.intellij.codeInsight.lookup.Classifier;
+import com.intellij.codeInsight.lookup.ClassifierFactory;
+import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.codeInsight.lookup.LookupElementWeigher;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressManager;
@@ -300,18 +303,5 @@ public final class CompletionServiceImpl extends CompletionService {
   @Override
   public CompletionSorterImpl emptySorter() {
     return new CompletionSorterImpl(new ArrayList<>());
-  }
-
-  public static boolean isStartMatch(LookupElement element, WeighingContext context) {
-    return getItemMatcher(element, context).isStartMatch(element);
-  }
-
-  static PrefixMatcher getItemMatcher(LookupElement element, WeighingContext context) {
-    PrefixMatcher itemMatcher = context.itemMatcher(element);
-    String pattern = context.itemPattern(element);
-    if (!pattern.equals(itemMatcher.getPrefix())) {
-      return itemMatcher.cloneWithPrefix(pattern);
-    }
-    return itemMatcher;
   }
 }

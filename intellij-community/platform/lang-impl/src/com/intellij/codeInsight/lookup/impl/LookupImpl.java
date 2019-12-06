@@ -1145,6 +1145,7 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
     hideLookup(true);
   }
 
+  @Override
   public void hideLookup(boolean explicitly) {
     ApplicationManager.getApplication().assertIsDispatchThread();
 

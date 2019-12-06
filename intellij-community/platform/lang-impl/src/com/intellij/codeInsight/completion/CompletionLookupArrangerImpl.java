@@ -2,11 +2,9 @@
 
 package com.intellij.codeInsight.completion;
 
-import com.intellij.codeInsight.completion.impl.CompletionServiceImpl;
 import com.intellij.codeInsight.completion.impl.CompletionSorterImpl;
 import com.intellij.codeInsight.lookup.*;
 import com.intellij.codeInsight.lookup.impl.EmptyLookupItem;
-import com.intellij.codeInsight.lookup.impl.LookupImpl;
 import com.intellij.codeInsight.template.impl.LiveTemplateLookupElement;
 import com.intellij.ide.ui.UISettings;
 import com.intellij.openapi.application.ApplicationManager;
@@ -457,7 +455,7 @@ public class CompletionLookupArrangerImpl extends LookupArranger implements Comp
         }
         exactMatches.add(item);
       }
-      else if (i == 0 && isSuddenLiveTemplate && items.size() > 1 && !CompletionServiceImpl.isStartMatch(items.get(1), this)) {
+      else if (i == 0 && isSuddenLiveTemplate && items.size() > 1 && !CompletionService.isStartMatch(items.get(1), this)) {
         return Collections.singletonList(item);
       }
     }
@@ -518,7 +516,7 @@ public class CompletionLookupArrangerImpl extends LookupArranger implements Comp
   }
 
   @Override
-  public void prefixTruncated(@NotNull LookupImpl lookup, int hideOffset) {
+  public void prefixTruncated(@NotNull LookupEx lookup, int hideOffset) {
     if (hideOffset < lookup.getEditor().getCaretModel().getOffset()) {
       myProcess.scheduleRestart();
       return;

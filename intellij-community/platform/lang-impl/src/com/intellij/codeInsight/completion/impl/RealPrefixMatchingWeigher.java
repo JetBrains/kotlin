@@ -1,5 +1,6 @@
 package com.intellij.codeInsight.completion.impl;
 
+import com.intellij.codeInsight.completion.CompletionService;
 import com.intellij.codeInsight.completion.PrefixMatcher;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementWeigher;
@@ -17,7 +18,7 @@ public class RealPrefixMatchingWeigher extends LookupElementWeigher {
 
   @Override
   public Comparable weigh(@NotNull LookupElement element, @NotNull WeighingContext context) {
-    return getBestMatchingDegree(element, CompletionServiceImpl.getItemMatcher(element, context));
+    return getBestMatchingDegree(element, CompletionService.getItemMatcher(element, context));
   }
 
   public static int getBestMatchingDegree(LookupElement element, PrefixMatcher matcher) {
