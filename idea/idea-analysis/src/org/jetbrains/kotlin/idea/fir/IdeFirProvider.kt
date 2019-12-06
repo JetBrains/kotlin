@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.fir
 
+import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.fir.FirSession
@@ -36,16 +37,19 @@ class IdeFirProvider(
 
     override fun getFirClassifierByFqName(classId: ClassId): FirClassLikeDeclaration<*>? {
         return cacheProvider.getFirClassifierByFqName(classId) ?: run {
+            try {
+                val classes = KotlinFullClassNameIndex.getInstance().get(classId.asSingleFqName().asString(), project, scope)
+                val ktClass = classes.firstOrNull {
+                    classId.packageFqName == it.containingKtFile.packageFqName
+                } ?: return null // TODO: what if two of them?
 
-            val classes = KotlinFullClassNameIndex.getInstance().get(classId.asSingleFqName().asString(), project, scope)
-            val ktClass = classes.firstOrNull {
-                classId.packageFqName == it.containingKtFile.packageFqName
-            } ?: return null // TODO: what if two of them?
-            val ktFile = ktClass.containingKtFile
+                val ktFile = ktClass.containingKtFile
+                getOrBuildFile(ktFile)
 
-            getOrBuildFile(ktFile)
-
-            cacheProvider.getFirClassifierByFqName(classId)
+                cacheProvider.getFirClassifierByFqName(classId)
+            } catch (e: ProcessCanceledException) {
+                return null
+            }
         }
     }
 
@@ -68,11 +72,15 @@ class IdeFirProvider(
 
     override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> {
         val packagePrefix = if (packageFqName.isRoot) "" else "$packageFqName."
-        val topLevelFunctions = KotlinTopLevelFunctionFqnNameIndex.getInstance()["$packagePrefix$name", project, scope]
-        val topLevelProperties = KotlinTopLevelPropertyFqnNameIndex.getInstance()["$packagePrefix$name", project, scope]
-        topLevelFunctions.forEach { getOrBuildFile(it.containingKtFile) }
-        topLevelProperties.forEach { getOrBuildFile(it.containingKtFile) }
-        return cacheProvider.getTopLevelCallableSymbols(packageFqName, name)
+        return try {
+            val topLevelFunctions = KotlinTopLevelFunctionFqnNameIndex.getInstance()["$packagePrefix$name", project, scope]
+            val topLevelProperties = KotlinTopLevelPropertyFqnNameIndex.getInstance()["$packagePrefix$name", project, scope]
+            topLevelFunctions.forEach { getOrBuildFile(it.containingKtFile) }
+            topLevelProperties.forEach { getOrBuildFile(it.containingKtFile) }
+            cacheProvider.getTopLevelCallableSymbols(packageFqName, name)
+        } catch (e: ProcessCanceledException) {
+            emptyList()
+        }
     }
 
     override fun getFirClassifierContainerFile(fqName: ClassId): FirFile {
@@ -93,8 +101,12 @@ class IdeFirProvider(
     override fun getFirClassifierContainerFileIfAny(symbol: FirClassLikeSymbol<*>): FirFile? {
         val psi = symbol.fir.source?.psi
         if (psi is KtElement) {
-            val ktFile = psi.containingKtFile
-            return getOrBuildFile(ktFile)
+            return try {
+                val ktFile = psi.containingKtFile
+                getOrBuildFile(ktFile)
+            } catch (e: ProcessCanceledException) {
+                null
+            }
         }
         return getFirClassifierContainerFileIfAny(symbol.classId)
     }
@@ -104,9 +116,13 @@ class IdeFirProvider(
     }
 
     override fun getFirFilesByPackage(fqName: FqName): List<FirFile> {
-        val files = KotlinExactPackagesIndex.getInstance()[fqName.asString(), project, scope]
-        files.forEach { getOrBuildFile(it) }
-        return cacheProvider.getFirFilesByPackage(fqName)
+        return try {
+            val files = KotlinExactPackagesIndex.getInstance()[fqName.asString(), project, scope]
+            files.forEach { getOrBuildFile(it) }
+            cacheProvider.getFirFilesByPackage(fqName)
+        } catch (e: ProcessCanceledException) {
+            emptyList()
+        }
     }
 
     override fun getClassDeclaredMemberScope(classId: ClassId): FirScope? {
