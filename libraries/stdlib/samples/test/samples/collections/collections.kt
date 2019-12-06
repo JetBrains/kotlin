@@ -643,6 +643,24 @@ class Collections {
         }
 
         @Sample
+        fun reduce() {
+            val strings = listOf("a", "b", "c", "d")
+            assertPrints(strings.reduce { acc, string -> acc + string }, "abcd")
+            assertPrints(strings.reduceIndexed { index, acc, string -> acc + string + index }, "ab1c2d3")
+
+            assertFails { emptyList<Int>().reduce { _, _ -> 0 } }
+        }
+
+        @Sample
+        fun reduceRight() {
+            val strings = listOf("a", "b", "c", "d")
+            assertPrints(strings.reduceRight { string, acc -> acc + string }, "dcba")
+            assertPrints(strings.reduceRightIndexed { index, string, acc -> acc + string + index }, "dc2b1a0")
+
+            assertFails { emptyList<Int>().reduceRight { _, _ -> 0 } }
+        }
+
+        @Sample
         fun reduceOrNull() {
             val strings = listOf("a", "b", "c", "d")
             assertPrints(strings.reduceOrNull { acc, string -> acc + string }, "abcd")

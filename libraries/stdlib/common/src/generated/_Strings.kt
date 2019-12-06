@@ -1168,6 +1168,8 @@ public inline fun <S : CharSequence> S.onEach(action: (Char) -> Unit): S {
 
 /**
  * Accumulates value starting with the first character and applying [operation] from left to right to current accumulator value and each character.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduce
  */
 public inline fun CharSequence.reduce(operation: (acc: Char, Char) -> Char): Char {
     if (isEmpty())
@@ -1184,6 +1186,8 @@ public inline fun CharSequence.reduce(operation: (acc: Char, Char) -> Char): Cha
  * to current accumulator value and each character with its index in the original char sequence.
  * @param [operation] function that takes the index of a character, current accumulator value
  * and the character itself and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduce
  */
 public inline fun CharSequence.reduceIndexed(operation: (index: Int, acc: Char, Char) -> Char): Char {
     if (isEmpty())
@@ -1214,6 +1218,8 @@ public inline fun CharSequence.reduceOrNull(operation: (acc: Char, Char) -> Char
 
 /**
  * Accumulates value starting with last character and applying [operation] from right to left to each character and current accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceRight
  */
 public inline fun CharSequence.reduceRight(operation: (Char, acc: Char) -> Char): Char {
     var index = lastIndex
@@ -1230,6 +1236,8 @@ public inline fun CharSequence.reduceRight(operation: (Char, acc: Char) -> Char)
  * to each character with its index in the original char sequence and current accumulator value.
  * @param [operation] function that takes the index of a character, the character itself
  * and current accumulator value, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceRight
  */
 public inline fun CharSequence.reduceRightIndexed(operation: (index: Int, Char, acc: Char) -> Char): Char {
     var index = lastIndex
