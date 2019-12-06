@@ -13701,6 +13701,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("testData/intentions/replaceExplicitFunctionLiteralParamWithIt/applicable_inPropertyInitializer.kt");
         }
 
+        @TestMetadata("applicable_inWhenEntry.kt")
+        public void testApplicable_inWhenEntry() throws Exception {
+            runTest("idea/testData/intentions/replaceExplicitFunctionLiteralParamWithIt/applicable_inWhenEntry.kt");
+        }
+
         @TestMetadata("applicable_nestedLiteralsNoUseInside.kt")
         public void testApplicable_nestedLiteralsNoUseInside() throws Exception {
             runTest("testData/intentions/replaceExplicitFunctionLiteralParamWithIt/applicable_nestedLiteralsNoUseInside.kt");
@@ -13709,6 +13714,16 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("applicable_qualifiedExpression.kt")
         public void testApplicable_qualifiedExpression() throws Exception {
             runTest("testData/intentions/replaceExplicitFunctionLiteralParamWithIt/applicable_qualifiedExpression.kt");
+        }
+
+        @TestMetadata("notApplicable_InIf.kt")
+        public void testNotApplicable_InIf() throws Exception {
+            runTest("idea/testData/intentions/replaceExplicitFunctionLiteralParamWithIt/notApplicable_InIf.kt");
+        }
+
+        @TestMetadata("notApplicable_InIfElse.kt")
+        public void testNotApplicable_InIfElse() throws Exception {
+            runTest("idea/testData/intentions/replaceExplicitFunctionLiteralParamWithIt/notApplicable_InIfElse.kt");
         }
 
         @TestMetadata("notApplicable_alreadyUsesImplicitIt.kt")
@@ -13724,6 +13739,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("notApplicable_hasMultipleParameters.kt")
         public void testNotApplicable_hasMultipleParameters() throws Exception {
             runTest("testData/intentions/replaceExplicitFunctionLiteralParamWithIt/notApplicable_hasMultipleParameters.kt");
+        }
+
+        @TestMetadata("notApplicable_inWhenEntry.kt")
+        public void testNotApplicable_inWhenEntry() throws Exception {
+            runTest("idea/testData/intentions/replaceExplicitFunctionLiteralParamWithIt/notApplicable_inWhenEntry.kt");
         }
 
         @TestMetadata("notApplicable_itFromOuterLambda.kt")
