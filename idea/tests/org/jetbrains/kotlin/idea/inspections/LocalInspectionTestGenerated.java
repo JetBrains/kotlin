@@ -12372,11 +12372,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class UnsafeNotNullAssertionOnReallyNullable extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInUnsafeNotNullAssertionOnReallyNullable() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/unsafeNotNullAssertionOnReallyNullable"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/unsafeNotNullAssertionOnReallyNullable"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), true);
         }
 
         @TestMetadata("globalNullableFunToNot.kt")
