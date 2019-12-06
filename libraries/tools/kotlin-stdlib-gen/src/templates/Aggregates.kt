@@ -659,6 +659,7 @@ object Aggregates : TemplateGroupBase() {
             return accumulator
             """
         }
+        sample("samples.collections.Collections.Aggregates.reduce")
     }
 
     val f_reduceIndexedSuper = fn("reduceIndexed(operation: (index: Int, acc: S, T) -> S)") {
@@ -703,6 +704,7 @@ object Aggregates : TemplateGroupBase() {
             return accumulator
             """
         }
+        sample("samples.collections.Collections.Aggregates.reduce")
     }
 
     val f_reduceRightIndexed = fn("reduceRightIndexed(operation: (index: Int, T, acc: T) -> T)") {
@@ -734,6 +736,7 @@ object Aggregates : TemplateGroupBase() {
             return accumulator
             """
         }
+        sample("samples.collections.Collections.Aggregates.reduceRight")
     }
 
     val f_reduceRightIndexedSuper = fn("reduceRightIndexed(operation: (index: Int, T, acc: S) -> S)") {
@@ -781,6 +784,7 @@ object Aggregates : TemplateGroupBase() {
             return accumulator
             """
         }
+        sample("samples.collections.Collections.Aggregates.reduceRight")
     }
 
     val f_reduce = fn("reduce(operation: (acc: T, T) -> T)") {
@@ -803,6 +807,7 @@ object Aggregates : TemplateGroupBase() {
             return accumulator
             """
         }
+        sample("samples.collections.Collections.Aggregates.reduce")
     }
 
     val f_reduceSuper = fn("reduce(operation: (acc: S, T) -> S)") {
@@ -838,6 +843,7 @@ object Aggregates : TemplateGroupBase() {
             return accumulator
             """
         }
+        sample("samples.collections.Collections.Aggregates.reduce")
     }
 
     val f_reduceRight = fn("reduceRight(operation: (T, acc: T) -> T)") {
@@ -861,6 +867,7 @@ object Aggregates : TemplateGroupBase() {
             return accumulator
             """
         }
+        sample("samples.collections.Collections.Aggregates.reduceRight")
     }
 
     val f_reduceRightSuper = fn("reduceRight(operation: (T, acc: S) -> S)") {
@@ -898,6 +905,7 @@ object Aggregates : TemplateGroupBase() {
             return accumulator
             """
         }
+        sample("samples.collections.Collections.Aggregates.reduceRight")
     }
 
     val f_onEach = fn("onEach(action: (T) -> Unit)") {
