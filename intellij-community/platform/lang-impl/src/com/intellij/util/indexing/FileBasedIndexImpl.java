@@ -553,11 +553,12 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
   }
 
   private void performShutdown(boolean keepConnection) {
-    if (!myRegisteredIndexes.performShutdown()) {
+    RegisteredIndexes registeredIndexes = myRegisteredIndexes;
+    if (registeredIndexes == null || !registeredIndexes.performShutdown()) {
       return; // already shut down
     }
 
-    myRegisteredIndexes.waitUntilAllIndicesAreInitialized();
+    registeredIndexes.waitUntilAllIndicesAreInitialized();
     try {
       if (myFlushingFuture != null) {
         myFlushingFuture.cancel(false);
