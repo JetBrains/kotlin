@@ -4,6 +4,7 @@ package com.intellij.ide;
 import com.intellij.AppTopics;
 import com.intellij.ProjectTopics;
 import com.intellij.ide.impl.ProjectUtil;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.editor.Document;
@@ -43,7 +44,8 @@ public final class GeneratedSourceFileChangeTrackerImpl extends GeneratedSourceF
 
   public GeneratedSourceFileChangeTrackerImpl(@NotNull Project project) {
     myProject = project;
-    myCheckingQueue = new SingleAlarm(this::checkFiles, 500, Alarm.ThreadToUse.POOLED_THREAD, ((ProjectEx)project).getEarlyDisposable());
+    Disposable parentDisposable = project instanceof ProjectEx ? (ProjectEx)project : project;
+    myCheckingQueue = new SingleAlarm(this::checkFiles, 500, Alarm.ThreadToUse.POOLED_THREAD, parentDisposable);
   }
 
   @TestOnly
