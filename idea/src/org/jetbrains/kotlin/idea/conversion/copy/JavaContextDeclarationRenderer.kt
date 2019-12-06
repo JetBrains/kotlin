@@ -107,7 +107,11 @@ class JavaContextDeclarationRenderer {
         if (!type?.arguments.isNullOrEmpty()) {
             append("<")
             for (typeArgument in type!!.arguments) {
-                renderType(typeArgument.type)
+                if (typeArgument.isStarProjection) {
+                    append("?")
+                } else {
+                    renderType(typeArgument.type)
+                }
             }
             append(">")
         }
