@@ -1244,10 +1244,9 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
     }
 
     private fun FlowContent.generateUnary(expression: FirOperatorCall) {
-        val (first) = expression.arguments
         unresolved { +expression.operation.operator }
         ws
-        generate(first)
+        generate(expression.argument)
     }
 
     private fun FlowContent.generate(expression: FirOperatorCall) {
@@ -1259,12 +1258,16 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
     }
 
     private fun FlowContent.generate(typeOperatorCall: FirTypeOperatorCall) {
-        val (expression) = typeOperatorCall.arguments
-        generate(expression)
+        generate(typeOperatorCall.argument)
         ws
         keyword(typeOperatorCall.operation.operator)
         ws
         generate(typeOperatorCall.conversionTypeRef)
+    }
+
+    private fun FlowContent.generate(checkNotNullCall: FirCheckNotNullCall) {
+        generate(checkNotNullCall.argument)
+        +"!!"
     }
 
     @Suppress("UNUSED_PARAMETER")
@@ -1471,6 +1474,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                 is FirTypeOperatorCall -> generate(expression)
                 is FirOperatorCall -> generate(expression)
                 is FirBinaryLogicExpression -> generate(expression)
+                is FirCheckNotNullCall -> generate(expression)
                 else -> inlineUnsupported(expression)
             }
         }
