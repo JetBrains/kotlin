@@ -1,13 +1,13 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.jvm.lower
+package org.jetbrains.kotlin.backend.common.lower.optimizations
 
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
-import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.resolve.constants.evaluate.evaluateBinary
 import org.jetbrains.kotlin.resolve.constants.evaluate.evaluateUnary
 
-internal val foldConstantLoweringPhase = makeIrFilePhase(
+val foldConstantLoweringPhase = makeIrFilePhase(
     ::FoldConstantLowering,
     name = "FoldConstantLowering",
     description = "Constant Folding"
@@ -34,7 +34,7 @@ internal val foldConstantLoweringPhase = makeIrFilePhase(
  *
  * TODO: constant fields (e.g. Double.NaN)
  */
-class FoldConstantLowering(private val context: JvmBackendContext) : IrElementTransformerVoid(), FileLoweringPass {
+class FoldConstantLowering(private val context: CommonBackendContext) : IrElementTransformerVoid(), FileLoweringPass {
     /**
      * ID of an binary operator / method.
      *
