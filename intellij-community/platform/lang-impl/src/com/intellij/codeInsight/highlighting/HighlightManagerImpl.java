@@ -252,7 +252,7 @@ public final class HighlightManagerImpl extends HighlightManager {
     List<RangeHighlighter> highlightersToRemove = new ArrayList<>();
     for (RangeHighlighter highlighter : map.keySet()) {
       HighlightFlags info = map.get(highlighter);
-      if (!info.editor.equals(editor)) continue;
+      if (!InjectedLanguageUtil.getTopLevelEditor(info.editor).equals(InjectedLanguageUtil.getTopLevelEditor(editor))) continue;
       if ((info.flags & mask) != 0) {
         highlightersToRemove.add(highlighter);
         done = true;
