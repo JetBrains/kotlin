@@ -646,6 +646,7 @@ object Aggregates : TemplateGroupBase() {
             and the ${f.element} itself and calculates the next accumulator value.
             """
         }
+        sample("samples.collections.Collections.Aggregates.reduce")
         returns("T")
         body {
             """
@@ -676,6 +677,7 @@ object Aggregates : TemplateGroupBase() {
         }
         typeParam("S")
         typeParam("T : S")
+        sample("samples.collections.Collections.Aggregates.reduce")
         returns("S")
         body {
             fun checkOverflow(value: String) = if (f == Sequences || f == Iterables) "checkIndexOverflow($value)" else value
@@ -719,6 +721,7 @@ object Aggregates : TemplateGroupBase() {
             and current accumulator value, and calculates the next accumulator value.
             """
         }
+        sample("samples.collections.Collections.Aggregates.reduceRight")
         returns("T")
         body {
             """
@@ -749,6 +752,7 @@ object Aggregates : TemplateGroupBase() {
             and current accumulator value, and calculates the next accumulator value.
             """
         }
+        sample("samples.collections.Collections.Aggregates.reduceRight")
         typeParam("S")
         typeParam("T : S")
         returns("S")
@@ -790,6 +794,7 @@ object Aggregates : TemplateGroupBase() {
         specialFor(ArraysOfUnsigned) { inlineOnly() }
 
         doc { "Accumulates value starting with the first ${f.element} and applying [operation] from left to right to current accumulator value and each ${f.element}." }
+        sample("samples.collections.Collections.Aggregates.reduce")
         returns("T")
         body {
             """
@@ -811,6 +816,7 @@ object Aggregates : TemplateGroupBase() {
         inline()
 
         doc { "Accumulates value starting with the first ${f.element} and applying [operation] from left to right to current accumulator value and each ${f.element}." }
+        sample("samples.collections.Collections.Aggregates.reduce")
         typeParam("S")
         typeParam("T : S")
         returns("S")
@@ -910,6 +916,7 @@ object Aggregates : TemplateGroupBase() {
         specialFor(ArraysOfUnsigned) { inlineOnly() }
 
         doc { "Accumulates value starting with last ${f.element} and applying [operation] from right to left to each ${f.element} and current accumulator value." }
+        sample("samples.collections.Collections.Aggregates.reduceRight")
         returns("T")
         body {
             """
@@ -931,6 +938,7 @@ object Aggregates : TemplateGroupBase() {
     } builder {
         inline()
         doc { "Accumulates value starting with last ${f.element} and applying [operation] from right to left to each ${f.element} and current accumulator value." }
+        sample("samples.collections.Collections.Aggregates.reduceRight")
         typeParam("S")
         typeParam("T : S")
         returns("S")
