@@ -51,7 +51,7 @@ abstract class InitializersLoweringBase(open val context: CommonBackendContext) 
             irClass.declarations.removeAll { it is IrAnonymousInitializer && filter(it) }
         }
 
-    protected open fun shouldEraseFieldInitializer(irField: IrField): Boolean = true
+    protected open fun shouldEraseFieldInitializer(irField: IrField): Boolean = irField.correspondingPropertySymbol?.owner?.isConst != true
 
     private fun handleField(irClass: IrClass, declaration: IrField): IrStatement? =
         declaration.initializer?.run {
