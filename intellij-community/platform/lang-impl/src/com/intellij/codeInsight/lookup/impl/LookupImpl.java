@@ -176,11 +176,6 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
   }
 
   @Override
-  public FocusDegree getFocusDegree() {
-    return convertToFocusDegree(myLookupFocusDegree);
-  }
-
-  @Override
   public boolean isFocused() {
     return getLookupFocusDegree() == LookupFocusDegree.FOCUSED;
   }

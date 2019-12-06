@@ -11,7 +11,10 @@ import com.intellij.codeInsight.template.impl.LiveTemplateLookupElement;
 import com.intellij.ide.ui.UISettings;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.util.*;
+import com.intellij.openapi.util.Comparing;
+import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.patterns.StandardPatterns;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
@@ -264,11 +267,6 @@ public class CompletionLookupArrangerImpl extends LookupArranger implements Comp
       @Override
       public int getLastVisibleIndex() {
         return 0;
-      }
-
-      @Override
-      public LookupImpl.FocusDegree getFocusDegree() {
-        return LookupImpl.FocusDegree.FOCUSED;
       }
 
       @NotNull
