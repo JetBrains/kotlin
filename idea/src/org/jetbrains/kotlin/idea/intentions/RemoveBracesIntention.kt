@@ -51,6 +51,7 @@ class RemoveBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class
             is KtWhenEntry -> {
                 text = "Remove braces from 'when' entry"
                 return singleStatement !is KtNamedDeclaration
+                        && !(singleStatement is KtLambdaExpression && singleStatement.functionLiteral.arrow == null)
             }
             else -> return false
         }
