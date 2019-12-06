@@ -6,6 +6,7 @@ interface AppleTarget : Serializable {
     val name: String
     val configuration: Configuration
     val sourceSet: AppleSourceSet
+    val testSourceSet: AppleSourceSet
     val buildTask: AbstractTask
     var launchStoryboard: String?
     var mainStoryboard: String?

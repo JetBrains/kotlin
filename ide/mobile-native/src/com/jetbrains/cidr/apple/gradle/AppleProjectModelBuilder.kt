@@ -20,10 +20,11 @@ class AppleProjectModelBuilder : ModelBuilderService {
         for (value: Any in projectExtension.targets) {
             val target = value.dynamic<AppleTarget>()
             val srcDirs = target.sourceSet.dynamic<AppleSourceSet>().apple.srcDirs
+            val testDirs = target.testSourceSet.dynamic<AppleSourceSet>().apple.srcDirs
             val bridgingHeader = target.bridgingHeader?.let { bridgingHeader ->
                 srcDirs.firstOrNull { it.isDirectory && it.exists() }?.resolve(bridgingHeader)
             }
-            target.name.let { name -> targetModels[name] = AppleTargetModelImpl(name, srcDirs, bridgingHeader) }
+            target.name.let { name -> targetModels[name] = AppleTargetModelImpl(name, srcDirs, testDirs, bridgingHeader) }
         }
         return AppleProjectModelImpl(targetModels)
     }

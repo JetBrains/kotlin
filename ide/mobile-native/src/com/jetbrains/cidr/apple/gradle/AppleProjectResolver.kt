@@ -24,6 +24,7 @@ import org.jetbrains.plugins.gradle.service.project.GradleProjectResolver
 import org.jetbrains.plugins.gradle.service.project.GradleProjectResolverUtil
 import org.jetbrains.plugins.gradle.service.project.ProjectResolverContext
 import org.jetbrains.plugins.gradle.util.GradleConstants
+import java.io.File
 
 @Order(ExternalSystemConstants.UNORDERED)
 class AppleProjectResolver : AbstractProjectResolverExtension() {
@@ -39,30 +40,38 @@ class AppleProjectResolver : AbstractProjectResolverExtension() {
 
             for (target in apple.targets.values) {
                 val moduleId = getAppleModuleId(gradleModule, target.name, resolverCtx)
-                sourceSetMap.computeIfAbsent(moduleId) {
-                    val sourceSetData = GradleSourceSetData(
-                        moduleId,
-                        getExternalName(gradleModule, target.name),
-                        getInternalName(gradleModule, externalProject, target.name, resolverCtx),
-                        mainModuleNode.data.moduleFileDirectoryPath,
-                        mainModuleNode.data.linkedExternalProjectPath
-                    ).apply {
-                        group = externalProject.group
-                        version = externalProject.version
+                val sourceModuleId = moduleId + "Main"
+                val testModuleId = moduleId + "Test"
+
+                val targetModel = AppleTargetModelImpl(target.name, target.sourceFolders, target.testFolders, target.bridgingHeader)
+
+                fun addSourceSet(id: String, suffix: String, type: ExternalSystemSourceType, dirs: Set<File>) {
+                    sourceSetMap.computeIfAbsent(id) {
+                        val sourceSetData = GradleSourceSetData(
+                            id,
+                            getExternalName(gradleModule, target.name, suffix),
+                            getInternalName(gradleModule, externalProject, target.name, suffix, resolverCtx),
+                            mainModuleNode.data.moduleFileDirectoryPath,
+                            mainModuleNode.data.linkedExternalProjectPath
+                        ).apply {
+                            group = externalProject.group
+                            version = externalProject.version
+                        }
+                        val dataNode = mainModuleNode.createChild(GradleSourceSetData.KEY, sourceSetData).apply {
+                            appleSourceSet = targetModel
+                        }
+                        val externalSourceSet = DefaultExternalSourceSet().apply {
+                            name = target.name + suffix
+                            setSources(linkedMapOf(
+                                type to DefaultExternalSourceDirectorySet().apply { srcDirs = dirs }
+                            ).toMap())
+                        }
+                        Pair.create(dataNode, externalSourceSet)
                     }
-                    val dataNode = mainModuleNode.createChild(GradleSourceSetData.KEY, sourceSetData).apply {
-                        appleSourceSet = AppleTargetModelImpl(target.name, target.sourceFolders, target.bridgingHeader)
-                    }
-                    val externalSourceSet = DefaultExternalSourceSet().apply {
-                        name = "${target.name}Main"
-                        setSources(linkedMapOf(
-                            ExternalSystemSourceType.SOURCE to DefaultExternalSourceDirectorySet().apply {
-                                srcDirs = target.sourceFolders
-                            }
-                        ).toMap())
-                    }
-                    Pair.create(dataNode, externalSourceSet)
                 }
+
+                addSourceSet(sourceModuleId, "Main", ExternalSystemSourceType.SOURCE, target.sourceFolders)
+                addSourceSet(testModuleId, "Test", ExternalSystemSourceType.TEST, target.testFolders)
             }
         }
 
@@ -76,15 +85,16 @@ class AppleProjectResolver : AbstractProjectResolverExtension() {
         val APPLE_PROJECT: Key<AppleProjectModel> = Key.create(AppleProjectModel::class.java, ProjectKeys.MODULE.processingWeight + 1)
 
         private fun getAppleModuleId(gradleModule: IdeaModule, target: String, resolverCtx: ProjectResolverContext) =
-            "${GradleProjectResolverUtil.getModuleId(resolverCtx, gradleModule)}:${target}Main"
+            "${GradleProjectResolverUtil.getModuleId(resolverCtx, gradleModule)}:$target"
 
-        private fun getExternalName(gradleModule: IdeaModule, target: String) =
-            "${gradleModule.name}:${target}Main"
+        private fun getExternalName(gradleModule: IdeaModule, target: String, suffix: String) =
+            "${gradleModule.name}:${target}$suffix"
 
         private fun getInternalName(
             gradleModule: IdeaModule,
             externalProject: ExternalProject,
             target: String,
+            suffix: String,
             resolverCtx: ProjectResolverContext
         ): String {
             val delimiter: String
@@ -100,7 +110,7 @@ class AppleProjectResolver : AbstractProjectResolverExtension() {
                 moduleName.append(gradleModule.name)
             }
             moduleName.append(delimiter)
-            moduleName.append("${target}Main")
+            moduleName.append(target + suffix)
             return PathUtilRt.suggestFileName(moduleName.toString(), true, false)
         }
 
@@ -114,11 +124,15 @@ class AppleProjectResolver : AbstractProjectResolverExtension() {
             val targets = mutableMapOf<String, AppleTargetModel>()
             for (dataNode in ExternalSystemApiUtil.findAll(ideModule, GradleSourceSetData.KEY)) {
                 val target = (dataNode.appleSourceSet ?: continue).also { targets[it.name] = it }
-                for (sourceFolder in target.sourceFolders) {
-                    val contentRoot = ContentRootData(GradleConstants.SYSTEM_ID, sourceFolder.path)
-                    contentRoot.storePath(ExternalSystemSourceType.SOURCE, contentRoot.rootPath)
+
+                fun createRoot(dir: File, type: ExternalSystemSourceType) {
+                    val contentRoot = ContentRootData(GradleConstants.SYSTEM_ID, dir.path)
+                    contentRoot.storePath(type, contentRoot.rootPath)
                     dataNode.createChild(ProjectKeys.CONTENT_ROOT, contentRoot)
                 }
+
+                target.sourceFolders.forEach { createRoot(it, ExternalSystemSourceType.SOURCE) }
+                target.testFolders.forEach { createRoot(it, ExternalSystemSourceType.TEST) }
             }
 
             ideModule.createChild(APPLE_PROJECT, AppleProjectModelImpl(targets))

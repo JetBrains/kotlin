@@ -10,6 +10,7 @@ interface AppleProjectModel : Serializable {
 interface AppleTargetModel : Serializable {
     val name: String
     val sourceFolders: Set<File>
+    val testFolders: Set<File>
     val bridgingHeader: File?
 }
 
@@ -17,5 +18,6 @@ internal data class AppleProjectModelImpl(override val targets: Map<String, Appl
 internal data class AppleTargetModelImpl(
     override val name: String,
     override val sourceFolders: Set<File>,
+    override val testFolders: Set<File>,
     override val bridgingHeader: File?
 ) : AppleTargetModel

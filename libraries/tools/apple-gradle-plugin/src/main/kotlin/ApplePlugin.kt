@@ -25,6 +25,7 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.getValue
+import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.gradle.language.nativeplatform.internal.Names
 import org.gradle.process.internal.ExecActionFactory
 import java.io.*
@@ -226,6 +227,9 @@ private open class DefaultAppleTarget @Inject constructor(project: Project,
                                                           configurations: ConfigurationContainer) : Named, AppleTarget {
     override val configuration: Configuration by configurations.register(Names.of(name).withSuffix("implementation"))
     override val sourceSet: AppleSourceSet by project.apple.sourceSets.register("${name}Main") {
+        apple.outputDir = project.buildDir.resolve("bin/$name")
+    }
+    override val testSourceSet: AppleSourceSet by project.apple.sourceSets.register("${name}Test") {
         apple.outputDir = project.buildDir.resolve("bin/$name")
     }
     override val buildTask: AppleBuildTask by project.tasks.register("build${name.capitalize()}Main", AppleBuildTask::class.java, this).also {

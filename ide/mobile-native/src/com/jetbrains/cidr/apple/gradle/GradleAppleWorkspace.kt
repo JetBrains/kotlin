@@ -181,6 +181,9 @@ class GradleAppleWorkspace(private val project: Project) : PersistentStateCompon
                 for (sourceFolder in data.target.sourceFolders) {
                     addContent(Element("sourceFolder").addContent(sourceFolder.path))
                 }
+                for (testFolder in data.target.testFolders) {
+                    addContent(Element("testFolder").addContent(testFolder.path))
+                }
             })
         }
         for (target in konanFrameworkTargets.values) {
@@ -199,6 +202,7 @@ class GradleAppleWorkspace(private val project: Project) : PersistentStateCompon
             configData[configElement.getAttributeValue("id") ?: continue] = Data(AppleTargetModelImpl(
                 name = configElement.getAttributeValue("targetName") ?: continue,
                 sourceFolders = configElement.getChildren("sourceFolder").mapTo(mutableSetOf()) { File(it.text) },
+                testFolders = configElement.getChildren("testFolder").mapTo(mutableSetOf()) { File(it.text) },
                 bridgingHeader = configElement.getChild("bridgingHeader")?.let { File(it.text) }
             ), newDisposable)
         }
