@@ -5,8 +5,6 @@
 
 import kotlinx.html.*; import kotlinx.html.stream.*; import kotlinx.html.attributes.*
 
-BooleanEncoder()
-
 print(createHTML().html {
     body {
         h1 { +"Hello, World!" }
