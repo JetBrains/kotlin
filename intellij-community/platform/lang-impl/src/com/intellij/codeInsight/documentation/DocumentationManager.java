@@ -668,10 +668,7 @@ public final class DocumentationManager extends DockablePopupManager<Documentati
     PsiElement element = null;
     if (file != null) {
       DocumentationProvider documentationProvider = getProviderFromElement(file);
-      if (documentationProvider instanceof DocumentationProviderEx) {
-        element = assertSameProject(
-          ((DocumentationProviderEx)documentationProvider).getCustomDocumentationElement(editor, file, contextElement, offset));
-      }
+      element = assertSameProject(documentationProvider.getCustomDocumentationElement(editor, file, contextElement, offset));
     }
 
     if (element == null) {
