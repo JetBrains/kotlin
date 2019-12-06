@@ -35,6 +35,10 @@ fun eliminateDeadDeclarations(
     removeUselessDeclarations(module, usefulDeclarations)
 }
 
+private fun IrField.isConstant(): Boolean {
+    return correspondingPropertySymbol?.owner?.isConst ?: false
+}
+
 private fun buildRoots(module: IrModuleFragment, context: JsIrBackendContext, mainFunction: IrSimpleFunction?): Iterable<IrDeclaration> {
     val rootDeclarations =
         (module.files + context.packageLevelJsModules + context.externalPackageFragment.values).flatMapTo(mutableListOf()) { file ->
@@ -44,7 +48,7 @@ private fun buildRoots(module: IrModuleFragment, context: JsIrBackendContext, ma
                         || it.isEffectivelyExternal()
                         || it is IrField && it.correspondingPropertySymbol?.owner?.isExported(context) == true
                         || it is IrSimpleFunction && it.correspondingPropertySymbol?.owner?.isExported(context) == true
-            }
+            }.filter { !(it is IrField && it.isConstant() && !it.isExported(context)) }
         }
 
     if (context.hasTests) rootDeclarations += context.testContainer

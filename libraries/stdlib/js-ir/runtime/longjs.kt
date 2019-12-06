@@ -358,18 +358,18 @@ internal fun fromNumber(value: Double): Long {
     }
 }
 
-private val TWO_PWR_16_DBL_ = (1 shl 16).toDouble()
+private const val TWO_PWR_16_DBL_ = (1 shl 16).toDouble()
 
-private val TWO_PWR_24_DBL_ = (1 shl 24).toDouble()
+private const val TWO_PWR_24_DBL_ = (1 shl 24).toDouble()
 
 //private val TWO_PWR_32_DBL_ = TWO_PWR_16_DBL_ * TWO_PWR_16_DBL_
-private val TWO_PWR_32_DBL_ = (1 shl 16).toDouble() * (1 shl 16).toDouble()
+private const val TWO_PWR_32_DBL_ = (1 shl 16).toDouble() * (1 shl 16).toDouble()
 
 //private val TWO_PWR_64_DBL_ = TWO_PWR_32_DBL_ * TWO_PWR_32_DBL_
-private val TWO_PWR_64_DBL_ = ((1 shl 16).toDouble() * (1 shl 16).toDouble()) * ((1 shl 16).toDouble() * (1 shl 16).toDouble())
+private const val TWO_PWR_64_DBL_ = ((1 shl 16).toDouble() * (1 shl 16).toDouble()) * ((1 shl 16).toDouble() * (1 shl 16).toDouble())
 
 //private val TWO_PWR_63_DBL_ = TWO_PWR_64_DBL_ / 2
-private val TWO_PWR_63_DBL_ = (((1 shl 16).toDouble() * (1 shl 16).toDouble()) * ((1 shl 16).toDouble() * (1 shl 16).toDouble())) / 2
+private const val TWO_PWR_63_DBL_ = (((1 shl 16).toDouble() * (1 shl 16).toDouble()) * ((1 shl 16).toDouble() * (1 shl 16).toDouble())) / 2
 
 private val ZERO = fromInt(0)
 

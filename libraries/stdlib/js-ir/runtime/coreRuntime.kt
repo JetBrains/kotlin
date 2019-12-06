@@ -55,8 +55,8 @@ fun hashCode(obj: dynamic): Int {
     }
 }
 
-private var POW_2_32 = 4294967296.0
-private var OBJECT_HASH_CODE_PROPERTY_NAME = "kotlinHashCodeValue$"
+private const val POW_2_32 = 4294967296.0
+private const val OBJECT_HASH_CODE_PROPERTY_NAME = "kotlinHashCodeValue$"
 
 fun getObjectHashCode(obj: dynamic): Int {
     if (!jsIn(OBJECT_HASH_CODE_PROPERTY_NAME, obj)) {
