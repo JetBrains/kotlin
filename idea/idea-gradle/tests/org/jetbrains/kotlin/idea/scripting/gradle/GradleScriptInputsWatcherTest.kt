@@ -103,6 +103,44 @@ class GradleScriptInputsWatcherTest : AbstractScriptConfigurationLoadingTest() {
         assertConfigurationUpToDate(testFiles.settings)
     }
 
+    fun testChangeOutsideSectionsInvalidatesOtherFiles() {
+        assertAndLoadInitialConfiguration(testFiles.buildKts)
+        assertAndLoadInitialConfiguration(testFiles.settings)
+
+        changeBuildKtsOutsideSections()
+
+        assertConfigurationUpToDate(testFiles.buildKts)
+        assertConfigurationUpdateWasDone(testFiles.settings)
+    }
+
+    fun testChangeInsideSectionsInvalidatesOtherFiles() {
+        assertAndLoadInitialConfiguration(testFiles.buildKts)
+        assertAndLoadInitialConfiguration(testFiles.settings)
+
+        changeBuildKtsInsideSections()
+
+        assertConfigurationUpdateWasDone(testFiles.buildKts)
+        assertConfigurationUpdateWasDone(testFiles.settings)
+    }
+
+    fun testChangeInsideNonKtsFileInvalidatesOtherFiles() {
+        assertAndLoadInitialConfiguration(testFiles.buildKts)
+
+        changePropertiesFile()
+
+        assertConfigurationUpdateWasDone(testFiles.buildKts)
+    }
+
+    fun testTwoFilesChanged() {
+        assertAndLoadInitialConfiguration(testFiles.buildKts)
+        assertAndLoadInitialConfiguration(testFiles.settings)
+
+        changePropertiesFile()
+        changeSettingsKtsOutsideSections()
+
+        assertConfigurationUpdateWasDone(testFiles.settings)
+    }
+
     fun testFileAttributes() {
         assertAndLoadInitialConfiguration(testFiles.buildKts)
 

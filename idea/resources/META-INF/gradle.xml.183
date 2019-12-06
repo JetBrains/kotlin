@@ -31,6 +31,8 @@
                      This setting currently affects only HMPP projects. You may need to delete existing test configurations for the change to take place."
                      defaultValue="true"
                      restartRequired="false"/>
+
+        <projectService serviceImplementation="org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptInputsWatcher"/>
     </extensions>
 
     <actions>

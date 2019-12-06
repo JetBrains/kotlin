@@ -55,7 +55,7 @@ fun getGradleScriptInputsStamp(
                     }
                 }
 
-            GradleKotlinScriptConfigurationInputs(result.toString())
+            GradleKotlinScriptConfigurationInputs(result.toString(), file.timeStamp)
         } else null
     }
 }

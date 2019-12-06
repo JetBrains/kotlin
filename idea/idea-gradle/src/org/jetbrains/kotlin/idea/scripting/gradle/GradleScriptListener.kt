@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.scripting.gradle
 
+import com.intellij.openapi.components.service
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -34,10 +35,8 @@ open class GradleScriptListener(project: Project) : ScriptChangeListener(project
         if (file != null) {
             // *.gradle.kts file was changed
             updater.ensureUpToDatedConfigurationSuggested(file)
-            updater.postponeConfigurationReload(ScriptConfigurationCacheScope.Except(file))
-        } else {
-            updater.postponeConfigurationReload(ScriptConfigurationCacheScope.All)
         }
+        project.service<GradleScriptInputsWatcher>().addToStorage(vFile)
     }
 
     override fun isApplicable(vFile: VirtualFile): Boolean {
