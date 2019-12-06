@@ -18,7 +18,6 @@ import com.intellij.ide.ui.UISettings;
 import com.intellij.ide.util.ElementsChooser;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.ex.ActionUtil;
-import com.intellij.openapi.actionSystem.impl.ActionToolbarImpl;
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -157,23 +156,12 @@ public class RunAnythingPopupUI extends BigPopupUI {
           mySkipFocusGain = false;
           return;
         }
-        mySearchField.setForeground(UIUtil.getLabelForeground());
-        mySearchField.setColumns(SEARCH_FIELD_COLUMNS);
-        ApplicationManager.getApplication().invokeLater(() -> {
-          final JComponent parent = (JComponent)mySearchField.getParent();
-          parent.revalidate();
-          parent.repaint();
-        });
         rebuildList();
       }
 
       @Override
       public void focusLost(FocusEvent e) {
-        UIUtil.invokeLaterIfNeeded(() -> {
-          ApplicationManager.getApplication().invokeLater(() -> ActionToolbarImpl.updateAllToolbarsImmediately());
-
-          searchFinishedHandler.run();
-        });
+        searchFinishedHandler.run();
       }
     });
   }
