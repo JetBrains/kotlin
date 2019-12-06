@@ -129,7 +129,7 @@ public final class DaemonCodeAnalyzerImpl extends DaemonCodeAnalyzerEx implement
       assert !myDisposed : "Double dispose";
       myUpdateRunnable.clearFieldsOnDispose();
 
-      stopProcess(false, "Dispose");
+      stopProcess(false, "Dispose "+myProject);
 
       myDisposed = true;
       myLastSettings = null;
