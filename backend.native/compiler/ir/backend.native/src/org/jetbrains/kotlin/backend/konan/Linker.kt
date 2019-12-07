@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.LinkerOutputKind
+import org.jetbrains.kotlin.backend.konan.files.renameAtomic
 
 internal fun determineLinkerOutput(context: Context): LinkerOutputKind =
         when (context.config.produce) {
@@ -45,7 +46,7 @@ internal class Linker(val context: Context) {
             val outputFiles = context.config.outputFiles
             val outputFile = java.io.File(outputFiles.mainFileMangled)
             val outputDsymBundle = java.io.File(outputFiles.mainFileMangled + ".dSYM")
-            if (outputFile.renameTo(java.io.File(outputFiles.mainFile)))
+            if (renameAtomic(outputFile.absolutePath, outputFiles.mainFile, /* replaceExisting = */ false))
                 outputDsymBundle.renameTo(java.io.File(outputFiles.mainFile + ".dSYM"))
             else {
                 outputFile.delete()

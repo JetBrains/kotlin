@@ -13,8 +13,16 @@ targetList.each { targetName ->
     }
 }
 
+targetList.each { targetName ->
+    task ("${targetName}Files", type: CompileCppToBitcode) {
+        name 'files'
+        target targetName
+    }
+}
+
 task build {
     dependsOn "${hostName}Hash"
+    dependsOn "${hostName}Files"
 }
 
 task clean {
