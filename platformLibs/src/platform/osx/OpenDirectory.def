@@ -5,3 +5,5 @@ modules = OpenDirectory
 
 compilerOpts = -framework OpenDirectory
 linkerOpts = -framework OpenDirectory
+
+excludedFunctions = kODAuthenticationTypeClearTextReadOnly kODAuthenticationTypeSetCertificateHashAsCurrent

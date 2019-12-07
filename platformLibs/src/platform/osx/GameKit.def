@@ -5,3 +5,5 @@ modules = GameKit
 
 compilerOpts = -framework GameKit
 linkerOpts = -framework GameKit
+
+excludedFunctions = GKVoiceChatServiceErrorDomain
