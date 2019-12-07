@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle
 
+import assertk.assertions.contains
 import org.jetbrains.kotlin.ide.konan.gradle.KotlinGradleNativeMultiplatformModuleBuilder
 import org.jetbrains.kotlin.idea.configuration.KotlinGradleMobileMultiplatformModuleBuilder
 import org.jetbrains.kotlin.idea.configuration.KotlinGradleMobileSharedMultiplatformModuleBuilder
@@ -33,39 +34,110 @@ class GradleMultiplatformWizardTest : AbstractGradleMultiplatformWizardTest() {
 
     fun testMobile() {
         // TODO: add import & tests here when we will be able to locate Android SDK automatically (see KT-27635)
-        testImportFromBuilder(KotlinGradleMobileMultiplatformModuleBuilder(), performImport = false)
+        val builder = KotlinGradleMobileMultiplatformModuleBuilder()
+        val project = builder.buildProject()
+
+        with(project) {
+            checkSource("app/src") {
+                sourceSetsSize(6)
+                common("$commonMain/$kotlin/$sample/Sample.kt")
+                test("$commonTest/$kotlin/$sample/SampleTests.kt")
+                main("main/java/$sample/SampleAndroid.kt") {
+                    contains("class MainActivity")
+                }
+                test("test/java/$sample/SampleTestsAndroid.kt")
+                main("$iosMain/$kotlin/$sample/SampleIos.kt")
+                test("$iosTest/$kotlin/$sample/SampleTestsIOS.kt")
+            }
+            checkSource("iosApp") {
+                sourceSetsSize(3)
+            }
+            checkProjectStructure(checkMppPlugin = false)
+        }
     }
 
     fun testMobileShared() {
         val builder = KotlinGradleMobileSharedMultiplatformModuleBuilder()
-        val project = testImportFromBuilder(builder, "SampleTests", "SampleTestsJVM", metadataInside = true)
-        // Native tests can be run on Mac only
-        if (HostManager.hostIsMac) {
-            runTaskInProject(project, builder.nativeTestName)
+        val project = builder.buildProject()
+
+        with(project) {
+            checkProjectStructure(metadataInside = true)
+            runGradleImport()
+            runGradleTests("SampleTests", "SampleTestsJVM")
+
+            if (HostManager.hostIsMac) {
+                runGradleTask(builder.nativeTestName)
+            }
         }
     }
 
     fun testNative() {
         val builder = KotlinGradleNativeMultiplatformModuleBuilder()
-        val project = testImportFromBuilder(builder)
-        runTaskInProject(project, builder.nativeTestName)
+        val project = builder.buildProject()
+
+        with(project) {
+            checkSource("src") {
+                sourceSetsSize(2)
+                isExist("$nativeMain/$kotlin/$sample/Sample${native.capitalize()}.kt")
+                test("$nativeTest/$kotlin/$sample/SampleTests.kt")
+            }
+            checkProjectStructure()
+            runGradleImport()
+            runGradleTask("runReleaseExecutable${native.capitalize()}")
+        }
     }
 
     fun testShared() {
         val builder = KotlinGradleSharedMultiplatformModuleBuilder()
-        val project = testImportFromBuilder(builder, "SampleTests", "SampleTestsJVM", "SampleTestsNative", metadataInside = true)
-        runTaskInProject(project, builder.nativeTestName)
+        val project = builder.buildProject()
+
+        with(project) {
+            checkSource("src") {
+                sourceSetsSize(8)
+                common("$commonMain/$kotlin/$sample/Sample.kt")
+                test("$commonTest/$kotlin/$sample/SampleTests.kt")
+                main("$jvmMain/$kotlin/$sample/SampleJvm.kt")
+                test("$jvmTest/$kotlin/$sample/SampleTestsJVM.kt")
+                main("$jsMain/$kotlin/$sample/SampleJs.kt")
+                test("$jsTest/$kotlin/$sample/SampleTestsJS.kt")
+                main("$nativeMain/$kotlin/$sample/Sample${native.capitalize()}.kt")
+                test("$nativeTest/$kotlin/$sample/SampleTestsNative.kt")
+            }
+            checkProjectStructure(metadataInside = true)
+            runGradleImport()
+            runGradleTests("SampleTests", "SampleTestsJVM")
+        }
     }
 
     fun testSharedWithQualifiedName() {
         val builder = KotlinGradleSharedMultiplatformModuleBuilder()
-        val project = testImportFromBuilder(builder, "SampleTests", "SampleTestsJVM", "SampleTestsNative", metadataInside = true, useQualifiedModuleNames = true)
-        runTaskInProject(project, builder.nativeTestName)
+        val project = builder.buildProject()
+
+        with(project) {
+            runGradleImport(useQualifiedModuleNames = true)
+            runGradleTests("SampleTests", "SampleTestsJVM")
+        }
     }
 
     fun testWeb() {
         runTest {
-            testImportFromBuilder(KotlinGradleWebMultiplatformModuleBuilder(), "SampleTests", "SampleTestsJVM")
+            val builder = KotlinGradleWebMultiplatformModuleBuilder()
+            val project = builder.buildProject()
+
+            with(project) {
+                checkSource("src") {
+                    sourceSetsSize(6)
+                    common("$commonMain/$kotlin/$sample/Sample.kt")
+                    test("$commonTest/$kotlin/$sample/SampleTests.kt")
+                    main("$jvmMain/$kotlin/$sample/SampleJvm.kt")
+                    test("$jvmTest/$kotlin/$sample/SampleTestsJVM.kt")
+                    main("$jsMain/$kotlin/$sample/SampleJs.kt")
+                    test("$jsTest/$kotlin/$sample/SampleTestsJS.kt")
+                }
+                checkProjectStructure()
+               // runGradleImport()
+               // runGradleTests("SampleTests", "SampleTestsJVM")
+            }
         }
     }
 }

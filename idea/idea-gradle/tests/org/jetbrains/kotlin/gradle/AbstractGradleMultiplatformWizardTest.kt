@@ -5,6 +5,10 @@
 
 package org.jetbrains.kotlin.gradle
 
+import assertk.Assert
+import assertk.assertAll
+import assertk.assertThat
+import assertk.assertions.*
 import com.intellij.ide.projectWizard.NewProjectWizard
 import com.intellij.ide.projectWizard.ProjectTypeStep
 import com.intellij.ide.projectWizard.ProjectWizardTestCase
@@ -46,6 +50,9 @@ import org.jetbrains.kotlin.idea.codeInsight.gradle.ExternalSystemImportingTestC
 import org.jetbrains.kotlin.idea.codeInsight.gradle.GradleImportingTestCase
 import org.jetbrains.kotlin.idea.configuration.KotlinGradleAbstractMultiplatformModuleBuilder
 import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
+import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.TargetSupportException
 import org.jetbrains.kotlin.test.isIgnoredInDatabaseWithLog
 import org.jetbrains.plugins.gradle.service.execution.GradleExecutionHelper
 import org.jetbrains.plugins.gradle.settings.DistributionType
@@ -53,8 +60,11 @@ import org.jetbrains.plugins.gradle.settings.GradleExecutionSettings
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.settings.GradleSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
+import org.jetbrains.plugins.gradle.util.GradleConstants.DEFAULT_SCRIPT_NAME
+import org.jetbrains.plugins.gradle.util.GradleConstants.SETTINGS_FILE_NAME
 import org.jetbrains.plugins.groovy.GroovyFileType
 import java.io.File
+import java.io.FileNotFoundException
 import java.io.IOException
 
 abstract class AbstractGradleMultiplatformWizardTest : ProjectWizardTestCase<AbstractProjectWizard>() {
@@ -78,20 +88,14 @@ abstract class AbstractGradleMultiplatformWizardTest : ProjectWizardTestCase<Abs
         systemSettings.setLinkedProjectsSettings(projects)
     }
 
-    protected fun testImportFromBuilder(
-        builder: KotlinGradleAbstractMultiplatformModuleBuilder,
-        vararg testClassNames: String,
-        metadataInside: Boolean = false,
-        performImport: Boolean = true,
-        useQualifiedModuleNames: Boolean = false
-    ): Project {
-        val project = createProject { step ->
+    fun KotlinGradleAbstractMultiplatformModuleBuilder.buildProject(): Project =
+        createProject { step ->
             if (step is ProjectTypeStep) {
-                TestCase.assertTrue(step.setSelectedTemplate("Kotlin", builder.presentableName))
+                TestCase.assertTrue(step.setSelectedTemplate("Kotlin", this.presentableName))
                 val steps = myWizard.sequence.selectedSteps
                 TestCase.assertEquals(4, steps.size)
                 val projectBuilder = myWizard.projectBuilder
-                UsefulTestCase.assertInstanceOf(projectBuilder, builder::class.java)
+                UsefulTestCase.assertInstanceOf(projectBuilder, this::class.java)
                 with(projectBuilder as KotlinGradleAbstractMultiplatformModuleBuilder) {
                     explicitPluginVersion = pluginVersion
                 }
@@ -102,47 +106,124 @@ abstract class AbstractGradleMultiplatformWizardTest : ProjectWizardTestCase<Abs
             }
         }
 
-        val modules = ModuleManager.getInstance(project).modules
-        TestCase.assertEquals(1, modules.size)
+    fun Project.checkProjectStructure(metadataInside: Boolean = false, checkMppPlugin: Boolean = true) {
+
+        val modules = ModuleManager.getInstance(this).modules
+        assertThat(modules, "modules in project").size().isEqualTo(1)
+
         val module = modules[0]
-        TestCase.assertTrue(ModuleRootManager.getInstance(module).isSdkInherited)
+        assertThat(ModuleRootManager.getInstance(module).isSdkInherited, "sdk inherited").isTrue()
 
-        val root = ProjectRootManager.getInstance(project).contentRoots[0]
+        val root = ProjectRootManager.getInstance(this).contentRoots[0]
 
-        val settingsScript = VfsUtilCore.findRelativeFile("settings.gradle", root)
+        val settingsScript = VfsUtilCore.findRelativeFile(SETTINGS_FILE_NAME, root)
+        assertThat(settingsScript, SETTINGS_FILE_NAME).isNotNull()
+
         TestCase.assertNotNull(settingsScript)
         val settingsScriptText = StringUtil.convertLineSeparators(VfsUtilCore.loadText(settingsScript!!))
-        TestCase.assertTrue("rootProject.name = " in settingsScriptText)
+
+        assertThat(settingsScriptText, "$SETTINGS_FILE_NAME script").contains("rootProject.name = ")
+
         if (metadataInside) {
-            TestCase.assertTrue("enableFeaturePreview('GRADLE_METADATA')" in settingsScriptText)
+            assertThat(settingsScriptText, "$SETTINGS_FILE_NAME script").contains("enableFeaturePreview('GRADLE_METADATA')")
         }
 
         File(root.canonicalPath).assertNoEmptyChildren()
 
-        val buildScript = VfsUtilCore.findRelativeFile("build.gradle", root)!!
+        val buildScript = VfsUtilCore.findRelativeFile(DEFAULT_SCRIPT_NAME, root)!!
         val buildScriptText = StringUtil.convertLineSeparators(VfsUtilCore.loadText(buildScript))
-        println(buildScriptText)
 
-        if (!performImport) return project
-        doImportProject(project, useQualifiedModuleNames)
-        if (testClassNames.isNotEmpty()) {
-            doTestProject(project, *testClassNames)
+        if (checkMppPlugin){
+            assertThat(buildScriptText, DEFAULT_SCRIPT_NAME).contains("id 'org.jetbrains.kotlin.multiplatform' version '$pluginVersion'")
         }
-        return project
+        println(buildScriptText)
     }
 
-    private fun File.assertNoEmptyChildren() {
-        for (file in walkTopDown()) {
-            if (!file.isDirectory) {
-                var empty = true
-                file.forEachLine {
-                    if (it.isNotEmpty()) {
-                        empty = false
-                        return@forEachLine
+    protected fun Project.runGradleImport(useQualifiedModuleNames: Boolean = false) {
+        ExternalSystemApiUtil.subscribe(
+            this,
+            GradleConstants.SYSTEM_ID,
+            object : ExternalSystemSettingsListenerAdapter<ExternalProjectSettings>() {
+                override fun onProjectsLinked(settings: Collection<ExternalProjectSettings>) {
+                    val item = ContainerUtil.getFirstItem<Any>(settings)
+                    if (item is GradleProjectSettings) {
+                        item.gradleJvm = DEFAULT_SDK
                     }
                 }
-                TestCase.assertFalse("Generated file ${file.path} is empty", empty)
+            })
+
+        GradleSettings.getInstance(this).gradleVmOptions = "-Xmx256m -XX:MaxPermSize=64m"
+        val wrapperJarFrom = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(GradleImportingTestCase.wrapperJar())!!
+        val wrapperJarFromTo = this.createProjectSubFile("gradle/wrapper/gradle-wrapper.jar")
+        runWrite {
+            wrapperJarFromTo.setBinaryContent(wrapperJarFrom.contentsToByteArray())
+        }
+
+        this.reconfigureGradleSettings {
+            distributionType = DistributionType.DEFAULT_WRAPPED
+            externalProjectPath = this@runGradleImport.basePath!!
+            gradleJvm = DEFAULT_SDK
+            isUseQualifiedModuleNames = useQualifiedModuleNames
+        }
+
+        val error = Ref.create<Couple<String>>()
+        ExternalSystemUtil.refreshProjects(
+            ImportSpecBuilder(this, externalSystemId)
+                .use(ProgressExecutionMode.MODAL_SYNC)
+                .callback(object : ExternalProjectRefreshCallback {
+                    override fun onSuccess(externalProject: DataNode<ProjectData>?) {
+                        if (externalProject == null) {
+                            val errorMessage = "Got null External project after import"
+                            System.err.println(errorMessage)
+                            error.set(Couple.of(errorMessage, null))
+                            return
+                        }
+                        ServiceManager.getService(ProjectDataManager::class.java).importData(externalProject, this@runGradleImport, true)
+                        println("External project was successfully imported")
+                    }
+
+                    override fun onFailure(errorMessage: String, errorDetails: String?) {
+                        error.set(Couple.of(errorMessage, errorDetails))
+                    }
+                })
+                .forceWhenUptodate()
+        )
+
+        if (!error.isNull) {
+            var failureMsg = "Import failed: " + error.get().first
+            if (StringUtil.isNotEmpty(error.get().second)) {
+                failureMsg += "\nError details: \n" + error.get().second
             }
+            TestCase.fail(failureMsg)
+        }
+    }
+
+    protected fun Project.runGradleTests(vararg testClassNames: String) {
+        val settings = GradleExecutionSettings(null, null, DistributionType.DEFAULT_WRAPPED, false)
+        println("Running project tests: ${testClassNames.toList()}")
+
+        val errors = mutableMapOf<String, Throwable>()
+        testClassNames.forEach { test ->
+            try {
+                GradleExecutionHelper().execute(this.basePath!!, settings) {
+                    // TODO: --no-daemon should be here, unfortunately it does not work for TestLauncher
+                    val testLauncher = it.newTestLauncher()
+                    testLauncher.withJvmTestClasses(test).run()
+                }
+            } catch (exception: Throwable) {
+                errors[test] = exception
+            }
+        }
+        if (errors.isNotEmpty()) {
+            throw RuntimeException(errors.mapValues { it.component2().stackTrace }.toString())
+        }
+    }
+
+    protected fun Project.runGradleTask(taskName: String) {
+        val settings = GradleExecutionSettings(null, null, DistributionType.DEFAULT_WRAPPED, false)
+        println("Running project task: $taskName")
+        GradleExecutionHelper().execute(this.basePath!!, settings) {
+            it.newBuild().forTasks(taskName).run()
         }
     }
 
@@ -166,83 +247,6 @@ abstract class AbstractGradleMultiplatformWizardTest : ProjectWizardTestCase<Abs
         }.execute()
     }
 
-    private fun doImportProject(project: Project, useQualifiedModuleNames: Boolean = false) {
-        ExternalSystemApiUtil.subscribe(
-            project,
-            GradleConstants.SYSTEM_ID,
-            object : ExternalSystemSettingsListenerAdapter<ExternalProjectSettings>() {
-                override fun onProjectsLinked(settings: Collection<ExternalProjectSettings>) {
-                    val item = ContainerUtil.getFirstItem<Any>(settings)
-                    if (item is GradleProjectSettings) {
-                        item.gradleJvm = DEFAULT_SDK
-                    }
-                }
-            })
-
-        GradleSettings.getInstance(project).gradleVmOptions = "-Xmx256m -XX:MaxPermSize=64m"
-        val wrapperJarFrom = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(GradleImportingTestCase.wrapperJar())!!
-        val wrapperJarFromTo = project.createProjectSubFile("gradle/wrapper/gradle-wrapper.jar")
-        runWrite {
-            wrapperJarFromTo.setBinaryContent(wrapperJarFrom.contentsToByteArray())
-        }
-
-        project.reconfigureGradleSettings {
-            distributionType = DistributionType.DEFAULT_WRAPPED
-            externalProjectPath = project.basePath!!
-            gradleJvm = DEFAULT_SDK
-            isUseQualifiedModuleNames = useQualifiedModuleNames
-        }
-
-        val error = Ref.create<Couple<String>>()
-        ExternalSystemUtil.refreshProjects(
-            ImportSpecBuilder(project, externalSystemId)
-                .use(ProgressExecutionMode.MODAL_SYNC)
-                .callback(object : ExternalProjectRefreshCallback {
-                    override fun onSuccess(externalProject: DataNode<ProjectData>?) {
-                        if (externalProject == null) {
-                            val errorMessage = "Got null External project after import"
-                            System.err.println(errorMessage)
-                            error.set(Couple.of(errorMessage, null))
-                            return
-                        }
-                        ServiceManager.getService(ProjectDataManager::class.java).importData(externalProject, project, true)
-                        println("External project was successfully imported")
-                    }
-
-                    override fun onFailure(errorMessage: String, errorDetails: String?) {
-                        error.set(Couple.of(errorMessage, errorDetails))
-                    }
-                })
-                .forceWhenUptodate()
-        )
-
-        if (!error.isNull) {
-            var failureMsg = "Import failed: " + error.get().first
-            if (StringUtil.isNotEmpty(error.get().second)) {
-                failureMsg += "\nError details: \n" + error.get().second
-            }
-            TestCase.fail(failureMsg)
-        }
-    }
-
-    private fun doTestProject(project: Project, vararg testClassNames: String) {
-        val settings = GradleExecutionSettings(null, null, DistributionType.DEFAULT_WRAPPED, false)
-        println("Running project tests: ${testClassNames.toList()}")
-        GradleExecutionHelper().execute(project.basePath!!, settings) {
-            // TODO: --no-daemon should be here, unfortunately it does not work for TestLauncher
-            val testLauncher = it.newTestLauncher()
-            testLauncher.withJvmTestClasses(*testClassNames).run()
-        }
-    }
-
-    protected fun runTaskInProject(project: Project, taskName: String) {
-        val settings = GradleExecutionSettings(null, null, DistributionType.DEFAULT_WRAPPED, false)
-        println("Running project task: $taskName")
-        GradleExecutionHelper().execute(project.basePath!!, settings) {
-            it.newBuild().forTasks(taskName).run()
-        }
-    }
-
     override fun setUp() {
         super.setUp()
         val javaHome = IdeaTestUtil.requireRealJdkHome()
@@ -263,5 +267,143 @@ abstract class AbstractGradleMultiplatformWizardTest : ProjectWizardTestCase<Abs
 
     companion object {
         val externalSystemId = GradleConstants.SYSTEM_ID
+
+        private val defaultNativeTarget by lazy {
+            try {
+                HostManager.host
+            } catch (e: TargetSupportException) {
+                KonanTarget.IOS_X64
+            }
+        }
+
+        // Examples: ios_x64 -> ios, macos_x64 -> macos, wasm32 -> wasm.
+        private val KonanTarget.userTargetName: String
+            get() {
+                val index = name.indexOfAny("_0123456789".toCharArray())
+                return if (index > 0) name.substring(0, index) else name
+            }
+
+        val native by lazy { defaultNativeTarget.userTargetName }
     }
+
+
+    class Checker(val project: Project) {
+        val kotlin = "kotlin"
+        val sample = "sample"
+
+        val commonMain = "commonMain"
+        val commonTest = "commonTest"
+        val jvmMain = "jvmMain"
+        val jvmTest = "jvmTest"
+        val jsMain = "jsMain"
+        val jsTest = "jsTest"
+        val nativeMain = "${native}Main"
+        val nativeTest = "${native}Test"
+        val iosMain = "iosMain"
+        val iosTest = "iosTest"
+
+        private var files: MutableMap<String, (Assert<String>.() -> Unit)?> = mutableMapOf()
+        private var sourceSetsCount: Int? = null
+        private var commons: MutableMap<String, (Assert<String>.() -> Unit)?> = mutableMapOf()
+        private var tests: MutableMap<String, (Assert<String>.() -> Unit)?> = mutableMapOf()
+        private var mains: MutableMap<String, (Assert<String>.() -> Unit)?> = mutableMapOf()
+
+        fun isExist(uri: String, matcher: (Assert<String>.() -> Unit)? = null) {
+            files[uri] = matcher
+        }
+
+        fun common(uri: String, matcher: (Assert<String>.() -> Unit)? = null) {
+            commons[uri] = matcher
+        }
+
+        fun test(uri: String, matcher: (Assert<String>.() -> Unit)? = null) {
+            tests[uri] = matcher
+        }
+
+        fun main(uri: String, matcher: (Assert<String>.() -> Unit)? = null) {
+            mains[uri] = matcher
+        }
+
+        fun sourceSetsSize(value: Int) {
+            sourceSetsCount = value
+        }
+
+        fun runChecks(source: String) {
+            assertAll {
+                val root = ProjectRootManager.getInstance(project).contentRoots[0]
+                val src = root.findFileByRelativePath(source) ?: throw FileNotFoundException(source)
+
+                sourceSetsCount?.let { count ->
+                    assertThat(src.children.filter { it.isDirectory }, "sourceSet folders").size().isEqualTo(count)
+                }
+                files.forEach { (uri, matcher) ->
+                    val content = src.getIfExists(uri).getContent()
+
+                    matcher?.let {
+                        assertThat(content, uri).it()
+                    }
+                }
+                tests.forEach { (uri, matcher) ->
+                    val content = src.getIfExists(uri).getContent()
+
+                    assertThat(content, uri).contains("@Test")
+                    matcher?.let {
+                        assertThat(content, uri).it()
+                    }
+                }
+                mains.forEach { (uri, matcher) ->
+                    val content = src.getIfExists(uri).getContent()
+
+                    assertThat(content, uri).contains("actual")
+                    matcher?.let {
+                        assertThat(content, uri).it()
+                    }
+                }
+                commons.forEach { (uri, matcher) ->
+                    val content = src.getIfExists(uri).getContent()
+
+                    assertThat(content, uri).contains("expect")
+                    matcher?.let {
+                        assertThat(content, uri).it()
+                    }
+                }
+            }
+        }
+    }
+
+    fun Project.checkSource(source: String, addChecks: Checker.() -> Unit) {
+        val checker = Checker(this)
+        checker.addChecks()
+        checker.runChecks(source)
+    }
+}
+
+private fun File.assertNoEmptyChildren() {
+    for (file in walkTopDown()) {
+        if (!file.isDirectory) {
+            var empty = true
+            file.forEachLine {
+                if (it.isNotEmpty()) {
+                    empty = false
+                    return@forEachLine
+                }
+            }
+            TestCase.assertFalse("Generated file ${file.path} is empty", empty)
+        }
+    }
+}
+
+private fun VirtualFile.getContent(): String = StringUtil.convertLineSeparators(VfsUtilCore.loadText(this))
+
+private fun VirtualFile.getIfExists(
+    uri: String,
+    isNotEmpty: Boolean = true
+): VirtualFile {
+    val file = this.findFileByRelativePath(uri)
+    assertThat(file, uri).isNotNull()
+
+    if (isNotEmpty) {
+        File(file!!.canonicalPath).assertNoEmptyChildren()
+    }
+    return file!!
 }

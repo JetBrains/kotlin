@@ -35,6 +35,8 @@ dependencies {
     testCompile(projectTests(":idea"))
     testCompile(projectTests(":idea:idea-test-framework"))
 
+    testCompile("com.willowtreeapps.assertk:assertk-jvm:0.20")
+
     testCompile(intellijPluginDep("gradle"))
     Platform[193].orHigher {
         testCompile(intellijPluginDep("gradle-java"))
