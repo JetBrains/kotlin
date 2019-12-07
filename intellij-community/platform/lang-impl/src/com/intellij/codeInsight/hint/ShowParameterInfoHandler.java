@@ -94,6 +94,9 @@ public class ShowParameterInfoHandler implements CodeInsightActionHandler {
       new Task.Backgroundable(project, progressTitle, true) {
         @Override
         public void run(@NotNull ProgressIndicator indicator) {
+          assert !ApplicationManager.getApplication().isWriteAccessAllowed() :
+            "Show parameter info under write action could lead to live lock";
+
           final VisibleAreaListener visibleAreaListener = e -> indicator.cancel();
 
           editor.getScrollingModel().addVisibleAreaListener(visibleAreaListener);
