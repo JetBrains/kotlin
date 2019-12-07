@@ -14637,6 +14637,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/nullableTypes/elvisOnUnit.kt");
             }
 
+            @TestMetadata("inferenceFlexibleTToNullable.kt")
+            public void testInferenceFlexibleTToNullable() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/nullableTypes/inferenceFlexibleTToNullable.kt");
+            }
+
             @TestMetadata("nullAssertOnTypeWithNullableUpperBound.kt")
             public void testNullAssertOnTypeWithNullableUpperBound() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/nullableTypes/nullAssertOnTypeWithNullableUpperBound.kt");
