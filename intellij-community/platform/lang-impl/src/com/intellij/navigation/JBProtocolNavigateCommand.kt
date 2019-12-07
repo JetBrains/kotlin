@@ -11,7 +11,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.JBProtocolCommand
 import com.intellij.openapi.application.JetBrainsProtocolHandler.FRAGMENT_PARAM_NAME
 import com.intellij.openapi.application.ModalityState
-import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.editor.LogicalPosition
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.TextEditor
@@ -32,7 +32,6 @@ import java.util.regex.Pattern
 
 open class JBProtocolNavigateCommand : JBProtocolCommand(NAVIGATE_COMMAND) {
   override fun perform(target: String, parameters: Map<String, String>) {
-
     /**
      * The handler parses the following 'navigate' command parameters:
      *
@@ -57,27 +56,23 @@ open class JBProtocolNavigateCommand : JBProtocolCommand(NAVIGATE_COMMAND) {
       return
     }
 
-    val recentProjectsActions = RecentProjectListActionProvider.getInstance().getActions(false)
-    for (recentProjectAction in recentProjectsActions) {
+    for (recentProjectAction in RecentProjectListActionProvider.getInstance().getActions(false)) {
       if (recentProjectAction !is ReopenProjectAction || recentProjectAction.projectName != projectName) {
         continue
       }
 
-      ProjectManager.getInstance().openProjects.find { project -> project.name == projectName }?.let {
-        findAndNavigateToReference(it, parameters)
-      } ?: run {
-        ApplicationManager.getApplication().invokeLater(
-          {
-            RecentProjectsManagerBase.instanceEx.openProject(Paths.get(recentProjectAction.projectPath), OpenProjectTask())?.let {
-              StartupManager.getInstance(it).registerPostStartupActivity { findAndNavigateToReference(it, parameters) }
-            }
-          }, ModalityState.NON_MODAL)
-      }
+      val project1 = ProjectManager.getInstance().openProjects.find { project -> project.name == projectName } ?: continue
+      findAndNavigateToReference(project1, parameters)
+      ApplicationManager.getApplication().invokeLater(Runnable {
+        RecentProjectsManagerBase.instanceEx.openProject(Paths.get(recentProjectAction.projectPath), OpenProjectTask())?.let {
+          StartupManager.getInstance(it).registerPostStartupActivity { findAndNavigateToReference(it, parameters) }
+        }
+      }, ModalityState.NON_MODAL, project1.disposed)
     }
   }
 
   companion object {
-    private val LOG = Logger.getInstance(JBProtocolNavigateCommand::class.java)
+    private val LOG = logger<JBProtocolNavigateCommand>()
     const val NAVIGATE_COMMAND = "navigate"
     const val PROJECT_NAME_KEY = "project"
     const val REFERENCE_TARGET = "reference"
@@ -88,7 +83,7 @@ open class JBProtocolNavigateCommand : JBProtocolCommand(NAVIGATE_COMMAND) {
     private const val PATH_GROUP = "path"
     private const val LINE_GROUP = "line"
     private const val COLUMN_GROUP = "column"
-    private val PATH_WITH_LOCATION: Pattern = Pattern.compile("(?<$PATH_GROUP>[^:]*)(:(?<$LINE_GROUP>[\\d]+))?(:(?<$COLUMN_GROUP>[\\d]+))?")
+    private val PATH_WITH_LOCATION = Pattern.compile("(?<$PATH_GROUP>[^:]*)(:(?<$LINE_GROUP>[\\d]+))?(:(?<$COLUMN_GROUP>[\\d]+))?")
 
     private fun findAndNavigateToReference(project: Project, parameters: Map<String, String>) {
       parameters.filter { it.key.startsWith(FQN_KEY) }.forEach {

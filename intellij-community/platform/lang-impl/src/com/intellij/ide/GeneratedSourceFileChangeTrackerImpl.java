@@ -4,7 +4,6 @@ package com.intellij.ide;
 import com.intellij.AppTopics;
 import com.intellij.ProjectTopics;
 import com.intellij.ide.impl.ProjectUtil;
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.editor.Document;
@@ -16,7 +15,6 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManagerListener;
-import com.intellij.openapi.project.ex.ProjectEx;
 import com.intellij.openapi.roots.GeneratedSourcesFilter;
 import com.intellij.openapi.roots.ModuleRootEvent;
 import com.intellij.openapi.roots.ModuleRootListener;
@@ -44,8 +42,7 @@ public final class GeneratedSourceFileChangeTrackerImpl extends GeneratedSourceF
 
   public GeneratedSourceFileChangeTrackerImpl(@NotNull Project project) {
     myProject = project;
-    Disposable parentDisposable = project instanceof ProjectEx ? (ProjectEx)project : project;
-    myCheckingQueue = new SingleAlarm(this::checkFiles, 500, Alarm.ThreadToUse.POOLED_THREAD, parentDisposable);
+    myCheckingQueue = new SingleAlarm(this::checkFiles, 500, Alarm.ThreadToUse.POOLED_THREAD, project);
   }
 
   @TestOnly

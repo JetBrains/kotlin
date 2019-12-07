@@ -440,7 +440,8 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
         boolean createSnapshotStorage = VfsAwareMapReduceIndex.hasSnapshotMapping(extension) && extension instanceof SingleEntryFileBasedIndexExtension;
         if (createSnapshotStorage) {
           storage = new SnapshotSingleValueIndexStorage<K, V, FileContent>();
-        } else {
+        }
+        else {
           storage = new VfsAwareMapIndexStorage<>(
             IndexInfrastructure.getStorageFile(name),
             extension.getKeyDescriptor(),
@@ -473,8 +474,10 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
 
         state.registerIndex(name,
                             index,
-                            file -> file instanceof VirtualFileWithId && inputFilter.acceptInput(file) &&
-                                    !GlobalIndexFilter.isExcludedFromIndexViaFilters(file, name),
+                            file -> {
+                              return file instanceof VirtualFileWithId && inputFilter.acceptInput(file) &&
+                                     !GlobalIndexFilter.isExcludedFromIndexViaFilters(file, name);
+                            },
                             version + GlobalIndexFilter.getFiltersVersion(name),
                             addedTypes);
         break;

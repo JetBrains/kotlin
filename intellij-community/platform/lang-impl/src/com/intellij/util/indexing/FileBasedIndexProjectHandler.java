@@ -23,7 +23,6 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileVisitor;
 import com.intellij.util.Processor;
-import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,13 +35,30 @@ public final class FileBasedIndexProjectHandler implements IndexableFileSet {
 
   private final FileBasedIndexScanRunnableCollector myCollector;
 
-  // not clear for what it should be as pre-startup activity instead of direct execution in this constructor, but for now leave old logic as is
-  static final class FileBasedIndexProjectHandlerPreStartupActivity implements StartupActivity {
+  private boolean isRemoved;
+
+  private FileBasedIndexProjectHandler(@NotNull Project project) {
+    myCollector = FileBasedIndexScanRunnableCollector.getInstance(project);
+  }
+
+  static final class FileBasedIndexProjectHandlerStartupActivity implements StartupActivity {
+    FileBasedIndexProjectHandlerStartupActivity() {
+      ApplicationManager.getApplication().getMessageBus().connect().subscribe(ProjectManager.TOPIC, new ProjectManagerListener() {
+        @Override
+        public void projectClosing(@NotNull Project project) {
+          FileBasedIndexProjectHandler handler = project.getServiceIfCreated(FileBasedIndexProjectHandler.class);
+          if (handler != null && !handler.isRemoved) {
+            handler.isRemoved = true;
+            FileBasedIndex.getInstance().removeIndexableSet(handler);
+          }
+        }
+      });
+    }
+
     @Override
     public void runActivity(@NotNull Project project) {
-      MessageBusConnection busConnection = project.getMessageBus().connect();
       if (ApplicationManager.getApplication().isInternal()) {
-        busConnection.subscribe(DumbService.DUMB_MODE, new DumbService.DumbModeListener() {
+        project.getMessageBus().connect().subscribe(DumbService.DUMB_MODE, new DumbService.DumbModeListener() {
           @Override
           public void exitDumbMode() {
             LOG.info("Has changed files: " + (createChangedFilesIndexingTask(project) != null) + "; project=" + project);
@@ -62,24 +78,10 @@ public final class FileBasedIndexProjectHandler implements IndexableFileSet {
       fileBasedIndex.registerIndexableSet(handler, project);
       // done mostly for tests. In real life this is no-op, because the set was removed on project closing
       Disposer.register(project, () -> {
+        handler.isRemoved = true;
         fileBasedIndex.removeIndexableSet(handler);
       });
-      busConnection.subscribe(ProjectManager.TOPIC, new ProjectManagerListener() {
-        private boolean removed;
-
-        @Override
-        public void projectClosing(@NotNull Project eventProject) {
-          if (eventProject == project && !removed) {
-            removed = true;
-            fileBasedIndex.removeIndexableSet(handler);
-          }
-        }
-      });
     }
-  }
-
-  private FileBasedIndexProjectHandler(@NotNull Project project) {
-    myCollector = FileBasedIndexScanRunnableCollector.getInstance(project);
   }
 
   @Override
