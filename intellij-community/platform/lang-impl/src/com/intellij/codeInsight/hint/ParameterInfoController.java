@@ -78,7 +78,6 @@ public class ParameterInfoController extends UserDataHolderBase implements Dispo
   private final CaretListener myEditorCaretListener;
   @NotNull private final ParameterInfoHandler<PsiElement, Object> myHandler;
   private final MyBestLocationPointProvider myProvider;
-  private final ParameterInfoListener[] myListeners;
 
   private final Alarm myAlarm = new Alarm();
   private static final int DELAY = 200;
@@ -141,7 +140,6 @@ public class ParameterInfoController extends UserDataHolderBase implements Dispo
     myEditor = editor;
     myHandler = handler;
     myProvider = new MyBestLocationPointProvider(editor);
-    myListeners = ParameterInfoListener.EP_NAME.getExtensions();
     myLbraceMarker = editor.getDocument().createRangeMarker(lbraceOffset, lbraceOffset);
     myComponent = new ParameterInfoComponent(descriptors, editor, handler, requestFocus, true);
     myHint = createHint();
@@ -334,7 +332,7 @@ public class ParameterInfoController extends UserDataHolderBase implements Dispo
             result.project = myProject;
             result.range = myComponent.getParameterOwner().getTextRange();
             result.editor = myEditor;
-            for (ParameterInfoListener listener : myListeners) {
+            for (ParameterInfoListener listener : ParameterInfoListener.EP_NAME.getExtensionList()) {
               listener.hintUpdated(result);
             }
             if (ApplicationManager.getApplication().isHeadlessEnvironment()) return;
@@ -832,7 +830,7 @@ public class ParameterInfoController extends UserDataHolderBase implements Dispo
 
   protected void hideHint() {
     myHint.hide();
-    for (ParameterInfoListener listener : myListeners) {
+    for (ParameterInfoListener listener : ParameterInfoListener.EP_NAME.getExtensionList()) {
       listener.hintHidden(myProject);
     }
   }
