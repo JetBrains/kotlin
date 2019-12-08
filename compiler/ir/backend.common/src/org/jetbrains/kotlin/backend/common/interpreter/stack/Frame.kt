@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.common.interpreter.stack
 import org.jetbrains.kotlin.backend.common.interpreter.equalTo
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
-import java.util.*
+import kotlin.NoSuchElementException
 
 data class Variable(val descriptor: DeclarationDescriptor, val state: State) {
     override fun toString(): String {
@@ -26,9 +26,19 @@ interface Frame {
     fun getVariableState(variableDescriptor: DeclarationDescriptor): State
     fun getAll(): List<Variable>
     fun contains(descriptor: DeclarationDescriptor): Boolean
+    fun pushReturnValue(state: State)
+    fun pushReturnValue(frame: Frame)
+    fun peekReturnValue(): State
+    //fun peekReturnValueOrNull(): State?
+    fun popReturnValue(): State
+    //fun popReturnValueOrNull(): State?
+    fun hasReturnValue(): Boolean
+    fun copy(): Frame
 }
 
 class InterpreterFrame(val pool: MutableList<Variable> = mutableListOf()) : Frame {
+    private val returnStack: MutableList<State> = mutableListOf()
+
     override fun addVar(variable: Variable) {
         pool.add(variable)
     }
@@ -48,5 +58,37 @@ class InterpreterFrame(val pool: MutableList<Variable> = mutableListOf()) : Fram
 
     override fun contains(descriptor: DeclarationDescriptor): Boolean {
         return pool.any { it.descriptor == descriptor }
+    }
+
+    override fun pushReturnValue(state: State) {
+        returnStack += state
+    }
+
+    override fun pushReturnValue(frame: Frame) {
+        if (frame.hasReturnValue()) this.pushReturnValue(frame.popReturnValue())
+    }
+
+    override fun hasReturnValue(): Boolean {
+        return returnStack.isNotEmpty()
+    }
+
+    override fun peekReturnValue(): State {
+        if (returnStack.isNotEmpty()) {
+            return returnStack.last()
+        }
+        throw NoSuchElementException("Return values stack is empty")
+    }
+
+    override fun popReturnValue(): State {
+        if (returnStack.isNotEmpty()) {
+            val item = returnStack.last()
+            returnStack.removeAt(returnStack.size - 1)
+            return item
+        }
+        throw NoSuchElementException("Return values stack is empty")
+    }
+
+    override fun copy(): Frame {
+        return InterpreterFrame(pool.toMutableList())
     }
 }
