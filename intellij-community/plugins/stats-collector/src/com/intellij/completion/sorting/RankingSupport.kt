@@ -16,7 +16,6 @@ import org.jetbrains.annotations.TestOnly
 
 
 object RankingSupport {
-  val EP_NAME: ExtensionPointName<RankingModelProvider> = ExtensionPointName("com.intellij.completion.ml.model")
   private val LOG = logger<RankingSupport>()
   private var enabledInTests: Boolean = false
 
