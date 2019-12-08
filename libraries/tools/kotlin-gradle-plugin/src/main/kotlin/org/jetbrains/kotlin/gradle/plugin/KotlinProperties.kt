@@ -92,6 +92,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val enableCompatibilityMetadataVariant: Boolean?
         get() = booleanProperty("kotlin.mpp.enableCompatibilityMetadataVariant")
 
+    val enableExperimentalAndroidSourceSets: Boolean?
+        get() = booleanProperty("kotlin.mpp.enableExperimentalAndroidSourceSets")
+
     val ignoreDisabledNativeTargets: Boolean?
         get() = booleanProperty(DisabledNativeTargetsReporter.DISABLE_WARNING_PROPERTY_NAME)
 

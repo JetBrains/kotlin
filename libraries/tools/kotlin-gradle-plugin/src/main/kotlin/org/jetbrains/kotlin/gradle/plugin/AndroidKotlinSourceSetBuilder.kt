@@ -12,7 +12,7 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.logging.Logging
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
-import org.jetbrains.kotlin.gradle.plugin.MppAndroidKotlinSourceSetBuilder.AndroidSourceSetClassifierReplacement.PrefixClassifierReplacement
+import org.jetbrains.kotlin.gradle.plugin.NewMppAndroidKotlinSourceSetBuilder.AndroidSourceSetClassifierReplacement.PrefixClassifierReplacement
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.utils.keysToMap
@@ -21,10 +21,17 @@ import java.io.File
 private typealias KotlinSourceSets = NamedDomainObjectContainer<KotlinSourceSet>
 
 internal fun AndroidKotlinSourceSetBuilder(target: KotlinAndroidTarget): AndroidKotlinSourceSetBuilder {
+    val areExperimentalAndroidSourceSetsEnabled = PropertiesProvider(target.project).enableExperimentalAndroidSourceSets ?: false
     val disambiguationClassifier = target.disambiguationClassifier
-    return when (disambiguationClassifier) {
-        null, "" -> SinglePlatformAndroidKotlinSourceSetBuilder(target.project)
-        else -> MppAndroidKotlinSourceSetBuilder(target.project, androidTargetName = disambiguationClassifier)
+    return when {
+        disambiguationClassifier == null || disambiguationClassifier.isEmpty() ->
+            SinglePlatformAndroidKotlinSourceSetBuilder(target.project)
+
+        areExperimentalAndroidSourceSetsEnabled ->
+            NewMppAndroidKotlinSourceSetBuilder(target.project, androidTargetName = disambiguationClassifier)
+
+        else ->
+            MppAndroidKotlinSourceSetBuilder(target.project, androidTargetName = disambiguationClassifier)
     }
 }
 
@@ -56,6 +63,43 @@ internal class SinglePlatformAndroidKotlinSourceSetBuilder(private val project: 
 }
 
 internal class MppAndroidKotlinSourceSetBuilder(
+    private val project: Project,
+    private val androidTargetName: String
+) : AndroidKotlinSourceSetBuilder {
+    private val logger = Logging.getLogger(this.javaClass)
+
+    override fun createKotlinSourceSets(
+        kotlinSourceSets: KotlinSourceSets,
+        androidSourceSets: Set<AndroidSourceSet>
+    ): Map<AndroidSourceSet, KotlinSourceSet> {
+        logger.kotlinDebug("Creating source sets for ${androidSourceSets.map { it.name }}")
+        val kotlinSourceSetNames = androidSourceSets.map(::kotlinSourceSetName)
+        return androidSourceSets.keysToMap { androidSourceSet ->
+            logger.kotlinDebug("Creating KotlinSourceSet for source set ${androidSourceSet.name}")
+            kotlinSourceSets.maybeCreate(kotlinSourceSetName(androidSourceSet)).apply {
+                // Avoid overlapping source directories like src/androidTest/kotlin which would otherwise be present in the
+                // androidTest and androidAndroidTest kotlin source sets
+                if (androidSourceSet.name !in kotlinSourceSetNames) {
+                    kotlin.srcDir(project.file(project.file("src/${androidSourceSet.name}/kotlin")))
+                }
+
+                // Adding all java source directories to the kotlin source set:
+                // This could be confusing because "src/androidTest/java" will belong to the androidAndroidTest kotlin source set
+                // instead of the androidTest one for example.
+                kotlin.srcDirs(androidSourceSet.java.srcDirs)
+                androidSourceSet.java.srcDirs(*(kotlin.srcDirs - androidSourceSet.java.srcDirs).toTypedArray())
+                androidSourceSet.addConvention(KOTLIN_DSL_NAME, this)
+            }
+        }
+    }
+
+    private fun kotlinSourceSetName(androidSourceSet: AndroidSourceSet): String {
+        return lowerCamelCaseName(androidTargetName, androidSourceSet.name)
+    }
+}
+
+
+internal class NewMppAndroidKotlinSourceSetBuilder(
     private val project: Project,
     private val androidTargetName: String
 ) : AndroidKotlinSourceSetBuilder {
