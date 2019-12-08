@@ -27,6 +27,11 @@ public class ShowImplementationsAction extends ShowRelatedElementsActionBase {
   }
 
   @Override
+  protected boolean couldPinPopup() {
+    return true;
+  }
+
+  @Override
   protected void triggerFeatureUsed(@NotNull Project project) {
     triggerFeatureUsed(project, CODEASSISTS_QUICKDEFINITION_FEATURE, CODEASSISTS_QUICKDEFINITION_LOOKUP_FEATURE);
   }

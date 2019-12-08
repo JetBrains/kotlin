@@ -34,6 +34,8 @@ open class ShowTypeDefinitionAction : ShowRelatedElementsActionBase() {
     return CodeInsightBundle.message("type.definition.view.title", session.text)
   }
 
+  override fun couldPinPopup(): Boolean = false
+
   override fun triggerFeatureUsed(project: Project) {}
 
   override fun getIndexNotReadyMessage(): String {

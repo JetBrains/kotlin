@@ -23,6 +23,7 @@ import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.GenericListComponentUpdater;
+import com.intellij.openapi.ui.popup.ComponentPopupBuilder;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.Disposer;
@@ -161,7 +162,8 @@ public abstract class ShowRelatedElementsActionBase extends DumbAwareAction impl
         }
       };
 
-      popup = JBPopupFactory.getInstance().createComponentPopupBuilder(component, component.getPreferredFocusableComponent())
+      ComponentPopupBuilder popupBuilder = JBPopupFactory.getInstance()
+        .createComponentPopupBuilder(component, component.getPreferredFocusableComponent())
         .setProject(project)
         .addListener(updateProcessor)
         .addUserData(updateProcessor)
@@ -170,12 +172,6 @@ public abstract class ShowRelatedElementsActionBase extends DumbAwareAction impl
         .setMovable(true)
         .setRequestFocus(invokedFromEditor && LookupManager.getActiveLookup(session.getEditor()) == null)
         .setTitle(title)
-        .setCouldPin(popup1 -> {
-          usageView.set(component.showInUsageView());
-          popup1.cancel();
-          myTaskRef = null;
-          return false;
-        })
         .setCancelCallback(() -> {
           ImplementationsUpdaterTask task = SoftReference.dereference(myTaskRef);
           if (task != null) {
@@ -183,8 +179,16 @@ public abstract class ShowRelatedElementsActionBase extends DumbAwareAction impl
           }
           Disposer.dispose(session);
           return Boolean.TRUE;
-        })
-        .createPopup();
+        });
+      if (couldPinPopup()) {
+        popupBuilder.setCouldPin(popup1 -> {
+          usageView.set(component.showInUsageView());
+          popup1.cancel();
+          myTaskRef = null;
+          return false;
+        });
+      }
+      popup = popupBuilder.createPopup();
 
       updateInBackground(session, component, title, (AbstractPopup)popup, usageView);
 
@@ -206,6 +210,8 @@ public abstract class ShowRelatedElementsActionBase extends DumbAwareAction impl
 
   @NotNull
   protected abstract String getPopupTitle(@NotNull ImplementationViewSession session);
+
+  protected abstract boolean couldPinPopup();
 
   private void updateInBackground(@NotNull ImplementationViewSession session,
                                   @NotNull ImplementationViewComponent component,
