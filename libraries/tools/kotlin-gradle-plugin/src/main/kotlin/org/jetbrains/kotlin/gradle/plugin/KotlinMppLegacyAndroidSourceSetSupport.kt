@@ -26,7 +26,7 @@ internal object KotlinMppLegacyAndroidSourceSetSupport {
 
         /*
         Avoid confusions like:
-        `androidTest/java` actually belonging to the `androidAndroidTest` sourceSet (instead of ` `androidTest`)
+        `androidTest/java` actually belonging to the `androidAndroidTest` sourceSet (instead of the `androidTest`)
          */
         val kotlinSourceSetNames = project.kotlinExtension.sourceSets.map { it.name }
         if (androidSourceSet.name !in kotlinSourceSetNames) {
