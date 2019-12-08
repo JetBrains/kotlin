@@ -3,8 +3,8 @@ package com.intellij.openapi.externalSystem.service;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.externalSystem.ExternalSystemManager;
-import com.intellij.openapi.externalSystem.autoimport.ExternalSystemProjectTracker;
 import com.intellij.openapi.externalSystem.autoimport.AutoImportProjectTracker;
+import com.intellij.openapi.externalSystem.autoimport.ExternalSystemProjectTracker;
 import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder;
 import com.intellij.openapi.externalSystem.model.ExternalSystemDataKeys;
 import com.intellij.openapi.externalSystem.service.project.ProjectRenameAware;
@@ -15,9 +15,9 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupActivity;
 import org.jetbrains.annotations.NotNull;
 
-final class ExternalSystemStartupActivity implements StartupActivity.Background {
+final class ExternalSystemStartupActivity implements StartupActivity.DumbAware {
   @Override
-  public void runActivity(@NotNull final Project project) {
+  public void runActivity(@NotNull Project project) {
     ExternalProjectsManagerImpl.getInstance(project).init();
 
     ApplicationManager.getApplication().invokeLater(() -> {
