@@ -95,6 +95,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         private val INFO_AS_WARNINGS = "kapt.info.as.warnings"
         private val INCLUDE_COMPILE_CLASSPATH = "kapt.include.compile.classpath"
         private val INCREMENTAL_APT = "kapt.incremental.apt"
+        private val PROVIDE_GENERATED = "kapt.provide.generated.option"
 
         const val KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME = "kotlinKaptWorkerDependencies"
 
@@ -130,6 +131,10 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
         fun Project.isInfoAsWarnings(): Boolean {
             return hasProperty(INFO_AS_WARNINGS) && property(INFO_AS_WARNINGS) == "true"
+        }
+
+        fun Project.isProvideGeneratedOption(): Boolean {
+            return !(hasProperty(PROVIDE_GENERATED) && property(PROVIDE_GENERATED) == "false")
         }
 
         fun includeCompileClasspath(project: Project): Boolean? =
@@ -319,8 +324,13 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
             kaptExtension.getAdditionalArguments(project, kaptVariantData?.variantData, androidPlugin).toList() +
                     androidOptions.toList()
 
+        val generatedOption = if (project.isProvideGeneratedOption()) {
+            listOf(FilesSubpluginOption(KAPT_KOTLIN_GENERATED, listOf(kotlinSourcesOutputDir)))
+        } else {
+            emptyList()
+        }
         return apOptionsPairsList.map { SubpluginOption(it.first, it.second) } +
-                FilesSubpluginOption(KAPT_KOTLIN_GENERATED, listOf(kotlinSourcesOutputDir)) +
+                generatedOption +
                 subluginOptionsFromProvidedApOptions
     }
 
