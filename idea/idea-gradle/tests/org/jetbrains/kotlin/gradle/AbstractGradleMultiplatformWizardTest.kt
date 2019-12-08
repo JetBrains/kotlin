@@ -106,7 +106,7 @@ abstract class AbstractGradleMultiplatformWizardTest : ProjectWizardTestCase<Abs
             }
         }
 
-    fun Project.checkProjectStructure(metadataInside: Boolean = false, checkMppPlugin: Boolean = true) {
+    fun Project.checkGradleConfiguration(metadataInside: Boolean = false, mppPluginInside: Boolean = true) {
 
         val modules = ModuleManager.getInstance(this).modules
         assertThat(modules, "modules in project").size().isEqualTo(1)
@@ -122,10 +122,10 @@ abstract class AbstractGradleMultiplatformWizardTest : ProjectWizardTestCase<Abs
         TestCase.assertNotNull(settingsScript)
         val settingsScriptText = StringUtil.convertLineSeparators(VfsUtilCore.loadText(settingsScript!!))
 
-        assertThat(settingsScriptText, "$SETTINGS_FILE_NAME script").contains("rootProject.name = ")
+        assertThat(settingsScriptText, SETTINGS_FILE_NAME).contains("rootProject.name = ")
 
         if (metadataInside) {
-            assertThat(settingsScriptText, "$SETTINGS_FILE_NAME script").contains("enableFeaturePreview('GRADLE_METADATA')")
+            assertThat(settingsScriptText, SETTINGS_FILE_NAME).contains("enableFeaturePreview('GRADLE_METADATA')")
         }
 
         File(root.canonicalPath).assertNoEmptyChildren()
@@ -133,7 +133,7 @@ abstract class AbstractGradleMultiplatformWizardTest : ProjectWizardTestCase<Abs
         val buildScript = VfsUtilCore.findRelativeFile(DEFAULT_SCRIPT_NAME, root)!!
         val buildScriptText = StringUtil.convertLineSeparators(VfsUtilCore.loadText(buildScript))
 
-        if (checkMppPlugin){
+        if (mppPluginInside) {
             assertThat(buildScriptText, DEFAULT_SCRIPT_NAME).contains("id 'org.jetbrains.kotlin.multiplatform' version '$pluginVersion'")
         }
         println(buildScriptText)
@@ -287,7 +287,7 @@ abstract class AbstractGradleMultiplatformWizardTest : ProjectWizardTestCase<Abs
     }
 
 
-    class Checker(val project: Project) {
+    class FileChecker(val project: Project) {
         val kotlin = "kotlin"
         val sample = "sample"
 
@@ -328,10 +328,10 @@ abstract class AbstractGradleMultiplatformWizardTest : ProjectWizardTestCase<Abs
             sourceSetsCount = value
         }
 
-        fun runChecks(source: String) {
+        fun runChecks(source: String?) {
             assertAll {
                 val root = ProjectRootManager.getInstance(project).contentRoots[0]
-                val src = root.findFileByRelativePath(source) ?: throw FileNotFoundException(source)
+                val src = source?.let { root.findFileByRelativePath(source) ?: throw FileNotFoundException(source) } ?: root
 
                 sourceSetsCount?.let { count ->
                     assertThat(src.children.filter { it.isDirectory }, "sourceSet folders").size().isEqualTo(count)
@@ -371,8 +371,8 @@ abstract class AbstractGradleMultiplatformWizardTest : ProjectWizardTestCase<Abs
         }
     }
 
-    fun Project.checkSource(source: String, addChecks: Checker.() -> Unit) {
-        val checker = Checker(this)
+    fun Project.checkSource(source: String? = null, addChecks: FileChecker.() -> Unit) {
+        val checker = FileChecker(this)
         checker.addChecks()
         checker.runChecks(source)
     }

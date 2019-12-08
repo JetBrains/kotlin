@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.idea.configuration.KotlinGradleWebMultiplatformModul
 import org.jetbrains.kotlin.idea.test.KotlinSdkCreationChecker
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
-import org.jetbrains.kotlin.test.runTest
 import org.junit.runner.RunWith
 
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
@@ -52,7 +51,7 @@ class GradleMultiplatformWizardTest : AbstractGradleMultiplatformWizardTest() {
             checkSource("iosApp") {
                 sourceSetsSize(3)
             }
-            checkProjectStructure(checkMppPlugin = false)
+            checkGradleConfiguration(mppPluginInside = false)
         }
     }
 
@@ -61,7 +60,16 @@ class GradleMultiplatformWizardTest : AbstractGradleMultiplatformWizardTest() {
         val project = builder.buildProject()
 
         with(project) {
-            checkProjectStructure(metadataInside = true)
+            checkSource("src") {
+                sourceSetsSize(6)
+                common("$commonMain/$kotlin/$sample/Sample.kt")
+                test("$commonTest/$kotlin/$sample/SampleTests.kt")
+                main("$iosMain/$kotlin/$sample/SampleIos.kt")
+                test("$iosTest/$kotlin/$sample/SampleTestsNative.kt")
+                main("$jvmMain/$kotlin/$sample/SampleJvm.kt")
+                test("$jvmTest/$kotlin/$sample/SampleTestsJVM.kt")
+            }
+            checkGradleConfiguration(metadataInside = true)
             runGradleImport()
             runGradleTests("SampleTests", "SampleTestsJVM")
 
@@ -81,7 +89,7 @@ class GradleMultiplatformWizardTest : AbstractGradleMultiplatformWizardTest() {
                 isExist("$nativeMain/$kotlin/$sample/Sample${native.capitalize()}.kt")
                 test("$nativeTest/$kotlin/$sample/SampleTests.kt")
             }
-            checkProjectStructure()
+            checkGradleConfiguration()
             runGradleImport()
             runGradleTask("runReleaseExecutable${native.capitalize()}")
         }
@@ -103,7 +111,7 @@ class GradleMultiplatformWizardTest : AbstractGradleMultiplatformWizardTest() {
                 main("$nativeMain/$kotlin/$sample/Sample${native.capitalize()}.kt")
                 test("$nativeTest/$kotlin/$sample/SampleTestsNative.kt")
             }
-            checkProjectStructure(metadataInside = true)
+            checkGradleConfiguration(metadataInside = true)
             runGradleImport()
             runGradleTests("SampleTests", "SampleTestsJVM")
         }
@@ -120,24 +128,28 @@ class GradleMultiplatformWizardTest : AbstractGradleMultiplatformWizardTest() {
     }
 
     fun testWeb() {
-        runTest {
-            val builder = KotlinGradleWebMultiplatformModuleBuilder()
-            val project = builder.buildProject()
+        val builder = KotlinGradleWebMultiplatformModuleBuilder()
+        val project = builder.buildProject()
 
-            with(project) {
-                checkSource("src") {
-                    sourceSetsSize(6)
-                    common("$commonMain/$kotlin/$sample/Sample.kt")
-                    test("$commonTest/$kotlin/$sample/SampleTests.kt")
-                    main("$jvmMain/$kotlin/$sample/SampleJvm.kt")
-                    test("$jvmTest/$kotlin/$sample/SampleTestsJVM.kt")
-                    main("$jsMain/$kotlin/$sample/SampleJs.kt")
-                    test("$jsTest/$kotlin/$sample/SampleTestsJS.kt")
-                }
-                checkProjectStructure()
-               // runGradleImport()
-               // runGradleTests("SampleTests", "SampleTestsJVM")
+        with(project) {
+            checkSource("src") {
+                sourceSetsSize(6)
+                common("$commonMain/$kotlin/$sample/Sample.kt")
+                test("$commonTest/$kotlin/$sample/SampleTests.kt")
+                main("$jvmMain/$kotlin/$sample/SampleJvm.kt")
+                test("$jvmTest/$kotlin/$sample/SampleTestsJVM.kt")
+                main("$jsMain/$kotlin/$sample/SampleJs.kt")
+                test("$jsTest/$kotlin/$sample/SampleTestsJS.kt")
             }
+            checkSource{
+                isExist("build.gradle"){
+                    contains("jsMain")
+                }
+            }
+            checkGradleConfiguration()
+            /* TODO: return after fix KT-35095
+              runGradleImport()
+              runGradleTests("SampleTests", "SampleTestsJVM")*/
         }
     }
 }
