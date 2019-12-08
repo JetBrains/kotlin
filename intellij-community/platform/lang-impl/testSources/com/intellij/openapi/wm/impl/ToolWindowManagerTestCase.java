@@ -21,7 +21,7 @@ public abstract class ToolWindowManagerTestCase extends LightPlatformCodeInsight
       protected void fireStateChanged() {
       }
     };
-    ServiceContainerUtil.registerComponentInstance(getProject(), ToolWindowManager.class, myManager, getTestRootDisposable());
+    ServiceContainerUtil.replaceService(getProject(), ToolWindowManager.class, myManager, getTestRootDisposable());
     myManager.init();
   }
 
