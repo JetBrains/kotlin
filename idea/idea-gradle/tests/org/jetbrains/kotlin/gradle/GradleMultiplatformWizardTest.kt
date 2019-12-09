@@ -77,10 +77,17 @@ class GradleMultiplatformWizardTest : AbstractGradleMultiplatformWizardTest() {
             }
             checkGradleConfiguration(metadataInside = true)
             runGradleImport()
-            runGradleTests("SampleTests", "SampleTestsJVM")
-
+            runGradleTestTasks {
+                test("jvmTest") {
+                    testClassCount = 2
+                }
+            }
             if (HostManager.hostIsMac) {
-                runGradleTask(builder.nativeTestName)
+                runGradleTestTasks {
+                    test("${native}Test") {
+                        testClassCount = 2
+                    }
+                }
             }
         }
     }
@@ -97,6 +104,11 @@ class GradleMultiplatformWizardTest : AbstractGradleMultiplatformWizardTest() {
             }
             checkGradleConfiguration()
             runGradleImport()
+            runGradleTestTasks {
+                test("${native}Test") {
+                    testClassCount = 2
+                }
+            }
             runGradleTask("runReleaseExecutable${native.capitalize()}")
         }
     }
@@ -117,17 +129,31 @@ class GradleMultiplatformWizardTest : AbstractGradleMultiplatformWizardTest() {
                 main("$nativeMain/$kotlin/$sample/Sample${native.capitalize()}.kt")
                 test("$nativeTest/$kotlin/$sample/SampleTestsNative.kt")
             }
-            checkSource{
+            checkSource {
                 isExist("build.gradle") {
+                    contains("group")
+                    contains("version")
                     contains(nativeMain)
                     contains(nativeTest)
-                    contains(jsMain)
-                    contains(jsTest)
                 }
             }
             checkGradleConfiguration(metadataInside = true)
             runGradleImport()
-            runGradleTests("SampleTests", "SampleTestsJVM")
+
+            runGradleTestTasks {
+                test("jsBrowserTest") {
+                    testClassCount = 2
+                }
+                test("jsNodeTest") {
+                    testClassCount = 2
+                }
+                test("jvmTest") {
+                    testClassCount = 2
+                }
+                test("${native}Test") {
+                    testClassCount = 2
+                }
+            }
         }
     }
 
@@ -137,7 +163,20 @@ class GradleMultiplatformWizardTest : AbstractGradleMultiplatformWizardTest() {
 
         with(project) {
             runGradleImport(useQualifiedModuleNames = true)
-            runGradleTests("SampleTests", "SampleTestsJVM")
+            runGradleTestTasks {
+                test("jsBrowserTest") {
+                    testClassCount = 2
+                }
+                test("jsNodeTest") {
+                    testClassCount = 2
+                }
+                test("jvmTest") {
+                    testClassCount = 2
+                }
+                test("${native}Test") {
+                    testClassCount = 2
+                }
+            }
         }
     }
 
@@ -159,12 +198,16 @@ class GradleMultiplatformWizardTest : AbstractGradleMultiplatformWizardTest() {
                 isExist("build.gradle") {
                     contains(jsMain)
                     contains(jsTest)
+                    contains(jvmMain)
+                    contains(jvmTest)
+                    contains(commonMain)
+                    contains(commonTest)
                 }
             }
             checkGradleConfiguration()
-            /* TODO: return after fix KT-35095
-              runGradleImport()
-              runGradleTests("SampleTests", "SampleTestsJVM")*/
+            /*  TODO: return after fix KT-35095
+                 runGradleImport()
+                 runGradleTests("SampleTests", "SampleTestsJVM")*/
         }
     }
 }

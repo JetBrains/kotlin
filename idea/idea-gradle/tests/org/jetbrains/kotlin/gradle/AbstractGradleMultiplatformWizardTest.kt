@@ -46,6 +46,8 @@ import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.containers.ContainerUtilRt
 import junit.framework.TestCase
+import org.gradle.api.internal.tasks.testing.junit.result.TestClassResult
+import org.gradle.api.internal.tasks.testing.junit.result.TestResultSerializer
 import org.gradle.api.tasks.testing.TestExecutionException
 import org.jetbrains.kotlin.idea.codeInsight.gradle.ExternalSystemImportingTestCase.LATEST_STABLE_GRADLE_PLUGIN_VERSION
 import org.jetbrains.kotlin.idea.codeInsight.gradle.GradleImportingTestCase
@@ -71,6 +73,20 @@ import java.io.IOException
 abstract class AbstractGradleMultiplatformWizardTest : ProjectWizardTestCase<AbstractProjectWizard>() {
 
     private val pluginVersion = LATEST_STABLE_GRADLE_PLUGIN_VERSION
+
+    override fun setUp() {
+        super.setUp()
+        val javaHome = IdeaTestUtil.requireRealJdkHome()
+        ApplicationManager.getApplication().runWriteAction {
+            addSdk(SimpleJavaSdkType().createJdk(DEFAULT_SDK, javaHome))
+            addSdk(SimpleJavaSdkType().createJdk("_other", javaHome))
+
+            println("ProjectWizardTestCase.configureJdk:")
+            println(listOf(*getProjectJdkTableSafe().allJdks))
+
+            FileTypeManager.getInstance().associateExtension(GroovyFileType.GROOVY_FILE_TYPE, "gradle")
+        }
+    }
 
     override fun createWizard(project: Project?, directory: File): AbstractProjectWizard {
         return NewProjectWizard(project, ModulesProvider.EMPTY_MODULES_PROVIDER, directory.path)
@@ -213,23 +229,25 @@ abstract class AbstractGradleMultiplatformWizardTest : ProjectWizardTestCase<Abs
                 }
             } catch (exception: Throwable) {
                 errors[test] = exception
+                exception.printStackTrace()
             }
         }
         if (errors.isNotEmpty()) {
             throw TestExecutionException(
                 "${errors.size} runs failed: \n" +
-                        " ${errors.map { "TestClass: ${it.component1()}, ExceptionMessage: ${it.component2().localizedMessage} \n" }}"
+                        " ${errors.map { "TestClass: ${it.key}, ExceptionMessage: ${it.value.localizedMessage} \n" }}"
             )
         }
     }
 
-    protected fun Project.runGradleTask(taskName: String) {
+    fun Project.runGradleTask(taskName: String) {
         val settings = GradleExecutionSettings(null, null, DistributionType.DEFAULT_WRAPPED, false)
         println("Running project task: $taskName")
         GradleExecutionHelper().execute(this.basePath!!, settings) {
             it.newBuild().forTasks(taskName).run()
         }
     }
+
 
     @Throws(IOException::class)
     private fun Project.createProjectSubFile(relativePath: String): VirtualFile {
@@ -249,20 +267,6 @@ abstract class AbstractGradleMultiplatformWizardTest : ProjectWizardTestCase<Abs
                 f()
             }
         }.execute()
-    }
-
-    override fun setUp() {
-        super.setUp()
-        val javaHome = IdeaTestUtil.requireRealJdkHome()
-        ApplicationManager.getApplication().runWriteAction {
-            addSdk(SimpleJavaSdkType().createJdk(DEFAULT_SDK, javaHome))
-            addSdk(SimpleJavaSdkType().createJdk("_other", javaHome))
-
-            println("ProjectWizardTestCase.configureJdk:")
-            println(listOf(*getProjectJdkTableSafe().allJdks))
-
-            FileTypeManager.getInstance().associateExtension(GroovyFileType.GROOVY_FILE_TYPE, "gradle")
-        }
     }
 
     override fun shouldRunTest(): Boolean {
@@ -290,6 +294,11 @@ abstract class AbstractGradleMultiplatformWizardTest : ProjectWizardTestCase<Abs
         val native by lazy { defaultNativeTarget.userTargetName }
     }
 
+    fun Project.checkSource(source: String? = null, addChecks: FileChecker.() -> Unit) {
+        val checker = FileChecker(this)
+        checker.addChecks()
+        checker.runChecks(source)
+    }
 
     class FileChecker(val project: Project) {
         val kotlin = "kotlin"
@@ -375,10 +384,67 @@ abstract class AbstractGradleMultiplatformWizardTest : ProjectWizardTestCase<Abs
         }
     }
 
-    fun Project.checkSource(source: String? = null, addChecks: FileChecker.() -> Unit) {
-        val checker = FileChecker(this)
-        checker.addChecks()
-        checker.runChecks(source)
+    fun Project.runGradleTestTasks(addTasks: GradleTestTaskRunner.() -> Unit) {
+        GradleTestTaskRunner(this)
+            .apply(addTasks)
+            .runTasks()
+    }
+
+    inner class GradleTestTaskRunner(val project: Project) {
+        val tests: MutableMap<String, (TestResultChecker.() -> Unit)?> = mutableMapOf()
+
+        fun test(testTask: String, testResultChecks: (TestResultChecker.() -> Unit)? = null) {
+            tests.put(testTask, testResultChecks)
+        }
+
+        fun runTasks() {
+            val errors = mutableMapOf<String, Throwable>()
+
+            tests.forEach { test ->
+                try {
+                    project.runGradleTask("cleanAllTest")
+                    project.runGradleTask(test.key)
+                    TestResultChecker(project, test.key).apply {
+                        test.value
+                    }.runCheck()
+                } catch (exception: Throwable) {
+                    errors[test.key] = exception
+                    exception.printStackTrace()
+                }
+            }
+
+            if (errors.isNotEmpty()) {
+                throw TestExecutionException(
+                    "${errors.size} tasks failed: \n" +
+                            " ${errors.map { "TestTask: ${it.key}, ExceptionMessage: ${it.value.localizedMessage} \n" }}"
+                )
+            }
+        }
+    }
+
+    class TestResultChecker(val project: Project, val gradleTask: String) {
+        var testClassCount: Int? = null
+        val root = ProjectRootManager.getInstance(project).contentRoots[0]
+        private val testSerializer = TestResultSerializer(File("${root.canonicalPath}/build/test-results/$gradleTask/binary"))
+        val testClassResults: MutableList<TestClassResult> = mutableListOf()
+
+        fun runCheck() {
+            testSerializer.read {
+                testClassResults.add(it)
+            }
+
+            testClassCount?.let {
+                assertThat(testClassResults, "running test class").size().isEqualTo(2)
+            }
+            assertAll {
+                testClassResults.forEach {
+                    assertThat(it.results, "test class results").isNotEmpty()
+                    println("Finished ${it.classDisplayName}, testCount: ${it.results.count()}")
+                    it.results.forEach { test -> test.resultType.name == "SUCCESS" }
+                }
+            }
+        }
+
     }
 }
 
