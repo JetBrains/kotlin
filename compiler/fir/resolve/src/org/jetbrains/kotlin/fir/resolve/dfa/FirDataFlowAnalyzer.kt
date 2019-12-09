@@ -32,6 +32,8 @@ import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.unwrapSmartcast
+import org.jetbrains.kotlin.fir.unwrapWhenSubjectExpression
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -838,23 +840,15 @@ class FirDataFlowAnalyzer(private val components: FirAbstractBodyResolveTransfor
     private fun getOrCreateSyntheticVariable(fir: FirElement): SyntheticDataFlowVariable =
         variableStorage.getOrCreateNewSyntheticVariable(fir)
 
-    private fun FirElement.unwrapWhenSubjectExpression(): FirElement = if (this is FirWhenSubjectExpression) {
-        val whenExpression = whenSubject.whenExpression
-        whenExpression.subjectVariable
-            ?: whenExpression.subject
-            ?: throw IllegalStateException("Subject or subject variable must be not null")
-    } else {
-        this
-    }
-
     private fun getOrCreateRealVariable(fir: FirElement): RealDataFlowVariable? {
         @Suppress("NAME_SHADOWING")
-        val fir = fir.unwrapWhenSubjectExpression()
-        if (fir is FirThisReceiverExpressionImpl) {
-            return variableStorage.getOrCreateNewThisRealVariable(fir.calleeReference.boundSymbol ?: return null)
+        val fir = fir.unwrapWhenSubjectExpression().unwrapSmartcast()
+        val symbol = fir.resolvedSymbol ?: return null
+        return when {
+            fir is FirThisReceiverExpressionImpl -> variableStorage.getOrCreateNewThisRealVariable(symbol)
+            symbol is FirVariableSymbol<*> -> variableStorage.getOrCreateNewRealVariable(symbol).variableUnderAlias
+            else -> null
         }
-        val symbol = fir.resolvedSymbol as? FirVariableSymbol<*> ?: return null
-        return variableStorage.getOrCreateNewRealVariable(symbol).variableUnderAlias
     }
 
     private fun getOrCreateVariable(fir: FirElement): DataFlowVariable {

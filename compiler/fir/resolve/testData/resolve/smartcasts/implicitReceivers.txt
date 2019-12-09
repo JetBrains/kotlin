@@ -8,6 +8,15 @@ FILE: implicitReceivers.kt
         }
 
     }
+    public final class B : R|kotlin/Any| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun bar(): R|kotlin/Unit| {
+        }
+
+    }
     public final fun <T> R|T|.with(block: R|T.() -> kotlin/Unit|): R|kotlin/Unit| {
     }
     public final fun R|kotlin/Any?|.test_1(): R|kotlin/Unit| {
@@ -55,4 +64,56 @@ FILE: implicitReceivers.kt
             )
         }
         )
+    }
+    public final fun R|kotlin/Any?|.test_4(): R|kotlin/Unit| {
+        when () {
+            (this@R|/test_4| !is R|A|) ->  {
+                this@R|/test_4|.<Unresolved name: foo>#()
+                <Unresolved name: foo>#()
+                this@R|/test_4|.<Unresolved name: bar>#()
+                <Unresolved name: bar>#()
+            }
+            else ->  {
+                when () {
+                    (this@R|/test_4| !is R|B|) ->  {
+                        this@R|/test_4|.<Unresolved name: bar>#()
+                        <Unresolved name: bar>#()
+                        this@R|/test_4|.R|/A.foo|()
+                        this@R|/A|.R|/A.foo|()
+                    }
+                    else ->  {
+                        this@R|/test_4|.R|/A.foo|()
+                        this@R|/A|.R|/A.foo|()
+                        this@R|/test_4|.R|/B.bar|()
+                        this@R|/B|.R|/B.bar|()
+                    }
+                }
+
+            }
+        }
+
+        this@R|/test_4|.<Unresolved name: foo>#()
+        <Unresolved name: foo>#()
+        this@R|/test_4|.<Unresolved name: bar>#()
+        <Unresolved name: bar>#()
+    }
+    public final fun R|kotlin/Any|.test_5(): R|kotlin/Int| {
+        ^test_5 when () {
+            (this@R|/test_5| is R|kotlin/collections/List<*>|) ->  {
+                this@R|kotlin/collections/List|.R|kotlin/collections/List.size|
+            }
+            (this@R|/test_5| is R|kotlin/String|) ->  {
+                this@R|kotlin/String|.R|kotlin/String.length|
+            }
+            else ->  {
+                Int(0)
+            }
+        }
+
+    }
+    public final fun R|kotlin/Any|.test_6(): R|kotlin/Unit| {
+        (this@R|/test_6| as R|kotlin/collections/List<*>|)
+        this@R|kotlin/collections/List|.R|kotlin/collections/List.size|
+        (this@R|/test_6| as R|kotlin/String|)
+        this@R|kotlin/String|.R|kotlin/String.length|
     }
