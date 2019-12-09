@@ -53,8 +53,9 @@ actual class StringBenchmark actual constructor() {
             val result = StringBuilder()
             for (i in 1..benchmarkSize) {
                 val pointer = findSuitableString(strings.toCStringArray(this), benchmarkSize, "a")
-                result.append(pointer?.toKString())
-                nativeHeap.free(pointer.rawValue)
+                val str = pointer?.toKString()
+                result.append(str)
+                freeSuitableString(pointer)
             }
         }
     }

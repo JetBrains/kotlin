@@ -26,6 +26,10 @@ const char* findSuitableString(const char* stringsArray[], int arraySize, const 
     return NULL;
 }
 
+void freeSuitableString(char* unusedString) {
+    free(unusedString);
+}
+
 unsigned long int sum(int array[], int arraySize) {
     unsigned long int result = 0;
     for(int i = 0; i < arraySize; ++i) {

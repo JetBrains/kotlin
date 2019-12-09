@@ -46,19 +46,6 @@
 
 namespace {
 
-// TODO: it seems to be very common case; does C++ std library provide something like this?
-class AutoFree {
- private:
-  void* mem_;
-
- public:
-  AutoFree(void* mem): mem_(mem) {}
-
-  ~AutoFree() {
-    konan::free(mem_);
-  }
-};
-
 // RuntimeUtils.kt
 extern "C" void ReportUnhandledException(KRef throwable);
 extern "C" void ExceptionReporterLaunchpad(KRef reporter, KRef throwable);
@@ -182,7 +169,7 @@ OBJ_GETTER(GetStackTraceStrings, KConstRef stackTrace) {
   if (size > 0) {
     char **symbols = backtrace_symbols(PrimitiveArrayAddressOfElementAt<KNativePtr>(stackTrace->array(), 0), size);
     RuntimeCheck(symbols != nullptr, "Not enough memory to retrieve the stacktrace");
-    AutoFree autoFree(symbols);
+
     for (int index = 0; index < size; ++index) {
       auto sourceInfo = Kotlin_getSourceInfo(*PrimitiveArrayAddressOfElementAt<KNativePtr>(stackTrace->array(), index));
       const char* symbol = symbols[index];
@@ -203,6 +190,8 @@ OBJ_GETTER(GetStackTraceStrings, KConstRef stackTrace) {
       CreateStringFromCString(result, holder.slot());
       UpdateHeapRef(ArrayAddressOfElementAt(strings->array(), index), holder.obj());
     }
+    // Not konan::free. Used to free memory allocated in backtrace_symbols where malloc is used.
+    free(symbols);
   }
 #endif
   RETURN_OBJ(strings);
