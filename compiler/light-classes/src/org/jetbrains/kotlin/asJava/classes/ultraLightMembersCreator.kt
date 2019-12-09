@@ -18,10 +18,8 @@ import org.jetbrains.kotlin.asJava.elements.convertToLightAnnotationMemberValue
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
-import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.lexer.KtTokens.EXTERNAL_KEYWORD
-import org.jetbrains.kotlin.lexer.KtTokens.REIFIED_KEYWORD
+import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.FqName
@@ -29,7 +27,7 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.psi.psiUtil.hasSuspendModifier
-import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
+import org.jetbrains.kotlin.psi.psiUtil.isPrivate
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.isPublishedApi
@@ -119,6 +117,11 @@ internal class UltraLightMembersCreator(
             ktFunction.hasReifiedParameters() ||
             ktFunction.hasExpectModifier()
         ) return emptyList()
+
+
+        if (ktFunction.modifierList?.hasSuspendModifier() == true && ktFunction.isPrivate()) {
+            return emptyList()
+        }
 
         val basicMethod = asJavaMethod(ktFunction, forceStatic, forcePrivate)
 
@@ -465,9 +468,21 @@ internal class UltraLightMembersCreator(
             val setterParameter = ktSetter?.parameter
             setterPrototype.addParameter(
                 if (setterParameter != null)
-                    KtUltraLightParameterForSource(propertyName, setterParameter, support, setterWrapper, declaration)
+                    KtUltraLightParameterForSource(
+                        name = setterParameter.name ?: propertyName,
+                        kotlinOrigin = setterParameter,
+                        support = support,
+                        method = setterWrapper,
+                        containingDeclaration = declaration
+                    )
                 else
-                    KtUltraLightParameterForSetterParameter(propertyName, declaration, support, setterWrapper, declaration)
+                    KtUltraLightParameterForSetterParameter(
+                        name = propertyName,
+                        property = declaration,
+                        support = support,
+                        method = setterWrapper,
+                        containingDeclaration = declaration
+                    )
             )
             result.add(setterWrapper)
         }

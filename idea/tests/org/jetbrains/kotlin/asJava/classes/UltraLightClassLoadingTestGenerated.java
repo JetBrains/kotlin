@@ -28,6 +28,11 @@ public class UltraLightClassLoadingTestGenerated extends AbstractUltraLightClass
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/ultraLightClasses"), Pattern.compile("^(.+)\\.(kt|kts)$"), true);
     }
 
+    @TestMetadata("annotationWithSetParamPropertyModifier.kt")
+    public void testAnnotationWithSetParamPropertyModifier() throws Exception {
+        runTest("compiler/testData/asJava/ultraLightClasses/annotationWithSetParamPropertyModifier.kt");
+    }
+
     @TestMetadata("annotations.kt")
     public void testAnnotations() throws Exception {
         runTest("compiler/testData/asJava/ultraLightClasses/annotations.kt");

@@ -13,11 +13,17 @@ import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.isSuspendFunctionType
+import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.codegen.AsmUtil.LABELED_THIS_PARAMETER
+import org.jetbrains.kotlin.codegen.AsmUtil.RECEIVER_PARAMETER_NAME
 
 internal class KtUltraLightSuspendContinuationParameter(
     private val ktFunction: KtFunction,
@@ -182,6 +188,13 @@ internal class KtUltraLightParameterForSetterParameter(
 
     override fun tryGetKotlinType(): KotlinType? = property.getKotlinType()
 
+    override val givenAnnotations: List<KtLightAbstractAnnotation>?
+        get() = (property.resolve() as? PropertyDescriptor)
+            ?.setter
+            ?.valueParameters
+            ?.firstOrNull()
+            ?.obtainLightAnnotations(support, this)
+
     override fun isVarArgs(): Boolean = false
 }
 
@@ -189,7 +202,14 @@ internal class KtUltraLightReceiverParameter(
     containingDeclaration: KtCallableDeclaration,
     support: KtUltraLightSupport,
     method: KtUltraLightMethod
-) : KtAbstractUltraLightParameterForDeclaration("\$self", null, support, method, containingDeclaration) {
+) : KtAbstractUltraLightParameterForDeclaration(
+    /** @see org.jetbrains.kotlin.codegen.AsmUtil.getNameForReceiverParameter */
+    name = AsmUtil.getLabeledThisName(method.name, LABELED_THIS_PARAMETER, RECEIVER_PARAMETER_NAME),
+    kotlinOrigin = null,
+    support = support,
+    method = method,
+    containingDeclaration = containingDeclaration
+) {
 
     override fun isVarArgs(): Boolean = false
 

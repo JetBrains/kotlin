@@ -7,9 +7,6 @@ public final class Prop /* Prop*/ {
 }
 
 final class null /* null*/ {
-  @null()
-  public static final java.lang.Object INSTANCE;
-
   private  ();
 
 }
@@ -23,9 +20,6 @@ public final class Fun /* Fun*/ {
 }
 
 final class null /* null*/ {
-  @null()
-  public static final java.lang.Object INSTANCE;
-
   private  ();
 
 }
@@ -42,9 +36,6 @@ public final class ArrayOfAnonymous /* ArrayOfAnonymous*/ {
 }
 
 final class null /* null*/ {
-  @null()
-  public static final java.lang.Object INSTANCE;
-
   private static final java.lang.String fy = "text" /* initializer type: java.lang.String */ /* constant value text */;
 
   @org.jetbrains.annotations.NotNull()
@@ -70,9 +61,6 @@ final class C /* C*/ {
 }
 
 final class null /* null*/ {
-  @null()
-  public static final java.lang.Object INSTANCE;
-
   @org.jetbrains.annotations.NotNull()
   public java.lang.String toString();
 
@@ -101,9 +89,6 @@ public final class Sub /* Sub*/ extends Super {
 }
 
 final class null /* null*/ {
-  @null()
-  public static final java.lang.Object INSTANCE;
-
   private static final java.lang.String fy = "text" /* initializer type: java.lang.String */ /* constant value text */;
 
   @org.jetbrains.annotations.NotNull()
@@ -128,9 +113,6 @@ public final class ValidPublicSupertype /* ValidPublicSupertype*/ {
 }
 
 final class null /* null*/ implements java.lang.Runnable {
-  @null()
-  public static final java.lang.Runnable INSTANCE;
-
   private  ();
 
   public void run();
@@ -138,9 +120,6 @@ final class null /* null*/ implements java.lang.Runnable {
 }
 
 final class null /* null*/ implements java.lang.Runnable {
-  @null()
-  public static final java.lang.Runnable INSTANCE;
-
   private  ();
 
   public void run();
@@ -165,9 +144,6 @@ public final class InvalidPublicSupertype /* InvalidPublicSupertype*/ {
 }
 
 final class null /* null*/ implements I, java.lang.Runnable {
-  @null()
-  public static final java.lang.Runnable INSTANCE;
-
   private  ();
 
   public void run();
@@ -175,9 +151,6 @@ final class null /* null*/ implements I, java.lang.Runnable {
 }
 
 final class null /* null*/ implements I, java.lang.Runnable {
-  @null()
-  public static final java.lang.Runnable INSTANCE;
-
   private  ();
 
   public void run();

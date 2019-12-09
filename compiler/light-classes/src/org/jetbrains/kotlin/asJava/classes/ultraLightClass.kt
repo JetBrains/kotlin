@@ -13,7 +13,6 @@ import com.intellij.psi.impl.light.LightMethodBuilder
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
-import org.jetbrains.kotlin.asJava.UltraLightClassModifierExtension
 import org.jetbrains.kotlin.asJava.builder.LightClassData
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
@@ -226,7 +225,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
             }
         }
 
-        if (isNamedObject()) {
+        if (isNamedObject() && !this.classOrObject.isLocal) {
             result.add(
                 KtUltraLightFieldForSourceDeclaration(
                     this.classOrObject,
