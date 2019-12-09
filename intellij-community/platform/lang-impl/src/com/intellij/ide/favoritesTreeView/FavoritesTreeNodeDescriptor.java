@@ -36,11 +36,6 @@ public class FavoritesTreeNodeDescriptor extends PresentableNodeDescriptor<Abstr
     presentation.copyFrom(myElement.getPresentation());
   }
 
- /* protected boolean isMarkReadOnly() {
-    final Object parentValue = myElement.getParent() == null ? null : myElement.getParent().getValue();
-    return parentValue instanceof PsiDirectory || parentValue instanceof PackageElement;
-  }*/
-
   public String getLocation() {
     return getLocation(myElement, myProject);
   }

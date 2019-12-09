@@ -88,10 +88,6 @@ public final class FavoritesTreeStructure extends ProjectTreeStructure {
 
         result.add(abstractTreeNode);
       }
-      //myFavoritesRoots = result;
-      //if (result.isEmpty()) {
-      //  result.add(getEmptyScreen());
-      //}
       return ArrayUtil.toObjectArray(result);
     }
     catch (ProcessCanceledException ignored) {
