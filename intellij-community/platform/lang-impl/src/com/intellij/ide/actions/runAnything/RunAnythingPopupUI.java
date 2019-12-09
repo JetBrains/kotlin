@@ -219,46 +219,37 @@ public class RunAnythingPopupUI extends BigPopupUI {
   private ActionCallback insert(@NotNull RunAnythingGroup group, int index) {
     ActionCallback callback = new ActionCallback();
     ApplicationManager.getApplication().executeOnPooledThread(() -> {
+      List<RunAnythingItem> items = StreamEx.of(myListModel.getItems()).select(RunAnythingItem.class).collect(Collectors.toList());
+      RunAnythingGroup.SearchResult result;
       try {
-        List<RunAnythingItem> items = StreamEx.of(myListModel.getItems()).select(RunAnythingItem.class).collect(Collectors.toList());
-        RunAnythingGroup.SearchResult result;
-        try {
-          result = ProgressManager.getInstance().runProcess(
-            () -> group.getItems(getDataContext(), items,
-                                 trimHelpPattern(getSearchPattern()), true), new EmptyProgressIndicator());
-        }
-        catch (ProcessCanceledException e) {
-          return;
-        }
-
-        ApplicationManager.getApplication().invokeLater(() -> {
-          try {
-            int shift = 0;
-            int i = index + 1;
-            for (Object o : result) {
-              myListModel.add(i, o);
-              shift++;
-              i++;
-            }
-
-            myListModel.shiftIndexes(index, shift);
-            if (!result.isNeedMore()) {
-              group.resetMoreIndex();
-            }
-
-            clearSelection();
-            ScrollingUtil.selectItem(myResultsList, index);
-
-            callback.setDone();
-          }
-          catch (Exception e) {
-            callback.setRejected();
-          }
-        });
+        result = ProgressManager.getInstance().runProcess(
+          () -> group.getItems(getDataContext(), items,
+                               trimHelpPattern(getSearchPattern()), true), new EmptyProgressIndicator());
       }
-      catch (Exception e) {
+      catch (ProcessCanceledException e) {
         callback.setRejected();
+        return;
       }
+
+      ApplicationManager.getApplication().invokeLater(() -> {
+        int shift = 0;
+        int i = index + 1;
+        for (Object o : result) {
+          myListModel.add(i, o);
+          shift++;
+          i++;
+        }
+
+        myListModel.shiftIndexes(index, shift);
+        if (!result.isNeedMore()) {
+          group.resetMoreIndex();
+        }
+
+        clearSelection();
+        ScrollingUtil.selectItem(myResultsList, index);
+
+        callback.setDone();
+      });
     });
     return callback;
   }
