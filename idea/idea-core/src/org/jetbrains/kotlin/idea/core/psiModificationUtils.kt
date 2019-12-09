@@ -348,7 +348,10 @@ fun KtModifierListOwner.canBeProtected(): Boolean {
 }
 
 fun KtModifierListOwner.canBeInternal(): Boolean {
-    if (containingClass()?.isInterface() == true && hasJvmFieldAnnotation()) return false
+    if (containingClass()?.isInterface() == true) {
+        val objectDeclaration = getStrictParentOfType<KtObjectDeclaration>() ?: return false
+        if (objectDeclaration.isCompanion() && hasJvmFieldAnnotation()) return false
+    }
     return !isAnnotationClassPrimaryConstructor()
 }
 
