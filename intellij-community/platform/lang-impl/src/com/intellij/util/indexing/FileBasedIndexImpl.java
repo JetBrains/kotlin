@@ -7,6 +7,7 @@ import com.intellij.diagnostic.Activity;
 import com.intellij.diagnostic.StartUpMeasurer;
 import com.intellij.history.LocalHistory;
 import com.intellij.ide.AppLifecycleListener;
+import com.intellij.ide.IdeBundle;
 import com.intellij.ide.plugins.DynamicPluginListener;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.startup.ServiceNotReadyException;
@@ -185,6 +186,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
           DumbService.getInstance(project).queueTask(new DumbModeTask() {
             @Override
             public void performInDumbMode(@NotNull ProgressIndicator indicator) {
+              indicator.setText(IdeBundle.message("progress.indexing.reload"));
               mySemaphore.waitFor();
             }
           });
