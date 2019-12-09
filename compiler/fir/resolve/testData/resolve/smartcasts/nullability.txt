@@ -19,6 +19,48 @@ FILE: nullability.kt
         public abstract fun fdata(): R|MyData?|
 
     }
+    public final class QImpl : R|Q| {
+        public constructor(data: R|MyData?|): R|QImpl| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final override val data: R|MyData?| = R|<local>/data|
+            public get(): R|MyData?|
+
+        public final override fun fdata(): R|MyData?| {
+            ^fdata Null(null)
+        }
+
+    }
+    public final class QImplMutable : R|Q| {
+        public constructor(data: R|MyData?|): R|QImplMutable| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final override var data: R|MyData?| = R|<local>/data|
+            public get(): R|MyData?|
+            public set(value: R|MyData?|): R|kotlin/Unit|
+
+        public final override fun fdata(): R|MyData?| {
+            ^fdata Null(null)
+        }
+
+    }
+    public final class QImplWithCustomGetter : R|Q| {
+        public constructor(): R|QImplWithCustomGetter| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final override val data: R|MyData?|
+            public get(): R|MyData?| {
+                ^ Null(null)
+            }
+
+        public final override fun fdata(): R|MyData?| {
+            ^fdata Null(null)
+        }
+
+    }
     public final fun test_1(x: R|A?|): R|kotlin/Unit| {
         when () {
             !=(R|<local>/x|, Null(null)) ->  {
@@ -165,4 +207,44 @@ FILE: nullability.kt
         }
 
         R|<local>/b|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
+    }
+    public final fun test_11(q: R|QImpl?|, q2: R|QImpl|): R|kotlin/Unit| {
+        when () {
+            !=(R|<local>/q|?.R|/QImpl.data|?.R|/MyData.s|?.R|kotlin/Int.inc|(), Null(null)) ->  {
+                R|<local>/q|.R|/QImpl.data|
+                R|<local>/q|.R|/QImpl.data|.R|/MyData.s|
+                R|<local>/q|.R|/QImpl.data|.R|/MyData.s|.R|kotlin/Int.inc|()
+                R|<local>/q2|.R|/QImpl.data|
+                R|<local>/q2|.R|/QImpl.data|.R|/MyData.s|
+                R|<local>/q2|.R|/QImpl.data|.R|/MyData.s|.R|kotlin/Int.inc|()
+                when () {
+                    !=(R|<local>/q2|.R|/QImpl.data|, Null(null)) ->  {
+                        R|<local>/q2|.R|/QImpl.data|.R|/MyData.s|
+                        R|<local>/q2|.R|/QImpl.data|.R|/MyData.s|.R|kotlin/Int.inc|()
+                    }
+                }
+
+            }
+        }
+
+    }
+    public final fun test_12(q: R|QImplWithCustomGetter?|): R|kotlin/Unit| {
+        when () {
+            !=(R|<local>/q|?.R|/QImplWithCustomGetter.data|?.R|/MyData.s|?.R|kotlin/Int.inc|(), Null(null)) ->  {
+                R|<local>/q|.R|/QImplWithCustomGetter.data|
+                R|<local>/q|.R|/QImplWithCustomGetter.data|.R|/MyData.s|
+                R|<local>/q|.R|/QImplWithCustomGetter.data|.R|/MyData.s|.R|kotlin/Int.inc|()
+            }
+        }
+
+    }
+    public final fun test_13(q: R|QImplMutable?|): R|kotlin/Unit| {
+        when () {
+            !=(R|<local>/q|?.R|/QImplMutable.data|?.R|/MyData.s|?.R|kotlin/Int.inc|(), Null(null)) ->  {
+                R|<local>/q|.R|/QImplMutable.data|
+                R|<local>/q|.R|/QImplMutable.data|.R|/MyData.s|
+                R|<local>/q|.R|/QImplMutable.data|.R|/MyData.s|.R|kotlin/Int.inc|()
+            }
+        }
+
     }

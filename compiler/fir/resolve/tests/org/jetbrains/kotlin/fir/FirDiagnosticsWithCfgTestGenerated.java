@@ -188,6 +188,11 @@ public class FirDiagnosticsWithCfgTestGenerated extends AbstractFirDiagnosticsWi
             runTest("compiler/fir/resolve/testData/resolve/smartcasts/inPlaceLambdas.kt");
         }
 
+        @TestMetadata("notBoundSmartcasts.kt")
+        public void testNotBoundSmartcasts() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/smartcasts/notBoundSmartcasts.kt");
+        }
+
         @TestMetadata("nullability.kt")
         public void testNullability() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/smartcasts/nullability.kt");

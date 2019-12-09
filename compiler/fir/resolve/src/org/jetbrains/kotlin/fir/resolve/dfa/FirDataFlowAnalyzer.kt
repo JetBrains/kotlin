@@ -846,7 +846,9 @@ class FirDataFlowAnalyzer(private val components: FirAbstractBodyResolveTransfor
         val symbol = fir.resolvedSymbol ?: return null
         return when {
             fir is FirThisReceiverExpressionImpl -> variableStorage.getOrCreateNewThisRealVariable(symbol)
-            symbol is FirVariableSymbol<*> -> variableStorage.getOrCreateNewRealVariable(symbol).variableUnderAlias
+            symbol is FirVariableSymbol<*> ->
+                // TODO: Fix this for non-local properties.
+                variableStorage.getOrCreateNewRealVariable(symbol).variableUnderAlias
             else -> null
         }
     }
@@ -867,6 +869,10 @@ class FirDataFlowAnalyzer(private val components: FirAbstractBodyResolveTransfor
             return variableStorage[symbol]
         }
 
+    // TODO: Fix this -- see broken test_3 in compiler/fir/resolve/testData/resolve/smartcasts/notBoundSmartcasts.kt
+    // If we have multiple local variables (could be value parameter) of the same type, there should be separate DataFlowVariables for
+    // accesses to a property for each distinct local variable, i.e., DataFlowVariables in storage for properties should be keyed by
+    // the "chain" of variable/property accesses. We also need to check that the property is not mutable and has no custom getter.
     private fun getRealVariablesForSafeCallChain(call: FirExpression): Collection<RealDataFlowVariable> {
         val result = mutableListOf<RealDataFlowVariable>()
 
