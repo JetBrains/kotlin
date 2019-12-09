@@ -372,13 +372,13 @@ public class GradleCompositeImportingTest extends GradleImportingTestCase {
     createProjectSubFile("project-a/core/build.gradle",
                          new GradleBuildScriptBuilderEx()
                            .withKotlinPlugin("1.3.50")
-                           .addRepository(" maven { url 'http://maven.labs.intellij.net/repo1' }")
+                           .addRepository(" maven { url 'https://repo.labs.intellij.net/repo1' }")
                            .addPrefix("apply plugin: 'java-library'").generate());
 
     createProjectSubFile("project-a/ext/build.gradle",
                          new GradleBuildScriptBuilderEx()
                            .withKotlinPlugin("1.3.50")
-                           .addRepository(" maven { url 'http://maven.labs.intellij.net/repo1' }")
+                           .addRepository(" maven { url 'https://repo.labs.intellij.net/repo1' }")
                            .addPrefix(
                              "apply plugin: 'java-library'",
                              "group = 'myGroup.projectA'",

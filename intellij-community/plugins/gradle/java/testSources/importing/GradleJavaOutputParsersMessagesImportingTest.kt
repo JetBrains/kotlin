@@ -221,14 +221,14 @@ class GradleJavaOutputParsersMessagesImportingTest : GradleOutputParsersMessages
                                   "> Could not resolve all files for configuration ':testCompileClasspath'.\n" +
                                   "   > Could not find junit:junit:99.99.\n" +
                                   "     Searched in the following locations:\n" +
-                                  "       - http://maven.labs.intellij.net/repo1/junit/junit/99.99/junit-99.99.pom\n" +
-                                  "       - http://maven.labs.intellij.net/repo1/junit/junit/99.99/junit-99.99.jar\n" +
+                                  "       - https://repo.labs.intellij.net/repo1/junit/junit/99.99/junit-99.99.pom\n" +
+                                  "       - https://repo.labs.intellij.net/repo1/junit/junit/99.99/junit-99.99.jar\n" +
                                   "     Required by:\n" +
                                   "         project :\n" +
                                   "   > Could not find junit:junit:99.99.\n" +
                                   "     Searched in the following locations:\n" +
-                                  "       - http://maven.labs.intellij.net/repo1/junit/junit/99.99/junit-99.99.pom\n" +
-                                  "       - http://maven.labs.intellij.net/repo1/junit/junit/99.99/junit-99.99.jar\n" +
+                                  "       - https://repo.labs.intellij.net/repo1/junit/junit/99.99/junit-99.99.pom\n" +
+                                  "       - https://repo.labs.intellij.net/repo1/junit/junit/99.99/junit-99.99.jar\n" +
                                   "     Required by:\n" +
                                   "         project :\n" +
                                   "\n" +
@@ -239,14 +239,14 @@ class GradleJavaOutputParsersMessagesImportingTest : GradleOutputParsersMessages
                                   "Could not resolve all $files for configuration ':$testCompileConfiguration'.\n" +
                                   "> Could not find junit:junit:99.99.\n" +
                                   "  Searched in the following locations:\n" +
-                                  "    $itemLinePrefix http://maven.labs.intellij.net/repo1/junit/junit/99.99/junit-99.99.pom\n" +
-                                  "    $itemLinePrefix http://maven.labs.intellij.net/repo1/junit/junit/99.99/junit-99.99.jar\n" +
+                                  "    $itemLinePrefix https://repo.labs.intellij.net/repo1/junit/junit/99.99/junit-99.99.pom\n" +
+                                  "    $itemLinePrefix https://repo.labs.intellij.net/repo1/junit/junit/99.99/junit-99.99.jar\n" +
                                   "  Required by:\n" +
                                   "      $requiredByProject\n" +
                                   "> Could not find junit:junit:99.99.\n" +
                                   "  Searched in the following locations:\n" +
-                                  "    $itemLinePrefix http://maven.labs.intellij.net/repo1/junit/junit/99.99/junit-99.99.pom\n" +
-                                  "    $itemLinePrefix http://maven.labs.intellij.net/repo1/junit/junit/99.99/junit-99.99.jar\n" +
+                                  "    $itemLinePrefix https://repo.labs.intellij.net/repo1/junit/junit/99.99/junit-99.99.pom\n" +
+                                  "    $itemLinePrefix https://repo.labs.intellij.net/repo1/junit/junit/99.99/junit-99.99.jar\n" +
                                   "  Required by:\n" +
                                   "      $requiredByProject\n" +
                                   "\n" +

@@ -176,8 +176,8 @@ open class GradleOutputParsersMessagesImportingTest : BuildViewMessagesImporting
     assertSyncViewSelectedNode("Could not resolve junit:junit:99.99",
                                "Could not find junit:junit:99.99.\n" +
                                "Searched in the following locations:\n" +
-                               "  $itemLinePrefix http://maven.labs.intellij.net/repo1/junit/junit/99.99/junit-99.99.pom\n" +
-                               "  $itemLinePrefix http://maven.labs.intellij.net/repo1/junit/junit/99.99/junit-99.99.jar\n" +
+                               "  $itemLinePrefix https://repo.labs.intellij.net/repo1/junit/junit/99.99/junit-99.99.pom\n" +
+                               "  $itemLinePrefix https://repo.labs.intellij.net/repo1/junit/junit/99.99/junit-99.99.jar\n" +
                                "\n" +
                                "Possible solution:\n" +
                                " - Declare repository providing the artifact, see the documentation at https://docs.gradle.org/current/userguide/declaring_repositories.html\n" +
@@ -252,14 +252,14 @@ open class GradleOutputParsersMessagesImportingTest : BuildViewMessagesImporting
                                "> Could not resolve all $artifacts for configuration ':classpath'.\n" +
                                "   > Could not find junit:junit:99.99.\n" +
                                "     Searched in the following locations:\n" +
-                               "       $itemLinePrefix http://maven.labs.intellij.net/repo1/junit/junit/99.99/junit-99.99.pom\n" +
-                               "       $itemLinePrefix http://maven.labs.intellij.net/repo1/junit/junit/99.99/junit-99.99.jar\n" +
+                               "       $itemLinePrefix https://repo.labs.intellij.net/repo1/junit/junit/99.99/junit-99.99.pom\n" +
+                               "       $itemLinePrefix https://repo.labs.intellij.net/repo1/junit/junit/99.99/junit-99.99.jar\n" +
                                "     Required by:\n" +
                                "         $requiredByProject\n" +
                                "   > Could not find junit:junit:99.99.\n" +
                                "     Searched in the following locations:\n" +
-                               "       $itemLinePrefix http://maven.labs.intellij.net/repo1/junit/junit/99.99/junit-99.99.pom\n" +
-                               "       $itemLinePrefix http://maven.labs.intellij.net/repo1/junit/junit/99.99/junit-99.99.jar\n" +
+                               "       $itemLinePrefix https://repo.labs.intellij.net/repo1/junit/junit/99.99/junit-99.99.pom\n" +
+                               "       $itemLinePrefix https://repo.labs.intellij.net/repo1/junit/junit/99.99/junit-99.99.jar\n" +
                                "     Required by:\n" +
                                "         $requiredByProject\n" +
                                "\n" +

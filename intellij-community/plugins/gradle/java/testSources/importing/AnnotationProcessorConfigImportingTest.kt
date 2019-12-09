@@ -311,7 +311,7 @@ class AnnotationProcessorConfigImportingTest: GradleImportingTestCase() {
       buildscript {
         repositories {
           maven {
-            url 'http://maven.labs.intellij.net/plugins-gradle-org'
+            url 'https://repo.labs.intellij.net/plugins-gradle-org'
           }
         }
         dependencies {

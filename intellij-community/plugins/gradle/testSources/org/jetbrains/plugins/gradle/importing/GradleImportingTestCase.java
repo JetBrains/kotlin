@@ -241,7 +241,7 @@ public abstract class GradleImportingTestCase extends ExternalSystemImportingTes
     config = "allprojects {\n" +
              "  repositories {\n" +
              "    maven {\n" +
-             "        url 'http://maven.labs.intellij.net/repo1'\n" +
+             "        url 'https://repo.labs.intellij.net/repo1'\n" +
              "    }\n" +
              "  }" +
              "}\n" + config;
