@@ -114,7 +114,7 @@ private class StatisticsEventLogConsole(val project: Project,
   }
 
   override fun isActive(): Boolean {
-    return ToolWindowManager.getInstance(project).getToolWindow(eventLogToolWindowsId).isVisible
+    return ToolWindowManager.getInstance(project).getToolWindow(eventLogToolWindowsId)?.isVisible ?: false
   }
 
   fun addLogLine(line: String) {
