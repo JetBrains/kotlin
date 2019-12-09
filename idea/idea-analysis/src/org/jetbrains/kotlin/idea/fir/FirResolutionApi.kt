@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDesignatedBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.runResolve
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
-import org.jetbrains.kotlin.fir.scopes.impl.selfImportingScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirSelfImportingScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
@@ -43,8 +43,9 @@ private fun FirFile.findCallableMember(
     provider: FirProvider, callableMember: KtCallableDeclaration,
     packageFqName: FqName, klassFqName: FqName?, declName: Name
 ): FirCallableDeclaration<*> {
+    // NB: not sure it's correct to use member scope provider from here (because of possible changes)
     val memberScope =
-        if (klassFqName == null) selfImportingScope(this.packageFqName, session)
+        if (klassFqName == null) FirSelfImportingScope(this.packageFqName, session)
         else provider.getClassDeclaredMemberScope(ClassId(packageFqName, klassFqName, false))!!
     var result: FirCallableDeclaration<*>? = null
     val processor = { symbol: FirCallableSymbol<*> ->
@@ -66,7 +67,6 @@ private fun FirFile.findCallableMember(
         ?: error("Cannot find FIR callable declaration ${CallableId(packageFqName, klassFqName, declName)}")
 }
 
-// NB: at this moment it crashes with ISE when called on local declaration
 fun KtCallableDeclaration.getOrBuildFir(
     state: FirResolveState,
     phase: FirResolvePhase = FirResolvePhase.DECLARATIONS
