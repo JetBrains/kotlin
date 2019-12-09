@@ -50,10 +50,6 @@ public class FileIncludeIndex extends FileBasedIndexExtension<String, List<FileI
     return result;
   }
 
-  private static class Holder {
-    private static final List<FileIncludeProvider> myProviders = FileIncludeProvider.EP_NAME.getExtensionList();
-  }
-
   @NotNull
   @Override
   public ID<String, List<FileIncludeInfoImpl>> getName() {
@@ -70,7 +66,7 @@ public class FileIncludeIndex extends FileBasedIndexExtension<String, List<FileI
 
         Map<String, List<FileIncludeInfoImpl>> map = FactoryMap.create(key -> new ArrayList<>());
 
-        for (FileIncludeProvider provider : Holder.myProviders) {
+        for (FileIncludeProvider provider : FileIncludeProvider.EP_NAME.getExtensionList()) {
           if (!provider.acceptFile(inputData.getFile())) continue;
           FileIncludeInfo[] infos = provider.getIncludeInfos(inputData);
           if (infos.length  == 0) continue;
@@ -127,7 +123,7 @@ public class FileIncludeIndex extends FileBasedIndexExtension<String, List<FileI
         if (file.getFileSystem() == JarFileSystem.getInstance()) {
           return false;
         }
-        for (FileIncludeProvider provider : Holder.myProviders) {
+        for (FileIncludeProvider provider : FileIncludeProvider.EP_NAME.getExtensionList()) {
           if (provider.acceptFile(file)) {
             return true;
           }
@@ -137,7 +133,7 @@ public class FileIncludeIndex extends FileBasedIndexExtension<String, List<FileI
 
       @Override
       public void registerFileTypesUsedForIndexing(@NotNull Consumer<FileType> fileTypeSink) {
-        for (FileIncludeProvider provider : Holder.myProviders) {
+        for (FileIncludeProvider provider : FileIncludeProvider.EP_NAME.getExtensionList()) {
           provider.registerFileTypesUsedForIndexing(fileTypeSink);
         }
       }
@@ -152,7 +148,7 @@ public class FileIncludeIndex extends FileBasedIndexExtension<String, List<FileI
   @Override
   public int getVersion() {
     int version = BASE_VERSION;
-    for (FileIncludeProvider provider : Holder.myProviders) {
+    for (FileIncludeProvider provider : FileIncludeProvider.EP_NAME.getExtensionList()) {
       version = version * 31 + (provider.getVersion() ^ provider.getClass().getName().hashCode());
     }
     return version;

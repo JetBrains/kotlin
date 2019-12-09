@@ -53,8 +53,7 @@ public final class FileIncludeManagerImpl extends FileIncludeManager {
       return VfsUtilCore.toVirtualFileArray(files);
     }
   };
-  private final Map<String, FileIncludeProvider> myProviderMap;
-
+  
   public void processIncludes(PsiFile file, Processor<? super FileIncludeInfo> processor) {
     List<FileIncludeInfo> infoList = FileIncludeIndex.getIncludes(file.getVirtualFile(), myProject);
     for (FileIncludeInfo info : infoList) {
@@ -116,17 +115,27 @@ public final class FileIncludeManagerImpl extends FileIncludeManager {
     return names;
   }
 
+  private final Map<String, FileIncludeProvider> myProviderMap = new HashMap<>();
+
   public FileIncludeManagerImpl(Project project) {
     myProject = project;
     myPsiManager = PsiManager.getInstance(project);
     myPsiFileFactory = PsiFileFactory.getInstance(myProject);
 
-    List<FileIncludeProvider> providers = FileIncludeProvider.EP_NAME.getExtensionList();
-    myProviderMap = new HashMap<>(providers.size());
-    for (FileIncludeProvider provider : providers) {
-      FileIncludeProvider old = myProviderMap.put(provider.getId(), provider);
-      assert old == null;
+    for (FileIncludeProvider provider : FileIncludeProvider.EP_NAME.getExtensionList()) {
+      put(provider);
     }
+
+    FileIncludeProvider.EP_NAME.addExtensionPointListener(
+      (p, d) -> { put(p); },
+      (p, d) -> { myProviderMap.remove(p.getId()); },
+      project
+    );
+  }
+
+  private void put(FileIncludeProvider provider) {
+    FileIncludeProvider old = myProviderMap.put(provider.getId(), provider);
+    assert old == null;
   }
 
   @Override
