@@ -10894,6 +10894,16 @@ public abstract class LocalInspectionTestGenerated extends AbstractLocalInspecti
             runTest("testData/inspectionsLocal/replacePutWithAssignment/beforeElvis.kt");
         }
 
+        @TestMetadata("hasSet.kt")
+        public void testHasSet() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replacePutWithAssignment/hasSet.kt");
+        }
+
+        @TestMetadata("hasSet2.kt")
+        public void testHasSet2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replacePutWithAssignment/hasSet2.kt");
+        }
+
         @TestMetadata("nonMap.kt")
         public void testNonMap() throws Exception {
             runTest("testData/inspectionsLocal/replacePutWithAssignment/nonMap.kt");
