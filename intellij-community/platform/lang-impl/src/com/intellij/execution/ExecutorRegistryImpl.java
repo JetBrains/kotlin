@@ -58,6 +58,11 @@ public final class ExecutorRegistryImpl extends ExecutorRegistry implements Disp
 
   public ExecutorRegistryImpl() {
     init();
+    Executor.EXECUTOR_EXTENSION_NAME.addExtensionPointListener(
+      (e, pd) -> {initExecutor(e);},
+      (e, pd) -> {deinitExecutor(e);},
+      this
+    );
   }
 
   static class ExecutorRegistryPreloader extends PreloadingActivity {
