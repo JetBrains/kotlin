@@ -95,10 +95,22 @@ internal val arrayTypes = setOf(
         "kotlin.native.internal.NativePtrArray"
 )
 
+internal val arraysWithFixedSizeItems = setOf(
+        "kotlin.ByteArray",
+        "kotlin.CharArray",
+        "kotlin.ShortArray",
+        "kotlin.IntArray",
+        "kotlin.LongArray",
+        "kotlin.FloatArray",
+        "kotlin.DoubleArray",
+        "kotlin.BooleanArray"
+)
 
 internal val IrClass.isArray: Boolean
     get() = this.fqNameForIrSerialization.asString() in arrayTypes
 
+internal val IrClass.isArrayWithFixedSizeItems: Boolean
+    get() = this.fqNameForIrSerialization.asString() in arraysWithFixedSizeItems
 
 fun IrClass.isAbstract() = this.modality == Modality.SEALED || this.modality == Modality.ABSTRACT
 

@@ -565,22 +565,24 @@ internal object DFGSerializer {
         }
     }
 
-    class ArrayRead(val array: Edge, val index: Edge, val type: Int) {
+    class ArrayRead(val callee: Int, val array: Edge, val index: Edge, val type: Int) {
 
-        constructor(data: ArraySlice) : this(Edge(data), Edge(data), data.readInt())
+        constructor(data: ArraySlice) : this(data.readInt(), Edge(data), Edge(data), data.readInt())
 
         fun write(result: ArraySlice) {
+            result.writeInt(callee)
             array.write(result)
             index.write(result)
             result.writeInt(type)
         }
     }
 
-    class ArrayWrite(val array: Edge, val index: Edge, val value: Edge, val type: Int) {
+    class ArrayWrite(val callee: Int, val array: Edge, val index: Edge, val value: Edge, val type: Int) {
 
-        constructor(data: ArraySlice) : this(Edge(data), Edge(data), Edge(data), data.readInt())
+        constructor(data: ArraySlice) : this(data.readInt(), Edge(data), Edge(data), Edge(data), data.readInt())
 
         fun write(result: ArraySlice) {
+            result.writeInt(callee)
             array.write(result)
             index.write(result)
             value.write(result)
@@ -708,11 +710,11 @@ internal object DFGSerializer {
             fun fieldWrite(receiver: Edge?, field: Field, value: Edge, type: Int) =
                     Node().also { it.fieldWrite = FieldWrite(receiver, field, value, type) }
 
-            fun arrayRead(array: Edge, index: Edge, type: Int) =
-                    Node().also { it.arrayRead = ArrayRead(array, index, type) }
+            fun arrayRead(callee: Int, array: Edge, index: Edge, type: Int) =
+                    Node().also { it.arrayRead = ArrayRead(callee, array, index, type) }
 
-            fun arrayWrite(array: Edge, index: Edge, value: Edge, type: Int) =
-                    Node().also { it.arrayWrite = ArrayWrite(array, index, value, type) }
+            fun arrayWrite(callee: Int, array: Edge, index: Edge, value: Edge, type: Int) =
+                    Node().also { it.arrayWrite = ArrayWrite(callee, array, index, value, type) }
 
             fun variable(values: Array<Edge>, type: Int, kind: DataFlowIR.VariableKind) =
                     Node().also { it.variable = Variable(values, type, kind.ordinal.toByte()) }
@@ -948,10 +950,10 @@ internal object DFGSerializer {
                                         Node.fieldWrite(node.receiver?.let { buildEdge(it) }, buildField(node.field), buildEdge(node.value), typeMap[node.type]!!)
 
                                     is DataFlowIR.Node.ArrayRead ->
-                                        Node.arrayRead(buildEdge(node.array), buildEdge(node.index), typeMap[node.type]!!)
+                                        Node.arrayRead(functionSymbolMap[node.callee]!!, buildEdge(node.array), buildEdge(node.index), typeMap[node.type]!!)
 
                                     is DataFlowIR.Node.ArrayWrite ->
-                                        Node.arrayWrite(buildEdge(node.array), buildEdge(node.index), buildEdge(node.value), typeMap[node.type]!!)
+                                        Node.arrayWrite(functionSymbolMap[node.callee]!!, buildEdge(node.array), buildEdge(node.index), buildEdge(node.value), typeMap[node.type]!!)
 
                                     is DataFlowIR.Node.Variable ->
                                         Node.variable(node.values.map { buildEdge(it) }.toTypedArray(), typeMap[node.type]!!, node.kind)
@@ -1213,12 +1215,12 @@ internal object DFGSerializer {
 
                             NodeType.ARRAY_READ -> {
                                 val arrayRead = it.arrayRead!!
-                                DataFlowIR.Node.ArrayRead(deserializeEdge(arrayRead.array), deserializeEdge(arrayRead.index), types[arrayRead.type], null)
+                                DataFlowIR.Node.ArrayRead(functionSymbols[arrayRead.callee], deserializeEdge(arrayRead.array), deserializeEdge(arrayRead.index), types[arrayRead.type], null)
                             }
 
                             NodeType.ARRAY_WRITE -> {
                                 val arrayWrite = it.arrayWrite!!
-                                DataFlowIR.Node.ArrayWrite(deserializeEdge(arrayWrite.array), deserializeEdge(arrayWrite.index), deserializeEdge(arrayWrite.value), types[arrayWrite.type])
+                                DataFlowIR.Node.ArrayWrite(functionSymbols[arrayWrite.callee], deserializeEdge(arrayWrite.array), deserializeEdge(arrayWrite.index), deserializeEdge(arrayWrite.value), types[arrayWrite.type])
                             }
 
                             NodeType.VARIABLE -> {

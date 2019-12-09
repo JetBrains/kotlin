@@ -485,6 +485,8 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
             producingCache = config.produce.isCache,
             librariesToCache = config.librariesToCache
     )
+
+    val declaredLocalArrays: MutableMap<String, LLVMTypeRef> = HashMap()
 }
 
 private fun MemberScope.getContributedClassifier(name: String) =

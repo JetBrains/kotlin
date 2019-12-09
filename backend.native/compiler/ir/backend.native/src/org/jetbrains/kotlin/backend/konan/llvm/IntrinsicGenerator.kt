@@ -417,11 +417,6 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
         TODO("Implement me")
     }
 
-    private fun extractConstUnsignedInt(value: LLVMValueRef): Long {
-        assert(LLVMIsConstant(value) != 0)
-        return LLVMConstIntGetZExtValue(value)
-    }
-
     private fun FunctionGenerationContext.emitGetClassTypeInfo(callSite: IrCall): LLVMValueRef {
         val typeArgument = callSite.getTypeArgument(0)!!
         val typeArgumentClass = typeArgument.getClass()

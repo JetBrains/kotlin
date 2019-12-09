@@ -12,6 +12,7 @@ import kotlin.internal.PureReifiable
 import kotlin.native.internal.ExportTypeInfo
 import kotlin.native.internal.IntrinsicType
 import kotlin.native.internal.TypedIntrinsic
+import kotlin.native.internal.PointsTo
 
 /**
  * An array of bytes.
@@ -527,6 +528,7 @@ public inline fun <reified @PureReifiable T> arrayOfNulls(size: Int): Array<T?> 
  * Returns an array containing the specified elements.
  */
 @TypedIntrinsic(IntrinsicType.IDENTITY)
+@PointsTo(0, 1) // <return> points to <array> argument.
 public external inline fun <reified @PureReifiable T> arrayOf(vararg elements: T): Array<T>
 
 @SymbolName("Kotlin_emptyArray")

@@ -204,6 +204,11 @@ internal fun ContextUtils.numParameters(functionType: LLVMTypeRef) : Int {
     return LLVMCountParamTypes(LLVMGetElementType(functionType))
 }
 
+fun extractConstUnsignedInt(value: LLVMValueRef): Long {
+    assert(LLVMIsConstant(value) != 0)
+    return LLVMConstIntGetZExtValue(value)
+}
+
 internal fun ContextUtils.isObjectReturn(functionType: LLVMTypeRef) : Boolean {
     // Note that type is usually function pointer, so we have to dereference it.
     val returnType = LLVMGetReturnType(LLVMGetElementType(functionType))!!
