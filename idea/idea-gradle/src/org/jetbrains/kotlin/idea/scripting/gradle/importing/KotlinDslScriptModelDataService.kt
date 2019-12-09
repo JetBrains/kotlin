@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.configuration
+package org.jetbrains.kotlin.idea.scripting.gradle.importing
 
 import com.intellij.openapi.components.service
 import com.intellij.openapi.externalSystem.model.DataNode
@@ -30,8 +30,6 @@ import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 import org.jetbrains.kotlin.scripting.resolve.VirtualFileScriptSource
 import org.jetbrains.kotlin.scripting.resolve.adjustByDefinition
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
-import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
 import org.jetbrains.plugins.gradle.settings.GradleExecutionSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.io.File
@@ -40,7 +38,7 @@ import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.jdkHome
 import kotlin.script.experimental.jvm.jvm
 
-class KotlinGradleBuildScriptsDataService : AbstractProjectDataService<ProjectData, Void>() {
+class KotlinDslScriptModelDataService : AbstractProjectDataService<ProjectData, Void>() {
     override fun getTargetDataKey(): Key<ProjectData> = ProjectKeys.PROJECT
 
     override fun onSuccessImport(
@@ -52,7 +50,7 @@ class KotlinGradleBuildScriptsDataService : AbstractProjectDataService<ProjectDa
         super.onSuccessImport(imported, projectData, project, modelsProvider)
 
         val projectDataNode = imported.singleOrNull() ?: return
-        val gradleKotlinBuildScripts = projectDataNode.gradleKotlinBuildScripts
+        val gradleKotlinBuildScripts = projectDataNode.KOTLIN_DSL_SCRIPT_IDEA_MODELS
         val buildScripts = gradleKotlinBuildScripts.toList()
         gradleKotlinBuildScripts.clear()
 
@@ -107,7 +105,7 @@ class KotlinGradleBuildScriptsDataService : AbstractProjectDataService<ProjectDa
     }
 
     private fun addBuildScriptDiagnosticMessage(
-        message: GradleKotlinBuildScriptData.Message,
+        message: KotlinDslScriptIdeaModel.Message,
         virtualFile: VirtualFile,
         project: Project
     ) {
@@ -115,17 +113,18 @@ class KotlinGradleBuildScriptsDataService : AbstractProjectDataService<ProjectDa
             "Kotlin Build Script",
             message.text,
             when (message.severity) {
-                GradleKotlinBuildScriptData.Severity.WARNING -> NotificationCategory.WARNING
-                GradleKotlinBuildScriptData.Severity.ERROR -> NotificationCategory.ERROR
+                KotlinDslScriptIdeaModel.Severity.WARNING -> NotificationCategory.WARNING
+                KotlinDslScriptIdeaModel.Severity.ERROR -> NotificationCategory.ERROR
             },
             NotificationSource.PROJECT_SYNC
         )
 
-        notification.navigatable = LazyNavigatable(
-            virtualFile,
-            project,
-            message.position
-        )
+        notification.navigatable =
+            LazyNavigatable(
+                virtualFile,
+                project,
+                message.position
+            )
 
         ExternalSystemNotificationManager.getInstance(project).showNotification(
             GradleConstants.SYSTEM_ID,
@@ -136,7 +135,7 @@ class KotlinGradleBuildScriptsDataService : AbstractProjectDataService<ProjectDa
     class LazyNavigatable internal constructor(
         private val virtualFile: VirtualFile,
         private val project: Project,
-        val position: GradleKotlinBuildScriptData.Position?
+        val position: KotlinDslScriptIdeaModel.Position?
     ) : Navigatable {
         private val openFileDescriptor: Navigatable by lazy {
             if (position != null) OpenFileDescriptor(project, virtualFile, position.line, position.column)

@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.configuration
+package org.jetbrains.kotlin.idea.scripting.gradle.importing
 
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.project.ProjectData
@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.idea.scripting.gradle.minimal_gradle_version_support
 import org.jetbrains.plugins.gradle.model.ProjectImportModelProvider
 import org.jetbrains.plugins.gradle.service.project.AbstractProjectResolverExtension
 
-class KotlinGradleBuildScriptsResolver : AbstractProjectResolverExtension() {
+class KotlinDslScriptModelResolver : AbstractProjectResolverExtension() {
     override fun getExtraProjectModelClasses(): Set<Class<out Any>> {
         return setOf(KotlinDslScriptsModel::class.java)
     }
@@ -61,7 +61,7 @@ class KotlinGradleBuildScriptsResolver : AbstractProjectResolverExtension() {
             if (it.gradleProject.parent == null) {
                 resolverCtx.getExtraProject(it, KotlinDslScriptsModel::class.java)?.let { model ->
                     // we need a copy to avoid memory leak, as model is java rmi proxy object
-                    ideProject.gradleKotlinBuildScripts.addAll(copy(model))
+                    ideProject.KOTLIN_DSL_SCRIPT_IDEA_MODELS.addAll(copy(model))
                 }
             }
         }

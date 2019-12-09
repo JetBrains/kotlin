@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.configuration
+package org.jetbrains.kotlin.idea.scripting.gradle.importing
 
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.project.ProjectData
@@ -12,16 +12,15 @@ import org.gradle.tooling.model.kotlin.dsl.EditorReportSeverity
 import org.gradle.tooling.model.kotlin.dsl.KotlinDslScriptsModel
 import org.jetbrains.kotlin.idea.util.NotNullableCopyableDataNodeUserDataProperty
 
-
-var DataNode<out ProjectData>.gradleKotlinBuildScripts
+var DataNode<out ProjectData>.KOTLIN_DSL_SCRIPT_IDEA_MODELS: MutableList<KotlinDslScriptIdeaModel>
         by NotNullableCopyableDataNodeUserDataProperty(
-            Key.create<MutableList<GradleKotlinBuildScriptData>>(
+            Key.create<MutableList<KotlinDslScriptIdeaModel>>(
                 "GRADLE_KOTLIN_BUILD_SCRIPTS"
             ),
             mutableListOf()
         )
 
-data class GradleKotlinBuildScriptData(
+data class KotlinDslScriptIdeaModel(
     val file: String,
     val classPath: List<String>,
     val sourcePath: List<String>,
@@ -40,30 +39,33 @@ data class GradleKotlinBuildScriptData(
 }
 
 @Suppress("unused")
-fun KotlinGradleBuildScriptsResolver.copy(model: KotlinDslScriptsModel): List<GradleKotlinBuildScriptData> {
+fun KotlinDslScriptModelResolver.copy(model: KotlinDslScriptsModel): List<KotlinDslScriptIdeaModel> {
     return model.scriptModels.map { (file, model) ->
-        val messages = mutableListOf<GradleKotlinBuildScriptData.Message>()
+        val messages = mutableListOf<KotlinDslScriptIdeaModel.Message>()
 
         model.exceptions.forEach {
             messages.add(
-                GradleKotlinBuildScriptData.Message(GradleKotlinBuildScriptData.Severity.ERROR, it)
+                KotlinDslScriptIdeaModel.Message(
+                    KotlinDslScriptIdeaModel.Severity.ERROR, it
+                )
             )
         }
 
         model.editorReports.forEach {
-            messages.add(GradleKotlinBuildScriptData.Message(
+            messages.add(KotlinDslScriptIdeaModel.Message(
                 when (it.severity) {
-                    EditorReportSeverity.WARNING -> GradleKotlinBuildScriptData.Severity.WARNING
-                    else -> GradleKotlinBuildScriptData.Severity.ERROR
+                    EditorReportSeverity.WARNING -> KotlinDslScriptIdeaModel.Severity.WARNING
+                    else -> KotlinDslScriptIdeaModel.Severity.ERROR
                 },
                 it.message,
                 it.position?.let { position ->
-                    GradleKotlinBuildScriptData.Position(position.line, position.column)
+                    KotlinDslScriptIdeaModel
+                        .Position(position.line, position.column)
                 }
             ))
         }
 
-        GradleKotlinBuildScriptData(
+        KotlinDslScriptIdeaModel(
             file.absolutePath,
             model.classPath.map { it.absolutePath },
             model.sourcePath.map { it.absolutePath },
