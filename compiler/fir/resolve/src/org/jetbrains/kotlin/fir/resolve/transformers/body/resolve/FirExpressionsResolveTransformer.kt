@@ -459,7 +459,13 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
         val symbol: FirClassSymbol<*> = when (val reference = delegatedConstructorCall.calleeReference) {
             is FirThisReference -> {
                 typeArguments = emptyList()
-                reference.boundSymbol as? FirClassSymbol<*> ?: return delegatedConstructorCall.compose()
+                if (reference.boundSymbol == null) {
+                    implicitReceiverStack.lastDispatchReceiver()?.boundSymbol?.also {
+                        reference.replaceBoundSymbol(it)
+                    } ?: return delegatedConstructorCall.compose()
+                } else {
+                    reference.boundSymbol!! as FirClassSymbol<*>
+                }
             }
             is FirSuperReference -> {
                 // TODO: unresolved supertype
