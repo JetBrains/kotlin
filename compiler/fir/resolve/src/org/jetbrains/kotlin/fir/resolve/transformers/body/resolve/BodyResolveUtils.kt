@@ -15,12 +15,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.InferenceComponents
 import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowInferenceContext
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.types.ConeClassErrorType
-import org.jetbrains.kotlin.fir.types.ErrorTypeConstructor
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
-import org.jetbrains.kotlin.types.model.SimpleTypeMarker
-import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContextDelegate
 
 inline fun <reified T : FirElement> FirBasedSymbol<*>.firUnsafe(): T {
@@ -37,7 +32,7 @@ internal inline var FirExpression.resultType: FirTypeRef
         replaceTypeRef(type)
     }
 
-internal interface UniversalConeInferenceContext :
+interface UniversalConeInferenceContext :
     ConeInferenceContext, TypeSystemInferenceExtensionContextDelegate, DataFlowInferenceContext
 
 internal fun FirSession.inferenceContext(): UniversalConeInferenceContext {

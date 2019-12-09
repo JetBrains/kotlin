@@ -97,6 +97,10 @@ class FirJavaField(
         return this
     }
 
+    override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef) {
+        returnTypeRef = newReturnTypeRef
+    }
+
     override val delegate: FirExpression?
         get() = null
 

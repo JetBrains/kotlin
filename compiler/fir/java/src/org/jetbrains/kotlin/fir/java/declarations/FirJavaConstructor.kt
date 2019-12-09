@@ -112,4 +112,8 @@ class FirJavaConstructor(
     }
 
     override var containerSource: DeserializedContainerSource? = null
+
+    override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef) {
+        returnTypeRef = newReturnTypeRef
+    }
 }

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.tree.generator
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.annotations
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.arguments
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.body
-import org.jetbrains.kotlin.fir.tree.generator.FieldSets.calleeReference
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.classKind
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.controlFlowGraphReferenceField
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.declarations
@@ -69,7 +68,7 @@ object NodeConfigurator : AbstractFieldConfigurator() {
         }
 
         typedDeclaration.configure {
-            +field("returnTypeRef", typeRef).withTransform()
+            +field("returnTypeRef", typeRef, withReplace = true).withTransform()
         }
 
         callableDeclaration.configure {

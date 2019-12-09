@@ -85,4 +85,8 @@ class FirErrorFunctionImpl(
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
         resolvePhase = newResolvePhase
     }
+
+    override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef) {
+        returnTypeRef = newReturnTypeRef
+    }
 }

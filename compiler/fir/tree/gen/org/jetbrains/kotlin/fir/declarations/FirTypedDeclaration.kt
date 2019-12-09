@@ -26,5 +26,7 @@ interface FirTypedDeclaration : FirDeclaration, FirAnnotationContainer {
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitTypedDeclaration(this, data)
 
+    fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)
+
     fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirTypedDeclaration
 }

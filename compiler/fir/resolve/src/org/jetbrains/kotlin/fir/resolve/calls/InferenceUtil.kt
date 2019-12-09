@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.UniversalConeInferenceContext
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintIncorporator
@@ -19,7 +20,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImp
 import org.jetbrains.kotlin.types.AbstractTypeApproximator
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
-import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContextDelegate
 
 fun ConeTypeContext.hasNullableSuperType(type: ConeKotlinType): Boolean {
     if (type is ConeClassLikeType) return false
@@ -41,7 +41,7 @@ class TypeParameterBasedTypeVariable(val typeParameterSymbol: FirTypeParameterSy
     ConeTypeVariable(typeParameterSymbol.name.identifier)
 
 class InferenceComponents(
-    val ctx: TypeSystemInferenceExtensionContextDelegate,
+    val ctx: UniversalConeInferenceContext,
     val session: FirSession,
     val returnTypeCalculator: ReturnTypeCalculator,
     val scopeSession: ScopeSession

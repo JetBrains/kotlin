@@ -99,6 +99,10 @@ class FirAnonymousFunctionImpl(
         resolvePhase = newResolvePhase
     }
 
+    override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef) {
+        returnTypeRef = newReturnTypeRef
+    }
+
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
         typeRef = newTypeRef
     }

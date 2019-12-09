@@ -102,4 +102,8 @@ open class FirValueParameterImpl(
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
         resolvePhase = newResolvePhase
     }
+
+    override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef) {
+        returnTypeRef = newReturnTypeRef
+    }
 }

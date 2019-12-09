@@ -1,6 +1,6 @@
 FILE: main.kt
     public final fun test(): R|kotlin/Unit| {
-        <Inapplicable(INAPPLICABLE): [/Foo.Foo]>#(<L> = Foo@fun <anonymous>(): <ERROR TYPE REF: Unresolved name: it> {
+        <Inapplicable(INAPPLICABLE): [/Foo.Foo]>#(<L> = Foo@fun <anonymous>(): R|class error: Unresolved name: it| {
             <Unresolved name: it>#
         }
         )

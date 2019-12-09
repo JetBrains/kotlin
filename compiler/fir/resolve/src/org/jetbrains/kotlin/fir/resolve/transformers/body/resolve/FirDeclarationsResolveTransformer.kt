@@ -12,12 +12,15 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitDispatchReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitExtensionReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.extractLambdaInfoFromFunctionalType
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.ControlFlowGraphReferenceTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.FirCallCompletionResultsWriterTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.FirStatusResolveTransformer.Companion.resolveStatus
 import org.jetbrains.kotlin.fir.resolve.transformers.StoreType
 import org.jetbrains.kotlin.fir.resolve.transformers.transformVarargTypeToArrayType
@@ -32,6 +35,7 @@ import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.compose
+import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -460,11 +464,9 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
                     session,
                     ConeSubstitutor.Empty,
                     returnTypeCalculator,
-                    inferenceComponents.approximator,
-                    integerOperatorsTypeUpdater,
-                    integerLiteralTypeApproximator
+                    inferenceComponents.approximator
                 )
-                af.transformSingle(writer, data.expectedTypeRef.coneTypeSafe<ConeKotlinType>()?.toExpectedType())
+                af.transformSingle(writer, null)
                 val returnTypes = dataFlowAnalyzer.returnExpressionsOfAnonymousFunction(af).mapNotNull { (it as? FirExpression)?.resultType?.coneTypeUnsafe() }
                 af.replaceReturnTypeRef(af.returnTypeRef.resolvedTypeFromPrototype(inferenceComponents.ctx.commonSuperTypeOrNull(returnTypes) ?: session.builtinTypes.unitType.coneTypeUnsafe()))
                 af.replaceTypeRef(af.constructFunctionalTypeRef(session))

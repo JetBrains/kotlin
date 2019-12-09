@@ -60,4 +60,6 @@ abstract class FirModifiableConstructor : FirPureAbstractElement(), FirConstruct
     abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirModifiableConstructor
 
     abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
+
+    abstract override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)
 }

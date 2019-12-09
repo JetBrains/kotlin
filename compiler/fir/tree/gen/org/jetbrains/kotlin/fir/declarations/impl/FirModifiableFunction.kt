@@ -48,4 +48,6 @@ interface FirModifiableFunction<F : FirFunction<F>>  : FirFunction<F>, FirAbstra
     override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirModifiableFunction<F>
 
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
+
+    override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)
 }
