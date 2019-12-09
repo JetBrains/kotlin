@@ -455,14 +455,23 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
                 af = af.transformValueParameters(ImplicitToErrorTypeTransformer, null)
                 val bodyExpectedType = returnTypeRefFromResolvedAtom ?: data.expectedTypeRef
                 af = transformFunction(af, withExpectedType(bodyExpectedType)).single as FirAnonymousFunction
-                af = af.copy(
-                    returnTypeRef = af.body?.resultType ?: FirErrorTypeRefImpl(af.source, FirSimpleDiagnostic("No result type for lambda", DiagnosticKind.InferenceError))
+                // To separate function and separate commit
+                val writer = FirCallCompletionResultsWriterTransformer(
+                    session,
+                    ConeSubstitutor.Empty,
+                    returnTypeCalculator,
+                    inferenceComponents.approximator,
+                    integerOperatorsTypeUpdater,
+                    integerLiteralTypeApproximator
                 )
+                af.transformSingle(writer, data.expectedTypeRef.coneTypeSafe<ConeKotlinType>()?.toExpectedType())
+                val returnTypes = dataFlowAnalyzer.returnExpressionsOfAnonymousFunction(af).mapNotNull { (it as? FirExpression)?.resultType?.coneTypeUnsafe() }
+                af.replaceReturnTypeRef(af.returnTypeRef.resolvedTypeFromPrototype(inferenceComponents.ctx.commonSuperTypeOrNull(returnTypes) ?: session.builtinTypes.unitType.coneTypeUnsafe()))
                 af.replaceTypeRef(af.constructFunctionalTypeRef(session))
                 af.compose()
             }
             ResolutionMode.ContextIndependent -> {
-                transformFunction(anonymousFunction, data).single.compose()
+                transformFunction(anonymousFunction, data)
             }
             is ResolutionMode.WithStatus -> {
                 throw AssertionError("Should not be here in WithStatus mode")
