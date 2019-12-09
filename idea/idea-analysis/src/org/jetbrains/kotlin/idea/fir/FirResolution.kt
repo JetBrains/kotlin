@@ -12,9 +12,16 @@ object FirResolution {
     private const val ENABLED_BY_DEFAULT = false
     private const val optionName = "kotlin.use.fir.resolution"
 
+    private val initialEnabledValue: Boolean by lazy {
+        PropertiesComponent.getInstance().getBoolean(optionName, ENABLED_BY_DEFAULT)
+    }
+
+    private var changedEnabledValue: Boolean? = null
+
     var enabled: Boolean
-        get() = PropertiesComponent.getInstance().getBoolean(optionName, ENABLED_BY_DEFAULT)
+        get() = changedEnabledValue ?: initialEnabledValue
         set(value) {
-            PropertiesComponent.getInstance().setValue(optionName, value, ENABLED_BY_DEFAULT)
+            changedEnabledValue = value
+            //PropertiesComponent.getInstance().setValue(optionName, value, ENABLED_BY_DEFAULT)
         }
 }
