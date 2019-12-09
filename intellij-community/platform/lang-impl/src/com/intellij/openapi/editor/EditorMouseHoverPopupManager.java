@@ -109,7 +109,10 @@ public final class EditorMouseHoverPopupManager implements Disposable {
         return;
       }
 
-      cancelProcessingAndCloseHint();
+      Rectangle oldRectangle = e.getOldRectangle();
+      if (oldRectangle != null && !oldRectangle.getLocation().equals(e.getNewRectangle().getLocation())) {
+        cancelProcessingAndCloseHint();
+      }
     }, this);
 
     EditorMouseHoverPopupControl.getInstance().addListener(() -> {
