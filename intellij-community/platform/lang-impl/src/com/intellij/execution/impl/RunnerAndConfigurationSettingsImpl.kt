@@ -364,7 +364,10 @@ class RunnerAndConfigurationSettingsImpl @JvmOverloads constructor(
     }
   }
 
-  override fun <T : RunnerSettings> getRunnerSettings(runner: ProgramRunner<T>): T? = runnerSettings.getOrCreateSettings(runner) as T?
+  override fun <T : RunnerSettings> getRunnerSettings(runner: ProgramRunner<T>): T? {
+    @Suppress("UNCHECKED_CAST")
+    return runnerSettings.getOrCreateSettings(runner) as T?
+  }
 
   override fun getConfigurationSettings(runner: ProgramRunner<*>) = configurationPerRunnerSettings.getOrCreateSettings(runner)
 
@@ -459,7 +462,7 @@ class RunnerAndConfigurationSettingsImpl @JvmOverloads constructor(
       val iterator = element.getChildren(childTagName).iterator()
       while (iterator.hasNext()) {
         val state = iterator.next()
-        val runner = findRunner(state.getAttributeValue(RUNNER_ID))
+        val runner = state.getAttributeValue(RUNNER_ID)?.let { findRunner(it) }
         if (runner == null) {
           iterator.remove()
         }
@@ -519,7 +522,7 @@ class RunnerAndConfigurationSettingsImpl @JvmOverloads constructor(
     private fun add(state: Element, runner: ProgramRunner<*>?, data: T?) {
       if (runner == null) {
         if (unloadedSettings == null) {
-          unloadedSettings = SmartList<Element>()
+          unloadedSettings = SmartList()
         }
         unloadedSettings!!.add(JDOMUtil.internElement(state))
         return
@@ -551,7 +554,7 @@ class RunnerAndConfigurationSettingsImpl @JvmOverloads constructor(
         val element = Element(childTagName)
         runnerSettings.writeExternal(element)
         if (unloadedSettings == null) {
-          unloadedSettings = SmartList<Element>()
+          unloadedSettings = SmartList()
         }
         unloadedSettings!!.add(JDOMUtil.internElement(element))
         loadedIds.remove(runner.runnerId)
