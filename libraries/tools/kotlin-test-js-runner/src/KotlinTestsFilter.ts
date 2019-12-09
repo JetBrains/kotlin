@@ -4,7 +4,7 @@ import {KotlinTestRunner} from "./KotlinTestRunner";
 export interface KotlinTestsFilter {
     mayContainTestsFromSuite(fqn: string, alternativeFqn?: string): boolean;
 
-    containsTest(fqn: string): boolean;
+    containsTest(fqn: string, alternativeFqn?: string): boolean;
 }
 
 export function runWithFilter(
@@ -38,15 +38,6 @@ export function runWithFilter(
         return `${path[0]}.${javaClassName}`
     }
 
-    function everyOfJsOrJavaNames(
-        predicate: (value: string) => boolean
-    ): boolean {
-        return [jsClassName(), javaClassName()]
-            .every(value => {
-                return predicate(value);
-            })
-    }
-
     return {
         suite: function (name: string, isIgnored: boolean, fn: () => void) {
             path.push(name);
@@ -64,7 +55,7 @@ export function runWithFilter(
 
         test: function (name: string, isIgnored: boolean, fn: () => void) {
             try {
-                if (everyOfJsOrJavaNames(value => !filter.containsTest(`${value}.${name}`)))
+                if (!filter.containsTest(`${jsClassName()}.${name}`, `${javaClassName()}.${name}`))
                     return;
 
                 runner.test(name, isIgnored, fn);
@@ -87,7 +78,7 @@ export function newKotlinTestsFilter(wildcard: string | null): KotlinTestsFilter
         // by adding explicit prefix matcher to not visit unneeded suites
         // (RegExpKotlinTestsFilter doesn't support suites matching)
         const [prefix, rest] = wildcard.split('*', 2);
-        return new StartsWithFilter(prefix.slice(0, -1), rest ? new RegExpKotlinTestsFilter(wildcard) : null)
+        return new StartsWithFilter(prefix, rest ? new RegExpKotlinTestsFilter(wildcard) : null)
     }
 }
 
@@ -199,12 +190,12 @@ export class CompositeTestFilter implements KotlinTestsFilter {
         return false;
     }
 
-    containsTest(fqn: string): boolean {
+    containsTest(fqn: string, alternativeFqn: string): boolean {
         for (const excl of this.exclude) {
-            if (excl.containsTest(fqn)) return false
+            if (excl.containsTest(fqn) || excl.containsTest(alternativeFqn)) return false
         }
         for (const incl of this.include) {
-            if (incl.containsTest(fqn)) return true
+            if (incl.containsTest(fqn) || incl.containsTest(alternativeFqn)) return true
         }
         return false
     }
