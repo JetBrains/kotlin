@@ -560,13 +560,13 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                         copyBodyFrom(function)
                         copyAttributes(function)
                     }
-                    functionsToAdd[function.parentAsClass] = mutableSetOf(newFunction)
+                    registerNewFunction(function.parentAsClass, newFunction)
                 }
 
                 val newFunction = if (function.isOverridable) {
                     // Create static method for the suspend state machine method so that reentering the method
                     // does not lead to virtual dispatch to the wrong method.
-                    functionsToAdd.getOrPut(function.parentAsClass) { mutableSetOf() }.add(function)
+                    registerNewFunction(function.parentAsClass, function)
                     createStaticSuspendImpl(function)
                 } else function
 
@@ -600,6 +600,10 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                 return result
             }
         })
+    }
+
+    private fun registerNewFunction(container: IrClass, function: IrFunction) {
+        functionsToAdd.getOrPut(container) { mutableSetOf() }.add(function)
     }
 
     private fun markSuspendLambdas(irElement: IrElement): Pair<List<SuspendLambdaInfo>, List<IrFunction>> {
