@@ -26,7 +26,7 @@ abstract class AbstractDiagnosticCollector {
 
     protected abstract fun initializeCollector()
     protected abstract fun getCollectedDiagnostics(): Iterable<ConeDiagnostic>
-    internal abstract fun runCheck(block: (DiagnosticReporter) -> Unit)
+    abstract fun runCheck(block: (DiagnosticReporter) -> Unit)
 
     private val components: MutableList<AbstractDiagnosticCollectorComponent> = mutableListOf()
     private var componentsInitialized = false

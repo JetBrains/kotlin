@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
-import org.jetbrains.kotlin.fir.resolve.diagnostics.collectors.FirDiagnosticsCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDesignatedBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.runResolve
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
@@ -145,8 +144,8 @@ fun KtFile.getOrBuildFirWithDiagnostics(state: FirResolveState): FirFile {
 
     if (state.hasDiagnosticsForFile(this)) return firFile
 
-    val coneDiagnostics = FirDiagnosticsCollector.create().collectDiagnostics(firFile)
-    state.setDiagnosticsForFile(this, firFile, coneDiagnostics)
+    FirIdeDiagnosticsCollector(state).collectDiagnostics(firFile)
+    state.setDiagnosticsForFile(this, firFile)
     return firFile
 }
 

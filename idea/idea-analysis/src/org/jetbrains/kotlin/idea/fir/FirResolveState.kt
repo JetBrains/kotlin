@@ -67,7 +67,7 @@ interface FirResolveState {
 
     fun record(psi: KtElement, diagnostic: Diagnostic)
 
-    fun setDiagnosticsForFile(file: KtFile, fir: FirFile, diagnostics: Iterable<ConeDiagnostic>)
+    fun setDiagnosticsForFile(file: KtFile, fir: FirFile, diagnostics: Iterable<ConeDiagnostic> = emptyList())
 }
 
 class FirResolveStateImpl(override val sessionProvider: FirSessionProvider) : FirResolveState {
@@ -92,7 +92,6 @@ class FirResolveStateImpl(override val sessionProvider: FirSessionProvider) : Fi
     }
 
     override fun record(psi: KtElement, diagnostic: Diagnostic) {
-        // TODO: consider implementing custom FirIdeDiagnosticReported/Collector
         val list = diagnosticCache.getOrPut(psi) { mutableListOf() }
         list += diagnostic
     }
