@@ -23,7 +23,7 @@ class GradleBuildSrcImportingTest : GradleImportingTestCase() {
                   "project.buildSrc", "project.buildSrc.main", "project.buildSrc.test")
   }
 
-  @TargetVersions("<6.0") // since 6.9 'buildSrc' is a reserved project name, https://docs.gradle.org/current/userguide/upgrading_version_5.html#buildsrc_is_now_reserved_as_a_project_and_subproject_build_name
+  @TargetVersions("<6.0") // since 6.0 'buildSrc' is a reserved project name, https://docs.gradle.org/current/userguide/upgrading_version_5.html#buildsrc_is_now_reserved_as_a_project_and_subproject_build_name
   @Test
   fun `test buildSrc project is included into the main build`() {
     createProjectSubFile("buildSrc/src/main/java/my/pack/Util.java",
