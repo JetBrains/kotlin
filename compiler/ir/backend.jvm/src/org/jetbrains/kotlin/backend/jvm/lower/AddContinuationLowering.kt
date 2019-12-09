@@ -652,11 +652,20 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                 expression.acceptChildrenVoid(this)
 
                 if (expression.isSuspend && expression !in inlineLambdas && expression.origin == IrStatementOrigin.LAMBDA) {
+                    var expressionCapturesCrossinline = false
+                    for (i in 0 until expression.valueArgumentsCount) {
+                        val getValue = expression.getValueArgument(i) as? IrGetValue ?: continue
+                        val owner = getValue.symbol.owner as? IrValueParameter ?: continue
+                        if (owner.isCrossinline) {
+                            expressionCapturesCrossinline = true
+                            break
+                        }
+                    }
                     suspendLambdas += SuspendLambdaInfo(
                         expression.symbol.owner,
                         (expression.type as IrSimpleType).arguments.size - 1,
                         expression,
-                        expression in capturesCrossinline
+                        expressionCapturesCrossinline || expression in capturesCrossinline
                     )
                 }
             }

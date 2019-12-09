@@ -131,6 +131,12 @@ class MethodInliner(
 
         processReturns(resultNode, returnLabelOwner, remapReturn, end)
         //flush transformed node to output
+        // TODO: HACK resultNode's invisibleParameterAnnotations' size is greater than adapter's
+        if (resultNode.name == "<init>" && resultNode.desc.contains("Lkotlin/coroutines/Continuation;") &&
+            inliningContext.root.state.isIrBackend
+        ) {
+            resultNode.invisibleParameterAnnotations = null
+        }
         resultNode.accept(SkipMaxAndEndVisitor(adapter))
 
         sourceMapper.endMapping()
