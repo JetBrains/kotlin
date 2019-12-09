@@ -4,6 +4,8 @@ package com.intellij.util.indexing;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.roots.ContentIterator;
+import com.intellij.openapi.util.AtomicNullableLazyValue;
+import com.intellij.openapi.util.NullableLazyValue;
 import com.intellij.openapi.vfs.*;
 import com.intellij.openapi.vfs.newvfs.ManagingFS;
 import com.intellij.openapi.vfs.newvfs.NewVirtualFile;
@@ -16,10 +18,13 @@ import java.util.List;
 abstract class IndexedFilesListener implements AsyncFileListener {
   private final VfsEventsMerger myEventMerger = new VfsEventsMerger();
 
-  private static class ConfigHolder {
-    private static final VirtualFile myConfig = LocalFileSystem.getInstance().findFileByIoFile(new File(PathManager.getConfigPath()));
-    private static final VirtualFile myLog = LocalFileSystem.getInstance().findFileByIoFile(new File(PathManager.getLogPath()));
-  }
+  private static final NullableLazyValue<VirtualFile> myConfig = AtomicNullableLazyValue.createValue(() -> {
+    return LocalFileSystem.getInstance().findFileByIoFile(new File(PathManager.getConfigPath()));
+  });
+
+  private static final NullableLazyValue<VirtualFile> myLog = AtomicNullableLazyValue.createValue(() -> {
+    return LocalFileSystem.getInstance().findFileByIoFile(new File(PathManager.getLogPath()));
+  });
 
   @NotNull
   VfsEventsMerger getEventMerger() {
@@ -139,7 +144,9 @@ abstract class IndexedFilesListener implements AsyncFileListener {
   }
 
   private static boolean isUnderConfigOrSystem(@NotNull VirtualFile file) {
-    return ConfigHolder.myConfig != null && VfsUtilCore.isAncestor(ConfigHolder.myConfig, file, false) ||
-           ConfigHolder.myLog != null && VfsUtilCore.isAncestor(ConfigHolder.myLog, file, false);
+    VirtualFile configValue = myConfig.getValue();
+    VirtualFile logValue = myLog.getValue();
+    return (configValue != null && VfsUtilCore.isAncestor(configValue, file, false)) ||
+           (logValue != null && VfsUtilCore.isAncestor(logValue, file, false));
   }
 }
