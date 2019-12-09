@@ -9,6 +9,8 @@ import com.intellij.rt.execution.junit.FileComparisonFailure
 import org.jetbrains.kotlin.idea.fir.FirResolution
 import org.jetbrains.kotlin.idea.test.configureCompilerOptions
 import org.jetbrains.kotlin.idea.test.rollbackCompilerOptions
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import java.io.File
 
 abstract class AbstractFirPsiCheckerTest : AbstractPsiCheckerTest() {
     override fun setUp() {
@@ -28,11 +30,17 @@ abstract class AbstractFirPsiCheckerTest : AbstractPsiCheckerTest() {
     ): Long {
         val file = file
         val configured = configureCompilerOptions(file.text, project, module)
+        val doComparison = InTextDirectivesUtils.isDirectiveDefined(myFixture.file.text, "FIR_COMPARISON")
         return try {
             myFixture.checkHighlighting(checkWarnings, checkInfos, checkWeakWarnings)
         } catch (e: FileComparisonFailure) {
-            // NB: yet we do not actually compare highlighting
-            0
+            if (doComparison) {
+                // Even this is very partial check (only error compatibility, no warnings / infos)
+                throw FileComparisonFailure(e.message, e.expected, e.actual, File(e.filePath).absolutePath)
+            } else {
+                // Here we just check that we haven't crashed due to exception
+                0
+            }
         } finally {
             if (configured) {
                 rollbackCompilerOptions(project, module)

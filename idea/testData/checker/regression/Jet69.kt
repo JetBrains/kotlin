@@ -1,3 +1,5 @@
+// FIR_COMPARISON
+
 class Command() {}
 
 fun parse(<warning>cmd</warning>: String): Command? { return null  }

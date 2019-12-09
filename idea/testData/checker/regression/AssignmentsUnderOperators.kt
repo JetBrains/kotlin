@@ -1,3 +1,5 @@
+// FIR_COMPARISON
+
 fun test() {
   var a : Any? = null
   if (a is Any) else a = null;

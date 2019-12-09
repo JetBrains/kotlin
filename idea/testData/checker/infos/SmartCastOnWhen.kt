@@ -1,3 +1,5 @@
+// FIR_COMPARISON
+
 // COMPILER_ARGUMENTS: -XXLanguage:-NewInference
 
 fun baz(s: String?): Int {

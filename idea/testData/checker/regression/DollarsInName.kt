@@ -1,3 +1,5 @@
+// FIR_COMPARISON
+
 class `A$B` {
     class `$$$` {
         class `$`

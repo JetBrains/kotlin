@@ -1,3 +1,5 @@
+// FIR_COMPARISON
+
 fun test(<warning textAttributesKey="NOT_USED_ELEMENT_ATTRIBUTES">unusedParam</warning>: Int) { // UNUSED_PARAMETER
   val str = ":)"
   str <warning textAttributesKey="NOT_USED_ELEMENT_ATTRIBUTES">as String</warning> // USELESS_CAST

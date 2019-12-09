@@ -1,3 +1,5 @@
+// FIR_COMPARISON
+
 // RUNTIME
 @file:JvmName("TopLevelMultifile")
 @file:JvmMultifileClass

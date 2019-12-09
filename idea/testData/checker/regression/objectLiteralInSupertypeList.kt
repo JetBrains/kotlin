@@ -1,3 +1,5 @@
+// FIR_COMPARISON
+
 interface A
 
 open class B(<warning>i</warning>: Int, <warning>a</warning>: A)

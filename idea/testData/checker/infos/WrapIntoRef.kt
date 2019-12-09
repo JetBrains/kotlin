@@ -1,3 +1,5 @@
+// FIR_COMPARISON
+
 fun refs() {
     var <warning>a</warning> = 1
     val <warning>v</warning> = {
