@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
@@ -263,10 +264,13 @@ private fun FirRegularClass.findSingleAbstractMethodByNames(
         classUseSiteMemberScope.processFunctionsByName(candidateName) { functionSymbol ->
             val firFunction = functionSymbol.fir
             require(firFunction is FirSimpleFunction) {
-                "${functionSymbol.callableId.callableName} is expected to be _root_ide_package_.org.jetbrains.kotlin.fir.declarations.FirSimpleFunction, but ${functionSymbol::class} was found"
+                "${functionSymbol.callableId
+                    .callableName} is expected to be _root_ide_package_.org.jetbrains.kotlin.fir.declarations.FirSimpleFunction, but ${functionSymbol::class} was found"
             }
 
-            if (firFunction.modality != Modality.ABSTRACT || firFunction.isPublicInObject()) return@processFunctionsByName ProcessorAction.NEXT
+            if (firFunction.modality != Modality.ABSTRACT || firFunction
+                    .isPublicInObject(checkOnlyName = false)
+            ) return@processFunctionsByName ProcessorAction.NEXT
 
             if (resultMethod != null) {
                 metIncorrectMember = true
@@ -287,7 +291,9 @@ private fun FirRegularClass.hasMoreThenOneAbstractFunctionOrHasAbstractProperty(
     var wasAbstractFunction = false
     for (declaration in declarations) {
         if (declaration is FirProperty && declaration.modality == Modality.ABSTRACT) return true
-        if (declaration is FirSimpleFunction && declaration.modality == Modality.ABSTRACT && !declaration.isPublicInObject()) {
+        if (declaration is FirSimpleFunction && declaration.modality == Modality.ABSTRACT &&
+            !declaration.isPublicInObject(checkOnlyName = true)
+        ) {
             if (wasAbstractFunction) return true
             wasAbstractFunction = true
         }
@@ -300,9 +306,36 @@ private fun FirRegularClass.hasMoreThenOneAbstractFunctionOrHasAbstractProperty(
 // "methods that are members of I that do not have the same signature as any public instance method of the class Object"
 // It means that if an interface declares `int hashCode()` then the method won't be taken into account when
 // checking if the interface is SAM.
-private fun FirSimpleFunction.isPublicInObject(): Boolean {
-    // TODO: We make here a conservative check just filtering out methods by name, check the signature as well
-    return name.asString() in PUBLIC_METHOD_NAMES_IN_OBJECT
+private fun FirSimpleFunction.isPublicInObject(checkOnlyName: Boolean): Boolean {
+    if (name.asString() !in PUBLIC_METHOD_NAMES_IN_OBJECT) return false
+    if (checkOnlyName) return true
+
+    return when (name.asString()) {
+        "hashCode", "getClass", "notify", "notifyAll", "toString" -> valueParameters.isEmpty()
+        "equals" -> valueParameters.singleOrNull()?.hasTypeOf(StandardClassIds.Any, allowNullable = true) == true
+        "wait" -> when (valueParameters.size) {
+            0 -> true
+            1 -> valueParameters[0].hasTypeOf(StandardClassIds.Long, allowNullable = false)
+            2 -> valueParameters[0].hasTypeOf(StandardClassIds.Long, allowNullable = false) &&
+                    valueParameters[1].hasTypeOf(StandardClassIds.Int, allowNullable = false)
+            else -> false
+        }
+        else -> error("Unexpected method name: $name")
+    }
+
+}
+
+private fun FirValueParameter.hasTypeOf(classId: ClassId, allowNullable: Boolean): Boolean {
+    val type = returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: return false
+
+    val classLike = when (type) {
+        is ConeClassLikeType -> type
+        is ConeFlexibleType -> type.upperBound as? ConeClassLikeType ?: return false
+        else -> return false
+    }
+
+    if (classLike.isMarkedNullable && !allowNullable) return false
+    return classLike.lookupTag.classId == classId
 }
 
 private val PUBLIC_METHOD_NAMES_IN_OBJECT = setOf("equals", "hashCode", "getClass", "wait", "notify", "notifyAll", "toString")

@@ -1115,6 +1115,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/resolve/testData/resolve/samConversions/samSupertypeWithOverride.kt");
         }
 
+        @TestMetadata("samWithEquals.kt")
+        public void testSamWithEquals() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/samConversions/samWithEquals.kt");
+        }
+
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/samConversions/simple.kt");
