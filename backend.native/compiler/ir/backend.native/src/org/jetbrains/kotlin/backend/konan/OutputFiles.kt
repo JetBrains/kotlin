@@ -11,12 +11,13 @@ import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.visibleName
+import kotlin.random.Random
 
 
 /**
  * Creates and stores terminal compiler outputs.
  */
-class OutputFiles(outputPath: String?, target: KonanTarget, produce: CompilerOutputKind) {
+class OutputFiles(outputPath: String?, target: KonanTarget, val produce: CompilerOutputKind) {
 
     private val prefix = produce.prefix(target)
     private val suffix = produce.suffix(target)
@@ -33,6 +34,33 @@ class OutputFiles(outputPath: String?, target: KonanTarget, produce: CompilerOut
      * Main compiler's output file.
      */
     val mainFile = outputName
-            .prefixBaseNameIfNot(prefix)
-            .suffixIfNot(suffix)
+            .prefixBaseNameIfNeeded(prefix)
+            .suffixIfNeeded(suffix)
+
+    val mainFileMangled = if (!produce.isCache) mainFile else {
+        (outputName + Random.nextLong().toString())
+                .prefixBaseNameIfNeeded(prefix)
+                .suffixIfNeeded(suffix)
+    }
+
+    private fun String.prefixBaseNameIfNeeded(prefix: String): String {
+        return if (produce.isCache)
+            prefixBaseNameAlways(prefix)
+        else prefixBaseNameIfNot(prefix)
+    }
+
+    private fun String.suffixIfNeeded(prefix: String): String {
+        return if (produce.isCache)
+            suffixAlways(prefix)
+        else suffixIfNot(prefix)
+    }
+
+    private fun String.prefixBaseNameAlways(prefix: String): String {
+        val file = File(this).absoluteFile
+        val name = file.name
+        val directory = file.parent
+        return "$directory/$prefix$name"
+    }
+
+    private fun String.suffixAlways(suffix: String) = "$this$suffix"
 }

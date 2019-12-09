@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.library.SearchPathResolver
 import org.jetbrains.kotlin.library.isInterop
 import org.jetbrains.kotlin.library.toUnresolvedLibraries
 
-internal fun Context.getExportedDependencies(): List<ModuleDescriptor> = getDescriptorsFromLibraries((config.exportedLibraries + config.includedLibraries).toSet())
-internal fun Context.getIncludedLibraryDescriptors(): List<ModuleDescriptor> = getDescriptorsFromLibraries(config.includedLibraries.toSet())
+internal fun Context.getExportedDependencies(): List<ModuleDescriptor> = getDescriptorsFromLibraries((config.resolve.exportedLibraries + config.resolve.includedLibraries).toSet())
+internal fun Context.getIncludedLibraryDescriptors(): List<ModuleDescriptor> = getDescriptorsFromLibraries(config.resolve.includedLibraries.toSet())
 
 private fun Context.getDescriptorsFromLibraries(libraries: Set<KonanLibrary>) =
     moduleDescriptor.allDependencyModules.filter {

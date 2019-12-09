@@ -35,7 +35,7 @@ internal class CachedLibraries(
             Cache(kind, explicitPath)
         } else {
             implicitCacheDirectories.firstNotNullResult { dir ->
-                val baseName = "${library.uniqueName}-cache"
+                val baseName = getCachedLibraryName(library)
                 val dynamicFile = dir.child(getArtifactName(baseName, CompilerOutputKind.DYNAMIC_CACHE))
                 val staticFile = dir.child(getArtifactName(baseName, CompilerOutputKind.STATIC_CACHE))
 
@@ -50,7 +50,7 @@ internal class CachedLibraries(
         cache?.let { library to it }
     }.toMap()
 
-    private fun getArtifactName(baseName: String, kind: CompilerOutputKind) =
+    fun getArtifactName(baseName: String, kind: CompilerOutputKind) =
             "${kind.prefix(target)}$baseName${kind.suffix(target)}"
 
     fun isLibraryCached(library: KotlinLibrary): Boolean =
@@ -71,5 +71,9 @@ internal class CachedLibraries(
             Cache.Kind.STATIC -> false
             Cache.Kind.DYNAMIC -> true
         }
+    }
+
+    companion object {
+        fun getCachedLibraryName(library: KotlinLibrary): String = "${library.uniqueName}-cache"
     }
 }

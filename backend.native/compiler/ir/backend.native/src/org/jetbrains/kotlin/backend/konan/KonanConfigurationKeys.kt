@@ -34,6 +34,8 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create<List<String>>("libraries included into produced framework API")
         val LIBRARIES_TO_CACHE: CompilerConfigurationKey<List<String>>
                 = CompilerConfigurationKey.create<List<String>>("paths to libraries that to be compiled to cache")
+        val LIBRARY_TO_ADD_TO_CACHE: CompilerConfigurationKey<String?>
+                = CompilerConfigurationKey.create<String?>("path to library that to be added to cache")
         val CACHE_DIRECTORIES: CompilerConfigurationKey<List<String>>
                 = CompilerConfigurationKey.create<List<String>>("paths to directories containing caches")
         val CACHED_LIBRARIES: CompilerConfigurationKey<Map<String, String>>

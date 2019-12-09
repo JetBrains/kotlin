@@ -25,7 +25,7 @@ internal class CoverageManager(val context: Context) {
             context.config.shouldCoverSources
 
     private val librariesToCover: Set<String> =
-            context.config.coveredLibraries.map { it.libraryName }.toSet()
+            context.config.resolve.coveredLibraries.map { it.libraryName }.toSet()
 
     private val llvmProfileFilenameGlobal = "__llvm_profile_filename"
 

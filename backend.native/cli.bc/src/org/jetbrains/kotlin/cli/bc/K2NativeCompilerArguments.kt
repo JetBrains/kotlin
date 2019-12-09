@@ -163,6 +163,14 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     )
     var librariesToCache: Array<String>? = null
 
+    @Argument(
+            value = ADD_CACHE,
+            valueDescription = "<path>",
+            description = "Path to the library to be added to cache",
+            delimiter = ""
+    )
+    var libraryToAddToCache: String? = null
+
     @Argument(value = "-Xprint-bitcode", deprecatedName = "--print_bitcode", description = "Print llvm bitcode")
     var printBitCode: Boolean = false
 
@@ -249,3 +257,4 @@ const val STATIC_FRAMEWORK_FLAG = "-Xstatic-framework"
 const val INCLUDE_ARG = "-Xinclude"
 const val CACHED_LIBRARY = "-Xcached-library"
 const val MAKE_CACHE = "-Xmake-cache"
+const val ADD_CACHE = "-Xadd-cache"

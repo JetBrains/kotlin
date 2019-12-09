@@ -36,6 +36,22 @@ internal class Linker(val context: Context) {
         val includedBinaries = nativeDependencies.map { it.includedPaths }.flatten()
         val libraryProvidedLinkerFlags = nativeDependencies.map { it.linkerOpts }.flatten()
         runLinker(objectFiles, includedBinaries, libraryProvidedLinkerFlags)
+        renameOutput()
+    }
+
+    private fun renameOutput() {
+        val libraryToAddToCache = context.configuration.get(KonanConfigKeys.LIBRARY_TO_ADD_TO_CACHE)
+        if (context.config.produce.isCache && !libraryToAddToCache.isNullOrEmpty()) {
+            val outputFiles = context.config.outputFiles
+            val outputFile = java.io.File(outputFiles.mainFileMangled)
+            val outputDsymBundle = java.io.File(outputFiles.mainFileMangled + ".dSYM")
+            if (outputFile.renameTo(java.io.File(outputFiles.mainFile)))
+                outputDsymBundle.renameTo(java.io.File(outputFiles.mainFile + ".dSYM"))
+            else {
+                outputFile.delete()
+                outputDsymBundle.deleteRecursively()
+            }
+        }
     }
 
     private fun asLinkerArgs(args: List<String>): List<String> {
@@ -58,12 +74,15 @@ internal class Linker(val context: Context) {
     private fun runLinker(objectFiles: List<ObjectFile>,
                           includedBinaries: List<String>,
                           libraryProvidedLinkerFlags: List<String>): ExecutableFile? {
-        val frameworkLinkerArgs: List<String>
+        val additionalLinkerArgs: List<String>
         val executable: String
 
         if (context.config.produce != CompilerOutputKind.FRAMEWORK) {
-            frameworkLinkerArgs = emptyList()
-            executable = context.config.outputFile
+            if (context.config.produce == CompilerOutputKind.DYNAMIC_CACHE && target.family.isAppleFamily)
+                additionalLinkerArgs = listOf("-install_name", context.config.outputFiles.mainFile)
+            else
+                additionalLinkerArgs = emptyList()
+            executable = context.config.outputFiles.mainFileMangled
         } else {
             val framework = File(context.config.outputFile)
             val dylibName = framework.name.removeSuffix(".framework")
@@ -74,7 +93,7 @@ internal class Linker(val context: Context) {
                 Family.OSX -> "Versions/A/$dylibName"
                 else -> error(target)
             }
-            frameworkLinkerArgs = listOf("-install_name", "@rpath/${framework.name}/$dylibRelativePath")
+            additionalLinkerArgs = listOf("-install_name", "@rpath/${framework.name}/$dylibRelativePath")
             val dylibPath = framework.child(dylibRelativePath)
             dylibPath.parentFile.mkdirs()
             executable = dylibPath.absolutePath
@@ -92,9 +111,9 @@ internal class Linker(val context: Context) {
                     linkerArgs = asLinkerArgs(config.getNotNull(KonanConfigKeys.LINKER_ARGS)) +
                             BitcodeEmbedding.getLinkerOptions(context.config) +
                             caches.dynamic +
-                            libraryProvidedLinkerFlags + frameworkLinkerArgs,
+                            libraryProvidedLinkerFlags + additionalLinkerArgs,
                     optimize = optimize, debug = debug, kind = linkerOutput,
-                    outputDsymBundle = context.config.outputFile + ".dSYM",
+                    outputDsymBundle = context.config.outputFiles.mainFileMangled + ".dSYM",
                     needsProfileLibrary = needsProfileLibrary).forEach {
                 it.logWith(context::log)
                 it.execute()
