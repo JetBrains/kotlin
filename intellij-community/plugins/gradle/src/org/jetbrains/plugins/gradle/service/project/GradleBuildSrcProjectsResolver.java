@@ -170,6 +170,11 @@ public class GradleBuildSrcProjectsResolver {
       return;
     }
 
+    if (includedModulesPaths.containsKey(projectPath)) {
+      // `buildSrc` has been already included into the main build (prohibited since 6.0, https://docs.gradle.org/current/userguide/upgrading_version_5.html#buildsrc_is_now_reserved_as_a_project_and_subproject_build_name)
+      return;
+    }
+
     if (ArrayUtil.isEmpty(projectPathFile.list((dir, name) -> !name.equals(".gradle") && !name.equals("build")))) {
       return;
     }

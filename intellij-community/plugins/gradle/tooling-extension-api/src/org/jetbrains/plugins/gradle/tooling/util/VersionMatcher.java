@@ -35,13 +35,23 @@ public class VersionMatcher {
   }
 
   public boolean isVersionMatch(@Nullable TargetVersions targetVersions) {
-    if (targetVersions == null || targetVersions.value() == null || targetVersions.value().isEmpty()) return true;
+    if (targetVersions == null || targetVersions.value().isEmpty()) return true;
 
     final GradleVersion current = adjust(myGradleVersion, targetVersions.checkBaseVersions());
 
     if (targetVersions.value().endsWith("+")) {
       String minVersion = targetVersions.value().substring(0, targetVersions.value().length() - 1);
       return compare(current, minVersion, targetVersions.checkBaseVersions()) >= 0;
+    }
+    else if (targetVersions.value().startsWith("<")) {
+      if (targetVersions.value().startsWith("<=")) {
+        String maxVersion = targetVersions.value().substring(2);
+        return compare(current, maxVersion, targetVersions.checkBaseVersions()) <= 0;
+      }
+      else {
+        String maxVersion = targetVersions.value().substring(1);
+        return compare(current, maxVersion, targetVersions.checkBaseVersions()) < 0;
+      }
     }
     else {
       final int rangeIndex = targetVersions.value().indexOf(RANGE_TOKEN);

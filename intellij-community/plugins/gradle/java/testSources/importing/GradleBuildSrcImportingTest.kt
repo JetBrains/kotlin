@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.importing
 
+import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions
 import org.junit.Test
 
 class GradleBuildSrcImportingTest : GradleImportingTestCase() {
@@ -20,5 +21,21 @@ class GradleBuildSrcImportingTest : GradleImportingTestCase() {
                   "apply plugin: my.pack.TestPlugin")
     assertModules("project", "project.main", "project.test",
                   "project.buildSrc", "project.buildSrc.main", "project.buildSrc.test")
+  }
+
+  @TargetVersions("<6.0") // since 6.9 'buildSrc' is a reserved project name, https://docs.gradle.org/current/userguide/upgrading_version_5.html#buildsrc_is_now_reserved_as_a_project_and_subproject_build_name
+  @Test
+  fun `test buildSrc project is included into the main build`() {
+    createProjectSubFile("buildSrc/src/main/java/my/pack/Util.java",
+                         "package my.pack;\npublic class Util {}")
+
+    importProject("apply plugin: 'java'")
+    assertModules("project", "project.main", "project.test",
+                  "project.buildSrc", "project.buildSrc.main", "project.buildSrc.test")
+
+    createSettingsFile("include 'buildSrc'")
+    importProject("apply plugin: 'java'")
+    assertModules("project", "project.main", "project.test", "project.buildSrc")
+
   }
 }
