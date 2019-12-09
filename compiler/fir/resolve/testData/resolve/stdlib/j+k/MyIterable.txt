@@ -2,11 +2,11 @@ FILE: test.kt
     public abstract interface UseIterable : R|MyIterable<kotlin/String>| {
         public open fun test(): R|kotlin/Unit| {
             lval it: R|kotlin/collections/MutableIterator<kotlin/String>| = this@R|kotlin/collections/MutableIterable|.R|FakeOverride<kotlin/collections/MutableIterable.iterator: R|kotlin/collections/MutableIterator<kotlin/String>|>|()
-            lval split: R|java/util/Spliterator<kotlin/String!>| = this@R|java/lang/Iterable|.R|FakeOverride<java/lang/Iterable.spliterator: R|java/util/Spliterator<kotlin/String!>|>|()
+            lval split: R|java/util/Spliterator<kotlin/String>| = this@R|java/lang/Iterable|.R|FakeOverride<java/lang/Iterable.spliterator: R|java/util/Spliterator<kotlin/String>|>|()
         }
 
     }
     public final fun test(some: R|kotlin/collections/Iterable<kotlin/String>|): R|kotlin/Unit| {
         lval it: R|kotlin/collections/Iterator<kotlin/String>| = R|<local>/some|.R|FakeOverride<kotlin/collections/Iterable.iterator: R|kotlin/collections/Iterator<kotlin/String>|>|()
-        lval split: R|java/util/Spliterator<kotlin/String!>| = R|<local>/some|.R|FakeOverride<java/lang/Iterable.spliterator: R|java/util/Spliterator<kotlin/String!>|>|()
+        lval split: R|java/util/Spliterator<kotlin/String>| = R|<local>/some|.R|FakeOverride<java/lang/Iterable.spliterator: R|java/util/Spliterator<kotlin/String>|>|()
     }

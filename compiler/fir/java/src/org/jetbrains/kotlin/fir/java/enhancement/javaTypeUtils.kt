@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.java.toConeProjection
 import org.jetbrains.kotlin.fir.java.toNotNullConeKotlinType
-import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
 import org.jetbrains.kotlin.fir.references.impl.FirResolvedNamedReferenceImpl
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
@@ -32,6 +31,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
+import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.DEFAULT_NULL_FQ_NAME
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.DEFAULT_VALUE_FQ_NAME
 import org.jetbrains.kotlin.load.java.descriptors.AnnotationDefaultValue
@@ -87,7 +87,9 @@ private fun JavaType?.enhancePossiblyFlexible(
 
             when {
                 type.isRaw -> ConeRawType(lowerResult, upperResult)
-                else -> coneFlexibleOrSimpleType(session, lowerResult, upperResult)
+                else -> coneFlexibleOrSimpleType(
+                    session, lowerResult, upperResult, isNotNullTypeParameter = qualifiers(index).isNotNullTypeParameter
+                )
             }
         }
         is JavaArrayType -> {
@@ -122,11 +124,12 @@ private fun JavaType?.subtreeSize(): Int {
 private fun coneFlexibleOrSimpleType(
     session: FirSession,
     lowerBound: ConeLookupTagBasedType,
-    upperBound: ConeLookupTagBasedType
+    upperBound: ConeLookupTagBasedType,
+    isNotNullTypeParameter: Boolean
 ): ConeKotlinType {
     if (AbstractStrictEqualityTypeChecker.strictEqualTypes(session.typeContext, lowerBound, upperBound)) {
         val lookupTag = lowerBound.lookupTag
-        if (lookupTag is ConeTypeParameterLookupTag && !lowerBound.isMarkedNullable) {
+        if (isNotNullTypeParameter && lookupTag is ConeTypeParameterLookupTag && !lowerBound.isMarkedNullable) {
             // TODO: we need enhancement for type parameter bounds for this code to work properly
             // At this moment, this condition is always true
             if (lookupTag.typeParameterSymbol.fir.bounds.any {
