@@ -23,7 +23,7 @@ public class SdkTrackerImpl extends SdkTracker {
                         @NotNull Disposable lifetime,
                         @NotNull Consumer<Sdk> onReady) {
     ApplicationManager.getApplication().invokeLater(() -> {
-      SdkDownloadTracker.getInstance().tryRegisterDownloadingListener(sdk, lifetime, new AbstractProgressIndicatorExBase(), () -> {
+      SdkDownloadTracker.getInstance().tryRegisterDownloadingListener(sdk, lifetime, new AbstractProgressIndicatorExBase(), __ -> {
         AppExecutorUtil.getAppExecutorService().execute(() -> onReady.accept(sdk));
       });
     });
