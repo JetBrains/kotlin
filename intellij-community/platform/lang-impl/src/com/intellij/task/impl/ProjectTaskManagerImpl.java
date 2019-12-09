@@ -146,7 +146,7 @@ public class ProjectTaskManagerImpl extends ProjectTaskManager {
 
     Consumer<Collection<? extends ProjectTask>> taskClassifier = tasks -> {
       Map<ProjectTaskRunner, ? extends List<? extends ProjectTask>> toBuild = tasks.stream().collect(
-        groupingBy(aTask -> stream(getTaskRunners())
+        groupingBy(aTask -> stream(ProjectTaskRunner.EP_NAME.getExtensions())
           .filter(runner -> {
             try {
               return runner.canRun(myProject, aTask);
@@ -291,11 +291,6 @@ public class ProjectTaskManagerImpl extends ProjectTaskManager {
       visitTasks(taskDependencies, consumer);
     }
     consumer.accept(tasks);
-  }
-
-  @NotNull
-  private static ProjectTaskRunner[] getTaskRunners() {
-    return ProjectTaskRunner.EP_NAME.getExtensions();
   }
 
   private Promise<Result> doBuild(@NotNull ProjectModelBuildableElement[] buildableElements, boolean isIncrementalBuild) {
