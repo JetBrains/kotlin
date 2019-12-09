@@ -112,7 +112,7 @@ internal sealed class CheckReceivers : ResolutionStage() {
                     isSafeCall = callInfo.isSafeCall,
                     typeProvider = callInfo.typeProvider
                 )
-                sink.yield()
+                sink.yieldIfNeed()
             } else {
                 val argumentExtensionReceiverValue = candidate.implicitExtensionReceiverValue
                 if (argumentExtensionReceiverValue != null && explicitReceiverKind.shouldBeCheckedAgainstImplicit()) {
@@ -125,7 +125,7 @@ internal sealed class CheckReceivers : ResolutionStage() {
                         isDispatch = this is Dispatch,
                         isSafeCall = callInfo.isSafeCall
                     )
-                    sink.yield()
+                    sink.yieldIfNeed()
                 }
             }
         }
@@ -161,7 +161,7 @@ internal object CheckArguments : CheckerStage() {
             if (candidate.system.hasContradiction) {
                 sink.yieldApplicability(CandidateApplicability.INAPPLICABLE)
             }
-            sink.yield()
+            sink.yieldIfNeed()
         }
     }
 }
