@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.java
 
+import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
@@ -124,8 +125,10 @@ class JavaSymbolProvider(
                 FirSuperTypeScope.prepareSupertypeScope(
                     useSiteSession,
                     JavaOverrideChecker(
-                        useSiteSession, if (regularClass is FirJavaClass) regularClass
-                            .javaTypeParameterStack else JavaTypeParameterStack.EMPTY),
+                        useSiteSession,
+                        if (regularClass is FirJavaClass) regularClass.javaTypeParameterStack
+                        else JavaTypeParameterStack.EMPTY
+                    ),
                     superTypeEnhancementScopes
                 ), wrappedDeclaredScope
             )
@@ -171,7 +174,13 @@ class JavaSymbolProvider(
             }
     }
 
-    override fun getClassLikeSymbolByFqName(classId: ClassId): FirRegularClassSymbol? = getFirJavaClass(classId)
+    override fun getClassLikeSymbolByFqName(classId: ClassId): FirRegularClassSymbol? {
+        return try {
+            getFirJavaClass(classId)
+        } catch (e: ProcessCanceledException) {
+            null
+        }
+    }
 
     fun getFirJavaClass(classId: ClassId, content: KotlinClassFinder.Result.ClassFileContent? = null): FirRegularClassSymbol? {
         if (!hasTopLevelClassOf(classId)) return null
@@ -309,9 +318,13 @@ class JavaSymbolProvider(
 
     override fun getPackage(fqName: FqName): FqName? {
         return packageCache.lookupCacheOrCalculate(fqName) {
-            val facade = KotlinJavaPsiFacade.getInstance(project)
-            val javaPackage = facade.findPackage(fqName.asString(), searchScope) ?: return@lookupCacheOrCalculate null
-            FqName(javaPackage.qualifiedName)
+            try {
+                val facade = KotlinJavaPsiFacade.getInstance(project)
+                val javaPackage = facade.findPackage(fqName.asString(), searchScope) ?: return@lookupCacheOrCalculate null
+                FqName(javaPackage.qualifiedName)
+            } catch (e: ProcessCanceledException) {
+                return@lookupCacheOrCalculate null
+            }
         }
     }
 
