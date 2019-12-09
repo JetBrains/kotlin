@@ -56,8 +56,6 @@ public final class PsiVFSListener implements BulkFileListener {
   private static final AtomicBoolean ourGlobalListenerInstalled = new AtomicBoolean(false);
 
   PsiVFSListener(@NotNull Project project) {
-    installGlobalListener();
-
     myProject = project;
     myProjectRootManager = ProjectRootManager.getInstance(project);
     myManager = (PsiManagerImpl)PsiManager.getInstance(project);
@@ -77,6 +75,8 @@ public final class PsiVFSListener implements BulkFileListener {
         }
       });
       connection.subscribe(AppTopics.FILE_DOCUMENT_SYNC, new MyFileDocumentManagerListener(project));
+
+      installGlobalListener();
     }
   }
 
