@@ -19,15 +19,16 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.ThrowableComputable
+import com.intellij.util.containers.ContainerUtil
 import com.intellij.xdebugger.XDebugSession
 import com.jetbrains.cidr.cpp.CPPLog
-import com.jetbrains.cidr.cpp.execution.debugger.backend.CLionGDBDriverConfiguration
-import com.jetbrains.cidr.cpp.execution.debugger.backend.CLionLLDBDriverConfiguration
+import com.jetbrains.cidr.cpp.execution.CLionRunParameters
 import com.jetbrains.cidr.cpp.toolchains.CPPEnvironment
 import com.jetbrains.cidr.cpp.toolchains.CPPToolchains
 import com.jetbrains.cidr.execution.*
 import com.jetbrains.cidr.execution.debugger.CidrCustomDebuggerProvider
 import com.jetbrains.cidr.execution.debugger.CidrDebugProcess
+import com.jetbrains.cidr.execution.testing.CidrLauncher
 import com.jetbrains.cidr.lang.toolchains.CidrToolEnvironment
 import com.jetbrains.cidr.toolchains.EnvironmentProblems
 import com.jetbrains.konan.debugger.KonanLocalDebugProcess
@@ -76,7 +77,7 @@ class CLionGradleKonanLauncher(
         state.consoleBuilder = createConsoleBuilder(environment, projectBaseDir)
         myExtensionsManager.patchCommandLineState(myConfiguration, runnerSettings, environment, projectBaseDir, state, runnerId, context)
         val handler = createProcessHandler(environment, cl, usePty)
-        configProcessHandler(handler, false, true, project)
+        CidrLauncher.configProcessHandler(handler, false, true, project)
         myExtensionsManager.attachExtensionsToProcess(myConfiguration,
                                                       handler,
                                                       environment,
@@ -142,7 +143,7 @@ class CLionGradleKonanLauncher(
         val backendFilterProvider = CidrDebugConsoleFilterProvider(environment, projectBaseDir)
         val parameters = getDebugParameters(environment, cl)
         val process = KonanLocalDebugProcess(parameters, session, state.consoleBuilder, backendFilterProvider)
-        configProcessHandler(process.processHandler, process.isDetachDefault, true, project)
+        CidrLauncher.configProcessHandler(process.processHandler, process.isDetachDefault, true, project)
         myExtensionsManager.attachExtensionsToProcess(myConfiguration,
                                                       process.processHandler,
                                                       environment,
@@ -153,28 +154,22 @@ class CLionGradleKonanLauncher(
     }
 
     @Throws(ExecutionException::class)
-    private fun getDebugParameters(
-            environment: CPPEnvironment,
-            cl: GeneralCommandLine
-    ): RunParameters {
+    private fun getDebugParameters(environment: CPPEnvironment,
+                                   cl: GeneralCommandLine): RunParameters {
         val installer = TrivialInstaller(cl)
 
-        for (debuggerProvider in CidrCustomDebuggerProvider.EP_NAME.extensionList) {
-            debuggerProvider.debuggerConfigurations.firstOrNull()?.let { config ->
-                return TrivialRunParameters(config, installer)
-            }
+        for (each in CidrCustomDebuggerProvider.EP_NAME.extensionList) {
+            val config = ContainerUtil.getFirstItem(each.debuggerConfigurations)
+            if (config != null) return CLionRunParameters(config, installer)
         }
 
-        environment.toolSet.isDebugSupportDisabled?.let { debugSupportDisabled ->
+        val toolset = environment.toolSet
+        val debugSupportDisabled = toolset?.isDebugSupportDisabled
+        if (debugSupportDisabled != null) {
             throw ExecutionException(debugSupportDisabled)
         }
 
-        val config = if (environment.toolchain.debuggerKind.isLLDB())
-            CLionLLDBDriverConfiguration(project, environment.toolchain)
-        else
-            CLionGDBDriverConfiguration(project, environment.toolchain)
-
-        return TrivialRunParameters(config, installer)
+        return CLionRunParameters(environment.toolchain.createDriverConfiguration(project), installer)
     }
 
     @Throws(ExecutionException::class)
