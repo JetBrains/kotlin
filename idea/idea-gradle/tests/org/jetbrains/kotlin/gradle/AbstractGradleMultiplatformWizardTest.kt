@@ -46,6 +46,7 @@ import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.containers.ContainerUtilRt
 import junit.framework.TestCase
+import org.gradle.api.tasks.testing.TestExecutionException
 import org.jetbrains.kotlin.idea.codeInsight.gradle.ExternalSystemImportingTestCase.LATEST_STABLE_GRADLE_PLUGIN_VERSION
 import org.jetbrains.kotlin.idea.codeInsight.gradle.GradleImportingTestCase
 import org.jetbrains.kotlin.idea.configuration.KotlinGradleAbstractMultiplatformModuleBuilder
@@ -215,7 +216,10 @@ abstract class AbstractGradleMultiplatformWizardTest : ProjectWizardTestCase<Abs
             }
         }
         if (errors.isNotEmpty()) {
-            throw RuntimeException(errors.mapValues { it.component2().stackTrace }.toString())
+            throw TestExecutionException(
+                "${errors.size} runs failed: \n" +
+                        " ${errors.map { "TestClass: ${it.component1()}, ExceptionMessage: ${it.component2().localizedMessage} \n" }}"
+            )
         }
     }
 

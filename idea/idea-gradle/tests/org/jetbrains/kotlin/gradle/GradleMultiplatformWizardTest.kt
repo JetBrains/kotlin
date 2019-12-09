@@ -69,6 +69,12 @@ class GradleMultiplatformWizardTest : AbstractGradleMultiplatformWizardTest() {
                 main("$jvmMain/$kotlin/$sample/SampleJvm.kt")
                 test("$jvmTest/$kotlin/$sample/SampleTestsJVM.kt")
             }
+            checkSource {
+                isExist("build.gradle") {
+                    contains(iosMain)
+                    contains(iosTest)
+                }
+            }
             checkGradleConfiguration(metadataInside = true)
             runGradleImport()
             runGradleTests("SampleTests", "SampleTestsJVM")
@@ -111,6 +117,14 @@ class GradleMultiplatformWizardTest : AbstractGradleMultiplatformWizardTest() {
                 main("$nativeMain/$kotlin/$sample/Sample${native.capitalize()}.kt")
                 test("$nativeTest/$kotlin/$sample/SampleTestsNative.kt")
             }
+            checkSource{
+                isExist("build.gradle") {
+                    contains(nativeMain)
+                    contains(nativeTest)
+                    contains(jsMain)
+                    contains(jsTest)
+                }
+            }
             checkGradleConfiguration(metadataInside = true)
             runGradleImport()
             runGradleTests("SampleTests", "SampleTestsJVM")
@@ -141,9 +155,10 @@ class GradleMultiplatformWizardTest : AbstractGradleMultiplatformWizardTest() {
                 main("$jsMain/$kotlin/$sample/SampleJs.kt")
                 test("$jsTest/$kotlin/$sample/SampleTestsJS.kt")
             }
-            checkSource{
-                isExist("build.gradle"){
-                    contains("jsMain")
+            checkSource {
+                isExist("build.gradle") {
+                    contains(jsMain)
+                    contains(jsTest)
                 }
             }
             checkGradleConfiguration()
