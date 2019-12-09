@@ -1,7 +1,6 @@
 // IGNORE_BACKEND_FIR: JVM_IR
 // TODO: muted automatically, investigate should it be ran for JS or not
 // IGNORE_BACKEND: JS
-// IGNORE_BACKEND: JS_IR
 
 fun box(): String {
     if (239.toByte().toString() != (239.toByte() as Byte?).toString()) return "byte failed"

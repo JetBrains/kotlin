@@ -173,7 +173,7 @@ private val propertyAccessorInlinerLoweringPhase = makeJsModulePhase(
 )
 
 private val foldConstantLoweringPhase = makeJsModulePhase(
-    ::FoldConstantLowering,
+    { FoldConstantLowering(it, true) },
     name = "FoldConstantLowering",
     description = "[Optimization] Constant Folding",
     prerequisite = setOf(propertyAccessorInlinerLoweringPhase)
