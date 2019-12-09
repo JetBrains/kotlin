@@ -7,14 +7,8 @@ package org.jetbrains.kotlin.backend.konan.ir
 import org.jetbrains.kotlin.backend.konan.descriptors.isFromInteropLibrary
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
-import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunction
-import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyProperty
-import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyTypeAlias
-import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
+import org.jetbrains.kotlin.ir.declarations.lazy.*
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
@@ -36,6 +30,8 @@ class IrProviderForInteropStubs : LazyIrProvider {
         is IrSimpleFunctionSymbol -> provideIrFunction(symbol)
         is IrPropertySymbol -> provideIrProperty(symbol)
         is IrTypeAliasSymbol -> provideIrTypeAlias(symbol)
+        is IrClassSymbol -> provideIrClass(symbol)
+        is IrConstructorSymbol -> provideIrConstructor(symbol)
         else -> error("Unsupported interop declaration: symbol=$symbol, descriptor=${symbol.descriptor}")
     }
 
@@ -60,6 +56,20 @@ class IrProviderForInteropStubs : LazyIrProvider {
                     symbol.descriptor, propertyFactory = this::createPropertyDeclaration
             ) as IrLazyProperty
 
+    private fun provideIrClass(symbol: IrClassSymbol): IrLazyClass =
+            declarationStubGenerator.symbolTable.declareClass(
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                    IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
+                    symbol.descriptor, classFactory = this::createClassDeclaration
+            ) as IrLazyClass
+
+    private fun provideIrConstructor(symbol: IrConstructorSymbol): IrLazyConstructor =
+            declarationStubGenerator.symbolTable.declareConstructor(
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                    IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
+                    symbol.descriptor, constructorFactory = this::createConstructorDeclaration
+            ) as IrLazyConstructor
+
     private fun createPropertyDeclaration(symbol: IrPropertySymbol) =
             IrLazyProperty(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET,
@@ -79,5 +89,19 @@ class IrProviderForInteropStubs : LazyIrProvider {
                     symbol, symbol.descriptor.name,
                     symbol.descriptor.visibility, symbol.descriptor.isActual,
                     declarationStubGenerator, declarationStubGenerator.typeTranslator
+            )
+
+    private fun createClassDeclaration(symbol: IrClassSymbol): IrLazyClass =
+            IrLazyClass(
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                    IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
+                    symbol, declarationStubGenerator, declarationStubGenerator.typeTranslator
+            )
+
+    private fun createConstructorDeclaration(symbol: IrConstructorSymbol): IrLazyConstructor =
+            IrLazyConstructor(
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                    IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
+                    symbol, declarationStubGenerator, declarationStubGenerator.typeTranslator
             )
 }
