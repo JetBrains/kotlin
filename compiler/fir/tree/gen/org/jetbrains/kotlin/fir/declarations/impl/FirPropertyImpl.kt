@@ -76,6 +76,7 @@ class FirPropertyImpl(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirPropertyImpl {
         transformReturnTypeRef(transformer, data)
         transformReceiverTypeRef(transformer, data)
+        transformInitializer(transformer, data)
         transformGetter(transformer, data)
         transformSetter(transformer, data)
         transformControlFlowGraphReference(transformer, data)
@@ -91,6 +92,11 @@ class FirPropertyImpl(
 
     override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirPropertyImpl {
         receiverTypeRef = receiverTypeRef?.transformSingle(transformer, data)
+        return this
+    }
+
+    override fun <D> transformInitializer(transformer: FirTransformer<D>, data: D): FirPropertyImpl {
+        initializer = initializer?.transformSingle(transformer, data)
         return this
     }
 
@@ -115,7 +121,6 @@ class FirPropertyImpl(
     }
 
     override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirPropertyImpl {
-        initializer = initializer?.transformSingle(transformer, data)
         delegate = delegate?.transformSingle(transformer, data)
         annotations.transformInplace(transformer, data)
         typeParameters.transformInplace(transformer, data)

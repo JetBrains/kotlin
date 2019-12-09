@@ -28,7 +28,7 @@ digraph complex_kt {
           14 [label="Access variable R|<local>/url|"];
           15 [label="Access variable R|<local>/url|"];
           16 [label="Function call: <Unresolved name: HttpRequests>#.<Unresolved name: request>#(R|<local>/url|)"];
-          17 [label="Function call: <Unresolved name: HttpRequests>#.<Unresolved name: request>#(R|<local>/url|).<Unresolved name: connect>#(<L> = connect@fun <anonymous>(): <ERROR TYPE REF: Unresolved name: fromJson> {
+          17 [label="Function call: <Unresolved name: HttpRequests>#.<Unresolved name: request>#(R|<local>/url|).<Unresolved name: connect>#(<L> = connect@fun <anonymous>(): R|class error: Unresolved name: fromJson| {
     <Unresolved name: GsonBuilder>#().<Unresolved name: create>#().<Unresolved name: fromJson>#(<Unresolved name: it>#.<Unresolved name: inputStream>#.<Ambiguity: reader, [kotlin/io/reader, kotlin/io/reader, kotlin/io/reader]>#(), <getClass>(Q|kotlin/Array|).R|kotlin/jvm/java|)
 }
 )"];
@@ -44,44 +44,42 @@ digraph complex_kt {
           21 [label="Enter block"];
           22 [label="Const: String(Can't parse json response)"];
           23 [label="Access variable R|<local>/syntaxException|"];
-          24 [label="Const: String(Can't parse json response)"];
+          24 [label="Access variable R|<local>/syntaxException|"];
           25 [label="Access variable R|<local>/syntaxException|"];
-          26 [label="Const: String(Can't parse json response)"];
-          27 [label="Access variable R|<local>/syntaxException|"];
-          28 [label="Function call: <Unresolved name: ResponseParseException>#(String(Can't parse json response), R|<local>/syntaxException|)"];
-          29 [label="Throw: throw <Unresolved name: ResponseParseException>#(String(Can't parse json response), R|<local>/syntaxException|)"];
-          30 [label="Stub" style="filled" fillcolor=gray];
-          31 [label="Exit block" style="filled" fillcolor=gray];
+          26 [label="Function call: <Unresolved name: ResponseParseException>#(String(Can't parse json response), R|<local>/syntaxException|)"];
+          27 [label="Throw: throw <Unresolved name: ResponseParseException>#(String(Can't parse json response), R|<local>/syntaxException|)"];
+          28 [label="Stub" style="filled" fillcolor=gray];
+          29 [label="Exit block" style="filled" fillcolor=gray];
         }
-        32 [label="Catch exit" style="filled" fillcolor=gray];
+        30 [label="Catch exit" style="filled" fillcolor=gray];
       }
       subgraph cluster_6 {
         color=blue
-        33 [label="Catch enter"];
+        31 [label="Catch enter"];
         subgraph cluster_7 {
           color=blue
-          34 [label="Enter block"];
+          32 [label="Enter block"];
+          33 [label="Access variable R|<local>/ioException|"];
+          34 [label="Access variable R|<local>/ioException|"];
           35 [label="Access variable R|<local>/ioException|"];
-          36 [label="Access variable R|<local>/ioException|"];
-          37 [label="Access variable R|<local>/ioException|"];
-          38 [label="Function call: <Unresolved name: IOException>#(R|<local>/ioException|)"];
-          39 [label="Throw: throw <Unresolved name: IOException>#(R|<local>/ioException|)"];
-          40 [label="Stub" style="filled" fillcolor=gray];
-          41 [label="Exit block" style="filled" fillcolor=gray];
+          36 [label="Function call: <Unresolved name: IOException>#(R|<local>/ioException|)"];
+          37 [label="Throw: throw <Unresolved name: IOException>#(R|<local>/ioException|)"];
+          38 [label="Stub" style="filled" fillcolor=gray];
+          39 [label="Exit block" style="filled" fillcolor=gray];
         }
-        42 [label="Catch exit" style="filled" fillcolor=gray];
+        40 [label="Catch exit" style="filled" fillcolor=gray];
       }
-      43 [label="Try expression exit"];
+      41 [label="Try expression exit"];
     }
-    44 [label="Variable declaration: lval pluginDTOs: R|kotlin/Array<class error: Symbol not found, for `PluginDTO`>|"];
-    45 [label="Exit function fetchPluginReleaseDate" style="filled" fillcolor=red];
+    42 [label="Variable declaration: lval pluginDTOs: R|kotlin/Array<class error: Symbol not found, for `PluginDTO`>|"];
+    43 [label="Exit function fetchPluginReleaseDate" style="filled" fillcolor=red];
   }
   subgraph cluster_8 {
     color=blue
-    46 [label="Enter annotation"];
-    47 [label="Access variable <Unresolved name: IOException>#"];
-    48 [label="Access variable <Unresolved name: ResponseParseException>#"];
-    49 [label="Exit annotation"];
+    44 [label="Enter annotation"];
+    45 [label="Access variable <Unresolved name: IOException>#"];
+    46 [label="Access variable <Unresolved name: ResponseParseException>#"];
+    47 [label="Exit annotation"];
   }
 
   0 -> {1};
@@ -94,7 +92,7 @@ digraph complex_kt {
   7 -> {8};
   8 -> {9};
   9 -> {10};
-  10 -> {45 33 20 11};
+  10 -> {43 31 20 11};
   11 -> {12};
   12 -> {13};
   13 -> {14};
@@ -103,54 +101,54 @@ digraph complex_kt {
   16 -> {17};
   17 -> {18};
   18 -> {19};
-  19 -> {43};
-  20 -> {45 21};
+  19 -> {41};
+  20 -> {43 21};
   21 -> {22};
   22 -> {23};
   23 -> {24};
   24 -> {25};
   25 -> {26};
   26 -> {27};
-  27 -> {28};
-  28 -> {29};
-  29 -> {45};
+  27 -> {43};
+  27 -> {28} [style=dotted];
+  28 -> {29} [style=dotted];
   29 -> {30} [style=dotted];
-  30 -> {31} [style=dotted];
-  31 -> {32} [style=dotted];
-  32 -> {43} [style=dotted];
-  33 -> {45 34};
+  30 -> {41} [style=dotted];
+  31 -> {43 32};
+  32 -> {33};
+  33 -> {34};
   34 -> {35};
   35 -> {36};
   36 -> {37};
-  37 -> {38};
-  38 -> {39};
-  39 -> {45};
+  37 -> {43};
+  37 -> {38} [style=dotted];
+  38 -> {39} [style=dotted];
   39 -> {40} [style=dotted];
   40 -> {41} [style=dotted];
-  41 -> {42} [style=dotted];
-  42 -> {43} [style=dotted];
+  41 -> {42};
+  42 -> {43};
   43 -> {44};
   44 -> {45};
   45 -> {46};
   46 -> {47};
-  47 -> {48};
-  48 -> {49};
 
   subgraph cluster_9 {
     color=red
-    50 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
-    51 [label="Function call: <Unresolved name: GsonBuilder>#()"];
-    52 [label="Function call: <Unresolved name: GsonBuilder>#().<Unresolved name: create>#()"];
-    53 [label="Access variable <Unresolved name: it>#"];
-    54 [label="Access variable <Unresolved name: inputStream>#"];
-    55 [label="Function call: <Unresolved name: it>#.<Unresolved name: inputStream>#.<Ambiguity: reader, [kotlin/io/reader, kotlin/io/reader, kotlin/io/reader]>#()"];
+    48 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+    49 [label="Function call: <Unresolved name: GsonBuilder>#()"];
+    50 [label="Function call: <Unresolved name: GsonBuilder>#().<Unresolved name: create>#()"];
+    51 [label="Access variable <Unresolved name: it>#"];
+    52 [label="Access variable <Unresolved name: inputStream>#"];
+    53 [label="Function call: <Unresolved name: it>#.<Unresolved name: inputStream>#.<Ambiguity: reader, [kotlin/io/reader, kotlin/io/reader, kotlin/io/reader]>#()"];
+    54 [label="Access variable R|kotlin/jvm/java|"];
+    55 [label="Access variable R|kotlin/jvm/java|"];
     56 [label="Access variable R|kotlin/jvm/java|"];
-    57 [label="Access variable R|kotlin/jvm/java|"];
-    58 [label="Access variable R|kotlin/jvm/java|"];
-    59 [label="Function call: <Unresolved name: GsonBuilder>#().<Unresolved name: create>#().<Unresolved name: fromJson>#(<Unresolved name: it>#.<Unresolved name: inputStream>#.<Ambiguity: reader, [kotlin/io/reader, kotlin/io/reader, kotlin/io/reader]>#(), <getClass>(Q|kotlin/Array|).R|kotlin/jvm/java|)"];
-    60 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+    57 [label="Function call: <Unresolved name: GsonBuilder>#().<Unresolved name: create>#().<Unresolved name: fromJson>#(<Unresolved name: it>#.<Unresolved name: inputStream>#.<Ambiguity: reader, [kotlin/io/reader, kotlin/io/reader, kotlin/io/reader]>#(), <getClass>(Q|kotlin/Array|).R|kotlin/jvm/java|)"];
+    58 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
   }
 
+  48 -> {49};
+  49 -> {50};
   50 -> {51};
   51 -> {52};
   52 -> {53};
@@ -159,98 +157,96 @@ digraph complex_kt {
   55 -> {56};
   56 -> {57};
   57 -> {58};
-  58 -> {59};
-  59 -> {60};
 
   subgraph cluster_10 {
     color=red
-    61 [label="Enter function close" style="filled" fillcolor=red];
-    62 [label="Exit function close" style="filled" fillcolor=red];
+    59 [label="Enter function close" style="filled" fillcolor=red];
+    60 [label="Exit function close" style="filled" fillcolor=red];
   }
 
-  61 -> {62};
+  59 -> {60};
 
   subgraph cluster_11 {
     color=red
-    63 [label="Enter function closeFinally" style="filled" fillcolor=red];
+    61 [label="Enter function closeFinally" style="filled" fillcolor=red];
     subgraph cluster_12 {
       color=blue
-      64 [label="Enter when"];
+      62 [label="Enter when"];
       subgraph cluster_13 {
         color=blue
-        65 [label="Enter when branch condition "];
-        66 [label="Access variable this@R|/closeFinally|"];
-        67 [label="Const: Null(null)"];
-        68 [label="Operator =="];
-        69 [label="Exit when branch condition"];
+        63 [label="Enter when branch condition "];
+        64 [label="Access variable this@R|/closeFinally|"];
+        65 [label="Const: Null(null)"];
+        66 [label="Operator =="];
+        67 [label="Exit when branch condition"];
       }
       subgraph cluster_14 {
         color=blue
-        70 [label="Enter when branch condition "];
-        71 [label="Access variable R|<local>/cause|"];
-        72 [label="Const: Null(null)"];
-        73 [label="Operator =="];
-        74 [label="Exit when branch condition"];
+        68 [label="Enter when branch condition "];
+        69 [label="Access variable R|<local>/cause|"];
+        70 [label="Const: Null(null)"];
+        71 [label="Operator =="];
+        72 [label="Exit when branch condition"];
       }
       subgraph cluster_15 {
         color=blue
-        75 [label="Enter when branch condition else"];
-        76 [label="Exit when branch condition"];
+        73 [label="Enter when branch condition else"];
+        74 [label="Exit when branch condition"];
       }
-      77 [label="Enter when branch result"];
+      75 [label="Enter when branch result"];
       subgraph cluster_16 {
         color=blue
-        78 [label="Enter block"];
+        76 [label="Enter block"];
         subgraph cluster_17 {
           color=blue
-          79 [label="Try expression enter"];
+          77 [label="Try expression enter"];
           subgraph cluster_18 {
             color=blue
-            80 [label="Try main block enter"];
+            78 [label="Try main block enter"];
             subgraph cluster_19 {
               color=blue
-              81 [label="Enter block"];
-              82 [label="Function call: this@R|/AutoCloseable|.R|/AutoCloseable.close|()"];
-              83 [label="Exit block"];
+              79 [label="Enter block"];
+              80 [label="Function call: this@R|/AutoCloseable|.R|/AutoCloseable.close|()"];
+              81 [label="Exit block"];
             }
-            84 [label="Try main block exit"];
+            82 [label="Try main block exit"];
           }
           subgraph cluster_20 {
             color=blue
-            85 [label="Catch enter"];
+            83 [label="Catch enter"];
             subgraph cluster_21 {
               color=blue
-              86 [label="Enter block"];
-              87 [label="Access variable R|<local>/cause|"];
-              88 [label="Access variable R|<local>/closeException|"];
-              89 [label="Function call: R|<local>/cause|.R|kotlin/addSuppressed|(R|<local>/closeException|)"];
-              90 [label="Exit block"];
+              84 [label="Enter block"];
+              85 [label="Access variable R|<local>/cause|"];
+              86 [label="Access variable R|<local>/closeException|"];
+              87 [label="Function call: R|<local>/cause|.R|kotlin/addSuppressed|(R|<local>/closeException|)"];
+              88 [label="Exit block"];
             }
-            91 [label="Catch exit"];
+            89 [label="Catch exit"];
           }
-          92 [label="Try expression exit"];
+          90 [label="Try expression exit"];
         }
-        93 [label="Exit block"];
+        91 [label="Exit block"];
       }
-      94 [label="Exit when branch result"];
-      95 [label="Enter when branch result"];
+      92 [label="Exit when branch result"];
+      93 [label="Enter when branch result"];
       subgraph cluster_22 {
         color=blue
-        96 [label="Enter block"];
-        97 [label="Function call: this@R|/AutoCloseable|.R|/AutoCloseable.close|()"];
-        98 [label="Exit block"];
+        94 [label="Enter block"];
+        95 [label="Function call: this@R|/AutoCloseable|.R|/AutoCloseable.close|()"];
+        96 [label="Exit block"];
       }
-      99 [label="Exit when branch result"];
-      100 [label="Enter when branch result"];
+      97 [label="Exit when branch result"];
+      98 [label="Enter when branch result"];
       subgraph cluster_23 {
         color=blue
-        101 [label="Enter block"];
-        102 [label="Exit block"];
+        99 [label="Enter block"];
+        100 [label="Exit block"];
       }
-      103 [label="Exit when branch result"];
-      104 [label="Exit when"];
+      101 [label="Exit when branch result"];
+      102 [label="Exit when"];
     }
-    105 [label="Jump: ^closeFinally when () {
+    103 [label="Jump: ^closeFinally when () {
     ==(this@R|/closeFinally|, Null(null)) ->  {
     }
     ==(R|<local>/cause|, Null(null)) ->  {
@@ -267,118 +263,120 @@ digraph complex_kt {
     }
 }
 "];
-    106 [label="Stub" style="filled" fillcolor=gray];
-    107 [label="Exit function closeFinally" style="filled" fillcolor=red];
+    104 [label="Stub" style="filled" fillcolor=gray];
+    105 [label="Exit function closeFinally" style="filled" fillcolor=red];
   }
 
+  61 -> {62};
+  62 -> {63};
   63 -> {64};
   64 -> {65};
   65 -> {66};
   66 -> {67};
-  67 -> {68};
+  67 -> {98 68};
   68 -> {69};
-  69 -> {100 70};
+  69 -> {70};
   70 -> {71};
   71 -> {72};
-  72 -> {73};
+  72 -> {93 73};
   73 -> {74};
-  74 -> {95 75};
+  74 -> {75};
   75 -> {76};
   76 -> {77};
   77 -> {78};
-  78 -> {79};
+  78 -> {105 83 79};
   79 -> {80};
-  80 -> {107 85 81};
+  80 -> {81};
   81 -> {82};
-  82 -> {83};
-  83 -> {84};
-  84 -> {92};
-  85 -> {107 86};
+  82 -> {90};
+  83 -> {105 84};
+  84 -> {85};
+  85 -> {86};
   86 -> {87};
   87 -> {88};
   88 -> {89};
   89 -> {90};
   90 -> {91};
   91 -> {92};
-  92 -> {93};
+  92 -> {102};
   93 -> {94};
-  94 -> {104};
+  94 -> {95};
   95 -> {96};
   96 -> {97};
-  97 -> {98};
+  97 -> {102};
   98 -> {99};
-  99 -> {104};
+  99 -> {100};
   100 -> {101};
   101 -> {102};
   102 -> {103};
-  103 -> {104};
-  104 -> {105};
-  105 -> {107};
-  105 -> {106} [style=dotted];
-  106 -> {107} [style=dotted];
+  103 -> {105};
+  103 -> {104} [style=dotted];
+  104 -> {105} [style=dotted];
 
   subgraph cluster_24 {
     color=red
-    108 [label="Enter function firstIsInstanceOrNull" style="filled" fillcolor=red];
-    109 [label="Access variable this@R|/firstIsInstanceOrNull|"];
-    110 [label="Variable declaration: lval <range>: R|kotlin/sequences/Sequence<*>|"];
-    111 [label="Access variable R|<local>/<range>|"];
-    112 [label="Function call: R|<local>/<range>|.R|FakeOverride<kotlin/sequences/Sequence.iterator: R|kotlin/collections/Iterator<kotlin/Any?>|>|()"];
-    113 [label="Variable declaration: lval <iterator>: R|kotlin/collections/Iterator<kotlin/Any?>|"];
+    106 [label="Enter function firstIsInstanceOrNull" style="filled" fillcolor=red];
+    107 [label="Access variable this@R|/firstIsInstanceOrNull|"];
+    108 [label="Variable declaration: lval <range>: R|kotlin/sequences/Sequence<*>|"];
+    109 [label="Access variable R|<local>/<range>|"];
+    110 [label="Function call: R|<local>/<range>|.R|FakeOverride<kotlin/sequences/Sequence.iterator: R|kotlin/collections/Iterator<kotlin/Any?>|>|()"];
+    111 [label="Variable declaration: lval <iterator>: R|kotlin/collections/Iterator<kotlin/Any?>|"];
     subgraph cluster_25 {
       color=blue
-      114 [label="Enter while loop"];
+      112 [label="Enter while loop"];
       subgraph cluster_26 {
         color=blue
-        115 [label="Enter loop condition"];
-        116 [label="Access variable R|<local>/<iterator>|"];
-        117 [label="Function call: R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()"];
-        118 [label="Exit loop condition"];
+        113 [label="Enter loop condition"];
+        114 [label="Access variable R|<local>/<iterator>|"];
+        115 [label="Function call: R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()"];
+        116 [label="Exit loop condition"];
       }
       subgraph cluster_27 {
         color=blue
-        119 [label="Enter loop block"];
+        117 [label="Enter loop block"];
         subgraph cluster_28 {
           color=blue
-          120 [label="Enter block"];
-          121 [label="Access variable R|<local>/<iterator>|"];
-          122 [label="Function call: R|<local>/<iterator>|.R|FakeOverride<kotlin/collections/Iterator.next: R|kotlin/Any?|>|()"];
-          123 [label="Variable declaration: lval element: R|kotlin/Any?|"];
+          118 [label="Enter block"];
+          119 [label="Access variable R|<local>/<iterator>|"];
+          120 [label="Function call: R|<local>/<iterator>|.R|FakeOverride<kotlin/collections/Iterator.next: R|kotlin/Any?|>|()"];
+          121 [label="Variable declaration: lval element: R|kotlin/Any?|"];
           subgraph cluster_29 {
             color=blue
-            124 [label="Enter when"];
+            122 [label="Enter when"];
             subgraph cluster_30 {
               color=blue
-              125 [label="Enter when branch condition "];
-              126 [label="Access variable R|<local>/element|"];
-              127 [label="Type operator: element is T"];
-              128 [label="Exit when branch condition"];
+              123 [label="Enter when branch condition "];
+              124 [label="Access variable R|<local>/element|"];
+              125 [label="Type operator: element is T"];
+              126 [label="Exit when branch condition"];
             }
-            129 [label="Synthetic else branch"];
-            130 [label="Enter when branch result"];
+            127 [label="Synthetic else branch"];
+            128 [label="Enter when branch result"];
             subgraph cluster_31 {
               color=blue
-              131 [label="Enter block"];
-              132 [label="Access variable R|<local>/element|"];
-              133 [label="Jump: ^firstIsInstanceOrNull R|<local>/element|"];
-              134 [label="Stub" style="filled" fillcolor=gray];
-              135 [label="Exit block" style="filled" fillcolor=gray];
+              129 [label="Enter block"];
+              130 [label="Access variable R|<local>/element|"];
+              131 [label="Jump: ^firstIsInstanceOrNull R|<local>/element|"];
+              132 [label="Stub" style="filled" fillcolor=gray];
+              133 [label="Exit block" style="filled" fillcolor=gray];
             }
-            136 [label="Exit when branch result" style="filled" fillcolor=gray];
-            137 [label="Exit when"];
+            134 [label="Exit when branch result" style="filled" fillcolor=gray];
+            135 [label="Exit when"];
           }
-          138 [label="Exit block"];
+          136 [label="Exit block"];
         }
-        139 [label="Exit loop block"];
+        137 [label="Exit loop block"];
       }
-      140 [label="Exit whileloop"];
+      138 [label="Exit whileloop"];
     }
-    141 [label="Const: Null(null)"];
-    142 [label="Jump: ^firstIsInstanceOrNull Null(null)"];
-    143 [label="Stub" style="filled" fillcolor=gray];
-    144 [label="Exit function firstIsInstanceOrNull" style="filled" fillcolor=red];
+    139 [label="Const: Null(null)"];
+    140 [label="Jump: ^firstIsInstanceOrNull Null(null)"];
+    141 [label="Stub" style="filled" fillcolor=gray];
+    142 [label="Exit function firstIsInstanceOrNull" style="filled" fillcolor=red];
   }
 
+  106 -> {107};
+  107 -> {108};
   108 -> {109};
   109 -> {110};
   110 -> {111};
@@ -387,9 +385,9 @@ digraph complex_kt {
   113 -> {114};
   114 -> {115};
   115 -> {116};
-  116 -> {117};
+  116 -> {138 117};
   117 -> {118};
-  118 -> {140 119};
+  118 -> {119};
   119 -> {120};
   120 -> {121};
   121 -> {122};
@@ -397,25 +395,23 @@ digraph complex_kt {
   123 -> {124};
   124 -> {125};
   125 -> {126};
-  126 -> {127};
-  127 -> {128};
-  128 -> {130 129};
-  129 -> {137};
+  126 -> {128 127};
+  127 -> {135};
+  128 -> {129};
+  129 -> {130};
   130 -> {131};
-  131 -> {132};
-  132 -> {133};
-  133 -> {144};
+  131 -> {142};
+  131 -> {132} [style=dotted];
+  132 -> {133} [style=dotted];
   133 -> {134} [style=dotted];
   134 -> {135} [style=dotted];
-  135 -> {136} [style=dotted];
-  136 -> {137} [style=dotted];
-  137 -> {138};
+  135 -> {136};
+  136 -> {137};
+  137 -> {113};
   138 -> {139};
-  139 -> {115};
-  140 -> {141};
-  141 -> {142};
-  142 -> {144};
-  142 -> {143} [style=dotted];
-  143 -> {144} [style=dotted];
+  139 -> {140};
+  140 -> {142};
+  140 -> {141} [style=dotted];
+  141 -> {142} [style=dotted];
 
 }

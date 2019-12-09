@@ -111,4 +111,8 @@ class FirJavaField(
         get() = null
 
     override var containerSource: DeserializedContainerSource? = null
+
+    override fun <D> transformInitializer(transformer: FirTransformer<D>, data: D): FirField {
+        return this
+    }
 }

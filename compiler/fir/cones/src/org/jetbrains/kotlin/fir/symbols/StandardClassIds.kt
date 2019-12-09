@@ -37,6 +37,9 @@ object StandardClassIds {
 
     val KProperty = "KProperty".reflectId()
 
+    val Comparable = "Comparable".baseId()
+    val Number = "Number".baseId()
+
     fun byName(name: String) = name.baseId()
     fun reflectByName(name: String) = name.reflectId()
 

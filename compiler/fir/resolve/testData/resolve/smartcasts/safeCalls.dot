@@ -199,7 +199,7 @@ digraph safeCalls_kt {
       73 [label="Stub" style="filled" fillcolor=gray];
       74 [label="Exit function anonymousFunction" style="filled" fillcolor=gray];
     }
-    75 [label="Function call: R|<local>/x|?.R|kotlin/let|<R|A|, R|kotlin/Nothing|>(<L> = let@fun <anonymous>(it: R|A|): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+    75 [label="Function call: R|<local>/x|?.R|kotlin/let|<R|A|, R|kotlin/Nothing|>(<L> = let@fun <anonymous>(it: R|A|): R|kotlin/Nothing| <kind=EXACTLY_ONCE>  {
     ^test_5 Unit
 }
 )" style="filled" fillcolor=gray];
@@ -207,7 +207,7 @@ digraph safeCalls_kt {
     77 [label="Enter safe call" style="filled" fillcolor=gray];
     78 [label="Access variable R|<local>/x|" style="filled" fillcolor=gray];
     79 [label="Function call: R|<local>/x|.R|/A.bool|()" style="filled" fillcolor=gray];
-    80 [label="Function call: R|<local>/x|?.R|kotlin/let|<R|A|, R|kotlin/Nothing|>(<L> = let@fun <anonymous>(it: R|A|): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+    80 [label="Function call: R|<local>/x|?.R|kotlin/let|<R|A|, R|kotlin/Nothing|>(<L> = let@fun <anonymous>(it: R|A|): R|kotlin/Nothing| <kind=EXACTLY_ONCE>  {
     ^test_5 Unit
 }
 )?.R|/boo|(R|<local>/x|.R|/A.bool|())" style="filled" fillcolor=gray];

@@ -28,7 +28,7 @@ digraph binaryOperations_kt {
       subgraph cluster_4 {
         color=blue
         12 [label="Enter block"];
-        13 [label="Const: Int(1)"];
+        13 [label="Const: IntegerLiteral(1)"];
         14 [label="Exit block"];
       }
       15 [label="Exit when branch result"];
@@ -80,7 +80,7 @@ digraph binaryOperations_kt {
       subgraph cluster_9 {
         color=blue
         30 [label="Enter block"];
-        31 [label="Const: Int(1)"];
+        31 [label="Const: IntegerLiteral(1)"];
         32 [label="Exit block"];
       }
       33 [label="Exit when branch result"];
@@ -140,7 +140,7 @@ digraph binaryOperations_kt {
       subgraph cluster_15 {
         color=blue
         53 [label="Enter block"];
-        54 [label="Const: Int(1)"];
+        54 [label="Const: IntegerLiteral(1)"];
         55 [label="Exit block"];
       }
       56 [label="Exit when branch result"];
@@ -205,7 +205,7 @@ digraph binaryOperations_kt {
       subgraph cluster_21 {
         color=blue
         76 [label="Enter block"];
-        77 [label="Const: Int(1)"];
+        77 [label="Const: IntegerLiteral(1)"];
         78 [label="Exit block"];
       }
       79 [label="Exit when branch result"];

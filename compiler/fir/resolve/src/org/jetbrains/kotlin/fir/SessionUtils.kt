@@ -5,11 +5,12 @@
 
 package org.jetbrains.kotlin.fir
 
+import org.jetbrains.kotlin.fir.resolve.calls.ConeInferenceContext
 import org.jetbrains.kotlin.fir.types.ConeTypeCheckerContext
 import org.jetbrains.kotlin.fir.types.ConeTypeContext
 import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
 
-private class SessionBasedTypeContext(override val session: FirSession) : ConeTypeContext {
+private class SessionBasedTypeContext(override val session: FirSession) : ConeInferenceContext {
     override fun newBaseTypeCheckerContext(
         errorTypesEqualToAnything: Boolean,
         stubTypesEqualToAnything: Boolean
@@ -18,4 +19,4 @@ private class SessionBasedTypeContext(override val session: FirSession) : ConeTy
     }
 }
 
-val FirSession.typeContext: ConeTypeContext get() = SessionBasedTypeContext(this)
+val FirSession.typeContext: ConeInferenceContext get() = SessionBasedTypeContext(this)

@@ -50,7 +50,7 @@ digraph returnValuesFromLambda_kt {
       19 [label="Function call: R|/C.C|()"];
       20 [label="Exit function anonymousFunction"];
     }
-    21 [label="Function call: R|kotlin/run|<R|A|>(<L> = run@fun <anonymous>(): R|C| <kind=EXACTLY_ONCE>  {
+    21 [label="Function call: R|kotlin/run|<R|A|>(<L> = run@fun <anonymous>(): R|A| <kind=EXACTLY_ONCE>  {
     when () {
         R|<local>/b| ->  {
             ^@run R|/B.B|()
@@ -124,7 +124,7 @@ digraph returnValuesFromLambda_kt {
       36 [label="Stub" style="filled" fillcolor=gray];
       37 [label="Exit function anonymousFunction" style="filled" fillcolor=gray];
     }
-    38 [label="Function call: R|kotlin/run|<R|kotlin/Nothing|>(<L> = run@fun <anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+    38 [label="Function call: R|kotlin/run|<R|kotlin/Nothing|>(<L> = run@fun <anonymous>(): R|kotlin/Nothing| <kind=EXACTLY_ONCE>  {
     ^test_3 Unit
 }
 )" style="filled" fillcolor=gray];

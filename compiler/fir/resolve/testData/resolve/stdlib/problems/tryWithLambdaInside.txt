@@ -8,7 +8,7 @@ FILE: tryWithLambdaInside.kt
     public final fun bar(): R|kotlin/collections/List<kotlin/String>| {
         ^bar try {
             R|/foo|().R|kotlin/collections/filter|<R|kotlin/String|>(<L> = filter@fun <implicit>.<anonymous>(): <implicit> <kind=UNKNOWN>  {
-                >(it#.length#, Int(2))
+                >(it#.length#, IntegerLiteral(2))
             }
             )
         }

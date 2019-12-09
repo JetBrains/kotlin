@@ -73,6 +73,7 @@ fun ConeKotlinType.toIrType(session: FirSession, declarationStorage: Fir2IrDecla
             intersectedTypes.first().toIrType(session, declarationStorage, definitelyNotNull)
         }
         is ConeStubType -> createErrorType()
+        is ConeIntegerLiteralType -> getApproximatedType().toIrType(session, declarationStorage, definitelyNotNull)
     }
 }
 

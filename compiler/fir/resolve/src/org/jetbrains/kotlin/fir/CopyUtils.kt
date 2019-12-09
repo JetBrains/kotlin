@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirWhenExpressionImpl
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirReference
+import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperatorCall
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
@@ -36,7 +37,11 @@ fun FirFunctionCall.copy(
     typeArguments: List<FirTypeProjection> = this.typeArguments,
     resultType: FirTypeRef = this.typeRef
 ): FirFunctionCall {
-    return FirFunctionCallImpl(source).apply {
+    return if (this is FirIntegerOperatorCall) {
+        FirIntegerOperatorCall(source)
+    } else {
+        FirFunctionCallImpl(source)
+    }.apply {
         this.safe = safe
         this.annotations.addAll(annotations)
         this.arguments.addAll(arguments)

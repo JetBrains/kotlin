@@ -138,7 +138,8 @@ object NodeConfigurator : AbstractFieldConfigurator() {
 
         returnExpression.configure {
             parentArg(jump, "E", function.withArgs("F" to "*"))
-            +field("result", expression)
+            +field("result", expression).withTransform()
+            needTransformOtherChildren()
         }
 
         label.configure {
@@ -178,7 +179,7 @@ object NodeConfigurator : AbstractFieldConfigurator() {
 
         constExpression.configure {
             withArg("T")
-            +field("kind", constKindType.withArgs("T"))
+            +field("kind", constKindType.withArgs("T"), withReplace = true)
             +field("value", "T", null)
         }
 
@@ -335,7 +336,7 @@ object NodeConfigurator : AbstractFieldConfigurator() {
             withArg("F", variable)
             parentArg(callableDeclaration, "F", "F")
             +symbol("FirVariableSymbol", "F")
-            +initializer
+            +initializer.withTransform()
             +field("delegate", expression, nullable = true)
             +field("delegateFieldSymbol", delegateFieldSymbolType, "F", nullable = true)
             generateBooleanFields("var", "val")

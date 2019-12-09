@@ -76,6 +76,10 @@ class FirFieldImpl(
         return this
     }
 
+    override fun <D> transformInitializer(transformer: FirTransformer<D>, data: D): FirFieldImpl {
+        return this
+    }
+
     override fun <D> transformGetter(transformer: FirTransformer<D>, data: D): FirFieldImpl {
         return this
     }

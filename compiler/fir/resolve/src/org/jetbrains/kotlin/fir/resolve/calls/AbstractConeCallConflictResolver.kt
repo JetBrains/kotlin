@@ -6,14 +6,13 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralTypeImpl
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.arrayElementType
 import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
-import org.jetbrains.kotlin.resolve.OverloadabilitySpecificityCallbacks
-import org.jetbrains.kotlin.resolve.calls.results.FlatSignature
-import org.jetbrains.kotlin.resolve.calls.results.SimpleConstraintSystem
-import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
-import org.jetbrains.kotlin.resolve.calls.results.isSignatureNotLessSpecific
+import org.jetbrains.kotlin.resolve.calls.results.*
+import org.jetbrains.kotlin.types.checker.requireOrDescribe
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 
 abstract class AbstractConeCallConflictResolver(
     private val specificityComparator: TypeSpecificityComparator,
@@ -50,9 +49,37 @@ abstract class AbstractConeCallConflictResolver(
         return createEmptyConstraintSystem().isSignatureNotLessSpecific(
             call1,
             call2,
-            OverloadabilitySpecificityCallbacks,
+            SpecificityComparisonWithNumerics,
             specificityComparator
         )
+    }
+
+    private val SpecificityComparisonWithNumerics = object : SpecificityComparisonCallbacks {
+        override fun isNonSubtypeNotLessSpecific(specific: KotlinTypeMarker, general: KotlinTypeMarker): Boolean {
+            requireOrDescribe(specific is ConeKotlinType, specific)
+            requireOrDescribe(general is ConeKotlinType, general)
+
+            // TODO: support unsigned types
+            // see OverloadingConflictResolver.kt:294
+
+            val int = ConeIntegerLiteralTypeImpl.INT_TYPE
+            val long = ConeIntegerLiteralTypeImpl.LONG_TYPE
+            val byte = ConeIntegerLiteralTypeImpl.BYTE_TYPE
+            val short = ConeIntegerLiteralTypeImpl.SHORT_TYPE
+
+            when {
+                //TypeUtils.equalTypes(specific, _double) && TypeUtils.equalTypes(general, _float) -> return true
+                specific == int -> {
+                    when {
+                        general == long -> return true
+                        general == byte -> return true
+                        general == short -> return true
+                    }
+                }
+                specific == short && general == byte -> return true
+            }
+            return false
+        }
     }
 
     protected fun createFlatSignature(call: Candidate): FlatSignature<Candidate> {

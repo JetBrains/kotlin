@@ -19,7 +19,7 @@ FILE: typeParameters.kt
         }
 
         public? open? override fun get(index: Int): Int {
-            ^get Int(42)
+            ^get IntegerLiteral(42)
         }
 
         public? open? override fun concat(other: List<Int>): List<Int> {

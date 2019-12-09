@@ -9,7 +9,7 @@ FILE: K1.kt
         R|<local>/k|.R|/J1.getImpl|().R|FakeOverride</SuperI.NestedInI.nestedI: R|kotlin/Unit|>|(R|<local>/vString|)
         R|<local>/k|.R|/J1.getImpl|().R|FakeOverride</SuperI.NestedInI.nestedI: R|kotlin/Unit|>|(R|<local>/vInt|)
         R|<local>/k|.R|/J1.getNestedSubClass|().<Inapplicable(INAPPLICABLE): [/SuperClass.NestedInSuperClass.nested]>#(String())
-        R|<local>/k|.R|/J1.getNestedSubClass|().<Inapplicable(INAPPLICABLE): [/SuperClass.NestedInSuperClass.nested]>#(Int(1))
+        R|<local>/k|.R|/J1.getNestedSubClass|().R|/SuperClass.NestedInSuperClass.nested|(Int(1))
     }
 FILE: K2.kt
     public open class KFirst : R|SuperClass<kotlin/String>|, R|SuperI<kotlin/Int>| {

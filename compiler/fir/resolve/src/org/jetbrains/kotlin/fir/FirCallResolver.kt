@@ -35,9 +35,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.invoke
-import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.FirTypeProjection
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.compose
 import org.jetbrains.kotlin.name.Name
@@ -74,15 +72,56 @@ class FirCallResolver(
     fun resolveCallAndSelectCandidate(functionCall: FirFunctionCall, file: FirFile): FirFunctionCall {
         qualifiedResolver.reset()
         @Suppress("NAME_SHADOWING")
-        val functionCall = functionCall.transformExplicitReceiver(transformer, ResolutionMode.ContextIndependent)
+        var functionCall = functionCall.transformExplicitReceiver(transformer, ResolutionMode.ContextIndependent)
             .also { dataFlowAnalyzer.enterQualifiedAccessExpression(functionCall) }
             .transformArguments(transformer, ResolutionMode.ContextDependent)
 
-        val name = functionCall.calleeReference.name
+        var result = collectCandidates(functionCall)
 
+        if (
+            (result.candidates.isEmpty() || result.applicability < CandidateApplicability.SYNTHETIC_RESOLVED) &&
+            functionCall.explicitReceiver?.typeRef?.coneTypeSafe<ConeIntegerLiteralType>() != null
+        ) {
+            functionCall = functionCall.transformExplicitReceiver(integerLiteralTypeApproximator, null)
+            result = collectCandidates(functionCall)
+        }
+
+        val nameReference = createResolvedNamedReference(
+            functionCall.calleeReference,
+            functionCall.calleeReference.name,
+            result.candidates,
+            result.applicability
+        )
+
+        val resultExpression = functionCall.transformCalleeReference(StoreNameReference, nameReference)
+        val candidate = resultExpression.candidate()
+
+        // We need desugaring
+        val resultFunctionCall = if (candidate != null && candidate.callInfo != result.info) {
+            functionCall.copy(
+                explicitReceiver = candidate.callInfo.explicitReceiver,
+                dispatchReceiver = candidate.dispatchReceiverExpression(),
+                extensionReceiver = candidate.extensionReceiverExpression(),
+                arguments = candidate.callInfo.arguments,
+                safe = candidate.callInfo.isSafeCall
+            )
+        } else {
+            resultExpression
+        }
+        val typeRef = typeFromCallee(resultFunctionCall)
+        if (typeRef.type is ConeKotlinErrorType) {
+            resultFunctionCall.resultType = typeRef
+        }
+        return resultFunctionCall
+    }
+
+    private data class ResolutionResult(val info: CallInfo, val applicability: CandidateApplicability, val candidates: Collection<Candidate>)
+
+    private fun collectCandidates(functionCall: FirFunctionCall): ResolutionResult {
         val explicitReceiver = functionCall.explicitReceiver
         val arguments = functionCall.arguments
         val typeArguments = functionCall.typeArguments
+        val name = functionCall.calleeReference.name
 
         val info = CallInfo(
             CallKind.Function,
@@ -108,34 +147,7 @@ class FirCallResolver(
         } else {
             conflictResolver.chooseMaximallySpecificCandidates(bestCandidates, discriminateGenerics = true)
         }
-
-        val nameReference = createResolvedNamedReference(
-            functionCall.calleeReference,
-            name,
-            reducedCandidates,
-            result.currentApplicability
-        )
-
-        val resultExpression = functionCall.transformCalleeReference(StoreNameReference, nameReference)
-        val candidate = resultExpression.candidate()
-
-        // We need desugaring
-        val resultFunctionCall = if (candidate != null && candidate.callInfo != info) {
-            functionCall.copy(
-                explicitReceiver = candidate.callInfo.explicitReceiver,
-                dispatchReceiver = candidate.dispatchReceiverExpression(),
-                extensionReceiver = candidate.extensionReceiverExpression(),
-                arguments = candidate.callInfo.arguments,
-                safe = candidate.callInfo.isSafeCall
-            )
-        } else {
-            resultExpression
-        }
-        val typeRef = typeFromCallee(resultFunctionCall)
-        if (typeRef.type is ConeKotlinErrorType) {
-            resultFunctionCall.resultType = typeRef
-        }
-        return resultFunctionCall
+        return ResolutionResult(info, result.currentApplicability, reducedCandidates)
     }
 
     fun <T : FirQualifiedAccess> resolveVariableAccessAndSelectCandidate(qualifiedAccess: T, file: FirFile): FirStatement {

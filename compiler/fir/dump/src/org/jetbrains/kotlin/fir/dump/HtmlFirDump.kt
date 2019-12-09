@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirTypePlaceholderProjection
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
-import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -728,38 +727,38 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
 
     private fun FlowContent.generate(expression: FirConstExpression<*>) {
         val value = expression.value
-        if (value == null && expression.kind != IrConstKind.Null) {
+        if (value == null && expression.kind != FirConstKind.Null) {
             return error {
                 +"null value"
             }
         }
 
         when (expression.kind) {
-            IrConstKind.Null -> keyword("null")
-            IrConstKind.Boolean -> keyword(value.toString())
-            IrConstKind.String, IrConstKind.Char ->
+            FirConstKind.Null -> keyword("null")
+            FirConstKind.Boolean -> keyword(value.toString())
+            FirConstKind.String, FirConstKind.Char ->
                 stringLiteral(value)
-            IrConstKind.Byte -> {
+            FirConstKind.Byte -> {
                 +value.toString()
                 keyword("B")
             }
-            IrConstKind.Short -> {
+            FirConstKind.Short -> {
                 +value.toString()
                 keyword("S")
             }
-            IrConstKind.Int -> {
+            FirConstKind.Int -> {
                 +value.toString()
                 keyword("I")
             }
-            IrConstKind.Long -> {
+            FirConstKind.Long -> {
                 +value.toString()
                 keyword("L")
             }
-            IrConstKind.Float -> {
+            FirConstKind.Float -> {
                 +value.toString()
                 keyword("F")
             }
-            IrConstKind.Double -> {
+            FirConstKind.Double -> {
                 +value.toString()
                 keyword("D")
             }
@@ -784,6 +783,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                 +"!!"
             }
             is ConeIntersectionType -> resolved { generate(type) }
+            is ConeIntegerLiteralType -> inlineUnsupported(type)
         }
         if (type.typeArguments.isNotEmpty()) {
             +"<"

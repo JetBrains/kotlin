@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirFunctionCallImpl(
+open class FirFunctionCallImpl(
     override val source: FirSourceElement?
 ) : FirFunctionCall(), FirModifiableQualifiedAccess, FirCallWithArgumentList, FirAbstractAnnotatedElement {
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)

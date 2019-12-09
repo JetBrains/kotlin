@@ -235,6 +235,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             defaultFalse("safe")
             lateinit("calleeReference")
             defaultNoReceivers()
+            kind = OpenClass
         }
 
         impl(qualifiedAccessExpression) {

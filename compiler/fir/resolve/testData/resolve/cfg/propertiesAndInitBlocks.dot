@@ -190,7 +190,7 @@ digraph propertiesAndInitBlocks_kt {
         subgraph cluster_18 {
           color=blue
           53 [label="Enter block"];
-          54 [label="Const: Int(0)"];
+          54 [label="Const: IntegerLiteral(0)"];
           55 [label="Exit block"];
         }
         56 [label="Exit finally"];

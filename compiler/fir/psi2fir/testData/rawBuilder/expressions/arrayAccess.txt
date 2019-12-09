@@ -1,8 +1,8 @@
 FILE: arrayAccess.kt
-    public? final? val p: <implicit> = Int(0)
+    public? final? val p: <implicit> = IntegerLiteral(0)
         public? get(): <implicit>
     public? final? fun foo(): <implicit> {
-        ^foo Int(1)
+        ^foo IntegerLiteral(1)
     }
     public? final? class Wrapper : R|kotlin/Any| {
         public? constructor(v: IntArray): R|Wrapper| {
@@ -14,5 +14,5 @@ FILE: arrayAccess.kt
 
     }
     public? final? fun test(a: IntArray, w: Wrapper): <implicit> {
-        ^test a#.get#(Int(0)).plus#(a#.get#(p#)).plus#(a#.get#(foo#())).plus#(w#.v#.get#(Int(0)))
+        ^test a#.get#(IntegerLiteral(0)).plus#(a#.get#(p#)).plus#(a#.get#(foo#())).plus#(w#.v#.get#(IntegerLiteral(0)))
     }

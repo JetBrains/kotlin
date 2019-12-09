@@ -23,7 +23,7 @@ FILE: lambda.kt
 
     }
     public? final? inline fun use(f: ( (Tuple) -> Int )): <implicit> {
-        ^use f#(Tuple#(Int(1), Int(2)))
+        ^use f#(Tuple#(IntegerLiteral(1), IntegerLiteral(2)))
     }
     public? final? fun foo(): Int {
         lval l1: <implicit> = fun <implicit>.<anonymous>(t: Tuple): <implicit> {
@@ -40,8 +40,8 @@ FILE: lambda.kt
         )
         ^foo use#(<L> = use@fun <implicit>.<anonymous>(): <implicit> {
             when () {
-                ==(it#.x#, Int(0)) ->  {
-                    ^foo Int(0)
+                ==(it#.x#, IntegerLiteral(0)) ->  {
+                    ^foo IntegerLiteral(0)
                 }
             }
 
@@ -52,8 +52,8 @@ FILE: lambda.kt
     public? final? fun bar(): Int {
         ^bar use#(<L> = lambda@fun <implicit>.<anonymous>(): <implicit> {
             when () {
-                ==(it#.x#, Int(0)) ->  {
-                    ^bar Int(0)
+                ==(it#.x#, IntegerLiteral(0)) ->  {
+                    ^bar IntegerLiteral(0)
                 }
             }
 
@@ -77,7 +77,7 @@ FILE: lambda.kt
 
         public? get(): <implicit>
     public? final? val another: <implicit> = fun <implicit>.<anonymous>(): <implicit> {
-        Int(42)
+        IntegerLiteral(42)
     }
 
         public? get(): <implicit>

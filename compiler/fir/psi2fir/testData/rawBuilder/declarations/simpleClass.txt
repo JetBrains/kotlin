@@ -11,7 +11,7 @@ FILE: simpleClass.kt
             super<R|kotlin/Any|>()
         }
 
-        private final? val baz: <implicit> = Int(42)
+        private final? val baz: <implicit> = IntegerLiteral(42)
             private get(): <implicit>
 
         public? open? override fun foo(x: Int, y: String): String {

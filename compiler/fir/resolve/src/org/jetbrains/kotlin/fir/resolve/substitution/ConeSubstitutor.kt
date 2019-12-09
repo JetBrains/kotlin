@@ -70,6 +70,7 @@ abstract class AbstractConeSubstitutor : ConeSubstitutor() {
             is ConeDefinitelyNotNullType -> this.substituteOriginal()
             is ConeIntersectionType -> this.substituteIntersectedTypes()
             is ConeStubType -> return null
+            is ConeIntegerLiteralType -> return null
         }
     }
 

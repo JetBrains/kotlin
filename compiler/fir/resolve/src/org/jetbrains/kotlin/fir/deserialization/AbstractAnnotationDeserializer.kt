@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirErrorTypeRefImpl
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
-import org.jetbrains.kotlin.ir.expressions.IrConstKind
+import org.jetbrains.kotlin.fir.expressions.FirConstKind
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value.Type.*
 import org.jetbrains.kotlin.metadata.deserialization.Flags
@@ -111,15 +111,15 @@ abstract class AbstractAnnotationDeserializer(
         // TODO: val isUnsigned = Flags.IS_UNSIGNED.get(value.flags)
 
         val result: FirExpression = when (value.type) {
-            BYTE -> const(IrConstKind.Byte, value.intValue.toByte())
-            CHAR -> const(IrConstKind.Char, value.intValue.toChar())
-            SHORT -> const(IrConstKind.Short, value.intValue.toShort())
-            INT -> const(IrConstKind.Int, value.intValue.toInt())
-            LONG -> const(IrConstKind.Long, value.intValue)
-            FLOAT -> const(IrConstKind.Float, value.floatValue)
-            DOUBLE -> const(IrConstKind.Double, value.doubleValue)
-            BOOLEAN -> const(IrConstKind.Boolean, (value.intValue != 0L))
-            STRING -> const(IrConstKind.String, nameResolver.getString(value.stringValue))
+            BYTE -> const(FirConstKind.Byte, value.intValue.toByte())
+            CHAR -> const(FirConstKind.Char, value.intValue.toChar())
+            SHORT -> const(FirConstKind.Short, value.intValue.toShort())
+            INT -> const(FirConstKind.Int, value.intValue.toInt())
+            LONG -> const(FirConstKind.Long, value.intValue)
+            FLOAT -> const(FirConstKind.Float, value.floatValue)
+            DOUBLE -> const(FirConstKind.Double, value.doubleValue)
+            BOOLEAN -> const(FirConstKind.Boolean, (value.intValue != 0L))
+            STRING -> const(FirConstKind.String, nameResolver.getString(value.stringValue))
             ANNOTATION -> deserializeAnnotation(value.annotation, nameResolver)
             CLASS -> FirGetClassCallImpl(null).apply {
                 val classId = nameResolver.getClassId(value.classId)
@@ -152,5 +152,5 @@ abstract class AbstractAnnotationDeserializer(
         return result
     }
 
-    private fun <T> const(kind: IrConstKind<T>, value: T) = FirConstExpressionImpl(null, kind, value)
+    private fun <T> const(kind: FirConstKind<T>, value: T) = FirConstExpressionImpl(null, kind, value)
 }

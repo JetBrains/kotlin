@@ -17,5 +17,5 @@ FILE: expectActual.kt
     public? final? actual fun foo(): <implicit> {
         ^foo String(Hello)
     }
-    public? final? actual val x: <implicit> = Int(42)
+    public? final? actual val x: <implicit> = IntegerLiteral(42)
         public? get(): <implicit>

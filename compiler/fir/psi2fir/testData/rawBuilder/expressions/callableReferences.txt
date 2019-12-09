@@ -7,7 +7,7 @@ FILE: callableReferences.kt
         public? final? fun foo(): R|kotlin/Unit| {
         }
 
-        public? final? val bar: <implicit> = Int(0)
+        public? final? val bar: <implicit> = IntegerLiteral(0)
             public? get(): <implicit>
 
     }

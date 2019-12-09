@@ -19,8 +19,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.ImplicitDispatchReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitExtensionReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.extractLambdaInfoFromFunctionalType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.resolve.transformers.ControlFlowGraphReferenceTransformer
-import org.jetbrains.kotlin.fir.resolve.transformers.FirCallCompletionResultsWriterTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.*
 import org.jetbrains.kotlin.fir.resolve.transformers.FirStatusResolveTransformer.Companion.resolveStatus
 import org.jetbrains.kotlin.fir.resolve.transformers.StoreType
 import org.jetbrains.kotlin.fir.resolve.transformers.transformVarargTypeToArrayType
@@ -104,6 +103,7 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
                     localScopes.addIfNotNull(primaryConstructorParametersScope)
                     components.withContainer(property) {
                         property.transformChildrenWithoutAccessors(returnTypeRef)
+                        property.transformInitializer(integerLiteralTypeApproximator, null)
                         if (property.initializer != null) {
                             storeVariableReturnType(property)
                         }
@@ -125,7 +125,10 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
 
     private fun transformLocalVariable(variable: FirProperty): CompositeTransformResult<FirDeclaration> {
         assert(variable.isLocal)
-        variable.transformOtherChildren(transformer, withExpectedType(variable.returnTypeRef))
+        val resolutionMode = withExpectedType(variable.returnTypeRef)
+        variable.transformOtherChildren(transformer, resolutionMode)
+            .transformInitializer(transformer, resolutionMode)
+            .transformInitializer(integerLiteralTypeApproximator, null)
         if (variable.initializer != null) {
             storeVariableReturnType(variable)
         }
@@ -138,7 +141,7 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
 
     private fun FirProperty.transformChildrenWithoutAccessors(returnTypeRef: FirTypeRef): FirProperty {
         val data = withExpectedType(returnTypeRef)
-        return transformReturnTypeRef(transformer, data).transformOtherChildren(transformer, data)
+        return transformInitializer(transformer, data).transformOtherChildren(transformer, data)
     }
 
     private fun <F : FirVariable<F>> FirVariable<F>.transformAccessors() {
@@ -380,6 +383,7 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
             valueParameter.replaceResolvePhase(transformerPhase)
             return valueParameter.compose() // TODO
         }
+        val valueParameter = valueParameter.transformInitializer(integerLiteralTypeApproximator, valueParameter.returnTypeRef.coneTypeSafe())
         return (transformDeclaration(valueParameter, withExpectedType(valueParameter.returnTypeRef)).single as FirStatement).compose()
     }
 
@@ -464,9 +468,11 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
                     session,
                     ConeSubstitutor.Empty,
                     returnTypeCalculator,
-                    inferenceComponents.approximator
+                    inferenceComponents.approximator,
+                    integerOperatorsTypeUpdater,
+                    integerLiteralTypeApproximator
                 )
-                af.transformSingle(writer, null)
+                af.transformSingle(writer, data.expectedTypeRef.coneTypeSafe<ConeKotlinType>()?.toExpectedType())
                 val returnTypes = dataFlowAnalyzer.returnExpressionsOfAnonymousFunction(af).mapNotNull { (it as? FirExpression)?.resultType?.coneTypeUnsafe() }
                 af.replaceReturnTypeRef(af.returnTypeRef.resolvedTypeFromPrototype(inferenceComponents.ctx.commonSuperTypeOrNull(returnTypes) ?: session.builtinTypes.unitType.coneTypeUnsafe()))
                 af.replaceTypeRef(af.constructFunctionalTypeRef(session))

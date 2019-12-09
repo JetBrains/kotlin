@@ -224,6 +224,7 @@ fun <T : ConeKotlinType> T.withNullability(nullability: ConeNullability): T {
             ConeNullability.NULLABLE -> original.withNullability(nullability)
             ConeNullability.UNKNOWN -> original.withNullability(nullability)
         } as T
+        is ConeIntegerLiteralType -> this
         else -> error("sealed: ${this::class}")
     }
 }

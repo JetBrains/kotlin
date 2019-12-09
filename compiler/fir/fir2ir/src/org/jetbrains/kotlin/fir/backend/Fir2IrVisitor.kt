@@ -23,12 +23,16 @@ import org.jetbrains.kotlin.fir.resolve.buildUseSiteMemberScope
 import org.jetbrains.kotlin.fir.resolve.calls.SyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolve.transformers.IntegerLiteralTypeApproximationTransformer
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperator
+import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperatorCall
 import org.jetbrains.kotlin.fir.symbols.AccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
+import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
@@ -70,6 +74,8 @@ class Fir2IrVisitor(
 
         private val UNARY_OPERATIONS: Set<FirOperation> = EnumSet.of(FirOperation.EXCL)
     }
+
+    private val integerApproximator = IntegerLiteralTypeApproximationTransformer(session.firSymbolProvider, session.typeContext)
 
     private val typeContext = session.typeContext
 
@@ -822,6 +828,11 @@ class Fir2IrVisitor(
     }
 
     override fun visitFunctionCall(functionCall: FirFunctionCall, data: Any?): IrElement {
+        val functionCall = if (functionCall.toResolvedCallableSymbol()?.fir is FirIntegerOperator) {
+            functionCall.copy().transformSingle(integerApproximator, null)
+        } else {
+            functionCall
+        }
         return functionCall.toIrExpression(functionCall.typeRef).applyCallArguments(functionCall).applyTypeArguments(functionCall)
             .applyReceivers(functionCall)
     }
@@ -916,10 +927,23 @@ class Fir2IrVisitor(
 
     override fun <T> visitConstExpression(constExpression: FirConstExpression<T>, data: Any?): IrElement {
         return constExpression.convertWithOffsets { startOffset, endOffset ->
+            @Suppress("UNCHECKED_CAST")
+            val kind = constExpression.getIrConstKind() as IrConstKind<T>
+            @Suppress("UNCHECKED_CAST")
+            val value = (constExpression.value as? Long)?.let {
+                when (kind) {
+                    IrConstKind.Byte -> it.toByte()
+                    IrConstKind.Short -> it.toShort()
+                    IrConstKind.Int -> it.toInt()
+                    IrConstKind.Float -> it.toFloat()
+                    IrConstKind.Double -> it.toDouble()
+                    else -> it
+                }
+            } as T ?: constExpression.value
             IrConstImpl(
                 startOffset, endOffset,
                 constExpression.typeRef.toIrType(session, declarationStorage),
-                constExpression.kind, constExpression.value
+                kind, value
             )
         }
     }

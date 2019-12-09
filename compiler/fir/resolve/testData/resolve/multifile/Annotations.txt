@@ -69,9 +69,9 @@ FILE: main.kt
             public get(): R|kotlin/String|
 
     }
-    @R|annotations/WithString|(String(xyz)) public final class Second : @R|annotations/WithInt|(Int(0)) R|test/First| {
+    @R|annotations/WithString|(String(xyz)) public final class Second : @R|annotations/WithInt|(IntegerLiteral(0)) R|test/First| {
         public constructor(y: R|kotlin/Char|): R|test/Second| {
-            super<@R|annotations/WithInt|(Int(0)) R|test/First|>()
+            super<@R|annotations/WithInt|(IntegerLiteral(0)) R|test/First|>()
         }
 
         public final val y: R|kotlin/Char| = R|<local>/y|

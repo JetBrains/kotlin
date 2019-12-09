@@ -5,10 +5,14 @@
 
 package org.jetbrains.kotlin.fir.types
 
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.constants.IntegerLiteralTypeConstructor
+import org.jetbrains.kotlin.types.KotlinTypeFactory
+import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.model.*
 
 sealed class ConeKotlinTypeProjection : TypeArgumentMarker {
@@ -229,4 +233,34 @@ open class ConeTypeVariable(name: String) : TypeVariableMarker {
 
 class ConeTypeVariableTypeConstructor(val debugName: String) : ConeClassifierLookupTag(), TypeVariableTypeConstructorMarker {
     override val name: Name get() = Name.identifier(debugName)
+}
+
+abstract class ConeIntegerLiteralType(val value: Long) : ConeKotlinType(), SimpleTypeMarker, TypeConstructorMarker {
+    abstract val possibleTypes: Collection<ConeClassLikeType>
+    abstract val supertypes: List<ConeClassLikeType>
+
+    override val typeArguments: Array<out ConeKotlinTypeProjection> = emptyArray()
+    override val nullability: ConeNullability = ConeNullability.NOT_NULL
+
+    abstract fun getApproximatedType(expectedType: ConeKotlinType? = null): ConeClassLikeType
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as ConeIntegerLiteralType
+
+        if (possibleTypes != other.possibleTypes) return false
+        if (nullability != other.nullability) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return 31 * possibleTypes.hashCode() + nullability.hashCode()
+    }
+}
+
+fun ConeIntegerLiteralType.canBeInt(): Boolean {
+    return value in Int.MIN_VALUE..Int.MAX_VALUE
 }

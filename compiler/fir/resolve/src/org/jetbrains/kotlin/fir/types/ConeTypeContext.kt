@@ -38,21 +38,24 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     val session: FirSession
 
     override fun TypeConstructorMarker.isIntegerLiteralTypeConstructor(): Boolean {
-        // TODO()
-        return false
+        return this is ConeIntegerLiteralType
     }
 
     override fun SimpleTypeMarker.possibleIntegerTypes(): Collection<KotlinTypeMarker> {
-        TODO("not implemented")
+        return (this as? ConeIntegerLiteralType)?.possibleTypes ?: emptyList()
     }
 
     override fun SimpleTypeMarker.fastCorrespondingSupertypes(constructor: TypeConstructorMarker): List<SimpleTypeMarker>? {
         require(this is ConeKotlinType)
-        return session.correspondingSupertypesCache.getCorrespondingSupertypes(this, constructor)
+        return if (this is ConeIntegerLiteralType) {
+            supertypes
+        } else {
+            session.correspondingSupertypesCache.getCorrespondingSupertypes(this, constructor)
+        }
     }
 
     override fun SimpleTypeMarker.isIntegerLiteralType(): Boolean {
-        return false
+        return this is ConeIntegerLiteralType
     }
 
     override fun KotlinTypeMarker.asSimpleType(): SimpleTypeMarker? {
@@ -65,6 +68,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
             is ConeIntersectionType -> this
             is ConeFlexibleType -> null
             is ConeStubType -> this
+            is ConeIntegerLiteralType -> this
             else -> error("Unknown simpleType: $this")
         }
     }
@@ -134,6 +138,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
             is ConeIntersectionType -> this
             is ConeStubType -> variable.typeConstructor
             is ConeDefinitelyNotNullType -> original.typeConstructor()
+            is ConeIntegerLiteralType -> this
             else -> error("?: $this")
         }
     }
@@ -210,6 +215,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
             is ConeIntersectionType -> 0
             is FirRegularClassSymbol -> fir.typeParameters.size
             is FirTypeAliasSymbol -> fir.typeParameters.size
+            is ConeIntegerLiteralType -> 0
             else -> error("?!:10")
         }
     }
@@ -234,6 +240,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
             is FirTypeAliasSymbol -> listOfNotNull(fir.expandedConeType)
             is ConeCapturedTypeConstructor -> supertypes!!
             is ConeIntersectionType -> intersectedTypes
+            is ConeIntegerLiteralType -> supertypes
             else -> error("?!:13")
         }
     }
@@ -280,7 +287,8 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return when (this) {
             is ConeCapturedTypeConstructor,
             is ConeTypeVariableTypeConstructor,
-            is ConeIntersectionType -> false
+            is ConeIntersectionType,
+            is ConeIntegerLiteralType -> false
             is AbstractFirBasedSymbol<*> -> true
             else -> true
         }
@@ -363,6 +371,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         if (this is ConeCapturedType) return true
         if (this is ConeTypeVariableType) return false
         if (this is ConeIntersectionType) return false
+        if (this is ConeIntegerLiteralType) return true
         if (this is ConeStubType) return true
         if (this is ConeDefinitelyNotNullType) return true
         require(this is ConeLookupTagBasedType)

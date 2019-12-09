@@ -1,15 +1,15 @@
 FILE: modifications.kt
     public? final? fun simple(): R|kotlin/Unit| {
-        lvar x: <implicit> = Int(10)
-        +=(x#, Int(20))
-        -=(x#, Int(5))
-        /=(x#, Int(5))
-        *=(x#, Int(10))
+        lvar x: <implicit> = IntegerLiteral(10)
+        +=(x#, IntegerLiteral(20))
+        -=(x#, IntegerLiteral(5))
+        /=(x#, IntegerLiteral(5))
+        *=(x#, IntegerLiteral(10))
     }
     public? final? fun List<String>.modify(): R|kotlin/Unit| {
         +=(this#, String(Alpha))
         +=(this#, String(Omega))
     }
     public? final? fun Any.modify(): R|kotlin/Unit| {
-        +=((this# as List<Int>), Int(42))
+        +=((this# as List<Int>), IntegerLiteral(42))
     }

@@ -16,10 +16,8 @@ import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.resolve.transformers.FirCallCompletionResultsWriterTransformer
-import org.jetbrains.kotlin.fir.resolve.transformers.InvocationKindTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.*
 import org.jetbrains.kotlin.fir.resolve.transformers.MapArguments
-import org.jetbrains.kotlin.fir.resolve.transformers.StoreType
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
@@ -98,12 +96,14 @@ class FirCallCompleter(
             return call.transformSingle(
                 FirCallCompletionResultsWriterTransformer(
                     session, finalSubstitutor, returnTypeCalculator,
-                    inferenceComponents.approximator
+                    inferenceComponents.approximator,
+                    integerOperatorsTypeUpdater,
+                    integerLiteralTypeApproximator
                 ),
                 null
             )
         }
-        return call
+        return call.transformSingle(integerOperatorsTypeUpdater, null)
     }
 
     private inner class LambdaAnalyzerImpl(

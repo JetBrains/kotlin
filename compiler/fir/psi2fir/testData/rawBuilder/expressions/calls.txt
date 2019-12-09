@@ -3,10 +3,10 @@ FILE: calls.kt
         ^distance x#.plus#(y#)
     }
     public? final? fun test(): Int {
-        ^test Int(3).distance#(Int(4))
+        ^test IntegerLiteral(3).distance#(IntegerLiteral(4))
     }
     public? final? fun testRegular(): Int {
-        ^testRegular distance#(Int(3), Int(4))
+        ^testRegular distance#(IntegerLiteral(3), IntegerLiteral(4))
     }
     public? final? class My : R|kotlin/Any| {
         public? constructor(x: Int): R|My| {
@@ -30,7 +30,7 @@ FILE: calls.kt
 
     }
     public? final? fun testInvoke(): Int {
-        ^testInvoke My#(Int(13)).invoke#()
+        ^testInvoke My#(IntegerLiteral(13)).invoke#()
     }
     public? final? fun testQualified(first: My, second: My?): R|kotlin/Unit| {
         println#(first#.x#)
@@ -38,5 +38,5 @@ FILE: calls.kt
         first#.foo#()
         second#?.foo#()
         first#.copy#().foo#()
-        first#.x# = Int(42)
+        first#.x# = IntegerLiteral(42)
     }

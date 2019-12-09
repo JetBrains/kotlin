@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.fir.expressions.impl
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
+import org.jetbrains.kotlin.fir.expressions.FirConstKind
 import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
-import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 class FirConstExpressionImpl<T> (
     override val source: FirSourceElement?,
-    override val kind: IrConstKind<T>,
+    override var kind: FirConstKind<T>,
     override val value: T
 ) : FirConstExpression<T>(), FirAbstractAnnotatedElement {
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
@@ -40,5 +40,9 @@ class FirConstExpressionImpl<T> (
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
         typeRef = newTypeRef
+    }
+
+    override fun replaceKind(newKind: FirConstKind<T>) {
+        kind = newKind
     }
 }

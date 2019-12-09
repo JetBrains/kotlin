@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.types
 
-import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirConstKind
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.name.ClassId
@@ -56,4 +56,12 @@ val FirAnnotationCall.isExtensionFunctionAnnotationCall: Boolean
 
 fun List<FirAnnotationCall>.dropExtensionFunctionAnnotation(): List<FirAnnotationCall> {
     return filterNot { it.isExtensionFunctionAnnotationCall }
+}
+
+fun ConeClassLikeType.toConstKind(): FirConstKind<*>? = when (lookupTag.classId) {
+    StandardClassIds.Byte -> FirConstKind.Byte
+    StandardClassIds.Short -> FirConstKind.Short
+    StandardClassIds.Int -> FirConstKind.Int
+    StandardClassIds.Long -> FirConstKind.Long
+    else -> null
 }

@@ -2,7 +2,7 @@ FILE: nullability.kt
     public? final? fun orFourtyTwo(arg: Int?): <implicit> {
         ^orFourtyTwo when (lval <elvis>: <implicit> = arg#) {
             ==($subj$, Null(null)) ->  {
-                Int(42)
+                IntegerLiteral(42)
             }
             else ->  {
                 R|<local>/<elvis>|

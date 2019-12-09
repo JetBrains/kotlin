@@ -33,7 +33,7 @@ class TestProperty {
                     return intConst + 1
                 }
             }
-            1
+            return 1
         }
 
     val z = run {

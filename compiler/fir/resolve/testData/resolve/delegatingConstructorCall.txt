@@ -74,3 +74,40 @@ FILE: delegatingConstructorCall.kt
         }
 
     }
+    public open class A4 : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Byte|): R|A4| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Byte| = R|<local>/x|
+            public get(): R|kotlin/Byte|
+
+    }
+    public final class B4 : R|A4| {
+        public constructor(): R|B4| {
+            super<R|A4|>(Byte(1).R|kotlin/Byte.plus|(Byte(1)))
+        }
+
+    }
+    public open class A5 : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Byte|): R|A5| {
+            super<R|kotlin/Any|>()
+        }
+
+        public constructor(x: R|kotlin/Short|): R|A5| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class B5_1 : R|A5| {
+        public constructor(): R|B5_1| {
+            super<R|A5|>(Short(1).R|kotlin/Short.plus|(Short(1)))
+        }
+
+    }
+    public final class B5_2 : R|A5| {
+        public constructor(): R|B5_2| {
+            super<R|A5|>(Short(100).R|kotlin/Short.times|(Short(2)))
+        }
+
+    }

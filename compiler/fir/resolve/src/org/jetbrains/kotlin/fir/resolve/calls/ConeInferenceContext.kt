@@ -260,7 +260,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext,
             TypeSubstitutorMarker {
             override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
                 val new = map[type.typeConstructor()] ?: return null
-                return makeNullableIfNeed(type.isMarkedNullable, new as ConeKotlinType)
+                return makeNullableIfNeed(type.isMarkedNullable, (new as ConeKotlinType).approximateIntegerLiteralType())
             }
         }
     }
@@ -299,10 +299,6 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext,
         return this is ConeCapturedTypeConstructor
     }
 
-    override fun TypeConstructorMarker.getApproximatedIntegerLiteralType(): KotlinTypeMarker {
-        TODO()
-    }
-
     override fun KotlinTypeMarker.removeExactAnnotation(): KotlinTypeMarker {
         // TODO
         return this
@@ -314,7 +310,11 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext,
     }
 
     override fun findCommonIntegerLiteralTypesSuperType(explicitSupertypes: List<SimpleTypeMarker>): SimpleTypeMarker? {
-        // TODO: implement
-        return null
+        return ConeIntegerLiteralTypeImpl.findCommonSuperType(explicitSupertypes)
+    }
+
+    override fun TypeConstructorMarker.getApproximatedIntegerLiteralType(): KotlinTypeMarker {
+        require(this is ConeIntegerLiteralType)
+        return this.getApproximatedType()
     }
 }

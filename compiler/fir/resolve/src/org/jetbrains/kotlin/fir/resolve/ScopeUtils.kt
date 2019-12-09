@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.impl.FirCompositeScope
+import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
@@ -45,6 +45,14 @@ fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: ScopeSession)
             }
         )
         is ConeDefinitelyNotNullType -> original.scope(useSiteSession, scopeSession)
+        is ConeIntegerLiteralType -> {
+            scopeSession.getOrBuild(
+                FirIntegerLiteralTypeScope.ILT_SYMBOL,
+                FirIntegerLiteralTypeScope.SCOPE_SESSION_KEY
+            ) {
+                FirIntegerLiteralTypeScope(useSiteSession)
+            }
+        }
         else -> error("Failed type $this")
     }
 }

@@ -275,6 +275,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/resolve/testData/resolve/arguments/incorrectFunctionalType.kt");
         }
 
+        @TestMetadata("integerLiteralTypes.kt")
+        public void testIntegerLiteralTypes() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/arguments/integerLiteralTypes.kt");
+        }
+
         @TestMetadata("invoke.kt")
         public void testInvoke() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/arguments/invoke.kt");
@@ -303,6 +308,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         @TestMetadata("lambdaInUnresolvedCall.kt")
         public void testLambdaInUnresolvedCall() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/arguments/lambdaInUnresolvedCall.kt");
+        }
+
+        @TestMetadata("operatorsOverLiterals.kt")
+        public void testOperatorsOverLiterals() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/arguments/operatorsOverLiterals.kt");
         }
 
         @TestMetadata("overloadByReceiver.kt")

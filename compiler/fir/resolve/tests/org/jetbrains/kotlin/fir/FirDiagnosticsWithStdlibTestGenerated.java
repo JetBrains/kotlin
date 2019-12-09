@@ -158,6 +158,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         runTest("compiler/fir/resolve/testData/resolve/stdlib/problems.kt");
     }
 
+    @TestMetadata("rangeTo.kt")
+    public void testRangeTo() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/stdlib/rangeTo.kt");
+    }
+
     @TestMetadata("recursiveBug.kt")
     public void testRecursiveBug() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/stdlib/recursiveBug.kt");

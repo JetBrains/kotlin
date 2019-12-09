@@ -10,10 +10,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.FirConstExpression
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.classId
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirConstExpressionImpl
 import org.jetbrains.kotlin.fir.expressions.impl.FirQualifiedAccessExpressionImpl
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
@@ -35,7 +32,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
-import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.DEFAULT_NULL_FQ_NAME
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.DEFAULT_VALUE_FQ_NAME
 import org.jetbrains.kotlin.load.java.descriptors.AnnotationDefaultValue
@@ -391,15 +387,15 @@ internal fun ConeKotlinType.lexicalCastFrom(session: FirSession, value: String):
 
     val (number, radix) = extractRadix(value)
     return when (classId.relativeClassName.asString()) {
-        "Boolean" -> FirConstExpressionImpl(null, IrConstKind.Boolean, value.toBoolean())
-        "Char" -> FirConstExpressionImpl(null, IrConstKind.Char, value.singleOrNull() ?: return null)
-        "Byte" -> FirConstExpressionImpl(null, IrConstKind.Byte, number.toByteOrNull(radix) ?: return null)
-        "Short" -> FirConstExpressionImpl(null, IrConstKind.Short, number.toShortOrNull(radix) ?: return null)
-        "Int" -> FirConstExpressionImpl(null, IrConstKind.Int, number.toIntOrNull(radix) ?: return null)
-        "Long" -> FirConstExpressionImpl(null, IrConstKind.Long, number.toLongOrNull(radix) ?: return null)
-        "Float" -> FirConstExpressionImpl(null, IrConstKind.Float, value.toFloatOrNull() ?: return null)
-        "Double" -> FirConstExpressionImpl(null, IrConstKind.Double, value.toDoubleOrNull() ?: return null)
-        "String" -> FirConstExpressionImpl(null, IrConstKind.String, value)
+        "Boolean" -> FirConstExpressionImpl(null, FirConstKind.Boolean, value.toBoolean())
+        "Char" -> FirConstExpressionImpl(null, FirConstKind.Char, value.singleOrNull() ?: return null)
+        "Byte" -> FirConstExpressionImpl(null, FirConstKind.Byte, number.toByteOrNull(radix) ?: return null)
+        "Short" -> FirConstExpressionImpl(null, FirConstKind.Short, number.toShortOrNull(radix) ?: return null)
+        "Int" -> FirConstExpressionImpl(null, FirConstKind.Int, number.toIntOrNull(radix) ?: return null)
+        "Long" -> FirConstExpressionImpl(null, FirConstKind.Long, number.toLongOrNull(radix) ?: return null)
+        "Float" -> FirConstExpressionImpl(null, FirConstKind.Float, value.toFloatOrNull() ?: return null)
+        "Double" -> FirConstExpressionImpl(null, FirConstKind.Double, value.toDoubleOrNull() ?: return null)
+        "String" -> FirConstExpressionImpl(null, FirConstKind.String, value)
         else -> null
     }
 }

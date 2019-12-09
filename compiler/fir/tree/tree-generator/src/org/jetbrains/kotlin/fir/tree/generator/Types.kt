@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.tree.generator.context.generatedType
 import org.jetbrains.kotlin.fir.tree.generator.context.type
 import org.jetbrains.kotlin.fir.types.ConeClassErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -23,7 +22,7 @@ import org.jetbrains.kotlin.types.Variance
 
 val sourceElementType = type("fir", "FirSourceElement")
 val jumpTargetType = type("fir", "FirTarget")
-val constKindType = type(IrConstKind::class)
+val constKindType = generatedType("expressions", "FirConstKind")
 val operationType = type("fir.expressions", "FirOperation")
 val classKindType = type(ClassKind::class)
 val invocationKindType = type(InvocationKind::class)

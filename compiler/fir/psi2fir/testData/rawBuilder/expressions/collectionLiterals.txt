@@ -32,7 +32,7 @@ FILE: collectionLiterals.kt
         }
 
     }
-    @Ann1(<implicitArrayOf>(Int(1), Int(2))) public? final? class First : R|kotlin/Any| {
+    @Ann1(<implicitArrayOf>(IntegerLiteral(1), IntegerLiteral(2))) public? final? class First : R|kotlin/Any| {
         public? constructor(): R|First| {
             super<R|kotlin/Any|>()
         }

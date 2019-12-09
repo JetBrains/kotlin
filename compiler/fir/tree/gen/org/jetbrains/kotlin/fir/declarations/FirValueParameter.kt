@@ -48,6 +48,8 @@ abstract class FirValueParameter : FirPureAbstractElement(), FirVariable<FirValu
 
     abstract override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirValueParameter
 
+    abstract override fun <D> transformInitializer(transformer: FirTransformer<D>, data: D): FirValueParameter
+
     abstract override fun <D> transformGetter(transformer: FirTransformer<D>, data: D): FirValueParameter
 
     abstract override fun <D> transformSetter(transformer: FirTransformer<D>, data: D): FirValueParameter

@@ -61,7 +61,7 @@ FILE: localObject.kt
 
                 }
 
-                Int(1)
+                ^ Int(1)
             }
 
         public final val z: R|kotlin/Int| = R|/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| {

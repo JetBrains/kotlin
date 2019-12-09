@@ -25,4 +25,8 @@ abstract class FirReturnExpression : FirPureAbstractElement(), FirJump<FirFuncti
     abstract val result: FirExpression
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitReturnExpression(this, data)
+
+    abstract fun <D> transformResult(transformer: FirTransformer<D>, data: D): FirReturnExpression
+
+    abstract fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirReturnExpression
 }
