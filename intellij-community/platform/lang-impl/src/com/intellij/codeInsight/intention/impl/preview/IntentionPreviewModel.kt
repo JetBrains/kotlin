@@ -6,6 +6,7 @@ import com.intellij.diff.comparison.ComparisonPolicy
 import com.intellij.diff.fragments.LineFragment
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.EditorFactory
+import com.intellij.openapi.editor.LineNumberConverter
 import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileTypes.FileType
@@ -86,7 +87,7 @@ internal class IntentionPreviewModel {
 
       editor.gutterComponentEx.apply {
         setPaintBackground(false)
-        setLineNumberConvertor { line -> line + lineShift }
+        setLineNumberConverter(LineNumberConverter.Simple { _, line -> line + lineShift })
       }
 
       return editor
