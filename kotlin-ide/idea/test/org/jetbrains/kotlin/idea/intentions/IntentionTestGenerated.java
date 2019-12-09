@@ -3025,9 +3025,24 @@ public abstract class IntentionTestGenerated extends AbstractIntentionTest {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
-            @TestMetadata("hasJvmFieldInInterface.kt")
-            public void testHasJvmFieldInInterface() throws Exception {
-                runTest("testData/intentions/changeVisibility/internal/hasJvmFieldInInterface.kt");
+            @TestMetadata("hasJvmFieldInInterfaceCompanion.kt")
+            public void testHasJvmFieldInInterfaceCompanion() throws Exception {
+                runTest("testData/intentions/changeVisibility/internal/hasJvmFieldInInterfaceCompanion.kt");
+            }
+
+            @TestMetadata("hasJvmFieldInInterfaceObject.kt")
+            public void testHasJvmFieldInInterfaceObject() throws Exception {
+                runTest("testData/intentions/changeVisibility/internal/hasJvmFieldInInterfaceObject.kt");
+            }
+
+            @TestMetadata("inInterface.kt")
+            public void testInInterface() throws Exception {
+                runTest("testData/intentions/changeVisibility/internal/inInterface.kt");
+            }
+
+            @TestMetadata("inInterfaceCompanion.kt")
+            public void testInInterfaceCompanion() throws Exception {
+                runTest("testData/intentions/changeVisibility/internal/inInterfaceCompanion.kt");
             }
 
             @TestMetadata("notForAnnotationClassPrimaryConstructor.kt")
