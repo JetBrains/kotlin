@@ -450,7 +450,9 @@ abstract class AbstractGradleMultiplatformWizardTest : ProjectWizardTestCase<Abs
                 testClassResults.forEach {
                     assertThat(it.results, "test class results").isNotEmpty()
                     println("Finished ${it.classDisplayName}, testCount: ${it.results.count()}")
-                    it.results.forEach { test -> test.resultType.name == "SUCCESS" }
+                    it.results.forEach { test ->
+                        assertThat(test.resultType.name, test.displayName).isEqualTo("SUCCESS")
+                    }
                 }
             }
         }

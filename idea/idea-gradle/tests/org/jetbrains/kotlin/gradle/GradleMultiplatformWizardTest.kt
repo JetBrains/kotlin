@@ -208,8 +208,16 @@ class GradleMultiplatformWizardTest : AbstractGradleMultiplatformWizardTest() {
             }
             checkGradleConfiguration()
             /*  TODO: return after fix KT-35095
-                 runGradleImport()
-                 runGradleTests("SampleTests", "SampleTestsJVM")*/
+            runGradleImport()
+            runGradleTestTasks {
+                test("jsBrowserTest") {
+                    testClassCount = 2
+                }
+
+                test("jvmTest") {
+                    testClassCount = 2
+                }
+            }*/
         }
     }
 }
