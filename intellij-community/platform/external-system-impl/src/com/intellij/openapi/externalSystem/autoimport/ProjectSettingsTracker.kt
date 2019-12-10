@@ -67,8 +67,6 @@ class ProjectSettingsTracker(
 
   fun getModificationType() = modificationType.get()
 
-  private fun hasChanges() = hasChanges(calculateSettingsFilesCRC())
-
   private fun hasChanges(newSettingsFilesCRC: Map<String, Long>): Boolean {
     val oldSettingsFilesCRC = settingsFilesCRC.get()
     if (newSettingsFilesCRC.size != oldSettingsFilesCRC.size) return true
@@ -83,13 +81,12 @@ class ProjectSettingsTracker(
   private fun applyChanges() {
     applyChangesOperation.startTask()
     submitSettingsFilesRefresh {
-      nonBlockingReadAction {
-        settingsFilesCRC.set(calculateSettingsFilesCRC())
+      submitSettingsFilesCRCCalculation { newSettingsFilesCRC ->
+        settingsFilesCRC.set(newSettingsFilesCRC)
         modificationType.set(null)
         status.markSynchronized(currentTime())
-      }.finishOnUiThread {
         applyChangesOperation.finishTask()
-      }.submit()
+      }
     }
   }
 
@@ -100,30 +97,27 @@ class ProjectSettingsTracker(
   private fun applyUnknownChanges() {
     applyChangesOperation.startTask()
     submitSettingsFilesRefresh {
-      nonBlockingReadAction {
-        val newSettingsFilesCRC = calculateSettingsFilesCRC()
+      submitSettingsFilesCRCCalculation { newSettingsFilesCRC ->
         settingsFilesCRC.updateAndGet { newSettingsFilesCRC + it }
         if (!hasChanges(newSettingsFilesCRC)) {
           modificationType.set(null)
           status.markSynchronized(currentTime())
         }
-      }.finishOnUiThread {
         applyChangesOperation.finishTask()
-      }.submit()
+      }
     }
   }
 
   fun refreshChanges() {
     submitSettingsFilesRefresh {
-      nonBlockingReadAction {
+      submitSettingsFilesCRCCalculation { newSettingsFilesCRC ->
         modificationType.set(null)
-        when (hasChanges()) {
+        when (hasChanges(newSettingsFilesCRC)) {
           true -> status.markDirty(currentTime())
           else -> status.markReverted(currentTime())
         }
-      }.finishOnUiThread {
         projectTracker.scheduleProjectRefresh()
-      }.submit()
+      }
     }
   }
 
@@ -147,7 +141,11 @@ class ProjectSettingsTracker(
     }
   }
 
-  private fun NonBlockingReadActionBuilder<*>.submit() = submit(parentDisposable)
+  private fun submitSettingsFilesCRCCalculation(action: (Map<String, Long>) -> Unit) {
+    nonBlockingReadAction { calculateSettingsFilesCRC() }
+      .finishOnUiThread { action(it) }
+      .submit(parentDisposable)
+  }
 
   private fun invokeLater(action: () -> Unit) {
     val application = ApplicationManager.getApplication()
@@ -263,8 +261,14 @@ class ProjectSettingsTracker(
     fun updateFile(path: String, modificationStamp: Long, type: ModificationType) {
       hasRelevantChanges = true
       logModificationAsDebug(path, modificationStamp, type)
-      modificationType.updateAndGet { if (it == INTERNAL) INTERNAL else type }
-      status.markModified(currentTime())
+      if (applyChangesOperation.isOperationCompleted()) {
+        modificationType.updateAndGet { if (it == INTERNAL) INTERNAL else type }
+        status.markModified(currentTime())
+      }
+      else {
+        modificationType.set(null)
+        status.markDirty(currentTime())
+      }
     }
 
     fun init() {
@@ -274,18 +278,13 @@ class ProjectSettingsTracker(
 
     fun apply() {
       if (hasRelevantChanges) {
-        nonBlockingReadAction {
-          if (!hasChanges()) {
+        submitSettingsFilesCRCCalculation { newSettingsFilesCRC ->
+          if (!hasChanges(newSettingsFilesCRC)) {
             modificationType.set(null)
             status.markReverted(currentTime())
           }
-          if (!applyChangesOperation.isOperationCompleted()) {
-            modificationType.set(null)
-            status.markDirty(currentTime())
-          }
-        }.finishOnUiThread {
           projectTracker.scheduleChangeProcessing()
-        }.submit()
+        }
       }
     }
 
