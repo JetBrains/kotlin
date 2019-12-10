@@ -8419,6 +8419,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/redundantOverride/callDifferentSuperMethod.kt");
         }
 
+        @TestMetadata("callDifferentSuperMethod2.kt")
+        public void testCallDifferentSuperMethod2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantOverride/callDifferentSuperMethod2.kt");
+        }
+
         @TestMetadata("classAndInterface.kt")
         public void testClassAndInterface() throws Exception {
             runTest("idea/testData/inspectionsLocal/redundantOverride/classAndInterface.kt");

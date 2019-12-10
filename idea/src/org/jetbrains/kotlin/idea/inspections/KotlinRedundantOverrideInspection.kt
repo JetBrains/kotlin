@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
@@ -58,8 +59,15 @@ class KotlinRedundantOverrideInspection : AbstractKotlinInspection(), CleanupLoc
             val superCallElement = qualifiedExpression.selectorExpression as? KtCallElement ?: return
             if (!isSameFunctionName(superCallElement, function)) return
             if (!isSameArguments(superCallElement, function)) return
+
             val context = function.analyze()
             val functionDescriptor = context[BindingContext.FUNCTION, function]
+            val functionParams = functionDescriptor?.valueParameters.orEmpty()
+            val superCallFunctionParams = superCallElement.resolveToCall()?.resultingDescriptor?.valueParameters.orEmpty()
+            if (functionParams.size == superCallFunctionParams.size
+                && functionParams.zip(superCallFunctionParams).any { it.first.type != it.second.type }
+            ) return
+
             if (function.hasDerivedProperty(functionDescriptor, context)) return
             val overriddenDescriptors = functionDescriptor?.original?.overriddenDescriptors
             if (overriddenDescriptors?.any { it is JavaMethodDescriptor && it.visibility == JavaDescriptorVisibilities.PACKAGE_VISIBILITY } == true) return
