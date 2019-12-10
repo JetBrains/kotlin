@@ -4,7 +4,7 @@
 // WITH_RUNTIME
 // FILE: equalsNull_withExplicitFlag.kt
 
-// Should be: IGNORE_BACKEND: JVM_IR
+// Should be ignored on JVM IR.
 // ^ TODO: fix intrinsic for 'equals' for boxed primitives
 // JVM_IR supports behavior since Kotlin 1.3,
 // and '-Xno-exception-on-explicit-equals-for-boxed-null' is a fallback flag introduced in 1.2.

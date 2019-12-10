@@ -16722,9 +16722,9 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
                 runTest("compiler/testData/codegen/box/platformTypes/primitives/equals.kt");
             }
 
-            @TestMetadata("equalsNull_lv12.kt")
-            public void testEqualsNull_lv12() throws Exception {
-                runTest("compiler/testData/codegen/box/platformTypes/primitives/equalsNull_lv12.kt");
+            @TestMetadata("equalsNull.kt")
+            public void testEqualsNull() throws Exception {
+                runTest("compiler/testData/codegen/box/platformTypes/primitives/equalsNull.kt");
             }
 
             @TestMetadata("equalsNull_withExplicitFlag.kt")
