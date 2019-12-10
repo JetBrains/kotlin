@@ -9232,6 +9232,11 @@ public abstract class QuickFixTestGenerated extends AbstractQuickFixTest {
                 runTest("testData/quickfix/override/nothingToOverride/addFunctionNonUnitReturnType.kt");
             }
 
+            @TestMetadata("addFunctionReciever.kt")
+            public void testAddFunctionReciever() throws Exception {
+                runTest("idea/testData/quickfix/override/nothingToOverride/addFunctionReciever.kt");
+            }
+
             @TestMetadata("addFunctionSealedClass.kt")
             public void testAddFunctionSealedClass() throws Exception {
                 runTest("testData/quickfix/override/nothingToOverride/addFunctionSealedClass.kt");
@@ -9290,6 +9295,11 @@ public abstract class QuickFixTestGenerated extends AbstractQuickFixTest {
             @TestMetadata("addTypeParameter2.kt")
             public void testAddTypeParameter2() throws Exception {
                 runTest("testData/quickfix/override/nothingToOverride/addTypeParameter2.kt");
+            }
+
+            @TestMetadata("changeFunctionReciever.kt")
+            public void testChangeFunctionReciever() throws Exception {
+                runTest("idea/testData/quickfix/override/nothingToOverride/changeFunctionReciever.kt");
             }
 
             @TestMetadata("changeParameterType.kt")

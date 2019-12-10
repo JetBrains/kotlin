@@ -338,8 +338,15 @@ class ChangeMemberFunctionSignatureFix private constructor(
                 } as KtParameterList
                 ShortenReferences.DEFAULT.process(newParameterList)
 
-                if (patternFunction.receiverTypeReference == null && function.receiverTypeReference != null) {
-                    function.setReceiverTypeReference(null)
+                val patternFunctionReceiver = patternFunction.receiverTypeReference
+                if (patternFunctionReceiver == null) {
+                    if (function.receiverTypeReference != null) {
+                        function.setReceiverTypeReference(null)
+                    }
+                } else {
+                    function.setReceiverTypeReference(patternFunction.receiverTypeReference)?.let {
+                        ShortenReferences.DEFAULT.process(it)
+                    }
                 }
 
                 val patternTypeParameterList = patternFunction.typeParameterList
