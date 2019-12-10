@@ -20,9 +20,7 @@ import com.intellij.openapi.projectRoots.SdkModificator;
 import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.wm.ex.ProgressIndicatorEx;
-import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -122,14 +120,13 @@ public class SdkDownloadTracker implements Disposable {
    * @param sdk                        the Sdk instance that to check (it could be it's #clone())
    * @param lifetime                   unsubscribe callback
    * @param indicator                  progress indicator to deliver progress
-   * @param onDownloadCompleteCallback called once (with {@code true} to indicate success and {@code false} for a failure)
-   *                                   download is completed from ETD to update the UI,
+   * @param onDownloadCompleteCallback called once download is completed from ETD to update the UI
    * @return true if the given Sdk is downloading right now
    */
   public boolean tryRegisterDownloadingListener(@NotNull Sdk sdk,
                                                 @NotNull Disposable lifetime,
                                                 @NotNull ProgressIndicator indicator,
-                                                @NotNull Consumer<Boolean> onDownloadCompleteCallback) {
+                                                @NotNull Runnable onDownloadCompleteCallback) {
     ApplicationManager.getApplication().assertIsDispatchThread();
     PendingDownload pd = findTask(sdk);
     if (pd == null) return false;
@@ -192,7 +189,7 @@ public class SdkDownloadTracker implements Disposable {
     final SdkDownloadTask myTask;
     final SdkSet myEditableSdks = new SdkSet();
     final ProgressIndicatorBase myProgressIndicator = new ProgressIndicatorBase();
-    final Set<Consumer<Boolean>> myCompleteListeners = Sets.newIdentityHashSet();
+    final Set<Runnable> myCompleteListeners = Sets.newIdentityHashSet();
     final Set<Disposable> myDisposables = Sets.newIdentityHashSet();
     final PendingDownloadModalityTracker myModalityTracker = new PendingDownloadModalityTracker();
 
@@ -269,7 +266,7 @@ public class SdkDownloadTracker implements Disposable {
 
     void registerListener(@NotNull Disposable lifetime,
                           @NotNull ProgressIndicator uiIndicator,
-                          @NotNull Consumer<Boolean> completedCallback) {
+                          @NotNull Runnable completedCallback) {
       ApplicationManager.getApplication().assertIsDispatchThread();
       myModalityTracker.updateModality();
 
@@ -304,18 +301,10 @@ public class SdkDownloadTracker implements Disposable {
           for (Sdk sdk : myEditableSdks.copy()) {
             try {
               SdkType sdkType = (SdkType)sdk.getSdkType();
-              configureSdk(sdk, myTask);
-
-              try {
-                String actualVersion = sdkType.getVersionString(sdk);
-                SdkModificator modificator = sdk.getSdkModificator();
-                modificator.setVersionString(actualVersion);
-                modificator.commitChanges();
-              } catch (Exception e) {
-                LOG.warn("Failed to configure a downloaded sdk. " + e.getMessage(), e);
-              }
-
               sdkType.setupSdkPaths(sdk);
+              SdkModificator modificator = sdk.getSdkModificator();
+              modificator.setVersionString(sdkType.getVersionString(sdk));
+              modificator.commitChanges();
             }
             catch (Exception e) {
               LOG.warn("Failed to setup Sdk " + sdk + ". " + e.getMessage(), e);
@@ -325,27 +314,20 @@ public class SdkDownloadTracker implements Disposable {
       }
 
       // dispose our own state
-      myModalityTracker.invokeLater(() -> disposeNow(!failed));
+      myModalityTracker.invokeLater(() -> disposeNow());
     }
 
-    void disposeNow(boolean succeeded) {
+    void disposeNow() {
       ApplicationManager.getApplication().assertIsDispatchThread();
       getInstance().removeTask(this);
       //collections may change from the callbacks
-      new ArrayList<>(myCompleteListeners).forEach(it -> it.consume(succeeded));
+      new ArrayList<>(myCompleteListeners).forEach(Runnable::run);
       new ArrayList<>(myDisposables).forEach(Disposable::dispose);
     }
 
     void cancel() {
       myProgressIndicator.cancel();
-      myModalityTracker.invokeLater(() -> disposeNow(false));
+      myModalityTracker.invokeLater(() -> disposeNow());
     }
-  }
-
-  public static void configureSdk(@NotNull Sdk sdk, @NotNull SdkDownloadTask task) {
-    SdkModificator mod = sdk.getSdkModificator();
-    mod.setVersionString(task.getPlannedVersion());
-    mod.setHomePath(FileUtil.toSystemIndependentName(task.getPlannedHomeDir()));
-    mod.commitChanges();
   }
 }
