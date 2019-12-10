@@ -867,6 +867,11 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
                 runTest("idea/testData/formatter/callChain/CallChainWrapping.after.kt");
             }
 
+            @TestMetadata("CallChainWrapping2.after.kt")
+            public void testCallChainWrapping2() throws Exception {
+                runTest("idea/testData/formatter/callChain/CallChainWrapping2.after.kt");
+            }
+
             @TestMetadata("CallChainWrappingChopDown.after.kt")
             public void testCallChainWrappingChopDown() throws Exception {
                 runTest("idea/testData/formatter/callChain/CallChainWrappingChopDown.after.kt");
@@ -1435,6 +1440,11 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             @TestMetadata("CallChainWrapping.after.inv.kt")
             public void testCallChainWrapping() throws Exception {
                 runTest("idea/testData/formatter/callChain/CallChainWrapping.after.inv.kt");
+            }
+
+            @TestMetadata("CallChainWrapping2.after.inv.kt")
+            public void testCallChainWrapping2() throws Exception {
+                runTest("idea/testData/formatter/callChain/CallChainWrapping2.after.inv.kt");
             }
 
             @TestMetadata("CallChainWrappingChopDown.after.inv.kt")

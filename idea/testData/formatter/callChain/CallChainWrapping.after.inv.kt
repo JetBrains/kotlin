@@ -3,6 +3,44 @@ val x = foo
         .baz()
         .quux()
 
+val x2 = foo()
+        .bar()
+        .baz()
+        .quux()
+
+val x3 = ((foo()
+        .bar()))
+        .baz()
+        .quux()
+
+val x4 = (foo()
+        .bar()
+        .baz())
+        .quux()
+
+val x5 = (foo())
+        .bar()
+        .baz()
+        .quux()
+
+val x6 = foo!!
+        .bar()
+        .baz()!!
+        .quux()!!
+
+val x7 = foo!!
+        .bar()
+        .baz()!!
+        .quux()!!
+
+val x8 = foo!!!!!!!!
+        .bar()
+        .baz()!!
+        .quux()!!
+
+val x9 = ((b!!)!!!!)!!
+        .f
+
 val y = xyzzy(foo
         .bar()
         .baz()

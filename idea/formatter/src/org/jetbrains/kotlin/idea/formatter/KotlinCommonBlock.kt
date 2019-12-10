@@ -122,7 +122,9 @@ abstract class KotlinCommonBlock(
         return nodeSubBlocks
     }
 
-    private fun ASTNode.isQualifiedNode(): Boolean {
+    private fun ASTNode.isQualifiedNode(strict: Boolean = false): Boolean {
+        if (strict) return elementType in QUALIFIED_EXPRESSIONS
+
         var currentNode: ASTNode? = this
         while (currentNode != null) {
             if (currentNode.elementType in QUALIFIED_EXPRESSIONS) return true
@@ -143,7 +145,7 @@ abstract class KotlinCommonBlock(
         if (operationBlockIndex == -1) return nodeSubBlocks
 
         val block = nodeSubBlocks.first()
-        val wrap = createWrapForQualifiedExpression(block.requireNode())
+        val wrap = createWrapForQualifiedExpression(node)
         val indent = createIndentForQualifiedExpression(block)
         val newBlock = block.processBlock(indent, wrap)
         return nodeSubBlocks.replaceBlock(newBlock, 0).splitAtIndex(operationBlockIndex, indent, wrap)
@@ -164,7 +166,11 @@ abstract class KotlinCommonBlock(
             else -> return this
         }
 
-        val resultWrap = wrap.takeIf { elementType != PARENTHESIZED } ?: createWrapForQualifiedExpression(currentNode)
+        val resultWrap = if (currentNode.wrapForFirstCallInChainIsAllowed)
+            wrap.takeIf { elementType != PARENTHESIZED } ?: createWrapForQualifiedExpression(currentNode)
+        else
+            null
+
         val newBlock = subBlocks.elementAt(index).processBlock(indent, resultWrap)
         return subBlocks.replaceBlock(newBlock, index).let {
             val operationIndex = subBlocks.indexOfBlockWithType(QUALIFIED_OPERATION)
@@ -175,22 +181,20 @@ abstract class KotlinCommonBlock(
         }.wrapToBlock(currentNode, this)
     }
 
-    private fun List<ASTBlock>.replaceBlock(
-        block: ASTBlock,
-        index: Int = 0
-    ): List<ASTBlock> = subList(0, index) + block + (takeIf { index + 1 < it.size }?.subList(index + 1, size) ?: emptyList())
+    private fun List<ASTBlock>.replaceBlock(block: ASTBlock, index: Int = 0): List<ASTBlock> = toMutableList().apply { this[index] = block }
 
-    private fun createWrapForQualifiedExpression(node: ASTNode): Wrap? {
-        val isNonFirstChainedCall = (node.treeParent)?.isQualifiedNode() == true
+    private val ASTNode.wrapForFirstCallInChainIsAllowed
+        get() = settings.kotlinCommonSettings.WRAP_FIRST_METHOD_IN_CALL_CHAIN ||
+                settings.kotlinCommonSettings.METHOD_CALL_CHAIN_WRAP != CommonCodeStyleSettings.WRAP_AS_NEEDED ||
+                firstChildNode?.isQualifiedNode(true) == true
 
-        return if (isNonFirstChainedCall)
-            Wrap.createWrap(
-                settings.kotlinCommonSettings.METHOD_CALL_CHAIN_WRAP,
-                settings.kotlinCommonSettings.WRAP_FIRST_METHOD_IN_CALL_CHAIN
-            )
-        else
-            null
-    }
+    private fun createWrapForQualifiedExpression(node: ASTNode): Wrap? = if (node.wrapForFirstCallInChainIsAllowed)
+        Wrap.createWrap(
+            settings.kotlinCommonSettings.METHOD_CALL_CHAIN_WRAP,
+            settings.kotlinCommonSettings.WRAP_FIRST_METHOD_IN_CALL_CHAIN
+        )
+    else
+        null
 
     private fun createIndentForQualifiedExpression(block: ASTBlock): Indent {
         // enforce indent to children when there's a line break before the dot in any call in the chain (meaning that
