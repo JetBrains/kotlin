@@ -14,6 +14,7 @@ import com.jetbrains.cidr.xcode.frameworks.buildSystem.BuildSettingNames
 import com.jetbrains.cidr.xcode.model.PBXBuildPhase
 import com.jetbrains.cidr.xcode.model.PBXCopyFilesBuildPhase
 import com.jetbrains.cidr.xcode.model.PBXDictionary
+import com.jetbrains.cidr.xcode.model.PBXTarget
 import com.jetbrains.cidr.xcode.model.PBXProjectFileManipulator
 import com.jetbrains.cidr.xcode.plist.Plist
 import com.jetbrains.cidr.xcode.plist.XMLPlistDriver
@@ -45,8 +46,8 @@ private class DefaultAppleSourceSet(@Suppress("ACCIDENTAL_OVERRIDE") override va
 }
 
 private open class AppleBuildTask @Inject constructor(
-        private val target: AppleTarget,
-        private val execActionFactory: ExecActionFactory
+    protected val target: AppleTarget,
+    protected val execActionFactory: ExecActionFactory
 ) : DefaultTask() {
     init {
         group = BasePlugin.BUILD_GROUP
@@ -69,19 +70,30 @@ private open class AppleBuildTask @Inject constructor(
         val projectFile = projectDir.resolve("project.pbxproj")
         projectFile.createNewFile()
 
-        val infoPlistFile = baseDir.resolve("Info-${target.name}.plist")
-        XMLPlistDriver().write(Plist().also { plist ->
-            plist["CFBundleDevelopmentRegion"] = "$(DEVELOPMENT_LANGUAGE)"
-            plist["CFBundleExecutable"] = "$(EXECUTABLE_NAME)"
-            plist["CFBundleIdentifier"] = "$(PRODUCT_BUNDLE_IDENTIFIER)"
-            plist["CFBundleInfoDictionaryVersion"] = "6.0"
-            plist["CFBundleName"] = "$(PRODUCT_NAME)"
-            plist["CFBundlePackageType"] = "APPL"
-            plist["CFBundleShortVersionString"] = "1.0"
-            plist["CFBundleVersion"] = "1"
+        fun writePlist(name: String, map: Map<String, Any>): File {
+            val plist = Plist().also { plist ->
+                plist["CFBundleDevelopmentRegion"] = "$(DEVELOPMENT_LANGUAGE)"
+                plist["CFBundleExecutable"] = "$(EXECUTABLE_NAME)"
+                plist["CFBundleIdentifier"] = "$(PRODUCT_BUNDLE_IDENTIFIER)"
+                plist["CFBundleInfoDictionaryVersion"] = "6.0"
+                plist["CFBundleName"] = "$(PRODUCT_NAME)"
+                plist["CFBundlePackageType"] = "APPL"
+                plist["CFBundleShortVersionString"] = "1.0"
+                plist["CFBundleVersion"] = "1"
+            }
+            plist += map
+
+            val file = baseDir.resolve(name + ".plist")
+            XMLPlistDriver().write(plist, file)
+            return file
+        }
+
+        val targetPlist = mutableMapOf<String, Any>().also { plist ->
             target.launchStoryboard?.let { plist["UILaunchStoryboardName"] = it }
             target.mainStoryboard?.let { plist["UIMainStoryboardFile"] = it }
-        }, infoPlistFile)
+        }
+        val infoPlistFile = writePlist("Info-${target.name}", targetPlist)
+        val testInfoPlistFile = writePlist("Info-${target.name}Tests", emptyMap<String, Any>())
 
         val vBaseDir = StandardFileSystems.local().refreshAndFindFileByPath(baseDir.path)!!
         val vProjectFile =
@@ -118,6 +130,7 @@ private open class AppleBuildTask @Inject constructor(
         val mainGroup = pbxProjectFile.projectObject.mainGroup!!
 
         val sourceDirectorySet = target.sourceSet.apple
+        val testSourceDirectorySet = target.testSourceSet.apple
         val symRoot = sourceDirectorySet.outputDir
 
         with(pbxProjectFile.manipulator) {
@@ -126,54 +139,88 @@ private open class AppleBuildTask @Inject constructor(
             val sourcesGroupDir = sourceDirectorySet.srcDirs.firstOrNull { it.isDirectory && it.exists() }
                     ?: baseDir.resolve("Sources")
             val sourcesGroup = addGroup("SOURCE_ROOT", "Sources", sourcesGroupDir.path)
+
+            val testSourcesGroupDir = testSourceDirectorySet.srcDirs.firstOrNull { it.isDirectory && it.exists() }
+                ?: baseDir.resolve("Tests")
+            val testSourcesGroup = addGroup("SOURCE_ROOT", "Tests", testSourcesGroupDir.path)
+
             val frameworksGroupDir = frameworkDirs.firstOrNull() ?: baseDir.resolve("Frameworks")
             val frameworksGroup = addGroup(null, "Frameworks", frameworksGroupDir.path)
 
-            val targetSettings = mutableMapOf(
+            fun addTarget(name: String, typeId: String, customSettings: Map<String, Any>): PBXTarget {
+                val settings = mutableMapOf(
                     BuildSettingNames.SDKROOT to ApplePlatform.Type.IOS.platformName,
                     BuildSettingNames.SYMROOT to symRoot.toRelativeString(baseDir),
                     BuildSettingNames.OBJROOT to "build",
-                    BuildSettingNames.PRODUCT_BUNDLE_IDENTIFIER to getQualifiedName(target.name),
                     BuildSettingNames.PRODUCT_NAME to target.name,
-                    BuildSettingNames.INFOPLIST_FILE to infoPlistFile.toRelativeString(baseDir),
                     BuildSettingNames.FRAMEWORK_SEARCH_PATHS to frameworkSearchPaths,
-                    BuildSettingNames.LD_RUNPATH_SEARCH_PATHS to "$(inherited) @executable_path/Frameworks",
+                    BuildSettingNames.LD_RUNPATH_SEARCH_PATHS to "$(inherited) @executable_path/Frameworks @loader_path/Frameworks",
                     BuildSettingNames.SWIFT_VERSION to "5.0",
                     BuildSettingNames.ALWAYS_SEARCH_USER_PATHS to "NO",
                     BuildSettingNames.CLANG_ENABLE_MODULES to "YES",
                     BuildSettingNames.CLANG_ENABLE_OBJC_ARC to "YES",
-                    BuildSettingNames.ASSETCATALOG_COMPILER_APPICON_NAME to "AppIcon",
                     // Debug
                     BuildSettingNames.ONLY_ACTIVE_ARCH to "YES"
-            )
-            target.bridgingHeader?.let { targetSettings[BuildSettingNames.SWIFT_OBJC_BRIDGING_HEADER] = sourcesGroupDir.resolve(it).toRelativeString(baseDir) }
+                )
+                settings += customSettings
 
-            val pbxTarget = addNativeTarget(target.name, AppleProductType.APPLICATION_TYPE_ID, targetSettings, platform)
-            addConfiguration(configName, targetSettings, pbxTarget)
+                val pbxTarget = addNativeTarget(name, typeId, settings, platform)
+                addConfiguration(configName, settings, pbxTarget)
 
-            for (phaseType in listOf(
+                for (phaseType in listOf(
                     PBXBuildPhase.Type.SOURCES,
                     PBXBuildPhase.Type.FRAMEWORKS,
                     PBXBuildPhase.Type.RESOURCES
-            )) {
-                addBuildPhase(phaseType, emptyMap(), pbxTarget)
+                )) {
+                    addBuildPhase(phaseType, emptyMap(), pbxTarget)
+                }
+
+                return pbxTarget
             }
 
-            val embedFrameworksPhase = addBuildPhase(
-                    PBXBuildPhase.Type.COPY_FILES, mapOf(
-                    "name" to "Embed Frameworks",
-                    "dstSubfolderSpec" to PBXCopyFilesBuildPhase.DestinationType.FRAMEWORKS.spec
-            ), pbxTarget
+            val targetSettings = mutableMapOf(
+                BuildSettingNames.INFOPLIST_FILE to infoPlistFile.toRelativeString(baseDir),
+                BuildSettingNames.PRODUCT_BUNDLE_IDENTIFIER to getQualifiedName(target.name),
+                BuildSettingNames.ASSETCATALOG_COMPILER_APPICON_NAME to "AppIcon"
             )
+            target.bridgingHeader?.let {
+                targetSettings[BuildSettingNames.SWIFT_OBJC_BRIDGING_HEADER] = sourcesGroupDir.resolve(it).toRelativeString(baseDir)
+            }
+            val pbxTarget = addTarget(target.name, AppleProductType.APPLICATION_TYPE_ID, targetSettings)
 
-            addFile(infoPlistFile.path, emptyArray(), mainGroup, false)
+            val testTargetSettings = mapOf(
+                BuildSettingNames.INFOPLIST_FILE to testInfoPlistFile.toRelativeString(baseDir),
+                BuildSettingNames.PRODUCT_BUNDLE_IDENTIFIER to getQualifiedName(target.name) + "Tests",
+                BuildSettingNames.TEST_HOST to "$(BUILT_PRODUCTS_DIR)/${target.name}.app/${target.name}",
+                BuildSettingNames.PRODUCT_NAME to "$(TARGET_NAME)",
+                "BUNDLE_LOADER" to "$(TEST_HOST)",
+                "ENABLE_TESTABILITY" to "YES"
+            )
+            val pbxTestTarget = addTarget(target.name + "Tests", AppleProductType.UNIT_TEST_TYPE_ID, testTargetSettings)
+            addTargetDependency(pbxTestTarget, pbxTarget)
+
+            for (file in arrayOf(infoPlistFile, testInfoPlistFile)) {
+                addFile(file.path, emptyArray(), mainGroup, false)
+            }
+
+            fun addTargetFiles(targetMemberships: Array<PBXTarget>, sourceDirectorySet: SourceDirectorySet) {
+                for (file in sourceDirectorySet.srcDirs.flatMap {
+                    it.listFiles()?.apply { sort() }?.asList() ?: emptyList()
+                }) { // don't flatten
+                    addFile(file.path, targetMemberships, sourcesGroup, false)
+                }
+            }
 
             val targetMemberships = arrayOf(pbxTarget)
-            for (file in sourceDirectorySet.srcDirs.flatMap {
-                it.listFiles()?.apply { sort() }?.asList() ?: emptyList()
-            }) { // don't flatten
-                addFile(file.path, targetMemberships, sourcesGroup, false)
-            }
+            addTargetFiles(targetMemberships, sourceDirectorySet)
+            addTargetFiles(arrayOf(pbxTestTarget), testSourceDirectorySet)
+
+            val embedFrameworksPhase = addBuildPhase(
+                PBXBuildPhase.Type.COPY_FILES, mapOf(
+                    "name" to "Embed Frameworks",
+                    "dstSubfolderSpec" to PBXCopyFilesBuildPhase.DestinationType.FRAMEWORKS.spec
+                ), pbxTarget
+            )
 
             for (file in frameworks) {
                 val result = addFile(
@@ -201,17 +248,29 @@ private open class AppleBuildTask @Inject constructor(
         with(execActionFactory.newExecAction()) {
             environment("DEVELOPER_DIR", XcodeBase.getBasePath())
             commandLine(
-                    "xcrun", "xcodebuild",
-                    "-project", projectDir.toRelativeString(baseDir),
-                    "-scheme", target.name,
-                    "-configuration", configName,
-                    "-sdk", "iphonesimulator",
-                    "-derivedDataPath", "DerivedData" //"-destination", "platform=iOS Simulator,name=iPhone X",
+                "xcrun", "xcodebuild",
+                "-project", projectDir.toRelativeString(baseDir),
+                "-scheme", xcodeScheme,
+                "-configuration", configName,
+                "-sdk", "iphonesimulator",
+                "-derivedDataPath", "DerivedData",
+                xcodeBuildTask
             )
             workingDir = baseDir
             execute().assertNormalExitValue()
         }
     }
+
+    open val xcodeBuildTask: String = "build"
+    open val xcodeScheme: String = target.name
+}
+
+private open class AppleBuildTestTask @Inject constructor(
+    target: AppleTarget,
+    execActionFactory: ExecActionFactory
+) : AppleBuildTask(target, execActionFactory) {
+    override val xcodeBuildTask: String = "build-for-testing"
+    override val xcodeScheme: String = target.name + "Tests"
 }
 
 private open class AppleTargetFactory @Inject constructor(
@@ -232,6 +291,7 @@ private open class DefaultAppleTarget @Inject constructor(project: Project,
     override val testSourceSet: AppleSourceSet by project.apple.sourceSets.register("${name}Test") {
         apple.outputDir = project.buildDir.resolve("bin/$name")
     }
+
     override val buildTask: AppleBuildTask by project.tasks.register("build${name.capitalize()}Main", AppleBuildTask::class.java, this).also {
         it.configure {
             dependsOn(configuration.incoming.files)
@@ -241,6 +301,12 @@ private open class DefaultAppleTarget @Inject constructor(project: Project,
             dependsOn(it)
         }
     }
+    override val buildTestTask: AppleBuildTask by project.tasks.register("build${name.capitalize()}Test", AppleBuildTestTask::class.java, this).also {
+        it.configure {
+            dependsOn(configuration.incoming.files)
+        }
+    }
+
     override var launchStoryboard: String? = null
     override var mainStoryboard: String? = null
     override var bridgingHeader: String? = null

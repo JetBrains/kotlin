@@ -8,6 +8,7 @@ interface AppleTarget : Serializable {
     val sourceSet: AppleSourceSet
     val testSourceSet: AppleSourceSet
     val buildTask: AbstractTask
+    val buildTestTask: AbstractTask
     var launchStoryboard: String?
     var mainStoryboard: String?
     var bridgingHeader: String?

@@ -70,7 +70,7 @@ class MobileBeforeRunTaskProvider : BeforeRunTaskProvider<MobileBeforeRunTaskPro
             is MobileTestRunConfiguration ->
                 when (device) {
                     is AndroidDevice -> listOf("$moduleId:assembleDebug", "$moduleId:assembleDebugAndroidTest")
-                    is AppleDevice -> listOf("$moduleId:buildIosAppMain") // TODO
+                    is AppleDevice -> listOf("$moduleId:buildIosAppTest")
                     else -> throw IllegalStateException()
                 }
             else -> throw IllegalStateException()
