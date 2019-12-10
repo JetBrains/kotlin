@@ -20,7 +20,7 @@ class TestCommandLineProcessor : CommandLineProcessor {
 
     override val pluginOptions: Collection<CliOption> = listOf(MyTestOption)
 
-    override fun processOption(option: CliOption, value: String, configuration: CompilerConfiguration) {
+    override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) {
         when (option) {
             MyTestOption -> {
                 configuration.put(TestPluginKeys.TestOption, value)
