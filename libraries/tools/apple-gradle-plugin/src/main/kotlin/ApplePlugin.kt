@@ -59,12 +59,9 @@ private open class AppleBuildTask @Inject constructor(
             targetName
     ).joinToString(".")
 
-    @TaskAction
-    fun build() {
+    fun generateXcodeproj(baseDir: File, projectDir: File, configName: String) {
+        if (projectDir.exists()) return
         println("GENERATING XCODEPROJ")
-
-        val baseDir = project.buildDir.resolve("tmp/apple/${target.name}")
-        val projectDir = baseDir.resolve("${target.name}.xcodeproj")
         projectDir.mkdirs()
 
         val projectFile = projectDir.resolve("project.pbxproj")
@@ -97,11 +94,11 @@ private open class AppleBuildTask @Inject constructor(
 
         val vBaseDir = StandardFileSystems.local().refreshAndFindFileByPath(baseDir.path)!!
         val vProjectFile =
-                object : CoreLocalVirtualFile(StandardFileSystems.local() as CoreLocalFileSystem, projectFile) {
-                    override fun isWritable() = true
-                    override fun getOutputStream(requestor: Any?, newModificationStamp: Long, newTimeStamp: Long) =
-                            VfsUtilCore.outputStreamAddingBOM(BufferedOutputStream(FileOutputStream(projectFile)), this)
-                }
+            object : CoreLocalVirtualFile(StandardFileSystems.local() as CoreLocalFileSystem, projectFile) {
+                override fun isWritable() = true
+                override fun getOutputStream(requestor: Any?, newModificationStamp: Long, newTimeStamp: Long) =
+                    VfsUtilCore.outputStreamAddingBOM(BufferedOutputStream(FileOutputStream(projectFile)), this)
+            }
 
         // TODO Dirty hack -- is there really no better way?
         val frameworks = target.configuration.flatMap { dep ->
@@ -117,16 +114,15 @@ private open class AppleBuildTask @Inject constructor(
         val frameworkSearchPaths = frameworkDirs.map { it.toRelativeString(baseDir) }
 
         val pbxProjectFile = PBXProjectFileManipulator.createNewProject(
-                project.appleImpl.intellijProject,
-                vBaseDir,
-                vProjectFile,
-                null,
-                null
+            project.appleImpl.intellijProject,
+            vBaseDir,
+            vProjectFile,
+            null,
+            null
         )
 
-        val configName = "Debug"
         val platform = AppleSdkManager.getInstance().findPlatformByType(ApplePlatform.Type.IOS)
-                ?: throw RuntimeException("Could not find SDK.")
+            ?: throw RuntimeException("Could not find SDK.")
         val mainGroup = pbxProjectFile.projectObject.mainGroup!!
 
         val sourceDirectorySet = target.sourceSet.apple
@@ -137,7 +133,7 @@ private open class AppleBuildTask @Inject constructor(
             addConfiguration(configName, emptyMap(), null)
 
             val sourcesGroupDir = sourceDirectorySet.srcDirs.firstOrNull { it.isDirectory && it.exists() }
-                    ?: baseDir.resolve("Sources")
+                ?: baseDir.resolve("Sources")
             val sourcesGroup = addGroup("SOURCE_ROOT", "Sources", sourcesGroupDir.path)
 
             val testSourcesGroupDir = testSourceDirectorySet.srcDirs.firstOrNull { it.isDirectory && it.exists() }
@@ -224,13 +220,13 @@ private open class AppleBuildTask @Inject constructor(
 
             for (file in frameworks) {
                 val result = addFile(
-                        file.path,
-                        targetMemberships,
-                        frameworksGroup,
-                        false,
-                        null,
-                        PBXBuildPhase.Type.FRAMEWORKS,
-                        false
+                    file.path,
+                    targetMemberships,
+                    frameworksGroup,
+                    false,
+                    null,
+                    PBXBuildPhase.Type.FRAMEWORKS,
+                    false
                 )
                 val buildFile = addToBuildPhase(pbxTarget, embedFrameworksPhase, result.reference)
                 buildFile.setAttribute("settings", PBXDictionary(pbxProjectFile).apply {
@@ -242,6 +238,15 @@ private open class AppleBuildTask @Inject constructor(
         SwingUtilities.invokeAndWait {
             pbxProjectFile.save()
         }
+    }
+
+    @TaskAction
+    fun build() {
+        val configName = "Debug"
+
+        val baseDir = project.buildDir.resolve("tmp/apple/${target.name}")
+        val projectDir = baseDir.resolve("${target.name}.xcodeproj")
+        generateXcodeproj(baseDir, projectDir, configName)
 
         println("RUNNING XCODEBUILD")
 
