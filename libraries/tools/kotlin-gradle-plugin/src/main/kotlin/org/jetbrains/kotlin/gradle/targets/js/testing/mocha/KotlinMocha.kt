@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.gradle.process.ProcessForkOptions
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
+import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutor.Companion.TC_PROJECT_PROPERTY
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.KotlinGradleNpmPackage
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
@@ -50,7 +51,8 @@ class KotlinMocha(override val compilation: KotlinJsCompilation) : KotlinJsTestF
             testNameSuffix = task.targetName,
             prependSuiteName = true,
             stackTraceParser = ::parseNodeJsStackTraceAsJvm,
-            ignoreOutOfRootNodes = true
+            ignoreOutOfRootNodes = true,
+            escapeTCMessagesInLog = project.hasProperty(TC_PROJECT_PROPERTY)
         )
 
         val npmProject = compilation.npmProject

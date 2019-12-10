@@ -81,4 +81,8 @@ class TCServiceMessagesTestExecutor(
         execHandle?.abort()
         outputReaderThread?.join()
     }
+
+    companion object {
+        const val TC_PROJECT_PROPERTY = "teamcity"
+    }
 }

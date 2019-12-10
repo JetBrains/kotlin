@@ -25,7 +25,8 @@ data class TCServiceMessagesClientSettings(
     val treatFailedTestOutputAsStacktrace: Boolean = false,
     val stackTraceParser: (String) -> ParsedStackTrace? = { null },
     val ignoreOutOfRootNodes: Boolean = false,
-    val ignoreLineEndingAfterMessage: Boolean = true
+    val ignoreLineEndingAfterMessage: Boolean = true,
+    val escapeTCMessagesInLog: Boolean = false
 )
 
 internal open class TCServiceMessagesClient(
@@ -51,7 +52,17 @@ internal open class TCServiceMessagesClient(
     }
 
     override fun serviceMessage(message: ServiceMessage) {
-        log.kotlinDebug { "TCSM: $message" }
+
+        // If a user uses TeamCity, this log may be treated by TC as an actual service message.
+        // So, escape logged messages if the corresponding setting is specified.
+        log.kotlinDebug {
+            val messageString = if (settings.escapeTCMessagesInLog) {
+                message.toString().replaceFirst("^##teamcity\\[".toRegex(), "##TC[")
+            } else {
+                message.toString()
+            }
+            "TCSM: $messageString"
+        }
 
         when (message) {
             is TestSuiteStarted -> open(message.ts, SuiteNode(requireLeafGroup(), getSuiteName(message)))

@@ -17,6 +17,7 @@ import org.gradle.process.internal.DefaultProcessForkOptions
 import org.jetbrains.kotlin.compilerRunner.konanVersion
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
+import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutor.Companion.TC_PROJECT_PROPERTY
 import org.jetbrains.kotlin.gradle.targets.native.internal.parseKotlinNativeStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 import org.jetbrains.kotlin.konan.CompilerVersion
@@ -117,7 +118,8 @@ abstract class KotlinNativeTest : KotlinTest() {
             testNameSuffix = targetName,
             prependSuiteName = targetName != null,
             treatFailedTestOutputAsStacktrace = false,
-            stackTraceParser = ::parseKotlinNativeStackTraceAsJvm
+            stackTraceParser = ::parseKotlinNativeStackTraceAsJvm,
+            escapeTCMessagesInLog = project.hasProperty(TC_PROJECT_PROPERTY)
         )
 
         // The KotlinTest expects that the exit code is zero even if some tests failed.
