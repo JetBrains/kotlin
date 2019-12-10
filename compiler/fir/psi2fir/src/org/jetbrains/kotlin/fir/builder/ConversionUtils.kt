@@ -313,7 +313,7 @@ fun generateTemporaryVariable(
     session: FirSession, source: FirSourceElement?, specialName: String, initializer: FirExpression
 ): FirVariable<*> = generateTemporaryVariable(session, source, Name.special("<$specialName>"), initializer)
 
-fun FirModifiableVariable<*>.generateAccessorsByDelegate(session: FirSession, member: Boolean, stubMode: Boolean) {
+fun FirModifiableVariable<*>.generateAccessorsByDelegate(session: FirSession, member: Boolean, stubMode: Boolean, receiver: FirExpression?) {
     val variable = this as FirVariable<*>
     val delegateFieldSymbol = delegateFieldSymbol ?: return
     val delegate = delegate as? FirWrappedDelegateExpressionImpl ?: return
@@ -333,7 +333,7 @@ fun FirModifiableVariable<*>.generateAccessorsByDelegate(session: FirSession, me
     }
 
     delegate.delegateProvider = if (stubMode) FirExpressionStub(null) else FirFunctionCallImpl(null).apply {
-        explicitReceiver = delegate.expression
+        explicitReceiver = receiver
         calleeReference = FirSimpleNamedReference(null, PROVIDE_DELEGATE, null)
         arguments += thisRef()
         arguments += propertyRef()

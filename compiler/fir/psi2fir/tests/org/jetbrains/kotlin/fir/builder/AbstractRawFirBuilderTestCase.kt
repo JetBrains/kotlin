@@ -21,16 +21,13 @@ import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.FirWrappedDelegateExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
-import org.jetbrains.kotlin.fir.expressions.impl.FirWrappedDelegateExpressionImpl
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.isExtensionFunctionAnnotationCall
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
-import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -136,13 +133,10 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
             // NB: types are reused sometimes (e.g. in accessors)
             if (!result.add(element)) {
                 throwTwiceVisitingError(element)
-            } else if (element !is FirWrappedDelegateExpression) {
-                element.acceptChildren(this)
             } else {
-                element.delegateProvider.accept(this)
+                element.acceptChildren(this)
             }
         }
-
     }
 
     private class ConsistencyTransformer : FirTransformer<Unit>() {
@@ -151,10 +145,8 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
         override fun <E : FirElement> transformElement(element: E, data: Unit): CompositeTransformResult<E> {
             if (!result.add(element)) {
                 throwTwiceVisitingError(element)
-            } else if (element !is FirWrappedDelegateExpressionImpl) {
-                element.transformChildren(this, Unit)
             } else {
-                element.delegateProvider = element.delegateProvider.transformSingle(this, data)
+                element.transformChildren(this, Unit)
             }
             return CompositeTransformResult.single(element)
         }

@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.*
-import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -775,6 +774,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
             val delegateExpression by lazy { property.delegate?.expression }
             val propertySource = property.toFirSourceElement()
             val firProperty = if (property.isLocal) {
+                val receiver = delegateExpression?.toFirExpression("Incorrect delegate expression")
                 FirPropertyImpl(
                     propertySource,
                     session,
@@ -793,7 +793,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
                     true,
                     FirDeclarationStatusImpl(Visibilities.LOCAL, Modality.FINAL)
                 ).apply {
-                    generateAccessorsByDelegate(this@RawFirBuilder.session, member = false, stubMode = stubMode)
+                    generateAccessorsByDelegate(this@RawFirBuilder.session, member = false, stubMode, receiver)
                 }
             } else {
                 val status = FirDeclarationStatusImpl(property.visibility, property.modality).apply {
@@ -803,6 +803,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
                     isConst = property.hasModifier(CONST_KEYWORD)
                     isLateInit = property.hasModifier(LATEINIT_KEYWORD)
                 }
+                val receiver = delegateExpression?.toFirExpression("Should have delegate")
                 FirPropertyImpl(
                     propertySource,
                     session,
@@ -824,7 +825,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
                     property.extractTypeParametersTo(this)
                     getter = property.getter.toFirPropertyAccessor(property, propertyType, isGetter = true)
                     setter = if (isVar) property.setter.toFirPropertyAccessor(property, propertyType, isGetter = false) else null
-                    generateAccessorsByDelegate(this@RawFirBuilder.session, member = !property.isTopLevel, stubMode = stubMode)
+                    generateAccessorsByDelegate(this@RawFirBuilder.session, member = !property.isTopLevel, stubMode, receiver)
                 }
             }
             property.extractAnnotationsTo(firProperty)

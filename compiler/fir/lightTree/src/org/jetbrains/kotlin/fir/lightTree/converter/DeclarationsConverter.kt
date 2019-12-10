@@ -14,7 +14,10 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.builder.*
+import org.jetbrains.kotlin.fir.builder.Context
+import org.jetbrains.kotlin.fir.builder.generateAccessorsByDelegate
+import org.jetbrains.kotlin.fir.builder.generateComponentFunctions
+import org.jetbrains.kotlin.fir.builder.generateCopyFunction
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.*
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
@@ -819,6 +822,7 @@ class DeclarationsConverter(
         val parentNode = property.getParent()
         val isLocal = !(parentNode?.tokenType == KT_FILE || parentNode?.tokenType == CLASS_BODY)
         return if (isLocal) {
+            val receiver = delegateExpression?.let { expressionConverter.getAsFirExpression<FirExpression>(it, "Incorrect delegate expression") }
             FirPropertyImpl(
                 null,
                 session,
@@ -837,7 +841,7 @@ class DeclarationsConverter(
                 FirDeclarationStatusImpl(Visibilities.LOCAL, Modality.FINAL)
             ).apply {
                 annotations += modifiers.annotations
-                this.generateAccessorsByDelegate(this@DeclarationsConverter.session, member = false, stubMode = stubMode)
+                this.generateAccessorsByDelegate(this@DeclarationsConverter.session, member = false, stubMode, receiver)
             }
         } else {
             val status = FirDeclarationStatusImpl(modifiers.getVisibility(), modifiers.getModality()).apply {
@@ -846,6 +850,9 @@ class DeclarationsConverter(
                 isOverride = modifiers.hasOverride()
                 isConst = modifiers.isConst()
                 isLateInit = modifiers.hasLateinit()
+            }
+            val receiver = delegateExpression?.let {
+                expressionConverter.getAsFirExpression<FirExpression>(it, "Should have delegate")
             }
             FirPropertyImpl(
                 null,
@@ -871,7 +878,7 @@ class DeclarationsConverter(
                 this.getter = getter ?: FirDefaultPropertyGetter(null, session, returnType, modifiers.getVisibility())
                 this.setter = if (isVar) setter ?: FirDefaultPropertySetter(null, session, returnType, modifiers.getVisibility()) else null
                 generateAccessorsByDelegate(
-                    this@DeclarationsConverter.session, member = parentNode?.tokenType != KT_FILE, stubMode = stubMode
+                    this@DeclarationsConverter.session, member = parentNode?.tokenType != KT_FILE, stubMode, receiver
                 )
             }
         }
