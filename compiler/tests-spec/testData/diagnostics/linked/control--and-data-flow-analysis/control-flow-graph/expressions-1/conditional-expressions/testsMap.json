@@ -1,0 +1,92 @@
+{
+  "1": {
+    "neg": {
+      "2": [
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 2,
+          "description": "* HELPERS: checkType",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "1": [
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 2,
+          "description": "* HELPERS:",
+          "unexpectedBehaviour": false
+        }
+      ]
+    },
+    "pos": {
+      "2": [
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 2,
+          "description": "* HELPERS: checkType, functions",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "1": [
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 3,
+          "description": "* HELPERS: checkType, functions",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-152",
+          "casesNumber": 0,
+          "description": "Exhaustive with nullability check before",
+          "path": "compiler/testData/diagnostics/tests/when/ExhaustiveWithNullabilityCheckBefore.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-152",
+          "casesNumber": 0,
+          "description": "Exhaustive with nullability check else",
+          "path": "compiler/testData/diagnostics/tests/when/ExhaustiveWithNullabilityCheckElse.kt",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  },
+  "2": {
+    "neg": {
+      "1": [
+        {
+          "specVersion": "0.1-152",
+          "casesNumber": 0,
+          "description": "When type disjunctions",
+          "path": "compiler/testData/diagnostics/tests/when/WhenTypeDisjunctions.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-152",
+          "casesNumber": 0,
+          "description": "Exhaustive break continue",
+          "path": "compiler/testData/diagnostics/tests/when/ExhaustiveBreakContinue.kt",
+          "unexpectedBehaviour": false
+        }
+      ]
+    },
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-152",
+          "casesNumber": 0,
+          "description": "Exhaustive return throw",
+          "path": "compiler/testData/diagnostics/tests/when/ExhaustiveReturnThrow.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-152",
+          "casesNumber": 0,
+          "description": "Exhaustive return",
+          "path": "compiler/testData/diagnostics/tests/when/ExhaustiveReturn.kt",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}

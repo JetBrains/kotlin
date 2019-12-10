@@ -8,7 +8,7 @@
  * SPEC VERSION: 0.1-213
  * PLACE: expressions, prefix-expressions, prefix-increment-expression -> paragraph 4 -> sentence 1
  * RELEVANT PLACES: statements, assignments -> paragraph 3 -> sentence 2
- * NUMBER:1
+ * NUMBER: 1
  * DESCRIPTION: check unsafe prefix increment expression call for an assignable expression
  */
 class A() {
