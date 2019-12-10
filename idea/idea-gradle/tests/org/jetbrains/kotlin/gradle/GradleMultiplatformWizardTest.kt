@@ -143,12 +143,6 @@ class GradleMultiplatformWizardTest : AbstractGradleMultiplatformWizardTest() {
             runGradleImport()
 
             runGradleTestTasks {
-                test("allTests") {
-                    testClassCount = 2
-                }
-            }
-
-            runGradleTestTasks {
                 test("jsBrowserTest") {
                     testClassCount = 2
                 }
