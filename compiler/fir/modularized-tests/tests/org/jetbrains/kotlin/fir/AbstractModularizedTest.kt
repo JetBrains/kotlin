@@ -17,14 +17,19 @@ import javax.xml.parsers.DocumentBuilderFactory
 
 data class ModuleData(
     val name: String,
-    val outputDir: String,
+    val rawOutputDir: String,
     val qualifier: String,
-    val classpath: List<File>,
-    val sources: List<File>,
-    val javaSourceRoots: List<File>,
+    val rawClasspath: List<String>,
+    val rawSources: List<String>,
+    val rawJavaSourceRoots: List<String>,
     val isCommon: Boolean
 ) {
     val qualifiedName get() = if (name in qualifier) qualifier else "$name.$qualifier"
+
+    val outputDir = File(ROOT_PATH_PREFIX, rawOutputDir.removePrefix("/"))
+    val classpath = rawClasspath.map { File(ROOT_PATH_PREFIX, it.removePrefix("/")) }
+    val sources = rawSources.map { File(ROOT_PATH_PREFIX, it.removePrefix("/")) }
+    val javaSourceRoots = rawJavaSourceRoots.map { File(ROOT_PATH_PREFIX, it.removePrefix("/")) }
 }
 
 private fun NodeList.toList(): List<Node> {
@@ -37,6 +42,8 @@ private fun NodeList.toList(): List<Node> {
 
 
 private val Node.childNodesList get() = childNodes.toList()
+
+private val ROOT_PATH_PREFIX = System.getProperty("fir.bench.prefix", "/")
 
 abstract class AbstractModularizedTest : KtUsefulTestCase() {
     private val folderDateFormat = SimpleDateFormat("yyyy-MM-dd")
@@ -74,9 +81,9 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
         val moduleName = moduleElement.attributes.getNamedItem("name").nodeValue
         val outputDir = moduleElement.attributes.getNamedItem("outputDir").nodeValue
         val moduleNameQualifier = outputDir.substringAfterLast("/")
-        val javaSourceRoots = mutableListOf<File>()
-        val classpath = mutableListOf<File>()
-        val sources = mutableListOf<File>()
+        val javaSourceRoots = mutableListOf<String>()
+        val classpath = mutableListOf<String>()
+        val sources = mutableListOf<String>()
         var isCommon = false
 
         for (index in 0 until moduleElement.childNodes.length) {
@@ -85,14 +92,14 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
             if (item.nodeName == "classpath") {
                 val path = item.attributes.getNamedItem("path").nodeValue
                 if (path != outputDir) {
-                    classpath += File(path)
+                    classpath += path
                 }
             }
             if (item.nodeName == "javaSourceRoots") {
-                javaSourceRoots += File(item.attributes.getNamedItem("path").nodeValue)
+                javaSourceRoots += item.attributes.getNamedItem("path").nodeValue
             }
             if (item.nodeName == "sources") {
-                sources += File(item.attributes.getNamedItem("path").nodeValue)
+                sources += item.attributes.getNamedItem("path").nodeValue
             }
             if (item.nodeName == "commonSources") {
                 isCommon = true
@@ -118,7 +125,7 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
         val filterRegex = (System.getProperty("fir.bench.filter") ?: ".*").toRegex()
         val modules =
             root.listFiles().sortedBy { it.lastModified() }.map { loadModule(it) }
-                .filter { it.outputDir.matches(filterRegex) }
+                .filter { it.rawOutputDir.matches(filterRegex) }
                 .filter { !it.isCommon }
 
 
