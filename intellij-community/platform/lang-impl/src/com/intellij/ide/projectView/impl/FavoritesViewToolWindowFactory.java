@@ -24,9 +24,4 @@ final class FavoritesViewToolWindowFactory implements ToolWindowFactory, DumbAwa
     Content content = contentManager.getFactory().createContent(panel, null, false);
     contentManager.addContent(content);
   }
-
-  @Override
-  public boolean isDoNotActivateOnStart() {
-    return true;
-  }
 }
