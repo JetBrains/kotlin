@@ -40,6 +40,7 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns) {
     private fun IrElement.interpret(data: Frame): Code {
         try {
             val code = when (this) {
+                is IrFunctionImpl -> interpretFunction(this, data)
                 is IrCall -> interpretCall(this, data)
                 is IrConstructorCall -> interpretConstructorCall(this, data)
                 is IrDelegatingConstructorCall -> interpretDelegatedConstructorCall(this, data)
@@ -86,6 +87,11 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns) {
         }
     }
 
+    // this method is used to get stack trace after exception
+    private fun interpretFunction(irFunction: IrFunctionImpl, data: Frame): Code {
+        return irFunction.body?.interpret(data) ?: throw AssertionError("Ir function must be with body")
+    }
+
     private fun calculateAbstract(irFunction: IrFunction, data: Frame): Code {
         if (irFunction.body == null) {
             val receiver = data.getVariableState(irFunction.symbol.getReceiver()!!) as Complex
@@ -97,7 +103,7 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns) {
             val newFrame = InterpreterFrame()
             newFrame.addVar(Variable(functionImplementation.symbol.getReceiver()!!, instance))
             newFrame.addAll(arguments)
-            return functionImplementation.body!!.interpret(newFrame).apply { data.pushReturnValue(newFrame) }
+            return functionImplementation.interpret(newFrame).apply { data.pushReturnValue(newFrame) }
         }
         return irFunction.body!!.interpret(data)
     }
@@ -113,9 +119,8 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns) {
         newStates.addVar(Variable(overridden.getReceiver()!!, superQualifier))
 
         val overriddenOwner = overridden.owner as IrFunctionImpl
-        val body = overriddenOwner.body
         return when {
-            body != null -> body.interpret(newStates)
+            overriddenOwner.body != null -> overriddenOwner.interpret(newStates)
             else -> calculateOverridden(overriddenOwner, newStates)
         }.apply { data.pushReturnValue(newStates) }
     }
@@ -227,7 +232,7 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns) {
             irFunction.isAbstract() -> calculateAbstract(irFunction, newFrame) //abstract check must be before fake overridden check
             irFunction.isFakeOverridden() -> calculateOverridden(irFunction as IrFunctionImpl, newFrame)
             irFunction.body == null -> calculateBuiltIns(irFunction, newFrame)
-            else -> irFunction.body!!.interpret(newFrame)
+            else -> irFunction.interpret(newFrame)
         }
         data.pushReturnValue(newFrame)
         return code
