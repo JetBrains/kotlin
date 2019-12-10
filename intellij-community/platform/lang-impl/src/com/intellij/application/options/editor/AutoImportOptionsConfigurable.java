@@ -17,7 +17,9 @@
 package com.intellij.application.options.editor;
 
 import com.intellij.openapi.application.ApplicationBundle;
+import com.intellij.openapi.extensions.BaseExtensionPointName;
 import com.intellij.openapi.options.CompositeConfigurable;
+import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.Configurable.VariableProjectAppLevel;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.containers.ContainerUtil;
@@ -27,6 +29,8 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -34,7 +38,7 @@ import java.util.List;
  */
 public class AutoImportOptionsConfigurable
   extends CompositeConfigurable<AutoImportOptionsProvider>
-  implements EditorOptionsProvider, VariableProjectAppLevel {
+  implements EditorOptionsProvider, VariableProjectAppLevel, Configurable.WithEpDependencies {
 
   private final Project myProject;
   private JPanel myPanel;
@@ -88,5 +92,11 @@ public class AutoImportOptionsConfigurable
   @Override
   public boolean isProjectLevel() {
     return false;
+  }
+
+  @NotNull
+  @Override
+  public Collection<BaseExtensionPointName<?>> getDependencies() {
+    return Collections.singleton(AutoImportOptionsProviderEP.EP_NAME);
   }
 }

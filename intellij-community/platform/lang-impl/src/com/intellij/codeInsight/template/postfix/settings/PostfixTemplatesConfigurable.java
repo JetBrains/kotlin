@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.template.postfix.settings;
 
+import com.intellij.application.options.editor.AutoImportOptionsProviderEP;
 import com.intellij.application.options.editor.EditorOptionsProvider;
 import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.template.impl.LiveTemplateCompletionContributor;
@@ -80,7 +81,7 @@ public class PostfixTemplatesConfigurable implements SearchableConfigurable, Edi
 
   @NotNull
   @Override
-  public Collection<BaseExtensionPointName> getDependencies() {
+  public Collection<BaseExtensionPointName<?>> getDependencies() {
     return Collections.singleton(LanguagePostfixTemplate.EP_NAME);
   }
 
