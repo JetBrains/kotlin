@@ -41,8 +41,7 @@ internal class Linker(val context: Context) {
     }
 
     private fun renameOutput() {
-        val libraryToAddToCache = context.configuration.get(KonanConfigKeys.LIBRARY_TO_ADD_TO_CACHE)
-        if (context.config.produce.isCache && !libraryToAddToCache.isNullOrEmpty()) {
+        if (context.config.produce.isCache) {
             val outputFiles = context.config.outputFiles
             val outputFile = java.io.File(outputFiles.mainFileMangled)
             val outputDsymBundle = java.io.File(outputFiles.mainFileMangled + ".dSYM")
