@@ -99,13 +99,9 @@ export class StartsWithFilter implements KotlinTestsFilter {
     ) {
     }
 
-    isPrefixMatched(fqn: string): boolean {
+    mayContainTestsFromSuite(fqn: string): boolean {
         return startsWith(this.prefix, fqn)
             || startsWith(fqn, this.prefix);
-    }
-
-    mayContainTestsFromSuite(fqn: string): boolean {
-        return this.isPrefixMatched(fqn);
     }
 
     containsAllTestsFromSuite(fqn: string): boolean {
