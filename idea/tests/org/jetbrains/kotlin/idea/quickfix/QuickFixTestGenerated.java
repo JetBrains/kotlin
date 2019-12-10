@@ -9664,6 +9664,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 runTest("idea/testData/quickfix/override/nothingToOverride/addFunctionNonUnitReturnType.kt");
             }
 
+            @TestMetadata("addFunctionReciever.kt")
+            public void testAddFunctionReciever() throws Exception {
+                runTest("idea/testData/quickfix/override/nothingToOverride/addFunctionReciever.kt");
+            }
+
             @TestMetadata("addFunctionSealedClass.kt")
             public void testAddFunctionSealedClass() throws Exception {
                 runTest("idea/testData/quickfix/override/nothingToOverride/addFunctionSealedClass.kt");
@@ -9726,6 +9731,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
 
             public void testAllFilesPresentInNothingToOverride() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/override/nothingToOverride"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+            }
+
+            @TestMetadata("changeFunctionReciever.kt")
+            public void testChangeFunctionReciever() throws Exception {
+                runTest("idea/testData/quickfix/override/nothingToOverride/changeFunctionReciever.kt");
             }
 
             @TestMetadata("changeParameterType.kt")
