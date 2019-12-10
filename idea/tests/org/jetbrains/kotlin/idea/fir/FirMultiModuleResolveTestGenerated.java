@@ -122,4 +122,9 @@ public class FirMultiModuleResolveTestGenerated extends AbstractFirMultiModuleRe
     public void testOverrideWithJava() throws Exception {
         runTest("idea/testData/fir/multiModule/overrideWithJava/");
     }
+
+    @TestMetadata("withStdlib")
+    public void testWithStdlib() throws Exception {
+        runTest("idea/testData/fir/multiModule/withStdlib/");
+    }
 }
