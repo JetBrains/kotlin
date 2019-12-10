@@ -190,7 +190,7 @@ class FirCallCompletionResultsWriterTransformer(
             is FirIntegerOperatorCall -> {
                 val expectedType = data?.getExpectedType(functionCall)
                 resultType = typeRef.resolvedTypeFromPrototype(typeRef.coneTypeUnsafe<ConeIntegerLiteralType>().getApproximatedType(expectedType))
-                result.transformSingle(integerApproximator, expectedType)
+                result.transformArguments(this, expectedType?.toExpectedType()).transformSingle(integerApproximator, expectedType)
             }
             else -> {
                 resultType = typeRef.substituteTypeRef(subCandidate)
