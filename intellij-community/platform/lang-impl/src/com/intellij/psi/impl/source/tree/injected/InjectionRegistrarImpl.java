@@ -293,7 +293,7 @@ class InjectionRegistrarImpl extends MultiHostRegistrarImpl implements MultiHost
       InjectedLanguageUtil.clearCaches(psiFile, documentWindow);
       psiFile = newFile;
       viewProvider = (InjectedFileViewProvider)psiFile.getViewProvider();
-      documentWindow = (DocumentWindowImpl)viewProvider.getDocument();
+      documentWindow = viewProvider.getDocument();
       boolean shredsReused = !cacheEverything(place, documentWindow, viewProvider, psiFile);
       if (shredsReused) {
         place.dispose();
@@ -359,10 +359,7 @@ class InjectionRegistrarImpl extends MultiHostRegistrarImpl implements MultiHost
     StringBuilder decodedChars = new StringBuilder();
     ShredImpl shred = createShred(placeInfos.get(0), decodedChars, myHostPsiFile);
     place.add(shred);
-    if (resultReferences == null) {
-      resultReferences = new SmartList<>();
-    }
-    resultReferences.add(Pair.create(injector, place));
+    addReferenceToResults(Pair.create(injector, place));
     clear();
   }
 
@@ -705,7 +702,7 @@ class InjectionRegistrarImpl extends MultiHostRegistrarImpl implements MultiHost
       }
 
       try {
-        List<InjectedLanguageUtil.TokenInfo> tokens = obtainHighlightTokensFromLexer(language, decodedChars, virtualFile, project, placeInfos);
+        List<InjectedLanguageUtil.TokenInfo> tokens = obtainHighlightTokensFromLexer(decodedChars, virtualFile, project, placeInfos);
         InjectedLanguageUtil.setHighlightTokens(psiFile, tokens);
       }
       catch (ProcessCanceledException e) {
@@ -783,8 +780,7 @@ class InjectionRegistrarImpl extends MultiHostRegistrarImpl implements MultiHost
   // returns lexer element types with corresponding ranges in encoded (injection host based) PSI
   @NotNull
   private static List<InjectedLanguageUtil.TokenInfo>
-          obtainHighlightTokensFromLexer(@NotNull Language language,
-                                         @NotNull CharSequence outChars,
+          obtainHighlightTokensFromLexer(@NotNull CharSequence outChars,
                                          @NotNull VirtualFileWindow virtualFile,
                                          @NotNull Project project,
                                          @NotNull List<? extends PlaceInfo> placeInfos) {
@@ -797,7 +793,7 @@ class InjectionRegistrarImpl extends MultiHostRegistrarImpl implements MultiHost
     HighlighterIterator iterator = highlighter.createIterator(0);
     int hostNum = -1;
     int prevHostEndOffset = 0;
-    LiteralTextEscaper escaper = null;
+    LiteralTextEscaper<?> escaper = null;
     int prefixLength = 0;
     int suffixLength = 0;
     TextRange rangeInsideHost = null;
