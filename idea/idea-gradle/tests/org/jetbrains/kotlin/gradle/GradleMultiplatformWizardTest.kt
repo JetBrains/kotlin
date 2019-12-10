@@ -77,11 +77,13 @@ class GradleMultiplatformWizardTest : AbstractGradleMultiplatformWizardTest() {
             }
             checkGradleConfiguration(metadataInside = true)
             runGradleImport()
+
             runGradleTestTasks {
                 test("jvmTest") {
                     testClassCount = 2
                 }
             }
+
             if (HostManager.hostIsMac) {
                 runGradleTestTasks {
                     test("${native}Test") {
@@ -139,6 +141,12 @@ class GradleMultiplatformWizardTest : AbstractGradleMultiplatformWizardTest() {
             }
             checkGradleConfiguration(metadataInside = true)
             runGradleImport()
+
+            runGradleTestTasks {
+                test("allTests") {
+                    testClassCount = 2
+                }
+            }
 
             runGradleTestTasks {
                 test("jsBrowserTest") {

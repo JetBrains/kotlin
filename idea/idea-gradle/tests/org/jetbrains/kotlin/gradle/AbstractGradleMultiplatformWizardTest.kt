@@ -391,7 +391,7 @@ abstract class AbstractGradleMultiplatformWizardTest : ProjectWizardTestCase<Abs
     }
 
     inner class GradleTestTaskRunner(val project: Project) {
-        val tests: MutableMap<String, (TestResultChecker.() -> Unit)?> = mutableMapOf()
+        private val tests: MutableMap<String, (TestResultChecker.() -> Unit)?> = mutableMapOf()
 
         fun test(testTask: String, testResultChecks: (TestResultChecker.() -> Unit)? = null) {
             tests.put(testTask, testResultChecks)
@@ -402,11 +402,15 @@ abstract class AbstractGradleMultiplatformWizardTest : ProjectWizardTestCase<Abs
 
             tests.forEach { test ->
                 try {
-                    project.runGradleTask("cleanAllTest")
+                    project.runGradleTask("clean${test.key.capitalize()}")
                     project.runGradleTask(test.key)
-                    TestResultChecker(project, test.key).apply {
-                        test.value
-                    }.runCheck()
+                    if (test.key == "allTests") {
+                        println("test-results for task 'allTests' are not checked")
+                    } else {
+                        TestResultChecker(project, test.key).apply {
+                            test.value
+                        }.runCheck()
+                    }
                 } catch (exception: Throwable) {
                     errors[test.key] = exception
                     exception.printStackTrace()
@@ -422,11 +426,17 @@ abstract class AbstractGradleMultiplatformWizardTest : ProjectWizardTestCase<Abs
         }
     }
 
+    fun Project.checkTestResult(gradleTask: String, testResultChecks: (TestResultChecker.() -> Unit) = {}) {
+        TestResultChecker(this, gradleTask).apply {
+            testResultChecks()
+        }.runCheck()
+    }
+
     class TestResultChecker(val project: Project, val gradleTask: String) {
         var testClassCount: Int? = null
-        val root = ProjectRootManager.getInstance(project).contentRoots[0]
+        private val root = ProjectRootManager.getInstance(project).contentRoots[0]
         private val testSerializer = TestResultSerializer(File("${root.canonicalPath}/build/test-results/$gradleTask/binary"))
-        val testClassResults: MutableList<TestClassResult> = mutableListOf()
+        private val testClassResults: MutableList<TestClassResult> = mutableListOf()
 
         fun runCheck() {
             testSerializer.read {
