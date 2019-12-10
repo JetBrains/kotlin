@@ -59,6 +59,7 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns) {
                 is IrWhileLoop -> interpretWhile(this, data)
                 is IrWhen -> interpretWhen(this, data)
                 is IrBreak -> interpretBreak(this, data)
+                is IrContinue -> interpretContinue(this, data)
 
                 else -> TODO("${this.javaClass} not supported")
             }
@@ -76,7 +77,10 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns) {
                     is IrWhileLoop -> if ((this.label ?: "") == code.info) Code.NEXT else code
                     else -> code
                 }
-                Code.CONTINUE -> TODO("Code.CONTINUE not implemented")
+                Code.CONTINUE -> when (this) {
+                    is IrWhileLoop -> if ((this.label ?: "") == code.info) this.interpret(data) else code
+                    else -> code
+                }
                 Code.EXCEPTION -> TODO("Code.EXCEPTION not implemented")
                 Code.NEXT -> Code.NEXT
             }
@@ -332,6 +336,10 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns) {
 
     private fun interpretBreak(breakStatement: IrBreak, data: Frame): Code {
         return Code.BREAK_LOOP.apply { info = breakStatement.label ?: "" }
+    }
+
+    private fun interpretContinue(continueStatement: IrContinue, data: Frame): Code {
+        return Code.CONTINUE.apply { info = continueStatement.label ?: "" }
     }
 
     private fun interpretSetField(expression: IrSetField, data: Frame): Code {
