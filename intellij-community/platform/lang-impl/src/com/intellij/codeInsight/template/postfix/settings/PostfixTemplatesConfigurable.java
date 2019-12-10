@@ -12,7 +12,10 @@ import com.intellij.codeInsight.template.postfix.templates.PostfixTemplatesUtils
 import com.intellij.lang.LanguageExtensionPoint;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonShortcuts;
+import com.intellij.openapi.extensions.ExtensionPointName;
+import com.intellij.openapi.extensions.PluginDescriptor;
 import com.intellij.openapi.options.Configurable;
+import com.intellij.openapi.options.ConfigurableWithEPDependency;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.util.Disposer;
@@ -36,7 +39,9 @@ import java.awt.*;
 import java.util.List;
 import java.util.*;
 
-public class PostfixTemplatesConfigurable implements SearchableConfigurable, EditorOptionsProvider, Configurable.NoScroll {
+@SuppressWarnings("rawtypes")
+public class PostfixTemplatesConfigurable implements SearchableConfigurable, EditorOptionsProvider, Configurable.NoScroll,
+                                                     ConfigurableWithEPDependency<LanguageExtensionPoint> {
   public static final Comparator<PostfixTemplate> TEMPLATE_COMPARATOR = Comparator.comparing(PostfixTemplate::getKey);
 
   @Nullable
@@ -74,7 +79,13 @@ public class PostfixTemplatesConfigurable implements SearchableConfigurable, Edi
     myShortcutComboBox.addItem(ENTER);
     myDescriptionPanel.setLayout(new BorderLayout());
   }
-  
+
+  @NotNull
+  @Override
+  public ExtensionPointName<LanguageExtensionPoint> getDependency() {
+    return LanguagePostfixTemplate.EP_NAME;
+  }
+
   @NotNull
   private static List<PostfixTemplateProvider> getProviders() {
     List<LanguageExtensionPoint> list = LanguagePostfixTemplate.EP_NAME.getExtensionList();
@@ -256,6 +267,12 @@ public class PostfixTemplatesConfigurable implements SearchableConfigurable, Edi
     if (myCheckboxTree != null) {
       myCheckboxTree.setEnabled(pluginEnabled);
     }
+  }
+
+  @Override
+  public boolean updateOnExtensionChanged(@NotNull LanguageExtensionPoint e, @NotNull PluginDescriptor pd) {
+    reset();
+    return true;
   }
 
   private static char stringToShortcut(@Nullable String string) {
