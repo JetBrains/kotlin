@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.idea.run
 
 import com.intellij.execution.configurations.ConfigurationFactory
-import com.intellij.execution.configurations.ConfigurationType
 import com.intellij.execution.configurations.ConfigurationTypeUtil
 import com.intellij.openapi.externalSystem.model.ProjectSystemId
 import com.intellij.openapi.externalSystem.service.execution.AbstractExternalSystemTaskConfigurationType
@@ -25,6 +24,9 @@ class KotlinGradleExternalTaskConfigurationType : AbstractExternalSystemTaskConf
 
     @Suppress("SpellCheckingInspection")
     override fun getHelpTopic() = "reference.dialogs.rundebug.GradleRunConfiguration"
+
+    override fun getDisplayName() = "Kotlin Gradle"
+    override fun getConfigurationTypeDescription() = "Kotlin Gradle build"
 
     override fun doCreateConfiguration(
         externalSystemId: ProjectSystemId,
