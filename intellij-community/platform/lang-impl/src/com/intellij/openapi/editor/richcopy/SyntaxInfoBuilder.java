@@ -198,6 +198,9 @@ public final class SyntaxInfoBuilder {
         }
         myCurrentEnd = Math.min(myCurrentEnd, nearestBound);
       }
+      assert myCurrentStart <= myCurrentEnd : "Unexpected range: " + myCurrentStart + ":" + myCurrentEnd +
+                                              ", iterators: " + Arrays.toString(myIterators) +
+                                              ", overlappingRanges: " + overlappingRangesCount;
       for (overlappingRangesCount = 1; overlappingRangesCount < myIterators.length; overlappingRangesCount++) {
         IteratorWrapper wrapper = myIterators[overlappingRangesCount];
         if (wrapper == null || wrapper.iterator.getRangeStart() > myCurrentStart) {
@@ -273,6 +276,11 @@ public final class SyntaxInfoBuilder {
       private IteratorWrapper(RangeIterator iterator, int order) {
         this.iterator = iterator;
         this.order = order;
+      }
+
+      @Override
+      public String toString() {
+        return iterator + " (" + iterator.getRangeStart() + ":" + iterator.getRangeEnd() + ")";
       }
     }
   }
@@ -369,6 +377,9 @@ public final class SyntaxInfoBuilder {
           continue;
         }
         myNextAttributes = attributes;
+        assert myNextStart <= myNextEnd : "Unexpected range: " + myNextStart + ":" + myNextEnd +
+                                          ", target range: " + myStartOffset + ":" + myEndOffset +
+                                          ", highlighter: " + highlighter.getStartOffset() + ":" + highlighter.getEndOffset();
         break;
       }
     }
@@ -438,6 +449,9 @@ public final class SyntaxInfoBuilder {
     public void advance() {
       myCurrentStart = getCurrentStart();
       myCurrentEnd = getCurrentEnd();
+      assert myCurrentStart <= myCurrentEnd : "Unexpected range: " + myCurrentStart + ":" + myCurrentEnd +
+                                              ", target range: " + myStartOffset + ":" + myEndOffset +
+                                              ", iterator: " + myIterator.getStart() + ":" + myIterator.getEnd();
       myCurrentAttributes = myIterator.getTokenType() == TokenType.BAD_CHARACTER ? EMPTY_ATTRIBUTES : myIterator.getTextAttributes();
       myIterator.advance();
     }
