@@ -312,7 +312,7 @@ public class ParameterInfoController extends UserDataHolderBase implements Dispo
     final PsiFile file =  PsiUtilBase.getPsiFileInEditor(myEditor, myProject);
     int caretOffset = myEditor.getCaretModel().getOffset();
     final int offset = getCurrentOffset();
-    final UpdateParameterInfoContext context = new MyUpdateParameterInfoContext(offset, file);
+    final MyUpdateParameterInfoContext context = new MyUpdateParameterInfoContext(offset, file);
     executeFindElementForUpdatingParameterInfo(context, elementForUpdating -> {
       myHandler.processFoundElementForUpdatingParameterInfo(elementForUpdating, context);
       if (elementForUpdating != null) {
@@ -370,8 +370,8 @@ public class ParameterInfoController extends UserDataHolderBase implements Dispo
       new Task.Backgroundable(myProject, CodeInsightBundle.message("parameter.info.progress.title"), true) {
         @Override
         public void run(@NotNull ProgressIndicator indicator) {
-          assert !ApplicationManager.getApplication().isWriteAccessAllowed() :
-            "Show parameter info under write action could lead to live lock";
+          assert !ApplicationManager.getApplication().isDispatchThread() :
+            "Show parameter info on dispatcher thread leads to live lock";
 
           final VisibleAreaListener visibleAreaListener = e -> indicator.cancel();
 
@@ -398,7 +398,7 @@ public class ParameterInfoController extends UserDataHolderBase implements Dispo
   }
 
   private void executeUpdateParameterInfo(PsiElement elementForUpdating,
-                                          UpdateParameterInfoContext context,
+                                          MyUpdateParameterInfoContext context,
                                           Runnable continuation) {
     PsiElement parameterOwner = context.getParameterOwner();
     if (parameterOwner != null && !parameterOwner.equals(elementForUpdating)) {
@@ -411,8 +411,8 @@ public class ParameterInfoController extends UserDataHolderBase implements Dispo
       new Task.Backgroundable(myProject, CodeInsightBundle.message("parameter.info.progress.title"), true) {
         @Override
         public void run(@NotNull ProgressIndicator indicator) {
-          assert !ApplicationManager.getApplication().isWriteAccessAllowed() :
-            "Show parameter info under write action could lead to live lock";
+          assert !ApplicationManager.getApplication().isDispatchThread() :
+            "Show parameter info on dispatcher thread leads to live lock";
 
           final VisibleAreaListener visibleAreaListener = e -> indicator.cancel();
 
@@ -435,8 +435,8 @@ public class ParameterInfoController extends UserDataHolderBase implements Dispo
             .expireWhen(() -> !myKeepOnHintHidden && !myHint.isVisible() || getCurrentOffset() != context.getOffset() || !elementForUpdating.isValid())
             .expireWith(ParameterInfoController.this)
             .finishOnUiThread(ModalityState.defaultModalityState(), element -> {
-              if (element != null && continuation != null &&
-                  Objects.equals(focusOwner, IdeFocusManager.getInstance(myProject).getFocusOwner())) {
+              if (element != null && continuation != null && Objects.equals(focusOwner, IdeFocusManager.getInstance(myProject).getFocusOwner())) {
+                context.applyUIChanges();
                 continuation.run();
               }
             })
@@ -690,10 +690,16 @@ public class ParameterInfoController extends UserDataHolderBase implements Dispo
   private class MyUpdateParameterInfoContext implements UpdateParameterInfoContext {
     private final int myOffset;
     private final PsiFile myFile;
+    private final boolean[] enabled;
 
     MyUpdateParameterInfoContext(final int offset, final PsiFile file) {
       myOffset = offset;
       myFile = file;
+
+      enabled = new boolean[getObjects().length];
+      for(int i = 0; i < enabled.length; i++) {
+        enabled[i] = myComponent.isEnabled(i);
+      }
     }
 
     @Override
@@ -759,12 +765,12 @@ public class ParameterInfoController extends UserDataHolderBase implements Dispo
 
     @Override
     public boolean isUIComponentEnabled(int index) {
-      return myComponent.isEnabled(index);
+      return enabled[index];
     }
 
     @Override
     public void setUIComponentEnabled(int index, boolean enabled) {
-      myComponent.setEnabled(index, enabled);
+      this.enabled[index] = enabled;
     }
 
     @Override
@@ -809,6 +815,16 @@ public class ParameterInfoController extends UserDataHolderBase implements Dispo
     @Override
     public UserDataHolderEx getCustomContext() {
       return ParameterInfoController.this;
+    }
+
+    void applyUIChanges() {
+      ApplicationManager.getApplication().assertIsDispatchThread();
+
+      for (int index = 0, len = enabled.length; index < len; index++) {
+        if (enabled[index] != myComponent.isEnabled(index)) {
+          myComponent.setEnabled(index, enabled[index]);
+        }
+      }
     }
   }
 
