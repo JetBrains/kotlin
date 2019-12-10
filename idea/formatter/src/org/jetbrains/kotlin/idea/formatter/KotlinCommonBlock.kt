@@ -594,12 +594,7 @@ abstract class KotlinCommonBlock(
                     parentElementType === SECONDARY_CONSTRUCTOR
                 ) {
                     val wrap = Wrap.createWrap(commonSettings.METHOD_PARAMETERS_WRAP, false)
-                    return { childElement ->
-                        if (childElement.elementType === VALUE_PARAMETER && !childElement.startsWithAnnotation())
-                            wrap
-                        else
-                            null
-                    }
+                    return { childElement -> wrap.takeIf { childElement.elementType === VALUE_PARAMETER } }
                 }
             }
 
@@ -700,8 +695,6 @@ abstract class KotlinCommonBlock(
         return ::noWrapping
     }
 }
-
-private fun ASTNode.startsWithAnnotation() = firstChildNode?.firstChildNode?.elementType == ANNOTATION_ENTRY
 
 private fun ASTNode.isFirstParameter(): Boolean = treePrev?.elementType == LPAR
 
