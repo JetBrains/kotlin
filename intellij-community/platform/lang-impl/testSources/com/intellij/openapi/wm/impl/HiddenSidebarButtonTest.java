@@ -30,9 +30,6 @@ public class HiddenSidebarButtonTest extends ToolWindowManagerTestCase {
       " show_stripe_button=\"true\" weight=\"0.37235227\" sideWeight=\"0.6060991\" order=\"0\" side_tool=\"false\" content_ui=\"tabs\" x=\"116\"" +
       " y=\"80\" width=\"487\" height=\"787\"/>" +
       "</layout>"));
-    for (String id : toolWindows) {
-      assertFalse(layout.isToolWindowRegistered(id));
-    }
 
     for (ToolWindowEP extension : ToolWindowEP.EP_NAME.getExtensionList()) {
       if (Arrays.asList(ToolWindowId.TODO_VIEW, ToolWindowId.FIND, ToolWindowId.PROJECT_VIEW).contains(extension.id)) {
@@ -42,8 +39,8 @@ public class HiddenSidebarButtonTest extends ToolWindowManagerTestCase {
     new UsageViewContentManagerImpl(myManager.getProject(), myManager);
 
     for (int i = 0; i < toolWindows.length; i++) {
-      assertTrue(layout.isToolWindowRegistered(toolWindows[i]));
-      assertEquals(expectedStripes[i], layout.getInfo(toolWindows[i], true).isShowStripeButton());
+      assertTrue(myManager.isToolWindowRegistered(toolWindows[i]));
+      assertEquals(expectedStripes[i], layout.getInfo(toolWindows[i]).isShowStripeButton());
       assertEquals(expectedVisibility[i], myManager.getStripeButton(toolWindows[i]).isVisible());
     }
   }

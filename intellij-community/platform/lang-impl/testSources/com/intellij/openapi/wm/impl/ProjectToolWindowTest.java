@@ -19,7 +19,7 @@ public class ProjectToolWindowTest extends ToolWindowManagerTestCase {
     }
 
     DesktopLayout layout = myManager.getLayout();
-    WindowInfoImpl info = layout.getInfo(ToolWindowId.PROJECT_VIEW, false);
+    WindowInfoImpl info = layout.getInfo(ToolWindowId.PROJECT_VIEW);
     assertFalse(info.isVisible());
     info.setVisible(true);
 
