@@ -127,10 +127,10 @@ private class InterfaceDelegationLowering(val context: JvmBackendContext) : IrEl
             super.visitSimpleFunction(declaration)
         }
     }
-
-    private fun IrSimpleFunction.hasInterfaceParent() =
-        (parent as? IrClass)?.isInterface == true
 }
+
+private fun IrSimpleFunction.hasInterfaceParent() =
+    (parent as? IrClass)?.isInterface == true
 
 internal val interfaceSuperCallsPhase = makeIrFilePhase(
     lowering = ::InterfaceSuperCallsLowering,
@@ -145,7 +145,7 @@ private class InterfaceSuperCallsLowering(val context: JvmBackendContext) : IrEl
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
-        if (expression.superQualifierSymbol?.owner?.isInterface != true) {
+        if (expression.superQualifierSymbol?.owner?.isInterface != true || expression.isSuperToAny()) {
             return super.visitCall(expression)
         }
 
@@ -201,3 +201,26 @@ private fun IrSimpleFunction.isDefinitelyNotDefaultImplsMethod() =
             (name.asString() == "clone" &&
                     parent.safeAs<IrClass>()?.fqNameWhenAvailable?.asString() == "kotlin.Cloneable" &&
                     valueParameters.isEmpty())
+
+internal val interfaceObjectCallsPhase = makeIrFilePhase(
+    lowering = ::InterfaceObjectCallsLowering,
+    name = "InterfaceObjectCalls",
+    description = "Resolve calls to Object methods on interface types to virtual methods"
+)
+
+private class InterfaceObjectCallsLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), FileLoweringPass {
+    override fun lower(irFile: IrFile) = irFile.transformChildrenVoid(this)
+
+    override fun visitCall(expression: IrCall): IrExpression {
+        if (expression.superQualifierSymbol != null && !expression.isSuperToAny())
+            return super.visitCall(expression)
+        val callee = expression.symbol.owner
+        if (callee !is IrSimpleFunction || !callee.hasInterfaceParent())
+            return super.visitCall(expression)
+        val resolved = callee.resolveFakeOverride()
+        if (resolved?.isMethodOfAny() != true)
+            return super.visitCall(expression)
+        val newSuperQualifierSymbol = context.irBuiltIns.anyClass.takeIf { expression.superQualifierSymbol != null }
+        return super.visitCall(irCall(expression, resolved, newSuperQualifierSymbol = newSuperQualifierSymbol))
+    }
+}

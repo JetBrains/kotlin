@@ -21882,6 +21882,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/super/innerClassQualifiedPropertyAccess.kt");
         }
 
+        @TestMetadata("interfaceHashCode.kt")
+        public void testInterfaceHashCode() throws Exception {
+            runTest("compiler/testData/codegen/box/super/interfaceHashCode.kt");
+        }
+
         @TestMetadata("kt14243.kt")
         public void testKt14243() throws Exception {
             runTest("compiler/testData/codegen/box/super/kt14243.kt");
