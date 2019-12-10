@@ -13,10 +13,9 @@ import com.intellij.openapi.externalSystem.model.internal.InternalExternalProjec
 import com.intellij.openapi.externalSystem.model.project.ModuleData;
 import com.intellij.openapi.externalSystem.model.project.ProjectData;
 import com.intellij.openapi.externalSystem.model.settings.ExternalSystemExecutionSettings;
-import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId;
-import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskState;
-import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskType;
+import com.intellij.openapi.externalSystem.model.task.*;
 import com.intellij.openapi.externalSystem.service.ExternalSystemFacadeManager;
+import com.intellij.openapi.externalSystem.service.execution.ExternalSystemExecutionAware;
 import com.intellij.openapi.externalSystem.service.notification.ExternalSystemProgressNotificationManager;
 import com.intellij.openapi.externalSystem.service.project.manage.ProjectDataManagerImpl;
 import com.intellij.openapi.externalSystem.service.remote.ExternalSystemProgressNotificationManagerImpl;
@@ -74,8 +73,14 @@ public class ExternalSystemResolveProjectTask extends AbstractExternalSystemTask
     try {
       progressNotificationManager.onStart(id, myProjectPath);
 
-      final ExternalSystemFacadeManager manager = ServiceManager.getService(ExternalSystemFacadeManager.class);
       ideProject = getIdeProject();
+
+      ExternalSystemTaskNotificationListener progressNotificationListener = wrapWithListener(progressNotificationManager);
+      for (ExternalSystemExecutionAware executionAware : ExternalSystemExecutionAware.getExtensions(getExternalSystemId())) {
+        executionAware.prepareExecution(id, myProjectPath, myIsPreviewMode, progressNotificationListener, ideProject);
+      }
+
+      final ExternalSystemFacadeManager manager = ServiceManager.getService(ExternalSystemFacadeManager.class);
       resolver = manager.getFacade(ideProject, myProjectPath, getExternalSystemId()).getResolver();
       settings = ExternalSystemApiUtil.getExecutionSettings(ideProject, myProjectPath, getExternalSystemId());
       if (StringUtil.isNotEmpty(myVmOptions)) {

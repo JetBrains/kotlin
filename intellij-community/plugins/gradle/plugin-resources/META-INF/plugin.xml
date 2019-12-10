@@ -90,6 +90,7 @@
     <externalSystemViewContributor implementation="org.jetbrains.plugins.gradle.service.project.view.GradleViewContributor"/>
     <externalProjectStructureCustomizer implementation="org.jetbrains.plugins.gradle.service.project.GradleProjectStructureCustomizer"/>
     <externalIconProvider key="GRADLE" implementationClass="org.jetbrains.plugins.gradle.ui.GradleIconProvider"/>
+    <externalExecutionAware key="GRADLE" implementationClass="org.jetbrains.plugins.gradle.service.execution.GradleExecutionAware"/>
     <externalSystemNotificationExtension implementation="org.jetbrains.plugins.gradle.service.notification.GradleNotificationExtension" order="last"/>
     <externalSystemTaskNotificationListener implementation="org.jetbrains.plugins.gradle.service.project.GradleProjectImportNotificationListener"/>
 

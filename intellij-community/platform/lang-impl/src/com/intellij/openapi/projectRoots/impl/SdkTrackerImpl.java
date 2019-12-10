@@ -15,7 +15,7 @@ import java.util.function.Consumer;
 public class SdkTrackerImpl extends SdkTracker {
   @Override
   public boolean isSdkReady(@NotNull Sdk sdk) {
-    return SdkDownloadTracker.getInstance().isDownloading(sdk);
+    return !SdkDownloadTracker.getInstance().isDownloading(sdk);
   }
 
   @Override

@@ -145,7 +145,7 @@ public class GradleInstallationManager {
     }
 
     final String gradleJvm = settings.getGradleJvm();
-    final Sdk sdk;
+    Sdk sdk;
     try {
       sdk = ExternalSystemJdkUtil.getJdk(project, gradleJvm);
     }

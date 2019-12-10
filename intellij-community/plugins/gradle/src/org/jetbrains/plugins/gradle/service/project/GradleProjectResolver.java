@@ -2,6 +2,7 @@
 package org.jetbrains.plugins.gradle.service.project;
 
 import com.intellij.execution.configurations.ParametersList;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.externalSystem.importing.ProjectResolverPolicy;
 import com.intellij.openapi.externalSystem.model.DataNode;
@@ -24,6 +25,7 @@ import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import gnu.trove.THashMap;
+import org.gradle.tooling.CancellationToken;
 import org.gradle.tooling.CancellationTokenSource;
 import org.gradle.tooling.ProjectConnection;
 import org.gradle.tooling.model.ProjectModel;

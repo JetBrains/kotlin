@@ -7,9 +7,11 @@ import com.intellij.openapi.externalSystem.model.execution.ExternalSystemTaskExe
 import com.intellij.openapi.externalSystem.model.execution.ExternalTaskPojo;
 import com.intellij.openapi.externalSystem.model.settings.ExternalSystemExecutionSettings;
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId;
+import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListener;
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskType;
 import com.intellij.openapi.externalSystem.service.ExternalSystemFacadeManager;
 import com.intellij.openapi.externalSystem.service.RemoteExternalSystemFacade;
+import com.intellij.openapi.externalSystem.service.execution.ExternalSystemExecutionAware;
 import com.intellij.openapi.externalSystem.service.notification.ExternalSystemProgressNotificationManager;
 import com.intellij.openapi.externalSystem.service.remote.ExternalSystemProgressNotificationManagerImpl;
 import com.intellij.openapi.externalSystem.service.remote.RemoteExternalSystemTaskManager;
@@ -124,6 +126,11 @@ public class ExternalSystemExecuteTaskTask extends AbstractExternalSystemTask {
     RemoteExternalSystemTaskManager taskManager;
     try {
       progressNotificationManager.onStart(id, projectPath);
+
+      ExternalSystemTaskNotificationListener progressNotificationListener = wrapWithListener(progressNotificationManager);
+      for (ExternalSystemExecutionAware executionAware : ExternalSystemExecutionAware.getExtensions(getExternalSystemId())) {
+        executionAware.prepareExecution(id, projectPath, false, progressNotificationListener, getIdeProject());
+      }
 
       final ExternalSystemFacadeManager manager = ServiceManager.getService(ExternalSystemFacadeManager.class);
       settings = ExternalSystemApiUtil.getExecutionSettings(getIdeProject(),
