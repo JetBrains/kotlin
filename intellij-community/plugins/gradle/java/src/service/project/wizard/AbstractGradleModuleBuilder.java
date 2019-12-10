@@ -9,22 +9,16 @@ import com.intellij.ide.projectWizard.ProjectSettingsStep;
 import com.intellij.ide.util.EditorHelper;
 import com.intellij.ide.util.projectWizard.*;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.externalSystem.ExternalStateComponent;
 import com.intellij.openapi.externalSystem.ExternalSystemModulePropertyManager;
-import com.intellij.openapi.externalSystem.importing.ImportSpec;
 import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder;
-import com.intellij.openapi.externalSystem.model.DataNode;
 import com.intellij.openapi.externalSystem.model.ExternalSystemDataKeys;
-import com.intellij.openapi.externalSystem.model.ProjectKeys;
-import com.intellij.openapi.externalSystem.model.internal.InternalExternalProjectInfo;
 import com.intellij.openapi.externalSystem.model.project.ProjectData;
 import com.intellij.openapi.externalSystem.model.project.ProjectId;
-import com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsManagerImpl;
 import com.intellij.openapi.externalSystem.service.project.wizard.AbstractExternalModuleBuilder;
 import com.intellij.openapi.externalSystem.settings.AbstractExternalSystemSettings;
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
@@ -66,6 +60,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.intellij.ide.util.newProjectWizard.AbstractProjectWizard.getNewProjectJdk;
+import static com.intellij.openapi.externalSystem.service.execution.ProgressExecutionMode.MODAL_SYNC;
 import static com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsManagerImpl.setupCreatedProject;
 import static org.jetbrains.plugins.gradle.service.project.open.GradleProjectImportUtil.setupGradleSettings;
 
@@ -201,26 +196,7 @@ public abstract class AbstractGradleModuleBuilder extends AbstractExternalModule
     super.setupModule(module);
     assert rootProjectPath != null;
 
-    VirtualFile buildScriptFile = null;
-    final BuildScriptDataBuilder buildScriptDataBuilder = getBuildScriptData(module);
-    try {
-      if (buildScriptDataBuilder != null) {
-        buildScriptFile = buildScriptDataBuilder.getBuildScriptFile();
-        String lineSeparator = lineSeparator(buildScriptFile);
-        String imports = StringUtil.convertLineSeparators(buildScriptDataBuilder.buildImports(), lineSeparator);
-        String configurationPart = StringUtil.convertLineSeparators(buildScriptDataBuilder.buildConfigurationPart(), lineSeparator);
-        String existingText = StringUtil.trimTrailing(VfsUtilCore.loadText(buildScriptFile));
-        String content = (!imports.isEmpty() ? imports + lineSeparator : "") +
-                         (!configurationPart.isEmpty() ? configurationPart + lineSeparator : "") +
-                         (!existingText.isEmpty() ? existingText + lineSeparator : "") +
-                         lineSeparator +
-                         StringUtil.convertLineSeparators(buildScriptDataBuilder.buildMainPart(), lineSeparator);
-        VfsUtil.saveText(buildScriptFile, content);
-      }
-    }
-    catch (IOException e) {
-      LOG.warn("Unexpected exception on applying frameworks templates", e);
-    }
+    VirtualFile buildScriptFile = createAndConfigureBuildScriptFile(module);
 
     // it will be set later in any case, but save is called immediately after project creation, so, to ensure that it will be properly saved as external system module
     ExternalSystemModulePropertyManager modulePropertyManager = ExternalSystemModulePropertyManager.getInstance(module);
@@ -231,50 +207,73 @@ public abstract class AbstractGradleModuleBuilder extends AbstractExternalModule
     moduleState.setLinkedProjectPath(rootProjectPath);
 
     final Project project = module.getProject();
-    final Sdk projectSdk = getNewProjectJdk(myWizardContext);
-    final GradleProjectSettings gradleProjectSettings = getExternalProjectSettings();
+    FileDocumentManager.getInstance().saveAllDocuments();
+    GradleProjectSettings projectSettings = getOrCreateCurrentSettings(project);
     if (myWizardContext.isCreatingNewProject()) {
-      setupGradleSettings(gradleProjectSettings, rootProjectPath, project, projectSdk);
-      AbstractExternalSystemSettings settings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID);
       project.putUserData(ExternalSystemDataKeys.NEWLY_CREATED_PROJECT, Boolean.TRUE);
-      //noinspection unchecked
-      settings.linkProject(gradleProjectSettings);
+      // Needed to ignore postponed project refresh
+      project.putUserData(ExternalSystemDataKeys.NEWLY_IMPORTED_PROJECT, Boolean.TRUE);
       // update external projects data to be able to add child modules before the initial import finish
-      ProjectData projectData = new ProjectData(GradleConstants.SYSTEM_ID, project.getName(), myWizardContext.getProjectFileDirectory(),
-                                                gradleProjectSettings.getExternalProjectPath());
-      DataNode<ProjectData> projectDataNode = new DataNode<>(ProjectKeys.PROJECT, projectData, null);
-      ExternalProjectsManagerImpl.getInstance(project).updateExternalProjectData(
-        new InternalExternalProjectInfo(GradleConstants.SYSTEM_ID, gradleProjectSettings.getExternalProjectPath(), projectDataNode));
+      ImportSpecBuilder previewSpec = new ImportSpecBuilder(project, GradleConstants.SYSTEM_ID).usePreviewMode().use(MODAL_SYNC);
+      ExternalSystemUtil.refreshProject(rootProjectPath, previewSpec);
     }
-    else {
-      FileDocumentManager.getInstance().saveAllDocuments();
-      final VirtualFile finalBuildScriptFile = buildScriptFile;
-      Runnable runnable = () -> {
-        if (myParentProject == null) {
-          setupGradleSettings(gradleProjectSettings, rootProjectPath, project, projectSdk);
-          AbstractExternalSystemSettings settings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID);
-          //noinspection unchecked
-          settings.linkProject(gradleProjectSettings);
-        }
 
-        ImportSpec importSpec = new ImportSpecBuilder(project, GradleConstants.SYSTEM_ID)
-          .createDirectoriesForEmptyContentRoots()
-          .build();
-        ExternalSystemUtil.refreshProject(rootProjectPath, importSpec);
+    // execute when current dialog is closed
+    ApplicationManager.getApplication().invokeLater(() -> {
+      ImportSpecBuilder importSpec = new ImportSpecBuilder(project, GradleConstants.SYSTEM_ID).createDirectoriesForEmptyContentRoots();
+      ExternalSystemUtil.refreshProject(rootProjectPath, importSpec);
+      openBuildScriptFile(project, buildScriptFile);
+    }, ModalityState.NON_MODAL, project.getDisposed());
+  }
 
-        final PsiFile psiFile;
-        if (finalBuildScriptFile != null) {
-          psiFile = PsiManager.getInstance(project).findFile(finalBuildScriptFile);
-          if (psiFile != null) {
-            EditorHelper.openInEditor(psiFile);
-          }
-        }
-      };
-
-      // execute when current dialog is closed
-      Application application = ApplicationManager.getApplication();
-      application.invokeLater(runnable, ModalityState.NON_MODAL, project.getDisposed());
+  private GradleProjectSettings getOrCreateCurrentSettings(@NotNull Project project) {
+    if (myParentProject != null) {
+      return getSystemSettings(project).getLinkedProjectSettings(rootProjectPath);
     }
+    Sdk projectSdk = getNewProjectJdk(myWizardContext);
+    GradleProjectSettings projectSettings = getExternalProjectSettings();
+    setupGradleSettings(projectSettings, rootProjectPath, project, projectSdk);
+    getSystemSettings(project).linkProject(projectSettings);
+    return projectSettings;
+  }
+
+  private static AbstractExternalSystemSettings<?, GradleProjectSettings, ?> getSystemSettings(@NotNull Project project) {
+    //noinspection unchecked
+    return ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID);
+  }
+
+  @Nullable
+  private static VirtualFile createAndConfigureBuildScriptFile(@NotNull Module module) {
+    final BuildScriptDataBuilder buildScriptDataBuilder = getBuildScriptData(module);
+    if (buildScriptDataBuilder == null) return null;
+    try {
+      VirtualFile buildScriptFile = buildScriptDataBuilder.getBuildScriptFile();
+      String lineSeparator = lineSeparator(buildScriptFile);
+      String imports = StringUtil.convertLineSeparators(buildScriptDataBuilder.buildImports(), lineSeparator);
+      String configurationPart = StringUtil.convertLineSeparators(buildScriptDataBuilder.buildConfigurationPart(), lineSeparator);
+      String existingText = StringUtil.trimTrailing(VfsUtilCore.loadText(buildScriptFile));
+      String content = (!imports.isEmpty() ? imports + lineSeparator : "") +
+                       (!configurationPart.isEmpty() ? configurationPart + lineSeparator : "") +
+                       (!existingText.isEmpty() ? existingText + lineSeparator : "") +
+                       lineSeparator +
+                       StringUtil.convertLineSeparators(buildScriptDataBuilder.buildMainPart(), lineSeparator);
+      VfsUtil.saveText(buildScriptFile, content);
+      return buildScriptFile;
+    }
+    catch (IOException e) {
+      LOG.warn("Unexpected exception on applying frameworks templates", e);
+    }
+    return null;
+  }
+
+  private static void openBuildScriptFile(@NotNull Project project, VirtualFile buildScriptFile) {
+    ApplicationManager.getApplication().invokeLater(() -> {
+      if (buildScriptFile == null) return;
+      PsiManager psiManager = PsiManager.getInstance(project);
+      PsiFile psiFile = psiManager.findFile(buildScriptFile);
+      if (psiFile == null) return;
+      EditorHelper.openInEditor(psiFile);
+    }, ModalityState.NON_MODAL, project.getDisposed());
   }
 
   protected void setWizardContext(@NotNull WizardContext wizardContext) {
