@@ -5,15 +5,14 @@
 
 package org.jetbrains.kotlin.idea.fir
 
-import com.intellij.ide.util.PropertiesComponent
+import com.intellij.openapi.util.registry.Registry
 
 // Just a wrapper to see whether resolve works via FIR or not
 object FirResolution {
-    private const val ENABLED_BY_DEFAULT = false
     private const val optionName = "kotlin.use.fir.resolution"
 
     private val initialEnabledValue: Boolean by lazy {
-        PropertiesComponent.getInstance().getBoolean(optionName, ENABLED_BY_DEFAULT)
+        Registry.`is`(optionName, /* defaultValue = */ false)
     }
 
     private var changedEnabledValue: Boolean? = null
@@ -22,6 +21,5 @@ object FirResolution {
         get() = changedEnabledValue ?: initialEnabledValue
         set(value) {
             changedEnabledValue = value
-            //PropertiesComponent.getInstance().setValue(optionName, value, ENABLED_BY_DEFAULT)
         }
 }
