@@ -4481,6 +4481,11 @@ public abstract class LocalInspectionTestGenerated extends AbstractLocalInspecti
             runTest("testData/inspectionsLocal/foldInitializerAndIfToElvis/Comments2.kt");
         }
 
+        @TestMetadata("ComplexExpression.kt")
+        public void testComplexExpression() throws Exception {
+            runTest("idea/testData/inspectionsLocal/foldInitializerAndIfToElvis/ComplexExpression.kt");
+        }
+
         @TestMetadata("Continue.kt")
         public void testContinue() throws Exception {
             runTest("testData/inspectionsLocal/foldInitializerAndIfToElvis/Continue.kt");

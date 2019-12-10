@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.core.setType
 import org.jetbrains.kotlin.idea.formatter.rightMarginOrDefault
+import org.jetbrains.kotlin.idea.core.util.isMultiLine
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.elvisPattern
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.expressionComparedToNull
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.fromIfKeywordToRightParenthesisTextRangeInThis
@@ -63,6 +64,11 @@ class FoldInitializerAndIfToElvisInspection : AbstractApplicabilityBasedInspecti
         private fun applicabilityRange(element: KtIfExpression): TextRange? {
             val data = calcData(element) ?: return null
 
+            if (data.initializer !is KtParenthesizedExpression
+                && data.initializer.isMultiLine()
+                && createElvisExpression(element, data, KtPsiFactory(element)).left is KtParenthesizedExpression
+            ) return null
+
             val type = data.ifNullExpression.analyze().getType(data.ifNullExpression) ?: return null
             if (!type.isNothing()) return null
 
@@ -72,7 +78,8 @@ class FoldInitializerAndIfToElvisInspection : AbstractApplicabilityBasedInspecti
         fun isApplicable(element: KtIfExpression): Boolean = applicabilityRange(element) != null
 
         fun applyTo(element: KtIfExpression): KtBinaryExpression {
-            val (initializer, declaration, ifNullExpr, typeReference) = calcData(element)!!
+            val data = calcData(element)!!
+            val (initializer, declaration, _, typeReference) = data
             val factory = KtPsiFactory(element)
 
             val explicitTypeToSet = when {
@@ -90,11 +97,7 @@ class FoldInitializerAndIfToElvisInspection : AbstractApplicabilityBasedInspecti
             val commentSaver = CommentSaver(childRangeBefore)
             val childRangeAfter = childRangeBefore.withoutLastStatement()
 
-            val margin = element.containingKtFile.rightMarginOrDefault
-            val declarationTextLength = declaration.text.split("\n").lastOrNull()?.trim()?.length ?: 0
-            val pattern = elvisPattern(declarationTextLength + ifNullExpr.textLength + 5 >= margin || element.then?.hasComments() == true)
-
-            val elvis = factory.createExpressionByPattern(pattern, initializer, ifNullExpr) as KtBinaryExpression
+            val elvis = createElvisExpression(element, data, factory)
 
             return runWriteAction {
                 if (typeReference != null) {
@@ -110,6 +113,14 @@ class FoldInitializerAndIfToElvisInspection : AbstractApplicabilityBasedInspecti
                 commentSaver.restore(childRangeAfter)
                 newElvis
             }
+        }
+
+        private fun createElvisExpression(element: KtIfExpression, data: Data, factory: KtPsiFactory): KtBinaryExpression {
+            val (initializer, declaration, ifNullExpr, _) = data
+            val margin = element.containingKtFile.rightMarginOrDefault
+            val declarationTextLength = declaration.text.split("\n").lastOrNull()?.trim()?.length ?: 0
+            val pattern = elvisPattern(declarationTextLength + ifNullExpr.textLength + 5 >= margin || element.then?.hasComments() == true)
+            return factory.createExpressionByPattern(pattern, initializer, ifNullExpr) as KtBinaryExpression
         }
 
         private fun calcData(ifExpression: KtIfExpression): Data? {
