@@ -38,8 +38,8 @@ public class SdkDetector {
    */
   public interface DetectedSdkListener {
     void onSdkDetected(@NotNull SdkType type, @Nullable String version, @NotNull String home);
-    void onSearchStarted();
-    void onSearchCompleted();
+    default void onSearchStarted() { }
+    default void onSearchCompleted() { }
   }
 
   /**
@@ -118,50 +118,67 @@ public class SdkDetector {
     }
   };
 
-  private static void startSdkDetection(@Nullable Project project, @NotNull DetectedSdkListener callback) {
+  /**
+   * Run Sdk detection assuming called in a background thread
+   */
+  public void detectSdks(@NotNull SdkType type,
+                         @NotNull ProgressIndicator indicator,
+                         @NotNull DetectedSdkListener callback) {
+    callback.onSearchStarted();
+    try {
+      detect(type, indicator, callback);
+    } finally {
+      callback.onSearchCompleted();
+    }
+  }
+
+  private static void detect(@NotNull SdkType type,
+                             @NotNull ProgressIndicator indicator,
+                             @NotNull DetectedSdkListener callback) {
+    try {
+      for (String path : new HashSet<>(type.suggestHomePaths())) {
+        indicator.checkCanceled();
+
+        if (path == null) continue;
+
+        try {
+          //a sanity check first
+          if (!new File(path).exists()) continue;
+          if (!type.isValidSdkHome(path)) continue;
+        }
+        catch (Exception e) {
+          LOG.warn("Failed to process detected SDK for " + type + " at " + path + ". " + e.getMessage(), e);
+          continue;
+        }
+
+        String version;
+        try {
+          version = type.getVersionString(path);
+        }
+        catch (Exception e) {
+          LOG.warn("Failed to get the detected SDK version for " + type + " at " + path + ". " + e.getMessage(), e);
+          continue;
+        }
+
+        callback.onSdkDetected(type, version, path);
+      }
+    }
+    catch (ProcessCanceledException e) {
+      throw e;
+    }
+    catch (Exception e) {
+      LOG.warn("Failed to detect SDK: " + e.getMessage(), e);
+    }
+  }
+
+  private static void startSdkDetection(@Nullable Project project,
+                                        @NotNull DetectedSdkListener callback) {
     Task.Backgroundable task = new Task.Backgroundable(
       project,
       "Detecting SDKs",
       true,
       PerformInBackgroundOption.ALWAYS_BACKGROUND) {
 
-      private void detect(SdkType type, @NotNull ProgressIndicator indicator) {
-        try {
-          for (String path : new HashSet<>(type.suggestHomePaths())) {
-            indicator.checkCanceled();
-            if (project != null && project.isDisposed()) indicator.cancel();
-
-            if (path == null) continue;
-
-            try {
-              //a sanity check first
-              if (!new File(path).exists()) continue;
-              if (!type.isValidSdkHome(path)) continue;
-            }
-            catch (Exception e) {
-              LOG.warn("Failed to process detected SDK for " + type + " at " + path + ". " + e.getMessage(), e);
-              continue;
-            }
-
-            String version;
-            try {
-              version = type.getVersionString(path);
-            }
-            catch (Exception e) {
-              LOG.warn("Failed to get the detected SDK version for " + type + " at " + path + ". " + e.getMessage(), e);
-              continue;
-            }
-
-            callback.onSdkDetected(type, version, path);
-          }
-        }
-        catch (ProcessCanceledException e) {
-          throw e;
-        }
-        catch (Exception e) {
-          LOG.warn("Failed to detect SDK: " + e.getMessage(), e);
-        }
-      }
 
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
@@ -172,7 +189,7 @@ public class SdkDetector {
           for (SdkType type : SdkType.getAllTypes()) {
             indicator.setFraction((float)item++ / SdkType.getAllTypes().length);
             indicator.checkCanceled();
-            detect(type, indicator);
+            detect(type, indicator, callback);
           }
         } finally {
           callback.onSearchCompleted();
