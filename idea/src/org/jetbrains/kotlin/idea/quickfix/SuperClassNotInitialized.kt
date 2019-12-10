@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructorSubstitution
@@ -192,10 +193,17 @@ object SuperClassNotInitialized : KotlinIntentionActionsFactory() {
                         if (type.isSubtypeOf(parameter.type)) continue // use existing parameter
                     }
 
-                    val parameterText = if (varargElementType != null)
+                    val defaultValue = if (parameter.declaresDefaultValue()) {
+                        (DescriptorToSourceUtils.descriptorToDeclaration(parameter) as? KtParameter)
+                            ?.defaultValue?.text?.let { " = $it" } ?: ""
+                    } else {
+                        ""
+                    }
+                    val parameterText = if (varargElementType != null) {
                         "vararg " + nameRendered + ":" + IdeDescriptorRenderers.SOURCE_CODE.renderType(varargElementType)
-                    else
+                    } else {
                         nameRendered + ":" + IdeDescriptorRenderers.SOURCE_CODE.renderType(parameter.type)
+                    } + defaultValue
                     parametersToAdd.add(KtPsiFactory(element).createParameter(parameterText))
                 }
 

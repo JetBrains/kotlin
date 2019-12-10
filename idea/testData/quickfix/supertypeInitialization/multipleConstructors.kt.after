@@ -2,4 +2,4 @@
 // ACTION: Add constructor parameters from ArrayList(Int)
 import java.util.ArrayList
 
-class C(c: MutableCollection<out String>?) : ArrayList<String>(c)
+class C(c: MutableCollection<out String>) : ArrayList<String>(c)
