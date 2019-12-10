@@ -99,7 +99,8 @@ class StringBuilderTest {
             sb.append('\uD800')
             sb.append('\uDC00')
 
-            sb.insert(10, "\uDC01\uD801")
+            sb.insert(10, '\uDC01')
+            sb.insert(11, '\uD801')
             sb.insert(0, "\uD802\uDC02")
 
             sb.reverse()
