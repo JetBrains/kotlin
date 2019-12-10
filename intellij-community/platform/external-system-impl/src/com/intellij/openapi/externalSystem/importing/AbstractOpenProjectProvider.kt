@@ -2,6 +2,7 @@
 package com.intellij.openapi.externalSystem.importing
 
 import com.intellij.ide.highlighter.ProjectFileType
+import com.intellij.ide.impl.OpenProjectTask
 import com.intellij.ide.impl.ProjectUtil.*
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.model.ExternalSystemDataKeys
@@ -44,7 +45,9 @@ abstract class AbstractOpenProjectProvider : OpenProjectProvider {
     if (!forceOpenInNewFrame) {
       closePreviousProject(projectToClose)
     }
-    ProjectManagerEx.getInstanceEx().openProject(project)
+
+    val path = Paths.get(projectDirectory.path)
+    PlatformProjectOpenProcessor.openExistingProject(path, path, OpenProjectTask(project = project))
     return project
   }
 
