@@ -4,7 +4,6 @@ package com.intellij.codeInsight.navigation;
 import com.intellij.codeInsight.documentation.DocumentationManagerProtocol;
 import com.intellij.lang.documentation.DocumentationProvider;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import gnu.trove.TIntHashSet;
 import org.jetbrains.annotations.NotNull;
@@ -98,16 +97,16 @@ public class DocPreviewUtil {
     Map<String, String> toAdd = new HashMap<>();
     for (Map.Entry<String, String> entry : links.entrySet()) {
       String shortName = parseShortName(entry.getKey());
-      if (!StringUtil.isEmpty(shortName)) {
+      if (shortName != null) {
         toAdd.put(shortName, entry.getValue());
       }
       String longName = parseLongName(entry.getKey(), entry.getValue());
-      if (!StringUtil.isEmpty(longName)) {
+      if (longName != null) {
         toAdd.put(longName, entry.getValue());
       }
     }
     links.putAll(toAdd);
-    if (!StringUtil.isEmpty(qName)) {
+    if (qName != null) {
       links.put(qName, DocumentationManagerProtocol.PSI_ELEMENT_PROTOCOL + qName);
     }
 
@@ -160,8 +159,12 @@ public class DocPreviewUtil {
   private static void replace(@NotNull StringBuilder text,
                               @NotNull String replaceFrom,
                               @NotNull String replaceTo,
-                              @NotNull List<TextRange> readOnlyChanges)
-  {
+                              @NotNull List<TextRange> readOnlyChanges) {
+
+    if (replaceFrom.isEmpty()) {
+      return;
+    }
+
     for (int i = text.indexOf(replaceFrom); i >= 0; i = text.indexOf(replaceFrom, i + 1)) {
       int end = i + replaceFrom.length();
       if (intersects(readOnlyChanges, i, end)) {
