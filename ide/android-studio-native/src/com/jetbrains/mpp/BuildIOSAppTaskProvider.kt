@@ -19,8 +19,10 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.io.FileUtil
 import com.jetbrains.cidr.execution.CidrBuildConfiguration
+import com.jetbrains.cidr.execution.ExecutionResult
 import com.jetbrains.cidr.execution.build.CidrBuild
 import com.jetbrains.cidr.execution.build.CidrBuild.startProcess
+import com.jetbrains.cidr.execution.build.CidrBuildResult
 import com.jetbrains.cidr.execution.build.CidrBuildTaskType
 import java.io.File
 import java.util.regex.Pattern
@@ -63,7 +65,7 @@ class BuildIOSAppTaskProvider : BeforeRunTaskProvider<BuildIOSAppTask>() {
     override fun getId() = BUILD_IOS_APP_TASK_ID
 
     override fun createTask(runConfiguration: RunConfiguration): BuildIOSAppTask? =
-        if (runConfiguration is MobileRunConfiguration) BuildIOSAppTask() else null
+        if (runConfiguration is AppleRunConfiguration) BuildIOSAppTask() else null
 
     override fun executeTask(
         context: DataContext,
@@ -71,7 +73,7 @@ class BuildIOSAppTaskProvider : BeforeRunTaskProvider<BuildIOSAppTask>() {
         environment: ExecutionEnvironment,
         task: BuildIOSAppTask
     ): Boolean {
-        if (configuration !is MobileRunConfiguration) return false
+        if (configuration !is AppleRunConfiguration) return false
         val workDirectory = configuration.project.basePath ?: return false
         val xcodeprojFile = getXcodeprojFile(workDirectory, configuration.xcodeproj) ?: return false
 
@@ -93,17 +95,13 @@ class BuildIOSAppTaskProvider : BeforeRunTaskProvider<BuildIOSAppTask>() {
 
         buildContext.processHandler.addProcessListener(BuildProcessListener(buildContext))
 
-        ApplicationManager.getApplication().executeOnPooledThread {
+        val future = ApplicationManager.getApplication().executeOnPooledThread<ExecutionResult<CidrBuildResult>> {
             CidrBuild.execute(configuration.project, buildContext) {
                 startProcess(configuration.project, buildContext, emptyList())
             }
         }
 
-        if (xcodeprojFile.absolutePath.contains("xcodeproj")) {
-            return false // TODO: Let execution to continue once run configuration is ready.
-        }
-
-        return true
+        return future.get().get().succeeded
     }
 
     private fun createBuildProcess(

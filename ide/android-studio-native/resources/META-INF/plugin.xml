@@ -1,4 +1,5 @@
-<idea-plugin>
+<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
+  <xi:include href="/META-INF/CocoaCommonPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <id>org.jetbrains.mobile-mpp</id>
   <name>Mobile Multiplatform</name>
   <version>0.1</version>
@@ -12,10 +13,19 @@
       <implementation-class>com.jetbrains.konan.MPPWorkspace</implementation-class>
     </component>
   </project-components>
+  <application-components>
+    <component>
+      <implementation-class>com.jetbrains.cidr.xcode.frameworks.AppleSdkManager</implementation-class>
+    </component>
+  </application-components>
 
   <extensions defaultExtensionNs="com.intellij">
+    <applicationService serviceInterface="com.jetbrains.cidr.OCPathManagerCustomization"
+                        serviceImplementation="com.jetbrains.mpp.PathManagerCustomization" overrides="true"/>
+
     <externalProjectDataService implementation="com.jetbrains.konan.MPPProjectDataService"/>
     <configurationType implementation="com.jetbrains.mpp.MobileRunConfigurationType"/>
     <stepsBeforeRunProvider implementation="com.jetbrains.mpp.BuildIOSAppTaskProvider"/>
+    <executionTargetProvider implementation="com.jetbrains.mpp.execution.DeviceExecutionTargetProvider"/>
   </extensions>
 </idea-plugin>

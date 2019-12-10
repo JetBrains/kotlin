@@ -84,6 +84,18 @@ val appcodeJavaPluginDownloadUrl: URL? by rootProject.extra(
 )
 val xCodeCompatPluginVersion by rootProject.extra(rootProject.extra["versions.xcode-compat"] as String)
 
+val clionCocoaCommonArtifacts: List<String> by rootProject.extra(
+    listOf("$clionRepo:$clionVersion:cocoa-common-binaries/Bridge.framework.tar",
+           "$clionRepo:$clionVersion:cocoa-common-binaries/JBDevice.framework.tar",
+           "$clionRepo:$clionVersion:cocoa-common-binaries/libObjCHelper.dylib")
+)
+val clionCocoaCommonBinariesDir: File by rootProject.extra(
+    externalDepsDir(
+        "cocoa-common-binaries",
+        "cidr-cocoaCommon-binaries-$clionVersion"
+    )
+)
+
 if (rootProject.extra.has("versions.nativeDebug")) {
     val nativeDebugVersion: String = rootProject.extra["versions.nativeDebug"] as String
     rootProject.extra["nativeDebugVersion"] = nativeDebugVersion

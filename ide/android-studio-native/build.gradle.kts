@@ -2,6 +2,12 @@ plugins {
     kotlin("jvm")
 }
 
+val clionVersion: String by rootProject.extra
+
+repositories {
+    maven("https://repo.labs.intellij.net/intellij-proprietary-modules")
+}
+
 val ultimateTools: Map<String, Any> by rootProject.extensions
 val addCidrDeps: (Project) -> Unit by ultimateTools
 
@@ -29,6 +35,9 @@ dependencies {
         "java-api",
         "java-impl"
     ) }
+
+    implementation("com.jetbrains.intellij.cidr:cidr-cocoa-common:$clionVersion") { isTransitive = false }
+    implementation("com.jetbrains.intellij.cidr:cidr-xcode-model-core:$clionVersion") { isTransitive = false }
 }
 
 
