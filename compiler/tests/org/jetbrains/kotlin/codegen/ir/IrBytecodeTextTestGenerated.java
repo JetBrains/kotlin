@@ -2344,6 +2344,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         public void testHashCode() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/hashCode/hashCode.kt");
         }
+
+        @TestMetadata("interfaceHashCode.kt")
+        public void testInterfaceHashCode() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/hashCode/interfaceHashCode.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/bytecodeText/ieee754")

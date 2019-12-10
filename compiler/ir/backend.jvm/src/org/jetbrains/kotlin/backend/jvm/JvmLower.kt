@@ -280,6 +280,7 @@ private val jvmFilePhases =
         interfaceDelegationPhase then
         interfaceSuperCallsPhase then
         interfaceDefaultCallsPhase then
+        interfaceObjectCallsPhase then
 
         addContinuationPhase then
 
