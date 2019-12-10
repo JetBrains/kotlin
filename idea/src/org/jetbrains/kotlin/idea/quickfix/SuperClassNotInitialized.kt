@@ -193,17 +193,17 @@ object SuperClassNotInitialized : KotlinIntentionActionsFactory() {
                         if (type.isSubtypeOf(parameter.type)) continue // use existing parameter
                     }
 
+                    val defaultValue = if (parameter.declaresDefaultValue()) {
+                        (DescriptorToSourceUtils.descriptorToDeclaration(parameter) as? KtParameter)
+                            ?.defaultValue?.text?.let { " = $it" } ?: ""
+                    } else {
+                        ""
+                    }
                     val parameterText = if (varargElementType != null) {
                         "vararg " + nameRendered + ":" + IdeDescriptorRenderers.SOURCE_CODE.renderType(varargElementType)
                     } else {
-                        val defaultValue = if (parameter.declaresDefaultValue()) {
-                            (DescriptorToSourceUtils.descriptorToDeclaration(parameter) as? KtParameter)
-                                ?.defaultValue?.text?.let { " = $it" } ?: ""
-                        } else {
-                            ""
-                        }
-                        nameRendered + ":" + IdeDescriptorRenderers.SOURCE_CODE.renderType(parameter.type) + defaultValue
-                    }
+                        nameRendered + ":" + IdeDescriptorRenderers.SOURCE_CODE.renderType(parameter.type)
+                    } + defaultValue
                     parametersToAdd.add(KtPsiFactory(element).createParameter(parameterText))
                 }
 

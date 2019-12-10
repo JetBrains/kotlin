@@ -11804,6 +11804,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         public void testVararg3() throws Exception {
             runTest("idea/testData/quickfix/supertypeInitialization/vararg3.kt");
         }
+
+        @TestMetadata("vararg4.kt")
+        public void testVararg4() throws Exception {
+            runTest("idea/testData/quickfix/supertypeInitialization/vararg4.kt");
+        }
     }
 
     @TestMetadata("idea/testData/quickfix/suppress")
