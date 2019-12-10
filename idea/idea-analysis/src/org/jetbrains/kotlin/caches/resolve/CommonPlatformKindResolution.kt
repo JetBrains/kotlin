@@ -33,7 +33,7 @@ class CommonPlatformKindResolution : IdePlatformKindResolution {
 
     override val kind get() = CommonIdePlatformKind
 
-    override fun getKeyForBuiltIns(moduleInfo: ModuleInfo): BuiltInsCacheKey = BuiltInsCacheKey.DefaultBuiltInsKey
+    override fun getKeyForBuiltIns(moduleInfo: ModuleInfo, sdkInfo: SdkInfo?): BuiltInsCacheKey = BuiltInsCacheKey.DefaultBuiltInsKey
 
     override fun createBuiltIns(moduleInfo: ModuleInfo, projectContext: ProjectContext, sdkDependency: SdkInfo?): KotlinBuiltIns {
         return DefaultBuiltIns.Instance
