@@ -105,7 +105,7 @@ abstract class AbstractGradleMultiplatformWizardTest : ProjectWizardTestCase<Abs
         systemSettings.setLinkedProjectsSettings(projects)
     }
 
-    fun KotlinGradleAbstractMultiplatformModuleBuilder.buildProject(): Project =
+    protected fun KotlinGradleAbstractMultiplatformModuleBuilder.buildProject(): Project =
         createProject { step ->
             if (step is ProjectTypeStep) {
                 TestCase.assertTrue(step.setSelectedTemplate("Kotlin", this.presentableName))
@@ -123,7 +123,7 @@ abstract class AbstractGradleMultiplatformWizardTest : ProjectWizardTestCase<Abs
             }
         }
 
-    fun Project.checkGradleConfiguration(metadataInside: Boolean = false, mppPluginInside: Boolean = true) {
+    protected fun Project.checkGradleConfiguration(metadataInside: Boolean = false, mppPluginInside: Boolean = true) {
 
         val modules = ModuleManager.getInstance(this).modules
         assertThat(modules, "modules in project").size().isEqualTo(1)
@@ -240,7 +240,7 @@ abstract class AbstractGradleMultiplatformWizardTest : ProjectWizardTestCase<Abs
         }
     }
 
-    fun Project.runGradleTask(taskName: String) {
+    protected fun Project.runGradleTask(taskName: String) {
         val settings = GradleExecutionSettings(null, null, DistributionType.DEFAULT_WRAPPED, false)
         println("Running project task: $taskName")
         GradleExecutionHelper().execute(this.basePath!!, settings) {
@@ -294,7 +294,7 @@ abstract class AbstractGradleMultiplatformWizardTest : ProjectWizardTestCase<Abs
         val native by lazy { defaultNativeTarget.userTargetName }
     }
 
-    fun Project.checkSource(source: String? = null, addChecks: FileChecker.() -> Unit) {
+    protected fun Project.checkSource(source: String? = null, addChecks: FileChecker.() -> Unit) {
         val checker = FileChecker(this)
         checker.addChecks()
         checker.runChecks(source)
@@ -384,7 +384,7 @@ abstract class AbstractGradleMultiplatformWizardTest : ProjectWizardTestCase<Abs
         }
     }
 
-    fun Project.runGradleTestTasks(addTasks: GradleTestTaskRunner.() -> Unit) {
+    protected fun Project.runGradleTestTasks(addTasks: GradleTestTaskRunner.() -> Unit) {
         GradleTestTaskRunner(this)
             .apply(addTasks)
             .runTasks()
@@ -426,7 +426,7 @@ abstract class AbstractGradleMultiplatformWizardTest : ProjectWizardTestCase<Abs
         }
     }
 
-    fun Project.checkTestResult(gradleTask: String, testResultChecks: (TestResultChecker.() -> Unit) = {}) {
+    protected fun Project.checkTestResult(gradleTask: String, testResultChecks: (TestResultChecker.() -> Unit) = {}) {
         TestResultChecker(this, gradleTask).apply {
             testResultChecks()
         }.runCheck()
