@@ -21,8 +21,6 @@ import org.jetbrains.kotlin.fir.resolve.calls.extractLambdaInfoFromFunctionalTyp
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.*
 import org.jetbrains.kotlin.fir.resolve.transformers.FirStatusResolveTransformer.Companion.resolveStatus
-import org.jetbrains.kotlin.fir.resolve.transformers.StoreType
-import org.jetbrains.kotlin.fir.resolve.transformers.transformVarargTypeToArrayType
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
@@ -126,8 +124,8 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
     private fun transformLocalVariable(variable: FirProperty): CompositeTransformResult<FirDeclaration> {
         assert(variable.isLocal)
         val resolutionMode = withExpectedType(variable.returnTypeRef)
-        variable.transformOtherChildren(transformer, resolutionMode)
-            .transformInitializer(transformer, resolutionMode)
+        variable.transformInitializer(transformer, resolutionMode)
+            .transformOtherChildren(transformer, resolutionMode)
             .transformInitializer(integerLiteralTypeApproximator, null)
         if (variable.initializer != null) {
             storeVariableReturnType(variable)
@@ -141,7 +139,9 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
 
     private fun FirProperty.transformChildrenWithoutAccessors(returnTypeRef: FirTypeRef): FirProperty {
         val data = withExpectedType(returnTypeRef)
-        return transformInitializer(transformer, data).transformOtherChildren(transformer, data)
+        return transformReturnTypeRef(transformer, data)
+            .transformInitializer(transformer, data)
+            .transformOtherChildren(transformer, data)
     }
 
     private fun <F : FirVariable<F>> FirVariable<F>.transformAccessors() {
