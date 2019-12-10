@@ -4,11 +4,10 @@ const kotlin_test = require('kotlin-test');
 
 const nothingTest: KotlinTestRunner = {
     suite(name: string, isIgnored: boolean, fn: () => void): void {
-        console.error("suite", name)
+        // do nothing
     },
     test(name: string, isIgnored: boolean, fn: () => void): void {
-        console.error("test", name)
-
+        // do nothing
     }
 };
 
