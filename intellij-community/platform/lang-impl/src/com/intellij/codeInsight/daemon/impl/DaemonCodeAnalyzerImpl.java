@@ -323,7 +323,8 @@ public final class DaemonCodeAnalyzerImpl extends DaemonCodeAnalyzerEx implement
     }
 
     myUpdateRunnableFuture.cancel(false);
-    waitForTermination(); // previous passes can be canceled but still in flight. wait for them to avoid interference
+    // previous passes can be canceled but still in flight. wait for them to avoid interference
+    myPassExecutorService.cancelAll(false);
     fileStatusMap.allowDirt(canChangeDocument);
     final DaemonProgressIndicator progress = createUpdateProgress(map.keySet());
     myPassExecutorService.submitPasses(map, progress);
@@ -350,7 +351,7 @@ public final class DaemonCodeAnalyzerImpl extends DaemonCodeAnalyzerEx implement
 
       HighlightingSessionImpl session = (HighlightingSessionImpl)HighlightingSessionImpl.getOrCreateHighlightingSession(file, progress, null);
       if (!waitInOtherThread(60000, canChangeDocument)) {
-        throw new TimeoutException("Unable to complete in 60s");
+        throw new TimeoutException("Unable to complete in 60s. Thread dump:\n"+ThreadDumper.dumpThreadsToString());
       }
       session.waitForHighlightInfosApplied();
       UIUtil.dispatchAllInvocationEvents();
