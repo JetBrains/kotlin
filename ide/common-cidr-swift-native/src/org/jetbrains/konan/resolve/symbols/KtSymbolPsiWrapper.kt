@@ -13,22 +13,28 @@ import com.intellij.psi.search.SearchScope
 import com.jetbrains.cidr.lang.psi.OCSymbolDeclarator
 import com.jetbrains.cidr.lang.search.scopes.OCSearchScope
 import com.jetbrains.cidr.lang.symbols.OCSymbol
+import com.jetbrains.swift.psi.SwiftSymbolDeclarator
+import com.jetbrains.swift.symbols.SwiftSymbol
 
-class KtSymbolPsiWrapper(
-    val psi: PsiElement,
-    private val symbol: OCSymbol
-) : FakePsiElement(), PsiElement, OCSymbolDeclarator<OCSymbol>, PsiNamedElement {
-
+sealed class KtSymbolPsiWrapper(val psi: PsiElement) : FakePsiElement(), PsiNamedElement {
     override fun getParent(): PsiElement = psi.containingFile
-    override fun getSymbol(): OCSymbol = symbol
 
     override fun getTextRange(): TextRange = psi.textRange
     override fun getTextOffset(): Int = psi.textOffset
-
-    override fun getName(): String = symbol.name
 
     override fun getUseScope(): SearchScope {
         //todo better scope inference
         return OCSearchScope.getProjectSourcesScope(project)
     }
+}
+
+class KtOCSymbolPsiWrapper(psi: PsiElement, private val symbol: OCSymbol) : KtSymbolPsiWrapper(psi), OCSymbolDeclarator<OCSymbol> {
+    override fun getSymbol(): OCSymbol = symbol
+    override fun getName(): String = symbol.name
+}
+
+class KtSwiftSymbolPsiWrapper(psi: PsiElement, private val symbol: SwiftSymbol) : KtSymbolPsiWrapper(psi),
+    SwiftSymbolDeclarator<SwiftSymbol> {
+    override fun getSwiftSymbol(): SwiftSymbol = symbol
+    override fun getName(): String = symbol.name
 }

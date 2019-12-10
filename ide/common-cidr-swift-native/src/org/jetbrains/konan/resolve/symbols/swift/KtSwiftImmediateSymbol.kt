@@ -3,15 +3,15 @@ package org.jetbrains.konan.resolve.symbols.swift
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Comparing
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiElement
 import com.jetbrains.cidr.lang.symbols.DeepEqual
-import com.jetbrains.cidr.lang.symbols.OCSymbol
 import com.jetbrains.cidr.lang.symbols.OCSymbolKind
 import com.jetbrains.swift.symbols.SwiftAttributesInfo
 import com.jetbrains.swift.symbols.SwiftDeclarationSpecifiers
 import com.jetbrains.swift.symbols.SwiftSymbol
 import com.jetbrains.swift.symbols.SwiftSymbolAttribute
 import org.jetbrains.konan.resolve.symbols.KtImmediateSymbol
-import org.jetbrains.konan.resolve.symbols.KtOCLightSymbol
+import org.jetbrains.konan.resolve.symbols.KtSwiftSymbolPsiWrapper
 import org.jetbrains.kotlin.backend.konan.objcexport.Stub
 
 abstract class KtSwiftImmediateSymbol : KtImmediateSymbol, SwiftSymbol {
@@ -44,11 +44,6 @@ abstract class KtSwiftImmediateSymbol : KtImmediateSymbol, SwiftSymbol {
 
     override fun hashCodeExcludingOffset(): Int = name.hashCode() * 31 + file.hashCode()
 
-    override fun isSameSymbol(symbol: OCSymbol?, project: Project): Boolean {
-        return super<KtImmediateSymbol>.isSameSymbol(symbol, project)
-               || symbol is KtOCLightSymbol && locateDefinition(project) == symbol.locateDefinition(project)
-    }
-
     override fun init(project: Project?, file: VirtualFile?) {
         this.file = file!!
         this.project = project!!
@@ -72,4 +67,6 @@ abstract class KtSwiftImmediateSymbol : KtImmediateSymbol, SwiftSymbol {
 
     final override lateinit var objcName: String //todo???
         private set
+
+    override fun locateDefinition(project: Project): PsiElement? = doLocateDefinition(project)?.let { KtSwiftSymbolPsiWrapper(it, this) }
 }

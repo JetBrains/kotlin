@@ -3,11 +3,11 @@ package org.jetbrains.konan.resolve.symbols.objc
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Comparing
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiElement
 import com.jetbrains.cidr.lang.symbols.DeepEqual
-import com.jetbrains.cidr.lang.symbols.OCSymbol
 import com.jetbrains.cidr.lang.symbols.VirtualFileOwner
 import org.jetbrains.konan.resolve.symbols.KtImmediateSymbol
-import org.jetbrains.konan.resolve.symbols.KtOCLightSymbol
+import org.jetbrains.konan.resolve.symbols.KtOCSymbolPsiWrapper
 import org.jetbrains.kotlin.backend.konan.objcexport.Stub
 
 abstract class KtOCImmediateSymbol : KtImmediateSymbol, VirtualFileOwner {
@@ -35,12 +35,9 @@ abstract class KtOCImmediateSymbol : KtImmediateSymbol, VirtualFileOwner {
 
     override fun hashCodeExcludingOffset(): Int = name.hashCode() * 31 + file.hashCode()
 
-    override fun isSameSymbol(symbol: OCSymbol?, project: Project): Boolean {
-        return super.isSameSymbol(symbol, project)
-               || symbol is KtOCLightSymbol && locateDefinition(project) == symbol.locateDefinition(project)
-    }
-
     override fun init(file: VirtualFile) {
         this.file = file
     }
+
+    override fun locateDefinition(project: Project): PsiElement? = doLocateDefinition(project)?.let { KtOCSymbolPsiWrapper(it, this) }
 }

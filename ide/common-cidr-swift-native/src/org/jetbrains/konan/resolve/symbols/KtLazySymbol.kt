@@ -3,7 +3,8 @@ package org.jetbrains.konan.resolve.symbols
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Comparing
 import com.intellij.psi.PsiElement
-import com.jetbrains.cidr.lang.symbols.*
+import com.jetbrains.cidr.lang.symbols.DeepEqual
+import com.jetbrains.cidr.lang.symbols.OCSymbolBase
 import org.jetbrains.kotlin.backend.konan.objcexport.Stub
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
@@ -69,12 +70,7 @@ abstract class KtLazySymbol<State : KtLazySymbol.StubState, Stb : Stub<*>> : KtS
         return true
     }
 
-    override fun locateDefinition(project: Project): PsiElement? = psi(project)?.let { KtSymbolPsiWrapper(it, this) }
-
-    override fun isSameSymbol(symbol: OCSymbol?, project: Project): Boolean {
-        return super.isSameSymbol(symbol, project)
-               || symbol is KtOCLightSymbol && psi(project) == symbol.locateDefinition(project)
-    }
+    override fun locateDefinition(project: Project): PsiElement? = psi(project)?.let { KtOCSymbolPsiWrapper(it, this) }
 
     override fun updateOffset(start: Int, lengthShift: Int) {
         if (_state == null) return

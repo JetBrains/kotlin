@@ -2,7 +2,6 @@ package org.jetbrains.konan.resolve.symbols
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Comparing
-import com.intellij.psi.PsiElement
 import com.jetbrains.cidr.lang.symbols.DeepEqual
 import com.jetbrains.cidr.lang.symbols.OCSymbolBase
 import org.jetbrains.kotlin.backend.konan.objcexport.Stub
@@ -40,6 +39,6 @@ abstract class KtImmediateSymbol : KtSymbol {
 
     override fun hashCodeExcludingOffset(): Int = name.hashCode() * 31
 
-    override fun locateDefinition(project: Project): PsiElement? =
-        OCSymbolBase.doLocateDefinition(this, project, KtNamedDeclaration::class.java)?.let { KtSymbolPsiWrapper(it, this) }
+    protected fun doLocateDefinition(project: Project): KtNamedDeclaration? =
+        OCSymbolBase.doLocateDefinition(this, project, KtNamedDeclaration::class.java)
 }

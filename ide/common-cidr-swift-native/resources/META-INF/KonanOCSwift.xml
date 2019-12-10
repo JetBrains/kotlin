@@ -9,6 +9,8 @@
 
     <referencesSearch implementation="org.jetbrains.konan.findUsages.KotlinFunctionOCUsagesSearcher"/>
     <referencesSearch implementation="org.jetbrains.konan.findUsages.KotlinOCUsageSearcher"/>
+    <referencesSearch implementation="org.jetbrains.konan.findUsages.KotlinInitializerSwiftUsageSearcher"/>
+    <referencesSearch implementation="org.jetbrains.konan.findUsages.KotlinSwiftUsageSearcher"/>
 
   </extensions>
 

@@ -1,60 +1,63 @@
 package org.jetbrains.konan.resolve
 
-import com.intellij.openapi.extensions.ExtensionPoint
-import com.intellij.openapi.extensions.ExtensionPointName
-import com.jetbrains.cidr.lang.CLanguageKind
+import com.intellij.psi.ResolveState
+import com.intellij.util.CommonProcessors
+import com.jetbrains.cidr.lang.OCLanguageKind
 import com.jetbrains.cidr.lang.preprocessor.OCInclusionContext
 import com.jetbrains.cidr.lang.symbols.OCSymbol
-import com.jetbrains.cidr.lang.symbols.objc.OCClassSymbol
 import com.jetbrains.cidr.lang.symbols.symtable.FileSymbolTable
-import org.jetbrains.konan.getKonanFrameworkTargets
+import com.jetbrains.cidr.lang.symbols.symtable.OCMembersContainer
+import com.jetbrains.swift.codeinsight.resolve.processor.CollectingSymbolProcessor
+import com.jetbrains.swift.codeinsight.resolve.processor.SwiftAbstractSymbolProcessor.ALL_DECLARATION_KINDS
+import com.jetbrains.swift.symbols.SwiftSymbol
+import com.jetbrains.swift.symbols.SwiftTypeSymbol
 import org.jetbrains.konan.resolve.konan.KonanBridgeFileManager
 import org.jetbrains.konan.resolve.konan.KonanConsumer
-import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
-fun KtNamedDeclaration.findSymbols(): Sequence<OCSymbol> {
-    if (!(this is KtClassOrObject || this is KtFunction)) return emptySequence()
-
+fun KtNamedDeclaration.findSymbols(kind: OCLanguageKind): List<OCSymbol> {
     val offset = textOffset // we have to use same offset as in `org.jetbrains.konan.resolve.symbols.KtSymbolUtilKt.getOffset`
-    return containingClass?.findMemberSymbols(offset) ?: findGlobalSymbols(offset)
+    return containingClassOrObject?.findMemberSymbols(offset, kind) ?: findGlobalSymbols(offset, kind)
 }
 
-private val KtNamedDeclaration.containingClass: KtClassOrObject?
-    get() = (parent as? KtClassBody)?.parent as? KtClassOrObject
-
-private fun KtClassOrObject.findMemberSymbols(startOffset: Int): Sequence<OCSymbol> =
-    findSymbols()
-        .filterIsInstance<OCClassSymbol>()
-        .flatMap { classSymbol -> classSymbol.findMemberSymbols(startOffset) }
-
-private fun OCClassSymbol.findMemberSymbols(offset: Int): Sequence<OCSymbol> {
-    val result = mutableListOf<OCSymbol>()
-    processMembers(null) { member ->
-        if (member.offset == offset) {
-            result += member
+private fun KtClassOrObject.findMemberSymbols(startOffset: Int, kind: OCLanguageKind): List<OCSymbol> =
+    findSymbols(kind)
+        .flatMap { classSymbol ->
+            when (classSymbol) {
+                is OCMembersContainer<*> -> classSymbol.findMemberSymbols(startOffset)
+                is SwiftTypeSymbol -> classSymbol.findMemberSymbols(startOffset)
+                else -> emptyList()
+            }
         }
-        true
-    }
-    return result.asSequence()
-}
 
-private fun KtNamedDeclaration.findGlobalSymbols(offset: Int): Sequence<OCSymbol> = sequence<OCSymbol> {
+private fun OCMembersContainer<*>.findMemberSymbols(offset: Int): Collection<OCSymbol> =
+    object : CommonProcessors.CollectProcessor<OCSymbol>() {
+        override fun accept(member: OCSymbol): Boolean = member.offset == offset
+    }.also { processMembers(null, it) }.results
+
+private fun SwiftTypeSymbol.findMemberSymbols(offset: Int): List<SwiftSymbol> =
+    CollectingSymbolProcessor<SwiftSymbol>(null, null, ALL_DECLARATION_KINDS) {
+        it.offset == offset
+    }.also { processMembers(it, ResolveState.initial()) }.collectedSymbols
+
+private fun KtNamedDeclaration.findGlobalSymbols(offset: Int, kind: OCLanguageKind): List<OCSymbol> {
     val tables = hashSetOf<FileSymbolTable>()
     val symbols = hashSetOf<OCSymbol>()
+    val results = mutableListOf<OCSymbol>()
     for (konanTarget in KonanConsumer.getAllReferencedKonanTargets(project)) {
         val bridgeFile = konanTarget.let { target ->
             KonanBridgeFileManager.getInstance(project).forTarget(target, target.productModuleName.let { "$it/$it.h" })
         }
 
-        val context = OCInclusionContext.empty(CLanguageKind.OBJ_C, containingFile)
+        val context = OCInclusionContext.empty(kind, containingFile)
         context.addProcessedFile(bridgeFile)
 
         val tableContents = FileSymbolTable.forFile(containingFile, context)?.takeIf { tables.add(it) }?.contents ?: emptyList()
         for (symbol in tableContents) {
-            if (symbol.offset == offset && symbols.add(symbol)) yield(symbol)
+            if (symbol.offset == offset && symbols.add(symbol)) results.add(symbol)
         }
     }
+    return results
 }
