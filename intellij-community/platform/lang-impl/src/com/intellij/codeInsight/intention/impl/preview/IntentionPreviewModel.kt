@@ -7,6 +7,8 @@ import com.intellij.diff.fragments.LineFragment
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.LineNumberConverter
+import com.intellij.openapi.editor.colors.EditorColors
+import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileTypes.FileType
@@ -17,6 +19,7 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.util.ui.JBUI
+import java.awt.Color
 import java.awt.Dimension
 
 internal class IntentionPreviewModel {
@@ -80,6 +83,8 @@ internal class IntentionPreviewModel {
         isAdditionalPageAtBottom = false
       }
 
+      editor.backgroundColor = getEditorBackground()
+
       if (text.length > 80) {
         editor.component.preferredSize = Dimension(600, 80)
         editor.settings.isUseSoftWraps = true
@@ -91,6 +96,11 @@ internal class IntentionPreviewModel {
       }
 
       return editor
+    }
+
+    private fun getEditorBackground(): Color {
+      val colorsScheme = EditorColorsManager.getInstance().globalScheme
+      return colorsScheme.getColor(EditorColors.CARET_ROW_COLOR) ?: colorsScheme.defaultBackground
     }
   }
 }

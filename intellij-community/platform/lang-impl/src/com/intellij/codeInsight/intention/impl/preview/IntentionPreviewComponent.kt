@@ -6,7 +6,6 @@ import com.intellij.ide.plugins.MultiPanel
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.project.Project
-import com.intellij.ui.ColorUtil
 import com.intellij.ui.components.JBLoadingPanel
 import com.intellij.util.ui.JBUI
 import java.awt.BorderLayout
@@ -36,7 +35,6 @@ internal class IntentionPreviewComponent(project: Project) : JBLoadingPanel(Bord
   }
 
   init {
-    background = ColorUtil.withAlpha(EditorColorsManager.getInstance().globalScheme.defaultBackground, 1.0)
     add(multiPanel)
     setLoadingText(CodeInsightBundle.message("intention.preview.loading.preview"))
   }
