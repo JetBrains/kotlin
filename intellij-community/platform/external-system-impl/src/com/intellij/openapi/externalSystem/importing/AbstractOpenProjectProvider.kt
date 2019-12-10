@@ -31,14 +31,19 @@ abstract class AbstractOpenProjectProvider : OpenProjectProvider {
   override fun openProject(projectFile: VirtualFile, projectToClose: Project?, forceOpenInNewFrame: Boolean): Project? {
     LOG.debug("Open project from $projectFile")
     val projectDirectory = getProjectDirectory(projectFile)
-    if (focusOnOpenedSameProject(projectDirectory.path)) return null
+    if (focusOnOpenedSameProject(projectDirectory.path)) {
+      return null
+    }
     if (canOpenPlatformProject(projectDirectory)) {
       return openPlatformProject(projectDirectory, projectToClose, forceOpenInNewFrame)
     }
+
     val project = createProject(projectDirectory) ?: return null
     linkAndRefreshProject(projectDirectory.path, project)
     updateLastProjectLocation(projectDirectory.path)
-    if (!forceOpenInNewFrame) closePreviousProject(projectToClose)
+    if (!forceOpenInNewFrame) {
+      closePreviousProject(projectToClose)
+    }
     ProjectManagerEx.getInstanceEx().openProject(project)
     return project
   }

@@ -51,9 +51,11 @@ internal class GradleOpenProjectProvider : AbstractOpenProjectProvider() {
   }
 
   override fun openProject(projectFile: VirtualFile, projectToClose: Project?, forceOpenInNewFrame: Boolean): Project? {
-    return super.openProject(projectFile, projectToClose, forceOpenInNewFrame)?.also {
-      GradleUnlinkedProjectProcessor.enableNotifications(it)
+    val project = super.openProject(projectFile, projectToClose, forceOpenInNewFrame)
+    if (project != null) {
+      GradleUnlinkedProjectProcessor.enableNotifications(project)
     }
+    return project
   }
 
   private fun attachGradleProjectAndRefresh(settings: ExternalProjectSettings, project: Project) {
