@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.serialization.DescriptorTable
 import org.jetbrains.kotlin.backend.common.serialization.isExpectMember
 import org.jetbrains.kotlin.backend.common.serialization.isSerializableExpectClass
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataSerializer
-import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
@@ -19,7 +18,6 @@ import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
@@ -32,7 +30,6 @@ class KlibMetadataIncrementalSerializer(
 ) : KlibMetadataSerializer(languageVersionSettings, metadataVersion, descriptorTable) {
 
     fun serializePackageFragment(
-        bindingContext: BindingContext,
         module: ModuleDescriptor,
         scope: Collection<DeclarationDescriptor>,
         fqName: FqName
@@ -58,7 +55,7 @@ class KlibMetadataIncrementalSerializer(
         // This is no always the case, actually.
         // But marrying split package fragments with incremental compilation is an endeavour.
         // See monolithic serializer for details.
-        return serializeDescriptors(fqName, classifierDescriptors, topLevelDescriptors, bindingContext).single()
+        return serializeDescriptors(fqName, classifierDescriptors, topLevelDescriptors).single()
     }
 
     fun serializedMetadata(

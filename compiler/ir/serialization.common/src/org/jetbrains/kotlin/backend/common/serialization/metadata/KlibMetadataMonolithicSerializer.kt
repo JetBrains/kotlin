@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
@@ -20,15 +19,10 @@ import org.jetbrains.kotlin.serialization.DescriptorSerializer
 class KlibMetadataMonolithicSerializer(
     languageVersionSettings: LanguageVersionSettings,
     metadataVersion: BinaryVersion,
-    descriptorTable: DescriptorTable,
-    val bindingContext: BindingContext
+    descriptorTable: DescriptorTable
 ) : KlibMetadataSerializer(languageVersionSettings, metadataVersion, descriptorTable) {
 
-    protected fun serializePackageFragment(fqName: FqName,
-                                           module: ModuleDescriptor,
-                                           bindingContext: BindingContext
-    ):
-            List<ProtoBuf.PackageFragment> {
+    private fun serializePackageFragment(fqName: FqName, module: ModuleDescriptor): List<ProtoBuf.PackageFragment> {
 
         // TODO: ModuleDescriptor should be able to return
         // the package only with the contents of that module, without dependencies
@@ -48,7 +42,7 @@ class KlibMetadataMonolithicSerializer(
             }.filter { !it.isExpectMember }
         )
 
-        return serializeDescriptors(fqName, classifierDescriptors, topLevelDescriptors, bindingContext)
+        return serializeDescriptors(fqName, classifierDescriptors, topLevelDescriptors)
     }
 
     fun serializeModule(moduleDescriptor: ModuleDescriptor): SerializedMetadata {
@@ -59,7 +53,7 @@ class KlibMetadataMonolithicSerializer(
 
         for (packageFqName in getPackagesFqNames(moduleDescriptor)) {
             val packageProtos =
-                serializePackageFragment(packageFqName, moduleDescriptor, bindingContext)
+                serializePackageFragment(packageFqName, moduleDescriptor)
             if (packageProtos.isEmpty()) continue
 
             val packageFqNameStr = packageFqName.asString()

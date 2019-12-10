@@ -345,7 +345,7 @@ fun serializeModuleIntoKlib(
 ) {
     assert(files.size == moduleFragment.files.size)
 
-    val descriptorTable = DescriptorTable()
+    val descriptorTable = DescriptorTable.createDefault()
     val serializedIr =
         JsIrModuleSerializer(emptyLoggingContext, moduleFragment.irBuiltins, descriptorTable).serializedIrModule(moduleFragment)
 
@@ -361,7 +361,6 @@ fun serializeModuleIntoKlib(
 
     fun serializeScope(fqName: FqName, memberScope: Collection<DeclarationDescriptor>): ByteArray {
         return metadataSerializer.serializePackageFragment(
-            bindingContext,
             moduleDescriptor,
             memberScope,
             fqName

@@ -15,7 +15,8 @@ val mavenCompileScope by configurations.creating {
 description = "Kotlin/Native library commonizer"
 
 dependencies {
-    compileOnly(project(":compiler:frontend")) { isTransitive = true }
+    compileOnly(project(":compiler:frontend"))
+    compileOnly(project(":compiler:ir.serialization.common"))
 
     // This dependency is necessary to keep the right dependency record inside of POM file:
     mavenCompileScope(project(":kotlin-compiler"))

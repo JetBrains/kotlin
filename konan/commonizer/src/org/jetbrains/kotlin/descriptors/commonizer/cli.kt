@@ -5,10 +5,15 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer
 
+import org.jetbrains.kotlin.backend.common.serialization.DescriptorTable
+import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer
+import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.ModuleForCommonization.DeserializedModule
 import org.jetbrains.kotlin.descriptors.commonizer.ModuleForCommonization.SyntheticModule
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.ir.util.UniqId
 import org.jetbrains.kotlin.konan.library.*
 import org.jetbrains.kotlin.konan.library.KonanFactories.DefaultDeserializedDescriptorFactory
 import org.jetbrains.kotlin.konan.properties.propertyList
@@ -188,30 +193,45 @@ private fun saveModules(
             .associate { it.module.name to it.data }
     }
 
+    val serializer = KlibMetadataMonolithicSerializer(
+        languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
+        metadataVersion = KlibMetadataVersion.INSTANCE,
+        descriptorTable = EmptyDescriptorTable
+    )
+
     val stdlibName = Name.special("<$KONAN_STDLIB_NAME>")
 
-    result.concreteTargets.forEach { target ->
-        val konanTarget = target.konanTarget!!
-        val targetLibsDestination = destination.resolve(KONAN_DISTRIBUTION_PLATFORM_LIBS_DIR).resolve(konanTarget.name)
+    fun serializeTarget(target: Target) {
+        val libsDestination: File
+        val newModulesManifestData: Map<Name, SensitiveManifestData>
 
-        val newModulesManifestData = originalModulesManifestData.getValue(target)
+        when (target) {
+            is InputTarget -> {
+                libsDestination = destination.resolve(KONAN_DISTRIBUTION_PLATFORM_LIBS_DIR).resolve(target.konanTarget!!.name)
+                newModulesManifestData = originalModulesManifestData.getValue(target)
+            }
+            is OutputTarget -> {
+                libsDestination = destination.resolve(KONAN_DISTRIBUTION_COMMON_LIBS_DIR)
+                newModulesManifestData = originalModulesManifestData.values.first() // just take the first one
+            }
+        }
+
         val newModules = result.modulesByTargets.getValue(target)
 
         for (newModule in newModules) {
             val libraryName = newModule.name
             if (libraryName == stdlibName || libraryName == FORWARD_DECLARATIONS_MODULE_NAME) continue
 
-            // TODO: obtain serialization data
-//            val metadata = TODO()
+            val metadata = serializer.serializeModule(newModule)
             val manifestData = newModulesManifestData.getValue(newModule.name)
-            val libraryDestination = targetLibsDestination.resolve(libraryName.asString().trimStart('<').trimEnd('>'))
+            val libraryDestination = libsDestination.resolve(libraryName.asString().trimStart('<').trimEnd('>'))
 
-//            writeLibrary(metadata, manifestData, libraryDestination)
-            println("$manifestData - $libraryDestination")
+            writeLibrary(metadata, manifestData, libraryDestination)
         }
     }
 
-    TODO("serialize common target")
+    result.concreteTargets.forEach(::serializeTarget)
+    result.commonTarget.let(::serializeTarget)
 }
 
 private sealed class ModuleForCommonization(val module: ModuleDescriptorImpl) {
@@ -237,26 +257,18 @@ private data class SensitiveManifestData(
 
         // note: versions can't be added here
 
-        if (dependencies.isNotEmpty())
-            library.manifestProperties[KLIB_PROPERTY_DEPENDS] = dependencies.joinToString(separator = " ")
-        else
-            library.manifestProperties.remove(KLIB_PROPERTY_DEPENDS)
+        fun addOptionalProperty(name: String, condition: Boolean, value: () -> String) =
+            if (condition)
+                library.manifestProperties[name] = value()
+            else
+                library.manifestProperties.remove(name)
 
-        if (isInterop)
-            library.manifestProperties[KLIB_PROPERTY_INTEROP] = "true"
-        else
-            library.manifestProperties.remove(KLIB_PROPERTY_INTEROP)
-
-        if (packageFqName != null)
-            library.manifestProperties[KLIB_PROPERTY_PACKAGE] = packageFqName
-        else
-            library.manifestProperties.remove(KLIB_PROPERTY_PACKAGE)
-
-        if (exportForwardDeclarations.isNotEmpty())
-            library.manifestProperties[KLIB_PROPERTY_EXPORT_FORWARD_DECLARATIONS] =
-                exportForwardDeclarations.joinToString(separator = " ")
-        else
-            library.manifestProperties.remove(KLIB_PROPERTY_EXPORT_FORWARD_DECLARATIONS)
+        addOptionalProperty(KLIB_PROPERTY_DEPENDS, dependencies.isNotEmpty()) { dependencies.joinToString(separator = " ") }
+        addOptionalProperty(KLIB_PROPERTY_INTEROP, isInterop) { "true" }
+        addOptionalProperty(KLIB_PROPERTY_PACKAGE, packageFqName != null) { packageFqName!! }
+        addOptionalProperty(KLIB_PROPERTY_EXPORT_FORWARD_DECLARATIONS, exportForwardDeclarations.isNotEmpty()) {
+            exportForwardDeclarations.joinToString(separator = " ")
+        }
     }
 
     companion object {
@@ -271,12 +283,19 @@ private data class SensitiveManifestData(
     }
 }
 
+private object EmptyDescriptorTable : DescriptorTable {
+    private const val DEFAULT_UNIQ_ID_INDEX = 0L
+
+    override fun put(descriptor: DeclarationDescriptor, uniqId: UniqId) = error("unsupported")
+    override fun get(descriptor: DeclarationDescriptor): Long = DEFAULT_UNIQ_ID_INDEX
+}
+
 private fun writeLibrary(
     metadata: SerializedMetadata,
     manifestData: SensitiveManifestData,
     destination: File
 ) {
-    val library = KoltinLibraryWriterImpl(KFile(destination.path), manifestData.uniqueName, manifestData.versions, nopack = false)
+    val library = KoltinLibraryWriterImpl(KFile(destination.path), manifestData.uniqueName, manifestData.versions, nopack = true)
     library.addMetadata(metadata)
     manifestData.applyTo(library.base as BaseWriterImpl)
     library.commit()

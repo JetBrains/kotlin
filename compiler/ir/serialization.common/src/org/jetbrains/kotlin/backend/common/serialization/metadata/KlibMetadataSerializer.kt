@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.serialization.StringTableImpl
@@ -69,8 +68,7 @@ abstract class KlibMetadataSerializer(
         packageProto: ProtoBuf.Package,
         classesProto: List<Pair<ProtoBuf.Class, Int>>,
         fqName: FqName,
-        isEmpty: Boolean,
-        bindingContext: BindingContext
+        isEmpty: Boolean
     ): ProtoBuf.PackageFragment {
 
         val (stringTableProto, nameTableProto) = serializerExtension.stringTable.buildProto()
@@ -130,8 +128,7 @@ abstract class KlibMetadataSerializer(
     protected fun serializeDescriptors(
         fqName: FqName,
         classifierDescriptors: List<DeclarationDescriptor>,
-        topLevelDescriptors: List<DeclarationDescriptor>,
-        bindingContext: BindingContext
+        topLevelDescriptors: List<DeclarationDescriptor>
     ): List<ProtoBuf.PackageFragment> {
 
         if (TOP_LEVEL_CLASS_DECLARATION_COUNT_PER_FILE == null &&
@@ -151,8 +148,7 @@ abstract class KlibMetadataSerializer(
                         packageProto,
                         serializeClasses(fqName, classifierDescriptors),
                         fqName,
-                        topLevelDescriptors.isEmpty() && classifierDescriptors.isEmpty(),
-                        bindingContext
+                        topLevelDescriptors.isEmpty() && classifierDescriptors.isEmpty()
                     )
                 }
             )
@@ -178,8 +174,7 @@ abstract class KlibMetadataSerializer(
                     packageProto,
                     classesProto,
                     fqName,
-                    descriptors.isEmpty(),
-                    bindingContext
+                    descriptors.isEmpty()
                 )
             }
         }
@@ -190,8 +185,7 @@ abstract class KlibMetadataSerializer(
                     buildPackageProto(fqName, descriptors),
                     emptyList(),
                     fqName,
-                    descriptors.isEmpty(),
-                    bindingContext
+                    descriptors.isEmpty()
                 )
             }
         }
@@ -202,8 +196,7 @@ abstract class KlibMetadataSerializer(
                     emptyPackageProto(),
                     emptyList(),
                     fqName,
-                    true,
-                    bindingContext
+                    true
                 )
             }
         }
