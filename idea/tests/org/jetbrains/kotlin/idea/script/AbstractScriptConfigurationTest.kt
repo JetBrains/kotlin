@@ -19,6 +19,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.PlatformTestCase
 import com.intellij.testFramework.PsiTestUtil
 import com.intellij.util.ui.UIUtil
+import org.jdom.Element
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.idea.completion.test.KotlinCompletionTestCase
 import org.jetbrains.kotlin.idea.core.script.IdeScriptReportSink
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager.Companio
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionContributor
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager
 import org.jetbrains.kotlin.idea.core.script.isScriptChangesNotifierDisabled
+import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.idea.highlighter.KotlinHighlightingUtil
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
@@ -86,6 +88,10 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
 
     protected fun configureScriptFile(path: String) {
         val mainScriptFile = findMainScript(path)
+        configureScriptFile(path, mainScriptFile)
+    }
+
+    protected fun configureScriptFile(path: String, mainScriptFile: File) {
         val environment = createScriptEnvironment(mainScriptFile)
         registerScriptTemplateProvider(environment)
 
@@ -137,15 +143,33 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
 
     private val oldScripClasspath: String? = System.getProperty("kotlin.script.classpath")
 
+    private var settings: Element? = null
+
     override fun setUp() {
         super.setUp()
         ApplicationManager.getApplication().isScriptChangesNotifierDisabled = true
+
+        settings = KotlinScriptingSettings.getInstance(project).state
+
+        ScriptDefinitionsManager.getInstance(project).getAllDefinitions().forEach {
+            KotlinScriptingSettings.getInstance(project).setEnabled(it, false)
+        }
+
+        setUpTestProject()
+    }
+
+    open fun setUpTestProject() {
+
     }
 
     override fun tearDown() {
         ApplicationManager.getApplication().isScriptChangesNotifierDisabled = false
 
         System.setProperty("kotlin.script.classpath", oldScripClasspath ?: "")
+
+        settings?.let {
+            KotlinScriptingSettings.getInstance(project).loadState(it)
+        }
 
         super.tearDown()
     }
@@ -250,7 +274,7 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
         }
     }
 
-    private fun createFileAndSyncDependencies(scriptFile: File) {
+    protected fun createFileAndSyncDependencies(scriptFile: File) {
         var script: VirtualFile? = null
         if (module != null) {
             script = module.moduleFile?.parent?.findChild(scriptFile.name)
@@ -278,14 +302,13 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
         checkHighlighting()
     }
 
-    protected fun checkHighlighting() {
-        val ktFile = myFile as KtFile
-        val reports = IdeScriptReportSink.getReports(ktFile)
+    protected fun checkHighlighting(file: KtFile = myFile as KtFile) {
+        val reports = IdeScriptReportSink.getReports(file)
         val isFatalErrorPresent = reports.any { it.severity == ScriptDiagnostic.Severity.FATAL }
-        assert(isFatalErrorPresent || KotlinHighlightingUtil.shouldHighlight(myFile)) {
-            "Highlighting is switched off for ${myFile.virtualFile.path}\n" +
+        assert(isFatalErrorPresent || KotlinHighlightingUtil.shouldHighlight(file)) {
+            "Highlighting is switched off for ${file.virtualFile.path}\n" +
                     "reports=$reports\n" +
-                    "scriptDefinition=${ktFile.findScriptDefinition()}"
+                    "scriptDefinition=${file.findScriptDefinition()}"
         }
     }
 

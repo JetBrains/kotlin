@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.idea.script
 
 import com.intellij.openapi.components.ServiceManager
-import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.core.script.IdeScriptReportSink
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.script.applySuggestedScriptConfiguration
@@ -20,9 +22,6 @@ import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtFile
 
 abstract class AbstractScriptConfigurationLoadingTest : AbstractScriptConfigurationTest() {
-    val ktFile: KtFile get() = myFile as KtFile
-    val virtualFile get() = myFile.virtualFile
-
     lateinit var scriptConfigurationManager: ScriptConfigurationManager
 
     companion object {
@@ -41,14 +40,6 @@ abstract class AbstractScriptConfigurationLoadingTest : AbstractScriptConfigurat
         super.setUp()
         testScriptConfigurationNotification = true
 
-        addExtensionPointInTest(
-            DefaultScriptConfigurationManagerExtensions.LOADER,
-            project,
-            FileContentsDependentConfigurationLoader(project),
-            testRootDisposable
-        )
-
-        configureScriptFile("idea/testData/script/definition/loading/async/")
         scriptConfigurationManager = ServiceManager.getService(project, ScriptConfigurationManager::class.java)
     }
 
@@ -57,6 +48,17 @@ abstract class AbstractScriptConfigurationLoadingTest : AbstractScriptConfigurat
         testScriptConfigurationNotification = false
         occurredLoadings = 0
         currentLoadingScriptConfigurationCallback = null
+    }
+
+    override fun setUpTestProject() {
+        addExtensionPointInTest(
+            DefaultScriptConfigurationManagerExtensions.LOADER,
+            project,
+            FileContentsDependentConfigurationLoader(project),
+            testRootDisposable
+        )
+
+        configureScriptFile("idea/testData/script/definition/loading/async/")
     }
 
     override fun loadScriptConfigurationSynchronously(script: VirtualFile) {
@@ -80,8 +82,12 @@ abstract class AbstractScriptConfigurationLoadingTest : AbstractScriptConfigurat
         }
     }
 
-    protected fun assertAppliedConfiguration(contents: String) {
-        val secondConfiguration = scriptConfigurationManager.getConfiguration(ktFile)!!
+    protected fun assertNoBackgroundTasks() {
+        assertTrue(scriptConfigurationManager.testingBackgroundExecutor.noBackgroundTasks())
+    }
+
+    protected fun assertAppliedConfiguration(contents: String, file: KtFile = myFile as KtFile) {
+        val secondConfiguration = scriptConfigurationManager.getConfiguration(file)!!
         assertEquals(
             contents,
             secondConfiguration.defaultImports.single().let {
@@ -91,39 +97,35 @@ abstract class AbstractScriptConfigurationLoadingTest : AbstractScriptConfigurat
         )
     }
 
-    protected fun makeChanges(contents: String) {
+    protected fun makeChanges(contents: String, file: KtFile = myFile as KtFile) {
         changeContents(contents)
 
-        scriptConfigurationManager.updater.ensureUpToDatedConfigurationSuggested(ktFile)
+        scriptConfigurationManager.updater.ensureUpToDatedConfigurationSuggested(file)
     }
 
-    protected fun changeContents(contents: String) {
+    protected fun changeContents(contents: String, file: PsiFile = myFile) {
         runWriteAction {
-            val fileDocumentManager = FileDocumentManager.getInstance()
-            fileDocumentManager.reloadFiles(virtualFile)
-            val document = fileDocumentManager.getDocument(virtualFile)!!
-            document.setText(contents)
-            fileDocumentManager.saveDocument(document)
-            psiManager.reloadFromDisk(myFile)
-            myFile = psiManager.findFile(virtualFile)
+            VfsUtil.saveText(file.virtualFile, contents)
+            PsiDocumentManager.getInstance(project).commitAllDocuments()
+            myFile = psiManager.findFile(file.virtualFile)
         }
     }
 
-    protected fun assertReports(expected: String) {
-        val actual = IdeScriptReportSink.getReports(virtualFile).single().message
+    protected fun assertReports(expected: String, file: KtFile = myFile as KtFile) {
+        val actual = IdeScriptReportSink.getReports(file.virtualFile).single().message
         assertEquals(expected, actual)
     }
 
-    protected fun assertSuggestedConfiguration() {
-        assertTrue(virtualFile.hasSuggestedScriptConfiguration(project))
+    protected fun assertSuggestedConfiguration(file: KtFile = myFile as KtFile) {
+        assertTrue(file.virtualFile.hasSuggestedScriptConfiguration(project))
     }
 
-    protected fun assertAndApplySuggestedConfiguration() {
-        assertTrue(virtualFile.applySuggestedScriptConfiguration(project))
+    protected fun assertAndApplySuggestedConfiguration(file: KtFile = myFile as KtFile) {
+        assertTrue(file.virtualFile.applySuggestedScriptConfiguration(project))
     }
 
-    protected fun assertNoSuggestedConfiguration() {
-        assertFalse(virtualFile.applySuggestedScriptConfiguration(project))
+    protected fun assertNoSuggestedConfiguration(file: KtFile = myFile as KtFile) {
+        assertFalse(file.virtualFile.applySuggestedScriptConfiguration(project))
     }
 
     protected fun assertNoLoading() {
@@ -136,12 +138,12 @@ abstract class AbstractScriptConfigurationLoadingTest : AbstractScriptConfigurat
         occurredLoadings = 0
     }
 
-    protected fun assertAndLoadInitialConfiguration() {
-        assertNull(scriptConfigurationManager.getConfiguration(ktFile))
+    protected fun assertAndLoadInitialConfiguration(file: KtFile = myFile as KtFile) {
+        assertNull(scriptConfigurationManager.getConfiguration(file))
         assertAndDoAllBackgroundTasks()
         assertSingleLoading()
-        assertAppliedConfiguration("initial")
+        assertAppliedConfiguration(file.text, file)
 
-        checkHighlighting()
+        checkHighlighting(file)
     }
 }

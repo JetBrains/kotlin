@@ -52,6 +52,10 @@ internal class ScriptChangesNotifier(
 
                 val listener = getListener(project, file) ?: return
 
+                if (ApplicationManager.getApplication().isUnitTestMode) {
+                    listener.documentChanged(file, updater)
+                }
+
                 scriptsQueue.cancelAllRequests()
                 scriptsQueue.addRequest(
                     { listener.documentChanged(file, updater) },

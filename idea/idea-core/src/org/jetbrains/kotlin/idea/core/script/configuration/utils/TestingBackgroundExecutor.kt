@@ -53,4 +53,6 @@ class TestingBackgroundExecutor internal constructor(
 
         return copy.isNotEmpty()
     }
+
+    fun noBackgroundTasks(): Boolean = backgroundQueue.isEmpty()
 }
