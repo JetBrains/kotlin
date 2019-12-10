@@ -941,6 +941,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/resolve/testData/resolve/problems/asImports.kt");
         }
 
+        @TestMetadata("covariantArrayAsReceiver.kt")
+        public void testCovariantArrayAsReceiver() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/problems/covariantArrayAsReceiver.kt");
+        }
+
         @TestMetadata("defaultJavaImportHiding.kt")
         public void testDefaultJavaImportHiding() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/problems/defaultJavaImportHiding.kt");

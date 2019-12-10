@@ -1,0 +1,33 @@
+FILE: covariantArrayAsReceiver.kt
+    public abstract interface UsageInfo : R|kotlin/Any| {
+        public abstract val usage: R|PsiElement|
+            public get(): R|PsiElement|
+
+    }
+    public abstract interface PsiElement : R|kotlin/Any| {
+    }
+    public abstract interface KtParameter : R|PsiElement| {
+    }
+    public abstract interface KtLightMethod : R|PsiElement| {
+    }
+    public final fun <T> R|kotlin/Array<out T>|.filterNot(f: R|(T) -> kotlin/Boolean|): R|kotlin/collections/List<T>| {
+        ^filterNot this@R|/filterNot|
+    }
+    public final fun <T> R|kotlin/Array<T>|.toList(): R|kotlin/collections/List<T>?| {
+        ^toList Null(null)
+    }
+    public final fun foo(element: R|PsiElement|, usages: R|kotlin/Array<UsageInfo>|): R|kotlin/Unit| {
+        (R|<local>/element| is R|KtLightMethod|)
+        lval adjusted: R|kotlin/collections/List<UsageInfo>?| = when () {
+            (R|<local>/element| is R|KtParameter|) ->  {
+                R|<local>/usages|.R|/filterNot|<R|UsageInfo|>(<L> = filterNot@fun <implicit>.<anonymous>(): <implicit> {
+                    (it#.usage# is KtLightMethod)
+                }
+                )
+            }
+            else ->  {
+                R|<local>/usages|.R|/toList|<R|UsageInfo|>()
+            }
+        }
+
+    }
