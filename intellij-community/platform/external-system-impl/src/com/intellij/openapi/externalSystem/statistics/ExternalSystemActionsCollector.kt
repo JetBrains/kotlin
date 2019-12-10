@@ -24,7 +24,7 @@ class ExternalSystemActionsCollector {
                 place: String?,
                 isFromContextMenu: Boolean,
                 executor : Executor? = null) {
-      val data = FeatureUsageData().addOS().addProject(project)
+      val data = FeatureUsageData().addProject(project)
 
       if (place != null) {
         data.addPlace(place).addData("context_menu", isFromContextMenu)
