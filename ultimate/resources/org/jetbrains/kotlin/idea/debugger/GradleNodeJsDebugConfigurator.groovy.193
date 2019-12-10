@@ -19,7 +19,7 @@ import org.gradle.api.Task
     }
 
     def forNodeJsTestTask = { Task task, Closure action ->
-        if (task.name.startsWith("node")) {
+        if (task.name.toLowerCase().contains("node".toLowerCase())) {
             doIfInstance(task, "org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest", action)
         }
     }

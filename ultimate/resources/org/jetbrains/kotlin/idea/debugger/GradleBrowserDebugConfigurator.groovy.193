@@ -18,9 +18,15 @@ import org.gradle.api.Task
         doIfInstance(task, "org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest", action)
     }
 
+    def forJsBrowserTestTask = { Task task, Closure action ->
+        if (task.name.toLowerCase().contains("browser".toLowerCase())) {
+            forJsTestTask(task, action)
+        }
+    }
+
     gradle.taskGraph.beforeTask { Task task ->
-        forJsTestTask(task) {
-            if (task.name.startsWith("browser") && task.hasProperty('debug')) {
+        forJsBrowserTestTask(task) {
+            if (task.hasProperty('debug')) {
                 ForkedDebuggerHelper.setupDebugger('%id', task.path, '', '%dispatchPort'.toInteger())
                 task.debug = true
             }
@@ -28,8 +34,8 @@ import org.gradle.api.Task
     }
 
     gradle.taskGraph.afterTask { Task task ->
-        forJsTestTask(task) {
-            if (task.name.startsWith("browser") && task.hasProperty('debug')) {
+        forJsBrowserTestTask(task) {
+            if (task.hasProperty('debug')) {
                 ForkedDebuggerHelper.signalizeFinish('%id', task.path, '%dispatchPort'.toInteger())
             }
         }
