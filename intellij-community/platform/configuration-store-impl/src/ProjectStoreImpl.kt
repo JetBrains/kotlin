@@ -173,7 +173,7 @@ open class ProjectWithModulesStoreImpl(project: Project) : ProjectStoreImpl(proj
     }
   }
 
-  open protected fun commitModuleComponents(moduleStore: ComponentStoreImpl, moduleSaveSessionManager: SaveSessionProducerManager,
+  protected open fun commitModuleComponents(moduleStore: ComponentStoreImpl, moduleSaveSessionManager: SaveSessionProducerManager,
                                             projectSaveSessionManager: SaveSessionProducerManager, isForceSavingAllSettings: Boolean,
                                             errors: MutableList<Throwable>) {
     moduleStore.commitComponents(isForceSavingAllSettings, moduleSaveSessionManager, errors)
