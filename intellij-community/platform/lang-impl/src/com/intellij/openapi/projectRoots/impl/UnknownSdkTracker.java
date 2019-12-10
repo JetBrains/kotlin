@@ -41,8 +41,7 @@ import static com.intellij.openapi.projectRoots.impl.UnknownSdkResolver.UnknownS
 public class UnknownSdkTracker {
   private static final Logger LOG = Logger.getInstance(UnknownSdkTracker.class);
 
-  //TODO: subscribe for a project reload!
-  private static class ActivityTracker implements StartupActivity.Background, StartupActivity.DumbAware {
+  public static class ActivityTracker implements StartupActivity.Background, StartupActivity.DumbAware {
     @Override
     public void runActivity(@NotNull Project project) {
       StartupManager.getInstance(project).runWhenProjectIsInitialized(() -> updateUnknownSdks(project));

@@ -64,8 +64,7 @@ public class SdkUsagesCollector {
     return usages;
   }
 
-  @SuppressWarnings("unused")
-  private static class ProjectSdkUsages implements SdkUsagesContributor {
+  public static class ProjectSdkUsages implements SdkUsagesContributor {
     @NotNull
     @Override
     public List<SdkUsage> contributeUsages(@NotNull Project project) {
@@ -80,8 +79,7 @@ public class SdkUsagesCollector {
     }
   }
 
-  @SuppressWarnings("unused")
-  private static class ModuleSdkUsages implements SdkUsagesContributor {
+  public static class ModuleSdkUsages implements SdkUsagesContributor {
     @NotNull
     @Override
     public List<SdkUsage> contributeUsages(@NotNull Project project) {
