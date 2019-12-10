@@ -55,13 +55,6 @@ public class NonAsciiCharactersInspection extends LocalInspectionTool {
   }
 
   @Override
-  @Nls
-  @NotNull
-  public String getDisplayName() {
-    return InspectionsBundle.message("non.ascii.characters");
-  }
-
-  @Override
   @NonNls
   @NotNull
   public String getShortName() {

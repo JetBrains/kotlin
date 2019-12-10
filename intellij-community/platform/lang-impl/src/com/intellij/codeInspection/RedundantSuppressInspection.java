@@ -41,12 +41,6 @@ public class RedundantSuppressInspection extends GlobalSimpleInspectionTool {
 
   @Override
   @NotNull
-  public String getDisplayName() {
-    return InspectionsBundle.message("inspection.redundant.suppression.name");
-  }
-
-  @Override
-  @NotNull
   @NonNls
   public String getShortName() {
     return SHORT_NAME;
@@ -327,13 +321,6 @@ public class RedundantSuppressInspection extends GlobalSimpleInspectionTool {
     @Override
     public String getShortName() {
       return SHORT_NAME;
-    }
-
-    @Nls
-    @NotNull
-    @Override
-    public String getDisplayName() {
-      return RedundantSuppressInspection.this.getDisplayName();
     }
 
     @NotNull

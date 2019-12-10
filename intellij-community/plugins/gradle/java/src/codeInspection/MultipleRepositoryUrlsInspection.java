@@ -45,13 +45,6 @@ public class MultipleRepositoryUrlsInspection extends GradleBaseInspection {
     return GradleInspectionBundle.message("multiple.repository.urls", args);
   }
 
-  @Nls
-  @NotNull
-  @Override
-  public String getDisplayName() {
-    return GradleInspectionBundle.message("multiple.repository.urls");
-  }
-
   private static class MyVisitor extends BaseInspectionVisitor {
     @Override
     public void visitClosure(@NotNull GrClosableBlock closure) {

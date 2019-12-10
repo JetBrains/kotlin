@@ -58,13 +58,6 @@ public class LossyEncodingInspection extends LocalInspectionTool {
   }
 
   @Override
-  @Nls
-  @NotNull
-  public String getDisplayName() {
-    return InspectionsBundle.message("lossy.encoding");
-  }
-
-  @Override
   @NonNls
   @NotNull
   public String getShortName() {
