@@ -766,6 +766,7 @@ task runtime_random(type: KonanLocalTest) {
 }
 
 task runtime_basic_simd(type: KonanLocalTest) {
+    expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
     source = "runtime/basic/simd.kt"
 }
 
