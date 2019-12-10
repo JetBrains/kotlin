@@ -116,3 +116,9 @@ annotation class Independent
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.BINARY)
 @PublishedApi internal annotation class FilterExceptions
+
+/**
+ * Marks a class whose instances to be added to the list of leak detector candidates.
+ */
+@Target(AnnotationTarget.CLASS)
+@PublishedApi internal annotation class LeakDetectorCandidate

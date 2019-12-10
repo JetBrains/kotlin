@@ -60,6 +60,9 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                 result = result or TF_ACYCLIC
             }
         }
+        if (irClass.hasAnnotation(KonanFqNames.leakDetectorCandidate)) {
+            result = result or TF_LEAK_DETECTOR_CANDIDATE
+        }
         if (irClass.isInterface)
             result = result or TF_INTERFACE
         return result
@@ -569,3 +572,6 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
 private const val TF_IMMUTABLE = 1
 private const val TF_ACYCLIC   = 2
 private const val TF_INTERFACE = 4
+private const val TF_OBJC_DYNAMIC = 8
+private const val TF_LEAK_DETECTOR_CANDIDATE = 16
+

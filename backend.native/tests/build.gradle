@@ -2721,6 +2721,12 @@ standaloneTest("memory_only_gc") {
     source = "runtime/memory/only_gc.kt"
 }
 
+standaloneTest("leak_detector") {
+    disabled = project.globalTestArgs.contains('-opt')
+    flags = ['-g']
+    source = "runtime/memory/leak_detector.kt"
+}
+
 standaloneTest("mpp1") {
     source = "codegen/mpp/mpp1.kt"
     flags = ['-tr', '-Xmulti-platform']

@@ -174,17 +174,21 @@ internal fun getProgressionLast(start: Long, end: Long, step: Long): Long =
 // Called by the debugger.
 @ExportForCppRuntime
 internal fun KonanObjectToUtf8Array(value: Any?): ByteArray {
-    val string = when (value) {
-        is Array<*> -> value.contentToString()
-        is CharArray -> value.contentToString()
-        is BooleanArray -> value.contentToString()
-        is ByteArray -> value.contentToString()
-        is ShortArray -> value.contentToString()
-        is IntArray -> value.contentToString()
-        is LongArray -> value.contentToString()
-        is FloatArray -> value.contentToString()
-        is DoubleArray -> value.contentToString()
-        else -> value.toString()
+    val string = try {
+        when (value) {
+            is Array<*> -> value.contentToString()
+            is CharArray -> value.contentToString()
+            is BooleanArray -> value.contentToString()
+            is ByteArray -> value.contentToString()
+            is ShortArray -> value.contentToString()
+            is IntArray -> value.contentToString()
+            is LongArray -> value.contentToString()
+            is FloatArray -> value.contentToString()
+            is DoubleArray -> value.contentToString()
+            else -> value.toString()
+        }
+    } catch (error: Throwable) {
+        "<Thrown $error when converting to string>"
     }
     return string.encodeToByteArray()
 }

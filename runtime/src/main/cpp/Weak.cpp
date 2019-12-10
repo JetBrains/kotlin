@@ -61,13 +61,13 @@ OBJ_GETTER(Konan_getWeakReferenceImpl, ObjHeader* referred) {
   }
 #endif // KONAN_OBJC_INTEROP
 
-  if (meta->counter_ == nullptr) {
+  if (meta->WeakReference.counter_ == nullptr) {
      ObjHolder counterHolder;
      // Cast unneeded, just to emphasize we store an object reference as void*.
      ObjHeader* counter = makeWeakReferenceCounter(reinterpret_cast<void*>(referred), counterHolder.slot());
-     UpdateHeapRefIfNull(&meta->counter_, counter);
+     UpdateHeapRefIfNull(&meta->WeakReference.counter_, counter);
   }
-  RETURN_OBJ(meta->counter_);
+  RETURN_OBJ(meta->WeakReference.counter_);
 }
 
 // Materialize a weak reference to either null or the real reference.
