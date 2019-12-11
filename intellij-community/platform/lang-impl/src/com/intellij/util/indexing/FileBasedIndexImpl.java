@@ -2501,12 +2501,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
       PersistentFSImpl fs = (PersistentFSImpl)ManagingFS.getInstance();
       FileBasedIndexImpl fileBasedIndex = (FileBasedIndexImpl)FileBasedIndex.getInstance();
       Disposable disposable = () -> fileBasedIndex.performShutdown(false);
-      ApplicationManager.getApplication().addApplicationListener(new ApplicationListener() {
-        @Override
-        public void writeActionStarted(@NotNull Object action) {
-          fileBasedIndex.myUpToDateIndicesForUnsavedOrTransactedDocuments.clear();
-        }
-      }, disposable);
+      ApplicationManager.getApplication().addApplicationListener(new MyApplicationListener(fileBasedIndex), disposable);
       Disposer.register(fs, disposable);
 
       initAssociatedDataForExtensions();
@@ -2598,6 +2593,17 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
         myRegisteredIndexes.markInitialized();  // this will ensure that all changes to component's state will be visible to other threads
         saveRegisteredIndicesAndDropUnregisteredOnes(state.getIndexIDs());
       }
+    }
+  }
+
+  private static class MyApplicationListener implements ApplicationListener {
+    private final FileBasedIndexImpl myFileBasedIndex;
+
+    MyApplicationListener(FileBasedIndexImpl fileBasedIndex) {myFileBasedIndex = fileBasedIndex;}
+
+    @Override
+    public void writeActionStarted(@NotNull Object action) {
+      myFileBasedIndex.myUpToDateIndicesForUnsavedOrTransactedDocuments.clear();
     }
   }
 
