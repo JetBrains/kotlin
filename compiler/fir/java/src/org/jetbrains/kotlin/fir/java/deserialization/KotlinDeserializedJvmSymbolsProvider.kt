@@ -146,7 +146,7 @@ class KotlinDeserializedJvmSymbolsProvider(
         scopeSession: ScopeSession
     ): FirScope? {
         val symbol = this.getClassLikeSymbolByFqName(classId) as? FirClassSymbol ?: return null
-
+        if (classId in handledByJava) return null
         return buildDefaultUseSiteMemberScope((symbol.fir as FirClass<*>), session, scopeSession)
     }
 
