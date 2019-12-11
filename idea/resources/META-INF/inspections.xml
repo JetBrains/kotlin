@@ -2563,6 +2563,14 @@
                      language="kotlin"
                      key="inspection.simplifiable.scope.function.display.name" bundle="messages.KotlinBundle"/>
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.UnusedDataClassCopyResultInspection"
+                     groupPath="Kotlin"
+                     groupName="Probable bugs"
+                     enabledByDefault="true"
+                     level="WARNING"
+                     language="kotlin"
+                     key="inspection.unused.result.of.data.class.copy" bundle="messages.KotlinBundle"/>
+
   </extensions>
 
 </idea-plugin>

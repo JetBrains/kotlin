@@ -14026,6 +14026,39 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/unusedDataClassCopyResult")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class UnusedDataClassCopyResult extends AbstractLocalInspectionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInUnusedDataClassCopyResult() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/inspectionsLocal/unusedDataClassCopyResult"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
+        }
+
+        @TestMetadata("basic.kt")
+        public void testBasic() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unusedDataClassCopyResult/basic.kt");
+        }
+
+        @TestMetadata("basic2.kt")
+        public void testBasic2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unusedDataClassCopyResult/basic2.kt");
+        }
+
+        @TestMetadata("used.kt")
+        public void testUsed() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unusedDataClassCopyResult/used.kt");
+        }
+
+        @TestMetadata("used2.kt")
+        public void testUsed2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unusedDataClassCopyResult/used2.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/unusedEquals")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
