@@ -48,21 +48,19 @@ class ConstraintInjector(
 
     fun addInitialSubtypeConstraint(c: Context, lowerType: KotlinTypeMarker, upperType: KotlinTypeMarker, position: ConstraintPosition) {
         val initialConstraint = InitialConstraint(lowerType, upperType, UPPER, position)
-        val incorporationPosition = IncorporationConstraintPosition(position, initialConstraint)
         c.addInitialConstraint(initialConstraint)
         updateAllowedTypeDepth(c, lowerType)
         updateAllowedTypeDepth(c, upperType)
-        addSubTypeConstraintAndIncorporateIt(c, lowerType, upperType, incorporationPosition)
+        addSubTypeConstraintAndIncorporateIt(c, lowerType, upperType, IncorporationConstraintPosition(position, initialConstraint))
     }
 
     fun addInitialEqualityConstraint(c: Context, a: KotlinTypeMarker, b: KotlinTypeMarker, position: ConstraintPosition) {
         val initialConstraint = InitialConstraint(a, b, ConstraintKind.EQUALITY, position)
-        val incorporationPosition = IncorporationConstraintPosition(position, initialConstraint)
         c.addInitialConstraint(initialConstraint)
         updateAllowedTypeDepth(c, a)
         updateAllowedTypeDepth(c, b)
-        addSubTypeConstraintAndIncorporateIt(c, a, b, incorporationPosition)
-        addSubTypeConstraintAndIncorporateIt(c, b, a, incorporationPosition)
+        addSubTypeConstraintAndIncorporateIt(c, a, b, IncorporationConstraintPosition(position, initialConstraint))
+        addSubTypeConstraintAndIncorporateIt(c, b, a, IncorporationConstraintPosition(position, initialConstraint))
     }
 
     private fun addSubTypeConstraintAndIncorporateIt(
@@ -72,7 +70,7 @@ class ConstraintInjector(
         incorporatePosition: IncorporationConstraintPosition
     ) {
         val possibleNewConstraints = Stack<Pair<TypeVariableMarker, Constraint>>()
-        val typeCheckerContext = TypeCheckerContext(c, incorporatePosition, lowerType, upperType, possibleNewConstraints)
+        val typeCheckerContext = TypeCheckerContext(c, incorporatePosition, lowerType, upperType, possibleNewConstraints, mutableSetOf())
         typeCheckerContext.runIsSubtypeOf(lowerType, upperType)
 
         while (possibleNewConstraints.isNotEmpty()) {
@@ -87,6 +85,8 @@ class ConstraintInjector(
                 constraintIncorporator.incorporate(typeCheckerContext, typeVariable, it)
             }
         }
+
+        incorporatePosition.inputTypePositions = typeCheckerContext.preservedInputTypePositions
     }
 
     private fun updateAllowedTypeDepth(c: Context, initialType: KotlinTypeMarker) = with(c) {
@@ -122,7 +122,8 @@ class ConstraintInjector(
         val position: IncorporationConstraintPosition,
         val baseLowerType: KotlinTypeMarker,
         val baseUpperType: KotlinTypeMarker,
-        val possibleNewConstraints: MutableList<Pair<TypeVariableMarker, Constraint>>
+        val possibleNewConstraints: MutableList<Pair<TypeVariableMarker, Constraint>>,
+        val preservedInputTypePositions: MutableSet<ConstraintPosition>
     ) : AbstractTypeCheckerContextForConstraintSystem(), ConstraintIncorporator.Context, TypeSystemInferenceExtensionContext by c {
 
         val baseContext: AbstractTypeCheckerContext = newBaseTypeCheckerContext(isErrorTypeEqualsToAnything, isStubTypeEqualsToAnything)
@@ -193,7 +194,7 @@ class ConstraintInjector(
             type: KotlinTypeMarker,
             constraintContext: ConstraintContext
         ) {
-            val (kind, derivedFrom) = constraintContext
+            val (kind, derivedFrom, inputTypePosition) = constraintContext
 
             var targetType = type
             if (targetType.isUninferredParameter()) {
@@ -231,6 +232,7 @@ class ConstraintInjector(
             }
 
             possibleNewConstraints.add(typeVariable to Constraint(kind, targetType, position, derivedFrom = derivedFrom))
+            inputTypePosition?.let { preservedInputTypePositions.add(it) }
         }
 
         override val allTypeVariablesWithConstraints: Collection<VariableWithConstraints>
@@ -259,4 +261,8 @@ class ConstraintInjector(
     }
 }
 
-data class ConstraintContext(val kind: ConstraintKind, val derivedFrom: Set<TypeVariableMarker>)
+data class ConstraintContext(
+    val kind: ConstraintKind,
+    val derivedFrom: Set<TypeVariableMarker>,
+    val inputTypePosition: ConstraintPosition? = null
+)

@@ -12,9 +12,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
-import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.UnwrappedType
-import org.jetbrains.kotlin.types.checker.NewCapturedType
 import org.jetbrains.kotlin.types.typeUtil.unCapture
 import kotlin.collections.ArrayList
 import kotlin.collections.LinkedHashMap
@@ -34,14 +32,16 @@ class MutableVariableWithConstraints(
 
     // see @OnlyInputTypes annotation
     val projectedInputCallTypes: Collection<UnwrappedType>
-        get() =
-            mutableConstraints.filter {
-                val position = it.position.from
-                position is ArgumentConstraintPosition || position is ReceiverConstraintPosition ||
-                        position is ExpectedTypeConstraintPosition || position is ExplicitTypeParameterConstraintPosition
-            }.map {
-                (it.type as KotlinType).unCapture().unwrap()
-            }
+        get() = mutableConstraints
+            .filter { it.position.isInputTypePosition }
+            .map { (it.type as KotlinType).unCapture().unwrap() }
+
+    private val ConstraintPosition?.isInputTypePosition: Boolean
+        get() = when (this) {
+            is OnlyInputTypeConstraintPosition -> true
+            !is IncorporationConstraintPosition -> false
+            else -> from.isInputTypePosition || inputTypePositions.any { it.isInputTypePosition }
+        }
 
     private val mutableConstraints = ArrayList(constraints)
 

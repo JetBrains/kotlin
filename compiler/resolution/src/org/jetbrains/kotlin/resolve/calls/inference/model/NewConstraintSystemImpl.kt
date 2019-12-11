@@ -298,10 +298,10 @@ class NewConstraintSystemImpl(
         variableWithConstraints: MutableVariableWithConstraints?,
         resultType: KotlinTypeMarker
     ) {
-        if (resultType !is KotlinType) return
-        if (variableWithConstraints == null || variableWithConstraints.typeVariable.safeAs<NewTypeVariable>()?.hasOnlyInputTypesAnnotation() != true ) return
-        val projectedInputCallTypes = variableWithConstraints.projectedInputCallTypes
-        val resultTypeIsInputType = projectedInputCallTypes.any { inputType ->
+        if (resultType !is KotlinType || variableWithConstraints == null) return
+        if (variableWithConstraints.typeVariable.safeAs<NewTypeVariable>()?.hasOnlyInputTypesAnnotation() != true) return
+
+        val resultTypeIsInputType = variableWithConstraints.projectedInputCallTypes.any { inputType ->
             NewKotlinTypeChecker.Default.equalTypes(resultType, inputType) ||
                     inputType.constructor is IntersectionTypeConstructor
                     && inputType.constructor.supertypes.any { NewKotlinTypeChecker.Default.equalTypes(resultType, it) }

@@ -29,11 +29,11 @@ import org.jetbrains.kotlin.types.model.TypeVariableMarker
 
 sealed class ConstraintPosition
 
-class ExplicitTypeParameterConstraintPosition(val typeArgument: SimpleTypeArgument) : ConstraintPosition() {
+class ExplicitTypeParameterConstraintPosition(val typeArgument: SimpleTypeArgument) : ConstraintPosition(), OnlyInputTypeConstraintPosition {
     override fun toString() = "TypeParameter $typeArgument"
 }
 
-class ExpectedTypeConstraintPosition(val topLevelCall: KotlinCall) : ConstraintPosition() {
+class ExpectedTypeConstraintPosition(val topLevelCall: KotlinCall) : ConstraintPosition(), OnlyInputTypeConstraintPosition {
     override fun toString() = "ExpectedType for call $topLevelCall"
 }
 
@@ -45,11 +45,13 @@ class DeclaredUpperBoundConstraintPositionImpl(val typeParameterDescriptor: Type
 
 class FirDeclaredUpperBoundConstraintPosition : DeclaredUpperBoundConstraintPosition()
 
-class ArgumentConstraintPosition(val argument: KotlinCallArgument) : ConstraintPosition() {
+interface OnlyInputTypeConstraintPosition
+
+class ArgumentConstraintPosition(val argument: KotlinCallArgument) : ConstraintPosition(), OnlyInputTypeConstraintPosition {
     override fun toString() = "Argument $argument"
 }
 
-class ReceiverConstraintPosition(val argument: KotlinCallArgument) : ConstraintPosition() {
+class ReceiverConstraintPosition(val argument: KotlinCallArgument) : ConstraintPosition(), OnlyInputTypeConstraintPosition {
     override fun toString() = "Receiver $argument"
 }
 
@@ -77,8 +79,14 @@ class DelegatedPropertyConstraintPosition(val topLevelCall: KotlinCall) : Constr
     override fun toString() = "Constraint from call $topLevelCall for delegated property"
 }
 
-class IncorporationConstraintPosition(val from: ConstraintPosition, val initialConstraint: InitialConstraint) : ConstraintPosition() {
-    override fun toString() = "Incorporate $initialConstraint from position $from"
+class IncorporationConstraintPosition(
+    val from: ConstraintPosition,
+    val initialConstraint: InitialConstraint
+) : ConstraintPosition() {
+    lateinit var inputTypePositions: Set<ConstraintPosition>
+
+    override fun toString() =
+        "Incorporate $initialConstraint from position $from"
 }
 
 class CoroutinePosition() : ConstraintPosition() {

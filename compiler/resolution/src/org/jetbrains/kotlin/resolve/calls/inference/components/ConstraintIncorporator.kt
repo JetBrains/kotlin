@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
-import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
-import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
-import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
+import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.SmartSet
@@ -174,7 +172,10 @@ class ConstraintIncorporator(
 
         val kind = if (isSubtype) ConstraintKind.LOWER else ConstraintKind.UPPER
 
-        addNewIncorporatedConstraint(targetVariable, newConstraint, ConstraintContext(kind, derivedFrom))
+        val inputTypePosition = if (baseConstraint.position.from is OnlyInputTypeConstraintPosition)
+            baseConstraint.position else null
+
+        addNewIncorporatedConstraint(targetVariable, newConstraint, ConstraintContext(kind, derivedFrom, inputTypePosition))
     }
 
     fun Context.containsConstrainingTypeWithoutProjection(
