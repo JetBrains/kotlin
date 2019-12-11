@@ -665,7 +665,10 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
       @Override
       public void stateChanged() {
         ToolWindow window = ToolWindowManager.getInstance(myProject).getToolWindow(ToolWindowId.PROJECT_VIEW);
-        if (window == null || toolWindowVisible == window.isVisible()) return;
+        if (window == null || toolWindowVisible == window.isVisible()) {
+          return;
+        }
+
         myCurrentSelectionObsolete = ThreeState.NO;
         if (window.isVisible() && !toolWindowVisible) {
           AbstractProjectViewPane currentProjectViewPane = getCurrentProjectViewPane();
