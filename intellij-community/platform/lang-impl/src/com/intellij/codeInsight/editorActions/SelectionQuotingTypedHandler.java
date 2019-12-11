@@ -64,27 +64,33 @@ public class SelectionQuotingTypedHandler extends TypedHandlerDelegate {
         boolean restoreStickySelection = editor instanceof EditorEx && ((EditorEx)editor).isStickySelection();
         selectionModel.removeSelection();
         editor.getDocument().replaceString(selectionStart, selectionEnd, newText);
-        TextRange replacedTextRange = new TextRange(caretOffset + 1, caretOffset + newText.length() - 1);
+        
+        int startOffset = caretOffset + 1;
+        int endOffset = caretOffset + newText.length() - 1;
+        int length = editor.getDocument().getTextLength();
+        
         // selection is removed here
-        if (replacedTextRange.getEndOffset() <= editor.getDocument().getTextLength()) {
+        if (endOffset <= length) {
           if (restoreStickySelection) {
             EditorEx editorEx = (EditorEx)editor;
             CaretModel caretModel = editorEx.getCaretModel();
-            caretModel.moveToOffset(ltrSelection ? replacedTextRange.getStartOffset() : replacedTextRange.getEndOffset());
+            caretModel.moveToOffset(ltrSelection ? startOffset : endOffset);
             editorEx.setStickySelection(true);
-            caretModel.moveToOffset(ltrSelection ? replacedTextRange.getEndOffset() : replacedTextRange.getStartOffset());
+            caretModel.moveToOffset(ltrSelection ? endOffset : startOffset);
           }
           else {
             if (ltrSelection || editor instanceof EditorWindow) {
-              editor.getSelectionModel().setSelection(replacedTextRange.getStartOffset(), replacedTextRange.getEndOffset());
+              editor.getSelectionModel().setSelection(startOffset, endOffset);
             }
             else {
-              editor.getSelectionModel().setSelection(replacedTextRange.getEndOffset(), replacedTextRange.getStartOffset());
+              editor.getSelectionModel().setSelection(endOffset, startOffset);
             }
-            editor.getCaretModel().moveToOffset(ltrSelection ? replacedTextRange.getEndOffset() : replacedTextRange.getStartOffset());
+            editor.getCaretModel().moveToOffset(ltrSelection ? endOffset : startOffset);
           }
           if (c == '{') {
-            CodeStyleManager.getInstance(project).reformatText(file, replacedTextRange.getStartOffset() - 1, replacedTextRange.getEndOffset() + 1);
+            int startOffsetToReformat = startOffset - 1;
+            int endOffsetToReformat = length > endOffset ? endOffset + 1 : endOffset;
+            CodeStyleManager.getInstance(project).reformatText(file, startOffsetToReformat, endOffsetToReformat);
           }
         }
         return Result.STOP;
