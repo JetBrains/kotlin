@@ -1023,8 +1023,8 @@ class NewMultiplatformIT : BaseGradleIT() {
             val prefix = outputKind.prefix(HostManager.host)
             val suffix = outputKind.suffix(HostManager.host)
             val fileName = "$prefix$fileBaseName$suffix"
-            "build/bin/$nativeHostTargetName/$name/$fileName"
-        }
+            name to "build/bin/$nativeHostTargetName/$name/$fileName"
+        }.toMap()
 
         val runTasks = listOf(
             "runDebugExecutable",
@@ -1046,12 +1046,22 @@ class NewMultiplatformIT : BaseGradleIT() {
             assertSuccessful()
             assertTasksExecuted(linkTasks.map { ":$it" })
             assertTasksExecuted(":$compileTask", ":$compileTestTask")
-            outputFiles.forEach {
-                assertFileExists(it)
+            outputFiles.forEach { (_, file) ->
+                assertFileExists(file)
             }
             // Check that getters work fine.
             assertTrue(output.contains("Check link task: linkReleaseShared$hostSuffix"))
             assertTrue(output.contains("Check run task: runFooReleaseExecutable$hostSuffix"))
+
+            // Check that dependency export works for static and shared libs.
+            val staticSuffix = CompilerOutputKind.STATIC.suffix(HostManager.host)
+            val sharedSuffix = CompilerOutputKind.DYNAMIC.suffix(HostManager.host)
+            val staticPrefix = CompilerOutputKind.STATIC.prefix(HostManager.host)
+            val sharedPrefix = CompilerOutputKind.DYNAMIC.prefix(HostManager.host)
+            val staticHeader = outputFiles.getValue("releaseStatic").removeSuffix(staticSuffix) + "_api.h"
+            val sharedHeader = outputFiles.getValue("releaseShared").removeSuffix(sharedSuffix) + "_api.h"
+            assertTrue(fileInWorkingDir(staticHeader).readText().contains("${staticPrefix}native_binary_KInt (*exported)();"))
+            assertTrue(fileInWorkingDir(sharedHeader).readText().contains("${sharedPrefix}native_binary_KInt (*exported)();"))
         }
 
         build("tasks") {
@@ -1126,8 +1136,11 @@ class NewMultiplatformIT : BaseGradleIT() {
             build("linkDebugFrameworkIos") {
                 assertSuccessful()
                 assertFileExists("build/bin/ios/debugFramework/native_binary.framework")
-                fileInWorkingDir("build/bin/ios/debugFramework/native_binary.framework/Headers/native_binary.h")
-                    .readText().contains("+ (int32_t)exported")
+                assertTrue(
+                    fileInWorkingDir("build/bin/ios/debugFramework/native_binary.framework/Headers/native_binary.h")
+                    .readText()
+                    .contains("+ (int32_t)exported")
+                )
                 // Check that by default debug frameworks have bitcode marker embedded.
                 checkNativeCommandLineFor(":linkDebugFrameworkIos") {
                     assertTrue(it.contains("-Xembed-bitcode-marker"))
