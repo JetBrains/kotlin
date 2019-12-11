@@ -1256,20 +1256,6 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
     }
   }
 
-  @NotNull
-  private static FocusDegree convertToFocusDegree(@NotNull LookupFocusDegree lookupFocusDegree) {
-    switch (lookupFocusDegree) {
-      case FOCUSED:
-        return FocusDegree.FOCUSED;
-      case SEMI_FOCUSED:
-        return FocusDegree.SEMI_FOCUSED;
-      case UNFOCUSED:
-        return FocusDegree.UNFOCUSED;
-      default:
-        throw new IllegalStateException("Unknown lookupFocusDegree " + lookupFocusDegree);
-    }
-  }
-
   /**
    * @deprecated Use {@link LookupFocusDegree}
    */
