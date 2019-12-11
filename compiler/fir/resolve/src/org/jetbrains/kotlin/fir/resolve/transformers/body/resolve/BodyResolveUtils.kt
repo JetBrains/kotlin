@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.calls.InferenceComponents
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.typeContext
+import org.jetbrains.kotlin.fir.inferenceContext
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 
 inline fun <reified T : FirElement> FirBasedSymbol<*>.firUnsafe(): T {
@@ -35,6 +35,6 @@ internal fun inferenceComponents(
     returnTypeCalculator: ReturnTypeCalculator,
     scopeSession: ScopeSession
 ): InferenceComponents {
-    val inferenceContext = session.typeContext
+    val inferenceContext = session.inferenceContext
     return InferenceComponents(inferenceContext, session, returnTypeCalculator, scopeSession)
 }

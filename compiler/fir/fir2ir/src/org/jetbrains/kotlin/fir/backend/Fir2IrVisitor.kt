@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.IntegerLiteralTypeApproxima
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperator
-import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperatorCall
 import org.jetbrains.kotlin.fir.symbols.AccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -72,7 +71,7 @@ class Fir2IrVisitor(
         private val UNARY_OPERATIONS: Set<FirOperation> = EnumSet.of(FirOperation.EXCL)
     }
 
-    private val integerApproximator = IntegerLiteralTypeApproximationTransformer(session.firSymbolProvider, session.typeContext)
+    private val integerApproximator = IntegerLiteralTypeApproximationTransformer(session.firSymbolProvider, session.inferenceContext)
 
     private val typeContext = session.typeContext
 
