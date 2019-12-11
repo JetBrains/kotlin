@@ -840,6 +840,67 @@ object Aggregates : TemplateGroupBase() {
         }
     }
 
+    val f_reduceOrNull = fn("reduceOrNull(operation: (acc: T, T) -> T)") {
+        include(ArraysOfPrimitives, ArraysOfUnsigned, CharSequences)
+    } builder {
+        since("1.3")
+        annotation("@ExperimentalStdlibApi")
+        inline()
+        specialFor(ArraysOfUnsigned) { inlineOnly() }
+
+        doc { "Accumulates value starting with the first ${f.element} and applying [operation] from left to right to current accumulator value and each ${f.element}. Returns null if the ${f.collection} is empty." }
+        returns("T?")
+        body {
+            """
+            if (isEmpty())
+                return null
+
+            var accumulator = this[0]
+            for (index in 1..lastIndex) {
+                accumulator = operation(accumulator, this[index])
+            }
+            return accumulator
+            """
+        }
+    }
+
+    val f_reduceOrNullSuper = fn("reduceOrNull(operation: (acc: S, T) -> S)") {
+        include(ArraysOfObjects, Iterables, Sequences)
+    } builder {
+        since("1.3")
+        annotation("@ExperimentalStdlibApi")
+        inline()
+
+        doc { "Accumulates value starting with the first ${f.element} and applying [operation] from left to right to current accumulator value and each ${f.element}. Returns null if the ${f.collection} is empty." }
+        typeParam("S")
+        typeParam("T : S")
+        returns("S?")
+        body {
+            """
+            val iterator = this.iterator()
+            if (!iterator.hasNext()) return null
+
+            var accumulator: S = iterator.next()
+            while (iterator.hasNext()) {
+                accumulator = operation(accumulator, iterator.next())
+            }
+            return accumulator
+            """
+        }
+        body(ArraysOfObjects) {
+            """
+            if (isEmpty())
+                return null
+
+            var accumulator: S = this[0]
+            for (index in 1..lastIndex) {
+                accumulator = operation(accumulator, this[index])
+            }
+            return accumulator
+            """
+        }
+    }
+
     val f_reduceRight = fn("reduceRight(operation: (T, acc: T) -> T)") {
         include(CharSequences, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {

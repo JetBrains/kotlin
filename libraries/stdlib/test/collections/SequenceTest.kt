@@ -379,6 +379,10 @@ public class SequenceTest {
         assertEquals(expected_, b.toList())
     }
 
+    @Test fun reduceOrNullOnEmpty() {
+        expect(null, { sequenceOf<Int>().reduceOrNull { acc, i -> acc + i } })
+    }
+
     @Test fun minusElement() = testMinus(expected = listOf("foo", "bar")) { it - "bar" - "zoo" }
     @Test fun minusCollection() = testMinus { it - listOf("bar", "zoo") }
     @Test fun minusArray() = testMinus { it - arrayOf("bar", "zoo") }

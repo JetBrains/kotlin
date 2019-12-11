@@ -1006,6 +1006,20 @@ class ArraysTest {
         }
     }
 
+    @Test fun reduceOrNull() {
+        expect(-4) { intArrayOf(1, 2, 3).reduceOrNull { a, b -> a - b } }
+        expect(-4.toLong()) { longArrayOf(1, 2, 3).reduceOrNull { a, b -> a - b } }
+        expect(-4F) { floatArrayOf(1F, 2F, 3F).reduceOrNull { a, b -> a - b } }
+        expect(-4.0) { doubleArrayOf(1.0, 2.0, 3.0).reduceOrNull { a, b -> a - b } }
+        expect('3') { charArrayOf('1', '3', '2').reduceOrNull { a, b -> if (a > b) a else b } }
+        expect(false) { booleanArrayOf(true, true, false).reduceOrNull { a, b -> a && b } }
+        expect(true) { booleanArrayOf(true, true).reduceOrNull { a, b -> a && b } }
+        expect(0.toByte()) { byteArrayOf(3, 2, 1).reduceOrNull { a, b -> (a - b).toByte() } }
+        expect(0.toShort()) { shortArrayOf(3, 2, 1).reduceOrNull { a, b -> (a - b).toShort() } }
+
+        expect(null, { intArrayOf().reduceOrNull { a, b -> a + b } })
+    }
+
     @Test fun reduceRight() {
         expect(2) { intArrayOf(1, 2, 3).reduceRight { a, b -> a - b } }
         expect(2.toLong()) { longArrayOf(1, 2, 3).reduceRight { a, b -> a - b } }
