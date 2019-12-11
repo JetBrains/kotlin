@@ -89,7 +89,7 @@ class KoltinLibraryWriterImpl(
 fun buildKoltinLibrary(
     linkDependencies: List<KotlinLibrary>,
     metadata: SerializedMetadata,
-    ir: SerializedIrModule,
+    ir: SerializedIrModule?,
     versions: KotlinLibraryVersioning,
     output: String,
     moduleName: String,
@@ -101,7 +101,10 @@ fun buildKoltinLibrary(
     val library = KoltinLibraryWriterImpl(File(output), moduleName, versions, nopack)
 
     library.addMetadata(metadata)
-    library.addIr(ir)
+
+    if (ir != null) {
+        library.addIr(ir)
+    }
 
     manifestProperties?.let { library.addManifestAddend(it) }
     library.addLinkDependencies(linkDependencies)
