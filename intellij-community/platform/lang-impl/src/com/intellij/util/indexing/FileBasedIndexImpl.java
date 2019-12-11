@@ -7,9 +7,7 @@ import com.intellij.diagnostic.Activity;
 import com.intellij.diagnostic.StartUpMeasurer;
 import com.intellij.history.LocalHistory;
 import com.intellij.ide.AppLifecycleListener;
-import com.intellij.ide.IdeBundle;
 import com.intellij.ide.plugins.DynamicPluginListener;
-import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.startup.ServiceNotReadyException;
 import com.intellij.lang.ASTNode;
 import com.intellij.notification.NotificationDisplayType;
@@ -65,7 +63,6 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.SerializationManagerEx;
 import com.intellij.util.*;
 import com.intellij.util.concurrency.BoundedTaskExecutor;
-import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.concurrency.SequentialTaskExecutor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.IntObjectMap;
@@ -149,71 +146,23 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
     return myRegisteredIndexes.getConfigurationState();
   }
 
+  void dropRegisteredIndexes() {
+    ScheduledFuture<?> flushingFuture = myFlushingFuture;
+    LOG.assertTrue(flushingFuture == null || flushingFuture.isCancelled() || flushingFuture.isDone());
+    LOG.assertTrue(myUpToDateIndicesForUnsavedOrTransactedDocuments.isEmpty());
+    LOG.assertTrue(myProjectsBeingUpdated.isEmpty());
+    LOG.assertTrue(myUpdatingFiles.get() == 0);
+    LOG.assertTrue(myTransactionMap.isEmpty());
+
+    myRegisteredIndexes = null;
+  }
+
   public FileBasedIndexImpl() {
     myFileDocumentManager = FileDocumentManager.getInstance();
     myIsUnitTestMode = ApplicationManager.getApplication().isUnitTestMode();
 
     MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect();
-    myRegisteredIndexes = new RegisteredIndexes(myFileDocumentManager, this);
-    connection.subscribe(DynamicPluginListener.TOPIC, new DynamicPluginListener() {
-      @Override
-      public void beforePluginLoaded(@NotNull IdeaPluginDescriptor pluginDescriptor) {
-        beforePluginSetChanged();
-      }
-
-      @Override
-      public void beforePluginUnload(@NotNull IdeaPluginDescriptor pluginDescriptor, boolean isUpdate) {
-        beforePluginSetChanged();
-      }
-
-      @Override
-      public void pluginLoaded(@NotNull IdeaPluginDescriptor pluginDescriptor) {
-        afterPluginSetChanged();
-      }
-
-      @Override
-      public void pluginUnloaded(@NotNull IdeaPluginDescriptor pluginDescriptor, boolean isUpdate) {
-        afterPluginSetChanged();
-      }
-
-      private final Semaphore mySemaphore = new Semaphore();
-
-      private void beforePluginSetChanged() {
-        LOG.assertTrue(mySemaphore.isUp());
-        mySemaphore.down();
-
-        for (Project project : ProjectManager.getInstance().getOpenProjects()) {
-          DumbService.getInstance(project).queueTask(new DumbModeTask() {
-            @Override
-            public void performInDumbMode(@NotNull ProgressIndicator indicator) {
-              indicator.setText(IdeBundle.message("progress.indexing.reload"));
-              mySemaphore.waitFor();
-            }
-          });
-        }
-
-        performShutdown(true);
-        assertProcessingStopped();
-        myRegisteredIndexes = null;
-      }
-
-      private void afterPluginSetChanged() {
-        myRegisteredIndexes = new RegisteredIndexes(myFileDocumentManager, FileBasedIndexImpl.this);
-        initComponent();
-
-        LOG.assertTrue(!mySemaphore.isUp());
-        mySemaphore.up();
-      }
-
-      void assertProcessingStopped() {
-        ScheduledFuture<?> flushingFuture = myFlushingFuture;
-        LOG.assertTrue(flushingFuture == null || flushingFuture.isCancelled() || flushingFuture.isDone());
-        LOG.assertTrue(myUpToDateIndicesForUnsavedOrTransactedDocuments.isEmpty());
-        LOG.assertTrue(myProjectsBeingUpdated.isEmpty());
-        LOG.assertTrue(myUpdatingFiles.get() == 0);
-        LOG.assertTrue(myTransactionMap.isEmpty());
-      }
-    });
+    connection.subscribe(DynamicPluginListener.TOPIC, new FileBasedIndexPluginListener(this));
 
     connection.subscribe(PsiDocumentTransactionListener.TOPIC, new PsiDocumentTransactionListener() {
       @Override
@@ -383,7 +332,9 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
     }
   }
 
-  private void initComponent() {
+  void initComponent() {
+    LOG.assertTrue(myRegisteredIndexes == null);
+    myRegisteredIndexes = new RegisteredIndexes(myFileDocumentManager, this);
     myRegisteredIndexes.initializeIndexes(new FileIndexDataInitialization());
   }
 
@@ -557,7 +508,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
            : new VfsAwareMapReduceIndex<>(extension, storage);
   }
 
-  private void performShutdown(boolean keepConnection) {
+  void performShutdown(boolean keepConnection) {
     RegisteredIndexes registeredIndexes = myRegisteredIndexes;
     if (registeredIndexes == null || !registeredIndexes.performShutdown()) {
       return; // already shut down
