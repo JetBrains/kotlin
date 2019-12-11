@@ -3,12 +3,11 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.checkers;
+package org.jetbrains.kotlin.fir;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -20,7 +19,7 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/diagnostics/testsWithStdLib")
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
-public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestWithStdLib {
+public class FirOldFrontendDiagnosticsTestWithStdlibGenerated extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
     private void runTest(String testDataFilePath) throws Exception {
         KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
@@ -31,7 +30,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
     }
 
     public void testAllFilesPresentInTestsWithStdLib() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true, "coroutines");
     }
 
     @TestMetadata("ArrayOfNothing.kt")
@@ -162,7 +161,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Annotations extends AbstractDiagnosticsTestWithStdLib {
+    public static class Annotations extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -239,7 +238,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationApplicability")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class AnnotationApplicability extends AbstractDiagnosticsTestWithStdLib {
+        public static class AnnotationApplicability extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
@@ -287,7 +286,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationParameterMustBeConstant")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class AnnotationParameterMustBeConstant extends AbstractDiagnosticsTestWithStdLib {
+        public static class AnnotationParameterMustBeConstant extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
@@ -320,7 +319,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationParameters")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class AnnotationParameters extends AbstractDiagnosticsTestWithStdLib {
+        public static class AnnotationParameters extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
@@ -373,7 +372,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationWithVarargParameter")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class AnnotationWithVarargParameter extends AbstractDiagnosticsTestWithStdLib {
+        public static class AnnotationWithVarargParameter extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
@@ -396,7 +395,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/javaAnnotationsWithKClassParameter")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class JavaAnnotationsWithKClassParameter extends AbstractDiagnosticsTestWithStdLib {
+        public static class JavaAnnotationsWithKClassParameter extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
@@ -469,7 +468,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class JvmDefault extends AbstractDiagnosticsTestWithStdLib {
+        public static class JvmDefault extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
@@ -562,7 +561,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmField")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class JvmField extends AbstractDiagnosticsTestWithStdLib {
+        public static class JvmField extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
@@ -600,7 +599,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmOverloads")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class JvmOverloads extends AbstractDiagnosticsTestWithStdLib {
+        public static class JvmOverloads extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
@@ -638,7 +637,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmPackageName")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class JvmPackageName extends AbstractDiagnosticsTestWithStdLib {
+        public static class JvmPackageName extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
@@ -656,7 +655,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmSpecialFunctions")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class JvmSpecialFunctions extends AbstractDiagnosticsTestWithStdLib {
+        public static class JvmSpecialFunctions extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
@@ -674,7 +673,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmStatic")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class JvmStatic extends AbstractDiagnosticsTestWithStdLib {
+        public static class JvmStatic extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
@@ -757,7 +756,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/kClass")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class KClass extends AbstractDiagnosticsTestWithStdLib {
+        public static class KClass extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
@@ -805,7 +804,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/prohibitPositionedArgument")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class ProhibitPositionedArgument extends AbstractDiagnosticsTestWithStdLib {
+        public static class ProhibitPositionedArgument extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
@@ -844,7 +843,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/assert")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Assert extends AbstractDiagnosticsTestWithStdLib {
+    public static class Assert extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -867,7 +866,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/builtins")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Builtins extends AbstractDiagnosticsTestWithStdLib {
+    public static class Builtins extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -885,7 +884,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/cast")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Cast extends AbstractDiagnosticsTestWithStdLib {
+    public static class Cast extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -913,7 +912,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/contracts")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Contracts extends AbstractDiagnosticsTestWithStdLib {
+    public static class Contracts extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -925,7 +924,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/contracts/controlflow")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Controlflow extends AbstractDiagnosticsTestWithStdLib {
+        public static class Controlflow extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
@@ -937,7 +936,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/contracts/controlflow/flowInlining")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
-            public static class FlowInlining extends AbstractDiagnosticsTestWithStdLib {
+            public static class FlowInlining extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
                 private void runTest(String testDataFilePath) throws Exception {
                     KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                 }
@@ -1035,7 +1034,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/contracts/controlflow/initialization")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
-            public static class Initialization extends AbstractDiagnosticsTestWithStdLib {
+            public static class Initialization extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
                 private void runTest(String testDataFilePath) throws Exception {
                     KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                 }
@@ -1047,7 +1046,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
                 @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/contracts/controlflow/initialization/atLeastOnce")
                 @TestDataPath("$PROJECT_ROOT")
                 @RunWith(JUnit3RunnerWithInners.class)
-                public static class AtLeastOnce extends AbstractDiagnosticsTestWithStdLib {
+                public static class AtLeastOnce extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
                     private void runTest(String testDataFilePath) throws Exception {
                         KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                     }
@@ -1075,7 +1074,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
                 @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/contracts/controlflow/initialization/exactlyOnce")
                 @TestDataPath("$PROJECT_ROOT")
                 @RunWith(JUnit3RunnerWithInners.class)
-                public static class ExactlyOnce extends AbstractDiagnosticsTestWithStdLib {
+                public static class ExactlyOnce extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
                     private void runTest(String testDataFilePath) throws Exception {
                         KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                     }
@@ -1118,7 +1117,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
                 @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/contracts/controlflow/initialization/unknown")
                 @TestDataPath("$PROJECT_ROOT")
                 @RunWith(JUnit3RunnerWithInners.class)
-                public static class Unknown extends AbstractDiagnosticsTestWithStdLib {
+                public static class Unknown extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
                     private void runTest(String testDataFilePath) throws Exception {
                         KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                     }
@@ -1138,7 +1137,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Dsl extends AbstractDiagnosticsTestWithStdLib {
+        public static class Dsl extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
@@ -1170,7 +1169,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
-            public static class Errors extends AbstractDiagnosticsTestWithStdLib {
+            public static class Errors extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
                 private void runTest(String testDataFilePath) throws Exception {
                     KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                 }
@@ -1254,7 +1253,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/contracts/fromStdlib")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class FromStdlib extends AbstractDiagnosticsTestWithStdLib {
+        public static class FromStdlib extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
@@ -1297,7 +1296,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/contracts/smartcasts")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Smartcasts extends AbstractDiagnosticsTestWithStdLib {
+        public static class Smartcasts extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
@@ -1389,7 +1388,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/contracts/smartcasts/multieffect")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
-            public static class Multieffect extends AbstractDiagnosticsTestWithStdLib {
+            public static class Multieffect extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
                 private void runTest(String testDataFilePath) throws Exception {
                     KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                 }
@@ -1412,7 +1411,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/contracts/smartcasts/operatorsTests")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
-            public static class OperatorsTests extends AbstractDiagnosticsTestWithStdLib {
+            public static class OperatorsTests extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
                 private void runTest(String testDataFilePath) throws Exception {
                     KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                 }
@@ -1470,7 +1469,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/contracts/smartcasts/when")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
-            public static class When extends AbstractDiagnosticsTestWithStdLib {
+            public static class When extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
                 private void runTest(String testDataFilePath) throws Exception {
                     KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                 }
@@ -1497,909 +1496,10 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         }
     }
 
-    @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/coroutines")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class Coroutines extends AbstractDiagnosticsTestWithStdLib {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-        }
-
-        private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
-            KotlinTestUtils.runTest(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.ANY, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInCoroutines() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/coroutines"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
-        }
-
-        @TestMetadata("allowResultInReturnTypeWithFlag.kt")
-        public void testAllowResultInReturnTypeWithFlag() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/allowResultInReturnTypeWithFlag.kt");
-        }
-
-        @TestMetadata("callableReferences.kt")
-        public void testCallableReferences() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/callableReferences.kt");
-        }
-
-        @TestMetadata("coroutineContext.kt")
-        public void testCoroutineContext() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/coroutineContext.kt");
-        }
-
-        @TestMetadata("coroutinesDisabled.kt")
-        public void testCoroutinesDisabled() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/coroutinesDisabled.kt");
-        }
-
-        @TestMetadata("coroutinesEnabledWithWarning.kt")
-        public void testCoroutinesEnabledWithWarning() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/coroutinesEnabledWithWarning.kt");
-        }
-
-        @TestMetadata("illegalSuspendCalls.kt")
-        public void testIllegalSuspendCalls() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/illegalSuspendCalls.kt");
-        }
-
-        @TestMetadata("illegalSuspendCallsForDelegated.kt")
-        public void testIllegalSuspendCallsForDelegated() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/illegalSuspendCallsForDelegated.kt");
-        }
-
-        @TestMetadata("irrelevantSuspendDeclarations.kt")
-        public void testIrrelevantSuspendDeclarations() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/irrelevantSuspendDeclarations.kt");
-        }
-
-        @TestMetadata("kSuspendFunctionAsSupertype.kt")
-        public void testKSuspendFunctionAsSupertype() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/kSuspendFunctionAsSupertype.kt");
-        }
-
-        @TestMetadata("kt18292.kt")
-        public void testKt18292() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/kt18292.kt");
-        }
-
-        @TestMetadata("kt28658.kt")
-        public void testKt28658() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/kt28658.kt");
-        }
-
-        @TestMetadata("lambdaExpectedType.kt")
-        public void testLambdaExpectedType() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/lambdaExpectedType.kt");
-        }
-
-        @TestMetadata("mixingSuspendability.kt")
-        public void testMixingSuspendability() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/mixingSuspendability.kt");
-        }
-
-        @TestMetadata("modifierFormForNonBuiltInSuspend.kt")
-        public void testModifierFormForNonBuiltInSuspend() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/modifierFormForNonBuiltInSuspend.kt");
-        }
-
-        @TestMetadata("modifierFormForNonBuiltInSuspendWithAnyParameter.kt")
-        public void testModifierFormForNonBuiltInSuspendWithAnyParameter() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/modifierFormForNonBuiltInSuspendWithAnyParameter.kt");
-        }
-
-        @TestMetadata("noDefaultCoroutineImports.kt")
-        public void testNoDefaultCoroutineImports_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/noDefaultCoroutineImports.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("noDefaultCoroutineImports.kt")
-        public void testNoDefaultCoroutineImports_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/noDefaultCoroutineImports.kt", "kotlin.coroutines");
-        }
-
-        @TestMetadata("nonLocalSuspension.kt")
-        public void testNonLocalSuspension() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/nonLocalSuspension.kt");
-        }
-
-        @TestMetadata("nonModifierFormForBuiltIn.kt")
-        public void testNonModifierFormForBuiltIn() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/nonModifierFormForBuiltIn.kt");
-        }
-
-        @TestMetadata("nonModifierFormForBuiltInRenameOnImport.kt")
-        public void testNonModifierFormForBuiltInRenameOnImport() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/nonModifierFormForBuiltInRenameOnImport.kt");
-        }
-
-        @TestMetadata("operators.kt")
-        public void testOperators() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/operators.kt");
-        }
-
-        @TestMetadata("returnLabelForBuiltInSuspend.kt")
-        public void testReturnLabelForBuiltInSuspend() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/returnLabelForBuiltInSuspend.kt");
-        }
-
-        @TestMetadata("suspendApplicability.kt")
-        public void testSuspendApplicability_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendApplicability.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("suspendApplicability.kt")
-        public void testSuspendApplicability_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendApplicability.kt", "kotlin.coroutines");
-        }
-
-        @TestMetadata("suspendConflictsWithNoSuspend.kt")
-        public void testSuspendConflictsWithNoSuspend() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendConflictsWithNoSuspend.kt");
-        }
-
-        @TestMetadata("suspendCoroutineOrReturn.kt")
-        public void testSuspendCoroutineOrReturn() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendCoroutineOrReturn.kt");
-        }
-
-        @TestMetadata("suspendCoroutineOrReturn_1_2.kt")
-        public void testSuspendCoroutineOrReturn_1_2() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendCoroutineOrReturn_1_2.kt");
-        }
-
-        @TestMetadata("suspendCoroutineUnavailableWithNewAPI.kt")
-        public void testSuspendCoroutineUnavailableWithNewAPI() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendCoroutineUnavailableWithNewAPI.kt");
-        }
-
-        @TestMetadata("suspendCoroutineUnavailableWithOldAPI.kt")
-        public void testSuspendCoroutineUnavailableWithOldAPI() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendCoroutineUnavailableWithOldAPI.kt");
-        }
-
-        @TestMetadata("suspendCovarianJavaOverride.kt")
-        public void testSuspendCovarianJavaOverride_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendCovarianJavaOverride.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("suspendCovarianJavaOverride.kt")
-        public void testSuspendCovarianJavaOverride_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendCovarianJavaOverride.kt", "kotlin.coroutines");
-        }
-
-        @TestMetadata("suspendDestructuring.kt")
-        public void testSuspendDestructuring() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendDestructuring.kt");
-        }
-
-        @TestMetadata("suspendExternalFunctions.kt")
-        public void testSuspendExternalFunctions() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendExternalFunctions.kt");
-        }
-
-        @TestMetadata("suspendFunctionN.kt")
-        public void testSuspendFunctionN() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendFunctionN.kt");
-        }
-
-        @TestMetadata("suspendFunctions.kt")
-        public void testSuspendFunctions_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendFunctions.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("suspendFunctions.kt")
-        public void testSuspendFunctions_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendFunctions.kt", "kotlin.coroutines");
-        }
-
-        @TestMetadata("suspendJavaImplementationFromDifferentClass.kt")
-        public void testSuspendJavaImplementationFromDifferentClass_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendJavaImplementationFromDifferentClass.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("suspendJavaImplementationFromDifferentClass.kt")
-        public void testSuspendJavaImplementationFromDifferentClass_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendJavaImplementationFromDifferentClass.kt", "kotlin.coroutines");
-        }
-
-        @TestMetadata("suspendJavaOverrides.kt")
-        public void testSuspendJavaOverrides_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendJavaOverrides.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("suspendJavaOverrides.kt")
-        public void testSuspendJavaOverrides_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendJavaOverrides.kt", "kotlin.coroutines");
-        }
-
-        @TestMetadata("suspendLambda.kt")
-        public void testSuspendLambda_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendLambda.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("suspendLambda.kt")
-        public void testSuspendLambda_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendLambda.kt", "kotlin.coroutines");
-        }
-
-        @TestMetadata("suspendOverridability.kt")
-        public void testSuspendOverridability() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendOverridability.kt");
-        }
-
-        @TestMetadata("suspendTest.kt")
-        public void testSuspendTest() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendTest.kt");
-        }
-
-        @TestMetadata("suspensionPointInMonitor.kt")
-        public void testSuspensionPointInMonitor() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspensionPointInMonitor.kt");
-        }
-
-        @TestMetadata("suspensionPointInMonitorNewInf.kt")
-        public void testSuspensionPointInMonitorNewInf() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspensionPointInMonitorNewInf.kt");
-        }
-
-        @TestMetadata("suspesionInDefaultValue.kt")
-        public void testSuspesionInDefaultValue() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspesionInDefaultValue.kt");
-        }
-
-        @TestMetadata("tryCatchLambda.kt")
-        public void testTryCatchLambda() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/tryCatchLambda.kt");
-        }
-
-        @TestMetadata("unsupported.kt")
-        public void testUnsupported() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/unsupported.kt");
-        }
-
-        @TestMetadata("usageOfResultTypeInReturnType.kt")
-        public void testUsageOfResultTypeInReturnType() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/usageOfResultTypeInReturnType.kt");
-        }
-
-        @TestMetadata("usageOfResultTypeWithNullableOperators.kt")
-        public void testUsageOfResultTypeWithNullableOperators() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/usageOfResultTypeWithNullableOperators.kt");
-        }
-
-        @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/coroutines/callableReference")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class CallableReference extends AbstractDiagnosticsTestWithStdLib {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-            }
-
-            private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
-                KotlinTestUtils.runTest(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.ANY, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInCallableReference() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/coroutines/callableReference"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
-            }
-
-            @TestMetadata("bigArity.kt")
-            public void testBigArity() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/callableReference/bigArity.kt");
-            }
-
-            @TestMetadata("callableReferenceOnUnresolvedLHS.kt")
-            public void testCallableReferenceOnUnresolvedLHS() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/callableReference/callableReferenceOnUnresolvedLHS.kt");
-            }
-
-            @TestMetadata("property.kt")
-            public void testProperty_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/callableReference/property.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("property.kt")
-            public void testProperty_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/callableReference/property.kt", "kotlin.coroutines");
-            }
-
-            @TestMetadata("suspendConversionForCallableReferences.kt")
-            public void testSuspendConversionForCallableReferences() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/callableReference/suspendConversionForCallableReferences.kt");
-            }
-        }
-
-        @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class Inference extends AbstractDiagnosticsTestWithStdLib {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInInference() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
-            }
-
-            @TestMetadata("applyInsideCoroutine.kt")
-            public void testApplyInsideCoroutine() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/applyInsideCoroutine.kt");
-            }
-
-            @TestMetadata("callableReferenceToASuspendFunction.kt")
-            public void testCallableReferenceToASuspendFunction() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/callableReferenceToASuspendFunction.kt");
-            }
-
-            @TestMetadata("chainCallWithExtensionExplicitTypes.kt")
-            public void testChainCallWithExtensionExplicitTypes() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/chainCallWithExtensionExplicitTypes.kt");
-            }
-
-            @TestMetadata("coroutineInferenceWithCapturedTypeVariable.kt")
-            public void testCoroutineInferenceWithCapturedTypeVariable() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/coroutineInferenceWithCapturedTypeVariable.kt");
-            }
-
-            @TestMetadata("correctMember.kt")
-            public void testCorrectMember() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/correctMember.kt");
-            }
-
-            @TestMetadata("extensionPriority.kt")
-            public void testExtensionPriority() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/extensionPriority.kt");
-            }
-
-            @TestMetadata("extensionSuspend.kt")
-            public void testExtensionSuspend() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/extensionSuspend.kt");
-            }
-
-            @TestMetadata("extensionWithNonValuableConstraints.kt")
-            public void testExtensionWithNonValuableConstraints() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/extensionWithNonValuableConstraints.kt");
-            }
-
-            @TestMetadata("extensionsWithNonValuableConstraintsGenericBase.kt")
-            public void testExtensionsWithNonValuableConstraintsGenericBase() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/extensionsWithNonValuableConstraintsGenericBase.kt");
-            }
-
-            @TestMetadata("extensionsWithNonValuableConstraints_1_2.kt")
-            public void testExtensionsWithNonValuableConstraints_1_2() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/extensionsWithNonValuableConstraints_1_2.kt");
-            }
-
-            @TestMetadata("incorrectCalls.kt")
-            public void testIncorrectCalls() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/incorrectCalls.kt");
-            }
-
-            @TestMetadata("inferCoroutineTypeInOldVersion.kt")
-            public void testInferCoroutineTypeInOldVersion() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/inferCoroutineTypeInOldVersion.kt");
-            }
-
-            @TestMetadata("inferenceFromMethodInsideLocalVariable.kt")
-            public void testInferenceFromMethodInsideLocalVariable() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/inferenceFromMethodInsideLocalVariable.kt");
-            }
-
-            @TestMetadata("kt15516.kt")
-            public void testKt15516() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/kt15516.kt");
-            }
-
-            @TestMetadata("kt32271.kt")
-            public void testKt32271() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/kt32271.kt");
-            }
-
-            @TestMetadata("nestedLambdaInferenceWithListMap.kt")
-            public void testNestedLambdaInferenceWithListMap() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/nestedLambdaInferenceWithListMap.kt");
-            }
-
-            @TestMetadata("nestedSuspendCallInsideLambda.kt")
-            public void testNestedSuspendCallInsideLambda() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/nestedSuspendCallInsideLambda.kt");
-            }
-
-            @TestMetadata("recursiveGenerators.kt")
-            public void testRecursiveGenerators() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/recursiveGenerators.kt");
-            }
-
-            @TestMetadata("recursiveGenerators2.kt")
-            public void testRecursiveGenerators2() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/recursiveGenerators2.kt");
-            }
-
-            @TestMetadata("resolveUsualCallWithBuilderInference.kt")
-            public void testResolveUsualCallWithBuilderInference() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/resolveUsualCallWithBuilderInference.kt");
-            }
-
-            @TestMetadata("returnTypeInference.kt")
-            public void testReturnTypeInference() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/returnTypeInference.kt");
-            }
-
-            @TestMetadata("returnTypeInference2.kt")
-            public void testReturnTypeInference2() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/returnTypeInference2.kt");
-            }
-
-            @TestMetadata("severalCandidatesWithDifferentVisibility.kt")
-            public void testSeveralCandidatesWithDifferentVisibility() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/severalCandidatesWithDifferentVisibility.kt");
-            }
-
-            @TestMetadata("simpleGenerator.kt")
-            public void testSimpleGenerator() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/simpleGenerator.kt");
-            }
-
-            @TestMetadata("suspendCallsWithErrors.kt")
-            public void testSuspendCallsWithErrors() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/suspendCallsWithErrors.kt");
-            }
-
-            @TestMetadata("suspendCallsWrongUpperBound.kt")
-            public void testSuspendCallsWrongUpperBound() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/suspendCallsWrongUpperBound.kt");
-            }
-
-            @TestMetadata("twoReceiversInScope.kt")
-            public void testTwoReceiversInScope() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/twoReceiversInScope.kt");
-            }
-
-            @TestMetadata("typeFromReceiver.kt")
-            public void testTypeFromReceiver() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/typeFromReceiver.kt");
-            }
-
-            @TestMetadata("useInferenceInformationFromExtension.kt")
-            public void testUseInferenceInformationFromExtension() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/useInferenceInformationFromExtension.kt");
-            }
-
-            @TestMetadata("variableCallInsideBuilderFunction.kt")
-            public void testVariableCallInsideBuilderFunction() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/variableCallInsideBuilderFunction.kt");
-            }
-
-            @TestMetadata("withParameter.kt")
-            public void testWithParameter() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/withParameter.kt");
-            }
-
-            @TestMetadata("withUninferredParameter.kt")
-            public void testWithUninferredParameter() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/withUninferredParameter.kt");
-            }
-        }
-
-        @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/coroutines/inlineCrossinline")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class InlineCrossinline extends AbstractDiagnosticsTestWithStdLib {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-            }
-
-            private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
-                KotlinTestUtils.runTest(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.ANY, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInInlineCrossinline() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/coroutines/inlineCrossinline"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
-            }
-
-            @TestMetadata("inlineOrdinaryOfCrossinlineOrdinary.kt")
-            public void testInlineOrdinaryOfCrossinlineOrdinary_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/inlineCrossinline/inlineOrdinaryOfCrossinlineOrdinary.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("inlineOrdinaryOfCrossinlineOrdinary.kt")
-            public void testInlineOrdinaryOfCrossinlineOrdinary_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/inlineCrossinline/inlineOrdinaryOfCrossinlineOrdinary.kt", "kotlin.coroutines");
-            }
-
-            @TestMetadata("inlineOrdinaryOfCrossinlineSuspend.kt")
-            public void testInlineOrdinaryOfCrossinlineSuspend_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/inlineCrossinline/inlineOrdinaryOfCrossinlineSuspend.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("inlineOrdinaryOfCrossinlineSuspend.kt")
-            public void testInlineOrdinaryOfCrossinlineSuspend_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/inlineCrossinline/inlineOrdinaryOfCrossinlineSuspend.kt", "kotlin.coroutines");
-            }
-
-            @TestMetadata("inlineOrdinaryOfNoinlineOrdinary.kt")
-            public void testInlineOrdinaryOfNoinlineOrdinary_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/inlineCrossinline/inlineOrdinaryOfNoinlineOrdinary.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("inlineOrdinaryOfNoinlineOrdinary.kt")
-            public void testInlineOrdinaryOfNoinlineOrdinary_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/inlineCrossinline/inlineOrdinaryOfNoinlineOrdinary.kt", "kotlin.coroutines");
-            }
-
-            @TestMetadata("inlineOrdinaryOfNoinlineSuspend.kt")
-            public void testInlineOrdinaryOfNoinlineSuspend_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/inlineCrossinline/inlineOrdinaryOfNoinlineSuspend.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("inlineOrdinaryOfNoinlineSuspend.kt")
-            public void testInlineOrdinaryOfNoinlineSuspend_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/inlineCrossinline/inlineOrdinaryOfNoinlineSuspend.kt", "kotlin.coroutines");
-            }
-
-            @TestMetadata("inlineOrdinaryOfOrdinary.kt")
-            public void testInlineOrdinaryOfOrdinary_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/inlineCrossinline/inlineOrdinaryOfOrdinary.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("inlineOrdinaryOfOrdinary.kt")
-            public void testInlineOrdinaryOfOrdinary_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/inlineCrossinline/inlineOrdinaryOfOrdinary.kt", "kotlin.coroutines");
-            }
-
-            @TestMetadata("inlineOrdinaryOfSuspend.kt")
-            public void testInlineOrdinaryOfSuspend_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/inlineCrossinline/inlineOrdinaryOfSuspend.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("inlineOrdinaryOfSuspend.kt")
-            public void testInlineOrdinaryOfSuspend_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/inlineCrossinline/inlineOrdinaryOfSuspend.kt", "kotlin.coroutines");
-            }
-
-            @TestMetadata("inlineSuspendOfCrossinlineOrdinary.kt")
-            public void testInlineSuspendOfCrossinlineOrdinary_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/inlineCrossinline/inlineSuspendOfCrossinlineOrdinary.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("inlineSuspendOfCrossinlineOrdinary.kt")
-            public void testInlineSuspendOfCrossinlineOrdinary_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/inlineCrossinline/inlineSuspendOfCrossinlineOrdinary.kt", "kotlin.coroutines");
-            }
-
-            @TestMetadata("inlineSuspendOfCrossinlineSuspend.kt")
-            public void testInlineSuspendOfCrossinlineSuspend_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/inlineCrossinline/inlineSuspendOfCrossinlineSuspend.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("inlineSuspendOfCrossinlineSuspend.kt")
-            public void testInlineSuspendOfCrossinlineSuspend_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/inlineCrossinline/inlineSuspendOfCrossinlineSuspend.kt", "kotlin.coroutines");
-            }
-
-            @TestMetadata("inlineSuspendOfNoinlineOrdinary.kt")
-            public void testInlineSuspendOfNoinlineOrdinary_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/inlineCrossinline/inlineSuspendOfNoinlineOrdinary.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("inlineSuspendOfNoinlineOrdinary.kt")
-            public void testInlineSuspendOfNoinlineOrdinary_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/inlineCrossinline/inlineSuspendOfNoinlineOrdinary.kt", "kotlin.coroutines");
-            }
-
-            @TestMetadata("inlineSuspendOfNoinlineSuspend.kt")
-            public void testInlineSuspendOfNoinlineSuspend_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/inlineCrossinline/inlineSuspendOfNoinlineSuspend.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("inlineSuspendOfNoinlineSuspend.kt")
-            public void testInlineSuspendOfNoinlineSuspend_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/inlineCrossinline/inlineSuspendOfNoinlineSuspend.kt", "kotlin.coroutines");
-            }
-
-            @TestMetadata("inlineSuspendOfOrdinary.kt")
-            public void testInlineSuspendOfOrdinary_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/inlineCrossinline/inlineSuspendOfOrdinary.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("inlineSuspendOfOrdinary.kt")
-            public void testInlineSuspendOfOrdinary_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/inlineCrossinline/inlineSuspendOfOrdinary.kt", "kotlin.coroutines");
-            }
-
-            @TestMetadata("inlineSuspendOfSuspend.kt")
-            public void testInlineSuspendOfSuspend_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/inlineCrossinline/inlineSuspendOfSuspend.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("inlineSuspendOfSuspend.kt")
-            public void testInlineSuspendOfSuspend_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/inlineCrossinline/inlineSuspendOfSuspend.kt", "kotlin.coroutines");
-            }
-        }
-
-        @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/coroutines/release")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class Release extends AbstractDiagnosticsTestWithStdLib {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInRelease() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/coroutines/release"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
-            }
-
-            @TestMetadata("coroutineContext.kt")
-            public void testCoroutineContext() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/release/coroutineContext.kt");
-            }
-
-            @TestMetadata("languageVersionIsNotEqualToApiVersion.kt")
-            public void testLanguageVersionIsNotEqualToApiVersion() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/release/languageVersionIsNotEqualToApiVersion.kt");
-            }
-
-            @TestMetadata("suspend.kt")
-            public void testSuspend() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/release/suspend.kt");
-            }
-        }
-
-        @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/coroutines/restrictSuspension")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class RestrictSuspension extends AbstractDiagnosticsTestWithStdLib {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-            }
-
-            private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
-                KotlinTestUtils.runTest(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.ANY, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInRestrictSuspension() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/coroutines/restrictSuspension"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
-            }
-
-            @TestMetadata("allMembersAllowed.kt")
-            public void testAllMembersAllowed_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/restrictSuspension/allMembersAllowed.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("allMembersAllowed.kt")
-            public void testAllMembersAllowed_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/restrictSuspension/allMembersAllowed.kt", "kotlin.coroutines");
-            }
-
-            @TestMetadata("extensions.kt")
-            public void testExtensions_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/restrictSuspension/extensions.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("extensions.kt")
-            public void testExtensions_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/restrictSuspension/extensions.kt", "kotlin.coroutines");
-            }
-
-            @TestMetadata("memberExtension.kt")
-            public void testMemberExtension_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/restrictSuspension/memberExtension.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("memberExtension.kt")
-            public void testMemberExtension_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/restrictSuspension/memberExtension.kt", "kotlin.coroutines");
-            }
-
-            @TestMetadata("notRelatedFun.kt")
-            public void testNotRelatedFun_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/restrictSuspension/notRelatedFun.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("notRelatedFun.kt")
-            public void testNotRelatedFun_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/restrictSuspension/notRelatedFun.kt", "kotlin.coroutines");
-            }
-
-            @TestMetadata("outerYield_1_2.kt")
-            public void testOuterYield_1_2() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/restrictSuspension/outerYield_1_2.kt");
-            }
-
-            @TestMetadata("outerYield_1_3.kt")
-            public void testOuterYield_1_3() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/restrictSuspension/outerYield_1_3.kt");
-            }
-
-            @TestMetadata("sameInstance.kt")
-            public void testSameInstance_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/restrictSuspension/sameInstance.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("sameInstance.kt")
-            public void testSameInstance_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/restrictSuspension/sameInstance.kt", "kotlin.coroutines");
-            }
-
-            @TestMetadata("simpleForbidden.kt")
-            public void testSimpleForbidden_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/restrictSuspension/simpleForbidden.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("simpleForbidden.kt")
-            public void testSimpleForbidden_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/restrictSuspension/simpleForbidden.kt", "kotlin.coroutines");
-            }
-
-            @TestMetadata("wrongEnclosingFunction.kt")
-            public void testWrongEnclosingFunction_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/restrictSuspension/wrongEnclosingFunction.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("wrongEnclosingFunction.kt")
-            public void testWrongEnclosingFunction_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/restrictSuspension/wrongEnclosingFunction.kt", "kotlin.coroutines");
-            }
-        }
-
-        @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendFunctionType")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class SuspendFunctionType extends AbstractDiagnosticsTestWithStdLib {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInSuspendFunctionType() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendFunctionType"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
-            }
-
-            @TestMetadata("functionVsSuspendFunction.kt")
-            public void testFunctionVsSuspendFunction() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendFunctionType/functionVsSuspendFunction.kt");
-            }
-
-            @TestMetadata("inference1.kt")
-            public void testInference1() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendFunctionType/inference1.kt");
-            }
-
-            @TestMetadata("inference2.kt")
-            public void testInference2() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendFunctionType/inference2.kt");
-            }
-
-            @TestMetadata("inference3.kt")
-            public void testInference3() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendFunctionType/inference3.kt");
-            }
-
-            @TestMetadata("inference4.kt")
-            public void testInference4() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendFunctionType/inference4.kt");
-            }
-
-            @TestMetadata("inline.kt")
-            public void testInline() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendFunctionType/inline.kt");
-            }
-
-            @TestMetadata("invoke.kt")
-            public void testInvoke() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendFunctionType/invoke.kt");
-            }
-
-            @TestMetadata("lambdaInOverriddenValInitializer.kt")
-            public void testLambdaInOverriddenValInitializer() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendFunctionType/lambdaInOverriddenValInitializer.kt");
-            }
-
-            @TestMetadata("lambdaInValInitializer.kt")
-            public void testLambdaInValInitializer() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendFunctionType/lambdaInValInitializer.kt");
-            }
-
-            @TestMetadata("modifierApplicability.kt")
-            public void testModifierApplicability() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendFunctionType/modifierApplicability.kt");
-            }
-
-            @TestMetadata("noInvokeForSuspendFunction.kt")
-            public void testNoInvokeForSuspendFunction() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendFunctionType/noInvokeForSuspendFunction.kt");
-            }
-
-            @TestMetadata("noValueParameters.kt")
-            public void testNoValueParameters() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendFunctionType/noValueParameters.kt");
-            }
-
-            @TestMetadata("nullableSuspendFunction.kt")
-            public void testNullableSuspendFunction() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendFunctionType/nullableSuspendFunction.kt");
-            }
-
-            @TestMetadata("suspendFunctionN.kt")
-            public void testSuspendFunctionN() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendFunctionType/suspendFunctionN.kt");
-            }
-        }
-
-        @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/coroutines/tailCalls")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class TailCalls extends AbstractDiagnosticsTestWithStdLib {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-            }
-
-            private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
-                KotlinTestUtils.runTest(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.ANY, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInTailCalls() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/coroutines/tailCalls"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
-            }
-
-            @TestMetadata("forbidden.kt")
-            public void testForbidden_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/tailCalls/forbidden.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("forbidden.kt")
-            public void testForbidden_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/tailCalls/forbidden.kt", "kotlin.coroutines");
-            }
-
-            @TestMetadata("localFunctions.kt")
-            public void testLocalFunctions() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/tailCalls/localFunctions.kt");
-            }
-
-            @TestMetadata("nothingTypedSuspendFunction_1_2.kt")
-            public void testNothingTypedSuspendFunction_1_2() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/tailCalls/nothingTypedSuspendFunction_1_2.kt");
-            }
-
-            @TestMetadata("nothingTypedSuspendFunction_1_3.kt")
-            public void testNothingTypedSuspendFunction_1_3() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/tailCalls/nothingTypedSuspendFunction_1_3.kt");
-            }
-
-            @TestMetadata("recursive.kt")
-            public void testRecursive() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/tailCalls/recursive.kt");
-            }
-
-            @TestMetadata("tryCatch.kt")
-            public void testTryCatch_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/tailCalls/tryCatch.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("tryCatch.kt")
-            public void testTryCatch_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/tailCalls/tryCatch.kt", "kotlin.coroutines");
-            }
-
-            @TestMetadata("valid.kt")
-            public void testValid_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/tailCalls/valid.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("valid.kt")
-            public void testValid_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/tailCalls/valid.kt", "kotlin.coroutines");
-            }
-        }
-    }
-
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/deprecated")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Deprecated extends AbstractDiagnosticsTestWithStdLib {
+    public static class Deprecated extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -2422,7 +1522,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/duplicateJvmSignature")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class DuplicateJvmSignature extends AbstractDiagnosticsTestWithStdLib {
+    public static class DuplicateJvmSignature extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -2464,7 +1564,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/duplicateJvmSignature/statics")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Statics extends AbstractDiagnosticsTestWithStdLib {
+        public static class Statics extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
@@ -2498,7 +1598,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/experimental")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Experimental extends AbstractDiagnosticsTestWithStdLib {
+    public static class Experimental extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -2641,7 +1741,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/forInArrayLoop")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class ForInArrayLoop extends AbstractDiagnosticsTestWithStdLib {
+    public static class ForInArrayLoop extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -2679,7 +1779,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/functionLiterals")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class FunctionLiterals extends AbstractDiagnosticsTestWithStdLib {
+    public static class FunctionLiterals extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -2697,7 +1797,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/inference")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Inference extends AbstractDiagnosticsTestWithStdLib {
+    public static class Inference extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -2764,7 +1864,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/inference/annotationsForResolve")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class AnnotationsForResolve extends AbstractDiagnosticsTestWithStdLib {
+        public static class AnnotationsForResolve extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
@@ -2858,7 +1958,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/inline")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Inline extends AbstractDiagnosticsTestWithStdLib {
+    public static class Inline extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -2881,7 +1981,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/java")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Java extends AbstractDiagnosticsTestWithStdLib {
+    public static class Java extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -2919,7 +2019,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/kt7585")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Kt7585 extends AbstractDiagnosticsTestWithStdLib {
+    public static class Kt7585 extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -2937,7 +2037,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/lateinit")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Lateinit extends AbstractDiagnosticsTestWithStdLib {
+    public static class Lateinit extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -2955,7 +2055,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/multiplatform")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Multiplatform extends AbstractDiagnosticsTestWithStdLib {
+    public static class Multiplatform extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -2973,7 +2073,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/native")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Native extends AbstractDiagnosticsTestWithStdLib {
+    public static class Native extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -3031,7 +2131,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/purelyImplementedCollection")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class PurelyImplementedCollection extends AbstractDiagnosticsTestWithStdLib {
+    public static class PurelyImplementedCollection extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -3094,7 +2194,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/reflection")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Reflection extends AbstractDiagnosticsTestWithStdLib {
+    public static class Reflection extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -3112,7 +2212,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/regression")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Regression extends AbstractDiagnosticsTestWithStdLib {
+    public static class Regression extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -3180,7 +2280,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/reified")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Reified extends AbstractDiagnosticsTestWithStdLib {
+    public static class Reified extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -3218,7 +2318,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/resolve")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Resolve extends AbstractDiagnosticsTestWithStdLib {
+    public static class Resolve extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -3296,7 +2396,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/smartcasts")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Smartcasts extends AbstractDiagnosticsTestWithStdLib {
+    public static class Smartcasts extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -3374,7 +2474,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/sourceCompatibility")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class SourceCompatibility extends AbstractDiagnosticsTestWithStdLib {
+    public static class SourceCompatibility extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -3392,7 +2492,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/targetedBuiltIns")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class TargetedBuiltIns extends AbstractDiagnosticsTestWithStdLib {
+    public static class TargetedBuiltIns extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -3415,7 +2515,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/trailingComma")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class TrailingComma extends AbstractDiagnosticsTestWithStdLib {
+    public static class TrailingComma extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -3493,7 +2593,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/tryCatch")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class TryCatch extends AbstractDiagnosticsTestWithStdLib {
+    public static class TryCatch extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -3556,7 +2656,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/typealias")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Typealias extends AbstractDiagnosticsTestWithStdLib {
+    public static class Typealias extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -3599,7 +2699,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/varargs")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Varargs extends AbstractDiagnosticsTestWithStdLib {
+    public static class Varargs extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -3627,7 +2727,7 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/when")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class When extends AbstractDiagnosticsTestWithStdLib {
+    public static class When extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }

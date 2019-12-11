@@ -10,7 +10,28 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveTransformer
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
-abstract class AbstractFirDiagnosticsSmokeTest : AbstractFirBaseDiagnosticsTest() {
+abstract class AbstractFirOldFrontendDiagnosticsTest : AbstractFirDiagnosticsTest() {
+    companion object {
+        private val DIAGNOSTIC_PATTERN = Regex("(<!>|(<!(.(\".*\")*?)+?!>))")
+
+        private fun loadTestDataWithoutDiagnostics(file: File): String {
+            return KotlinTestUtils.doLoadFile(file).replace(DIAGNOSTIC_PATTERN, "")
+        }
+    }
+
+    override fun createTestFileFromPath(filePath: String): File {
+        val newPath = filePath.replace(".kt", ".fir.kt")
+        return File(newPath).also {
+            prepareTestDataFile(filePath, it)
+        }
+    }
+
+    private fun prepareTestDataFile(originalFilePath: String, firTestDataFile: File) {
+        if (!firTestDataFile.exists()) {
+            firTestDataFile.writeText(loadTestDataWithoutDiagnostics(File(originalFilePath)))
+        }
+    }
+
     override fun runAnalysis(testDataFile: File, testFiles: List<TestFile>, firFiles: List<FirFile>) {
         val failure: AssertionError? = try {
             doFirResolveTestBench(firFiles, FirTotalResolveTransformer().transformers, gc = false)
@@ -18,10 +39,11 @@ abstract class AbstractFirDiagnosticsSmokeTest : AbstractFirBaseDiagnosticsTest(
         } catch (e: AssertionError) {
             e
         }
-        val failureFile = File(testDataFile.path.replace(".kt", ".fir.fail"))
+        val failureFile = File(testDataFile.path.replace(".kt", ".fail"))
         if (failure == null) {
             checkResultingFirFiles(firFiles, testDataFile)
             assertFalse("Test is good but there is expected exception", failureFile.exists())
+            checkDiagnostics(testDataFile, testFiles, firFiles)
         } else {
             if (!failureFile.exists()) {
                 throw failure

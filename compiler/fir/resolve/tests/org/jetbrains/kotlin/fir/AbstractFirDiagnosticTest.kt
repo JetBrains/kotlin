@@ -35,7 +35,7 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
         )
     }
 
-    private fun checkDiagnostics(file: File, testFiles: List<TestFile>, firFiles: List<FirFile>) {
+    protected fun checkDiagnostics(file: File, testFiles: List<TestFile>, firFiles: List<FirFile>) {
         val collector = createCollector()
         val actualText = StringBuilder()
         for (testFile in testFiles) {
@@ -50,7 +50,7 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
         KotlinTestUtils.assertEqualsToFile(file, actualText.toString())
     }
 
-    private fun createCollector(): AbstractDiagnosticCollector {
+    protected fun createCollector(): AbstractDiagnosticCollector {
         return FirDiagnosticsCollector.create()
     }
 }

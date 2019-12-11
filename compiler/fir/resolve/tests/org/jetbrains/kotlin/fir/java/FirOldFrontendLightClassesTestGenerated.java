@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/fir/resolve/testData/lightClasses")
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
-public class FirLightClassesTestGenerated extends AbstractFirLightClassesTest {
+public class FirOldFrontendLightClassesTestGenerated extends AbstractFirOldFrontendLightClassesTest {
     private void runTest(String testDataFilePath) throws Exception {
         KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }

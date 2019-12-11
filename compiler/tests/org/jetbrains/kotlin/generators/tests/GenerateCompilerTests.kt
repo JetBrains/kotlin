@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.codegen.ir.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
 import org.jetbrains.kotlin.fir.lightTree.AbstractLightTree2FirConverterTestCase
-import org.jetbrains.kotlin.fir.java.AbstractFirLightClassesTest
+import org.jetbrains.kotlin.fir.java.AbstractFirOldFrontendLightClassesTest
 import org.jetbrains.kotlin.fir.java.AbstractFirTypeEnhancementTest
 import org.jetbrains.kotlin.fir.java.AbstractOwnFirTypeEnhancementTest
 import org.jetbrains.kotlin.generators.tests.generator.testGroup
@@ -62,21 +62,27 @@ import org.jetbrains.kotlin.visualizer.psi.AbstractPsiVisualizer
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
 
-    testGroup("compiler/tests", "compiler/testData") {
+    val excludedFirTestdataPattern = "^(.+)\\.fir\\.kts?\$"
 
+    testGroup("compiler/tests", "compiler/testData") {
         testClass<AbstractDiagnosticsTest> {
-            model("diagnostics/tests", pattern = "^(.*)\\.kts?$")
+            model("diagnostics/tests", pattern = "^(.*)\\.kts?$", excludedPattern = excludedFirTestdataPattern)
             model("codegen/box/diagnostics")
         }
 
         testClass<AbstractDiagnosticsUsingJavacTest> {
-            model("diagnostics/tests")
+            model("diagnostics/tests", excludedPattern = excludedFirTestdataPattern)
             model("codegen/box/diagnostics")
         }
 
         testClass<AbstractJavacDiagnosticsTest> {
-            model("javac/diagnostics/tests")
-            model("javac/diagnostics/tests", testClassName = "TestsWithoutJavac", testMethod = "doTestWithoutJavacWrapper")
+            model("javac/diagnostics/tests", excludedPattern = excludedFirTestdataPattern)
+            model(
+                "javac/diagnostics/tests",
+                testClassName = "TestsWithoutJavac",
+                testMethod = "doTestWithoutJavacWrapper",
+                excludedPattern = excludedFirTestdataPattern
+            )
         }
 
         testClass<AbstractJavacFieldResolutionTest> {
@@ -85,11 +91,11 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractDiagnosticsTestWithStdLib> {
-            model("diagnostics/testsWithStdLib")
+            model("diagnostics/testsWithStdLib", excludedPattern = excludedFirTestdataPattern)
         }
 
         testClass<AbstractDiagnosticsTestWithStdLibUsingJavac> {
-            model("diagnostics/testsWithStdLib")
+            model("diagnostics/testsWithStdLib", excludedPattern = excludedFirTestdataPattern)
         }
 
         testClass<AbstractDiagnosticsTestWithJsStdLib> {
@@ -558,14 +564,21 @@ fun main(args: Array<String>) {
     }
 
     testGroup("compiler/fir/resolve/tests", "compiler/testData") {
+        testClass<AbstractFirOldFrontendDiagnosticsTest> {
+            model("diagnostics/tests", excludedPattern = excludedFirTestdataPattern)
+        }
 
-        testClass<AbstractFirDiagnosticsSmokeTest> {
-            model("diagnostics/tests")
+        testClass<AbstractFirOldFrontendDiagnosticsTestWithStdlib> {
+            model(
+                "diagnostics/testsWithStdLib",
+                excludedPattern = excludedFirTestdataPattern,
+                excludeDirs = listOf("coroutines")
+            )
         }
     }
 
     testGroup("compiler/fir/resolve/tests", "compiler/fir/resolve/testData") {
-        testClass<AbstractFirLightClassesTest> {
+        testClass<AbstractFirOldFrontendLightClassesTest> {
             model("lightClasses")
         }
     }

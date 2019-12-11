@@ -9,14 +9,14 @@ import com.intellij.openapi.extensions.Extensions
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.impl.compiled.ClsClassImpl
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.fir.AbstractFirDiagnosticsSmokeTest
+import org.jetbrains.kotlin.fir.AbstractFirOldFrontendDiagnosticsTest
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
-abstract class AbstractFirLightClassesTest : AbstractFirDiagnosticsSmokeTest() {
+abstract class AbstractFirOldFrontendLightClassesTest : AbstractFirOldFrontendDiagnosticsTest() {
     override fun checkResultingFirFiles(firFiles: List<FirFile>, testDataFile: File) {
         super.checkResultingFirFiles(firFiles, testDataFile)
 
@@ -49,5 +49,9 @@ abstract class AbstractFirLightClassesTest : AbstractFirDiagnosticsSmokeTest() {
 
         val expectedPath = testDataFile.path.replace(".kt", ".txt")
         KotlinTestUtils.assertEqualsToFile(File(expectedPath), stringBuilder.toString())
+    }
+
+    override fun createTestFileFromPath(filePath: String): File {
+        return File(filePath)
     }
 }
