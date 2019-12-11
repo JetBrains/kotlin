@@ -17,20 +17,24 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Consumer;
+import com.intellij.util.EventDispatcher;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.Arrays;
+import java.util.EventListener;
 import java.util.Map;
 import java.util.Objects;
 
-public abstract class SdkListModelBuilder {
+public class SdkListModelBuilder {
   @Nullable private final Project myProject;
   @NotNull private final ProjectSdksModel mySdkModel;
   @NotNull private final Condition<? super Sdk> mySdkFilter;
   @NotNull private final Condition<? super SdkTypeId> mySdkTypeFilter;
   @NotNull private final Condition<? super SdkTypeId> mySdkTypeCreationFilter;
+
+  @NotNull private final EventDispatcher<ModelListener> myModelListener = EventDispatcher.create(ModelListener.class);
 
   private boolean mySuggestedItemsConnected = false;
   private boolean myIsSdkDetectorInProgress = false;
@@ -42,11 +46,11 @@ public abstract class SdkListModelBuilder {
   private ImmutableList<SuggestedItem> mySuggestions = ImmutableList.of();
   private InvalidSdkItem myInvalidItem = null;
 
-  protected SdkListModelBuilder(@Nullable Project project,
-                                @NotNull ProjectSdksModel sdkModel,
-                                @Nullable Condition<? super SdkTypeId> sdkTypeFilter,
-                                @Nullable Condition<? super SdkTypeId> sdkTypeCreationFilter,
-                                @Nullable Condition<? super Sdk> sdkFilter) {
+  public SdkListModelBuilder(@Nullable Project project,
+                             @NotNull ProjectSdksModel sdkModel,
+                             @Nullable Condition<? super SdkTypeId> sdkTypeFilter,
+                             @Nullable Condition<? super SdkTypeId> sdkTypeCreationFilter,
+                             @Nullable Condition<? super Sdk> sdkFilter) {
     myProject = project;
     mySdkModel = sdkModel;
 
@@ -64,13 +68,24 @@ public abstract class SdkListModelBuilder {
   }
 
   /**
-   * Implement this method to turn a given {@link SdkListModel}
+   * Implement this listener to turn a given {@link SdkListModel}
    * into a specific model and apply it for the control
+   * @see #addModelListener(ModelListener)
    */
-  protected abstract void syncModel(@NotNull SdkListModel model);
+  public interface ModelListener extends EventListener {
+    /**
+     * Implement this method to turn a given {@link SdkListModel}
+     * into a specific model and apply it for the control
+     */
+    void syncModel(@NotNull SdkListModel model);
+  }
+
+  public void addModelListener(@NotNull ModelListener listener) {
+    myModelListener.addListener(listener);
+  }
 
   private void syncModel() {
-    syncModel(buildModel());
+    myModelListener.getMulticaster().syncModel(buildModel());
   }
 
   @NotNull

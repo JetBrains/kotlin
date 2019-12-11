@@ -5,20 +5,42 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.ui.AnimatedIcon.ANIMATION_IN_RENDERER_ALLOWED;
 
 public abstract class SdkComboBoxBase<T> extends ComboBox<T> {
   private final Logger LOG = Logger.getInstance(getClass());
+  @NotNull protected final SdkListModelBuilder myModel;
 
-  protected SdkComboBoxBase() {
+  protected SdkComboBoxBase(@NotNull SdkListModelBuilder model) {
     super();
+    myModel = model;
+    myModel.addModelListener(this::onModelUpdated);
 
     UIUtil.putClientProperty(this, ANIMATION_IN_RENDERER_ALLOWED, true);
     setMinimumAndPreferredWidth(JBUI.scale(300));
     setMaximumRowCount(30);
     setSwingPopup(false);
     putClientProperty("ComboBox.jbPopup.supportUpdateModel", true);
+  }
+
+  protected abstract void onModelUpdated(@NotNull SdkListModel model);
+
+  public void setInvalidJdk(String name) {
+    setSelectedItem(myModel.setInvalidSdk(name));
+  }
+
+  public void showProjectSdkItem() {
+    myModel.showProjectSdkItem();
+  }
+
+  public void showNoneSdkItem() {
+    myModel.showNoneSdkItem();
+  }
+
+  public void reloadModel() {
+    myModel.reloadSdks();
   }
 
   /**
