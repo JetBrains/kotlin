@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 internal abstract class BaseInteropIrTransformer(private val context: Context) : IrBuildingTransformer(context) {
 
@@ -59,6 +60,16 @@ internal abstract class BaseInteropIrTransformer(private val context: Context) :
             element.getCompilerMessageLocation(irFile)
         } else {
             builder.getCompilerMessageLocation()
+        }
+
+        val uniqueModuleName = irFile.packageFragmentDescriptor.module.name.asString()
+                .let { it.substring(1, it.lastIndex) }
+        val uniquePrefix = buildString {
+            append('_')
+            uniqueModuleName.toByteArray().joinTo(this, "") {
+                (0xFF and it.toInt()).toString(16).padStart(2, '0')
+            }
+            append('_')
         }
 
         return object : KotlinStubs {
@@ -74,7 +85,7 @@ internal abstract class BaseInteropIrTransformer(private val context: Context) :
             }
 
             override fun getUniqueCName(prefix: String) =
-                    "_${context.cStubsManager.getUniqueName(prefix)}" // Ok in absence of separate compilation
+                    "$uniquePrefix${context.cStubsManager.getUniqueName(prefix)}"
 
             override fun getUniqueKotlinFunctionReferenceClassName(prefix: String) =
                     "$prefix${context.functionReferenceCount++}"
