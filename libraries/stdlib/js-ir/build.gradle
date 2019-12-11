@@ -159,6 +159,10 @@ node {
     nodeModulesDir = buildDir
 }
 
+task install() {
+    // dummy task to make coreLibsInstall aggregate task not fail
+}
+
 task installMocha(type: NpmTask) {
     args = ['install', 'mocha']
 }
