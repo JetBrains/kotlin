@@ -264,10 +264,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
             .transformArguments(integerLiteralTypeApproximator, null)
         when (resolved.operation) {
             FirOperation.IS, FirOperation.NOT_IS -> {
-                resolved.resultType = FirResolvedTypeRefImpl(
-                    null,
-                    StandardClassIds.Boolean(symbolProvider).constructType(emptyArray(), isNullable = false)
-                )
+                resolved.resultType = session.builtinTypes.booleanType
             }
             FirOperation.AS -> {
                 resolved.resultType = resolved.conversionTypeRef

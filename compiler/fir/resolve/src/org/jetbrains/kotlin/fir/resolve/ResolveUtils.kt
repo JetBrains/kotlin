@@ -319,7 +319,7 @@ fun BodyResolveComponents.typeForQualifier(resolvedQualifier: FirResolvedQualifi
     }
     // TODO: Handle no value type here
     return resultType.resolvedTypeFromPrototype(
-        StandardClassIds.Unit(symbolProvider).constructType(emptyArray(), isNullable = false)
+        session.builtinTypes.unitType.type//StandardClassIds.Unit(symbolProvider).constructType(emptyArray(), isNullable = false)
     )
 }
 

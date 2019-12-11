@@ -209,7 +209,7 @@ class FirCallResolver(
                 resultType = if (classId.isLocal) {
                     typeForQualifierByDeclaration(referencedSymbol.fir, resultType)
                         ?: resultType.resolvedTypeFromPrototype(
-                            StandardClassIds.Unit(symbolProvider).constructType(emptyArray(), isNullable = false)
+                            session.builtinTypes.unitType.type//StandardClassIds.Unit(symbolProvider).constructType(emptyArray(), isNullable = false)
                         )
                 } else {
                     typeForQualifier(this)

@@ -28,19 +28,19 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     override val isErrorTypeAllowed: Boolean get() = false
 
     override fun nullableNothingType(): SimpleTypeMarker {
-        return StandardClassIds.Nothing(symbolProvider).constructType(emptyArray(), true)
+        return session.builtinTypes.nullableNothingType.type//StandardClassIds.Nothing(symbolProvider).constructType(emptyArray(), true)
     }
 
     override fun nullableAnyType(): SimpleTypeMarker {
-        return StandardClassIds.Any(symbolProvider).constructType(emptyArray(), true)
+        return session.builtinTypes.nullableAnyType.type//StandardClassIds.Any(symbolProvider).constructType(emptyArray(), true)
     }
 
     override fun nothingType(): SimpleTypeMarker {
-        return StandardClassIds.Nothing(symbolProvider).constructType(emptyArray(), false)
+        return session.builtinTypes.nothingType.type//StandardClassIds.Nothing(symbolProvider).constructType(emptyArray(), false)
     }
 
     override fun anyType(): SimpleTypeMarker {
-        return StandardClassIds.Any(symbolProvider).constructType(emptyArray(), false)
+        return session.builtinTypes.anyType.type//StandardClassIds.Any(symbolProvider).constructType(emptyArray(), false)
     }
 
     override fun createFlexibleType(lowerBound: SimpleTypeMarker, upperBound: SimpleTypeMarker): KotlinTypeMarker {

@@ -108,7 +108,7 @@ class PostponedArgumentsAnalyzer(
         lambda: ResolvedLambdaAtom//,
         //diagnosticHolder: KotlinDiagnosticsHolder
     ) {
-        val unitType = Unit(components.session.firSymbolProvider).constructType(emptyArray(), false)
+        val unitType = components.session.builtinTypes.unitType.type//Unit(components.session.firSymbolProvider).constructType(emptyArray(), false)
         val stubsForPostponedVariables = c.bindingStubsForPostponedVariables()
         val currentSubstitutor = c.buildCurrentSubstitutor(stubsForPostponedVariables.mapKeys { it.key.freshTypeConstructor(c) })
 
