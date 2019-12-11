@@ -16,6 +16,7 @@ import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.projectView.impl.AbstractProjectViewPane;
 import com.intellij.ide.projectView.impl.ProjectRootsUtil;
 import com.intellij.ide.ui.UISettings;
+import com.intellij.ide.ui.customization.CustomActionsSchema;
 import com.intellij.ide.util.DeleteHandler;
 import com.intellij.internal.statistic.service.fus.collectors.UIEventId;
 import com.intellij.internal.statistic.service.fus.collectors.UIEventLogger;
@@ -427,13 +428,14 @@ public class NavBarPanel extends JPanel implements DataProvider, PopupOwner, Dis
       @Override
       public AnAction[] getChildren(@Nullable AnActionEvent e) {
         if (e == null) return EMPTY_ARRAY;
-        String popupGroup = null;
+        String popupGroupId = null;
         for (NavBarModelExtension modelExtension : NavBarModelExtension.EP_NAME.getExtensionList()) {
-          popupGroup = modelExtension.getPopupMenuGroup(NavBarPanel.this);
-          if (popupGroup != null) break;
+          popupGroupId = modelExtension.getPopupMenuGroup(NavBarPanel.this);
+          if (popupGroupId != null) break;
         }
-        if (popupGroup == null) popupGroup = IdeActions.GROUP_NAVBAR_POPUP;
-        return ((ActionGroup)actionManager.getAction(popupGroup)).getChildren(e);
+        if (popupGroupId == null) popupGroupId = IdeActions.GROUP_NAVBAR_POPUP;
+        ActionGroup group = (ActionGroup)CustomActionsSchema.getInstance().getCorrectedAction(popupGroupId);
+        return group == null ? EMPTY_ARRAY : group.getChildren(e);
       }
     }, ActionPlaces.NAVIGATION_BAR_POPUP, actionManager, new PopupMenuListenerAdapter() {
       @Override
