@@ -44,6 +44,10 @@ abstract class AbstractFirOldFrontendDiagnosticsTest : AbstractFirDiagnosticsTes
             checkResultingFirFiles(firFiles, testDataFile)
             assertFalse("Test is good but there is expected exception", failureFile.exists())
             checkDiagnostics(testDataFile, testFiles, firFiles)
+            val needDump = testFiles.any { it.directives.containsKey("FIR_DUMP") }
+            if (needDump) {
+                checkFir(testDataFile, firFiles)
+            }
         } else {
             if (!failureFile.exists()) {
                 throw failure
