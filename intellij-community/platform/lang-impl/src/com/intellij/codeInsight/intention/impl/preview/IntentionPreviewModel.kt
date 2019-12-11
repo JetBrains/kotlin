@@ -92,7 +92,7 @@ internal class IntentionPreviewModel {
 
       editor.gutterComponentEx.apply {
         setPaintBackground(false)
-        setLineNumberConverter(LineNumberConverter.Simple { _, line -> line + lineShift })
+        setLineNumberConverter(LineNumberConverter.Increasing { _, line -> line + lineShift })
       }
 
       return editor
