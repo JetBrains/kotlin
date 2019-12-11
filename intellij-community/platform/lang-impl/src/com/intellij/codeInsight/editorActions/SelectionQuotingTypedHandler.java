@@ -14,6 +14,8 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.codeStyle.CodeStyleManager;
+import com.intellij.psi.impl.source.codeStyle.CodeFormatterFacade;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -80,6 +82,9 @@ public class SelectionQuotingTypedHandler extends TypedHandlerDelegate {
               editor.getSelectionModel().setSelection(replacedTextRange.getEndOffset(), replacedTextRange.getStartOffset());
             }
             editor.getCaretModel().moveToOffset(ltrSelection ? replacedTextRange.getEndOffset() : replacedTextRange.getStartOffset());
+          }
+          if (c == '{') {
+            CodeStyleManager.getInstance(project).reformatText(file, replacedTextRange.getStartOffset() - 1, replacedTextRange.getEndOffset() + 1);
           }
         }
         return Result.STOP;
