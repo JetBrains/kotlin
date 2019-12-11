@@ -65,18 +65,6 @@ interface RunConfigurationTemplateProvider {
 // open for Upsource (UpsourceRunManager overrides to disable loadState (empty impl))
 @State(name = "RunManager", storages = [(Storage(value = StoragePathMacros.WORKSPACE_FILE, useSaveThreshold = ThreeState.NO))])
 open class RunManagerImpl @JvmOverloads constructor(val project: Project, sharedStreamProvider: StreamProvider? = null) : RunManagerEx(), PersistentStateComponent<Element>, Disposable {
-
-  init {
-    BeforeRunTaskProvider.EXTENSION_POINT_NAME.getPoint(project).addExtensionPointListener(
-      object : ExtensionPointAdapter<BeforeRunTaskProvider<BeforeRunTask<BeforeRunTask<*>>>?>() {
-        override fun extensionListChanged() {
-          if (stringIdToBeforeRunProvider != null) {
-            stringIdToBeforeRunProvider.drop()
-          }
-        }
-      }, true, project)
-  }
-
   companion object {
     const val CONFIGURATION = "configuration"
     const val NAME_ATTR = "name"
@@ -211,6 +199,12 @@ open class RunManagerImpl @JvmOverloads constructor(val project: Project, shared
         }
       })
     }
+    BeforeRunTaskProvider.EXTENSION_POINT_NAME.getPoint(project).addExtensionPointListener(
+      object : ExtensionPointAdapter<BeforeRunTaskProvider<BeforeRunTask<BeforeRunTask<*>>>?>() {
+        override fun extensionListChanged() {
+          stringIdToBeforeRunProvider.drop()
+        }
+      }, true, project)
   }
 
   @TestOnly
