@@ -135,7 +135,12 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
   private volatile SmartFMap<Document, PsiFile> myTransactionMap = SmartFMap.emptyMap();
 
   private final boolean myIsUnitTestMode;
-  @Nullable private ScheduledFuture<?> myFlushingFuture;
+
+  @Nullable
+  private Runnable myShutDownTask;
+  @Nullable
+  private ScheduledFuture<?> myFlushingFuture;
+
   private final AtomicInteger myLocalModCount = new AtomicInteger();
   private final AtomicInteger myFilesModCount = new AtomicInteger();
   private final AtomicInteger myUpdatingFiles = new AtomicInteger();
@@ -516,6 +521,9 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
 
     registeredIndexes.waitUntilAllIndicesAreInitialized();
     try {
+      if (myShutDownTask != null) {
+        ShutDownTracker.getInstance().unregisterShutdownTask(myShutDownTask);
+      }
       if (myFlushingFuture != null) {
         myFlushingFuture.cancel(false);
         myFlushingFuture = null;
@@ -2568,7 +2576,8 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
         return state;
       }
       finally {
-        ShutDownTracker.getInstance().registerShutdownTask(() -> FileBasedIndexImpl.this.performShutdown(false));
+        myShutDownTask = () -> FileBasedIndexImpl.this.performShutdown(false);
+        ShutDownTracker.getInstance().registerShutdownTask(myShutDownTask);
 
         myFlushingFuture = FlushingDaemon.everyFiveSeconds(new Runnable() {
           private final SerializationManagerEx mySerializationManager = SerializationManagerEx.getInstanceEx();
