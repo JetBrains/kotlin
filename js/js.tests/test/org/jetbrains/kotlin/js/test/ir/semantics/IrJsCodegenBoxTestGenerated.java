@@ -7617,6 +7617,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/delegation/delegationWithPrivateConstructor.kt");
         }
 
+        @TestMetadata("genericProperty.kt")
+        public void testGenericProperty() throws Exception {
+            runTest("compiler/testData/codegen/box/delegation/genericProperty.kt");
+        }
+
         @TestMetadata("hiddenSuperOverrideIn1.0.kt")
         public void testHiddenSuperOverrideIn1_0() throws Exception {
             runTest("compiler/testData/codegen/box/delegation/hiddenSuperOverrideIn1.0.kt");

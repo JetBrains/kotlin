@@ -85,6 +85,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             runTest("compiler/testData/ir/irText/classes/dataClassesGeneric.kt");
         }
 
+        @TestMetadata("delegatedGenericImplementation.kt")
+        public void testDelegatedGenericImplementation() throws Exception {
+            runTest("compiler/testData/ir/irText/classes/delegatedGenericImplementation.kt");
+        }
+
         @TestMetadata("delegatedImplementation.kt")
         public void testDelegatedImplementation() throws Exception {
             runTest("compiler/testData/ir/irText/classes/delegatedImplementation.kt");

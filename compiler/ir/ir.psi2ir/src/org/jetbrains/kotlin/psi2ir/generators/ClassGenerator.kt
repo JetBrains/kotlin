@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
 import org.jetbrains.kotlin.renderer.OverrideRenderingPolicy
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
@@ -320,41 +321,42 @@ class ClassGenerator(
         return irBlockBody
     }
 
-    private fun substituteOverriddenDescriptorForDelegate(
-        delegated: FunctionDescriptor,
-        overridden: FunctionDescriptor
-    ): FunctionDescriptor {
-        // TODO PropertyAccessorDescriptor doesn't support 'substitute' right now :(
-        return if (overridden is PropertyAccessorDescriptor)
-            overridden
-        else {
-            val substitutor =
-                TypeSubstitutor.create(
-                    overridden.typeParameters.associate {
-                        val delegatedDefaultType = delegated.typeParameters[it.index].defaultType
-                        it.typeConstructor to TypeProjectionImpl(delegatedDefaultType)
-                    }
-                )
-            overridden.substitute(substitutor)!!
+    @Suppress("UNCHECKED_CAST")
+    private fun <D : CallableMemberDescriptor> substituteOverriddenDescriptorForDelegate(delegated: D, overridden: D): D =
+        // PropertyAccessorDescriptor doesn't support 'substitute' right now, so we substitute the corresponding property instead.
+        when (overridden) {
+            is PropertyGetterDescriptor -> substituteOverriddenDescriptorForDelegate(
+                (delegated as PropertyGetterDescriptor).correspondingProperty,
+                overridden.correspondingProperty
+            ).getter as D
+            is PropertySetterDescriptor -> substituteOverriddenDescriptorForDelegate(
+                (delegated as PropertySetterDescriptor).correspondingProperty,
+                overridden.correspondingProperty
+            ).setter as D
+            else -> {
+                val substitutor =
+                    TypeSubstitutor.create(
+                        overridden.typeParameters.associate {
+                            val delegatedDefaultType = delegated.typeParameters[it.index].defaultType
+                            it.typeConstructor to TypeProjectionImpl(delegatedDefaultType)
+                        }
+                    )
+                overridden.substitute(substitutor)!! as D
+            }
         }
-    }
 
     private fun getTypeArgumentsForOverriddenDescriptorDelegatingCall(
         delegated: FunctionDescriptor,
         overridden: FunctionDescriptor
-    ): Map<TypeParameterDescriptor, KotlinType>? =
-        if (overridden.original.typeParameters.isEmpty())
-            null
-        else
-            zipTypeParametersToDefaultTypes(overridden.original, delegated)
+    ): Map<TypeParameterDescriptor, KotlinType>? {
+        val keys = overridden.propertyIfAccessor.original.typeParameters
+        if (keys.isEmpty()) return null
 
-    private fun zipTypeParametersToDefaultTypes(
-        keys: FunctionDescriptor,
-        values: FunctionDescriptor
-    ): Map<TypeParameterDescriptor, KotlinType> {
-        val typeArguments = newHashMapWithExpectedSize<TypeParameterDescriptor, KotlinType>(keys.typeParameters.size)
-        for ((i, overriddenTypeParameter) in keys.typeParameters.withIndex()) {
-            typeArguments[overriddenTypeParameter] = values.typeParameters[i].defaultType
+        val values = delegated.propertyIfAccessor.typeParameters
+
+        val typeArguments = newHashMapWithExpectedSize<TypeParameterDescriptor, KotlinType>(keys.size)
+        for ((i, overriddenTypeParameter) in keys.withIndex()) {
+            typeArguments[overriddenTypeParameter] = values[i].defaultType
         }
         return typeArguments
     }
