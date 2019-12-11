@@ -22,9 +22,6 @@ import com.intellij.psi.presentation.java.SymbolPresentationUtil
 import com.intellij.util.Processor
 import org.jetbrains.annotations.TestOnly
 import java.awt.Component
-import com.intellij.util.containers.ContainerUtil
-import org.jetbrains.annotations.TestOnly
-import java.awt.Component
 import kotlin.streams.asSequence
 
 open class ShowTypeDefinitionAction : ShowRelatedElementsActionBase() {
