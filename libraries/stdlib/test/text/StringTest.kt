@@ -1281,6 +1281,13 @@ class StringTest {
         }
     }
 
+    @Test fun reduceOrNull() = withOneCharSequenceArg { arg1 ->
+        // get the smallest character(by char value)
+        assertEquals('a', arg1("bacfd").reduceOrNull { v, c -> if (v > c) c else v })
+
+        expect(null, { arg1("").reduceOrNull { _, _ -> '\n' } })
+    }
+
     @Test fun groupBy() = withOneCharSequenceArg("abAbaABcD") { data ->
         // group characters by their case
         val result = data.groupBy { it.isAsciiUpperCase() }

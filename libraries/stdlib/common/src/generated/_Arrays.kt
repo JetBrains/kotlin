@@ -12732,6 +12732,141 @@ public inline fun CharArray.reduceIndexed(operation: (index: Int, acc: Char, Cha
 }
 
 /**
+ * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element. Returns null if the array is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public inline fun <S, T : S> Array<out T>.reduceOrNull(operation: (acc: S, T) -> S): S? {
+    if (isEmpty())
+        return null
+    var accumulator: S = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(accumulator, this[index])
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element. Returns null if the array is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public inline fun ByteArray.reduceOrNull(operation: (acc: Byte, Byte) -> Byte): Byte? {
+    if (isEmpty())
+        return null
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(accumulator, this[index])
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element. Returns null if the array is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public inline fun ShortArray.reduceOrNull(operation: (acc: Short, Short) -> Short): Short? {
+    if (isEmpty())
+        return null
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(accumulator, this[index])
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element. Returns null if the array is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public inline fun IntArray.reduceOrNull(operation: (acc: Int, Int) -> Int): Int? {
+    if (isEmpty())
+        return null
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(accumulator, this[index])
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element. Returns null if the array is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public inline fun LongArray.reduceOrNull(operation: (acc: Long, Long) -> Long): Long? {
+    if (isEmpty())
+        return null
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(accumulator, this[index])
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element. Returns null if the array is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public inline fun FloatArray.reduceOrNull(operation: (acc: Float, Float) -> Float): Float? {
+    if (isEmpty())
+        return null
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(accumulator, this[index])
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element. Returns null if the array is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public inline fun DoubleArray.reduceOrNull(operation: (acc: Double, Double) -> Double): Double? {
+    if (isEmpty())
+        return null
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(accumulator, this[index])
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element. Returns null if the array is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public inline fun BooleanArray.reduceOrNull(operation: (acc: Boolean, Boolean) -> Boolean): Boolean? {
+    if (isEmpty())
+        return null
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(accumulator, this[index])
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element. Returns null if the array is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public inline fun CharArray.reduceOrNull(operation: (acc: Char, Char) -> Char): Char? {
+    if (isEmpty())
+        return null
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(accumulator, this[index])
+    }
+    return accumulator
+}
+
+/**
  * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
  */
 public inline fun <S, T : S> Array<out T>.reduceRight(operation: (T, acc: S) -> S): S {

@@ -315,6 +315,15 @@ class CollectionTest {
         }
     }
 
+    @Test fun reduceOrNull() {
+        expect("1234") {
+            val list = listOf("1", "2", "3", "4")
+            list.reduceOrNull { a, b -> a + b }
+        }
+
+        expect(null, { arrayListOf<Int>().reduceOrNull { a, b -> a + b } })
+    }
+
     @Test fun reduceRight() {
         expect("1234") {
             val list = listOf("1", "2", "3", "4")
