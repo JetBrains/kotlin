@@ -520,22 +520,9 @@ public class FunctionCodegen {
 
         Iterator<ValueParameterDescriptor> iterator = valueParameters.iterator();
         List<JvmMethodParameterSignature> kotlinParameterTypes = jvmSignature.getValueParameters();
-        int syntheticParameterCount = 0;
-        for (int i = 0; i < kotlinParameterTypes.size(); i++) {
-            JvmMethodParameterSignature parameterSignature = kotlinParameterTypes.get(i);
-            JvmMethodParameterKind kind = parameterSignature.getKind();
-            if (kind.isSkippedInGenericSignature()) {
-                if (AsmUtil.IS_BUILT_WITH_ASM6) {
-                    markEnumOrInnerConstructorParameterAsSynthetic(mv, i, state.getClassBuilderMode());
-                }
-                else {
-                    syntheticParameterCount++;
-                }
-            }
-        }
-        if (!AsmUtil.IS_BUILT_WITH_ASM6) {
-            Asm7UtilKt.visitAnnotableParameterCount(mv, kotlinParameterTypes.size() - syntheticParameterCount);
-        }
+        int syntheticParameterCount = CollectionsKt.count(kotlinParameterTypes, signature -> signature.getKind().isSkippedInGenericSignature());
+
+        Asm7UtilKt.visitAnnotableParameterCount(mv, kotlinParameterTypes.size() - syntheticParameterCount);
 
         for (int i = 0; i < kotlinParameterTypes.size(); i++) {
             JvmMethodParameterSignature parameterSignature = kotlinParameterTypes.get(i);
@@ -553,22 +540,9 @@ public class FunctionCodegen {
 
             if (annotated != null) {
                 //noinspection ConstantConditions
-                AnnotationCodegen.forParameter(AsmUtil.IS_BUILT_WITH_ASM6 ? i : i - syntheticParameterCount, mv, innerClassConsumer, state)
+                AnnotationCodegen.forParameter(i - syntheticParameterCount, mv, innerClassConsumer, state)
                         .genAnnotations(annotated, parameterSignature.getAsmType());
             }
-        }
-    }
-
-    private static void markEnumOrInnerConstructorParameterAsSynthetic(MethodVisitor mv, int i, ClassBuilderMode mode) {
-        // IDEA's ClsPsi builder fails to annotate synthetic parameters
-        if (mode == ClassBuilderMode.LIGHT_CLASSES) return;
-
-        // This is needed to avoid RuntimeInvisibleParameterAnnotations error in javac:
-        // see MethodWriter.visitParameterAnnotation()
-
-        AnnotationVisitor av = mv.visitParameterAnnotation(i, "Ljava/lang/Synthetic;", true);
-        if (av != null) {
-            av.visitEnd();
         }
     }
 

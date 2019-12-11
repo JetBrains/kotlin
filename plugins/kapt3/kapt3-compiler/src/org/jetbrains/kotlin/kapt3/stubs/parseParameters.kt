@@ -74,7 +74,7 @@ internal fun MethodNode.getParametersInfo(containingClass: ClassNode, isInnerCla
             name = "p${index - startParameterIndex}"
         }
 
-        val indexForAnnotation = if (AsmUtil.IS_BUILT_WITH_ASM6) index else index - startParameterIndex
+        val indexForAnnotation = index - startParameterIndex
         val visibleAnnotations = visibleParameterAnnotations?.get(indexForAnnotation)
         val invisibleAnnotations = invisibleParameterAnnotations?.get(indexForAnnotation)
         parameterInfos += ParameterInfo(0, name, type, visibleAnnotations, invisibleAnnotations)

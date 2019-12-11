@@ -221,22 +221,9 @@ private fun generateParameterAnnotations(
 ) {
     val iterator = irFunction.valueParameters.iterator()
     val kotlinParameterTypes = jvmSignature.valueParameters
-    var syntheticParameterCount = 0
-    kotlinParameterTypes.forEachIndexed { i, parameterSignature ->
-        val kind = parameterSignature.kind
-        if (kind.isSkippedInGenericSignature) {
-            if (AsmUtil.IS_BUILT_WITH_ASM6) {
-                // This is needed to avoid RuntimeInvisibleParameterAnnotations error in javac:
-                // see MethodWriter.visitParameterAnnotation()
-                mv.visitParameterAnnotation(i, "Ljava/lang/Synthetic;", true)?.visitEnd()
-            } else {
-                syntheticParameterCount++
-            }
-        }
-    }
-    if (!AsmUtil.IS_BUILT_WITH_ASM6) {
-        visitAnnotableParameterCount(mv, kotlinParameterTypes.size - syntheticParameterCount)
-    }
+    val syntheticParameterCount = kotlinParameterTypes.count { it.kind.isSkippedInGenericSignature }
+
+    visitAnnotableParameterCount(mv, kotlinParameterTypes.size - syntheticParameterCount)
 
     kotlinParameterTypes.forEachIndexed { i, parameterSignature ->
         val kind = parameterSignature.kind
@@ -248,7 +235,7 @@ private fun generateParameterAnnotations(
         if (!kind.isSkippedInGenericSignature) {
             AnnotationCodegen(innerClassConsumer, context) { descriptor, visible ->
                 mv.visitParameterAnnotation(
-                    if (AsmUtil.IS_BUILT_WITH_ASM6) i else i - syntheticParameterCount,
+                    i - syntheticParameterCount,
                     descriptor,
                     visible
                 )

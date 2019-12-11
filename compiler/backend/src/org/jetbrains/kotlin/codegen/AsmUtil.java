@@ -76,8 +76,6 @@ import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class AsmUtil {
 
-    public static final boolean IS_BUILT_WITH_ASM6 = Opcodes.API_VERSION <= Opcodes.ASM6;
-
     private static final Set<Type> STRING_BUILDER_OBJECT_APPEND_ARG_TYPES = Sets.newHashSet(
             getType(String.class),
             getType(StringBuffer.class),
