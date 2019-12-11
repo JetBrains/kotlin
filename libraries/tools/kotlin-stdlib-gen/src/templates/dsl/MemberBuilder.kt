@@ -74,6 +74,11 @@ class MemberBuilder(
     fun deprecate(value: Deprecation) { deprecate = value }
     fun deprecate(value: String) { deprecate = Deprecation(value) }
     fun since(value: String) { since = value }
+    fun sinceAtLeast(value: String) {
+        // TODO: comparing versions as strings, will work only up until Kotlin 1.10 or Kotlin 10.0
+        since = maxOf(since, value, nullsFirst())
+    }
+
     fun platformName(name: String) { platformName = name }
 
     fun visibility(value: String) { visibility = value }
