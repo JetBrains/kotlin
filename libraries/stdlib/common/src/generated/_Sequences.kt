@@ -1383,6 +1383,23 @@ public inline fun <S, T : S> Sequence<T>.reduceIndexed(operation: (index: Int, a
 }
 
 /**
+ * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element. Returns null if the sequence is empty.
+ *
+ * The operation is _terminal_.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public inline fun <S, T : S> Sequence<T>.reduceOrNull(operation: (acc: S, T) -> S): S? {
+    val iterator = this.iterator()
+    if (!iterator.hasNext()) return null
+    var accumulator: S = iterator.next()
+    while (iterator.hasNext()) {
+        accumulator = operation(accumulator, iterator.next())
+    }
+    return accumulator
+}
+
+/**
  * Returns the sum of all values produced by [selector] function applied to each element in the sequence.
  *
  * The operation is _terminal_.
