@@ -1491,10 +1491,11 @@ public class RunnerContentUi implements ContentUI, Disposable, CellTransform.Fac
 
     @Override
     @Nullable
-    public Object getData(@NotNull @NonNls final String dataId) {
+    public Object getData(@NotNull @NonNls String dataId) {
       if (QuickActionProvider.KEY.is(dataId)) {
         return RunnerContentUi.this;
       }
+
       if (CloseAction.CloseTarget.KEY.is(dataId)) {
         Content content = getContentManager().getSelectedContent();
         if (content != null && content.isCloseable()) {
