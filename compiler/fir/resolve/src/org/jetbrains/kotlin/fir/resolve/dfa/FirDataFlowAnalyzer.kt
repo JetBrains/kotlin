@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.references.impl.FirExplicitThisReference
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.ImplicitReceiverStackImpl
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
+import org.jetbrains.kotlin.fir.resolve.calls.ConeInferenceContext
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.dfa.Condition.*
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
@@ -45,7 +46,7 @@ class FirDataFlowAnalyzer(private val components: FirAbstractBodyResolveTransfor
         private val KOTLIN_BOOLEAN_NOT = CallableId(FqName("kotlin"), FqName("Boolean"), Name.identifier("not"))
     }
 
-    private val context: DataFlowInferenceContext get() = inferenceComponents.ctx as DataFlowInferenceContext
+    private val context: ConeInferenceContext get() = inferenceComponents.ctx
     private val receiverStack: ImplicitReceiverStackImpl = components.implicitReceiverStack as ImplicitReceiverStackImpl
 
     private val graphBuilder = ControlFlowGraphBuilder()
@@ -898,7 +899,7 @@ class FirDataFlowAnalyzer(private val components: FirAbstractBodyResolveTransfor
         return result
     }
 
-    private inner class LogicSystemImpl(context: DataFlowInferenceContext) : DelegatingLogicSystem(context) {
+    private inner class LogicSystemImpl(context: ConeInferenceContext) : DelegatingLogicSystem(context) {
         override fun processUpdatedReceiverVariable(flow: Flow, variable: RealDataFlowVariable) {
             val symbol = (variable.fir as? FirSymbolOwner<*>)?.symbol ?: return
 

@@ -11,22 +11,20 @@ import org.jetbrains.kotlin.fir.types.ConeTypeIntersector
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
 import org.jetbrains.kotlin.types.model.TypeSystemCommonSuperTypesContext
 
-interface DataFlowInferenceContext : TypeSystemCommonSuperTypesContext, ConeInferenceContext {
-    fun commonSuperTypeOrNull(types: List<ConeKotlinType>): ConeKotlinType? {
-        return when (types.size) {
-            0 -> null
-            1 -> types.first()
-            else -> with(NewCommonSuperTypeCalculator) {
-                commonSuperType(types) as ConeKotlinType
-            }
+fun ConeInferenceContext.commonSuperTypeOrNull(types: List<ConeKotlinType>): ConeKotlinType? {
+    return when (types.size) {
+        0 -> null
+        1 -> types.first()
+        else -> with(NewCommonSuperTypeCalculator) {
+            commonSuperType(types) as ConeKotlinType
         }
     }
+}
 
-    fun intersectTypesOrNull(types: List<ConeKotlinType>): ConeKotlinType? {
-        return when (types.size) {
-            0 -> null
-            1 -> types.first()
-            else -> ConeTypeIntersector.intersectTypes(this as ConeInferenceContext, types)
-        }
+fun ConeInferenceContext.intersectTypesOrNull(types: List<ConeKotlinType>): ConeKotlinType? {
+    return when (types.size) {
+        0 -> null
+        1 -> types.first()
+        else -> ConeTypeIntersector.intersectTypes(this, types)
     }
 }

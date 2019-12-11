@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.calls.ConeInferenceContext
 import org.jetbrains.kotlin.fir.resolve.calls.InferenceComponents
-import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowInferenceContext
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -33,7 +32,7 @@ internal inline var FirExpression.resultType: FirTypeRef
     }
 
 interface UniversalConeInferenceContext :
-    ConeInferenceContext, TypeSystemInferenceExtensionContextDelegate, DataFlowInferenceContext
+    ConeInferenceContext, TypeSystemInferenceExtensionContextDelegate
 
 internal fun FirSession.inferenceContext(): UniversalConeInferenceContext {
     val session = this
