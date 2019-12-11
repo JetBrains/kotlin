@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.descriptors.commonizer
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.konan.library.KonanFactories.DefaultDeserializedDescriptorFactory
@@ -98,23 +95,28 @@ private val KOTLIN_NATIVE_SYNTHETIC_PACKAGES_PREFIXES = ForwardDeclarationsFqNam
         fqName.asString()
     }
 
+private const val DARWIN_PACKAGE_PREFIX = "platform.darwin"
+
 internal val FqName.isUnderStandardKotlinPackages: Boolean
     get() = hasAnyPrefix(STANDARD_KOTLIN_PACKAGE_PREFIXES)
 
 internal val FqName.isUnderKotlinNativeSyntheticPackages: Boolean
     get() = hasAnyPrefix(KOTLIN_NATIVE_SYNTHETIC_PACKAGES_PREFIXES)
 
+internal val FqName.isUnderDarwinPackage: Boolean
+    get() = asString().hasPrefix(DARWIN_PACKAGE_PREFIX)
+
 private fun FqName.hasAnyPrefix(prefixes: List<String>): Boolean =
-    asString().let { fqName ->
-        prefixes.any { prefix ->
-            val lengthDifference = fqName.length - prefix.length
-            when {
-                lengthDifference == 0 -> fqName == prefix
-                lengthDifference > 0 -> fqName[prefix.length] == '.' && fqName.startsWith(prefix)
-                else -> false
-            }
-        }
+    asString().let { fqName -> prefixes.any(fqName::hasPrefix) }
+
+private fun String.hasPrefix(prefix: String): Boolean {
+    val lengthDifference = length - prefix.length
+    return when {
+        lengthDifference == 0 -> this == prefix
+        lengthDifference > 0 -> this[prefix.length] == '.' && this.startsWith(prefix)
+        else -> false
     }
+}
 
 internal val ModuleDescriptor.packageFragmentProvider
     get() = (this as ModuleDescriptorImpl).packageFragmentProviderForModuleContentWithoutDependencies
