@@ -85,8 +85,8 @@ public final class SelectInAction extends AnAction implements DumbAware {
       ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(selectInContext.getProject());
       List<Icon> list = new ArrayList<>();
       for (SelectInTarget target : targets) {
-        String id = target.getMinorViewId() != null ? null : target.getToolWindowId();
-        ToolWindow toolWindow = toolWindowManager.getToolWindow(id);
+        String id = target.getMinorViewId() == null ? target.getToolWindowId() : null;
+        ToolWindow toolWindow = id == null ? null : toolWindowManager.getToolWindow(id);
         Icon icon = toolWindow != null ? toolWindow.getIcon() : EmptyIcon.ICON_13;
         list.add(icon);
       }
