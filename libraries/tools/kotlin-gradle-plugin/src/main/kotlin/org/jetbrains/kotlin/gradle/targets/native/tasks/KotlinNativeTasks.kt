@@ -493,7 +493,7 @@ open class KotlinNativeLink : AbstractKotlinNativeCompile<KotlinCommonToolOption
     @get:InputFiles
     val exportLibraries: FileCollection
         get() = binary.let {
-            if (it is Framework) {
+            if (it is AbstractNativeLibrary) {
                 project.configurations.getByName(it.exportConfigurationName)
             } else {
                 project.files()

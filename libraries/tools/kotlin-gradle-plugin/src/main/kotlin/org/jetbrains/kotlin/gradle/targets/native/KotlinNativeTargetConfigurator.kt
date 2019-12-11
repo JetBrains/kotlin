@@ -304,7 +304,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget>(
             }
         }
 
-        target.binaries.withType(Framework::class.java).all { framework ->
+        target.binaries.withType(AbstractNativeLibrary::class.java).all { framework ->
             val exportConfiguration = project.configurations.maybeCreate(framework.exportConfigurationName).apply {
                 isVisible = false
                 isTransitive = false

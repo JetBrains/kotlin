@@ -155,37 +155,13 @@ class TestExecutable(
         get() = NativeOutputKind.TEST
 }
 
-class StaticLibrary(
-    name: String,
-    baseName: String,
-    buildType: NativeBuildType,
-    compilation: KotlinNativeCompilation
-) : NativeBinary(name, baseName, buildType, compilation) {
-    override val outputKind: NativeOutputKind
-        get() = NativeOutputKind.STATIC
-}
-
-class SharedLibrary(
-    name: String,
-    baseName: String,
-    buildType: NativeBuildType,
-    compilation: KotlinNativeCompilation
-) : NativeBinary(name, baseName, buildType, compilation) {
-    override val outputKind: NativeOutputKind
-        get() = NativeOutputKind.DYNAMIC
-}
-
-class Framework(
+abstract class AbstractNativeLibrary(
     name: String,
     baseName: String,
     buildType: NativeBuildType,
     compilation: KotlinNativeCompilation
 ) : NativeBinary(name, baseName, buildType, compilation) {
 
-    override val outputKind: NativeOutputKind
-        get() = NativeOutputKind.FRAMEWORK
-
-    // Export symbols from klibraries.
     val exportConfigurationName: String
         get() = target.disambiguateName(lowerCamelCaseName(name, "export"))
 
@@ -220,6 +196,37 @@ class Framework(
             configure.execute(it)
         }
     }
+}
+
+class StaticLibrary(
+    name: String,
+    baseName: String,
+    buildType: NativeBuildType,
+    compilation: KotlinNativeCompilation
+) : AbstractNativeLibrary(name, baseName, buildType, compilation) {
+    override val outputKind: NativeOutputKind
+        get() = NativeOutputKind.STATIC
+}
+
+class SharedLibrary(
+    name: String,
+    baseName: String,
+    buildType: NativeBuildType,
+    compilation: KotlinNativeCompilation
+) : AbstractNativeLibrary(name, baseName, buildType, compilation) {
+    override val outputKind: NativeOutputKind
+        get() = NativeOutputKind.DYNAMIC
+}
+
+class Framework(
+    name: String,
+    baseName: String,
+    buildType: NativeBuildType,
+    compilation: KotlinNativeCompilation
+) : AbstractNativeLibrary(name, baseName, buildType, compilation) {
+
+    override val outputKind: NativeOutputKind
+        get() = NativeOutputKind.FRAMEWORK
 
     // Embedding bitcode.
     /**
