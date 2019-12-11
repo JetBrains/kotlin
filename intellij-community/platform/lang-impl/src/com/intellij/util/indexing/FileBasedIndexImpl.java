@@ -2500,9 +2500,11 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
       // 2) we dispose FileBasedIndex before PersistentFS disposing
       PersistentFSImpl fs = (PersistentFSImpl)ManagingFS.getInstance();
       FileBasedIndexImpl fileBasedIndex = (FileBasedIndexImpl)FileBasedIndex.getInstance();
-      Disposable disposable = () -> fileBasedIndex.performShutdown(false);
+      Disposable disposable = () -> new MyShutDownTask().run();
       ApplicationManager.getApplication().addApplicationListener(new MyApplicationListener(fileBasedIndex), disposable);
       Disposer.register(fs, disposable);
+      myShutDownTask = new MyShutDownTask();
+      ShutDownTracker.getInstance().registerShutdownTask(myShutDownTask);
 
       initAssociatedDataForExtensions();
 
@@ -2571,8 +2573,6 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
         return state;
       }
       finally {
-        myShutDownTask = () -> FileBasedIndexImpl.this.performShutdown(false);
-        ShutDownTracker.getInstance().registerShutdownTask(myShutDownTask);
 
         myFlushingFuture = FlushingDaemon.everyFiveSeconds(new Runnable() {
           private final SerializationManagerEx mySerializationManager = SerializationManagerEx.getInstanceEx();
@@ -2593,6 +2593,13 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
         myRegisteredIndexes.markInitialized();  // this will ensure that all changes to component's state will be visible to other threads
         saveRegisteredIndicesAndDropUnregisteredOnes(state.getIndexIDs());
       }
+    }
+  }
+
+  private static class MyShutDownTask implements Runnable {
+    @Override
+    public void run() {
+      ((FileBasedIndexImpl)FileBasedIndex.getInstance()).performShutdown(false);
     }
   }
 
