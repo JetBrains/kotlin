@@ -124,7 +124,8 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
 
         val filterRegex = (System.getProperty("fir.bench.filter") ?: ".*").toRegex()
         val modules =
-            root.listFiles().sortedBy { it.lastModified() }.map { loadModule(it) }
+            root.listFiles().filter { it.extension == "xml" }
+                .sortedBy { it.lastModified() }.map { loadModule(it) }
                 .filter { it.rawOutputDir.matches(filterRegex) }
                 .filter { !it.isCommon }
 
