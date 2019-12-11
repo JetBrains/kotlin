@@ -25,6 +25,10 @@ dependencies {
     compile(project(":compiler:fir:jvm"))
     compile(project(":compiler:fir:java"))
     compile(project(":compiler:fir:fir2ir"))
+    compile(project(":kotlin-util-klib"))
+    compile(project(":kotlin-util-io"))
+    compile(project(":compiler:ir.serialization.common"))
+
     compile(toolsJar())
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(intellijDep()) { includeIntellijCoreJarDependencies(project) }
