@@ -87,7 +87,6 @@
     <externalProjectDataService implementation="org.jetbrains.plugins.gradle.service.project.data.CompositeBuildDataService"/>
     <externalProjectDataService implementation="org.jetbrains.plugins.gradle.service.project.data.GradleExtensionsDataService"/>
     <externalProjectDataService implementation="org.jetbrains.plugins.gradle.service.project.data.PerformanceTraceDataService"/>
-    <externalSystemViewContributor implementation="org.jetbrains.plugins.gradle.service.project.view.GradleViewContributor"/>
     <externalProjectStructureCustomizer implementation="org.jetbrains.plugins.gradle.service.project.GradleProjectStructureCustomizer"/>
     <externalIconProvider key="GRADLE" implementationClass="org.jetbrains.plugins.gradle.ui.GradleIconProvider"/>
     <externalExecutionAware key="GRADLE" implementationClass="org.jetbrains.plugins.gradle.service.execution.GradleExecutionAware"/>

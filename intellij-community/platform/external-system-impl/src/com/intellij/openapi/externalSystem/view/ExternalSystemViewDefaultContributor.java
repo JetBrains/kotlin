@@ -8,6 +8,7 @@ import com.intellij.openapi.externalSystem.model.Key;
 import com.intellij.openapi.externalSystem.model.ProjectKeys;
 import com.intellij.openapi.externalSystem.model.ProjectSystemId;
 import com.intellij.openapi.externalSystem.model.project.*;
+import com.intellij.openapi.externalSystem.model.project.dependencies.*;
 import com.intellij.openapi.externalSystem.model.task.TaskData;
 import com.intellij.openapi.externalSystem.service.project.IdeModelsProviderImpl;
 import com.intellij.openapi.externalSystem.settings.AbstractExternalSystemSettings;
@@ -20,6 +21,7 @@ import com.intellij.openapi.roots.ui.configuration.ProjectSettingsService;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.pom.Navigatable;
+import com.intellij.ui.treeStructure.SimpleTree;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
@@ -27,7 +29,9 @@ import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.awt.event.InputEvent;
 import java.io.File;
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.function.Supplier;
 
@@ -40,6 +44,7 @@ public class ExternalSystemViewDefaultContributor extends ExternalSystemViewCont
 
   private static final Key<?>[] KEYS = new Key[]{
     ProjectKeys.MODULE,
+    ProjectKeys.DEPENDENCIES_GRAPH,
     ProjectKeys.MODULE_DEPENDENCY,
     ProjectKeys.LIBRARY_DEPENDENCY,
     ProjectKeys.TASK
@@ -90,6 +95,25 @@ public class ExternalSystemViewDefaultContributor extends ExternalSystemViewCont
   private static void addDependenciesNode(@NotNull ExternalProjectsView externalProjectsView,
                                           @NotNull MultiMap<Key<?>, DataNode<?>> dataNodes,
                                           @NotNull List<? super ExternalSystemNode<?>> result) {
+    final Collection<DataNode<?>> depsGraph = dataNodes.get(ProjectKeys.DEPENDENCIES_GRAPH);
+    if (!depsGraph.isEmpty()) {
+      final ExternalSystemNode<?> depNode = new MyDependenciesNode(externalProjectsView);
+      for (DataNode<?> dataNode : depsGraph) {
+        if (!(dataNode.getData() instanceof ProjectDependencies)) continue;
+
+        ProjectDependencies projectDependencies = (ProjectDependencies)dataNode.getData();
+        for (ComponentDependencies componentDependencies : projectDependencies.getComponentsDependencies()) {
+          depNode.add(new DependencyScopeExternalSystemNode(externalProjectsView, componentDependencies.getCompileDependenciesGraph()));
+          depNode.add(new DependencyScopeExternalSystemNode(externalProjectsView, componentDependencies.getRuntimeDependenciesGraph()));
+        }
+      }
+
+      if (depNode.hasChildren()) {
+        result.add(depNode);
+      }
+      return;
+    }
+
     final Collection<DataNode<?>> moduleDeps = dataNodes.get(ProjectKeys.MODULE_DEPENDENCY);
     final Collection<DataNode<?>> libDeps = dataNodes.get(ProjectKeys.LIBRARY_DEPENDENCY);
 
@@ -198,6 +222,144 @@ public class ExternalSystemViewDefaultContributor extends ExternalSystemViewCont
     @Override
     public String getName() {
       return "Dependencies";
+    }
+  }
+
+  private static class DependencyScopeExternalSystemNode extends ExternalSystemNode<Object> {
+    private final DependencyScopeNode myDependenciesGraph;
+    private final Map<Long, DependencyNode> myDependencyNodeMap = new HashMap<>();
+
+    DependencyScopeExternalSystemNode(@NotNull ExternalProjectsView externalProjectsView,
+                                      @NotNull DependencyScopeNode dependenciesGraph) {
+      super(externalProjectsView, null);
+      myDependenciesGraph = dependenciesGraph;
+    }
+
+    @Override
+    public String getName() {
+      return myDependenciesGraph.getScope();
+    }
+
+    @Override
+    protected void update(@NotNull PresentationData presentation) {
+      super.update(presentation);
+      presentation.setIcon(AllIcons.Nodes.PpLibFolder);
+      String description = myDependenciesGraph.getDescription();
+      if (description != null) {
+        setNameAndTooltip(getName(), description, (String)null);
+      }
+    }
+
+    @NotNull
+    @Override
+    protected List<ExternalSystemNode<?>> doBuildChildren() {
+      buildNodesMap(myDependencyNodeMap, myDependenciesGraph);
+      List<ExternalSystemNode<?>> myChildNodes = new ArrayList<>();
+      for (DependencyNode dependency : myDependenciesGraph.getDependencies()) {
+        myChildNodes.add(new DependencyExternalSystemNode(getExternalProjectsView(), dependency, myDependencyNodeMap));
+      }
+      return myChildNodes;
+    }
+
+    private static void buildNodesMap(@NotNull Map<Long, DependencyNode> dependencyNodeMap, @NotNull DependencyNode node) {
+      for (DependencyNode child : node.getDependencies()) {
+        if (child instanceof ReferenceNode) continue;
+        dependencyNodeMap.put(child.getId(), child);
+        buildNodesMap(dependencyNodeMap, child);
+      }
+    }
+  }
+
+  private static class DependencyExternalSystemNode extends ExternalSystemNode<Object> {
+    @NotNull
+    private final DependencyNode myDependencyNode;
+    @NotNull
+    private final Map<Long, DependencyNode> myDependencyNodeMap;
+    @Nullable
+    private DependencyNode myReferencedNode;
+    private final String myName;
+
+    DependencyExternalSystemNode(@NotNull ExternalProjectsView externalProjectsView,
+                                 @NotNull DependencyNode dependencyNode,
+                                 @NotNull Map<Long, DependencyNode> dependencyNodeMap) {
+      super(externalProjectsView, null);
+      myDependencyNode = dependencyNode;
+      myDependencyNodeMap = dependencyNodeMap;
+      if (myDependencyNode instanceof ReferenceNode) {
+        myReferencedNode = myDependencyNodeMap.get(myDependencyNode.getId());
+      }
+      if (myReferencedNode != null) {
+        myName = MessageFormat.format("{0}{1}",
+                                      myReferencedNode.getDisplayName(),
+                                      myReferencedNode.getDependencies().isEmpty() ? "" : " (*)");
+      }
+      else {
+        myName = myDependencyNode.getDisplayName();
+      }
+    }
+
+    @Override
+    public String getName() {
+      return myName;
+    }
+
+    @Override
+    protected void update(@NotNull PresentationData presentation) {
+      super.update(presentation);
+      boolean isProjectDependency = myDependencyNode instanceof ProjectDependencyNode || myReferencedNode instanceof ProjectDependencyNode;
+      presentation.setIcon(isProjectDependency ? getUiAware().getProjectIcon() : AllIcons.Nodes.PpLib);
+      String tooltip = "Dependencies omitted (listed previously). <br/>" +
+                       "Press Enter or left mouse button double click to navigate to dependencies.";
+      setNameAndTooltip(getName(), tooltip, (String)null);
+    }
+
+    @NotNull
+    @Override
+    protected List<ExternalSystemNode<?>> doBuildChildren() {
+      if (myReferencedNode != null) {
+        return Collections.emptyList();
+      }
+      List<ExternalSystemNode<?>> myChildNodes = new ArrayList<>();
+      for (DependencyNode dependency : myDependencyNode.getDependencies()) {
+        myChildNodes.add(new DependencyExternalSystemNode(getExternalProjectsView(), dependency, myDependencyNodeMap));
+      }
+      return myChildNodes;
+    }
+
+    @Override
+    public void handleDoubleClickOrEnter(SimpleTree tree, InputEvent inputEvent) {
+      if (myReferencedNode == null) {
+        super.handleDoubleClickOrEnter(tree, inputEvent);
+      }
+      else {
+        selectAndExpandReferencedNode();
+      }
+    }
+
+    private void selectAndExpandReferencedNode() {
+      ExternalProjectsStructure structure = getStructure();
+      if (structure == null) return;
+      DependencyScopeExternalSystemNode scopeNode = findParent(DependencyScopeExternalSystemNode.class);
+      if (scopeNode == null) return;
+
+      DependencyExternalSystemNode referencedNode = findReferencedNode(scopeNode);
+      if (referencedNode != null) {
+        structure.select(referencedNode);
+        structure.expand(referencedNode);
+      }
+    }
+
+    @Nullable
+    private DependencyExternalSystemNode findReferencedNode(ExternalSystemNode<?> node) {
+      for (ExternalSystemNode<?> child : node.getChildren()) {
+        if (child instanceof DependencyExternalSystemNode &&
+            ((DependencyExternalSystemNode)child).myDependencyNode == myReferencedNode) {
+          return (DependencyExternalSystemNode)child;
+        }
+        DependencyExternalSystemNode referencedNode = findReferencedNode(child);
+        if (referencedNode != null) return referencedNode;
+      }
+      return null;
     }
   }
 

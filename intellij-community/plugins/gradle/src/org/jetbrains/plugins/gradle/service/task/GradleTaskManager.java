@@ -254,7 +254,7 @@ public class GradleTaskManager extends BaseExternalSystemTaskManager<GradleExecu
                                    @Nullable TaskCallback callback) {
 
     String taskName = taskClass.getSimpleName();
-    String paths = GradleExecutionHelper.getToolingExtensionsJarPaths(set(taskClass, GsonBuilder.class));
+    String paths = GradleExecutionHelper.getToolingExtensionsJarPaths(set(taskClass, GsonBuilder.class, ExternalSystemException.class));
     String initScript = "initscript {\n" +
                         "  dependencies {\n" +
                         "    classpath files(" + paths + ")\n" +

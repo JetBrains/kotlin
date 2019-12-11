@@ -5,8 +5,10 @@ import com.intellij.execution.CommandLineUtil;
 import com.intellij.externalSystem.JavaProjectData;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.externalSystem.model.DataNode;
+import com.intellij.openapi.externalSystem.model.ProjectKeys;
 import com.intellij.openapi.externalSystem.model.project.ModuleData;
 import com.intellij.openapi.externalSystem.model.project.ProjectData;
+import com.intellij.openapi.externalSystem.model.project.dependencies.ProjectDependencies;
 import com.intellij.openapi.externalSystem.rt.execution.ForkedDebuggerConfiguration;
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.externalSystem.util.ExternalSystemConstants;
@@ -84,6 +86,7 @@ public class JavaGradleProjectResolver extends AbstractProjectResolverExtension 
   public void populateModuleExtraModels(@NotNull IdeaModule gradleModule, @NotNull DataNode<ModuleData> ideModule) {
     populateBuildScriptClasspathData(gradleModule, ideModule);
     populateAnnotationProcessorData(gradleModule, ideModule);
+    populateDependenciesGraphData(gradleModule, ideModule);
     nextResolver.populateModuleExtraModels(gradleModule, ideModule);
   }
 
@@ -165,7 +168,8 @@ public class JavaGradleProjectResolver extends AbstractProjectResolverExtension 
     if (buildScriptClasspathModel != null) {
       classpathEntries = ContainerUtil.map(
         buildScriptClasspathModel.getClasspath(),
-        (Function<ClasspathEntryModel, BuildScriptClasspathData.ClasspathEntry>)model -> BuildScriptClasspathData.ClasspathEntry.create(model.getClasses(), model.getSources(), model.getJavadoc()));
+        (Function<ClasspathEntryModel, BuildScriptClasspathData.ClasspathEntry>)model -> BuildScriptClasspathData.ClasspathEntry
+          .create(model.getClasses(), model.getSources(), model.getJavadoc()));
     }
     else {
       classpathEntries = ContainerUtil.emptyList();
@@ -173,6 +177,14 @@ public class JavaGradleProjectResolver extends AbstractProjectResolverExtension 
     BuildScriptClasspathData buildScriptClasspathData = new BuildScriptClasspathData(GradleConstants.SYSTEM_ID, classpathEntries);
     buildScriptClasspathData.setGradleHomeDir(buildScriptClasspathModel != null ? buildScriptClasspathModel.getGradleHomeDir() : null);
     ideModule.createChild(BuildScriptClasspathData.KEY, buildScriptClasspathData);
+  }
+
+  private void populateDependenciesGraphData(@NotNull IdeaModule gradleModule,
+                                             @NotNull DataNode<ModuleData> ideModule) {
+    final ProjectDependencies projectDependencies = resolverCtx.getExtraProject(gradleModule, ProjectDependencies.class);
+    if (projectDependencies != null) {
+      ideModule.createChild(ProjectKeys.DEPENDENCIES_GRAPH, projectDependencies);
+    }
   }
 
   @Override
@@ -250,6 +262,6 @@ public class JavaGradleProjectResolver extends AbstractProjectResolverExtension 
   @NotNull
   @Override
   public Set<Class<?>> getExtraProjectModelClasses() {
-    return Collections.singleton(AnnotationProcessingModel.class);
+    return ContainerUtil.set(AnnotationProcessingModel.class, ProjectDependencies.class);
   }
 }

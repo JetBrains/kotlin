@@ -2,28 +2,29 @@
 package org.jetbrains.plugins.gradle.tooling.tasks;
 
 import com.google.gson.*;
+import com.intellij.openapi.externalSystem.model.project.dependencies.*;
 
 import java.lang.reflect.Type;
 
-public class ComponentNodeDeserializer implements JsonDeserializer<ComponentNode> {
+public class DependencyNodeDeserializer implements JsonDeserializer<DependencyNode> {
 
   @Override
-  public ComponentNode deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+  public DependencyNode deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
     JsonObject jsonObject = json.getAsJsonObject();
     if (jsonObject.get("configurationName") != null) {
-      return context.deserialize(json, ConfigurationNode.class);
+      return context.deserialize(json, DependencyScopeNode.class);
     }
     else if (jsonObject.get("projectPath") != null) {
-      return context.deserialize(json, ProjectComponentNode.class);
+      return context.deserialize(json, ProjectDependencyNodeImpl.class);
     }
     else if (jsonObject.get("module") != null) {
-      return context.deserialize(json, ArtifactComponentNode.class);
+      return context.deserialize(json, ArtifactDependencyNodeImpl.class);
     }
     else if (jsonObject.size() == 1 && jsonObject.get("id") != null) {
       return context.deserialize(json, ReferenceNode.class);
     }
     else {
-      return context.deserialize(json, BaseComponentNode.class);
+      return context.deserialize(json, UnknownDependencyNode.class);
     }
   }
 }

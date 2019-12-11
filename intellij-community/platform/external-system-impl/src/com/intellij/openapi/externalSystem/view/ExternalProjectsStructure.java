@@ -75,8 +75,12 @@ public class ExternalProjectsStructure extends SimpleTreeStructure implements Di
     tree.setShowsRootHandles(true);
   }
 
-  public void select(SimpleNode node) {
+  public void select(@NotNull SimpleNode node) {
     myTreeModel.select(node, myTree, path -> {});
+  }
+
+  public void expand(@NotNull SimpleNode node) {
+    myTreeModel.expand(node, myTree, path -> {});
   }
 
   protected Class<? extends ExternalSystemNode>[] getVisibleNodesClasses() {
