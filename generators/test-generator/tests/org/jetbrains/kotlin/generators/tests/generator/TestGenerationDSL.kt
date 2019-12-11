@@ -52,6 +52,7 @@ class TestGroup(
             excludeParentDirs: Boolean = false,
             extension: String? = "kt", // null string means dir (name without dot)
             pattern: String = if (extension == null) """^([^\.]+)$""" else "^(.+)\\.$extension\$",
+            excludedPattern: String? = null,
             testMethod: String = "doTest",
             singleClass: Boolean = false,
             testClassName: String? = null,
@@ -63,18 +64,19 @@ class TestGroup(
         ) {
             val rootFile = File("$testDataRoot/$relativeRootPath")
             val compiledPattern = Pattern.compile(pattern)
+            val compiledExcludedPattern = excludedPattern?.let { Pattern.compile(it) }
             val className = testClassName ?: TestGeneratorUtil.fileNameToJavaIdentifier(rootFile)
             testModels.add(
                 if (singleClass) {
                     if (excludeDirs.isNotEmpty()) error("excludeDirs is unsupported for SingleClassTestModel yet")
                     SingleClassTestModel(
-                        rootFile, compiledPattern, filenameStartsLowerCase, testMethod, className, targetBackend,
-                        skipIgnored, testRunnerMethodName, additionalRunnerArguments, annotations
+                        rootFile, compiledPattern, compiledExcludedPattern, filenameStartsLowerCase, testMethod, className,
+                        targetBackend, skipIgnored, testRunnerMethodName, additionalRunnerArguments, annotations
                     )
                 } else {
                     SimpleTestClassModel(
                         rootFile, recursive, excludeParentDirs,
-                        compiledPattern, filenameStartsLowerCase, testMethod, className,
+                        compiledPattern, compiledExcludedPattern, filenameStartsLowerCase, testMethod, className,
                         targetBackend, excludeDirs, skipIgnored, testRunnerMethodName, additionalRunnerArguments, deep, annotations
                     )
                 }

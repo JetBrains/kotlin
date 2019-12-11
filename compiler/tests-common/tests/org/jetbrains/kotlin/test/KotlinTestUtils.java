@@ -857,6 +857,17 @@ public class KotlinTestUtils {
         }
     }
 
+    public static void assertAllTestsPresentByMetadataWithExcluded(
+            @NotNull Class<?> testCaseClass,
+            @NotNull File testDataDir,
+            @NotNull Pattern filenamePattern,
+            @Nullable Pattern excludedPattern,
+            boolean recursive,
+            @NotNull String... excludeDirs
+    ) {
+        assertAllTestsPresentByMetadataWithExcluded(testCaseClass, testDataDir, filenamePattern, excludedPattern, TargetBackend.ANY, recursive, excludeDirs);
+    }
+
     public static void assertAllTestsPresentByMetadata(
             @NotNull Class<?> testCaseClass,
             @NotNull File testDataDir,
@@ -874,10 +885,11 @@ public class KotlinTestUtils {
         );
     }
 
-    public static void assertAllTestsPresentByMetadata(
+    public static void assertAllTestsPresentByMetadataWithExcluded(
             @NotNull Class<?> testCaseClass,
             @NotNull File testDataDir,
             @NotNull Pattern filenamePattern,
+            @Nullable Pattern excludedPattern,
             @NotNull TargetBackend targetBackend,
             boolean recursive,
             @NotNull String... excludeDirs
@@ -891,15 +903,29 @@ public class KotlinTestUtils {
         if (files != null) {
             for (File file : files) {
                 if (file.isDirectory()) {
-                    if (recursive && containsTestData(file, filenamePattern) && !exclude.contains(file.getName())) {
+                    if (recursive && containsTestData(file, filenamePattern, excludedPattern) && !exclude.contains(file.getName())) {
                         assertTestClassPresentByMetadata(testCaseClass, file);
                     }
                 }
-                else if (filenamePattern.matcher(file.getName()).matches() && isCompatibleTarget(targetBackend, file)) {
-                    assertFilePathPresent(file, rootFile, filePaths);
+                else {
+                    boolean excluded = excludedPattern != null && excludedPattern.matcher(file.getName()).matches();
+                    if (!excluded && filenamePattern.matcher(file.getName()).matches() && isCompatibleTarget(targetBackend, file)) {
+                        assertFilePathPresent(file, rootFile, filePaths);
+                    }
                 }
             }
         }
+    }
+
+    public static void assertAllTestsPresentByMetadata(
+            @NotNull Class<?> testCaseClass,
+            @NotNull File testDataDir,
+            @NotNull Pattern filenamePattern,
+            @NotNull TargetBackend targetBackend,
+            boolean recursive,
+            @NotNull String... excludeDirs
+    ) {
+        assertAllTestsPresentByMetadataWithExcluded(testCaseClass, testDataDir, filenamePattern, null, targetBackend, recursive, excludeDirs);
     }
 
     public static void assertAllTestsPresentInSingleGeneratedClass(
@@ -910,10 +936,29 @@ public class KotlinTestUtils {
         assertAllTestsPresentInSingleGeneratedClass(testCaseClass, testDataDir, filenamePattern, TargetBackend.ANY);
     }
 
+    public static void assertAllTestsPresentInSingleGeneratedClassWithExcluded(
+            @NotNull Class<?> testCaseClass,
+            @NotNull File testDataDir,
+            @NotNull Pattern filenamePattern,
+            @Nullable Pattern excludePattern
+    ) {
+        assertAllTestsPresentInSingleGeneratedClass(testCaseClass, testDataDir, filenamePattern, excludePattern, TargetBackend.ANY);
+    }
+
     public static void assertAllTestsPresentInSingleGeneratedClass(
             @NotNull Class<?> testCaseClass,
             @NotNull File testDataDir,
             @NotNull Pattern filenamePattern,
+            @NotNull TargetBackend targetBackend
+    ) {
+        assertAllTestsPresentInSingleGeneratedClass(testCaseClass, testDataDir, filenamePattern, null, targetBackend);
+    }
+
+    public static void assertAllTestsPresentInSingleGeneratedClass(
+            @NotNull Class<?> testCaseClass,
+            @NotNull File testDataDir,
+            @NotNull Pattern filenamePattern,
+            @Nullable Pattern excludePattern,
             @NotNull TargetBackend targetBackend
     ) {
         File rootFile = new File(getTestsRoot(testCaseClass));
@@ -921,7 +966,8 @@ public class KotlinTestUtils {
         Set<String> filePaths = collectPathsMetadata(testCaseClass);
 
         FileUtil.processFilesRecursively(testDataDir, file -> {
-            if (file.isFile() && filenamePattern.matcher(file.getName()).matches() && isCompatibleTarget(targetBackend, file)) {
+            boolean excluded = excludePattern != null && excludePattern.matcher(file.getName()).matches();
+            if (file.isFile() && !excluded && filenamePattern.matcher(file.getName()).matches() && isCompatibleTarget(targetBackend, file)) {
                 assertFilePathPresent(file, rootFile, filePaths);
             }
 
@@ -960,17 +1006,18 @@ public class KotlinTestUtils {
         return filePaths;
     }
 
-    private static boolean containsTestData(File dir, Pattern filenamePattern) {
+    private static boolean containsTestData(File dir, Pattern filenamePattern, @Nullable Pattern excludedPattern) {
         File[] files = dir.listFiles();
         assert files != null;
         for (File file : files) {
             if (file.isDirectory()) {
-                if (containsTestData(file, filenamePattern)) {
+                if (containsTestData(file, filenamePattern, excludedPattern)) {
                     return true;
                 }
             }
             else {
-                if (filenamePattern.matcher(file.getName()).matches()) {
+                boolean excluded = excludedPattern != null && excludedPattern.matcher(file.getName()).matches();
+                if (! excluded && filenamePattern.matcher(file.getName()).matches()) {
                     return true;
                 }
             }
