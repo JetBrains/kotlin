@@ -11,7 +11,6 @@ import com.intellij.debugger.engine.events.DebuggerCommandImpl
 import com.intellij.debugger.impl.DebuggerContextImpl
 import com.intellij.psi.PsiElement
 import com.sun.jdi.*
-import com.sun.tools.jdi.LocalVariableImpl
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding.asmTypeForAnonymousClass
 import org.jetbrains.kotlin.codegen.coroutines.DO_RESUME_METHOD_NAME
 import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
@@ -129,11 +128,9 @@ private class MockStackFrame(private val location: Location, private val vm: Vir
             val allVariables = location.method().safeVariables() ?: emptyList()
             val map = HashMap<String, LocalVariable>(allVariables.size)
 
-            for (allVariable in allVariables) {
-                val variable = allVariable as LocalVariableImpl
-                val name = variable.name()
+            for (variable in allVariables) {
                 if (variable.isVisible(this)) {
-                    map.put(name, variable)
+                    map.put(variable.name(), variable)
                 }
             }
             visibleVariables = map
