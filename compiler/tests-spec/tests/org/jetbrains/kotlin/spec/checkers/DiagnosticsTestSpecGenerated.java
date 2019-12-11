@@ -523,6 +523,11 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
                                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                             }
 
+                            @TestMetadata("2.1.kt")
+                            public void test2_1() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/boolean-literals/p-1/neg/2.1.kt");
+                            }
+
                             @TestMetadata("3.1.kt")
                             public void test3_1() throws Exception {
                                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/boolean-literals/p-1/neg/3.1.kt");
@@ -539,6 +544,11 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
                         public static class Pos extends AbstractDiagnosticsTestSpec {
                             private void runTest(String testDataFilePath) throws Exception {
                                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                            }
+
+                            @TestMetadata("2.1.kt")
+                            public void test2_1() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.1.kt");
                             }
 
                             @TestMetadata("3.1.kt")

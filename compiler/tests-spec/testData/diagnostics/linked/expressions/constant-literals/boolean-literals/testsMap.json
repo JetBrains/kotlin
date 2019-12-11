@@ -1,6 +1,14 @@
 {
   "1": {
     "neg": {
+      "2": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 7,
+          "description": "checking of type for Boolean values: impossible to use as identifiers",
+          "unexpectedBehaviour": false
+        }
+      ],
       "3": [
         {
           "specVersion": "0.1-100",
@@ -11,6 +19,14 @@
       ]
     },
     "pos": {
+      "2": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 7,
+          "description": "checking of type for Boolean values: possible to use as identifiers if surround with backticks",
+          "unexpectedBehaviour": false
+        }
+      ],
       "3": [
         {
           "specVersion": "0.1-100",
