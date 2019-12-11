@@ -37,7 +37,7 @@ public class SdkDetector {
    * back to the callee in EDT thread
    */
   public interface DetectedSdkListener {
-    void onSdkDetected(@NotNull SdkType type, @Nullable String version, @NotNull String home);
+    void onSdkDetected(@NotNull SdkType type, @NotNull String version, @NotNull String home);
     default void onSearchStarted() { }
     default void onSearchCompleted() { }
   }
@@ -103,7 +103,7 @@ public class SdkDetector {
     }
 
     @Override
-    public void onSdkDetected(@NotNull SdkType type, @Nullable String version, @NotNull String home) {
+    public void onSdkDetected(@NotNull SdkType type, @NotNull String version, @NotNull String home) {
       synchronized (myPublicationLock) {
         logEvent(listener -> listener.onSdkDetected(type, version, home));
       }
@@ -157,6 +157,10 @@ public class SdkDetector {
         }
         catch (Exception e) {
           LOG.warn("Failed to get the detected SDK version for " + type + " at " + path + ". " + e.getMessage(), e);
+          continue;
+        }
+        if (version == null) {
+          LOG.warn("No version is returned for detected SDK" + type + " at " + path);
           continue;
         }
 
@@ -215,7 +219,7 @@ public class SdkDetector {
     }
 
     @Override
-    public void onSdkDetected(@NotNull SdkType type, @Nullable String version, @NotNull String home) {
+    public void onSdkDetected(@NotNull SdkType type, @NotNull String version, @NotNull String home) {
       dispatch(() -> myTarget.onSdkDetected(type, version, home));
     }
 
