@@ -28,8 +28,8 @@ import org.gradle.api.tasks.TaskAction
  */
 open class CoverageTest : DefaultTask() {
 
-    private val target = project.testTarget()
-    private val platform = project.platformManager().platform(target)
+    private val target = project.testTarget
+    private val platform = project.platformManager.platform(target)
     private val llvmBin = "${platform.configurables.absoluteLlvmHome}/bin"
 
     @Input

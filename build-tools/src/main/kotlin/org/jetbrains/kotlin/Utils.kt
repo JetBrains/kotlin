@@ -52,14 +52,10 @@ val Project.globalTestArgs: List<String>
             else this as List<String>
     }
 
+val Project.testTargetSupportsCodeCoverage: Boolean
+    get() = this.testTarget.supportsCodeCoverage()
+
 //endregion
-
-
-fun Project.platformManager() = findProperty("platformManager") as PlatformManager
-fun Project.testTarget() = findProperty("target") as KonanTarget
-
-fun Project.testTargetSupportsCodeCoverage(): Boolean =
-        this.testTarget.supportsCodeCoverage()
 
 /**
  * Ad-hoc signing of the specified path.
@@ -214,7 +210,7 @@ fun getBuildProperty(buildJsonDescription: String, property: String) =
 @JvmOverloads
 fun compileSwift(project: Project, target: KonanTarget, sources: List<String>, options: List<String>,
                  output: Path, fullBitcode: Boolean = false) {
-    val platform = project.platformManager().platform(target)
+    val platform = project.platformManager.platform(target)
     assert(platform.configurables is AppleConfigurables)
     val configs = platform.configurables as AppleConfigurables
     val compiler = configs.absoluteTargetToolchain + "/usr/bin/swiftc"

@@ -317,8 +317,8 @@ def createTestTasks(File testRoot, Class<Task> taskType, Closure taskConfigurati
 
 void dependsOnPlatformLibs(Task t) {
     if (!useCustomDist) {
-        def testTarget = project.testTarget
-        if (testTarget != null && testTarget != project.hostName) {
+        def testTarget = project.target
+        if (testTarget != project.platformManager.Companion.host) {
             t.dependsOn(":${testTarget}PlatformLibs")
         } else {
             t.dependsOn(':distPlatformLibs')
@@ -3909,7 +3909,7 @@ KotlinNativeTestKt.createTest(project, 'harmonyRegexTest', KonanGTest) { task ->
     task.finalizedBy("resultsTask")
 }
 
-if (UtilsKt.testTargetSupportsCodeCoverage(project)) {
+if (UtilsKt.getTestTargetSupportsCodeCoverage(project)) {
     task coverage_basic_program(type: CoverageTest) {
 
         binaryName = "CoverageBasic"

@@ -32,8 +32,8 @@ object PlatformInfo {
 
     @JvmStatic
     fun getTarget(project: Project): KonanTarget {
-        val platformManager = project.rootProject.platformManager()
-        val targetName = project.project.testTarget().name
+        val platformManager = project.rootProject.platformManager
+        val targetName = project.project.testTarget.name
         return platformManager.targetManager(targetName).target
     }
 
