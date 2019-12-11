@@ -21,10 +21,6 @@ public abstract class RunAnythingSearchListModel extends CollectionListModel<Obj
   @NotNull
   protected abstract List<RunAnythingGroup> getGroups();
 
-  void clearIndexes() {
-    RunAnythingGroup.clearIndexes(getGroups());
-  }
-
   @Nullable
   RunAnythingGroup findGroupByMoreIndex(int index) {
     return RunAnythingGroup.findGroupByMoreIndex(getGroups(), index);
@@ -44,14 +40,8 @@ public abstract class RunAnythingSearchListModel extends CollectionListModel<Obj
     return RunAnythingGroup.getTitle(getGroups(), titleIndex);
   }
 
-  @Nullable
-  RunAnythingGroup findItemGroup(int titleIndex) {
-    return RunAnythingGroup.findItemGroup(getGroups(), titleIndex);
-  }
-
   int[] getAllIndexes() {
-    RunAnythingGroup.getAllIndexes(getGroups());
-    return new int[0];
+    return RunAnythingGroup.getAllIndexes(getGroups());
   }
 
   boolean isMoreIndex(int index) {
@@ -98,16 +88,13 @@ public abstract class RunAnythingSearchListModel extends CollectionListModel<Obj
   static class RunAnythingHelpListModel extends RunAnythingSearchListModel {
     private final List<RunAnythingGroup> myGroups;
 
-    public RunAnythingHelpListModel() {
+    RunAnythingHelpListModel() {
       myGroups = ContainerUtil.map(StreamEx.of(RunAnythingProvider.EP_NAME.extensions())
                                      .filter(provider -> provider.getHelpGroupTitle() != null)
                                      .groupingBy(provider -> provider.getHelpGroupTitle())
                                      .entrySet(), entry -> new RunAnythingHelpGroup(entry.getKey(), entry.getValue()));
 
-      List<RunAnythingGroup> epGroups = Arrays.asList(RunAnythingHelpGroup.EP_NAME.getExtensions());
-      if (!epGroups.isEmpty()) {
-        myGroups.addAll(epGroups);
-      }
+      myGroups.addAll(RunAnythingHelpGroup.EP_NAME.getExtensionList());
     }
 
     @NotNull

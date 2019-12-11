@@ -16,8 +16,6 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class RunAnythingCompletionGroup<V, P extends RunAnythingProvider<V>> extends RunAnythingGroupBase {
-  public static final Collection<RunAnythingGroup> MAIN_GROUPS = createCompletionGroups();
-
   @NotNull private final P myProvider;
 
   public RunAnythingCompletionGroup(@NotNull P provider) {

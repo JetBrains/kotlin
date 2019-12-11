@@ -141,7 +141,7 @@ public abstract class RunAnythingGroup {
    * Clears {@link #myTitleIndex} of all groups.
    */
   private static void clearTitleIndex(@NotNull Collection<? extends RunAnythingGroup> groups) {
-    groups.forEach(runAnythingGroup -> ((RunAnythingGroup)runAnythingGroup).myTitleIndex = -1);
+    groups.forEach(runAnythingGroup -> runAnythingGroup.myTitleIndex = -1);
   }
 
   /**
