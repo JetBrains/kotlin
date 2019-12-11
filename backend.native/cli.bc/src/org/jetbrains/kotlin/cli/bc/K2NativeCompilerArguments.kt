@@ -245,6 +245,9 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value="-Xallocator", valueDescription = "std | mimalloc", description = "Allocator used in runtime")
     var allocator: String = "std"
 
+    @Argument(value = "-Xmetadata-klib", description = "Produce a klib that only contains the declarations metadata")
+    var metadataKlib: Boolean = false
+
     override fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> =
             super.configureAnalysisFlags(collector).also {
                 val useExperimental = it[AnalysisFlags.useExperimental] as List<*>

@@ -64,6 +64,8 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     internal val produce get() = configuration.get(KonanConfigKeys.PRODUCE)!!
 
+    internal val metadataKlib get() = configuration.get(KonanConfigKeys.METADATA_KLIB)!!
+
     internal val produceStaticFramework get() = configuration.getBoolean(KonanConfigKeys.STATIC_FRAMEWORK)
 
     internal val purgeUserLibs: Boolean

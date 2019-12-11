@@ -267,9 +267,11 @@ internal val serializerPhase = konanUnitPhase(
             val mppKlibs = config.configuration.get(CommonConfigurationKeys.KLIB_MPP)?:false
             val descriptorTable = DescriptorTable.createDefault()
 
-            serializedIr = KonanIrModuleSerializer(
-                this, irModule!!.irBuiltins, descriptorTable, expectDescriptorToSymbol, skipExpects = !mppKlibs
-            ).serializedIrModule(irModule!!)
+            serializedIr = irModule?.let { ir ->
+                KonanIrModuleSerializer(
+                    this, ir.irBuiltins, descriptorTable, expectDescriptorToSymbol, skipExpects = !mppKlibs
+                ).serializedIrModule(ir)
+            }
 
             val serializer = KlibMetadataMonolithicSerializer(
                 this.config.configuration.languageVersionSettings,
@@ -421,6 +423,22 @@ internal val bitcodePhase = namedIrModulePhase(
                 cStubsPhase
 )
 
+private val backendCodegen = namedUnitPhase(
+        name = "Backend codegen",
+        description = "Backend code generation",
+        lower = takeFromContext<Context, Unit, IrModuleFragment> { it.irModule!! } then
+                allLoweringsPhase then // Lower current module first.
+                dependenciesLowerPhase then // Then lower all libraries in topological order.
+                                            // With that we guarantee that inline functions are unlowered while being inlined.
+                entryPointPhase then
+                bitcodePhase then
+                verifyBitcodePhase then
+                printBitcodePhase then
+                linkBitcodeDependenciesPhase then
+                bitcodeOptimizationPhase then
+                unitSink()
+)
+
 // Have to hide Context as type parameter in order to expose toplevelPhase outside of this module.
 val toplevelPhase: CompilerPhase<*, Unit, Unit> = namedUnitPhase(
         name = "Compiler",
@@ -436,16 +454,7 @@ val toplevelPhase: CompilerPhase<*, Unit, Unit> = namedUnitPhase(
                 namedUnitPhase(
                         name = "Backend",
                         description = "All backend",
-                        lower = takeFromContext<Context, Unit, IrModuleFragment> { it.irModule!! } then
-                                allLoweringsPhase then // Lower current module first.
-                                dependenciesLowerPhase then // Then lower all libraries in topological order.
-                                                            // With that we guarantee that inline functions are unlowered while being inlined.
-                                entryPointPhase then
-                                bitcodePhase then
-                                verifyBitcodePhase then
-                                printBitcodePhase then
-                                linkBitcodeDependenciesPhase then
-                                bitcodeOptimizationPhase then
+                        lower = backendCodegen then
                                 produceOutputPhase then
                                 disposeLLVMPhase then
                                 unitSink()
@@ -485,5 +494,11 @@ internal fun PhaseConfig.konanPhasesConfig(config: KonanConfig) {
         disableUnless(dcePhase, getBoolean(KonanConfigKeys.OPTIMIZATION))
         disableUnless(ghaPhase, getBoolean(KonanConfigKeys.OPTIMIZATION))
         disableUnless(verifyBitcodePhase, config.needCompilerVerification || getBoolean(KonanConfigKeys.VERIFY_BITCODE))
+
+        val isDescriptorsOnlyLibrary = config.metadataKlib == true
+        disableIf(psiToIrPhase, isDescriptorsOnlyLibrary)
+        disableIf(destroySymbolTablePhase, isDescriptorsOnlyLibrary)
+        disableIf(copyDefaultValuesToActualPhase, isDescriptorsOnlyLibrary)
+        disableIf(backendCodegen, isDescriptorsOnlyLibrary)
     }
 }
