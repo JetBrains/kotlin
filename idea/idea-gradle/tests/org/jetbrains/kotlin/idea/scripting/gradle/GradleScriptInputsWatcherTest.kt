@@ -63,6 +63,22 @@ class GradleScriptInputsWatcherTest : AbstractScriptConfigurationLoadingTest() {
         assertConfigurationUpdateWasDone(testFiles.buildKts)
     }
 
+    fun testSpacesInSectionsChange() {
+        assertAndLoadInitialConfiguration(testFiles.buildKts)
+
+        changeBuildKtsInsideSections("// INSIDE PLUGINS\n")
+
+        assertConfigurationUpToDate(testFiles.buildKts)
+    }
+
+    fun testCommentsInSectionsChange() {
+        assertAndLoadInitialConfiguration(testFiles.buildKts)
+
+        changeBuildKtsInsideSections("// My test comment\n")
+
+        assertConfigurationUpToDate(testFiles.buildKts)
+    }
+
     fun testOutsideSectionChange() {
         assertAndLoadInitialConfiguration(testFiles.buildKts)
 

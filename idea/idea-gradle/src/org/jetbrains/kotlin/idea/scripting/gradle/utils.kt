@@ -8,10 +8,7 @@ package org.jetbrains.kotlin.idea.scripting.gradle
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiManager
-import com.intellij.psi.PsiRecursiveElementVisitor
-import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.*
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -49,6 +46,7 @@ fun getGradleScriptInputsStamp(
                                 super.visitElement(element)
                                 when (element) {
                                     is PsiWhiteSpace -> if (element.text.contains("\n")) result.append("\n")
+                                    is PsiComment -> { }
                                     is LeafPsiElement -> result.append(element.text)
                                 }
                             }
