@@ -15,6 +15,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.*
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.diagnostic.runAndLogException
+import com.intellij.openapi.extensions.ExtensionPointAdapter
 import com.intellij.openapi.extensions.ExtensionPointListener
 import com.intellij.openapi.extensions.PluginDescriptor
 import com.intellij.openapi.extensions.ProjectExtensionPointName
@@ -64,6 +65,18 @@ interface RunConfigurationTemplateProvider {
 // open for Upsource (UpsourceRunManager overrides to disable loadState (empty impl))
 @State(name = "RunManager", storages = [(Storage(value = StoragePathMacros.WORKSPACE_FILE, useSaveThreshold = ThreeState.NO))])
 open class RunManagerImpl @JvmOverloads constructor(val project: Project, sharedStreamProvider: StreamProvider? = null) : RunManagerEx(), PersistentStateComponent<Element>, Disposable {
+
+  init {
+    BeforeRunTaskProvider.EXTENSION_POINT_NAME.getPoint(project).addExtensionPointListener(
+      object : ExtensionPointAdapter<BeforeRunTaskProvider<BeforeRunTask<BeforeRunTask<*>>>?>() {
+        override fun extensionListChanged() {
+          if (stringIdToBeforeRunProvider != null) {
+            stringIdToBeforeRunProvider.drop()
+          }
+        }
+      }, true, project)
+  }
+
   companion object {
     const val CONFIGURATION = "configuration"
     const val NAME_ATTR = "name"
