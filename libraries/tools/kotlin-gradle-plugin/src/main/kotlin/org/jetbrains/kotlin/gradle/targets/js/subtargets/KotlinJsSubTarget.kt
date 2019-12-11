@@ -120,7 +120,7 @@ abstract class KotlinJsSubTarget(
         }
     }
 
-    protected abstract fun configureDefaultTestFramework(it: KotlinJsTest)
+    protected abstract fun configureDefaultTestFramework(testTask: KotlinJsTest)
 
     private fun configureMain() {
         target.compilations.all { compilation ->

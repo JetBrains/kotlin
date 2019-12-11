@@ -56,6 +56,9 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
         useMocha()
         useWebpack()
         useSourceMapSupport()
+
+        // necessary for debug as a fallback when no debuggable browsers found
+        addChromeLauncher()
     }
 
     private fun useKotlinReporter() {
@@ -98,6 +101,19 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
         )
     }
 
+    fun useDebuggableChrome() {
+        val debuggableChrome = "DebuggableChrome"
+
+        config.customLaunchers[debuggableChrome] = CustomLauncher("Chrome").apply {
+            flags.add("--remote-debugging-port=9222")
+        }
+
+        useBrowser(
+            id = debuggableChrome,
+            dependency = versions.karmaChromeLauncher
+        )
+    }
+
     fun useChromeHeadless() {
         useBrowser(
             id = "ChromeHeadless",
@@ -118,6 +134,10 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
     private fun useBrowser(id: String, dependency: NpmPackageVersion) {
         config.browsers.add(id)
         requiredDependencies.add(dependency)
+    }
+
+    private fun addChromeLauncher() {
+        requiredDependencies.add(versions.karmaChromeLauncher)
     }
 
     private fun useMocha() {
@@ -322,7 +342,11 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
             confWriter.println()
 
             confWriter.print("config.set(")
-            GsonBuilder().setPrettyPrinting().create().toJson(config, confWriter)
+            GsonBuilder()
+                .setPrettyPrinting()
+                .disableHtmlEscaping()
+                .create()
+                .toJson(config, confWriter)
             confWriter.println(");")
 
             confJsWriters.forEach { it(confWriter) }

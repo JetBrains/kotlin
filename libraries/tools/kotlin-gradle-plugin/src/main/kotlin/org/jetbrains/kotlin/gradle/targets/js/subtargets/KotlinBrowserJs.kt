@@ -43,8 +43,8 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
     override val testTaskDescription: String
         get() = "Run all ${target.name} tests inside browser using karma and webpack"
 
-    override fun configureDefaultTestFramework(it: KotlinJsTest) {
-        it.useKarma {
+    override fun configureDefaultTestFramework(testTask: KotlinJsTest) {
+        testTask.useKarma {
             useChromeHeadless()
         }
     }
