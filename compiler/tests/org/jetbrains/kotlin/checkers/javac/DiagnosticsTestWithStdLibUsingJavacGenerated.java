@@ -2843,6 +2843,11 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
                 runTest("compiler/testData/diagnostics/testsWithStdLib/inference/annotationsForResolve/onlyInputTypesCaptured.kt");
             }
 
+            @TestMetadata("onlyInputTypesCommonConstraintSystem.kt")
+            public void testOnlyInputTypesCommonConstraintSystem() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/inference/annotationsForResolve/onlyInputTypesCommonConstraintSystem.kt");
+            }
+
             @TestMetadata("onlyInputTypesWithVarargs.kt")
             public void testOnlyInputTypesWithVarargs() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/inference/annotationsForResolve/onlyInputTypesWithVarargs.kt");
