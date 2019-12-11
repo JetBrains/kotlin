@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.descriptors.commonizer
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorTable
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
+import org.jetbrains.kotlin.backend.common.serialization.metadata.metadataVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.ModuleForCommonization.DeserializedModule
@@ -169,8 +170,24 @@ private fun loadModules(repository: File, targets: List<KonanTarget>): Map<Input
 }
 
 private fun loadLibrary(location: File): KotlinLibrary {
-    if (!location.isDirectory) printErrorAndExit("library not found: $location")
-    return createKotlinLibrary(KFile(location.path))
+    if (!location.isDirectory)
+        printErrorAndExit("library not found: $location")
+
+    val library = createKotlinLibrary(KFile(location.path))
+
+    if (library.versions.metadataVersion == null)
+        printErrorAndExit("library does not have metadata version specified in manifest: $location")
+
+    val metadataVersion = library.metadataVersion
+    if (!metadataVersion.isCompatible())
+        printErrorAndExit(
+            """
+                library has incompatible metadata version $metadataVersion: $location,
+                please make sure that all libraries passed to commonizer compatible metadata version ${KlibMetadataVersion.INSTANCE}
+            """.trimIndent()
+        )
+
+    return library
 }
 
 private fun commonize(modulesByTargets: Map<InputTarget, List<ModuleForCommonization>>): CommonizationPerformed {
