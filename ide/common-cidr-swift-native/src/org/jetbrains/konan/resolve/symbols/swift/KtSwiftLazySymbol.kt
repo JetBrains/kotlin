@@ -8,9 +8,9 @@ import com.jetbrains.swift.symbols.SwiftDeclarationSpecifiers
 import com.jetbrains.swift.symbols.SwiftSymbol
 import com.jetbrains.swift.symbols.SwiftSymbolAttribute
 import org.jetbrains.konan.resolve.symbols.KtLazySymbol
-import org.jetbrains.kotlin.backend.konan.objcexport.Stub
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCTopLevel
 
-abstract class KtSwiftLazySymbol<State : KtLazySymbol.StubState, Stb : Stub<*>> : KtLazySymbol<State, Stb>, SwiftSymbol {
+abstract class KtSwiftLazySymbol<State : KtLazySymbol.StubState, Stb : ObjCTopLevel<*>> : KtLazySymbol<State, Stb>, SwiftSymbol {
     @Transient
     private lateinit var file: VirtualFile
     @Transient

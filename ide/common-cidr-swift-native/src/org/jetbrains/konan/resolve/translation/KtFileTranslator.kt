@@ -9,7 +9,7 @@ import org.jetbrains.konan.resolve.konan.KonanTarget
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportLazy
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportWarningCollector
-import org.jetbrains.kotlin.backend.konan.objcexport.Stub
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCTopLevel
 import org.jetbrains.kotlin.backend.konan.objcexport.createObjCExportLazy
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
@@ -24,8 +24,10 @@ abstract class KtFileTranslator {
     fun translateBase(file: KtFile, target: KonanTarget): Sequence<OCSymbol> =
         createStubProvider(file, target).generateBase().translate(file.virtualFile)
 
-    private fun Collection<Stub<*>>.translate(file: VirtualFile): Sequence<OCSymbol> = asSequence().mapNotNull { translate(it, file) }
-    protected abstract fun translate(stub: Stub<*>, file: VirtualFile): OCSymbol?
+    private fun Collection<ObjCTopLevel<*>>.translate(file: VirtualFile): Sequence<OCSymbol> =
+        asSequence().mapNotNull { translate(it, file) }
+
+    protected abstract fun translate(stub: ObjCTopLevel<*>, file: VirtualFile): OCSymbol?
 
     private fun createStubProvider(file: KtFile, target: KonanTarget): ObjCExportLazy {
         val configuration = object : ObjCExportLazy.Configuration {

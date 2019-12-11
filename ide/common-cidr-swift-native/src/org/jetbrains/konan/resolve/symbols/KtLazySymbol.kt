@@ -5,12 +5,13 @@ import com.intellij.openapi.util.Comparing
 import com.intellij.psi.PsiElement
 import com.jetbrains.cidr.lang.symbols.DeepEqual
 import com.jetbrains.cidr.lang.symbols.OCSymbolBase
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCTopLevel
 import org.jetbrains.kotlin.backend.konan.objcexport.Stub
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater
 
-abstract class KtLazySymbol<State : KtLazySymbol.StubState, Stb : Stub<*>> : KtSymbol {
+abstract class KtLazySymbol<State : KtLazySymbol.StubState, Stb : ObjCTopLevel<*>> : KtSymbol {
     private lateinit var name: String
 
     @Volatile

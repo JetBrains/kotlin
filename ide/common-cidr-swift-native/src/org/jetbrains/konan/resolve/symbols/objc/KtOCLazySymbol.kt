@@ -11,9 +11,9 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.cidr.lang.symbols.DeepEqual
 import com.jetbrains.cidr.lang.symbols.VirtualFileOwner
 import org.jetbrains.konan.resolve.symbols.KtLazySymbol
-import org.jetbrains.kotlin.backend.konan.objcexport.Stub
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCTopLevel
 
-abstract class KtOCLazySymbol<State : KtLazySymbol.StubState, Stb : Stub<*>> : KtLazySymbol<State, Stb>, VirtualFileOwner {
+abstract class KtOCLazySymbol<State : KtLazySymbol.StubState, Stb : ObjCTopLevel<*>> : KtLazySymbol<State, Stb>, VirtualFileOwner {
 
     @Transient
     private lateinit var file: VirtualFile

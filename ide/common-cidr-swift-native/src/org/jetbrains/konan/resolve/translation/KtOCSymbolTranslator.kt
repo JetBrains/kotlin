@@ -13,7 +13,7 @@ import org.jetbrains.konan.resolve.symbols.objc.*
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 
 class KtOCSymbolTranslator(val project: Project) : KtFileTranslator() {
-    override fun translate(stub: Stub<*>, file: VirtualFile): OCSymbol? {
+    override fun translate(stub: ObjCTopLevel<*>, file: VirtualFile): OCSymbol? {
         return when (stub) {
             is ObjCProtocol -> KtOCProtocolSymbol(stub, project, file)
             is ObjCInterface -> KtOCInterfaceSymbol(stub, project, file)
