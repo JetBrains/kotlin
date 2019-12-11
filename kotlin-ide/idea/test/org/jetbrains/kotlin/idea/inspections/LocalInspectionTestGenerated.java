@@ -13121,6 +13121,35 @@ public abstract class LocalInspectionTestGenerated extends AbstractLocalInspecti
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/unusedDataClassCopyResult")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class UnusedDataClassCopyResult extends AbstractLocalInspectionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        @TestMetadata("basic.kt")
+        public void testBasic() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unusedDataClassCopyResult/basic.kt");
+        }
+
+        @TestMetadata("basic2.kt")
+        public void testBasic2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unusedDataClassCopyResult/basic2.kt");
+        }
+
+        @TestMetadata("used.kt")
+        public void testUsed() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unusedDataClassCopyResult/used.kt");
+        }
+
+        @TestMetadata("used2.kt")
+        public void testUsed2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unusedDataClassCopyResult/used2.kt");
+        }
+    }
+
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/unusedEquals")
     public static class UnusedEquals extends AbstractLocalInspectionTest {
