@@ -28,8 +28,11 @@ import org.jetbrains.kotlin.serialization.konan.impl.KlibResolvedModuleDescripto
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import java.io.File
 import kotlin.system.exitProcess
+import kotlin.time.ExperimentalTime
+import kotlin.time.MonoClock
 import org.jetbrains.kotlin.konan.file.File as KFile
 
+@ExperimentalTime
 fun main(args: Array<String>) {
     if (args.isEmpty()) printUsageAndExit()
 
@@ -52,9 +55,23 @@ fun main(args: Array<String>) {
         destination.walkTopDown().any { it != destination } -> printErrorAndExit("output is not empty: $destination")
     }
 
+    val startMark = MonoClock.markNow()
     val modulesByTargets = loadModules(repository, targets)
+    val loadDuration = startMark.elapsedNow()
+
+    println("Loaded lazy (uninitialized) libraries in $loadDuration")
+
     val result = commonize(modulesByTargets)
+    val commonizationDuration = startMark.elapsedNow() - loadDuration
+
+    println("Commonization performed in $commonizationDuration")
+
     saveModules(modulesByTargets, destination, result)
+    val totalDuration = startMark.elapsedNow()
+    val writeDuration = totalDuration - commonizationDuration - loadDuration
+
+    println("Written libraries in $writeDuration")
+    println("TOTAL: $totalDuration")
 
     println("Done.")
     println()
