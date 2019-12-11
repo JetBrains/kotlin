@@ -1,5 +1,4 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-
 package com.intellij.ide.actions;
 
 import com.intellij.featureStatistics.FeatureUsageTracker;
@@ -21,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.util.*;
 
-public class SelectInAction extends AnAction implements DumbAware {
+public final class SelectInAction extends AnAction implements DumbAware {
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
     FeatureUsageTracker.getInstance().triggerFeatureUsed("navigation.select.in");
@@ -52,7 +51,7 @@ public class SelectInAction extends AnAction implements DumbAware {
   }
 
   private static void invoke(@NotNull DataContext dataContext, @NotNull SelectInContext context) {
-    final List<SelectInTarget> targetVector = Arrays.asList(getSelectInManager(context.getProject()).getTargets());
+    final List<SelectInTarget> targetVector = Arrays.asList(SelectInManager.getInstance(context.getProject()).getTargets());
     ListPopup popup;
     if (targetVector.isEmpty()) {
       DefaultActionGroup group = new DefaultActionGroup();
@@ -67,11 +66,11 @@ public class SelectInAction extends AnAction implements DumbAware {
     popup.showInBestPositionFor(dataContext);
   }
 
-  private static class SelectInActionsStep extends BaseListPopupStep<SelectInTarget> {
+  private static final class SelectInActionsStep extends BaseListPopupStep<SelectInTarget> {
     private final SelectInContext mySelectInContext;
     private final List<SelectInTarget> myVisibleTargets;
 
-    SelectInActionsStep(@NotNull final Collection<SelectInTarget> targetVector, @NotNull SelectInContext selectInContext) {
+    SelectInActionsStep(@NotNull Collection<SelectInTarget> targetVector, @NotNull SelectInContext selectInContext) {
       mySelectInContext = selectInContext;
       myVisibleTargets = new ArrayList<>(targetVector);
       List<Icon> icons = fillInIcons(targetVector, selectInContext);
@@ -154,11 +153,7 @@ public class SelectInAction extends AnAction implements DumbAware {
     return text;
   }
 
-  private static SelectInManager getSelectInManager(Project project) {
-    return SelectInManager.getInstance(project);
-  }
-
-  private static class NoTargetsAction extends AnAction {
+  private static final class NoTargetsAction extends AnAction {
     NoTargetsAction() {
       super(IdeBundle.message("message.no.targets.available"));
     }
