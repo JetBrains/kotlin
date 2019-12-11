@@ -1911,6 +1911,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 runTest("compiler/testData/codegen/box/callableReference/property/genericProperty.kt");
             }
 
+            @TestMetadata("inEnum.kt")
+            public void testInEnum() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/property/inEnum.kt");
+            }
+
             @TestMetadata("invokePropertyReference.kt")
             public void testInvokePropertyReference() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/property/invokePropertyReference.kt");
