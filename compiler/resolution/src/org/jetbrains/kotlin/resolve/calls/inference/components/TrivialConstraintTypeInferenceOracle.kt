@@ -40,7 +40,7 @@ class TrivialConstraintTypeInferenceOracle(context: TypeSystemInferenceExtension
         generatedConstraintType: KotlinTypeMarker,
         isSubtype: Boolean
     ): Boolean {
-        if (isSubtype && generatedConstraintType.isNothing()) return true
+        if (isSubtype && (generatedConstraintType.isNothing() || generatedConstraintType.isFlexibleNothing())) return true
         if (!isSubtype && generatedConstraintType.isNullableAny()) return true
 
         // If types from constraints that will be used to generate new constraint already contains `Nothing(?)`,
