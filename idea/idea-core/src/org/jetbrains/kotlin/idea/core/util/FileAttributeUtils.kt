@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -93,4 +93,24 @@ fun <T : Any> DataOutput.writeNullable(nullable: T?, writeT: DataOutput.(T) -> U
 fun <T : Any> DataInput.readNullable(readT: DataInput.() -> T): T? {
     val hasValue = readBoolean()
     return if (hasValue) readT() else null
+}
+
+inline fun <reified T : Any> DataOutputStream.writeObject(obj: T) {
+    val os = ByteArrayOutputStream()
+    ObjectOutputStream(os).use { oos ->
+        oos.writeObject(obj)
+    }
+    val bytes = os.toByteArray()
+    writeInt(bytes.size)
+    write(bytes)
+}
+
+inline fun <reified T : Any> DataInputStream.readObject(): T {
+    val size = readInt()
+    val bytes = ByteArray(size)
+    read(bytes, 0, size)
+    val bis = ByteArrayInputStream(bytes)
+    return ObjectInputStream(bis).use { ois ->
+        ois.readObject() as T
+    }
 }

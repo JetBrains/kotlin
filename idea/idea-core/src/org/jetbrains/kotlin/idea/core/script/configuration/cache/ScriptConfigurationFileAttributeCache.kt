@@ -9,19 +9,19 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptConfigurationLoader
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptConfigurationLoadingContext
-import org.jetbrains.kotlin.idea.core.script.configuration.utils.getKtFile
 import org.jetbrains.kotlin.idea.core.script.debug
-import org.jetbrains.kotlin.idea.core.util.*
+import org.jetbrains.kotlin.idea.core.util.cachedFileAttribute
+import org.jetbrains.kotlin.idea.core.util.readObject
+import org.jetbrains.kotlin.idea.core.util.writeObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
-import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
-import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper.FromCompilationConfiguration
-import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper.FromLegacy
-import java.io.*
+import java.io.Serializable
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
-import kotlin.script.experimental.dependencies.ScriptDependencies
+import kotlin.script.experimental.api.ScriptDiagnostic
+import kotlin.script.experimental.api.dependencies
+import kotlin.script.experimental.jvm.impl.toClassPathOrEmpty
 
 internal class ScriptConfigurationFileAttributeCache(
     val project: Project
@@ -39,42 +39,37 @@ internal class ScriptConfigurationFileAttributeCache(
 
         val virtualFile = ktFile.originalFile.virtualFile
         val fromFs = load(virtualFile) ?: return false
-        val result =
+
+        context.saveNewConfiguration(
+            virtualFile,
             ScriptConfigurationSnapshot(
-                CachedConfigurationInputs.OutOfDate, // todo(KT-34444): save inputs to fs
-                listOf(), // todo(KT-34444): save reports to fs
-                fromFs
+                fromFs.inputs,
+                fromFs.reports,
+                FromCompilationConfiguration(KtFileScriptSource(ktFile), fromFs.configuration)
             )
-        context.saveNewConfiguration(virtualFile, result)
-        return true
+        )
+        return fromFs.inputs.isUpToDate(ktFile.project, virtualFile, ktFile)
     }
 
     private fun load(
         virtualFile: VirtualFile
-    ): ScriptCompilationConfigurationWrapper? {
-        val ktFile = project.getKtFile(virtualFile) ?: return null
-        val scriptSource = KtFileScriptSource(ktFile)
+    ): ScriptConfigurationSnapshotForFS? {
+        val configurationSnapshot = virtualFile.scriptConfigurationSnapshot ?: return null
+        debug(virtualFile) { "configuration from fileAttributes = $configurationSnapshot" }
 
-        val configurationFromAttributes =
-            virtualFile.scriptCompilationConfiguration?.let {
-                FromCompilationConfiguration(scriptSource, it)
-            } ?: virtualFile.scriptDependencies?.let {
-                FromLegacy(scriptSource, it, ktFile.findScriptDefinition())
-            } ?: return null
+        val configuration = configurationSnapshot.configuration ?: return null
 
-
-        debug(virtualFile) { "configuration from fileAttributes = $configurationFromAttributes" }
-
-        if (!areDependenciesValid(virtualFile, configurationFromAttributes)) {
+        if (!areDependenciesValid(virtualFile, configuration)) {
             save(virtualFile, null)
             return null
         }
 
-        return configurationFromAttributes
+        return configurationSnapshot
     }
 
-    private fun areDependenciesValid(file: VirtualFile, configuration: ScriptCompilationConfigurationWrapper): Boolean {
-        return configuration.dependenciesClassPath.all {
+    private fun areDependenciesValid(file: VirtualFile, configuration: ScriptCompilationConfiguration): Boolean {
+        val classpath = configuration.get(ScriptCompilationConfiguration.dependencies).toClassPathOrEmpty()
+        return classpath.all {
             if (it.exists()) {
                 true
             } else {
@@ -83,68 +78,31 @@ internal class ScriptConfigurationFileAttributeCache(
                 }
                 false
             }
-
         }
     }
 
-    fun save(file: VirtualFile, value: ScriptCompilationConfigurationWrapper?) {
+    fun save(file: VirtualFile, value: ScriptConfigurationSnapshot?) {
         if (value == null) {
-            file.scriptDependencies = null
-            file.scriptCompilationConfiguration = null
+            file.scriptConfigurationSnapshot = null
         } else {
-            if (value is ScriptCompilationConfigurationWrapper.FromLegacy) {
-                file.scriptDependencies = value.legacyDependencies
-            } else {
-                if (file.scriptDependencies != null) file.scriptDependencies = null
-                file.scriptCompilationConfiguration = value.configuration
-            }
+            file.scriptConfigurationSnapshot = ScriptConfigurationSnapshotForFS(
+                value.inputs,
+                value.reports,
+                value.configuration?.configuration
+            )
         }
     }
-
 }
 
-private var VirtualFile.scriptDependencies: ScriptDependencies? by cachedFileAttribute(
-    name = "kotlin-script-dependencies",
-    version = 3,
-    read = {
-        ScriptDependencies(
-            classpath = readFileList(),
-            imports = readStringList(),
-            javaHome = readNullable(DataInput::readFile),
-            scripts = readFileList(),
-            sources = readFileList()
-        )
-    },
-    write = {
-        with(it) {
-            writeFileList(classpath)
-            writeStringList(imports)
-            writeNullable(javaHome, DataOutput::writeFile)
-            writeFileList(scripts)
-            writeFileList(sources)
-        }
-    }
-)
+private class ScriptConfigurationSnapshotForFS(
+    val inputs: CachedConfigurationInputs,
+    val reports: List<ScriptDiagnostic>,
+    val configuration: ScriptCompilationConfiguration?
+) : Serializable
 
-private var VirtualFile.scriptCompilationConfiguration: ScriptCompilationConfiguration? by cachedFileAttribute(
-    name = "kotlin-script-compilation-configuration",
-    version = 1,
-    read = {
-        val size = readInt()
-        val bytes = ByteArray(size)
-        read(bytes, 0, size)
-        val bis = ByteArrayInputStream(bytes)
-        ObjectInputStream(bis).use { ois ->
-            ois.readObject() as ScriptCompilationConfiguration
-        }
-    },
-    write = {
-        val os = ByteArrayOutputStream()
-        ObjectOutputStream(os).use { oos ->
-            oos.writeObject(it)
-        }
-        val bytes = os.toByteArray()
-        writeInt(bytes.size)
-        write(bytes)
-    }
+private var VirtualFile.scriptConfigurationSnapshot: ScriptConfigurationSnapshotForFS? by cachedFileAttribute(
+    name = "kotlin-script-dependencies",
+    version = 4,
+    read = { readObject<ScriptConfigurationSnapshotForFS>() },
+    write = { writeObject<ScriptConfigurationSnapshotForFS>(it) }
 )

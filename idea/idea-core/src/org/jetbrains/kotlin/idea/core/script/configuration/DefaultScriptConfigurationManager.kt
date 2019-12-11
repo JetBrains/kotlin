@@ -124,7 +124,7 @@ internal class DefaultScriptConfigurationManager(project: Project) :
     override fun createCache() = object : ScriptConfigurationMemoryCache(project) {
         override fun setLoaded(file: VirtualFile, configurationSnapshot: ScriptConfigurationSnapshot) {
             super.setLoaded(file, configurationSnapshot)
-            fileAttributeCache.save(file, configurationSnapshot.configuration)
+            fileAttributeCache.save(file, configurationSnapshot)
         }
     }
 
