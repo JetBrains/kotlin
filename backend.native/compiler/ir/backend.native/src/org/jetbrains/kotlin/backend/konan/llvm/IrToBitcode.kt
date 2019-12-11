@@ -371,6 +371,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     private fun createInitBody(): LLVMValueRef {
         val initFunction = LLVMAddFunction(context.llvmModule, "", kInitFuncType)!!
+        LLVMSetLinkage(initFunction, LLVMLinkage.LLVMPrivateLinkage)
         generateFunction(codegen, initFunction) {
             using(FunctionScope(initFunction, "init_body", it)) {
                 val bbInit = basicBlock("init", null)
@@ -465,6 +466,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     private fun createInitCtor(initNodePtr: LLVMValueRef): LLVMValueRef {
         val ctorFunction = LLVMAddFunction(context.llvmModule, "", kVoidFuncType)!!
+        LLVMSetLinkage(ctorFunction, LLVMLinkage.LLVMPrivateLinkage)
         generateFunction(codegen, ctorFunction) {
             call(context.llvm.appendToInitalizersTail, listOf(initNodePtr))
             ret(null)
