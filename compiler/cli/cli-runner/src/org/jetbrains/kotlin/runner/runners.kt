@@ -152,7 +152,7 @@ class ExpressionRunner(private val code: List<String>) : RunnerWithCompiler() {
         val compilerArgs = ArrayList<String>().apply {
             addClasspathArgIfNeeded(classpath)
             code.forEach {
-                add("-expression")
+                add("-Xexpression")
                 add(it)
             }
             addAll(arguments)
