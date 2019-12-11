@@ -25,7 +25,7 @@ public class JsLookupTrackerTestGenerated extends AbstractJsLookupTrackerTest {
     }
 
     public void testAllFilesPresentInJs() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/lookupTracker/js"), Pattern.compile("^([^\\.]+)$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/lookupTracker/js"), Pattern.compile("^([^\\.]+)$"), null, false);
     }
 
     @TestMetadata("classifierMembers")
