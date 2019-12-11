@@ -21,8 +21,7 @@ import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 
-interface ConeInferenceContext : TypeSystemInferenceExtensionContext,
-    ConeTypeContext {
+interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeContext {
 
     val symbolProvider: FirSymbolProvider get() = session.firSymbolProvider
 
