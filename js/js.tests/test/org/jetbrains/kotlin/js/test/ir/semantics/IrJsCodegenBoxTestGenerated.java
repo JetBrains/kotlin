@@ -3291,6 +3291,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/closures/localClassLambdaClosure.kt");
         }
 
+        @TestMetadata("localFunInInit.kt")
+        public void testLocalFunInInit() throws Exception {
+            runTest("compiler/testData/codegen/box/closures/localFunInInit.kt");
+        }
+
         @TestMetadata("localFunctionInFunction.kt")
         public void testLocalFunctionInFunction() throws Exception {
             runTest("compiler/testData/codegen/box/closures/localFunctionInFunction.kt");

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.common.peek
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
@@ -189,7 +190,7 @@ class ClosureAnnotator(irFile: IrFile) {
 
         private fun processMemberAccess(declaration: IrDeclaration) {
             if (declaration.isLocal) {
-                if (declaration is IrSimpleFunction && declaration.parent is IrClass) {
+                if (declaration is IrSimpleFunction && declaration.visibility != Visibilities.LOCAL) {
                     return
                 }
 
