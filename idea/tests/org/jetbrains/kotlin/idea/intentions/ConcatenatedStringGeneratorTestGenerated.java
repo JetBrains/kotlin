@@ -25,7 +25,7 @@ public class ConcatenatedStringGeneratorTestGenerated extends AbstractConcatenat
     }
 
     public void testAllFilesPresentInConcatenatedStringGenerator() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/concatenatedStringGenerator"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/concatenatedStringGenerator"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
     }
 
     @TestMetadata("constants.kt")

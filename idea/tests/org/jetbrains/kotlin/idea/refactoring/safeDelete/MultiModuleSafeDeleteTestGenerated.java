@@ -25,7 +25,7 @@ public class MultiModuleSafeDeleteTestGenerated extends AbstractMultiModuleSafeD
     }
 
     public void testAllFilesPresentInSafeDeleteMultiModule() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/refactoring/safeDeleteMultiModule"), Pattern.compile("^(.+)\\.test$"));
+        KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File("idea/testData/refactoring/safeDeleteMultiModule"), Pattern.compile("^(.+)\\.test$"), null);
     }
 
     @TestMetadata("byActualClass/byActualClass.test")

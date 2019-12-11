@@ -25,7 +25,7 @@ public class RawFirBuilderTestCaseGenerated extends AbstractRawFirBuilderTestCas
     }
 
     public void testAllFilesPresentInRawBuilder() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/psi2fir/testData/rawBuilder"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/psi2fir/testData/rawBuilder"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("compiler/fir/psi2fir/testData/rawBuilder/declarations")
@@ -37,7 +37,7 @@ public class RawFirBuilderTestCaseGenerated extends AbstractRawFirBuilderTestCas
         }
 
         public void testAllFilesPresentInDeclarations() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/psi2fir/testData/rawBuilder/declarations"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/psi2fir/testData/rawBuilder/declarations"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("complexTypes.kt")
@@ -150,7 +150,7 @@ public class RawFirBuilderTestCaseGenerated extends AbstractRawFirBuilderTestCas
         }
 
         public void testAllFilesPresentInExpressions() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/psi2fir/testData/rawBuilder/expressions"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/psi2fir/testData/rawBuilder/expressions"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("annotated.kt")

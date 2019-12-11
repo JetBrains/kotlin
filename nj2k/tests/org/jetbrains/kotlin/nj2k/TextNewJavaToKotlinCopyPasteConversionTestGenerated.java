@@ -25,7 +25,7 @@ public class TextNewJavaToKotlinCopyPasteConversionTestGenerated extends Abstrac
     }
 
     public void testAllFilesPresentInCopyPastePlainText() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/copyPastePlainText"), Pattern.compile("^([^\\.]+)\\.txt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("nj2k/testData/copyPastePlainText"), Pattern.compile("^([^\\.]+)\\.txt$"), null, true);
     }
 
     @TestMetadata("AsExpression.txt")

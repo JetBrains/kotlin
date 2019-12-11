@@ -25,7 +25,7 @@ public class MultiLineStringIndentTestGenerated extends AbstractMultiLineStringI
     }
 
     public void testAllFilesPresentInMultilineString() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/editor/enterHandler/multilineString"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/editor/enterHandler/multilineString"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("idea/testData/editor/enterHandler/multilineString/spaces")
@@ -37,7 +37,7 @@ public class MultiLineStringIndentTestGenerated extends AbstractMultiLineStringI
         }
 
         public void testAllFilesPresentInSpaces() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/editor/enterHandler/multilineString/spaces"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/editor/enterHandler/multilineString/spaces"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("dontAddMarginCharWhenMultilineWithoutMargins.kt")
@@ -240,7 +240,7 @@ public class MultiLineStringIndentTestGenerated extends AbstractMultiLineStringI
         }
 
         public void testAllFilesPresentInWithTabs() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/editor/enterHandler/multilineString/withTabs"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/editor/enterHandler/multilineString/withTabs"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("idea/testData/editor/enterHandler/multilineString/withTabs/tabs2")
@@ -252,7 +252,7 @@ public class MultiLineStringIndentTestGenerated extends AbstractMultiLineStringI
             }
 
             public void testAllFilesPresentInTabs2() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/editor/enterHandler/multilineString/withTabs/tabs2"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/editor/enterHandler/multilineString/withTabs/tabs2"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("dontInsertTrimMarginCall.kt")
@@ -320,7 +320,7 @@ public class MultiLineStringIndentTestGenerated extends AbstractMultiLineStringI
             }
 
             public void testAllFilesPresentInTabs4() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/editor/enterHandler/multilineString/withTabs/tabs4"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/editor/enterHandler/multilineString/withTabs/tabs4"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("dontInsertTrimMarginCall.kt")

@@ -25,7 +25,7 @@ public class FirDiagnosticsWithCfgAndStdlibTestGenerated extends AbstractFirDiag
     }
 
     public void testAllFilesPresentInContracts() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/stdlib/contracts"), Pattern.compile("^([^.]+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/stdlib/contracts"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
     }
 
     @TestMetadata("callsInPlace.kt")

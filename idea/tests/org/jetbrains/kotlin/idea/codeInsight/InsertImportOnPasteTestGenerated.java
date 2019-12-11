@@ -27,7 +27,7 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
         }
 
         public void testAllFilesPresentInCopy() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/copyPaste/imports"), Pattern.compile("^([^.]+)\\.kt$"), false);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/copyPaste/imports"), Pattern.compile("^([^.]+)\\.kt$"), null, false);
         }
 
         @TestMetadata("AlreadyImportedExtensions.kt")
@@ -370,7 +370,7 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
         }
 
         public void testAllFilesPresentInCut() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/copyPaste/imports"), Pattern.compile("^([^.]+)\\.kt$"), false);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/copyPaste/imports"), Pattern.compile("^([^.]+)\\.kt$"), null, false);
         }
 
         @TestMetadata("AlreadyImportedExtensions.kt")

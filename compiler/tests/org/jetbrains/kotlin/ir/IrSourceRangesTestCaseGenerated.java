@@ -25,7 +25,7 @@ public class IrSourceRangesTestCaseGenerated extends AbstractIrSourceRangesTestC
     }
 
     public void testAllFilesPresentInSourceRanges() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/sourceRanges"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/sourceRanges"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("augmentedAssignmentWithExpression.kt")
@@ -52,7 +52,7 @@ public class IrSourceRangesTestCaseGenerated extends AbstractIrSourceRangesTestC
         }
 
         public void testAllFilesPresentInDeclarations() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/sourceRanges/declarations"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/sourceRanges/declarations"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("classFuns.kt")

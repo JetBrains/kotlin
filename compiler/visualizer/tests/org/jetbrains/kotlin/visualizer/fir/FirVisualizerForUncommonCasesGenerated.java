@@ -25,7 +25,7 @@ public class FirVisualizerForUncommonCasesGenerated extends AbstractFirVisualize
     }
 
     public void testAllFilesPresentInTestFiles() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/visualizer/testData/uncommonCases/testFiles"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/visualizer/testData/uncommonCases/testFiles"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("dataClass.kt")

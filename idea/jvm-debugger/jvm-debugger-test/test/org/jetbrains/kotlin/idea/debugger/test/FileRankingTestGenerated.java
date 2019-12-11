@@ -25,7 +25,7 @@ public class FileRankingTestGenerated extends AbstractFileRankingTest {
     }
 
     public void testAllFilesPresentInFileRanking() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/fileRanking"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/fileRanking"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("anonymousClasses.kt")

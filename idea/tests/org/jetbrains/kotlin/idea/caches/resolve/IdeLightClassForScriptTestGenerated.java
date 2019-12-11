@@ -25,7 +25,7 @@ public class IdeLightClassForScriptTestGenerated extends AbstractIdeLightClassFo
     }
 
     public void testAllFilesPresentInIde() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/script/ide"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/script/ide"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), null, true);
     }
 
     @TestMetadata("HelloWorld.kts")

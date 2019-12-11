@@ -28,7 +28,7 @@ public class SteppingTestGenerated extends AbstractSteppingTest {
 
     @Test
     public void testAllFilesPresentInStepping() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/debug/stepping"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/debug/stepping"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
     }
 
     @Test

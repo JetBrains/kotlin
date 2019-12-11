@@ -25,7 +25,7 @@ public class SlicerNullnessGroupingTestGenerated extends AbstractSlicerNullnessG
     }
 
     public void testAllFilesPresentInInflow() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/slicer/inflow"), Pattern.compile("^(.+)\\.kt$"));
+        KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File("idea/testData/slicer/inflow"), Pattern.compile("^(.+)\\.kt$"), null);
     }
 
     @TestMetadata("anonymousFunBodyExpression.kt")

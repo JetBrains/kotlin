@@ -25,7 +25,7 @@ public class LoadJava8WithPsiClassReadingTestGenerated extends AbstractLoadJava8
     }
 
     public void testAllFilesPresentInCompiledJava() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava8/compiledJava"), Pattern.compile("^(.+)\\.java$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava8/compiledJava"), Pattern.compile("^(.+)\\.java$"), null, true);
     }
 
     @TestMetadata("InnerClassTypeAnnotation.java")

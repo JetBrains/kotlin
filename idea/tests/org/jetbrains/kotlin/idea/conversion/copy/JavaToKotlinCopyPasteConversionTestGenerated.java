@@ -60,7 +60,7 @@ public class JavaToKotlinCopyPasteConversionTestGenerated extends AbstractJavaTo
     }
 
     public void testAllFilesPresentInConversion() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/copyPaste/conversion"), Pattern.compile("^([^\\.]+)\\.java$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/copyPaste/conversion"), Pattern.compile("^([^\\.]+)\\.java$"), null, true);
     }
 
     @TestMetadata("Arithmetic.java")

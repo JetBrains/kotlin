@@ -26,7 +26,7 @@ public class Kapt3BuilderModeBytecodeShapeTestGenerated extends AbstractKapt3Bui
     }
 
     public void testAllFilesPresentInKapt() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/kapt"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/kapt"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
     }
 
     @TestMetadata("dataClass.kt")

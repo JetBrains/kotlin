@@ -25,7 +25,7 @@ public class JvmAbiContentTestGenerated extends AbstractJvmAbiContentTest {
     }
 
     public void testAllFilesPresentInContent() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/jvm-abi-gen/testData/content"), Pattern.compile("^([^\\.]+)$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/jvm-abi-gen/testData/content"), Pattern.compile("^([^\\.]+)$"), null, false);
     }
 
     @TestMetadata("class")

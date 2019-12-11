@@ -25,7 +25,7 @@ public class ExpressionTypeTestGenerated extends AbstractExpressionTypeTest {
     }
 
     public void testAllFilesPresentInExpressionType() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/expressionType"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/codeInsight/expressionType"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("AnonymousObject.kt")

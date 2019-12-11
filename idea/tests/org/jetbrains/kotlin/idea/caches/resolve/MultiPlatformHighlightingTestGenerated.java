@@ -30,7 +30,7 @@ public class MultiPlatformHighlightingTestGenerated extends AbstractMultiPlatfor
     }
 
     public void testAllFilesPresentInMultiplatform() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/multiModuleHighlighting/multiplatform"), Pattern.compile("^([^\\.]+)$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/multiModuleHighlighting/multiplatform"), Pattern.compile("^([^\\.]+)$"), null, false);
     }
 
     @TestMetadata("basic")

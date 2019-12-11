@@ -25,7 +25,7 @@ public class CompileAgainstJvmAbiTestGenerated extends AbstractCompileAgainstJvm
     }
 
     public void testAllFilesPresentInCompile() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/jvm-abi-gen/testData/compile"), Pattern.compile("^([^\\.]+)$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/jvm-abi-gen/testData/compile"), Pattern.compile("^([^\\.]+)$"), null, false);
     }
 
     @TestMetadata("anonymousObject")

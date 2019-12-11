@@ -25,7 +25,7 @@ public class MultiPlatformCompletionTestGenerated extends AbstractMultiPlatformC
     }
 
     public void testAllFilesPresentInMultiPlatform() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/multiPlatform"), Pattern.compile("^([^\\.]+)$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-completion/testData/multiPlatform"), Pattern.compile("^([^\\.]+)$"), null, false);
     }
 
     @TestMetadata("classInCommon")

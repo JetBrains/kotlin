@@ -25,7 +25,7 @@ public class GenerateToStringActionTestGenerated extends AbstractGenerateToStrin
     }
 
     public void testAllFilesPresentInToString() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/generate/toString"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/codeInsight/generate/toString"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("idea/testData/codeInsight/generate/toString/common")
@@ -37,7 +37,7 @@ public class GenerateToStringActionTestGenerated extends AbstractGenerateToStrin
         }
 
         public void testAllFilesPresentInCommon() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/generate/toString/common"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/codeInsight/generate/toString/common"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("annotation.kt")
@@ -65,7 +65,7 @@ public class GenerateToStringActionTestGenerated extends AbstractGenerateToStrin
         }
 
         public void testAllFilesPresentInMultipeTemplates() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/generate/toString/multipeTemplates"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/codeInsight/generate/toString/multipeTemplates"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("arrays.kt")
@@ -123,7 +123,7 @@ public class GenerateToStringActionTestGenerated extends AbstractGenerateToStrin
         }
 
         public void testAllFilesPresentInSingleTemplate() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/generate/toString/singleTemplate"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/codeInsight/generate/toString/singleTemplate"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("arrays.kt")

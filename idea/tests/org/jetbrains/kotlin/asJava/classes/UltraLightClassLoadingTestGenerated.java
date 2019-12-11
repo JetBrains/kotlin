@@ -25,7 +25,7 @@ public class UltraLightClassLoadingTestGenerated extends AbstractUltraLightClass
     }
 
     public void testAllFilesPresentInUltraLightClasses() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/ultraLightClasses"), Pattern.compile("^(.+)\\.(kt|kts)$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/ultraLightClasses"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
     }
 
     @TestMetadata("annotationWithSetParamPropertyModifier.kt")

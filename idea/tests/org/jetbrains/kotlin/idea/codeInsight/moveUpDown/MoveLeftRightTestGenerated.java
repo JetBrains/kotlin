@@ -25,7 +25,7 @@ public class MoveLeftRightTestGenerated extends AbstractMoveLeftRightTest {
     }
 
     public void testAllFilesPresentInMoveLeftRight() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/moveLeftRight"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/codeInsight/moveLeftRight"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("annotationParams.kt")

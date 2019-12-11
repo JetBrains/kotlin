@@ -25,7 +25,7 @@ public class CompiledKotlinInJavaCompletionTestGenerated extends AbstractCompile
     }
 
     public void testAllFilesPresentInInjava() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/injava"), Pattern.compile("^(.+)\\.java$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-completion/testData/injava"), Pattern.compile("^(.+)\\.java$"), null, false);
     }
 
     @TestMetadata("AnnotationParameter.java")

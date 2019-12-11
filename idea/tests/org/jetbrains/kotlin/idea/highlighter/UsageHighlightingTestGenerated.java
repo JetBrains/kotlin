@@ -25,7 +25,7 @@ public class UsageHighlightingTestGenerated extends AbstractUsageHighlightingTes
     }
 
     public void testAllFilesPresentInUsageHighlighter() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/usageHighlighter"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/usageHighlighter"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("implicitIt.kt")

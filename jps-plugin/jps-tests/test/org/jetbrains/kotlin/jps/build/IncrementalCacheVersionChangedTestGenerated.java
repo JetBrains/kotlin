@@ -25,7 +25,7 @@ public class IncrementalCacheVersionChangedTestGenerated extends AbstractIncreme
     }
 
     public void testAllFilesPresentInCacheVersionChanged() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/cacheVersionChanged"), Pattern.compile("^([^\\.]+)$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/cacheVersionChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
     }
 
     @TestMetadata("clearedHasKotlin")
@@ -92,7 +92,7 @@ public class IncrementalCacheVersionChangedTestGenerated extends AbstractIncreme
         }
 
         public void testAllFilesPresentInClearedHasKotlin() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/cacheVersionChanged/clearedHasKotlin"), Pattern.compile("^([^\\.]+)$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/cacheVersionChanged/clearedHasKotlin"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
     }
 
@@ -105,7 +105,7 @@ public class IncrementalCacheVersionChangedTestGenerated extends AbstractIncreme
         }
 
         public void testAllFilesPresentInExportedModule() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/cacheVersionChanged/exportedModule"), Pattern.compile("^([^\\.]+)$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/cacheVersionChanged/exportedModule"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
     }
 
@@ -118,7 +118,7 @@ public class IncrementalCacheVersionChangedTestGenerated extends AbstractIncreme
         }
 
         public void testAllFilesPresentInJavaOnlyModulesAreNotAffected() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/cacheVersionChanged/javaOnlyModulesAreNotAffected"), Pattern.compile("^([^\\.]+)$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/cacheVersionChanged/javaOnlyModulesAreNotAffected"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
     }
 
@@ -131,7 +131,7 @@ public class IncrementalCacheVersionChangedTestGenerated extends AbstractIncreme
         }
 
         public void testAllFilesPresentInModule1Modified() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/cacheVersionChanged/module1Modified"), Pattern.compile("^([^\\.]+)$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/cacheVersionChanged/module1Modified"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
     }
 
@@ -144,7 +144,7 @@ public class IncrementalCacheVersionChangedTestGenerated extends AbstractIncreme
         }
 
         public void testAllFilesPresentInModule2Modified() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/cacheVersionChanged/module2Modified"), Pattern.compile("^([^\\.]+)$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/cacheVersionChanged/module2Modified"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
     }
 
@@ -157,7 +157,7 @@ public class IncrementalCacheVersionChangedTestGenerated extends AbstractIncreme
         }
 
         public void testAllFilesPresentInModuleWithConstantModified() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/cacheVersionChanged/moduleWithConstantModified"), Pattern.compile("^([^\\.]+)$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/cacheVersionChanged/moduleWithConstantModified"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
     }
 
@@ -170,7 +170,7 @@ public class IncrementalCacheVersionChangedTestGenerated extends AbstractIncreme
         }
 
         public void testAllFilesPresentInModuleWithInlineModified() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/cacheVersionChanged/moduleWithInlineModified"), Pattern.compile("^([^\\.]+)$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/cacheVersionChanged/moduleWithInlineModified"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
     }
 
@@ -183,7 +183,7 @@ public class IncrementalCacheVersionChangedTestGenerated extends AbstractIncreme
         }
 
         public void testAllFilesPresentInTouchedFile() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/cacheVersionChanged/touchedFile"), Pattern.compile("^([^\\.]+)$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/cacheVersionChanged/touchedFile"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
     }
 
@@ -196,7 +196,7 @@ public class IncrementalCacheVersionChangedTestGenerated extends AbstractIncreme
         }
 
         public void testAllFilesPresentInTouchedOnlyJavaFile() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/cacheVersionChanged/touchedOnlyJavaFile"), Pattern.compile("^([^\\.]+)$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/cacheVersionChanged/touchedOnlyJavaFile"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
     }
 
@@ -209,7 +209,7 @@ public class IncrementalCacheVersionChangedTestGenerated extends AbstractIncreme
         }
 
         public void testAllFilesPresentInUntouchedFiles() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/cacheVersionChanged/untouchedFiles"), Pattern.compile("^([^\\.]+)$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/cacheVersionChanged/untouchedFiles"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
     }
 
@@ -222,7 +222,7 @@ public class IncrementalCacheVersionChangedTestGenerated extends AbstractIncreme
         }
 
         public void testAllFilesPresentInWithError() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/cacheVersionChanged/withError"), Pattern.compile("^([^\\.]+)$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/cacheVersionChanged/withError"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
     }
 }

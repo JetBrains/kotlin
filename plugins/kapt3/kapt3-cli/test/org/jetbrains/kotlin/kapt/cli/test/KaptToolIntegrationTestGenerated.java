@@ -25,7 +25,7 @@ public class KaptToolIntegrationTestGenerated extends AbstractKaptToolIntegratio
     }
 
     public void testAllFilesPresentInIntegration() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/kapt3/kapt3-cli/testData/integration"), Pattern.compile("^([^\\.]+)$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kapt3/kapt3-cli/testData/integration"), Pattern.compile("^([^\\.]+)$"), null, false);
     }
 
     @TestMetadata("argfile")

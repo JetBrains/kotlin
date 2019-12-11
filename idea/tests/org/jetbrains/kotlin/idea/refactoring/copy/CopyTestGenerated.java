@@ -25,7 +25,7 @@ public class CopyTestGenerated extends AbstractCopyTest {
     }
 
     public void testAllFilesPresentInCopy() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/refactoring/copy"), Pattern.compile("^(.+)\\.test$"));
+        KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File("idea/testData/refactoring/copy"), Pattern.compile("^(.+)\\.test$"), null);
     }
 
     @TestMetadata("copyClassCaretInside/copyClassCaretInside.test")

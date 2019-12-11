@@ -25,7 +25,7 @@ public class GotoSuperTestGenerated extends AbstractGotoSuperTest {
     }
 
     public void testAllFilesPresentInGotoSuper() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/navigation/gotoSuper"), Pattern.compile("^(.+)\\.test$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/navigation/gotoSuper"), Pattern.compile("^(.+)\\.test$"), null, false);
     }
 
     @TestMetadata("BadPositionLambdaParameter.test")

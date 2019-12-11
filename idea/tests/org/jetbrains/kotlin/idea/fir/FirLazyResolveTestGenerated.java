@@ -25,7 +25,7 @@ public class FirLazyResolveTestGenerated extends AbstractFirLazyResolveTest {
     }
 
     public void testAllFilesPresentInLazyResolve() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/fir/lazyResolve"), Pattern.compile("^(.+)\\.test$"));
+        KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File("idea/testData/fir/lazyResolve"), Pattern.compile("^(.+)\\.test$"), null);
     }
 
     @TestMetadata("elvis/elvis.test")

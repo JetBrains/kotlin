@@ -25,7 +25,7 @@ public class BytecodeToolWindowTestGenerated extends AbstractBytecodeToolWindowT
     }
 
     public void testAllFilesPresentInToolWindow() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/internal/toolWindow"), Pattern.compile("^([^\\.]+)$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/internal/toolWindow"), Pattern.compile("^([^\\.]+)$"), null, false);
     }
 
     @TestMetadata("componentInlineFun")

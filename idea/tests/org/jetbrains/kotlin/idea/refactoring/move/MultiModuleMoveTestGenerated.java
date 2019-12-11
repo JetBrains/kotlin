@@ -25,7 +25,7 @@ public class MultiModuleMoveTestGenerated extends AbstractMultiModuleMoveTest {
     }
 
     public void testAllFilesPresentInMoveMultiModule() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/refactoring/moveMultiModule"), Pattern.compile("^(.+)\\.test$"));
+        KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File("idea/testData/refactoring/moveMultiModule"), Pattern.compile("^(.+)\\.test$"), null);
     }
 
     @TestMetadata("moveClassWithInternalMemberFromJvmToCommon/moveClassWithInternalMemberFromJvmToCommon.test")

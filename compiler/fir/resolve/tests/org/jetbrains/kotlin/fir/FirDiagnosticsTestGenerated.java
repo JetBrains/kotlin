@@ -25,7 +25,7 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
     }
 
     public void testAllFilesPresentInResolve() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve"), Pattern.compile("^([^.]+)\\.kt$"), true, "stdlib", "cfg", "smartcasts");
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "stdlib", "cfg", "smartcasts");
     }
 
     @TestMetadata("cast.kt")
@@ -247,7 +247,7 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         }
 
         public void testAllFilesPresentInArguments() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/arguments"), Pattern.compile("^([^.]+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/arguments"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("ambiguityOnJavaOverride.kt")
@@ -355,7 +355,7 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         }
 
         public void testAllFilesPresentInBuiltins() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/builtins"), Pattern.compile("^([^.]+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/builtins"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("lists.kt")
@@ -373,7 +373,7 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         }
 
         public void testAllFilesPresentInDiagnostics() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/diagnostics"), Pattern.compile("^([^.]+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/diagnostics"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("infixFunctions.kt")
@@ -396,7 +396,7 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         }
 
         public void testAllFilesPresentInExpresssions() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/expresssions"), Pattern.compile("^([^.]+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/expresssions"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("annotationWithReturn.kt")
@@ -618,7 +618,7 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             }
 
             public void testAllFilesPresentInInference() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/expresssions/inference"), Pattern.compile("^([^.]+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/expresssions/inference"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
             }
 
             @TestMetadata("id.kt")
@@ -646,7 +646,7 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             }
 
             public void testAllFilesPresentInInvoke() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/expresssions/invoke"), Pattern.compile("^([^.]+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/expresssions/invoke"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
             }
 
             @TestMetadata("explicitReceiver.kt")
@@ -699,7 +699,7 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             }
 
             public void testAllFilesPresentInOperators() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/expresssions/operators"), Pattern.compile("^([^.]+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/expresssions/operators"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
             }
 
             @TestMetadata("plus.kt")
@@ -728,7 +728,7 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         }
 
         public void testAllFilesPresentInFromBuilder() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/fromBuilder"), Pattern.compile("^([^.]+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/fromBuilder"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("complexTypes.kt")
@@ -766,7 +766,7 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         }
 
         public void testAllFilesPresentInInference() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/inference"), Pattern.compile("^([^.]+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/inference"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("receiverWithCapturedType.kt")
@@ -789,7 +789,7 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         }
 
         public void testAllFilesPresentInMultifile() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/multifile"), Pattern.compile("^([^.]+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/multifile"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("Annotations.kt")
@@ -857,7 +857,7 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         }
 
         public void testAllFilesPresentInNested() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/nested"), Pattern.compile("^([^.]+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/nested"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("inner.kt")
@@ -880,7 +880,7 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         }
 
         public void testAllFilesPresentInOverrides() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/overrides"), Pattern.compile("^([^.]+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/overrides"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("generics.kt")
@@ -933,7 +933,7 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         }
 
         public void testAllFilesPresentInProblems() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/problems"), Pattern.compile("^([^.]+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/problems"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("asImports.kt")
@@ -1016,7 +1016,7 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         }
 
         public void testAllFilesPresentInReferences() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/references"), Pattern.compile("^([^.]+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/references"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("simple.kt")
@@ -1039,7 +1039,7 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         }
 
         public void testAllFilesPresentInSamConstructors() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/samConstructors"), Pattern.compile("^([^.]+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/samConstructors"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("genericSam.kt")
@@ -1082,7 +1082,7 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         }
 
         public void testAllFilesPresentInSamConversions() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/samConversions"), Pattern.compile("^([^.]+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/samConversions"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("genericSam.kt")

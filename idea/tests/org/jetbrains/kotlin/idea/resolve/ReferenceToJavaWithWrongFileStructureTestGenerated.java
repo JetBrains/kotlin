@@ -25,7 +25,7 @@ public class ReferenceToJavaWithWrongFileStructureTestGenerated extends Abstract
     }
 
     public void testAllFilesPresentInReferenceToJavaWithWrongFileStructure() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/resolve/referenceToJavaWithWrongFileStructure"), Pattern.compile("^(.+)\\.kt$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/resolve/referenceToJavaWithWrongFileStructure"), Pattern.compile("^(.+)\\.kt$"), null, false);
     }
 
     @TestMetadata("ClassStatics.kt")

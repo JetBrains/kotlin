@@ -25,7 +25,7 @@ public class KotlinExceptionFilterTestGenerated extends AbstractKotlinExceptionF
     }
 
     public void testAllFilesPresentInExceptionFilter() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/exceptionFilter"), Pattern.compile("^([^\\.]+)$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/debugger/exceptionFilter"), Pattern.compile("^([^\\.]+)$"), null, false);
     }
 
     @TestMetadata("breakpointReachedAt")

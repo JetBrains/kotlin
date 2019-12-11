@@ -25,7 +25,7 @@ public class JavacForeignAnnotationsTestGenerated extends AbstractJavacForeignAn
     }
 
     public void testAllFilesPresentInTests() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/foreignAnnotations/tests"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/foreignAnnotations/tests"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("androidRecently.kt")
@@ -92,7 +92,7 @@ public class JavacForeignAnnotationsTestGenerated extends AbstractJavacForeignAn
         }
 
         public void testAllFilesPresentInJsr305() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/foreignAnnotations/tests/jsr305"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/foreignAnnotations/tests/jsr305"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("nonNullNever.kt")
@@ -124,7 +124,7 @@ public class JavacForeignAnnotationsTestGenerated extends AbstractJavacForeignAn
             }
 
             public void testAllFilesPresentInIgnore() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/foreignAnnotations/tests/jsr305/ignore"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/foreignAnnotations/tests/jsr305/ignore"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("parametersAreNonnullByDefault.kt")
@@ -142,7 +142,7 @@ public class JavacForeignAnnotationsTestGenerated extends AbstractJavacForeignAn
             }
 
             public void testAllFilesPresentInNullabilityWarnings() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("elvis.kt")
@@ -189,7 +189,7 @@ public class JavacForeignAnnotationsTestGenerated extends AbstractJavacForeignAn
                 }
 
                 public void testAllFilesPresentInFromPlatformTypes() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/fromPlatformTypes"), Pattern.compile("^(.+)\\.kt$"), true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/fromPlatformTypes"), Pattern.compile("^(.+)\\.kt$"), null, true);
                 }
 
                 @TestMetadata("arithmetic.kt")
@@ -302,7 +302,7 @@ public class JavacForeignAnnotationsTestGenerated extends AbstractJavacForeignAn
                 }
 
                 public void testAllFilesPresentInTypeQualifierDefault() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/typeQualifierDefault"), Pattern.compile("^(.+)\\.kt$"), true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/typeQualifierDefault"), Pattern.compile("^(.+)\\.kt$"), null, true);
                 }
 
                 @TestMetadata("equalsOnNonNull.kt")
@@ -356,7 +356,7 @@ public class JavacForeignAnnotationsTestGenerated extends AbstractJavacForeignAn
             }
 
             public void testAllFilesPresentInTypeQualifierDefault() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/foreignAnnotations/tests/jsr305/typeQualifierDefault"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/foreignAnnotations/tests/jsr305/typeQualifierDefault"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("fieldsAreNullable.kt")
@@ -415,7 +415,7 @@ public class JavacForeignAnnotationsTestGenerated extends AbstractJavacForeignAn
         }
 
         public void testAllFilesPresentInJsr305NullabilityWarnings() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings/migration")
@@ -427,7 +427,7 @@ public class JavacForeignAnnotationsTestGenerated extends AbstractJavacForeignAn
             }
 
             public void testAllFilesPresentInMigration() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings/migration"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings/migration"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("customMigration.kt")
@@ -486,7 +486,7 @@ public class JavacForeignAnnotationsTestGenerated extends AbstractJavacForeignAn
         }
 
         public void testAllFilesPresentInTypeQualifierDefault() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/foreignAnnotations/tests/typeQualifierDefault"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/foreignAnnotations/tests/typeQualifierDefault"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("defaultAndNicknameMigrationPolicy.kt")

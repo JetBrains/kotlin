@@ -25,7 +25,7 @@ public class BreadcrumbsTestGenerated extends AbstractBreadcrumbsTest {
     }
 
     public void testAllFilesPresentInBreadcrumbs() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/breadcrumbs"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/codeInsight/breadcrumbs"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("AnonymousObjects.kt")

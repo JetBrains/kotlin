@@ -25,7 +25,7 @@ public class IrCfgTestCaseGenerated extends AbstractIrCfgTestCase {
     }
 
     public void testAllFilesPresentInIrCfg() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irCfg"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irCfg"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("expressionFun.kt")
@@ -67,7 +67,7 @@ public class IrCfgTestCaseGenerated extends AbstractIrCfgTestCase {
         }
 
         public void testAllFilesPresentInLoop() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irCfg/loop"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irCfg/loop"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("digitCount.kt")
@@ -95,7 +95,7 @@ public class IrCfgTestCaseGenerated extends AbstractIrCfgTestCase {
         }
 
         public void testAllFilesPresentInWhen() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irCfg/when"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irCfg/when"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("cascadeIf.kt")

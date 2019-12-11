@@ -25,7 +25,7 @@ public class InheritorsSearchTestGenerated extends AbstractInheritorsSearchTest 
     }
 
     public void testAllFilesPresentInInheritance() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/search/inheritance"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/search/inheritance"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("annotationClass.kt")

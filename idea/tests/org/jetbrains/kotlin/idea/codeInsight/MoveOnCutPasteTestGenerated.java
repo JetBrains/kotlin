@@ -25,7 +25,7 @@ public class MoveOnCutPasteTestGenerated extends AbstractMoveOnCutPasteTest {
     }
 
     public void testAllFilesPresentInMoveDeclarations() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/copyPaste/moveDeclarations"), Pattern.compile("^([^.]+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/copyPaste/moveDeclarations"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
     }
 
     @TestMetadata("ChangePackage.kt")

@@ -25,7 +25,7 @@ public class PerformanceAddImportTestGenerated extends AbstractPerformanceAddImp
     }
 
     public void testAllFilesPresentInAddImport() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/addImport"), Pattern.compile("^([^.]+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/addImport"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
     }
 
     @TestMetadata("CannotImportClass1.kt")

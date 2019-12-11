@@ -55,7 +55,7 @@ public class NewJavaToKotlinCopyPasteConversionTestGenerated extends AbstractNew
     }
 
     public void testAllFilesPresentInCopyPaste() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/copyPaste"), Pattern.compile("^([^\\.]+)\\.java$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("nj2k/testData/copyPaste"), Pattern.compile("^([^\\.]+)\\.java$"), null, true);
     }
 
     @TestMetadata("Arithmetic.java")

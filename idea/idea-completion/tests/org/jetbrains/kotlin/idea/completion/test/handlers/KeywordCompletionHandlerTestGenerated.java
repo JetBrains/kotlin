@@ -30,7 +30,7 @@ public class KeywordCompletionHandlerTestGenerated extends AbstractKeywordComple
     }
 
     public void testAllFilesPresentInKeywords() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/keywords"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-completion/testData/handlers/keywords"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("Break.kt")

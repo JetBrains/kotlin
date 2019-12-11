@@ -25,7 +25,7 @@ public class NavigateToDecompiledLibraryTestGenerated extends AbstractNavigateTo
     }
 
     public void testAllFilesPresentInUsercode() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/decompiler/navigation/usercode"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/decompiler/navigation/usercode"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("ClassObject.kt")

@@ -26,7 +26,7 @@ public class IrCheckLocalVariablesTableTestGenerated extends AbstractIrCheckLoca
     }
 
     public void testAllFilesPresentInCheckLocalVariablesTable() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/checkLocalVariablesTable"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/checkLocalVariablesTable"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @TestMetadata("catchClause.kt")
@@ -128,7 +128,7 @@ public class IrCheckLocalVariablesTableTestGenerated extends AbstractIrCheckLoca
         }
 
         public void testAllFilesPresentInCompletionInSuspendFunction() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/checkLocalVariablesTable/completionInSuspendFunction"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/checkLocalVariablesTable/completionInSuspendFunction"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @TestMetadata("nonStaticSimple.kt")
@@ -171,7 +171,7 @@ public class IrCheckLocalVariablesTableTestGenerated extends AbstractIrCheckLoca
         }
 
         public void testAllFilesPresentInParametersInSuspendLambda() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/checkLocalVariablesTable/parametersInSuspendLambda"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/checkLocalVariablesTable/parametersInSuspendLambda"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @TestMetadata("dataClass.kt")

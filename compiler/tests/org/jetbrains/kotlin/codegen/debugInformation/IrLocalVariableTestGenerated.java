@@ -28,7 +28,7 @@ public class IrLocalVariableTestGenerated extends AbstractIrLocalVariableTest {
 
     @Test
     public void testAllFilesPresentInLocalVariables() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/debug/localVariables"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/debug/localVariables"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test

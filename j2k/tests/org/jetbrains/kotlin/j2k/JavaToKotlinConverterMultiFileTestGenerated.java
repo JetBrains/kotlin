@@ -25,7 +25,7 @@ public class JavaToKotlinConverterMultiFileTestGenerated extends AbstractJavaToK
     }
 
     public void testAllFilesPresentInMultiFile() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/multiFile"), Pattern.compile("^([^\\.]+)$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("j2k/testData/multiFile"), Pattern.compile("^([^\\.]+)$"), null, false);
     }
 
     @TestMetadata("AnnotationWithArrayParameter")

@@ -25,7 +25,7 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
     }
 
     public void testAllFilesPresentInSlicer() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/slicer"), Pattern.compile("^(.+)\\.kt$"));
+        KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File("idea/testData/slicer"), Pattern.compile("^(.+)\\.kt$"), null);
     }
 
     @TestMetadata("inflow/anonymousFunBodyExpression.kt")

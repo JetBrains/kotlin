@@ -25,7 +25,7 @@ public class SamWithReceiverTestGenerated extends AbstractSamWithReceiverTest {
     }
 
     public void testAllFilesPresentInDiagnostics() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/sam-with-receiver/sam-with-receiver-cli/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/sam-with-receiver/sam-with-receiver-cli/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("noParameters.kt")

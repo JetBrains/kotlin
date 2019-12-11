@@ -25,7 +25,7 @@ public class KotlinTypeAliasByExpansionShortNameIndexTestGenerated extends Abstr
     }
 
     public void testAllFilesPresentInTypealiasExpansionIndex() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/typealiasExpansionIndex"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/typealiasExpansionIndex"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("functionalTypes.kt")

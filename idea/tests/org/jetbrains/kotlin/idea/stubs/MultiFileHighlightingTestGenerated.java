@@ -25,7 +25,7 @@ public class MultiFileHighlightingTestGenerated extends AbstractMultiFileHighlig
     }
 
     public void testAllFilesPresentInMultiFileHighlighting() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/multiFileHighlighting"), Pattern.compile("^(.+)\\.kt$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/multiFileHighlighting"), Pattern.compile("^(.+)\\.kt$"), null, false);
     }
 
     @TestMetadata("annotatedParameter.kt")

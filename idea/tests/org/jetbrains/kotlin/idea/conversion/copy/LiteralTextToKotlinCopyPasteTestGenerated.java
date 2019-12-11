@@ -25,7 +25,7 @@ public class LiteralTextToKotlinCopyPasteTestGenerated extends AbstractLiteralTe
     }
 
     public void testAllFilesPresentInPlainTextLiteral() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/copyPaste/plainTextLiteral"), Pattern.compile("^([^\\.]+)\\.txt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/copyPaste/plainTextLiteral"), Pattern.compile("^([^\\.]+)\\.txt$"), null, true);
     }
 
     @TestMetadata("BrokenEntries.txt")

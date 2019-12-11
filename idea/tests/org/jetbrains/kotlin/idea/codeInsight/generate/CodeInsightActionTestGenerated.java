@@ -25,7 +25,7 @@ public class CodeInsightActionTestGenerated extends AbstractCodeInsightActionTes
     }
 
     public void testAllFilesPresentInSecondaryConstructors() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/generate/secondaryConstructors"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/codeInsight/generate/secondaryConstructors"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("empty.kt")

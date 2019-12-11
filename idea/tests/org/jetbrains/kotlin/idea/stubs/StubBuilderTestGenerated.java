@@ -25,7 +25,7 @@ public class StubBuilderTestGenerated extends AbstractStubBuilderTest {
     }
 
     public void testAllFilesPresentInStubs() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/stubs"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/stubs"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("AnnotationClass.kt")

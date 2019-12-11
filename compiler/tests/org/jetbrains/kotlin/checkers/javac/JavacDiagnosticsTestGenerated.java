@@ -27,7 +27,7 @@ public class JavacDiagnosticsTestGenerated extends AbstractJavacDiagnosticsTest 
         }
 
         public void testAllFilesPresentInTests() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/javac/diagnostics/tests"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/javac/diagnostics/tests"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("Annotations.kt")
@@ -44,7 +44,7 @@ public class JavacDiagnosticsTestGenerated extends AbstractJavacDiagnosticsTest 
             }
 
             public void testAllFilesPresentInImports() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/javac/diagnostics/tests/imports"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/javac/diagnostics/tests/imports"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("AllUnderImportsAmbiguity.kt")
@@ -142,7 +142,7 @@ public class JavacDiagnosticsTestGenerated extends AbstractJavacDiagnosticsTest 
             }
 
             public void testAllFilesPresentInInheritance() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/javac/diagnostics/tests/inheritance"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/javac/diagnostics/tests/inheritance"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("IheritanceOfInner.kt")
@@ -250,7 +250,7 @@ public class JavacDiagnosticsTestGenerated extends AbstractJavacDiagnosticsTest 
             }
 
             public void testAllFilesPresentInInners() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/javac/diagnostics/tests/inners"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/javac/diagnostics/tests/inners"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("ComplexCase.kt")
@@ -298,7 +298,7 @@ public class JavacDiagnosticsTestGenerated extends AbstractJavacDiagnosticsTest 
             }
 
             public void testAllFilesPresentInQualifiedExpression() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/javac/diagnostics/tests/qualifiedExpression"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/javac/diagnostics/tests/qualifiedExpression"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("GenericClassVsPackage.kt")
@@ -336,7 +336,7 @@ public class JavacDiagnosticsTestGenerated extends AbstractJavacDiagnosticsTest 
             }
 
             public void testAllFilesPresentInTypeParameters() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/javac/diagnostics/tests/typeParameters"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/javac/diagnostics/tests/typeParameters"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("Clash.kt")
@@ -385,7 +385,7 @@ public class JavacDiagnosticsTestGenerated extends AbstractJavacDiagnosticsTest 
         }
 
         public void testAllFilesPresentInTestsWithoutJavac() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/javac/diagnostics/tests"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/javac/diagnostics/tests"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("Annotations.kt")
@@ -402,7 +402,7 @@ public class JavacDiagnosticsTestGenerated extends AbstractJavacDiagnosticsTest 
             }
 
             public void testAllFilesPresentInImports() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/javac/diagnostics/tests/imports"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/javac/diagnostics/tests/imports"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("AllUnderImportsAmbiguity.kt")
@@ -500,7 +500,7 @@ public class JavacDiagnosticsTestGenerated extends AbstractJavacDiagnosticsTest 
             }
 
             public void testAllFilesPresentInInheritance() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/javac/diagnostics/tests/inheritance"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/javac/diagnostics/tests/inheritance"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("IheritanceOfInner.kt")
@@ -608,7 +608,7 @@ public class JavacDiagnosticsTestGenerated extends AbstractJavacDiagnosticsTest 
             }
 
             public void testAllFilesPresentInInners() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/javac/diagnostics/tests/inners"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/javac/diagnostics/tests/inners"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("ComplexCase.kt")
@@ -656,7 +656,7 @@ public class JavacDiagnosticsTestGenerated extends AbstractJavacDiagnosticsTest 
             }
 
             public void testAllFilesPresentInQualifiedExpression() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/javac/diagnostics/tests/qualifiedExpression"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/javac/diagnostics/tests/qualifiedExpression"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("GenericClassVsPackage.kt")
@@ -694,7 +694,7 @@ public class JavacDiagnosticsTestGenerated extends AbstractJavacDiagnosticsTest 
             }
 
             public void testAllFilesPresentInTypeParameters() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/javac/diagnostics/tests/typeParameters"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/javac/diagnostics/tests/typeParameters"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("Clash.kt")

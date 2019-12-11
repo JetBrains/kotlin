@@ -40,7 +40,7 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
     }
 
     public void testAllFilesPresentInConverter() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/kapt3/kapt3-compiler/testData/converter"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kapt3/kapt3-compiler/testData/converter"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("annotationWithFqNames.kt")

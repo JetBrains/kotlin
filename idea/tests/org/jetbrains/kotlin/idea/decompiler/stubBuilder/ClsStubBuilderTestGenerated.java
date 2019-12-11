@@ -25,7 +25,7 @@ public class ClsStubBuilderTestGenerated extends AbstractClsStubBuilderTest {
     }
 
     public void testAllFilesPresentInStubBuilder() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/decompiler/stubBuilder"), Pattern.compile("^([^\\.]+)$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/decompiler/stubBuilder"), Pattern.compile("^([^\\.]+)$"), null, false);
     }
 
     @TestMetadata("AnnotatedFlexibleTypes")

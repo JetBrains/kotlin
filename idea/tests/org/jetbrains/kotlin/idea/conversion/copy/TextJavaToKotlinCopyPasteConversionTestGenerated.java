@@ -25,7 +25,7 @@ public class TextJavaToKotlinCopyPasteConversionTestGenerated extends AbstractTe
     }
 
     public void testAllFilesPresentInPlainTextConversion() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/copyPaste/plainTextConversion"), Pattern.compile("^([^\\.]+)\\.txt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/copyPaste/plainTextConversion"), Pattern.compile("^([^\\.]+)\\.txt$"), null, true);
     }
 
     @TestMetadata("AsExpression.txt")

@@ -25,7 +25,7 @@ public class DiagnosticsWithModifiedMockJdkTestGenerated extends AbstractDiagnos
     }
 
     public void testAllFilesPresentInTestWithModifiedMockJdk() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testWithModifiedMockJdk"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testWithModifiedMockJdk"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("newStringMethods.kt")

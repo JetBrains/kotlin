@@ -26,7 +26,7 @@ public class KdocResolveTestGenerated extends AbstractReferenceResolveTest {
     }
 
     public void testAllFilesPresentInResolve() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/kdoc/resolve"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/kdoc/resolve"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("AmbiguousReference.kt")

@@ -30,7 +30,7 @@ public class KDocCompletionTestGenerated extends AbstractJvmBasicCompletionTest 
     }
 
     public void testAllFilesPresentInKdoc() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/kdoc"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-completion/testData/kdoc"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("AutoPopupAfterAtInKDoc.kt")

@@ -26,7 +26,7 @@ public class DceTestGenerated extends AbstractDceTest {
     }
 
     public void testAllFilesPresentInDce() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/dce"), Pattern.compile("(.+)\\.js"), TargetBackend.JS, true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/dce"), Pattern.compile("(.+)\\.js"), null, TargetBackend.JS, true);
     }
 
     @TestMetadata("amd.js")

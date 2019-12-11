@@ -27,7 +27,7 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
         }
 
         public void testAllFilesPresentInType() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/hierarchy/class/type"), Pattern.compile("^([^\\.]+)$"), false);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/hierarchy/class/type"), Pattern.compile("^([^\\.]+)$"), null, false);
         }
 
         @TestMetadata("CaretAtAnnotation")
@@ -185,7 +185,7 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
         }
 
         public void testAllFilesPresentInSuper() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/hierarchy/class/super"), Pattern.compile("^([^\\.]+)$"), false);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/hierarchy/class/super"), Pattern.compile("^([^\\.]+)$"), null, false);
         }
 
         @TestMetadata("JetList")
@@ -218,7 +218,7 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
         }
 
         public void testAllFilesPresentInSub() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/hierarchy/class/sub"), Pattern.compile("^([^\\.]+)$"), false);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/hierarchy/class/sub"), Pattern.compile("^([^\\.]+)$"), null, false);
         }
 
         @TestMetadata("AllFromClass")
@@ -301,7 +301,7 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
         }
 
         public void testAllFilesPresentInCallers() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/hierarchy/calls/callers"), Pattern.compile("^([^\\.]+)$"), false);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/hierarchy/calls/callers"), Pattern.compile("^([^\\.]+)$"), null, false);
         }
 
         @TestMetadata("callInsideAnonymousFun")
@@ -419,7 +419,7 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
         }
 
         public void testAllFilesPresentInCallersJava() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/hierarchy/calls/callersJava"), Pattern.compile("^([^\\.]+)$"), false);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/hierarchy/calls/callersJava"), Pattern.compile("^([^\\.]+)$"), null, false);
         }
 
         @TestMetadata("javaMethod")
@@ -437,7 +437,7 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
         }
 
         public void testAllFilesPresentInCallees() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/hierarchy/calls/callees"), Pattern.compile("^([^\\.]+)$"), false);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/hierarchy/calls/callees"), Pattern.compile("^([^\\.]+)$"), null, false);
         }
 
         @TestMetadata("kotlinAnonymousObject")
@@ -515,7 +515,7 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
         }
 
         public void testAllFilesPresentInOverrides() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/hierarchy/overrides"), Pattern.compile("^([^\\.]+)$"), false);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/hierarchy/overrides"), Pattern.compile("^([^\\.]+)$"), null, false);
         }
 
         @TestMetadata("kotlinBuiltInMemberFunction")

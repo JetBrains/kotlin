@@ -26,7 +26,7 @@ public class OutputPrefixPostfixTestGenerated extends AbstractOutputPrefixPostfi
     }
 
     public void testAllFilesPresentInOutputPrefixPostfix() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/outputPrefixPostfix"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS, true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/outputPrefixPostfix"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS, true);
     }
 
     @TestMetadata("simple.kt")

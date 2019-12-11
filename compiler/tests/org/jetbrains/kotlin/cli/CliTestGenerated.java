@@ -27,7 +27,7 @@ public class CliTestGenerated extends AbstractCliTest {
         }
 
         public void testAllFilesPresentInJvm() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cli/jvm"), Pattern.compile("^(.+)\\.args$"), false);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/jvm"), Pattern.compile("^(.+)\\.args$"), null, false);
         }
 
         @TestMetadata("apiVersion.args")
@@ -730,7 +730,7 @@ public class CliTestGenerated extends AbstractCliTest {
         }
 
         public void testAllFilesPresentInJs() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cli/js"), Pattern.compile("^(.+)\\.args$"), false);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/js"), Pattern.compile("^(.+)\\.args$"), null, false);
         }
 
         @TestMetadata("createMetadata.args")
@@ -908,7 +908,7 @@ public class CliTestGenerated extends AbstractCliTest {
         }
 
         public void testAllFilesPresentInJs_dce() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cli/js-dce"), Pattern.compile("^(.+)\\.args$"), false);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/js-dce"), Pattern.compile("^(.+)\\.args$"), null, false);
         }
 
         @TestMetadata("dceHelp.args")
@@ -981,7 +981,7 @@ public class CliTestGenerated extends AbstractCliTest {
         }
 
         public void testAllFilesPresentInMetadata() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cli/metadata"), Pattern.compile("^(.+)\\.args$"), false);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/metadata"), Pattern.compile("^(.+)\\.args$"), null, false);
         }
 
         @TestMetadata("kotlinPackage.args")

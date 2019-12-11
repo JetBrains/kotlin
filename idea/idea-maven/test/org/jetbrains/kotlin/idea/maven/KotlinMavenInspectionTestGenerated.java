@@ -25,7 +25,7 @@ public class KotlinMavenInspectionTestGenerated extends AbstractKotlinMavenInspe
     }
 
     public void testAllFilesPresentInMaven_inspections() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/idea-maven/testData/maven-inspections"), Pattern.compile("^([\\w\\-]+).xml$"));
+        KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File("idea/idea-maven/testData/maven-inspections"), Pattern.compile("^([\\w\\-]+).xml$"), null);
     }
 
     @TestMetadata("bothCompileAndTestCompileInTheSameExecution.xml")

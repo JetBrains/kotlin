@@ -25,7 +25,7 @@ public class FunctionDescriptorInExpressionRendererTestGenerated extends Abstrac
     }
 
     public void testAllFilesPresentInRenderFunctionDescriptorInExpression() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/renderFunctionDescriptorInExpression"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/renderFunctionDescriptorInExpression"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("basicFunExpr.kt")

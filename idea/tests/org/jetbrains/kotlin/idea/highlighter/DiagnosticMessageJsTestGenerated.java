@@ -26,7 +26,7 @@ public class DiagnosticMessageJsTestGenerated extends AbstractDiagnosticMessageJ
     }
 
     public void testAllFilesPresentInJs() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/diagnosticMessage/js"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, false);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/diagnosticMessage/js"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, false);
     }
 
     @TestMetadata("jsCodeErrorHtml.kt")

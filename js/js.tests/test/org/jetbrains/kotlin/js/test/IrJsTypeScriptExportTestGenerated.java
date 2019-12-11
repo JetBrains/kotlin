@@ -26,7 +26,7 @@ public class IrJsTypeScriptExportTestGenerated extends AbstractIrJsTypeScriptExp
     }
 
     public void testAllFilesPresentInTypescript_export() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/typescript-export"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS_IR, true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
     @TestMetadata("js/js.translator/testData/typescript-export/declarations")
@@ -38,7 +38,7 @@ public class IrJsTypeScriptExportTestGenerated extends AbstractIrJsTypeScriptExp
         }
 
         public void testAllFilesPresentInDeclarations() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/typescript-export/declarations"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS_IR, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/declarations"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
         }
 
         @TestMetadata("declarations.kt")
@@ -56,7 +56,7 @@ public class IrJsTypeScriptExportTestGenerated extends AbstractIrJsTypeScriptExp
         }
 
         public void testAllFilesPresentInInheritance() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/typescript-export/inheritance"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS_IR, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/inheritance"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
         }
 
         @TestMetadata("inheritance.kt")
@@ -74,7 +74,7 @@ public class IrJsTypeScriptExportTestGenerated extends AbstractIrJsTypeScriptExp
         }
 
         public void testAllFilesPresentInNamespaces() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/typescript-export/namespaces"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS_IR, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/namespaces"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
         }
 
         @TestMetadata("namespaces.kt")
@@ -92,7 +92,7 @@ public class IrJsTypeScriptExportTestGenerated extends AbstractIrJsTypeScriptExp
         }
 
         public void testAllFilesPresentInPrimitives() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/typescript-export/primitives"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS_IR, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/primitives"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
         }
 
         @TestMetadata("primitives.kt")
@@ -110,7 +110,7 @@ public class IrJsTypeScriptExportTestGenerated extends AbstractIrJsTypeScriptExp
         }
 
         public void testAllFilesPresentInSelectiveExport() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/typescript-export/selectiveExport"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS_IR, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/selectiveExport"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
         }
 
         @TestMetadata("selectiveExport.kt")
@@ -128,7 +128,7 @@ public class IrJsTypeScriptExportTestGenerated extends AbstractIrJsTypeScriptExp
         }
 
         public void testAllFilesPresentInVisibility() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/typescript-export/visibility"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS_IR, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/visibility"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
         }
 
         @TestMetadata("visibility.kt")

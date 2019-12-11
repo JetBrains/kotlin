@@ -25,7 +25,7 @@ public class UpdateKotlinCopyrightTestGenerated extends AbstractUpdateKotlinCopy
     }
 
     public void testAllFilesPresentInCopyright() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/copyright"), Pattern.compile("^(.+)\\.(kt|kts)$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/copyright"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
     }
 
     @TestMetadata("ClassDocComment.kt")

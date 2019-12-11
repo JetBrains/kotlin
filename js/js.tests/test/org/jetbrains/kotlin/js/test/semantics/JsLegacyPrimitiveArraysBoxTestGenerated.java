@@ -26,7 +26,7 @@ public class JsLegacyPrimitiveArraysBoxTestGenerated extends AbstractJsLegacyPri
     }
 
     public void testAllFilesPresentInArrays() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/arrays"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/arrays"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
     }
 
     @TestMetadata("arrayConstructorWithNonInlineLambda.kt")
@@ -348,7 +348,7 @@ public class JsLegacyPrimitiveArraysBoxTestGenerated extends AbstractJsLegacyPri
         }
 
         public void testAllFilesPresentInArraysOfInlineClass() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/arrays/arraysOfInlineClass"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/arrays/arraysOfInlineClass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
         }
 
         @TestMetadata("arrayOfInlineClassOfArrayOfInlineClass.kt")
@@ -366,7 +366,7 @@ public class JsLegacyPrimitiveArraysBoxTestGenerated extends AbstractJsLegacyPri
         }
 
         public void testAllFilesPresentInForInReversed() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/arrays/forInReversed"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/arrays/forInReversed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
         }
 
         @TestMetadata("reversedArrayOriginalUpdatedInLoopBody.kt")
@@ -399,7 +399,7 @@ public class JsLegacyPrimitiveArraysBoxTestGenerated extends AbstractJsLegacyPri
         }
 
         public void testAllFilesPresentInMultiDecl() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/arrays/multiDecl"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/arrays/multiDecl"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
         }
 
         @TestMetadata("kt15560.kt")
@@ -451,7 +451,7 @@ public class JsLegacyPrimitiveArraysBoxTestGenerated extends AbstractJsLegacyPri
             }
 
             public void testAllFilesPresentInInt() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/arrays/multiDecl/int"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/arrays/multiDecl/int"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
             }
 
             @TestMetadata("MultiDeclForComponentExtensions.kt")
@@ -484,7 +484,7 @@ public class JsLegacyPrimitiveArraysBoxTestGenerated extends AbstractJsLegacyPri
             }
 
             public void testAllFilesPresentInLong() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/arrays/multiDecl/long"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/arrays/multiDecl/long"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
             }
 
             @TestMetadata("MultiDeclForComponentExtensions.kt")

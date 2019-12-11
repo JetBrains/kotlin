@@ -25,7 +25,7 @@ public class ModuleXmlParserTestGenerated extends AbstractModuleXmlParserTest {
     }
 
     public void testAllFilesPresentInModules_xml() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/modules.xml"), Pattern.compile("^(.+)\\.xml$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/modules.xml"), Pattern.compile("^(.+)\\.xml$"), null, true);
     }
 
     @TestMetadata("allOnce.xml")

@@ -25,7 +25,7 @@ public class PostfixTemplateProviderTestGenerated extends AbstractPostfixTemplat
     }
 
     public void testAllFilesPresentInPostfix() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/postfix"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/codeInsight/postfix"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("arg.kt")
@@ -237,7 +237,7 @@ public class PostfixTemplateProviderTestGenerated extends AbstractPostfixTemplat
         }
 
         public void testAllFilesPresentInWrapWithCall() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/postfix/wrapWithCall"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/codeInsight/postfix/wrapWithCall"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("arrayOfStatement.kt")

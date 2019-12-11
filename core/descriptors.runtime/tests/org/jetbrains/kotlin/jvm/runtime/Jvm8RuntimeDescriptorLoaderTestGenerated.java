@@ -25,7 +25,7 @@ public class Jvm8RuntimeDescriptorLoaderTestGenerated extends AbstractJvm8Runtim
     }
 
     public void testAllFilesPresentInCompiledJava() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava8/compiledJava"), Pattern.compile("^(.+)\\.java$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava8/compiledJava"), Pattern.compile("^(.+)\\.java$"), null, true);
     }
 
     @TestMetadata("InnerClassTypeAnnotation.java")

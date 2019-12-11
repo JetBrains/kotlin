@@ -25,7 +25,7 @@ public class LineNumberTestGenerated extends AbstractLineNumberTest {
     }
 
     public void testAllFilesPresentInLineNumber() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/lineNumber"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/lineNumber"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("anonymousFunction.kt")
@@ -127,7 +127,7 @@ public class LineNumberTestGenerated extends AbstractLineNumberTest {
         }
 
         public void testAllFilesPresentInCustom() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/lineNumber/custom"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/lineNumber/custom"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("beforeGotoToWhileStart.kt")

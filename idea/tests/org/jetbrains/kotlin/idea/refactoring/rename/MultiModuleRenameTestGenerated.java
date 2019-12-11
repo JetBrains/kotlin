@@ -25,7 +25,7 @@ public class MultiModuleRenameTestGenerated extends AbstractMultiModuleRenameTes
     }
 
     public void testAllFilesPresentInRenameMultiModule() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/refactoring/renameMultiModule"), Pattern.compile("^(.+)\\.test$"));
+        KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File("idea/testData/refactoring/renameMultiModule"), Pattern.compile("^(.+)\\.test$"), null);
     }
 
     @TestMetadata("fileNotUnderSourceRootWithNamesakeUnderSourceRoot/fileNotUnderSourceRootWithNamesakeUnderSourceRoot.test")

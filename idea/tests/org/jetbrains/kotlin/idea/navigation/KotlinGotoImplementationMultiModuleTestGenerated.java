@@ -30,7 +30,7 @@ public class KotlinGotoImplementationMultiModuleTestGenerated extends AbstractKo
     }
 
     public void testAllFilesPresentInMultiModule() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/navigation/implementations/multiModule"), Pattern.compile("^([^\\.]+)$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/navigation/implementations/multiModule"), Pattern.compile("^([^\\.]+)$"), null, false);
     }
 
     @TestMetadata("expectClass")

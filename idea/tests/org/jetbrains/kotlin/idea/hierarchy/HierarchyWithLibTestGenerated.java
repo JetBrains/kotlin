@@ -25,7 +25,7 @@ public class HierarchyWithLibTestGenerated extends AbstractHierarchyWithLibTest 
     }
 
     public void testAllFilesPresentInWithLib() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/hierarchy/withLib"), Pattern.compile("^([^\\.]+)$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/hierarchy/withLib"), Pattern.compile("^([^\\.]+)$"), null, false);
     }
 
     @TestMetadata("annotation")

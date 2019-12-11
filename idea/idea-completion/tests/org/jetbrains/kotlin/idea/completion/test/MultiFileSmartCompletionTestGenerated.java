@@ -25,7 +25,7 @@ public class MultiFileSmartCompletionTestGenerated extends AbstractMultiFileSmar
     }
 
     public void testAllFilesPresentInSmartMultiFile() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/smartMultiFile"), Pattern.compile("^([^\\.]+)$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-completion/testData/smartMultiFile"), Pattern.compile("^([^\\.]+)$"), null, false);
     }
 
     @TestMetadata("AnonymousObjectGenericJava")

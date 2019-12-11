@@ -26,7 +26,7 @@ public class IrCallableReferenceInlineTestsGenerated extends AbstractIrCallableR
     }
 
     public void testAllFilesPresentInCallableReference() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/callableReference"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS_IR, true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/callableReference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
     @TestMetadata("classLevel.kt")
@@ -108,7 +108,7 @@ public class IrCallableReferenceInlineTestsGenerated extends AbstractIrCallableR
         }
 
         public void testAllFilesPresentInBound() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/callableReference/bound"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS_IR, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/callableReference/bound"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
         }
 
         @TestMetadata("classProperty.kt")

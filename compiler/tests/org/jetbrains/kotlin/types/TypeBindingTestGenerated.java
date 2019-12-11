@@ -25,7 +25,7 @@ public class TypeBindingTestGenerated extends AbstractTypeBindingTest {
     }
 
     public void testAllFilesPresentInBinding() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/type/binding"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/type/binding"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("compiler/testData/type/binding/explicit")
@@ -37,7 +37,7 @@ public class TypeBindingTestGenerated extends AbstractTypeBindingTest {
         }
 
         public void testAllFilesPresentInExplicit() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/type/binding/explicit"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/type/binding/explicit"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("conflictingProjection.kt")
@@ -140,7 +140,7 @@ public class TypeBindingTestGenerated extends AbstractTypeBindingTest {
         }
 
         public void testAllFilesPresentInImplicit() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/type/binding/implicit"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/type/binding/implicit"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("conflictingProjection.kt")

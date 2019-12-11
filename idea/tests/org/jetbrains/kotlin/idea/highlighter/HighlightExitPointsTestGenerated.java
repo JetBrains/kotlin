@@ -25,7 +25,7 @@ public class HighlightExitPointsTestGenerated extends AbstractHighlightExitPoint
     }
 
     public void testAllFilesPresentInExitPoints() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/exitPoints"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/exitPoints"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("getter.kt")

@@ -27,7 +27,7 @@ public class MavenConfigureProjectByChangingFileTestGenerated extends AbstractMa
         }
 
         public void testAllFilesPresentInJvm() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-maven/testData/configurator/jvm"), Pattern.compile("^([^\\.]+)$"), false);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-maven/testData/configurator/jvm"), Pattern.compile("^([^\\.]+)$"), null, false);
         }
 
         @TestMetadata("fixExisting")
@@ -85,7 +85,7 @@ public class MavenConfigureProjectByChangingFileTestGenerated extends AbstractMa
         }
 
         public void testAllFilesPresentInJs() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-maven/testData/configurator/js"), Pattern.compile("^([^\\.]+)$"), false);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-maven/testData/configurator/js"), Pattern.compile("^([^\\.]+)$"), null, false);
         }
 
         @TestMetadata("libraryMissed")

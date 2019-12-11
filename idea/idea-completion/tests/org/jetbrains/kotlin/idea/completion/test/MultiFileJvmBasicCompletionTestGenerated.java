@@ -25,7 +25,7 @@ public class MultiFileJvmBasicCompletionTestGenerated extends AbstractMultiFileJ
     }
 
     public void testAllFilesPresentInMultifile() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/multifile"), Pattern.compile("^([^\\.]+)$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-completion/testData/basic/multifile"), Pattern.compile("^([^\\.]+)$"), null, false);
     }
 
     @TestMetadata("CallableReferenceNotImported")

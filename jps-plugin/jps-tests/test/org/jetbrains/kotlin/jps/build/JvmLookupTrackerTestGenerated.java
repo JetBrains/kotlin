@@ -25,7 +25,7 @@ public class JvmLookupTrackerTestGenerated extends AbstractJvmLookupTrackerTest 
     }
 
     public void testAllFilesPresentInJvm() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/lookupTracker/jvm"), Pattern.compile("^([^\\.]+)$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/lookupTracker/jvm"), Pattern.compile("^([^\\.]+)$"), null, false);
     }
 
     @TestMetadata("classifierMembers")

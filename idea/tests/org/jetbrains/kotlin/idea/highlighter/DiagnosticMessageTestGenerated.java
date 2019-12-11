@@ -30,7 +30,7 @@ public class DiagnosticMessageTestGenerated extends AbstractDiagnosticMessageTes
     }
 
     public void testAllFilesPresentInDiagnosticMessage() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/diagnosticMessage"), Pattern.compile("^(.+)\\.kt$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/diagnosticMessage"), Pattern.compile("^(.+)\\.kt$"), null, false);
     }
 
     @TestMetadata("annotationsForResolve.kt")

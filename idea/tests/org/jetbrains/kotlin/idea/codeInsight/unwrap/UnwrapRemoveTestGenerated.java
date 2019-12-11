@@ -27,7 +27,7 @@ public class UnwrapRemoveTestGenerated extends AbstractUnwrapRemoveTest {
         }
 
         public void testAllFilesPresentInRemoveExpression() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/removeExpression"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/removeExpression"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("ifInBlock.kt")
@@ -65,7 +65,7 @@ public class UnwrapRemoveTestGenerated extends AbstractUnwrapRemoveTest {
         }
 
         public void testAllFilesPresentInUnwrapThen() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/unwrapThen"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/unwrapThen"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("thenCompoundInBlock.kt")
@@ -93,7 +93,7 @@ public class UnwrapRemoveTestGenerated extends AbstractUnwrapRemoveTest {
         }
 
         public void testAllFilesPresentInUnwrapElse() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/unwrapElse"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/unwrapElse"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("elseCompoundInBlock.kt")
@@ -121,7 +121,7 @@ public class UnwrapRemoveTestGenerated extends AbstractUnwrapRemoveTest {
         }
 
         public void testAllFilesPresentInRemoveElse() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/removeElse"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/removeElse"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("else.kt")
@@ -139,7 +139,7 @@ public class UnwrapRemoveTestGenerated extends AbstractUnwrapRemoveTest {
         }
 
         public void testAllFilesPresentInUnwrapLoop() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/unwrapLoop"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/unwrapLoop"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("doWhile.kt")
@@ -167,7 +167,7 @@ public class UnwrapRemoveTestGenerated extends AbstractUnwrapRemoveTest {
         }
 
         public void testAllFilesPresentInUnwrapTry() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/unwrapTry"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/unwrapTry"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("tryCompoundInBlock.kt")
@@ -195,7 +195,7 @@ public class UnwrapRemoveTestGenerated extends AbstractUnwrapRemoveTest {
         }
 
         public void testAllFilesPresentInUnwrapCatch() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/unwrapCatch"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/unwrapCatch"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("catchCompoundInBlock.kt")
@@ -223,7 +223,7 @@ public class UnwrapRemoveTestGenerated extends AbstractUnwrapRemoveTest {
         }
 
         public void testAllFilesPresentInRemoveCatch() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/removeCatch"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/removeCatch"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("catch.kt")
@@ -241,7 +241,7 @@ public class UnwrapRemoveTestGenerated extends AbstractUnwrapRemoveTest {
         }
 
         public void testAllFilesPresentInUnwrapFinally() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/unwrapFinally"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/unwrapFinally"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("finallyCompoundInBlock.kt")
@@ -269,7 +269,7 @@ public class UnwrapRemoveTestGenerated extends AbstractUnwrapRemoveTest {
         }
 
         public void testAllFilesPresentInRemoveFinally() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/removeFinally"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/removeFinally"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("finallyInBlock.kt")
@@ -292,7 +292,7 @@ public class UnwrapRemoveTestGenerated extends AbstractUnwrapRemoveTest {
         }
 
         public void testAllFilesPresentInUnwrapLambda() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/unwrapLambda"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/unwrapLambda"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("lambdaCallCompoundInBlock.kt")
@@ -355,7 +355,7 @@ public class UnwrapRemoveTestGenerated extends AbstractUnwrapRemoveTest {
         }
 
         public void testAllFilesPresentInUnwrapFunctionParameter() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/unwrapFunctionParameter"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/unwrapFunctionParameter"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("functionHasMultiParam.kt")

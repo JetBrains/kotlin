@@ -25,7 +25,7 @@ public class IncrementalJsCompilerRunnerWithFriendModulesDisabledTestGenerated e
     }
 
     public void testAllFilesPresentInFriendsModuleDisabled() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/js/friendsModuleDisabled"), Pattern.compile("^([^\\.]+)$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/js/friendsModuleDisabled"), Pattern.compile("^([^\\.]+)$"), null, false);
     }
 
     @TestMetadata("internalInlineFunctionIsChanged")

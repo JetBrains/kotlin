@@ -25,7 +25,7 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
     }
 
     public void testAllFilesPresentInJoinLines() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/joinLines"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/joinLines"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("idea/testData/joinLines/addSemicolon")
@@ -37,7 +37,7 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
         }
 
         public void testAllFilesPresentInAddSemicolon() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/joinLines/addSemicolon"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/joinLines/addSemicolon"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("ClassDeclarations.kt")
@@ -135,7 +135,7 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
         }
 
         public void testAllFilesPresentInDeclarationAndAssignment() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/joinLines/declarationAndAssignment"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/joinLines/declarationAndAssignment"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("blankLineBetween.kt")
@@ -233,7 +233,7 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
         }
 
         public void testAllFilesPresentInInitializerAndIfToElvis() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/joinLines/initializerAndIfToElvis"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/joinLines/initializerAndIfToElvis"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("simple.kt")
@@ -251,7 +251,7 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
         }
 
         public void testAllFilesPresentInNestedIfs() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/joinLines/nestedIfs"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/joinLines/nestedIfs"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("BlockBody.kt")
@@ -294,7 +294,7 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
         }
 
         public void testAllFilesPresentInRemoveBraces() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/joinLines/removeBraces"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/joinLines/removeBraces"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("CommentAfterStatement.kt")
@@ -402,7 +402,7 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
         }
 
         public void testAllFilesPresentInStringTemplate() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/joinLines/stringTemplate"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/joinLines/stringTemplate"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("firstLineVariable.kt")

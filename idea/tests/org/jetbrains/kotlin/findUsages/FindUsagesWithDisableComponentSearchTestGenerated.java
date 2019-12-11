@@ -25,7 +25,7 @@ public class FindUsagesWithDisableComponentSearchTestGenerated extends AbstractF
     }
 
     public void testAllFilesPresentInComponents() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/findUsages/kotlin/conventions/components"), Pattern.compile("^(.+)\\.0\\.(kt|kts)$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/findUsages/kotlin/conventions/components"), Pattern.compile("^(.+)\\.0\\.(kt|kts)$"), null, true);
     }
 
     @TestMetadata("callableReferences.0.kt")

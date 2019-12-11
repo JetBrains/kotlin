@@ -25,7 +25,7 @@ public class JavacForeignJava8AnnotationsTestGenerated extends AbstractJavacFore
     }
 
     public void testAllFilesPresentInTests() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/foreignAnnotationsJava8/tests"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/foreignAnnotationsJava8/tests"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("checkerFramework.kt")
@@ -52,7 +52,7 @@ public class JavacForeignJava8AnnotationsTestGenerated extends AbstractJavacFore
         }
 
         public void testAllFilesPresentInJsr305() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/foreignAnnotationsJava8/tests/jsr305"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/foreignAnnotationsJava8/tests/jsr305"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("defaultAnnotationAppliedToType.kt")
@@ -90,7 +90,7 @@ public class JavacForeignJava8AnnotationsTestGenerated extends AbstractJavacFore
         }
 
         public void testAllFilesPresentInTypeEnhancement() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/foreignAnnotationsJava8/tests/typeEnhancement"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/foreignAnnotationsJava8/tests/typeEnhancement"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("annotatedTypeArguments.kt")

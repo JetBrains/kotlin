@@ -25,7 +25,7 @@ public class IdeCompiledLightClassTestGenerated extends AbstractIdeCompiledLight
     }
 
     public void testAllFilesPresentInLightClasses() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/lightClasses"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), true, "local", "compilationErrors", "ideRegression");
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), null, true, "local", "compilationErrors", "ideRegression");
     }
 
     @TestMetadata("AnnotatedParameterInEnumConstructor.kt")
@@ -157,7 +157,7 @@ public class IdeCompiledLightClassTestGenerated extends AbstractIdeCompiledLight
         }
 
         public void testAllFilesPresentInDelegation() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/lightClasses/delegation"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/delegation"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), null, true);
         }
 
         @TestMetadata("Function.kt")
@@ -180,7 +180,7 @@ public class IdeCompiledLightClassTestGenerated extends AbstractIdeCompiledLight
         }
 
         public void testAllFilesPresentInFacades() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/lightClasses/facades"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/facades"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), null, true);
         }
 
         @TestMetadata("AllPrivate.kt")
@@ -213,7 +213,7 @@ public class IdeCompiledLightClassTestGenerated extends AbstractIdeCompiledLight
         }
 
         public void testAllFilesPresentInNullabilityAnnotations() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/lightClasses/nullabilityAnnotations"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/nullabilityAnnotations"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), null, true);
         }
 
         @TestMetadata("Class.kt")
@@ -316,7 +316,7 @@ public class IdeCompiledLightClassTestGenerated extends AbstractIdeCompiledLight
         }
 
         public void testAllFilesPresentInObject() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/lightClasses/object"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/object"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), null, true);
         }
 
         @TestMetadata("SimpleObject.kt")
@@ -334,7 +334,7 @@ public class IdeCompiledLightClassTestGenerated extends AbstractIdeCompiledLight
         }
 
         public void testAllFilesPresentInPublicField() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/lightClasses/publicField"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/publicField"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), null, true);
         }
 
         @TestMetadata("CompanionObject.kt")
@@ -357,7 +357,7 @@ public class IdeCompiledLightClassTestGenerated extends AbstractIdeCompiledLight
         }
 
         public void testAllFilesPresentInScript() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/lightClasses/script"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/script"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), null, true);
         }
 
         @TestMetadata("HelloWorld.kts")

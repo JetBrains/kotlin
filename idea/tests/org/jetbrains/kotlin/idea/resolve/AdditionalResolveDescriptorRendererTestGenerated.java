@@ -25,7 +25,7 @@ public class AdditionalResolveDescriptorRendererTestGenerated extends AbstractAd
     }
 
     public void testAllFilesPresentInAdditionalLazyResolve() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/resolve/additionalLazyResolve"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/resolve/additionalLazyResolve"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("anonymousObjectInBaseConstructor.kt")

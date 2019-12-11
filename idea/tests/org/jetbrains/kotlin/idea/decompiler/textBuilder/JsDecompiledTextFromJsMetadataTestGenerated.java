@@ -26,7 +26,7 @@ public class JsDecompiledTextFromJsMetadataTestGenerated extends AbstractJsDecom
     }
 
     public void testAllFilesPresentInDecompiledTextJs() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/decompiler/decompiledTextJs"), Pattern.compile("^([^\\.]+)$"), TargetBackend.JS, true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/decompiler/decompiledTextJs"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JS, true);
     }
 
     @TestMetadata("TestPackage")
@@ -48,7 +48,7 @@ public class JsDecompiledTextFromJsMetadataTestGenerated extends AbstractJsDecom
         }
 
         public void testAllFilesPresentInTestPackage() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/decompiler/decompiledTextJs/TestPackage"), Pattern.compile("^([^\\.]+)$"), TargetBackend.JS, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/decompiler/decompiledTextJs/TestPackage"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JS, true);
         }
     }
 
@@ -61,7 +61,7 @@ public class JsDecompiledTextFromJsMetadataTestGenerated extends AbstractJsDecom
         }
 
         public void testAllFilesPresentInTypeAliases() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/decompiler/decompiledTextJs/TypeAliases"), Pattern.compile("^([^\\.]+)$"), TargetBackend.JS, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/decompiler/decompiledTextJs/TypeAliases"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JS, true);
         }
     }
 }

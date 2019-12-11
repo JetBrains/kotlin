@@ -25,7 +25,7 @@ public class SamWithReceiverScriptTestGenerated extends AbstractSamWithReceiverS
     }
 
     public void testAllFilesPresentInScript() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/sam-with-receiver/sam-with-receiver-cli/testData/script"), Pattern.compile("^(.+)\\.kts$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/sam-with-receiver/sam-with-receiver-cli/testData/script"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
 
     @TestMetadata("samConversionSimple.kts")

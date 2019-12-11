@@ -27,7 +27,7 @@ public class JsOptimizeImportsTestGenerated extends AbstractJsOptimizeImportsTes
         }
 
         public void testAllFilesPresentInJs() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/editor/optimizeImports/js"), Pattern.compile("^([^.]+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/editor/optimizeImports/js"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("DefaultJsImports.kt")
@@ -45,7 +45,7 @@ public class JsOptimizeImportsTestGenerated extends AbstractJsOptimizeImportsTes
         }
 
         public void testAllFilesPresentInCommon() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/editor/optimizeImports/common"), Pattern.compile("^([^.]+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/editor/optimizeImports/common"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("ArrayAccessExpression.kt")
@@ -217,7 +217,7 @@ public class JsOptimizeImportsTestGenerated extends AbstractJsOptimizeImportsTes
             }
 
             public void testAllFilesPresentInKt21515() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/editor/optimizeImports/common/kt21515"), Pattern.compile("^([^.]+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/editor/optimizeImports/common/kt21515"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
             }
 
             @TestMetadata("callableReferenceOnClass.kt")

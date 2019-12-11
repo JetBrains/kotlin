@@ -25,7 +25,7 @@ public class CodeFragmentAutoImportTestGenerated extends AbstractCodeFragmentAut
     }
 
     public void testAllFilesPresentInCodeFragmentAutoImport() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix.special/codeFragmentAutoImport"), Pattern.compile("^(.+)\\.kt$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix.special/codeFragmentAutoImport"), Pattern.compile("^(.+)\\.kt$"), null, false);
     }
 
     @TestMetadata("ExtensionFun.kt")

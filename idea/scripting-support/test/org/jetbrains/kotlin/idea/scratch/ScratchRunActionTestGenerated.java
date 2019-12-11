@@ -27,7 +27,7 @@ public class ScratchRunActionTestGenerated extends AbstractScratchRunActionTest 
         }
 
         public void testAllFilesPresentInScratchCompiling() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/scripting-support/testData/scratch"), Pattern.compile("^(.+)\\.kts$"), false);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/scripting-support/testData/scratch"), Pattern.compile("^(.+)\\.kts$"), null, false);
         }
 
         @TestMetadata("for.kts")
@@ -115,7 +115,7 @@ public class ScratchRunActionTestGenerated extends AbstractScratchRunActionTest 
         }
 
         public void testAllFilesPresentInScratchRepl() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/scripting-support/testData/scratch"), Pattern.compile("^(.+)\\.kts$"), false);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/scripting-support/testData/scratch"), Pattern.compile("^(.+)\\.kts$"), null, false);
         }
 
         @TestMetadata("for.kts")
@@ -203,7 +203,7 @@ public class ScratchRunActionTestGenerated extends AbstractScratchRunActionTest 
         }
 
         public void testAllFilesPresentInScratchMultiFile() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/scripting-support/testData/scratch/multiFile"), Pattern.compile("^([^\\.]+)$"), false);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/scripting-support/testData/scratch/multiFile"), Pattern.compile("^([^\\.]+)$"), null, false);
         }
 
         @TestMetadata("inlineFun")
@@ -226,7 +226,7 @@ public class ScratchRunActionTestGenerated extends AbstractScratchRunActionTest 
         }
 
         public void testAllFilesPresentInWorksheetCompiling() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/scripting-support/testData/worksheet"), Pattern.compile("^(.+)\\.ws.kts$"), false);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/scripting-support/testData/worksheet"), Pattern.compile("^(.+)\\.ws.kts$"), null, false);
         }
 
         @TestMetadata("simpleScriptRuntime.ws.kts")
@@ -244,7 +244,7 @@ public class ScratchRunActionTestGenerated extends AbstractScratchRunActionTest 
         }
 
         public void testAllFilesPresentInWorksheetRepl() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/scripting-support/testData/worksheet"), Pattern.compile("^(.+)\\.ws.kts$"), false);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/scripting-support/testData/worksheet"), Pattern.compile("^(.+)\\.ws.kts$"), null, false);
         }
 
         @TestMetadata("simpleScriptRuntime.ws.kts")
@@ -262,7 +262,7 @@ public class ScratchRunActionTestGenerated extends AbstractScratchRunActionTest 
         }
 
         public void testAllFilesPresentInWorksheetMultiFile() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/scripting-support/testData/worksheet/multiFile"), Pattern.compile("^([^\\.]+)$"), false);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/scripting-support/testData/worksheet/multiFile"), Pattern.compile("^([^\\.]+)$"), null, false);
         }
 
         @TestMetadata("inlineFunScriptRuntime")
@@ -285,7 +285,7 @@ public class ScratchRunActionTestGenerated extends AbstractScratchRunActionTest 
         }
 
         public void testAllFilesPresentInScratchRightPanelOutput() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/scripting-support/testData/scratch/rightPanelOutput"), Pattern.compile("^(.+)\\.kts$"), false);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/scripting-support/testData/scratch/rightPanelOutput"), Pattern.compile("^(.+)\\.kts$"), null, false);
         }
 
         @TestMetadata("bigSequentialOutputs.kts")

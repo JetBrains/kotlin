@@ -50,7 +50,7 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
     }
 
     public void testAllFilesPresentInSmart() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/smart"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-completion/testData/handlers/smart"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("AnonymousObject1.kt")
@@ -762,7 +762,7 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
         }
 
         public void testAllFilesPresentInLambda() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/smart/lambda"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-completion/testData/handlers/smart/lambda"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("InsertImport.kt")
@@ -790,7 +790,7 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
         }
 
         public void testAllFilesPresentInLambdaSignature() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/smart/lambdaSignature"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-completion/testData/handlers/smart/lambdaSignature"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("NoAdditionalSpace.kt")
@@ -813,7 +813,7 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
         }
 
         public void testAllFilesPresentInSuspendLambdaSignature() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/smart/suspendLambdaSignature"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-completion/testData/handlers/smart/suspendLambdaSignature"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("NoAdditionalSpace.kt")

@@ -25,7 +25,7 @@ public class MultiFileLocalInspectionTestGenerated extends AbstractMultiFileLoca
     }
 
     public void testAllFilesPresentInMultiFileLocalInspections() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/multiFileLocalInspections"), Pattern.compile("^(.+)\\.test$"));
+        KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File("idea/testData/multiFileLocalInspections"), Pattern.compile("^(.+)\\.test$"), null);
     }
 
     @TestMetadata("convertSealedSubClassToObject/convertCallableReferenceUsages/convertCallableReferenceUsages.test")

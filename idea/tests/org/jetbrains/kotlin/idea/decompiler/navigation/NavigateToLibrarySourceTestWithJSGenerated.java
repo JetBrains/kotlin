@@ -27,7 +27,7 @@ public class NavigateToLibrarySourceTestWithJSGenerated extends AbstractNavigate
     }
 
     public void testAllFilesPresentInUsercodeWithJSModule() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/decompiler/navigation/usercode"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/decompiler/navigation/usercode"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("ClassObject.kt")

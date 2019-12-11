@@ -25,7 +25,7 @@ public class ReferenceResolveWithLibTestGenerated extends AbstractReferenceResol
     }
 
     public void testAllFilesPresentInReferenceWithLib() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/resolve/referenceWithLib"), Pattern.compile("^(.+)\\.kt$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/resolve/referenceWithLib"), Pattern.compile("^(.+)\\.kt$"), null, false);
     }
 
     @TestMetadata("delegatedPropertyWithTypeParameters.kt")

@@ -30,7 +30,7 @@ public class AndroidBytecodeShapeTestGenerated extends AbstractAndroidBytecodeSh
     }
 
     public void testAllFilesPresentInBytecodeShape() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/android-extensions/android-extensions-compiler/testData/codegen/bytecodeShape"), Pattern.compile("^([^\\.]+)$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/android-extensions/android-extensions-compiler/testData/codegen/bytecodeShape"), Pattern.compile("^([^\\.]+)$"), null, false);
     }
 
     @TestMetadata("baseClass")

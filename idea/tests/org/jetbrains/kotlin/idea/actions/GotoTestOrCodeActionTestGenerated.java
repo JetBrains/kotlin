@@ -25,7 +25,7 @@ public class GotoTestOrCodeActionTestGenerated extends AbstractGotoTestOrCodeAct
     }
 
     public void testAllFilesPresentInGotoTestOrCode() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/navigation/gotoTestOrCode"), Pattern.compile("^(.+)\\.main\\..+$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/navigation/gotoTestOrCode"), Pattern.compile("^(.+)\\.main\\..+$"), null, true);
     }
 
     @TestMetadata("fromJavaClassToTest.main.java")

@@ -40,6 +40,6 @@ public class KotlinGotoSuperMultiModuleTestGenerated extends AbstractKotlinGotoS
     }
 
     public void testAllFilesPresentInMultiModule() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/navigation/gotoSuper/multiModule"), Pattern.compile("^([^\\.]+)$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/navigation/gotoSuper/multiModule"), Pattern.compile("^([^\\.]+)$"), null, false);
     }
 }

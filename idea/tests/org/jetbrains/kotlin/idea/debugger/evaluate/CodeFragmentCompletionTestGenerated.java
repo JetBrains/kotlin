@@ -25,7 +25,7 @@ public class CodeFragmentCompletionTestGenerated extends AbstractCodeFragmentCom
     }
 
     public void testAllFilesPresentInCodeFragments() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/codeFragments"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-completion/testData/basic/codeFragments"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("blockCodeFragment.kt")
@@ -92,7 +92,7 @@ public class CodeFragmentCompletionTestGenerated extends AbstractCodeFragmentCom
         }
 
         public void testAllFilesPresentInRuntimeType() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/codeFragments/runtimeType"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-completion/testData/basic/codeFragments/runtimeType"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("castWithGenerics.kt")

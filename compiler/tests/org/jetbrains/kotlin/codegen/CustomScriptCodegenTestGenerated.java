@@ -25,7 +25,7 @@ public class CustomScriptCodegenTestGenerated extends AbstractCustomScriptCodege
     }
 
     public void testAllFilesPresentInCustomScript() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/customScript"), Pattern.compile("^(.*)$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/customScript"), Pattern.compile("^(.*)$"), null, true);
     }
 
     @TestMetadata("pathPattern5.kts")

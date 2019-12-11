@@ -25,7 +25,7 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
     }
 
     public void testAllFilesPresentInTestsWithJsStdLib() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("implementingFunction.kt")
@@ -67,7 +67,7 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
         }
 
         public void testAllFilesPresentInClassLiteral() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/classLiteral"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/classLiteral"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("arrays_after.kt")
@@ -90,7 +90,7 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
         }
 
         public void testAllFilesPresentInDynamicTypes() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("allowedDynamicFunctionType.kt")
@@ -333,7 +333,7 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
         }
 
         public void testAllFilesPresentInInline() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/inline"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/inline"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("Reified.kt")
@@ -351,7 +351,7 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
         }
 
         public void testAllFilesPresentInJsCode() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/jsCode"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/jsCode"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("argumentIsLiteral.kt")
@@ -394,7 +394,7 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
         }
 
         public void testAllFilesPresentInJvmDeclarations() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/jvmDeclarations"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/jvmDeclarations"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("cloneable.kt")
@@ -412,7 +412,7 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
         }
 
         public void testAllFilesPresentInModule() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/module"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/module"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("coroutineProhibitedMigration.kt")
@@ -475,7 +475,7 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
         }
 
         public void testAllFilesPresentInName() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/name"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/name"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("bridgeClash.kt")
@@ -643,7 +643,7 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
         }
 
         public void testAllFilesPresentInNative() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/native"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/native"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("anonymousInitializer.kt")
@@ -755,7 +755,7 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
             }
 
             public void testAllFilesPresentInNativeGetter() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeGetter"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeGetter"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("onLocalExtensionFun.kt")
@@ -813,7 +813,7 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
             }
 
             public void testAllFilesPresentInNativeInvoke() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeInvoke"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeInvoke"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("onLocalExtensionFun.kt")
@@ -871,7 +871,7 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
             }
 
             public void testAllFilesPresentInNativeSetter() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeSetter"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeSetter"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("onLocalExtensionFun.kt")
@@ -929,7 +929,7 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
             }
 
             public void testAllFilesPresentInOptionlBody() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/native/optionlBody"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/native/optionlBody"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("native.kt")
@@ -962,7 +962,7 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
             }
 
             public void testAllFilesPresentInRtti() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/native/rtti"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/native/rtti"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("castToNativeInterface.kt")
@@ -1000,7 +1000,7 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
             }
 
             public void testAllFilesPresentInUnusedParam() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/native/unusedParam"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/native/unusedParam"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("native.kt")
@@ -1034,7 +1034,7 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
         }
 
         public void testAllFilesPresentInQualifier() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/qualifier"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/qualifier"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("jsQualifierNonExternal.kt")
@@ -1057,7 +1057,7 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
         }
 
         public void testAllFilesPresentInReflection() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/reflection"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/reflection"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("reflectionApi.kt")

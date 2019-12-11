@@ -30,7 +30,7 @@ public class AntTaskTestGenerated extends AbstractAntTaskTest {
     }
 
     public void testAllFilesPresentInJvm() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/integration/ant/jvm"), Pattern.compile("^([^\\.]+)$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/integration/ant/jvm"), Pattern.compile("^([^\\.]+)$"), null, false);
     }
 
     @TestMetadata("doNotFailOnError")

@@ -30,7 +30,7 @@ public class MultiplatformAnalysisTestGenerated extends AbstractMultiplatformAna
     }
 
     public void testAllFilesPresentInMultiplatform() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/multiplatform"), Pattern.compile("^([^\\.]+)$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/multiplatform"), Pattern.compile("^([^\\.]+)$"), null, false);
     }
 
     @TestMetadata("callableReferences")

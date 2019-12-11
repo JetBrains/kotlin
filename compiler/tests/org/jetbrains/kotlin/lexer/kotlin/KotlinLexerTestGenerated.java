@@ -25,7 +25,7 @@ public class KotlinLexerTestGenerated extends AbstractKotlinLexerTest {
     }
 
     public void testAllFilesPresentInKotlin() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/lexer/kotlin"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/lexer/kotlin"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("compiler/testData/lexer/kotlin/whitespaceCharacters")
@@ -37,7 +37,7 @@ public class KotlinLexerTestGenerated extends AbstractKotlinLexerTest {
         }
 
         public void testAllFilesPresentInWhitespaceCharacters() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/lexer/kotlin/whitespaceCharacters"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/lexer/kotlin/whitespaceCharacters"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("compiler/testData/lexer/kotlin/whitespaceCharacters/carriageReturn")
@@ -49,7 +49,7 @@ public class KotlinLexerTestGenerated extends AbstractKotlinLexerTest {
             }
 
             public void testAllFilesPresentInCarriageReturn() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/lexer/kotlin/whitespaceCharacters/carriageReturn"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/lexer/kotlin/whitespaceCharacters/carriageReturn"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("carriageReturn.kt")
@@ -77,7 +77,7 @@ public class KotlinLexerTestGenerated extends AbstractKotlinLexerTest {
             }
 
             public void testAllFilesPresentInLineSeparator() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/lexer/kotlin/whitespaceCharacters/lineSeparator"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/lexer/kotlin/whitespaceCharacters/lineSeparator"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("lineSeparator.kt")
@@ -105,7 +105,7 @@ public class KotlinLexerTestGenerated extends AbstractKotlinLexerTest {
             }
 
             public void testAllFilesPresentInNextLine() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/lexer/kotlin/whitespaceCharacters/nextLine"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/lexer/kotlin/whitespaceCharacters/nextLine"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("nextLine.kt")
@@ -133,7 +133,7 @@ public class KotlinLexerTestGenerated extends AbstractKotlinLexerTest {
             }
 
             public void testAllFilesPresentInPageBreak() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/lexer/kotlin/whitespaceCharacters/pageBreak"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/lexer/kotlin/whitespaceCharacters/pageBreak"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("pageBreak.kt")
@@ -161,7 +161,7 @@ public class KotlinLexerTestGenerated extends AbstractKotlinLexerTest {
             }
 
             public void testAllFilesPresentInParagraphSeparator() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/lexer/kotlin/whitespaceCharacters/paragraphSeparator"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/lexer/kotlin/whitespaceCharacters/paragraphSeparator"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("paragraphSeparator.kt")
@@ -189,7 +189,7 @@ public class KotlinLexerTestGenerated extends AbstractKotlinLexerTest {
             }
 
             public void testAllFilesPresentInVerticalTab() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/lexer/kotlin/whitespaceCharacters/verticalTab"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/lexer/kotlin/whitespaceCharacters/verticalTab"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("verticalTab.kt")

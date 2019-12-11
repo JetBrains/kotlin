@@ -27,7 +27,7 @@ public class GradleConfigureProjectByChangingFileTestGenerated extends AbstractG
         }
 
         public void testAllFilesPresentInGradle() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/configuration/gradle"), Pattern.compile("^([^\\.]+)$"), false);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/configuration/gradle"), Pattern.compile("^([^\\.]+)$"), null, false);
         }
 
         @TestMetadata("default")
@@ -85,7 +85,7 @@ public class GradleConfigureProjectByChangingFileTestGenerated extends AbstractG
         }
 
         public void testAllFilesPresentInGsk() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/configuration/gsk"), Pattern.compile("^([^\\.]+)$"), false);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/configuration/gsk"), Pattern.compile("^([^\\.]+)$"), null, false);
         }
 
         @TestMetadata("eap11Version")

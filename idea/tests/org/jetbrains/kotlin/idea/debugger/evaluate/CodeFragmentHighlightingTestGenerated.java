@@ -27,7 +27,7 @@ public class CodeFragmentHighlightingTestGenerated extends AbstractCodeFragmentH
         }
 
         public void testAllFilesPresentInCodeFragments() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/codeFragments"), Pattern.compile("^(.+)\\.kt$"), false);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/checker/codeFragments"), Pattern.compile("^(.+)\\.kt$"), null, false);
         }
 
         @TestMetadata("anonymousObject.kt")
@@ -170,7 +170,7 @@ public class CodeFragmentHighlightingTestGenerated extends AbstractCodeFragmentH
         }
 
         public void testAllFilesPresentInImports() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/codeFragments/imports"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/checker/codeFragments/imports"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("hashMap.kt")

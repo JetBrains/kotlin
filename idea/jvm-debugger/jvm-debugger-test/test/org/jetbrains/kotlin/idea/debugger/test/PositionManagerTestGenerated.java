@@ -27,7 +27,7 @@ public class PositionManagerTestGenerated extends AbstractPositionManagerTest {
         }
 
         public void testAllFilesPresentInSingleFile() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/positionManager"), Pattern.compile("^(.+)\\.kt$"), false);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/positionManager"), Pattern.compile("^(.+)\\.kt$"), null, false);
         }
 
         @TestMetadata("anonymousFunction.kt")
@@ -140,7 +140,7 @@ public class PositionManagerTestGenerated extends AbstractPositionManagerTest {
         }
 
         public void testAllFilesPresentInMultiFile() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/positionManager"), Pattern.compile("^([^\\.]+)$"), false);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/positionManager"), Pattern.compile("^([^\\.]+)$"), null, false);
         }
 
         @TestMetadata("multiFilePackage")

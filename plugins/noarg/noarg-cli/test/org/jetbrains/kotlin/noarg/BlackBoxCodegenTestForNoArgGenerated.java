@@ -26,7 +26,7 @@ public class BlackBoxCodegenTestForNoArgGenerated extends AbstractBlackBoxCodege
     }
 
     public void testAllFilesPresentInBox() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/noarg/noarg-cli/testData/box"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/noarg/noarg-cli/testData/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
     }
 
     @TestMetadata("initializers.kt")

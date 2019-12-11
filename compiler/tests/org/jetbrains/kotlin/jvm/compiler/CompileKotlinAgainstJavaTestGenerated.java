@@ -37,7 +37,7 @@ public class CompileKotlinAgainstJavaTestGenerated extends AbstractCompileKotlin
         }
 
         public void testAllFilesPresentInWithAPT() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileKotlinAgainstJava"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileKotlinAgainstJava"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("AnnotationWithArguments.kt")
@@ -320,7 +320,7 @@ public class CompileKotlinAgainstJavaTestGenerated extends AbstractCompileKotlin
         }
 
         public void testAllFilesPresentInWithoutAPT() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileKotlinAgainstJava"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileKotlinAgainstJava"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("AnnotationWithArguments.kt")

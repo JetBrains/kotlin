@@ -27,7 +27,7 @@ public class JavaAgainstKotlinSourceCheckerTestGenerated extends AbstractJavaAga
         }
 
         public void testAllFilesPresentInJavaAgainstKotlin() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("AssignKotlinClassToObjectInJava.kt")
@@ -210,7 +210,7 @@ public class JavaAgainstKotlinSourceCheckerTestGenerated extends AbstractJavaAga
         }
 
         public void testAllFilesPresentInJavaWithKotlin() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/kotlinAndJavaChecker/javaWithKotlin"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/kotlinAndJavaChecker/javaWithKotlin"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("InnerClassWithoutName.kt")

@@ -25,7 +25,7 @@ public class PartialBodyResolveTestGenerated extends AbstractPartialBodyResolveT
     }
 
     public void testAllFilesPresentInPartialBodyResolve() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/resolve/partialBodyResolve"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/resolve/partialBodyResolve"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("AnonymousObjects.kt")

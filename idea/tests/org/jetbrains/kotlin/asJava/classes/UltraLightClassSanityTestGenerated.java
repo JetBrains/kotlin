@@ -25,7 +25,7 @@ public class UltraLightClassSanityTestGenerated extends AbstractUltraLightClassS
     }
 
     public void testAllFilesPresentInLightClasses() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/lightClasses"), Pattern.compile("^(.+)\\.(kt|kts)$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
     }
 
     @TestMetadata("AnnotatedParameterInEnumConstructor.kt")
@@ -172,7 +172,7 @@ public class UltraLightClassSanityTestGenerated extends AbstractUltraLightClassS
         }
 
         public void testAllFilesPresentInCompilationErrors() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/lightClasses/compilationErrors"), Pattern.compile("^(.+)\\.(kt|kts)$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/compilationErrors"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
         }
 
         @TestMetadata("AllInlineOnly.kt")
@@ -265,7 +265,7 @@ public class UltraLightClassSanityTestGenerated extends AbstractUltraLightClassS
         }
 
         public void testAllFilesPresentInDelegation() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/lightClasses/delegation"), Pattern.compile("^(.+)\\.(kt|kts)$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/delegation"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
         }
 
         @TestMetadata("Function.kt")
@@ -293,7 +293,7 @@ public class UltraLightClassSanityTestGenerated extends AbstractUltraLightClassS
         }
 
         public void testAllFilesPresentInFacades() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/lightClasses/facades"), Pattern.compile("^(.+)\\.(kt|kts)$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/facades"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
         }
 
         @TestMetadata("AllPrivate.kt")
@@ -331,7 +331,7 @@ public class UltraLightClassSanityTestGenerated extends AbstractUltraLightClassS
         }
 
         public void testAllFilesPresentInIdeRegression() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/lightClasses/ideRegression"), Pattern.compile("^(.+)\\.(kt|kts)$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/ideRegression"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
         }
 
         @TestMetadata("AllOpenAnnotatedClasses.kt")
@@ -399,7 +399,7 @@ public class UltraLightClassSanityTestGenerated extends AbstractUltraLightClassS
         }
 
         public void testAllFilesPresentInNullabilityAnnotations() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/lightClasses/nullabilityAnnotations"), Pattern.compile("^(.+)\\.(kt|kts)$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/nullabilityAnnotations"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
         }
 
         @TestMetadata("Class.kt")
@@ -502,7 +502,7 @@ public class UltraLightClassSanityTestGenerated extends AbstractUltraLightClassS
         }
 
         public void testAllFilesPresentInObject() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/lightClasses/object"), Pattern.compile("^(.+)\\.(kt|kts)$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/object"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
         }
 
         @TestMetadata("SimpleObject.kt")
@@ -520,7 +520,7 @@ public class UltraLightClassSanityTestGenerated extends AbstractUltraLightClassS
         }
 
         public void testAllFilesPresentInPublicField() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/lightClasses/publicField"), Pattern.compile("^(.+)\\.(kt|kts)$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/publicField"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
         }
 
         @TestMetadata("CompanionObject.kt")
@@ -543,7 +543,7 @@ public class UltraLightClassSanityTestGenerated extends AbstractUltraLightClassS
         }
 
         public void testAllFilesPresentInScript() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/lightClasses/script"), Pattern.compile("^(.+)\\.(kt|kts)$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/script"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
         }
 
         @TestMetadata("HelloWorld.kts")

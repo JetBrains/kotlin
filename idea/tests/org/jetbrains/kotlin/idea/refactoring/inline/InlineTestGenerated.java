@@ -25,7 +25,7 @@ public class InlineTestGenerated extends AbstractInlineTest {
     }
 
     public void testAllFilesPresentInInline() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/inline"), Pattern.compile("^(\\w+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/refactoring/inline"), Pattern.compile("^(\\w+)\\.kt$"), null, true);
     }
 
     @TestMetadata("idea/testData/refactoring/inline/function")
@@ -37,7 +37,7 @@ public class InlineTestGenerated extends AbstractInlineTest {
         }
 
         public void testAllFilesPresentInFunction() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/inline/function"), Pattern.compile("^(\\w+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/refactoring/inline/function"), Pattern.compile("^(\\w+)\\.kt$"), null, true);
         }
 
         @TestMetadata("EmptyFunction.kt")
@@ -109,7 +109,7 @@ public class InlineTestGenerated extends AbstractInlineTest {
             }
 
             public void testAllFilesPresentInExpressionBody() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/inline/function/expressionBody"), Pattern.compile("^(\\w+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/refactoring/inline/function/expressionBody"), Pattern.compile("^(\\w+)\\.kt$"), null, true);
             }
 
             @TestMetadata("ComplexArgumentNotUsed.kt")
@@ -237,7 +237,7 @@ public class InlineTestGenerated extends AbstractInlineTest {
             }
 
             public void testAllFilesPresentInFromIntellij() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/inline/function/fromIntellij"), Pattern.compile("^(\\w+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/refactoring/inline/function/fromIntellij"), Pattern.compile("^(\\w+)\\.kt$"), null, true);
             }
 
             @TestMetadata("ArrayAccess.kt")
@@ -350,7 +350,7 @@ public class InlineTestGenerated extends AbstractInlineTest {
             }
 
             public void testAllFilesPresentInReturnAtEnd() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/inline/function/returnAtEnd"), Pattern.compile("^(\\w+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/refactoring/inline/function/returnAtEnd"), Pattern.compile("^(\\w+)\\.kt$"), null, true);
             }
 
             @TestMetadata("Bug1.kt")
@@ -454,7 +454,7 @@ public class InlineTestGenerated extends AbstractInlineTest {
         }
 
         public void testAllFilesPresentInInlineTypeAlias() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/inline/inlineTypeAlias"), Pattern.compile("^(\\w+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/refactoring/inline/inlineTypeAlias"), Pattern.compile("^(\\w+)\\.kt$"), null, true);
         }
 
         @TestMetadata("extensionFunctionTypeToFunctionType.kt")
@@ -497,7 +497,7 @@ public class InlineTestGenerated extends AbstractInlineTest {
         }
 
         public void testAllFilesPresentInInlineVariableOrProperty() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/inline/inlineVariableOrProperty"), Pattern.compile("^(\\w+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/refactoring/inline/inlineVariableOrProperty"), Pattern.compile("^(\\w+)\\.kt$"), null, true);
         }
 
         @TestMetadata("AppendToCollection.kt")
@@ -614,7 +614,7 @@ public class InlineTestGenerated extends AbstractInlineTest {
             }
 
             public void testAllFilesPresentInAddParenthesis() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/inline/inlineVariableOrProperty/addParenthesis"), Pattern.compile("^(\\w+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/refactoring/inline/inlineVariableOrProperty/addParenthesis"), Pattern.compile("^(\\w+)\\.kt$"), null, true);
             }
 
             @TestMetadata("ArrayAccess.kt")
@@ -787,7 +787,7 @@ public class InlineTestGenerated extends AbstractInlineTest {
             }
 
             public void testAllFilesPresentInExplicateParameterTypes() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/inline/inlineVariableOrProperty/explicateParameterTypes"), Pattern.compile("^(\\w+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/refactoring/inline/inlineVariableOrProperty/explicateParameterTypes"), Pattern.compile("^(\\w+)\\.kt$"), null, true);
             }
 
             @TestMetadata("EnoughDontExplicate.kt")
@@ -835,7 +835,7 @@ public class InlineTestGenerated extends AbstractInlineTest {
             }
 
             public void testAllFilesPresentInExplicateTypeArgument() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/inline/inlineVariableOrProperty/explicateTypeArgument"), Pattern.compile("^(\\w+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/refactoring/inline/inlineVariableOrProperty/explicateTypeArgument"), Pattern.compile("^(\\w+)\\.kt$"), null, true);
             }
 
             @TestMetadata("DeeperNestedCall.kt")
@@ -898,7 +898,7 @@ public class InlineTestGenerated extends AbstractInlineTest {
             }
 
             public void testAllFilesPresentInProperty() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/inline/inlineVariableOrProperty/property"), Pattern.compile("^(\\w+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/refactoring/inline/inlineVariableOrProperty/property"), Pattern.compile("^(\\w+)\\.kt$"), null, true);
             }
 
             @TestMetadata("Basic.kt")
@@ -965,7 +965,7 @@ public class InlineTestGenerated extends AbstractInlineTest {
                 }
 
                 public void testAllFilesPresentInAccessors() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/inline/inlineVariableOrProperty/property/accessors"), Pattern.compile("^(\\w+)\\.kt$"), true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/refactoring/inline/inlineVariableOrProperty/property/accessors"), Pattern.compile("^(\\w+)\\.kt$"), null, true);
                 }
 
                 @TestMetadata("BlockBody.kt")
@@ -1014,7 +1014,7 @@ public class InlineTestGenerated extends AbstractInlineTest {
             }
 
             public void testAllFilesPresentInStringTemplates() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/inline/inlineVariableOrProperty/stringTemplates"), Pattern.compile("^(\\w+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/refactoring/inline/inlineVariableOrProperty/stringTemplates"), Pattern.compile("^(\\w+)\\.kt$"), null, true);
             }
 
             @TestMetadata("blockEntry.kt")

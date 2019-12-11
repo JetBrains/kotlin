@@ -25,7 +25,7 @@ public class MoveTestGenerated extends AbstractMoveTest {
     }
 
     public void testAllFilesPresentInMove() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/refactoring/move"), Pattern.compile("^(.+)\\.test$"));
+        KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File("idea/testData/refactoring/move"), Pattern.compile("^(.+)\\.test$"), null);
     }
 
     @TestMetadata("java/moveClass/callableReferences/nestedToAnotherClass/nestedToAnotherClass.test")

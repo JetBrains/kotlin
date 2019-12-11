@@ -30,7 +30,7 @@ public class IrCompileKotlinAgainstKotlinTestGenerated extends AbstractIrCompile
     }
 
     public void testAllFilesPresentInCompileKotlinAgainstKotlin() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileKotlinAgainstKotlin"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileKotlinAgainstKotlin"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @TestMetadata("annotationInInterface.kt")
@@ -342,7 +342,7 @@ public class IrCompileKotlinAgainstKotlinTestGenerated extends AbstractIrCompile
         }
 
         public void testAllFilesPresentInCoroutines() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileKotlinAgainstKotlin/coroutines"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileKotlinAgainstKotlin/coroutines"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @TestMetadata("builder.kt")
@@ -370,7 +370,7 @@ public class IrCompileKotlinAgainstKotlinTestGenerated extends AbstractIrCompile
         }
 
         public void testAllFilesPresentInJvm8() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileKotlinAgainstKotlin/jvm8"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileKotlinAgainstKotlin/jvm8"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @TestMetadata("compiler/testData/compileKotlinAgainstKotlin/jvm8/defaults")
@@ -382,7 +382,7 @@ public class IrCompileKotlinAgainstKotlinTestGenerated extends AbstractIrCompile
             }
 
             public void testAllFilesPresentInDefaults() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileKotlinAgainstKotlin/jvm8/defaults"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileKotlinAgainstKotlin/jvm8/defaults"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
             }
 
             @TestMetadata("superCall.kt")
@@ -425,7 +425,7 @@ public class IrCompileKotlinAgainstKotlinTestGenerated extends AbstractIrCompile
             }
 
             public void testAllFilesPresentInJvm8against6() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileKotlinAgainstKotlin/jvm8/jvm8against6"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileKotlinAgainstKotlin/jvm8/jvm8against6"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
             }
 
             @TestMetadata("jdk8Against6.kt")
@@ -467,7 +467,7 @@ public class IrCompileKotlinAgainstKotlinTestGenerated extends AbstractIrCompile
                 }
 
                 public void testAllFilesPresentInDelegation() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileKotlinAgainstKotlin/jvm8/jvm8against6/delegation"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileKotlinAgainstKotlin/jvm8/jvm8against6/delegation"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
                 }
 
                 @TestMetadata("diamond.kt")

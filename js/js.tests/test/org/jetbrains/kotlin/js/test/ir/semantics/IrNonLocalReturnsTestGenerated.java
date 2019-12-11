@@ -26,7 +26,7 @@ public class IrNonLocalReturnsTestGenerated extends AbstractIrNonLocalReturnsTes
     }
 
     public void testAllFilesPresentInNonLocalReturns() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS_IR, true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
     @TestMetadata("explicitLocalReturn.kt")
@@ -103,7 +103,7 @@ public class IrNonLocalReturnsTestGenerated extends AbstractIrNonLocalReturnsTes
         }
 
         public void testAllFilesPresentInDeparenthesize() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/deparenthesize"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS_IR, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/deparenthesize"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
         }
 
         @TestMetadata("bracket.kt")
@@ -126,7 +126,7 @@ public class IrNonLocalReturnsTestGenerated extends AbstractIrNonLocalReturnsTes
         }
 
         public void testAllFilesPresentInTryFinally() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS_IR, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
         }
 
         @TestMetadata("kt16417.kt")
@@ -203,7 +203,7 @@ public class IrNonLocalReturnsTestGenerated extends AbstractIrNonLocalReturnsTes
             }
 
             public void testAllFilesPresentInCallSite() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/callSite"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS_IR, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/callSite"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
             }
 
             @TestMetadata("callSite.kt")
@@ -246,7 +246,7 @@ public class IrNonLocalReturnsTestGenerated extends AbstractIrNonLocalReturnsTes
             }
 
             public void testAllFilesPresentInChained() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/chained"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS_IR, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/chained"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
             }
 
             @TestMetadata("finallyInFinally.kt")
@@ -299,7 +299,7 @@ public class IrNonLocalReturnsTestGenerated extends AbstractIrNonLocalReturnsTes
             }
 
             public void testAllFilesPresentInDeclSite() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS_IR, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
             }
 
             @TestMetadata("complex.kt")
@@ -372,7 +372,7 @@ public class IrNonLocalReturnsTestGenerated extends AbstractIrNonLocalReturnsTes
             }
 
             public void testAllFilesPresentInExceptionTable() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS_IR, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
             }
 
             @TestMetadata("break.kt")
@@ -485,7 +485,7 @@ public class IrNonLocalReturnsTestGenerated extends AbstractIrNonLocalReturnsTes
             }
 
             public void testAllFilesPresentInVariables() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/variables"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS_IR, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/variables"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
             }
 
             @TestMetadata("kt7792.kt")

@@ -25,7 +25,7 @@ public class ReferenceToCompiledKotlinResolveInJavaTestGenerated extends Abstrac
     }
 
     public void testAllFilesPresentInBinaryAndSource() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/resolve/referenceInJava/binaryAndSource"), Pattern.compile("^(.+)\\.java$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/resolve/referenceInJava/binaryAndSource"), Pattern.compile("^(.+)\\.java$"), null, true);
     }
 
     @TestMetadata("Class.java")

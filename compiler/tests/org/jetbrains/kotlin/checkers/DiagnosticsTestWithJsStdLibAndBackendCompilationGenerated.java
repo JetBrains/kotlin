@@ -25,7 +25,7 @@ public class DiagnosticsTestWithJsStdLibAndBackendCompilationGenerated extends A
     }
 
     public void testAllFilesPresentInTestsWithJsStdLibAndBackendCompilation() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/inline")
@@ -37,7 +37,7 @@ public class DiagnosticsTestWithJsStdLibAndBackendCompilationGenerated extends A
         }
 
         public void testAllFilesPresentInInline() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/inline"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/inline"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("recursionCycle.kt")
@@ -70,7 +70,7 @@ public class DiagnosticsTestWithJsStdLibAndBackendCompilationGenerated extends A
         }
 
         public void testAllFilesPresentInUnsupportedFeatures() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/unsupportedFeatures"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/unsupportedFeatures"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("annotations.kt")

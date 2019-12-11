@@ -27,7 +27,7 @@ public class LoadJava8UsingJavacTestGenerated extends AbstractLoadJava8UsingJava
         }
 
         public void testAllFilesPresentInCompiledJava() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava8/compiledJava"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava8/compiledJava"), Pattern.compile("^(.+)\\.java$"), null, true);
         }
 
         @TestMetadata("InnerClassTypeAnnotation.java")
@@ -65,7 +65,7 @@ public class LoadJava8UsingJavacTestGenerated extends AbstractLoadJava8UsingJava
         }
 
         public void testAllFilesPresentInSourceJava() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava8/sourceJava"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava8/sourceJava"), Pattern.compile("^(.+)\\.java$"), null, true);
         }
 
         @TestMetadata("MapRemove.java")

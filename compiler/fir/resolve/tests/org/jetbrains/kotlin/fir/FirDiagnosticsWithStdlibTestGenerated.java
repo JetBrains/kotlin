@@ -30,7 +30,7 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
     }
 
     public void testAllFilesPresentInStdlib() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/stdlib"), Pattern.compile("^([^.]+)\\.kt$"), true, "contracts");
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/stdlib"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "contracts");
     }
 
     @TestMetadata("anonymousInDelegate.kt")
@@ -227,7 +227,7 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         }
 
         public void testAllFilesPresentInCallableReferences() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/stdlib/callableReferences"), Pattern.compile("^([^.]+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/stdlib/callableReferences"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("beyoundCalls.kt")
@@ -339,7 +339,7 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
             }
 
             public void testAllFilesPresentInFromBasicDiagnosticTests() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/stdlib/callableReferences/fromBasicDiagnosticTests"), Pattern.compile("^([^.]+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/stdlib/callableReferences/fromBasicDiagnosticTests"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
             }
 
             @TestMetadata("ambiguityWhenNoApplicableCallableReferenceCandidate.kt")
@@ -418,7 +418,7 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         }
 
         public void testAllFilesPresentInInference() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/stdlib/inference"), Pattern.compile("^([^.]+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/stdlib/inference"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("complexConstraintSystem.kt")
@@ -436,7 +436,7 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         }
 
         public void testAllFilesPresentInJ_k() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/stdlib/j+k"), Pattern.compile("^([^.]+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/stdlib/j+k"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("complexFlexibleInference.kt")
@@ -579,7 +579,7 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         }
 
         public void testAllFilesPresentInProblems() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/stdlib/problems"), Pattern.compile("^([^.]+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/stdlib/problems"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("cloneArray.kt")

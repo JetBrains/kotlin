@@ -25,7 +25,7 @@ public class ResolveTestGenerated extends AbstractResolveTest {
     }
 
     public void testAllFilesPresentInResolve() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolve"), Pattern.compile("^(.+)\\.resolve$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/resolve"), Pattern.compile("^(.+)\\.resolve$"), null, true);
     }
 
     @TestMetadata("Basic.resolve")
@@ -177,7 +177,7 @@ public class ResolveTestGenerated extends AbstractResolveTest {
         }
 
         public void testAllFilesPresentInCandidatesPriority() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolve/candidatesPriority"), Pattern.compile("^(.+)\\.resolve$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/resolve/candidatesPriority"), Pattern.compile("^(.+)\\.resolve$"), null, true);
         }
 
         @TestMetadata("classObjectOuterResolve.resolve")
@@ -275,7 +275,7 @@ public class ResolveTestGenerated extends AbstractResolveTest {
         }
 
         public void testAllFilesPresentInDelegatedProperty() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolve/delegatedProperty"), Pattern.compile("^(.+)\\.resolve$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/resolve/delegatedProperty"), Pattern.compile("^(.+)\\.resolve$"), null, true);
         }
 
         @TestMetadata("delegationByCall.resolve")
@@ -323,7 +323,7 @@ public class ResolveTestGenerated extends AbstractResolveTest {
         }
 
         public void testAllFilesPresentInImports() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolve/imports"), Pattern.compile("^(.+)\\.resolve$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/resolve/imports"), Pattern.compile("^(.+)\\.resolve$"), null, true);
         }
 
         @TestMetadata("ImportConflictAllPackage.resolve")
@@ -396,7 +396,7 @@ public class ResolveTestGenerated extends AbstractResolveTest {
         }
 
         public void testAllFilesPresentInLabels() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolve/labels"), Pattern.compile("^(.+)\\.resolve$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/resolve/labels"), Pattern.compile("^(.+)\\.resolve$"), null, true);
         }
 
         @TestMetadata("labelForPropertyInGetter.resolve")
@@ -419,7 +419,7 @@ public class ResolveTestGenerated extends AbstractResolveTest {
         }
 
         public void testAllFilesPresentInRegressions() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolve/regressions"), Pattern.compile("^(.+)\\.resolve$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/resolve/regressions"), Pattern.compile("^(.+)\\.resolve$"), null, true);
         }
 
         @TestMetadata("kt300.resolve")
@@ -442,7 +442,7 @@ public class ResolveTestGenerated extends AbstractResolveTest {
         }
 
         public void testAllFilesPresentInVarargs() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolve/varargs"), Pattern.compile("^(.+)\\.resolve$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/resolve/varargs"), Pattern.compile("^(.+)\\.resolve$"), null, true);
         }
 
         @TestMetadata("MoreSpecificVarargsOfEqualLength.resolve")

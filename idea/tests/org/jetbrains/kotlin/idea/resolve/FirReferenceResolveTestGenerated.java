@@ -25,7 +25,7 @@ public class FirReferenceResolveTestGenerated extends AbstractFirReferenceResolv
     }
 
     public void testAllFilesPresentInReferences() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/resolve/references"), Pattern.compile("^([^.]+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/resolve/references"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
     }
 
     @TestMetadata("AnnotationForClass.kt")
@@ -412,7 +412,7 @@ public class FirReferenceResolveTestGenerated extends AbstractFirReferenceResolv
         }
 
         public void testAllFilesPresentInDelegatedPropertyAccessors() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/resolve/references/delegatedPropertyAccessors"), Pattern.compile("^([^.]+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/resolve/references/delegatedPropertyAccessors"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("unresolved.kt")
@@ -429,7 +429,7 @@ public class FirReferenceResolveTestGenerated extends AbstractFirReferenceResolv
             }
 
             public void testAllFilesPresentInInSource() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/resolve/references/delegatedPropertyAccessors/inSource"), Pattern.compile("^([^.]+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/resolve/references/delegatedPropertyAccessors/inSource"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
             }
 
             @TestMetadata("getExtension.kt")
@@ -462,7 +462,7 @@ public class FirReferenceResolveTestGenerated extends AbstractFirReferenceResolv
             }
 
             public void testAllFilesPresentInInStandardLibrary() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/resolve/references/delegatedPropertyAccessors/inStandardLibrary"), Pattern.compile("^([^.]+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/resolve/references/delegatedPropertyAccessors/inStandardLibrary"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
             }
 
             @TestMetadata("lazy.kt")
@@ -486,7 +486,7 @@ public class FirReferenceResolveTestGenerated extends AbstractFirReferenceResolv
         }
 
         public void testAllFilesPresentInForLoopIn() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/resolve/references/forLoopIn"), Pattern.compile("^([^.]+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/resolve/references/forLoopIn"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("unresolvedIterator.kt")
@@ -503,7 +503,7 @@ public class FirReferenceResolveTestGenerated extends AbstractFirReferenceResolv
             }
 
             public void testAllFilesPresentInInBuiltIns() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/resolve/references/forLoopIn/inBuiltIns"), Pattern.compile("^([^.]+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/resolve/references/forLoopIn/inBuiltIns"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
             }
 
             @TestMetadata("extension.kt")
@@ -526,7 +526,7 @@ public class FirReferenceResolveTestGenerated extends AbstractFirReferenceResolv
             }
 
             public void testAllFilesPresentInInLibrary() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/resolve/references/forLoopIn/inLibrary"), Pattern.compile("^([^.]+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/resolve/references/forLoopIn/inLibrary"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
             }
 
             @TestMetadata("extension.kt")
@@ -549,7 +549,7 @@ public class FirReferenceResolveTestGenerated extends AbstractFirReferenceResolv
             }
 
             public void testAllFilesPresentInInSource() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/resolve/references/forLoopIn/inSource"), Pattern.compile("^([^.]+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/resolve/references/forLoopIn/inSource"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
             }
 
             @TestMetadata("allMembers.kt")
@@ -573,7 +573,7 @@ public class FirReferenceResolveTestGenerated extends AbstractFirReferenceResolv
         }
 
         public void testAllFilesPresentInInvoke() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/resolve/references/invoke"), Pattern.compile("^([^.]+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/resolve/references/invoke"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("lambdaAndParens.kt")

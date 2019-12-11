@@ -25,7 +25,7 @@ public class ArgumentParsingTestGenerated extends AbstractArgumentParsingTest {
     }
 
     public void testAllFilesPresentInArgumentParsing() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/kapt3/kapt3-cli/testData/argumentParsing"), Pattern.compile("^(.+)\\.txt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kapt3/kapt3-cli/testData/argumentParsing"), Pattern.compile("^(.+)\\.txt$"), null, true);
     }
 
     @TestMetadata("errorFlag.txt")

@@ -27,7 +27,7 @@ public class JavacFieldResolutionTestGenerated extends AbstractJavacFieldResolut
         }
 
         public void testAllFilesPresentInTests() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/javac/fieldsResolution/tests"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/javac/fieldsResolution/tests"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("AsteriskStaticImportsAmbiguity.kt")
@@ -100,7 +100,7 @@ public class JavacFieldResolutionTestGenerated extends AbstractJavacFieldResolut
         }
 
         public void testAllFilesPresentInTestsWithoutJavac() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/javac/fieldsResolution/tests"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/javac/fieldsResolution/tests"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("AsteriskStaticImportsAmbiguity.kt")

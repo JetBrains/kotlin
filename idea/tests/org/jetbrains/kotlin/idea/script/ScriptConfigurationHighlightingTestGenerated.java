@@ -37,7 +37,7 @@ public class ScriptConfigurationHighlightingTestGenerated extends AbstractScript
         }
 
         public void testAllFilesPresentInHighlighting() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/script/definition/highlighting"), Pattern.compile("^([^\\.]+)$"), false);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/script/definition/highlighting"), Pattern.compile("^([^\\.]+)$"), null, false);
         }
 
         @TestMetadata("asyncResolver")
@@ -145,7 +145,7 @@ public class ScriptConfigurationHighlightingTestGenerated extends AbstractScript
         }
 
         public void testAllFilesPresentInComplex() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/script/definition/complex"), Pattern.compile("^([^\\.]+)$"), false);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/script/definition/complex"), Pattern.compile("^([^\\.]+)$"), null, false);
         }
 
         @TestMetadata("errorResolver")

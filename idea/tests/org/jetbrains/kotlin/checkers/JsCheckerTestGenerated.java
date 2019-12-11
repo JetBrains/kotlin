@@ -25,7 +25,7 @@ public class JsCheckerTestGenerated extends AbstractJsCheckerTest {
     }
 
     public void testAllFilesPresentInJs() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/js"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/checker/js"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("basic.kt")

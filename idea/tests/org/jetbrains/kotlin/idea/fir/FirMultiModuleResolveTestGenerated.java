@@ -25,7 +25,7 @@ public class FirMultiModuleResolveTestGenerated extends AbstractFirMultiModuleRe
     }
 
     public void testAllFilesPresentInMultiModule() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/fir/multiModule"), Pattern.compile("^([^\\.]+)$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/fir/multiModule"), Pattern.compile("^([^\\.]+)$"), null, false);
     }
 
     @TestMetadata("basic")

@@ -25,7 +25,7 @@ public class AnnotationParameterTestGenerated extends AbstractAnnotationParamete
     }
 
     public void testAllFilesPresentInParameters() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolveAnnotations/parameters"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/resolveAnnotations/parameters"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("byte.kt")
@@ -72,7 +72,7 @@ public class AnnotationParameterTestGenerated extends AbstractAnnotationParamete
         }
 
         public void testAllFilesPresentInExpressions() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolveAnnotations/parameters/expressions"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/resolveAnnotations/parameters/expressions"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("andAnd.kt")

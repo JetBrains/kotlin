@@ -25,7 +25,7 @@ public class LoadJavaWithPsiClassReadingTestGenerated extends AbstractLoadJavaWi
     }
 
     public void testAllFilesPresentInCompiledJava() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledJava"), Pattern.compile("^(.+)\\.java$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava"), Pattern.compile("^(.+)\\.java$"), null, true);
     }
 
     @TestMetadata("ArrayTypeVariance.java")
@@ -262,7 +262,7 @@ public class LoadJavaWithPsiClassReadingTestGenerated extends AbstractLoadJavaWi
         }
 
         public void testAllFilesPresentInAnnotations() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledJava/annotations"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/annotations"), Pattern.compile("^(.+)\\.java$"), null, true);
         }
 
         @TestMetadata("AnnotatedAnnotation.java")
@@ -465,7 +465,7 @@ public class LoadJavaWithPsiClassReadingTestGenerated extends AbstractLoadJavaWi
         }
 
         public void testAllFilesPresentInConstructor() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledJava/constructor"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/constructor"), Pattern.compile("^(.+)\\.java$"), null, true);
         }
 
         @TestMetadata("ConstructorGenericDeep.java")
@@ -493,7 +493,7 @@ public class LoadJavaWithPsiClassReadingTestGenerated extends AbstractLoadJavaWi
         }
 
         public void testAllFilesPresentInEnum() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledJava/enum"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/enum"), Pattern.compile("^(.+)\\.java$"), null, true);
         }
 
         @TestMetadata("EnumMembers.java")
@@ -521,7 +521,7 @@ public class LoadJavaWithPsiClassReadingTestGenerated extends AbstractLoadJavaWi
         }
 
         public void testAllFilesPresentInJavaBean() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledJava/javaBean"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/javaBean"), Pattern.compile("^(.+)\\.java$"), null, true);
         }
 
         @TestMetadata("DifferentGetterAndSetter.java")
@@ -569,7 +569,7 @@ public class LoadJavaWithPsiClassReadingTestGenerated extends AbstractLoadJavaWi
         }
 
         public void testAllFilesPresentInKotlinSignature() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledJava/kotlinSignature"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/kotlinSignature"), Pattern.compile("^(.+)\\.java$"), null, true);
         }
 
         @TestMetadata("ArrayType.java")
@@ -656,7 +656,7 @@ public class LoadJavaWithPsiClassReadingTestGenerated extends AbstractLoadJavaWi
             }
 
             public void testAllFilesPresentInError() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledJava/kotlinSignature/error"), Pattern.compile("^(.+)\\.java$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/kotlinSignature/error"), Pattern.compile("^(.+)\\.java$"), null, true);
             }
 
             @TestMetadata("WrongProjectionKind.java")
@@ -689,7 +689,7 @@ public class LoadJavaWithPsiClassReadingTestGenerated extends AbstractLoadJavaWi
             }
 
             public void testAllFilesPresentInPropagation() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation"), Pattern.compile("^(.+)\\.java$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation"), Pattern.compile("^(.+)\\.java$"), null, true);
             }
 
             @TestMetadata("PropagateTypeArgumentNullable.java")
@@ -706,7 +706,7 @@ public class LoadJavaWithPsiClassReadingTestGenerated extends AbstractLoadJavaWi
                 }
 
                 public void testAllFilesPresentInParameter() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/parameter"), Pattern.compile("^(.+)\\.java$"), true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/parameter"), Pattern.compile("^(.+)\\.java$"), null, true);
                 }
 
                 @TestMetadata("ChangeProjectionKind1.java")
@@ -859,7 +859,7 @@ public class LoadJavaWithPsiClassReadingTestGenerated extends AbstractLoadJavaWi
                 }
 
                 public void testAllFilesPresentInReturn() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return"), Pattern.compile("^(.+)\\.java$"), true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return"), Pattern.compile("^(.+)\\.java$"), null, true);
                 }
 
                 @TestMetadata("CantMakeImmutableInSubclass.java")
@@ -1012,7 +1012,7 @@ public class LoadJavaWithPsiClassReadingTestGenerated extends AbstractLoadJavaWi
                 }
 
                 public void testAllFilesPresentInTypeParameter() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/typeParameter"), Pattern.compile("^(.+)\\.java$"), true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/typeParameter"), Pattern.compile("^(.+)\\.java$"), null, true);
                 }
 
                 @TestMetadata("InheritNullability.java")
@@ -1062,7 +1062,7 @@ public class LoadJavaWithPsiClassReadingTestGenerated extends AbstractLoadJavaWi
         }
 
         public void testAllFilesPresentInLibrary() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledJava/library"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/library"), Pattern.compile("^(.+)\\.java$"), null, true);
         }
 
         @TestMetadata("LoadIterable.java")
@@ -1090,7 +1090,7 @@ public class LoadJavaWithPsiClassReadingTestGenerated extends AbstractLoadJavaWi
         }
 
         public void testAllFilesPresentInModality() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledJava/modality"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/modality"), Pattern.compile("^(.+)\\.java$"), null, true);
         }
 
         @TestMetadata("ModalityOfFakeOverrides.java")
@@ -1108,7 +1108,7 @@ public class LoadJavaWithPsiClassReadingTestGenerated extends AbstractLoadJavaWi
         }
 
         public void testAllFilesPresentInMutability() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledJava/mutability"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/mutability"), Pattern.compile("^(.+)\\.java$"), null, true);
         }
 
         @TestMetadata("LoadIterable.java")
@@ -1146,7 +1146,7 @@ public class LoadJavaWithPsiClassReadingTestGenerated extends AbstractLoadJavaWi
         }
 
         public void testAllFilesPresentInNotNull() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledJava/notNull"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/notNull"), Pattern.compile("^(.+)\\.java$"), null, true);
         }
 
         @TestMetadata("NotNullField.java")
@@ -1184,7 +1184,7 @@ public class LoadJavaWithPsiClassReadingTestGenerated extends AbstractLoadJavaWi
         }
 
         public void testAllFilesPresentInProtectedPackage() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledJava/protectedPackage"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/protectedPackage"), Pattern.compile("^(.+)\\.java$"), null, true);
         }
 
         @TestMetadata("ProtectedPackageConstructor.java")
@@ -1212,7 +1212,7 @@ public class LoadJavaWithPsiClassReadingTestGenerated extends AbstractLoadJavaWi
         }
 
         public void testAllFilesPresentInProtectedStatic() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledJava/protectedStatic"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/protectedStatic"), Pattern.compile("^(.+)\\.java$"), null, true);
         }
 
         @TestMetadata("ConstructorInProtectedStaticNestedClass.java")
@@ -1230,7 +1230,7 @@ public class LoadJavaWithPsiClassReadingTestGenerated extends AbstractLoadJavaWi
         }
 
         public void testAllFilesPresentInRendering() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledJava/rendering"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/rendering"), Pattern.compile("^(.+)\\.java$"), null, true);
         }
 
         @TestMetadata("Rendering.java")
@@ -1248,7 +1248,7 @@ public class LoadJavaWithPsiClassReadingTestGenerated extends AbstractLoadJavaWi
         }
 
         public void testAllFilesPresentInSam() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledJava/sam"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/sam"), Pattern.compile("^(.+)\\.java$"), null, true);
         }
 
         @TestMetadata("Comparator.java")
@@ -1340,7 +1340,7 @@ public class LoadJavaWithPsiClassReadingTestGenerated extends AbstractLoadJavaWi
             }
 
             public void testAllFilesPresentInAdapters() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledJava/sam/adapters"), Pattern.compile("^(.+)\\.java$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/sam/adapters"), Pattern.compile("^(.+)\\.java$"), null, true);
             }
 
             @TestMetadata("AmbiguousAdapters.java")
@@ -1427,7 +1427,7 @@ public class LoadJavaWithPsiClassReadingTestGenerated extends AbstractLoadJavaWi
                 }
 
                 public void testAllFilesPresentInInheritance() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledJava/sam/adapters/inheritance"), Pattern.compile("^(.+)\\.java$"), true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/sam/adapters/inheritance"), Pattern.compile("^(.+)\\.java$"), null, true);
                 }
 
                 @TestMetadata("InheritedAdapterAndDeclaration.java")
@@ -1487,7 +1487,7 @@ public class LoadJavaWithPsiClassReadingTestGenerated extends AbstractLoadJavaWi
         }
 
         public void testAllFilesPresentInSignatureAnnotations() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledJava/signatureAnnotations"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/signatureAnnotations"), Pattern.compile("^(.+)\\.java$"), null, true);
         }
 
         @TestMetadata("StableName.java")
@@ -1505,7 +1505,7 @@ public class LoadJavaWithPsiClassReadingTestGenerated extends AbstractLoadJavaWi
         }
 
         public void testAllFilesPresentInSignaturePropagation() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledJava/signaturePropagation"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/signaturePropagation"), Pattern.compile("^(.+)\\.java$"), null, true);
         }
 
         @TestMetadata("ArraysInSubtypes.java")
@@ -1563,7 +1563,7 @@ public class LoadJavaWithPsiClassReadingTestGenerated extends AbstractLoadJavaWi
         }
 
         public void testAllFilesPresentInStatic() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledJava/static"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/static"), Pattern.compile("^(.+)\\.java$"), null, true);
         }
 
         @TestMetadata("DeeplyInnerClass.java")
@@ -1631,7 +1631,7 @@ public class LoadJavaWithPsiClassReadingTestGenerated extends AbstractLoadJavaWi
         }
 
         public void testAllFilesPresentInVararg() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledJava/vararg"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/vararg"), Pattern.compile("^(.+)\\.java$"), null, true);
         }
 
         @TestMetadata("VarargInt.java")

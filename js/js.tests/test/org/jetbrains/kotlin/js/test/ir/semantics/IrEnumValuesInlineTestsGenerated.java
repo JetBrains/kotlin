@@ -26,7 +26,7 @@ public class IrEnumValuesInlineTestsGenerated extends AbstractIrEnumValuesInline
     }
 
     public void testAllFilesPresentInEnum() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/enum"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS_IR, true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/enum"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
     @TestMetadata("kt10569.kt")

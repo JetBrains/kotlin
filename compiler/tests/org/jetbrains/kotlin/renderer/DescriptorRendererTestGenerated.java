@@ -25,7 +25,7 @@ public class DescriptorRendererTestGenerated extends AbstractDescriptorRendererT
     }
 
     public void testAllFilesPresentInRenderer() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/renderer"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/renderer"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("Classes.kt")

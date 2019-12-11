@@ -25,7 +25,7 @@ public class IdeReplCompletionTestGenerated extends AbstractIdeReplCompletionTes
     }
 
     public void testAllFilesPresentInCompletion() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/repl/completion"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/repl/completion"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("builtInMember.kt")

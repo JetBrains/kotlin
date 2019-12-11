@@ -25,7 +25,7 @@ public class AndroidSyntheticPropertyDescriptorTestGenerated extends AbstractAnd
     }
 
     public void testAllFilesPresentInDescriptors() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/android-extensions/android-extensions-compiler/testData/descriptors"), Pattern.compile("^([^\\.]+)$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/android-extensions/android-extensions-compiler/testData/descriptors"), Pattern.compile("^([^\\.]+)$"), null, false);
     }
 
     @TestMetadata("escapedLayoutName")

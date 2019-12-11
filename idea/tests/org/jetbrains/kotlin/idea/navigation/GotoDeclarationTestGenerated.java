@@ -25,7 +25,7 @@ public class GotoDeclarationTestGenerated extends AbstractGotoDeclarationTest {
     }
 
     public void testAllFilesPresentInGotoDeclaration() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/navigation/gotoDeclaration"), Pattern.compile("^(.+)\\.test$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/navigation/gotoDeclaration"), Pattern.compile("^(.+)\\.test$"), null, true);
     }
 
     @TestMetadata("itExtensionLambda.test")

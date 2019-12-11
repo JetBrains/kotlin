@@ -25,7 +25,7 @@ public class SmartCompletionWeigherTestGenerated extends AbstractSmartCompletion
     }
 
     public void testAllFilesPresentInSmart() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/weighers/smart"), Pattern.compile("^([^.]+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-completion/testData/weighers/smart"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
     }
 
     @TestMetadata("BooleanExpected.kt")

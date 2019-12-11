@@ -50,7 +50,7 @@ public class MultiModuleLineMarkerTestGenerated extends AbstractMultiModuleLineM
     }
 
     public void testAllFilesPresentInMultiModuleLineMarker() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/multiModuleLineMarker"), Pattern.compile("^([^\\.]+)$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/multiModuleLineMarker"), Pattern.compile("^([^\\.]+)$"), null, false);
     }
 
     @TestMetadata("expectConstructorWithProperties")

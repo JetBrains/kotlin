@@ -27,7 +27,7 @@ public class AndroidBoxTestGenerated extends AbstractAndroidBoxTest {
         }
 
         public void testAllFilesPresentInAndroid() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/android-extensions/android-extensions-compiler/testData/codegen/android"), Pattern.compile("^([^\\.]+)$"), false);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/android-extensions/android-extensions-compiler/testData/codegen/android"), Pattern.compile("^([^\\.]+)$"), null, false);
         }
 
         @TestMetadata("androidEntity")
@@ -90,7 +90,7 @@ public class AndroidBoxTestGenerated extends AbstractAndroidBoxTest {
         }
 
         public void testAllFilesPresentInInvoke() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/android-extensions/android-extensions-compiler/testData/codegen/android"), Pattern.compile("^([^\\.]+)$"), false);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/android-extensions/android-extensions-compiler/testData/codegen/android"), Pattern.compile("^([^\\.]+)$"), null, false);
         }
 
         @TestMetadata("androidEntity")

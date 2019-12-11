@@ -25,7 +25,7 @@ public class CommonConstraintCollectorTestGenerated extends AbstractCommonConstr
     }
 
     public void testAllFilesPresentInCommon() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/inference/common"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("nj2k/testData/inference/common"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("arrayAssignment.kt")

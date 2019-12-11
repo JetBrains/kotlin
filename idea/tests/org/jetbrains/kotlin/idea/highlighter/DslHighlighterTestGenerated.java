@@ -25,7 +25,7 @@ public class DslHighlighterTestGenerated extends AbstractDslHighlighterTest {
     }
 
     public void testAllFilesPresentInDslHighlighter() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/dslHighlighter"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/dslHighlighter"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("functionCalls.kt")

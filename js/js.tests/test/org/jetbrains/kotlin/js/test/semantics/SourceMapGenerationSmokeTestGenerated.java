@@ -26,7 +26,7 @@ public class SourceMapGenerationSmokeTestGenerated extends AbstractSourceMapGene
     }
 
     public void testAllFilesPresentInSourcemap() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/sourcemap"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS, true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/sourcemap"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS, true);
     }
 
     @TestMetadata("binaryOperation.kt")

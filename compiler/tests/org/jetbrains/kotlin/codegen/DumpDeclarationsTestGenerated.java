@@ -25,7 +25,7 @@ public class DumpDeclarationsTestGenerated extends AbstractDumpDeclarationsTest 
     }
 
     public void testAllFilesPresentInDumpDeclarations() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/dumpDeclarations"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/dumpDeclarations"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("annotation.kt")

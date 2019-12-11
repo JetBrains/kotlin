@@ -25,7 +25,7 @@ public class TopLevelMembersInvocationTestGenerated extends AbstractTopLevelMemb
     }
 
     public void testAllFilesPresentInTopLevelMemberInvocation() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/topLevelMemberInvocation"), Pattern.compile("^([^\\.]+)$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/topLevelMemberInvocation"), Pattern.compile("^([^\\.]+)$"), null, false);
     }
 
     @TestMetadata("extensionFunction")

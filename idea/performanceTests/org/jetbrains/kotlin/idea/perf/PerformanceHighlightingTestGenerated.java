@@ -25,7 +25,7 @@ public class PerformanceHighlightingTestGenerated extends AbstractPerformanceHig
     }
 
     public void testAllFilesPresentInHighlighter() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/highlighter"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/highlighter"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("Annotations.kt")
@@ -167,7 +167,7 @@ public class PerformanceHighlightingTestGenerated extends AbstractPerformanceHig
         }
 
         public void testAllFilesPresentInDeprecated() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/highlighter/deprecated"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/highlighter/deprecated"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("Class.kt")

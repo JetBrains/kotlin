@@ -30,7 +30,7 @@ public class ScriptCodegenTestGenerated extends AbstractScriptCodegenTest {
     }
 
     public void testAllFilesPresentInScript() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/script"), Pattern.compile("^(.+)\\.kts$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/script"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
 
     @TestMetadata("classLiteralInsideFunction.kts")

@@ -26,7 +26,7 @@ public class IrLineNumberTestGenerated extends AbstractIrLineNumberTest {
     }
 
     public void testAllFilesPresentInLineNumber() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/lineNumber"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/lineNumber"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @TestMetadata("anonymousFunction.kt")
@@ -128,7 +128,7 @@ public class IrLineNumberTestGenerated extends AbstractIrLineNumberTest {
         }
 
         public void testAllFilesPresentInCustom() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/lineNumber/custom"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/lineNumber/custom"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @TestMetadata("beforeGotoToWhileStart.kt")

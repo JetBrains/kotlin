@@ -27,7 +27,7 @@ public class SelectExpressionForDebuggerTestGenerated extends AbstractSelectExpr
         }
 
         public void testAllFilesPresentInSelectExpression() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/selectExpression"), Pattern.compile("^(.+)\\.kt$"), false);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/selectExpression"), Pattern.compile("^(.+)\\.kt$"), null, false);
         }
 
         @TestMetadata("annotation.kt")
@@ -230,7 +230,7 @@ public class SelectExpressionForDebuggerTestGenerated extends AbstractSelectExpr
         }
 
         public void testAllFilesPresentInDisallowMethodCalls() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/selectExpression/disallowMethodCalls"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/selectExpression/disallowMethodCalls"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("binaryExpression.kt")

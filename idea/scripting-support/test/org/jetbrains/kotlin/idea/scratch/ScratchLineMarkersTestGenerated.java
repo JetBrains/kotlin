@@ -25,7 +25,7 @@ public class ScratchLineMarkersTestGenerated extends AbstractScratchLineMarkersT
     }
 
     public void testAllFilesPresentInLineMarker() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/scripting-support/testData/scratch/lineMarker"), Pattern.compile("^(.+)\\.(kt|kts)$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/scripting-support/testData/scratch/lineMarker"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
     }
 
     @TestMetadata("binaryExpression.kts")

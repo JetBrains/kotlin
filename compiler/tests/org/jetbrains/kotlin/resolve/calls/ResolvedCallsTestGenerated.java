@@ -25,7 +25,7 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
     }
 
     public void testAllFilesPresentInResolvedCalls() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls"), Pattern.compile("^(.+)\\.kt$"), true, "enhancedSignatures");
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/resolvedCalls"), Pattern.compile("^(.+)\\.kt$"), null, true, "enhancedSignatures");
     }
 
     @TestMetadata("explicitReceiverIsDispatchReceiver.kt")
@@ -77,7 +77,7 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
         }
 
         public void testAllFilesPresentInArguments() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/arguments"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/resolvedCalls/arguments"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("compiler/testData/resolvedCalls/arguments/functionLiterals")
@@ -89,7 +89,7 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
             }
 
             public void testAllFilesPresentInFunctionLiterals() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/arguments/functionLiterals"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/resolvedCalls/arguments/functionLiterals"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("chainedLambdas.kt")
@@ -132,7 +132,7 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
             }
 
             public void testAllFilesPresentInGenericCalls() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/arguments/genericCalls"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/resolvedCalls/arguments/genericCalls"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("inferredParameter.kt")
@@ -165,7 +165,7 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
             }
 
             public void testAllFilesPresentInNamedArguments() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/arguments/namedArguments"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/resolvedCalls/arguments/namedArguments"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("positionedAfterNamed.kt")
@@ -188,7 +188,7 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
             }
 
             public void testAllFilesPresentInOneArgument() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/arguments/oneArgument"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/resolvedCalls/arguments/oneArgument"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("argumentHasNoType.kt")
@@ -221,7 +221,7 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
             }
 
             public void testAllFilesPresentInRealExamples() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/arguments/realExamples"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/resolvedCalls/arguments/realExamples"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("emptyList.kt")
@@ -244,7 +244,7 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
             }
 
             public void testAllFilesPresentInSeveralCandidates() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/arguments/severalCandidates"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/resolvedCalls/arguments/severalCandidates"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("mostSpecific.kt")
@@ -263,7 +263,7 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
         }
 
         public void testAllFilesPresentInDifferentCallElements() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/differentCallElements"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/resolvedCalls/differentCallElements"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("annotationCall.kt")
@@ -291,7 +291,7 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
         }
 
         public void testAllFilesPresentInDynamic() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/dynamic"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/resolvedCalls/dynamic"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("explicitReceiverIsDispatchReceiver.kt")
@@ -334,7 +334,7 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
         }
 
         public void testAllFilesPresentInFunctionTypes() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/functionTypes"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/resolvedCalls/functionTypes"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("invokeForExtensionFunctionType.kt")
@@ -377,7 +377,7 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
         }
 
         public void testAllFilesPresentInInvoke() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/invoke"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/resolvedCalls/invoke"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("bothReceivers.kt")
@@ -440,7 +440,7 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
         }
 
         public void testAllFilesPresentInObjectsAndClassObjects() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/objectsAndClassObjects"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/resolvedCalls/objectsAndClassObjects"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("classObject.kt")
@@ -468,7 +468,7 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
         }
 
         public void testAllFilesPresentInRealExamples() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/realExamples"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/resolvedCalls/realExamples"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("stringPlusInBuilders.kt")
@@ -486,7 +486,7 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
         }
 
         public void testAllFilesPresentInResolve() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/resolve"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/resolvedCalls/resolve"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("mostSpecificUninferredParam.kt")
@@ -509,7 +509,7 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
         }
 
         public void testAllFilesPresentInSecondaryConstructors() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/secondaryConstructors"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/resolvedCalls/secondaryConstructors"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("classWithGenerics.kt")
@@ -592,7 +592,7 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
         }
 
         public void testAllFilesPresentInThisOrSuper() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/thisOrSuper"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/resolvedCalls/thisOrSuper"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("labeledSuper.kt")

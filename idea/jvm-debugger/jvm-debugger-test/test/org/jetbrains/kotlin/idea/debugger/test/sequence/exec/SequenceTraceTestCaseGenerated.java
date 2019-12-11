@@ -25,7 +25,7 @@ public class SequenceTraceTestCaseGenerated extends AbstractSequenceTraceTestCas
     }
 
     public void testAllFilesPresentInSequence() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/sequence/streams/sequence"), Pattern.compile("^(.+)\\.kt$"), true, "terminal");
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/sequence/streams/sequence"), Pattern.compile("^(.+)\\.kt$"), null, true, "terminal");
     }
 
     @TestMetadata("idea/jvm-debugger/jvm-debugger-test/testData/sequence/streams/sequence/append")
@@ -37,7 +37,7 @@ public class SequenceTraceTestCaseGenerated extends AbstractSequenceTraceTestCas
         }
 
         public void testAllFilesPresentInAppend() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/sequence/streams/sequence/append"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/sequence/streams/sequence/append"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("PlusArray.kt")
@@ -70,7 +70,7 @@ public class SequenceTraceTestCaseGenerated extends AbstractSequenceTraceTestCas
         }
 
         public void testAllFilesPresentInDistinct() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/sequence/streams/sequence/distinct"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/sequence/streams/sequence/distinct"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("Distinct.kt")
@@ -118,7 +118,7 @@ public class SequenceTraceTestCaseGenerated extends AbstractSequenceTraceTestCas
         }
 
         public void testAllFilesPresentInFilter() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/sequence/streams/sequence/filter"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/sequence/streams/sequence/filter"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("Drop.kt")
@@ -181,7 +181,7 @@ public class SequenceTraceTestCaseGenerated extends AbstractSequenceTraceTestCas
         }
 
         public void testAllFilesPresentInFlatMap() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/sequence/streams/sequence/flatMap"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/sequence/streams/sequence/flatMap"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("FlatMap.kt")
@@ -204,7 +204,7 @@ public class SequenceTraceTestCaseGenerated extends AbstractSequenceTraceTestCas
         }
 
         public void testAllFilesPresentInMap() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/sequence/streams/sequence/map"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/sequence/streams/sequence/map"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("Map.kt")
@@ -237,7 +237,7 @@ public class SequenceTraceTestCaseGenerated extends AbstractSequenceTraceTestCas
         }
 
         public void testAllFilesPresentInMisc() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/sequence/streams/sequence/misc"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/sequence/streams/sequence/misc"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("AsSequence.kt")
@@ -325,7 +325,7 @@ public class SequenceTraceTestCaseGenerated extends AbstractSequenceTraceTestCas
         }
 
         public void testAllFilesPresentInSort() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/sequence/streams/sequence/sort"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/sequence/streams/sequence/sort"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("Sorted.kt")

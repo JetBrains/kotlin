@@ -25,7 +25,7 @@ public class DefaultArgumentsReflectionTestGenerated extends AbstractDefaultArgu
     }
 
     public void testAllFilesPresentInReflection() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/defaultArguments/reflection"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/defaultArguments/reflection"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("classInClassObject.kt")

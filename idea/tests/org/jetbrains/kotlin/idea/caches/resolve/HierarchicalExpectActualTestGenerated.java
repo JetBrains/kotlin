@@ -25,7 +25,7 @@ public class HierarchicalExpectActualTestGenerated extends AbstractHierarchicalE
     }
 
     public void testAllFilesPresentInHierarchicalExpectActualMatching() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/multiModuleHighlighting/hierarchicalExpectActualMatching"), Pattern.compile("^([^\\.]+)$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/multiModuleHighlighting/hierarchicalExpectActualMatching"), Pattern.compile("^([^\\.]+)$"), null, false);
     }
 
     @TestMetadata("diamondActualInBottom")

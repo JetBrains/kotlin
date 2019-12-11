@@ -25,7 +25,7 @@ public class KDocHighlightingTestGenerated extends AbstractKDocHighlightingTest 
     }
 
     public void testAllFilesPresentInHighlighting() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/kdoc/highlighting"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/kdoc/highlighting"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("MissingDocumentation.kt")

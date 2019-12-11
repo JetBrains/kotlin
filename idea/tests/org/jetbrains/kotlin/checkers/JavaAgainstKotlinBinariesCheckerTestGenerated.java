@@ -25,7 +25,7 @@ public class JavaAgainstKotlinBinariesCheckerTestGenerated extends AbstractJavaA
     }
 
     public void testAllFilesPresentInJavaAgainstKotlin() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("AssignKotlinClassToObjectInJava.kt")

@@ -25,7 +25,7 @@ public class FirLightClassesTestGenerated extends AbstractFirLightClassesTest {
     }
 
     public void testAllFilesPresentInLightClasses() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/lightClasses"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/lightClasses"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("genericClasses.kt")

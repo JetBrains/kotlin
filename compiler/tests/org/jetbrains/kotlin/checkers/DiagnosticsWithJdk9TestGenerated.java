@@ -25,7 +25,7 @@ public class DiagnosticsWithJdk9TestGenerated extends AbstractDiagnosticsWithJdk
     }
 
     public void testAllFilesPresentInTestsWithJava9() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJava9"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJava9"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("kt11167.kt")

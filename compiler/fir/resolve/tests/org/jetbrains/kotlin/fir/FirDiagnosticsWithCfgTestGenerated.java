@@ -27,7 +27,7 @@ public class FirDiagnosticsWithCfgTestGenerated extends AbstractFirDiagnosticsWi
         }
 
         public void testAllFilesPresentInCfg() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/cfg"), Pattern.compile("^([^.]+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/cfg"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("binaryOperations.kt")
@@ -115,7 +115,7 @@ public class FirDiagnosticsWithCfgTestGenerated extends AbstractFirDiagnosticsWi
         }
 
         public void testAllFilesPresentInSmartcasts() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/smartcasts"), Pattern.compile("^([^.]+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/smartcasts"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("anotherBoundSmartcasts.kt")

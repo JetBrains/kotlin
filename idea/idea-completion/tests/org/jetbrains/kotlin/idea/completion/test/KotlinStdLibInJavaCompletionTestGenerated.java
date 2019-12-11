@@ -25,7 +25,7 @@ public class KotlinStdLibInJavaCompletionTestGenerated extends AbstractKotlinStd
     }
 
     public void testAllFilesPresentInStdlib() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/injava/stdlib"), Pattern.compile("^(.+)\\.java$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-completion/testData/injava/stdlib"), Pattern.compile("^(.+)\\.java$"), null, false);
     }
 
     @TestMetadata("List.java")

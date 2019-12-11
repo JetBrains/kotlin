@@ -25,7 +25,7 @@ public class KDocTypingTestGenerated extends AbstractKDocTypingTest {
     }
 
     public void testAllFilesPresentInTyping() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/kdoc/typing"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/kdoc/typing"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("closingBracketNotInLink.kt")

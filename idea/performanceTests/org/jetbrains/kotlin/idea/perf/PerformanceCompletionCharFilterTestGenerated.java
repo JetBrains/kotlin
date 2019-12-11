@@ -25,7 +25,7 @@ public class PerformanceCompletionCharFilterTestGenerated extends AbstractPerfor
     }
 
     public void testAllFilesPresentInCharFilter() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/charFilter"), Pattern.compile("^([^.]+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-completion/testData/handlers/charFilter"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
     }
 
     @TestMetadata("Colon.kt")

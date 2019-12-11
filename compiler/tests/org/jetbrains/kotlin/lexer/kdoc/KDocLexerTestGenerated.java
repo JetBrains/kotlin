@@ -25,7 +25,7 @@ public class KDocLexerTestGenerated extends AbstractKDocLexerTest {
     }
 
     public void testAllFilesPresentInKdoc() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/lexer/kdoc"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/lexer/kdoc"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("codeBlocks.kt")

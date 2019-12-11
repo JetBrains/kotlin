@@ -26,7 +26,7 @@ public class JsLineNumberTestGenerated extends AbstractJsLineNumberTest {
     }
 
     public void testAllFilesPresentInLineNumbers() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/lineNumbers"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS, true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/lineNumbers"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS, true);
     }
 
     @TestMetadata("andAndWithSideEffect.kt")
@@ -288,7 +288,7 @@ public class JsLineNumberTestGenerated extends AbstractJsLineNumberTest {
         }
 
         public void testAllFilesPresentInInlineMultiModule() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/lineNumbers/inlineMultiModule"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/lineNumbers/inlineMultiModule"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS, true);
         }
 
         @TestMetadata("simple.kt")

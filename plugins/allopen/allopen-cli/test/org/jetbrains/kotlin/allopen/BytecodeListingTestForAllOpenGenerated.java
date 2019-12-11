@@ -25,7 +25,7 @@ public class BytecodeListingTestForAllOpenGenerated extends AbstractBytecodeList
     }
 
     public void testAllFilesPresentInBytecodeListing() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/allopen/allopen-cli/testData/bytecodeListing"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/allopen/allopen-cli/testData/bytecodeListing"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("allOpenOnNotClasses.kt")

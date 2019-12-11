@@ -26,7 +26,7 @@ public class IrWasmBoxJsTestGenerated extends AbstractIrWasmBoxJsTest {
     }
 
     public void testAllFilesPresentInWasmBox() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/wasmBox"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS_IR, true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/wasmBox"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
     @TestMetadata("basicTypes.kt")
@@ -48,7 +48,7 @@ public class IrWasmBoxJsTestGenerated extends AbstractIrWasmBoxJsTest {
         }
 
         public void testAllFilesPresentInNumber() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/wasmBox/number"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS_IR, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/wasmBox/number"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
         }
 
         @TestMetadata("assignmentIntOverflow.kt")
@@ -181,7 +181,7 @@ public class IrWasmBoxJsTestGenerated extends AbstractIrWasmBoxJsTest {
         }
 
         public void testAllFilesPresentInPassedCommonTests() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/wasmBox/passedCommonTests"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS_IR, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/wasmBox/passedCommonTests"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
         }
 
         @TestMetadata("js/js.translator/testData/wasmBox/passedCommonTests/boxingOptimization")
@@ -193,7 +193,7 @@ public class IrWasmBoxJsTestGenerated extends AbstractIrWasmBoxJsTest {
             }
 
             public void testAllFilesPresentInBoxingOptimization() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/wasmBox/passedCommonTests/boxingOptimization"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS_IR, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/wasmBox/passedCommonTests/boxingOptimization"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
             }
 
             @TestMetadata("explicitEqualsOnDouble.kt")
@@ -211,7 +211,7 @@ public class IrWasmBoxJsTestGenerated extends AbstractIrWasmBoxJsTest {
             }
 
             public void testAllFilesPresentInClasses() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/wasmBox/passedCommonTests/classes"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS_IR, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/wasmBox/passedCommonTests/classes"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
             }
 
             @TestMetadata("kt2482.kt")
@@ -229,7 +229,7 @@ public class IrWasmBoxJsTestGenerated extends AbstractIrWasmBoxJsTest {
             }
 
             public void testAllFilesPresentInConstants() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/wasmBox/passedCommonTests/constants"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS_IR, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/wasmBox/passedCommonTests/constants"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
             }
 
             @TestMetadata("float.kt")
@@ -252,7 +252,7 @@ public class IrWasmBoxJsTestGenerated extends AbstractIrWasmBoxJsTest {
             }
 
             public void testAllFilesPresentInControlStructures() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/wasmBox/passedCommonTests/controlStructures"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS_IR, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/wasmBox/passedCommonTests/controlStructures"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
             }
 
             @TestMetadata("ifConst1.kt")
@@ -280,7 +280,7 @@ public class IrWasmBoxJsTestGenerated extends AbstractIrWasmBoxJsTest {
             }
 
             public void testAllFilesPresentInExtensionProperties() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/wasmBox/passedCommonTests/extensionProperties"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS_IR, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/wasmBox/passedCommonTests/extensionProperties"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
             }
 
             @TestMetadata("topLevel.kt")
@@ -298,7 +298,7 @@ public class IrWasmBoxJsTestGenerated extends AbstractIrWasmBoxJsTest {
             }
 
             public void testAllFilesPresentInFunctions() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/wasmBox/passedCommonTests/functions"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS_IR, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/wasmBox/passedCommonTests/functions"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
             }
 
             @TestMetadata("kt2280.kt")
@@ -316,7 +316,7 @@ public class IrWasmBoxJsTestGenerated extends AbstractIrWasmBoxJsTest {
             }
 
             public void testAllFilesPresentInIeee754() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/wasmBox/passedCommonTests/ieee754"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS_IR, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/wasmBox/passedCommonTests/ieee754"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
             }
 
             @TestMetadata("lessDouble_properIeeeAndNewInference.kt")
@@ -334,7 +334,7 @@ public class IrWasmBoxJsTestGenerated extends AbstractIrWasmBoxJsTest {
             }
 
             public void testAllFilesPresentInIr() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/wasmBox/passedCommonTests/ir"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS_IR, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/wasmBox/passedCommonTests/ir"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
             }
 
             @TestMetadata("js/js.translator/testData/wasmBox/passedCommonTests/ir/closureConversion")
@@ -346,7 +346,7 @@ public class IrWasmBoxJsTestGenerated extends AbstractIrWasmBoxJsTest {
                 }
 
                 public void testAllFilesPresentInClosureConversion() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/wasmBox/passedCommonTests/ir/closureConversion"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS_IR, true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/wasmBox/passedCommonTests/ir/closureConversion"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
                 }
 
                 @TestMetadata("closureConversion1.kt")
@@ -375,7 +375,7 @@ public class IrWasmBoxJsTestGenerated extends AbstractIrWasmBoxJsTest {
             }
 
             public void testAllFilesPresentInLabels() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/wasmBox/passedCommonTests/labels"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS_IR, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/wasmBox/passedCommonTests/labels"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
             }
 
             @TestMetadata("propertyAccessor.kt")
@@ -393,7 +393,7 @@ public class IrWasmBoxJsTestGenerated extends AbstractIrWasmBoxJsTest {
             }
 
             public void testAllFilesPresentInLazyCodegen() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/wasmBox/passedCommonTests/lazyCodegen"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS_IR, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/wasmBox/passedCommonTests/lazyCodegen"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
             }
 
             @TestMetadata("js/js.translator/testData/wasmBox/passedCommonTests/lazyCodegen/optimizations")
@@ -405,7 +405,7 @@ public class IrWasmBoxJsTestGenerated extends AbstractIrWasmBoxJsTest {
                 }
 
                 public void testAllFilesPresentInOptimizations() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/wasmBox/passedCommonTests/lazyCodegen/optimizations"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS_IR, true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/wasmBox/passedCommonTests/lazyCodegen/optimizations"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
                 }
 
                 @TestMetadata("negateConstantCompare.kt")
@@ -424,7 +424,7 @@ public class IrWasmBoxJsTestGenerated extends AbstractIrWasmBoxJsTest {
             }
 
             public void testAllFilesPresentInOperatorConventions() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/wasmBox/passedCommonTests/operatorConventions"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS_IR, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/wasmBox/passedCommonTests/operatorConventions"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
             }
 
             @TestMetadata("annotatedAssignment.kt")
@@ -447,7 +447,7 @@ public class IrWasmBoxJsTestGenerated extends AbstractIrWasmBoxJsTest {
             }
 
             public void testAllFilesPresentInPrimitiveTypes() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/wasmBox/passedCommonTests/primitiveTypes"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS_IR, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/wasmBox/passedCommonTests/primitiveTypes"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
             }
 
             @TestMetadata("ea35963.kt")
@@ -500,7 +500,7 @@ public class IrWasmBoxJsTestGenerated extends AbstractIrWasmBoxJsTest {
             }
 
             public void testAllFilesPresentInPublishedApi() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/wasmBox/passedCommonTests/publishedApi"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS_IR, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/wasmBox/passedCommonTests/publishedApi"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
             }
 
             @TestMetadata("topLevel.kt")
@@ -518,7 +518,7 @@ public class IrWasmBoxJsTestGenerated extends AbstractIrWasmBoxJsTest {
             }
 
             public void testAllFilesPresentInUnaryOp() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/wasmBox/passedCommonTests/unaryOp"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS_IR, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/wasmBox/passedCommonTests/unaryOp"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
             }
 
             @TestMetadata("intrinsic.kt")
@@ -536,7 +536,7 @@ public class IrWasmBoxJsTestGenerated extends AbstractIrWasmBoxJsTest {
             }
 
             public void testAllFilesPresentInWhen() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/wasmBox/passedCommonTests/when"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS_IR, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/wasmBox/passedCommonTests/when"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
             }
 
             @TestMetadata("noElseNoMatch.kt")

@@ -25,7 +25,7 @@ public class PerformanceLiteralKotlinToKotlinCopyPasteTestGenerated extends Abst
     }
 
     public void testAllFilesPresentInLiteral() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/copyPaste/literal"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/copyPaste/literal"), Pattern.compile("^([^\\.]+)\\.kt$"), null, true);
     }
 
     @TestMetadata("CollectionLiteralReference.kt")

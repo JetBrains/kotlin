@@ -27,7 +27,7 @@ public class KotlinGotoTestGenerated extends AbstractKotlinGotoTest {
         }
 
         public void testAllFilesPresentInGotoClass() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/navigation/gotoClass"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/navigation/gotoClass"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("builtInAny.kt")
@@ -95,7 +95,7 @@ public class KotlinGotoTestGenerated extends AbstractKotlinGotoTest {
         }
 
         public void testAllFilesPresentInGotoSymbol() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/navigation/gotoSymbol"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/navigation/gotoSymbol"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("builtInArrayOfNulls.kt")

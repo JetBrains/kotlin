@@ -27,7 +27,7 @@ public class DataFlowTestGenerated extends AbstractDataFlowTest {
         }
 
         public void testAllFilesPresentInCfg_variables() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg-variables"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cfg-variables"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("compiler/testData/cfg-variables/basic")
@@ -39,7 +39,7 @@ public class DataFlowTestGenerated extends AbstractDataFlowTest {
             }
 
             public void testAllFilesPresentInBasic() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg-variables/basic"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cfg-variables/basic"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("ExhaustiveInitialization.kt")
@@ -87,7 +87,7 @@ public class DataFlowTestGenerated extends AbstractDataFlowTest {
             }
 
             public void testAllFilesPresentInBugs() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg-variables/bugs"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cfg-variables/bugs"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("doWhileAssignment.kt")
@@ -155,7 +155,7 @@ public class DataFlowTestGenerated extends AbstractDataFlowTest {
             }
 
             public void testAllFilesPresentInLexicalScopes() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg-variables/lexicalScopes"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cfg-variables/lexicalScopes"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("doWhileScope.kt")
@@ -229,7 +229,7 @@ public class DataFlowTestGenerated extends AbstractDataFlowTest {
         }
 
         public void testAllFilesPresentInCfgVariablesWithStdLib() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfgVariablesWithStdLib"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cfgVariablesWithStdLib"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("compiler/testData/cfgVariablesWithStdLib/contracts")
@@ -241,7 +241,7 @@ public class DataFlowTestGenerated extends AbstractDataFlowTest {
             }
 
             public void testAllFilesPresentInContracts() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfgVariablesWithStdLib/contracts"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cfgVariablesWithStdLib/contracts"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("breakContinuesInInlinedLambda.kt")

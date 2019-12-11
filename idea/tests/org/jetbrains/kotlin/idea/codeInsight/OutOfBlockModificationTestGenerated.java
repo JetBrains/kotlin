@@ -25,7 +25,7 @@ public class OutOfBlockModificationTestGenerated extends AbstractOutOfBlockModif
     }
 
     public void testAllFilesPresentInOutOfBlock() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/outOfBlock"), Pattern.compile("^(.+)\\.(kt|kts)$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/codeInsight/outOfBlock"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
     }
 
     @TestMetadata("Comment.kt")

@@ -25,7 +25,7 @@ public class MultiFileInspectionTestGenerated extends AbstractMultiFileInspectio
     }
 
     public void testAllFilesPresentInMultiFileInspections() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/multiFileInspections"), Pattern.compile("^(.+)\\.test$"));
+        KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File("idea/testData/multiFileInspections"), Pattern.compile("^(.+)\\.test$"), null);
     }
 
     @TestMetadata("fakeJvmFieldConstant/fakeJvmFieldConstant.test")

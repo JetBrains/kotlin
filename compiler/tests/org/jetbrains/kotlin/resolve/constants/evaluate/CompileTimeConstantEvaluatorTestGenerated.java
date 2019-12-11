@@ -27,7 +27,7 @@ public class CompileTimeConstantEvaluatorTestGenerated extends AbstractCompileTi
         }
 
         public void testAllFilesPresentInConstant() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/evaluate/constant"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/evaluate/constant"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("classObjectProperty.kt")
@@ -145,7 +145,7 @@ public class CompileTimeConstantEvaluatorTestGenerated extends AbstractCompileTi
         }
 
         public void testAllFilesPresentInIsPure() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/evaluate/isPure"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/evaluate/isPure"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("innerToType.kt")
@@ -183,7 +183,7 @@ public class CompileTimeConstantEvaluatorTestGenerated extends AbstractCompileTi
         }
 
         public void testAllFilesPresentInUsesVariableAsConstant() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/evaluate/usesVariableAsConstant"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/evaluate/usesVariableAsConstant"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("binaryTypes.kt")

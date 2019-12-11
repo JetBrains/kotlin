@@ -27,7 +27,7 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
         }
 
         public void testAllFilesPresentInStepInto() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepIntoAndSmartStepInto"), Pattern.compile("^([^.]+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepIntoAndSmartStepInto"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("classObjectFunFromClass.kt")
@@ -120,7 +120,7 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
         }
 
         public void testAllFilesPresentInSmartStepInto() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepIntoAndSmartStepInto"), Pattern.compile("^([^.]+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepIntoAndSmartStepInto"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("classObjectFunFromClass.kt")
@@ -218,7 +218,7 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
         }
 
         public void testAllFilesPresentInStepIntoOnly() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepInto"), Pattern.compile("^([^.]+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepInto"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("continueLabel.kt")
@@ -346,7 +346,7 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
         }
 
         public void testAllFilesPresentInStepOut() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOut"), Pattern.compile("^([^.]+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOut"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("fwBackingField.kt")
@@ -404,7 +404,7 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
         }
 
         public void testAllFilesPresentInStepOver() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOver"), Pattern.compile("^([^.]+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOver"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("asIterableInFor.kt")
@@ -982,7 +982,7 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
         }
 
         public void testAllFilesPresentInStepOverForce() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOverForce"), Pattern.compile("^([^.]+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOverForce"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("sofSuspendableCallInFun.kt")
@@ -1000,7 +1000,7 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
         }
 
         public void testAllFilesPresentInFilters() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/stepping/filters"), Pattern.compile("^([^.]+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/stepping/filters"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("checkNotNull.kt")
@@ -1073,7 +1073,7 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
         }
 
         public void testAllFilesPresentInCustom() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/stepping/custom"), Pattern.compile("^([^.]+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/stepping/custom"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("anonymousFunAsParamDefaultValue.kt")
