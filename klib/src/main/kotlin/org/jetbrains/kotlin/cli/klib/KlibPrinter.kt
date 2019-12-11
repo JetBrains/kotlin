@@ -62,7 +62,7 @@ class KlibPrinter(out: Appendable) {
             append(Renderers.DEFAULT.renderAnnotation(it)).append(" ")
         }
         if (visibility != Visibilities.DEFAULT_VISIBILITY) {
-            append(visibility.displayName).append(" ")
+            append(visibility.internalDisplayName).append(" ")
         }
         when (this@render) {
             is PropertyGetterDescriptor -> append("get")
