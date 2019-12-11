@@ -11,14 +11,6 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
 abstract class AbstractFirOldFrontendDiagnosticsTest : AbstractFirDiagnosticsTest() {
-    companion object {
-        private val DIAGNOSTIC_PATTERN = Regex("(<!>|(<!(.(\".*\")*?)+?!>))")
-
-        private fun loadTestDataWithoutDiagnostics(file: File): String {
-            return KotlinTestUtils.doLoadFile(file).replace(DIAGNOSTIC_PATTERN, "")
-        }
-    }
-
     override fun createTestFileFromPath(filePath: String): File {
         val newPath = filePath.replace(".kt", ".fir.kt")
         return File(newPath).also {

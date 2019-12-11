@@ -475,6 +475,12 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                 Condition { diagnostic -> diagnostic.factory in DIAGNOSTICS_TO_INCLUDE_ANYWAY }
             )
         }
+
+        private val DIAGNOSTIC_IN_TESTDATA_PATTERN = Regex("(<!>|(<!(.(\".*\")*?)+?!>))")
+
+        fun loadTestDataWithoutDiagnostics(file: File): String {
+            return KotlinTestUtils.doLoadFile(file).replace(DIAGNOSTIC_IN_TESTDATA_PATTERN, "")
+        }
     }
 
     private fun parseJvmTarget(directiveMap: Map<String, String>) = directiveMap[JVM_TARGET]?.let { JvmTarget.fromString(it) }
