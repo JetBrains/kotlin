@@ -27,7 +27,8 @@ public class RunAnythingCache implements PersistentStateComponent<RunAnythingCac
    * @return true is group is visible; false if it's hidden
    */
   public boolean isGroupVisible(@NotNull String key) {
-    return mySettings.myKeys.get(key);
+    Boolean visible = mySettings.myKeys.get(key);
+    return visible == null || visible;
   }
 
   /**

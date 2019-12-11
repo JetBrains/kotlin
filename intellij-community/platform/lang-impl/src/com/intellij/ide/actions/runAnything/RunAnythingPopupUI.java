@@ -82,12 +82,11 @@ public class RunAnythingPopupUI extends BigPopupUI {
   private boolean myIsUsedTrigger;
   private volatile ActionCallback myCurrentWorker;
   private boolean mySkipFocusGain = false;
-  @Nullable
-  private final VirtualFile myVirtualFile;
+  @Nullable private final VirtualFile myVirtualFile;
   private JLabel myTextFieldTitle;
   private boolean myIsItemSelected;
   private String myLastInputText = null;
-  private RunAnythingSearchListModel myListModel;
+  @Nullable private RunAnythingSearchListModel myListModel;
   private final Project myProject;
   private final Module myModule;
 
@@ -197,7 +196,11 @@ public class RunAnythingPopupUI extends BigPopupUI {
       if (group != null) {
         myCurrentWorker.doWhenProcessed(() -> {
           RunAnythingUsageCollector.Companion.triggerMoreStatistics(myProject, group, model.getClass());
-          myCurrentWorker = insert(group, index);
+          myCurrentWorker = insert(group, myListModel, getDataContext(), getSearchPattern(), index, -1);
+          myCurrentWorker.doWhenProcessed(() -> {
+            clearSelection();
+            ScrollingUtil.selectItem(myResultsList, index);
+          });
         });
 
         return;
@@ -216,15 +219,23 @@ public class RunAnythingPopupUI extends BigPopupUI {
   }
 
   @NotNull
-  private ActionCallback insert(@NotNull RunAnythingGroup group, int index) {
+  public static ActionCallback insert(@NotNull RunAnythingGroup group,
+                                      @NotNull RunAnythingSearchListModel listModel,
+                                      @NotNull DataContext dataContext,
+                                      @NotNull String pattern,
+                                      int index,
+                                      int itemsNumberToInsert) {
     ActionCallback callback = new ActionCallback();
     ApplicationManager.getApplication().executeOnPooledThread(() -> {
-      List<RunAnythingItem> items = StreamEx.of(myListModel.getItems()).select(RunAnythingItem.class).collect(Collectors.toList());
+      List<RunAnythingItem> items = StreamEx.of(listModel.getItems()).select(RunAnythingItem.class).collect(Collectors.toList());
       RunAnythingGroup.SearchResult result;
       try {
         result = ProgressManager.getInstance().runProcess(
-          () -> group.getItems(getDataContext(), items,
-                               trimHelpPattern(getSearchPattern()), true), new EmptyProgressIndicator());
+          () -> group.getItems(dataContext,
+                               items,
+                               trimHelpPattern(pattern),
+                               itemsNumberToInsert == -1 ? group.getMaxItemsToInsert() : itemsNumberToInsert),
+          new EmptyProgressIndicator());
       }
       catch (ProcessCanceledException e) {
         callback.setRejected();
@@ -235,18 +246,15 @@ public class RunAnythingPopupUI extends BigPopupUI {
         int shift = 0;
         int i = index + 1;
         for (Object o : result) {
-          myListModel.add(i, o);
+          listModel.add(i, o);
           shift++;
           i++;
         }
 
-        myListModel.shiftIndexes(index, shift);
+        listModel.shiftIndexes(index, shift);
         if (!result.isNeedMore()) {
           group.resetMoreIndex();
         }
-
-        clearSelection();
-        ScrollingUtil.selectItem(myResultsList, index);
 
         callback.setDone();
       });
@@ -821,6 +829,11 @@ public class RunAnythingPopupUI extends BigPopupUI {
   }
 
   private class RunAnythingShowFilterAction extends ShowFilterAction {
+    @NotNull private final Collection<RunAnythingGroup> myTemplateGroups;
+
+    private RunAnythingShowFilterAction() {
+      myTemplateGroups = RunAnythingCompletionGroup.createCompletionGroups();
+    }
 
     @NotNull
     @Override
@@ -835,13 +848,13 @@ public class RunAnythingPopupUI extends BigPopupUI {
 
     @Override
     protected boolean isActive() {
-      return RunAnythingCompletionGroup.MAIN_GROUPS.size() != getVisibleGroups().size();
+      return myTemplateGroups.size() != getVisibleGroups().size();
     }
 
     @Override
     protected ElementsChooser<?> createChooser() {
       ElementsChooser<RunAnythingGroup> res =
-        new ElementsChooser<RunAnythingGroup>(new ArrayList<>(RunAnythingCompletionGroup.MAIN_GROUPS), false) {
+        new ElementsChooser<RunAnythingGroup>(new ArrayList<>(myTemplateGroups), false) {
           @Override
           protected String getItemText(@NotNull RunAnythingGroup value) {
             return value.getTitle();
@@ -859,8 +872,7 @@ public class RunAnythingPopupUI extends BigPopupUI {
 
     @NotNull
     private List<RunAnythingGroup> getVisibleGroups() {
-      Collection<RunAnythingGroup> groups = RunAnythingCompletionGroup.MAIN_GROUPS;
-      return ContainerUtil.filter(groups, group -> RunAnythingCache.getInstance(myProject).isGroupVisible(group.getTitle()));
+      return ContainerUtil.filter(myTemplateGroups, group -> RunAnythingCache.getInstance(myProject).isGroupVisible(group.getTitle()));
     }
   }
 }

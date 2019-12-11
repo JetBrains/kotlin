@@ -10,7 +10,6 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
-import one.util.streamex.StreamEx;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -35,15 +34,58 @@ class RunAnythingCalcThread implements Computable<RunAnythingSearchListModel> {
     if (RunAnythingPopupUI.isHelpMode(myPattern)) {
       model = new RunAnythingSearchListModel.RunAnythingHelpListModel();
       items = buildHelpGroups((RunAnythingSearchListModel.RunAnythingHelpListModel)model);
+      model.addAll(0, items);
     }
     else {
       model = new RunAnythingSearchListModel.RunAnythingMainListModel();
       items = buildAllGroups(model);
+
+      model.addAll(0, items);
+
+      loadEntireSingleMatchedGroup(model, items);
     }
 
-    model.addAll(0, items);
-
     return model;
+  }
+
+  private void loadEntireSingleMatchedGroup(@NotNull RunAnythingSearchListModel model, @NotNull List<RunAnythingItem> items) {
+    RunAnythingGroup currentTitleGroup;
+    RunAnythingGroup titleGroup = null;
+    RunAnythingGroup moreGroup = null;
+    int index = 0;
+
+    for (int i = 0; i < items.size(); i++) {
+      // check for single group (and optionally recent group) in the result list
+      currentTitleGroup = model.findGroupByTitleIndex(i);
+      if (currentTitleGroup instanceof RunAnythingRecentGroup) {
+        continue;
+      }
+
+      if (currentTitleGroup != null) {
+        if (titleGroup == null) {
+          titleGroup = currentTitleGroup;
+        }
+        else {
+          return;
+        }
+      }
+
+      moreGroup = model.findGroupByMoreIndex(i);
+      if (moreGroup == null) {
+        continue;
+      }
+
+      if (moreGroup instanceof RunAnythingRecentGroup) {
+        moreGroup = null;
+        continue;
+      }
+
+      index = i;
+    }
+
+    if (moreGroup != null) {
+      RunAnythingPopupUI.insert(moreGroup, model, myDataContext, myPattern, index, 100);
+    }
   }
 
   @NotNull
@@ -61,7 +103,10 @@ class RunAnythingCalcThread implements Computable<RunAnythingSearchListModel> {
   private List<RunAnythingItem> buildAllGroups(@NotNull RunAnythingSearchListModel model) {
     List<RunAnythingItem> items = new ArrayList<>();
     if (myPattern.trim().length() == 0) {
-      RunAnythingRecentGroup.INSTANCE.collectItems(myDataContext, items, myPattern);
+      RunAnythingGroup recentGroup =
+        model.getGroups().stream().filter(group -> group instanceof RunAnythingRecentGroup).findFirst().orElse(null);
+      assert recentGroup != null;
+      recentGroup.collectItems(myDataContext, items, myPattern);
     }
     else {
       buildCompletionGroups(myDataContext, items, model);
@@ -70,16 +115,18 @@ class RunAnythingCalcThread implements Computable<RunAnythingSearchListModel> {
     return items;
   }
 
-  private void buildCompletionGroups(@NotNull DataContext dataContext, @NotNull List<RunAnythingItem> items, @NotNull RunAnythingSearchListModel model) {
+  private void buildCompletionGroups(@NotNull DataContext dataContext,
+                                     @NotNull List<RunAnythingItem> items,
+                                     @NotNull RunAnythingSearchListModel model) {
     if (DumbService.getInstance(myProject).isDumb()) {
       return;
     }
 
-    StreamEx.of(RunAnythingRecentGroup.INSTANCE)
-      .select(RunAnythingGroup.class)
-      .append(model.getGroups().stream()
-                .filter(group -> group instanceof RunAnythingCompletionGroup || group instanceof RunAnythingGeneralGroup)
-                .filter(group -> RunAnythingCache.getInstance(myProject).isGroupVisible(group.getTitle())))
+    model.getGroups().stream()
+      .filter(group -> group instanceof RunAnythingCompletionGroup ||
+                       group instanceof RunAnythingGeneralGroup ||
+                       group instanceof RunAnythingRecentGroup)
+      .filter(group -> RunAnythingCache.getInstance(myProject).isGroupVisible(group.getTitle()))
       .forEach(group -> {
         group.collectItems(dataContext, items, myPattern);
       });

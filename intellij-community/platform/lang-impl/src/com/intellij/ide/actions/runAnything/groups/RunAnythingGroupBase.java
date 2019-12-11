@@ -24,7 +24,7 @@ public abstract class RunAnythingGroupBase extends RunAnythingGroup {
   public SearchResult getItems(@NotNull DataContext dataContext,
                                @NotNull List<RunAnythingItem> model,
                                @NotNull String pattern,
-                               boolean isInsertionMode) {
+                               int itemsToInsert) {
     ProgressManager.checkCanceled();
     SearchResult result = new SearchResult();
     for (RunAnythingItem item : getGroupItems(dataContext, pattern)) {
@@ -32,36 +32,16 @@ public abstract class RunAnythingGroupBase extends RunAnythingGroup {
       if (matcher == null) {
         matcher = RUN_ANYTHING_MATCHER_BUILDER.fun(pattern).build();
       }
-      if (addToList(model, result, item.getCommand(), isInsertionMode, item, matcher)) break;
+      if (!model.contains(item) && matcher.matches(item.getCommand())) {
+        if (result.size() == itemsToInsert) {
+          result.setNeedMore(true);
+          break;
+        }
+        result.add(item);
+      }
       ProgressManager.checkCanceled();
     }
 
     return result;
-  }
-
-  /**
-   * Adds limited number of matched items into the list.
-   *
-   * @param model           needed to avoid adding duplicates into the list
-   * @param textToMatch     an item presentation text to be matched with
-   * @param isInsertionMode if true gets {@link #getMaxItemsToInsert()} group items, else limits to {@link #getMaxInitialItems()}
-   * @param item            a new item that is conditionally added into the model
-   * @param matcher         uses for group items filtering
-   * @return true if limit exceeded
-   */
-  private boolean addToList(@NotNull List<RunAnythingItem> model,
-                            @NotNull SearchResult result,
-                            @NotNull String textToMatch,
-                            boolean isInsertionMode,
-                            @NotNull RunAnythingItem item,
-                            @NotNull Matcher matcher) {
-    if (!model.contains(item) && matcher.matches(textToMatch)) {
-      if (result.size() == (isInsertionMode ? getMaxItemsToInsert() : getMaxInitialItems())) {
-        result.setNeedMore(true);
-        return true;
-      }
-      result.add(item);
-    }
-    return false;
   }
 }

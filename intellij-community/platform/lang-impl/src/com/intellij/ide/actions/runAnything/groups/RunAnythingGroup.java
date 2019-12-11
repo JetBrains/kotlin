@@ -32,7 +32,7 @@ public abstract class RunAnythingGroup {
    * {@link #myTitleIndex} is an index of group title in the main list.
    * -1 means that group has zero elements and thus has no showing title
    */
-  private volatile int myTitleIndex = -1;
+  volatile int myTitleIndex = -1;
 
   /**
    * @return Current group title in the main list.
@@ -50,21 +50,22 @@ public abstract class RunAnythingGroup {
   /**
    * @return Current group maximum number of items to be insert by click on 'load more..'.
    */
-  protected int getMaxItemsToInsert() {
+  public int getMaxItemsToInsert() {
     return 5;
   }
 
   /**
    * Gets current group items to add into the main list.
-   * @param dataContext
-   * @param model               needed to avoid adding duplicates into the list
-   * @param pattern             input search string
-   * @param isInsertionMode     if true gets {@link #getMaxItemsToInsert()} group items, else limits to {@link #getMaxInitialItems()}
+   *
+   * @param dataContext needed to fetch project/module
+   * @param model       needed to avoid adding duplicates into the list
+   * @param pattern     input search string
+   * @param itemsToInsert number of items to insert
    */
   public abstract SearchResult getItems(@NotNull DataContext dataContext,
                                         @NotNull List<RunAnythingItem> model,
                                         @NotNull String pattern,
-                                        boolean isInsertionMode);
+                                        int itemsToInsert);
 
   /**
    * Resets current group 'load more..' {@link #myMoreIndex} index.
@@ -98,7 +99,7 @@ public abstract class RunAnythingGroup {
    */
   @Nullable
   public static RunAnythingGroup findGroup(@NotNull Collection<? extends RunAnythingGroup> groups, int titleIndex) {
-    return groups.stream().filter(runAnythingGroup -> titleIndex == ((RunAnythingGroup)runAnythingGroup).myTitleIndex).findFirst().orElse(null);
+    return groups.stream().filter(runAnythingGroup -> titleIndex == runAnythingGroup.myTitleIndex).findFirst().orElse(null);
   }
 
   /**
@@ -124,9 +125,9 @@ public abstract class RunAnythingGroup {
    * Shifts {@link #myTitleIndex} starting from {@code baseIndex} to {@code shift}.
    */
   private static void shiftTitleIndex(@NotNull Collection<? extends RunAnythingGroup> groups, int baseIndex, int shift) {
-    ((Collection<RunAnythingGroup>)groups).stream()
-          .filter(runAnythingGroup -> runAnythingGroup.myTitleIndex != -1 && runAnythingGroup.myTitleIndex > baseIndex)
-          .forEach(runAnythingGroup -> runAnythingGroup.myTitleIndex += shift);
+    groups.stream()
+      .filter(runAnythingGroup -> runAnythingGroup.myTitleIndex != -1 && runAnythingGroup.myTitleIndex > baseIndex)
+      .forEach(runAnythingGroup -> runAnythingGroup.myTitleIndex += shift);
   }
 
   /**
@@ -167,6 +168,14 @@ public abstract class RunAnythingGroup {
   }
 
   /**
+   * Finds group matched by {@link #myTitleIndex}.
+   */
+  @Nullable
+  public static RunAnythingGroup findGroupByTitleIndex(@NotNull Collection<? extends RunAnythingGroup> groups, int titleIndex) {
+    return groups.stream().filter(runAnythingGroup -> titleIndex == runAnythingGroup.myTitleIndex).findFirst().orElse(null);
+  }
+
+  /**
    * Returns {@code true} if {@code index} is a {@link #myMoreIndex} of some group, {@code false} otherwise
    */
   public static boolean isMoreIndex(@NotNull Collection<? extends RunAnythingGroup> groups, int index) {
@@ -191,14 +200,15 @@ public abstract class RunAnythingGroup {
 
   /**
    * Adds current group matched items into the list.
-   * @param dataContext
-   * @param model               needed to avoid adding duplicates into the list
-   * @param pattern             input search string
+   *
+   * @param dataContext needed to fetch project/module
+   * @param model       needed to avoid adding duplicates into the list
+   * @param pattern     input search string
    */
   public final synchronized void collectItems(@NotNull DataContext dataContext,
                                               @NotNull List<RunAnythingItem> model,
                                               @NotNull String pattern) {
-    SearchResult result = getItems(dataContext, model, pattern, false);
+    SearchResult result = getItems(dataContext, model, pattern, getMaxInitialItems());
 
     ProgressManager.checkCanceled();
     if (!result.isEmpty()) {

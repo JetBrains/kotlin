@@ -18,11 +18,6 @@ import java.util.List;
 
 @SuppressWarnings("unchecked")
 public abstract class RunAnythingSearchListModel extends CollectionListModel<Object> {
-  protected RunAnythingSearchListModel() {
-    super();
-    clearIndexes();
-  }
-
   @NotNull
   protected abstract List<RunAnythingGroup> getGroups();
 
@@ -33,6 +28,11 @@ public abstract class RunAnythingSearchListModel extends CollectionListModel<Obj
   @Nullable
   RunAnythingGroup findGroupByMoreIndex(int index) {
     return RunAnythingGroup.findGroupByMoreIndex(getGroups(), index);
+  }
+
+  @Nullable
+  RunAnythingGroup findGroupByTitleIndex(int index) {
+    return RunAnythingGroup.findGroupByTitleIndex(getGroups(), index);
   }
 
   void shiftIndexes(int baseIndex, int shift) {
@@ -80,35 +80,40 @@ public abstract class RunAnythingSearchListModel extends CollectionListModel<Obj
     fireContentsChanged(this, 0, getSize() - 1);
   }
 
-  public static class RunAnythingMainListModel extends RunAnythingSearchListModel {
+  static class RunAnythingMainListModel extends RunAnythingSearchListModel {
+    @NotNull private final List<RunAnythingGroup> myGroups = new ArrayList<>();
+
+    RunAnythingMainListModel() {
+      myGroups.add(new RunAnythingRecentGroup());
+      myGroups.addAll(RunAnythingCompletionGroup.createCompletionGroups());
+    }
+
     @NotNull
     @Override
     public List<RunAnythingGroup> getGroups() {
-      List<RunAnythingGroup> groups = ContainerUtil.newArrayList(RunAnythingRecentGroup.INSTANCE);
-      groups.addAll(RunAnythingCompletionGroup.MAIN_GROUPS);
-      return groups;
+      return myGroups;
     }
   }
 
-  public static class RunAnythingHelpListModel extends RunAnythingSearchListModel {
-    @Nullable private List<RunAnythingGroup> myHelpGroups;
+  static class RunAnythingHelpListModel extends RunAnythingSearchListModel {
+    private final List<RunAnythingGroup> myGroups;
+
+    public RunAnythingHelpListModel() {
+      myGroups = ContainerUtil.map(StreamEx.of(RunAnythingProvider.EP_NAME.extensions())
+                                     .filter(provider -> provider.getHelpGroupTitle() != null)
+                                     .groupingBy(provider -> provider.getHelpGroupTitle())
+                                     .entrySet(), entry -> new RunAnythingHelpGroup(entry.getKey(), entry.getValue()));
+
+      List<RunAnythingGroup> epGroups = Arrays.asList(RunAnythingHelpGroup.EP_NAME.getExtensions());
+      if (!epGroups.isEmpty()) {
+        myGroups.addAll(epGroups);
+      }
+    }
 
     @NotNull
     @Override
     protected List<RunAnythingGroup> getGroups() {
-      if (myHelpGroups == null) {
-        myHelpGroups = new ArrayList<>();
-        myHelpGroups.addAll(ContainerUtil.map(StreamEx.of(RunAnythingProvider.EP_NAME.extensions())
-                                                .filter(provider -> provider.getHelpGroupTitle() != null)
-                                                .groupingBy(provider -> provider.getHelpGroupTitle())
-                                                .entrySet(), entry -> new RunAnythingHelpGroup(entry.getKey(), entry.getValue())));
-
-        List<RunAnythingGroup> epGroups = Arrays.asList(RunAnythingHelpGroup.EP_NAME.getExtensions());
-        if (!epGroups.isEmpty()) {
-          myHelpGroups.addAll(epGroups);
-        }
-      }
-      return myHelpGroups;
+      return myGroups;
     }
   }
 }
