@@ -16595,11 +16595,6 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/platformTypes"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
         }
 
-        @TestMetadata("inferenceFlexibleTToNullable.kt")
-        public void testInferenceFlexibleTToNullable() throws Exception {
-            runTest("compiler/testData/codegen/box/platformTypes/inferenceFlexibleTToNullable.kt");
-        }
-
         @TestMetadata("unsafeNullCheck.kt")
         public void testUnsafeNullCheck() throws Exception {
             runTest("compiler/testData/codegen/box/platformTypes/unsafeNullCheck.kt");

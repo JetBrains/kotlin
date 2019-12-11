@@ -15126,11 +15126,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/platformTypes"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
         }
 
-        @TestMetadata("inferenceFlexibleTToNullable.kt")
-        public void testInferenceFlexibleTToNullable() throws Exception {
-            runTest("compiler/testData/codegen/box/platformTypes/inferenceFlexibleTToNullable.kt");
-        }
-
         @TestMetadata("compiler/testData/codegen/box/platformTypes/primitives")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

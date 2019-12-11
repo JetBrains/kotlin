@@ -136,7 +136,7 @@ abstract class AbstractTypeCheckerContextForConstraintSystem : AbstractTypeCheck
      *
      * => Foo <: T! -- (Foo!! .. Foo) <: T
      *
-     * Foo? <: T! -- Foo? <: T
+     * Foo? <: T! -- (Foo!! .. Foo?) <: T
      *
      *
      * (Foo..Bar) <: T! --
@@ -163,11 +163,7 @@ abstract class AbstractTypeCheckerContextForConstraintSystem : AbstractTypeCheck
                 when (subType) {
                     is SimpleTypeMarker ->
                         // Foo <: T! -- (Foo!! .. Foo) <: T
-                        if (subType.isNullableType()) {
-                            subType // prefer nullable type to flexible one: `Foo? <: (T..T?)` => lowerConstraint = `Foo?`
-                        } else {
-                            createFlexibleType(subType.makeSimpleTypeDefinitelyNotNullOrNotNull(), subType)
-                        }
+                        createFlexibleType(subType.makeSimpleTypeDefinitelyNotNullOrNotNull(), subType)
 
                     is FlexibleTypeMarker ->
                         // (Foo..Bar) <: T! -- (Foo!! .. Bar) <: T

@@ -20,7 +20,7 @@ interface PsiMethod {
 interface PsiClass
 
 fun test() {
-    val processor = AdapterProcessor<PsiMethod, PsiClass?>(
+    val processor = AdapterProcessor<PsiMethod, PsiClass>(
         Function { method: PsiMethod? -> method?.containingClass }
     )
 }
