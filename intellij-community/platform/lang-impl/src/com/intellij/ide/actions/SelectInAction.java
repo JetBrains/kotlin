@@ -18,7 +18,10 @@ import com.intellij.util.ui.EmptyIcon;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 public final class SelectInAction extends AnAction implements DumbAware {
   @Override
@@ -51,7 +54,7 @@ public final class SelectInAction extends AnAction implements DumbAware {
   }
 
   private static void invoke(@NotNull DataContext dataContext, @NotNull SelectInContext context) {
-    final List<SelectInTarget> targetVector = Arrays.asList(SelectInManager.getInstance(context.getProject()).getTargets());
+    List<SelectInTarget> targetVector = SelectInManager.getInstance(context.getProject()).getTargetList();
     ListPopup popup;
     if (targetVector.isEmpty()) {
       DefaultActionGroup group = new DefaultActionGroup();

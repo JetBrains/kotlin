@@ -2141,8 +2141,8 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
 
     String selectInShortcut = KeymapUtil.getFirstKeyboardShortcutText("SelectIn");
     if (!selectInShortcut.isEmpty()) {
-      SelectInTarget[] targets = SelectInManager.getInstance(myProject).getTargets();
-      int index = ContainerUtil.indexOf(Arrays.asList(targets), (target) -> target instanceof ProjectViewSelectInGroupTarget);
+      List<SelectInTarget> targets = SelectInManager.getInstance(myProject).getTargetList();
+      int index = ContainerUtil.indexOf(targets, (target) -> target instanceof ProjectViewSelectInGroupTarget);
       if (index >= 0) {
         return " (" + selectInShortcut + ", " + (index + 1) + ")";
       }
@@ -2172,16 +2172,6 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
       pane = myId2Pane.get(myCurrentViewId);
     }
     return pane != null ? pane.getReady(requestor) : ActionCallback.DONE;
-  }
-
-  @NotNull
-  public ToggleAction getAutoScrollToSourceAction() {
-    return Action.AUTOSCROLL_TO_SOURCE;
-  }
-
-  @NotNull
-  public ToggleAction getAutoScrollFromSourceAction() {
-    return Action.AUTOSCROLL_FROM_SOURCE;
   }
 
   private void updatePanes(boolean withComparator) {
