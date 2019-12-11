@@ -10,12 +10,11 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.calls.ConeInferenceContext
 import org.jetbrains.kotlin.fir.resolve.calls.InferenceComponents
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContextDelegate
 
 inline fun <reified T : FirElement> FirBasedSymbol<*>.firUnsafe(): T {
     val fir = this.fir
@@ -31,22 +30,11 @@ internal inline var FirExpression.resultType: FirTypeRef
         replaceTypeRef(type)
     }
 
-interface UniversalConeInferenceContext :
-    ConeInferenceContext, TypeSystemInferenceExtensionContextDelegate
-
-internal fun FirSession.inferenceContext(): UniversalConeInferenceContext {
-    val session = this
-    return object : UniversalConeInferenceContext {
-        override val session: FirSession
-            get() = session
-    }
-}
-
 internal fun inferenceComponents(
     session: FirSession,
     returnTypeCalculator: ReturnTypeCalculator,
     scopeSession: ScopeSession
 ): InferenceComponents {
-    val inferenceContext = session.inferenceContext()
+    val inferenceContext = session.typeContext
     return InferenceComponents(inferenceContext, session, returnTypeCalculator, scopeSession)
 }

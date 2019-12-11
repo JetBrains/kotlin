@@ -9,10 +9,10 @@ import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.inferenceContext
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 
 abstract class SupertypeSupplier {
@@ -87,7 +87,7 @@ private fun createSubstitution(
             }
             else /* StarProjection */ -> {
                 ConeTypeIntersector.intersectTypes(
-                    session.inferenceContext(),
+                    session.typeContext,
                     typeParameterSymbol.fir.bounds.map { it.coneTypeUnsafe() }
                 )
             }

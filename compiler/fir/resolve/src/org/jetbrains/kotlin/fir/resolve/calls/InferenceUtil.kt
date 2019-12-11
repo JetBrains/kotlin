@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.UniversalConeInferenceContext
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintIncorporator
@@ -41,7 +40,7 @@ class TypeParameterBasedTypeVariable(val typeParameterSymbol: FirTypeParameterSy
     ConeTypeVariable(typeParameterSymbol.name.identifier)
 
 class InferenceComponents(
-    val ctx: UniversalConeInferenceContext,
+    val ctx: ConeInferenceContext,
     val session: FirSession,
     val returnTypeCalculator: ReturnTypeCalculator,
     val scopeSession: ScopeSession
