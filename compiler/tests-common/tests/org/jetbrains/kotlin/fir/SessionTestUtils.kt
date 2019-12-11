@@ -12,20 +12,23 @@ import org.jetbrains.kotlin.fir.java.FirJavaModuleBasedSession
 import org.jetbrains.kotlin.fir.java.FirLibrarySession
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
+import org.jetbrains.kotlin.name.Name
 
 fun createSession(
     environment: KotlinCoreEnvironment,
     sourceScope: GlobalSearchScope,
-    librariesScope: GlobalSearchScope = GlobalSearchScope.notScope(sourceScope)
-) = createSession(environment.project, sourceScope, librariesScope, environment::createPackagePartProvider)
+    librariesScope: GlobalSearchScope = GlobalSearchScope.notScope(sourceScope),
+    moduleName: String = "TestModule"
+) = createSession(environment.project, sourceScope, librariesScope, moduleName, environment::createPackagePartProvider)
 
 fun createSession(
     project: Project,
     sourceScope: GlobalSearchScope,
     librariesScope: GlobalSearchScope,
+    moduleName: String = "TestModule",
     packagePartProvider: (GlobalSearchScope) -> PackagePartProvider
 ): FirSession {
-    val moduleInfo = FirTestModuleInfo()
+    val moduleInfo = FirTestModuleInfo(name = Name.identifier(moduleName))
     val provider = FirProjectSessionProvider(project)
     return FirJavaModuleBasedSession(moduleInfo, provider, sourceScope).also {
         createSessionForDependencies(project, provider, moduleInfo, librariesScope, packagePartProvider)
@@ -39,7 +42,7 @@ private fun createSessionForDependencies(
     librariesScope: GlobalSearchScope,
     packagePartProvider: (GlobalSearchScope) -> PackagePartProvider
 ) {
-    val dependenciesInfo = FirTestModuleInfo()
+    val dependenciesInfo = FirTestModuleInfo(name = Name.identifier(moduleInfo.name.identifier + ".dependencies"))
     moduleInfo.dependencies.add(dependenciesInfo)
     FirLibrarySession.create(
         dependenciesInfo, provider, librariesScope, project, packagePartProvider(librariesScope)

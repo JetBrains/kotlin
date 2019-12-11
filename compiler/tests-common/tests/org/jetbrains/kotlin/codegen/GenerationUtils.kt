@@ -110,7 +110,7 @@ object GenerationUtils {
         val scope = GlobalSearchScope.filesScope(project, files.map { it.virtualFile })
             .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(project))
         val librariesScope = ProjectScope.getLibrariesScope(project)
-        val session = createSession(project, scope, librariesScope, packagePartProvider)
+        val session = createSession(project, scope, librariesScope, "main", packagePartProvider)
 
         val builder = RawFirBuilder(session, stubMode = false)
         val resolveTransformer = FirTotalResolveTransformer()

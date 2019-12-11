@@ -50,7 +50,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
 
         val scope = ProjectScope.getContentScope(project)
         val librariesScope = ProjectScope.getLibrariesScope(project)
-        val session = createSession(environment, scope, librariesScope)
+        val session = createSession(environment, scope, librariesScope, moduleData.qualifiedName)
         val builder = RawFirBuilder(session, stubMode = false)
 
         val totalTransformer = FirTotalResolveTransformer()
