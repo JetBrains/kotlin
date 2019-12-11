@@ -1,0 +1,60 @@
+package override.generics
+
+interface MyTrait<T> {
+    fun foo(t: T) : T
+}
+
+abstract class MyAbstractClass<T> {
+    abstract fun bar(t: T) : T
+    abstract val pr : T
+}
+
+interface MyProps<T> {
+    val p : T
+}
+
+open class MyGenericClass<T>(t : T) : MyTrait<T>, MyAbstractClass<T>(), MyProps<T> {
+    override fun foo(t: T) = t
+    override fun bar(t: T) = t
+    override val p : T = t
+    override val pr : T = t
+}
+
+class MyChildClass() : MyGenericClass<Int>(1) {}
+class MyChildClass1<T>(t : T) : MyGenericClass<T>(t) {}
+class MyChildClass2<T>(t : T) : MyGenericClass<T>(t) {
+    fun foo(t: T) = t
+    val pr : T = t
+    override fun bar(t: T) = t
+    override val p : T = t
+}
+
+open class MyClass() : MyTrait<Int>, MyAbstractClass<String>() {
+    override fun foo(t: Int) = t
+    override fun bar(t: String) = t
+    override val pr : String = "1"
+}
+
+abstract class MyAbstractClass1 : MyTrait<Int>, MyAbstractClass<String>() {
+    override fun foo(t: Int) = t
+    override fun bar(t: String) = t
+}
+
+class MyIllegalGenericClass1<T> : MyTrait<T>, MyAbstractClass<T>() {}
+class MyIllegalGenericClass2<T, R>(r : R) : MyTrait<T>, MyAbstractClass<R>() {
+    override fun foo(r: R) = r
+    override val <T> pr : R = r
+}
+class MyIllegalClass1 : MyTrait<Int>, MyAbstractClass<String>() {}
+abstract class MyLegalAbstractClass1 : MyTrait<Int>, MyAbstractClass<String>() {}
+
+class MyIllegalClass2<T>(t : T) : MyTrait<Int>, MyAbstractClass<Int>() {
+    fun foo(t: T) = t
+    fun bar(t: T) = t
+    val <R> pr : T = t
+}
+abstract class MyLegalAbstractClass2<T>(t : T) : MyTrait<Int>, MyAbstractClass<Int>() {
+    fun foo(t: T) = t
+    fun bar(t: T) = t
+    val <R> pr : T = t
+}

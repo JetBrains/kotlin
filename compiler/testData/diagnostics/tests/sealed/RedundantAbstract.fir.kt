@@ -1,0 +1,3 @@
+abstract sealed class Base {
+
+}

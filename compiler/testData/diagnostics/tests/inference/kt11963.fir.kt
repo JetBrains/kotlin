@@ -1,0 +1,1 @@
+val <T : KClass<T>.something> abc

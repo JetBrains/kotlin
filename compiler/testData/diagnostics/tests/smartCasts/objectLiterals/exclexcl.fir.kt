@@ -1,0 +1,22 @@
+// !WITH_NEW_INFERENCE
+abstract class Runnable {
+    abstract fun run()
+}
+
+fun foo(): Int {
+    val c: Int? = null
+    val a: Int? = 1
+    if (c is Int) {
+        val k = object: Runnable() {
+            init {
+                a!!.toInt()
+            }
+            override fun run() = Unit
+        }
+        k.run()
+        val d: Int = c
+        // a is not null because of k constructor, but we do not know it
+        return a <!INAPPLICABLE_CANDIDATE!>+<!> d
+    }
+    else return -1
+}

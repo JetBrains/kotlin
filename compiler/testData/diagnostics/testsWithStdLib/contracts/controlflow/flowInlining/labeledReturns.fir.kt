@@ -1,0 +1,86 @@
+// !LANGUAGE: +AllowContractsForCustomFunctions +UseCallsInPlaceEffect
+// !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
+// !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
+
+import kotlin.contracts.*
+
+inline fun <T> myRun(block: () -> T): T {
+    contract {
+        <!INAPPLICABLE_CANDIDATE!>callsInPlace<!>(block, InvocationKind.EXACTLY_ONCE)
+    }
+    return block()
+}
+
+inline fun <T, R> T.myLet(block: (T) -> R): R {
+    contract {
+        <!INAPPLICABLE_CANDIDATE!>callsInPlace<!>(block, InvocationKind.EXACTLY_ONCE)
+    }
+    return block(this)
+}
+
+inline fun unknownRun(block: () -> Unit) = block()
+
+fun getBool(): Boolean = false
+
+fun threeLevelsReturnNoInitialization(x: Int?): Int? {
+    // Inner always jumps to outer
+    // And middle always calls inner
+    // So, in fact, middle never finished normally
+    // Hence 'y = 54' in middle is unreachable, and middle doesn't performs definite initialization
+    // Hence, outer doesn't performs definite initialization
+    val y: Int
+    myRun outer@ {
+        myRun middle@ {
+            x.myLet inner@ {
+                if (it == null) {
+                    y = 42
+                    return@outer Unit
+                }
+                else {
+                    return@outer Unit
+                }
+            }
+        }
+        // Possible to report unreachable here
+        y = 54
+    }
+    return y.inc()
+}
+
+fun threeLevelsReturnWithInitialization(x: Int?): Int? {
+    val y: Int
+    myRun outer@ {
+        myRun middle@ {
+            x.myLet inner@ {
+                if (it == null) {
+                    y = 42
+                    return@outer Unit
+                }
+                else {
+                    y = 34
+                    return@outer Unit
+                }
+            }
+        }
+    }
+    return y.inc()
+}
+
+fun threeLevelsReturnWithUnknown(x: Int?): Int? {
+    val y: Int
+    myRun outer@ {
+        unknownRun middle@ {
+            x.myLet inner@ {
+                if (it == null) {
+                    y = 42
+                    return@outer Unit
+                }
+                else {
+                    y = 34
+                    return@outer Unit
+                }
+            }
+        }
+    }
+    return y.inc()
+}

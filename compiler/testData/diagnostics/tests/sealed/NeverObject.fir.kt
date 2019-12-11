@@ -1,0 +1,3 @@
+sealed object Sealed {
+
+}

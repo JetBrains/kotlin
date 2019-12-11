@@ -1,0 +1,26 @@
+// FILE: A.kt
+
+class A {
+    private class Nested {
+        object O1
+    }
+}
+
+// FILE: B.java
+
+public class B {
+    private static class JC {
+        public static class JC1 {
+        }
+    }
+}
+
+// FILE: C.kt
+
+import A.Nested.*
+import B.JC.JC1
+
+fun test() {
+    O1
+    JC1()
+}

@@ -1,0 +1,6 @@
+open class MyClass<T> {
+    object MyObject : MyClass<Boolean>() { }
+}
+
+val foo1 = MyClass.MyObject // it's ok
+val foo2 = MyClass<Boolean>.MyObject // here's stofl

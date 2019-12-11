@@ -1,0 +1,1 @@
+fun ff(a: Any) = a is Array<*> && a.isArrayOf<String>()

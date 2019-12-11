@@ -1,0 +1,1 @@
+inner data class Outer(val x: Int)

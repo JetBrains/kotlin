@@ -1,0 +1,9 @@
+public fun foo(x: String?, y: String?): Int {
+    while (true) {
+        (if (x != null) break else y) ?: y!!
+        // y is not null in both branches but it's hard to determine
+        y.<!INAPPLICABLE_CANDIDATE!>length<!>
+    }
+    // y can be null because of the break
+    return y.<!INAPPLICABLE_CANDIDATE!>length<!>
+}
