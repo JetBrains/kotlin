@@ -3,6 +3,7 @@ package org.jetbrains.jps.gradle.model.impl;
 
 import com.intellij.openapi.util.io.FileUtil;
 import org.gradle.api.file.RelativePath;
+import org.gradle.api.internal.file.pattern.PatternMatcher;
 import org.gradle.api.internal.file.pattern.PatternMatcherFactory;
 import org.gradle.api.specs.Spec;
 import org.gradle.api.specs.Specs;
@@ -49,8 +50,8 @@ public class GradleResourceFileFilter implements FileFilter {
     Collection<String> allExcludes = new LinkedHashSet<>(myFilePattern.excludes);
     List<Spec<RelativePath>> matchers = new ArrayList<>();
     for (String exclude : allExcludes) {
-      Spec<RelativePath> patternMatcher = PatternMatcherFactory.getPatternMatcher(false, caseSensitive, exclude);
-      matchers.add(patternMatcher);
+      PatternMatcher matcher = PatternMatcherFactory.getPatternMatcher(false, caseSensitive, exclude);
+      matchers.add(new MyRelativePathSpec(matcher));
     }
     if (matchers.isEmpty()) {
       return Specs.satisfyNone();
@@ -61,9 +62,22 @@ public class GradleResourceFileFilter implements FileFilter {
   private Spec<RelativePath> getAsIncludeSpec(boolean caseSensitive) {
     List<Spec<RelativePath>> matchers = new ArrayList<>();
     for (String include : myFilePattern.includes) {
-      Spec<RelativePath> patternMatcher = PatternMatcherFactory.getPatternMatcher(true, caseSensitive, include);
-      matchers.add(patternMatcher);
+      PatternMatcher matcher = PatternMatcherFactory.getPatternMatcher(true, caseSensitive, include);
+      matchers.add(new MyRelativePathSpec(matcher));
     }
     return Specs.union(matchers);
+  }
+
+  private static class MyRelativePathSpec implements Spec<RelativePath> {
+    @NotNull private final PatternMatcher matcher;
+
+    MyRelativePathSpec(@NotNull PatternMatcher matcher) {
+      this.matcher = matcher;
+    }
+
+    @Override
+    public boolean isSatisfiedBy(RelativePath path) {
+      return matcher.test(path.getSegments(), path.isFile());
+    }
   }
 }

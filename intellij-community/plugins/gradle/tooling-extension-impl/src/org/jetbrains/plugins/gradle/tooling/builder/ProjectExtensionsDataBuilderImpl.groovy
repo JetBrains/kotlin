@@ -11,6 +11,8 @@ import org.jetbrains.plugins.gradle.model.*
 import org.jetbrains.plugins.gradle.tooling.ErrorMessageBuilder
 import org.jetbrains.plugins.gradle.tooling.ModelBuilderService
 
+import java.lang.reflect.Method
+
 /**
  * @author Vladislav.Soroka
  */
@@ -51,8 +53,6 @@ class ProjectExtensionsDataBuilderImpl implements ModelBuilderService {
       List<String> keyList =
         GradleVersion.current() >= GradleVersion.version("4.5")
           ? extension.extensionsSchema.collect { it["name"] as String }
-          : is35_OrBetter
-          ? extension.schema.keySet().asList() as List<String>
           : extractKeysViaReflection(extension)
 
       for (name in keyList) {
@@ -67,8 +67,23 @@ class ProjectExtensionsDataBuilderImpl implements ModelBuilderService {
   }
 
   private static List<String> extractKeysViaReflection(ExtensionContainer convention) {
-    def m = convention.class.getMethod("getAsMap")
-    return (m.invoke(convention) as Map<String, Object>).keySet().asList() as List<String>
+    List<String> methods = ["getSchema", "getAsMap"]
+    Method m = null
+    for (def name : methods) {
+      try {
+        m = convention.class.getMethod(name)
+      } catch (NoSuchMethodException ignored) {
+      }
+      if (m != null) {
+        break;
+      }
+    }
+
+    if (m != null) {
+      return (m.invoke(convention) as Map<String, Object>).keySet().asList() as List<String>
+    } else {
+      return Collections.emptyList();
+    }
   }
 
   @NotNull
