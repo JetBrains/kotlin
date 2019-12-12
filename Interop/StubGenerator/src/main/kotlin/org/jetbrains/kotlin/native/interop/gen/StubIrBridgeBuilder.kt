@@ -73,7 +73,8 @@ class StubIrBridgeBuilder(
 
         override fun visitClass(element: ClassStub, owner: StubContainer?) {
             element.annotations.filterIsInstance<AnnotationStub.ObjC.ExternalClass>().firstOrNull()?.let {
-                if (it.protocolGetter.isNotEmpty() && element.origin is StubOrigin.ObjCProtocol) {
+                val origin = element.origin
+                if (it.protocolGetter.isNotEmpty() && origin is StubOrigin.ObjCProtocol && !origin.isMeta) {
                     val protocol = (element.origin as StubOrigin.ObjCProtocol).protocol
                     // TODO: handle the case when protocol getter stub can't be compiled.
                     generateProtocolGetter(it.protocolGetter, protocol)

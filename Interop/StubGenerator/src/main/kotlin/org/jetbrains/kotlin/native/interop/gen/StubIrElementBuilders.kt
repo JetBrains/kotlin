@@ -73,7 +73,7 @@ internal class StructStubBuilder(
                 val offset = field.offset / 8
                 val fieldRefType = context.mirror(field.type)
                 val unwrappedFieldType = field.type.unwrapTypedefs()
-                val origin = StubOrigin.None
+                val origin = StubOrigin.Synthetic
                 if (unwrappedFieldType is ArrayType) {
                     val type = (fieldRefType as TypeMirror.ByValue).valueType
                     val annotations = if (platform == KotlinPlatform.JVM) {
@@ -115,16 +115,18 @@ internal class StructStubBuilder(
             context.bridgeComponentsBuilder.getterToBridgeInfo[readBits] = BridgeGenerationInfo("", typeInfo)
             context.bridgeComponentsBuilder.setterToBridgeInfo[writeBits] = BridgeGenerationInfo("", typeInfo)
             val kind = PropertyStub.Kind.Var(readBits, writeBits)
-            PropertyStub(field.name, kotlinType.toStubIrType(), kind, origin = StubOrigin.None)
+            PropertyStub(field.name, kotlinType.toStubIrType(), kind, origin = StubOrigin.Synthetic)
         }
 
         val superClass = context.platform.getRuntimeType("CStructVar")
         require(superClass is ClassifierStubType)
         val rawPtrConstructorParam = FunctionParameterStub("rawPtr", context.platform.getRuntimeType("NativePtr"))
+        val origin = StubOrigin.Struct(decl)
         val primaryConstructor = ConstructorStub(
                 parameters = listOf(rawPtrConstructorParam),
                 isPrimary = true,
-                annotations = emptyList()
+                annotations = emptyList(),
+                origin = origin
         )
         val superClassInit = SuperClassInit(superClass, listOf(GetConstructorParameter(rawPtrConstructorParam)))
 
@@ -136,7 +138,7 @@ internal class StructStubBuilder(
 
         return listOf(ClassStub.Simple(
                 classifier,
-                origin = StubOrigin.Struct(decl),
+                origin = origin,
                 properties = fields.filterNotNull() + if (platform == KotlinPlatform.NATIVE) bitFields else emptyList(),
                 constructors = listOf(primaryConstructor),
                 methods = emptyList(),
@@ -182,7 +184,7 @@ internal class StructStubBuilder(
             val rawPtrConstructorParam = FunctionParameterStub("rawPtr", context.platform.getRuntimeType("NativePtr"))
             val superClassInit = SuperClassInit(superClass, listOf(GetConstructorParameter(rawPtrConstructorParam)))
             val origin = StubOrigin.Struct(s)
-            val primaryConstructor = ConstructorStub(listOf(rawPtrConstructorParam), emptyList(), isPrimary = true)
+            val primaryConstructor = ConstructorStub(listOf(rawPtrConstructorParam), emptyList(), isPrimary = true, origin = origin)
             listOf(ClassStub.Simple(
                     classifier,
                     ClassStubModality.NONE,
@@ -213,7 +215,7 @@ internal class EnumStubBuilder(
                 type = baseType,
                 kind = PropertyStub.Kind.Val(PropertyAccessor.Getter.GetConstructorParameter(constructorParameter)),
                 modality = MemberStubModality.OVERRIDE,
-                origin = StubOrigin.None)
+                origin = StubOrigin.Synthetic)
 
         val canonicalsByValue = enumDef.constants
                 .groupingBy { it.value }
@@ -232,11 +234,12 @@ internal class EnumStubBuilder(
             val aliases = aliasConstants.filter { it.value == constant.value }.map { EnumEntryStub.Alias(it.name) }
             EnumEntryStub(constant.name, literal, aliases)
         }
-        val primaryConstructor = ConstructorStub(listOf(constructorParameter), emptyList(), isPrimary = true)
+        val origin = StubOrigin.Enum(enumDef)
+        val primaryConstructor = ConstructorStub(listOf(constructorParameter), emptyList(), isPrimary = true, origin = origin)
         val enum = ClassStub.Enum(clazz, canonicalEntries,
                 constructors = listOf(primaryConstructor),
                 properties = listOf(valueProperty),
-                origin = StubOrigin.Enum(enumDef),
+                origin = origin,
                 interfaces = listOf(context.platform.getRuntimeType("CEnum"))
         )
         context.bridgeComponentsBuilder.enumToTypeMirror[enum] = baseTypeMirror
@@ -299,7 +302,7 @@ internal class EnumStubBuilder(
                     kind,
                     MemberStubModality.FINAL,
                     null,
-                    origin = StubOrigin.None
+                    origin = StubOrigin.Synthetic
             )
         }
         val container = SimpleStubContainer(

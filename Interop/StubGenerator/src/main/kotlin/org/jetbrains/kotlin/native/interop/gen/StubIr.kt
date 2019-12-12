@@ -91,7 +91,17 @@ sealed class StubOrigin {
     /**
      * Special case when element of IR was generated.
      */
-    object None : StubOrigin()
+    // TODO: All "synthetic" cases should be handled separately.
+    object Synthetic : StubOrigin()
+
+    /**
+     * Denotes default constructor that was generated and has no real origin.
+     */
+    object SyntheticDefaultConstructor : StubOrigin()
+
+    class ObjCCategoryInitMethod(
+            val method: org.jetbrains.kotlin.native.interop.indexer.ObjCMethod
+    ) : StubOrigin()
 
     class ObjCMethod(
             val method: org.jetbrains.kotlin.native.interop.indexer.ObjCMethod,
@@ -104,11 +114,13 @@ sealed class StubOrigin {
     ) : StubOrigin()
 
     class ObjCClass(
-            val clazz: org.jetbrains.kotlin.native.interop.indexer.ObjCClass
+            val clazz: org.jetbrains.kotlin.native.interop.indexer.ObjCClass,
+            val isMeta: Boolean
     ) : StubOrigin()
 
     class ObjCProtocol(
-            val protocol: org.jetbrains.kotlin.native.interop.indexer.ObjCProtocol
+            val protocol: org.jetbrains.kotlin.native.interop.indexer.ObjCProtocol,
+            val isMeta: Boolean
     ) : StubOrigin()
 
     class Enum(val enum: EnumDef) : StubOrigin()
@@ -270,7 +282,7 @@ sealed class ClassStub : StubContainer(), StubElementWithOrigin, AnnotationHolde
             override val superClassInit: SuperClassInit? = null,
             override val interfaces: List<StubType> = emptyList(),
             override val properties: List<PropertyStub> = emptyList(),
-            override val origin: StubOrigin = StubOrigin.None,
+            override val origin: StubOrigin = StubOrigin.Synthetic,
             override val annotations: List<AnnotationStub> = emptyList(),
             override val childrenClasses: List<ClassStub> = emptyList(),
             override val simpleContainers: List<SimpleStubContainer> = emptyList()
@@ -316,7 +328,7 @@ class FunctionParameterStub(
         val type: StubType,
         override val annotations: List<AnnotationStub> = emptyList(),
         val isVararg: Boolean = false,
-        val origin: StubOrigin = StubOrigin.None
+        val origin: StubOrigin = StubOrigin.Synthetic
 ) : AnnotationHolder
 
 enum class MemberStubModality {
@@ -430,7 +442,8 @@ class ConstructorStub(
         override val parameters: List<FunctionParameterStub> = emptyList(),
         override val annotations: List<AnnotationStub> = emptyList(),
         val isPrimary: Boolean,
-        val visibility: VisibilityModifier = VisibilityModifier.PUBLIC
+        val visibility: VisibilityModifier = VisibilityModifier.PUBLIC,
+        val origin: StubOrigin
 ) : FunctionalStub {
 
     override fun <T, R> accept(visitor: StubIrVisitor<T, R>, data: T) =
