@@ -160,6 +160,7 @@ import org.jetbrains.kotlin.search.AbstractAnnotatedMembersSearchTest
 import org.jetbrains.kotlin.search.AbstractInheritorsSearchTest
 import org.jetbrains.kotlin.shortenRefs.AbstractShortenRefsTest
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.tools.projectWizard.cli.AbstractBuildFileGenerationTest
 import org.jetbrains.kotlinx.serialization.AbstractSerializationIrBytecodeListingTest
 import org.jetbrains.kotlinx.serialization.AbstractSerializationPluginBytecodeListingTest
 import org.jetbrains.kotlinx.serialization.AbstractSerializationPluginDiagnosticTest
@@ -1063,6 +1064,15 @@ fun main(args: Array<String>) {
 
         testClass<AbstractMultiPlatformCompletionTest> {
             model("multiPlatform", recursive = false, extension = null)
+        }
+    }
+
+    testGroup(
+        "libraries/tools/new-project-wizard/new-project-wizard-cli/tests",
+        "libraries/tools/new-project-wizard/new-project-wizard-cli/testData"
+    ) {
+        testClass<AbstractBuildFileGenerationTest> {
+            model("buildFileGeneration", recursive = false, extension = null)
         }
     }
 

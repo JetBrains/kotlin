@@ -1,0 +1,39 @@
+plugins {
+    id 'org.jetbrains.kotlin.multiplatform' version '1.3.61'
+}
+group = 'testGroupId'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+kotlin {
+    js('nodeJs') {
+        nodejs {
+
+        }
+    }
+    js('browser') {
+        browser {
+
+        }
+    }
+    sourceSets {
+        nodeJsMain {
+            dependencies {
+                implementation kotlin('stdlib-js')
+            }
+        }
+        nodeJsTest {
+
+        }
+        browserMain {
+            dependencies {
+                implementation kotlin('stdlib-js')
+            }
+        }
+        browserTest {
+
+        }
+    }
+}

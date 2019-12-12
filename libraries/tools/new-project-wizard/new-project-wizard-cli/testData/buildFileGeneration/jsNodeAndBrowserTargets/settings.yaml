@@ -1,0 +1,20 @@
+kotlin:
+  version: 1.3.61
+  projectKind: Multiplatform
+  modules:
+    - type: multiplatform
+      kind: multiplatform
+      name: a
+      subModules:
+        - type: jsNode
+          kind: target
+          name: nodeJs
+          sourcesets:
+            - type: main
+            - type: test
+        - type: jsBrowser
+          kind: target
+          name: browser
+          sourcesets:
+            - type: main
+            - type: test

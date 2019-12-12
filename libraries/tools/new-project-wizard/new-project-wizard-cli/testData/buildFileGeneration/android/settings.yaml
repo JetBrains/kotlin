@@ -1,0 +1,12 @@
+kotlin:
+  version: 1.3.61
+  projectKind: Multiplatform
+  modules:
+    - type:
+        name: android
+        androidSdkPath: /home/ilya/Android/Sdk
+      kind: singleplatform
+      name: android
+      sourcesets:
+        - type: main
+        - type: test
