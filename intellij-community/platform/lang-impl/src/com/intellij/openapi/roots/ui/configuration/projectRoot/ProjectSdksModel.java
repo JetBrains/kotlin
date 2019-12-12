@@ -226,10 +226,6 @@ public class ProjectSdksModel implements SdkModel {
     }
   }
 
-  public void createAddActions(@NotNull DefaultActionGroup group, @NotNull JComponent parent, @NotNull Consumer<? super Sdk> updateTree) {
-    createAddActions(group, parent, updateTree, null);
-  }
-
   public void createAddActions(@NotNull DefaultActionGroup group,
                                @NotNull final JComponent parent,
                                @NotNull final Consumer<? super Sdk> updateTree,
