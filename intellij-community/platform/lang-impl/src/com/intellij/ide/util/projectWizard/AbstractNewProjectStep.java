@@ -183,7 +183,7 @@ public abstract class AbstractNewProjectStep<T> extends DefaultActionGroup imple
       String message = ActionsBundle.message("action.NewDirectoryProject.not.empty", location.toString());
       int result = Messages.showYesNoDialog(projectToClose, message, ActionsBundle.message("action.NewDirectoryProject.title"), Messages.getQuestionIcon());
       if (result == Messages.YES) {
-        return PlatformProjectOpenProcessor.doOpenProject(location, new OpenProjectTask(), -1);
+        return PlatformProjectOpenProcessor.doOpenProject(location, new OpenProjectTask());
       }
     }
 
