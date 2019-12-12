@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.references.impl.FirErrorNamedReferenceImpl
 import org.jetbrains.kotlin.fir.references.impl.FirResolvedNamedReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirErrorTypeRefImpl
@@ -389,6 +390,12 @@ class KotlinDeserializedJvmSymbolsProvider(
     override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> {
         return getPackageParts(packageFqName).flatMap { part ->
             loadFunctionsByName(part, name) + loadPropertiesByName(part, name)
+        }
+    }
+
+    override fun getNestedClassifierScope(classId: ClassId): FirScope? {
+        return findRegularClass(classId)?.let {
+            nestedClassifierScope(it)
         }
     }
 

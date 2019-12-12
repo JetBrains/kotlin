@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirSuperTypeScope
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
+import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.toFirSourceElement
@@ -63,6 +64,21 @@ class JavaSymbolProvider(
 
     override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> =
         emptyList()
+
+    override fun getNestedClassifierScope(classId: ClassId): FirScope? {
+        val symbol = this.getClassLikeSymbolByFqName(classId) ?: return null
+        val regularClass = symbol.fir
+        return if (regularClass is FirJavaClass) {
+            nestedClassifierScope(
+                classId,
+                session,
+                existingNames = regularClass.existingNestedClassifierNames,
+                symbolProvider = this
+            )
+        } else {
+            nestedClassifierScope(regularClass)
+        }
+    }
 
     override fun getClassUseSiteMemberScope(
         classId: ClassId,

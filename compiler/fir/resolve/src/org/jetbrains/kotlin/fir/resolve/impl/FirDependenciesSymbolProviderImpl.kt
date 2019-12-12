@@ -33,6 +33,10 @@ class FirDependenciesSymbolProviderImpl(val session: FirSession) : AbstractFirSy
         } ?: emptyList()
     }
 
+    override fun getNestedClassifierScope(classId: ClassId): FirScope? {
+        return dependencyProviders.firstNotNullResult { it.getNestedClassifierScope(classId) }
+    }
+
     override fun getClassLikeSymbolByFqName(classId: ClassId): FirClassLikeSymbol<*>? {
         return classCache.lookupCacheOrCalculate(classId) {
             for (provider in dependencyProviders) {

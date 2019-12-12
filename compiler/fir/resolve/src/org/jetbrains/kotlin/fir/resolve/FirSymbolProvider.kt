@@ -53,6 +53,8 @@ abstract class FirSymbolProvider : FirSessionComponent {
 
     abstract fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>>
 
+    abstract fun getNestedClassifierScope(classId: ClassId): FirScope?
+
     abstract fun getClassUseSiteMemberScope(
         classId: ClassId,
         useSiteSession: FirSession,

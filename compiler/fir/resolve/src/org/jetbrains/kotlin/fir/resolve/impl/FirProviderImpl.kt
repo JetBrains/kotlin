@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -36,6 +37,12 @@ class FirProviderImpl(val session: FirSession) : FirProvider() {
 
     override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> {
         return (state.callableMap[CallableId(packageFqName, null, name)] ?: emptyList())
+    }
+
+    override fun getNestedClassifierScope(classId: ClassId): FirScope? {
+        return (getFirClassifierByFqName(classId) as? FirRegularClass)?.let {
+            nestedClassifierScope(it)
+        }
     }
 
     override fun getFirClassifierContainerFile(fqName: ClassId): FirFile {

@@ -29,6 +29,10 @@ class FirCompositeSymbolProvider(val providers: List<FirSymbolProvider>) : FirSy
         return providers.flatMap { it.getTopLevelCallableSymbols(packageFqName, name) }
     }
 
+    override fun getNestedClassifierScope(classId: ClassId): FirScope? {
+        return providers.firstNotNullResult { it.getNestedClassifierScope(classId) }
+    }
+
     override fun getPackage(fqName: FqName): FqName? {
         return providers.firstNotNullResult { it.getPackage(fqName) }
     }

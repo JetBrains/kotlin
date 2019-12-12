@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.scopes.impl.FirCompositeScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
@@ -37,8 +38,8 @@ abstract class FirAbstractTreeTransformerWithSuperTypes(
         return withScopeCleanup {
             // ? Is it Ok to use original file session here ?
             lookupSuperTypes(regularClass, lookupInterfaces = false, deep = true, useSiteSession = session)
-                .asReversed().mapTo(towerScope.scopes) {
-                    nestedClassifierScope(it.lookupTag.classId, session)
+                .asReversed().mapNotNullTo(towerScope.scopes) {
+                    session.firSymbolProvider.getNestedClassifierScope(it.lookupTag.classId)
                 }
             regularClass.addTypeParametersScope()
             val companionObject = regularClass.companionObject
