@@ -42,24 +42,15 @@ class FcsCodegenTests : AbstractCodegenTest() {
     @Test
     fun testReturnValue(): Unit = ensureSetup {
         compose("""
-
-            @Composable
-            fun <T, V1> testMemo(
-                v1: V1,
-                calculation: () -> T
-            ): T {
-                return +memo(v1, calculation)
-            }
-
             var a = 0
             var b = 0
 
             @Composable
             fun SimpleComposable() {
                 a++
-                val c = +state { 0 }
-                val d = testMemo(c.value) { b++; b }
-                val recompose = +invalidate
+                val c = state { 0 }
+                val d = remember(c.value) { b++; b }
+                val recompose = invalidate
                 Button(
                   text=listOf(a, b, c.value, d).joinToString(", "),
                   onClick={ c.value += 1 },
@@ -118,16 +109,8 @@ class FcsCodegenTests : AbstractCodegenTest() {
         compose(
             """
             @Composable
-            fun <T, V1> testMemo(
-                v1: V1,
-                calculation: () -> T
-            ): T {
-                return +memo(v1, calculation)
-            }
-
-            @Composable
             fun SimpleComposable() {
-                val x = testMemo(calculation = { "abc" }, v1 = "def")
+                val x = remember(calculation = { "abc" }, v1 = "def")
                 TextView(
                   text=x,
                   id=42
@@ -331,7 +314,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
                 }
             """,
             noParameters,
-            "SimpleComposable(state=+memo { FancyButtonCount() })"
+            "SimpleComposable(state=remember { FancyButtonCount() })"
         ).then { activity ->
             val button = activity.findViewById(42) as Button
             button.performClick()
@@ -361,7 +344,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
             }
         """,
             noParameters,
-            "SimpleComposable(state=+memo { Counter() }, value=\"Value\")"
+            "SimpleComposable(state=remember { Counter() }, value=\"Value\")"
         ).then { activity ->
             val button = activity.findViewById(42) as Button
             button.performClick()
@@ -1040,11 +1023,11 @@ class FcsCodegenTests : AbstractCodegenTest() {
 
             @Composable fun Parent(bust: Double) {
                 val ambientRef = +buildPortal()
-                val viewRef = +memo { Ref<LinearLayout>() }
+                val viewRef = remember { Ref<LinearLayout>() }
 
                 LinearLayout(id=$llId, ref=viewRef)
 
-                +onCommit {
+                onCommit {
                     Compose.composeInto(
                         container = viewRef.value ?: error("No View Ref!"),
                         parent = ambientRef
@@ -1102,11 +1085,11 @@ class FcsCodegenTests : AbstractCodegenTest() {
 
             @Composable fun Parent(bust: Double) {
                 Ambient.Portal { ambientRef ->
-                    val viewRef = +memo { Ref<LinearLayout>() }
+                    val viewRef = remember { Ref<LinearLayout>() }
 
                     LinearLayout(id=$llId, ref=viewRef)
 
-                    +onCommit {
+                    onCommit {
                         Compose.composeInto(
                             container = viewRef.value ?: error("No View Ref!"),
                             parent = ambientRef
@@ -1222,7 +1205,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
                 val textAmbient = Ambient.of { "default" }
 
                 @Composable fun DisplayTest(id: Int) {
-                    val text = +ambient(textAmbient)
+                    val text = ambient(textAmbient)
                     TextView(id=id, text=text)
                 }
 
@@ -1242,7 +1225,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
 
                 @Composable
                 fun TestApp() {
-                    val inc = +state { 1 }
+                    val inc = state { 1 }
 
                     Button(id=$buttonId, text="Click Me", onClick={ inc.value += 1 })
 
@@ -1292,7 +1275,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
 
             @Composable
             fun Main() {
-                var text = +state { "$initialText" }
+                var text = state { "$initialText" }
                 TextAmbient.Provider(text.value) {
                     LinearLayout {
                         ConsumesAmbientFromDefaultParameter()
@@ -1306,7 +1289,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
             }
 
             @Composable
-            fun ConsumesAmbientFromDefaultParameter(text: String = +ambient(TextAmbient)) {
+            fun ConsumesAmbientFromDefaultParameter(text: String = ambient(TextAmbient)) {
                 TextView(text = text, id = 42)
             }
         """,
@@ -1725,7 +1708,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
                 @Composable
                 fun Counter() {
                     Observe {
-                        var count = +state { 0 }
+                        var count = state { 0 }
                         TextView(
                             text=("Count: " + count.value),
                             onClick={
@@ -1761,7 +1744,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
                 @Composable
                 fun Counter() {
                     Observe {
-                        var count = +memo { MyState(0) }
+                        var count = remember { MyState(0) }
                         TextView(
                             text=("Count: " + count.value),
                             onClick={
@@ -1796,11 +1779,11 @@ class FcsCodegenTests : AbstractCodegenTest() {
                 @Composable
                 fun Counter(log: StringBuilder) {
                     Observe {
-                        var count = +state { 0 }
-                        +onCommit {
+                        var count = state { 0 }
+                        onCommit {
                             log.append("a")
                         }
-                        +onActive {
+                        onActive {
                             log.append("b")
                         }
                         TextView(
@@ -1838,8 +1821,9 @@ class FcsCodegenTests : AbstractCodegenTest() {
             """
                 import androidx.ui.androidview.adapters.*
 
-                fun printer(log: StringBuilder, str: String) = effectOf<Unit> {
-                    +onCommit {
+                @Composable
+                fun printer(log: StringBuilder, str: String) {
+                    onCommit {
                         log.append(str)
                     }
                 }
@@ -1847,8 +1831,8 @@ class FcsCodegenTests : AbstractCodegenTest() {
                 @Composable
                 fun Counter(log: StringBuilder) {
                     Observe {
-                        var count = +state { 0 }
-                        +printer(log, "" + count.value)
+                        var count = state { 0 }
+                        printer(log, "" + count.value)
                         TextView(
                             text=("Count: " + count.value),
                             onClick={
@@ -2149,7 +2133,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
             @Composable
             fun Reordering() {
                 Observe {
-                    val items = +state { listOf(1, 2, 3, 4, 5) }
+                    val items = state { listOf(1, 2, 3, 4, 5) }
 
                     LinearLayout(orientation=LinearLayout.VERTICAL) {
                         items.value.forEachIndexed { index, id ->
@@ -2170,7 +2154,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
             @Composable
             private fun Item(@Pivotal id: Int, onMove: (Int) -> Unit) {
                 Observe {
-                    val count = +state { 0 }
+                    val count = state { 0 }
                     LinearLayout(orientation=LinearLayout.HORIZONTAL) {
                         TextView(id=(id+$tvId), text="id: ${'$'}id amt: ${'$'}{count.value}")
                         Button(id=(id+$btnIdAdd), text="+", onClick={ count.value++ })
@@ -2219,7 +2203,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
             """
                 @Composable
                 fun SimpleComposable() {
-                    val count = +state { 1 }
+                    val count = state { 1 }
                     Box {
                         repeat(count.value) {
                             Button(text="Increment", onClick={ count.value += 1 }, id=(41+it))
@@ -2266,7 +2250,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
                         )
                         LinearLayout(id=100) {
                             for(id in list) {
-                                Key(key=id) {
+                                key(v1=id) {
                                     StatefulButton()
                                 }
                             }
@@ -2277,7 +2261,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
 
             @Composable
             private fun StatefulButton() {
-                val count = +state { 0 }
+                val count = state { 0 }
                 Button(text="Clicked ${'$'}{count.value} times!", onClick={ count.value++ })
             }
             """, noParameters,
@@ -2633,7 +2617,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
 
             @Composable
             fun InvokeSelfCompose() {
-                val r = +memo() { SelfCompose() }
+                val r = remember() { SelfCompose() }
                 r.f1 = 1
                 r.compose(f2 = 10)
                 Leaf()

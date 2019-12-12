@@ -191,11 +191,12 @@ class ComposeCallLoweringTests : AbstractCodegenTest() {
 
                 val DensityAmbient = Ambient.of<Density>()
 
-                fun ambientDensity() = effectOf<Density> { +ambient(DensityAmbient) }
+                @Composable
+                fun ambientDensity() = ambient(DensityAmbient)
 
                 @Composable
                 fun WithDensity(block: @Composable DensityScope.() -> Unit) {
-                    DensityScope(+ambientDensity()).block()
+                    DensityScope(ambientDensity()).block()
                 }
             """
         )
@@ -862,7 +863,7 @@ fun WebComponent(
                     children()
                 }
             """,
-            "SimpleComposable(state=+memo { FancyButtonCount() })"
+            "SimpleComposable(state=remember { FancyButtonCount() })"
         ).then { activity ->
             val button = activity.findViewById(42) as Button
             button.performClick()
@@ -891,7 +892,7 @@ fun WebComponent(
                 )
             }
         """,
-            "SimpleComposable(state=+memo { Counter() }, value=\"Value\")"
+            "SimpleComposable(state=remember { Counter() }, value=\"Value\")"
         ).then { activity ->
             val button = activity.findViewById(42) as Button
             button.performClick()

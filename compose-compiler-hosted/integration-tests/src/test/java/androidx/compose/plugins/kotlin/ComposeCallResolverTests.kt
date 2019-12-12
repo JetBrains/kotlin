@@ -187,11 +187,12 @@ class ComposeCallResolverTests : AbstractCodegenTest() {
 
             val DensityAmbient = Ambient.of<Density>()
 
-            fun ambientDensity() = effectOf<Density> { +ambient(DensityAmbient) }
+            @Composable
+            fun ambientDensity() = ambient(DensityAmbient)
 
             @Composable
             fun WithDensity(block: @Composable DensityScope.() -> Unit) {
-                DensityScope(+ambientDensity()).<call>block()
+                DensityScope(ambientDensity()).<call>block()
             }
         """
     )
