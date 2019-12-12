@@ -17,7 +17,8 @@ import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.open
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.runWithTimeout
 import org.jetbrains.kotlin.daemon.common.toRMI
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
-import org.junit.Ignore
+import org.jetbrains.kotlin.test.IgnoreAll
+import org.junit.runner.RunWith
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.net.InetSocketAddress
@@ -39,7 +40,7 @@ class TestServer(val serverPort: Int = 6999) {
 
 val testServer = TestServer()
 
-@Ignore
+@RunWith(IgnoreAll::class)
 @Suppress("UNCHECKED_CAST")
 class ClientSerializationTest : KotlinIntegrationTestBase() {
 
