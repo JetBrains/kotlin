@@ -2,6 +2,7 @@
 package com.intellij.openapi.externalSystem.autoimport
 
 import com.intellij.ide.file.BatchFileChangeListener
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.components.ComponentManager
 import com.intellij.openapi.editor.Document
@@ -25,6 +26,7 @@ abstract class AutoImportTestCase : ExternalSystemTestCase() {
 
   override fun getExternalSystemConfigFileName() = throw UnsupportedOperationException()
 
+  private lateinit var testDisposable: Disposable
   private val notificationAware get() = ProjectNotificationAware.getInstance(myProject)
   private val projectTracker get() = AutoImportProjectTracker.getInstance(myProject).also { it.enableAutoImportInTests() }
 
@@ -199,6 +201,17 @@ abstract class AutoImportTestCase : ExternalSystemTestCase() {
     finally {
       Disposer.dispose(temporaryDisposable)
     }
+  }
+
+  override fun setUp() {
+    super.setUp()
+    testDisposable = Disposer.newDisposable()
+    myProject.replaceService(ExternalSystemProjectTracker::class.java, AutoImportProjectTracker(myProject), testDisposable)
+  }
+
+  override fun tearDown() {
+    Disposer.dispose(testDisposable)
+    super.tearDown()
   }
 
   protected fun simpleTest(fileRelativePath: String,

@@ -2,7 +2,6 @@
 package com.intellij.openapi.externalSystem.autoimport
 
 import com.intellij.openapi.externalSystem.model.ProjectSystemId
-import com.intellij.openapi.vfs.VfsUtil
 import org.junit.Test
 import java.io.File
 
