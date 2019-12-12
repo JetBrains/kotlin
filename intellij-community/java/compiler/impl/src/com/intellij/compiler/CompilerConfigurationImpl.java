@@ -16,7 +16,6 @@ import com.intellij.openapi.compiler.options.ExcludedEntriesConfiguration;
 import com.intellij.openapi.compiler.options.ExcludedEntriesListener;
 import com.intellij.openapi.compiler.options.ExcludesConfiguration;
 import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.diagnostic.Logger;
@@ -26,6 +25,7 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.ModuleListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.ui.InputValidator;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.*;
@@ -66,7 +66,7 @@ import static org.jetbrains.jps.model.java.impl.compiler.ResourcePatterns.normal
 import static org.jetbrains.jps.model.serialization.java.compiler.JpsJavaCompilerConfigurationSerializer.DEFAULT_WILDCARD_PATTERNS;
 
 @State(name = "CompilerConfiguration", storages = @Storage("compiler.xml"))
-public class CompilerConfigurationImpl extends CompilerConfiguration implements PersistentStateComponent<Element>, ProjectComponent {
+public class CompilerConfigurationImpl extends CompilerConfiguration implements PersistentStateComponent<Element> {
   private static final Logger LOG = Logger.getInstance(CompilerConfiguration.class);
 
   public static final String TESTS_EXTERNAL_COMPILER_HOME_PROPERTY_NAME = "tests.external.compiler.home";
@@ -104,7 +104,7 @@ public class CompilerConfigurationImpl extends CompilerConfiguration implements 
   private String myBytecodeTargetLevel = null;  // null means same as effective language level
   private final Map<String, String> myModuleBytecodeTarget = new HashMap<>();
 
-  public CompilerConfigurationImpl(Project project) {
+  public CompilerConfigurationImpl(@NotNull Project project) {
     myProject = project;
     myExcludesConfiguration = createExcludedEntriesConfiguration(project);
     MessageBusConnection connection = project.getMessageBus().connect();
@@ -126,6 +126,7 @@ public class CompilerConfigurationImpl extends CompilerConfiguration implements 
         updateModuleNames(modules.stream().collect(Collectors.toMap(oldNameProvider::fun, Module::getName)));
       }
     });
+    StartupManager.getInstance(project).runAfterOpened(() -> createCompilers());
   }
 
   // Overridden in Upsource
@@ -421,11 +422,6 @@ public class CompilerConfigurationImpl extends CompilerConfiguration implements 
   public JavacCompiler getJavacCompiler() {
     createCompilers();
     return JAVAC_EXTERNAL_BACKEND;
-  }
-
-  @Override
-  public void projectOpened() {
-    createCompilers();
   }
 
   private void createCompilers() {
