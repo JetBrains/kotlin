@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
@@ -19,18 +17,15 @@ import org.jetbrains.kotlin.name.Name
 // (or make possible to calculate nested classifiers on-the-fly)
 class FirLazyNestedClassifierScope(
     val classId: ClassId,
-    session: FirSession,
-    private val existingNames: List<Name>?,
-    symbolProvider: FirSymbolProvider?
+    private val existingNames: List<Name>,
+    private val symbolProvider: FirSymbolProvider
 ) : FirScope() {
-
-    private val symbolProvider = symbolProvider ?: session.firSymbolProvider
 
     override fun processClassifiersByName(
         name: Name,
         processor: (FirClassifierSymbol<*>) -> ProcessorAction
     ): ProcessorAction {
-        if (existingNames != null && name !in existingNames) {
+        if (name !in existingNames) {
             return ProcessorAction.NONE
         }
         val child = classId.createNestedClassId(name)

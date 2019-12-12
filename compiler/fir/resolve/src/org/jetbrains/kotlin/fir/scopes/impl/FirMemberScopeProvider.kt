@@ -46,16 +46,22 @@ class FirMemberScopeProvider : FirSessionComponent {
     }
 }
 
-fun declaredMemberScope(
+fun declaredMemberScope(klass: FirClass<*>): FirScope {
+    return klass
+        .session
+        .memberScopeProvider
+        .declaredMemberScope(klass, useLazyNestedClassifierScope = false, existingNames = null, symbolProvider = null)
+}
+
+fun declaredMemberScopeWithLazyNestedScope(
     klass: FirClass<*>,
-    useLazyNestedClassifierScope: Boolean = false,
-    existingNames: List<Name>? = null,
-    symbolProvider: FirSymbolProvider? = null
+    existingNames: List<Name>,
+    symbolProvider: FirSymbolProvider
 ): FirScope {
     return klass
         .session
         .memberScopeProvider
-        .declaredMemberScope(klass, useLazyNestedClassifierScope, existingNames, symbolProvider)
+        .declaredMemberScope(klass, useLazyNestedClassifierScope = true, existingNames = existingNames, symbolProvider = symbolProvider)
 }
 
 fun nestedClassifierScope(klass: FirClass<*>): FirNestedClassifierScope {
@@ -65,13 +71,12 @@ fun nestedClassifierScope(klass: FirClass<*>): FirNestedClassifierScope {
         .nestedClassifierScope(klass)
 }
 
-fun nestedClassifierScope(
+fun lazyNestedClassifierScope(
     classId: ClassId,
-    session: FirSession,
-    existingNames: List<Name>? = null,
-    symbolProvider: FirSymbolProvider? = null
+    existingNames: List<Name>,
+    symbolProvider: FirSymbolProvider
 ): FirLazyNestedClassifierScope {
-    return FirLazyNestedClassifierScope(classId, session, existingNames, symbolProvider)
+    return FirLazyNestedClassifierScope(classId, existingNames, symbolProvider)
 }
 
 fun selfImportingScope(fqName: FqName, session: FirSession): FirSelfImportingScope {

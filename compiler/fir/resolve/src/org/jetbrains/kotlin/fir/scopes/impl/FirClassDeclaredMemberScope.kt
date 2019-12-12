@@ -27,7 +27,7 @@ class FirClassDeclaredMemberScope(
     symbolProvider: FirSymbolProvider? = null
 ) : FirScope() {
     private val nestedClassifierScope = if (useLazyNestedClassifierScope) {
-        nestedClassifierScope(klass.symbol.classId, klass.session, existingNames, symbolProvider)
+        lazyNestedClassifierScope(klass.symbol.classId, existingNames!!, symbolProvider!!)
     } else {
         nestedClassifierScope(klass)
     }
