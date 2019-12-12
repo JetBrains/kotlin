@@ -7,6 +7,7 @@
 package org.jetbrains.kotlin.ide.konan.decompiler
 
 import com.intellij.openapi.diagnostic.Logger
+import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.ide.konan.createLoggingErrorReporter
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.DeserializerForDecompilerBase
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.ResolveEverythingToKotlinAnyLocalClassifierResolver
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.library.metadata.KlibMetadataClassDataFinder
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.name.FqName
@@ -38,7 +40,7 @@ class KotlinNativeMetadataDeserializerForDecompiler(
 
         deserializationComponents = DeserializationComponents(
             storageManager, moduleDescriptor, DeserializationConfiguration.Default,
-            KotlinNativeProtoBasedClassDataFinder(proto, nameResolver),
+            KlibMetadataClassDataFinder(proto, nameResolver),
             AnnotationAndConstantLoaderImpl(moduleDescriptor, notFoundClasses, serializerProtocol), packageFragmentProvider,
             ResolveEverythingToKotlinAnyLocalClassifierResolver(builtIns), createLoggingErrorReporter(LOG),
             LookupTracker.DO_NOTHING, flexibleTypeDeserializer, emptyList(), notFoundClasses, ContractDeserializer.DEFAULT,
@@ -55,7 +57,7 @@ class KotlinNativeMetadataDeserializerForDecompiler(
             createDummyPackageFragment(facadeFqName),
             proto.`package`,
             nameResolver,
-            KotlinNativeMetadataVersion.DEFAULT_INSTANCE,
+            KlibMetadataVersion.INSTANCE,
             containerSource = null,
             components = deserializationComponents
         ) { emptyList() }
