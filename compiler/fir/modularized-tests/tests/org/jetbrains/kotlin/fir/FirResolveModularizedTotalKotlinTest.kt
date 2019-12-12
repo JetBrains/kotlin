@@ -67,7 +67,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
 
     private fun dumpFir(disambiguatedName: String, moduleData: ModuleData, firFiles: List<FirFile>) {
         if (!DUMP_FIR) return
-        val dumpRoot = File(FIR_DUMP_PATH).resolve(disambiguatedName)
+        val dumpRoot = File(ROOT_PATH_PREFIX, FIR_DUMP_PATH).resolve(disambiguatedName)
         firFiles.forEach {
             val directory = it.packageFqName.pathSegments().fold(dumpRoot) { file, name -> file.resolve(name.asString()) }
             directory.mkdirs()
@@ -121,7 +121,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
     }
 
     override fun beforePass() {
-        if (DUMP_FIR) dump = MultiModuleHtmlFirDump(File(FIR_HTML_DUMP_PATH))
+        if (DUMP_FIR) dump = MultiModuleHtmlFirDump(File(ROOT_PATH_PREFIX, FIR_HTML_DUMP_PATH))
     }
 
     override fun afterPass(pass: Int) {
