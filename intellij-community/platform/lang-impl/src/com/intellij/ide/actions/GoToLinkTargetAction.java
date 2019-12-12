@@ -12,6 +12,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.psi.util.PsiUtilCore;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class GoToLinkTargetAction extends DumbAwareAction {
   private static final Logger LOG = Logger.getInstance(GoToLinkTargetAction.class);
@@ -20,14 +21,14 @@ public class GoToLinkTargetAction extends DumbAwareAction {
   public void update(@NotNull AnActionEvent e) {
     Project project = getEventProject(e);
     VirtualFile file = e.getData(CommonDataKeys.VIRTUAL_FILE);
-    e.getPresentation().setEnabledAndVisible(project != null && file != null && file.is(VFileProperty.SYMLINK));
+    e.getPresentation().setEnabledAndVisible(project != null && underSymlink(file));
   }
 
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
     Project project = getEventProject(e);
     VirtualFile file = e.getData(CommonDataKeys.VIRTUAL_FILE);
-    if (project != null && file != null && file.is(VFileProperty.SYMLINK)) {
+    if (project != null && underSymlink(file)) {
       VirtualFile target = file.getCanonicalFile();
       PsiFileSystemItem psiFile = PsiUtilCore.findFileSystemItem(project, target);
       if (LOG.isDebugEnabled()) LOG.debug(file + " -> " + target + " (" + psiFile + ")");
@@ -35,5 +36,9 @@ public class GoToLinkTargetAction extends DumbAwareAction {
         ProjectView.getInstance(project).select(psiFile, target, false);
       }
     }
+  }
+
+  private static boolean underSymlink(@Nullable VirtualFile file) {
+    return file != null && (file.is(VFileProperty.SYMLINK) || underSymlink(file.getParent()));
   }
 }
