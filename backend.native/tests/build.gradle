@@ -3739,9 +3739,6 @@ task library_ir_provider_mismatch(type: KonanDriverTest) {
     goldValue = isWindows() ? messages.replaceAll('\\/', '\\\\') : messages
 }
 
-def target = ext.platformManager.targetByName(project.testTarget ?: 'host')
-def targetName = target.name
-
 if (isAppleTarget(project)) {
     task testValuesFramework(type: FrameworkTest) {
         final String frameworkName = 'Values'
@@ -3774,12 +3771,12 @@ if (isAppleTarget(project)) {
         }
 
         konanArtifacts {
-            framework(frameworkName, targets: [ targetName ]) {
+            framework(frameworkName, targets: [target.name]) {
                 srcDir 'framework/values'
                 baseDir dir
 
                 if (!useCustomDist) {
-                    dependsOn ":${targetName}CrossDistRuntime", ':commonDistRuntime', ':distCompiler'
+                    dependsOn ":${target.name}CrossDistRuntime", ':commonDistRuntime', ':distCompiler'
                 }
 
                 extraOpts "-Xembed-bitcode-marker"
@@ -3817,12 +3814,12 @@ if (isAppleTarget(project)) {
         frameworkNames = [frameworkName]
         if (cacheTesting == null) fullBitcode = true
         konanArtifacts {
-            framework(frameworkName, targets: [ targetName ]) {
+            framework(frameworkName, targets: [target.name]) {
                 srcDir 'framework/stdlib'
                 baseDir "$testOutputFramework/$testName"
 
                 if (!useCustomDist) {
-                    dependsOn ":${targetName}CrossDistRuntime", ':commonDistRuntime', ':distCompiler'
+                    dependsOn ":${target.name}CrossDistRuntime", ':commonDistRuntime', ':distCompiler'
                 }
 
                 extraOpts "-Xembed-bitcode"
@@ -3843,26 +3840,26 @@ if (isAppleTarget(project)) {
         final String dir = "$testOutputFramework/$testName"
 
         konanArtifacts {
-            framework(firstFrameworkName, targets: [ targetName ]) {
+            framework(firstFrameworkName, targets: [target.name]) {
                 srcDir 'framework/multiple/framework1'
                 srcDir 'framework/multiple/shared'
                 baseDir dir
 
                 if (!useCustomDist) {
-                    dependsOn ":${targetName}CrossDistRuntime", ':commonDistRuntime', ':distCompiler'
+                    dependsOn ":${target.name}CrossDistRuntime", ':commonDistRuntime', ':distCompiler'
                 }
 
                 extraOpts "-Xembed-bitcode"
                 extraOpts project.globalTestArgs
             }
 
-            framework(secondFrameworkName, targets: [ targetName ]) {
+            framework(secondFrameworkName, targets: [target.name]) {
                 srcDir 'framework/multiple/framework2'
                 srcDir 'framework/multiple/shared'
                 baseDir dir
 
                 if (!useCustomDist) {
-                    dependsOn ":${targetName}CrossDistRuntime", ':commonDistRuntime', ':distCompiler'
+                    dependsOn ":${target.name}CrossDistRuntime", ':commonDistRuntime', ':distCompiler'
                 }
 
                 extraOpts "-Xembed-bitcode"
@@ -3898,7 +3895,7 @@ KotlinNativeTestKt.createTest(project, 'harmonyRegexTest', KonanGTest) { task ->
     def sources = UtilsKt.getFilesToCompile(project, ["harmony_regex"], [])
 
     konanArtifacts {
-        program('harmonyRegexTest', targets: [targetName]) {
+        program('harmonyRegexTest', targets: [target.name]) {
             srcFiles sources
             baseDir "$testOutputStdlib/harmonyRegexTest"
             extraOpts '-tr'
@@ -3933,7 +3930,7 @@ if (UtilsKt.getTestTargetSupportsCodeCoverage(project)) {
         numberOfCoveredLines = 1
 
         konanArtifacts {
-            library("lib_to_cover", targets: [targetName]) {
+            library("lib_to_cover", targets: [target.name]) {
                 srcFiles 'coverage/basic/library/library.kt'
             }
             program(binaryName, targets: [ target ]) {
@@ -4020,7 +4017,7 @@ KotlinNativeTestKt.createTest(project, 'stdlibTest', KonanGTest) { task ->
             [ 'build/stdlib_external/stdlib/test/internalAnnotations.kt' ])
 
     konanArtifacts {
-        program('stdlibTest', targets: [ targetName ]) {
+        program('stdlibTest', targets: [target.name]) {
             srcFiles sources
             baseDir "$testOutputStdlib/stdlibTest"
             enableMultiplatform true
@@ -4058,7 +4055,7 @@ task buildKonanTests { t ->
     def sources = UtilsKt.getFilesToCompile(project, compileList, excludeList)
 
     konanArtifacts {
-        program('localTest', targets: [ targetName ]) {
+        program('localTest', targets: [target.name]) {
             srcFiles sources
             baseDir testOutputLocal
             extraOpts '-tr'
@@ -4068,7 +4065,7 @@ task buildKonanTests { t ->
 
     // Set build dependencies.
     dependsOn compileKonanLocalTest
-    UtilsKt.dependsOnDist(project, "compileKonanLocalTest${targetName.capitalize()}")
+    UtilsKt.dependsOnDist(project, "compileKonanLocalTest${target.name.capitalize()}")
 
     // Local tests build into a single binary should depend on this task
     project.tasks
