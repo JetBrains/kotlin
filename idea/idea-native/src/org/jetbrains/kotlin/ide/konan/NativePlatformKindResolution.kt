@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.PlatformAnalysisParameters
 import org.jetbrains.kotlin.analyzer.ResolverForModuleFactory
 import org.jetbrains.kotlin.analyzer.getCapability
+import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
+import org.jetbrains.kotlin.backend.common.serialization.metadata.metadataVersion
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.functionInterfacePackageFragmentProvider
@@ -27,10 +29,10 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.KlibModuleOrigin
-import org.jetbrains.kotlin.ide.konan.NativeLibraryInfo.Companion.safeAbiVersion
-import org.jetbrains.kotlin.ide.konan.NativeLibraryInfo.Companion.isCompatible
+import org.jetbrains.kotlin.ide.konan.NativeLibraryInfo.Companion.safeMetadataVersion
+import org.jetbrains.kotlin.ide.konan.NativeLibraryInfo.MetadataInfo.Compatible
+import org.jetbrains.kotlin.ide.konan.NativeLibraryInfo.MetadataInfo.Incompatible
 import org.jetbrains.kotlin.ide.konan.analyzer.NativeResolverForModuleFactory
-import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.LibraryInfo
 import org.jetbrains.kotlin.idea.caches.project.SdkInfo
 import org.jetbrains.kotlin.idea.caches.project.lazyClosure
@@ -57,7 +59,7 @@ fun KotlinLibrary.createPackageFragmentProvider(
     moduleDescriptor: ModuleDescriptor
 ): PackageFragmentProvider? {
 
-    if (!safeAbiVersion.isCompatible) return null
+    if (safeMetadataVersion?.isCompatible() != true) return null
 
     val libraryProto = CachingIdeKonanLibraryMetadataLoader.loadModuleHeader(this)
 
@@ -187,14 +189,33 @@ private fun createKotlinNativeBuiltIns(moduleInfo: ModuleInfo, projectContext: P
 private fun ModuleInfo.findNativeStdlib(): NativeLibraryInfo? =
     dependencies().lazyClosure { it.dependencies() }
         .filterIsInstance<NativeLibraryInfo>()
-        .firstOrNull { it.isStdlib && it.safeAbiVersion.isCompatible }
+        .firstOrNull { it.isStdlib && it.metadataInfo.isCompatible }
 
 class NativeLibraryInfo(project: Project, library: Library, val libraryRoot: String) : LibraryInfo(project, library) {
+
+    sealed class MetadataInfo {
+        abstract val isCompatible: Boolean
+
+        object Compatible : MetadataInfo() {
+            override val isCompatible get() = true
+        }
+
+        class Incompatible(val isOlder: Boolean) : MetadataInfo() {
+            override val isCompatible get() = false
+        }
+    }
 
     private val nativeLibrary = createKotlinLibrary(File(libraryRoot))
 
     val isStdlib get() = libraryRoot.endsWith(KONAN_STDLIB_NAME)
-    val safeAbiVersion get() = nativeLibrary.safeAbiVersion
+    val metadataInfo by lazy {
+        val metadataVersion = nativeLibrary.safeMetadataVersion
+        when {
+            metadataVersion == null -> Incompatible(true) // too old KLIB format, even doesn't have metadata version
+            !metadataVersion.isCompatible() -> Incompatible(!metadataVersion.isAtLeast(KlibMetadataVersion.INSTANCE))
+            else -> Compatible
+        }
+    }
 
     override fun getLibraryRoots() = listOf(libraryRoot)
 
@@ -215,8 +236,7 @@ class NativeLibraryInfo(project: Project, library: Library, val libraryRoot: Str
     companion object {
         val NATIVE_LIBRARY_CAPABILITY = ModuleDescriptor.Capability<KotlinLibrary>("KotlinNativeLibrary")
 
-        internal val KotlinLibrary.safeAbiVersion get() = this.readSafe(null) { versions.abiVersion }
-        internal val KotlinAbiVersion?.isCompatible get() = this == KotlinAbiVersion.CURRENT
+        internal val KotlinLibrary.safeMetadataVersion get() = this.readSafe(null) { metadataVersion }
 
         private fun <T> KotlinLibrary.readSafe(defaultValue: T, action: KotlinLibrary.() -> T) = try {
             action()

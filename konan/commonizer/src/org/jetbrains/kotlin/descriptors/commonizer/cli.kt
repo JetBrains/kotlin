@@ -179,10 +179,10 @@ private fun loadLibrary(location: File): KotlinLibrary {
         printErrorAndExit("library does not have metadata version specified in manifest: $location")
 
     val metadataVersion = library.metadataVersion
-    if (!metadataVersion.isCompatible())
+    if (metadataVersion?.isCompatible() != true)
         printErrorAndExit(
             """
-                library has incompatible metadata version $metadataVersion: $location,
+                library has incompatible metadata version ${metadataVersion ?: "\"unknown\""}: $location,
                 please make sure that all libraries passed to commonizer compatible metadata version ${KlibMetadataVersion.INSTANCE}
             """.trimIndent()
         )

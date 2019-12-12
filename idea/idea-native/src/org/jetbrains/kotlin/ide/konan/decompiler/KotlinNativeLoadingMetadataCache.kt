@@ -9,11 +9,13 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.BaseComponent
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.containers.ContainerUtil.createConcurrentWeakValueMap
+import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.library.metadata.parsePackageFragment
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import java.io.IOException
 import java.util.*
 
@@ -39,7 +41,7 @@ class KotlinNativeLoadingMetadataCache : BaseComponent {
 
     private val packageFragmentCache = createConcurrentWeakValueMap<CacheKey, CacheValue<ProtoBuf.PackageFragment>>()
     private val moduleHeaderCache = createConcurrentWeakValueMap<CacheKey, CacheValue<KlibMetadataProtoBuf.Header>>()
-    private val libraryVersioningCache = createConcurrentWeakValueMap<CacheKey, CacheValue<KotlinLibraryVersioning>>()
+    private val libraryMetadataVersionCache = createConcurrentWeakValueMap<CacheKey, CacheValue<KlibMetadataVersion>>()
 
     fun getCachedPackageFragment(packageFragmentFile: VirtualFile): ProtoBuf.PackageFragment? {
         check(packageFragmentFile.extension == KLIB_METADATA_FILE_EXTENSION) {
@@ -61,18 +63,18 @@ class KotlinNativeLoadingMetadataCache : BaseComponent {
         }.value
     }
 
-    private fun isAbiCompatible(libraryRoot: VirtualFile): Boolean {
+    private fun isMetadataCompatible(libraryRoot: VirtualFile): Boolean {
         val manifestFile = libraryRoot.findChild(KLIB_MANIFEST_FILE_NAME) ?: return false
 
-        val versioning = libraryVersioningCache.computeIfAbsent(CacheKey(manifestFile)) {
-            CacheValue(computeLibraryVersioning(manifestFile))
-        }.value
+        val metadataVersion = libraryMetadataVersionCache.computeIfAbsent(CacheKey(manifestFile)) {
+            CacheValue(computeLibraryMetadataVersion(manifestFile))
+        }.value ?: return false
 
-        return versioning?.abiVersion == KotlinAbiVersion.CURRENT
+        return metadataVersion.isCompatible()
     }
 
     private fun computePackageFragment(packageFragmentFile: VirtualFile): ProtoBuf.PackageFragment? {
-        if (!isAbiCompatible(packageFragmentFile.parent.parent.parent))
+        if (!isMetadataCompatible(packageFragmentFile.parent.parent.parent))
             return null
 
         return try {
@@ -83,7 +85,7 @@ class KotlinNativeLoadingMetadataCache : BaseComponent {
     }
 
     private fun computeModuleHeader(moduleHeaderFile: VirtualFile): KlibMetadataProtoBuf.Header? {
-        if (!isAbiCompatible(moduleHeaderFile.parent.parent))
+        if (!isMetadataCompatible(moduleHeaderFile.parent.parent))
             return null
 
         return try {
@@ -93,8 +95,9 @@ class KotlinNativeLoadingMetadataCache : BaseComponent {
         }
     }
 
-    private fun computeLibraryVersioning(manifestFile: VirtualFile): KotlinLibraryVersioning? = try {
-        Properties().apply { manifestFile.inputStream.use { load(it) } }.readKonanLibraryVersioning()
+    private fun computeLibraryMetadataVersion(manifestFile: VirtualFile): KlibMetadataVersion? = try {
+        val versioning = Properties().apply { manifestFile.inputStream.use { load(it) } }.readKonanLibraryVersioning()
+        versioning.metadataVersion?.let(BinaryVersion.Companion::parseVersionArray)?.let(::KlibMetadataVersion)
     } catch (_: IOException) {
         // ignore and cache null value
         null
