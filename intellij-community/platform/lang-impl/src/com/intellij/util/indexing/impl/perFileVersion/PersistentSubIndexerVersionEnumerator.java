@@ -2,6 +2,7 @@
 package com.intellij.util.indexing.impl.perFileVersion;
 
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.io.*;
 import org.jetbrains.annotations.NotNull;
@@ -12,12 +13,10 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Collection;
-import java.util.function.Supplier;
 
 public class PersistentSubIndexerVersionEnumerator<SubIndexerVersion> implements Closeable {
   private static final Logger LOG = Logger.getInstance(PersistentSubIndexerVersionEnumerator.class);
-  private static volatile int COMPACT_THRESHOLD = 500_000;
+  private static volatile int STORAGE_SIZE_LIMIT = 1024 * 1024;
 
   private class MyEnumerator implements DataEnumerator<SubIndexerVersion> {
     @Override
@@ -48,13 +47,12 @@ public class PersistentSubIndexerVersionEnumerator<SubIndexerVersion> implements
   private volatile int myNextVersion;
 
   public PersistentSubIndexerVersionEnumerator(@NotNull File file,
-                                               @NotNull KeyDescriptor<SubIndexerVersion> subIndexerTypeDescriptor,
-                                               @NotNull Supplier<? extends Collection<SubIndexerVersion>> allSubIndexerVersions) throws IOException {
+                                               @NotNull KeyDescriptor<SubIndexerVersion> subIndexerTypeDescriptor) throws IOException {
     myFile = file;
     mySubIndexerTypeDescriptor = subIndexerTypeDescriptor;
     myEnumerator = new CachingEnumerator<>(new MyEnumerator(), subIndexerTypeDescriptor);
-    init(allSubIndexerVersions);
-    if (myNextVersion >= Integer.MAX_VALUE - COMPACT_THRESHOLD) {
+    init();
+    if (myNextVersion >= STORAGE_SIZE_LIMIT) {
       throw new IOException("Rebuild index due to attribute version enumerator overflow");
     }
   }
@@ -63,22 +61,20 @@ public class PersistentSubIndexerVersionEnumerator<SubIndexerVersion> implements
     return myEnumerator.enumerate(version);
   }
 
-  private void removeStaleKeys(@Nullable Supplier<? extends Collection<SubIndexerVersion>> allSubIndexerSupplier) throws IOException {
-    if (myMap.getSize() > COMPACT_THRESHOLD) {
-      if (allSubIndexerSupplier == null) {
-        throw new IOException("max sub indexer limit is exceeded");
-      }
-      Collection<SubIndexerVersion> subIndexerVersions = allSubIndexerSupplier.get();
-      for (SubIndexerVersion attr : myMap.getAllKeysWithExistingMapping()) {
-        if (!subIndexerVersions.contains(attr)) {
-          myMap.remove(attr);
-          // next time indexer is required we reindex file - it's ok
-        }
+  /**
+   * should not be used in production code, only testing purposes
+   */
+  public SubIndexerVersion valueOf(int idx) throws IOException {
+    for (SubIndexerVersion version : myMap.getAllKeysWithExistingMapping()) {
+      Integer versionIdx = myMap.get(version);
+      if (Comparing.equal(idx, versionIdx)) {
+        return version;
       }
     }
+    return null;
   }
 
-  private void init(@Nullable Supplier<? extends Collection<SubIndexerVersion>> allSubIndexerVersions) throws IOException {
+  private void init() throws IOException {
     myMap = new PersistentHashMap<SubIndexerVersion, Integer>(myFile, mySubIndexerTypeDescriptor, EnumeratorIntegerDescriptor.INSTANCE) {
       //@Override
       //protected boolean wantNonNegativeIntegralValues() {
@@ -94,7 +90,6 @@ public class PersistentSubIndexerVersionEnumerator<SubIndexerVersion> implements
     catch (NumberFormatException e) {
       throw new IOException("Invalid next version format " + intValue);
     }
-    removeStaleKeys(allSubIndexerVersions);
   }
 
   public void clear() throws IOException {
@@ -104,7 +99,7 @@ public class PersistentSubIndexerVersionEnumerator<SubIndexerVersion> implements
       LOG.error(e);
     } finally {
       PersistentHashMap.deleteFilesStartingWith(myFile);
-      init( null);
+      init();
     }
   }
 
@@ -127,12 +122,12 @@ public class PersistentSubIndexerVersionEnumerator<SubIndexerVersion> implements
   }
 
   @TestOnly
-  public static void setCompactThreshold(int compactThreshold) {
-    COMPACT_THRESHOLD = compactThreshold;
+  public static void setStorageSizeLimit(int storageSizeLimit) {
+    STORAGE_SIZE_LIMIT = storageSizeLimit;
   }
 
   @TestOnly
-  public static int getCompactThreshold() {
-    return COMPACT_THRESHOLD;
+  public static int getStorageSizeLimit() {
+    return STORAGE_SIZE_LIMIT;
   }
 }

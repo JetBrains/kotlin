@@ -53,8 +53,7 @@ class PersistentSubIndexerRetriever<SubIndexerType, SubIndexerVersion> {
 
     myPersistentVersionEnumerator = new PersistentSubIndexerVersionEnumerator<>(
       versionMapRoot.resolve(INDEXED_VERSIONS).toFile(),
-      indexer.getSubIndexerVersionDescriptor(),
-      () -> ContainerUtil.map(indexer.getAllAvailableSubIndexers(), indexer::getSubIndexerVersion));
+      indexer.getSubIndexerVersionDescriptor());
   }
 
   void clear() throws IOException {
