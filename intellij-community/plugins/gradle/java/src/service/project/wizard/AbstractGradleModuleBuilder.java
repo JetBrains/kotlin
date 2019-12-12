@@ -208,33 +208,31 @@ public abstract class AbstractGradleModuleBuilder extends AbstractExternalModule
 
     final Project project = module.getProject();
     FileDocumentManager.getInstance().saveAllDocuments();
-    GradleProjectSettings projectSettings = getOrCreateCurrentSettings(project);
+    if (myParentProject == null) setupAndLinkGradleProject(project);
     if (myWizardContext.isCreatingNewProject()) {
       project.putUserData(ExternalSystemDataKeys.NEWLY_CREATED_PROJECT, Boolean.TRUE);
       // Needed to ignore postponed project refresh
       project.putUserData(ExternalSystemDataKeys.NEWLY_IMPORTED_PROJECT, Boolean.TRUE);
-      // update external projects data to be able to add child modules before the initial import finish
-      ImportSpecBuilder previewSpec = new ImportSpecBuilder(project, GradleConstants.SYSTEM_ID).usePreviewMode().use(MODAL_SYNC);
-      ExternalSystemUtil.refreshProject(rootProjectPath, previewSpec);
     }
 
     // execute when current dialog is closed
     ApplicationManager.getApplication().invokeLater(() -> {
+      if (myWizardContext.isCreatingNewProject()) {
+        // update external projects data to be able to add child modules before the initial import finish
+        ImportSpecBuilder previewSpec = new ImportSpecBuilder(project, GradleConstants.SYSTEM_ID).usePreviewMode().use(MODAL_SYNC);
+        ExternalSystemUtil.refreshProject(rootProjectPath, previewSpec);
+      }
       ImportSpecBuilder importSpec = new ImportSpecBuilder(project, GradleConstants.SYSTEM_ID).createDirectoriesForEmptyContentRoots();
       ExternalSystemUtil.refreshProject(rootProjectPath, importSpec);
       openBuildScriptFile(project, buildScriptFile);
     }, ModalityState.NON_MODAL, project.getDisposed());
   }
 
-  private GradleProjectSettings getOrCreateCurrentSettings(@NotNull Project project) {
-    if (myParentProject != null) {
-      return getSystemSettings(project).getLinkedProjectSettings(rootProjectPath);
-    }
+  private void setupAndLinkGradleProject(@NotNull Project project) {
     Sdk projectSdk = getNewProjectJdk(myWizardContext);
     GradleProjectSettings projectSettings = getExternalProjectSettings();
     setupGradleSettings(projectSettings, rootProjectPath, project, projectSdk);
     getSystemSettings(project).linkProject(projectSettings);
-    return projectSettings;
   }
 
   private static AbstractExternalSystemSettings<?, GradleProjectSettings, ?> getSystemSettings(@NotNull Project project) {
@@ -267,13 +265,11 @@ public abstract class AbstractGradleModuleBuilder extends AbstractExternalModule
   }
 
   private static void openBuildScriptFile(@NotNull Project project, VirtualFile buildScriptFile) {
-    ApplicationManager.getApplication().invokeLater(() -> {
-      if (buildScriptFile == null) return;
-      PsiManager psiManager = PsiManager.getInstance(project);
-      PsiFile psiFile = psiManager.findFile(buildScriptFile);
-      if (psiFile == null) return;
-      EditorHelper.openInEditor(psiFile);
-    }, ModalityState.NON_MODAL, project.getDisposed());
+    if (buildScriptFile == null) return;
+    PsiManager psiManager = PsiManager.getInstance(project);
+    PsiFile psiFile = psiManager.findFile(buildScriptFile);
+    if (psiFile == null) return;
+    EditorHelper.openInEditor(psiFile);
   }
 
   protected void setWizardContext(@NotNull WizardContext wizardContext) {
