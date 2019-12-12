@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.scopes.impl
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.memberScopeProvider
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.name.ClassId
@@ -23,10 +24,11 @@ class FirMemberScopeProvider : FirSessionComponent {
     fun declaredMemberScope(
         klass: FirClass<*>,
         useLazyNestedClassifierScope: Boolean,
-        existingNames: List<Name>?
+        existingNames: List<Name>?,
+        symbolProvider: FirSymbolProvider?
     ): FirScope {
         return declaredMemberCache.getOrPut(klass) {
-            FirClassDeclaredMemberScope(klass, useLazyNestedClassifierScope, existingNames)
+            FirClassDeclaredMemberScope(klass, useLazyNestedClassifierScope, existingNames, symbolProvider)
         }
     }
 
@@ -47,12 +49,13 @@ class FirMemberScopeProvider : FirSessionComponent {
 fun declaredMemberScope(
     klass: FirClass<*>,
     useLazyNestedClassifierScope: Boolean = false,
-    existingNames: List<Name>? = null
+    existingNames: List<Name>? = null,
+    symbolProvider: FirSymbolProvider? = null
 ): FirScope {
     return klass
         .session
         .memberScopeProvider
-        .declaredMemberScope(klass, useLazyNestedClassifierScope, existingNames)
+        .declaredMemberScope(klass, useLazyNestedClassifierScope, existingNames, symbolProvider)
 }
 
 fun nestedClassifierScope(klass: FirClass<*>): FirNestedClassifierScope {
@@ -62,8 +65,13 @@ fun nestedClassifierScope(klass: FirClass<*>): FirNestedClassifierScope {
         .nestedClassifierScope(klass)
 }
 
-fun nestedClassifierScope(classId: ClassId, session: FirSession, existingNames: List<Name>? = null): FirLazyNestedClassifierScope {
-    return FirLazyNestedClassifierScope(classId, session, existingNames)
+fun nestedClassifierScope(
+    classId: ClassId,
+    session: FirSession,
+    existingNames: List<Name>? = null,
+    symbolProvider: FirSymbolProvider? = null
+): FirLazyNestedClassifierScope {
+    return FirLazyNestedClassifierScope(classId, session, existingNames, symbolProvider)
 }
 
 fun selfImportingScope(fqName: FqName, session: FirSession): FirSelfImportingScope {

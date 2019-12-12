@@ -103,7 +103,8 @@ class JavaSymbolProvider(
             val declaredScope = declaredMemberScope(
                 regularClass,
                 useLazyNestedClassifierScope = regularClass is FirJavaClass,
-                existingNames = (regularClass as? FirJavaClass)?.existingNestedClassifierNames
+                existingNames = (regularClass as? FirJavaClass)?.existingNestedClassifierNames,
+                symbolProvider = this
             )
             val wrappedDeclaredScope = wrapScopeWithJvmMapped(regularClass, declaredScope, useSiteSession, scopeSession)
             val superTypeEnhancementScopes =

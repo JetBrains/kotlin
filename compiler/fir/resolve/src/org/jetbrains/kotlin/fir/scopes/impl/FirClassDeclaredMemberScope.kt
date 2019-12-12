@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction.NEXT
@@ -22,10 +23,11 @@ import org.jetbrains.kotlin.name.Name
 class FirClassDeclaredMemberScope(
     klass: FirClass<*>,
     useLazyNestedClassifierScope: Boolean = false,
-    existingNames: List<Name>? = null
+    existingNames: List<Name>? = null,
+    symbolProvider: FirSymbolProvider? = null
 ) : FirScope() {
     private val nestedClassifierScope = if (useLazyNestedClassifierScope) {
-        nestedClassifierScope(klass.symbol.classId, klass.session, existingNames)
+        nestedClassifierScope(klass.symbol.classId, klass.session, existingNames, symbolProvider)
     } else {
         nestedClassifierScope(klass)
     }

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
@@ -19,10 +20,11 @@ import org.jetbrains.kotlin.name.Name
 class FirLazyNestedClassifierScope(
     val classId: ClassId,
     session: FirSession,
-    private val existingNames: List<Name>?
+    private val existingNames: List<Name>?,
+    symbolProvider: FirSymbolProvider?
 ) : FirScope() {
 
-    private val symbolProvider = session.firSymbolProvider
+    private val symbolProvider = symbolProvider ?: session.firSymbolProvider
 
     override fun processClassifiersByName(
         name: Name,
