@@ -9,6 +9,8 @@ import com.google.gson.GsonBuilder
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 import java.io.File
 
+// Gson set nulls reflective no matter on default values and non-null types
+@Suppress("USELESS_ELVIS")
 class PackageJson(
     var name: String,
     var version: String
@@ -29,24 +31,18 @@ class PackageJson(
 
     var workspaces: Collection<String>? = null
 
-    // Gson set nulls reflective no matter on default values and non-null types
-    @Suppress("USELESS_ELVIS")
     val devDependencies = mutableMapOf<String, String>()
         get() = field ?: mutableMapOf()
 
-    @Suppress("USELESS_ELVIS")
     val dependencies = mutableMapOf<String, String>()
         get() = field ?: mutableMapOf()
 
-    @Suppress("USELESS_ELVIS")
     val peerDependencies = mutableMapOf<String, String>()
         get() = field ?: mutableMapOf()
 
-    @Suppress("USELESS_ELVIS")
     val optionalDependencies = mutableMapOf<String, String>()
         get() = field ?: mutableMapOf()
 
-    @Suppress("USELESS_ELVIS")
     val bundledDependencies = mutableListOf<String>()
         get() = field ?: mutableListOf()
 
