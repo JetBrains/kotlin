@@ -29,23 +29,30 @@ fun test_1() {
 
 class D(val any: Any?)
 
-fun test_2(d1: D, d2: D) {
+fun Any.baz() {}
+
+fun test_2(d: D) {
     // Elvis operator is converted into == function call
-    val a = d1.any ?: return
-    val b = d2.any ?: return
+    val a = d.any ?: return
+    a.baz()
+    d.any.baz()
     a as A
     a.foo()
-    b as B
-    b.foo()
 }
 
-// TODO: Fix this -- see comment in FirDataFlowAnalyzer.getRealVariablesForSafeCallChain()
-fun test_3(d1: D, d2: D) {
+fun test_3(d1: D) {
+    val a = d1.any
+    a as A
+    a.foo()
+    d1.any.foo()
+    d1.any.baz()
+}
+
+fun test_4(d1: D, d2: D) {
     val a = d1?.any
     val b = d2?.any
     a as A
     a.foo()
     b as B
-    // Issue: b incorrectly smartcasted to (A & B)
-    b.<!AMBIGUITY!>foo<!>()  // should be OK
+    b.foo()  // should be OK
 }

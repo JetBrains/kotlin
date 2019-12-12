@@ -10,6 +10,7 @@ FILE: jumps.kt
         }
 
         R|<local>/y|.R|kotlin/Int.inc|()
+        R|<local>/x|.R|kotlin/Int.inc|()
     }
     public final fun test_2(x: R|kotlin/Int?|): R|kotlin/Unit| {
         lval y: R|kotlin/Int?| = when () {

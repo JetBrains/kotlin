@@ -166,13 +166,15 @@ digraph boundSmartcasts_kt {
         color=blue
         67 [label="Enter block"];
         68 [label="Access variable R|<local>/z|"];
-        69 [label="Function call: R|<local>/z|.<Unresolved name: bar>#()"];
-        70 [label="Exit block"];
+        69 [label="Function call: R|<local>/z|.<Unresolved name: foo>#()"];
+        70 [label="Access variable R|<local>/z|"];
+        71 [label="Function call: R|<local>/z|.R|/B.bar|()"];
+        72 [label="Exit block"];
       }
-      71 [label="Exit when branch result"];
-      72 [label="Exit when"];
+      73 [label="Exit when branch result"];
+      74 [label="Exit when"];
     }
-    73 [label="Exit function test_3" style="filled" fillcolor=red];
+    75 [label="Exit function test_3" style="filled" fillcolor=red];
   }
 
   42 -> {43};
@@ -198,7 +200,7 @@ digraph boundSmartcasts_kt {
   62 -> {63};
   63 -> {64};
   64 -> {66 65};
-  65 -> {72};
+  65 -> {74};
   66 -> {67};
   67 -> {68};
   68 -> {69};
@@ -206,49 +208,49 @@ digraph boundSmartcasts_kt {
   70 -> {71};
   71 -> {72};
   72 -> {73};
+  73 -> {74};
+  74 -> {75};
 
   subgraph cluster_17 {
     color=red
-    74 [label="Enter function test_4" style="filled" fillcolor=red];
-    75 [label="Const: Int(1)"];
-    76 [label="Variable declaration: lvar x: R|kotlin/Any|"];
-    77 [label="Access variable R|<local>/x|"];
-    78 [label="Type operator: x as Int"];
+    76 [label="Enter function test_4" style="filled" fillcolor=red];
+    77 [label="Const: Int(1)"];
+    78 [label="Variable declaration: lvar x: R|kotlin/Any|"];
     79 [label="Access variable R|<local>/x|"];
-    80 [label="Function call: R|<local>/x|.R|kotlin/Int.inc|()"];
-    81 [label="Access variable R|<local>/y|"];
-    82 [label="Assignmenet: R|<local>/x|"];
-    83 [label="Access variable R|<local>/x|"];
-    84 [label="Function call: R|<local>/x|.R|kotlin/Int.inc|()"];
+    80 [label="Type operator: x as Int"];
+    81 [label="Access variable R|<local>/x|"];
+    82 [label="Function call: R|<local>/x|.R|kotlin/Int.inc|()"];
+    83 [label="Access variable R|<local>/y|"];
+    84 [label="Assignmenet: R|<local>/x|"];
+    85 [label="Access variable R|<local>/x|"];
+    86 [label="Function call: R|<local>/x|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()"];
     subgraph cluster_18 {
       color=blue
-      85 [label="Enter when"];
+      87 [label="Enter when"];
       subgraph cluster_19 {
         color=blue
-        86 [label="Enter when branch condition "];
-        87 [label="Access variable R|<local>/y|"];
-        88 [label="Type operator: y is A"];
-        89 [label="Exit when branch condition"];
+        88 [label="Enter when branch condition "];
+        89 [label="Access variable R|<local>/y|"];
+        90 [label="Type operator: y is A"];
+        91 [label="Exit when branch condition"];
       }
-      90 [label="Synthetic else branch"];
-      91 [label="Enter when branch result"];
+      92 [label="Synthetic else branch"];
+      93 [label="Enter when branch result"];
       subgraph cluster_20 {
         color=blue
-        92 [label="Enter block"];
-        93 [label="Access variable R|<local>/x|"];
-        94 [label="Function call: R|<local>/x|.<Unresolved name: foo>#()"];
-        95 [label="Access variable R|<local>/y|"];
-        96 [label="Function call: R|<local>/y|.R|/A.foo|()"];
-        97 [label="Exit block"];
+        94 [label="Enter block"];
+        95 [label="Access variable R|<local>/x|"];
+        96 [label="Function call: R|<local>/x|.R|/A.foo|()"];
+        97 [label="Access variable R|<local>/y|"];
+        98 [label="Function call: R|<local>/y|.R|/A.foo|()"];
+        99 [label="Exit block"];
       }
-      98 [label="Exit when branch result"];
-      99 [label="Exit when"];
+      100 [label="Exit when branch result"];
+      101 [label="Exit when"];
     }
-    100 [label="Exit function test_4" style="filled" fillcolor=red];
+    102 [label="Exit function test_4" style="filled" fillcolor=red];
   }
 
-  74 -> {75};
-  75 -> {76};
   76 -> {77};
   77 -> {78};
   78 -> {79};
@@ -262,10 +264,10 @@ digraph boundSmartcasts_kt {
   86 -> {87};
   87 -> {88};
   88 -> {89};
-  89 -> {91 90};
-  90 -> {99};
-  91 -> {92};
-  92 -> {93};
+  89 -> {90};
+  90 -> {91};
+  91 -> {93 92};
+  92 -> {101};
   93 -> {94};
   94 -> {95};
   95 -> {96};
@@ -273,5 +275,7 @@ digraph boundSmartcasts_kt {
   97 -> {98};
   98 -> {99};
   99 -> {100};
+  100 -> {101};
+  101 -> {102};
 
 }

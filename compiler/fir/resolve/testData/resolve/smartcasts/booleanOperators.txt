@@ -74,3 +74,11 @@ FILE: booleanOperators.kt
         }
 
     }
+    public final fun test_8(x: R|kotlin/Any|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/x| !is R|A|).R|kotlin/Boolean.not|() ->  {
+                R|<local>/x|.R|/A.foo|()
+            }
+        }
+
+    }

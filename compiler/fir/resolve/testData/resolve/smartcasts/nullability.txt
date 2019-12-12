@@ -215,8 +215,8 @@ FILE: nullability.kt
                 R|<local>/q|.R|/QImpl.data|.R|/MyData.s|
                 R|<local>/q|.R|/QImpl.data|.R|/MyData.s|.R|kotlin/Int.inc|()
                 R|<local>/q2|.R|/QImpl.data|
-                R|<local>/q2|.R|/QImpl.data|.R|/MyData.s|
-                R|<local>/q2|.R|/QImpl.data|.R|/MyData.s|.R|kotlin/Int.inc|()
+                R|<local>/q2|.R|/QImpl.data|.<Inapplicable(WRONG_RECEIVER): [/MyData.s]>#
+                R|<local>/q2|.R|/QImpl.data|.<Inapplicable(WRONG_RECEIVER): [/MyData.s]>#.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
                 when () {
                     !=(R|<local>/q2|.R|/QImpl.data|, Null(null)) ->  {
                         R|<local>/q2|.R|/QImpl.data|.R|/MyData.s|

@@ -58,3 +58,9 @@ fun test_7(x: Any) {
         x.foo()
     }
 }
+
+fun test_8(x: Any) {
+    if ((x !is A).not()) {
+        x.foo()
+    }
+}

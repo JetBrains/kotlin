@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.calls.InferenceComponents
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionStageRunner
-import org.jetbrains.kotlin.fir.resolve.dfa.FirDataFlowAnalyzer
+import org.jetbrains.kotlin.fir.resolve.dfa.new.FirDataFlowAnalyzer
 import org.jetbrains.kotlin.fir.resolve.transformers.*
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -36,7 +36,7 @@ interface BodyResolveComponents : SessionHolder {
     val callResolver: FirCallResolver
     val doubleColonExpressionResolver: FirDoubleColonExpressionResolver
     val syntheticCallGenerator: FirSyntheticCallGenerator
-    val dataFlowAnalyzer: FirDataFlowAnalyzer
+    val dataFlowAnalyzer: FirDataFlowAnalyzer<*>
     val integerLiteralTypeApproximator: IntegerLiteralTypeApproximationTransformer
     val integerOperatorsTypeUpdater: IntegerOperatorsTypeUpdater
 

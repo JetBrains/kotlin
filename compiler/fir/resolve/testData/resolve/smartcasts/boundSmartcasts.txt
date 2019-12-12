@@ -38,7 +38,8 @@ FILE: boundSmartcasts.kt
         R|<local>/z| = R|<local>/y|
         when () {
             (R|<local>/y| is R|B|) ->  {
-                R|<local>/z|.<Unresolved name: bar>#()
+                R|<local>/z|.<Unresolved name: foo>#()
+                R|<local>/z|.R|/B.bar|()
             }
         }
 
@@ -48,10 +49,10 @@ FILE: boundSmartcasts.kt
         (R|<local>/x| as R|kotlin/Int|)
         R|<local>/x|.R|kotlin/Int.inc|()
         R|<local>/x| = R|<local>/y|
-        R|<local>/x|.R|kotlin/Int.inc|()
+        R|<local>/x|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
         when () {
             (R|<local>/y| is R|A|) ->  {
-                R|<local>/x|.<Unresolved name: foo>#()
+                R|<local>/x|.R|/A.foo|()
                 R|<local>/y|.R|/A.foo|()
             }
         }

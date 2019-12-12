@@ -46,6 +46,8 @@ messages/**)
 -dontwarn javaslang.match.annotation.Unapply
 -dontwarn javaslang.match.annotation.Patterns
 -dontwarn javaslang.*
+-dontwarn kotlinx.collections.immutable.*
+-dontwarn kotlinx.collections.immutable.**
 -dontwarn com.google.errorprone.**
 -dontwarn com.google.j2objc.**
 -dontwarn javax.crypto.**

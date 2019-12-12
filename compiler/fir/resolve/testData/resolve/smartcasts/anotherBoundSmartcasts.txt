@@ -1,18 +1,25 @@
 FILE: anotherBoundSmartcasts.kt
-    public abstract interface A : R|kotlin/Any| {
-        public abstract fun foo(): R|kotlin/Int|
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
 
-        public abstract val x: R|kotlin/Int|
+        public final fun foo(): R|kotlin/Int| {
+            ^foo Int(1)
+        }
+
+        public final val x: R|kotlin/Int| = Int(1)
             public get(): R|kotlin/Int|
 
-        public abstract fun bar(): R|kotlin/Unit|
+        public final fun bar(): R|kotlin/Unit| {
+        }
 
     }
     public final fun test_1(a: R|A?|): R|kotlin/Unit| {
         lval x: R|kotlin/Int?| = R|<local>/a|?.R|/A.x|
         when () {
             !=(R|<local>/x|, Null(null)) ->  {
-                R|<local>/a|.<Inapplicable(WRONG_RECEIVER): [/A.bar]>#()
+                R|<local>/a|.R|/A.bar|()
             }
         }
 
@@ -21,7 +28,7 @@ FILE: anotherBoundSmartcasts.kt
         lval x: R|kotlin/Int?| = R|<local>/a|?.R|/A.foo|()
         when () {
             !=(R|<local>/x|, Null(null)) ->  {
-                R|<local>/a|.<Inapplicable(WRONG_RECEIVER): [/A.bar]>#()
+                R|<local>/a|.R|/A.bar|()
             }
         }
 
@@ -37,5 +44,45 @@ FILE: anotherBoundSmartcasts.kt
         }
 
         R|<local>/a|.R|/A.foo|()
-        R|<local>/x|.<Unresolved name: foo>#()
+        R|<local>/x|.R|/A.foo|()
+    }
+    public abstract interface B : R|kotlin/Any| {
+        public abstract fun foo(): R|kotlin/Int|
+
+        public abstract val x: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+        public abstract fun bar(): R|kotlin/Unit|
+
+    }
+    public final fun test_1(a: R|B?|): R|kotlin/Unit| {
+        lval x: R|kotlin/Int?| = R|<local>/a|?.R|/B.x|
+        when () {
+            !=(R|<local>/x|, Null(null)) ->  {
+                R|<local>/a|.R|/B.bar|()
+            }
+        }
+
+    }
+    public final fun test_2(a: R|B?|): R|kotlin/Unit| {
+        lval x: R|kotlin/Int?| = R|<local>/a|?.R|/B.foo|()
+        when () {
+            !=(R|<local>/x|, Null(null)) ->  {
+                R|<local>/a|.R|/B.bar|()
+            }
+        }
+
+    }
+    public final fun test_3(x: R|kotlin/Any?|): R|kotlin/Unit| {
+        lval a: R|B| = when (lval <elvis>: R|B?| = (R|<local>/x| as? R|B|)) {
+            ==($subj$, Null(null)) ->  {
+                ^test_3 Unit
+            }
+            else ->  {
+                R|<local>/<elvis>|
+            }
+        }
+
+        R|<local>/a|.R|/B.foo|()
+        R|<local>/x|.R|/B.foo|()
     }

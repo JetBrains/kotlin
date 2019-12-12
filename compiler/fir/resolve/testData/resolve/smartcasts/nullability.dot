@@ -1153,11 +1153,11 @@ digraph nullability_kt {
         434 [label="Access variable R|/QImpl.data|"];
         435 [label="Access variable R|<local>/q2|"];
         436 [label="Access variable R|/QImpl.data|"];
-        437 [label="Access variable R|/MyData.s|"];
+        437 [label="Access variable <Inapplicable(WRONG_RECEIVER): [/MyData.s]>#"];
         438 [label="Access variable R|<local>/q2|"];
         439 [label="Access variable R|/QImpl.data|"];
-        440 [label="Access variable R|/MyData.s|"];
-        441 [label="Function call: R|<local>/q2|.R|/QImpl.data|.R|/MyData.s|.R|kotlin/Int.inc|()"];
+        440 [label="Access variable <Inapplicable(WRONG_RECEIVER): [/MyData.s]>#"];
+        441 [label="Function call: R|<local>/q2|.R|/QImpl.data|.<Inapplicable(WRONG_RECEIVER): [/MyData.s]>#.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()"];
         subgraph cluster_91 {
           color=blue
           442 [label="Enter when"];

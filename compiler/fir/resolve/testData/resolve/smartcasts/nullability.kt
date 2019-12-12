@@ -1,3 +1,5 @@
+// CONTAINS ERRORS
+
 interface A {
     fun foo()
     fun getA(): A
@@ -148,8 +150,8 @@ fun test_11(q: QImpl?, q2: QImpl) {
         // Smartcasting of `q.data` should have no effect on `q2.data`.
         // Issue: Smartcasting of QImpl.data affects all instances
         q2.data
-        q2.data.s // should be bad
-        q2.data.s.inc() // should be bad
+        q2.data.<!INAPPLICABLE_CANDIDATE!>s<!> // should be bad
+        q2.data.<!INAPPLICABLE_CANDIDATE!>s<!>.<!AMBIGUITY!>inc<!>() // should be bad
 
         if (q2.data != null) {
             q2.data.s

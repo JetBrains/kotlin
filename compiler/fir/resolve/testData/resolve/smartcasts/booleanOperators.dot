@@ -455,4 +455,49 @@ digraph booleanOperators_kt {
   160 -> {161};
   161 -> {162};
 
+  subgraph cluster_38 {
+    color=red
+    163 [label="Enter function test_8" style="filled" fillcolor=red];
+    subgraph cluster_39 {
+      color=blue
+      164 [label="Enter when"];
+      subgraph cluster_40 {
+        color=blue
+        165 [label="Enter when branch condition "];
+        166 [label="Access variable R|<local>/x|"];
+        167 [label="Type operator: x !is A"];
+        168 [label="Function call: (R|<local>/x| !is R|A|).R|kotlin/Boolean.not|()"];
+        169 [label="Exit when branch condition"];
+      }
+      170 [label="Synthetic else branch"];
+      171 [label="Enter when branch result"];
+      subgraph cluster_41 {
+        color=blue
+        172 [label="Enter block"];
+        173 [label="Access variable R|<local>/x|"];
+        174 [label="Function call: R|<local>/x|.R|/A.foo|()"];
+        175 [label="Exit block"];
+      }
+      176 [label="Exit when branch result"];
+      177 [label="Exit when"];
+    }
+    178 [label="Exit function test_8" style="filled" fillcolor=red];
+  }
+
+  163 -> {164};
+  164 -> {165};
+  165 -> {166};
+  166 -> {167};
+  167 -> {168};
+  168 -> {169};
+  169 -> {171 170};
+  170 -> {177};
+  171 -> {172};
+  172 -> {173};
+  173 -> {174};
+  174 -> {175};
+  175 -> {176};
+  176 -> {177};
+  177 -> {178};
+
 }

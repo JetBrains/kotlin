@@ -88,9 +88,8 @@ digraph smartcastAfterReassignment_kt {
     35 [label="Const: Null(null)"];
     36 [label="Assignmenet: R|<local>/x|"];
     37 [label="Access variable R|<local>/x|"];
-    38 [label="Stub" style="filled" fillcolor=gray];
-    39 [label="Access variable <Unresolved name: length>#" style="filled" fillcolor=gray];
-    40 [label="Exit function test_3" style="filled" fillcolor=red];
+    38 [label="Access variable <Unresolved name: length>#"];
+    39 [label="Exit function test_3" style="filled" fillcolor=red];
   }
 
   28 -> {29};
@@ -102,9 +101,7 @@ digraph smartcastAfterReassignment_kt {
   34 -> {35};
   35 -> {36};
   36 -> {37};
-  37 -> {40};
-  37 -> {38} [style=dotted];
-  38 -> {39} [style=dotted];
-  39 -> {40} [style=dotted];
+  37 -> {38};
+  38 -> {39};
 
 }

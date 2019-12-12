@@ -29,7 +29,8 @@ fun test_3(x: Any, y: Any) {
     }
     z = y
     if (y is B) {
-        z.<!UNRESOLVED_REFERENCE!>bar<!>()
+        z.<!UNRESOLVED_REFERENCE!>foo<!>()
+        z.bar()
     }
 }
 
@@ -38,9 +39,9 @@ fun test_4(y: Any) {
     x as Int
     x.inc()
     x = y
-    x.inc()
+    x.<!AMBIGUITY!>inc<!>()
     if (y is A) {
-        x.<!UNRESOLVED_REFERENCE!>foo<!>()
+        x.foo()
         y.foo()
     }
 }

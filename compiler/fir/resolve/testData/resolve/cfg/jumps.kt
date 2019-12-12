@@ -5,6 +5,7 @@ fun test_1(x: Int?) {
         x
     }
     y.inc()
+    x.inc()
 }
 
 fun test_2(x: Int?) {
