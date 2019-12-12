@@ -39,7 +39,7 @@ import org.jetbrains.plugins.gradle.settings.GradleSettings;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.function.Function;
+import java.util.function.Predicate;
 
 import static com.intellij.jarFinder.InternetAttachSourceProvider.attachSourceJar;
 import static org.jetbrains.plugins.gradle.service.project.GradleProjectResolverUtil.attachSourcesAndJavadocFromGradleCacheIfNeeded;
@@ -185,12 +185,12 @@ public class GradleAttachSourcesProvider implements AttachSourcesProvider {
 
   @NotNull
   @ApiStatus.Internal
-  static String getSourcesArtifactNotation(@NotNull Function<String, Boolean> artifactIdChecker, String artifactCoordinates) {
+  static String getSourcesArtifactNotation(@NotNull Predicate<String> artifactIdChecker, String artifactCoordinates) {
     String groupNameVersionCoordinates;
     String[] split = artifactCoordinates.split(":");
     if (split.length == 4) {
       // group:name:packaging:classifier || name:packaging:classifier:version || group:name:classifier:version || group:name:packaging:version
-      boolean isArtifactId = artifactIdChecker.apply(split[1]);
+      boolean isArtifactId = artifactIdChecker.test(split[1]);
       groupNameVersionCoordinates = isArtifactId ? split[0] + ":" + split[1] + ":" + split[3] : artifactCoordinates;
     }
     else if (split.length == 5) {
