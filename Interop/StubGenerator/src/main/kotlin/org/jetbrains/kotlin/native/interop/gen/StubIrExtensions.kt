@@ -62,3 +62,9 @@ val StubContainer.defaultMemberModality: MemberStubModality
         is ClassStub.Companion -> MemberStubModality.FINAL
         is ClassStub.Enum -> MemberStubModality.FINAL
     }
+
+/**
+ * Returns constructor that should be rendered in class header.
+ */
+val ClassStub.explicitPrimaryConstructor: ConstructorStub?
+    get() = functions.filterIsInstance<ConstructorStub>().firstOrNull(ConstructorStub::isPrimary)

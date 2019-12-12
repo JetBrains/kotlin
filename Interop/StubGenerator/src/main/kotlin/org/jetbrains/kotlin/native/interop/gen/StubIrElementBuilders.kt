@@ -121,22 +121,28 @@ internal class StructStubBuilder(
         val superClass = context.platform.getRuntimeType("CStructVar")
         require(superClass is ClassifierStubType)
         val rawPtrConstructorParam = FunctionParameterStub("rawPtr", context.platform.getRuntimeType("NativePtr"))
+        val primaryConstructor = ConstructorStub(
+                parameters = listOf(rawPtrConstructorParam),
+                isPrimary = true,
+                annotations = emptyList()
+        )
         val superClassInit = SuperClassInit(superClass, listOf(GetConstructorParameter(rawPtrConstructorParam)))
 
         val companionSuper = superClass.nested("Type")
         val typeSize = listOf(IntegralConstantStub(def.size, 4, true), IntegralConstantStub(def.align.toLong(), 4, true))
         val companionSuperInit = SuperClassInit(companionSuper, typeSize)
-        val companion = ClassStub.Companion(companionSuperInit)
+        val companionClassifier = classifier.nested("Companion")
+        val companion = ClassStub.Companion(companionClassifier, emptyList(), companionSuperInit)
 
         return listOf(ClassStub.Simple(
                 classifier,
                 origin = StubOrigin.Struct(decl),
                 properties = fields.filterNotNull() + if (platform == KotlinPlatform.NATIVE) bitFields else emptyList(),
-                functions = emptyList(),
+                constructors = listOf(primaryConstructor),
+                methods = emptyList(),
                 modality = ClassStubModality.NONE,
                 annotations = listOfNotNull(structAnnotation),
                 superClassInit = superClassInit,
-                constructorParameters = listOf(rawPtrConstructorParam),
                 companion = companion
         ))
     }
@@ -176,7 +182,13 @@ internal class StructStubBuilder(
             val rawPtrConstructorParam = FunctionParameterStub("rawPtr", context.platform.getRuntimeType("NativePtr"))
             val superClassInit = SuperClassInit(superClass, listOf(GetConstructorParameter(rawPtrConstructorParam)))
             val origin = StubOrigin.Struct(s)
-            listOf(ClassStub.Simple(classifier, ClassStubModality.NONE, listOf(rawPtrConstructorParam), superClassInit, origin = origin))
+            val primaryConstructor = ConstructorStub(listOf(rawPtrConstructorParam), emptyList(), isPrimary = true)
+            listOf(ClassStub.Simple(
+                    classifier,
+                    ClassStubModality.NONE,
+                    constructors = listOf(primaryConstructor),
+                    superClassInit = superClassInit,
+                    origin = origin))
         }
         KotlinPlatform.NATIVE -> emptyList()
     }
@@ -220,11 +232,11 @@ internal class EnumStubBuilder(
             val aliases = aliasConstants.filter { it.value == constant.value }.map { EnumEntryStub.Alias(it.name) }
             EnumEntryStub(constant.name, literal, aliases)
         }
-
+        val primaryConstructor = ConstructorStub(listOf(constructorParameter), emptyList(), isPrimary = true)
         val enum = ClassStub.Enum(clazz, canonicalEntries,
+                constructors = listOf(primaryConstructor),
                 properties = listOf(valueProperty),
                 origin = StubOrigin.Enum(enumDef),
-                constructorParameters = listOf(constructorParameter),
                 interfaces = listOf(context.platform.getRuntimeType("CEnum"))
         )
         context.bridgeComponentsBuilder.enumToTypeMirror[enum] = baseTypeMirror
