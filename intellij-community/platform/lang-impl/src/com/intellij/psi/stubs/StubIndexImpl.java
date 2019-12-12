@@ -583,11 +583,13 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
   }
 
   public void dispose() {
-    for (UpdatableIndex<?, ?, ?> index : getAsyncState().myIndices.values()) {
-      index.dispose();
+    try {
+      for (UpdatableIndex<?, ?, ?> index : getAsyncState().myIndices.values()) {
+        index.dispose();
+      }
+    } finally {
+      clearState();
     }
-
-    clearState();
   }
 
   private void clearState() {
@@ -595,6 +597,7 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
     myStateFuture = null;
     myState = null;
     myInitialized = false;
+    LOG.info("StubIndexExtension-s were unloaded");
   }
 
   void setDataBufferingEnabled(final boolean enabled) {
