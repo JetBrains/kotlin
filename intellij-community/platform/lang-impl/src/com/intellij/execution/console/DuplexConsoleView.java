@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.console;
 
 import com.google.common.collect.Lists;
@@ -32,7 +32,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-public class DuplexConsoleView<S extends ConsoleView, T extends ConsoleView> extends JPanel implements ConsoleView, 
+public class DuplexConsoleView<S extends ConsoleView, T extends ConsoleView> extends JPanel implements ConsoleView,
                                                                                                        ObservableConsoleView,
                                                                                                        DataProvider {
   private final static String PRIMARY_CONSOLE_PANEL = "PRIMARY_CONSOLE_PANEL";
@@ -204,7 +204,7 @@ public class DuplexConsoleView<S extends ConsoleView, T extends ConsoleView> ext
   @Override
   public AnAction[] createConsoleActions() {
     List<AnAction> actions = Lists.newArrayList();
-    actions.addAll(mergeConsoleActions(Arrays.asList(myPrimaryConsoleView.createConsoleActions()), 
+    actions.addAll(mergeConsoleActions(Arrays.asList(myPrimaryConsoleView.createConsoleActions()),
                                        Arrays.asList(mySecondaryConsoleView.createConsoleActions())));
     actions.add(mySwitchConsoleAction);
 
@@ -220,6 +220,7 @@ public class DuplexConsoleView<S extends ConsoleView, T extends ConsoleView> ext
     myPrimaryConsoleView.allowHeavyFilters();
   }
 
+  @NotNull
   @Override
   public JComponent getComponent() {
     return this;
@@ -265,7 +266,7 @@ public class DuplexConsoleView<S extends ConsoleView, T extends ConsoleView> ext
   public void setDisableSwitchConsoleActionOnProcessEnd(boolean disableSwitchConsoleActionOnProcessEnd) {
     myDisableSwitchConsoleActionOnProcessEnd = disableSwitchConsoleActionOnProcessEnd;
   }
-  
+
   @NotNull
   private List<AnAction> mergeConsoleActions(@NotNull List<? extends AnAction> actions1, @NotNull Collection<? extends AnAction> actions2) {
     return ContainerUtil.map(actions1, action1 -> {
@@ -299,7 +300,7 @@ public class DuplexConsoleView<S extends ConsoleView, T extends ConsoleView> ext
       DuplexConsoleView.this.getComponent().revalidate();
     }
   }
-  
+
   private class SwitchDuplexConsoleViewAction extends ToggleAction implements DumbAware {
 
     SwitchDuplexConsoleViewAction() {
@@ -336,7 +337,7 @@ public class DuplexConsoleView<S extends ConsoleView, T extends ConsoleView> ext
       }
     }
   }
-  
+
   private static class MergedToggleAction extends ToggleAction implements DumbAware {
     @NotNull
     private final ToggleAction myAction1;
@@ -379,5 +380,5 @@ public class DuplexConsoleView<S extends ConsoleView, T extends ConsoleView> ext
       myAction2.actionPerformed(e);
     }
   }
-  
+
 }

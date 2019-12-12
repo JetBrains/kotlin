@@ -582,6 +582,7 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
   public void allowHeavyFilters() {
   }
 
+  @NotNull
   @Override
   public JComponent getComponent() {
     return myPanel;

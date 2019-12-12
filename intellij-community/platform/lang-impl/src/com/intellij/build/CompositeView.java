@@ -109,6 +109,7 @@ public class CompositeView<T extends ComponentContainer> extends JPanel implemen
     return new AnAction[]{actionGroup};
   }
 
+  @NotNull
   @Override
   public JComponent getComponent() {
     return this;
