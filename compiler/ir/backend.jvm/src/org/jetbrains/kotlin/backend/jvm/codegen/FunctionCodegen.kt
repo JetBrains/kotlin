@@ -68,11 +68,8 @@ open class FunctionCodegen(
             )
         }
 
-        // Since the only arguments to anonymous object constructors are captured variables and complex
-        // super constructor arguments, there shouldn't be any annotations on them other than @NonNull,
-        // and those are meaningless on synthetic parameters. (Also, the inliner cannot handle them and
-        // will throw an exception if we generate any.)
-        if (irFunction !is IrConstructor || !irFunction.parentAsClass.isAnonymousObject) {
+
+        if (irFunction !is IrConstructor || !irFunction.parentAsClass.shouldNotGenerateConstructorParameterAnnotations()) {
             generateParameterAnnotations(functionView, methodVisitor, signature, classCodegen, context)
         }
 
@@ -109,6 +106,14 @@ open class FunctionCodegen(
 
         return signature
     }
+
+    // Since the only arguments to anonymous object constructors are captured variables and complex
+    // super constructor arguments, there shouldn't be any annotations on them other than @NonNull,
+    // and those are meaningless on synthetic parameters. (Also, the inliner cannot handle them and
+    // will throw an exception if we generate any.)
+    // The same applies for continuations.
+    private fun IrClass.shouldNotGenerateConstructorParameterAnnotations() =
+        isAnonymousObject || origin == JvmLoweredDeclarationOrigin.CONTINUATION_CLASS || origin == JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA
 
     private fun psiElement(): KtElement =
         if (irFunction.isSuspend) irFunction.symbol.descriptor.psiElement as KtElement
