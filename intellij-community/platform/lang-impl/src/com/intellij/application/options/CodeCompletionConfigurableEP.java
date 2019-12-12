@@ -1,6 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.application.options;
 
+import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.options.ConfigurableEP;
 import com.intellij.openapi.options.UnnamedConfigurable;
 
@@ -18,4 +19,5 @@ import com.intellij.openapi.options.UnnamedConfigurable;
  * {@link CodeCompletionOptionsCustomSection}
  */
 public class CodeCompletionConfigurableEP extends ConfigurableEP<UnnamedConfigurable> {
+  static final ExtensionPointName<CodeCompletionConfigurableEP> EP_NAME = ExtensionPointName.create("com.intellij.codeCompletionConfigurable");
 }
