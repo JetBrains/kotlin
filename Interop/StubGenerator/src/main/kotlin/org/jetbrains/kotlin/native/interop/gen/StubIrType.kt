@@ -65,7 +65,8 @@ class FunctionalType(
 
 class TypeParameterType(
         val name: String,
-        override val nullable: Boolean
+        override val nullable: Boolean,
+        val typeParameterDeclaration: TypeParameterStub
 ) : StubType() {
     override val typeArguments: List<TypeArgument> = emptyList()
 }

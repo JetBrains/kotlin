@@ -59,7 +59,7 @@ class TypeParameterStub(
         val upperBound: StubType? = null
 ) {
     fun getStubType(nullable: Boolean) =
-            TypeParameterType(name, nullable = nullable)
+            TypeParameterType(name, nullable = nullable, typeParameterDeclaration = this)
 
 }
 
