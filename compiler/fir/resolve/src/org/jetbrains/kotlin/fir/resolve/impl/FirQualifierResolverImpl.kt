@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.impl
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.FirQualifierResolver
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.types.FirQualifierPart
 import org.jetbrains.kotlin.name.ClassId
@@ -16,7 +17,7 @@ import org.jetbrains.kotlin.name.FqName
 class FirQualifierResolverImpl(val session: FirSession) : FirQualifierResolver {
 
     override fun resolveSymbolWithPrefix(parts: List<FirQualifierPart>, prefix: ClassId): FirClassifierSymbol<*>? {
-        val symbolProvider = FirSymbolProvider.getInstance(session)
+        val symbolProvider = session.firSymbolProvider
 
         val fqName = ClassId(
             prefix.packageFqName,
@@ -27,7 +28,7 @@ class FirQualifierResolverImpl(val session: FirSession) : FirQualifierResolver {
     }
 
     override fun resolveSymbol(parts: List<FirQualifierPart>): FirClassifierSymbol<*>? {
-        val firProvider = FirSymbolProvider.getInstance(session)
+        val firProvider = session.firSymbolProvider
 
         if (parts.isNotEmpty()) {
             val lastPart = mutableListOf<FirQualifierPart>()
