@@ -24,7 +24,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.*;
 import com.intellij.openapi.util.IconLoader;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Trinity;
 import com.intellij.util.IconUtil;
 import com.intellij.util.containers.ContainerUtil;
@@ -43,9 +42,6 @@ public final class ExecutorRegistryImpl extends ExecutorRegistry implements Disp
 
   public static final String RUNNERS_GROUP = "RunnerActions";
   public static final String RUN_CONTEXT_GROUP = "RunContextGroupInner";
-
-  // Usage: project.putUserData(EXECUTION_TEMPORARY_DISABLED, Boolean.TRUE) when there is some 'external' reason that prevents execution
-  public static final Key<Boolean> EXECUTION_TEMPORARY_DISABLED = Key.create("EXECUTION_TEMPORARY_DISABLED");
 
   private List<Executor> myExecutors = new ArrayList<>();
   private final Map<String, Executor> myIdToExecutor = new THashMap<>();
@@ -257,7 +253,7 @@ public final class ExecutorRegistryImpl extends ExecutorRegistry implements Disp
     public void update(@NotNull final AnActionEvent e) {
       final Presentation presentation = e.getPresentation();
       final Project project = e.getProject();
-      if (project == null || !project.isInitialized() || project.isDisposed() || EXECUTION_TEMPORARY_DISABLED.get(project) == Boolean.TRUE) {
+      if (project == null || !project.isInitialized() || project.isDisposed()) {
         presentation.setEnabled(false);
         return;
       }
