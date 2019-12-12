@@ -5,7 +5,7 @@
         {
           "specVersion": "0.1-213",
           "casesNumber": 2,
-          "description": "* HELPERS: checkType",
+          "description": "check any if-statement in kotlin may be trivially turned into such an expression by replacing the missing branch with a kotlin.Unit object expression.",
           "unexpectedBehaviour": false
         }
       ],
@@ -13,7 +13,7 @@
         {
           "specVersion": "0.1-213",
           "casesNumber": 2,
-          "description": "* HELPERS:",
+          "description": "check if-expressions must have both branches.",
           "unexpectedBehaviour": false
         }
       ]
@@ -23,7 +23,7 @@
         {
           "specVersion": "0.1-213",
           "casesNumber": 2,
-          "description": "* HELPERS: checkType, functions",
+          "description": "check any if-statement in kotlin may be trivially turned into such an expression by replacing the missing branch with a kotlin.Unit object expression.",
           "unexpectedBehaviour": false
         }
       ],
@@ -31,7 +31,7 @@
         {
           "specVersion": "0.1-213",
           "casesNumber": 3,
-          "description": "* HELPERS: checkType, functions",
+          "description": "check if-expressions must have both branches.",
           "unexpectedBehaviour": false
         },
         {

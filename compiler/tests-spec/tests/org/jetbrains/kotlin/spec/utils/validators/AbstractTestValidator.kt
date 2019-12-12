@@ -23,10 +23,11 @@ enum class SpecTestValidationFailedReason(val description: String) {
     UNKNOWN_FRONTEND_EXCEPTION("Unknown frontend exception. Manual analysis is required."),
     UNMATCHED_FRONTEND_EXCEPTION("Unmatched frontend exception. Manual analysis is required."),
     UNKNOWN("Unknown validation error."),
-    INCONSISTENT_REASONS("Inconsistent fail reasons: all test cases should have one fail reason within one test.")
+    INCONSISTENT_REASONS("Inconsistent fail reasons: all test cases should have one fail reason within one test."),
+    TEST_CASE_NUMBER_FORMAT("Wrong format of testcase number: only integers are allowed.")
 }
 
-class SpecTestValidationException(reason: SpecTestValidationFailedReason, details: String = "") : Exception() {
+class SpecTestValidationException(reason: SpecTestValidationFailedReason, details: String = "") : Exception("${reason.description} \nDetails: $details") {
     val description = "${reason.description} $details"
 }
 

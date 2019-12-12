@@ -31,33 +31,37 @@ data class ParsedTestFile(
 )
 
 fun parseTestInfo(testFilePath: String, testFiles: TestFiles, linkedTestType: SpecTestLinkedType): ParsedTestFile {
-    val patterns = linkedTestType.patterns.value
-    val testInfoByFilenameMatcher = patterns.testPathPattern.matcher(testFilePath)
+    try {
+        val patterns = linkedTestType.patterns.value
+        val testInfoByFilenameMatcher = patterns.testPathPattern.matcher(testFilePath)
 
-    if (!testInfoByFilenameMatcher.find())
-        throw SpecTestValidationException(SpecTestValidationFailedReason.FILENAME_NOT_VALID)
+        if (!testInfoByFilenameMatcher.find())
+            throw SpecTestValidationException(SpecTestValidationFailedReason.FILENAME_NOT_VALID)
 
-    val testInfoByContentMatcher = patterns.testInfoPattern.matcher(FileUtil.loadFile(File(testFilePath), true))
+        val testInfoByContentMatcher = patterns.testInfoPattern.matcher(FileUtil.loadFile(File(testFilePath), true))
 
-    if (!testInfoByContentMatcher.find())
-        throw SpecTestValidationException(SpecTestValidationFailedReason.TESTINFO_NOT_VALID)
+        if (!testInfoByContentMatcher.find())
+            throw SpecTestValidationException(SpecTestValidationFailedReason.TESTINFO_NOT_VALID)
 
-    val testInfoElements = CommonParser.parseTestInfoElements(
-        arrayOf(*CommonInfoElementType.values(), *CommonSpecTestFileInfoElementType.values(), *linkedTestType.infoElements.value),
-        testInfoByContentMatcher.group("infoElements")
-    )
-    val helpers = testInfoElements[CommonSpecTestFileInfoElementType.HELPERS]?.content?.splitByComma()?.toSet()
+        val testInfoElements = CommonParser.parseTestInfoElements(
+            arrayOf(*CommonInfoElementType.values(), *CommonSpecTestFileInfoElementType.values(), *linkedTestType.infoElements.value),
+            testInfoByContentMatcher.group("infoElements")
+        )
+        val helpers = testInfoElements[CommonSpecTestFileInfoElementType.HELPERS]?.content?.splitByComma()?.toSet()
 
-    return ParsedTestFile(
-        testArea = TestArea.valueOf(testInfoByContentMatcher.group("testArea").withUnderscores()),
-        testType = TestType.valueOf(testInfoByContentMatcher.group("testType")),
-        testNumber = testInfoElements[CommonSpecTestFileInfoElementType.NUMBER]!!.content.toInt(),
-        testDescription = testInfoElements[CommonSpecTestFileInfoElementType.DESCRIPTION]!!.content,
-        testInfoElements = testInfoElements,
-        testCasesSet = parseTestCases(testFiles),
-        unexpectedBehavior = testInfoElements.contains(CommonInfoElementType.UNEXPECTED_BEHAVIOUR),
-        issues = CommonParser.parseIssues(testInfoElements[CommonInfoElementType.ISSUES]),
-        helpers = helpers,
-        exception = testInfoElements[CommonInfoElementType.EXCEPTION]?.content?.let { TestsExceptionType.fromValue(it) }
-    )
+        return ParsedTestFile(
+            testArea = TestArea.valueOf(testInfoByContentMatcher.group("testArea").withUnderscores()),
+            testType = TestType.valueOf(testInfoByContentMatcher.group("testType")),
+            testNumber = testInfoElements[CommonSpecTestFileInfoElementType.NUMBER]!!.content.toInt(),
+            testDescription = testInfoElements[CommonSpecTestFileInfoElementType.DESCRIPTION]!!.content,
+            testInfoElements = testInfoElements,
+            testCasesSet = parseTestCases(testFiles),
+            unexpectedBehavior = testInfoElements.contains(CommonInfoElementType.UNEXPECTED_BEHAVIOUR),
+            issues = CommonParser.parseIssues(testInfoElements[CommonInfoElementType.ISSUES]),
+            helpers = helpers,
+            exception = testInfoElements[CommonInfoElementType.EXCEPTION]?.content?.let { TestsExceptionType.fromValue(it) }
+        )
+    } catch (e: Exception) {
+        error("Wrong format of file:\nfile://$testFilePath \n${e.message}")
+    }
 }

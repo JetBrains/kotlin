@@ -5,7 +5,7 @@
         {
           "specVersion": "0.1-213",
           "casesNumber": 0,
-          "description": " check of the cast operators as or as?",
+          "description": "check of the cast operators as or as?",
           "unexpectedBehaviour": false
         }
       ]

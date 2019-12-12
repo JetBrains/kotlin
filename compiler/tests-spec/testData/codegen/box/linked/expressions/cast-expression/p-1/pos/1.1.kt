@@ -6,7 +6,7 @@
  * SPEC VERSION: 0.1-213
  * PLACE: expressions, cast-expression -> paragraph 1 -> sentence 1
  * NUMBER: 1
- * DESCRIPTION: check of the cast operators as or as?
+ * DESCRIPTION: check of the cast operators as or as?
  */
 
 fun box(): String {

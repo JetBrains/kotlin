@@ -6,7 +6,7 @@
  * SPEC VERSION: 0.1-213
  * PLACE: expressions, built-in-types-and-their-semantics, kotlin.nothing-1 -> paragraph 1 -> sentence 1
  * NUMBER: 6
- * DESCRIPTION:
+ * DESCRIPTION: check kotlin.Nothing type
  */
 
 

@@ -39,7 +39,7 @@ object CommonPatterns {
         """${SINGLE_LINE_COMMENT_REGEX.format("""[\w\s]+:""")}|${MULTILINE_COMMENT_REGEX.format(""" $ASTERISK_REGEX [\w\s]+:[\s\S]*?""")}"""
     val testAreaRegex = """(?<testArea>${TestArea.joinedValues})"""
     val testTypeRegex = """(?<testType>${TestType.joinedValues})"""
-    val testInfoElementPattern: Pattern = Pattern.compile("""(?: \* )?(?<name>[A-Z ]+?)(?::\s*(?<value>.*?))?\n""")
+    val testInfoElementPattern: Pattern = Pattern.compile("""(?: \* )?(?<name>[A-Z ]+?)(?::[ ]?(?<value>.*?))?\n""")
     val testPathBaseRegexTemplate = """^.*?$ps(?<testArea>diagnostics|psi|(?:codegen${ps}box))$ps%s"""
     val testPathRegexTemplate = """$testPathBaseRegexTemplate$ps(?<testType>pos|neg)$ps%s$"""
     val issuesPattern: Pattern = Pattern.compile("""(KT-[1-9]\d*)(,\s*KT-[1-9]\d*)*""")
