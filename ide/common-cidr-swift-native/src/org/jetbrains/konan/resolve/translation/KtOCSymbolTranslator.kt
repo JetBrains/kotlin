@@ -6,17 +6,15 @@ import com.intellij.openapi.util.component2
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.containers.ContainerUtil
 import com.jetbrains.cidr.lang.OCLog
-import com.jetbrains.cidr.lang.symbols.OCSymbol
-import com.jetbrains.cidr.lang.symbols.objc.OCClassSymbol
 import com.jetbrains.cidr.lang.symbols.objc.OCMemberSymbol
-import com.jetbrains.cidr.lang.symbols.objc.OCMethodSymbol
+import com.jetbrains.cidr.lang.symbols.objc.OCMethodSymbol.SelectorPartSymbol
 import com.jetbrains.cidr.lang.symbols.objc.SelectorPartSymbolImpl
 import com.jetbrains.cidr.lang.types.OCVoidType
 import org.jetbrains.konan.resolve.symbols.objc.*
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 
-class KtOCSymbolTranslator(val project: Project) : KtFileTranslator() {
-    override fun translate(stub: ObjCTopLevel<*>, file: VirtualFile): OCSymbol? {
+class KtOCSymbolTranslator(val project: Project) : KtFileTranslator<KtOCClassSymbol<*, *>, OCMemberSymbol>() {
+    override fun translate(stub: ObjCTopLevel<*>, file: VirtualFile): KtOCClassSymbol<*, *>? {
         return when (stub) {
             is ObjCProtocol -> KtOCProtocolSymbol(stub, project, file)
             is ObjCInterface -> KtOCInterfaceSymbol(stub, project, file)
@@ -27,7 +25,7 @@ class KtOCSymbolTranslator(val project: Project) : KtFileTranslator() {
         }
     }
 
-    fun translateMember(stub: Stub<*>, clazz: OCClassSymbol, file: VirtualFile, processor: (OCMemberSymbol) -> Unit) {
+    override fun translateMember(stub: Stub<*>, clazz: KtOCClassSymbol<*, *>, file: VirtualFile, processor: (OCMemberSymbol) -> Unit) {
         when (stub) {
             is ObjCMethod -> KtOCMethodSymbol(stub, project, file, clazz, translateParameters(stub, clazz, file)).also(processor)
             is ObjCProperty -> KtOCPropertySymbol(stub, project, file, clazz).also(processor).also { property ->
@@ -42,14 +40,11 @@ class KtOCSymbolTranslator(val project: Project) : KtFileTranslator() {
                     }.also(processor)
                 }
             }
-            else -> {
-                OCLog.LOG.error("unknown kotlin objective-c declaration: " + stub::class)
-                null
-            }
+            else -> OCLog.LOG.error("unknown kotlin objective-c declaration: " + stub::class)
         }
     }
 
-    private fun translateParameters(stub: ObjCMethod, clazz: OCClassSymbol, file: VirtualFile): List<OCMethodSymbol.SelectorPartSymbol> {
+    private fun translateParameters(stub: ObjCMethod, clazz: KtOCClassSymbol<*, *>, file: VirtualFile): List<SelectorPartSymbol> {
         val selectors = stub.selectors
         val parameters = stub.parameters
 

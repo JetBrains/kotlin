@@ -40,20 +40,11 @@ abstract class KtSwiftTypeSymbol<State : KtSwiftTypeSymbol.TypeState, Stub : Obj
         var members: MostlySingularMultiMap<String, SwiftMemberSymbol>?
 
         constructor(clazz: KtSwiftTypeSymbol<*, *>, stub: ObjCClass<*>, project: Project) : super(stub) {
-            val translator = KtSwiftSymbolTranslator(project)
-            var map: MostlySingularMultiMap<String, SwiftMemberSymbol>? = null
-            for (member in stub.members) {
-                val translatedMember = translator.translateMember(member, clazz, clazz.containingFile)
-                if (translatedMember != null) {
-                    if (map == null) map = MostlySingularMultiMap()
-                    map.add(translatedMember.name, translatedMember)
-                }
-            }
-            this.members = map
+            members = KtSwiftSymbolTranslator(project).translateMembers(stub, clazz)
         }
 
         constructor() : super() {
-            this.members = null
+            members = null
         }
     }
 }

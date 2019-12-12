@@ -20,13 +20,12 @@ import com.jetbrains.cidr.lang.symbols.objc.OCMemberSymbol
 import com.jetbrains.cidr.lang.types.OCObjectType
 import org.jetbrains.konan.resolve.translation.KtOCSymbolTranslator
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCClass
-import org.jetbrains.kotlin.util.getValueOrNull
 
 abstract class KtOCClassSymbol<State : KtOCClassSymbol.ClassState, Stub : ObjCClass<*>> : KtOCLazySymbol<State, Stub>, OCClassSymbol {
     private lateinit var qualifiedName: OCQualifiedName
 
     constructor(stub: Stub, project: Project, file: VirtualFile) : super(stub, project, file) {
-        this.qualifiedName = OCQualifiedName.interned(stub.name)
+        qualifiedName = OCQualifiedName.interned(stub.name)
     }
 
     constructor() : super()
@@ -81,19 +80,12 @@ abstract class KtOCClassSymbol<State : KtOCClassSymbol.ClassState, Stub : ObjCCl
         lateinit var protocolNames: List<String>
 
         constructor(clazz: KtOCClassSymbol<*, *>, stub: ObjCClass<*>, project: Project) : super(stub) {
-            this.protocolNames = stub.superProtocols
-            val translator = KtOCSymbolTranslator(project)
-            val map = lazy(LazyThreadSafetyMode.NONE) { MostlySingularMultiMap<String, OCMemberSymbol>() }
-            for (member in stub.members) {
-                translator.translateMember(member, clazz, clazz.containingFile) {
-                    map.value.add(it.name, it)
-                }
-            }
-            this.members = map.getValueOrNull()
+            protocolNames = stub.superProtocols
+            members = KtOCSymbolTranslator(project).translateMembers(stub, clazz)
         }
 
         constructor() : super() {
-            this.members = null
+            members = null
         }
     }
 }

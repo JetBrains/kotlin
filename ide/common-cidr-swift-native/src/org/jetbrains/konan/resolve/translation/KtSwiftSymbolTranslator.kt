@@ -4,12 +4,14 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.cidr.lang.OCLog
 import com.jetbrains.swift.psi.types.SwiftTypeFactory
-import com.jetbrains.swift.symbols.*
+import com.jetbrains.swift.symbols.SwiftCallableSymbol
+import com.jetbrains.swift.symbols.SwiftMemberSymbol
+import com.jetbrains.swift.symbols.SwiftParameterSymbol
 import org.jetbrains.konan.resolve.symbols.swift.*
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 
-class KtSwiftSymbolTranslator(val project: Project) : KtFileTranslator() {
-    override fun translate(stub: ObjCTopLevel<*>, file: VirtualFile): SwiftSymbol? {
+class KtSwiftSymbolTranslator(val project: Project) : KtFileTranslator<KtSwiftTypeSymbol<*, *>, SwiftMemberSymbol>() {
+    override fun translate(stub: ObjCTopLevel<*>, file: VirtualFile): KtSwiftTypeSymbol<*, *>? {
         return when (stub) {
             is ObjCProtocol -> KtSwiftProtocolSymbol(stub, project, file)
             is ObjCInterface -> {
@@ -26,8 +28,10 @@ class KtSwiftSymbolTranslator(val project: Project) : KtFileTranslator() {
         }
     }
 
-    fun translateMember(stub: Stub<*>, clazz: SwiftTypeSymbol, file: VirtualFile): SwiftMemberSymbol? {
-        return when (stub) {
+    override fun translateMember(
+        stub: Stub<*>, clazz: KtSwiftTypeSymbol<*, *>, file: VirtualFile, processor: (SwiftMemberSymbol) -> Unit
+    ) {
+        when (stub) {
             is ObjCMethod -> {
                 val isConstructor = stub.swiftName == "init" // works due to the attributes set by Kotlin ObjC export
                 when (isConstructor) {
@@ -43,15 +47,12 @@ class KtSwiftSymbolTranslator(val project: Project) : KtFileTranslator() {
                             false -> createImplicitSelfMethodType(functionType)
                         }
                     }
-                }
+                }.also(processor)
             }
             is ObjCProperty -> KtSwiftPropertySymbol(stub, project, file, clazz).also { property ->
                 property.swiftType = stub.type.convertType(property)
-            }
-            else -> {
-                OCLog.LOG.error("unknown kotlin objective-c declaration: " + stub::class)
-                null
-            }
+            }.also(processor)
+            else -> OCLog.LOG.error("unknown kotlin objective-c declaration: " + stub::class)
         }
     }
 
