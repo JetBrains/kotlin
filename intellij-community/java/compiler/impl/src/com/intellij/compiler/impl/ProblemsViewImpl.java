@@ -7,7 +7,6 @@ import com.intellij.ide.errorTreeView.ErrorTreeElement;
 import com.intellij.ide.errorTreeView.ErrorTreeElementKind;
 import com.intellij.ide.errorTreeView.ErrorViewStructure;
 import com.intellij.ide.errorTreeView.GroupingElement;
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.compiler.CompileScope;
@@ -57,13 +56,6 @@ final class ProblemsViewImpl extends ProblemsView {
       content.setHelpId("reference.problems.tool.window");
       // todo: setup content?
       toolWindow.getContentManager().addContent(content);
-      Disposer.register(project, new Disposable() {
-        @Override
-        public void dispose() {
-          toolWindow.getContentManager().removeAllContents(true);
-        }
-      });
-
       if (myPanel == null) {
         myViewUpdater.execute(() -> doUpdateIcon(toolWindow));
       }
