@@ -176,6 +176,19 @@ fun FirClassifierSymbol<*>.constructType(typeArguments: Array<ConeKotlinTypeProj
 fun FirClassifierSymbol<*>.constructType(parts: List<FirQualifierPart>, isNullable: Boolean): ConeKotlinType =
     constructType(parts.toTypeProjections(), isNullable)
 
+fun FirClassifierSymbol<*>.constructType(
+    parts: List<FirQualifierPart>,
+    isNullable: Boolean,
+    symbolOriginSession: FirSession
+): ConeKotlinType =
+    constructType(parts.toTypeProjections(), isNullable)
+        .also {
+            val lookupTag = it.lookupTag
+            if (lookupTag is ConeClassLikeLookupTagImpl && this is FirClassLikeSymbol<*>) {
+                lookupTag.bindSymbolToLookupTag(symbolOriginSession.firSymbolProvider, this)
+            }
+        }
+
 fun ConeKotlinType.toTypeProjection(variance: Variance): ConeKotlinTypeProjection =
     when (variance) {
         Variance.INVARIANT -> this
