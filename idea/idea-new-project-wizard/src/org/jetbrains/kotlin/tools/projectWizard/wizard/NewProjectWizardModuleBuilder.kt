@@ -39,6 +39,8 @@ class NewProjectWizardModuleBuilder : ModuleBuilder() {
         const val MODULE_BUILDER_ID = "kotlin.newProjectWizard.builder"
     }
 
+    override fun isAvailable(): Boolean = NewProjectWizardService.isEnabled
+
     private var wizardContext: WizardContext? = null
 
     override fun getModuleType(): ModuleType<*> = NewProjectWizardModuleType()
