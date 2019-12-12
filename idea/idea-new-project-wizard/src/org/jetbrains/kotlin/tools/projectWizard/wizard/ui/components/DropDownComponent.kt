@@ -22,8 +22,9 @@ import javax.swing.JList
 
 class DropDownComponent<T : DisplayableSettingItem>(
     private val valuesReadingContext: ValuesReadingContext,
-    initialValues: List<T> = emptyList(),
+    private val initialValues: List<T> = emptyList(),
     labelText: String? = null,
+    private val filter: (T) -> Boolean = { true },
     private val validator: SettingValidator<T> = settingValidator { ValidationResult.OK },
     private val iconProvider: (T) -> Icon? = { null },
     private val onAnyValueUpdate: (T) -> Unit = {}
@@ -42,7 +43,7 @@ class DropDownComponent<T : DisplayableSettingItem>(
     }
 
     @Suppress("UNCHECKED_CAST")
-    private val comboBox = ComboBox<T>(initialValues.toTypedArray<DisplayableSettingItem>() as Array<T>).apply {
+    private val comboBox = ComboBox<T>().apply {
         renderer = object : ColoredListCellRenderer<T>() {
             override fun customizeCellRenderer(
                 list: JList<out T>,
@@ -76,13 +77,23 @@ class DropDownComponent<T : DisplayableSettingItem>(
         }
     }
 
-    fun updateValues(newValues: List<T>) = withoutActionFiring {
-        val oldValue = comboBox.selectedItem
-        @Suppress("UNCHECKED_CAST")
-        comboBox.model = DefaultComboBoxModel(newValues.toTypedArray<DisplayableSettingItem>() as Array<T>)
+    override fun onInit() {
+        super.onInit()
+        updateValues(initialValues)
+    }
 
-        if (newValues.isNotEmpty() && oldValue !in newValues) {
-            value = newValues.first()
+    fun updateValues(newValues: List<T>) {
+        val newValuesFiltered = newValues.filter(filter)
+        val oldValue = comboBox.selectedItem
+        withoutActionFiring {
+            @Suppress("UNCHECKED_CAST")
+            comboBox.model = DefaultComboBoxModel(newValuesFiltered.toTypedArray<DisplayableSettingItem>() as Array<T>)
+        }
+
+        if (oldValue !in newValuesFiltered) {
+            newValuesFiltered.firstOrNull()?.let { newValue ->
+                value = newValuesFiltered.first()
+            }
         }
     }
 
@@ -103,13 +114,6 @@ class DropDownComponent<T : DisplayableSettingItem>(
         validate(newValue)
         if (allowFireEventWhenValueUpdated) {
             onAnyValueUpdate(newValue)
-        }
-    }
-
-    init {
-        initialValues.firstOrNull()?.let { first ->
-            value = first
-            validate(first)
         }
     }
 

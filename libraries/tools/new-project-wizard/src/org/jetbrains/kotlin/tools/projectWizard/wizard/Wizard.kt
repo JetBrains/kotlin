@@ -2,12 +2,13 @@ package org.jetbrains.kotlin.tools.projectWizard.wizard
 
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
-import org.jetbrains.kotlin.tools.projectWizard.core.service.Service
+import org.jetbrains.kotlin.tools.projectWizard.core.service.WizardService
+import org.jetbrains.kotlin.tools.projectWizard.core.service.ServicesManager
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 
-abstract class Wizard(createPlugins: PluginsCreator, initialServices: List<Service>) {
+abstract class Wizard(createPlugins: PluginsCreator, val servicesManager: ServicesManager) {
     val context = Context(createPlugins, EventManager())
-    val valuesReadingContext = ValuesReadingContext(context, initialServices)
+    val valuesReadingContext = ValuesReadingContext(context, servicesManager)
     protected val plugins = context.plugins
     protected val pluginSettings = plugins.flatMap { it.declaredSettings }.distinctBy { it.path }
 
@@ -28,12 +29,12 @@ abstract class Wizard(createPlugins: PluginsCreator, initialServices: List<Servi
         }.fold(ValidationResult.OK, ValidationResult::and).toResult()
 
     open fun apply(
-        services: List<Service>,
+        services: List<WizardService>,
         phases: Set<GenerationPhase>,
         onTaskExecuting: (PipelineTask) -> Unit = {}
     ): TaskResult<Unit> = computeM {
         context.checkAllRequiredSettingPresent(phases).ensure()
-        val taskRunningContext = TaskRunningContext(context, services)
+        val taskRunningContext = TaskRunningContext(context, servicesManager.withServices(services))
         taskRunningContext.validate(phases).ensure()
         val (tasksSorted) = context.sortTasks().map { tasks ->
             tasks.groupBy { it.phase }.toList().sortedBy { it.first }.flatMap { it.second }

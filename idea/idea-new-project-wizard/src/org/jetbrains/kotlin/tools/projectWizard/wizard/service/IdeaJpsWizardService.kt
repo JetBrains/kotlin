@@ -1,4 +1,9 @@
-package org.jetbrains.kotlin.tools.projectWizard.wizard
+/*
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.tools.projectWizard.wizard.service
 
 import com.intellij.codeInsight.daemon.impl.quickfix.OrderEntryFix
 import com.intellij.jarRepository.JarRepositoryManager
@@ -9,7 +14,6 @@ import com.intellij.openapi.roots.DependencyScope
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.OrderRootType
-import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.util.PathUtil
 import org.jetbrains.idea.maven.utils.library.RepositoryLibraryProperties
@@ -19,19 +23,24 @@ import org.jetbrains.kotlin.config.TestResourceKotlinRootType
 import org.jetbrains.kotlin.config.TestSourceKotlinRootType
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.tools.projectWizard.core.*
-import org.jetbrains.kotlin.tools.projectWizard.core.service.JpsService
+import org.jetbrains.kotlin.tools.projectWizard.core.service.ProjectImportingWizardService
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.library.MavenArtifact
+import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.SourcesetType
 import java.nio.file.Path
 import com.intellij.openapi.module.Module as IdeaModule
 
-class IdeaJpsService(
+class IdeaJpsWizardService(
     private val project: Project,
     private val modulesModel: ModifiableModuleModel
-) : JpsService {
+) : ProjectImportingWizardService, IdeaWizardService {
+    override fun isSuitableFor(buildSystemType: BuildSystemType): Boolean =
+        buildSystemType == BuildSystemType.Jps
+
     override fun importProject(path: Path, modulesIrs: List<ModuleIR>): TaskResult<Unit> = runWriteAction {
-        ProjectImporter(project, modulesModel, path, modulesIrs).import()
+        ProjectImporter(project, modulesModel, path, modulesIrs)
+            .import()
     }
 }
 
@@ -46,7 +55,6 @@ private class ProjectImporter(
 
     fun import() = modulesIrs.mapSequence { convertModule(it) } andThen
             safe { modulesModel.commit() }
-
 
     private fun convertModule(moduleIr: ModuleIR): TaskResult<IdeaModule> {
         val module = modulesModel.newModule(

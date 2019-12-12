@@ -4,16 +4,24 @@ import org.jetbrains.kotlin.tools.projectWizard.core.PluginsCreator
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingReference
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingType
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.reference
-import org.jetbrains.kotlin.tools.projectWizard.core.service.Service
+import org.jetbrains.kotlin.tools.projectWizard.core.service.WizardService
+import org.jetbrains.kotlin.tools.projectWizard.core.service.ServicesManager
 import org.jetbrains.kotlin.tools.projectWizard.plugins.StructurePlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemPlugin
+import org.jetbrains.kotlin.tools.projectWizard.wizard.service.IdeaWizardService
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 class IdeWizard(
     createPlugins: PluginsCreator,
-    initialServices: List<Service>
-) : Wizard(createPlugins, initialServices) {
+    initialServices: List<WizardService>
+) : Wizard(
+    createPlugins,
+    ServicesManager(initialServices) { services ->
+        services.firstOrNull { it is IdeaWizardService }
+            ?: services.firstOrNull()
+    }
+) {
     private val allSettings = plugins.flatMap { it.declaredSettings }
 
     init {

@@ -3,7 +3,7 @@ package org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.ModuleConfiguratorSetting
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
-import org.jetbrains.kotlin.tools.projectWizard.core.service.AndroidService
+import org.jetbrains.kotlin.tools.projectWizard.core.service.AndroidWizardService
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.AndroidConfigIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.BuildScriptDependencyIR
@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.gradle.GradlePlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleConfigurationData
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
-import org.jetbrains.kotlin.tools.projectWizard.plugins.pomIR
 import org.jetbrains.kotlin.tools.projectWizard.plugins.templates.TemplatesPlugin
 import org.jetbrains.kotlin.tools.projectWizard.settings.JavaPackage
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.DefaultRepository
@@ -38,7 +37,7 @@ object AndroidSinglePlatformModuleConfigurator : ModuleConfiguratorWithSettings(
 
         validate { path ->
             ValidationResult.create(
-                service<AndroidService>().isValidAndroidSdk(
+                service<AndroidWizardService>()!!.isValidAndroidSdk(
                     path
                 ),
                 "Path should point to valid Android SDK location"

@@ -100,7 +100,7 @@ class VersionSettingComponent(
 
 class DropdownSettingComponent(
     reference: SettingReference<DisplayableSettingItem, DropDownSettingType<DisplayableSettingItem>>,
-    valuesReadingContext: ValuesReadingContext
+    private val valuesReadingContext: ValuesReadingContext
 ) : DefaultSettingComponent<DisplayableSettingItem, DropDownSettingType<DisplayableSettingItem>>(
     reference,
     valuesReadingContext
@@ -108,21 +108,12 @@ class DropdownSettingComponent(
     private val dropDownComponent = DropDownComponent(
         valuesReadingContext,
         setting.type.values,
+        filter = { value -> setting.type.filter(valuesReadingContext, reference, value) },
         labelText = setting.title,
         onAnyValueUpdate = { newValue ->
             value = newValue
         }
     ).asSubComponent()
-
-
-    override fun onInit() {
-        super.onInit()
-        val valuesFiltered = setting.type.values.filter { setting.type.filter(reference, it) }
-        dropDownComponent.updateValues(valuesFiltered)
-        if (valuesFiltered.isNotEmpty()) {
-            value = valuesFiltered.first()
-        }
-    }
 
     override val validationIndicator: ValidationIndicator? = null
     override val component: JComponent = dropDownComponent.component

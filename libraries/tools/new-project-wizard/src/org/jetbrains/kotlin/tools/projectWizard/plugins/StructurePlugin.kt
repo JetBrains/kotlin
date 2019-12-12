@@ -5,7 +5,7 @@ import org.jetbrains.kotlin.tools.projectWizard.core.Plugin
 import org.jetbrains.kotlin.tools.projectWizard.core.TaskRunningContext
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.reference
 import org.jetbrains.kotlin.tools.projectWizard.core.pathParser
-import org.jetbrains.kotlin.tools.projectWizard.core.service.FileSystemService
+import org.jetbrains.kotlin.tools.projectWizard.core.service.FileSystemWizardService
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.PomIR
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
@@ -31,7 +31,7 @@ class StructurePlugin(context: Context) : Plugin(context) {
 
     val createProjectDir by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
         withAction {
-            service<FileSystemService>().createDirectory(StructurePlugin::projectPath.reference.settingValue)
+            service<FileSystemWizardService>()!!.createDirectory(StructurePlugin::projectPath.reference.settingValue)
         }
     }
 }

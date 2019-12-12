@@ -277,7 +277,7 @@ class DropDownSettingType<V : DisplayableSettingItem>(
     }
 }
 
-typealias DropDownSettingTypeFilter<V> = (SettingReference<V, DropDownSettingType<V>>, V) -> Boolean
+typealias DropDownSettingTypeFilter<V> = ValuesReadingContext.(SettingReference<V, DropDownSettingType<V>>, V) -> Boolean
 
 
 class ValueSettingType<V : Any>(

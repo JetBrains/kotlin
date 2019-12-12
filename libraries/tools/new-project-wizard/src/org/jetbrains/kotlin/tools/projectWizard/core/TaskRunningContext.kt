@@ -3,11 +3,12 @@ package org.jetbrains.kotlin.tools.projectWizard.core
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.PropertyReference
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.Task1
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.Task1Reference
-import org.jetbrains.kotlin.tools.projectWizard.core.service.Service
-import kotlin.reflect.KClass
-import kotlin.reflect.full.isSubclassOf
+import org.jetbrains.kotlin.tools.projectWizard.core.service.ServicesManager
 
-class TaskRunningContext(context: Context, services: List<Service>) : ValuesReadingContext(context, services) {
+class TaskRunningContext(
+    context: Context,
+    servicesManager: ServicesManager
+) : ValuesReadingContext(context, servicesManager) {
     fun <A, B : Any> Task1Reference<A, B>.execute(value: A): TaskResult<B> {
         @Suppress("UNCHECKED_CAST")
         val task = context.taskContext.getEntity(this) as Task1<A, B>
@@ -30,4 +31,3 @@ class TaskRunningContext(context: Context, services: List<Service>) : ValuesRead
         values: List<T>
     ): TaskResult<Unit> = update { oldValues -> success(oldValues + values) }
 }
-

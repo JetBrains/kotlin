@@ -4,11 +4,10 @@ import org.jetbrains.kotlin.tools.projectWizard.Identificator
 import org.jetbrains.kotlin.tools.projectWizard.SettingsOwner
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
-import org.jetbrains.kotlin.tools.projectWizard.core.service.FileSystemService
+import org.jetbrains.kotlin.tools.projectWizard.core.service.FileSystemWizardService
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.DependencyIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.SourcesetIR
-import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.ModuleConfigurator
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.StructurePlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
@@ -79,7 +78,7 @@ abstract class Template : SettingsOwner {
         templateEngine: TemplateEngine,
         sourceset: SourcesetIR
     ): TaskResult<TemplateApplicationResult> {
-        val fileSystemService = service<FileSystemService>()
+        val fileSystemService = service<FileSystemWizardService>()!!
 
         val allSettings = createDefaultSettings() + settingsAsMap(sourceset.original)
 
