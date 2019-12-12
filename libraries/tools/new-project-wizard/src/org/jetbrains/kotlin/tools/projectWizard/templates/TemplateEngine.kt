@@ -8,7 +8,7 @@ import org.apache.velocity.runtime.log.LogChute
 import org.jetbrains.kotlin.tools.projectWizard.core.TaskResult
 import org.jetbrains.kotlin.tools.projectWizard.core.TaskRunningContext
 import org.jetbrains.kotlin.tools.projectWizard.core.div
-import org.jetbrains.kotlin.tools.projectWizard.core.service.FileSystemService
+import org.jetbrains.kotlin.tools.projectWizard.core.service.FileSystemWizardService
 import java.io.StringWriter
 
 
@@ -17,7 +17,7 @@ interface TemplateEngine {
 
     fun TaskRunningContext.writeTemplate(template: FileTemplate): TaskResult<Unit> {
         val text = renderTemplate(template.descriptor, template.data)
-        return service<FileSystemService>().createFile(template.rootPath / template.descriptor.relativePath, text)
+        return service<FileSystemWizardService>()!!.createFile(template.rootPath / template.descriptor.relativePath, text)
     }
 }
 

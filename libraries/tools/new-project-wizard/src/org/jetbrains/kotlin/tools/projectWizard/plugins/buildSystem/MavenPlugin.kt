@@ -4,7 +4,6 @@ import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.core.asSuccess
 import org.jetbrains.kotlin.tools.projectWizard.core.checker
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.reference
-import org.jetbrains.kotlin.tools.projectWizard.core.service.MavenService
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.RootFileModuleStructureIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.ModulesDependencyMavenIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.withIrs
@@ -42,7 +41,6 @@ class MavenPlugin(context: Context) : BuildSystemPlugin(context) {
     val addBuildSystemData by addBuildSystemData(
         BuildSystemData(
             type = BuildSystemType.Maven,
-            buildSystemServiceClass = MavenService::class,
             buildFileData = BuildFileData(
                 createPrinter = { MavenPrinter() },
                 buildFileName = "pom.xml"

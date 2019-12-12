@@ -5,8 +5,7 @@ import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.PipelineTask
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.PluginSettingReference
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.reference
-import org.jetbrains.kotlin.tools.projectWizard.core.service.AndroidServiceImpl
-import org.jetbrains.kotlin.tools.projectWizard.core.service.Service
+import org.jetbrains.kotlin.tools.projectWizard.core.service.*
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.StructurePlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.templates.TemplatesPlugin
@@ -16,9 +15,14 @@ class YamlWizard(
     private val yaml: String,
     private val path: String,
     createPlugins: (Context) -> List<Plugin>
-) : Wizard(createPlugins, listOf(AndroidServiceImpl())) {
+) : Wizard(
+    createPlugins,
+    ServicesManager(Services.IDEA_INDEPENDENT_SERVICES) { services ->
+        services.firstOrNull { it is IdeaIndependentWizardService }
+    }
+) {
     override fun apply(
-        services: List<Service>,
+        services: List<WizardService>,
         phases: Set<GenerationPhase>,
         onTaskExecuting: (PipelineTask) -> Unit
     ): TaskResult<Unit> = computeM {
@@ -38,5 +42,5 @@ class YamlWizard(
         get() = pluginSettings.mapNotNull { setting ->
             val defaultValue = setting.defaultValue ?: return@mapNotNull null
             PluginSettingReference(setting) to defaultValue
-        } .toMap()
+        }.toMap()
 }

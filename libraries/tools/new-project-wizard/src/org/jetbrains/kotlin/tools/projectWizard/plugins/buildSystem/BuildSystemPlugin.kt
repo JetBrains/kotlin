@@ -3,8 +3,9 @@ package org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.reference
-import org.jetbrains.kotlin.tools.projectWizard.core.service.BuildSystemService
-import org.jetbrains.kotlin.tools.projectWizard.core.service.FileSystemService
+import org.jetbrains.kotlin.tools.projectWizard.core.service.BuildSystemAvailabilityWizardService
+import org.jetbrains.kotlin.tools.projectWizard.core.service.FileSystemWizardService
+import org.jetbrains.kotlin.tools.projectWizard.core.service.ProjectImportingWizardService
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildFileIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.MultiplatformModulesStructureIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.render
@@ -16,13 +17,17 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.BuildFilePrinter
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.printBuildFile
 import org.jetbrains.kotlin.tools.projectWizard.plugins.projectPath
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
-import kotlin.reflect.KClass
 
 abstract class BuildSystemPlugin(context: Context) : Plugin(context) {
     val type by enumSetting<BuildSystemType>("Build System", GenerationPhase.FIRST_STEP) {
+        filter = { _, type ->
+            val service = service<BuildSystemAvailabilityWizardService>()!!
+            service.isAvailable(type)
+        }
+
         validate { buildSystemType ->
             if (!buildSystemType.isGradle
-                && KotlinPlugin::projectKind.settingValue() == ProjectKind.Multiplatform
+                && KotlinPlugin::projectKind.reference.notRequiredSettingValue == ProjectKind.Multiplatform
             ) {
                 ValidationResult.ValidationError("Multiplatform project cannot be generated using ${buildSystemType.text}")
             } else ValidationResult.OK
@@ -36,7 +41,7 @@ abstract class BuildSystemPlugin(context: Context) : Plugin(context) {
     val createModules by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
         runAfter(StructurePlugin::createProjectDir)
         withAction {
-            val fileSystem = service<FileSystemService>()
+            val fileSystem = service<FileSystemWizardService>()!!
             val data = BuildSystemPlugin::buildSystemData.propertyValue.first { it.type == buildSystemType }
             val buildFileData = data.buildFileData ?: return@withAction UNIT_SUCCESS
             BuildSystemPlugin::buildFiles.propertyValue.mapSequenceIgnore { buildFile ->
@@ -52,7 +57,7 @@ abstract class BuildSystemPlugin(context: Context) : Plugin(context) {
         runAfter(BuildSystemPlugin::createModules)
         withAction {
             val data = BuildSystemPlugin::buildSystemData.propertyValue.first { it.type == buildSystemType }
-            serviceByClass(data.buildSystemServiceClass)
+            service<ProjectImportingWizardService> { service -> service.isSuitableFor(data.type) }!!
                 .importProject(StructurePlugin::projectPath.reference.settingValue, allModules)
         }
     }
@@ -61,14 +66,13 @@ abstract class BuildSystemPlugin(context: Context) : Plugin(context) {
         runBefore(BuildSystemPlugin::createModules)
         activityChecker = Checker.ALWAYS_AVAILABLE
         withAction {
-            BuildSystemPlugin::buildSystemData.update { Success(it + data) }
+            BuildSystemPlugin::buildSystemData.addValues(data)
         }
     }
 }
 
 data class BuildSystemData(
     val type: BuildSystemType,
-    val buildSystemServiceClass: KClass<out BuildSystemService>,
     val buildFileData: BuildFileData?
 )
 

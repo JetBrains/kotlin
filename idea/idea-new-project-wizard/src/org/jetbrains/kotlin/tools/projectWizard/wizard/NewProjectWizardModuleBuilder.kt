@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.Plugins
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.projectTemplates.ProjectTemplatesPlugin
+import org.jetbrains.kotlin.tools.projectWizard.wizard.service.*
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.PomWizardStepComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.firstStep.FirstWizardStepComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep.SecondStepWizardComponent
@@ -34,7 +35,7 @@ import com.intellij.openapi.module.Module as IdeaModule
 
 
 class NewProjectWizardModuleBuilder : ModuleBuilder() {
-    private val wizard = IdeWizard(Plugins.allPlugins, listOf(IdeaAndroidService()))
+    private val wizard = IdeWizard(Plugins.allPlugins, IdeaServices.PROJECT_INDEPENDENT)
 
     companion object {
         const val MODULE_BUILDER_ID = "kotlin.newProjectWizard.builder"
@@ -62,13 +63,8 @@ class NewProjectWizardModuleBuilder : ModuleBuilder() {
     ): List<IdeaModule>? {
         val modulesModel = model ?: ModuleManager.getInstance(project).modifiableModel
         val success = wizard.apply(
-            services = listOf(
-                IdeaMavenService(project),
-                IdeaGradleService(project),
-                IdeaJpsService(project, modulesModel),
-                IdeaFileSystemService(),
-                IdeaAndroidService()
-            ),
+            services = IdeaServices.createScopeDependent(project, modulesModel) +
+                    IdeaServices.PROJECT_INDEPENDENT,
             phases = GenerationPhase.startingFrom(GenerationPhase.FIRST_STEP)
         ).onFailure { errors ->
             val errorMessages = errors.joinToString(separator = "\n") { it.message }

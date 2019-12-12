@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.tools.projectWizard.cli
 
-import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.tools.projectWizard.core.ExceptionError
 import org.jetbrains.kotlin.tools.projectWizard.core.div
 import org.jetbrains.kotlin.tools.projectWizard.core.onFailure
@@ -20,7 +19,6 @@ import java.nio.file.Path
 import java.nio.file.Paths
 
 abstract class AbstractBuildFileGenerationTest : AbstractPluginBasedTest() {
-
     fun doTest(directoryPath: String) {
         val directory = Paths.get(directoryPath)
         val testData = init(directory)
@@ -41,7 +39,7 @@ abstract class AbstractBuildFileGenerationTest : AbstractPluginBasedTest() {
                 buildSystem.yaml
         val tempDir = Files.createTempDirectory(null)
         val wizard = YamlWizard(yaml, tempDir.toString(), testData.createPlugins)
-        val result = wizard.apply(Services.osServices, GenerationPhase.ALL)
+        val result = wizard.apply(Services.IDEA_INDEPENDENT_SERVICES, GenerationPhase.ALL)
         result.onFailure { errors ->
             errors.forEach { error ->
                 if (error is ExceptionError) {

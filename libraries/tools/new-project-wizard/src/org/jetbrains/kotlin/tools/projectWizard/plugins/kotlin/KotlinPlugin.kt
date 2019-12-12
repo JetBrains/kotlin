@@ -2,7 +2,7 @@ package org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin
 
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
-import org.jetbrains.kotlin.tools.projectWizard.core.service.FileSystemService
+import org.jetbrains.kotlin.tools.projectWizard.core.service.FileSystemWizardService
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.StructurePlugin
@@ -82,9 +82,10 @@ class KotlinPlugin(context: Context) : Plugin(context) {
     val createSourcesetDirectories by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
         runAfter(KotlinPlugin::createModules)
         withAction {
-            fun Path.createKotlinAndResourceDirectories() =
-                service<FileSystemService>().createDirectory(this / Defaults.KOTLIN_DIR) andThen
-                        service<FileSystemService>().createDirectory(this / Defaults.RESOURCES_DIR)
+            fun Path.createKotlinAndResourceDirectories() = with(service<FileSystemWizardService>()!!) {
+                createDirectory(this@createKotlinAndResourceDirectories / Defaults.KOTLIN_DIR) andThen
+                        createDirectory(this@createKotlinAndResourceDirectories / Defaults.RESOURCES_DIR)
+            }
 
             forEachModule { moduleIR ->
                 when (moduleIR) {

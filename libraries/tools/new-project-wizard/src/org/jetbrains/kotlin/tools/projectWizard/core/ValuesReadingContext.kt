@@ -1,19 +1,17 @@
 package org.jetbrains.kotlin.tools.projectWizard.core
 
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
-import org.jetbrains.kotlin.tools.projectWizard.core.service.Service
+import org.jetbrains.kotlin.tools.projectWizard.core.service.WizardService
+import org.jetbrains.kotlin.tools.projectWizard.core.service.ServicesManager
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
-import kotlin.reflect.full.isSubclassOf
-import kotlin.reflect.jvm.jvmName
 
 @Suppress("UNCHECKED_CAST")
-open class ValuesReadingContext(val context: Context, private val services: List<Service>) {
-    inline fun <reified S : Service> service() = serviceByClass(S::class)
+open class ValuesReadingContext(val context: Context, private val servicesManager: ServicesManager) {
+    inline fun <reified S : WizardService> service(noinline filter: (S) -> Boolean = { true }) = serviceByClass(S::class, filter)
 
-    @Suppress("UNCHECKED_CAST")
-    fun <S : Service> serviceByClass(klass: KClass<S>) =
-        services.firstOrNull { it::class.isSubclassOf(klass) } as? S ?: error("No service ${klass.jvmName}")
+    fun <S : WizardService> serviceByClass(klass: KClass<S>, filter: (S) -> Boolean = { true }) =
+        servicesManager.serviceByClass(klass, filter)
 
     inline val <reified T : Any> PropertyReference<T>.propertyValue: T
         get() = context.propertyContext[this] as T
