@@ -1,0 +1,14 @@
+{
+  "4": {
+    "pos": {
+      "2": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "character literal codepoint is equal to the unicode symbol codes",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}
