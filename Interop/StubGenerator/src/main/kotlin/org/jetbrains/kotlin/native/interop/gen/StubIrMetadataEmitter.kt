@@ -33,7 +33,7 @@ internal class ModuleMetadataEmitter(
         private val packageFqName: String
 ) : StubIrVisitor<StubContainer?, Unit> {
 
-    private val uniqIds = StubIrUniqIdProvider()
+    private val uniqIds = StubIrUniqIdProvider(ManglingContext.Module(packageFqName))
 
     private val classes = mutableListOf<KmClass>()
     private val properties = mutableListOf<KmProperty>()

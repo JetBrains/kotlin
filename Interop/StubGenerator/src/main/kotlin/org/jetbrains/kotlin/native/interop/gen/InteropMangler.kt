@@ -53,7 +53,7 @@ interface InteropMangler {
 /**
  * Mangler that mimics behaviour of the one from the Kotlin compiler.
  */
-class KotlinLikeInteropMangler(val context: ManglingContext = ManglingContext.Empty) : InteropMangler {
+class KotlinLikeInteropMangler(context: ManglingContext = ManglingContext.Empty) : InteropMangler {
 
     private val prefix = context.prefix
 

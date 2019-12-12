@@ -7,31 +7,27 @@ package org.jetbrains.kotlin.native.interop.gen
 import kotlinx.metadata.klib.UniqId
 import org.jetbrains.kotlin.backend.common.serialization.cityHash64
 
-internal class StubIrUniqIdProvider {
-    private val mangler = KotlinLikeInteropMangler()
+/**
+ * Returns stable [UniqId] for the given element of StubIr.
+ */
+internal class StubIrUniqIdProvider(private val context: ManglingContext) {
+    private val mangler: InteropMangler = KotlinLikeInteropMangler(context)
+
+    fun createChild(suffix: String): StubIrUniqIdProvider =
+            StubIrUniqIdProvider(ManglingContext.Entity(suffix, context))
 
     fun uniqIdForFunction(function: FunctionStub): UniqId = with(mangler) {
         when (function.origin) {
             is StubOrigin.Function -> function.origin.function.uniqueSymbolName
-            is StubOrigin.ObjCMethod -> {
-                require(this.context is ManglingContext.Entity) {
-                    "Unexpected mangling context $context for method ${function.name}."
-                }
-                function.origin.method.uniqueSymbolName
-            }
-            // TODO: What to do with "create" method in Objective-C categories?
+            is StubOrigin.ObjCMethod -> function.origin.method.uniqueSymbolName
+            is StubOrigin.ObjCCategoryInitMethod -> "${function.origin.method.uniqueSymbolName}#Create"
             else -> error("Unexpected origin ${function.origin} for function ${function.name}.")
         }.toUniqId()
     }
 
     fun uniqIdForProperty(property: PropertyStub): UniqId = with (mangler) {
         when (property.origin) {
-            is StubOrigin.ObjCProperty -> {
-                require(this.context is ManglingContext.Entity) {
-                    "Unexpected mangling context $context for property ${property.name}."
-                }
-                property.origin.property.uniqueSymbolName
-            }
+            is StubOrigin.ObjCProperty -> property.origin.property.uniqueSymbolName
             is StubOrigin.Constant -> property.origin.constantDef.uniqueSymbolName
             is StubOrigin.Global -> property.origin.global.uniqueSymbolName
             // TODO: What to do with origin for enum entries and struct fields?
@@ -49,6 +45,43 @@ internal class StubIrUniqIdProvider {
     fun uniqIdForTypeAlias(typeAlias: TypealiasStub): UniqId = with (mangler) {
         uniqSymbolNameForTypeAlias(typeAlias.origin)
                 ?: error("Unexpected origin ${typeAlias.origin} for typealias ${typeAlias.alias.fqName}.")
+    }.toUniqId()
+
+    private fun InteropMangler.uniqSymbolNameForClass(origin: StubOrigin): String? = when (origin) {
+        is StubOrigin.ObjCClass -> if (origin.isMeta) {
+            origin.clazz.metaClassUniqueSymbolName
+        } else {
+            origin.clazz.uniqueSymbolName
+        }
+        is StubOrigin.ObjCProtocol -> if (origin.isMeta) {
+            origin.protocol.metaClassUniqueSymbolName
+        } else {
+            origin.protocol.uniqueSymbolName
+        }
+        is StubOrigin.Struct -> origin.struct.uniqueSymbolName
+        is StubOrigin.Enum -> origin.enum.uniqueSymbolName
+        else -> null
+    }
+
+    fun uniqIdForClass(classStub: ClassStub): UniqId = with (mangler) {
+        when (classStub) {
+            is ClassStub.Simple,
+            is ClassStub.Enum -> uniqSymbolNameForClass(classStub.origin)
+            is ClassStub.Companion -> "${context.prefix}#Companion"
+        } ?: error("Unexpected origin ${classStub.origin} for class ${classStub.classifier.fqName}.")
+    }.toUniqId()
+
+    private fun InteropMangler.uniqSymbolNameForConstructor(origin: StubOrigin): String? = when (origin) {
+        is StubOrigin.SyntheticDefaultConstructor -> "${context.prefix}#Constructor"
+        is StubOrigin.Enum -> "${origin.enum.uniqueSymbolName}#Constructor"
+        is StubOrigin.Struct -> "${origin.struct.uniqueSymbolName}#Constructor"
+        is StubOrigin.ObjCMethod -> "${origin.method.uniqueSymbolName}#Constructor"
+        else -> null
+    }
+
+    fun uniqIdForConstructor(constructorStub: ConstructorStub): UniqId = with (mangler) {
+        uniqSymbolNameForConstructor(constructorStub.origin)
+                ?: error("Unexpected origin ${constructorStub.origin} for constructor.")
     }.toUniqId()
 
     /**
