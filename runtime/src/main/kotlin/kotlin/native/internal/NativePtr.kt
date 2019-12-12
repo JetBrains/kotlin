@@ -12,6 +12,7 @@ external fun getNativeNullPtr(): NativePtr
 
 class NativePtr @PublishedApi internal constructor(private val value: NonNullNativePtr?) {
     companion object {
+        // TODO: make it properly precreated, maybe use an intrinsic for that.
         val NULL = getNativeNullPtr()
     }
 

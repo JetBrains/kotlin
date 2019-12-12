@@ -7,15 +7,16 @@
 
 package kotlin
 
+import kotlin.native.internal.CanBePrecreated
+import kotlin.native.internal.IntrinsicType
 import kotlin.native.internal.NumberConverter
 import kotlin.native.internal.TypedIntrinsic
-import kotlin.native.internal.IntrinsicType
 
 /**
  * Represents a 8-bit signed integer.
  */
 public final class Byte private constructor() : Number(), Comparable<Byte> {
-
+    @CanBePrecreated
     companion object {
         /**
          * A constant holding the minimum value an instance of Byte can have.
@@ -284,6 +285,7 @@ public final class Byte private constructor() : Number(), Comparable<Byte> {
  * Represents a 16-bit signed integer.
  */
 public final class Short private constructor() : Number(), Comparable<Short> {
+    @CanBePrecreated
     companion object {
         /**
          * A constant holding the minimum value an instance of Short can have.
@@ -551,6 +553,7 @@ public final class Short private constructor() : Number(), Comparable<Short> {
  * Represents a 32-bit signed integer.
  */
 public final class Int private constructor() : Number(), Comparable<Int> {
+    @CanBePrecreated
     companion object {
         /**
          * A constant holding the minimum value an instance of Int can have.
@@ -844,6 +847,7 @@ public final class Int private constructor() : Number(), Comparable<Int> {
  * Represents a 64-bit signed integer.
  */
 public final class Long private constructor() : Number(), Comparable<Long> {
+    @CanBePrecreated
     companion object {
         /**
          * A constant holding the minimum value an instance of Long can have.

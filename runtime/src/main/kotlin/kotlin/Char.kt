@@ -65,6 +65,7 @@ public class Char private constructor() : Comparable<Char> {
     @TypedIntrinsic(IntrinsicType.UNSIGNED_TO_FLOAT)
     external public fun toDouble(): Double
 
+    @kotlin.native.internal.CanBePrecreated
     companion object {
         /**
          * The minimum value of a character code unit.

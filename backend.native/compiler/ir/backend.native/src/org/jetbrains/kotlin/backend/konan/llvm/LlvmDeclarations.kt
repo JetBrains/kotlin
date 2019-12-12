@@ -273,11 +273,9 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
         } else {
             "kobjref:" + qualifyInternalName(irClass)
         }
-        val threadLocal = !(irClass.objectIsShared && context.config.threadsAreAllowed)
+        val threadLocal = irClass.storageKind(context) == ObjectStorageKind.THREAD_LOCAL
         val instanceFieldRef = addGlobal(
                 symbolName, getLLVMType(irClass.defaultType), isExported = isExported, threadLocal = threadLocal)
-
-        LLVMSetInitializer(instanceFieldRef, kNullObjHeaderPtr)
 
         val instanceShadowFieldRef =
                 if (threadLocal) null
@@ -329,7 +327,7 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
             val name = "kvar:" + qualifyInternalName(declaration)
             val storage = addGlobal(
                     name, getLLVMType(declaration.type), isExported = false,
-                    threadLocal = declaration.storageClass == FieldStorage.THREAD_LOCAL)
+                    threadLocal = declaration.storageKind == FieldStorageKind.THREAD_LOCAL)
 
             this.staticFields[declaration] = StaticFieldLlvmDeclarations(storage)
         }

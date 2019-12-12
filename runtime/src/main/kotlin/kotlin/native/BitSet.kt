@@ -13,6 +13,7 @@ package kotlin.native
  */
 public class BitSet(size: Int = ELEMENT_SIZE) {
 
+    @kotlin.native.internal.CanBePrecreated
     companion object {
         // Default size of one element in the array used to store bits.
         private const val ELEMENT_SIZE = 64

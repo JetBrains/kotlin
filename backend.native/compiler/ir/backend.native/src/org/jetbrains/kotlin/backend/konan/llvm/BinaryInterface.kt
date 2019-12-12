@@ -143,7 +143,6 @@ internal val IrClass.objectInstanceShadowFieldSymbolName: String
         assert (this.isExported())
         assert (this.kind.isSingleton)
         assert (!this.isUnit())
-        assert (this.objectIsShared)
 
         return "kshadowobjref:$fqNameForIrSerialization"
     }

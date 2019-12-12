@@ -122,3 +122,12 @@ annotation class Independent
  */
 @Target(AnnotationTarget.CLASS)
 @PublishedApi internal annotation class LeakDetectorCandidate
+
+/**
+ * Indicates that given top level signleton object can be created in compile time and thus
+ * members access doesn't need to use an init barrier and allow better optimizations for
+ * field access, such as constant folding.
+ */
+@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.SOURCE)
+public annotation class CanBePrecreated

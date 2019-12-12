@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
+import org.jetbrains.kotlin.ir.types.isPrimitiveType
+import org.jetbrains.kotlin.ir.types.isString
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -64,6 +66,7 @@ internal class InitializersLowering(val context: CommonBackendContext) : ClassLo
                     val initializer = declaration.initializer ?: return declaration
                     val startOffset = initializer.startOffset
                     val endOffset = initializer.endOffset
+                    val initExpression = initializer.expression
                     initializers.add(IrBlockImpl(startOffset, endOffset,
                             context.irBuiltIns.unitType,
                             STATEMENT_ORIGIN_ANONYMOUS_INITIALIZER,
@@ -73,11 +76,19 @@ internal class InitializersLowering(val context: CommonBackendContext) : ClassLo
                                                     startOffset, endOffset,
                                                     irClass.thisReceiver!!.type, irClass.thisReceiver!!.symbol
                                             ),
-                                            initializer.expression,
+                                            initExpression,
                                             context.irBuiltIns.unitType,
                                             STATEMENT_ORIGIN_ANONYMOUS_INITIALIZER)))
                     )
-                    declaration.initializer = null
+
+                    // We shall keep initializer for constants for compile-time instantiation.
+                    declaration.initializer =
+                            if (initExpression is IrConst<*> &&
+                                    (initExpression.type.isPrimitiveType() || initExpression.type.isString())) {
+                                IrExpressionBodyImpl(initExpression.copy())
+                            } else {
+                                null
+                            }
                     return declaration
                 }
             })

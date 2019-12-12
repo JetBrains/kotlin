@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.optimizations
 
+import org.jetbrains.kotlin.backend.common.ir.ir2stringWhole
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.isAbstract
 import org.jetbrains.kotlin.backend.konan.descriptors.target
@@ -487,7 +488,10 @@ internal object DataFlowIR {
                 }
 
                 override fun visitField(declaration: IrField) {
-                    declaration.initializer?.let { mapFunction(declaration) }
+                    if (declaration.parent is IrFile)
+                        declaration.initializer?.let {
+                            mapFunction(declaration)
+                        }
                 }
 
                 override fun visitClass(declaration: IrClass) {

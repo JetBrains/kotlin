@@ -225,14 +225,15 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
             }
 
             override fun visitField(declaration: IrField) {
-                declaration.initializer?.let {
-                    DEBUG_OUTPUT(0) {
-                        println("Analysing global field ${declaration.descriptor}")
-                        println("IR: ${ir2stringWhole(declaration)}")
+                if (declaration.parent is IrFile)
+                    declaration.initializer?.let {
+                        DEBUG_OUTPUT(0) {
+                            println("Analysing global field ${declaration.descriptor}")
+                            println("IR: ${ir2stringWhole(declaration)}")
+                        }
+                        analyze(declaration, IrSetFieldImpl(it.startOffset, it.endOffset, declaration.symbol, null,
+                                it.expression, context.irBuiltIns.unitType))
                     }
-                    analyze(declaration, IrSetFieldImpl(it.startOffset, it.endOffset, declaration.symbol, null,
-                            it.expression, context.irBuiltIns.unitType))
-                }
             }
 
             private fun analyze(declaration: IrDeclaration, body: IrElement?) {

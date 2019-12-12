@@ -505,8 +505,9 @@ actual class HashMap<K, V> private constructor(
     internal fun valuesIterator() = ValuesItr(this)
     internal fun entriesIterator() = EntriesItr(this)
 
+    @kotlin.native.internal.CanBePrecreated
     private companion object {
-        const val MAGIC = 2654435769L.toInt() // golden ratio
+        const val MAGIC =  -1640531527 // 2654435769L.toInt(), golden ratio
         const val INITIAL_CAPACITY = 8
         const val INITIAL_MAX_PROBE_DISTANCE = 2
         const val TOMBSTONE = -1
