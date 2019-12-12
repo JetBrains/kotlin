@@ -59,7 +59,7 @@ class FirSuperTypeScope private constructor(
         processCallables: FirScope.(Name, (D) -> ProcessorAction) -> ProcessorAction
     ): ProcessorAction? {
         if (name in absentNames) {
-            return ProcessorAction.NEXT
+            return ProcessorAction.NONE
         }
 
         val membersByScope = scopes.mapNotNull { scope ->
@@ -76,7 +76,7 @@ class FirSuperTypeScope private constructor(
 
         if (membersByScope.isEmpty()) {
             absentNames.add(name)
-            return null
+            return ProcessorAction.NONE
         }
 
         membersByScope.singleOrNull()?.let { members ->
