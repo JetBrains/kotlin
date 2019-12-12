@@ -1,7 +1,7 @@
 import org.gradle.util.GradleVersion
 
 String[] ijTestIncludes = ${TEST_NAME_INCLUDES}
-boolean ijTestFilteringSupported = GradleVersion.current().compareTo(GradleVersion.version("1.10"))>=0
+boolean ijTestFilteringSupported = GradleVersion.current().compareTo(GradleVersion.version("1.10")) >= 0
 boolean skipExecution
 
 gradle.addBuildListener(new BuildListener() {
@@ -33,10 +33,17 @@ for (incl in ijTestIncludes) {
   }
 }
 
+Class abstractTestTaskClass = null
+try {
+  abstractTestTaskClass = Class.forName("org.gradle.api.tasks.testing.AbstractTestTask")
+} catch (ClassNotFoundException ex) {
+ // ignore, class not available
+}
+
 gradle.taskGraph.beforeTask { Task task ->
   task.onlyIf { !skipExecution }
 
-  if (task instanceof AbstractTestTask) {
+  if (task instanceof Test || (abstractTestTaskClass != null && abstractTestTaskClass.isAssignableFrom(task.class))) {
     try {
       if(ijTestIncludes != ['*'] && ijTestFilteringSupported) {
         task.filter {
