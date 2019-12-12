@@ -14,6 +14,7 @@ import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.psi.PsiDocumentManager;
+import com.intellij.ui.DirtyUI;
 import com.intellij.util.ui.EmptyIcon;
 import org.jetbrains.annotations.NotNull;
 
@@ -106,6 +107,7 @@ public final class SelectInAction extends AnAction implements DumbAware {
       return numberingText(n, text);
     }
 
+    @DirtyUI
     @Override
     public PopupStep onChosen(final SelectInTarget target, final boolean finalChoice) {
       if (finalChoice) {
@@ -129,6 +131,7 @@ public final class SelectInAction extends AnAction implements DumbAware {
              ((CompositeSelectInTarget)selectedValue).getSubTargets(mySelectInContext).size() > 1;
     }
 
+    @DirtyUI
     @Override
     public boolean isSelectable(final SelectInTarget target) {
       if (DumbService.isDumb(mySelectInContext.getProject()) && !DumbService.isDumbAware(target)) {

@@ -15,6 +15,7 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiDirectoryContainer;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiUtilCore;
+import com.intellij.ui.DirtyUI;
 import com.intellij.ui.popup.HintUpdateSupply;
 import com.intellij.ui.tabs.FileColorManagerImpl;
 import com.intellij.util.ObjectUtils;
@@ -102,6 +103,7 @@ public class ProjectViewTree extends DnDAwareTree {
     return enabled;
   }
 
+  @DirtyUI
   @Nullable
   @Override
   public Color getFileColorFor(Object object) {

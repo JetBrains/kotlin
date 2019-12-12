@@ -9,6 +9,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.VfsPresentationUtil;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.ui.ColorUtil;
+import com.intellij.ui.DirtyUI;
 import com.intellij.ui.SimpleColoredComponent;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.scale.JBUIScale;
@@ -50,6 +51,7 @@ class ShowUsagesTableCellRenderer implements TableCellRenderer {
   private static final int FILE_GROUP_COL = 1;
   private static final int LINE_NUMBER_COL = 2;
   private static final int USAGE_TEXT_COL = 3;
+  @DirtyUI
   @Override
   public Component getTableCellRendererComponent(JTable list, Object value, boolean isSelected, boolean hasFocus, int row,
                                                  @MagicConstant(intValues = {CURRENT_ASTERISK_COL, FILE_GROUP_COL, LINE_NUMBER_COL, USAGE_TEXT_COL}) int column) {
