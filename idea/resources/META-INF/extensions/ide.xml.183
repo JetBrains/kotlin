@@ -121,6 +121,11 @@
                      defaultValue="false"
                      restartRequired="true"/>
         <fileEditorProvider implementation="org.jetbrains.kotlin.idea.scratch.ui.KtScratchFileEditorProvider"/>
+
+         <registryKey key="kotlin.experimental.project.wizard"
+                             description="Use experimental project wizard for creating new Kotlin projects"
+                             defaultValue="false"
+                             restartRequired="false"/>
         <moduleBuilder builderClass="org.jetbrains.kotlin.tools.projectWizard.wizard.NewProjectWizardModuleBuilder"/>
     </extensions>
 </idea-plugin>
