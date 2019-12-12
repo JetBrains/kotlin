@@ -29,8 +29,6 @@ class FirCompositeSymbolProvider(val providers: List<FirSymbolProvider>) : FirSy
         return providers.flatMap { it.getTopLevelCallableSymbols(packageFqName, name) }
     }
 
-    override fun getClassDeclaredMemberScope(classId: ClassId) = providers.firstNotNullResult { it.getClassDeclaredMemberScope(classId) }
-
     override fun getPackage(fqName: FqName): FqName? {
         return providers.firstNotNullResult { it.getPackage(fqName) }
     }

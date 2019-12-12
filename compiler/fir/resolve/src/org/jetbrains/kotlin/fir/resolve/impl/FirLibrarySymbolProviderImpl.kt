@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.getOrPut
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
@@ -264,9 +263,6 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider(
             it.getTopLevelCallableSymbols(name)
         } ?: emptyList()
     }
-
-    override fun getClassDeclaredMemberScope(classId: ClassId): FirScope? =
-        findRegularClass(classId)?.let(::FirClassDeclaredMemberScope)
 
     override fun getAllCallableNamesInPackage(fqName: FqName): Set<Name> {
         return allPackageFragments[fqName]?.flatMapTo(mutableSetOf()) {

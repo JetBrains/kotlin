@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.fir.references.impl.FirErrorNamedReferenceImpl
 import org.jetbrains.kotlin.fir.references.impl.FirResolvedNamedReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirErrorTypeRefImpl
@@ -392,11 +391,6 @@ class KotlinDeserializedJvmSymbolsProvider(
             loadFunctionsByName(part, name) + loadPropertiesByName(part, name)
         }
     }
-
-    override fun getClassDeclaredMemberScope(classId: ClassId) =
-        findRegularClass(classId)?.let {
-            declaredMemberScope(it)
-        }
 
     private fun getPackageParts(packageFqName: FqName): Collection<PackagePartsCacheData> {
         return packagePartsCache.getOrPut(packageFqName) {

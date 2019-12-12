@@ -141,11 +141,6 @@ class IdeFirProvider(
         }
     }
 
-    override fun getClassDeclaredMemberScope(classId: ClassId): FirScope? {
-        getFirClassifierByFqName(classId)
-        return cacheProvider.getClassDeclaredMemberScope(classId)
-    }
-
     override fun getClassUseSiteMemberScope(classId: ClassId, useSiteSession: FirSession, scopeSession: ScopeSession): FirScope? {
         getFirClassifierByFqName(classId)
         return cacheProvider.getClassUseSiteMemberScope(classId, useSiteSession, scopeSession)

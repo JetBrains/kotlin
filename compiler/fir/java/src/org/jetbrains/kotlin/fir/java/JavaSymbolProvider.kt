@@ -64,12 +64,6 @@ class JavaSymbolProvider(
     override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> =
         emptyList()
 
-    // NB: looks like it's better not to use this function at all...
-    override fun getClassDeclaredMemberScope(classId: ClassId): FirScope? {
-        // Anyway we cannot build correct declared member scope here
-        return null
-    }
-
     override fun getClassUseSiteMemberScope(
         classId: ClassId,
         useSiteSession: FirSession,

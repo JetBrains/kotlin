@@ -53,7 +53,6 @@ abstract class FirSymbolProvider : FirSessionComponent {
 
     abstract fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>>
 
-    abstract fun getClassDeclaredMemberScope(classId: ClassId): FirScope?
     abstract fun getClassUseSiteMemberScope(
         classId: ClassId,
         useSiteSession: FirSession,
