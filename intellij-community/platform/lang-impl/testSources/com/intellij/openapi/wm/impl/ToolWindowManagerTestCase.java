@@ -16,13 +16,17 @@ public abstract class ToolWindowManagerTestCase extends LightPlatformCodeInsight
   @Override
   public void setUp() throws Exception {
     super.setUp();
+
     myManager = new ToolWindowManagerImpl(getProject()) {
       @Override
       protected void fireStateChanged() {
       }
     };
     ServiceContainerUtil.replaceService(getProject(), ToolWindowManager.class, myManager, getTestRootDisposable());
-    myManager.init();
+
+    ProjectFrameHelper frame = new ProjectFrameHelper(new IdeFrameImpl(), null);
+    frame.init();
+    myManager.init(frame);
   }
 
   @Override

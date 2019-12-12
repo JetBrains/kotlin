@@ -7,6 +7,8 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowEP;
 import com.intellij.openapi.wm.ToolWindowId;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 /**
  * @author Dmitry Avdeev
  */
@@ -20,11 +22,15 @@ public class ProjectToolWindowTest extends ToolWindowManagerTestCase {
 
     DesktopLayout layout = myManager.getLayout();
     WindowInfoImpl info = layout.getInfo(ToolWindowId.PROJECT_VIEW);
-    assertFalse(info.isVisible());
+    assertThat(info.isVisible()).isFalse();
     info.setVisible(true);
 
     ToolWindow window = myManager.getToolWindow(ToolWindowId.PROJECT_VIEW);
-    assertTrue(window.isVisible());
+    // because change is not applied from desktop
+    assertThat(window.isVisible()).isFalse();
+
+    myManager.showToolWindow(ToolWindowId.PROJECT_VIEW);
+    assertThat(window.isVisible()).isTrue();
 
     ProjectView.getInstance(getProject());
 
