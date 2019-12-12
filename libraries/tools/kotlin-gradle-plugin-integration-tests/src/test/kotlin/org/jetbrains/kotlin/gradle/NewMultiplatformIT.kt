@@ -999,10 +999,22 @@ class NewMultiplatformIT : BaseGradleIT() {
     }
 
     @Test
-    fun testNativeBinaryKotlinDSL() = doTestNativeBinaryDSL("kotlin-dsl")
+    fun testNativeBinaryGroovyDSL() {
+        // Building K/N binaries is very time-consuming. So we check building only for Kotlin DSL.
+        // For Groovy DSl we just check that a project can be configured.
+        val project = transformProjectWithPluginsDsl(
+            "groovy-dsl", gradleVersion, "new-mpp-native-binaries"
+        )
+        project.build("tasks") {
+            assertSuccessful()
 
-    @Test
-    fun testNativeBinaryGroovyDSL() = doTestNativeBinaryDSL("groovy-dsl")
+            // Check that getters work fine.
+            val hostSuffix = nativeHostTargetName.capitalize()
+            assertTrue(output.contains("Check link task: linkReleaseShared$hostSuffix"))
+            assertTrue(output.contains("Check run task: runFooReleaseExecutable$hostSuffix"))
+        }
+
+    }
 
     private fun CompiledProject.checkNativeCommandLineFor(vararg taskPaths: String, check: (String) -> Unit) = taskPaths.forEach { taskPath ->
         val commandLine = output.lineSequence().dropWhile {
@@ -1013,10 +1025,10 @@ class NewMultiplatformIT : BaseGradleIT() {
         check(commandLine)
     }
 
-    private fun doTestNativeBinaryDSL(
-        projectName: String,
-        gradleVersionRequired: GradleVersionRequired = gradleVersion
-    ) = with(transformProjectWithPluginsDsl(projectName, gradleVersionRequired, "new-mpp-native-binaries")) {
+    @Test
+    fun testNativeBinaryKotlinDSL() = with(
+        transformProjectWithPluginsDsl("kotlin-dsl", gradleVersion, "new-mpp-native-binaries")
+    ) {
 
         val hostSuffix = nativeHostTargetName.capitalize()
         val binaries = mutableListOf(
@@ -1204,7 +1216,7 @@ class NewMultiplatformIT : BaseGradleIT() {
     }
 
     // Check that we still can build binaries from sources if the corresponding property is specified.
-    // TODO: Drop in 1.3.70.
+    // TODO: Drop in 1.4
     @Test
     fun testLinkNativeBinaryFromSources() = with(
         transformProjectWithPluginsDsl("groovy-dsl", gradleVersion, "new-mpp-native-binaries")
@@ -1307,7 +1319,7 @@ class NewMultiplatformIT : BaseGradleIT() {
             }
         }
     }
-    
+
     private fun getBootedSimulators(workingDirectory: File): Set<String>? =
         if (HostManager.hostIsMac) {
             val simulators = runProcess(listOf("xcrun", "simctl", "list"), workingDirectory, System.getenv()).also {

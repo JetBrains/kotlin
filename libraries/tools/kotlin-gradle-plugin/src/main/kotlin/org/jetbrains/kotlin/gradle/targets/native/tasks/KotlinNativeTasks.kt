@@ -404,7 +404,8 @@ open class KotlinNativeLink : AbstractKotlinNativeCompile<KotlinCommonToolOption
     override fun getSource(): FileTree =
         if (linkFromSources) {
             // Allow a user to force the old behaviour of a link task.
-            // TODO: Remove in 1.3.70.
+            // It's better to keep this flag in 1.3.70 to be able to workaroud probable klib serialization bugs.
+            // TODO: Remove in 1.4.
             project.files(compilation.allSources).asFileTree
         } else {
             project.files(intermediateLibrary.get()).asFileTree
