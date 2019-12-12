@@ -1,0 +1,10 @@
+kotlin:
+  version: 1.3.61
+  projectKind: Singleplatform
+  modules:
+    - type: JVM Module
+      name: nya
+      kind: singleplatform
+      sourcesets:
+        - type: main
+

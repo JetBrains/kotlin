@@ -1,0 +1,14 @@
+kotlin:
+  version: 1.3.61
+  projectKind: Multiplatform
+  modules:
+    - type: multiplatform
+      kind: multiplatform
+      name: a
+      subModules:
+        - type: nativeForCurrentSystem
+          kind: target
+          name: myNative
+          sourcesets:
+            - type: main
+            - type: test

@@ -1,0 +1,22 @@
+plugins {
+    id 'org.jetbrains.kotlin.multiplatform' version '1.3.61'
+}
+group = 'testGroupId'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+kotlin {
+    jvm()
+    sourceSets {
+        jvmMain {
+            dependencies {
+                implementation kotlin('stdlib-jdk8')
+            }
+        }
+        jvmTest {
+
+        }
+    }
+}

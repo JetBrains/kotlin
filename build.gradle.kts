@@ -621,11 +621,20 @@ tasks {
         )
     }
 
+    register("idea-new-project-wizard-tests") {
+        dependsOn("dist")
+        dependsOn(
+            ":libraries:tools:new-project-wizard:test",
+            ":libraries:tools:new-project-wizard:new-project-wizard-cli:test"
+        )
+    }
+
     register("idea-plugin-tests") {
         dependsOn("dist")
         dependsOn(
             "idea-plugin-main-tests",
-            "idea-plugin-additional-tests"
+            "idea-plugin-additional-tests",
+            "idea-new-project-wizard-tests"
         )
     }
 
