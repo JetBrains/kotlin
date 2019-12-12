@@ -1786,6 +1786,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/callableReference/callableReferenceAsLastExpressionInBlock.kt");
             }
 
+            @TestMetadata("callableReferenceToLocalVariable.kt")
+            public void testCallableReferenceToLocalVariable() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/callableReference/callableReferenceToLocalVariable.kt");
+            }
+
             @TestMetadata("classVsPackage.kt")
             public void testClassVsPackage() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/callableReference/classVsPackage.kt");
@@ -17307,6 +17312,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/regressions/kt10843.kt");
             }
 
+            @TestMetadata("kt11979.kt")
+            public void testKt11979() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/regressions/kt11979.kt");
+            }
+
             @TestMetadata("kt127.kt")
             public void testKt127() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/regressions/kt127.kt");
@@ -17315,6 +17325,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("kt128.kt")
             public void testKt128() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/regressions/kt128.kt");
+            }
+
+            @TestMetadata("kt12898.kt")
+            public void testKt12898() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/regressions/kt12898.kt");
             }
 
             @TestMetadata("kt13685.kt")

@@ -1997,6 +1997,11 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
                 runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/variableCallInsideBuilderFunction.kt");
             }
 
+            @TestMetadata("variableOfAFunctionTypeCall.kt")
+            public void testVariableOfAFunctionTypeCall() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/variableOfAFunctionTypeCall.kt");
+            }
+
             @TestMetadata("withParameter.kt")
             public void testWithParameter() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/withParameter.kt");
