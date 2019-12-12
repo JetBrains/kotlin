@@ -11,8 +11,11 @@ import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
 import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContextDelegate
 
-class TrivialConstraintTypeInferenceOracle(context: TypeSystemInferenceExtensionContextDelegate) :
+class TrivialConstraintTypeInferenceOracle private constructor(context: TypeSystemInferenceExtensionContext) :
     TypeSystemInferenceExtensionContext by context {
+    // This constructor is used for injection only in old FE
+    constructor(context: TypeSystemInferenceExtensionContextDelegate) : this(context as TypeSystemInferenceExtensionContext)
+
     // The idea is to add knowledge that constraint `Nothing(?) <: T` is quite useless and
     // it's totally fine to go and resolve postponed argument without fixation T to Nothing(?).
     // In other words, constraint `Nothing(?) <: T` is *not* proper
@@ -62,4 +65,8 @@ class TrivialConstraintTypeInferenceOracle(context: TypeSystemInferenceExtension
     private fun KotlinTypeMarker.containsOnlyNonNullableNothing(): Boolean =
         contains { it.isNothing() } && !contains { it.isNullableNothing() }
 
+
+    companion object {
+        fun create(context: TypeSystemInferenceExtensionContext) = TrivialConstraintTypeInferenceOracle(context)
+    }
 }

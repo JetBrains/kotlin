@@ -51,7 +51,7 @@ class InferenceComponents(
             return ConeClassErrorType(message)
         }
     }
-    val trivialConstraintTypeInferenceOracle = TrivialConstraintTypeInferenceOracle(ctx)
+    val trivialConstraintTypeInferenceOracle = TrivialConstraintTypeInferenceOracle.create(ctx)
     private val incorporator = ConstraintIncorporator(approximator, trivialConstraintTypeInferenceOracle)
     private val injector = ConstraintInjector(incorporator, approximator, KotlinTypeRefiner.Default)
     val resultTypeResolver = ResultTypeResolver(approximator, trivialConstraintTypeInferenceOracle)

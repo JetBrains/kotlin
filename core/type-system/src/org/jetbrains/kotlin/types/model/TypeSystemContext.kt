@@ -105,6 +105,10 @@ interface TypeSystemCommonSuperTypesContext : TypeSystemContext, TypeSystemTypeF
     fun TypeConstructorMarker.toErrorType(): SimpleTypeMarker
 }
 
+// This interface is only used to declare that implementing class is supposed to be used as a TypeSystemInferenceExtensionContext component
+// Otherwise clash happens during DI container initialization: there are a lot of components that extend TypeSystemInferenceExtensionContext
+// but they only has it among supertypes to bring additional receiver into their scopes, i.e. they are not intended to be used as
+// component implementation for TypeSystemInferenceExtensionContext
 interface TypeSystemInferenceExtensionContextDelegate : TypeSystemInferenceExtensionContext
 
 interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBuiltInsContext, TypeSystemCommonSuperTypesContext {
