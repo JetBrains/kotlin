@@ -247,12 +247,12 @@ internal val copyDefaultValuesToActualPhase = konanUnitPhase(
 
 internal val serializerPhase = konanUnitPhase(
         op = {
-            val descriptorTable = DescriptorTable()
+            val descriptorTable = DescriptorTable.createDefault()
             serializedIr = KonanIrModuleSerializer(this, irModule!!.irBuiltins, descriptorTable).serializedIrModule(irModule!!)
             val serializer = KlibMetadataMonolithicSerializer(
                 this.config.configuration.languageVersionSettings,
                 config.configuration.get(CommonConfigurationKeys.METADATA_VERSION
-            )!!, descriptorTable, bindingContext)
+            )!!, descriptorTable)
             serializedMetadata = serializer.serializeModule(moduleDescriptor)
         },
         name = "Serializer",
