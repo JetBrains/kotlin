@@ -13,6 +13,7 @@ import com.intellij.openapi.roots.ui.configuration.ModulesProvider
 import com.intellij.openapi.ui.Messages
 import com.intellij.util.SystemProperties
 import org.jetbrains.kotlin.idea.framework.KotlinModuleSettingStep
+import org.jetbrains.kotlin.idea.framework.KotlinTemplatesFactory
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.tools.projectWizard.core.Failure
@@ -44,6 +45,8 @@ class NewProjectWizardModuleBuilder : ModuleBuilder() {
     private var wizardContext: WizardContext? = null
 
     override fun getModuleType(): ModuleType<*> = NewProjectWizardModuleType()
+    override fun getParentGroup(): String = KotlinTemplatesFactory.KOTLIN_PARENT_GROUP_NAME
+
     override fun createWizardSteps(
         wizardContext: WizardContext,
         modulesProvider: ModulesProvider
