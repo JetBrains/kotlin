@@ -66,8 +66,8 @@ class JavaSymbolProvider(
 
     // NB: looks like it's better not to use this function at all...
     override fun getClassDeclaredMemberScope(classId: ClassId): FirScope? {
-        val classSymbol = getClassLikeSymbolByFqName(classId) ?: return null
-        return declaredMemberScope(classSymbol.fir)
+        // Anyway we cannot build correct declared member scope here
+        return null
     }
 
     override fun getClassUseSiteMemberScope(

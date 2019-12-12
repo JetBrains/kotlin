@@ -18,10 +18,11 @@ import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperator
 import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperatorCall
+import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -55,7 +56,7 @@ class IntegerLiteralTypeApproximationTransformer(
         functionCall.transformChildren(this, data)
         val argumentType = functionCall.arguments.firstOrNull()?.resultType?.coneTypeUnsafe<ConeClassLikeType>()
         val receiverClassId = functionCall.dispatchReceiver.typeRef.coneTypeUnsafe<ConeClassLikeType>().lookupTag.classId
-        val scope = symbolProvider.getClassDeclaredMemberScope(receiverClassId)!!
+        val scope = declaredMemberScope((symbolProvider.getClassLikeSymbolByFqName(receiverClassId) as FirRegularClassSymbol).fir)
         var resultSymbol: FirFunctionSymbol<*>? = null
         scope.processFunctionsByName(operator.name) { symbol ->
             if (operator.kind.unary) {

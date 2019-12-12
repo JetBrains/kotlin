@@ -135,7 +135,8 @@ abstract class FirSymbolProvider : FirSessionComponent {
 }
 
 fun FirSymbolProvider.getClassDeclaredCallableSymbols(classId: ClassId, name: Name): List<FirCallableSymbol<*>> {
-    val declaredMemberScope = getClassDeclaredMemberScope(classId) ?: return emptyList()
+    val classSymbol = getClassLikeSymbolByFqName(classId) as? FirRegularClassSymbol ?: return emptyList()
+    val declaredMemberScope = declaredMemberScope(classSymbol.fir)
     val result = mutableListOf<FirCallableSymbol<*>>()
     val processor: (FirCallableSymbol<*>) -> ProcessorAction = {
         result.add(it)
