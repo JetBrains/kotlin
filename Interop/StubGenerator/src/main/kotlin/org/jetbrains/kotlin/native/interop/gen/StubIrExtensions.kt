@@ -68,3 +68,6 @@ val StubContainer.defaultMemberModality: MemberStubModality
  */
 val ClassStub.explicitPrimaryConstructor: ConstructorStub?
     get() = functions.filterIsInstance<ConstructorStub>().firstOrNull(ConstructorStub::isPrimary)
+
+fun ClassStub.nestedName(): String =
+        classifier.relativeFqName.substringAfterLast('.')

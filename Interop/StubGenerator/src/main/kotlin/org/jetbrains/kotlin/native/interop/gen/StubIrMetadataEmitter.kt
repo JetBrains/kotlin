@@ -76,8 +76,34 @@ internal class ModuleMetadataEmitter(
 
     private val visitor = object : StubIrVisitor<VisitingContext, Any> {
 
-        override fun visitClass(element: ClassStub, data: VisitingContext) {
-            // TODO("not implemented")
+        override fun visitClass(element: ClassStub, data: VisitingContext): List<KmClass> {
+            val classVisitingContext = VisitingContext(
+                    container = element,
+                    uniqIds = data.uniqIds.createChild(element.nestedName()),
+                    typeParametersInterner = Interner(data.typeParametersInterner)
+            )
+            val children = element.children + if (element is ClassStub.Companion) {
+                listOf(ConstructorStub(isPrimary = true, visibility = VisibilityModifier.PRIVATE, origin = StubOrigin.SyntheticDefaultConstructor))
+            } else emptyList()
+            val elements = KmElements(children.map { it.accept(this, classVisitingContext) })
+            val kmClass = with (MappingExtensions(data.typeParametersInterner)) {
+                KmClass().also { km ->
+                    element.annotations.mapTo(km.annotations) { it.map() }
+                    km.flags = element.flags
+                    km.name = element.classifier.fqNameSerialized
+                    element.superClassInit?.let { km.supertypes += it.type.map() }
+                    element.interfaces.mapTo(km.supertypes) { it.map() }
+                    element.classes.mapTo(km.nestedClasses) { it.nestedName() }
+                    km.typeAliases += elements.typeAliases.toList()
+                    km.properties += elements.properties.toList()
+                    km.functions += elements.functions.toList()
+                    km.constructors += elements.constructors.toList()
+                    km.companionObject = element.companion?.nestedName()
+                    km.uniqId = data.uniqIds.uniqIdForClass(element)
+                }
+            }
+            // Metadata stores classes as flat list.
+            return listOf(kmClass) + elements.classes
         }
 
         override fun visitTypealias(element: TypealiasStub, data: VisitingContext): KmTypeAlias =
@@ -123,9 +149,14 @@ internal class ModuleMetadataEmitter(
                     }
                 }
 
-        override fun visitConstructor(constructorStub: ConstructorStub, data: VisitingContext) {
-            // TODO("not implemented")
-        }
+        override fun visitConstructor(constructorStub: ConstructorStub, data: VisitingContext) =
+                with (MappingExtensions(data.typeParametersInterner)) {
+                    KmConstructor(constructorStub.flags).apply {
+                        constructorStub.parameters.mapTo(valueParameters, { it.map() })
+                        constructorStub.annotations.mapTo(annotations, { it.map() })
+                        uniqId = data.uniqIds.uniqIdForConstructor(constructorStub)
+                    }
+                }
 
         override fun visitPropertyAccessor(propertyAccessor: PropertyAccessor, data: VisitingContext) {
             // TODO("not implemented")
@@ -246,6 +277,31 @@ private class MappingExtensions(
         get() = flagsOfNotNull(
                 Flag.HAS_ANNOTATIONS.takeIf { annotations.isNotEmpty() }
         )
+
+    val ClassStub.flags: Flags
+        get() = flagsOfNotNull(
+                Flag.HAS_ANNOTATIONS.takeIf { annotations.isNotEmpty() },
+                Flag.IS_PUBLIC,
+                Flag.IS_OPEN.takeIf { this is ClassStub.Simple && this.modality == ClassStubModality.OPEN },
+                Flag.IS_FINAL.takeIf { this is ClassStub.Simple && this.modality == ClassStubModality.NONE },
+                Flag.Class.IS_COMPANION_OBJECT.takeIf { this is ClassStub.Companion },
+                Flag.Class.IS_CLASS.takeIf { this is ClassStub.Simple },
+                Flag.Class.IS_ENUM_CLASS.takeIf { this is ClassStub.Enum }
+        )
+
+    // TODO: Looks like [Flag.Constructor.IS_PRIMARY] flag is incorrect.
+    //  Upstream fix to kotlinx-metadata.
+    private val isSecondaryConstructorFlag = Flag(
+            org.jetbrains.kotlin.metadata.deserialization.Flags.IS_SECONDARY.offset,
+            org.jetbrains.kotlin.metadata.deserialization.Flags.IS_SECONDARY.bitWidth,
+            value = 1
+    )
+
+    val ConstructorStub.flags: Flags
+        get() = flagsOfNotNull(
+                isSecondaryConstructorFlag.takeIf { !isPrimary },
+                Flag.HAS_ANNOTATIONS.takeIf { annotations.isNotEmpty() }
+        ) or visibility.flags
 
     fun AnnotationStub.map(): KmAnnotation {
         fun Pair<String, String>.asAnnotationArgument() =
