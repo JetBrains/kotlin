@@ -42,9 +42,8 @@ internal class GradleNodeModuleBuilder(
     fun rebuild(): File? {
         if (files.isEmpty()) return null
 
-        val packageJson = srcPackageJsonFile?.reader()?.use {
-            Gson().fromJson(it, PackageJson::class.java)
-        } ?: PackageJson(dependency.moduleName, dependency.moduleVersion)
+        val packageJson = fromSrcPackageJson(srcPackageJsonFile)
+            ?: PackageJson(dependency.moduleName, dependency.moduleVersion)
 
         val jsFiles = files.filter { it.name.endsWith(".js") }
         if (jsFiles.size == 1) {
@@ -64,6 +63,11 @@ internal class GradleNodeModuleBuilder(
         }
     }
 }
+
+internal fun fromSrcPackageJson(packageJson: File?): PackageJson? =
+    packageJson?.reader()?.use {
+        Gson().fromJson(it, PackageJson::class.java)
+    }
 
 private val File.isZip
     get() = isFile && (name.endsWith(".jar") || name.endsWith(".zip"))
