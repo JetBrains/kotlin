@@ -21,7 +21,6 @@ import com.intellij.openapi.externalSystem.model.project.ProjectData;
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider;
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.externalSystem.util.ExternalSystemConstants;
-import com.intellij.openapi.externalSystem.util.ExternalSystemUtil;
 import com.intellij.openapi.externalSystem.util.Order;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
@@ -34,6 +33,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.ui.GuiUtils;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import gnu.trove.THashSet;
@@ -117,10 +117,12 @@ public class ContentRootDataService extends AbstractProjectDataService<ContentRo
           VirtualFile[] roots = modelsProvider.getModifiableRootModel(module).getContentRoots();
           if (roots.length > 0) {
             VirtualFile virtualFile = roots[0];
-            ExternalSystemUtil.invokeLater(project, ModalityState.NON_MODAL, () -> StartupManager.getInstance(project).runWhenProjectIsInitialized(() -> {
-              final ProjectView projectView = ProjectView.getInstance(project);
-              projectView.changeViewCB(ProjectViewPane.ID, null).doWhenProcessed(() -> projectView.selectCB(null, virtualFile, false));
-            }));
+            StartupManager.getInstance(project).runAfterOpened(() -> {
+              GuiUtils.invokeLaterIfNeeded(() -> {
+                final ProjectView projectView = ProjectView.getInstance(project);
+                projectView.changeViewCB(ProjectViewPane.ID, null).doWhenProcessed(() -> projectView.selectCB(null, virtualFile, false));
+              }, ModalityState.NON_MODAL, project.getDisposed());
+            });
           }
         }
       }
