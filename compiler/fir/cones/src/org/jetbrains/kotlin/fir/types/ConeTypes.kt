@@ -5,23 +5,11 @@
 
 package org.jetbrains.kotlin.fir.types
 
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.constants.IntegerLiteralTypeConstructor
-import org.jetbrains.kotlin.types.KotlinTypeFactory
-import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.model.*
-
-sealed class ConeKotlinTypeProjection : TypeArgumentMarker {
-    abstract val kind: ProjectionKind
-
-    companion object {
-        val EMPTY_ARRAY = arrayOf<ConeKotlinTypeProjection>()
-    }
-}
 
 enum class ProjectionKind {
     STAR, IN, OUT, INVARIANT;
@@ -37,40 +25,37 @@ enum class ProjectionKind {
     }
 }
 
+sealed class ConeKotlinTypeProjection : TypeArgumentMarker {
+    abstract val kind: ProjectionKind
+
+    companion object {
+        val EMPTY_ARRAY = arrayOf<ConeKotlinTypeProjection>()
+    }
+}
+
 object ConeStarProjection : ConeKotlinTypeProjection() {
     override val kind: ProjectionKind
         get() = ProjectionKind.STAR
 }
 
-interface ConeTypedProjection {
-    val type: ConeKotlinType
-}
-
-data class ConeKotlinTypeProjectionIn(override val type: ConeKotlinType) : ConeKotlinTypeProjection(), ConeTypedProjection {
+data class ConeKotlinTypeProjectionIn(override val type: ConeKotlinType) : ConeKotlinTypeProjection(),
+    ConeTypedProjection {
     override val kind: ProjectionKind
         get() = ProjectionKind.IN
 }
 
-data class ConeKotlinTypeProjectionOut(override val type: ConeKotlinType) : ConeKotlinTypeProjection(), ConeTypedProjection {
+data class ConeKotlinTypeProjectionOut(override val type: ConeKotlinType) : ConeKotlinTypeProjection(),
+    ConeTypedProjection {
     override val kind: ProjectionKind
         get() = ProjectionKind.OUT
 }
 
-enum class ConeNullability(val suffix: String) {
-    NULLABLE("?"),
-    UNKNOWN("!"),
-    NOT_NULL("");
-
-    val isNullable: Boolean get() = this != NOT_NULL
-
-    companion object {
-        fun create(isNullable: Boolean) = if (isNullable) NULLABLE else NOT_NULL
-    }
-}
-
 // We assume type IS an invariant type projection to prevent additional wrapper here
 // (more exactly, invariant type projection contains type)
-sealed class ConeKotlinType : ConeKotlinTypeProjection(), ConeTypedProjection, KotlinTypeMarker, TypeArgumentListMarker {
+sealed class ConeKotlinType : ConeKotlinTypeProjection(),
+    ConeTypedProjection,
+    KotlinTypeMarker,
+    TypeArgumentListMarker {
     override val kind: ProjectionKind
         get() = ProjectionKind.INVARIANT
 
@@ -86,9 +71,9 @@ sealed class ConeKotlinType : ConeKotlinTypeProjection(), ConeTypedProjection, K
     }
 }
 
-val ConeKotlinType.isNullable: Boolean get() = nullability != ConeNullability.NOT_NULL
-
-val ConeKotlinType.isMarkedNullable: Boolean get() = nullability == ConeNullability.NULLABLE
+interface ConeTypedProjection {
+    val type: ConeKotlinType
+}
 
 typealias ConeKotlinErrorType = ConeClassErrorType
 

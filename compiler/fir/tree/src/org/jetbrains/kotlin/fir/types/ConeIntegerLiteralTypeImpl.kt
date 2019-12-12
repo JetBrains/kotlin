@@ -17,17 +17,17 @@ class ConeIntegerLiteralTypeImpl : ConeIntegerLiteralType {
     constructor(value: Long) : super(value) {
         possibleTypes = mutableListOf()
 
-        fun checkBoundsAndAddPossibleType(type: ConeClassLikeType, range: LongRange) {
+        fun checkBoundsAndAddPossibleType(classId: ClassId, range: LongRange) {
             if (value in range) {
-                possibleTypes.add(type)
+                possibleTypes.add(createType(classId))
             }
         }
 
         fun addSignedPossibleTypes() {
-            checkBoundsAndAddPossibleType(INT_TYPE, INT_RANGE)
-            possibleTypes += LONG_TYPE
-            checkBoundsAndAddPossibleType(BYTE_TYPE, BYTE_RANGE)
-            checkBoundsAndAddPossibleType(SHORT_TYPE, SHORT_RANGE)
+            checkBoundsAndAddPossibleType(StandardClassIds.Int, INT_RANGE)
+            possibleTypes += createType(StandardClassIds.Long)
+            checkBoundsAndAddPossibleType(StandardClassIds.Byte, BYTE_RANGE)
+            checkBoundsAndAddPossibleType(StandardClassIds.Short, SHORT_RANGE)
         }
 
         addSignedPossibleTypes()
@@ -53,14 +53,9 @@ class ConeIntegerLiteralTypeImpl : ConeIntegerLiteralType {
     }
 
     companion object {
-        private fun createType(classId: ClassId): ConeClassLikeType {
+        fun createType(classId: ClassId): ConeClassLikeType {
             return ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(classId), emptyArray(), false)
         }
-
-        val INT_TYPE = createType(StandardClassIds.Int)
-        val LONG_TYPE = createType(StandardClassIds.Long)
-        val SHORT_TYPE = createType(StandardClassIds.Short)
-        val BYTE_TYPE = createType(StandardClassIds.Byte)
 
         private val NUMBER_TYPE = createType(StandardClassIds.Number)
 

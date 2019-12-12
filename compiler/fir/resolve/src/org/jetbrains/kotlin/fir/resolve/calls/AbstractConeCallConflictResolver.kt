@@ -6,10 +6,9 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralTypeImpl
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.arrayElementType
-import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
+import org.jetbrains.kotlin.fir.declarations.classId
+import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.results.*
 import org.jetbrains.kotlin.types.checker.requireOrDescribe
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
@@ -62,21 +61,24 @@ abstract class AbstractConeCallConflictResolver(
             // TODO: support unsigned types
             // see OverloadingConflictResolver.kt:294
 
-            val int = ConeIntegerLiteralTypeImpl.INT_TYPE
-            val long = ConeIntegerLiteralTypeImpl.LONG_TYPE
-            val byte = ConeIntegerLiteralTypeImpl.BYTE_TYPE
-            val short = ConeIntegerLiteralTypeImpl.SHORT_TYPE
+            val int = StandardClassIds.Int
+            val long = StandardClassIds.Long
+            val byte = StandardClassIds.Byte
+            val short = StandardClassIds.Short
+
+            val specificClassId = specific.classId ?: return false
+            val generalClassId = general.classId ?: return false
 
             when {
                 //TypeUtils.equalTypes(specific, _double) && TypeUtils.equalTypes(general, _float) -> return true
-                specific == int -> {
+                specificClassId == int -> {
                     when {
-                        general == long -> return true
-                        general == byte -> return true
-                        general == short -> return true
+                        generalClassId == long -> return true
+                        generalClassId == byte -> return true
+                        generalClassId == short -> return true
                     }
                 }
-                specific == short && general == byte -> return true
+                specificClassId == short && generalClassId == byte -> return true
             }
             return false
         }

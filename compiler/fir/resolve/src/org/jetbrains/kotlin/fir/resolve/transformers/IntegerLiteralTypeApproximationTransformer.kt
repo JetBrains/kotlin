@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperator
 import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperatorCall
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -106,11 +107,11 @@ class IntegerLiteralTypeApproximationTransformer(
 }
 
 fun ConeClassLikeType.toConstKind(): FirConstKind<*> {
-    return when (this) {
-        ConeIntegerLiteralTypeImpl.INT_TYPE -> FirConstKind.Int
-        ConeIntegerLiteralTypeImpl.LONG_TYPE -> FirConstKind.Long
-        ConeIntegerLiteralTypeImpl.SHORT_TYPE -> FirConstKind.Short
-        ConeIntegerLiteralTypeImpl.BYTE_TYPE -> FirConstKind.Byte
+    return when (classId) {
+        StandardClassIds.Int -> FirConstKind.Int
+        StandardClassIds.Long -> FirConstKind.Long
+        StandardClassIds.Short -> FirConstKind.Short
+        StandardClassIds.Byte -> FirConstKind.Byte
         else -> throw IllegalStateException()
     }
 }
@@ -171,9 +172,9 @@ class IntegerOperatorsTypeUpdater(val approximator: IntegerLiteralTypeApproximat
                         }
                     }
                     else -> {
-                        val expectedType = when (argumentType) {
-                            ConeIntegerLiteralTypeImpl.LONG_TYPE -> argumentType
-                            else -> ConeIntegerLiteralTypeImpl.INT_TYPE
+                        val expectedType = when (argumentType.classId) {
+                            StandardClassIds.Long -> argumentType
+                            else -> ConeIntegerLiteralTypeImpl.createType(StandardClassIds.Int)
                         }
                         functionCall.transformSingle(approximator, expectedType)
                         functionCall.replaceTypeRef(functionCall.resultType.resolvedTypeFromPrototype(expectedType))
