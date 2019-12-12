@@ -19,12 +19,15 @@ import com.intellij.openapi.vfs.ReadonlyStatusHandler
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.PathUtilRt
 import com.intellij.util.SmartList
-import com.intellij.util.containers.computeIfAny
-import com.intellij.util.io.*
+import com.intellij.util.io.delete
+import com.intellij.util.io.isDirectory
+import com.intellij.util.io.systemIndependentPath
+import com.intellij.util.io.write
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.annotations.CalledInAny
+import org.jetbrains.jps.util.JpsPathUtil
 import java.nio.file.AccessDeniedException
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -53,18 +56,18 @@ open class ProjectStoreImpl(project: Project) : ProjectStoreBase(project) {
       return PathUtilRt.getFileName(projectFilePath).removeSuffix(ProjectFileType.DOT_DEFAULT_EXTENSION)
     }
 
-    val baseDir = projectBasePath
-    val nameFile = nameFile
-    if (nameFile.exists()) {
-      LOG.runAndLogException { readProjectNameFile(nameFile) }?.let {
-        lastSavedProjectName = it
-        return it
-      }
+    val projectDir = nameFile.parent
+    val storedName = JpsPathUtil.readProjectName(projectDir)
+    if (storedName != null) {
+      lastSavedProjectName = storedName
+      return storedName
     }
 
-    return ProjectNameProvider.EP_NAME.extensionList.computeIfAny {
-      LOG.runAndLogException { it.getDefaultName(project) }
-    } ?: PathUtilRt.getFileName(baseDir).replace(":", "")
+    val computedName = ProjectNameProvider.EP_NAME.iterable.asSequence()
+      .map { LOG.runAndLogException { it.getDefaultName(project) } }
+      .find { it != null }
+
+    return computedName ?: JpsPathUtil.getDefaultProjectName(projectDir)
   }
 
   private suspend fun saveProjectName() {
