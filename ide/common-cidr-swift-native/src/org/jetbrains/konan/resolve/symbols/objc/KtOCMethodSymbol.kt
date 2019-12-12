@@ -8,38 +8,54 @@ package org.jetbrains.konan.resolve.symbols.objc
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.cidr.lang.symbols.OCResolveContext
-import com.jetbrains.cidr.lang.symbols.OCSymbol
 import com.jetbrains.cidr.lang.symbols.OCSymbolKind
 import com.jetbrains.cidr.lang.symbols.cpp.OCDeclaratorSymbol
 import com.jetbrains.cidr.lang.symbols.objc.OCClassSymbol
 import com.jetbrains.cidr.lang.symbols.objc.OCMethodSymbol
+import com.jetbrains.cidr.lang.symbols.objc.OCMethodSymbol.SelectorPartSymbol
 import com.jetbrains.cidr.lang.symbols.objc.OCMethodSymbolImpl
 import com.jetbrains.cidr.lang.types.OCObjectType
 import com.jetbrains.cidr.lang.types.OCType
 import com.jetbrains.cidr.lang.types.visitors.OCTypeSubstitution
 import org.jetbrains.konan.resolve.translation.toOCType
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCMethod
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProperty
 import java.util.*
 
 class KtOCMethodSymbol : KtOCMemberSymbol, OCMethodSymbol {
-
-    private lateinit var selectors: List<OCMethodSymbol.SelectorPartSymbol>
+    private lateinit var selectors: List<SelectorPartSymbol>
     private lateinit var returnType: OCType
-    private var isStatic: Boolean
+    private var originalSymbol: KtOCMemberSymbol? = null
+    private var isStatic: Boolean = false
 
     constructor(
         stub: ObjCMethod,
         project: Project,
         file: VirtualFile,
-        containingClass: OCClassSymbol
-    ) : super(stub, file, containingClass) {
+        containingClass: OCClassSymbol,
+        selectors: List<SelectorPartSymbol>
+    ) : super(stub, stub.name, file, containingClass) {
         this.returnType = stub.returnType.toOCType(project, containingClass)
         this.isStatic = !stub.isInstanceMethod
+        this.selectors = selectors
     }
 
-    constructor() : super() {
-        this.isStatic = false
+    constructor(
+        property: KtOCPropertySymbol,
+        stub: ObjCProperty,
+        name: String,
+        returnType: OCType,
+        file: VirtualFile,
+        containingClass: OCClassSymbol,
+        selectors: List<SelectorPartSymbol>
+    ) : super(stub, name, file, containingClass) {
+        this.originalSymbol = property
+        this.returnType = returnType
+        this.isStatic = property.isStatic
+        this.selectors = selectors
     }
+
+    constructor() : super()
 
     override fun getKind(): OCSymbolKind = OCSymbolKind.METHOD
 
@@ -51,9 +67,11 @@ class KtOCMethodSymbol : KtOCMemberSymbol, OCMethodSymbol {
 
     override fun isVararg(): Boolean = false
 
-    override fun getOriginalSymbol(): OCSymbol? = null
+    override fun isSynthetic(): Boolean = getOriginalSymbol() != null
 
-    override fun getSelectors(): List<OCMethodSymbol.SelectorPartSymbol> = selectors
+    override fun getOriginalSymbol(): KtOCMemberSymbol? = originalSymbol
+
+    override fun getSelectors(): List<SelectorPartSymbol> = selectors
 
     @Suppress("UNCHECKED_CAST")
     override fun getParameterSymbols(): List<OCDeclaratorSymbol> = Collections.unmodifiableList(selectors) as List<OCDeclaratorSymbol>
@@ -65,8 +83,4 @@ class KtOCMethodSymbol : KtOCMemberSymbol, OCMethodSymbol {
     override fun isStatic(): Boolean = isStatic
 
     override fun getNameWithParent(context: OCResolveContext): String = "${if (isStatic) "+" else "-"}[${parent.name} $name]"
-
-    fun setSelectors(selectors: List<OCMethodSymbol.SelectorPartSymbol>) {
-        this.selectors = selectors
-    }
 }

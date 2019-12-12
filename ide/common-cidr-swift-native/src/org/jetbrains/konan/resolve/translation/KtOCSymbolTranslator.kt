@@ -1,6 +1,8 @@
 package org.jetbrains.konan.resolve.translation
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.component1
+import com.intellij.openapi.util.component2
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.containers.ContainerUtil
 import com.jetbrains.cidr.lang.OCLog
@@ -9,6 +11,7 @@ import com.jetbrains.cidr.lang.symbols.objc.OCClassSymbol
 import com.jetbrains.cidr.lang.symbols.objc.OCMemberSymbol
 import com.jetbrains.cidr.lang.symbols.objc.OCMethodSymbol
 import com.jetbrains.cidr.lang.symbols.objc.SelectorPartSymbolImpl
+import com.jetbrains.cidr.lang.types.OCVoidType
 import org.jetbrains.konan.resolve.symbols.objc.*
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 
@@ -24,12 +27,21 @@ class KtOCSymbolTranslator(val project: Project) : KtFileTranslator() {
         }
     }
 
-    fun translateMember(stub: Stub<*>, clazz: OCClassSymbol, file: VirtualFile): OCMemberSymbol? {
-        return when (stub) {
-            is ObjCMethod -> KtOCMethodSymbol(stub, project, file, clazz).also { method ->
-                method.selectors = translateParameters(stub, clazz, file)
+    fun translateMember(stub: Stub<*>, clazz: OCClassSymbol, file: VirtualFile, processor: (OCMemberSymbol) -> Unit) {
+        when (stub) {
+            is ObjCMethod -> KtOCMethodSymbol(stub, project, file, clazz, translateParameters(stub, clazz, file)).also(processor)
+            is ObjCProperty -> KtOCPropertySymbol(stub, project, file, clazz).also(processor).also { property ->
+                property.getterName.let {
+                    KtOCMethodSymbol(property, stub, it, property.type, file, clazz, listOf(SelectorPartSymbolImpl(null, it)))
+                }.also(processor)
+
+                if (!property.isReadonly) {
+                    property.setterName.let {
+                        val selectors = listOf(SelectorPartSymbolImpl(KtOCParameterSymbol(property, stub, file, clazz), it))
+                        KtOCMethodSymbol(property, stub, it, OCVoidType.instance(), file, clazz, selectors)
+                    }.also(processor)
+                }
             }
-            is ObjCProperty -> KtOCPropertySymbol(stub, project, file, clazz)
             else -> {
                 OCLog.LOG.error("unknown kotlin objective-c declaration: " + stub::class)
                 null
@@ -45,9 +57,9 @@ class KtOCSymbolTranslator(val project: Project) : KtFileTranslator() {
             listOf(SelectorPartSymbolImpl(null, selectors[0]))
         } else {
             assert(selectors.size == parameters.size)
-            ContainerUtil.zip(parameters, selectors).asSequence().map {
-                SelectorPartSymbolImpl(KtOCParameterSymbol(it.first, project, file, clazz), it.second)
-            }.toList()
+            ContainerUtil.zip(parameters, selectors).map { (param, selector) ->
+                SelectorPartSymbolImpl(KtOCParameterSymbol(param, project, file, clazz), selector)
+            }
         }
     }
 }

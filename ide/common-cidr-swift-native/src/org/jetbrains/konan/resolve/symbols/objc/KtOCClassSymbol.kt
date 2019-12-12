@@ -20,10 +20,9 @@ import com.jetbrains.cidr.lang.symbols.objc.OCMemberSymbol
 import com.jetbrains.cidr.lang.types.OCObjectType
 import org.jetbrains.konan.resolve.translation.KtOCSymbolTranslator
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCClass
+import org.jetbrains.kotlin.util.getValueOrNull
 
-abstract class KtOCClassSymbol<State: KtOCClassSymbol.ClassState, Stub : ObjCClass<*>>
-    : KtOCLazySymbol<State, Stub>, OCClassSymbol {
-
+abstract class KtOCClassSymbol<State : KtOCClassSymbol.ClassState, Stub : ObjCClass<*>> : KtOCLazySymbol<State, Stub>, OCClassSymbol {
     private lateinit var qualifiedName: OCQualifiedName
 
     constructor(stub: Stub, project: Project, file: VirtualFile) : super(stub, project, file) {
@@ -84,15 +83,13 @@ abstract class KtOCClassSymbol<State: KtOCClassSymbol.ClassState, Stub : ObjCCla
         constructor(clazz: KtOCClassSymbol<*, *>, stub: ObjCClass<*>, project: Project) : super(stub) {
             this.protocolNames = stub.superProtocols
             val translator = KtOCSymbolTranslator(project)
-            var map: MostlySingularMultiMap<String, OCMemberSymbol>? = null
+            val map = lazy(LazyThreadSafetyMode.NONE) { MostlySingularMultiMap<String, OCMemberSymbol>() }
             for (member in stub.members) {
-                val translatedMember = translator.translateMember(member, clazz, clazz.containingFile)
-                if (translatedMember != null) {
-                    if (map == null) map = MostlySingularMultiMap()
-                    map.add(member.name, translatedMember)
+                translator.translateMember(member, clazz, clazz.containingFile) {
+                    map.value.add(it.name, it)
                 }
             }
-            this.members = map
+            this.members = map.getValueOrNull()
         }
 
         constructor() : super() {

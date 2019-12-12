@@ -12,13 +12,14 @@ import com.jetbrains.cidr.lang.symbols.OCSymbolKind
 import com.jetbrains.cidr.lang.symbols.objc.OCClassSymbol
 import com.jetbrains.cidr.lang.symbols.objc.OCMemberSymbol
 import com.jetbrains.cidr.lang.symbols.objc.OCPropertySymbol
+import com.jetbrains.cidr.lang.symbols.objc.OCPropertySymbol.PropertyAttribute
+import com.jetbrains.cidr.lang.symbols.objc.OCPropertySymbol.ValueAttribute
 import com.jetbrains.cidr.lang.types.OCType
 import com.jetbrains.cidr.lang.types.visitors.OCTypeSubstitution
 import org.jetbrains.konan.resolve.translation.toOCType
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProperty
 
 class KtOCPropertySymbol : KtOCMemberSymbol, OCPropertySymbol {
-
     private lateinit var type: OCType
     private lateinit var attributes: List<String>
     private var externalGetterName: String?
@@ -29,7 +30,7 @@ class KtOCPropertySymbol : KtOCMemberSymbol, OCPropertySymbol {
         project: Project,
         file: VirtualFile,
         containingClass: OCClassSymbol
-    ) : super(stub, file, containingClass) {
+    ) : super(stub, stub.name, file, containingClass) {
         this.type = stub.type.toOCType(project, containingClass)
         this.attributes = stub.propertyAttributes
         this.externalGetterName = stub.getterName
@@ -49,20 +50,18 @@ class KtOCPropertySymbol : KtOCMemberSymbol, OCPropertySymbol {
 
     override fun getAssociatedSymbol(project: Project): OCMemberSymbol? = null //todo ???
 
-    override fun hasAttribute(attribute: OCPropertySymbol.PropertyAttribute): Boolean {
-        return attributes.contains(attribute.tokenName) ||
-               attribute == OCPropertySymbol.PropertyAttribute.GETTER && externalGetterName != null ||
-               attribute == OCPropertySymbol.PropertyAttribute.SETTER && externalSetterName != null
+    override fun hasAttribute(attribute: PropertyAttribute): Boolean = when (attribute) {
+        PropertyAttribute.GETTER -> externalGetterName != null
+        PropertyAttribute.SETTER -> externalSetterName != null
+        else -> attributes.contains(attribute.tokenName)
     }
 
     override fun getNameWithParent(context: OCResolveContext): String = "${parent.name}.$name"
 
-    override fun getAttributeValue(attribute: OCPropertySymbol.ValueAttribute): String? {
-        return when (attribute) {
-            OCPropertySymbol.ValueAttribute.GETTER -> externalGetterName
-            OCPropertySymbol.ValueAttribute.SETTER -> externalSetterName
-            else -> throw IllegalArgumentException("Unsupported value attribute: $attribute")
-        }
+    override fun getAttributeValue(attribute: ValueAttribute): String? = when (attribute) {
+        ValueAttribute.GETTER -> externalGetterName
+        ValueAttribute.SETTER -> externalSetterName
+        else -> throw IllegalArgumentException("Unsupported value attribute: $attribute")
     }
 
     override fun getType(): OCType = type

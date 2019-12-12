@@ -14,7 +14,7 @@ abstract class KtOCImmediateSymbol : KtImmediateSymbol, VirtualFileOwner {
     @Transient
     private lateinit var file: VirtualFile
 
-    constructor(stub: Stub<*>, file: VirtualFile) : super(stub, stub.name) {
+    constructor(stub: Stub<*>, name: String, file: VirtualFile) : super(stub, name) {
         this.file = file
     }
 

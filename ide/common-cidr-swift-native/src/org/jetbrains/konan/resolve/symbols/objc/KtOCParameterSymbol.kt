@@ -17,6 +17,7 @@ import com.jetbrains.cidr.lang.types.OCTypeArgument
 import com.jetbrains.cidr.lang.types.visitors.OCTypeSubstitution
 import org.jetbrains.konan.resolve.translation.toOCType
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCParameter
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProperty
 
 class KtOCParameterSymbol : KtOCImmediateSymbol, OCDeclaratorSymbol {
     private lateinit var containingClass: OCClassSymbol
@@ -28,10 +29,21 @@ class KtOCParameterSymbol : KtOCImmediateSymbol, OCDeclaratorSymbol {
         project: Project,
         file: VirtualFile,
         containingClass: OCClassSymbol
-    ) : super(stub, file) {
+    ) : super(stub, stub.name, file) {
         this.containingClass = containingClass
         this.qualifiedName = OCQualifiedName.interned(name)
         this.type = stub.type.toOCType(project, containingClass)
+    }
+
+    constructor(
+        property: KtOCPropertySymbol,
+        stub: ObjCProperty,
+        file: VirtualFile,
+        containingClass: OCClassSymbol
+    ) : super(stub, stub.name, file) {
+        this.containingClass = containingClass
+        this.qualifiedName = OCQualifiedName.interned(name)
+        this.type = property.type
     }
 
     constructor() : super()
