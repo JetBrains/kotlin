@@ -831,3 +831,5 @@ object GH3525 : GH3525Base() {
 class TestStringConversion {
     lateinit var str: Any
 }
+
+fun foo(a: kotlin.native.concurrent.AtomicReference<*>) {}

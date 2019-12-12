@@ -64,14 +64,18 @@ internal object Devirtualization {
         val exportedFunctions =
                 if (entryPoint != null)
                     listOf(moduleDFG.symbolTable.mapFunction(entryPoint).resolved())
-                else
-                // In a library every public function and every function accessible via virtual call belongs to the rootset.
-                    moduleDFG.symbolTable.functionMap.values.filterIsInstance<DataFlowIR.FunctionSymbol.Public>() +
-                    moduleDFG.symbolTable.classMap.values
-                            .filterIsInstance<DataFlowIR.Type.Declared>()
-                            .flatMap { it.vtable + it.itable.values }
-                            .filterIsInstance<DataFlowIR.FunctionSymbol.Declared>()
-                            .filter { moduleDFG.functions.containsKey(it) }
+                else {
+                    // In a library every public function and every function accessible via virtual call belongs to the rootset.
+                    moduleDFG.symbolTable.functionMap.values.filter {
+                        it is DataFlowIR.FunctionSymbol.Public
+                                || (it as? DataFlowIR.FunctionSymbol.External)?.isExported == true
+                    } +
+                            moduleDFG.symbolTable.classMap.values
+                                    .filterIsInstance<DataFlowIR.Type.Declared>()
+                                    .flatMap { it.vtable + it.itable.values }
+                                    .filterIsInstance<DataFlowIR.FunctionSymbol.Declared>()
+                                    .filter { moduleDFG.functions.containsKey(it) }
+                }
         // TODO: Are globals initializers always called whether they are actually reachable from roots or not?
         val globalInitializers =
                 moduleDFG.symbolTable.functionMap.values.filter { it.isGlobalInitializer } +

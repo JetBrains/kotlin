@@ -1123,6 +1123,7 @@ __attribute__((swift_name("ValuesKt")))
 + (BOOL)testInterfaceTypeCheckX:(id)x __attribute__((swift_name("testInterfaceTypeCheck(x:)")));
 + (int32_t)testAbstractInterfaceCallX:(id<ValuesIAbstractInterface>)x __attribute__((swift_name("testAbstractInterfaceCall(x:)")));
 + (int32_t)testAbstractInterfaceCall2X:(id<ValuesIAbstractInterface2>)x __attribute__((swift_name("testAbstractInterfaceCall2(x:)")));
++ (void)fooA:(ValuesKotlinAtomicReference *)a __attribute__((swift_name("foo(a:)")));
 @property (class, readonly) double dbl __attribute__((swift_name("dbl")));
 @property (class, readonly) float flt __attribute__((swift_name("flt")));
 @property (class, readonly) int32_t integer __attribute__((swift_name("integer")));

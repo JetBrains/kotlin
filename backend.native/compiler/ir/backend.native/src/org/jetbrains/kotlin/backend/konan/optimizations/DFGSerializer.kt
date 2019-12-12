@@ -326,13 +326,14 @@ internal object DFGSerializer {
         }
     }
 
-    class ExternalFunctionSymbol(val hash: Long, val name: String?) {
+    class ExternalFunctionSymbol(val hash: Long, val name: String?, val isExported: Boolean) {
 
-        constructor(data: ArraySlice) : this(data.readLong(), data.readNullableString())
+        constructor(data: ArraySlice) : this(data.readLong(), data.readNullableString(), data.readBoolean())
 
         fun write(result: ArraySlice) {
             result.writeLong(hash)
             result.writeNullableString(name)
+            result.writeBoolean(isExported)
         }
     }
 
@@ -379,8 +380,8 @@ internal object DFGSerializer {
         }
 
         companion object {
-            fun external(base: FunctionSymbolBase, hash: Long, name: String?) =
-                    FunctionSymbol(base, ExternalFunctionSymbol(hash, name), null, null)
+            fun external(base: FunctionSymbolBase, hash: Long, name: String?, isExported: Boolean) =
+                    FunctionSymbol(base, ExternalFunctionSymbol(hash, name, isExported), null, null)
 
             fun public(base: FunctionSymbolBase, hash: Long, index: Int, bridgeTarget: Int?, name: String?) =
                     FunctionSymbol(base, null, PublicFunctionSymbol(hash, index, bridgeTarget, name), null)
@@ -876,7 +877,7 @@ internal object DFGSerializer {
                     val bridgeTarget = (symbol as? DataFlowIR.FunctionSymbol.Declared)?.let { functionSymbolMap[it] }
                     when (symbol) {
                         is DataFlowIR.FunctionSymbol.External ->
-                            FunctionSymbol.external(buildFunctionSymbolBase(symbol), symbol.hash, symbol.name)
+                            FunctionSymbol.external(buildFunctionSymbolBase(symbol), symbol.hash, symbol.name, symbol.isExported)
 
                         is DataFlowIR.FunctionSymbol.Public ->
                             FunctionSymbol.public(buildFunctionSymbolBase(symbol), symbol.hash,
@@ -1051,7 +1052,7 @@ internal object DFGSerializer {
                     val private = it.private
                     when {
                         external != null ->
-                            DataFlowIR.FunctionSymbol.External(external.hash, attributes, null, external.name)
+                            DataFlowIR.FunctionSymbol.External(external.hash, attributes, null, external.name, external.isExported)
 
                         public != null -> {
                             val symbolTableIndex = public.index
