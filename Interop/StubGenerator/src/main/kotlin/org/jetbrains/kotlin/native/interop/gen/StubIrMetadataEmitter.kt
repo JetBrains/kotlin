@@ -20,93 +20,112 @@ class StubIrMetadataEmitter(
     }
 
     private fun emitModuleFragments(): List<KmModuleFragment> =
-        ModuleMetadataEmitter(context.configuration.pkgName).let {
-            builderResult.stubs.accept(it, null)
-            listOf(it.writeModule())
-        }
+            ModuleMetadataEmitter(context.configuration.pkgName, builderResult.stubs).emit().let(::listOf)
 }
 
 /**
  * Translates single [StubContainer] to [KmModuleFragment].
  */
 internal class ModuleMetadataEmitter(
-        private val packageFqName: String
-) : StubIrVisitor<StubContainer?, Unit> {
+        private val packageFqName: String,
+        private val module: SimpleStubContainer
+) {
 
-    private val uniqIds = StubIrUniqIdProvider(ManglingContext.Module(packageFqName))
+    fun emit(): KmModuleFragment {
+        val uniqIdProvider = StubIrUniqIdProvider(ManglingContext.Module(packageFqName))
+        val context = VisitingContext(uniqIds = uniqIdProvider)
+        val elements = KmElements(visitor.visitSimpleStubContainer(module, context))
+        return writeModule(elements)
+    }
 
-    private val classes = mutableListOf<KmClass>()
-    private val properties = mutableListOf<KmProperty>()
-    private val typeAliases = mutableListOf<KmTypeAlias>()
-    private val functions = mutableListOf<KmFunction>()
-
-    fun writeModule(): KmModuleFragment = KmModuleFragment().also { km ->
+    private fun writeModule(elements: KmElements) = KmModuleFragment().also { km ->
         km.fqName = packageFqName
-        km.classes += classes
-        km.pkg = writePackage()
+        km.classes += elements.classes.toList()
+        km.className += elements.classes.map(KmClass::name)
+        km.pkg = writePackage(elements)
     }
 
-    private fun writePackage() = KmPackage().also { km ->
+    private fun writePackage(elements: KmElements) = KmPackage().also { km ->
         km.fqName = packageFqName
-        km.typeAliases += typeAliases
-        km.properties += properties
-        km.functions += functions
+        km.typeAliases += elements.typeAliases.toList()
+        km.properties += elements.properties.toList()
+        km.functions += elements.functions.toList()
     }
 
-    override fun visitClass(element: ClassStub, data: StubContainer?) {
-        // TODO("not implemented")
+    /**
+     * StubIr translation result. Since Km* classes don't have common hierarchy we need
+     * to use list of Any.
+     */
+    private class KmElements(result: List<Any>) {
+        val classes: List<KmClass> = result.filterIsInstance<List<KmClass>>().flatten()
+        val properties: List<KmProperty> = result.filterIsInstance<KmProperty>()
+        val typeAliases: List<KmTypeAlias> = result.filterIsInstance<KmTypeAlias>()
+        val functions: List<KmFunction> = result.filterIsInstance<KmFunction>()
+        val constructors: List<KmConstructor> = result.filterIsInstance<KmConstructor>()
     }
 
-    override fun visitTypealias(element: TypealiasStub, data: StubContainer?) {
-        KmTypeAlias(element.flags, element.alias.topLevelName).apply {
-            uniqId = uniqIds.uniqIdForTypeAlias(element)
-            underlyingType = element.aliasee.map(shouldExpandTypeAliases = false)
-            expandedType = element.aliasee.map()
-        }.let(typeAliases::add)
-    }
+    /**
+     * Used to pass data between parents and children when visiting StubIr elements.
+     */
+    private data class VisitingContext(
+            val container: StubContainer? = null,
+            val uniqIds: StubIrUniqIdProvider
+    )
 
-    override fun visitFunction(element: FunctionStub, data: StubContainer?) {
-        KmFunction(element.flags, element.name).apply {
-            element.annotations.mapTo(annotations, AnnotationStub::map)
-            returnType = element.returnType.map()
-            element.parameters.mapTo(valueParameters, FunctionParameterStub::map)
-            element.typeParameters.mapTo(typeParameters, TypeParameterStub::map)
-            uniqId = uniqIds.uniqIdForFunction(element)
-        }.let(functions::add)
-    }
+    private val visitor = object : StubIrVisitor<VisitingContext, Any> {
 
-    override fun visitProperty(element: PropertyStub, data: StubContainer?) {
-        KmProperty(element.flags, element.name, element.getterFlags, element.setterFlags).apply {
-            element.annotations.mapTo(annotations, AnnotationStub::map)
-            uniqId = uniqIds.uniqIdForProperty(element)
-            returnType = element.type.map()
-            if (element.kind is PropertyStub.Kind.Var) {
-                val setter = element.kind.setter
-                setter.annotations.mapTo(setterAnnotations, AnnotationStub::map)
-                // TODO: Maybe it's better to explicitly add setter parameter in stub.
-                setterParameter = FunctionParameterStub("value", element.type).map()
+        override fun visitClass(element: ClassStub, data: VisitingContext) {
+            // TODO("not implemented")
+        }
+
+        override fun visitTypealias(element: TypealiasStub, data: VisitingContext): KmTypeAlias =
+            KmTypeAlias(element.flags, element.alias.topLevelName).also { km ->
+                km.uniqId = data.uniqIds.uniqIdForTypeAlias(element)
+                km.underlyingType = element.aliasee.map(shouldExpandTypeAliases = false)
+                km.expandedType = element.aliasee.map()
             }
-            getterAnnotations += when (element.kind) {
-                is PropertyStub.Kind.Val -> element.kind.getter.annotations.map(AnnotationStub::map)
-                is PropertyStub.Kind.Var -> element.kind.getter.annotations.map(AnnotationStub::map)
-                is PropertyStub.Kind.Constant -> emptyList()
+
+        override fun visitFunction(element: FunctionStub, data: VisitingContext) =
+            KmFunction(element.flags, element.name).also { km ->
+                element.annotations.mapTo(km.annotations, AnnotationStub::map)
+                km.returnType = element.returnType.map()
+                element.parameters.mapTo(km.valueParameters, FunctionParameterStub::map)
+                element.typeParameters.mapTo(km.typeParameters, TypeParameterStub::map)
+                km.uniqId = data.uniqIds.uniqIdForFunction(element)
             }
-            if (element.kind is PropertyStub.Kind.Constant) {
-                compileTimeValue = element.kind.constant.map()
+
+        override fun visitProperty(element: PropertyStub, data: VisitingContext) =
+            KmProperty(element.flags, element.name, element.getterFlags, element.setterFlags).also { km ->
+                element.annotations.mapTo(km.annotations, AnnotationStub::map)
+                km.uniqId = data.uniqIds.uniqIdForProperty(element)
+                km.returnType = element.type.map()
+                if (element.kind is PropertyStub.Kind.Var) {
+                    val setter = element.kind.setter
+                    setter.annotations.mapTo(km.setterAnnotations, AnnotationStub::map)
+                    // TODO: Maybe it's better to explicitly add setter parameter in stub.
+                    km.setterParameter = FunctionParameterStub("value", element.type).map()
+                }
+                km.getterAnnotations += when (element.kind) {
+                    is PropertyStub.Kind.Val -> element.kind.getter.annotations.map(AnnotationStub::map)
+                    is PropertyStub.Kind.Var -> element.kind.getter.annotations.map(AnnotationStub::map)
+                    is PropertyStub.Kind.Constant -> emptyList()
+                }
+                if (element.kind is PropertyStub.Kind.Constant) {
+                    km.compileTimeValue = element.kind.constant.mapToAnnotationArgument()
+                }
             }
-        }.let(properties::add)
-    }
 
-    override fun visitConstructor(constructorStub: ConstructorStub, data: StubContainer?) {
-        // TODO("not implemented")
-    }
+        override fun visitConstructor(constructorStub: ConstructorStub, data: VisitingContext) {
+            // TODO("not implemented")
+        }
 
-    override fun visitPropertyAccessor(propertyAccessor: PropertyAccessor, data: StubContainer?) {
-        // TODO("not implemented")
-    }
+        override fun visitPropertyAccessor(propertyAccessor: PropertyAccessor, data: VisitingContext) {
+            // TODO("not implemented")
+        }
 
-    override fun visitSimpleStubContainer(simpleStubContainer: SimpleStubContainer, data: StubContainer?) {
-        simpleStubContainer.children.forEach { it.accept(this, simpleStubContainer) }
+        override fun visitSimpleStubContainer(simpleStubContainer: SimpleStubContainer, data: VisitingContext): List<Any> =
+                simpleStubContainer.children.map { it.accept(this, data) } +
+                        simpleStubContainer.simpleContainers.flatMap { visitSimpleStubContainer(it, data) }
     }
 }
 
@@ -292,7 +311,7 @@ private fun TypeArgument.Variance.map(): KmVariance = when (this) {
     TypeArgument.Variance.OUT -> KmVariance.OUT
 }
 
-private fun ConstantStub.map(): KmAnnotationArgument<*> = when (this) {
+private fun ConstantStub.mapToAnnotationArgument(): KmAnnotationArgument<*> = when (this) {
     is StringConstantStub -> KmAnnotationArgument.StringValue(value)
     is IntegralConstantStub -> when (size) {
         1 -> if (isSigned) {

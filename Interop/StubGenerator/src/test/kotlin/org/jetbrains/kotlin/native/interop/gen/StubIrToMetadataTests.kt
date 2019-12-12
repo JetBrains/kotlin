@@ -49,11 +49,9 @@ class StubIrToMetadataTests {
             fqName: String,
             functions: List<FunctionStub> = emptyList(),
             properties: List<PropertyStub> = emptyList()
-    ) = ModuleMetadataEmitter(fqName).let {
-        val stubs = SimpleStubContainer(functions = functions, properties = properties)
-        stubs.accept(it, null)
-        it.writeModule()
-    }.also(this::checkUniqIdPresence)
+    ) = SimpleStubContainer(functions = functions, properties = properties)
+            .let { ModuleMetadataEmitter(fqName, it).emit() }
+            .also(this::checkUniqIdPresence)
 
     private fun checkUniqIdPresence(metadata: KmModuleFragment) {
         metadata.classes.forEach { assertNotNull(it.uniqId) }
