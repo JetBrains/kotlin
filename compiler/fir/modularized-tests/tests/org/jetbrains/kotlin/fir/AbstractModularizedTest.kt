@@ -43,13 +43,13 @@ private fun NodeList.toList(): List<Node> {
 
 private val Node.childNodesList get() = childNodes.toList()
 
-val ROOT_PATH_PREFIX = System.getProperty("fir.bench.prefix", "/")
+private val ROOT_PATH_PREFIX = System.getProperty("fir.bench.prefix", "/")
 
 abstract class AbstractModularizedTest : KtUsefulTestCase() {
     private val folderDateFormat = SimpleDateFormat("yyyy-MM-dd")
     private lateinit var startDate: Date
 
-    protected fun reportDir() = File(ROOT_PATH_PREFIX).resolve(FIR_LOGS_PATH).resolve(folderDateFormat.format(startDate))
+    protected fun reportDir() = File(FIR_LOGS_PATH, folderDateFormat.format(startDate))
         .also {
             it.mkdirs()
         }
