@@ -4,15 +4,19 @@ package com.intellij.psi.impl.source.codeStyle;
 import com.intellij.application.options.schemes.SchemeNameGenerator;
 import com.intellij.configurationStore.LazySchemeProcessor;
 import com.intellij.configurationStore.SchemeDataHolder;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.extensions.ExtensionPointListener;
+import com.intellij.openapi.extensions.PluginDescriptor;
 import com.intellij.openapi.options.SchemeManager;
 import com.intellij.openapi.options.SchemeManagerFactory;
-import com.intellij.psi.codeStyle.CodeStyleScheme;
-import com.intellij.psi.codeStyle.CodeStyleSchemes;
+import com.intellij.psi.codeStyle.*;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xmlb.annotations.Transient;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.function.Function;
 
 public abstract class CodeStyleSchemesImpl extends CodeStyleSchemes {
@@ -35,6 +39,29 @@ public abstract class CodeStyleSchemesImpl extends CodeStyleSchemes {
 
     mySchemeManager.loadSchemes();
     setCurrentScheme(getDefaultScheme());
+
+    FileTypeIndentOptionsProvider.EP_NAME.addExtensionPointListener(
+      new ExtensionPointListener<FileTypeIndentOptionsProvider>() {
+        @Override
+        public void extensionAdded(@NotNull FileTypeIndentOptionsProvider extension,
+                                   @NotNull PluginDescriptor pluginDescriptor) {
+          //noinspection deprecation
+          CodeStyleSettingsManager.getInstance()
+            .registerFileTypeIndentOptions(getAllSettings(), extension.getFileType(), extension.createIndentOptions());
+        }
+
+        @Override
+        public void extensionRemoved(@NotNull FileTypeIndentOptionsProvider extension,
+                                     @NotNull PluginDescriptor pluginDescriptor) {
+          //noinspection deprecation
+          CodeStyleSettingsManager.getInstance()
+            .unregisterFileTypeIndentOptions(getAllSettings(), extension.getFileType());
+        }
+      }, ApplicationManager.getApplication());
+  }
+
+  private List<CodeStyleSettings> getAllSettings() {
+    return ContainerUtil.map(mySchemeManager.getAllSchemes(), scheme -> scheme.getCodeStyleSettings());
   }
 
   @Override
