@@ -52,7 +52,9 @@ class KotlinGradleBuildScriptsDataService : AbstractProjectDataService<ProjectDa
         super.onSuccessImport(imported, projectData, project, modelsProvider)
 
         val projectDataNode = imported.singleOrNull() ?: return
-        val buildScripts = projectDataNode.gradleKotlinBuildScripts ?: return
+        val gradleKotlinBuildScripts = projectDataNode.gradleKotlinBuildScripts
+        val buildScripts = gradleKotlinBuildScripts.toList()
+        gradleKotlinBuildScripts.clear()
 
         val gradleSettings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID)
         val projectSettings = gradleSettings.getLinkedProjectSettings(projectData?.linkedExternalProjectPath ?: return) ?: return

@@ -37,6 +37,25 @@ class GradleKtsImportTest : GradleImportingTestCase() {
         checkConfiguration("build.gradle.kts")
     }
 
+    @Test
+    @TargetVersions("6.0.1+")
+    fun testCompositeBuild() {
+        configureByFiles()
+        importProject()
+
+        checkConfiguration(
+            "settings.gradle.kts",
+            "build.gradle.kts",
+            "subProject/build.gradle.kts",
+            "subBuild/settings.gradle.kts",
+            "subBuild/build.gradle.kts",
+            "subBuild/subProject/build.gradle.kts",
+            "buildSrc/settings.gradle.kts",
+            "buildSrc/build.gradle.kts",
+            "buildSrc/subProject/build.gradle.kts"
+        )
+    }
+
     private fun checkConfiguration(vararg files: String) {
         val scripts = files.map {
             KtsFixture(it).also { kts ->

@@ -19,9 +19,13 @@ class KotlinDslScriptModelProvider : ProjectImportModelProvider {
         buildModel: GradleBuild,
         consumer: ProjectImportModelProvider.BuildModelConsumer
     ) {
-        val model = controller.findModel(kotlinDslScriptModelClass)
-        if (model != null) {
-            consumer.consume(buildModel, model, kotlinDslScriptModelClass)
+        project.modules.forEach { module ->
+            if (module.gradleProject.parent == null) {
+                val model = controller.findModel(module.gradleProject, kotlinDslScriptModelClass)
+                if (model != null) {
+                    consumer.consume(module, model, kotlinDslScriptModelClass)
+                }
+            }
         }
     }
 

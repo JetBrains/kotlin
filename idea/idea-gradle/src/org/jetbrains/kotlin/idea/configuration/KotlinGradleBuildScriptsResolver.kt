@@ -45,9 +45,24 @@ class KotlinGradleBuildScriptsResolver : AbstractProjectResolverExtension() {
         super.populateProjectExtraModels(gradleProject, ideProject)
 
         if (kotlinDslScriptsModelImportSupported(resolverCtx.projectGradleVersion)) {
-            resolverCtx.getExtraProject(null, KotlinDslScriptsModel::class.java)?.let { model ->
-                // we need a copy to avoid memory leak, as model is java rmi proxy object
-                ideProject.gradleKotlinBuildScripts = copy(model)
+            pupulateBuildModels(gradleProject, ideProject)
+
+            resolverCtx.models.includedBuilds.forEach { includedRoot ->
+                pupulateBuildModels(includedRoot, ideProject)
+            }
+        }
+    }
+
+    private fun pupulateBuildModels(
+        root: IdeaProject,
+        ideProject: DataNode<ProjectData>
+    ) {
+        root.modules.forEach {
+            if (it.gradleProject.parent == null) {
+                resolverCtx.getExtraProject(it, KotlinDslScriptsModel::class.java)?.let { model ->
+                    // we need a copy to avoid memory leak, as model is java rmi proxy object
+                    ideProject.gradleKotlinBuildScripts.addAll(copy(model))
+                }
             }
         }
     }

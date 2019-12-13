@@ -15,10 +15,10 @@ import org.jetbrains.kotlin.idea.util.NotNullableCopyableDataNodeUserDataPropert
 
 var DataNode<out ProjectData>.gradleKotlinBuildScripts
         by NotNullableCopyableDataNodeUserDataProperty(
-            Key.create<List<GradleKotlinBuildScriptData>>(
+            Key.create<MutableList<GradleKotlinBuildScriptData>>(
                 "GRADLE_KOTLIN_BUILD_SCRIPTS"
             ),
-            emptyList()
+            mutableListOf()
         )
 
 data class GradleKotlinBuildScriptData(
