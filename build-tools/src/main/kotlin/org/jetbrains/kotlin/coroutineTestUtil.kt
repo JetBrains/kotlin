@@ -113,7 +113,7 @@ fun createTextForHelpers(isReleaseCoroutines: Boolean): String {
             |        proceed = { c.resume(Unit) }
             |    }
             |
-            |    fun check(numberOfSuspensions: Int) {
+            |    fun check(numberOfSuspensions: Int, checkFinished: Boolean = true) {
             |        for (i in 1..numberOfSuspensions) {
             |            if (counter != i) error("Wrong state-machine generated: suspendHere called should be called exactly once in one state. Expected " + i + ", got " + counter)
             |            proceed()
@@ -122,7 +122,7 @@ fun createTextForHelpers(isReleaseCoroutines: Boolean): String {
             |            error("Wrong state-machine generated: suspendHere called should be called exactly once in one state. Expected " + numberOfSuspensions + ", got " + counter)
             |        if (finished) error("Wrong state-machine generated: it is finished early")
             |        proceed()
-            |        if (!finished) error("Wrong state-machine generated: it is not finished yet")
+            |        if (checkFinished && !finished) error("Wrong state-machine generated: it is not finished yet")
             |    }
             |}
             |val StateMachineChecker = StateMachineCheckerClass()
