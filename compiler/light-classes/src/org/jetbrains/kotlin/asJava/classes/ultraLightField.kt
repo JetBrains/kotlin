@@ -73,7 +73,7 @@ internal open class KtUltraLightFieldImpl protected constructor(
         KtUltraLightSimpleModifierListField(support, declaration, this, modifiers)
     }
 
-    override fun isEquivalentTo(another: PsiElement?): Boolean = kotlinOrigin == another
+    override fun isEquivalentTo(another: PsiElement?): Boolean = kotlinOrigin == another || (another as? KtLightField)?.kotlinOrigin == kotlinOrigin
 
     override fun getModifierList(): PsiModifierList = modifierList
 
