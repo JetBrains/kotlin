@@ -244,8 +244,7 @@ open class SerializerJsTranslator(
 
         // var index = -1, readAll = false
         val indexVar = JsNameRef(jsFun.scope.declareFreshName("index"))
-        val readAllVar = JsNameRef(jsFun.scope.declareFreshName("readAll"))
-        +JsVars(JsVars.JsVar(indexVar.name), JsVars.JsVar(readAllVar.name, JsBooleanLiteral(false)))
+        +JsVars(JsVars.JsVar(indexVar.name))
 
         // calculating bit mask vars
         val blocksCnt = serializableProperties.bitMaskSlotCount()
@@ -283,14 +282,7 @@ open class SerializerJsTranslator(
             ).makeStmt()
             // switch(index)
             jsSwitch(indexVar) {
-                // -2: readAll = true
-                case(JsIntLiteral(-2)) {
-                    +JsAstUtils.assignment(
-                        readAllVar,
-                        JsBooleanLiteral(true)
-                    ).makeStmt()
-                }
-                // all properties
+//                 all properties
                 for ((i, property) in serializableProperties.withIndex()) {
                     case(JsIntLiteral(i)) {
                         // input.readXxxElementValue
@@ -366,8 +358,7 @@ open class SerializerJsTranslator(
                             bitMasks[bitMaskOff(i)],
                             JsIntLiteral(bitPos)
                         ).makeStmt()
-                        // if (!readAll) break
-                        +JsIf(JsAstUtils.not(readAllVar), JsBreak())
+                        +JsBreak()
                     }
                 }
                 // case -1: break loop

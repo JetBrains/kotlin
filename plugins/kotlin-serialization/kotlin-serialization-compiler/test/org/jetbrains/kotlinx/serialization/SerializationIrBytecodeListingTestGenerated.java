@@ -9,6 +9,7 @@ import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 
 import java.io.File;
@@ -19,6 +20,7 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/codegen")
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
+@Ignore // todo: unignore when new serialziation version will be publicly available & update it in build.gradle.kts
 public class SerializationIrBytecodeListingTestGenerated extends AbstractSerializationIrBytecodeListingTest {
     private void runTest(String testDataFilePath) throws Exception {
         KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);

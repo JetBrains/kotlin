@@ -17,9 +17,11 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.patchDeclarationParents
+import org.jetbrains.kotlin.ir.util.referenceFunction
+import org.jetbrains.kotlin.ir.util.withScope
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializerCodegen
@@ -331,8 +333,7 @@ open class SerializerIrGenerator(val irClass: IrClass, final override val compil
         val flagVar = irTemporaryVar(irBoolean(true), "flag")
 
         val indexVar = irTemporaryVar(irInt(0), "index")
-//        val readAll = irTemporaryVar(irBoolean(false), "readAll", parent = loadFunc)
-//
+
         // calculating bit mask vars
         val blocksCnt = serializableProperties.bitMaskSlotCount()
 
@@ -358,54 +359,61 @@ open class SerializerIrGenerator(val irClass: IrClass, final override val compil
         )
         val localInput = irTemporary(call, "input")
 
-        +irWhile().also { loop ->
+        // prepare all .decodeXxxElement calls
+        val decoderCalls: List<Pair<Int, IrExpression>> =
+            serializableProperties.mapIndexed { index, property ->
+                val body = irBlock {
+                    val sti = getSerialTypeInfo(property)
+                    val innerSerial = serializerInstance(
+                        this@SerializerIrGenerator,
+                        loadFunc.dispatchReceiverParameter!!,
+                        sti.serializer,
+                        property.module,
+                        property.type,
+                        genericIndex = property.genericIndex
+                    )
+                    // todo: update
+                    val decodeFuncToCall =
+                        (if (innerSerial != null) "${CallingConventions.decode}${sti.elementMethodPrefix}Serializable${CallingConventions.elementPostfix}"
+                        else "${CallingConventions.decode}${sti.elementMethodPrefix}${CallingConventions.elementPostfix}")
+                            .let {
+                                inputClass.referenceMethod(it)
+                            }
+                    val typeArgs =
+                        if (decodeFuncToCall.descriptor.typeParameters.isNotEmpty()) listOf(property.type.toIrType()) else listOf()
+                    val args = mutableListOf<IrExpression>(localSerialDesc.get(), irInt(index))
+                    if (innerSerial != null)
+                        args.add(innerSerial)
+                    // local$i = localInput.decode...(...)
+                    +irSetVar(
+                        localProps[index].symbol,
+                        irInvoke(localInput.get(), decodeFuncToCall, typeArgs, args, returnTypeHint = property.type.toIrType())
+                    )
+                    // bitMask[i] |= 1 << x
+                    val bitPos = 1 shl (index % 32)
+                    val or = irBinOp(OperatorNameConventions.OR, bitMasks[index / 32].get(), irInt(bitPos))
+                    +irSetVar(bitMasks[index / 32].symbol, or)
+                }
+                index to body
+            }
+
+        // if (decoder.decodeSequentially())
+        val decodeSequentiallyCall = irInvoke(localInput.get(), inputClass.referenceMethod(CallingConventions.decodeSequentially))
+
+        val sequentialPart = irBlock {
+            decoderCalls.forEach { (_, expr) -> +expr.deepCopyWithVariables() }
+        }
+
+        val byIndexPart: IrExpression = irWhile().also { loop ->
             loop.condition = flagVar.get()
             loop.body = irBlock {
                 val readElementF = inputClass.referenceMethod(CallingConventions.decodeElementIndex)
                 +irSetVar(indexVar.symbol, irInvoke(localInput.get(), readElementF, localSerialDesc.get()))
                 +irWhen {
-                    // if index == -2 (READ_ALL) todo...
-
                     // if index == -1 (READ_DONE) break loop
                     +IrBranchImpl(irEquals(indexVar.get(), irInt(-1)), irSetVar(flagVar.symbol, irBoolean(false)))
 
-                    val branchBodies: List<Pair<Int, IrExpression>> =
-                        serializableProperties.mapIndexed { index, property ->
-                            val body = irBlock {
-                                val sti = getSerialTypeInfo(property)
-                                val innerSerial = serializerInstance(
-                                    this@SerializerIrGenerator,
-                                    loadFunc.dispatchReceiverParameter!!,
-                                    sti.serializer,
-                                    property.module,
-                                    property.type,
-                                    genericIndex = property.genericIndex
-                                )
-                                // todo: update
-                                val decodeFuncToCall =
-                                    (if (innerSerial != null) "${CallingConventions.decode}${sti.elementMethodPrefix}Serializable${CallingConventions.elementPostfix}"
-                                    else "${CallingConventions.decode}${sti.elementMethodPrefix}${CallingConventions.elementPostfix}")
-                                        .let {
-                                            inputClass.referenceMethod(it)
-                                        }
-                                val typeArgs =
-                                    if (decodeFuncToCall.descriptor.typeParameters.isNotEmpty()) listOf(property.type.toIrType()) else listOf()
-                                val args = mutableListOf<IrExpression>(localSerialDesc.get(), irInt(index))
-                                if (innerSerial != null)
-                                    args.add(innerSerial)
-                                // local$i = localInput.decode...(...)
-                                +irSetVar(
-                                    localProps[index].symbol,
-                                    irInvoke(localInput.get(), decodeFuncToCall, typeArgs, args, returnTypeHint = property.type.toIrType())
-                                )
-                                // bitMask[i] |= 1 << x
-                                val bitPos = 1 shl (index % 32)
-                                val or = irBinOp(OperatorNameConventions.OR, bitMasks[index / 32].get(), irInt(bitPos))
-                                +irSetVar(bitMasks[index / 32].symbol, or)
-                            }
-                            index to body
-                        }
-                    branchBodies.forEach { (i, e) -> +IrBranchImpl(irEquals(indexVar.get(), irInt(i)), e) }
+                    decoderCalls.forEach { (i, e) -> +IrBranchImpl(irEquals(indexVar.get(), irInt(i)), e) }
 
                     // throw exception on unknown field
                     val exceptionCtor =
@@ -424,6 +432,8 @@ open class SerializerIrGenerator(val irClass: IrClass, final override val compil
                 }
             }
         }
+
+        +irIfThenElse(compilerContext.irBuiltIns.unitType, decodeSequentiallyCall, sequentialPart, byIndexPart)
 
         //input.endStructure(...)
         val endFunc = inputClass.referenceMethod(CallingConventions.end)
