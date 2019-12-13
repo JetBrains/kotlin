@@ -425,6 +425,15 @@ open class KotlinNativeLink : AbstractKotlinNativeCompile<KotlinCommonToolOption
             project.files(intermediateLibrary.get()).asFileTree
         }
 
+    @OutputDirectory
+    override fun getDestinationDir(): File {
+        return binary.outputDirectory
+    }
+
+    override fun setDestinationDir(destinationDir: File) {
+        binary.outputDirectory = destinationDir
+    }
+
     @get:Input
     override val outputKind: CompilerOutputKind
         get() = binary.outputKind.compilerOutputKind
