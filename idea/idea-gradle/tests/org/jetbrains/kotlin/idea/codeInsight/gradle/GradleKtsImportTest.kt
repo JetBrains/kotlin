@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.idea.codeInsight.gradle
 
 import com.intellij.openapi.vfs.LocalFileSystem
-import org.jetbrains.kotlin.idea.completion.test.KotlinCompletionTestCase
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.script.applySuggestedScriptConfiguration
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationCacheScope
@@ -14,13 +13,25 @@ import org.jetbrains.kotlin.idea.core.script.configuration.utils.areSimilar
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.getKtFile
 import org.jetbrains.kotlin.idea.core.script.hasSuggestedScriptConfiguration
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
+import org.jetbrains.kotlin.test.JUnitParameterizedWithIdeaConfigurationRunner
+import org.jetbrains.kotlin.test.RunnerFactoryWithMuteInDatabase
 import org.jetbrains.plugins.gradle.settings.GradleSettings
 import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.Parameterized
+import org.junit.runners.Parameterized.Parameters
 import java.io.File
 
-
+@RunWith(value = JUnitParameterizedWithIdeaConfigurationRunner::class)
+@Parameterized.UseParametersRunnerFactory(RunnerFactoryWithMuteInDatabase::class)
 class GradleKtsImportTest : GradleImportingTestCase() {
+    companion object {
+        @JvmStatic
+        @Parameters(name = "{index}: with Gradle-{0}")
+        fun data(): Collection<Array<Any?>> = listOf(arrayOf<Any?>("6.0.1"))
+    }
+
     val scriptConfigurationManager get() = ScriptConfigurationManager.getInstance(myProject)
     val projectDir get() = File(GradleSettings.getInstance(myProject).linkedProjectsSettings.first().externalProjectPath)
 
