@@ -29,11 +29,12 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.messages.MessageBus;
 import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.serialization.facet.FacetManagerState;
 import org.jetbrains.jps.model.serialization.facet.FacetState;
+import org.jetbrains.jps.model.serialization.facet.JpsFacetSerializer;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -41,10 +42,10 @@ import java.util.function.Predicate;
 /**
  * @author nik
  */
-@State(name = FacetManagerImpl.COMPONENT_NAME, useLoadedStateAsExisting = false)
+@State(name = JpsFacetSerializer.FACET_MANAGER_COMPONENT_NAME, useLoadedStateAsExisting = false)
+@ApiStatus.Internal
 public final class FacetManagerImpl extends FacetManager implements ModuleComponent, PersistentStateComponent<FacetManagerState> {
   private static final Logger LOG = Logger.getInstance(FacetManagerImpl.class);
-  @NonNls public static final String COMPONENT_NAME = "FacetManager";
 
   private final Module myModule;
   private final FacetManagerModel myModel = new FacetManagerModel();
@@ -285,7 +286,7 @@ public final class FacetManagerImpl extends FacetManager implements ModuleCompon
     doLoadState(state);
   }
 
-  protected void doLoadState(@Nullable FacetManagerState state) {
+  private void doLoadState(@Nullable FacetManagerState state) {
     ModifiableFacetModel model = new FacetModelImpl(this);
     FacetManagerState importedFacetsState = myExternalSourcesStorage.getLoadedState();
     addFacets(ContainerUtil.concat(state == null ? Collections.emptyList() : state.getFacets(), importedFacetsState.getFacets()), null, model);

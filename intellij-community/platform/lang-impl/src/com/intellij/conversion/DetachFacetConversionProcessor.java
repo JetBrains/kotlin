@@ -16,9 +16,9 @@
 
 package com.intellij.conversion;
 
-import com.intellij.facet.FacetManagerImpl;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jps.model.serialization.facet.JpsFacetSerializer;
 
 import java.util.Collection;
 
@@ -41,7 +41,7 @@ public class DetachFacetConversionProcessor extends ConversionProcessor<ModuleSe
 
   @Override
   public void process(ModuleSettings moduleSettings) throws CannotConvertException {
-    final Element facetManagerElement = moduleSettings.getComponentElement(FacetManagerImpl.COMPONENT_NAME);
+    final Element facetManagerElement = moduleSettings.getComponentElement(JpsFacetSerializer.FACET_MANAGER_COMPONENT_NAME);
     if (facetManagerElement == null) return;
     for (String facetName : myFacetNames) {
       for (Element element : getElements(moduleSettings, facetName)) {

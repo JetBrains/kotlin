@@ -5,7 +5,6 @@ package com.intellij.conversion.impl;
 import com.intellij.conversion.CannotConvertException;
 import com.intellij.conversion.ComponentManagerSettings;
 import com.intellij.conversion.ModuleSettings;
-import com.intellij.facet.FacetManagerImpl;
 import com.intellij.ide.highlighter.ModuleFileType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.impl.libraries.LibraryImpl;
@@ -61,7 +60,7 @@ public class ModuleSettingsImpl extends ComponentManagerSettingsImpl implements 
   @Override
   @NotNull
   public Collection<? extends Element> getFacetElements(@NotNull String facetTypeId) {
-    final Element facetManager = getComponentElement(FacetManagerImpl.COMPONENT_NAME);
+    final Element facetManager = getComponentElement(JpsFacetSerializer.FACET_MANAGER_COMPONENT_NAME);
     final ArrayList<Element> elements = new ArrayList<>();
 
     addFacetTypes(facetTypeId, facetManager, elements);
@@ -86,7 +85,7 @@ public class ModuleSettingsImpl extends ComponentManagerSettingsImpl implements 
 
   @Override
   public void addFacetElement(@NotNull String facetTypeId, @NotNull String facetName, Element configuration) {
-    Element componentElement = JDomSerializationUtil.findOrCreateComponentElement(getRootElement(), FacetManagerImpl.COMPONENT_NAME);
+    Element componentElement = JDomSerializationUtil.findOrCreateComponentElement(getRootElement(), JpsFacetSerializer.FACET_MANAGER_COMPONENT_NAME);
     Element facetElement = new Element(JpsFacetSerializer.FACET_TAG);
     facetElement.setAttribute(JpsFacetSerializer.TYPE_ATTRIBUTE, facetTypeId);
     facetElement.setAttribute(JpsFacetSerializer.NAME_ATTRIBUTE, facetName);
