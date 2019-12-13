@@ -961,6 +961,70 @@ object Aggregates : TemplateGroupBase() {
         }
     }
 
+    val f_reduceRightOrNull = fn("reduceRightOrNull(operation: (T, acc: T) -> T)") {
+        include(CharSequences, ArraysOfPrimitives, ArraysOfUnsigned)
+    } builder {
+        since("1.3")
+        annotation("@ExperimentalStdlibApi")
+        inline()
+        specialFor(ArraysOfUnsigned) { inlineOnly() }
+
+        doc { "Accumulates value starting with last ${f.element} and applying [operation] from right to left to each ${f.element} and current accumulator value. Returns null if the ${f.collection} is empty." }
+        returns("T?")
+        body {
+            """
+            var index = lastIndex
+            if (index < 0) return null
+
+            var accumulator = get(index--)
+            while (index >= 0) {
+                accumulator = operation(get(index--), accumulator)
+            }
+
+            return accumulator
+            """
+        }
+    }
+
+    val f_reduceRightOrNullSuper = fn("reduceRightOrNull(operation: (T, acc: S) -> S)") {
+        include(Lists, ArraysOfObjects)
+    } builder {
+        since("1.3")
+        annotation("@ExperimentalStdlibApi")
+        inline()
+        doc { "Accumulates value starting with last ${f.element} and applying [operation] from right to left to each ${f.element} and current accumulator value. Returns null if the ${f.collection} is empty." }
+        typeParam("S")
+        typeParam("T : S")
+        returns("S?")
+        body {
+            """
+            var index = lastIndex
+            if (index < 0) return null
+
+            var accumulator: S = get(index--)
+            while (index >= 0) {
+                accumulator = operation(get(index--), accumulator)
+            }
+
+            return accumulator
+            """
+        }
+        body(Lists) {
+            """
+            val iterator = listIterator(size)
+            if (!iterator.hasPrevious())
+                return null
+
+            var accumulator: S = iterator.previous()
+            while (iterator.hasPrevious()) {
+                accumulator = operation(iterator.previous(), accumulator)
+            }
+
+            return accumulator
+            """
+        }
+    }
+
     val f_onEach = fn("onEach(action: (T) -> Unit)") {
         include(Iterables, Maps, CharSequences, Sequences)
     } builder {

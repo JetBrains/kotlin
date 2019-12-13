@@ -335,6 +335,15 @@ class CollectionTest {
         }
     }
 
+    @Test fun reduceRightOrNull() {
+        expect("1234") {
+            val list = listOf("1", "2", "3", "4")
+            list.reduceRightOrNull { a, b -> a + b }
+        }
+
+        expect(null, { arrayListOf<Int>().reduceRightOrNull { a, b -> a + b } })
+    }
+
     @Test fun groupBy() {
         val words = listOf("a", "abc", "ab", "def", "abcd")
         val byLength = words.groupBy { it.length }
