@@ -17,7 +17,7 @@ import com.intellij.openapi.util.ProperTextRange;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiUtilBase;
+import com.intellij.psi.util.PsiEditorUtil;
 import com.intellij.util.Alarm;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -151,7 +151,7 @@ public class DefaultHighlightInfoProcessor extends HighlightInfoProcessor {
         if (myProject.isDisposed()) return;
         Editor myeditor = editor;
         if (myeditor == null) {
-          myeditor = PsiUtilBase.findEditor(file);
+          myeditor = PsiEditorUtil.Service.getInstance().findEditorByPsiElement(file);
         }
         if (myeditor != null && !myeditor.isDisposed()) {
           repaintErrorStripeAndIcon(myeditor, myProject);

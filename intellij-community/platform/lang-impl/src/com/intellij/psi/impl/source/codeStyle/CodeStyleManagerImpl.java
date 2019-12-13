@@ -29,7 +29,7 @@ import com.intellij.psi.impl.source.codeStyle.lineIndent.FormatterBasedIndentAdj
 import com.intellij.psi.impl.source.tree.FileElement;
 import com.intellij.psi.impl.source.tree.RecursiveTreeElementWalkingVisitor;
 import com.intellij.psi.impl.source.tree.TreeElement;
-import com.intellij.psi.util.PsiUtilBase;
+import com.intellij.psi.util.PsiEditorUtil;
 import com.intellij.util.CharTable;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.ThrowableRunnable;
@@ -197,7 +197,7 @@ public class CodeStyleManagerImpl extends CodeStyleManager implements Formatting
     LOG.assertTrue(file.isValid(), "File name: " + file.getName() + " , class: " + file.getClass().getSimpleName());
 
     if (editor == null) {
-      editor = PsiUtilBase.findEditor(file);
+      editor = PsiEditorUtil.Service.getInstance().findEditorByPsiElement(file);
     }
 
     CaretPositionKeeper caretKeeper = null;

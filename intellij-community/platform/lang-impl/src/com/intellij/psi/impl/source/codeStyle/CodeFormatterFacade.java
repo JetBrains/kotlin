@@ -34,8 +34,8 @@ import com.intellij.psi.formatter.DocumentBasedFormattingModel;
 import com.intellij.psi.impl.source.PostprocessReformattingAspect;
 import com.intellij.psi.impl.source.SourceTreeToPsiMap;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
+import com.intellij.psi.util.PsiEditorUtil;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.util.PsiUtilBase;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.ObjectUtils;
@@ -445,7 +445,7 @@ public class CodeFormatterFacade {
       return;
     }
 
-    Editor editor = PsiUtilBase.findEditor(file);
+    Editor editor = PsiEditorUtil.Service.getInstance().findEditorByPsiElement(file);
     EditorFactory editorFactory = null;
     if (editor == null) {
       if (!ApplicationManager.getApplication().isDispatchThread()) {

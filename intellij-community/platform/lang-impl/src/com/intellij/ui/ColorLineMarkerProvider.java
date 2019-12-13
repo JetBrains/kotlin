@@ -13,7 +13,7 @@ import com.intellij.openapi.editor.ElementColorProvider;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiUtilBase;
+import com.intellij.psi.util.PsiEditorUtil;
 import com.intellij.util.Function;
 import com.intellij.util.FunctionUtil;
 import com.intellij.util.ui.ColorIcon;
@@ -69,7 +69,7 @@ public final class ColorLineMarkerProvider extends LineMarkerProviderDescriptor 
             (e, elt) -> {
               if (!elt.isWritable()) return;
 
-              final Editor editor = PsiUtilBase.findEditor(elt);
+              final Editor editor = PsiEditorUtil.Service.getInstance().findEditorByPsiElement(elt);
               assert editor != null;
 
               if (Registry.is("ide.new.color.picker")) {
