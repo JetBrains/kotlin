@@ -1,14 +1,17 @@
 package org.jetbrains.kotlin.tools.projectWizard.core
 
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.Setting
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.BodyIR
 import java.io.IOException
 import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.properties.ReadOnlyProperty
 import kotlin.random.Random
 import kotlin.reflect.KProperty
+
+inline infix fun <A, B, C> ((A) -> B).andThen(crossinline then: (B) -> C): (A) -> C =
+    { then(this(it)) }
+
+@Suppress("NOTHING_TO_INLINE")
+inline fun <T> idFunction(): (T) -> T = { it }
 
 operator fun Path.div(other: String): Path =
     resolve(other)
@@ -42,23 +45,10 @@ internal inline fun <T> cached(crossinline createValue: (name: String) -> T) = o
 @PublishedApi
 internal inline fun <reified T> Any?.safeAs(): T? = this as? T
 
-@Suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE", "unused")
 inline fun Any?.ignore() = Unit
 
 internal fun <T> T.asSingletonList() = listOf(this)
-
-inline fun <reified R> Iterable<*>.filterIsInstanceWith(predicate: (R) -> Boolean): List<R> {
-    val result = mutableListOf<R>()
-    for (element in this) {
-        if (element is R && predicate(element)) {
-            result += element
-        }
-    }
-    return result
-}
-
-fun Path.asAbsolute(prefix: Path) =
-    if (isAbsolute) this else prefix / this
 
 @DslMarker
 annotation class Builder

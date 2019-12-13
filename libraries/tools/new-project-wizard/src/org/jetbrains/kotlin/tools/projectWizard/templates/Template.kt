@@ -5,9 +5,8 @@ import org.jetbrains.kotlin.tools.projectWizard.SettingsOwner
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
 import org.jetbrains.kotlin.tools.projectWizard.core.service.FileSystemWizardService
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.DependencyIR
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.SourcesetIR
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.TargetConfigurationIR
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.StructurePlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
@@ -52,7 +51,7 @@ fun <T> withSettingsOf(
 
 
 abstract class Template : SettingsOwner {
-    override fun <V : Any, T : SettingType<V>> settingDelegate(
+    final override fun <V : Any, T : SettingType<V>> settingDelegate(
         create: (path: String) -> SettingBuilder<V, T>
     ): ReadOnlyProperty<Any, TemplateSetting<V, T>> = cached { name ->
         TemplateSetting(create(name).buildInternal())
@@ -72,6 +71,11 @@ abstract class Template : SettingsOwner {
         sourceset: SourcesetIR
     ): List<BuildSystemIR> = emptyList()
 
+    open fun updateTargetIr(
+        sourceset: SourcesetIR,
+        targetConfigurationIR: TargetConfigurationIR
+    ): TargetConfigurationIR = targetConfigurationIR
+
     open fun TaskRunningContext.getFileTemplates(sourceset: SourcesetIR): List<FileTemplateDescriptor> = emptyList()
 
     fun TaskRunningContext.applyToSourceset(
@@ -85,7 +89,16 @@ abstract class Template : SettingsOwner {
         val librariesToAdd = getRequiredLibraries(sourceset)
         val irsToAddToBuildFile = getIrsToAddToBuildFile(sourceset)
 
-        val result = TemplateApplicationResult(librariesToAdd, irsToAddToBuildFile)
+        val targetsUpdater = when (sourceset) {
+            is SourcesetModuleIR -> { target: TargetConfigurationIR ->
+                val targetName = sourceset.name.removeSuffix(sourceset.sourcesetType.name.capitalize())
+                if (target.name == targetName) updateTargetIr(sourceset, target)
+                else target
+            }
+            else -> idFunction()
+        }
+
+        val result = TemplateApplicationResult(librariesToAdd, irsToAddToBuildFile, targetsUpdater)
 
         return getFileTemplates(sourceset).map { fileTemplate ->
             val fileText = templateEngine.renderTemplate(fileTemplate, allSettings)
@@ -107,7 +120,7 @@ abstract class Template : SettingsOwner {
     )
 
     @Suppress("UNCHECKED_CAST")
-    override fun <V : DisplayableSettingItem> dropDownSetting(
+    final override fun <V : DisplayableSettingItem> dropDownSetting(
         title: String,
         neededAtPhase: GenerationPhase,
         parser: Parser<V>,
@@ -121,7 +134,7 @@ abstract class Template : SettingsOwner {
         ) as ReadOnlyProperty<Any, TemplateSetting<V, DropDownSettingType<V>>>
 
     @Suppress("UNCHECKED_CAST")
-    override fun stringSetting(
+    final override fun stringSetting(
         title: String,
         neededAtPhase: GenerationPhase,
         init: StringSettingType.Builder.() -> Unit
@@ -133,7 +146,7 @@ abstract class Template : SettingsOwner {
         ) as ReadOnlyProperty<Any, TemplateSetting<String, StringSettingType>>
 
     @Suppress("UNCHECKED_CAST")
-    override fun booleanSetting(
+    final override fun booleanSetting(
         title: String,
         neededAtPhase: GenerationPhase,
         init: BooleanSettingType.Builder.() -> Unit
@@ -145,7 +158,7 @@ abstract class Template : SettingsOwner {
         ) as ReadOnlyProperty<Any, TemplateSetting<Boolean, BooleanSettingType>>
 
     @Suppress("UNCHECKED_CAST")
-    override fun <V : Any> valueSetting(
+    final override fun <V : Any> valueSetting(
         title: String,
         neededAtPhase: GenerationPhase,
         parser: Parser<V>,
@@ -159,7 +172,7 @@ abstract class Template : SettingsOwner {
         ) as ReadOnlyProperty<Any, TemplateSetting<V, ValueSettingType<V>>>
 
     @Suppress("UNCHECKED_CAST")
-    override fun versionSetting(
+    final override fun versionSetting(
         title: String,
         neededAtPhase: GenerationPhase,
         init: VersionSettingType.Builder.() -> Unit
@@ -171,7 +184,7 @@ abstract class Template : SettingsOwner {
         ) as ReadOnlyProperty<Any, TemplateSetting<Version, VersionSettingType>>
 
     @Suppress("UNCHECKED_CAST")
-    override fun <V : Any> listSetting(
+    final override fun <V : Any> listSetting(
         title: String,
         neededAtPhase: GenerationPhase,
         parser: Parser<V>,
@@ -186,7 +199,7 @@ abstract class Template : SettingsOwner {
 
 
     @Suppress("UNCHECKED_CAST")
-    override fun pathSetting(
+    final override fun pathSetting(
         title: String,
         neededAtPhase: GenerationPhase,
         init: PathSettingType.Builder.() -> Unit
@@ -233,7 +246,7 @@ fun TaskRunningContext.applyTemplateToSourceset(
     sourceset: SourcesetIR,
     templateEngine: TemplateEngine
 ): TaskResult<TemplateApplicationResult> = when (template) {
-    null -> TemplateApplicationResult(emptyList(), emptyList()).asSuccess()
+    null -> TemplateApplicationResult.EMPTY.asSuccess()
     else -> with(template) {
         applyToSourceset(templateEngine, sourceset)
     }
@@ -242,10 +255,15 @@ fun TaskRunningContext.applyTemplateToSourceset(
 
 data class TemplateApplicationResult(
     val librariesToAdd: List<DependencyIR>,
-    val irsToAddToBuildFile: List<BuildSystemIR>
+    val irsToAddToBuildFile: List<BuildSystemIR>,
+    val updateTarget: (TargetConfigurationIR) -> TargetConfigurationIR
 ) {
     companion object {
-        val EMPTY = TemplateApplicationResult(emptyList(), emptyList())
+        val EMPTY = TemplateApplicationResult(
+            librariesToAdd = emptyList(),
+            irsToAddToBuildFile = emptyList(),
+            updateTarget = { it }
+        )
     }
 }
 
@@ -255,5 +273,6 @@ fun List<TemplateApplicationResult>.fold() =
 operator fun TemplateApplicationResult.plus(other: TemplateApplicationResult) =
     TemplateApplicationResult(
         librariesToAdd + other.librariesToAdd,
-        irsToAddToBuildFile + other.irsToAddToBuildFile
+        irsToAddToBuildFile + other.irsToAddToBuildFile,
+        updateTarget andThen other.updateTarget
     )

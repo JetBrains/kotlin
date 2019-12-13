@@ -3,11 +3,9 @@ package org.jetbrains.kotlin.tools.projectWizard.templates
 import org.jetbrains.kotlin.tools.projectWizard.core.buildList
 import org.jetbrains.kotlin.tools.projectWizard.core.TaskRunningContext
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.*
-import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.buildSystemType
-import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.isGradle
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.TargetConfigurationIR
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.addWithJavaIntoJvmTarget
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
-import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.GradlePrinter
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.SourcesetType
 
 class ConsoleJvmApplicationTemplate : Template() {
@@ -22,50 +20,11 @@ class ConsoleJvmApplicationTemplate : Template() {
     override fun TaskRunningContext.getIrsToAddToBuildFile(
         sourceset: SourcesetIR
     ) = buildList<BuildSystemIR> {
-        +ApplicationPluginIR("MainKt")
-
-        if (buildSystemType.isGradle) {
-            +GradleSectionIR("application", buildBody {
-                +GradleAssignmentIR("mainClassName", GradleStringConstIR("MainKt"))
-            })
-        }
-
-        if (sourceset is SourcesetModuleIR) {
-            +GetGradleTaskIR(
-                "run",
-                "JavaExec",
-                buildBody {
-                    val compilationAccess =
-                        CompilationAccessIr(sourceset.type.name, sourceset.sourcesetType.name, null)
-                    val classPath = RawGradleIR {
-                        when (dsl) {
-                            GradlePrinter.GradleDsl.KOTLIN -> {
-                                +"with("
-                                compilationAccess.render(this)
-                                +") "
-                                inBrackets {
-                                    indent()
-                                    +"output.allOutputs + compileDependencyFiles + runtimeDependencyFiles"
-                                }
-                            }
-                            GradlePrinter.GradleDsl.GROOVY -> {
-                                compilationAccess.render(this); +".output.allOutputs + "; nl()
-                                indented {
-                                    indent(); compilationAccess.render(this); +".compileDependencyFiles + "; nl()
-                                    indent(); compilationAccess.render(this); +".runtimeDependencyFiles"
-                                }
-                            }
-                        }
-                    }
-
-                    +GradleAssignmentIR(
-                        "classpath",
-                        classPath
-                    )
-                }
-            )
-        }
+        +runTaskIrs("MainKt")
     }
+
+    override fun updateTargetIr(sourceset: SourcesetIR, targetConfigurationIR: TargetConfigurationIR): TargetConfigurationIR =
+        targetConfigurationIR.addWithJavaIntoJvmTarget()
 
     override fun TaskRunningContext.getFileTemplates(sourceset: SourcesetIR) =
         buildList<FileTemplateDescriptor> {

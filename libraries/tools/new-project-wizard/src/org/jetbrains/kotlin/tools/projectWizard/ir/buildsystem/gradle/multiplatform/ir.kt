@@ -3,13 +3,15 @@ package org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplat
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.IrsOwner
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.KotlinIR
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.GradleCallIr
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.GradleIR
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.withIrs
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.GradlePrinter
 
 interface MultiplatformIR : GradleIR, KotlinIR
 
-interface TargetIR: MultiplatformIR
+interface TargetIR : MultiplatformIR
 
 data class TargetAccessIR(
     val type: ModuleSubType,
@@ -23,12 +25,23 @@ data class TargetAccessIR(
     }
 }
 
-interface TargetConfigurationIR : MultiplatformIR, IrsOwner
+interface TargetConfigurationIR : MultiplatformIR, IrsOwner {
+    val name: String
+}
+
+fun TargetConfigurationIR.addWithJavaIntoJvmTarget() = when {
+    this is DefaultTargetConfigurationIR && targetAccess.type == ModuleSubType.jvm ->
+        withIrs(GradleCallIr("withJava"))
+    else -> this
+}
 
 data class DefaultTargetConfigurationIR(
     val targetAccess: TargetAccessIR,
     override val irs: List<BuildSystemIR>
 ) : TargetConfigurationIR {
+    override val name: String
+        get() = targetAccess.nonDefaultName ?: targetAccess.type.name
+
     override fun withReplacedIrs(irs: List<BuildSystemIR>): DefaultTargetConfigurationIR =
         copy(irs = irs)
 
@@ -44,7 +57,7 @@ data class DefaultTargetConfigurationIR(
 }
 
 data class NonDefaultTargetConfigurationIR(
-    val name: String,
+    override val name: String,
     override val irs: List<BuildSystemIR>
 ) : TargetConfigurationIR {
     override fun withReplacedIrs(irs: List<BuildSystemIR>): NonDefaultTargetConfigurationIR =
@@ -54,7 +67,7 @@ data class NonDefaultTargetConfigurationIR(
         +name
         when (dsl) {
             GradlePrinter.GradleDsl.KOTLIN -> +".apply"
-            GradlePrinter.GradleDsl.GROOVY-> +".with"
+            GradlePrinter.GradleDsl.GROOVY -> +".with"
         }
         +" "; inBrackets { irs.listNl() }
     }
