@@ -8,7 +8,6 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
-import com.intellij.openapi.application.impl.NonBlockingReadActionImpl;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.event.DocumentEvent;
@@ -37,7 +36,6 @@ import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.TestOnly;
 
 import java.util.*;
 
@@ -141,13 +139,6 @@ public final class PsiDocumentManagerImpl extends PsiDocumentManagerBase {
     final PostprocessReformattingAspect component = myProject.getComponent(PostprocessReformattingAspect.class);
     final FileViewProvider viewProvider = getCachedViewProvider(doc);
     if (viewProvider != null && component != null) component.doPostponedFormatting(viewProvider);
-  }
-
-  @Override
-  @TestOnly
-  public void clearUncommittedDocuments() {
-    super.clearUncommittedDocuments();
-    NonBlockingReadActionImpl.cancelAllTasks();
   }
 
   @NotNull
