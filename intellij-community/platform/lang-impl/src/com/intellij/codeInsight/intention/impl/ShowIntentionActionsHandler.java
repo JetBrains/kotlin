@@ -35,7 +35,6 @@ import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.registry.Registry;
-import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -45,8 +44,6 @@ import com.intellij.util.PairProcessor;
 import com.intellij.util.ThreeState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.awt.*;
 
 /**
  * @author mike
@@ -105,13 +102,8 @@ public class ShowIntentionActionsHandler implements CodeInsightActionHandler {
   private static ShowIntentionsPass.IntentionsInfo calcIntentions(@NotNull Project project,
                                                                   @NotNull Editor editor,
                                                                   @NotNull PsiFile file) {
-    Component prevOwner = IdeFocusManager.getInstance(project).getFocusOwner();
     ShowIntentionsPass.IntentionsInfo intentions = ActionUtil.underModalProgress(project, "Searching for Context Actions", () ->
       ShowIntentionsPass.getActionsToShow(editor, file, false));
-    if (prevOwner != null) {
-      //todo remove this abomination after IDEA-227466 is fixed in a more general way
-      IdeFocusManager.getInstance(project).requestFocusInProject(prevOwner, project);
-    }
 
     ShowIntentionsPass.getActionsToShowSync(editor, file, intentions);
     return intentions;
