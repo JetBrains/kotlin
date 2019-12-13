@@ -8,6 +8,7 @@ import com.intellij.codeInsight.lookup.impl.PrefixChangeListener
 import com.intellij.ide.ui.UISettings
 import com.intellij.internal.statistic.eventLog.FeatureUsageData
 import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger
+import com.intellij.openapi.project.DumbService
 import com.intellij.stats.storage.factors.LookupStorage
 import com.intellij.stats.storage.factors.MutableLookupStorage
 
@@ -17,7 +18,7 @@ class CompletionQualityTracker : LookupTracker() {
   }
 
   override fun lookupCreated(lookup: LookupImpl, storage: MutableLookupStorage) {
-    val queryTracker = QueryTracker()
+    val queryTracker = QueryTracker(DumbService.isDumb(lookup.project))
     lookup.addPrefixChangeListener(queryTracker, lookup)
     lookup.addLookupListener(CompletionQualityListener(storage, queryTracker))
   }
@@ -25,7 +26,7 @@ class CompletionQualityTracker : LookupTracker() {
   override fun lookupClosed() {
   }
 
-  private class QueryTracker : PrefixChangeListener {
+  private class QueryTracker(val dumbStart: Boolean) : PrefixChangeListener {
     var typingActionsCount: Int = 0
       private set
     var backspaceActionsCount: Int = 0
@@ -89,6 +90,10 @@ class CompletionQualityTracker : LookupTracker() {
         // Performance
         addData("total_ml_time", storage.performanceTracker.totalMLTimeContribution())
         addData("time_to_show", if (shownTimestamp == -1L) -1 else shownTimestamp - storage.startedTimestamp)
+
+        // Indexing
+        addData("dumb_start", queryTracker.dumbStart)
+        addData("dumb_finish", DumbService.isDumb(lookup.project))
       }
 
       FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, "finished", data)
