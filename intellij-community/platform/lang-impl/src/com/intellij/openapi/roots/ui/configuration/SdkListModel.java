@@ -5,14 +5,16 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.ui.ComboBoxPopupState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import java.util.List;
 
 import static com.intellij.openapi.roots.ui.configuration.SdkListItem.*;
 
-public class SdkListModel {
+public class SdkListModel extends AbstractListModel<SdkListItem> implements ComboBoxPopupState<SdkListItem> {
   private final boolean myIsSearching;
   private final ImmutableList<SdkListItem> myItems;
   private final ImmutableMap<SdkListItem, String> mySeparators;
@@ -25,18 +27,49 @@ public class SdkListModel {
     boolean mySuggestedSep = false;
     ImmutableMap.Builder<SdkListItem, String> sep = ImmutableMap.builder();
 
-    for (SdkListItem it : myItems) {
+    int lastSepIndex = 0; //putting 0 to avoid first separator
+    for (int i = 0; i < myItems.size(); i++) {
+      SdkListItem it = myItems.get(i);
+
       if (!myFirstSepSet && (it instanceof GroupItem || it instanceof ActionItem)) {
         myFirstSepSet = true;
-        sep.put(it, "");
+        if (lastSepIndex < i) {
+          sep.put(it, "");
+          lastSepIndex = i;
+        }
       }
 
       if (!mySuggestedSep && it instanceof SuggestedItem) {
         mySuggestedSep = true;
-        sep.put(it, ProjectBundle.message("jdk.combo.box.autodetected"));
+        if (lastSepIndex < i) {
+          sep.put(it, ProjectBundle.message("jdk.combo.box.autodetected"));
+          lastSepIndex = i;
+        }
       }
     }
     mySeparators = sep.build();
+  }
+
+  @Override
+  public int getSize() {
+    return myItems.size();
+  }
+
+  @Override
+  public SdkListItem getElementAt(int index) {
+    return myItems.get(index);
+  }
+
+  @Nullable
+  @Override
+  public SdkListModel onChosen(SdkListItem selectedValue) {
+    if (!(selectedValue instanceof GroupItem)) return null;
+    return new SdkListModel(myIsSearching, ((GroupItem)selectedValue).mySubItems);
+  }
+
+  @Override
+  public boolean hasSubstep(SdkListItem selectedValue) {
+    return selectedValue instanceof GroupItem;
   }
 
   @NotNull

@@ -2,6 +2,7 @@
 package com.intellij.openapi.roots.ui.configuration;
 
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
@@ -16,7 +17,17 @@ public abstract class SdkComboBoxBase<T> extends ComboBox<T> {
   protected SdkComboBoxBase(@NotNull SdkListModelBuilder model) {
     super();
     myModel = model;
-    myModel.addModelListener(this::onModelUpdated);
+    myModel.addModelListener(new SdkListModelBuilder.ModelListener() {
+      @Override
+      public void syncModel(@NotNull SdkListModel model) {
+        SdkComboBoxBase.this.onModelUpdated(model);
+      }
+
+      @Override
+      public void onNewSdkAdded(@NotNull Sdk sdk) {
+        SdkComboBoxBase.this.onNewSdkAdded(sdk);
+      }
+    });
 
     UIUtil.putClientProperty(this, ANIMATION_IN_RENDERER_ALLOWED, true);
     setMinimumAndPreferredWidth(JBUI.scale(300));
@@ -26,6 +37,8 @@ public abstract class SdkComboBoxBase<T> extends ComboBox<T> {
   }
 
   protected abstract void onModelUpdated(@NotNull SdkListModel model);
+
+  protected abstract void onNewSdkAdded(@NotNull Sdk sdk);
 
   public void setInvalidJdk(String name) {
     setSelectedItem(myModel.setInvalidSdk(name));

@@ -33,6 +33,7 @@ public class SdkListModelBuilder {
   @NotNull private final Condition<? super Sdk> mySdkFilter;
   @NotNull private final Condition<? super SdkTypeId> mySdkTypeFilter;
   @NotNull private final Condition<? super SdkTypeId> mySdkTypeCreationFilter;
+  @NotNull private final Consumer<Sdk> myOnNewSdkAdded;
 
   @NotNull private final EventDispatcher<ModelListener> myModelListener = EventDispatcher.create(ModelListener.class);
 
@@ -65,6 +66,9 @@ public class SdkListModelBuilder {
     mySdkFilter = sdk -> sdk != null
                          && mySdkTypeFilter.value(sdk.getSdkType())
                          && (sdkFilter == null || sdkFilter.value(sdk));
+    myOnNewSdkAdded = sdk -> {
+      if (sdk != null) myModelListener.getMulticaster().onNewSdkAdded(sdk);
+    };
   }
 
   /**
@@ -77,11 +81,20 @@ public class SdkListModelBuilder {
      * Implement this method to turn a given {@link SdkListModel}
      * into a specific model and apply it for the control
      */
-    void syncModel(@NotNull SdkListModel model);
+    default void syncModel(@NotNull SdkListModel model) {}
+
+    /**
+     * A callback executed when a new Sdk was created and added
+     */
+    default void onNewSdkAdded(@NotNull Sdk sdk) {}
   }
 
   public void addModelListener(@NotNull ModelListener listener) {
     myModelListener.addListener(listener);
+  }
+
+  public void removeListener(@NotNull ModelListener listener) {
+    myModelListener.removeListener(listener);
   }
 
   private void syncModel() {
@@ -112,7 +125,7 @@ public class SdkListModelBuilder {
       .addAll(myAddActions)
       .build();
 
-    if (subItems.size() > 3) {
+    if (subItems.size() > 3 && !newModel.build().isEmpty()) {
       newModel.add(new GroupItem(AllIcons.General.Add, "Add SDK", subItems));
     }
     else {
@@ -180,20 +193,16 @@ public class SdkListModelBuilder {
     syncModel();
   }
 
-  public void reloadActions(@NotNull JComponent parent,
-                            @Nullable Sdk selectedSdk,
-                            @NotNull Consumer<? super Sdk> onNewSdkAdded) {
-    Map<SdkType, NewSdkAction> downloadActions = mySdkModel.createDownloadActions(parent, selectedSdk, onNewSdkAdded,
-                                                                                  mySdkTypeCreationFilter);
-    Map<SdkType, NewSdkAction> addActions = mySdkModel.createAddActions(parent, selectedSdk, onNewSdkAdded, mySdkTypeCreationFilter);
+  public void reloadActions(@NotNull JComponent parent, @Nullable Sdk selectedSdk) {
+    Map<SdkType, NewSdkAction> downloadActions = mySdkModel.createDownloadActions(parent, selectedSdk, myOnNewSdkAdded, mySdkTypeCreationFilter);
+    Map<SdkType, NewSdkAction> addActions = mySdkModel.createAddActions(parent, selectedSdk, myOnNewSdkAdded, mySdkTypeCreationFilter);
 
     myDownloadActions = createActions(parent, ActionRole.DOWNLOAD, downloadActions);
     myAddActions = createActions(parent, ActionRole.ADD, addActions);
     syncModel();
   }
 
-  public void detectItems(@NotNull JComponent parent,
-                          @NotNull Consumer<? super Sdk> onNewSdkAdded) {
+  public void detectItems(@NotNull JComponent parent) {
     if (mySuggestedItemsConnected) return;
     mySuggestedItemsConnected = true;
 
@@ -210,7 +219,7 @@ public class SdkListModelBuilder {
         SuggestedItem item = new SuggestedItem(type, version, home) {
           @Override
           public void executeAction() {
-            mySdkModel.addSdk(getSdkType(), getHomePath(), onNewSdkAdded);
+            mySdkModel.addSdk(getSdkType(), getHomePath(), myOnNewSdkAdded);
           }
         };
 

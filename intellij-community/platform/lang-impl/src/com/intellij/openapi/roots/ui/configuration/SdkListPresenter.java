@@ -39,7 +39,9 @@ public abstract class SdkListPresenter extends ColoredListCellRenderer<SdkListIt
   @NotNull
   protected abstract SdkListModel getModel();
 
-  protected abstract boolean showProgressIcon();
+  protected boolean showProgressIcon() {
+    return true;
+  }
 
 
   @NotNull
