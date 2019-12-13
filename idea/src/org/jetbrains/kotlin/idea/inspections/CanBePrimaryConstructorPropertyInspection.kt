@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -44,16 +44,18 @@ class CanBePrimaryConstructorPropertyInspection : AbstractKotlinInspection() {
             val assignedParameter = DescriptorToSourceUtils.descriptorToDeclaration(assignedDescriptor) as? KtParameter ?: return
             if (property.containingClassOrObject !== assignedParameter.containingClassOrObject) return
 
-            if (property.containingClassOrObject?.isInterfaceClass() ?: false) return
+            if (property.containingClassOrObject?.isInterfaceClass() == true) return
 
-            holder.registerProblem(holder.manager.createProblemDescriptor(
+            holder.registerProblem(
+                holder.manager.createProblemDescriptor(
                     nameIdentifier,
                     nameIdentifier,
                     "Property is explicitly assigned to parameter ${assignedDescriptor.name}, can be declared directly in constructor",
                     ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                     isOnTheFly,
                     MovePropertyToConstructorIntention()
-            ))
+                )
+            )
         })
     }
 }

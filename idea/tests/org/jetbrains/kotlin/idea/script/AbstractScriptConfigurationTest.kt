@@ -51,6 +51,7 @@ import kotlin.script.experimental.api.ScriptDiagnostic
 private val validKeys = setOf("javaHome", "sources", "classpath", "imports", "template-classes-names")
 private const val useDefaultTemplate = "// DEPENDENCIES:"
 private const val templatesSettings = "// TEMPLATES: "
+
 // some bugs can only be reproduced when some module and script have intersecting library dependencies
 private const val configureConflictingModule = "// CONFLICTING_MODULE"
 

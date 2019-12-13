@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 @file:JvmName("ScopeUtils")
@@ -44,13 +33,15 @@ fun LexicalScope.getAllAccessibleVariables(name: Name): Collection<VariableDescr
 }
 
 fun LexicalScope.getAllAccessibleFunctions(name: Name): Collection<FunctionDescriptor> {
-    return getImplicitReceiversWithInstance().flatMap { it.type.memberScope.getContributedFunctions(name, NoLookupLocation.FROM_IDE) } +
-           collectFunctions(name, NoLookupLocation.FROM_IDE)
+    return getImplicitReceiversWithInstance().flatMap {
+        it.type.memberScope.getContributedFunctions(name, NoLookupLocation.FROM_IDE)
+    } + collectFunctions(name, NoLookupLocation.FROM_IDE)
 }
 
-fun LexicalScope.getVariablesFromImplicitReceivers(name: Name): Collection<VariableDescriptor> = getImplicitReceiversWithInstance().flatMap {
-    it.type.memberScope.getContributedVariables(name, NoLookupLocation.FROM_IDE)
-}
+fun LexicalScope.getVariablesFromImplicitReceivers(name: Name): Collection<VariableDescriptor> =
+    getImplicitReceiversWithInstance().flatMap {
+        it.type.memberScope.getContributedVariables(name, NoLookupLocation.FROM_IDE)
+    }
 
 fun LexicalScope.getVariableFromImplicitReceivers(name: Name): VariableDescriptor? {
     getImplicitReceiversWithInstance().forEach {
@@ -80,12 +71,12 @@ fun PsiElement.getResolutionScope(bindingContext: BindingContext): LexicalScope?
     return null
 }
 
-fun PsiElement.getResolutionScope(bindingContext: BindingContext, resolutionFacade: ResolutionFacade/*TODO: get rid of this parameter*/): LexicalScope {
-    return getResolutionScope(bindingContext) ?:
-           when (containingFile) {
-               is KtFile -> resolutionFacade.getFileResolutionScope(containingFile as KtFile)
-               else -> error("Not in KtFile")
-           }
+fun PsiElement.getResolutionScope(
+    bindingContext: BindingContext,
+    resolutionFacade: ResolutionFacade/*TODO: get rid of this parameter*/
+): LexicalScope = getResolutionScope(bindingContext) ?: when (containingFile) {
+    is KtFile -> resolutionFacade.getFileResolutionScope(containingFile as KtFile)
+    else -> error("Not in KtFile")
 }
 
 fun KtElement.getResolutionScope(): LexicalScope {

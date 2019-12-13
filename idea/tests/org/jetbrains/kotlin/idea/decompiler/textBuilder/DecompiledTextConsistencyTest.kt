@@ -34,20 +34,20 @@ import org.junit.runner.RunWith
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class DecompiledTextConsistencyTest : LightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor() =
-            object : KotlinWithJdkAndRuntimeLightProjectDescriptor() {
-                override fun getSdk() = PluginTestCaseBase.fullJdk()
-            }
+        object : KotlinWithJdkAndRuntimeLightProjectDescriptor() {
+            override fun getSdk() = PluginTestCaseBase.fullJdk()
+        }
 
     fun testConsistency() {
         for ((packageFacadeFqName, topLevelMembers) in listOf(
-                FqName("kotlin.collections.CollectionsKt") to "mutableListOf",
-                FqName("kotlin.collections.TypeAliasesKt") to null
+            FqName("kotlin.collections.CollectionsKt") to "mutableListOf",
+            FqName("kotlin.collections.TypeAliasesKt") to null
         )) {
             val classId = ClassId.topLevel(packageFacadeFqName)
             val classFile = VirtualFileFinder.SERVICE.getInstance(project).findVirtualFileWithHeader(classId)!!
 
             val module = TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
-                    project, listOf(), BindingTraceContext(), KotlinTestUtils.newConfiguration(), ::IDEPackagePartProvider
+                project, listOf(), BindingTraceContext(), KotlinTestUtils.newConfiguration(), ::IDEPackagePartProvider
             ).moduleDescriptor
 
             val projectBasedText = buildDecompiledTextForClassFile(classFile, ResolverForDecompilerImpl(module)).text
@@ -65,17 +65,17 @@ class DecompiledTextConsistencyTest : LightCodeInsightFixtureTestCase() {
 
     private inner class ResolverForDecompilerImpl(val module: ModuleDescriptor) : ResolverForDecompiler {
         override fun resolveTopLevelClass(classId: ClassId): ClassDescriptor? =
-                module.resolveTopLevelClass(classId.asSingleFqName(), NoLookupLocation.FROM_TEST)
+            module.resolveTopLevelClass(classId.asSingleFqName(), NoLookupLocation.FROM_TEST)
 
         override fun resolveDeclarationsInFacade(facadeFqName: FqName): List<DeclarationDescriptor> =
-                module.getPackage(facadeFqName.parent()).memberScope.getContributedDescriptors().filter { descriptor ->
-                    (descriptor is MemberDescriptor && descriptor !is ClassDescriptor && isFromFacade(descriptor, facadeFqName)) &&
-                    !KotlinBuiltIns.isBuiltIn(descriptor)
-                }.sortedWith(MemberComparator.INSTANCE)
+            module.getPackage(facadeFqName.parent()).memberScope.getContributedDescriptors().filter { descriptor ->
+                (descriptor is MemberDescriptor && descriptor !is ClassDescriptor && isFromFacade(descriptor, facadeFqName)) &&
+                        !KotlinBuiltIns.isBuiltIn(descriptor)
+            }.sortedWith(MemberComparator.INSTANCE)
 
         private fun isFromFacade(descriptor: MemberDescriptor, facadeFqName: FqName): Boolean =
-                descriptor is DeserializedMemberDescriptor &&
-                descriptor.isFromJvmPackagePart() &&
-                facadeFqName == JvmFileClassUtil.getPartFqNameForDeserialized(descriptor)
+            descriptor is DeserializedMemberDescriptor && descriptor.isFromJvmPackagePart() && facadeFqName == JvmFileClassUtil.getPartFqNameForDeserialized(
+                descriptor
+            )
     }
 }

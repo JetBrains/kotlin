@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -22,7 +22,6 @@ import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.updateSettings.impl.PluginDownloader
 import com.intellij.openapi.updateSettings.impl.UpdateSettings
 import com.intellij.openapi.util.JDOMUtil
@@ -94,6 +93,7 @@ class KotlinPluginUpdater : Disposable {
 
     @Volatile
     private var checkQueued = false
+
     @Volatile
     private var lastUpdateStatus: PluginUpdateStatus? = null
 
@@ -332,9 +332,11 @@ class KotlinPluginUpdater : Disposable {
         private class PluginDTO {
             var cdate: String? = null
             var channel: String? = null
+
             // `true` if the version is seen in plugin site and available for download.
             // Maybe be `false` if author requested version deletion.
             var listed: Boolean = true
+
             // `true` if version is approved and verified
             var approve: Boolean = true
         }

@@ -27,7 +27,7 @@ abstract class AbstractPullUpTest : AbstractMemberPullPushTest() {
     protected fun doKotlinTest(path: String) {
         doTest(path) { file ->
             val targetClassName = getTargetClassName(file)
-            val helper = object: KotlinPullUpHandler.TestHelper {
+            val helper = object : KotlinPullUpHandler.TestHelper {
                 override fun adjustMembers(members: List<KotlinMemberInfo>) = chooseMembers(members)
 
                 override fun chooseSuperClass(superClasses: List<PsiNamedElement>): PsiNamedElement {
@@ -59,13 +59,13 @@ abstract class AbstractPullUpTest : AbstractMemberPullPushTest() {
 
             val targetDirectory = targetClass.containingFile.containingDirectory
             val conflicts = PullUpConflictsUtil.checkConflicts(
-                    memberInfos,
-                    sourceClass,
-                    targetClass,
-                    targetDirectory.getPackage()!!,
-                    targetDirectory,
-                    { psiMethod : PsiMethod -> PullUpProcessor.checkedInterfacesContain(memberInfoList, psiMethod) },
-                    true
+                memberInfos,
+                sourceClass,
+                targetClass,
+                targetDirectory.getPackage()!!,
+                targetDirectory,
+                { psiMethod: PsiMethod -> PullUpProcessor.checkedInterfacesContain(memberInfoList, psiMethod) },
+                true
             )
             if (!conflicts.isEmpty) throw BaseRefactoringProcessor.ConflictsInTestsException(conflicts.values())
 

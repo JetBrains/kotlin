@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.intentions
@@ -48,7 +37,8 @@ class RemoveExplicitTypeArgumentsInspection : IntentionBasedInspection<KtTypeArg
         ProblemHighlightType.LIKE_UNUSED_SYMBOL
 }
 
-class RemoveExplicitTypeArgumentsIntention : SelfTargetingOffsetIndependentIntention<KtTypeArgumentList>(KtTypeArgumentList::class.java, "Remove explicit type arguments") {
+class RemoveExplicitTypeArgumentsIntention :
+    SelfTargetingOffsetIndependentIntention<KtTypeArgumentList>(KtTypeArgumentList::class.java, "Remove explicit type arguments") {
     companion object {
 
         fun isApplicableTo(element: KtTypeArgumentList, approximateFlexible: Boolean): Boolean {
@@ -71,12 +61,12 @@ class RemoveExplicitTypeArgumentsIntention : SelfTargetingOffsetIndependentInten
             newCallExpression.typeArgumentList!!.delete()
 
             val newBindingContext = expressionToAnalyze.analyzeInContext(
-                    resolutionScope,
-                    contextExpression,
-                    trace = DelegatingBindingTrace(bindingContext, "Temporary trace"),
-                    dataFlowInfo = bindingContext.getDataFlowInfoBefore(contextExpression),
-                    expectedType = expectedType ?: TypeUtils.NO_EXPECTED_TYPE,
-                    isStatement = contextExpression.isUsedAsStatement(bindingContext)
+                resolutionScope,
+                contextExpression,
+                trace = DelegatingBindingTrace(bindingContext, "Temporary trace"),
+                dataFlowInfo = bindingContext.getDataFlowInfoBefore(contextExpression),
+                expectedType = expectedType ?: TypeUtils.NO_EXPECTED_TYPE,
+                isStatement = contextExpression.isUsedAsStatement(bindingContext)
             )
 
             val newCall = newCallExpression.getResolvedCall(newBindingContext) ?: return false
@@ -87,8 +77,7 @@ class RemoveExplicitTypeArgumentsIntention : SelfTargetingOffsetIndependentInten
             fun equalTypes(type1: KotlinType, type2: KotlinType): Boolean {
                 return if (approximateFlexible) {
                     KotlinTypeChecker.DEFAULT.equalTypes(type1, type2)
-                }
-                else {
+                } else {
                     type1 == type2
                 }
             }
@@ -106,8 +95,7 @@ class RemoveExplicitTypeArgumentsIntention : SelfTargetingOffsetIndependentInten
                 if (element is KtFunctionLiteral) continue
                 if (!element.isUsedAsExpression(bindingContext)) return element to null
 
-                val parent = element.parent
-                when (parent) {
+                when (val parent = element.parent) {
                     is KtNamedFunction -> {
                         val expectedType = if (element == parent.bodyExpression && !parent.hasBlockBody() && parent.hasDeclaredReturnType())
                             (bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, parent] as? FunctionDescriptor)?.returnType

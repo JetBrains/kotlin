@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.quickfix
@@ -35,7 +24,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 
 class SpecifyOverrideExplicitlyFix(
-        element: KtClassOrObject, private val signature: String
+    element: KtClassOrObject, private val signature: String
 ) : KotlinQuickFixAction<KtClassOrObject>(element) {
 
     override fun getText() = "Specify override for '$signature' explicitly"
@@ -66,11 +55,13 @@ class SpecifyOverrideExplicitlyFix(
                 if (delegateTargetDescriptor is ValueParameterDescriptor &&
                     delegateTargetDescriptor.containingDeclaration.let {
                         it is ConstructorDescriptor &&
-                        it.isPrimary &&
-                        it.containingDeclaration == delegatedDescriptor.containingDeclaration
-                    }) {
+                                it.isPrimary &&
+                                it.containingDeclaration == delegatedDescriptor.containingDeclaration
+                    }
+                ) {
                     val delegateParameter = DescriptorToSourceUtils.descriptorToDeclaration(
-                            delegateTargetDescriptor) as? KtParameter
+                        delegateTargetDescriptor
+                    ) as? KtParameter
                     if (delegateParameter != null && !delegateParameter.hasValOrVar()) {
                         val factory = KtPsiFactory(project)
                         delegateParameter.addModifier(KtTokens.PRIVATE_KEYWORD)
@@ -79,8 +70,8 @@ class SpecifyOverrideExplicitlyFix(
                 }
 
                 val overrideMemberChooserObject = OverrideMemberChooserObject.create(
-                        project, delegatedDescriptor, overriddenDescriptor,
-                        OverrideMemberChooserObject.BodyType.Delegate(delegateTargetDescriptor.name.asString())
+                    project, delegatedDescriptor, overriddenDescriptor,
+                    OverrideMemberChooserObject.BodyType.Delegate(delegateTargetDescriptor.name.asString())
                 )
                 val member = overrideMemberChooserObject.generateMember(element, copyDoc = false)
                 val insertedMember = element.addDeclaration(member)
@@ -96,8 +87,8 @@ class SpecifyOverrideExplicitlyFix(
             val hidesOverrideError = Errors.DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE.cast(diagnostic)
             val klass = hidesOverrideError.psiElement
             if (klass.superTypeListEntries.any {
-                it is KtDelegatedSuperTypeEntry && it.delegateExpression !is KtNameReferenceExpression
-            }) {
+                    it is KtDelegatedSuperTypeEntry && it.delegateExpression !is KtNameReferenceExpression
+                }) {
                 return null
             }
             val properOverride = hidesOverrideError.a

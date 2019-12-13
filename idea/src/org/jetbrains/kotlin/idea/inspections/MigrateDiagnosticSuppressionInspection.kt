@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -35,10 +35,10 @@ class MigrateDiagnosticSuppressionInspection : AbstractKotlinInspection(), Clean
                 val newDiagnosticFactory = MIGRATION_MAP[StringUtil.unquoteString(text)] ?: continue
 
                 holder.registerProblem(
-                        expression,
-                        "Diagnostic name should be replaced by the new one",
-                        ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                        ReplaceDiagnosticNameFix(newDiagnosticFactory)
+                    expression,
+                    "Diagnostic name should be replaced by the new one",
+                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                    ReplaceDiagnosticNameFix(newDiagnosticFactory)
                 )
             }
         })
@@ -62,23 +62,23 @@ class MigrateDiagnosticSuppressionInspection : AbstractKotlinInspection(), Clean
     companion object {
 
         private val MIGRATION_MAP = mapOf(
-                "HEADER_DECLARATION_WITH_BODY" to EXPECTED_DECLARATION_WITH_BODY,
-                "HEADER_CLASS_CONSTRUCTOR_DELEGATION_CALL" to EXPECTED_CLASS_CONSTRUCTOR_DELEGATION_CALL,
-                "HEADER_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER" to EXPECTED_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER,
-                "HEADER_ENUM_CONSTRUCTOR" to EXPECTED_ENUM_CONSTRUCTOR,
-                "HEADER_ENUM_ENTRY_WITH_BODY" to EXPECTED_ENUM_ENTRY_WITH_BODY,
-                "HEADER_PROPERTY_INITIALIZER" to EXPECTED_PROPERTY_INITIALIZER,
+            "HEADER_DECLARATION_WITH_BODY" to EXPECTED_DECLARATION_WITH_BODY,
+            "HEADER_CLASS_CONSTRUCTOR_DELEGATION_CALL" to EXPECTED_CLASS_CONSTRUCTOR_DELEGATION_CALL,
+            "HEADER_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER" to EXPECTED_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER,
+            "HEADER_ENUM_CONSTRUCTOR" to EXPECTED_ENUM_CONSTRUCTOR,
+            "HEADER_ENUM_ENTRY_WITH_BODY" to EXPECTED_ENUM_ENTRY_WITH_BODY,
+            "HEADER_PROPERTY_INITIALIZER" to EXPECTED_PROPERTY_INITIALIZER,
 
-                "IMPL_TYPE_ALIAS_NOT_TO_CLASS" to ACTUAL_TYPE_ALIAS_NOT_TO_CLASS,
-                "IMPL_TYPE_ALIAS_TO_CLASS_WITH_DECLARATION_SITE_VARIANCE" to ACTUAL_TYPE_ALIAS_TO_CLASS_WITH_DECLARATION_SITE_VARIANCE,
-                "IMPL_TYPE_ALIAS_WITH_USE_SITE_VARIANCE" to ACTUAL_TYPE_ALIAS_WITH_USE_SITE_VARIANCE,
-                "IMPL_TYPE_ALIAS_WITH_COMPLEX_SUBSTITUTION" to ACTUAL_TYPE_ALIAS_WITH_COMPLEX_SUBSTITUTION,
+            "IMPL_TYPE_ALIAS_NOT_TO_CLASS" to ACTUAL_TYPE_ALIAS_NOT_TO_CLASS,
+            "IMPL_TYPE_ALIAS_TO_CLASS_WITH_DECLARATION_SITE_VARIANCE" to ACTUAL_TYPE_ALIAS_TO_CLASS_WITH_DECLARATION_SITE_VARIANCE,
+            "IMPL_TYPE_ALIAS_WITH_USE_SITE_VARIANCE" to ACTUAL_TYPE_ALIAS_WITH_USE_SITE_VARIANCE,
+            "IMPL_TYPE_ALIAS_WITH_COMPLEX_SUBSTITUTION" to ACTUAL_TYPE_ALIAS_WITH_COMPLEX_SUBSTITUTION,
 
-                "HEADER_WITHOUT_IMPLEMENTATION" to NO_ACTUAL_FOR_EXPECT,
-                "IMPLEMENTATION_WITHOUT_HEADER" to ACTUAL_WITHOUT_EXPECT,
+            "HEADER_WITHOUT_IMPLEMENTATION" to NO_ACTUAL_FOR_EXPECT,
+            "IMPLEMENTATION_WITHOUT_HEADER" to ACTUAL_WITHOUT_EXPECT,
 
-                "HEADER_CLASS_MEMBERS_ARE_NOT_IMPLEMENTED" to NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS,
-                "IMPL_MISSING" to ACTUAL_MISSING
+            "HEADER_CLASS_MEMBERS_ARE_NOT_IMPLEMENTED" to NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS,
+            "IMPL_MISSING" to ACTUAL_MISSING
         )
     }
 }

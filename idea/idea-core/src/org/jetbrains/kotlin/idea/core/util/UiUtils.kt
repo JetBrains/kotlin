@@ -11,10 +11,10 @@ import javax.swing.text.JTextComponent
 
 fun JTextComponent.onTextChange(action: (DocumentEvent) -> Unit) {
     document.addDocumentListener(
-            object : DocumentAdapter() {
-                override fun textChanged(e: DocumentEvent) {
-                    action(e)
-                }
+        object : DocumentAdapter() {
+            override fun textChanged(e: DocumentEvent) {
+                action(e)
             }
+        }
     )
 }

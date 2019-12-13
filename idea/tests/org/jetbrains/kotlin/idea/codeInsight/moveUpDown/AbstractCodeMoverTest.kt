@@ -52,7 +52,7 @@ abstract class AbstractMoveStatementTest : AbstractCodeMoverTest() {
 
 abstract class AbstractMoveLeftRightTest : AbstractCodeMoverTest() {
     protected fun doTest(path: String) {
-        doTest(path) { _, _ ->  }
+        doTest(path) { _, _ -> }
     }
 }
 
@@ -72,8 +72,7 @@ abstract class AbstractCodeMoverTest : KotlinLightCodeInsightTestCase() {
         configureByFile(path)
 
         val fileText = FileUtil.loadFile(File(path), true)
-        val direction = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// MOVE: ")
-                        ?: error("No MOVE directive found")
+        val direction = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// MOVE: ") ?: error("No MOVE directive found")
 
         val action = when (direction) {
             "up" -> MoveStatementUpAction()
@@ -111,16 +110,14 @@ abstract class AbstractCodeMoverTest : KotlinLightCodeInsightTestCase() {
             TestCase.assertEquals(isApplicableExpected, !actionDoesNothing)
 
             if (isApplicableExpected) {
-                val afterFilePath = path + ".after"
+                val afterFilePath = "$path.after"
                 try {
                     checkResultByFile(afterFilePath)
-                }
-                catch (e: ComparisonFailure) {
+                } catch (e: ComparisonFailure) {
                     KotlinTestUtils.assertEqualsToFile(File(afterFilePath), editor)
                 }
             }
-        }
-        finally {
+        } finally {
             codeStyleSettings.clearCodeStyleSettings()
         }
     }

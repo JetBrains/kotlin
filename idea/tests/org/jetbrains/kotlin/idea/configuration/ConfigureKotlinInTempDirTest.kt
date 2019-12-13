@@ -90,7 +90,10 @@ open class ConfigureKotlinInTempDirTest : AbstractConfigureKotlinInTempDirTest()
         Assert.assertEquals(true, settings.useProjectSettings)
         Assert.assertEquals("1.1", settings.languageLevel!!.description)
         Assert.assertEquals("1.1", settings.apiLevel!!.description)
-        Assert.assertEquals("-version -Xallow-kotlin-package -Xskip-metadata-version-check", settings.compilerSettings!!.additionalArguments)
+        Assert.assertEquals(
+            "-version -Xallow-kotlin-package -Xskip-metadata-version-check",
+            settings.compilerSettings!!.additionalArguments
+        )
     }
 
     fun testLoadAndSaveProjectWithV2FacetConfig() {
@@ -109,7 +112,10 @@ open class ConfigureKotlinInTempDirTest : AbstractConfigureKotlinInTempDirTest()
         application.isSaveAllowed = true
         application.saveAll()
         val moduleFileContentAfter = String(module.moduleFile!!.contentsToByteArray())
-        Assert.assertEquals(moduleFileContentBefore.replace("platform=\"Native \"", "platform=\"Native \" allPlatforms=\"Native []\""), moduleFileContentAfter)
+        Assert.assertEquals(
+            moduleFileContentBefore.replace("platform=\"Native \"", "platform=\"Native \" allPlatforms=\"Native []\""),
+            moduleFileContentAfter
+        )
     }
 
     //TODO(auskov): test parsing common target platform with multiple versions of java, add parsing common platforms
@@ -119,7 +125,10 @@ open class ConfigureKotlinInTempDirTest : AbstractConfigureKotlinInTempDirTest()
         application.isSaveAllowed = true
         application.saveAll()
         val moduleFileContentAfter = String(module.moduleFile!!.contentsToByteArray())
-        Assert.assertEquals(moduleFileContentBefore.replace("platform=\"JVM 1.8\"", "platform=\"JVM 1.8\" allPlatforms=\"JVM [1.8]\""), moduleFileContentAfter)
+        Assert.assertEquals(
+            moduleFileContentBefore.replace("platform=\"JVM 1.8\"", "platform=\"JVM 1.8\" allPlatforms=\"JVM [1.8]\""),
+            moduleFileContentAfter
+        )
     }
 
     fun testLoadAndSaveProjectHMPPFacetConfig() {
@@ -128,7 +137,10 @@ open class ConfigureKotlinInTempDirTest : AbstractConfigureKotlinInTempDirTest()
         application.isSaveAllowed = true
         application.saveAll()
         val moduleFileContentAfter = String(module.moduleFile!!.contentsToByteArray())
-        Assert.assertEquals(moduleFileContentBefore.replace("platform=\"JVM 1.8\"", "platform=\"JVM 1.8\" allPlatforms=\"JVM [1.8]\""), moduleFileContentAfter)
+        Assert.assertEquals(
+            moduleFileContentBefore.replace("platform=\"JVM 1.8\"", "platform=\"JVM 1.8\" allPlatforms=\"JVM [1.8]\""),
+            moduleFileContentAfter
+        )
     }
 
 

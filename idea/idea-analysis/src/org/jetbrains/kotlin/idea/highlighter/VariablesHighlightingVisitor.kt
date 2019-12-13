@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.highlighter
@@ -37,8 +26,8 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import org.jetbrains.kotlin.types.expressions.CaptureKind
 
-internal class VariablesHighlightingVisitor(holder: AnnotationHolder, bindingContext: BindingContext)
-    : AfterAnalysisHighlightingVisitor(holder, bindingContext) {
+internal class VariablesHighlightingVisitor(holder: AnnotationHolder, bindingContext: BindingContext) :
+    AfterAnalysisHighlightingVisitor(holder, bindingContext) {
 
     override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
         val target = bindingContext.get(REFERENCE_TARGET, expression) ?: return
@@ -91,31 +80,32 @@ internal class VariablesHighlightingVisitor(holder: AnnotationHolder, bindingCon
                     is ImplicitClassReceiver -> "Implicit receiver"
                     else -> "Unknown receiver"
                 }
-                createInfoAnnotation(expression,
-                                     "$receiverName smart cast to " + DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(type))
-                        .textAttributes = SMART_CAST_RECEIVER
+                createInfoAnnotation(
+                    expression,
+                    "$receiverName smart cast to " + DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(type)
+                ).textAttributes = SMART_CAST_RECEIVER
             }
         }
 
         val nullSmartCast = bindingContext.get(SMARTCAST_NULL, expression) == true
         if (nullSmartCast) {
-            createInfoAnnotation(expression, "Always null")
-                    .textAttributes = SMART_CONSTANT
+            createInfoAnnotation(expression, "Always null").textAttributes = SMART_CONSTANT
         }
 
         val smartCast = bindingContext.get(SMARTCAST, expression)
         if (smartCast != null) {
             val defaultType = smartCast.defaultType
             if (defaultType != null) {
-                createInfoAnnotation(getSmartCastTarget(expression),
-                                     "Smart cast to " + DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(defaultType))
-                        .textAttributes = SMART_CAST_VALUE
-            }
-            else if (smartCast is MultipleSmartCasts) {
+                createInfoAnnotation(
+                    getSmartCastTarget(expression),
+                    "Smart cast to " + DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(defaultType)
+                ).textAttributes = SMART_CAST_VALUE
+            } else if (smartCast is MultipleSmartCasts) {
                 for ((call, type) in smartCast.map) {
-                    createInfoAnnotation(getSmartCastTarget(expression),
-                                         "Smart cast to ${DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(type)} (for $call call)")
-                            .textAttributes = SMART_CAST_VALUE
+                    createInfoAnnotation(
+                        getSmartCastTarget(expression),
+                        "Smart cast to ${DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(type)} (for $call call)"
+                    ).textAttributes = SMART_CAST_VALUE
                 }
             }
         }
@@ -166,11 +156,13 @@ internal class VariablesHighlightingVisitor(holder: AnnotationHolder, bindingCon
 
             if (descriptor is PropertyDescriptor && KotlinHighlightingUtil.hasCustomPropertyDeclaration(descriptor)) {
                 val isStaticDeclaration = DescriptorUtils.isStaticDeclaration(descriptor)
-                highlightName(elementToHighlight,
-                              if (isStaticDeclaration)
-                                  PACKAGE_PROPERTY_CUSTOM_PROPERTY_DECLARATION
-                              else
-                                  INSTANCE_PROPERTY_CUSTOM_PROPERTY_DECLARATION)
+                highlightName(
+                    elementToHighlight,
+                    if (isStaticDeclaration)
+                        PACKAGE_PROPERTY_CUSTOM_PROPERTY_DECLARATION
+                    else
+                        INSTANCE_PROPERTY_CUSTOM_PROPERTY_DECLARATION
+                )
             }
         }
     }

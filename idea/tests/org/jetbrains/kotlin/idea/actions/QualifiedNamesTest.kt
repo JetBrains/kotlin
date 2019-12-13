@@ -19,8 +19,8 @@ import java.util.*
 class QualifiedNamesTest : KotlinLightCodeInsightTestCase() {
     fun testClassRef() {
         configureFromFileText_(
-                "class.kt",
-                """
+            "class.kt",
+            """
                     package foo.bar
 
                     class Klass {
@@ -37,14 +37,23 @@ class QualifiedNamesTest : KotlinLightCodeInsightTestCase() {
                     }
                 """
         )
-        assertEquals(listOf("foo.bar.Klass", "foo.bar.Klass.Nested", "foo.bar.Klass.Companion", "foo.bar.Object", "foo.bar.ClassKt#getAnonymous", null),
-                     getQualifiedNamesForDeclarations())
+        assertEquals(
+            listOf(
+                "foo.bar.Klass",
+                "foo.bar.Klass.Nested",
+                "foo.bar.Klass.Companion",
+                "foo.bar.Object",
+                "foo.bar.ClassKt#getAnonymous",
+                null
+            ),
+            getQualifiedNamesForDeclarations()
+        )
     }
 
     fun testFunRef() {
         configureFromFileText_(
-                "fun.kt",
-                """
+            "fun.kt",
+            """
                     package foo.bar
 
                     class Klass {
@@ -59,8 +68,16 @@ class QualifiedNamesTest : KotlinLightCodeInsightTestCase() {
                     val topLevelVal = ":)"
                 """
         )
-        assertEquals(listOf("foo.bar.Klass", "foo.bar.Klass#memberFun", "foo.bar.Klass#getMemberVal", "foo.bar.FunKt#topLevelFun", "foo.bar.FunKt#getTopLevelVal"),
-                     getQualifiedNamesForDeclarations())
+        assertEquals(
+            listOf(
+                "foo.bar.Klass",
+                "foo.bar.Klass#memberFun",
+                "foo.bar.Klass#getMemberVal",
+                "foo.bar.FunKt#topLevelFun",
+                "foo.bar.FunKt#getTopLevelVal"
+            ),
+            getQualifiedNamesForDeclarations()
+        )
     }
 
     private fun getQualifiedNamesForDeclarations(): List<String?> {

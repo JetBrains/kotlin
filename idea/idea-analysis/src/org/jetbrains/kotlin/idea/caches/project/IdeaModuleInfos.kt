@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -233,8 +233,11 @@ fun Module.testSourceInfo(): ModuleTestSourceInfo? = if (hasTestRoots()) ModuleT
 
 internal fun Module.correspondingModuleInfos(): List<ModuleSourceInfo> = listOf(testSourceInfo(), productionSourceInfo()).filterNotNull()
 
-private fun Module.hasProductionRoots() = hasRootsOfType(JavaSourceRootType.SOURCE) || hasRootsOfType(SourceKotlinRootType) || (isNewMPPModule && sourceType == SourceType.PRODUCTION)
-private fun Module.hasTestRoots() = hasRootsOfType(JavaSourceRootType.TEST_SOURCE) || hasRootsOfType(TestSourceKotlinRootType) || (isNewMPPModule && sourceType == SourceType.TEST)
+private fun Module.hasProductionRoots() =
+    hasRootsOfType(JavaSourceRootType.SOURCE) || hasRootsOfType(SourceKotlinRootType) || (isNewMPPModule && sourceType == SourceType.PRODUCTION)
+
+private fun Module.hasTestRoots() =
+    hasRootsOfType(JavaSourceRootType.TEST_SOURCE) || hasRootsOfType(TestSourceKotlinRootType) || (isNewMPPModule && sourceType == SourceType.TEST)
 
 private fun Module.hasRootsOfType(sourceRootType: JpsModuleSourceRootType<*>): Boolean =
     rootManager.contentEntries.any { it.getSourceFolders(sourceRootType).isNotEmpty() }
@@ -322,7 +325,8 @@ open class LibraryInfo(val project: Project, val library: Library) : IdeaModuleI
     override fun hashCode(): Int = 43 * library.hashCode()
 }
 
-data class LibrarySourceInfo(val project: Project, val library: Library, override val binariesModuleInfo: BinaryModuleInfo) : IdeaModuleInfo, SourceForBinaryModuleInfo {
+data class LibrarySourceInfo(val project: Project, val library: Library, override val binariesModuleInfo: BinaryModuleInfo) :
+    IdeaModuleInfo, SourceForBinaryModuleInfo {
 
     override val name: Name = Name.special("<sources for library ${library.name}>")
 
@@ -330,7 +334,8 @@ data class LibrarySourceInfo(val project: Project, val library: Library, overrid
         LibrarySourceScope(
             project,
             library
-        ), project)
+        ), project
+    )
 
     override fun modulesWhoseInternalsAreVisible(): Collection<ModuleInfo> {
         return createLibraryInfo(project, library)

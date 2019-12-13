@@ -126,7 +126,9 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
     // TODO: check this against kotlin-dsl branch that uses daemon
     private fun kotlinStdlibAndCompiler(gradleLibDir: File): List<File> {
         // additionally need compiler jar to load gradle resolver
-        return gradleLibDir.listFiles { file -> file.name.startsWith("kotlin-compiler-embeddable") || file.name.startsWith("kotlin-stdlib") }
+        return gradleLibDir.listFiles { file ->
+                file.name.startsWith("kotlin-compiler-embeddable") || file.name.startsWith("kotlin-stdlib")
+            }
             .firstOrNull()?.let(::listOf).orEmpty()
     }
 
@@ -214,10 +216,11 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
                 if (legacyDef.scriptExpectedLocations.contains(ScriptExpectedLocation.Project)) null
                 else {
                     // Expand scope for old gradle script definition
-                    ScriptDefinition.FromLegacy(it.hostConfiguration,
-                                                GradleKotlinScriptDefinitionFromAnnotatedTemplate(
-                                                    legacyDef
-                                                )
+                    ScriptDefinition.FromLegacy(
+                        it.hostConfiguration,
+                        GradleKotlinScriptDefinitionFromAnnotatedTemplate(
+                            legacyDef
+                        )
                     )
                 }
             } ?: it
@@ -236,10 +239,11 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
 
     // TODO: refactor - minimize
     private class ErrorGradleScriptDefinition(message: String? = null) :
-        ScriptDefinition.FromLegacy(ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration),
-                                    LegacyDefinition(
-                                        message
-                                    )
+        ScriptDefinition.FromLegacy(
+            ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration),
+            LegacyDefinition(
+                message
+            )
         ) {
 
         private class LegacyDefinition(message: String?) : KotlinScriptDefinitionAdapterFromNewAPIBase() {

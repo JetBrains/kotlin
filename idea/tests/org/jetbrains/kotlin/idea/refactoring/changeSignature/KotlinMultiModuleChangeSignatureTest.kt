@@ -44,13 +44,13 @@ class KotlinMultiModuleChangeSignatureTest : KotlinMultiFileTestCase() {
 
     private fun KotlinChangeInfo.addParameter(name: String, type: KotlinType, defaultValue: String) {
         addParameter(
-                KotlinParameterInfo(
-                        originalBaseFunctionDescriptor,
-                        -1,
-                        name,
-                        KotlinTypeInfo(false, type),
-                        defaultValueForCall = KtPsiFactory(project).createExpression(defaultValue)
-                )
+            KotlinParameterInfo(
+                originalBaseFunctionDescriptor,
+                -1,
+                name,
+                KotlinTypeInfo(false, type),
+                defaultValueForCall = KtPsiFactory(project).createExpression(defaultValue)
+            )
         )
     }
 

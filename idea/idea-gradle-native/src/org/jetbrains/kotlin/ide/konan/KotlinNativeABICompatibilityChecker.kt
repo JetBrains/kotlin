@@ -6,7 +6,8 @@
 package org.jetbrains.kotlin.ide.konan
 
 import com.intellij.ProjectTopics
-import com.intellij.notification.*
+import com.intellij.notification.Notification
+import com.intellij.notification.NotificationType
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runInEdt
@@ -135,7 +136,8 @@ class KotlinNativeABICompatibilityChecker(private val project: Project) : Projec
                 is LibraryGroup.ThirdParty -> {
                     if (libraries.size == 1) {
                         """
-                        |There is a third-party library attached to the project that was compiled with $compilerVersionText Kotlin/Native compiler and can't be read in IDE: ${libraries.single().first}
+                        |There is a third-party library attached to the project that was compiled with $compilerVersionText Kotlin/Native compiler and can't be read in IDE: ${libraries.single()
+                            .first}
                         |
                         |Please edit Gradle buildfile(s) and specify library version compatible with Kotlin/Native ${bundledRuntimeVersion()}. Then re-import the project in IDE.
                         """.trimMargin()

@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -103,7 +103,10 @@ val Module.implementedModules: List<Module>
             KotlinMultiplatformVersion.M2 -> {
                 rootManager.dependencies.filter {
                     // TODO: remove additional android check
-                    it.isNewMPPModule && it.platform.isCommon() && it.externalProjectId == externalProjectId && (isAndroidModule() || it.isTestModule == isTestModule)
+                    it.isNewMPPModule && 
+                            it.platform.isCommon() &&
+                            it.externalProjectId == externalProjectId &&
+                            (isAndroidModule() || it.isTestModule == isTestModule)
                 }
             }
 

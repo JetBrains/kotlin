@@ -36,7 +36,10 @@ fun testCompletion(
         val itemsNumber = ExpectedCompletionUtils.getExpectedNumber(fileText, platform)
         val nothingElse = ExpectedCompletionUtils.isNothingElseExpected(fileText)
 
-        Assert.assertTrue("Should be some assertions about completion", expected.size != 0 || unexpected.size != 0 || itemsNumber != null || nothingElse)
+        Assert.assertTrue(
+            "Should be some assertions about completion",
+            expected.size != 0 || unexpected.size != 0 || itemsNumber != null || nothingElse
+        )
         ExpectedCompletionUtils.assertContainsRenderedItems(expected, items, ExpectedCompletionUtils.isWithOrder(fileText), nothingElse)
         ExpectedCompletionUtils.assertNotContainsRenderedItems(unexpected, items)
 
@@ -57,8 +60,7 @@ private fun testWithAutoCompleteSetting(fileText: String, doTest: () -> Unit) {
         settings.AUTOCOMPLETE_ON_CODE_COMPLETION = autoComplete
         settings.AUTOCOMPLETE_ON_SMART_TYPE_COMPLETION = autoComplete
         doTest()
-    }
-    finally {
+    } finally {
         settings.AUTOCOMPLETE_ON_CODE_COMPLETION = oldValue1
         settings.AUTOCOMPLETE_ON_SMART_TYPE_COMPLETION = oldValue2
     }

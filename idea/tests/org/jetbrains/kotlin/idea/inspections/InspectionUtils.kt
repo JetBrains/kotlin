@@ -53,7 +53,8 @@ fun runInspection(
 
     val localInspection = when (inspection) {
         is LocalInspectionTool -> inspection
-        is GlobalInspectionTool -> inspection.sharedLocalInspectionTool ?: error("Global inspection ${inspection::class} without local counterpart")
+        is GlobalInspectionTool -> inspection.sharedLocalInspectionTool
+            ?: error("Global inspection ${inspection::class} without local counterpart")
         else -> error("Unknown class for inspection instance")
     }
 

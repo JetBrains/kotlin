@@ -111,8 +111,7 @@ object PsiElementChecker {
                 node
                 toString()
                 Assert.assertTrue(isEquivalentTo(this))
-            }
-            catch (t: Throwable) {
+            } catch (t: Throwable) {
                 throw AssertionErrorWithCause("Failed for ${this::class.java} ${this}", t)
             }
         }

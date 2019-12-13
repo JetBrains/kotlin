@@ -96,8 +96,7 @@ class PsiBasedClassResolverTest : KotlinLightCodeInsightFixtureTestCaseBase() {
     private fun doTest(fileText: String, marker: String = "@Test"): Boolean? {
         val resolver = PsiBasedClassResolver("org.junit.Test")
         resolver.addConflict("org.testng.Test")
-        val file = PsiFileFactory.getInstance(project).createFileFromText("foo.kt", KotlinFileType.INSTANCE,
-                                                                          fileText) as KtFile
+        val file = PsiFileFactory.getInstance(project).createFileFromText("foo.kt", KotlinFileType.INSTANCE, fileText) as KtFile
         val index = fileText.indexOf(marker)
         val ref = file.findElementAt(index + marker.indexOf("Test"))!!.getParentOfType<KtSimpleNameExpression>(false)!!
         val canBeTargetReference = resolver.canBeTargetReference(ref)

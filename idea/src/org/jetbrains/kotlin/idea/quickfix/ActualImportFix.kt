@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.codeInsight.KotlinCodeInsightWorkspaceSettings
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 
-internal class ImportFix(expression: KtSimpleNameExpression): AbstractImportFix(expression, MyFactory) {
+internal class ImportFix(expression: KtSimpleNameExpression) : AbstractImportFix(expression, MyFactory) {
     override fun fixSilently(editor: Editor): Boolean {
         if (isOutdated()) return false
         val element = element ?: return false

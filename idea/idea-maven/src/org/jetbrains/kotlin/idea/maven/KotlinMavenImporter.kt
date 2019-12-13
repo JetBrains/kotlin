@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.maven
@@ -127,7 +116,7 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
     private fun scheduleDownloadStdlibSources(mavenProject: MavenProject, module: Module) {
         // TODO: here we have to process all kotlin libraries but for now we only handle standard libraries
         val artifacts = mavenProject.dependencyArtifactIndex.data[KOTLIN_PLUGIN_GROUP_ID]?.values?.flatMap { it.filter { it.isResolved } }
-                ?: emptyList()
+            ?: emptyList()
 
         val librariesWithNoSources = ArrayList<Library>()
         OrderEnumerator.orderEntries(module).forEachLibrary { library ->
@@ -164,13 +153,16 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
             val explicitOutputFile = it.configurationElement?.getChild("outputFile")?.text ?: sharedOutputFile
             if (PomFile.KotlinGoals.Js in it.goals) {
                 // see org.jetbrains.kotlin.maven.K2JSCompilerMojo
-                val outputFilePath = PathUtil.toSystemDependentName(explicitOutputFile ?: "$buildDirectory/js/${mavenProject.mavenId.artifactId}.js")
+                val outputFilePath =
+                    PathUtil.toSystemDependentName(explicitOutputFile ?: "$buildDirectory/js/${mavenProject.mavenId.artifactId}.js")
                 compilerModuleExtension.setCompilerOutputPath(parentPath(outputFilePath))
                 facetSettings.productionOutputPath = outputFilePath
             }
             if (PomFile.KotlinGoals.TestJs in it.goals) {
                 // see org.jetbrains.kotlin.maven.KotlinTestJSCompilerMojo
-                val outputFilePath = PathUtil.toSystemDependentName(explicitOutputFile ?: "$buildDirectory/test-js/${mavenProject.mavenId.artifactId}-tests.js")
+                val outputFilePath = PathUtil.toSystemDependentName(
+                    explicitOutputFile ?: "$buildDirectory/test-js/${mavenProject.mavenId.artifactId}-tests.js"
+                )
                 compilerModuleExtension.setCompilerOutputPathForTests(parentPath(outputFilePath))
                 facetSettings.testOutputPath = outputFilePath
             }
@@ -184,10 +176,10 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
     ): List<String> {
         val arguments = platform.createArguments()
 
-        arguments.apiVersion = configuration?.getChild("apiVersion")?.text ?:
-                mavenProject.properties["kotlin.compiler.apiVersion"]?.toString()
-        arguments.languageVersion = configuration?.getChild("languageVersion")?.text ?:
-                mavenProject.properties["kotlin.compiler.languageVersion"]?.toString()
+        arguments.apiVersion =
+            configuration?.getChild("apiVersion")?.text ?: mavenProject.properties["kotlin.compiler.apiVersion"]?.toString()
+        arguments.languageVersion =
+            configuration?.getChild("languageVersion")?.text ?: mavenProject.properties["kotlin.compiler.languageVersion"]?.toString()
         arguments.multiPlatform = configuration?.getChild("multiPlatform")?.text?.trim()?.toBoolean() ?: false
         arguments.suppressWarnings = configuration?.getChild("nowarn")?.text?.trim()?.toBoolean() ?: false
 
@@ -199,8 +191,8 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
             is K2JVMCompilerArguments -> {
                 arguments.classpath = configuration?.getChild("classpath")?.text
                 arguments.jdkHome = configuration?.getChild("jdkHome")?.text
-                arguments.jvmTarget = configuration?.getChild("jvmTarget")?.text ?:
-                        mavenProject.properties["kotlin.compiler.jvmTarget"]?.toString()
+                arguments.jvmTarget =
+                    configuration?.getChild("jvmTarget")?.text ?: mavenProject.properties["kotlin.compiler.jvmTarget"]?.toString()
                 arguments.javaParameters = configuration?.getChild("javaParameters")?.text?.toBoolean() ?: false
             }
             is K2JSCompilerArguments -> {
@@ -266,7 +258,7 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
         val configuration = mavenPlugin.configurationElement
         val sharedArguments = getCompilerArgumentsByConfigurationElement(mavenProject, configuration, configuredPlatform)
         val executionArguments = mavenPlugin.executions
-            ?.firstOrNull { it.goals.any { it in compilationGoals } }
+            ?.firstOrNull { it.goals.any { s -> s in compilationGoals } }
             ?.configurationElement?.let { getCompilerArgumentsByConfigurationElement(mavenProject, it, configuredPlatform) }
         parseCompilerArgumentsToFacet(sharedArguments, emptyList(), kotlinFacet, modifiableModelsProvider)
         if (executionArguments != null) {
@@ -338,7 +330,8 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
             .any { it in PomFile.KotlinGoals.CompileGoals && it !in PomFile.KotlinGoals.JvmGoals }
 
         val prodSourceRootType: JpsModuleSourceRootType<*> = if (isNonJvmModule) SourceKotlinRootType else JavaSourceRootType.SOURCE
-        val testSourceRootType: JpsModuleSourceRootType<*> = if (isNonJvmModule) TestSourceKotlinRootType else JavaSourceRootType.TEST_SOURCE
+        val testSourceRootType: JpsModuleSourceRootType<*> =
+            if (isNonJvmModule) TestSourceKotlinRootType else JavaSourceRootType.TEST_SOURCE
 
         for ((type, dir) in directories) {
             if (rootModel.getSourceFolder(File(dir)) == null) {
@@ -392,7 +385,7 @@ private fun MavenPlugin.isKotlinPlugin() =
 
 private fun Element?.sourceDirectories(): List<String> =
     this?.getChildren(KotlinMavenImporter.KOTLIN_PLUGIN_SOURCE_DIRS_CONFIG)?.flatMap { it.children ?: emptyList() }?.map { it.textTrim }
-            ?: emptyList()
+        ?: emptyList()
 
 private fun MavenPlugin.Execution.sourceType() =
     goals.map { if (isTestGoalName(it)) SourceType.TEST else SourceType.PROD }

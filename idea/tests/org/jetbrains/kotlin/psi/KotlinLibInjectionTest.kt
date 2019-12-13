@@ -22,23 +22,23 @@ class KotlinLibInjectionTest : AbstractInjectionTest() {
     }
 
     fun testFunInjection() = assertInjectionPresent(
-            """
+        """
             import injection.html
             fun test() {
                 12.html("<caret><html></html>")
             }
             """,
-            HTMLLanguage.INSTANCE.id
+        HTMLLanguage.INSTANCE.id
     )
 
     fun testFunInjectionWithImportedAnnotation() = assertInjectionPresent(
-            """
+        """
             import injection.regexp
             fun test() {
                 12.regexp("<caret>test")
             }
             """,
-            RegExpLanguage.INSTANCE.id
+        RegExpLanguage.INSTANCE.id
     )
 
     private fun assertInjectionPresent(@Language("kotlin") text: String, languageId: String) {
@@ -48,9 +48,10 @@ class KotlinLibInjectionTest : AbstractInjectionTest() {
 
     override fun getProjectDescriptor(): LightProjectDescriptor {
         val ideaSdkPath = System.getProperty("idea.home.path")?.takeIf { File(it).isDirectory }
-                          ?: throw RuntimeException("Unable to get a valid path from 'idea.home.path' property, please point it to the Idea location")
+            ?: throw RuntimeException("Unable to get a valid path from 'idea.home.path' property, please point it to the Idea location")
         return SdkAndMockLibraryProjectDescriptor(
-                PluginTestCaseBase.getTestDataPathBase() + "/injection/lib/", false, false, false, true,
-                listOf(File(ideaSdkPath, "lib/annotations.jar").absolutePath))
+            PluginTestCaseBase.getTestDataPathBase() + "/injection/lib/", false, false, false, true,
+            listOf(File(ideaSdkPath, "lib/annotations.jar").absolutePath)
+        )
     }
 }

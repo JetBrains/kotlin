@@ -37,7 +37,7 @@ abstract class AbstractSlicerTest : KotlinLightCodeInsightFixtureTestCase() {
     }
 
     companion object {
-        private val SliceNode.sortedChildren : List<SliceNode>
+        private val SliceNode.sortedChildren: List<SliceNode>
             get() = children.sortedBy { it.value.element?.startOffset ?: -1 }
 
         @JvmStatic
@@ -76,11 +76,11 @@ abstract class AbstractSlicerTest : KotlinLightCodeInsightFixtureTestCase() {
                             if (usage is KotlinSliceUsage) {
                                 append("[LAMBDA] ".repeat(usage.lambdaLevel))
                             }
-                            chunks.slice(1..chunks.size - 1).joinTo(
-                                    this,
-                                    separator = "",
-                                    prefix = if (isDuplicated) "DUPLICATE: " else "",
-                                    postfix = "\n"
+                            chunks.slice(1 until chunks.size).joinTo(
+                                this,
+                                separator = "",
+                                prefix = if (isDuplicated) "DUPLICATE: " else "",
+                                postfix = "\n"
                             ) { it.render() }
                         }
                     }

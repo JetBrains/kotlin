@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -32,9 +32,9 @@ class KotlinFunDeclarationRangeHandler : DeclarationRangeHandler<KtDeclarationWi
         val prevSibling = body.getPrevSiblingIgnoringWhitespaceAndComments()
         return TextRange(
             (container as? KtNamedFunction)?.funKeyword?.startOffset
-                    ?: (container as? PsiNameIdentifierOwner)?.nameIdentifier?.startOffset
-                    ?: container.modifierList?.startOffset
-                    ?: container.startOffset,
+                ?: (container as? PsiNameIdentifierOwner)?.nameIdentifier?.startOffset
+                ?: container.modifierList?.startOffset
+                ?: container.startOffset,
             prevSibling?.endOffset ?: body.startOffset
         )
     }

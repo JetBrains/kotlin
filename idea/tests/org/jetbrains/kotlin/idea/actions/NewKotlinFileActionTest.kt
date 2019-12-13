@@ -11,10 +11,10 @@ import org.junit.Assert
 import org.junit.runner.RunWith
 
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
-class NewKotlinFileActionTest: LightCodeInsightFixtureTestCase() {
+class NewKotlinFileActionTest : LightCodeInsightFixtureTestCase() {
     companion object {
-        private val EMPTY_PARTS_ERROR = "Name can't have empty parts"
-        private val EMPTY_ERROR = "Name can't be empty"
+        private const val EMPTY_PARTS_ERROR = "Name can't have empty parts"
+        private const val EMPTY_ERROR = "Name can't be empty"
     }
 
     fun testEmptyName() {

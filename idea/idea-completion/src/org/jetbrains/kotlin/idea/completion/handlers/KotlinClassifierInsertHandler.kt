@@ -45,7 +45,8 @@ object KotlinClassifierInsertHandler : BaseDeclarationInsertHandler() {
                 val document = context.document
 
                 val lookupObject = item.`object` as DeclarationLookupObject
-                if (lookupObject.descriptor?.isArtificialImportAliasedDescriptor == true) return // never need to insert import or use qualified name for import-aliased class
+                // never need to insert import or use qualified name for import-aliased class
+                if (lookupObject.descriptor?.isArtificialImportAliasedDescriptor == true) return
 
                 val qualifiedName = qualifiedName(lookupObject)
 

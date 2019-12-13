@@ -49,8 +49,8 @@ class StringTemplateExpressionManipulatorTest : KotlinLightCodeInsightFixtureTes
     }
 
     fun testReplaceRange() {
-        doTestContentChange("\"abc\"", "x", range = TextRange(2,3), expected = "\"axc\"")
-        doTestContentChange("\"\"\"abc\"\"\"", "x", range = TextRange(4,5), expected = "\"\"\"axc\"\"\"")
+        doTestContentChange("\"abc\"", "x", range = TextRange(2, 3), expected = "\"axc\"")
+        doTestContentChange("\"\"\"abc\"\"\"", "x", range = TextRange(4, 5), expected = "\"\"\"axc\"\"\"")
         doTestContentChange(
             "\"<div style = \\\"default\\\">\${foo(\"\")}</div>\"",
             "custom", range = TextRange(16, 23),
@@ -77,7 +77,11 @@ class StringTemplateExpressionManipulatorTest : KotlinLightCodeInsightFixtureTes
     private fun doTestContentChange(original: String, newContent: String, expected: String, range: TextRange? = null) {
         val expression = KtPsiFactory(project).createExpression(original) as KtStringTemplateExpression
         val manipulator = ElementManipulators.getNotNullManipulator(expression)
-        val newExpression = if (range == null) manipulator.handleContentChange(expression, newContent) else manipulator.handleContentChange(expression, range, newContent)
+        val newExpression = if (range == null) manipulator.handleContentChange(expression, newContent) else manipulator.handleContentChange(
+            expression,
+            range,
+            newContent
+        )
         assertEquals(expected, newExpression?.text)
     }
 

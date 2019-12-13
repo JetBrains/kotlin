@@ -18,15 +18,15 @@ import java.util.*
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class StringInjectionHostTest : KotlinTestWithEnvironment() {
     fun testRegular() {
-        with (quoted("")) {
+        with(quoted("")) {
             checkInjection("", mapOf(0 to 1))
             assertOneLine()
         }
-        with (quoted("a")) {
+        with(quoted("a")) {
             checkInjection("a", mapOf(0 to 1, 1 to 2))
             assertOneLine()
         }
-        with (quoted("ab")) {
+        with(quoted("ab")) {
             checkInjection("ab", mapOf(0 to 1, 1 to 2, 2 to 3))
             checkInjection("a", mapOf(0 to 1, 1 to 2), rangeInHost = TextRange(1, 2))
             checkInjection("b", mapOf(0 to 2, 1 to 3), rangeInHost = TextRange(2, 3))
@@ -45,14 +45,14 @@ class StringInjectionHostTest : KotlinTestWithEnvironment() {
     }
 
     fun testEscapeSequences() {
-        with (quoted("\\t")) {
+        with(quoted("\\t")) {
             checkInjection("\t", mapOf(0 to 1, 1 to 3))
             assertNoInjection(TextRange(1, 2))
             assertNoInjection(TextRange(2, 3))
             assertOneLine()
         }
 
-        with (quoted("a\\tb")) {
+        with(quoted("a\\tb")) {
             checkInjection("a\tb", mapOf(0 to 1, 1 to 2, 2 to 4, 3 to 5))
             checkInjection("a", mapOf(0 to 1, 1 to 2), rangeInHost = TextRange(1, 2))
             assertNoInjection(TextRange(1, 3))
@@ -64,15 +64,15 @@ class StringInjectionHostTest : KotlinTestWithEnvironment() {
     }
 
     fun testTripleQuotes() {
-        with (tripleQuoted("")) {
+        with(tripleQuoted("")) {
             checkInjection("", mapOf(0 to 3))
             assertMultiLine()
         }
-        with (tripleQuoted("a")) {
+        with(tripleQuoted("a")) {
             checkInjection("a", mapOf(0 to 3, 1 to 4))
             assertMultiLine()
         }
-        with (tripleQuoted("ab")) {
+        with(tripleQuoted("ab")) {
             checkInjection("ab", mapOf(0 to 3, 1 to 4, 2 to 5))
             checkInjection("a", mapOf(0 to 3, 1 to 4), rangeInHost = TextRange(3, 4))
             checkInjection("b", mapOf(0 to 4, 1 to 5), rangeInHost = TextRange(4, 5))
@@ -81,7 +81,7 @@ class StringInjectionHostTest : KotlinTestWithEnvironment() {
     }
 
     fun testEscapeSequenceInTripleQuotes() {
-        with (tripleQuoted("\\t")) {
+        with(tripleQuoted("\\t")) {
             checkInjection("\\t", mapOf(0 to 3, 1 to 4, 2 to 5))
             checkInjection("\\", mapOf(0 to 3, 1 to 4), rangeInHost = TextRange(3, 4))
             checkInjection("t", mapOf(0 to 4, 1 to 5), rangeInHost = TextRange(4, 5))
@@ -90,7 +90,7 @@ class StringInjectionHostTest : KotlinTestWithEnvironment() {
     }
 
     fun testMultiLine() {
-        with (tripleQuoted("a\nb")) {
+        with(tripleQuoted("a\nb")) {
             checkInjection("a\nb", mapOf(0 to 3, 1 to 4, 2 to 5, 3 to 6))
             assertMultiLine()
         }
@@ -145,14 +145,14 @@ class StringInjectionHostTest : KotlinTestWithEnvironment() {
     }
 
     private fun checkAllRanges(str: String) {
-        with (quoted(str)) {
+        with(quoted(str)) {
             checkInjection(str, (0..str.length).keysToMap { it + 1 })
             assertOneLine()
         }
     }
 
     private fun KtStringTemplateExpression.checkInjection(
-            decoded: String, targetToSourceOffsets: Map<Int, Int>, rangeInHost: TextRange? = null
+        decoded: String, targetToSourceOffsets: Map<Int, Int>, rangeInHost: TextRange? = null
     ) {
         assertTrue(isValidHost)
         for (prefix in listOf("", "prefix")) {

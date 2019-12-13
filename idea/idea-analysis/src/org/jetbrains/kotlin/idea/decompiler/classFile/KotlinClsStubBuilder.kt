@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.decompiler.classFile
@@ -103,7 +92,7 @@ open class KotlinClsStubBuilder : ClsStubBuilder() {
                 val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(annotationData, strings)
                 val context = components.createContext(nameResolver, packageFqName, TypeTable(packageProto.typeTable))
                 val fqName = header.packageName?.let { ClassId(FqName(it), classId.relativeClassName, classId.isLocal).asSingleFqName() }
-                             ?: classId.asSingleFqName()
+                    ?: classId.asSingleFqName()
                 createFileFacadeStub(packageProto, fqName, context)
             }
             else -> throw IllegalStateException("Should have processed " + file.path + " with header $header")
@@ -130,9 +119,9 @@ open class KotlinClsStubBuilder : ClsStubBuilder() {
 }
 
 class AnnotationLoaderForClassFileStubBuilder(
-        kotlinClassFinder: KotlinClassFinder,
-        private val cachedFile: VirtualFile,
-        private val cachedFileContent: ByteArray
+    kotlinClassFinder: KotlinClassFinder,
+    private val cachedFile: VirtualFile,
+    private val cachedFileContent: ByteArray
 ) : AbstractBinaryClassAnnotationAndConstantLoader<ClassId, Unit>(LockBasedStorageManager.NO_LOCKS, kotlinClassFinder) {
 
     override fun getCachedFileContent(kotlinClass: KotlinJvmBinaryClass): ByteArray? {
@@ -142,15 +131,14 @@ class AnnotationLoaderForClassFileStubBuilder(
         return null
     }
 
-    override fun loadTypeAnnotation(proto: ProtoBuf.Annotation, nameResolver: NameResolver): ClassId =
-            nameResolver.getClassId(proto.id)
+    override fun loadTypeAnnotation(proto: ProtoBuf.Annotation, nameResolver: NameResolver): ClassId = nameResolver.getClassId(proto.id)
 
     override fun loadConstant(desc: String, initializer: Any) = null
 
     override fun transformToUnsignedConstant(constant: Unit) = null
 
     override fun loadAnnotation(
-            annotationClassId: ClassId, source: SourceElement, result: MutableList<ClassId>
+        annotationClassId: ClassId, source: SourceElement, result: MutableList<ClassId>
     ): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
         result.add(annotationClassId)
         return null

@@ -43,7 +43,7 @@ class NoErrorsInStdlibTest : KotlinLightCodeInsightFixtureTestCase() {
                     if (errors.isNotEmpty()) {
                         System.err.println("${psiFile.getName()}: ${errors.size} errors")
                         AnalyzerWithCompilerReport.reportDiagnostics(
-                                bindingContext.diagnostics, PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, false)
+                            bindingContext.diagnostics, PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, false)
                         )
 
                         totalErrors += errors.size

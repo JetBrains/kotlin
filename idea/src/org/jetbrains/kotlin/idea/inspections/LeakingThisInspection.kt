@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -56,7 +56,9 @@ class LeakingThisInspection : AbstractKotlinInspection() {
                         val function = leakingThisDescriptor.function
                         klass.createDescription("Calling non-final function ${function.name} in constructor") {
                             it.hasOverriddenMember { owner ->
-                                owner is KtNamedFunction && owner.name == function.name.asString() && owner.valueParameters.size == function.valueParameters.size
+                                owner is KtNamedFunction &&
+                                        owner.name == function.name.asString() &&
+                                        owner.valueParameters.size == function.valueParameters.size
                             }
                         } ?: continue@these
                     }

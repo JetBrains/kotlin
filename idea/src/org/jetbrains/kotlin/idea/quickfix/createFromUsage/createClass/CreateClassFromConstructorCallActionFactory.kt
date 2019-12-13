@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass
@@ -29,7 +18,7 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.ifEmpty
 import java.util.*
 
-object CreateClassFromConstructorCallActionFactory: CreateClassFromUsageFactory<KtCallExpression>() {
+object CreateClassFromConstructorCallActionFactory : CreateClassFromUsageFactory<KtCallExpression>() {
     override fun getElementOfInterest(diagnostic: Diagnostic): KtCallExpression? {
         val diagElement = diagnostic.psiElement
         if (diagElement.getNonStrictParentOfType<KtTypeReference>() != null) return null
@@ -68,8 +57,7 @@ object CreateClassFromConstructorCallActionFactory: CreateClassFromUsageFactory<
         if (!inAnnotationEntry && !name.checkClassName()) return null
 
         val callParent = callExpr.parent
-        val fullCallExpr =
-                if (callParent is KtQualifiedExpression && callParent.selectorExpression == callExpr) callParent else callExpr
+        val fullCallExpr = if (callParent is KtQualifiedExpression && callParent.selectorExpression == callExpr) callParent else callExpr
 
         val (context, moduleDescriptor) = callExpr.analyzeAndGetResult()
 
@@ -82,8 +70,11 @@ object CreateClassFromConstructorCallActionFactory: CreateClassFromUsageFactory<
         val anyType = moduleDescriptor.builtIns.nullableAnyType
         val parameterInfos = valueArguments.map {
             ParameterInfo(
-                    it.getArgumentExpression()?.let { TypeInfo(it, Variance.IN_VARIANCE) } ?: TypeInfo(anyType, Variance.IN_VARIANCE),
-                    it.getArgumentName()?.referenceExpression?.getReferencedName() ?: defaultParamName
+                it.getArgumentExpression()?.let { expression -> TypeInfo(expression, Variance.IN_VARIANCE) } ?: TypeInfo(
+                    anyType,
+                    Variance.IN_VARIANCE
+                ),
+                it.getArgumentName()?.referenceExpression?.getReferencedName() ?: defaultParamName
             )
         }
 
@@ -98,12 +89,12 @@ object CreateClassFromConstructorCallActionFactory: CreateClassFromUsageFactory<
         val typeArgumentInfos = if (inAnnotationEntry) Collections.emptyList() else callExpr.getTypeInfoForTypeArguments()
 
         return ClassInfo(
-                name = name,
-                targetParents = filteredParents,
-                expectedTypeInfo = expectedTypeInfo,
-                inner = inner,
-                typeArguments = typeArgumentInfos,
-                parameterInfos = parameterInfos
+            name = name,
+            targetParents = filteredParents,
+            expectedTypeInfo = expectedTypeInfo,
+            inner = inner,
+            typeArguments = typeArgumentInfos,
+            parameterInfos = parameterInfos
         )
     }
 }

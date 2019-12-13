@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.intentions
@@ -26,7 +15,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isBooleanOrNullableBoolean
 
 class NullableBooleanEqualityCheckToElvisIntention : SelfTargetingIntention<KtBinaryExpression>(
-        KtBinaryExpression::class.java, "Convert Boolean? == const to elvis"
+    KtBinaryExpression::class.java, "Convert Boolean? == const to elvis"
 ) {
     override fun isApplicableTo(element: KtBinaryExpression, caretOffset: Int): Boolean {
         if (element.operationToken != KtTokens.EQEQ && element.operationToken != KtTokens.EXCLEQ) return false
@@ -44,8 +33,7 @@ class NullableBooleanEqualityCheckToElvisIntention : SelfTargetingIntention<KtBi
 
     override fun applyTo(element: KtBinaryExpression, editor: Editor?) {
         val equality = element.operationToken == KtTokens.EQEQ
-        val constPart = element.left as? KtConstantExpression ?:
-                        element.right as? KtConstantExpression ?: return
+        val constPart = element.left as? KtConstantExpression ?: element.right as? KtConstantExpression ?: return
         val exprPart = (if (element.right == constPart) element.left else element.right) ?: return
         val constValue = when {
             KtPsiUtil.isTrueConstant(constPart) -> true

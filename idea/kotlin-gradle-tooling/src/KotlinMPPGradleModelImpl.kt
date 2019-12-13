@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.tasks.Exec
 import java.io.File
-import kotlin.collections.HashSet
 
 class KotlinSourceSetProto(
     val name: String,
@@ -28,6 +27,7 @@ class KotlinSourceSetProto(
     )
 
 }
+
 class KotlinSourceSetImpl(
     override val name: String,
     override val languageSettings: KotlinLanguageSettings,
@@ -177,9 +177,10 @@ data class KotlinTargetImpl(
             }
         }.toList(),
         target.testTasks.map { initialTestTask ->
-            (cloningCache[initialTestTask] as? KotlinTestTask) ?: KotlinTestTaskImpl(initialTestTask.taskName, initialTestTask.compilationName).also {
-                cloningCache[initialTestTask] = it
-            }
+            (cloningCache[initialTestTask] as? KotlinTestTask)
+                ?: KotlinTestTaskImpl(initialTestTask.taskName, initialTestTask.compilationName).also {
+                    cloningCache[initialTestTask] = it
+                }
         },
         KotlinTargetJarImpl(target.jar?.archiveFile),
         target.konanArtifacts.map { KonanArtifactModelImpl(it) }.toList()

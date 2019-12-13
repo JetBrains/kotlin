@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.quickfix
@@ -36,7 +25,8 @@ import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 
-class InsertDelegationCallQuickfix(val isThis: Boolean, element: KtSecondaryConstructor) : KotlinQuickFixAction<KtSecondaryConstructor>(element) {
+class InsertDelegationCallQuickfix(val isThis: Boolean, element: KtSecondaryConstructor) :
+    KotlinQuickFixAction<KtSecondaryConstructor>(element) {
     override fun getText() = KotlinBundle.message("insert.delegation.call", keywordToUse)
     override fun getFamilyName() = "Insert explicit delegation call"
 
@@ -50,7 +40,7 @@ class InsertDelegationCallQuickfix(val isThis: Boolean, element: KtSecondaryCons
         val descriptor = element.unsafeResolveToDescriptor()
 
         // if empty call is ok and it's resolved to another constructor, do not move caret
-        if (resolvedCall?.isReallySuccess() ?: false && resolvedCall!!.candidateDescriptor.original != descriptor) return
+        if (resolvedCall?.isReallySuccess() == true && resolvedCall.candidateDescriptor.original != descriptor) return
 
         val leftParOffset = newDelegationCall.valueArgumentList!!.leftParenthesis!!.textOffset
 
@@ -63,13 +53,14 @@ class InsertDelegationCallQuickfix(val isThis: Boolean, element: KtSecondaryCons
     }
 
     object InsertThisDelegationCallFactory : KotlinSingleIntentionActionFactory() {
-        override fun createAction(diagnostic: Diagnostic) = diagnostic.createIntentionForFirstParentOfType<KtSecondaryConstructor> {
-            secondaryConstructor ->
-            if (secondaryConstructor.getContainingClassOrObject().getConstructorsCount() <= 1 ||
-                !secondaryConstructor.hasImplicitDelegationCall()) return null
-
-            return InsertDelegationCallQuickfix(isThis = true, element = secondaryConstructor)
-        }
+        override fun createAction(diagnostic: Diagnostic) =
+            diagnostic.createIntentionForFirstParentOfType<KtSecondaryConstructor> { secondaryConstructor ->
+                return if (secondaryConstructor.getContainingClassOrObject().getConstructorsCount() <= 1 ||
+                    !secondaryConstructor.hasImplicitDelegationCall()
+                ) null
+                else
+                    InsertDelegationCallQuickfix(isThis = true, element = secondaryConstructor)
+            }
 
         private fun KtClassOrObject.getConstructorsCount() = (descriptor as ClassDescriptor).constructors.size
     }

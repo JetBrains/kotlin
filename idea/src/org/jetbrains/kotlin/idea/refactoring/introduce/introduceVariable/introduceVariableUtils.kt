@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable
@@ -41,9 +30,9 @@ import org.jetbrains.kotlin.util.isValidOperator
 import java.util.*
 
 private fun getApplicableComponentFunctions(
-        contextExpression: KtExpression,
-        receiverType: KotlinType?,
-        receiverExpression: KtExpression?
+    contextExpression: KtExpression,
+    receiverType: KotlinType?,
+    receiverExpression: KtExpression?
 ): List<FunctionDescriptor> {
     val facade = contextExpression.getResolutionFacade()
     val context = facade.analyze(contextExpression)
@@ -53,32 +42,32 @@ private fun getApplicableComponentFunctions(
     PrimitiveType.values().mapTo(forbiddenClasses) { builtIns.getPrimitiveArrayClassDescriptor(it) }
 
     (receiverType ?: context.getType(contextExpression))?.let {
-        if ((listOf(it) + it.supertypes()).any {
-            val fqName = it.constructor.declarationDescriptor?.importableFqName
-            forbiddenClasses.any { it.fqNameSafe == fqName }
-        }) return emptyList()
+        if ((listOf(it) + it.supertypes()).any { type ->
+                val fqName = type.constructor.declarationDescriptor?.importableFqName
+                forbiddenClasses.any { descriptor -> descriptor.fqNameSafe == fqName }
+            }
+        ) return emptyList()
     }
 
     val scope = contextExpression.getResolutionScope(context, facade)
 
     val psiFactory = KtPsiFactory(contextExpression)
     @Suppress("UNCHECKED_CAST")
-    return generateSequence(1) { it + 1 }
-            .map {
-                val componentCallExpr = psiFactory.createExpressionByPattern("$0.$1", receiverExpression ?: contextExpression, "component$it()")
-                val newContext = componentCallExpr.analyzeInContext(scope, contextExpression)
-                componentCallExpr.getResolvedCall(newContext)?.resultingDescriptor as? FunctionDescriptor
-            }
-            .takeWhile { it != null && it.isValidOperator() }
-            .toList() as List<FunctionDescriptor>
+    return generateSequence(1) { it + 1 }.map {
+            val componentCallExpr = psiFactory.createExpressionByPattern("$0.$1", receiverExpression ?: contextExpression, "component$it()")
+            val newContext = componentCallExpr.analyzeInContext(scope, contextExpression)
+            componentCallExpr.getResolvedCall(newContext)?.resultingDescriptor as? FunctionDescriptor
+        }
+        .takeWhile { it != null && it.isValidOperator() }
+        .toList() as List<FunctionDescriptor>
 }
 
 internal fun chooseApplicableComponentFunctions(
-        contextExpression: KtExpression,
-        editor: Editor?,
-        type: KotlinType? = null,
-        receiverExpression: KtExpression? = null,
-        callback: (List<FunctionDescriptor>) -> Unit
+    contextExpression: KtExpression,
+    editor: Editor?,
+    type: KotlinType? = null,
+    receiverExpression: KtExpression? = null,
+    callback: (List<FunctionDescriptor>) -> Unit
 ) {
     val functions = getApplicableComponentFunctions(contextExpression, type, receiverExpression)
     if (functions.size <= 1) return callback(emptyList())
@@ -89,20 +78,20 @@ internal fun chooseApplicableComponentFunctions(
 
     val list = JBList<String>("Create single variable", "Create destructuring declaration")
     JBPopupFactory.getInstance()
-            .createListPopupBuilder(list)
-            .setMovable(true)
-            .setResizable(false)
-            .setRequestFocus(true)
-            .setItemChoosenCallback { callback(if (list.selectedIndex == 0) emptyList() else functions) }
-            .createPopup()
-            .showInBestPositionFor(editor)
+        .createListPopupBuilder(list)
+        .setMovable(true)
+        .setResizable(false)
+        .setRequestFocus(true)
+        .setItemChoosenCallback { callback(if (list.selectedIndex == 0) emptyList() else functions) }
+        .createPopup()
+        .showInBestPositionFor(editor)
 }
 
 internal fun suggestNamesForComponent(descriptor: FunctionDescriptor, project: Project, validator: (String) -> Boolean): Set<String> {
     return LinkedHashSet<String>().apply {
         val descriptorName = descriptor.name.asString()
         val componentName = (DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor) as? PsiNamedElement)?.name
-                            ?: descriptorName
+            ?: descriptorName
         if (componentName == descriptorName) {
             descriptor.returnType?.let { addAll(KotlinNameSuggester.suggestNamesByType(it, validator)) }
         }

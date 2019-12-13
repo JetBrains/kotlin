@@ -20,7 +20,7 @@ import java.util.Collections.synchronizedList
 object LightClassComputationControl {
     fun testWithControl(project: Project, testText: String, testBody: () -> Unit) {
         val expectedLightClassFqNames = InTextDirectivesUtils.findLinesWithPrefixesRemoved(
-                testText, "// $LIGHT_CLASS_DIRECTIVE"
+            testText, "// $LIGHT_CLASS_DIRECTIVE"
         ).map { it.trim() }
 
         val actualFqNames = synchronizedList(ArrayList<String>())
@@ -37,14 +37,14 @@ object LightClassComputationControl {
 
         if (expectedLightClassFqNames.toSortedSet() != synchronized(actualFqNames) { actualFqNames.toSortedSet() }) {
             Assert.fail(
-                    "Expected to compute: ${expectedLightClassFqNames.prettyToString()}\n" +
-                    "Actually computed: ${actualFqNames.prettyToString()}\n" +
-                    "Use $LIGHT_CLASS_DIRECTIVE to specify expected light class computations"
+                "Expected to compute: ${expectedLightClassFqNames.prettyToString()}\n" +
+                        "Actually computed: ${actualFqNames.prettyToString()}\n" +
+                        "Use $LIGHT_CLASS_DIRECTIVE to specify expected light class computations"
             )
         }
     }
 
-    val LIGHT_CLASS_DIRECTIVE = "LIGHT_CLASS:"
+    const val LIGHT_CLASS_DIRECTIVE = "LIGHT_CLASS:"
 
     private fun List<String>.prettyToString() = if (isEmpty()) "<empty>" else joinToString()
 }
@@ -56,8 +56,7 @@ inline fun <reified T : Any, R> ComponentManager.withServiceRegistered(instance:
         picoContainer.unregisterComponent(key)
         picoContainer.registerComponentInstance(key, instance)
         return body()
-    }
-    finally {
+    } finally {
         picoContainer.unregisterComponent(key)
     }
 }

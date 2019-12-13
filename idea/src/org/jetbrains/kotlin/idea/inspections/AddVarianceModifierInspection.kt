@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -32,9 +32,9 @@ class AddVarianceModifierInspection : AbstractKotlinInspection() {
         }
         for (member in klass.declarations + klass.primaryConstructorParameters) {
             val descriptor = when (member) {
-                                 is KtParameter -> context.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, member)
-                                 else -> context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, member)
-                             } as? MemberDescriptor ?: continue
+                is KtParameter -> context.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, member)
+                else -> context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, member)
+            } as? MemberDescriptor ?: continue
             when (member) {
                 is KtClassOrObject -> {
                     if (!checkClassOrObject(member)) return false
@@ -55,7 +55,7 @@ class AddVarianceModifierInspection : AbstractKotlinInspection() {
             for (typeParameter in klass.typeParameters) {
                 if (typeParameter.variance != Variance.INVARIANT) continue
                 val parameterDescriptor =
-                        context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, typeParameter) as? TypeParameterDescriptor ?: continue
+                    context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, typeParameter) as? TypeParameterDescriptor ?: continue
                 val variances = listOf(Variance.IN_VARIANCE, Variance.OUT_VARIANCE).filter {
                     variancePossible(klass, parameterDescriptor, it, context)
                 }
@@ -63,10 +63,10 @@ class AddVarianceModifierInspection : AbstractKotlinInspection() {
                     val suggested = variances.first()
                     val fixes = variances.map(::AddVarianceFix)
                     holder.registerProblem(
-                            typeParameter,
-                            "Type parameter can have $suggested variance",
-                            ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                            *fixes.toTypedArray()
+                        typeParameter,
+                        "Type parameter can have $suggested variance",
+                        ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                        *fixes.toTypedArray()
                     )
                 }
             }
@@ -93,7 +93,7 @@ class AddVarianceModifierInspection : AbstractKotlinInspection() {
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             if (!FileModificationService.getInstance().preparePsiElementForWrite(descriptor.psiElement)) return
             val typeParameter = descriptor.psiElement as? KtTypeParameter
-                                ?: throw AssertionError("Add variance fix is used on ${descriptor.psiElement.text}")
+                ?: throw AssertionError("Add variance fix is used on ${descriptor.psiElement.text}")
             addModifier(typeParameter, if (variance == Variance.IN_VARIANCE) KtTokens.IN_KEYWORD else KtTokens.OUT_KEYWORD)
         }
 

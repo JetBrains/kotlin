@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.highlighter
@@ -40,7 +29,7 @@ object IdeRenderers {
     @JvmField
     val HTML_RENDER_TYPE = SmartTypeRenderer(DescriptorRenderer.HTML.withOptions {
         parameterNamesInFunctionalTypes = false
-        modifiers =  DescriptorRendererModifier.ALL_EXCEPT_ANNOTATIONS
+        modifiers = DescriptorRendererModifier.ALL_EXCEPT_ANNOTATIONS
     })
 
     @JvmField
@@ -86,7 +75,8 @@ object IdeRenderers {
         val context = RenderingContext.of(descriptors)
         val conflicts = descriptors.joinToString("") { "<li>" + HTML.render(it, context) + "</li>\n" }
 
-        "The following declarations have the same JVM signature (<code>${data.signature.name}${data.signature.desc}</code>):<br/>\n<ul>\n$conflicts</ul>"
+        "The following declarations have the same JVM signature (<code>${data.signature.name}${data.signature
+            .desc}</code>):<br/>\n<ul>\n$conflicts</ul>"
     }
 
     @JvmField
@@ -98,8 +88,12 @@ object IdeRenderers {
     val HTML = DescriptorRenderer.HTML.withOptions {
         modifiers = DescriptorRendererModifier.ALL_EXCEPT_ANNOTATIONS
     }.asRenderer()
-    @JvmField val HTML_WITH_ANNOTATIONS = DescriptorRenderer.HTML.withOptions {
+
+    @JvmField
+    val HTML_WITH_ANNOTATIONS = DescriptorRenderer.HTML.withOptions {
         modifiers = DescriptorRendererModifier.ALL
     }.asRenderer()
-    @JvmField val HTML_WITH_ANNOTATIONS_WHITELIST = DescriptorRenderer.HTML.withAnnotationsWhitelist()
+
+    @JvmField
+    val HTML_WITH_ANNOTATIONS_WHITELIST = DescriptorRenderer.HTML.withAnnotationsWhitelist()
 }

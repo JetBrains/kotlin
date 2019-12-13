@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable
@@ -35,9 +24,9 @@ object CreateBinaryOperationActionFactory : CreateCallableMemberFromUsageFactory
     override fun createCallableInfo(element: KtBinaryExpression, diagnostic: Diagnostic): CallableInfo? {
         val token = element.operationToken as KtToken
         val operationName = when (token) {
-                                KtTokens.IDENTIFIER -> element.operationReference.getReferencedName()
-                                else -> OperatorConventions.getNameForOperationSymbol(token, false, true)?.asString()
-                            } ?: return null
+            KtTokens.IDENTIFIER -> element.operationReference.getReferencedName()
+            else -> OperatorConventions.getNameForOperationSymbol(token, false, true)?.asString()
+        } ?: return null
         val inOperation = token in OperatorConventions.IN_OPERATIONS
         val comparisonOperation = token in OperatorConventions.COMPARISON_OPERATIONS
 
@@ -57,11 +46,11 @@ object CreateBinaryOperationActionFactory : CreateCallableMemberFromUsageFactory
         val parameters = Collections.singletonList(ParameterInfo(TypeInfo(argumentExpr, Variance.IN_VARIANCE)))
         val isOperator = token != KtTokens.IDENTIFIER
         return FunctionInfo(
-                operationName,
-                receiverType,
-                returnType,
-                parameterInfos = parameters,
-                modifierList = KtPsiFactory(element).createModifierList(if (isOperator) KtTokens.OPERATOR_KEYWORD else KtTokens.INFIX_KEYWORD)
+            operationName,
+            receiverType,
+            returnType,
+            parameterInfos = parameters,
+            modifierList = KtPsiFactory(element).createModifierList(if (isOperator) KtTokens.OPERATOR_KEYWORD else KtTokens.INFIX_KEYWORD)
         )
     }
 }

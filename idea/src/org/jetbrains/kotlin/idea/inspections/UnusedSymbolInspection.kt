@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -93,7 +93,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
         private val KOTLIN_ADDITIONAL_ANNOTATIONS = listOf("kotlin.test.*")
 
         private val KOTLIN_BUILTIN_ENUM_FUNCTIONS = listOf(FqName("kotlin.enumValues"), FqName("kotlin.enumValueOf"))
-        
+
         private val ENUM_STATIC_METHODS = listOf("values", "valueOf")
 
         private fun KtDeclaration.hasKotlinAdditionalAnnotation() =
@@ -210,7 +210,9 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
             if (declaration is KtSecondaryConstructor && declaration.containingClass()?.isEnum() == true) return
             if (declaration.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return
             if (declaration is KtProperty && declaration.isLocal) return
-            if (declaration is KtParameter && (declaration.getParent().parent !is KtPrimaryConstructor || !declaration.hasValOrVar())) return
+            if (declaration is KtParameter &&
+                (declaration.getParent().parent !is KtPrimaryConstructor || !declaration.hasValOrVar())
+            ) return
 
             // More expensive, resolve-based checks
             val descriptor = declaration.resolveToDescriptorIfAny() ?: return
@@ -405,7 +407,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
 
         return referenceUsed || checkPrivateDeclaration(declaration, descriptor)
     }
-    
+
     private fun hasBuiltInEnumFunctionReference(reference: PsiReference): Boolean {
         return when (val parent = reference.element.getParentOfTypes(
             true,

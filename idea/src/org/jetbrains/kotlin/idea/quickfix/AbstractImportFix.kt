@@ -91,7 +91,9 @@ internal abstract class ImportFixBase<T : KtExpression> protected constructor(
 
         if (!element.isValid || isOutdated()) return false
 
-        if (ApplicationManager.getApplication().isUnitTestMode && HintManager.getInstance().hasShownHintsThatWillHideByOtherHint(true)) return false
+        if (ApplicationManager.getApplication().isUnitTestMode && HintManager.getInstance()
+                .hasShownHintsThatWillHideByOtherHint(true)
+        ) return false
 
         if (suggestions.isEmpty()) return false
 
@@ -262,7 +264,8 @@ internal abstract class OrdinaryImportFixBase<T : KtExpression>(expression: T, f
 }
 
 // This is required to be abstract to reduce bunch file size
-internal abstract class AbstractImportFix(expression: KtSimpleNameExpression, factory: Factory) : OrdinaryImportFixBase<KtSimpleNameExpression>(expression, factory) {
+internal abstract class AbstractImportFix(expression: KtSimpleNameExpression, factory: Factory) :
+    OrdinaryImportFixBase<KtSimpleNameExpression>(expression, factory) {
     override fun getCallTypeAndReceiver() = element?.let { CallTypeAndReceiver.detect(it) }
 
     private fun importNamesForMembers(): Collection<Name> {

@@ -21,7 +21,7 @@ abstract class KotlinFileStructureTestBase : KotlinLightCodeInsightFixtureTestCa
 
     protected abstract val fileExtension: String
 
-    open protected val treeFileName: String
+    protected open val treeFileName: String
         get() = getFileName("tree")
 
     override fun setUp() {
@@ -37,14 +37,13 @@ abstract class KotlinFileStructureTestBase : KotlinLightCodeInsightFixtureTestCa
         try {
             Disposer.dispose(popupFixture)
             myPopupFixture = null
-        }
-        finally {
+        } finally {
             super.tearDown()
         }
     }
 
     protected fun getFileName(ext: String): String {
-        return getTestName(false) + if (StringUtil.isEmpty(ext)) "" else "." + ext
+        return getTestName(false) + if (StringUtil.isEmpty(ext)) "" else ".$ext"
     }
 
     @Suppress("unused")
@@ -67,7 +66,7 @@ abstract class KotlinFileStructureTestBase : KotlinLightCodeInsightFixtureTestCa
         val printInfo = Queryable.PrintInfo(arrayOf("text"), arrayOf("location"))
         TreeUtil.expandAll(popupFixture.tree) {
             val popupText = StructureViewUtil.print(popupFixture.tree, false, printInfo, null).trim { it <= ' ' }
-            UsefulTestCase.assertSameLinesWithFile(testDataPath + "/" + treeFileName, popupText)
+            UsefulTestCase.assertSameLinesWithFile("$testDataPath/$treeFileName", popupText)
         }
     }
 }

@@ -59,7 +59,7 @@ abstract class AbstractMultifileRefactoringTest : KotlinLightCodeInsightFixtureT
         }
     }
 
-    protected fun getTestDirName(lowercaseFirstLetter : Boolean) : String {
+    protected fun getTestDirName(lowercaseFirstLetter: Boolean): String {
         val testName = getTestName(lowercaseFirstLetter)
         val endIndex = testName.lastIndexOf('_')
         if (endIndex < 0) return testName
@@ -86,11 +86,11 @@ abstract class AbstractMultifileRefactoringTest : KotlinLightCodeInsightFixtureT
 }
 
 fun runRefactoringTest(
-        path: String,
-        config: JsonObject,
-        rootDir: VirtualFile,
-        project: Project,
-        action: AbstractMultifileRefactoringTest.RefactoringAction
+    path: String,
+    config: JsonObject,
+    rootDir: VirtualFile,
+    project: Project,
+    action: AbstractMultifileRefactoringTest.RefactoringAction
 ) {
     val testDir = path.substring(0, path.lastIndexOf("/"))
     val mainFilePath = config.getNullableString("mainFile") ?: config.getAsJsonArray("filesToMove").first().asString
@@ -105,9 +105,9 @@ fun runRefactoringTest(
     val caretOffsets = document.extractMultipleMarkerOffsets(project)
     val elementsAtCaret = caretOffsets.map {
         TargetElementUtil.getInstance().findTargetElement(
-                editor,
-                TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED or TargetElementUtil.ELEMENT_NAME_ACCEPTED,
-                it
+            editor,
+            TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED or TargetElementUtil.ELEMENT_NAME_ACCEPTED,
+            it
         )!!
     }
 
@@ -115,16 +115,14 @@ fun runRefactoringTest(
         action.runRefactoring(rootDir, mainPsiFile, elementsAtCaret, config)
 
         assert(!conflictFile.exists())
-    }
-    catch(e: BaseRefactoringProcessor.ConflictsInTestsException) {
+    } catch (e: BaseRefactoringProcessor.ConflictsInTestsException) {
         KotlinTestUtils.assertEqualsToFile(conflictFile, e.messages.distinct().sorted().joinToString("\n"))
 
         BaseRefactoringProcessor.ConflictsInTestsException.withIgnoredConflicts<Throwable> {
             // Run refactoring again with ConflictsInTestsException suppressed
             action.runRefactoring(rootDir, mainPsiFile, elementsAtCaret, config)
         }
-    }
-    finally {
+    } finally {
         EditorFactory.getInstance()!!.releaseEditor(editor)
     }
 }

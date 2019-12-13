@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -144,7 +144,7 @@ class KotlinLanguageConfiguration : SearchableConfigurable, Configurable.NoScrol
         saveChannelSettings()
         form.updateCheckProgressIcon.resume()
         form.resetUpdateStatus()
-        KotlinPluginUpdater.getInstance().runUpdateCheck{ pluginUpdateStatus ->
+        KotlinPluginUpdater.getInstance().runUpdateCheck { pluginUpdateStatus ->
             // Need this to show something is happening when check is very fast
             Thread.sleep(30)
             form.updateCheckProgressIcon.suspend()

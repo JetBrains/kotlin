@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.core
@@ -40,10 +29,10 @@ import org.jetbrains.kotlin.utils.getOrPutNullable
 import java.util.*
 
 class IterableTypesDetection(
-        private val project: Project,
-        private val forLoopConventionsChecker: ForLoopConventionsChecker,
-        private val languageVersionSettings: LanguageVersionSettings,
-        private val dataFlowValueFactory: DataFlowValueFactory
+    private val project: Project,
+    private val forLoopConventionsChecker: ForLoopConventionsChecker,
+    private val languageVersionSettings: LanguageVersionSettings,
+    private val dataFlowValueFactory: DataFlowValueFactory
 ) {
     companion object {
         private val iteratorName = Name.identifier("iterator")
@@ -52,28 +41,28 @@ class IterableTypesDetection(
     fun createDetector(scope: LexicalScope): IterableTypesDetector {
         return Detector(scope)
     }
-    private inner class Detector(private val scope: LexicalScope): IterableTypesDetector {
+
+    private inner class Detector(private val scope: LexicalScope) : IterableTypesDetector {
         private val cache = HashMap<FuzzyType, FuzzyType?>()
 
         private val typesWithExtensionIterator: Collection<KotlinType> = scope
-                .collectFunctions(iteratorName, NoLookupLocation.FROM_IDE)
-                .filter { it.isValidOperator() }
-                .mapNotNull { it.extensionReceiverParameter?.type }
+            .collectFunctions(iteratorName, NoLookupLocation.FROM_IDE)
+            .filter { it.isValidOperator() }
+            .mapNotNull { it.extensionReceiverParameter?.type }
 
         override fun isIterable(type: FuzzyType, loopVarType: KotlinType?): Boolean {
             val elementType = elementType(type) ?: return false
             return loopVarType == null || elementType.checkIsSubtypeOf(loopVarType) != null
         }
 
-        override fun isIterable(type: KotlinType, loopVarType: KotlinType?): Boolean
-                = isIterable(type.toFuzzyType(emptyList()), loopVarType)
+        override fun isIterable(type: KotlinType, loopVarType: KotlinType?): Boolean =
+            isIterable(type.toFuzzyType(emptyList()), loopVarType)
 
         private fun elementType(type: FuzzyType): FuzzyType? {
             return cache.getOrPutNullable(type, { elementTypeNoCache(type) })
         }
 
-        override fun elementType(type: KotlinType): FuzzyType?
-                = elementType(type.toFuzzyType(emptyList()))
+        override fun elementType(type: KotlinType): FuzzyType? = elementType(type.toFuzzyType(emptyList()))
 
         private fun elementTypeNoCache(type: FuzzyType): FuzzyType? {
             // optimization
@@ -81,7 +70,8 @@ class IterableTypesDetection(
 
             val expression = KtPsiFactory(project).createExpression("fake")
             val context = ExpressionTypingContext.newContext(
-                    BindingTraceContext(), scope, DataFlowInfo.EMPTY, TypeUtils.NO_EXPECTED_TYPE, languageVersionSettings, dataFlowValueFactory)
+                BindingTraceContext(), scope, DataFlowInfo.EMPTY, TypeUtils.NO_EXPECTED_TYPE, languageVersionSettings, dataFlowValueFactory
+            )
             val expressionReceiver = ExpressionReceiver.create(expression, type.type, context.trace.bindingContext)
             val elementType = forLoopConventionsChecker.checkIterableConvention(expressionReceiver, context)
             return elementType?.let { it.toFuzzyType(type.freeParameters) }
@@ -90,10 +80,10 @@ class IterableTypesDetection(
         private fun canBeIterable(type: FuzzyType): Boolean {
             if (type.type.constructor is IntegerLiteralTypeConstructor) return false
             return type.type.memberScope.getContributedFunctions(iteratorName, NoLookupLocation.FROM_IDE).isNotEmpty() ||
-                   typesWithExtensionIterator.any {
-                       val freeParams = it.arguments.mapNotNull { it.type.constructor.declarationDescriptor as? TypeParameterDescriptor }
-                       type.checkIsSubtypeOf(it.toFuzzyType(freeParams)) != null
-                   }
+                    typesWithExtensionIterator.any {
+                        val freeParams = it.arguments.mapNotNull { it.type.constructor.declarationDescriptor as? TypeParameterDescriptor }
+                        type.checkIsSubtypeOf(it.toFuzzyType(freeParams)) != null
+                    }
         }
     }
 }

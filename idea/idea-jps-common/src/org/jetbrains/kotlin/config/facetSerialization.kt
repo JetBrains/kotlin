@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.config
@@ -100,8 +89,7 @@ private fun readV1Config(element: Element): KotlinFacetSettings {
 
         if (useProjectSettings != null) {
             this.useProjectSettings = useProjectSettings
-        }
-        else {
+        } else {
             // Migration problem workaround for pre-1.1-beta releases (mainly 1.0.6) -> 1.1-rc+
             // Problematic cases: 1.1-beta/1.1-beta2 -> 1.1-rc+ (useProjectSettings gets reset to false)
             // This heuristic detects old enough configurations:
@@ -214,13 +202,11 @@ private fun readLatestConfig(element: Element): KotlinFacetSettings {
 }
 
 fun deserializeFacetSettings(element: Element): KotlinFacetSettings {
-    val version =
-            try {
-                element.getAttribute("version")?.intValue
-            }
-            catch(e: DataConversionException) {
-                null
-            } ?: KotlinFacetSettings.DEFAULT_VERSION
+    val version = try {
+        element.getAttribute("version")?.intValue
+    } catch (e: DataConversionException) {
+        null
+    } ?: KotlinFacetSettings.DEFAULT_VERSION
     return when (version) {
         1 -> readV1Config(element)
         2 -> readV2Config(element)
@@ -290,9 +276,8 @@ private val Class<*>.normalOrdering
 private fun Element.restoreNormalOrdering(bean: Any) {
     val normalOrdering = bean.javaClass.normalOrdering
     val elementsToReorder = this.getContent<Element> { it is Element && it.getAttribute("name")?.value in normalOrdering }
-    elementsToReorder
-            .sortedBy { normalOrdering[it.getAttribute("name")?.value!!] }
-            .forEachIndexed { index, element -> elementsToReorder[index] = element.clone() }
+    elementsToReorder.sortedBy { normalOrdering[it.getAttribute("name")?.value!!] }
+        .forEachIndexed { index, element -> elementsToReorder[index] = element.clone() }
 }
 
 private fun buildChildElement(element: Element, tag: String, bean: Any, filter: SerializationFilter): Element {
@@ -422,8 +407,7 @@ fun KotlinFacetSettings.serializeFacetSettings(element: Element) {
     element.setAttribute("version", versionToWrite.toString())
     if (versionToWrite == 2) {
         writeV2Config(element)
-    }
-    else {
+    } else {
         writeLatestConfig(element)
     }
 }

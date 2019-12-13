@@ -101,14 +101,14 @@ private sealed class ModuleInfoCollector<out T>(
             LOG.error("Could not find correct module information.\nReason: $reason")
             NotUnderContentRootModuleInfo
         },
-        virtualFileProcessor = processor@ { project, virtualFile, isLibrarySource ->
+        virtualFileProcessor = processor@{ project, virtualFile, isLibrarySource ->
             collectInfosByVirtualFile(
                 project,
                 virtualFile,
-                isLibrarySource,
-                {
-                    return@processor it ?: NotUnderContentRootModuleInfo
-                })
+                isLibrarySource
+            ) {
+                return@processor it ?: NotUnderContentRootModuleInfo
+            }
         }
     )
 
@@ -118,12 +118,12 @@ private sealed class ModuleInfoCollector<out T>(
             LOG.warn("Could not find correct module information.\nReason: $reason")
             null
         },
-        virtualFileProcessor = processor@ { project, virtualFile, isLibrarySource ->
+        virtualFileProcessor = processor@{ project, virtualFile, isLibrarySource ->
             collectInfosByVirtualFile(
                 project,
                 virtualFile,
-                isLibrarySource,
-                { return@processor it })
+                isLibrarySource
+            ) { return@processor it }
         }
     )
 
@@ -138,8 +138,8 @@ private sealed class ModuleInfoCollector<out T>(
                 collectInfosByVirtualFile(
                     project,
                     virtualFile,
-                    isLibrarySource,
-                    { yieldIfNotNull(it) })
+                    isLibrarySource
+                ) { yieldIfNotNull(it) }
             }
         }
     )

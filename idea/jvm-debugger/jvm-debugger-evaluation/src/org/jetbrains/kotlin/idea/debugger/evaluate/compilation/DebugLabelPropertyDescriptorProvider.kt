@@ -11,12 +11,11 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.xdebugger.impl.XDebugSessionImpl
 import com.intellij.xdebugger.impl.ui.tree.ValueMarkup
-import org.jetbrains.kotlin.builtins.PrimitiveType
 import com.sun.jdi.*
 import org.jetbrains.kotlin.backend.common.SimpleMemberScope
-import com.sun.jdi.Type as JdiType
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorImpl
@@ -26,13 +25,14 @@ import org.jetbrains.kotlin.descriptors.impl.PropertyGetterDescriptorImpl
 import org.jetbrains.kotlin.idea.debugger.getClassDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtCodeFragment
-import org.jetbrains.kotlin.psi.externalDescriptors
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.psi.KtCodeFragment
+import org.jetbrains.kotlin.psi.externalDescriptors
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
+import com.sun.jdi.Type as JdiType
 import org.jetbrains.org.objectweb.asm.Type as AsmType
 
 class DebugLabelPropertyDescriptorProvider(val codeFragment: KtCodeFragment, val debugProcess: DebugProcessImpl) {
@@ -144,10 +144,8 @@ class DebugLabelPropertyDescriptorProvider(val codeFragment: KtCodeFragment, val
     }
 }
 
-private object DebugLabelModuleDescriptor
-    : DeclarationDescriptorImpl(Annotations.EMPTY, Name.identifier("DebugLabelExtensions")),
-    ModuleDescriptor
-{
+private object DebugLabelModuleDescriptor : DeclarationDescriptorImpl(Annotations.EMPTY, Name.identifier("DebugLabelExtensions")),
+    ModuleDescriptor {
     override val builtIns: KotlinBuiltIns
         get() = DefaultBuiltIns.Instance
 

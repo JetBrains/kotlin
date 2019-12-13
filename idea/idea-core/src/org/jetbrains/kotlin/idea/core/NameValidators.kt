@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.core
@@ -42,9 +31,9 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.*
 
 class CollectingNameValidator @JvmOverloads constructor(
-        existingNames: Collection<String> = Collections.emptySet(),
-        private val filter: (String) -> Boolean = { true }
-): (String) -> Boolean {
+    existingNames: Collection<String> = Collections.emptySet(),
+    private val filter: (String) -> Boolean = { true }
+) : (String) -> Boolean {
     private val existingNames = HashSet(existingNames)
 
     override fun invoke(name: String): Boolean {
@@ -61,20 +50,22 @@ class CollectingNameValidator @JvmOverloads constructor(
 }
 
 class NewDeclarationNameValidator(
-        private val visibleDeclarationsContext: KtElement?,
-        private val checkDeclarationsIn: Sequence<PsiElement>,
-        private val target: Target,
-        private val excludedDeclarations: List<KtDeclaration> = emptyList()
+    private val visibleDeclarationsContext: KtElement?,
+    private val checkDeclarationsIn: Sequence<PsiElement>,
+    private val target: Target,
+    private val excludedDeclarations: List<KtDeclaration> = emptyList()
 ) : (String) -> Boolean {
-    constructor(container: PsiElement,
-                anchor: PsiElement?,
-                target: Target,
-                excludedDeclarations: List<KtDeclaration> = emptyList())
-        : this(
-            (anchor ?: container).parentsWithSelf.firstIsInstanceOrNull<KtElement>(),
-            anchor?.siblings() ?: container.allChildren,
-            target,
-            excludedDeclarations)
+    constructor(
+        container: PsiElement,
+        anchor: PsiElement?,
+        target: Target,
+        excludedDeclarations: List<KtDeclaration> = emptyList()
+    ) : this(
+        (anchor ?: container).parentsWithSelf.firstIsInstanceOrNull<KtElement>(),
+        anchor?.siblings() ?: container.allChildren,
+        target,
+        excludedDeclarations
+    )
 
     enum class Target {
         VARIABLES,
@@ -86,7 +77,8 @@ class NewDeclarationNameValidator(
 
         if (visibleDeclarationsContext != null) {
             val bindingContext = visibleDeclarationsContext.analyze(BodyResolveMode.PARTIAL_FOR_COMPLETION)
-            val resolutionScope = visibleDeclarationsContext.getResolutionScope(bindingContext, visibleDeclarationsContext.getResolutionFacade())
+            val resolutionScope =
+                visibleDeclarationsContext.getResolutionScope(bindingContext, visibleDeclarationsContext.getResolutionFacade())
             if (resolutionScope.hasConflict(identifier)) return false
         }
 
@@ -105,12 +97,12 @@ class NewDeclarationNameValidator(
             }
         }
 
-        return when(target) {
+        return when (target) {
             Target.VARIABLES ->
                 getAllAccessibleVariables(name).any { !it.isExtension && it.isVisible() && !isExcluded(it) }
             Target.FUNCTIONS_AND_CLASSES ->
                 getAllAccessibleFunctions(name).any { !it.isExtension && it.isVisible() && !isExcluded(it) } ||
-                findClassifier(name, NoLookupLocation.FROM_IDE)?.let { it.isVisible() && !isExcluded(it) } ?: false
+                        findClassifier(name, NoLookupLocation.FROM_IDE)?.let { it.isVisible() && !isExcluded(it) } ?: false
         }
     }
 
@@ -118,7 +110,7 @@ class NewDeclarationNameValidator(
         if (this in excludedDeclarations) return false
         if (nameAsName != name) return false
         if (this is KtCallableDeclaration && receiverTypeReference != null) return false
-        return when(target) {
+        return when (target) {
             Target.VARIABLES -> this is KtVariableDeclaration || this is KtParameter
             Target.FUNCTIONS_AND_CLASSES -> this is KtNamedFunction || this is KtClassOrObject || this is KtTypeAlias
         }

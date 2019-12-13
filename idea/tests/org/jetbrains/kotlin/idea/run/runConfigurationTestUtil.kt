@@ -30,7 +30,8 @@ import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.junit.Assert
 
 fun getJavaRunParameters(configuration: RunConfiguration): JavaParameters {
-    val state = configuration.getState(MockExecutor, ExecutionEnvironmentBuilder.create(configuration.project, MockExecutor, MockProfile).build())
+    val state =
+        configuration.getState(MockExecutor, ExecutionEnvironmentBuilder.create(configuration.project, MockExecutor, MockProfile).build())
 
     Assert.assertNotNull(state)
     Assert.assertTrue(state is JavaCommandLine)

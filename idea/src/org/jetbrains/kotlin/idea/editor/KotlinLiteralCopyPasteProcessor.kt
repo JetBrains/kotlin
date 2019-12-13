@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.editor
@@ -45,7 +34,8 @@ private val PsiElement.templateContentRange: TextRange?
 private fun PsiFile.getTemplateIfAtLiteral(offset: Int, at: PsiElement? = findElementAt(offset)): KtStringTemplateExpression? {
     if (at == null) return null
     return when (at.node?.elementType) {
-        KtTokens.REGULAR_STRING_PART, KtTokens.ESCAPE_SEQUENCE, KtTokens.LONG_TEMPLATE_ENTRY_START, KtTokens.SHORT_TEMPLATE_ENTRY_START -> at.parent.parent as? KtStringTemplateExpression
+        KtTokens.REGULAR_STRING_PART, KtTokens.ESCAPE_SEQUENCE, KtTokens.LONG_TEMPLATE_ENTRY_START, KtTokens.SHORT_TEMPLATE_ENTRY_START -> at.parent
+            .parent as? KtStringTemplateExpression
         KtTokens.CLOSING_QUOTE -> if (offset == at.startOffset) at.parent as? KtStringTemplateExpression else null
         else -> null
     }
@@ -110,7 +100,7 @@ class KotlinLiteralCopyPasteProcessor : CopyPastePreProcessor {
                 }
             }
             val blockSelectionPadding = deducedBlockSelectionWidth - fileRange.length
-            for (j in 0..blockSelectionPadding - 1) {
+            for (j in 0 until blockSelectionPadding) {
                 buffer.append(' ')
             }
         }
@@ -235,11 +225,11 @@ private class TemplateTokenSequence(private val inputString: String) : Sequence<
 
     private suspend fun SequenceScope<TemplateChunk>.yieldLiteral(chunk: String) {
         val splitLines = LineTokenizer.tokenize(chunk, false, false)
-        for (i in 0..splitLines.size - 1) {
+        for (i in splitLines.indices) {
             if (i != 0) {
                 yield(NewLineChunk)
             }
-            splitLines[i].takeIf { !it.isEmpty() }?.let { yield(LiteralChunk(it)) }
+            splitLines[i].takeIf { it.isNotEmpty() }?.let { yield(LiteralChunk(it)) }
         }
     }
 

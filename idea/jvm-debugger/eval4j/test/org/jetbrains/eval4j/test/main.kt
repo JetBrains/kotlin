@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.eval4j.test
@@ -28,45 +17,42 @@ import org.junit.Assert.assertTrue
 import java.lang.reflect.*
 import java.lang.reflect.Array as JArray
 
-fun suite(): TestSuite = buildTestSuite {
-    methodNode, ownerClass, expected ->
+fun suite(): TestSuite = buildTestSuite { methodNode, ownerClass, expected ->
     object : TestCase(getTestName(methodNode.name)) {
 
-            override fun runTest() {
-                if (!isIgnored(methodNode)) {
-                    val value = interpreterLoop(
-                            methodNode,
-                            initFrame(
-                                    ownerClass.getInternalName(),
-                                    methodNode
-                            ),
-                            REFLECTION_EVAL
-                    )
-                    
-                    if (expected is ExceptionThrown && value is ExceptionThrown) {
-                        assertEquals(expected.exception.toString(), value.exception.toString())
-                    }
-                    else {
-                        assertEquals(expected.toString(), value.toString())
-                    }
+        override fun runTest() {
+            if (!isIgnored(methodNode)) {
+                val value = interpreterLoop(
+                    methodNode,
+                    initFrame(
+                        ownerClass.getInternalName(),
+                        methodNode
+                    ),
+                    REFLECTION_EVAL
+                )
+
+                if (expected is ExceptionThrown && value is ExceptionThrown) {
+                    assertEquals(expected.exception.toString(), value.exception.toString())
+                } else {
+                    assertEquals(expected.toString(), value.toString())
                 }
             }
-
-            private fun isIgnored(methodNode: MethodNode): Boolean {
-                return methodNode.visibleAnnotations?.any {
-                    val annotationDesc = it.desc
-                    annotationDesc != null &&
-                        Type.getType(annotationDesc) == Type.getType(IgnoreInReflectionTests::class.java)
-                } ?: false
-            }
         }
+
+        private fun isIgnored(methodNode: MethodNode): Boolean {
+            return methodNode.visibleAnnotations?.any {
+                val annotationDesc = it.desc
+                annotationDesc != null && Type.getType(annotationDesc) == Type.getType(IgnoreInReflectionTests::class.java)
+            } ?: false
+        }
+    }
 }
 
 fun Class<*>.getInternalName(): String = Type.getType(this).internalName
 
 fun initFrame(
-        owner: String,
-        m: MethodNode
+    owner: String,
+    m: MethodNode
 ): Frame<Value> {
     val current = Frame<Value>(m.maxLocals, m.maxStack)
     current.setReturn(makeNotInitializedValue(Type.getReturnType(m.desc)))
@@ -80,7 +66,7 @@ fun initFrame(
     }
 
     val args = Type.getArgumentTypes(m.desc)
-    for (i in 0..args.size - 1) {
+    for (i in args.indices) {
         current.setLocal(local++, makeNotInitializedValue(args[i]))
         if (args[i].size == 2) {
             current.setLocal(local++, NOT_A_VALUE)
@@ -198,12 +184,10 @@ object REFLECTION_EVAL : Eval {
         try {
             try {
                 return f()
+            } catch (ite: InvocationTargetException) {
+                throw ite.cause ?: ite
             }
-            catch (ite: InvocationTargetException) {
-                    throw ite.cause ?: ite
-            }
-        }
-        catch (e: Throwable) {
+        } catch (e: Throwable) {
             throw ThrownFromEvaluatedCodeException(ObjectValue(e, Type.getType(e::class.java)))
         }
     }
@@ -211,14 +195,14 @@ object REFLECTION_EVAL : Eval {
     override fun getStaticField(fieldDesc: FieldDescription): Value {
         val field = findStaticField(fieldDesc)
 
-        val result = mayThrow {field.get(null)}
+        val result = mayThrow { field.get(null) }
         return objectToValue(result, fieldDesc.fieldType)
     }
 
     override fun setStaticField(fieldDesc: FieldDescription, newValue: Value) {
         val field = findStaticField(fieldDesc)
         val obj = newValue.obj(fieldDesc.fieldType)
-        mayThrow {field.set(null, obj)}
+        mayThrow { field.set(null, obj) }
     }
 
     fun findStaticField(fieldDesc: FieldDescription): Field {
@@ -234,7 +218,7 @@ object REFLECTION_EVAL : Eval {
         val method = findClass(methodDesc).findMethod(methodDesc)
         assertNotNull("Method not found: $methodDesc", method)
         val args = mapArguments(arguments, methodDesc.parameterTypes).toTypedArray()
-        val result = mayThrow {method!!.invoke(null, *args)}
+        val result = mayThrow { method!!.invoke(null, *args) }
         return objectToValue(result, methodDesc.returnType)
     }
 
@@ -250,7 +234,7 @@ object REFLECTION_EVAL : Eval {
         val obj = instance.obj().checkNull()
         val field = findInstanceField(obj, fieldDesc)
 
-        return objectToValue(mayThrow {field.get(obj)}, fieldDesc.fieldType)
+        return objectToValue(mayThrow { field.get(obj) }, fieldDesc.fieldType)
     }
 
     override fun setField(instance: Value, fieldDesc: FieldDescription, newValue: Value) {
@@ -258,7 +242,7 @@ object REFLECTION_EVAL : Eval {
         val field = findInstanceField(obj, fieldDesc)
 
         val newObj = newValue.obj(fieldDesc.fieldType)
-        mayThrow {field.set(obj, newObj)}
+        mayThrow { field.set(obj, newObj) }
     }
 
     fun findInstanceField(obj: Any, fieldDesc: FieldDescription): Field {
@@ -277,11 +261,10 @@ object REFLECTION_EVAL : Eval {
                 val ctor = _class.findConstructor(methodDesc)
                 assertNotNull("Constructor not found: $methodDesc", ctor)
                 val args = mapArguments(arguments, methodDesc.parameterTypes).toTypedArray()
-                val result = mayThrow {ctor!!.newInstance(*args)}
+                val result = mayThrow { ctor!!.newInstance(*args) }
                 instance.value = result
                 return objectToValue(result, instance.asmType)
-            }
-            else {
+            } else {
                 // TODO
                 throw UnsupportedOperationException("invokespecial is not suported in reflection eval")
             }
@@ -290,7 +273,7 @@ object REFLECTION_EVAL : Eval {
         val method = obj::class.java.findMethod(methodDesc)
         assertNotNull("Method not found: $methodDesc", method)
         val args = mapArguments(arguments, methodDesc.parameterTypes).toTypedArray()
-        val result = mayThrow {method!!.invoke(obj, *args)}
+        val result = mayThrow { method!!.invoke(obj, *args) }
         return objectToValue(result, methodDesc.returnType)
     }
 

@@ -23,10 +23,9 @@ abstract class AbstractGenerateTestSupportMethodActionTest : AbstractCodeInsight
         }
     }
 
-    override fun createAction(fileText: String) =
-            (super.createAction(fileText) as KotlinGenerateTestSupportActionBase).apply {
-                testFrameworkToUse = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// TEST_FRAMEWORK:")
-            }
+    override fun createAction(fileText: String) = (super.createAction(fileText) as KotlinGenerateTestSupportActionBase).apply {
+        testFrameworkToUse = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// TEST_FRAMEWORK:")
+    }
 
     override fun doTest(path: String) {
         setUpTestSourceRoot()

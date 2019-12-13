@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.stubindex
@@ -27,27 +16,30 @@ import org.jetbrains.kotlin.psi.KtFile
 
 
 object PackageIndexUtil {
-    @JvmStatic fun getSubPackageFqNames(
-            packageFqName: FqName,
-            scope: GlobalSearchScope,
-            project: Project,
-            nameFilter: (Name) -> Boolean
+    @JvmStatic
+    fun getSubPackageFqNames(
+        packageFqName: FqName,
+        scope: GlobalSearchScope,
+        project: Project,
+        nameFilter: (Name) -> Boolean
     ): Collection<FqName> {
         return SubpackagesIndexService.getInstance(project).getSubpackages(packageFqName, scope, nameFilter)
     }
 
-    @JvmStatic fun findFilesWithExactPackage(
-            packageFqName: FqName,
-            searchScope: GlobalSearchScope,
-            project: Project
+    @JvmStatic
+    fun findFilesWithExactPackage(
+        packageFqName: FqName,
+        searchScope: GlobalSearchScope,
+        project: Project
     ): Collection<KtFile> {
         return KotlinExactPackagesIndex.getInstance().get(packageFqName.asString(), project, searchScope)
     }
 
-    @JvmStatic fun packageExists(
-            packageFqName: FqName,
-            searchScope: GlobalSearchScope,
-            project: Project
+    @JvmStatic
+    fun packageExists(
+        packageFqName: FqName,
+        searchScope: GlobalSearchScope,
+        project: Project
     ): Boolean {
 
         val subpackagesIndex = SubpackagesIndexService.getInstance(project)
@@ -56,18 +48,21 @@ object PackageIndexUtil {
         }
 
         return containsFilesWithExactPackage(packageFqName, searchScope, project) ||
-               subpackagesIndex.hasSubpackages(packageFqName, searchScope)
+                subpackagesIndex.hasSubpackages(packageFqName, searchScope)
     }
 
-    @JvmStatic fun containsFilesWithExactPackage(
-            packageFqName: FqName,
-            searchScope: GlobalSearchScope,
-            project: Project
+    @JvmStatic
+    fun containsFilesWithExactPackage(
+        packageFqName: FqName,
+        searchScope: GlobalSearchScope,
+        project: Project
     ): Boolean {
-        val ids = StubIndex.getInstance().getContainingIds(KotlinExactPackagesIndex.getInstance().key,
-                                                           packageFqName.asString(),
-                                                           project,
-                                                           searchScope)
+        val ids = StubIndex.getInstance().getContainingIds(
+            KotlinExactPackagesIndex.getInstance().key,
+            packageFqName.asString(),
+            project,
+            searchScope
+        )
         val fs = PersistentFS.getInstance() as PersistentFSImpl
         while (ids.hasNext()) {
             val file = fs.findFileByIdIfCached(ids.next())

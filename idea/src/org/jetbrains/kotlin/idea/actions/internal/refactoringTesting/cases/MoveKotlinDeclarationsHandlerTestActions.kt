@@ -71,7 +71,9 @@ internal class MoveKotlinDeclarationsHandlerTestActions(private val caseDataKeep
 
     private fun KotlinAwareMoveFilesOrDirectoriesModel.testDataString(): String {
         return "KotlinAwareMoveFilesOrDirectoriesModel:\n" +
-                "elementsToMove = ${elementsToMove.joinToString { if (it is PsiFileSystemItem) it.virtualFile.path else it.javaClass.name }}\n" +
+                "elementsToMove = ${elementsToMove.joinToString {
+                    if (it is PsiFileSystemItem) it.virtualFile.path else it.javaClass.name
+                }}\n" +
                 "directoryName = $targetDirectoryName\n" +
                 "updatePackageDirective = $updatePackageDirective\n" +
                 "searchReferences = $searchReferences"

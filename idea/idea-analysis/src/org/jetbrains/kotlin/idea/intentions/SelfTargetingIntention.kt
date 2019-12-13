@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.intentions
@@ -36,9 +25,9 @@ import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 
 @Suppress("EqualsOrHashCode")
 abstract class SelfTargetingIntention<TElement : PsiElement>(
-        val elementType: Class<TElement>,
-        private var text: String,
-        private val familyName: String = text
+    val elementType: Class<TElement>,
+    private var text: String,
+    private val familyName: String = text
 ) : IntentionAction {
 
     protected val defaultText: String = text
@@ -85,8 +74,7 @@ abstract class SelfTargetingIntention<TElement : PsiElement>(
         return getTarget(offset, file)
     }
 
-    protected open fun allowCaretInsideElement(element: PsiElement): Boolean =
-            element !is KtBlockExpression
+    protected open fun allowCaretInsideElement(element: PsiElement): Boolean = element !is KtBlockExpression
 
     final override fun isAvailable(project: Project, editor: Editor, file: PsiFile): Boolean {
         if (ApplicationManager.getApplication().isUnitTestMode) {
@@ -94,8 +82,7 @@ abstract class SelfTargetingIntention<TElement : PsiElement>(
         }
         try {
             return getTarget(editor, file) != null
-        }
-        finally {
+        } finally {
             CREATE_BY_PATTERN_MAY_NOT_REFORMAT = false
         }
     }
@@ -126,9 +113,9 @@ abstract class SelfTargetingIntention<TElement : PsiElement>(
 }
 
 abstract class SelfTargetingRangeIntention<TElement : PsiElement>(
-        elementType: Class<TElement>,
-        text: String,
-        familyName: String = text
+    elementType: Class<TElement>,
+    text: String,
+    familyName: String = text
 ) : SelfTargetingIntention<TElement>(elementType, text, familyName) {
 
     abstract fun applicabilityRange(element: TElement): TextRange?
@@ -140,9 +127,9 @@ abstract class SelfTargetingRangeIntention<TElement : PsiElement>(
 }
 
 abstract class SelfTargetingOffsetIndependentIntention<TElement : KtElement>(
-        elementType: Class<TElement>,
-        text: String,
-        familyName: String = text
+    elementType: Class<TElement>,
+    text: String,
+    familyName: String = text
 ) : SelfTargetingRangeIntention<TElement>(elementType, text, familyName) {
 
     abstract fun isApplicableTo(element: TElement): Boolean

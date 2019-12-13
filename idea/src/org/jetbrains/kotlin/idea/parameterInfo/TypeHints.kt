@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -103,7 +103,7 @@ fun provideTypeHint(element: KtCallableDeclaration, offset: Int): List<InlayInfo
     } else if (name?.isSpecial == true) {
         return emptyList()
     }
-    
+
     if (element is KtProperty && element.isLocal && type.isUnit() && element.lineCount() > 1) {
         val propertyLine = element.getLineNumber()
         val equalsTokenLine = element.equalsToken?.getLineNumber() ?: -1
@@ -116,7 +116,7 @@ fun provideTypeHint(element: KtCallableDeclaration, offset: Int): List<InlayInfo
             }
         }
     }
-    
+
     return if (isUnclearType(type, element)) {
         val settings = CodeStyle.getCustomSettings(element.containingFile, KotlinCodeStyleSettings::class.java)
         val declString = buildString {
@@ -186,7 +186,8 @@ private fun isConstructorCall(initializer: KtExpression?): Boolean {
 
 private fun KtExpression.isClassOrPackageReference(): Boolean =
     when (this) {
-        is KtNameReferenceExpression -> this.resolveMainReferenceToDescriptors().singleOrNull().let { it is ClassDescriptor || it is PackageViewDescriptor }
+        is KtNameReferenceExpression -> this.resolveMainReferenceToDescriptors().singleOrNull()
+            .let { it is ClassDescriptor || it is PackageViewDescriptor }
         is KtDotQualifiedExpression -> this.selectorExpression?.isClassOrPackageReference() ?: false
         else -> false
     }

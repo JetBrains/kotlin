@@ -17,9 +17,8 @@ import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.junit.runner.RunWith
 
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
-class KotlinCleanupInspectionTest(): KotlinLightCodeInsightFixtureTestCase() {
-    override fun getTestDataPath(): String
-            = PluginTestCaseBase.getTestDataPathBase() + "/inspections/cleanup"
+class KotlinCleanupInspectionTest() : KotlinLightCodeInsightFixtureTestCase() {
+    override fun getTestDataPath(): String = PluginTestCaseBase.getTestDataPathBase() + "/inspections/cleanup"
 
     override fun getProjectDescriptor(): LightProjectDescriptor = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 

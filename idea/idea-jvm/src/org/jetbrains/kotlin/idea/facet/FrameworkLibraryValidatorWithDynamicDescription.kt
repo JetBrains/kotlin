@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.facet
@@ -34,10 +23,10 @@ import javax.swing.JComponent
 
 // Based on com.intellij.facet.impl.ui.libraries.FrameworkLibraryValidatorImpl
 class FrameworkLibraryValidatorWithDynamicDescription(
-        private val context: LibrariesValidatorContext,
-        private val validatorsManager: FacetValidatorsManager,
-        private val libraryCategoryName: String,
-        private val getPlatform: () -> TargetPlatform?
+    private val context: LibrariesValidatorContext,
+    private val validatorsManager: FacetValidatorsManager,
+    private val libraryCategoryName: String,
+    private val getPlatform: () -> TargetPlatform?
 ) : FrameworkLibraryValidator() {
     private val IdePlatformKind<*>.libraryDescription: CustomLibraryDescription?
         get() = this.tooling.getLibraryDescription(context.module.project)
@@ -47,24 +36,25 @@ class FrameworkLibraryValidatorWithDynamicDescription(
         if (platform.isCommon) return true
 
         if (KotlinVersionInfoProvider.EP_NAME.extensions.any {
-            it.getLibraryVersions(context.module, platform, context.rootModel).isNotEmpty()
-        }) return true
+                it.getLibraryVersions(context.module, platform, context.rootModel).isNotEmpty()
+            }
+        ) return true
 
         val libraryDescription = platform.libraryDescription ?: return true
         val libraryKinds = libraryDescription.suitableLibraryKinds
         var found = false
         val presentationManager = LibraryPresentationManager.getInstance()
         context.rootModel
-                .orderEntries()
-                .using(context.modulesProvider)
-                .recursively()
-                .librariesOnly()
-                .forEachLibrary { library ->
-                    if (presentationManager.isLibraryOfKind(library, context.librariesContainer, libraryKinds)) {
-                        found = true
-                    }
-                    !found
+            .orderEntries()
+            .using(context.modulesProvider)
+            .recursively()
+            .librariesOnly()
+            .forEachLibrary { library ->
+                if (presentationManager.isLibraryOfKind(library, context.librariesContainer, libraryKinds)) {
+                    found = true
                 }
+                !found
+            }
         return found
     }
 
@@ -87,18 +77,20 @@ class FrameworkLibraryValidatorWithDynamicDescription(
         }
 
         return ValidationResult(
-                IdeBundle.message("label.missed.libraries.text", libraryCategoryName),
-                LibrariesQuickFix(targetPlatform.idePlatformKind.libraryDescription!!)
+            IdeBundle.message("label.missed.libraries.text", libraryCategoryName),
+            LibrariesQuickFix(targetPlatform.idePlatformKind.libraryDescription!!)
         )
     }
 
     private inner class LibrariesQuickFix(
-            private val myDescription: CustomLibraryDescription
+        private val myDescription: CustomLibraryDescription
     ) : FacetConfigurationQuickFix(IdeBundle.message("button.fix")) {
         override fun run(place: JComponent) {
-            val dialog = AddCustomLibraryDialog.createDialog(myDescription, context.librariesContainer,
-                                                             context.module, context.modifiableRootModel,
-                                                             null)
+            val dialog = AddCustomLibraryDialog.createDialog(
+                myDescription, context.librariesContainer,
+                context.module, context.modifiableRootModel,
+                null
+            )
             dialog.show()
             validatorsManager.validate()
         }

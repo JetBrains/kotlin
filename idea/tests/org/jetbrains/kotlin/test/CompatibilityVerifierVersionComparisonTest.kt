@@ -13,8 +13,7 @@ import org.junit.runner.RunWith
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class CompatibilityVerifierVersionComparisonTest : LightPlatformTestCase() {
     fun testKotlinVersionParsing() {
-        val version = KotlinPluginVersion.parse("1.2.40-dev-193-Studio3.0-1")
-                ?: throw AssertionError("Version should not be null")
+        val version = KotlinPluginVersion.parse("1.2.40-dev-193-Studio3.0-1") ?: throw AssertionError("Version should not be null")
 
         assertEquals("1.2.40", version.kotlinVersion)
         assertEquals("dev", version.status)

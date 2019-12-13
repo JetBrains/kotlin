@@ -13,6 +13,7 @@ abstract class AbstractCompiledKotlinInJavaCompletionTest : KotlinFixtureComplet
     override fun getPlatform() = JvmPlatforms.unspecifiedJvmPlatform
 
     override fun getProjectDescriptor() =
-        SdkAndMockLibraryProjectDescriptor(COMPLETION_TEST_DATA_BASE_PATH + "/injava/mockLib", false)
+        SdkAndMockLibraryProjectDescriptor("$COMPLETION_TEST_DATA_BASE_PATH/injava/mockLib", false)
+
     override fun defaultCompletionType() = CompletionType.BASIC
 }

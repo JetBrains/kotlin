@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.android
@@ -62,24 +51,26 @@ class KotlinAndroidLineMarkerProvider : LineMarkerProvider {
         }
 
         return LineMarkerInfo(
-                    nameIdentifier,
-                    nameIdentifier.textRange,
-                    AllIcons.FileTypes.Xml,
-                    Pass.LINE_MARKERS,
-                    Function { "Related XML file" },
-                    GutterIconNavigationHandler { e: MouseEvent, _: PsiElement ->
-                        NavigationUtil
-                                .getRelatedItemsPopup(
-                                        manifestItems + collectGoToRelatedLayoutItems(androidFacet),
-                                        "Go to Related Files")
-                                .show(RelativePoint(e))
-                    },
-                    GutterIconRenderer.Alignment.RIGHT)
+            nameIdentifier,
+            nameIdentifier.textRange,
+            AllIcons.FileTypes.Xml,
+            Pass.LINE_MARKERS,
+            Function { "Related XML file" },
+            GutterIconNavigationHandler { e: MouseEvent, _: PsiElement ->
+                NavigationUtil
+                    .getRelatedItemsPopup(
+                        manifestItems + collectGoToRelatedLayoutItems(androidFacet),
+                        "Go to Related Files"
+                    )
+                    .show(RelativePoint(e))
+            },
+            GutterIconRenderer.Alignment.RIGHT
+        )
     }
 
     private fun KtClass.collectGoToRelatedLayoutItems(androidFacet: AndroidFacet): List<GotoRelatedItem> {
         val resources = mutableSetOf<PsiFile>()
-        accept(object: KtVisitorVoid() {
+        accept(object : KtVisitorVoid() {
             override fun visitKtElement(element: KtElement) {
                 element.acceptChildren(this)
             }
@@ -96,11 +87,8 @@ class KotlinAndroidLineMarkerProvider : LineMarkerProvider {
                     return
                 }
 
-                val files = ModuleResourceManagers
-                        .getInstance(androidFacet)
-                        .localResourceManager
-                        .findResourcesByFieldName(resClassName, info.fieldName)
-                        .filterIsInstance<PsiFile>()
+                val files = ModuleResourceManagers.getInstance(androidFacet).localResourceManager
+                    .findResourcesByFieldName(resClassName, info.fieldName).filterIsInstance<PsiFile>()
 
                 resources.addAll(files)
             }
@@ -110,7 +98,7 @@ class KotlinAndroidLineMarkerProvider : LineMarkerProvider {
     }
 
     private fun KtClass.collectGoToRelatedManifestItems(manifest: Manifest): List<GotoRelatedItem> =
-            findComponentDeclarationInManifest(manifest)?.xmlAttributeValue?.let { listOf(GotoManifestItem(it)) } ?: emptyList()
+        findComponentDeclarationInManifest(manifest)?.xmlAttributeValue?.let { listOf(GotoManifestItem(it)) } ?: emptyList()
 
     private class GotoManifestItem(attributeValue: XmlAttributeValue) : GotoRelatedItem(attributeValue) {
         override fun getCustomName(): String? = "AndroidManifest.xml"
@@ -124,10 +112,11 @@ class KotlinAndroidLineMarkerProvider : LineMarkerProvider {
 
     companion object {
         private val CLASSES_WITH_LAYOUT_XML = arrayOf(
-                SdkConstants.CLASS_ACTIVITY,
-                SdkConstants.CLASS_FRAGMENT,
-                SdkConstants.CLASS_V4_FRAGMENT,
-                "android.widget.Adapter")
+            SdkConstants.CLASS_ACTIVITY,
+            SdkConstants.CLASS_FRAGMENT,
+            SdkConstants.CLASS_V4_FRAGMENT,
+            "android.widget.Adapter"
+        )
 
         private fun KtClass.isClassWithLayoutXml(): Boolean {
             val type = (unsafeResolveToDescriptor(BodyResolveMode.PARTIAL) as? ClassDescriptor)?.defaultType ?: return false

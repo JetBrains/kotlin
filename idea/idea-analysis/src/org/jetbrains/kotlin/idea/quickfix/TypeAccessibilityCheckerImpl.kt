@@ -99,7 +99,8 @@ private tailrec fun DeclarationDescriptor.additionalClasses(existingClasses: Col
 
 private fun DeclarationDescriptor.collectAllTypes(): Sequence<FqName?> {
     return when (this) {
-        is ClassConstructorDescriptor -> valueParameters.asSequence().map(ValueParameterDescriptor::getType).flatMap(KotlinType::collectAllTypes)
+        is ClassConstructorDescriptor -> valueParameters.asSequence().map(ValueParameterDescriptor::getType)
+            .flatMap(KotlinType::collectAllTypes)
         is ClassDescriptor -> if (isInline) unsubstitutedPrimaryConstructor?.collectAllTypes().orEmpty() else {
             emptySequence()
         } + declaredTypeParameters.asSequence().flatMap(DeclarationDescriptor::collectAllTypes) + sequenceOf(fqNameOrNull())

@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -59,7 +59,8 @@ protected constructor(
         if (psi == null
             || !psi.isValid
             || psi !is XmlFile
-            || psi.virtualFile == null) {
+            || psi.virtualFile == null
+        ) {
             return ConfigureKotlinStatus.BROKEN
         }
 
@@ -82,7 +83,7 @@ protected constructor(
 
         val kotlinPluginId = kotlinPluginId(null)
         val kotlinPlugin = mavenProject.plugins.find { it.mavenId.equals(kotlinPluginId.groupId, kotlinPluginId.artifactId) }
-                ?: return ConfigureKotlinStatus.CAN_BE_CONFIGURED
+            ?: return ConfigureKotlinStatus.CAN_BE_CONFIGURED
 
         if (kotlinPlugin.executions.any { it.goals.any(this::isRelevantGoal) }) {
             return ConfigureKotlinStatus.CONFIGURED

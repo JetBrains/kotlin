@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.completion
@@ -56,21 +45,21 @@ class CompletionBindingContextProvider(project: Project) {
     internal var TEST_LOG: StringBuilder? = null
 
     companion object {
-        fun getInstance(project: Project): CompletionBindingContextProvider
-                = project.getComponent(CompletionBindingContextProvider::class.java)
+        fun getInstance(project: Project): CompletionBindingContextProvider =
+            project.getComponent(CompletionBindingContextProvider::class.java)
 
         var ENABLED = true
     }
 
     private class CompletionData(
-            val block: KtBlockExpression,
-            val prevStatement: KtExpression?,
-            val psiElementsBeforeAndAfter: List<PsiElementData>,
-            val bindingContext: BindingContext,
-            val moduleDescriptor: ModuleDescriptor,
-            val statementResolutionScope: LexicalScope,
-            val statementDataFlowInfo: DataFlowInfo,
-            val debugText: String
+        val block: KtBlockExpression,
+        val prevStatement: KtExpression?,
+        val psiElementsBeforeAndAfter: List<PsiElementData>,
+        val bindingContext: BindingContext,
+        val moduleDescriptor: ModuleDescriptor,
+        val statementResolutionScope: LexicalScope,
+        val statementDataFlowInfo: DataFlowInfo,
+        val debugText: String
     )
 
     private data class PsiElementData(val element: PsiElement, val level: Int)
@@ -80,7 +69,9 @@ class CompletionBindingContextProvider(project: Project) {
 
         var data: CompletionData?
             get() = reference?.get()
-            set(value) { reference = value?.let { SoftReference(it) } }
+            set(value) {
+                reference = value?.let { SoftReference(it) }
+            }
     }
 
     private var prevCompletionDataCache: CachedValue<DataHolder> = CachedValuesManager.getManager(project).createCachedValue(
@@ -94,13 +85,10 @@ class CompletionBindingContextProvider(project: Project) {
     )
 
 
-    fun getBindingContext(position: PsiElement, resolutionFacade: ResolutionFacade): BindingContext {
-        return if (ENABLED) {
-            _getBindingContext(position, resolutionFacade)
-        }
-        else {
-            resolutionFacade.analyze(position.parentsWithSelf.firstIsInstance<KtElement>(), BodyResolveMode.PARTIAL_FOR_COMPLETION)
-        }
+    fun getBindingContext(position: PsiElement, resolutionFacade: ResolutionFacade): BindingContext = if (ENABLED) {
+        _getBindingContext(position, resolutionFacade)
+    } else {
+        resolutionFacade.analyze(position.parentsWithSelf.firstIsInstance<KtElement>(), BodyResolveMode.PARTIAL_FOR_COMPLETION)
     }
 
     private fun _getBindingContext(position: PsiElement, resolutionFacade: ResolutionFacade): BindingContext {
@@ -130,23 +118,33 @@ class CompletionBindingContextProvider(project: Project) {
                 LOG.debug("Reusing data from completion of \"${prevCompletionData.debugText}\"")
 
                 //TODO: expected type?
-                val statementContext = inStatement.analyzeInContext(scope = prevCompletionData.statementResolutionScope,
-                                                                    contextExpression = block,
-                                                                    dataFlowInfo = prevCompletionData.statementDataFlowInfo,
-                                                                    isStatement = true)
+                val statementContext = inStatement.analyzeInContext(
+                    scope = prevCompletionData.statementResolutionScope,
+                    contextExpression = block,
+                    dataFlowInfo = prevCompletionData.statementDataFlowInfo,
+                    isStatement = true
+                )
                 // we do not update prevCompletionDataCache because the same data should work
                 return CompositeBindingContext.create(listOf(statementContext, prevCompletionData.bindingContext))
             }
         }
 
-        val bindingContext = resolutionFacade.analyze(position.parentsWithSelf.firstIsInstance<KtElement>(), BodyResolveMode.PARTIAL_FOR_COMPLETION)
+        val bindingContext =
+            resolutionFacade.analyze(position.parentsWithSelf.firstIsInstance<KtElement>(), BodyResolveMode.PARTIAL_FOR_COMPLETION)
         prevCompletionDataCache.value.data = if (block != null && modificationScope != null) {
             val resolutionScope = inStatement.getResolutionScope(bindingContext, resolutionFacade)
             val dataFlowInfo = bindingContext.getDataFlowInfoBefore(inStatement)
-            CompletionData(block, prevStatement, psiElementsBeforeAndAfter!!, bindingContext, resolutionFacade.moduleDescriptor, resolutionScope, dataFlowInfo,
-                           debugText = position.text)
-        }
-        else {
+            CompletionData(
+                block,
+                prevStatement,
+                psiElementsBeforeAndAfter!!,
+                bindingContext,
+                resolutionFacade.moduleDescriptor,
+                resolutionScope,
+                dataFlowInfo,
+                debugText = position.text
+            )
+        } else {
             null
         }
 

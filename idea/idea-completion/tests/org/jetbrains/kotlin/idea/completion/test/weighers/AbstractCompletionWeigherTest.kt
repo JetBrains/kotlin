@@ -15,9 +15,10 @@ import org.jetbrains.kotlin.idea.test.rollbackCompilerOptions
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.junit.Assert
 
-abstract class AbstractCompletionWeigherTest(val completionType: CompletionType, val relativeTestDataPath: String) : KotlinLightCodeInsightFixtureTestCase() {
+abstract class AbstractCompletionWeigherTest(val completionType: CompletionType, val relativeTestDataPath: String) :
+    KotlinLightCodeInsightFixtureTestCase() {
     fun doTest(path: String) {
-        val pathPrefix = RELATIVE_COMPLETION_TEST_DATA_BASE_PATH + "/" + relativeTestDataPath
+        val pathPrefix = "$RELATIVE_COMPLETION_TEST_DATA_BASE_PATH/$relativeTestDataPath"
         assert(path.startsWith(pathPrefix))
         val relativePath = path.removePrefix(pathPrefix)
 
@@ -28,7 +29,7 @@ abstract class AbstractCompletionWeigherTest(val completionType: CompletionType,
         val configured = configureCompilerOptions(text, project, module)
 
         val items = InTextDirectivesUtils.findArrayWithPrefixes(text, "// ORDER:")
-        Assert.assertTrue("""Some items should be defined with "// ORDER:" directive""", !items.isEmpty())
+        Assert.assertTrue("""Some items should be defined with "// ORDER:" directive""", items.isNotEmpty())
 
         try {
             myFixture.complete(completionType, InTextDirectivesUtils.getPrefixedInt(text, "// INVOCATION_COUNT:") ?: 1)

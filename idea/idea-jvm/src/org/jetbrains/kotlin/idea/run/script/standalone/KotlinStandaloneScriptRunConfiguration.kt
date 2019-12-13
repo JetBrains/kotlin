@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.run.script.standalone
@@ -49,24 +38,32 @@ import java.io.File
 import java.util.*
 
 class KotlinStandaloneScriptRunConfiguration(
-        project: Project,
-        factory: ConfigurationFactory,
-        name: String?
-) : KotlinRunConfiguration(name, JavaRunConfigurationModule(project, true), factory), CommonJavaRunConfigurationParameters, RefactoringListenerProvider {
+    project: Project,
+    factory: ConfigurationFactory,
+    name: String?
+) : KotlinRunConfiguration(name, JavaRunConfigurationModule(project, true), factory), CommonJavaRunConfigurationParameters,
+    RefactoringListenerProvider {
     @JvmField
     var filePath: String? = null
+
     @JvmField
     var vmParameters: String? = null
+
     @JvmField
     var alternativeJrePath: String? = null
+
     @JvmField
     var programParameters: String? = null
+
     @JvmField
     var envs: MutableMap<String, String> = LinkedHashMap()
+
     @JvmField
     var passParentEnvs: Boolean = true
+
     @JvmField
     var workingDirectory: String? = null
+
     @JvmField
     var isAlternativeJrePathEnabled: Boolean = false
 
@@ -105,13 +102,17 @@ class KotlinStandaloneScriptRunConfiguration(
         isAlternativeJrePathEnabled = enabled
     }
 
-    override fun getState(executor: Executor, environment: ExecutionEnvironment): RunProfileState = ScriptCommandLineState(environment, this)
+    override fun getState(executor: Executor, environment: ExecutionEnvironment): RunProfileState =
+        ScriptCommandLineState(environment, this)
 
     override fun suggestedName() = filePath?.substringAfterLast('/')
 
     override fun getConfigurationEditor(): SettingsEditor<out RunConfiguration> {
         val group = SettingsEditorGroup<KotlinStandaloneScriptRunConfiguration>()
-        group.addEditor(ExecutionBundle.message("run.configuration.configuration.tab.title"), KotlinStandaloneScriptRunConfigurationEditor(project))
+        group.addEditor(
+            ExecutionBundle.message("run.configuration.configuration.tab.title"),
+            KotlinStandaloneScriptRunConfigurationEditor(project)
+        )
         JavaRunConfigurationExtensionManagerUtil.getInstance().appendEditors(this, group)
         return group
     }
@@ -193,16 +194,16 @@ class KotlinStandaloneScriptRunConfiguration(
 }
 
 private class ScriptCommandLineState(
-        environment: ExecutionEnvironment,
-        configuration: KotlinStandaloneScriptRunConfiguration) :
-        BaseJavaApplicationCommandLineState<KotlinStandaloneScriptRunConfiguration>(environment, configuration) {
+    environment: ExecutionEnvironment,
+    configuration: KotlinStandaloneScriptRunConfiguration
+) : BaseJavaApplicationCommandLineState<KotlinStandaloneScriptRunConfiguration>(environment, configuration) {
 
     override fun createJavaParameters(): JavaParameters? {
         val params = commonParameters()
 
         val filePath = configuration.filePath ?: throw CantRunException("Script file was not specified")
-        val scriptVFile = LocalFileSystem.getInstance().findFileByIoFile(File(filePath)) ?:
-                          throw CantRunException("Script file was not found in project")
+        val scriptVFile =
+            LocalFileSystem.getInstance().findFileByIoFile(File(filePath)) ?: throw CantRunException("Script file was not found in project")
 
         params.classPath.add(PathUtil.kotlinPathsForIdeaPlugin.compilerPath)
 

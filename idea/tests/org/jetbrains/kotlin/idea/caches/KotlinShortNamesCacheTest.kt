@@ -88,19 +88,21 @@ class KotlinShortNamesCacheTest : KotlinLightCodeInsightFixtureTestCase() {
 
     fun PsiMember.fqName() = PsiUtil.getMemberQualifiedName(this)
 
-    fun methodArrayDebugToString(a: Array<PsiMethod>)
-            = a.map { "${(it as KtLightMethod).getKotlinFqName()} static=${it.hasModifierProperty(PsiModifier.STATIC)}" }.joinToString("\n")
+    fun methodArrayDebugToString(a: Array<PsiMethod>) =
+        a.map { "${(it as KtLightMethod).getKotlinFqName()} static=${it.hasModifierProperty(PsiModifier.STATIC)}" }.joinToString("\n")
 
-    fun accessorArrayDebugToString(a: Array<PsiMethod>)
-            = a.map { "${(it as KtLightMethod).fqName()} property=${(it.lightMemberOrigin?.originalElement as KtProperty).fqName} static=${it.hasModifierProperty(PsiModifier.STATIC)}" }.joinToString("\n")
+    fun accessorArrayDebugToString(a: Array<PsiMethod>) = a.map {
+        "${(it as KtLightMethod).fqName()} property=${(it.lightMemberOrigin
+            ?.originalElement as KtProperty).fqName} static=${it.hasModifierProperty(PsiModifier.STATIC)}"
+    }.joinToString("\n")
 
     fun checkMethodFound(methods: Array<PsiMethod>, stringFqName: String, static: Boolean) {
-        assertNotNull("Method $stringFqName with static=$static not found\n" + methodArrayDebugToString(methods),
-                      methods.find {
-                          stringFqName == (it as KtLightMethod).fqName().toString()
-                          &&
-                          it.hasModifierProperty(PsiModifier.STATIC) == static
-                      })
+        assertNotNull(
+            "Method $stringFqName with static=$static not found\n" + methodArrayDebugToString(methods),
+            methods.find {
+                stringFqName == (it as KtLightMethod).fqName().toString() && it.hasModifierProperty(PsiModifier.STATIC) == static
+            }
+        )
     }
 
     fun checkIsSingleMethodFound(scope: GlobalSearchScope, stringFqName: String, static: Boolean, query: String = shortName(stringFqName)) {
@@ -110,7 +112,12 @@ class KotlinShortNamesCacheTest : KotlinLightCodeInsightFixtureTestCase() {
         }
     }
 
-    fun checkIsSingleMethodFoundCompanion(scope: GlobalSearchScope, delegateFqName: String, originalFqName: String, query: String = shortName(originalFqName)) {
+    fun checkIsSingleMethodFoundCompanion(
+        scope: GlobalSearchScope,
+        delegateFqName: String,
+        originalFqName: String,
+        query: String = shortName(originalFqName)
+    ) {
         cacheInstance.getMethodsByName(query, scope).let {
             checkMethodFound(it, delegateFqName, true)
             checkMethodFound(it, originalFqName, false)
@@ -137,8 +144,10 @@ class KotlinShortNamesCacheTest : KotlinLightCodeInsightFixtureTestCase() {
         checkIsVarAccessorsFound(scope, stringVarFqName, getter, setter, static)
     }
 
-    fun checkIsVarAccessorsFoundCompanion(scope: GlobalSearchScope, stringVarFqName: String, getterFqName: String, setterFqName: String,
-                                          delegateGetterFqName: String, delegateSetterFqName: String) {
+    fun checkIsVarAccessorsFoundCompanion(
+        scope: GlobalSearchScope, stringVarFqName: String, getterFqName: String, setterFqName: String,
+        delegateGetterFqName: String, delegateSetterFqName: String
+    ) {
         val varName = shortName(stringVarFqName)
 
 
@@ -160,27 +169,31 @@ class KotlinShortNamesCacheTest : KotlinLightCodeInsightFixtureTestCase() {
         val varName = varFqName.shortName().asString()
         val companionParent = varFqName.parent().parent().asString()
 
-        checkIsVarAccessorsFoundCompanion(scope, stringVarFqName, getter, setter,
-                                          companionParent + "." + JvmAbi.getterName(varName),
-                                          companionParent + "." + JvmAbi.setterName(varName))
+        checkIsVarAccessorsFoundCompanion(
+            scope, stringVarFqName, getter, setter,
+            companionParent + "." + JvmAbi.getterName(varName),
+            companionParent + "." + JvmAbi.setterName(varName)
+        )
     }
 
     fun accessorsFqNameStringFor(stringVarFqName: String): Pair<String, String> {
         val varFqName = FqName(stringVarFqName)
         val varShortName = varFqName.shortName().asString()
         val stringVarParentFqName = varFqName.parent().asString()
-        return Pair(stringVarParentFqName + "." + JvmAbi.getterName(varShortName),
-                    stringVarParentFqName + "." + JvmAbi.setterName(varShortName))
+        return Pair(
+            stringVarParentFqName + "." + JvmAbi.getterName(varShortName),
+            stringVarParentFqName + "." + JvmAbi.setterName(varShortName)
+        )
     }
 
     fun checkAccessorFound(methods: Array<PsiMethod>, stringFqName: String, propertyFqName: String, static: Boolean) {
         assertNotNull("Accessor $stringFqName property=$propertyFqName static=$static not found\n" + accessorArrayDebugToString(methods),
                       methods.find {
                           stringFqName == (it as KtLightMethod).fqName().toString()
-                          &&
-                          (it.lightMemberOrigin?.originalElement as KtProperty).fqName?.asString() == propertyFqName
-                          &&
-                          it.hasModifierProperty(PsiModifier.STATIC) == static
+                                  &&
+                                  (it.lightMemberOrigin?.originalElement as KtProperty).fqName?.asString() == propertyFqName
+                                  &&
+                                  it.hasModifierProperty(PsiModifier.STATIC) == static
                       })
     }
 
@@ -198,8 +211,10 @@ class KotlinShortNamesCacheTest : KotlinLightCodeInsightFixtureTestCase() {
     fun doTestGetMethodsByNameWithAccessors(file: String) {
         myFixture.configureByFile(file)
         val scope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module)
-        checkIsVarAccessorsFound(scope, "topLevelVar", "KotlinShortNameCacheTestData.getTopLevelVar",
-                                 "KotlinShortNameCacheTestData.setTopLevelVar", true)
+        checkIsVarAccessorsFound(
+            scope, "topLevelVar", "KotlinShortNameCacheTestData.getTopLevelVar",
+            "KotlinShortNameCacheTestData.setTopLevelVar", true
+        )
 
         checkIsVarAccessorsFound(scope, "B1.staticObjectVar", true)
         checkIsVarAccessorsFound(scope, "B1.nonStaticObjectVar", false)
@@ -220,13 +235,14 @@ class KotlinShortNamesCacheTest : KotlinLightCodeInsightFixtureTestCase() {
         assertNotNull("Field $stringFqName with static=$static not found\n" + fieldArrayDebugToString(methods),
                       methods.find {
                           stringFqName == (it as KtLightField).fqName().toString()
-                          &&
-                          it.hasModifierProperty(PsiModifier.STATIC) == static
+                                  &&
+                                  it.hasModifierProperty(PsiModifier.STATIC) == static
                       })
     }
 
-    fun fieldArrayDebugToString(a: Array<PsiField>)
-            = a.map { "${(it as KtLightField).fqName()} property=${(it.kotlinOrigin as KtProperty).fqName} static=${it.hasModifierProperty(PsiModifier.STATIC)}" }.joinToString("\n")
+    fun fieldArrayDebugToString(a: Array<PsiField>) = a.joinToString("\n") {
+        "${(it as KtLightField).fqName()} property=${(it.kotlinOrigin as KtProperty).fqName} static=${it.hasModifierProperty(PsiModifier.STATIC)}"
+    }
 
 
     fun checkIsSingleFieldFound(scope: GlobalSearchScope, stringFqName: String, static: Boolean, query: String = shortName(stringFqName)) {

@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.refactoring.pushDown
@@ -49,8 +38,8 @@ import org.jetbrains.kotlin.utils.keysToMap
 import java.util.*
 
 class KotlinPushDownContext(
-        val sourceClass: KtClass,
-        val membersToMove: List<KotlinMemberInfo>
+    val sourceClass: KtClass,
+    val membersToMove: List<KotlinMemberInfo>
 ) {
     val resolutionFacade = sourceClass.getResolutionFacade()
 
@@ -58,20 +47,18 @@ class KotlinPushDownContext(
 
     val sourceClassDescriptor = sourceClassContext[BindingContext.DECLARATION_TO_DESCRIPTOR, sourceClass] as ClassDescriptor
 
-    val memberDescriptors = membersToMove
-            .map { it.member }
-            .keysToMap {
-                when (it) {
-                    is KtPsiClassWrapper -> it.psiClass.getJavaClassDescriptor(resolutionFacade)!!
-                    else -> sourceClassContext[BindingContext.DECLARATION_TO_DESCRIPTOR, it]!!
-                }
-            }
+    val memberDescriptors = membersToMove.map { it.member }.keysToMap {
+        when (it) {
+            is KtPsiClassWrapper -> it.psiClass.getJavaClassDescriptor(resolutionFacade)!!
+            else -> sourceClassContext[BindingContext.DECLARATION_TO_DESCRIPTOR, it]!!
+        }
+    }
 }
 
 class KotlinPushDownProcessor(
-        project: Project,
-        sourceClass: KtClass,
-        membersToMove: List<KotlinMemberInfo>
+    project: Project,
+    sourceClass: KtClass,
+    membersToMove: List<KotlinMemberInfo>
 ) : BaseRefactoringProcessor(project) {
     private val context = KotlinPushDownContext(sourceClass, membersToMove)
 
@@ -81,7 +68,7 @@ class KotlinPushDownProcessor(
         override fun getElements() = arrayOf(context.sourceClass)
 
         override fun getCodeReferencesText(usagesCount: Int, filesCount: Int) =
-                RefactoringBundle.message("classes.to.push.down.members.to", UsageViewBundle.getReferencesString(usagesCount, filesCount))
+            RefactoringBundle.message("classes.to.push.down.members.to", UsageViewBundle.getReferencesString(usagesCount, filesCount))
 
         override fun getCommentReferencesText(usagesCount: Int, filesCount: Int) = null
     }
@@ -102,18 +89,17 @@ class KotlinPushDownProcessor(
     }
 
     override fun findUsages(): Array<out UsageInfo> {
-        return HierarchySearchRequest(context.sourceClass, context.sourceClass.useScope, false)
-                .searchInheritors()
-                .mapNotNull { it.unwrapped }
-                .map(::SubclassUsage)
-                .toTypedArray()
+        return HierarchySearchRequest(context.sourceClass, context.sourceClass.useScope, false).searchInheritors()
+            .mapNotNull { it.unwrapped }
+            .map(::SubclassUsage)
+            .toTypedArray()
     }
 
     override fun preprocessUsages(refUsages: Ref<Array<UsageInfo>>): Boolean {
         val usages = refUsages.get() ?: UsageInfo.EMPTY_ARRAY
         if (usages.isEmpty()) {
-            val message = "${context.sourceClassDescriptor.renderForConflicts()} doesn't have inheritors\n" +
-                          "Pushing members down will result in them being deleted. Would you like to proceed?"
+            val message = "${context.sourceClassDescriptor
+                .renderForConflicts()} doesn't have inheritors\nPushing members down will result in them being deleted. Would you like to proceed?"
             val answer = Messages.showYesNoDialog(message.capitalize(), PUSH_MEMBERS_DOWN, Messages.getWarningIcon())
             if (answer == Messages.NO) return false
         }
@@ -128,7 +114,7 @@ class KotlinPushDownProcessor(
     private fun pushDownToClass(targetClass: KtClassOrObject) {
         val targetClassDescriptor = context.resolutionFacade.resolveToDescriptor(targetClass) as ClassDescriptor
         val substitutor = getTypeSubstitutor(context.sourceClassDescriptor.defaultType, targetClassDescriptor.defaultType)
-                          ?: TypeSubstitutor.EMPTY
+            ?: TypeSubstitutor.EMPTY
         members@ for (memberInfo in context.membersToMove) {
             val member = memberInfo.member
             val memberDescriptor = context.memberDescriptors[member] ?: continue
@@ -138,26 +124,25 @@ class KotlinPushDownProcessor(
                     memberDescriptor as CallableMemberDescriptor
 
                     moveCallableMemberToClass(
-                            member as KtCallableDeclaration,
-                            memberDescriptor,
-                            targetClass,
-                            targetClassDescriptor,
-                            substitutor,
-                            memberInfo.isToAbstract
+                        member as KtCallableDeclaration,
+                        memberDescriptor,
+                        targetClass,
+                        targetClassDescriptor,
+                        substitutor,
+                        memberInfo.isToAbstract
                     )
                 }
 
                 is KtClassOrObject, is KtPsiClassWrapper -> {
                     if (memberInfo.overrides != null) {
                         context.sourceClass.getSuperTypeEntryByDescriptor(
-                                memberDescriptor as ClassDescriptor,
-                                context.sourceClassContext
+                            memberDescriptor as ClassDescriptor,
+                            context.sourceClassContext
                         )?.let {
                             addSuperTypeEntry(it, targetClass, targetClassDescriptor, context.sourceClassContext, substitutor)
                         }
                         continue@members
-                    }
-                    else {
+                    } else {
                         addMemberToTarget(member, targetClass)
                     }
                 }
@@ -183,21 +168,19 @@ class KotlinPushDownProcessor(
                         }
                         makeAbstract(member, memberDescriptor, TypeSubstitutor.EMPTY, context.sourceClass)
                         member.typeReference?.addToShorteningWaitSet()
-                    }
-                    else {
+                    } else {
                         member.delete()
                     }
                 }
                 is KtClassOrObject, is KtPsiClassWrapper -> {
                     if (memberInfo.overrides != null) {
                         context.sourceClass.getSuperTypeEntryByDescriptor(
-                                memberDescriptor as ClassDescriptor,
-                                context.sourceClassContext
+                            memberDescriptor as ClassDescriptor,
+                            context.sourceClassContext
                         )?.let {
                             context.sourceClass.removeSuperTypeListEntry(it)
                         }
-                    }
-                    else {
+                    } else {
                         member.delete()
                     }
                 }
@@ -213,8 +196,7 @@ class KotlinPushDownProcessor(
             }
             usages.forEach { (it.element as? KtClassOrObject)?.let { pushDownToClass(it) } }
             removeOriginalMembers()
-        }
-        finally {
+        } finally {
             clearMarking(markedElements)
         }
     }

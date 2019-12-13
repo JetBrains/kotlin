@@ -9,7 +9,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.testFramework.BinaryLightVirtualFile
 import com.intellij.testFramework.LightVirtualFile
-import com.intellij.testFramework.registerServiceInstance
 import com.intellij.util.indexing.FileContentImpl
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -73,14 +72,19 @@ abstract class AbstractLoadJavaClsStubTest : TestCaseWithTmpdir() {
 
             if (stubTreeFromCls != null) {
                 val stubsFromDeserializedDescriptors = run {
-                    val decompiledProvider = KotlinDecompiledFileViewProvider(PsiManager.getInstance(environment.project), file, true) { provider ->
-                        KtClsFile(provider)
-                    }
+                    val decompiledProvider =
+                        KotlinDecompiledFileViewProvider(PsiManager.getInstance(environment.project), file, true) { provider ->
+                            KtClsFile(provider)
+                        }
 
                     KtFileStubBuilder().buildStubTree(KtClsFile(decompiledProvider))
                 }
 
-                Assert.assertEquals("File: ${file.name}", stubsFromDeserializedDescriptors.serializeToString(), stubTreeFromCls.serializeToString())
+                Assert.assertEquals(
+                    "File: ${file.name}",
+                    stubsFromDeserializedDescriptors.serializeToString(),
+                    stubTreeFromCls.serializeToString()
+                )
             }
         }
     }

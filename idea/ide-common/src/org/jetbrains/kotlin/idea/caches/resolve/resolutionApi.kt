@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 @file:JvmName("ResolutionUtils")
@@ -20,7 +9,8 @@ package org.jetbrains.kotlin.idea.caches.resolve
 
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
@@ -165,7 +155,8 @@ inline fun <reified T> T.analyzeWithContent(): BindingContext where T : KtDeclar
  * @ref [org.jetbrains.kotlin.idea.caches.resolve.PerFileAnalysisCache]
  */
 fun KtFile.analyzeWithAllCompilerChecks(vararg extraFiles: KtFile): AnalysisResult =
-    KotlinCacheService.getInstance(project).getResolutionFacade(listOf(this) + extraFiles.toList()).analyzeWithAllCompilerChecks(listOf(this))
+    KotlinCacheService.getInstance(project).getResolutionFacade(listOf(this) + extraFiles.toList())
+        .analyzeWithAllCompilerChecks(listOf(this))
 
 /**
  * This function is expected to produce the same result as compiler for the given element and its children (including diagnostics,
@@ -187,13 +178,18 @@ fun KtElement.analyzeWithAllCompilerChecks(): AnalysisResult = getResolutionFaca
 
 // this method don't check visibility and collect all descriptors with given fqName
 fun ResolutionFacade.resolveImportReference(
-        moduleDescriptor: ModuleDescriptor,
-        fqName: FqName
+    moduleDescriptor: ModuleDescriptor,
+    fqName: FqName
 ): Collection<DeclarationDescriptor> {
     val importDirective = KtPsiFactory(project).createImportDirective(ImportPath(fqName, false))
     val qualifiedExpressionResolver = this.getFrontendService(moduleDescriptor, QualifiedExpressionResolver::class.java)
     return qualifiedExpressionResolver.processImportReference(
-            importDirective, moduleDescriptor, BindingTraceContext(), excludedImportNames = emptyList(), packageFragmentForVisibilityCheck = null)?.getContributedDescriptors() ?: emptyList()
+        importDirective,
+        moduleDescriptor,
+        BindingTraceContext(),
+        excludedImportNames = emptyList(),
+        packageFragmentForVisibilityCheck = null
+    )?.getContributedDescriptors() ?: emptyList()
 }
 
 @Suppress("DEPRECATION")

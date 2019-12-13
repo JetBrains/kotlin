@@ -19,7 +19,8 @@ import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.idea.caches.project.isNewMPPModule
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.plugins.gradle.execution.test.runner.*
+import org.jetbrains.plugins.gradle.execution.test.runner.TestClassGradleConfigurationProducer
+import org.jetbrains.plugins.gradle.execution.test.runner.applyTestConfiguration
 import org.jetbrains.plugins.gradle.service.execution.GradleRunConfiguration
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import org.jetbrains.plugins.gradle.util.GradleExecutionSettingsUtil.createTestFilterFrom
@@ -93,8 +94,7 @@ abstract class AbstractKotlinMultiplatformTestClassGradleConfigurationProducer :
 }
 
 abstract class AbstractKotlinTestClassGradleConfigurationProducer
-    : TestClassGradleConfigurationProducer(), KotlinGradleConfigurationProducer
-{
+    : TestClassGradleConfigurationProducer(), KotlinGradleConfigurationProducer {
     override fun getConfigurationFactory(): ConfigurationFactory {
         return KotlinGradleExternalTaskConfigurationType.instance.factory
     }

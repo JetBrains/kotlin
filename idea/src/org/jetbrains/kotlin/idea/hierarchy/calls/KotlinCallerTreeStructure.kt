@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.hierarchy.calls
@@ -41,17 +30,16 @@ import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
 class KotlinCallerTreeStructure(
-        element: KtElement,
-        private val scopeType: String
-) : HierarchyTreeStructure(element.project,
-                           KotlinCallHierarchyNodeDescriptor(null, element, true, false)) {
+    element: KtElement,
+    private val scopeType: String
+) : HierarchyTreeStructure(element.project, KotlinCallHierarchyNodeDescriptor(null, element, true, false)) {
     companion object {
         internal fun processReference(
-                reference: PsiReference?,
-                refElement: PsiElement,
-                nodeDescriptor: HierarchyNodeDescriptor,
-                callerToDescriptorMap: MutableMap<PsiElement, NodeDescriptor<*>>,
-                isJavaMap: Boolean
+            reference: PsiReference?,
+            refElement: PsiElement,
+            nodeDescriptor: HierarchyNodeDescriptor,
+            callerToDescriptorMap: MutableMap<PsiElement, NodeDescriptor<*>>,
+            isJavaMap: Boolean
         ) {
             var callerElement: PsiElement? = when (refElement) {
                 is KtElement -> getCallHierarchyElement(refElement)
@@ -72,9 +60,9 @@ class KotlinCallerTreeStructure(
     }
 
     private fun buildChildren(
-            element: PsiElement,
-            nodeDescriptor: HierarchyNodeDescriptor,
-            callerToDescriptorMap: MutableMap<PsiElement, NodeDescriptor<*>>
+        element: PsiElement,
+        nodeDescriptor: HierarchyNodeDescriptor,
+        callerToDescriptorMap: MutableMap<PsiElement, NodeDescriptor<*>>
     ): Collection<Any> {
         if (nodeDescriptor is CallHierarchyNodeDescriptor) {
             val psiMethod = nodeDescriptor.enclosingElement as? PsiMethod ?: return emptyList()
@@ -122,22 +110,21 @@ class KotlinCallerTreeStructure(
         if (descriptor is CallableMemberDescriptor) {
             return descriptor.getDeepestSuperDeclarations().flatMap { rootDescriptor ->
                 val rootElement = DescriptorToSourceUtilsIde.getAnyDeclaration(myProject, rootDescriptor)
-                                  ?: return@flatMap emptyList<Any>()
+                    ?: return@flatMap emptyList<Any>()
                 val rootNodeDescriptor = when (rootElement) {
                     is KtElement -> nodeDescriptor
                     is PsiMethod -> CallHierarchyNodeDescriptor(
-                            myProject,
-                            nodeDescriptor.parentDescriptor as HierarchyNodeDescriptor?,
-                            rootElement,
-                            nodeDescriptor.parentDescriptor == null,
-                            false
+                        myProject,
+                        nodeDescriptor.parentDescriptor as HierarchyNodeDescriptor?,
+                        rootElement,
+                        nodeDescriptor.parentDescriptor == null,
+                        false
                     )
                     else -> return@flatMap emptyList<Any>()
                 }
                 buildChildren(rootElement, rootNodeDescriptor, callerToDescriptorMap)
             }.toTypedArray()
-        }
-        else {
+        } else {
             return buildChildren(element, nodeDescriptor, callerToDescriptorMap).toTypedArray()
         }
     }

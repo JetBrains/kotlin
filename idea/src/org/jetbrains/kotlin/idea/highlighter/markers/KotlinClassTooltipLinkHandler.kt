@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -26,10 +26,9 @@ class KotlinClassTooltipLinkHandler : TooltipLinkHandler() {
             module?.let { GlobalSearchScope.moduleScope(it) } ?: GlobalSearchScope.allScope(project)
         }
         // Non-JVM classes cannot be found with Java PSI Facade
-        val aClassElement =
-            KotlinFullClassNameIndex.getInstance().get(qualifiedName, project, scope).firstOrNull()
-                    ?: javaPsiFacade.findClass(qualifiedName, scope)
-                    ?: return false
+        val aClassElement = KotlinFullClassNameIndex.getInstance().get(qualifiedName, project, scope).firstOrNull()
+            ?: javaPsiFacade.findClass(qualifiedName, scope)
+            ?: return false
         NavigationUtil.activateFileWithPsiElement(aClassElement)
         return true
     }

@@ -191,8 +191,10 @@ class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
         val element = file.findElementForRename<KtNameReferenceExpression>(editor.caretModel.offset)!!
         assertNotNull(element)
 
-        val dataContext = SimpleDataContext.getSimpleContext(CommonDataKeys.PSI_ELEMENT.name, element,
-                                                             getCurrentEditorDataContext())
+        val dataContext = SimpleDataContext.getSimpleContext(
+            CommonDataKeys.PSI_ELEMENT.name, element,
+            getCurrentEditorDataContext()
+        )
         val handler = RenameKotlinImplicitLambdaParameter()
 
         assertTrue(handler.isRenaming(dataContext), "In-place rename not allowed for " + element)
@@ -241,8 +243,7 @@ class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
 
         if (newName == null) {
             assertFalse(handler.isRenaming(dataContext), "In-place rename is allowed for " + element)
-        }
-        else {
+        } else {
             try {
                 assertTrue(handler.isRenaming(dataContext), "In-place rename not allowed for " + element)
                 CodeInsightTestUtil.doInlineRename(handler, newName, getEditor(), element)

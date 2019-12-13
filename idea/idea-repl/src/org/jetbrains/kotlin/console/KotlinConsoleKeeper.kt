@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.console
@@ -26,7 +15,7 @@ import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 
-private val REPL_TITLE = "Kotlin REPL"
+private const val REPL_TITLE = "Kotlin REPL"
 
 class KotlinConsoleKeeper(val project: Project) {
     private val consoleMap: MutableMap<VirtualFile, KotlinConsoleRunner> = ConcurrentHashMap()
@@ -45,7 +34,8 @@ class KotlinConsoleKeeper(val project: Project) {
     }
 
     companion object {
-        @JvmStatic fun getInstance(project: Project) = ServiceManager.getService(project, KotlinConsoleKeeper::class.java)
+        @JvmStatic
+        fun getInstance(project: Project) = ServiceManager.getService(project, KotlinConsoleKeeper::class.java)
 
         fun createReplCommandLine(project: Project, module: Module?): GeneralCommandLine {
             val javaParameters = JavaParametersBuilder(project)

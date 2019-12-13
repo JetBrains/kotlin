@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.console
@@ -35,9 +24,9 @@ import javax.xml.parsers.DocumentBuilderFactory
 data class SeverityDetails(val severity: Severity, val description: String, val range: TextRange)
 
 class ReplOutputHandler(
-        private val runner: KotlinConsoleRunner,
-        process: Process,
-        commandLine: String
+    private val runner: KotlinConsoleRunner,
+    process: Process,
+    commandLine: String
 ) : OSProcessHandler(process, commandLine) {
 
     private var isBuildInfoChecked = false
@@ -58,8 +47,7 @@ class ReplOutputHandler(
                 handleReplMessage(resultingText)
                 inputBuffer.setLength(0)
             }
-        }
-        else {
+        } else {
             super.notifyTextAvailable(text, key)
         }
     }
@@ -68,8 +56,7 @@ class ReplOutputHandler(
         if (text.isBlank()) return
         val output = try {
             factory.newDocumentBuilder().parse(strToSource(text))
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             logError(ReplOutputHandler::class.java, "Couldn't parse REPL output: $text", e)
             return
         }
@@ -79,17 +66,17 @@ class ReplOutputHandler(
         val content = root.textContent.replUnescapeLineBreaks().replNormalizeLineBreaks()
 
         when (outputType) {
-            INITIAL_PROMPT  -> buildWarningIfNeededBeforeInit(content)
-            HELP_PROMPT     -> outputProcessor.printHelp(content)
-            USER_OUTPUT     -> outputProcessor.printUserOutput(content)
-            REPL_RESULT     -> outputProcessor.printResultWithGutterIcon(content)
-            READLINE_START  -> runner.isReadLineMode = true
-            READLINE_END    -> runner.isReadLineMode = false
+            INITIAL_PROMPT -> buildWarningIfNeededBeforeInit(content)
+            HELP_PROMPT -> outputProcessor.printHelp(content)
+            USER_OUTPUT -> outputProcessor.printUserOutput(content)
+            REPL_RESULT -> outputProcessor.printResultWithGutterIcon(content)
+            READLINE_START -> runner.isReadLineMode = true
+            READLINE_END -> runner.isReadLineMode = false
             REPL_INCOMPLETE,
-            COMPILE_ERROR   -> outputProcessor.highlightCompilerErrors(createCompilerMessages(content))
-            RUNTIME_ERROR   -> outputProcessor.printRuntimeError("${content.trim()}\n")
-            INTERNAL_ERROR  -> outputProcessor.printInternalErrorMessage(content)
-            SUCCESS         -> runner.commandHistory.lastUnprocessedEntry()?.entryText?.let { runner.successfulLine(it) }
+            COMPILE_ERROR -> outputProcessor.highlightCompilerErrors(createCompilerMessages(content))
+            RUNTIME_ERROR -> outputProcessor.printRuntimeError("${content.trim()}\n")
+            INTERNAL_ERROR -> outputProcessor.printInternalErrorMessage(content)
+            SUCCESS -> runner.commandHistory.lastUnprocessedEntry()?.entryText?.let { runner.successfulLine(it) }
             null -> logError(ReplOutputHandler::class.java, "Unexpected output type:\n$outputType")
         }
 
@@ -113,7 +100,7 @@ class ReplOutputHandler(
 
         val report = factory.newDocumentBuilder().parse(strToSource(runtimeErrorsReport, Charsets.UTF_16))
         val entries = report.getElementsByTagName("reportEntry")
-        for (i in 0..entries.length - 1) {
+        for (i in 0 until entries.length) {
             val reportEntry = entries.item(i) as Element
 
             val severityLevel = reportEntry.getAttribute("severity").toSeverity()
@@ -128,9 +115,9 @@ class ReplOutputHandler(
     }
 
     private fun String.toSeverity() = when (this) {
-        "ERROR"   -> Severity.ERROR
+        "ERROR" -> Severity.ERROR
         "WARNING" -> Severity.WARNING
-        "INFO"    -> Severity.INFO
-        else      -> throw IllegalArgumentException("Unsupported Severity: '$this'") // this case shouldn't occur
+        "INFO" -> Severity.INFO
+        else -> throw IllegalArgumentException("Unsupported Severity: '$this'") // this case shouldn't occur
     }
 }

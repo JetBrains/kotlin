@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -68,11 +68,11 @@ class ConflictingExtensionPropertyInspection : AbstractKotlinInspection() {
                 val fixes = createFixes(property, conflictingExtension, isOnTheFly)
 
                 val problemDescriptor = holder.manager.createProblemDescriptor(
-                        nameElement,
-                        "This property conflicts with synthetic extension and should be removed or renamed to avoid breaking code by future changes in the compiler",
-                        true,
-                        fixes,
-                        ProblemHighlightType.GENERIC_ERROR_OR_WARNING
+                    nameElement,
+                    "This property conflicts with synthetic extension and should be removed or renamed to avoid breaking code by future changes in the compiler",
+                    true,
+                    fixes,
+                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING
                 )
                 holder.registerProblem(problemDescriptor)
             }
@@ -82,7 +82,7 @@ class ConflictingExtensionPropertyInspection : AbstractKotlinInspection() {
     private fun conflictingSyntheticExtension(descriptor: PropertyDescriptor, scopes: SyntheticScopes): SyntheticJavaPropertyDescriptor? {
         val extensionReceiverType = descriptor.extensionReceiverParameter?.type ?: return null
         return scopes.collectSyntheticExtensionProperties(listOf(extensionReceiverType), descriptor.name, NoLookupLocation.FROM_IDE)
-                .firstIsInstanceOrNull<SyntheticJavaPropertyDescriptor>()
+            .firstIsInstanceOrNull<SyntheticJavaPropertyDescriptor>()
     }
 
     private fun isSameAsSynthetic(declaration: KtProperty, syntheticProperty: SyntheticJavaPropertyDescriptor): Boolean {
@@ -103,8 +103,7 @@ class ConflictingExtensionPropertyInspection : AbstractKotlinInspection() {
         return if (getter.hasBlockBody()) {
             val statement = getter.bodyBlockExpression?.statements?.singleOrNull() ?: return false
             (statement as? KtReturnExpression)?.returnedExpression.isGetMethodCall(getMethod)
-        }
-        else {
+        } else {
             getter.bodyExpression.isGetMethodCall(getMethod)
         }
     }
@@ -114,8 +113,7 @@ class ConflictingExtensionPropertyInspection : AbstractKotlinInspection() {
         if (setter.hasBlockBody()) {
             val statement = setter.bodyBlockExpression?.statements?.singleOrNull() ?: return false
             return statement.isSetMethodCall(setMethod, valueParameterName)
-        }
-        else {
+        } else {
             return setter.bodyExpression.isSetMethodCall(setMethod, valueParameterName)
         }
     }
@@ -137,21 +135,32 @@ class ConflictingExtensionPropertyInspection : AbstractKotlinInspection() {
     private fun KtExpression?.isSetMethodCall(setMethod: FunctionDescriptor, valueParameterName: Name): Boolean {
         when (this) {
             is KtCallExpression -> {
-                if ((valueArguments.singleOrNull()?.getArgumentExpression() as? KtSimpleNameExpression)?.getReferencedNameAsName() != valueParameterName) return false
+                if ((valueArguments.singleOrNull()
+                        ?.getArgumentExpression() as? KtSimpleNameExpression)?.getReferencedNameAsName() != valueParameterName
+                ) return false
                 val resolvedCall = resolveToCall()
-                return resolvedCall != null && resolvedCall.isReallySuccess() && resolvedCall.resultingDescriptor.original == setMethod.original
+                return resolvedCall != null &&
+                        resolvedCall.isReallySuccess() &&
+                        resolvedCall.resultingDescriptor.original == setMethod.original
             }
 
             is KtQualifiedExpression -> {
                 val receiver = receiverExpression
-                return receiver is KtThisExpression && receiver.labelQualifier == null && selectorExpression.isSetMethodCall(setMethod, valueParameterName)
+                return receiver is KtThisExpression && receiver.labelQualifier == null && selectorExpression.isSetMethodCall(
+                    setMethod,
+                    valueParameterName
+                )
             }
 
             else -> return false
         }
     }
 
-    private fun createFixes(property: KtProperty, conflictingExtension: SyntheticJavaPropertyDescriptor, isOnTheFly: Boolean): Array<IntentionWrapper> {
+    private fun createFixes(
+        property: KtProperty,
+        conflictingExtension: SyntheticJavaPropertyDescriptor,
+        isOnTheFly: Boolean
+    ): Array<IntentionWrapper> {
         return if (isSameAsSynthetic(property, conflictingExtension)) {
             val fix1 = IntentionWrapper(DeleteRedundantExtensionAction(property), property.containingFile)
             // don't add the second fix when on the fly to allow code cleanup
@@ -160,8 +169,7 @@ class ConflictingExtensionPropertyInspection : AbstractKotlinInspection() {
             else
                 null
             listOfNotNull(fix1, fix2).toTypedArray()
-        }
-        else {
+        } else {
             emptyArray()
         }
     }
@@ -179,33 +187,33 @@ class ConflictingExtensionPropertyInspection : AbstractKotlinInspection() {
             val fqName = declaration.unsafeResolveToDescriptor(BodyResolveMode.PARTIAL).importableFqName
             if (fqName != null) {
                 ProgressManager.getInstance().run(
-                        object : Task.Modal(project, "Searching for imports to delete", true) {
-                            override fun run(indicator: ProgressIndicator) {
-                                val importsToDelete = runReadAction {
-                                    val searchScope = KotlinSourceFilterScope.projectSources(GlobalSearchScope.projectScope(project), project)
-                                    ReferencesSearch.search(declaration, searchScope)
-                                            .filterIsInstance<KtSimpleNameReference>()
-                                            .mapNotNull { ref -> ref.expression.getStrictParentOfType<KtImportDirective>() }
-                                            .filter { import -> !import.isAllUnder && import.targetDescriptors().size == 1 }
-                                }
-                                GuiUtils.invokeLaterIfNeeded({
-                                    project.executeWriteCommand(text) {
-                                        importsToDelete.forEach { import ->
-                                            if (!FileModificationService.getInstance().preparePsiElementForWrite(import)) return@forEach
-                                            try {
-                                                import.delete()
-                                            }
-                                            catch(e: Exception) {
-                                                LOG.error(e)
-                                            }
-                                        }
-                                        declaration.delete()
-                                    }
-                                }, ModalityState.NON_MODAL)
+                    object : Task.Modal(project, "Searching for imports to delete", true) {
+                        override fun run(indicator: ProgressIndicator) {
+                            val importsToDelete = runReadAction {
+                                val searchScope = KotlinSourceFilterScope.projectSources(GlobalSearchScope.projectScope(project), project)
+                                ReferencesSearch.search(declaration, searchScope)
+                                    .filterIsInstance<KtSimpleNameReference>()
+                                    .mapNotNull { ref -> ref.expression.getStrictParentOfType<KtImportDirective>() }
+                                    .filter { import -> !import.isAllUnder && import.targetDescriptors().size == 1 }
                             }
-                        })
-            }
-            else {
+                            GuiUtils.invokeLaterIfNeeded({
+                                                             project.executeWriteCommand(text) {
+                                                                 importsToDelete.forEach { import ->
+                                                                     if (!FileModificationService.getInstance()
+                                                                             .preparePsiElementForWrite(import)
+                                                                     ) return@forEach
+                                                                     try {
+                                                                         import.delete()
+                                                                     } catch (e: Exception) {
+                                                                         LOG.error(e)
+                                                                     }
+                                                                 }
+                                                                 declaration.delete()
+                                                             }
+                                                         }, ModalityState.NON_MODAL)
+                        }
+                    })
+            } else {
                 project.executeWriteCommand(text) { declaration.delete() }
             }
         }
@@ -229,8 +237,7 @@ class ConflictingExtensionPropertyInspection : AbstractKotlinInspection() {
                 val result = addAnnotationEntry(annotationEntry)
                 modifierList!!.addAfter(newLine, result)
                 result
-            }
-            else {
+            } else {
                 val result = addAnnotationEntry(annotationEntry)
                 addAfter(newLine, modifierList)
                 result

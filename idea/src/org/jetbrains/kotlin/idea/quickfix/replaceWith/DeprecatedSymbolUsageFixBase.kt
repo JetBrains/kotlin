@@ -125,7 +125,7 @@ abstract class DeprecatedSymbolUsageFixBase(
                 }
                 return expressionFromPattern.text
             }
-            
+
             if (expressionFromPattern !is KtCallExpression) return this
             val methodFromPattern = expressionFromPattern.referenceExpression()?.let { name ->
                 KotlinShortNamesCache(element.project).getMethodsByName(

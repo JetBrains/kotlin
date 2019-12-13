@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence
@@ -24,9 +13,9 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class FlatMapTransformation(
-        override val loop: KtForExpression,
-        val inputVariable: KtCallableDeclaration,
-        val transform: KtExpression
+    override val loop: KtForExpression,
+    val inputVariable: KtCallableDeclaration,
+    val transform: KtExpression
 ) : SequenceTransformation {
 
     override val affectsIndex: Boolean
@@ -68,17 +57,18 @@ class FlatMapTransformation(
 
             if (state.indexVariable != null && state.indexVariable.hasUsages(transform)) {
                 // if nested loop range uses index, convert to "mapIndexed {...}.flatMap { it }"
-                val mapIndexedTransformation = MapTransformation(state.outerLoop, state.inputVariable, state.indexVariable, transform, mapNotNull = false)
+                val mapIndexedTransformation =
+                    MapTransformation(state.outerLoop, state.inputVariable, state.indexVariable, transform, mapNotNull = false)
                 val inputVarExpression = KtPsiFactory(nestedLoop).createExpressionByPattern(
-                        "$0", state.inputVariable.nameAsSafeName,
-                        reformat = state.reformat
+                    "$0", state.inputVariable.nameAsSafeName,
+                    reformat = state.reformat
                 )
                 val transformToUse = if (state.lazySequence) inputVarExpression.asSequence(state.reformat) else inputVarExpression
                 val flatMapTransformation = FlatMapTransformation(state.outerLoop, state.inputVariable, transformToUse)
                 val newState = state.copy(
-                        innerLoop = nestedLoop,
-                        statements = listOf(nestedLoopBody),
-                        inputVariable = newInputVariable
+                    innerLoop = nestedLoop,
+                    statements = listOf(nestedLoopBody),
+                    inputVariable = newInputVariable
                 )
                 return TransformationMatch.Sequence(listOf(mapIndexedTransformation, flatMapTransformation), newState)
             }
@@ -86,18 +76,16 @@ class FlatMapTransformation(
             val transformToUse = if (state.lazySequence) transform.asSequence(state.reformat) else transform
             val transformation = FlatMapTransformation(state.outerLoop, state.inputVariable, transformToUse)
             val newState = state.copy(
-                    innerLoop = nestedLoop,
-                    statements = listOf(nestedLoopBody),
-                    inputVariable = newInputVariable
+                innerLoop = nestedLoop,
+                statements = listOf(nestedLoopBody),
+                inputVariable = newInputVariable
             )
             return TransformationMatch.Sequence(transformation, newState)
         }
 
-        private fun KtExpression.asSequence(reformat: Boolean): KtExpression {
-            return KtPsiFactory(this).createExpressionByPattern(
-                    "$0.asSequence()", this,
-                    reformat = reformat
-            )
-        }
+        private fun KtExpression.asSequence(reformat: Boolean): KtExpression = KtPsiFactory(this).createExpressionByPattern(
+            "$0.asSequence()", this,
+            reformat = reformat
+        )
     }
 }

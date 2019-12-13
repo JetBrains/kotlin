@@ -38,7 +38,7 @@ import kotlin.script.experimental.api.ide
 abstract class KotlinBinaryExtension(val fileType: FileType) {
     companion object {
         val EP_NAME: ExtensionPointName<KotlinBinaryExtension> =
-                ExtensionPointName.create<KotlinBinaryExtension>("org.jetbrains.kotlin.binaryExtension")
+            ExtensionPointName.create<KotlinBinaryExtension>("org.jetbrains.kotlin.binaryExtension")
 
         val kotlinBinaries: List<FileType> by lazy(LazyThreadSafetyMode.NONE) {
             EP_NAME.extensions.map { it.fileType }
@@ -46,10 +46,10 @@ abstract class KotlinBinaryExtension(val fileType: FileType) {
     }
 }
 
-class JavaClassBinary: KotlinBinaryExtension(JavaClassFileType.INSTANCE)
-class KotlinBuiltInBinary: KotlinBinaryExtension(KotlinBuiltInFileType)
-class KotlinModuleBinary: KotlinBinaryExtension(KotlinModuleFileType.INSTANCE)
-class KotlinJsMetaBinary: KotlinBinaryExtension(KotlinJavaScriptMetaFileType)
+class JavaClassBinary : KotlinBinaryExtension(JavaClassFileType.INSTANCE)
+class KotlinBuiltInBinary : KotlinBinaryExtension(KotlinBuiltInFileType)
+class KotlinModuleBinary : KotlinBinaryExtension(KotlinModuleFileType.INSTANCE)
+class KotlinJsMetaBinary : KotlinBinaryExtension(KotlinJavaScriptMetaFileType)
 
 fun FileType.isKotlinBinary(): Boolean = this in KotlinBinaryExtension.kotlinBinaries
 
@@ -149,31 +149,30 @@ object ProjectRootsUtil {
         return false
     }
 
-    @JvmStatic fun isInContent(
-            element: PsiElement,
-            includeProjectSource: Boolean,
-            includeLibrarySource: Boolean,
-            includeLibraryClasses: Boolean,
-            includeScriptDependencies: Boolean,
-            includeScriptsOutsideSourceRoots: Boolean
-    ): Boolean {
-        return runReadAction {
-            val virtualFile = when (element) {
-                                  is PsiDirectory -> element.virtualFile
-                                  else -> element.containingFile?.virtualFile
-                              } ?: return@runReadAction false
+    @JvmStatic
+    fun isInContent(
+        element: PsiElement,
+        includeProjectSource: Boolean,
+        includeLibrarySource: Boolean,
+        includeLibraryClasses: Boolean,
+        includeScriptDependencies: Boolean,
+        includeScriptsOutsideSourceRoots: Boolean
+    ): Boolean = runReadAction {
+        val virtualFile = when (element) {
+            is PsiDirectory -> element.virtualFile
+            else -> element.containingFile?.virtualFile
+        } ?: return@runReadAction false
 
-            val project = element.project
-            return@runReadAction isInContent(
-                project,
-                virtualFile,
-                includeProjectSource,
-                includeLibrarySource,
-                includeLibraryClasses,
-                includeScriptDependencies,
-                includeScriptsOutsideSourceRoots
-            )
-        }
+        val project = element.project
+        return@runReadAction isInContent(
+            project,
+            virtualFile,
+            includeProjectSource,
+            includeLibrarySource,
+            includeLibraryClasses,
+            includeScriptDependencies,
+            includeScriptsOutsideSourceRoots
+        )
     }
 
     @JvmOverloads

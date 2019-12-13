@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.decompiler.stubBuilder
@@ -32,24 +21,23 @@ import org.jetbrains.kotlin.serialization.deserialization.getName
 data class ClassIdWithTarget(val classId: ClassId, val target: AnnotationUseSiteTarget?)
 
 class ClsStubBuilderComponents(
-        val classDataFinder: ClassDataFinder,
-        val annotationLoader: AnnotationAndConstantLoader<ClassId, Unit>,
-        val virtualFileForDebug: VirtualFile
+    val classDataFinder: ClassDataFinder,
+    val annotationLoader: AnnotationAndConstantLoader<ClassId, Unit>,
+    val virtualFileForDebug: VirtualFile
 ) {
     fun createContext(
-            nameResolver: NameResolver,
-            packageFqName: FqName,
-            typeTable: TypeTable
-    ): ClsStubBuilderContext {
-        return ClsStubBuilderContext(this, nameResolver, packageFqName, EmptyTypeParameters, typeTable, protoContainer = null)
-    }
+        nameResolver: NameResolver,
+        packageFqName: FqName,
+        typeTable: TypeTable
+    ): ClsStubBuilderContext =
+        ClsStubBuilderContext(this, nameResolver, packageFqName, EmptyTypeParameters, typeTable, protoContainer = null)
 }
 
 interface TypeParameters {
     operator fun get(id: Int): Name
 
-    fun child(nameResolver: NameResolver, innerTypeParameters: List<ProtoBuf.TypeParameter>)
-            = TypeParametersImpl(nameResolver, innerTypeParameters, parent = this)
+    fun child(nameResolver: NameResolver, innerTypeParameters: List<ProtoBuf.TypeParameter>) =
+        TypeParametersImpl(nameResolver, innerTypeParameters, parent = this)
 }
 
 object EmptyTypeParameters : TypeParameters {
@@ -57,9 +45,9 @@ object EmptyTypeParameters : TypeParameters {
 }
 
 class TypeParametersImpl(
-        nameResolver: NameResolver,
-        typeParameterProtos: Collection<ProtoBuf.TypeParameter>,
-        private val parent: TypeParameters
+    nameResolver: NameResolver,
+    typeParameterProtos: Collection<ProtoBuf.TypeParameter>,
+    private val parent: TypeParameters
 ) : TypeParameters {
     private val typeParametersById = typeParameterProtos.map { Pair(it.id, nameResolver.getName(it.name)) }.toMap()
 
@@ -67,27 +55,25 @@ class TypeParametersImpl(
 }
 
 class ClsStubBuilderContext(
-        val components: ClsStubBuilderComponents,
-        val nameResolver: NameResolver,
-        val containerFqName: FqName,
-        val typeParameters: TypeParameters,
-        val typeTable: TypeTable,
-        val protoContainer: ProtoContainer.Class?
+    val components: ClsStubBuilderComponents,
+    val nameResolver: NameResolver,
+    val containerFqName: FqName,
+    val typeParameters: TypeParameters,
+    val typeTable: TypeTable,
+    val protoContainer: ProtoContainer.Class?
 )
 
 internal fun ClsStubBuilderContext.child(
-        typeParameterList: List<ProtoBuf.TypeParameter>,
-        name: Name? = null,
-        nameResolver: NameResolver = this.nameResolver,
-        typeTable: TypeTable = this.typeTable,
-        protoContainer: ProtoContainer.Class? = this.protoContainer
-): ClsStubBuilderContext {
-    return ClsStubBuilderContext(
-            this.components,
-            nameResolver,
-            if (name != null) this.containerFqName.child(name) else this.containerFqName,
-            this.typeParameters.child(nameResolver, typeParameterList),
-            typeTable,
-            protoContainer
-    )
-}
+    typeParameterList: List<ProtoBuf.TypeParameter>,
+    name: Name? = null,
+    nameResolver: NameResolver = this.nameResolver,
+    typeTable: TypeTable = this.typeTable,
+    protoContainer: ProtoContainer.Class? = this.protoContainer
+): ClsStubBuilderContext = ClsStubBuilderContext(
+    this.components,
+    nameResolver,
+    if (name != null) this.containerFqName.child(name) else this.containerFqName,
+    this.typeParameters.child(nameResolver, typeParameterList),
+    typeTable,
+    protoContainer
+)

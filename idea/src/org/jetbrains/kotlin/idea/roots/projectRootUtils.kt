@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -20,18 +20,22 @@ import com.intellij.psi.PsiFile
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.jps.model.JpsElement
 import org.jetbrains.jps.model.ex.JpsElementBase
-import org.jetbrains.jps.model.java.*
+import org.jetbrains.jps.model.java.JavaModuleSourceRootTypes
+import org.jetbrains.jps.model.java.JavaResourceRootType
+import org.jetbrains.jps.model.java.JavaSourceRootProperties
+import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.jps.model.module.JpsModuleSourceRoot
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
-import java.util.ArrayList
+import java.util.*
 
 private fun JpsModuleSourceRoot.getOrCreateProperties() =
     getProperties(rootType)?.also { (it as? JpsElementBase<*>)?.setParent(null) } ?: rootType.createDefaultProperties()
 
 fun JpsModuleSourceRoot.getMigratedSourceRootTypeWithProperties(): Pair<JpsModuleSourceRootType<JpsElement>, JpsElement>? {
     val currentRootType = rootType
+
     @Suppress("UNCHECKED_CAST")
     val newSourceRootType: JpsModuleSourceRootType<JpsElement> = when (currentRootType) {
         JavaSourceRootType.SOURCE -> SourceKotlinRootType as JpsModuleSourceRootType<JpsElement>
@@ -72,7 +76,7 @@ private fun Module.collectKotlinAwareDestinationSourceRoots(): List<VirtualFile>
         .toList()
 }
 
-fun isOutsideSourceRootSet(psiFile : PsiFile?, sourceRootTypes: Set<JpsModuleSourceRootType<*>>): Boolean {
+fun isOutsideSourceRootSet(psiFile: PsiFile?, sourceRootTypes: Set<JpsModuleSourceRootType<*>>): Boolean {
     if (psiFile == null || psiFile is PsiCodeFragment) return false
     val file = psiFile.virtualFile ?: return false
     if (file.fileSystem is NonPhysicalFileSystem) return false
@@ -80,7 +84,7 @@ fun isOutsideSourceRootSet(psiFile : PsiFile?, sourceRootTypes: Set<JpsModuleSou
     return !projectFileIndex.isUnderSourceRootOfType(file, sourceRootTypes) && !projectFileIndex.isInLibrary(file)
 }
 
-fun isOutsideKotlinAwareSourceRoot(psiFile : PsiFile?) = isOutsideSourceRootSet(psiFile, KOTLIN_AWARE_SOURCE_ROOT_TYPES)
+fun isOutsideKotlinAwareSourceRoot(psiFile: PsiFile?) = isOutsideSourceRootSet(psiFile, KOTLIN_AWARE_SOURCE_ROOT_TYPES)
 
 /**
  * @return list of all java source roots in the project which can be suggested as a target directory for a class created by user

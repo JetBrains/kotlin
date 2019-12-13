@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.android
@@ -86,8 +75,7 @@ internal fun JavaPropertyDescriptor.getResourceReferenceType(): AndroidPsiUtils.
     if (R_CLASS == rClass.name.asString()) {
         return if ((rClass.containingDeclaration as? PackageFragmentDescriptor)?.fqName?.asString() == ANDROID_PKG) {
             FRAMEWORK
-        }
-        else {
+        } else {
             APP
         }
     }
@@ -95,11 +83,13 @@ internal fun JavaPropertyDescriptor.getResourceReferenceType(): AndroidPsiUtils.
     return NONE
 }
 
-internal fun getReferredResourceOrManifestField(facet: AndroidFacet, expression: KtSimpleNameExpression, localOnly: Boolean)
-        = getReferredResourceOrManifestField(facet, expression, null, localOnly)
+internal fun getReferredResourceOrManifestField(facet: AndroidFacet, expression: KtSimpleNameExpression, localOnly: Boolean) =
+    getReferredResourceOrManifestField(facet, expression, null, localOnly)
 
-internal fun getReferredResourceOrManifestField(facet: AndroidFacet, expression: KtSimpleNameExpression,
-                                       className: String?, localOnly: Boolean): AndroidResourceUtil.MyReferredResourceFieldInfo? {
+internal fun getReferredResourceOrManifestField(
+    facet: AndroidFacet, expression: KtSimpleNameExpression,
+    className: String?, localOnly: Boolean
+): AndroidResourceUtil.MyReferredResourceFieldInfo? {
     val resFieldName = expression.getReferencedName()
     val resClassReference = expression.getPreviousInQualifiedChain() as? KtSimpleNameExpression ?: return null
     val resClassName = resClassReference.getReferencedName()
@@ -110,7 +100,7 @@ internal fun getReferredResourceOrManifestField(facet: AndroidFacet, expression:
 
     val rClassReference = resClassReference.getPreviousInQualifiedChain() as? KtSimpleNameExpression ?: return null
     val rClassDescriptor = rClassReference.analyze(BodyResolveMode.PARTIAL)
-                                   .get(BindingContext.REFERENCE_TARGET, rClassReference) as? ClassDescriptor ?: return null
+        .get(BindingContext.REFERENCE_TARGET, rClassReference) as? ClassDescriptor ?: return null
 
     val rClassShortName = rClassDescriptor.name.asString()
     val fromManifest = AndroidUtils.MANIFEST_CLASS_NAME == rClassShortName

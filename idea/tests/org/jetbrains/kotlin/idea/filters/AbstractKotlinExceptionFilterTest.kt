@@ -67,14 +67,15 @@ abstract class AbstractKotlinExceptionFilterTest : KotlinCodeInsightTestCase() {
             }
             MockLibraryUtil.compileKotlin(path, File(outDir.path), extraClasspath = *arrayOf(mockLibraryPath))
             classLoader = URLClassLoader(
-                    arrayOf(URL(outDir.url + "/"), mockLibraryJar.toURI().toURL()),
-                    ForTestCompileRuntime.runtimeJarClassLoader())
-        }
-        else {
+                arrayOf(URL(outDir.url + "/"), mockLibraryJar.toURI().toURL()),
+                ForTestCompileRuntime.runtimeJarClassLoader()
+            )
+        } else {
             MockLibraryUtil.compileKotlin(path, File(outDir.path))
             classLoader = URLClassLoader(
-                    arrayOf(URL(outDir.url + "/")),
-                    ForTestCompileRuntime.runtimeJarClassLoader())
+                arrayOf(URL(outDir.url + "/")),
+                ForTestCompileRuntime.runtimeJarClassLoader()
+            )
         }
 
         val stackTraceElement = try {
@@ -82,15 +83,15 @@ abstract class AbstractKotlinExceptionFilterTest : KotlinCodeInsightTestCase() {
             val clazz = classLoader.loadClass(className.asString())
             clazz.getMethod("box")?.invoke(null)
             throw AssertionError("class ${className.asString()} should have box() method and throw exception")
-        }
-        catch(e: InvocationTargetException) {
+        } catch (e: InvocationTargetException) {
             e.targetException.stackTrace[0]
         }
 
         val filter = KotlinExceptionFilterFactory().create(GlobalSearchScope.allScope(project))
         val prefix = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// PREFIX: ") ?: "at"
         val stackTraceString = stackTraceElement.toString()
-        var result = filter.applyFilter("$prefix $stackTraceString", 0) ?: throw AssertionError("Couldn't apply filter to $stackTraceElement")
+        var result = filter.applyFilter("$prefix $stackTraceString", 0)
+            ?: throw AssertionError("Couldn't apply filter to $stackTraceElement")
 
         if (InTextDirectivesUtils.isDirectiveDefined(fileText, "SMAP_APPLIED")) {
             val fileHyperlinkInfo = result.firstHyperlinkInfo as FileHyperlinkInfo
@@ -100,8 +101,8 @@ abstract class AbstractKotlinExceptionFilterTest : KotlinCodeInsightTestCase() {
             val line = descriptor.line + 1
 
             val newStackString = stackTraceString
-                    .replace(mainFile.name, file.name)
-                    .replace(Regex("\\:\\d+\\)"), ":$line)")
+                .replace(mainFile.name, file.name)
+                .replace(Regex(":\\d+\\)"), ":$line)")
 
             result = filter.applyFilter("$prefix $newStackString", 0) ?: throw AssertionError("Couldn't apply filter to $stackTraceElement")
         }
@@ -111,8 +112,8 @@ abstract class AbstractKotlinExceptionFilterTest : KotlinCodeInsightTestCase() {
 
         val expectedFileName = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// FILE: ")!!
         val expectedVirtualFile = File(rootDir, expectedFileName).toVirtualFile()
-                                        ?: File(MOCK_LIBRARY_SOURCES, expectedFileName).toVirtualFile()
-                                        ?: throw AssertionError("Couldn't find file: name = $expectedFileName")
+            ?: File(MOCK_LIBRARY_SOURCES, expectedFileName).toVirtualFile()
+            ?: throw AssertionError("Couldn't find file: name = $expectedFileName")
         val expectedLineNumber = InTextDirectivesUtils.getPrefixedInt(fileText, "// LINE: ")!!
 
 
@@ -120,6 +121,10 @@ abstract class AbstractKotlinExceptionFilterTest : KotlinCodeInsightTestCase() {
         val expectedOffset = document.getLineStartOffset(expectedLineNumber - 1)
 
         // TODO compare virtual files
-        assertEquals("Wrong result for line $stackTraceElement", expectedFileName + ":" + expectedOffset, descriptor.file.name + ":" + descriptor.offset)
+        assertEquals(
+            "Wrong result for line $stackTraceElement",
+            "$expectedFileName:$expectedOffset",
+            descriptor.file.name + ":" + descriptor.offset
+        )
     }
 }

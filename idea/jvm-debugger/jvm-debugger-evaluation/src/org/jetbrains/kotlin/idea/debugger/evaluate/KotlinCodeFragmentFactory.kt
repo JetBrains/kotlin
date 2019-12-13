@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.debugger.evaluate
@@ -34,7 +23,8 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.PsiTypesUtil
 import com.intellij.util.IncorrectOperationException
 import com.intellij.util.concurrency.Semaphore
-import com.sun.jdi.*
+import com.sun.jdi.AbsentInformationException
+import com.sun.jdi.InvalidStackFrameException
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.core.util.getKotlinJvmRuntimeMarkerClass
@@ -94,7 +84,9 @@ class KotlinCodeFragmentFactory : CodeFragmentFactory() {
 
                 val debuggerContext = DebuggerManagerEx.getInstanceEx(project).context
                 val debuggerSession = debuggerContext.debuggerSession
-                if ((debuggerSession == null || debuggerContext.suspendContext == null) && !ApplicationManager.getApplication().isUnitTestMode) {
+                if ((debuggerSession == null || debuggerContext.suspendContext == null) &&
+                    !ApplicationManager.getApplication().isUnitTestMode
+                ) {
                     LOG.warn("Couldn't create fake context element for java file, debugger isn't paused on breakpoint")
                     return@putCopyableUserData emptyFile
                 }

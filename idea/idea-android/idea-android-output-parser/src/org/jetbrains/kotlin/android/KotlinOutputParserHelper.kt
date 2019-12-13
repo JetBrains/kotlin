@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.android
@@ -63,8 +52,7 @@ fun parse(lineText: String, reader: OutputLineReader, messages: MutableList<Mess
             }
 
             return addMessage(createMessage(getMessageKind(severity), message), messages)
-        }
-        else {
+        } else {
             return addMessage(createMessage(getMessageKind(severity), lineWoSeverity.amendNextLinesIfNeeded(reader)), messages)
         }
     }
@@ -91,8 +79,7 @@ private fun String.amendNextLinesIfNeeded(reader: OutputLineReader): String {
         // This code is needed for compatibility with AS 2.0 and IDEA 15.0, because of difference in android plugins
         val positionField = try {
             reader::class.java.getDeclaredField("myPosition")
-        }
-        catch(e: Throwable) {
+        } catch (e: Throwable) {
             null
         }
         if (positionField != null) {
@@ -107,9 +94,9 @@ private fun String.amendNextLinesIfNeeded(reader: OutputLineReader): String {
 private fun String.isNextMessage(): Boolean {
     val colonIndex1 = indexOf(COLON)
     return colonIndex1 == 0
-           || (colonIndex1 >= 0 && substring(0, colonIndex1).startsWithSeverityPrefix()) // Next Kotlin message
-           || StringUtil.containsIgnoreCase(this, "FAILURE")
-           || StringUtil.containsIgnoreCase(this, "FAILED")
+            || (colonIndex1 >= 0 && substring(0, colonIndex1).startsWithSeverityPrefix()) // Next Kotlin message
+            || StringUtil.containsIgnoreCase(this, "FAILURE")
+            || StringUtil.containsIgnoreCase(this, "FAILED")
 }
 
 private fun String.startsWithSeverityPrefix() = getMessageKind(this) != Message.Kind.UNKNOWN
@@ -130,7 +117,7 @@ private fun Int.skipDriveOnWin(line: String): Int {
 }
 
 private val KAPT_ERROR_WHILE_ANNOTATION_PROCESSING_MARKER_TEXT =
-        KaptError::class.java.canonicalName + ": " + KaptError.Kind.ERROR_RAISED.message
+    KaptError::class.java.canonicalName + ": " + KaptError.Kind.ERROR_RAISED.message
 
 private fun isKaptErrorWhileAnnotationProcessing(message: Message): Boolean {
     if (message.kind != Message.Kind.ERROR) return false
@@ -138,7 +125,7 @@ private fun isKaptErrorWhileAnnotationProcessing(message: Message): Boolean {
 
     val messageText = message.text
     return messageText.startsWith(IllegalStateException::class.java.name)
-           && messageText.contains(KAPT_ERROR_WHILE_ANNOTATION_PROCESSING_MARKER_TEXT)
+            && messageText.contains(KAPT_ERROR_WHILE_ANNOTATION_PROCESSING_MARKER_TEXT)
 }
 
 private fun addMessage(message: Message, messages: MutableList<Message>): Boolean {

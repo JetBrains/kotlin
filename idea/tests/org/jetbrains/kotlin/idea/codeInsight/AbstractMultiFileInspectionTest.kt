@@ -29,36 +29,35 @@ abstract class AbstractMultiFileInspectionTest : KotlinMultiFileTestCase() {
         val withFullJdk = config["withFullJdk"]?.asBoolean ?: false
         isMultiModule = config["isMultiModule"]?.asBoolean ?: false
 
-        doTest({ _, _ ->
-                   val sdk = if (withFullJdk) fullJdk() else mockJdk()
-                   addJdk(testRootDisposable) { sdk }
+        doTest(
+            { _, _ ->
+                val sdk = if (withFullJdk) fullJdk() else mockJdk()
+                addJdk(testRootDisposable) { sdk }
 
-                   try {
-                       if (withRuntime) {
-                           project.allModules().forEach { module ->
-                               ConfigLibraryUtil.configureKotlinRuntimeAndSdk(module, sdk)
-                           }
-                       }
+                try {
+                    if (withRuntime) {
+                        project.allModules().forEach { module ->
+                            ConfigLibraryUtil.configureKotlinRuntimeAndSdk(module, sdk)
+                        }
+                    }
 
-                       runInspection(Class.forName(config.getString("inspectionClass")), project,
-                                     withTestDir = configFile.parent)
-                   }
-                   finally {
-                       if (withRuntime) {
-                           project.allModules().forEach { module ->
-                               ConfigLibraryUtil.unConfigureKotlinRuntimeAndSdk(module, sdk)
-                           }
-                       }
-                   }
-               },
-               getTestDirName(true))
+                    runInspection(
+                        Class.forName(config.getString("inspectionClass")), project,
+                        withTestDir = configFile.parent
+                    )
+                } finally {
+                    if (withRuntime) {
+                        project.allModules().forEach { module ->
+                            ConfigLibraryUtil.unConfigureKotlinRuntimeAndSdk(module, sdk)
+                        }
+                    }
+                }
+            },
+            getTestDirName(true)
+        )
     }
 
-    override fun getTestRoot() : String {
-        return "/multiFileInspections/"
-    }
+    override fun getTestRoot(): String = "/multiFileInspections/"
 
-    override fun getTestDataPath() : String {
-        return getTestDataPathBase()
-    }
+    override fun getTestDataPath(): String = getTestDataPathBase()
 }

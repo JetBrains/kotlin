@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.idea.refactoring.move
 
 import com.intellij.ide.util.DirectoryUtil
-import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Comparing
@@ -55,7 +54,6 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.File
-import java.nio.file.Path
 import java.util.*
 
 sealed class ContainerInfo {
@@ -374,7 +372,9 @@ private fun getReferenceKind(reference: PsiReference, referencedElement: PsiElem
 
     if (element.getStrictParentOfType<KtSuperExpression>() != null) return ReferenceKind.IRRELEVANT
 
-    if (element.isExtensionRef() && reference.element.getNonStrictParentOfType<KtImportDirective>() == null) return ReferenceKind.UNQUALIFIABLE
+    if (element.isExtensionRef() &&
+        reference.element.getNonStrictParentOfType<KtImportDirective>() == null
+    ) return ReferenceKind.UNQUALIFIABLE
 
     element.getParentOfTypeAndBranch<KtCallableReferenceExpression> { callableReference }?.let {
         val receiverExpression = it.receiverExpression

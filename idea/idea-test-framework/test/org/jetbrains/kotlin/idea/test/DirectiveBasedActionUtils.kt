@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -48,9 +48,11 @@ object DirectiveBasedActionUtils {
 
         val actualActions = availableActions.map { it.text }.sorted()
 
-        UsefulTestCase.assertOrderedEquals("Some unexpected actions available at current position. Use // ACTION: directive",
-                                           filterOutIrrelevantActions(actualActions),
-                                           expectedActions)
+        UsefulTestCase.assertOrderedEquals(
+            "Some unexpected actions available at current position. Use // ACTION: directive",
+            filterOutIrrelevantActions(actualActions),
+            expectedActions
+        )
     }
 
     //TODO: hack, implemented because irrelevant actions behave in different ways on build server and locally
@@ -62,26 +64,26 @@ object DirectiveBasedActionUtils {
     private fun isIrrelevantAction(action: String) = action.isEmpty() || IRRELEVANT_ACTION_PREFIXES.any { action.startsWith(it) }
 
     private val IRRELEVANT_ACTION_PREFIXES = listOf(
-            "Disable ",
-            "Edit intention settings",
-            "Edit inspection profile setting",
-            "Inject language or reference",
-            "Suppress '",
-            "Run inspection on",
-            "Inspection '",
-            "Suppress for ",
-            "Suppress all ",
-            "Edit cleanup profile settings",
-            "Fix all '",
-            "Cleanup code",
-            "Go to ",
-            "Show local variable type hints",
-            "Show function return type hints",
-            "Show property type hints",
-            "Show parameter type hints",
-            "Show argument name hints",
-            "Show hints for suspending calls",
-            "Add 'JUnit",
-            "Add 'testng"
+        "Disable ",
+        "Edit intention settings",
+        "Edit inspection profile setting",
+        "Inject language or reference",
+        "Suppress '",
+        "Run inspection on",
+        "Inspection '",
+        "Suppress for ",
+        "Suppress all ",
+        "Edit cleanup profile settings",
+        "Fix all '",
+        "Cleanup code",
+        "Go to ",
+        "Show local variable type hints",
+        "Show function return type hints",
+        "Show property type hints",
+        "Show parameter type hints",
+        "Show argument name hints",
+        "Show hints for suspending calls",
+        "Add 'JUnit",
+        "Add 'testng"
     )
 }

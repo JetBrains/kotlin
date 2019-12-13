@@ -13,9 +13,9 @@ import com.intellij.debugger.jdi.GeneratedLocation
 import com.intellij.debugger.memory.utils.StackFrameItem
 import com.intellij.debugger.ui.impl.watch.ValueDescriptorImpl
 import com.intellij.xdebugger.frame.XNamedValue
-import org.jetbrains.kotlin.idea.debugger.evaluate.ExecutionContext
 import com.sun.jdi.*
 import org.jetbrains.kotlin.codegen.coroutines.CONTINUATION_VARIABLE_NAME
+import org.jetbrains.kotlin.idea.debugger.evaluate.ExecutionContext
 
 class AsyncStackTraceContext(
     val context: ExecutionContext,
@@ -23,7 +23,7 @@ class AsyncStackTraceContext(
     private val debugMetadataKtType: ClassType
 ) {
 
-    fun getAsyncStackTraceForSuspendLambda() : List<StackFrameItem>? {
+    fun getAsyncStackTraceForSuspendLambda(): List<StackFrameItem>? {
         if (method.name() != "invokeSuspend" || method.signature() != "(Ljava/lang/Object;)Ljava/lang/Object;") {
             return null
         }

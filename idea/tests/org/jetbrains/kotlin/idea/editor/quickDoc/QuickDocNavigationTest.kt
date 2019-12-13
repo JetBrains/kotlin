@@ -47,7 +47,8 @@ class QuickDocNavigationTest() : KotlinLightCodeInsightFixtureTestCase() {
         Assert.assertEquals("reader", (target as KtFunction).name)
 
         val secondaryTarget = KotlinQuickDocumentationProvider().getDocumentationElementForLink(
-                myFixture.psiManager, "InputStream", target)
+            myFixture.psiManager, "InputStream", target
+        )
         UsefulTestCase.assertInstanceOf(secondaryTarget, PsiClass::class.java)
         Assert.assertEquals("InputStream", (secondaryTarget as PsiClass).name)
     }
@@ -74,6 +75,7 @@ class QuickDocNavigationTest() : KotlinLightCodeInsightFixtureTestCase() {
         myFixture.configureByFile(getTestName(true) + ".kt")
         val source = myFixture.elementAtCaret.getParentOfType<KtDeclaration>(false)
         return KotlinQuickDocumentationProvider().getDocumentationElementForLink(
-                myFixture.psiManager, linkText, source)
+            myFixture.psiManager, linkText, source
+        )
     }
 }
