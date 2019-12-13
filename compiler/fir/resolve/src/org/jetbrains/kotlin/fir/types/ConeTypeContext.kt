@@ -130,11 +130,11 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun SimpleTypeMarker.typeConstructor(): TypeConstructorMarker {
         return when (this) {
-            is ConeCapturedType -> constructor
-            is ConeTypeVariableType -> lookupTag as ConeTypeVariableTypeConstructor // TODO: WTF
             is ConeClassLikeType -> lookupTag.toSymbol(session)
                 ?: ErrorTypeConstructor("Unresolved: $lookupTag")
-            is ConeLookupTagBasedType -> lookupTag.toSymbol(session) ?: ErrorTypeConstructor("Unresolved: $lookupTag")
+            is ConeTypeParameterType -> lookupTag.typeParameterSymbol
+            is ConeCapturedType -> constructor
+            is ConeTypeVariableType -> lookupTag as ConeTypeVariableTypeConstructor // TODO: WTF
             is ConeIntersectionType -> this
             is ConeStubType -> variable.typeConstructor
             is ConeDefinitelyNotNullType -> original.typeConstructor()
