@@ -1509,6 +1509,219 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
                 }
             }
 
+            @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Try_expression extends AbstractDiagnosticsTestSpec {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInTry_expression() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class P_1 extends AbstractDiagnosticsTestSpec {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInP_1() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1"), Pattern.compile("^(.+)\\.kt$"), true);
+                    }
+
+                    @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/neg")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class Neg extends AbstractDiagnosticsTestSpec {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                        }
+
+                        @TestMetadata("1.1.kt")
+                        public void test1_1() throws Exception {
+                            runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/neg/1.1.kt");
+                        }
+
+                        @TestMetadata("3.1.kt")
+                        public void test3_1() throws Exception {
+                            runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/neg/3.1.kt");
+                        }
+
+                        @TestMetadata("4.1.kt")
+                        public void test4_1() throws Exception {
+                            runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/neg/4.1.kt");
+                        }
+
+                        @TestMetadata("5.1.kt")
+                        public void test5_1() throws Exception {
+                            runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/neg/5.1.kt");
+                        }
+
+                        public void testAllFilesPresentInNeg() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), true);
+                        }
+                    }
+
+                    @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/pos")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class Pos extends AbstractDiagnosticsTestSpec {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                        }
+
+                        @TestMetadata("1.1.kt")
+                        public void test1_1() throws Exception {
+                            runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/pos/1.1.kt");
+                        }
+
+                        @TestMetadata("3.1.kt")
+                        public void test3_1() throws Exception {
+                            runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/pos/3.1.kt");
+                        }
+
+                        @TestMetadata("3.2.kt")
+                        public void test3_2() throws Exception {
+                            runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/pos/3.2.kt");
+                        }
+
+                        @TestMetadata("4.1.kt")
+                        public void test4_1() throws Exception {
+                            runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/pos/4.1.kt");
+                        }
+
+                        @TestMetadata("4.2.kt")
+                        public void test4_2() throws Exception {
+                            runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/pos/4.2.kt");
+                        }
+
+                        public void testAllFilesPresentInPos() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), true);
+                        }
+                    }
+                }
+
+                @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-2")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class P_2 extends AbstractDiagnosticsTestSpec {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInP_2() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-2"), Pattern.compile("^(.+)\\.kt$"), true);
+                    }
+
+                    @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-2/pos")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class Pos extends AbstractDiagnosticsTestSpec {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                        }
+
+                        @TestMetadata("2.1.kt")
+                        public void test2_1() throws Exception {
+                            runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-2/pos/2.1.kt");
+                        }
+
+                        public void testAllFilesPresentInPos() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), true);
+                        }
+                    }
+                }
+
+                @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-5")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class P_5 extends AbstractDiagnosticsTestSpec {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInP_5() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-5"), Pattern.compile("^(.+)\\.kt$"), true);
+                    }
+
+                    @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-5/pos")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class Pos extends AbstractDiagnosticsTestSpec {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                        }
+
+                        @TestMetadata("1.1.kt")
+                        public void test1_1() throws Exception {
+                            runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-5/pos/1.1.kt");
+                        }
+
+                        @TestMetadata("2.1.kt")
+                        public void test2_1() throws Exception {
+                            runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-5/pos/2.1.kt");
+                        }
+
+                        public void testAllFilesPresentInPos() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), true);
+                        }
+                    }
+                }
+
+                @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-8")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class P_8 extends AbstractDiagnosticsTestSpec {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInP_8() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-8"), Pattern.compile("^(.+)\\.kt$"), true);
+                    }
+
+                    @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-8/neg")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class Neg extends AbstractDiagnosticsTestSpec {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                        }
+
+                        @TestMetadata("1.1.kt")
+                        public void test1_1() throws Exception {
+                            runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-8/neg/1.1.kt");
+                        }
+
+                        public void testAllFilesPresentInNeg() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-8/neg"), Pattern.compile("^(.+)\\.kt$"), true);
+                        }
+                    }
+
+                    @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-8/pos")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class Pos extends AbstractDiagnosticsTestSpec {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                        }
+
+                        @TestMetadata("1.1.kt")
+                        public void test1_1() throws Exception {
+                            runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-8/pos/1.1.kt");
+                        }
+
+                        public void testAllFilesPresentInPos() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-8/pos"), Pattern.compile("^(.+)\\.kt$"), true);
+                        }
+                    }
+                }
+            }
+
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
