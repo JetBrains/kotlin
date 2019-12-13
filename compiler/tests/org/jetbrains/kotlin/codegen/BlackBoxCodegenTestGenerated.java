@@ -9234,6 +9234,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 runTest("compiler/testData/codegen/box/defaultArguments/constructor/kt2852.kt");
             }
 
+            @TestMetadata("kt30517.kt")
+            public void testKt30517() throws Exception {
+                runTest("compiler/testData/codegen/box/defaultArguments/constructor/kt30517.kt");
+            }
+
             @TestMetadata("kt3060.kt")
             public void testKt3060() throws Exception {
                 runTest("compiler/testData/codegen/box/defaultArguments/constructor/kt3060.kt");
@@ -9242,6 +9247,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             @TestMetadata("manyArgs.kt")
             public void testManyArgs() throws Exception {
                 runTest("compiler/testData/codegen/box/defaultArguments/constructor/manyArgs.kt");
+            }
+
+            @TestMetadata("objectExpressionDelegatingToSecondaryConstructor.kt")
+            public void testObjectExpressionDelegatingToSecondaryConstructor() throws Exception {
+                runTest("compiler/testData/codegen/box/defaultArguments/constructor/objectExpressionDelegatingToSecondaryConstructor.kt");
             }
         }
 
