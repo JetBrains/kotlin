@@ -36,18 +36,18 @@ public actual class StringBuilder actual constructor(content: String) : Appendab
 
     actual override fun subSequence(startIndex: Int, endIndex: Int): CharSequence = string.substring(startIndex, endIndex)
 
-    actual override fun append(c: Char): StringBuilder {
-        string += c
+    actual override fun append(value: Char): StringBuilder {
+        string += value
         return this
     }
 
-    actual override fun append(csq: CharSequence?): StringBuilder {
-        string += csq.toString()
+    actual override fun append(value: CharSequence?): StringBuilder {
+        string += value.toString()
         return this
     }
 
     @UseExperimental(ExperimentalStdlibApi::class)
-    actual override fun append(csq: CharSequence?, start: Int, end: Int): StringBuilder = this.appendRange(csq, start, end)
+    actual override fun append(value: CharSequence?, startIndex: Int, endIndex: Int): StringBuilder = this.appendRange(value, startIndex, endIndex)
 
     /**
      * Reverses the contents of this string builder and returns this instance.
