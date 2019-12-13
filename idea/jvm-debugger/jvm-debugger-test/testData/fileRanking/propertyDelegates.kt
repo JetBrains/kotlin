@@ -19,5 +19,3 @@ class B {
         val b = 0
     }
 }
-
-// IGNORE_BACKEND: JVM_IR

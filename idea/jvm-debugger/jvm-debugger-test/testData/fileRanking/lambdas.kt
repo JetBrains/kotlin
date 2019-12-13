@@ -34,5 +34,3 @@ class A {
         }
     }
 }
-
-// IGNORE_BACKEND: JVM_IR
