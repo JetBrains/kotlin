@@ -20,7 +20,7 @@ class KtSwiftPropertySymbol : KtSwiftMemberSymbol, SwiftPropertySymbol {
     constructor() : super()
 
     override val declarationKind: SwiftDeclarationKind
-        get() = SwiftDeclarationKind.propertyDeclaration
+        get() = SwiftDeclarationKind.field // beware: propertyDeclaration is something completely unrelated
 
     override lateinit var swiftType: SwiftType
 
