@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.copy
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.addDefaultBoundIfNecessary
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
@@ -190,7 +188,11 @@ class FirSyntheticCallGenerator(
         val returnType = FirResolvedTypeRefImpl(null, ConeTypeParameterTypeImpl(typeParameterSymbol.toLookupTag(), false))
 
         val argumentType =
-            FirResolvedTypeRefImpl(null, returnType.coneTypeUnsafe<ConeKotlinType>().withNullability(ConeNullability.NULLABLE))
+            FirResolvedTypeRefImpl(
+                null, returnType.coneTypeUnsafe<ConeKotlinType>().withNullability(
+                    ConeNullability.NULLABLE, session.inferenceContext
+                )
+            )
         val typeArgument = FirTypeProjectionWithVarianceImpl(null, returnType, Variance.INVARIANT)
 
         return generateMemberFunction(

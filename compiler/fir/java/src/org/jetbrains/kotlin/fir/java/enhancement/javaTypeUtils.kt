@@ -101,9 +101,10 @@ private fun JavaType?.enhancePossiblyFlexible(
             } else {
                 baseEnhanced
             }
-            ConeFlexibleType(
-                baseEnhanced,
-                upperBound.withNullability(ConeNullability.NULLABLE)
+            coneFlexibleOrSimpleType(
+                session, baseEnhanced,
+                upperBound.withNullability(ConeNullability.NULLABLE),
+                isNotNullTypeParameter = false
             )
         }
         else -> {

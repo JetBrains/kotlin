@@ -6,8 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.componentArrayAccessor
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
@@ -21,13 +20,11 @@ import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.calls.ConeInferenceContext
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.diagnostics.FirUnresolvedNameError
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
-import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.scopes.impl.FirMemberScopeProvider
 import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
 import org.jetbrains.kotlin.fir.symbols.*
@@ -38,6 +35,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirErrorTypeRefImpl
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.AbstractStrictEqualityTypeChecker
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -198,8 +196,24 @@ private fun List<FirQualifierPart>.toTypeProjections(): Array<ConeKotlinTypeProj
     }
 }.toTypedArray()
 
+fun coneFlexibleOrSimpleType(
+    typeContext: ConeInferenceContext?,
+    lowerBound: ConeKotlinType,
+    upperBound: ConeKotlinType
+): ConeKotlinType {
+    if (lowerBound is ConeFlexibleType) {
+        return coneFlexibleOrSimpleType(typeContext, lowerBound.lowerBound, upperBound)
+    }
+    if (upperBound is ConeFlexibleType) {
+        return coneFlexibleOrSimpleType(typeContext, lowerBound, upperBound.upperBound)
+    }
+    if (typeContext != null && AbstractStrictEqualityTypeChecker.strictEqualTypes(typeContext, lowerBound, upperBound)) {
+        return lowerBound
+    }
+    return ConeFlexibleType(lowerBound, upperBound)
+}
 
-fun <T : ConeKotlinType> T.withNullability(nullability: ConeNullability): T {
+fun <T : ConeKotlinType> T.withNullability(nullability: ConeNullability, typeContext: ConeInferenceContext? = null): T {
     if (this.nullability == nullability) {
         return this
     }
@@ -208,7 +222,14 @@ fun <T : ConeKotlinType> T.withNullability(nullability: ConeNullability): T {
         is ConeClassErrorType -> this
         is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(lookupTag, typeArguments, nullability.isNullable) as T
         is ConeTypeParameterTypeImpl -> ConeTypeParameterTypeImpl(lookupTag, nullability.isNullable) as T
-        is ConeFlexibleType -> ConeFlexibleType(lowerBound.withNullability(nullability), upperBound.withNullability(nullability)) as T
+        is ConeFlexibleType -> {
+            if (nullability == ConeNullability.UNKNOWN) {
+                if (lowerBound.nullability != upperBound.nullability || lowerBound.nullability == ConeNullability.UNKNOWN) {
+                    return this
+                }
+            }
+            coneFlexibleOrSimpleType(typeContext, lowerBound.withNullability(nullability), upperBound.withNullability(nullability)) as T
+        }
         is ConeTypeVariableType -> ConeTypeVariableType(nullability, lookupTag) as T
         is ConeCapturedType -> ConeCapturedType(captureStatus, lowerType, nullability, constructor) as T
         is ConeIntersectionType -> when (nullability) {
@@ -362,7 +383,7 @@ private fun BodyResolveComponents.typeFromSymbol(symbol: AbstractFirBasedSymbol<
             val returnType = returnTypeCalculator.tryCalculateReturnType(symbol.phasedFir)
             if (makeNullable) {
                 returnType.withReplacedConeType(
-                    returnType.coneTypeUnsafe<ConeKotlinType>().withNullability(ConeNullability.NULLABLE)
+                    returnType.coneTypeUnsafe<ConeKotlinType>().withNullability(ConeNullability.NULLABLE, session.inferenceContext)
                 )
             } else {
                 returnType
