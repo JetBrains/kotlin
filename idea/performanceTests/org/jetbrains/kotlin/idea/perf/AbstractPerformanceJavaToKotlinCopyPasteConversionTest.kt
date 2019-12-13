@@ -9,6 +9,7 @@ import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.psi.PsiDocumentManager
+import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.conversion.copy.AbstractJavaToKotlinCopyPasteConversionTest
 import org.jetbrains.kotlin.idea.conversion.copy.ConvertJavaCopyPasteProcessor
@@ -118,6 +119,7 @@ abstract class AbstractPerformanceJavaToKotlinCopyPasteConversionTest(private va
 
     private fun perfTestCore() {
         myFixture.performEditorAction(IdeActions.ACTION_PASTE)
+        UIUtil.dispatchAllInvocationEvents()
     }
 
     private fun stats() = stats[j2kIndex()]
