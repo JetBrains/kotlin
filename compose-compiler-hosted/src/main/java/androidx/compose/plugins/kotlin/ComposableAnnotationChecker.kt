@@ -65,6 +65,7 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.psi.KtLambdaArgument
+import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker
@@ -194,10 +195,22 @@ open class ComposableAnnotationChecker : CallChecker, DeclarationChecker,
         var localFcs = false
         var isInlineLambda = false
         element.accept(object : KtTreeVisitorVoid() {
-            override fun visitDeclaration(dcl: KtDeclaration) {
-                if (dcl == element) {
-                    super.visitDeclaration(dcl)
+            override fun visitNamedFunction(function: KtNamedFunction) {
+                if (function == element) {
+                    super.visitNamedFunction(function)
                 }
+            }
+
+            override fun visitPropertyAccessor(accessor: KtPropertyAccessor) {
+                // this is basically a function, so unless it is the function we are analyzing, we
+                // stop here
+                if (accessor == element) {
+                    super.visitPropertyAccessor(accessor)
+                }
+            }
+
+            override fun visitClass(klass: KtClass) {
+                // never traverse a class
             }
 
             override fun visitLambdaExpression(lambdaExpression: KtLambdaExpression) {
