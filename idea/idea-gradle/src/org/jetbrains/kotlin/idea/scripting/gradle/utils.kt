@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.scripting.gradle
 
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFile
@@ -55,7 +56,8 @@ fun getGradleScriptInputsStamp(
                     }
                 }
 
-            GradleKotlinScriptConfigurationInputs(result.toString(), file.timeStamp)
+            val relatedFilesTimeStamp = project.service<GradleScriptInputsWatcher>().lastModifiedFileTimeStamp(file)
+            GradleKotlinScriptConfigurationInputs(result.toString(), file.timeStamp, relatedFilesTimeStamp)
         } else null
     }
 }

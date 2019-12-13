@@ -35,6 +35,12 @@ class GradleScriptInputsWatcher(val project: Project) {
         }
     }
 
+    fun lastModifiedFileTimeStamp(file: VirtualFile): Long = lastModifiedRelatedFile(file)?.timeStamp ?: 0
+
+    fun areRelatedFilesUpToDate(file: VirtualFile, timeStamp: Long): Boolean {
+        return lastModifiedFileTimeStamp(file) <= timeStamp
+    }
+
     fun addToStorage(file: VirtualFile) {
         if (storage.contains(file)) {
             storage.remove(file)
@@ -42,19 +48,19 @@ class GradleScriptInputsWatcher(val project: Project) {
         storage.add(file)
     }
 
-    fun areAffectedFilesUpToDate(file: VirtualFile, timeStamp: Long): Boolean {
-        if (storage.isEmpty()) return true
+    private fun lastModifiedRelatedFile(file: VirtualFile): VirtualFile? {
+        if (storage.isEmpty()) return null
 
         val iterator = storage.descendingIterator()
-        if (!iterator.hasNext()) return true
+        if (!iterator.hasNext()) return null
 
         var lastModifiedFile = iterator.next()
         while (lastModifiedFile == file && iterator.hasNext()) {
             lastModifiedFile = iterator.next()
         }
 
-        if (lastModifiedFile == file) return true
+        if (lastModifiedFile == file) return null
 
-        return lastModifiedFile.timeStamp <= timeStamp
+        return lastModifiedFile
     }
 }

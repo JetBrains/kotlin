@@ -182,6 +182,15 @@ class GradleScriptInputsWatcherTest : AbstractScriptConfigurationLoadingTest() {
         assertConfigurationUpdateWasDone(testFiles.buildKts)
     }
 
+    fun testLoadedConfigurationWhenExternalFileChanged() {
+        assertAndLoadInitialConfiguration(testFiles.buildKts)
+
+        changePropertiesFile()
+
+        assertConfigurationUpdateWasDone(testFiles.buildKts)
+        assertConfigurationUpToDate(testFiles.buildKts)
+    }
+
     private fun assertConfigurationUpToDate(file: KtFile) {
         scriptConfigurationManager.updater.ensureUpToDatedConfigurationSuggested(file)
         assertNoBackgroundTasks()

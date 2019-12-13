@@ -11,13 +11,30 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.CachedConfigurationInputs
 import org.jetbrains.kotlin.psi.KtFile
 
+/**
+ * Up to date of gradle script depends on following factors:
+ * 1. It is out of date when essential [sections] are changed
+ * @see getGradleScriptInputsStamp
+ * 2. When some related file is changed (other gradle script, gradle.properties file)
+ * @see GradleScriptInputsWatcher.areRelatedFilesUpToDate
+ *
+ * [inputsTimeStamp] is needed to check if some related file was changed between updates
+ * [relatedFilesTimeStamp] is needed to check if we already loaded a configuration after the last related file change
+ *
+ * In case when [relatedFilesTimeStamp]s are equal there is no needs to check if related files were changed
+ */
 data class GradleKotlinScriptConfigurationInputs(
-    val buildScriptAndPluginsSections: String,
-    val timeStamp: Long
+    val sections: String,
+    val inputsTimeStamp: Long,
+    val relatedFilesTimeStamp: Long
 ) : CachedConfigurationInputs {
     override fun isUpToDate(project: Project, file: VirtualFile, ktFile: KtFile?): Boolean {
         val actualStamp = getGradleScriptInputsStamp(project, file, ktFile) ?: return false
-        return actualStamp.buildScriptAndPluginsSections == this.buildScriptAndPluginsSections
-                && project.service<GradleScriptInputsWatcher>().areAffectedFilesUpToDate(file, timeStamp)
+
+        if (actualStamp.sections != this.sections) return false
+
+        if (actualStamp.relatedFilesTimeStamp == this.relatedFilesTimeStamp) return true
+
+        return project.service<GradleScriptInputsWatcher>().areRelatedFilesUpToDate(file, inputsTimeStamp)
     }
 }
