@@ -880,4 +880,106 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
             }
         """)
     }
+
+    fun testComposableReporting053() {
+        check("""
+            import androidx.compose.*;
+
+            @Composable fun foo(): Int = 123
+
+            fun <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>App<!>() {
+                val x = <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>foo<!>()
+                print(x)
+            }
+        """)
+    }
+
+    fun testComposableReporting054() {
+        check("""
+            import androidx.compose.*;
+
+            @Composable fun Foo() {}
+
+            val y: Any <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>get() = 
+            <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>state<!> { 1 }<!>
+
+            fun App() {
+                val x = object {
+                  val a <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>get() = 
+                  <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>state<!> { 2 }<!>
+                  @Composable val c get() = state { 4 }
+                  @Composable fun bar() { Foo() }
+                  fun <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>foo<!>() {
+                    <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>Foo<!>() 
+                  }
+                }
+                class Bar {
+                  val b <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>get() =
+                  <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>state<!> { 6 }<!>
+                  @Composable val c get() = state { 7 }
+                }
+                fun <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>Bam<!>() {
+                    <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>Foo<!>()
+                }
+                @Composable fun Boo() {
+                    Foo()
+                }
+                print(x)
+            }
+        """)
+    }
+
+    fun testComposableReporting055() {
+        check("""
+            import androidx.compose.*;
+
+            @Composable fun Foo() {}
+
+            @Composable fun App() {
+                val x = object {
+                  val a <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>get() = 
+                  <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!><!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>state<!><!> { 2 }<!>
+                  @Composable val c get() = state { 4 }
+                  fun <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>foo<!>() { 
+                    <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>Foo<!>() 
+                  }
+                  @Composable fun bar() { Foo() }
+                }
+                class Bar {
+                  val b <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>get() = 
+                  <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!><!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>state<!><!> { 6 }<!>
+                  @Composable val c get() = state { 7 }
+                }
+                fun <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>Bam<!>() {
+                    <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>Foo<!>()
+                }
+                @Composable fun Boo() {
+                    Foo()
+                }
+                print(x)
+            }
+        """)
+    }
+
+    fun testComposableReporting057() {
+        // This tests composable calls in initialization expressions of object literals inside of
+        // composable functions. I don't see any reason why we shouldn't support this, but right now
+        // we catch it and prevent it. Enabling it is nontrivial so i'm writing the test to assert
+        // on the current behavior, and we can consider changing it at a later date.
+        check("""
+            import androidx.compose.*;
+
+            @Composable fun App() {
+                val x = object {
+                  <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>val b = 
+                  <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!><!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>state<!><!> { 3 }<!>
+                }
+                class Bar {
+                  <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>val a = 
+                  <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!><!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>state<!><!> { 5 }<!>
+                }
+                print(x)
+            }
+        """)
+    }
 }
