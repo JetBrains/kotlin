@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.codeInsight
 
-import com.intellij.codeInsight.editorActions.TextBlockTransferableData
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
@@ -30,36 +29,7 @@ import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
 import java.awt.datatransfer.DataFlavor
 import java.io.Serializable
 
-class KotlinReferenceTransferableData(
-    val data: Array<KotlinReferenceData>
-) : TextBlockTransferableData, Cloneable, Serializable {
-
-    override fun getFlavor() = KotlinReferenceData.dataFlavor
-
-    override fun getOffsetCount() = data.size * 2
-
-    override fun getOffsets(offsets: IntArray, index: Int): Int {
-        var i = index
-        for (d in data) {
-            offsets[i++] = d.startOffset
-            offsets[i++] = d.endOffset
-        }
-        return i
-    }
-
-    override fun setOffsets(offsets: IntArray, index: Int): Int {
-        var i = index
-        for (d in data) {
-            d.startOffset = offsets[i++]
-            d.endOffset = offsets[i++]
-        }
-        return i
-    }
-
-    public override fun clone() = KotlinReferenceTransferableData(Array(data.size) { data[it].clone() })
-}
-
-class KotlinReferenceData(
+data class KotlinReferenceData(
     var startOffset: Int,
     var endOffset: Int,
     val fqName: String,
