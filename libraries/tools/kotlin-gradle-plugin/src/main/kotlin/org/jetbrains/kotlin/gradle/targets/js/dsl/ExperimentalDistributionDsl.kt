@@ -6,5 +6,6 @@
 package org.jetbrains.kotlin.gradle.targets.js.dsl
 
 @Experimental(level = Experimental.Level.WARNING)
+// TODO: @RequiresOptIn(level = RequiresOptIn.Level.WARNING)
 @Target(AnnotationTarget.FUNCTION)
 annotation class ExperimentalDistributionDsl

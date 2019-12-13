@@ -13,6 +13,7 @@ package kotlin.experimental
  * or by using the compiler argument `-Xuse-experimental=kotlin.experimental.ExperimentalTypeInference`.
  */
 @Experimental(level = Experimental.Level.ERROR)
+@RequiresOptIn(level = RequiresOptIn.Level.ERROR)
 @MustBeDocumented
 @Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.ANNOTATION_CLASS)

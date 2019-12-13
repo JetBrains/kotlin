@@ -56,7 +56,7 @@ class MakeModuleExperimentalFix(
         val facet = KotlinFacet.get(module) ?: return true
         val facetSettings = facet.configuration.settings
         val compilerSettings = facetSettings.compilerSettings ?: return true
-        return if (annotationFqName != ExperimentalUsageChecker.EXPERIMENTAL_FQ_NAME) {
+        return if (annotationFqName != ExperimentalUsageChecker.REQUIRES_OPT_IN_FQ_NAME) {
             compilerArgument !in compilerSettings.additionalArgumentsAsList
         } else {
             compilerSettings.additionalArgumentsAsList.none {
@@ -69,7 +69,7 @@ class MakeModuleExperimentalFix(
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val containingKtFile = diagnostic.psiElement.containingFile as? KtFile ?: return null
             val module = containingKtFile.module ?: return null
-            return MakeModuleExperimentalFix(containingKtFile, module, ExperimentalUsageChecker.EXPERIMENTAL_FQ_NAME)
+            return MakeModuleExperimentalFix(containingKtFile, module, ExperimentalUsageChecker.REQUIRES_OPT_IN_FQ_NAME)
         }
     }
 }

@@ -147,22 +147,22 @@ public class DefaultErrorMessages {
         MAP.put(ILLEGAL_KOTLIN_VERSION_STRING_VALUE, "Invalid @{0} annotation value (should be ''major.minor'' or ''major.minor.patch'')", TO_STRING);
         MAP.put(NEWER_VERSION_IN_SINCE_KOTLIN, "The version is greater than the specified API version {0}", STRING);
 
-        MAP.put(EXPERIMENTAL_API_USAGE, "This declaration is experimental and its usage should be marked with ''@{0}'' or ''@UseExperimental({0}::class)''", TO_STRING);
-        MAP.put(EXPERIMENTAL_API_USAGE_ERROR, "This declaration is experimental and its usage must be marked with ''@{0}'' or ''@UseExperimental({0}::class)''", TO_STRING);
+        MAP.put(EXPERIMENTAL_API_USAGE, "This declaration is experimental and its usage should be marked with ''@{0}'' or ''@OptIn({0}::class)''", TO_STRING);
+        MAP.put(EXPERIMENTAL_API_USAGE_ERROR, "This declaration is experimental and its usage must be marked with ''@{0}'' or ''@OptIn({0}::class)''", TO_STRING);
 
         MAP.put(EXPERIMENTAL_OVERRIDE, "This declaration overrides experimental member of supertype ''{1}'' and should be annotated with ''@{0}''", TO_STRING, NAME);
         MAP.put(EXPERIMENTAL_OVERRIDE_ERROR, "This declaration overrides experimental member of supertype ''{1}'' and must be annotated with ''@{0}''", TO_STRING, NAME);
 
-        MAP.put(EXPERIMENTAL_IS_NOT_ENABLED, "This class can only be used with the compiler argument '-Xuse-experimental=kotlin.Experimental'");
+        MAP.put(EXPERIMENTAL_IS_NOT_ENABLED, "This class can only be used with the compiler argument '-Xopt-in=kotlin.RequiresOptIn'");
         MAP.put(EXPERIMENTAL_CAN_ONLY_BE_USED_AS_ANNOTATION, "This class can only be used as an annotation");
-        MAP.put(EXPERIMENTAL_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_USE_EXPERIMENTAL, "This class can only be used as an annotation or as an argument to @UseExperimental");
+        MAP.put(EXPERIMENTAL_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_USE_EXPERIMENTAL, "This class can only be used as an annotation or as an argument to @OptIn");
 
-        MAP.put(USE_EXPERIMENTAL_WITHOUT_ARGUMENTS, "@UseExperimental without any arguments has no effect");
-        MAP.put(USE_EXPERIMENTAL_ARGUMENT_IS_NOT_MARKER, "Annotation ''{0}'' is not an experimental API marker, therefore its usage in @UseExperimental is ignored", TO_STRING);
+        MAP.put(USE_EXPERIMENTAL_WITHOUT_ARGUMENTS, "@OptIn without any arguments has no effect");
+        MAP.put(USE_EXPERIMENTAL_ARGUMENT_IS_NOT_MARKER, "Annotation ''{0}'' is not an experimental API marker, therefore its usage in @OptIn is ignored", TO_STRING);
         MAP.put(EXPERIMENTAL_ANNOTATION_WITH_WRONG_TARGET, "Experimental annotation cannot be used on the following code elements: {0}. Please remove these targets", STRING);
 
-        MAP.put(EXPERIMENTAL_UNSIGNED_LITERALS, "Unsigned literals are experimental and their usages should be marked with ''@{0}'' or ''@UseExperimental({0}::class)''", TO_STRING);
-        MAP.put(EXPERIMENTAL_UNSIGNED_LITERALS_ERROR, "Unsigned literals are experimental and their usages must be marked with ''@{0}'' or ''@UseExperimental({0}::class)''", TO_STRING);
+        MAP.put(EXPERIMENTAL_UNSIGNED_LITERALS, "Unsigned literals are experimental and their usages should be marked with ''@{0}'' or ''@OptIn({0}::class)''", TO_STRING);
+        MAP.put(EXPERIMENTAL_UNSIGNED_LITERALS_ERROR, "Unsigned literals are experimental and their usages must be marked with ''@{0}'' or ''@OptIn({0}::class)''", TO_STRING);
 
         MAP.put(NON_PARENTHESIZED_ANNOTATIONS_ON_FUNCTIONAL_TYPES, "Non-parenthesized annotations on function types without receiver aren't yet supported (see KT-31734 for details)");
 
