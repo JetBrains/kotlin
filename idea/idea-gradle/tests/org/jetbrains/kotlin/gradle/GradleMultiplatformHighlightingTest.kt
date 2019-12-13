@@ -40,7 +40,11 @@ class GradleMultiplatformHighlightingTest : GradleImportingTestCase() {
         val files = importProjectFromTestData()
         val project = myTestFixture.project
 
-        checkFiles(files, project, GradleDaemonAnalyzerTestCase(testLineMarkers = true, checkWarnings = true, checkInfos = false)) { file ->
+        checkFiles(
+            files,
+            project,
+            object : GradleDaemonAnalyzerTestCase(testLineMarkers = true, checkWarnings = true, checkInfos = false) {}
+        ) { file ->
             file.extension == "kt"
         }
     }
@@ -50,8 +54,11 @@ class GradleMultiplatformHighlightingTest : GradleImportingTestCase() {
     }
 }
 
-class GradleDaemonAnalyzerTestCase(val testLineMarkers: Boolean, val checkWarnings: Boolean, val checkInfos: Boolean) :
-    DaemonAnalyzerTestCase() {
+abstract class GradleDaemonAnalyzerTestCase(
+    val testLineMarkers: Boolean,
+    val checkWarnings: Boolean,
+    val checkInfos: Boolean
+) : DaemonAnalyzerTestCase() {
     override fun doTestLineMarkers() = testLineMarkers
 
     fun checkHighlighting(project: Project, editor: Editor) {

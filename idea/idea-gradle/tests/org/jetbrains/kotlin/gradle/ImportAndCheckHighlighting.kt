@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.gradle
 
 import org.jetbrains.kotlin.idea.codeInsight.gradle.MultiplePluginVersionGradleImportingTestCase
-import org.junit.Test
 import org.jetbrains.plugins.gradle.tooling.annotation.PluginTargetVersions
+import org.junit.Test
 
 
 class ImportAndCheckHighlighting : MultiplePluginVersionGradleImportingTestCase() {
@@ -28,7 +28,15 @@ class ImportAndCheckHighlighting : MultiplePluginVersionGradleImportingTestCase(
         val files = configureByFiles()
         importProject()
         val project = myTestFixture.project
-        checkFiles(files, project, GradleDaemonAnalyzerTestCase(testLineMarkers = testLineMarkers, checkWarnings = checkWarnings, checkInfos = false)) { file ->
+        checkFiles(
+            files,
+            project,
+            object : GradleDaemonAnalyzerTestCase(
+                testLineMarkers = testLineMarkers,
+                checkWarnings = checkWarnings,
+                checkInfos = false
+            ) {}
+        ) { file ->
             file.extension == "kt" || file.extension == "java"
         }
     }
