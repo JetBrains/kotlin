@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="CommitMessageInspectionProfile">
+    <profile version="1.0">
+      <inspection_tool class="GrazieCommit" enabled="true" level="TYPO" enabled_by_default="true" />
+    </profile>
+  </component>
   <component name="IssueNavigationConfiguration">
     <option name="links">
       <list>
@@ -24,5 +29,6 @@
   </component>
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/kotlin-ultimate" vcs="Git" />
   </component>
 </project>

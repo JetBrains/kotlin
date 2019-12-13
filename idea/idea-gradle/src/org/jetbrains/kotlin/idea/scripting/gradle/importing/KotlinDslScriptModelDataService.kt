@@ -50,7 +50,7 @@ class KotlinDslScriptModelDataService : AbstractProjectDataService<ProjectData, 
         super.onSuccessImport(imported, projectData, project, modelsProvider)
 
         val projectDataNode = imported.singleOrNull() ?: return
-        val gradleKotlinBuildScripts = projectDataNode.KOTLIN_DSL_SCRIPT_IDEA_MODELS
+        val gradleKotlinBuildScripts = projectDataNode.KOTLIN_DSL_SCRIPT_MODELS
         val buildScripts = gradleKotlinBuildScripts.toList()
         gradleKotlinBuildScripts.clear()
 
@@ -105,7 +105,7 @@ class KotlinDslScriptModelDataService : AbstractProjectDataService<ProjectData, 
     }
 
     private fun addBuildScriptDiagnosticMessage(
-        message: KotlinDslScriptIdeaModel.Message,
+        message: KotlinDslScriptModel.Message,
         virtualFile: VirtualFile,
         project: Project
     ) {
@@ -113,8 +113,8 @@ class KotlinDslScriptModelDataService : AbstractProjectDataService<ProjectData, 
             "Kotlin Build Script",
             message.text,
             when (message.severity) {
-                KotlinDslScriptIdeaModel.Severity.WARNING -> NotificationCategory.WARNING
-                KotlinDslScriptIdeaModel.Severity.ERROR -> NotificationCategory.ERROR
+                KotlinDslScriptModel.Severity.WARNING -> NotificationCategory.WARNING
+                KotlinDslScriptModel.Severity.ERROR -> NotificationCategory.ERROR
             },
             NotificationSource.PROJECT_SYNC
         )
@@ -135,7 +135,7 @@ class KotlinDslScriptModelDataService : AbstractProjectDataService<ProjectData, 
     class LazyNavigatable internal constructor(
         private val virtualFile: VirtualFile,
         private val project: Project,
-        val position: KotlinDslScriptIdeaModel.Position?
+        val position: KotlinDslScriptModel.Position?
     ) : Navigatable {
         private val openFileDescriptor: Navigatable by lazy {
             if (position != null) OpenFileDescriptor(project, virtualFile, position.line, position.column)
