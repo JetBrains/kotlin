@@ -43,7 +43,7 @@ data class GradleCallIr(
     val name: String
 ) : GradleIR {
     override fun GradlePrinter.renderGradle() {
-        sectionCall(name) {}
+        call(name, forceBrackets = true) {}
     }
 }
 
@@ -90,6 +90,21 @@ data class CompilationAccessIr(
     }
 }
 
+data class GradleDynamicPropertyAccessIR(val qualifier: BuildSystemIR, val propertyName: String) : GradleIR {
+    override fun GradlePrinter.renderGradle() {
+        qualifier.render(this)
+        when (dsl) {
+            GradlePrinter.GradleDsl.KOTLIN -> +"[${propertyName.quotified}]"
+            GradlePrinter.GradleDsl.GROOVY -> +".$propertyName"
+        }
+    }
+}
+
+data class GradlePropertyAccessIR(val propertyName: String) : GradleIR {
+    override fun GradlePrinter.renderGradle() {
+        +propertyName
+    }
+}
 
 interface BuildScriptIR : BuildSystemIR
 

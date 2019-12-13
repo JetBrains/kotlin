@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.BuildScrip
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.BuildScriptRepositoryIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.GradleIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.DefaultTargetConfigurationIR
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.TargetConfigurationIR
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.TargetIR
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.BuildFilePrinter
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.GradlePrinter
@@ -113,6 +115,18 @@ data class MultiplatformModulesStructureIR(
             }
         }
     }
+}
+
+fun MultiplatformModulesStructureIR.updateTargets(
+    updater: (TargetConfigurationIR) -> TargetConfigurationIR
+): MultiplatformModulesStructureIR {
+    val newTargets = targets.map { target ->
+        when (target) {
+            is TargetConfigurationIR -> updater(target)
+            else -> target
+        }
+    }
+    return copy(targets = newTargets)
 }
 
 data class SingleplatformModulesStructureWithSingleModuleIR(

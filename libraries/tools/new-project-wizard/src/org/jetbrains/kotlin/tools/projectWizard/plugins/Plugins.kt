@@ -7,9 +7,7 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.gradle.Groov
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.gradle.KotlinDslPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.projectTemplates.ProjectTemplatesPlugin
-import org.jetbrains.kotlin.tools.projectWizard.plugins.templates.ConsoleJvmApplicationTemplatePlugin
-import org.jetbrains.kotlin.tools.projectWizard.plugins.templates.KotlinTestTemplatePlugin
-import org.jetbrains.kotlin.tools.projectWizard.plugins.templates.TemplatesPlugin
+import org.jetbrains.kotlin.tools.projectWizard.plugins.templates.*
 
 object Plugins {
     val allPlugins = { context: Context ->
@@ -27,7 +25,9 @@ object Plugins {
 
             // templates
             KotlinTestTemplatePlugin(context),
-            ConsoleJvmApplicationTemplatePlugin(context)
+            ConsoleJvmApplicationTemplatePlugin(context),
+            KtorTemplatesPlugin(context),
+            JsTemplatesPlugin(context)
         )
     }
 }

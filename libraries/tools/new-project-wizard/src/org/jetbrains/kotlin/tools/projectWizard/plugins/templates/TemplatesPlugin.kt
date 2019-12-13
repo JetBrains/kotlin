@@ -65,20 +65,28 @@ class TemplatesPlugin(context: Context) : Plugin(context) {
                                         }
                                     )
                                 }
-                            }.map { it.fold() }
+                            }.map(List<TemplateApplicationResult>::fold)
                         }
-                        is SourcesetModuleIR -> applyTemplateToSourceset(
-                            module.template,
-                            module,
-                            templateEngine
-                        )
+                        is SourcesetModuleIR -> {
+                            applyTemplateToSourceset(
+                                module.template,
+                                module,
+                                templateEngine
+                            )
+                        }
                     }.map { result -> module.withIrs(result.librariesToAdd) to result }
                 }.map {
                     val (moduleIrs, results) = it.unzip()
                     val foldedResults = results.fold()
                     buildFile.copy(
                         modules = buildFile.modules.withModules(moduleIrs)
-                    ).withIrs(foldedResults.irsToAddToBuildFile)
+                    ).withIrs(foldedResults.irsToAddToBuildFile).let { buildFile ->
+                        when (val structure = buildFile.modules) {
+                            is MultiplatformModulesStructureIR ->
+                                buildFile.copy(modules = structure.updateTargets(foldedResults.updateTarget))
+                            else -> buildFile
+                        }
+                    }
                 }
             }
         }
