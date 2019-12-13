@@ -4904,6 +4904,7 @@ public final class kotlin/text/StringsKt {
 	public static final fun append (Ljava/lang/Appendable;[Ljava/lang/CharSequence;)Ljava/lang/Appendable;
 	public static final fun append (Ljava/lang/StringBuilder;[Ljava/lang/Object;)Ljava/lang/StringBuilder;
 	public static final fun append (Ljava/lang/StringBuilder;[Ljava/lang/String;)Ljava/lang/StringBuilder;
+	public static final fun appendRange (Ljava/lang/Appendable;Ljava/lang/CharSequence;II)Ljava/lang/Appendable;
 	public static final fun appendln (Ljava/lang/Appendable;)Ljava/lang/Appendable;
 	public static final fun appendln (Ljava/lang/StringBuilder;)Ljava/lang/StringBuilder;
 	public static final fun asIterable (Ljava/lang/CharSequence;)Ljava/lang/Iterable;

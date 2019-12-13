@@ -34,9 +34,9 @@ expect class StringBuilder : Appendable, CharSequence {
 
     override fun subSequence(startIndex: Int, endIndex: Int): CharSequence
 
-    override fun append(c: Char): StringBuilder
-    override fun append(csq: CharSequence?): StringBuilder
-    override fun append(csq: CharSequence?, start: Int, end: Int): StringBuilder
+    override fun append(value: Char): StringBuilder
+    override fun append(value: CharSequence?): StringBuilder
+    override fun append(value: CharSequence?, startIndex: Int, endIndex: Int): StringBuilder
 
     /**
      * Reverses the contents of this string builder and returns this instance.

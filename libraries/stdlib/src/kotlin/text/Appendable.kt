@@ -13,30 +13,47 @@ package kotlin.text
  */
 expect interface Appendable {
     /**
-     * Appends the specified character [c] to this Appendable and returns this instance.
+     * Appends the specified character [value] to this Appendable and returns this instance.
      *
-     * @param c the character to append.
+     * @param value the character to append.
      */
-    fun append(c: Char): Appendable
+    fun append(value: Char): Appendable
 
     /**
-     * Appends the specified character sequence [csq] to this Appendable and returns this instance.
+     * Appends the specified character sequence [value] to this Appendable and returns this instance.
      *
-     * @param csq the character sequence to append. If [csq] is `null`, then the four characters `"null"` are appended to this Appendable.
+     * @param value the character sequence to append. If [value] is `null`, then the four characters `"null"` are appended to this Appendable.
      */
-    fun append(csq: CharSequence?): Appendable
+    fun append(value: CharSequence?): Appendable
 
     /**
-     * Appends a subsequence of the specified character sequence [csq] to this Appendable and returns this instance.
+     * Appends a subsequence of the specified character sequence [value] to this Appendable and returns this instance.
      *
-     * @param csq the character sequence from which a subsequence is appended. If [csq] is `null`,
-     *  then characters are appended as if [csq] contained the four characters `"null"`.
-     * @param start the beginning (inclusive) of the subsequence to append.
-     * @param end the end (exclusive) of the subsequence to append.
+     * @param value the character sequence from which a subsequence is appended. If [value] is `null`,
+     *  then characters are appended as if [value] contained the four characters `"null"`.
+     * @param startIndex the beginning (inclusive) of the subsequence to append.
+     * @param endIndex the end (exclusive) of the subsequence to append.
      *
-     * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [start] or [end] is out of range of the [csq] character sequence indices or when `start > end`.
+     * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of the [value] character sequence indices or when `startIndex > endIndex`.
      */
-    fun append(csq: CharSequence?, start: Int, end: Int): Appendable
+    fun append(value: CharSequence?, startIndex: Int, endIndex: Int): Appendable
+}
+
+/**
+ * Appends a subsequence of the specified character sequence [value] to this Appendable and returns this instance.
+ *
+ * @param value the character sequence from which a subsequence is appended. If [value] is `null`,
+ *  then characters are appended as if [value] contained the four characters `"null"`.
+ * @param startIndex the beginning (inclusive) of the subsequence to append.
+ * @param endIndex the end (exclusive) of the subsequence to append.
+ *
+ * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of the [value] character sequence indices or when `startIndex > endIndex`.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public fun <T : Appendable> T.appendRange(value: CharSequence?, startIndex: Int, endIndex: Int): T {
+    @Suppress("UNCHECKED_CAST")
+    return append(value, startIndex, endIndex) as T
 }
 
 /**
