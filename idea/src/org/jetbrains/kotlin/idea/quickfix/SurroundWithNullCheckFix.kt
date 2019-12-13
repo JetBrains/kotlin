@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStableSimpleExpression
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.psi.psiUtil.getLastParentOfTypeInRow
@@ -68,7 +69,7 @@ class SurroundWithNullCheckFix(
             val nullableExpression =
                 when (parent) {
                     is KtDotQualifiedExpression -> parent.receiverExpression
-                    is KtBinaryExpression -> parent.left
+                    is KtBinaryExpression -> if (parent.operationToken == KtTokens.IN_KEYWORD) parent.right else parent.left
                     is KtCallExpression -> parent.calleeExpression
                     else -> return null
                 } as? KtReferenceExpression ?: return null
