@@ -1241,6 +1241,21 @@ public inline fun CharSequence.reduceRightIndexed(operation: (index: Int, Char, 
 }
 
 /**
+ * Accumulates value starting with last character and applying [operation] from right to left to each character and current accumulator value. Returns null if the char sequence is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public inline fun CharSequence.reduceRightOrNull(operation: (Char, acc: Char) -> Char): Char? {
+    var index = lastIndex
+    if (index < 0) return null
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(get(index--), accumulator)
+    }
+    return accumulator
+}
+
+/**
  * Returns the sum of all values produced by [selector] function applied to each character in the char sequence.
  */
 public inline fun CharSequence.sumBy(selector: (Char) -> Int): Int {

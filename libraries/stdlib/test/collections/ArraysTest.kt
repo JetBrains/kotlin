@@ -1036,6 +1036,20 @@ class ArraysTest {
         }
     }
 
+    @Test fun reduceRightOrNull() {
+        expect(2) { intArrayOf(1, 2, 3).reduceRightOrNull { a, b -> a - b } }
+        expect(2.toLong()) { longArrayOf(1, 2, 3).reduceRightOrNull { a, b -> a - b } }
+        expect(2F) { floatArrayOf(1F, 2F, 3F).reduceRightOrNull { a, b -> a - b } }
+        expect(2.0) { doubleArrayOf(1.0, 2.0, 3.0).reduceRightOrNull { a, b -> a - b } }
+        expect('3') { charArrayOf('1', '3', '2').reduceRightOrNull { a, b -> if (a > b) a else b } }
+        expect(false) { booleanArrayOf(true, true, false).reduceRightOrNull { a, b -> a && b } }
+        expect(true) { booleanArrayOf(true, true).reduceRightOrNull { a, b -> a && b } }
+        expect(2.toByte()) { byteArrayOf(1, 2, 3).reduceRightOrNull { a, b -> (a - b).toByte() } }
+        expect(2.toShort()) { shortArrayOf(1, 2, 3).reduceRightOrNull { a, b -> (a - b).toShort() } }
+
+        expect(null, { intArrayOf().reduceRightOrNull { a, b -> a + b } })
+    }
+
     @Test fun reverseInPlace() {
 
         fun <TArray, T> doTest(build: Iterable<Int>.() -> TArray, reverse: TArray.() -> Unit, snapshot: TArray.() -> List<T>) {
