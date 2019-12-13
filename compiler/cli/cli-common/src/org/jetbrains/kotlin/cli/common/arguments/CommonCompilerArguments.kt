@@ -335,7 +335,11 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             put(AnalysisFlags.skipMetadataVersionCheck, skipMetadataVersionCheck)
             put(AnalysisFlags.multiPlatformDoNotCheckActual, noCheckActual)
             put(AnalysisFlags.klibBasedMpp, klibBasedMpp)
-            put(AnalysisFlags.experimental, experimental?.toList().orEmpty())
+            val experimentalFqNames = experimental?.toList().orEmpty()
+            if (experimentalFqNames.isNotEmpty()) {
+                put(AnalysisFlags.experimental, experimentalFqNames)
+                collector.report(CompilerMessageSeverity.WARNING, "'-Xexperimental' is deprecated and will be removed in a future release")
+            }
             put(AnalysisFlags.useExperimental, useExperimental?.toList().orEmpty())
             put(AnalysisFlags.explicitApiVersion, apiVersion != null)
             put(AnalysisFlags.allowResultReturnType, allowResultReturnType)
