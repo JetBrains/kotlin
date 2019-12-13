@@ -76,9 +76,8 @@ val OPT_MASK_TYPE: Type = Type.INT_TYPE
 val OPT_MASK_BITS = 32
 
 // compare with zero. if result == 0, property was not seen.
-internal fun InstructionAdapter.genValidateProperty(index: Int, bitMaskPos: (Int) -> Int) {
-    val addr = bitMaskPos(index)
-    load(addr, OPT_MASK_TYPE)
+internal fun InstructionAdapter.genValidateProperty(index: Int, bitMaskAddress: Int) {
+    load(bitMaskAddress, OPT_MASK_TYPE)
     iconst(1 shl (index % OPT_MASK_BITS))
     and(OPT_MASK_TYPE)
     iconst(0)
