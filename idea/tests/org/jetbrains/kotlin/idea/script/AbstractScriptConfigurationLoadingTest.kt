@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.script
 
 import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.util.text.StringUtilRt
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
@@ -89,11 +90,11 @@ abstract class AbstractScriptConfigurationLoadingTest : AbstractScriptConfigurat
     protected fun assertAppliedConfiguration(contents: String, file: KtFile = myFile as KtFile) {
         val secondConfiguration = scriptConfigurationManager.getConfiguration(file)!!
         assertEquals(
-            contents,
-            secondConfiguration.defaultImports.single().let {
+            StringUtilRt.convertLineSeparators(contents),
+            StringUtilRt.convertLineSeparators(secondConfiguration.defaultImports.single().let {
                 check(it.startsWith("x_"))
                 it.removePrefix("x_")
-            }
+            })
         )
     }
 
