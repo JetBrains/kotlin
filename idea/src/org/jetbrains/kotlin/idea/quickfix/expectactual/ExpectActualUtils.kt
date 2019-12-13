@@ -32,8 +32,11 @@ import org.jetbrains.kotlin.idea.refactoring.createKotlinFile
 import org.jetbrains.kotlin.idea.refactoring.fqName.fqName
 import org.jetbrains.kotlin.idea.refactoring.introduce.showErrorHint
 import org.jetbrains.kotlin.idea.refactoring.isInterfaceClass
-import org.jetbrains.kotlin.idea.util.*
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.idea.util.hasInlineModifier
+import org.jetbrains.kotlin.idea.util.isEffectivelyActual
+import org.jetbrains.kotlin.idea.util.mustHaveValOrVar
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
@@ -259,7 +262,8 @@ private fun KtPsiFactory.repairSuperTypeList(
 private val forbiddenAnnotationFqNames = setOf(
     ExpectedActualDeclarationChecker.OPTIONAL_EXPECTATION_FQ_NAME,
     FqName("kotlin.ExperimentalMultiplatform"),
-    ExperimentalUsageChecker.USE_EXPERIMENTAL_FQ_NAME
+    ExperimentalUsageChecker.OPT_IN_FQ_NAME,
+    ExperimentalUsageChecker.OLD_USE_EXPERIMENTAL_FQ_NAME
 )
 
 internal fun generateCallable(

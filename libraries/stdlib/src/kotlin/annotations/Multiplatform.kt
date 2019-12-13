@@ -17,6 +17,7 @@ import kotlin.internal.RequireKotlinVersionKind
  * or by using the compiler argument `-Xuse-experimental=kotlin.ExperimentalMultiplatform`.
  */
 @Experimental
+@RequiresOptIn
 @MustBeDocumented
 @Target(
     CLASS,

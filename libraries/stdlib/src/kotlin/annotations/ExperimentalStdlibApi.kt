@@ -15,6 +15,7 @@ import kotlin.annotation.AnnotationTarget.*
  * or by using the compiler argument `-Xuse-experimental=kotlin.ExperimentalStdlibApi`.
  */
 @Experimental(level = Experimental.Level.ERROR)
+@RequiresOptIn(level = RequiresOptIn.Level.ERROR)
 @Retention(AnnotationRetention.BINARY)
 @Target(
     CLASS,

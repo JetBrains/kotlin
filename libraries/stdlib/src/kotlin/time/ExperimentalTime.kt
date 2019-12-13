@@ -19,6 +19,7 @@ import kotlin.annotation.AnnotationTarget.*
  * or by using the compiler argument `-Xuse-experimental=kotlin.time.ExperimentalTime`.
  */
 @Experimental(level = Experimental.Level.ERROR)
+@RequiresOptIn(level = RequiresOptIn.Level.ERROR)
 @MustBeDocumented
 @Retention(AnnotationRetention.BINARY)
 @Target(

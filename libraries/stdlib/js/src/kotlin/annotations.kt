@@ -171,6 +171,7 @@ public annotation class JsQualifier(val value: String)
  * or with the `-Xuse-experimental=kotlin.js.ExperimentalJsExport` compiler option is given.
  */
 @Experimental(level = Experimental.Level.WARNING)
+@RequiresOptIn(level = RequiresOptIn.Level.WARNING)
 @SinceKotlin("1.3")
 public annotation class ExperimentalJsExport
 

@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationSettings
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.utils.SmartSet
@@ -72,8 +71,14 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
     }
 
     companion object {
-        val EXPERIMENTAL_FQ_NAME = FqName("kotlin.Experimental")
-        val USE_EXPERIMENTAL_FQ_NAME = FqName("kotlin.UseExperimental")
+        val OLD_EXPERIMENTAL_FQ_NAME = FqName("kotlin.Experimental")
+        val OLD_USE_EXPERIMENTAL_FQ_NAME = FqName("kotlin.UseExperimental")
+        val REQUIRES_OPT_IN_FQ_NAME = FqName("kotlin.RequiresOptIn")
+        val OPT_IN_FQ_NAME = FqName("kotlin.OptIn")
+
+        val EXPERIMENTAL_FQ_NAMES = setOf(OLD_EXPERIMENTAL_FQ_NAME, REQUIRES_OPT_IN_FQ_NAME)
+        val USE_EXPERIMENTAL_FQ_NAMES = setOf(OLD_USE_EXPERIMENTAL_FQ_NAME, OPT_IN_FQ_NAME)
+
         internal val WAS_EXPERIMENTAL_FQ_NAME = FqName("kotlin.WasExperimental")
         internal val USE_EXPERIMENTAL_ANNOTATION_CLASS = Name.identifier("markerClass")
         internal val WAS_EXPERIMENTAL_ANNOTATION_CLASS = Name.identifier("markerClass")
@@ -81,9 +86,6 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
         private val LEVEL = Name.identifier("level")
         private val WARNING_LEVEL = Name.identifier("WARNING")
         private val ERROR_LEVEL = Name.identifier("ERROR")
-
-        private val EXPERIMENTAL_SHORT_NAME = EXPERIMENTAL_FQ_NAME.shortName()
-        private val USE_EXPERIMENTAL_SHORT_NAME = USE_EXPERIMENTAL_FQ_NAME.shortName()
 
         private val EXPERIMENTAL_API_DIAGNOSTICS = ExperimentalityDiagnostics(
             Errors.EXPERIMENTAL_API_USAGE, Errors.EXPERIMENTAL_API_USAGE_ERROR
@@ -146,7 +148,10 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
         }
 
         internal fun ClassDescriptor.loadExperimentalityForMarkerAnnotation(): Experimentality? {
-            val experimental = annotations.findAnnotation(EXPERIMENTAL_FQ_NAME) ?: return null
+            val experimental =
+                annotations.findAnnotation(REQUIRES_OPT_IN_FQ_NAME)
+                    ?: annotations.findAnnotation(OLD_EXPERIMENTAL_FQ_NAME)
+                    ?: return null
 
             val severity = when ((experimental.allValueArguments[LEVEL] as? EnumValue)?.enumEntryName) {
                 WARNING_LEVEL -> Experimentality.Severity.WARNING
@@ -187,7 +192,7 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
         private fun PsiElement.isElementAnnotatedWithUseExperimentalOf(annotationFqName: FqName, bindingContext: BindingContext): Boolean {
             return this is KtAnnotated && annotationEntries.any { entry ->
                 val descriptor = bindingContext.get(BindingContext.ANNOTATION, entry)
-                if (descriptor?.fqName == USE_EXPERIMENTAL_FQ_NAME) {
+                if (descriptor != null && descriptor.fqName in USE_EXPERIMENTAL_FQ_NAMES) {
                     val annotationClasses = descriptor.allValueArguments[USE_EXPERIMENTAL_ANNOTATION_CLASS]
                     annotationClasses is ArrayValue && annotationClasses.value.any { annotationClass ->
                         annotationClass is KClassValue && annotationClass.value.let { value ->
@@ -244,7 +249,7 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
 
             val validExperimental = languageVersionSettings.getFlag(AnalysisFlags.experimental).filter(::checkAnnotation)
             val validUseExperimental = languageVersionSettings.getFlag(AnalysisFlags.useExperimental).filter { fqName ->
-                fqName == EXPERIMENTAL_FQ_NAME.asString() || checkAnnotation(fqName)
+                fqName == REQUIRES_OPT_IN_FQ_NAME.asString() || fqName == OLD_EXPERIMENTAL_FQ_NAME.asString() || checkAnnotation(fqName)
             }
 
             for (fqName in validExperimental.intersect(validUseExperimental)) {
@@ -258,9 +263,10 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
 
         override fun check(targetDescriptor: ClassifierDescriptor, element: PsiElement, context: ClassifierUsageCheckerContext) {
             val name = targetDescriptor.name
-            if (name == EXPERIMENTAL_SHORT_NAME || name == USE_EXPERIMENTAL_SHORT_NAME) {
-                val fqName = targetDescriptor.fqNameUnsafe
-                if (fqName == EXPERIMENTAL_FQ_NAME.toUnsafe() || fqName == USE_EXPERIMENTAL_FQ_NAME.toUnsafe()) {
+            if (name == OLD_EXPERIMENTAL_FQ_NAME.shortName() || name == REQUIRES_OPT_IN_FQ_NAME.shortName() ||
+                name == OLD_USE_EXPERIMENTAL_FQ_NAME.shortName() || name == OPT_IN_FQ_NAME.shortName()) {
+                val fqName = targetDescriptor.fqNameSafe
+                if (fqName in EXPERIMENTAL_FQ_NAMES || fqName in USE_EXPERIMENTAL_FQ_NAMES) {
                     checkUsageOfKotlinExperimentalOrUseExperimental(element, context)
                     return
                 }
@@ -288,7 +294,9 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
         }
 
         private fun checkUsageOfKotlinExperimentalOrUseExperimental(element: PsiElement, context: CheckerContext) {
-            if (EXPERIMENTAL_FQ_NAME.asString() !in context.languageVersionSettings.getFlag(AnalysisFlags.useExperimental)) {
+            val useExperimentalFqNames = context.languageVersionSettings.getFlag(AnalysisFlags.useExperimental)
+            if (REQUIRES_OPT_IN_FQ_NAME.asString() !in useExperimentalFqNames &&
+                OLD_EXPERIMENTAL_FQ_NAME.asString() !in useExperimentalFqNames) {
                 context.trace.report(Errors.EXPERIMENTAL_IS_NOT_ENABLED.on(element))
             }
 
@@ -317,7 +325,7 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
                     parent.parent.parent is KtValueArgumentList &&
                     parent.parent.parent.parent.let { entry ->
                         entry is KtAnnotationEntry && bindingContext.get(BindingContext.ANNOTATION, entry)?.let { annotation ->
-                            annotation.fqName == USE_EXPERIMENTAL_FQ_NAME || annotation.fqName == WAS_EXPERIMENTAL_FQ_NAME
+                            annotation.fqName in USE_EXPERIMENTAL_FQ_NAMES || annotation.fqName == WAS_EXPERIMENTAL_FQ_NAME
                         } == true
                     }
         }

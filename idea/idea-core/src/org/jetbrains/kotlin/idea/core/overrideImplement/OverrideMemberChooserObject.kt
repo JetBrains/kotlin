@@ -220,7 +220,9 @@ private val OVERRIDE_RENDERER = withOptions {
     typeNormalizer = IdeDescriptorRenderers.APPROXIMATE_FLEXIBLE_TYPES
     renderUnabbreviatedType = false
     annotationFilter = {
-        it.type.constructor.declarationDescriptor?.annotations?.hasAnnotation(ExperimentalUsageChecker.EXPERIMENTAL_FQ_NAME) ?: false
+        val annotations = it.type.constructor.declarationDescriptor?.annotations
+        annotations != null && (annotations.hasAnnotation(ExperimentalUsageChecker.REQUIRES_OPT_IN_FQ_NAME) ||
+                annotations.hasAnnotation(ExperimentalUsageChecker.OLD_EXPERIMENTAL_FQ_NAME))
     }
     presentableUnresolvedTypes = true
     informativeErrorType = false
