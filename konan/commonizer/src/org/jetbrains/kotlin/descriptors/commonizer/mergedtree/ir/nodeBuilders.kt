@@ -6,11 +6,12 @@
 package org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.commonizer.*
-import org.jetbrains.kotlin.descriptors.commonizer.CommonizedGroup
+import org.jetbrains.kotlin.descriptors.commonizer.InputTarget
+import org.jetbrains.kotlin.descriptors.commonizer.OutputTarget
 import org.jetbrains.kotlin.descriptors.commonizer.core.*
-import org.jetbrains.kotlin.descriptors.commonizer.firstNonNull
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirRootNode.ClassifiersCacheImpl
+import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroup
+import org.jetbrains.kotlin.descriptors.commonizer.utils.firstNonNull
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe

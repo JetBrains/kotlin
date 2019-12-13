@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
-import org.jetbrains.kotlin.descriptors.commonizer.CommonizedGroupMap
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirRootNode.ClassifiersCacheImpl
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirType
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.buildClassNode
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.buildTypeAliasNode
+import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroupMap
 import org.jetbrains.kotlin.descriptors.commonizer.utils.mockClassType
 import org.jetbrains.kotlin.descriptors.commonizer.utils.mockTAType
 import org.jetbrains.kotlin.name.FqName
@@ -369,8 +369,10 @@ class DefaultTypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
     private fun prepareCache(variants: Array<out KotlinType>) {
         check(variants.isNotEmpty())
 
-        val classesMap = CommonizedGroupMap<FqName, ClassDescriptor>(variants.size)
-        val typeAliasesMap = CommonizedGroupMap<FqName, TypeAliasDescriptor>(variants.size)
+        val classesMap =
+            CommonizedGroupMap<FqName, ClassDescriptor>(variants.size)
+        val typeAliasesMap =
+            CommonizedGroupMap<FqName, TypeAliasDescriptor>(variants.size)
 
         fun recurse(type: KotlinType, index: Int) {
             @Suppress("MoveVariableDeclarationIntoWhen")

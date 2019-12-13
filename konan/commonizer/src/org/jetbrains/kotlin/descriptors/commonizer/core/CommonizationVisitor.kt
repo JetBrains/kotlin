@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.commonizer.CommonizedGroupMap
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.*
+import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroupMap
 
 internal class CommonizationVisitor(
     private val root: CirRootNode
@@ -89,7 +89,8 @@ internal class CommonizationVisitor(
             }
 
             // find out common (and commonized) supertypes
-            val supertypesMap = CommonizedGroupMap<String, CirType>(node.target.size)
+            val supertypesMap =
+                CommonizedGroupMap<String, CirType>(node.target.size)
             node.target.forEachIndexed { index, clazz ->
                 for (supertype in clazz!!.supertypes) {
                     supertypesMap[supertype.fqNameWithTypeParameters][index] = supertype

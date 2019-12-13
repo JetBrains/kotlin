@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.ModuleForCommonization.DeserializedModule
 import org.jetbrains.kotlin.descriptors.commonizer.ModuleForCommonization.SyntheticModule
+import org.jetbrains.kotlin.descriptors.commonizer.utils.createKotlinNativeForwardDeclarationsModule
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.ir.util.UniqId
 import org.jetbrains.kotlin.konan.library.*
@@ -153,10 +154,11 @@ private fun loadModules(repository: File, targets: List<KonanTarget>): Map<Input
             DeserializedModule(rawModule, data, File(library.libraryFile.path))
         }
 
-        val rawForwardDeclarationsModule = createKotlinNativeForwardDeclarationsModule(
-            storageManager = storageManager,
-            builtIns = rawStdlibModule.builtIns
-        )
+        val rawForwardDeclarationsModule =
+            createKotlinNativeForwardDeclarationsModule(
+                storageManager = storageManager,
+                builtIns = rawStdlibModule.builtIns
+            )
 
         val onlyDeserializedModules = listOf(rawStdlibModule) + otherModules.map { it.module }
         val allModules = onlyDeserializedModules + rawForwardDeclarationsModule

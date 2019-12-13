@@ -7,13 +7,10 @@ package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
 
 import org.jetbrains.kotlin.backend.common.serialization.metadata.impl.ExportedForwardDeclarationsPackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.commonizer.*
-import org.jetbrains.kotlin.descriptors.commonizer.CommonizedGroupMap
-import org.jetbrains.kotlin.descriptors.commonizer.firstNonNull
-import org.jetbrains.kotlin.descriptors.commonizer.isUnderKotlinNativeSyntheticPackages
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirModuleNode
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirRootNode
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.buildModuleNode
+import org.jetbrains.kotlin.descriptors.commonizer.utils.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.scopes.ChainedMemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -27,7 +24,8 @@ internal fun mergeModules(
 ): CirModuleNode {
     val node = buildModuleNode(storageManager, modules)
 
-    val packageMemberScopesMap = CommonizedGroupMap<FqName, MemberScope>(modules.size)
+    val packageMemberScopesMap =
+        CommonizedGroupMap<FqName, MemberScope>(modules.size)
 
     modules.forEachIndexed { index, module ->
         module?.collectNonEmptyPackageMemberScopes { packageFqName, memberScope ->

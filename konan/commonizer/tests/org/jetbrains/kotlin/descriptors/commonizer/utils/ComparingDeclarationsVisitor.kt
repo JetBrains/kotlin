@@ -7,9 +7,6 @@ package org.jetbrains.kotlin.descriptors.commonizer.utils
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.commonizer.fqName
-import org.jetbrains.kotlin.descriptors.commonizer.fqNameWithTypeParameters
-import org.jetbrains.kotlin.descriptors.commonizer.isNull
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe

@@ -9,11 +9,11 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.descriptors.commonizer.declarationDescriptor
-import org.jetbrains.kotlin.descriptors.commonizer.fqName
-import org.jetbrains.kotlin.descriptors.commonizer.fqNameWithTypeParameters
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirSimpleTypeKind.CLASS
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirSimpleTypeKind.TYPE_ALIAS
+import org.jetbrains.kotlin.descriptors.commonizer.utils.declarationDescriptor
+import org.jetbrains.kotlin.descriptors.commonizer.utils.fqName
+import org.jetbrains.kotlin.descriptors.commonizer.utils.fqNameWithTypeParameters
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.*
 import kotlin.LazyThreadSafetyMode.PUBLICATION

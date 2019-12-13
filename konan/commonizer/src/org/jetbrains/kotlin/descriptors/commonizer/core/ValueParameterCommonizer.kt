@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirCommonValueParameter
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirValueParameter
-import org.jetbrains.kotlin.descriptors.commonizer.isNull
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirClassifiersCache
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirCommonValueParameter
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirType
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirValueParameter
+import org.jetbrains.kotlin.descriptors.commonizer.utils.isNull
 import org.jetbrains.kotlin.name.Name
 
 interface ValueParameterCommonizer : Commonizer<CirValueParameter, CirValueParameter> {

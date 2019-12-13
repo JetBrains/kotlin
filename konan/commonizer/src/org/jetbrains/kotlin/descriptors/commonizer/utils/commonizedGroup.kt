@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.descriptors.commonizer
+package org.jetbrains.kotlin.descriptors.commonizer.utils
 
 /** Fixed-size ordered collection with no extra space that represents a commonized group of same-rank elements */
 internal class CommonizedGroup<T : Any>(
@@ -41,7 +41,11 @@ internal class CommonizedGroup<T : Any>(
 internal class CommonizedGroupMap<K, V : Any>(val size: Int) : Iterable<Map.Entry<K, CommonizedGroup<V>>> {
     private val wrapped: MutableMap<K, CommonizedGroup<V>> = HashMap()
 
-    operator fun get(key: K): CommonizedGroup<V> = wrapped.getOrPut(key) { CommonizedGroup(size) }
+    operator fun get(key: K): CommonizedGroup<V> = wrapped.getOrPut(key) {
+        CommonizedGroup(
+            size
+        )
+    }
     fun getOrNull(key: K): CommonizedGroup<V>? = wrapped[key]
 
     override fun iterator(): Iterator<Map.Entry<K, CommonizedGroup<V>>> = wrapped.iterator()

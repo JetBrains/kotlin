@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.descriptors.commonizer.builder
 
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.commonizer.CommonizedGroup
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirClass
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirTypeAlias
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirTypeAliasNode
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.indexOfCommon
+import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroup
 import org.jetbrains.kotlin.name.FqName
 
 internal fun CirTypeAliasNode.buildDescriptors(

@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.descriptors.commonizer.builder
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.commonizer.isUnderStandardKotlinPackages
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.*
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirSimpleTypeKind.Companion.areCompatible
-import org.jetbrains.kotlin.descriptors.commonizer.resolveClassOrTypeAliasByFqName
+import org.jetbrains.kotlin.descriptors.commonizer.utils.isUnderStandardKotlinPackages
+import org.jetbrains.kotlin.descriptors.commonizer.utils.resolveClassOrTypeAliasByFqName
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName

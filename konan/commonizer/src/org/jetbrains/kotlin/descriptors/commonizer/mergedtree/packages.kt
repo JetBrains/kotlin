@@ -9,10 +9,10 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
-import org.jetbrains.kotlin.descriptors.commonizer.CommonizedGroupMap
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirPackageNode
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirRootNode
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.buildPackageNode
+import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroupMap
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -27,10 +27,19 @@ internal fun mergePackages(
 ): CirPackageNode {
     val node = buildPackageNode(storageManager, moduleName, packageFqName, packageMemberScopes)
 
-    val propertiesMap = CommonizedGroupMap<PropertyApproximationKey, PropertyDescriptor>(packageMemberScopes.size)
-    val functionsMap = CommonizedGroupMap<FunctionApproximationKey, SimpleFunctionDescriptor>(packageMemberScopes.size)
-    val classesMap = CommonizedGroupMap<Name, ClassDescriptor>(packageMemberScopes.size)
-    val typeAliasesMap = CommonizedGroupMap<Name, TypeAliasDescriptor>(packageMemberScopes.size)
+    val propertiesMap =
+        CommonizedGroupMap<PropertyApproximationKey, PropertyDescriptor>(
+            packageMemberScopes.size
+        )
+    val functionsMap =
+        CommonizedGroupMap<FunctionApproximationKey, SimpleFunctionDescriptor>(
+            packageMemberScopes.size
+        )
+    val classesMap =
+        CommonizedGroupMap<Name, ClassDescriptor>(packageMemberScopes.size)
+    val typeAliasesMap = CommonizedGroupMap<Name, TypeAliasDescriptor>(
+        packageMemberScopes.size
+    )
 
     packageMemberScopes.forEachIndexed { index, memberScope ->
         memberScope?.collectMembers(

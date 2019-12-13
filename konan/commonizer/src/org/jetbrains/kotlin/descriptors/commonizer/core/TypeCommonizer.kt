@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.commonizer.isUnderStandardKotlinPackages
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.*
+import org.jetbrains.kotlin.descriptors.commonizer.utils.isUnderStandardKotlinPackages
 import org.jetbrains.kotlin.types.AbstractStrictEqualityTypeChecker
 
 interface TypeCommonizer : Commonizer<CirType, CirType> {

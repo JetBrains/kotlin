@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.descriptors.commonizer.builder
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.commonizer.CommonizedGroup
 import org.jetbrains.kotlin.descriptors.commonizer.builder.CommonizedMemberScope.Companion.plusAssign
+import org.jetbrains.kotlin.descriptors.commonizer.builder.DeclarationsBuilderVisitor1.Companion.asListContaining
 import org.jetbrains.kotlin.descriptors.commonizer.builder.DeclarationsBuilderVisitor1.Companion.noContainingDeclarations
 import org.jetbrains.kotlin.descriptors.commonizer.builder.DeclarationsBuilderVisitor1.Companion.noReturningDeclarations
-import org.jetbrains.kotlin.descriptors.commonizer.builder.DeclarationsBuilderVisitor1.Companion.asListContaining
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.*
+import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroup
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 
 /** Builds and initializes the new tree of common descriptors */
@@ -65,14 +65,16 @@ internal class DeclarationsBuilderVisitor2(
     }
 
     override fun visitPropertyNode(node: CirPropertyNode, data: List<DeclarationDescriptor?>): List<PropertyDescriptor?> {
-        val propertyDescriptorsGroup = CommonizedGroup<PropertyDescriptor>(node.dimension)
+        val propertyDescriptorsGroup =
+            CommonizedGroup<PropertyDescriptor>(node.dimension)
         node.buildDescriptors(components, propertyDescriptorsGroup, data)
 
         return propertyDescriptorsGroup.toList()
     }
 
     override fun visitFunctionNode(node: CirFunctionNode, data: List<DeclarationDescriptor?>): List<DeclarationDescriptor?> {
-        val functionDescriptorsGroup = CommonizedGroup<SimpleFunctionDescriptor>(node.dimension)
+        val functionDescriptorsGroup =
+            CommonizedGroup<SimpleFunctionDescriptor>(node.dimension)
         node.buildDescriptors(components, functionDescriptorsGroup, data)
 
         return functionDescriptorsGroup.toList()
@@ -114,7 +116,8 @@ internal class DeclarationsBuilderVisitor2(
     override fun visitClassConstructorNode(node: CirClassConstructorNode, data: List<DeclarationDescriptor?>): List<DeclarationDescriptor?> {
         val containingDeclarations = data.asListContaining<CommonizedClassDescriptor>()
 
-        val constructorsGroup = CommonizedGroup<ClassConstructorDescriptor>(node.dimension)
+        val constructorsGroup =
+            CommonizedGroup<ClassConstructorDescriptor>(node.dimension)
         node.buildDescriptors(components, constructorsGroup, containingDeclarations)
 
         return constructorsGroup.toList()

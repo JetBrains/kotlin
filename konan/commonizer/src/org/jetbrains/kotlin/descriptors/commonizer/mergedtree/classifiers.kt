@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.commonizer.CommonizedGroupMap
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.*
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirClassNode
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirRootNode.ClassifiersCacheImpl
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.buildClassNode
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.buildTypeAliasNode
+import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroupMap
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.storage.NullableLazyValue
 import org.jetbrains.kotlin.storage.StorageManager
@@ -23,10 +23,20 @@ internal fun mergeClasses(
 ): CirClassNode {
     val node = buildClassNode(storageManager, cacheRW, containingDeclarationCommon, classes)
 
-    val constructorsMap = CommonizedGroupMap<ConstructorApproximationKey, ClassConstructorDescriptor>(classes.size)
-    val propertiesMap = CommonizedGroupMap<PropertyApproximationKey, PropertyDescriptor>(classes.size)
-    val functionsMap = CommonizedGroupMap<FunctionApproximationKey, SimpleFunctionDescriptor>(classes.size)
-    val classesMap = CommonizedGroupMap<Name, ClassDescriptor>(classes.size)
+    val constructorsMap =
+        CommonizedGroupMap<ConstructorApproximationKey, ClassConstructorDescriptor>(
+            classes.size
+        )
+    val propertiesMap =
+        CommonizedGroupMap<PropertyApproximationKey, PropertyDescriptor>(
+            classes.size
+        )
+    val functionsMap =
+        CommonizedGroupMap<FunctionApproximationKey, SimpleFunctionDescriptor>(
+            classes.size
+        )
+    val classesMap =
+        CommonizedGroupMap<Name, ClassDescriptor>(classes.size)
 
     classes.forEachIndexed { index, clazz ->
         clazz?.constructors?.forEach { constructorsMap[ConstructorApproximationKey(it)][index] = it }

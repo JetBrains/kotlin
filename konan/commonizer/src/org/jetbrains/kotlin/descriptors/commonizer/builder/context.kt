@@ -7,14 +7,14 @@ package org.jetbrains.kotlin.descriptors.commonizer.builder
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.commonizer.CommonizedGroup
-import org.jetbrains.kotlin.descriptors.commonizer.CommonizedGroupMap
 import org.jetbrains.kotlin.descriptors.commonizer.Target
-import org.jetbrains.kotlin.descriptors.commonizer.createKotlinNativeForwardDeclarationsModule
-import org.jetbrains.kotlin.descriptors.commonizer.isUnderKotlinNativeSyntheticPackages
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirRootNode
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.dimension
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.indexOfCommon
+import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroup
+import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroupMap
+import org.jetbrains.kotlin.descriptors.commonizer.utils.createKotlinNativeForwardDeclarationsModule
+import org.jetbrains.kotlin.descriptors.commonizer.utils.isUnderKotlinNativeSyntheticPackages
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
@@ -29,13 +29,23 @@ class DeclarationsBuilderCache(dimension: Int) {
         check(dimension > 0)
     }
 
-    private val modules = CommonizedGroup<List<ModuleDescriptorImpl>>(dimension)
-    private val packageFragments = CommonizedGroupMap<Pair<Name, FqName>, CommonizedPackageFragmentDescriptor>(dimension)
-    private val classes = CommonizedGroupMap<FqName, CommonizedClassDescriptor>(dimension)
-    private val typeAliases = CommonizedGroupMap<FqName, CommonizedTypeAliasDescriptor>(dimension)
+    private val modules =
+        CommonizedGroup<List<ModuleDescriptorImpl>>(dimension)
+    private val packageFragments =
+        CommonizedGroupMap<Pair<Name, FqName>, CommonizedPackageFragmentDescriptor>(
+            dimension
+        )
+    private val classes =
+        CommonizedGroupMap<FqName, CommonizedClassDescriptor>(dimension)
+    private val typeAliases =
+        CommonizedGroupMap<FqName, CommonizedTypeAliasDescriptor>(
+            dimension
+        )
 
-    private val forwardDeclarationsModules = CommonizedGroup<ModuleDescriptorImpl>(dimension)
-    private val allModulesWithDependencies = CommonizedGroup<List<ModuleDescriptor>>(dimension)
+    private val forwardDeclarationsModules =
+        CommonizedGroup<ModuleDescriptorImpl>(dimension)
+    private val allModulesWithDependencies =
+        CommonizedGroup<List<ModuleDescriptor>>(dimension)
 
     fun getCachedPackageFragments(moduleName: Name, packageFqName: FqName): List<CommonizedPackageFragmentDescriptor?> =
         packageFragments.getOrFail(moduleName to packageFqName)
