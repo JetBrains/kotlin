@@ -254,7 +254,7 @@ val coreLibProjects = listOfNotNull(
     ":kotlin-stdlib",
     ":kotlin-stdlib-common",
     ":kotlin-stdlib-js",
-    ":kotlin-stdlib-js-ir",
+    ":kotlin-stdlib-js-ir".takeIf { isTeamcityBuild },
     ":kotlin-stdlib-jdk7",
     ":kotlin-stdlib-jdk8",
     ":kotlin-test:kotlin-test-common",

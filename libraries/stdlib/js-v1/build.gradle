@@ -368,7 +368,7 @@ task distSourcesJar(type: Jar) {
 
 
 artifacts {
-    runtime libraryJarWithIr
+    runtime libraryJarWithoutIr
     archives libraryJarWithIr
     archives sourcesJar
     sources sourcesJar
