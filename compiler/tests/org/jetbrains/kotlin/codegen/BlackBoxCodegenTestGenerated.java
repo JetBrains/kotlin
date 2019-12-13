@@ -18410,6 +18410,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/polymorphicSignature/invokeExactWithInlineClass.kt");
         }
 
+        @TestMetadata("nullArgument.kt")
+        public void testNullArgument() throws Exception {
+            runTest("compiler/testData/codegen/box/polymorphicSignature/nullArgument.kt");
+        }
+
         @TestMetadata("varargOfObjects_after.kt")
         public void testVarargOfObjects_after() throws Exception {
             runTest("compiler/testData/codegen/box/polymorphicSignature/varargOfObjects_after.kt");

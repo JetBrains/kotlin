@@ -43,5 +43,8 @@ fun box(): String {
     val result3 = (o.p).handle.invoke(C(), "Hello", 0.01, Derived()) as String
     if (result1 != result3) return "Fail 3: $result1 != $result3"
 
+    // Check cast expression without assignment to a variable
+    mh.invoke(C(), "", 0.01, Derived()) as String
+
     return "OK"
 }
