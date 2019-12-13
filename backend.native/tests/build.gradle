@@ -4108,7 +4108,7 @@ dependencies {
 if (PlatformInfo.getTarget(project) == KonanTarget.IOS_ARM64.INSTANCE) {
     project.tasks
             .matching { it instanceof KonanTestExecutable }
-            .all {
+            .forEach {
                 ExecutorServiceKt.configureXcodeBuild((KonanTestExecutable) it)
             }
     // Exclude tasks that can not be run on device
@@ -4119,5 +4119,5 @@ if (PlatformInfo.getTarget(project) == KonanTarget.IOS_ARM64.INSTANCE) {
                     it instanceof KonanDynamicTest ||
                     it instanceof KonanLinkTest
             }
-            .all { it.enabled = false }
+            .forEach { it.enabled = false }
 }
