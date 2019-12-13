@@ -1914,6 +1914,22 @@ public inline fun <S, T : S> List<T>.reduceRightIndexed(operation: (index: Int, 
 }
 
 /**
+ * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value. Returns null if the list is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public inline fun <S, T : S> List<T>.reduceRightOrNull(operation: (T, acc: S) -> S): S? {
+    val iterator = listIterator(size)
+    if (!iterator.hasPrevious())
+        return null
+    var accumulator: S = iterator.previous()
+    while (iterator.hasPrevious()) {
+        accumulator = operation(iterator.previous(), accumulator)
+    }
+    return accumulator
+}
+
+/**
  * Returns the sum of all values produced by [selector] function applied to each element in the collection.
  */
 public inline fun <T> Iterable<T>.sumBy(selector: (T) -> Int): Int {
