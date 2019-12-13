@@ -15,6 +15,7 @@ import com.intellij.openapi.ui.Splitter;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowAnchor;
+import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.openapi.wm.ex.ToolWindowManagerListener;
 import com.intellij.pom.Navigatable;
 import com.intellij.ui.*;
@@ -81,8 +82,10 @@ public abstract class SlicePanel extends JPanel implements TypeSafeDataProvider,
       ToolWindowAnchor myAnchor = toolWindow.getAnchor();
 
       @Override
-      public void stateChanged() {
-        if (!project.isOpen()) return;
+      public void stateChanged(@NotNull ToolWindowManager toolWindowManager) {
+        if (!project.isOpen()) {
+          return;
+        }
         if (toolWindow.getAnchor() != myAnchor) {
           myAnchor = myToolWindow.getAnchor();
           layoutPanel();

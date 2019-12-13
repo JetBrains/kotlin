@@ -663,8 +663,8 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
       private boolean toolWindowVisible;
 
       @Override
-      public void stateChanged() {
-        ToolWindow window = ToolWindowManager.getInstance(myProject).getToolWindow(ToolWindowId.PROJECT_VIEW);
+      public void stateChanged(@NotNull ToolWindowManager toolWindowManager) {
+        ToolWindow window = toolWindowManager.getToolWindow(ToolWindowId.PROJECT_VIEW);
         if (window == null || toolWindowVisible == window.isVisible()) {
           return;
         }

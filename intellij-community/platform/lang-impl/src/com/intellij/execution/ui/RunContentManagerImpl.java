@@ -82,12 +82,7 @@ public final class RunContentManagerImpl implements RunContentManager, Disposabl
 
     myProject.getMessageBus().connect().subscribe(ToolWindowManagerListener.TOPIC, new ToolWindowManagerListener() {
       @Override
-      public void stateChanged() {
-        if (myProject.isDisposed()) {
-          return;
-        }
-
-        ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(myProject);
+      public void stateChanged(@NotNull ToolWindowManager toolWindowManager) {
         Set<String> currentWindows = new THashSet<>();
         ContainerUtil.addAll(currentWindows, toolWindowManager.getToolWindowIds());
         myToolwindowIdZBuffer.retainAll(currentWindows);
