@@ -86,7 +86,7 @@ private val defaultHandlerActions = object : MoveKotlinDeclarationsHandlerAction
     override fun invokeKotlinAwareMoveFilesOrDirectoriesRefactoring(
         project: Project,
         initialDirectory: PsiDirectory?,
-        elements: Array<out PsiElement>,
+        elements: List<PsiFileSystemItem>,
         moveCallback: MoveCallback?
     ) = KotlinAwareMoveFilesOrDirectoriesDialog(project, initialDirectory, elements, moveCallback).show()
 }
@@ -159,6 +159,7 @@ class MoveKotlinDeclarationsHandler internal constructor(private val handlerActi
         }
 
         if (elements.all { it is KtFile }) {
+            val ktFileElements = elements.map { it as KtFile }
             val initialTargetElement = when {
                 targetContainer is PsiPackage || targetContainer is PsiDirectory -> targetContainer
                 container is PsiPackage || container is PsiDirectory -> container
@@ -167,7 +168,7 @@ class MoveKotlinDeclarationsHandler internal constructor(private val handlerActi
             val initialTargetDirectory = MoveFilesOrDirectoriesUtil.resolveToDirectory(project, initialTargetElement)
 
             handlerActions.invokeKotlinAwareMoveFilesOrDirectoriesRefactoring(
-                project, initialTargetDirectory, elements, callback
+                project, initialTargetDirectory, ktFileElements, callback
             )
 
             return true
