@@ -17,16 +17,17 @@
 package com.intellij.stats.logger
 
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.stats.completion.CompletionEventLogger
 import com.intellij.stats.completion.LogEventSerializer
 import com.intellij.stats.completion.events.LogEvent
+import com.intellij.util.concurrency.SequentialTaskExecutor
 
 /**
  * @author Vitaliy.Bibaev
  */
 class EventLoggerWithValidation(private val fileLogger: FileLogger, private val validator: SessionValidator)
     : CompletionEventLogger, Disposable {
+    private val taskExecutor = SequentialTaskExecutor.createSequentialApplicationPoolExecutor("Completion Events Log Executor")
     private val session: MutableList<LogEvent> = mutableListOf()
 
     override fun log(event: LogEvent) {
@@ -44,7 +45,7 @@ class EventLoggerWithValidation(private val fileLogger: FileLogger, private val 
 
     private fun validateAndLogInBackground(flush: Boolean) {
         val lastSession = session.toList()
-        ApplicationManager.getApplication().executeOnPooledThread {
+        taskExecutor.execute {
             validateAndLog(lastSession)
             if (flush) {
                 fileLogger.flush()
