@@ -41,7 +41,7 @@ private fun IrType.isClassWithNamePrefix(prefix: String, packageFqName: FqName):
     return parent.fqName == packageFqName
 }
 
-private fun IrType.superTypes(): List<IrType> = classifierOrNull?.superTypes() ?: emptyList()
+fun IrType.superTypes(): List<IrType> = classifierOrNull?.superTypes() ?: emptyList()
 
 fun IrType.isFunctionTypeOrSubtype(): Boolean = DFS.ifAny(listOf(this), IrType::superTypes, IrType::isFunction)
 fun IrType.isSuspendFunctionTypeOrSubtype(): Boolean = DFS.ifAny(listOf(this), IrType::superTypes, IrType::isSuspendFunction)

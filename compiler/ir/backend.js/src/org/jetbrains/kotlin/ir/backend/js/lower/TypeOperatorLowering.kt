@@ -151,6 +151,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
 
             // Note: native `instanceOf` is not used which is important because of null-behaviour
             private fun advancedCheckRequired(type: IrType) = type.isInterface() ||
+                    type.isTypeParameter() && type.superTypes().any { it.isInterface() } ||
                     type.isArray() ||
                     type.isPrimitiveArray() ||
                     isTypeOfCheckingType(type)
@@ -261,10 +262,16 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
 
                 // TODO either remove functions with reified type parameters or support this case
                 // assert(!typeParameter.isReified) { "reified parameters have to be lowered before" }
-                return typeParameter.superTypes.fold(litTrue) { r, t ->
+
+                return typeParameter.superTypes.fold<IrType, IrExpression?>(null) { r, t ->
                     val check = generateTypeCheckNonNull(argument.copy(), t.makeNotNull())
-                    calculator.and(r, check)
-                }
+
+                    if (r == null) {
+                        check
+                    } else {
+                        calculator.andand(r, check)
+                    }
+                } ?: litTrue
             }
 
 //            private fun generateCheckForChar(argument: IrExpression) =

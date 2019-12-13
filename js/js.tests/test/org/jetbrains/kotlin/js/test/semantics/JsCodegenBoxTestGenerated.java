@@ -2246,6 +2246,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/casts/notIs.kt");
         }
 
+        @TestMetadata("nullableSafeCastToTypeParameterWithInterfaceUpperBound.kt")
+        public void testNullableSafeCastToTypeParameterWithInterfaceUpperBound() throws Exception {
+            runTest("compiler/testData/codegen/box/casts/nullableSafeCastToTypeParameterWithInterfaceUpperBound.kt");
+        }
+
         @TestMetadata("unitAsAny.kt")
         public void testUnitAsAny() throws Exception {
             runTest("compiler/testData/codegen/box/casts/unitAsAny.kt");
