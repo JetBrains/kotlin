@@ -31,7 +31,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.5")
+        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.6")
     }
 }
 
@@ -39,14 +39,20 @@ plugins {
     id "com.gradle.enterprise" version "3.0"
 }
 
+def buildProperties = BuildPropertiesKt.getKotlinBuildPropertiesForSettings(settings)
+
 gradleEnterprise {
     buildScan {
-        setTermsOfServiceUrl("https://gradle.com/terms-of-service")
-        setTermsOfServiceAgree("yes")
+        if (buildProperties.buildScanServer != null) {
+            server = buildProperties.buildScanServer
+            allowUntrustedServer = true
+            publishAlways()
+        } else {
+            setTermsOfServiceUrl("https://gradle.com/terms-of-service")
+            setTermsOfServiceAgree("yes")
+        }
     }
 }
-
-def buildProperties = BuildPropertiesKt.getKotlinBuildPropertiesForSettings(settings)
 
 BuildCacheKt.setupBuildCache(settings)
 
