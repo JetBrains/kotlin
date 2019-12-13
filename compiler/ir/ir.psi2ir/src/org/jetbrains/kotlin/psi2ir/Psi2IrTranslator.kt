@@ -73,9 +73,11 @@ class Psi2IrTranslator(
         val moduleGenerator = ModuleGenerator(context)
         val irModule = moduleGenerator.generateModuleFragmentWithoutDependencies(ktFiles)
 
-        moduleGenerator.generateUnboundSymbolsAsDependencies(irProviders)
         irModule.patchDeclarationParents()
         postprocess(context, irModule)
+        // do not generate unbound symbols before postprocessing,
+        // since plugins must work with non-lazy IR
+        moduleGenerator.generateUnboundSymbolsAsDependencies(irProviders)
         irModule.computeUniqIdForDeclarations(context.symbolTable)
 
         moduleGenerator.generateUnboundSymbolsAsDependencies(irProviders)
