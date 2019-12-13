@@ -16,15 +16,25 @@ import java.io.File
 
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class SmartCompletionMultifileHandlerTest : KotlinCompletionTestCase() {
-    fun testImportExtensionFunction() { doTest() }
+    fun testImportExtensionFunction() {
+        doTest()
+    }
 
-    fun testImportExtensionProperty() { doTest() }
+    fun testImportExtensionProperty() {
+        doTest()
+    }
 
-    fun testAnonymousObjectGenericJava() { doTest() }
+    fun testAnonymousObjectGenericJava() {
+        doTest()
+    }
 
-    fun testImportAnonymousObject() { doTest() }
+    fun testImportAnonymousObject() {
+        doTest()
+    }
 
-    fun testNestedSamAdapter() { doTest(lookupString = "Nested") }
+    fun testNestedSamAdapter() {
+        doTest(lookupString = "Nested")
+    }
 
     override fun setUp() {
         setType(CompletionType.SMART)
@@ -34,7 +44,7 @@ class SmartCompletionMultifileHandlerTest : KotlinCompletionTestCase() {
     private fun doTest(lookupString: String? = null, itemText: String? = null) {
         val fileName = getTestName(false)
 
-        val fileNames = listOf(fileName + "-1.kt", fileName + "-2.kt", fileName + ".java")
+        val fileNames = listOf("$fileName-1.kt", "$fileName-2.kt", "$fileName.java")
 
         configureByFiles(null, *fileNames.filter { File(testDataPath + it).exists() }.toTypedArray())
 
@@ -58,7 +68,7 @@ class SmartCompletionMultifileHandlerTest : KotlinCompletionTestCase() {
             }
         }
 
-        checkResultByFile(fileName + ".kt.after")
+        checkResultByFile("$fileName.kt.after")
     }
 
     override fun getTestDataPath() = File(COMPLETION_TEST_DATA_BASE_PATH, "/handlers/multifile/smart/").path + File.separator

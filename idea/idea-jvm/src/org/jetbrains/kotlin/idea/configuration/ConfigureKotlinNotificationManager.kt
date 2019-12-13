@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.idea.configuration.ui.notifications.ConfigureKotlinN
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.reflect.KClass
 
-object ConfigureKotlinNotificationManager: KotlinSingleNotificationManager<ConfigureKotlinNotification> {
+object ConfigureKotlinNotificationManager : KotlinSingleNotificationManager<ConfigureKotlinNotification> {
     fun notify(project: Project, excludeModules: List<Module> = emptyList()) {
         val notificationState = ConfigureKotlinNotification.getNotificationState(project, excludeModules)
         if (notificationState != null) {
@@ -35,7 +35,7 @@ object ConfigureKotlinNotificationManager: KotlinSingleNotificationManager<Confi
     }
 }
 
-interface KotlinSingleNotificationManager<in T: Notification> {
+interface KotlinSingleNotificationManager<in T : Notification> {
     fun notify(project: Project, notification: T) {
         if (!expireOldNotifications(project, notification::class, notification)) {
             notification.notify(project)

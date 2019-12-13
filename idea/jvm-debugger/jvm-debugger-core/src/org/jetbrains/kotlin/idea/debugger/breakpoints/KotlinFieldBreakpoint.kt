@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.debugger.breakpoints
@@ -55,9 +44,9 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import javax.swing.Icon
 
 class KotlinFieldBreakpoint(
-        project: Project,
-        breakpoint: XBreakpoint<KotlinPropertyBreakpointProperties>
-): BreakpointWithHighlighter<KotlinPropertyBreakpointProperties>(project, breakpoint) {
+    project: Project,
+    breakpoint: XBreakpoint<KotlinPropertyBreakpointProperties>
+) : BreakpointWithHighlighter<KotlinPropertyBreakpointProperties>(project, breakpoint) {
     companion object {
         private val LOG = Logger.getInstance("#org.jetbrains.kotlin.idea.debugger.breakpoints.KotlinFieldBreakpoint")
         private val CATEGORY: Key<FieldBreakpoint> = BreakpointCategory.lookup<FieldBreakpoint>("field_breakpoints")
@@ -130,18 +119,18 @@ class KotlinFieldBreakpoint(
                 val sourcePosition = sourcePosition
                 if (sourcePosition != null) {
                     debugProcess.positionManager
-                            .locationsOfLine(refType, sourcePosition)
-                            .filter { it.method().isConstructor || it.method().isStaticInitializer }
-                            .forEach {
-                                val request = debugProcess.requestsManager.createBreakpointRequest(this, it)
-                                debugProcess.requestsManager.enableRequest(request)
-                                if (LOG.isDebugEnabled) {
-                                    LOG.debug("Breakpoint request added")
-                                }
+                        .locationsOfLine(refType, sourcePosition)
+                        .filter { it.method().isConstructor || it.method().isStaticInitializer }
+                        .forEach {
+                            val request = debugProcess.requestsManager.createBreakpointRequest(this, it)
+                            debugProcess.requestsManager.enableRequest(request)
+                            if (LOG.isDebugEnabled) {
+                                LOG.debug("Breakpoint request added")
                             }
+                        }
                 }
             }
-            
+
             when (breakpointType) {
                 BreakpointType.FIELD -> {
                     val field = refType.fieldByName(getFieldName())
@@ -181,8 +170,7 @@ class KotlinFieldBreakpoint(
                     }
                 }
             }
-        }
-        catch (ex: Exception) {
+        } catch (ex: Exception) {
             LOG.debug(ex)
         }
     }
@@ -198,12 +186,10 @@ class KotlinFieldBreakpoint(
             if (descriptor is PropertyDescriptor) {
                 if (bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor)!!) {
                     BreakpointType.FIELD
-                }
-                else {
+                } else {
                     BreakpointType.METHOD
                 }
-            }
-            else {
+            } else {
                 null
             }
         }
@@ -218,16 +204,14 @@ class KotlinFieldBreakpoint(
             if (LOG.isDebugEnabled) {
                 LOG.debug("Breakpoint request added")
             }
-        }
-        else {
+        } else {
             var entryRequest: MethodEntryRequest? = findRequest(debugProcess, MethodEntryRequest::class.java, this)
             if (entryRequest == null) {
                 entryRequest = manager.createMethodEntryRequest(this)!!
                 if (LOG.isDebugEnabled) {
                     LOG.debug("Method entry request added (method = ${accessor.name()}; refType = ${refType.name()})")
                 }
-            }
-            else {
+            } else {
                 entryRequest.disable()
             }
             entryRequest.addClassFilter(refType)
@@ -235,7 +219,11 @@ class KotlinFieldBreakpoint(
         }
     }
 
-    inline private fun <reified T : EventRequest> findRequest(debugProcess: DebugProcessImpl, requestClass: Class<T>, requestor: Requestor): T? {
+    inline private fun <reified T : EventRequest> findRequest(
+        debugProcess: DebugProcessImpl,
+        requestClass: Class<T>,
+        requestor: Requestor
+    ): T? {
         val requests = debugProcess.requestsManager.findRequests(requestor)
         for (eventRequest in requests) {
             if (eventRequest::class.java == requestClass) {
@@ -268,60 +256,63 @@ class KotlinFieldBreakpoint(
         val locationQName = location.declaringType().name() + "." + location.method().name()
         val locationFileName = try {
             location.sourceName()
-        }
-        catch (e: AbsentInformationException) {
+        } catch (e: AbsentInformationException) {
             fileName
-        }
-        catch (e: InternalError) {
+        } catch (e: InternalError) {
             fileName
         }
 
         val locationLine = location.lineNumber()
         when (event) {
-            is ModificationWatchpointEvent-> {
+            is ModificationWatchpointEvent -> {
                 val field = event.field()
                 return DebuggerBundle.message(
-                        "status.static.field.watchpoint.reached.access",
-                        field.declaringType().name(),
-                        field.name(),
-                        locationQName,
-                        locationFileName,
-                        locationLine)
+                    "status.static.field.watchpoint.reached.access",
+                    field.declaringType().name(),
+                    field.name(),
+                    locationQName,
+                    locationFileName,
+                    locationLine
+                )
             }
             is AccessWatchpointEvent -> {
                 val field = event.field()
                 return DebuggerBundle.message(
-                        "status.static.field.watchpoint.reached.access",
-                        field.declaringType().name(),
-                        field.name(),
-                        locationQName,
-                        locationFileName,
-                        locationLine)
+                    "status.static.field.watchpoint.reached.access",
+                    field.declaringType().name(),
+                    field.name(),
+                    locationQName,
+                    locationFileName,
+                    locationLine
+                )
             }
             is MethodEntryEvent -> {
                 val method = event.method()
                 return DebuggerBundle.message(
-                        "status.method.entry.breakpoint.reached",
-                        method.declaringType().name() + "." + method.name() + "()",
-                        locationQName,
-                        locationFileName,
-                        locationLine)
+                    "status.method.entry.breakpoint.reached",
+                    method.declaringType().name() + "." + method.name() + "()",
+                    locationQName,
+                    locationFileName,
+                    locationLine
+                )
             }
             is MethodExitEvent -> {
                 val method = event.method()
                 return DebuggerBundle.message(
-                        "status.method.exit.breakpoint.reached",
-                        method.declaringType().name() + "." + method.name() + "()",
-                        locationQName,
-                        locationFileName,
-                        locationLine)
+                    "status.method.exit.breakpoint.reached",
+                    method.declaringType().name() + "." + method.name() + "()",
+                    locationQName,
+                    locationFileName,
+                    locationLine
+                )
             }
         }
         return DebuggerBundle.message(
-                "status.line.breakpoint.reached",
-                locationQName,
-                locationFileName,
-                locationLine)
+            "status.line.breakpoint.reached",
+            locationQName,
+            locationFileName,
+            locationLine
+        )
     }
 
     fun setFieldName(fieldName: String) {
@@ -376,7 +367,7 @@ class KotlinFieldBreakpoint(
             return DebuggerBundle.message("status.breakpoint.invalid")
         }
         val className = className
-        return if (className != null && !className.isEmpty()) className + "." + getFieldName() else getFieldName()
+        return if (className != null && className.isNotEmpty()) className + "." + getFieldName() else getFieldName()
     }
 
     private fun getFieldName(): String {

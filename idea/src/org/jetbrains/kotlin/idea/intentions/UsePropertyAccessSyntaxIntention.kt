@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -148,7 +148,9 @@ class UsePropertyAccessSyntaxIntention :
     }
 
     fun detectPropertyNameToUse(callExpression: KtCallExpression): Name? {
-        if (callExpression.getQualifiedExpressionForSelector()?.receiverExpression is KtSuperExpression) return null // cannot call extensions on "super"
+        if (callExpression.getQualifiedExpressionForSelector()
+                ?.receiverExpression is KtSuperExpression
+        ) return null // cannot call extensions on "super"
 
         val callee = callExpression.calleeExpression as? KtNameReferenceExpression ?: return null
         if (!canBePropertyAccessor(callee.getReferencedName())) return null
@@ -274,8 +276,8 @@ class UsePropertyAccessSyntaxIntention :
             ConvertToBlockBodyIntention.convert(callParent)
             val firstStatement = callParent.bodyBlockExpression?.statements?.first()
             callToConvert = (firstStatement as? KtQualifiedExpression)?.selectorExpression as? KtCallExpression
-                    ?: firstStatement as? KtCallExpression
-                    ?: throw IllegalStateException("Unexpected contents of function after conversion: ${callParent.text}")
+                ?: firstStatement as? KtCallExpression
+                        ?: throw IllegalStateException("Unexpected contents of function after conversion: ${callParent.text}")
         }
 
         val qualifiedExpression = callToConvert.getQualifiedExpressionForSelector()

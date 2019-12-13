@@ -120,8 +120,8 @@ abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
             val testName = getTestName(true)
             return if (testName.contains("_")) {
                 testName.substring(0, testName.indexOf("_"))
-            }
-            else testName
+            } else
+                testName
         }
 
     protected val projectRoot: String
@@ -150,11 +150,11 @@ abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
         }
 
         private fun configure(
-                modules: List<Module>,
-                runtimeState: FileState,
-                configurator: KotlinWithLibraryConfigurator,
-                jarFromDist: String,
-                jarFromTemp: String
+            modules: List<Module>,
+            runtimeState: FileState,
+            configurator: KotlinWithLibraryConfigurator,
+            jarFromDist: String,
+            jarFromTemp: String
         ) {
             val project = modules.first().project
             val collector = createConfigureKotlinNotificationCollector(project)
@@ -181,14 +181,19 @@ abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
 
         protected fun assertNotConfigured(module: Module, configurator: KotlinWithLibraryConfigurator) {
             TestCase.assertFalse(
-                    String.format("Module %s should not be configured as %s Module", module.name, configurator.presentableText),
-                    configurator.isConfigured(module))
+                String.format("Module %s should not be configured as %s Module", module.name, configurator.presentableText),
+                configurator.isConfigured(module)
+            )
         }
 
         protected fun assertConfigured(module: Module, configurator: KotlinWithLibraryConfigurator) {
-            TestCase.assertTrue(String.format("Module %s should be configured with configurator '%s'", module.name,
-                                              configurator.presentableText),
-                                configurator.isConfigured(module))
+            TestCase.assertTrue(
+                String.format(
+                    "Module %s should be configured with configurator '%s'", module.name,
+                    configurator.presentableText
+                ),
+                configurator.isConfigured(module)
+            )
         }
 
         protected fun assertProperlyConfigured(module: Module, configurator: KotlinWithLibraryConfigurator) {

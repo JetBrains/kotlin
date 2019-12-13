@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable
@@ -78,31 +67,30 @@ object CreateParameterByRefActionFactory : CreateParameterFromUsageFactory<KtSim
         // todo: skip lambdas for now because Change Signature doesn't apply to them yet
         fun chooseContainerPreferringClass(): PsiElement? {
             return element.parents
-                    .filter {
-                        it is KtNamedFunction || it is KtSecondaryConstructor || it is KtPropertyAccessor ||
-                        it is KtClassBody || it is KtAnonymousInitializer || it is KtSuperTypeListEntry
-                    }
-                    .firstOrNull()
-                    ?.let {
-                        when {
-                            (it is KtNamedFunction || it is KtSecondaryConstructor) && varExpected ||
-                            it is KtPropertyAccessor -> chooseContainingClass(it)
-                            it is KtAnonymousInitializer -> it.parent.parent as? KtClass
-                            it is KtSuperTypeListEntry -> {
-                                val klass = it.getStrictParentOfType<KtClassOrObject>()
-                                if (klass is KtClass && !klass.isInterface() && klass !is KtEnumEntry) klass else null
-                            }
-                            it is KtClassBody -> {
-                                val klass = it.parent as? KtClass
-                                when {
-                                    klass is KtEnumEntry -> chooseContainingClass(klass)
-                                    klass != null && klass.isInterface() -> null
-                                    else -> klass
-                                }
-                            }
-                            else -> it
+                .filter {
+                    it is KtNamedFunction || it is KtSecondaryConstructor || it is KtPropertyAccessor || it is KtClassBody || it is KtAnonymousInitializer || it is KtSuperTypeListEntry
+                }
+                .firstOrNull()
+                ?.let {
+                    when {
+                        (it is KtNamedFunction || it is KtSecondaryConstructor) && varExpected ||
+                                it is KtPropertyAccessor -> chooseContainingClass(it)
+                        it is KtAnonymousInitializer -> it.parent.parent as? KtClass
+                        it is KtSuperTypeListEntry -> {
+                            val klass = it.getStrictParentOfType<KtClassOrObject>()
+                            if (klass is KtClass && !klass.isInterface() && klass !is KtEnumEntry) klass else null
                         }
+                        it is KtClassBody -> {
+                            val klass = it.parent as? KtClass
+                            when {
+                                klass is KtEnumEntry -> chooseContainingClass(klass)
+                                klass != null && klass.isInterface() -> null
+                                else -> klass
+                            }
+                        }
+                        else -> it
                     }
+                }
         }
 
         val container = chooseContainerPreferringClass() ?: chooseFunction()
@@ -114,11 +102,13 @@ object CreateParameterByRefActionFactory : CreateParameterFromUsageFactory<KtSim
         if (paramType.hasTypeParametersToAdd(functionDescriptor, context)) return null
 
         return CreateParameterData(
-                KotlinParameterInfo(callableDescriptor = functionDescriptor,
-                                    name = element.getReferencedName(),
-                                    originalTypeInfo = KotlinTypeInfo(false, paramType),
-                                    valOrVar = valOrVar),
-                element
+            KotlinParameterInfo(
+                callableDescriptor = functionDescriptor,
+                name = element.getReferencedName(),
+                originalTypeInfo = KotlinTypeInfo(false, paramType),
+                valOrVar = valOrVar
+            ),
+            element
         )
     }
 
@@ -130,17 +120,16 @@ fun KotlinType.hasTypeParametersToAdd(functionDescriptor: FunctionDescriptor, co
     typeParametersToAdd.removeAll(functionDescriptor.typeParameters)
     if (typeParametersToAdd.isEmpty()) return false
 
-    val scope =
-            when (functionDescriptor) {
-                is ConstructorDescriptor -> {
-                    (functionDescriptor.containingDeclaration as? ClassDescriptorWithResolutionScopes)?.scopeForClassHeaderResolution
-                }
+    val scope = when (functionDescriptor) {
+        is ConstructorDescriptor -> {
+            (functionDescriptor.containingDeclaration as? ClassDescriptorWithResolutionScopes)?.scopeForClassHeaderResolution
+        }
 
-                else -> {
-                    val function = functionDescriptor.source.getPsi() as? KtFunction
-                    function?.bodyExpression?.getResolutionScope(context, function.getResolutionFacade())
-                }
-            } ?: return true
+        else -> {
+            val function = functionDescriptor.source.getPsi() as? KtFunction
+            function?.bodyExpression?.getResolutionScope(context, function.getResolutionFacade())
+        }
+    } ?: return true
 
     return typeParametersToAdd.any { scope.findClassifier(it.name, NoLookupLocation.FROM_IDE) != it }
 }

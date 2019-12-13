@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -35,11 +35,11 @@ fun updateLibraries(project: Project, libraries: Collection<Library>) {
 
     val kJvmConfigurator =
         getConfiguratorByName(KotlinJavaModuleConfigurator.NAME) as KotlinJavaModuleConfigurator?
-                ?: error("Configurator with given name doesn't exists: " + KotlinJavaModuleConfigurator.NAME)
+            ?: error("Configurator with given name doesn't exists: " + KotlinJavaModuleConfigurator.NAME)
 
     val kJsConfigurator =
         getConfiguratorByName(KotlinJsModuleConfigurator.NAME) as KotlinJsModuleConfigurator?
-                ?: error("Configurator with given name doesn't exists: " + KotlinJsModuleConfigurator.NAME)
+            ?: error("Configurator with given name doesn't exists: " + KotlinJsModuleConfigurator.NAME)
 
     val collector = createConfigureKotlinNotificationCollector(project)
     val sdk = ProjectRootManager.getInstance(project).projectSdk

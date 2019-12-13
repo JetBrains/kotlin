@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -52,16 +52,14 @@ class KotlinGotoClassContributor : GotoClassContributor {
 * We have to process Kotlin builtIn classes separately since no light classes are built for them.
 * */
 class KotlinGotoSymbolContributor : GotoClassContributor {
-    override fun getNames(project: Project, includeNonProjectItems: Boolean): Array<String> {
-        return listOf(
-                KotlinFunctionShortNameIndex.getInstance(),
-                KotlinPropertyShortNameIndex.getInstance(),
-                KotlinClassShortNameIndex.getInstance(),
-                KotlinTypeAliasShortNameIndex.getInstance()
-        ).flatMap {
-            StubIndex.getInstance().getAllKeys(it.key, project)
-        }.toTypedArray()
-    }
+    override fun getNames(project: Project, includeNonProjectItems: Boolean): Array<String> = listOf(
+        KotlinFunctionShortNameIndex.getInstance(),
+        KotlinPropertyShortNameIndex.getInstance(),
+        KotlinClassShortNameIndex.getInstance(),
+        KotlinTypeAliasShortNameIndex.getInstance()
+    ).flatMap {
+        StubIndex.getInstance().getAllKeys(it.key, project)
+    }.toTypedArray()
 
     override fun getItemsByName(name: String, pattern: String, project: Project, includeNonProjectItems: Boolean): Array<NavigationItem> {
         val baseScope = if (includeNonProjectItems) GlobalSearchScope.allScope(project) else GlobalSearchScope.projectScope(project)
@@ -74,7 +72,7 @@ class KotlinGotoSymbolContributor : GotoClassContributor {
         }
         result += KotlinPropertyShortNameIndex.getInstance().get(name, project, noLibrarySourceScope).filter {
             LightClassUtil.getLightClassBackingField(it) == null ||
-            it.containingClass()?.isInterface() ?: false
+                    it.containingClass()?.isInterface() ?: false
         }
         result += KotlinClassShortNameIndex.getInstance().get(name, project, noLibrarySourceScope).filter {
             it is KtEnumEntry || it.containingFile.virtualFile?.fileType == KotlinBuiltInFileType

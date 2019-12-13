@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -125,7 +125,6 @@ class FirExplorerToolWindow(private val project: Project, private val toolWindow
                                 val psi = (data as? FirElement)?.psi
                                 if (data is FirElement && psi != null) {
                                     if (FileDocumentManager.getInstance().getFile(currentEditor.document) == psi.containingFile.virtualFile) {
-
                                         rangeHighlightMarkers += currentEditor.markupModel.addRangeHighlighter(
                                             psi.startOffset,
                                             min(currentEditor.document.textLength, psi.endOffset),
@@ -288,8 +287,7 @@ private fun KType.renderSimple(): String {
     }
 
     return buildString {
-        val classifier = classifier
-        when (classifier) {
+        when (val classifier = classifier) {
             is KClass<*> -> append(classifier.simpleName)
             is KTypeParameter -> append(classifier.name)
         }

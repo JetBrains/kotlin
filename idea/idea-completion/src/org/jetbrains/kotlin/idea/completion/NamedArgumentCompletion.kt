@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.completion
@@ -41,9 +30,7 @@ object NamedArgumentCompletion {
 
         val callElement = thisArgument.getStrictParentOfType<KtCallElement>() ?: return false
 
-        return callElement.valueArguments
-                .takeWhile { it != thisArgument }
-                .any { it.isNamed() }
+        return callElement.valueArguments.takeWhile { it != thisArgument }.any { it.isNamed() }
     }
 
     fun complete(collector: LookupElementsCollector, expectedInfos: Collection<ExpectedInfo>, callType: CallType<*>) {
@@ -61,10 +48,10 @@ object NamedArgumentCompletion {
             val typeText = types.singleOrNull()?.let { BasicLookupElementFactory.SHORT_NAMES_RENDERER.renderType(it) } ?: "..."
             val nameString = name.asString()
             val lookupElement = LookupElementBuilder.create("$nameString =")
-                    .withPresentableText("$nameString =")
-                    .withTailText(" $typeText")
-                    .withIcon(KotlinIcons.PARAMETER)
-                    .withInsertHandler(NamedArgumentInsertHandler(name))
+                .withPresentableText("$nameString =")
+                .withTailText(" $typeText")
+                .withIcon(KotlinIcons.PARAMETER)
+                .withInsertHandler(NamedArgumentInsertHandler(name))
             lookupElement.putUserData(SmartCompletionInBasicWeigher.NAMED_ARGUMENT_KEY, Unit)
             collector.addElement(lookupElement)
         }

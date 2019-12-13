@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.debugger
@@ -62,41 +51,39 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import com.intellij.debugger.engine.DebuggerUtils as JDebuggerUtils
 
 class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiRequestPositionManager, PositionManagerEx() {
-    private val allKotlinFilesScope =
-            object : DelegatingGlobalSearchScope(
-                    KotlinSourceFilterScope.projectAndLibrariesSources(GlobalSearchScope.allScope(myDebugProcess.project), myDebugProcess.project)
-            ) {
-                private val projectIndex = ProjectRootManager.getInstance(myDebugProcess.project).fileIndex
-                private val scopeComparator =
-                        Comparator.comparing(projectIndex::isInSourceContent)
-                                .thenComparing(projectIndex::isInLibrarySource)
-                                .thenComparing { file1, file2 -> super.compare(file1, file2) }
+    private val allKotlinFilesScope = object : DelegatingGlobalSearchScope(
+        KotlinSourceFilterScope.projectAndLibrariesSources(GlobalSearchScope.allScope(myDebugProcess.project), myDebugProcess.project)
+    ) {
+        private val projectIndex = ProjectRootManager.getInstance(myDebugProcess.project).fileIndex
+        private val scopeComparator = Comparator.comparing(projectIndex::isInSourceContent).thenComparing(projectIndex::isInLibrarySource)
+            .thenComparing { file1, file2 -> super.compare(file1, file2) }
 
-                override fun compare(file1: VirtualFile, file2: VirtualFile): Int {
-                    return scopeComparator.compare(file1, file2)
-                }
-            }
+        override fun compare(file1: VirtualFile, file2: VirtualFile): Int = scopeComparator.compare(file1, file2)
+    }
 
     private val sourceSearchScopes: List<GlobalSearchScope> = listOf(
-            myDebugProcess.searchScope,
-            allKotlinFilesScope
+        myDebugProcess.searchScope,
+        allKotlinFilesScope
     )
 
     override fun getAcceptedFileTypes(): Set<FileType> = KotlinFileTypeFactory.KOTLIN_FILE_TYPES_SET
 
-    override fun evaluateCondition(context: EvaluationContext, frame: StackFrameProxyImpl, location: Location, expression: String): ThreeState? {
+    override fun evaluateCondition(
+        context: EvaluationContext,
+        frame: StackFrameProxyImpl,
+        location: Location,
+        expression: String
+    ): ThreeState? {
         return ThreeState.UNSURE
     }
 
-    override fun createStackFrame(frame: StackFrameProxyImpl, debugProcess: DebugProcessImpl, location: Location): XStackFrame? {
-        if (location.isInKotlinSources()) {
-            return KotlinStackFrame(frame)
-        }
-        return null
-    }
+    override fun createStackFrame(frame: StackFrameProxyImpl, debugProcess: DebugProcessImpl, location: Location): XStackFrame? =
+        if (location.isInKotlinSources())
+            KotlinStackFrame(frame)
+        else
+            null
 
     override fun getSourcePosition(location: Location?): SourcePosition? {
         if (location == null) throw NoDataException.INSTANCE
@@ -120,13 +107,13 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
                     val project = myDebugProcess.project
 
                     val defaultPsiFile = DebuggerUtils.findSourceFileForClass(
-                        project, sourceSearchScopes, javaClassName, javaSourceFileName, location)
+                        project, sourceSearchScopes, javaClassName, javaSourceFileName, location
+                    )
 
                     if (defaultPsiFile != null) {
                         return SourcePosition.createFromLine(defaultPsiFile, 0)
                     }
-                }
-                catch (e: AbsentInformationException) {
+                } catch (e: AbsentInformationException) {
                     // ignored
                 }
             }
@@ -225,8 +212,8 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         val elementAt = file.findElementAt(start) ?: return null
         val typeMapper = KotlinDebuggerCaches.getOrCreateTypeMapper(elementAt)
 
-        val currentLocationClassName = JvmClassName.byFqNameWithoutInnerClasses(FqName(currentLocationFqName))
-                .internalName.replace('/', '.')
+        val currentLocationClassName =
+            JvmClassName.byFqNameWithoutInnerClasses(FqName(currentLocationFqName)).internalName.replace('/', '.')
 
         for (literal in literalsOrFunctions) {
             if (InlineUtil.isInlinedArgument(literal, typeMapper.bindingContext, true)) {
@@ -236,9 +223,10 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
                 continue
             }
 
-            val internalClassNames = DebuggerClassNameProvider(myDebugProcess, alwaysReturnLambdaParentClass = false)
-                    .getOuterClassNamesForElement(literal.firstChild, emptySet())
-                    .classNames
+            val internalClassNames = DebuggerClassNameProvider(
+                myDebugProcess,
+                alwaysReturnLambdaParentClass = false
+            ).getOuterClassNamesForElement(literal.firstChild, emptySet()).classNames
 
             if (internalClassNames.any { it == currentLocationClassName }) {
                 return literal
@@ -255,12 +243,10 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
             if (location.declaringType().containsKotlinStrata()) {
                 //replace is required for windows
                 location.sourcePath().replace('\\', '/')
-            }
-            else {
+            } else {
                 defaultInternalName(location)
             }
-        }
-        catch (e: AbsentInformationException) {
+        } catch (e: AbsentInformationException) {
             defaultInternalName(location)
         }
 
@@ -307,7 +293,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         try {
             if (myDebugProcess.isDexDebug()) {
                 val inlineLocations = runReadAction { getLocationsOfInlinedLine(type, position, myDebugProcess.searchScope) }
-                if (!inlineLocations.isEmpty()) {
+                if (inlineLocations.isNotEmpty()) {
                     return inlineLocations
                 }
             }
@@ -320,8 +306,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
             }
 
             return locations.filter { it.sourceName(KOTLIN_STRATA_NAME) == position.file.name }
-        }
-        catch (e: AbsentInformationException) {
+        } catch (e: AbsentInformationException) {
             throw NoDataException.INSTANCE
         }
     }
@@ -340,8 +325,8 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
             val classNames = DebuggerClassNameProvider(myDebugProcess).getOuterClassNamesForPosition(position)
             classNames.flatMap { name ->
                 listOfNotNull(
-                        myDebugProcess.requestsManager.createClassPrepareRequest(requestor, name),
-                        myDebugProcess.requestsManager.createClassPrepareRequest(requestor, "$name$*")
+                    myDebugProcess.requestsManager.createClassPrepareRequest(requestor, name),
+                    myDebugProcess.requestsManager.createClassPrepareRequest(requestor, "$name$*")
                 )
             }
         })

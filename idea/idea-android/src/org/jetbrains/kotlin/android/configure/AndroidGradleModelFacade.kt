@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -56,8 +56,8 @@ class AndroidGradleModelFacade : KotlinGradleModelFacade {
 
 // com.android.builder.model.Library.getProject() is not present in 2.1.0
 private val Library.projectSafe: String?
-        get() = try {
-           project
-        } catch(e: UnsupportedMethodException) {
-          null
-        }
+    get() = try {
+        project
+    } catch (e: UnsupportedMethodException) {
+        null
+    }

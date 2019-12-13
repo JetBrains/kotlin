@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.intentions
@@ -59,11 +48,9 @@ class ReturnSaver(val function: KtNamedFunction) {
             val value = returnExpression.returnedExpression
             val replaceWith = if (value != null && returnExpression.isValueOfBlock(lambdaBody)) {
                 value
-            }
-            else if (value != null) {
+            } else if (value != null) {
                 factory.createExpressionByPattern("return@$0 $1", label, value)
-            }
-            else {
+            } else {
                 factory.createExpressionByPattern("return@$0", label)
             }
 
@@ -72,30 +59,26 @@ class ReturnSaver(val function: KtNamedFunction) {
         }
     }
 
-    private fun KtExpression.isValueOfBlock(inBlock: KtBlockExpression): Boolean {
-        val parent = parent
-        when (parent) {
-            inBlock -> {
-                return this == inBlock.statements.last()
-            }
-
-            is KtBlockExpression -> {
-                return isValueOfBlock(parent) && parent.isValueOfBlock(inBlock)
-            }
-
-            is KtContainerNode -> {
-                val owner = parent.parent
-                if (owner is KtIfExpression) {
-                    return (this == owner.then || this == owner.`else`) && owner.isValueOfBlock(inBlock)
-                }
-            }
-
-            is KtWhenEntry -> {
-                return this == parent.expression && (parent.parent as KtWhenExpression).isValueOfBlock(inBlock)
-            }
+    private fun KtExpression.isValueOfBlock(inBlock: KtBlockExpression): Boolean = when (val parent = parent) {
+        inBlock -> {
+            this == inBlock.statements.last()
         }
 
-        return false
-    }
+        is KtBlockExpression -> {
+            isValueOfBlock(parent) && parent.isValueOfBlock(inBlock)
+        }
 
+        is KtContainerNode -> {
+            val owner = parent.parent
+            if (owner is KtIfExpression) {
+                (this == owner.then || this == owner.`else`) && owner.isValueOfBlock(inBlock)
+            } else
+                false
+        }
+
+        is KtWhenEntry -> {
+            this == parent.expression && (parent.parent as KtWhenExpression).isValueOfBlock(inBlock)
+        }
+        else -> false
+    }
 }

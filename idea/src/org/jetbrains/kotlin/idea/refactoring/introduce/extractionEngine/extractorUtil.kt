@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine
@@ -129,7 +118,11 @@ fun ExtractionGeneratorConfiguration.getDeclarationPattern(
 ): String {
     val extractionTarget = generatorOptions.target
     if (!extractionTarget.isAvailable(descriptor)) {
-        throw BaseRefactoringProcessor.ConflictsInTestsException(listOf("Can't generate ${extractionTarget.targetName}: ${descriptor.extractionData.codeFragmentText}"))
+        throw BaseRefactoringProcessor.ConflictsInTestsException(
+            listOf(
+                "Can't generate ${extractionTarget.targetName}: ${descriptor.extractionData.codeFragmentText}"
+            )
+        )
     }
 
     return buildSignature(this, descriptorRenderer).let { builder ->
@@ -308,7 +301,9 @@ private fun makeCall(
     val psiFactory = KtPsiFactory(anchor.project)
     val newLine = psiFactory.createNewLine()
 
-    if (controlFlow.outputValueBoxer is AsTuple && controlFlow.outputValues.size > 1 && controlFlow.outputValues.all { it is Initializer }) {
+    if (controlFlow.outputValueBoxer is AsTuple && controlFlow.outputValues.size > 1 && controlFlow.outputValues
+            .all { it is Initializer }
+    ) {
         val declarationsToMerge = controlFlow.outputValues.map { (it as Initializer).initializedDeclaration }
         val isVar = declarationsToMerge.first().isVar
         if (declarationsToMerge.all { it.isVar == isVar }) {
@@ -556,7 +551,9 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
         if (lastExpression is KtReturnExpression) return
 
         val defaultExpression =
-            if (!generatorOptions.inTempFile && defaultValue != null && descriptor.controlFlow.outputValueBoxer.boxingRequired && lastExpression!!.isMultiLine()) {
+            if (!generatorOptions.inTempFile && defaultValue != null && descriptor.controlFlow.outputValueBoxer
+                    .boxingRequired && lastExpression!!.isMultiLine()
+            ) {
                 val varNameValidator = NewDeclarationNameValidator(body, lastExpression, NewDeclarationNameValidator.Target.VARIABLES)
                 val resultVal = KotlinNameSuggester.suggestNamesByType(defaultValue.valueType, varNameValidator, null).first()
                 body.addBefore(psiFactory.createDeclaration("val $resultVal = ${lastExpression.text}"), lastExpression)

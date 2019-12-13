@@ -91,8 +91,8 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase(), Q
 
     private fun getPathAccordingToPackage(name: String, text: String): String {
         val packagePath = text.lines().let { it.find { it.trim().startsWith("package") } }
-                                  ?.removePrefix("package")
-                                  ?.trim()?.replace(".", "/") ?: ""
+            ?.removePrefix("package")
+            ?.trim()?.replace(".", "/") ?: ""
         return packagePath + "/" + name
     }
 
@@ -119,8 +119,7 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase(), Q
                     fileName = getPathAccordingToPackage(fileName, contents)
                     myFixture.addFileToProject(fileName, contents)
                     myFixture.configureByFile(fileName)
-                }
-                else {
+                } else {
                     myFixture.configureByText(fileName, contents)
                 }
 
@@ -138,22 +137,17 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase(), Q
                 }
 
                 UsefulTestCase.assertEmpty(expectedErrorMessage)
-            }
-            catch (e: FileComparisonFailure) {
+            } catch (e: FileComparisonFailure) {
                 throw e
-            }
-            catch (e: AssertionError) {
+            } catch (e: AssertionError) {
                 throw e
-            }
-            catch (e: Throwable) {
+            } catch (e: Throwable) {
                 if (expectedErrorMessage == null) {
                     throw e
-                }
-                else {
+                } else {
                     Assert.assertEquals("Wrong exception message", expectedErrorMessage, e.message)
                 }
-            }
-            finally {
+            } finally {
                 for (fixtureClass in fixtureClasses) {
                     TestFixtureExtension.unloadFixture(fixtureClass)
                 }
@@ -195,8 +189,10 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase(), Q
             UIUtil.dispatchAllInvocationEvents()
 
             if (!shouldBeAvailableAfterExecution()) {
-                assertNull("Action '${actionHint.expectedText}' is still available after its invocation in test " + fileName,
-                            findActionWithText(actionHint.expectedText))
+                assertNull(
+                    "Action '${actionHint.expectedText}' is still available after its invocation in test " + fileName,
+                    findActionWithText(actionHint.expectedText)
+                )
             }
 
             myFixture.checkResultByFile(File(fileName).name + ".after")
@@ -204,8 +200,7 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase(), Q
             if (stubComparisonFailure != null) {
                 throw stubComparisonFailure
             }
-        }
-        else {
+        } else {
             assertNull("Action with text ${actionHint.expectedText} is present, but should not", intention)
         }
     }
@@ -228,7 +223,9 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase(), Q
                 actions.removeAll { action -> !aClass.isAssignableFrom(action.javaClass) || validActions.contains(action.text) }
 
                 if (!actions.isEmpty()) {
-                    Assert.fail("Unexpected intention actions present\n " + actions.map { action -> action.javaClass.toString() + " " + action.toString() + "\n" }
+                    Assert.fail("Unexpected intention actions present\n " + actions.map { action ->
+                        action.javaClass.toString() + " " + action.toString() + "\n"
+                    }
                     )
                 }
 
@@ -237,8 +234,7 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase(), Q
                         Assert.fail("Unexpected intention action " + action.javaClass + " found")
                     }
                 }
-            }
-            else {
+            } else {
                 // Action shouldn't be found. Check that other actions are expected and thus tested action isn't there under another name.
                 DirectiveBasedActionUtils.checkAvailableActionsAreExpected(myFixture.file, actions)
             }
@@ -277,8 +273,7 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase(), Q
         val testDataPath = super.getTestDataPath()
         try {
             return File(testDataPath).getCanonicalPath()
-        }
-        catch (e: IOException) {
+        } catch (e: IOException) {
             e.printStackTrace()
             return testDataPath
         }

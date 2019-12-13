@@ -31,7 +31,7 @@ class MockMethod : Method {
     override fun isAbstract() = throw UnsupportedOperationException()
     override fun isVarArgs() = throw UnsupportedOperationException()
     override fun returnTypeName() = throw UnsupportedOperationException()
-    override fun argumentTypes( ) = throw UnsupportedOperationException()
+    override fun argumentTypes() = throw UnsupportedOperationException()
     override fun isConstructor() = throw UnsupportedOperationException()
     override fun locationsOfLine(lineNumber: Int) = throw UnsupportedOperationException()
     override fun locationsOfLine(stratum: String?, sourceName: String?, lineNumber: Int) = throw UnsupportedOperationException()

@@ -96,8 +96,7 @@ abstract class AbstractKotlinMultiplatformTestMethodGradleConfigurationProducer 
 }
 
 abstract class AbstractKotlinTestMethodGradleConfigurationProducer
-    : TestMethodGradleConfigurationProducer(), KotlinGradleConfigurationProducer
-{
+    : TestMethodGradleConfigurationProducer(), KotlinGradleConfigurationProducer {
     override fun getConfigurationFactory(): ConfigurationFactory {
         return KotlinGradleExternalTaskConfigurationType.instance.factory
     }

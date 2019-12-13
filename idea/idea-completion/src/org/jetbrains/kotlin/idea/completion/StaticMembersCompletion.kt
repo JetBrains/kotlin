@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.completion
@@ -39,43 +28,42 @@ import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
 class StaticMembersCompletion(
-        private val prefixMatcher: PrefixMatcher,
-        private val resolutionFacade: ResolutionFacade,
-        private val lookupElementFactory: LookupElementFactory,
-        alreadyAdded: Collection<DeclarationDescriptor>,
-        private val isJvmModule: Boolean
+    private val prefixMatcher: PrefixMatcher,
+    private val resolutionFacade: ResolutionFacade,
+    private val lookupElementFactory: LookupElementFactory,
+    alreadyAdded: Collection<DeclarationDescriptor>,
+    private val isJvmModule: Boolean
 ) {
     private val alreadyAdded = alreadyAdded.mapTo(HashSet()) {
         if (it is ImportedFromObjectCallableDescriptor<*>) it.callableFromObject else it
     }
 
-    fun decoratedLookupElementFactory(itemPriority: ItemPriority): AbstractLookupElementFactory {
-        return object : AbstractLookupElementFactory {
-            override fun createStandardLookupElementsForDescriptor(descriptor: DeclarationDescriptor, useReceiverTypes: Boolean): Collection<LookupElement> {
-                if (!useReceiverTypes) return emptyList()
-                return lookupElementFactory.createLookupElement(descriptor, useReceiverTypes = false)
-                        .decorateAsStaticMember(descriptor, classNameAsLookupString = false)
-                        ?.assignPriority(itemPriority)
-                        ?.suppressAutoInsertion()
-                        .let(::listOfNotNull)
-            }
-
-            override fun createLookupElement(descriptor: DeclarationDescriptor, useReceiverTypes: Boolean,
-                                             qualifyNestedClasses: Boolean, includeClassTypeArguments: Boolean,
-                                             parametersAndTypeGrayed: Boolean) = null
+    fun decoratedLookupElementFactory(itemPriority: ItemPriority): AbstractLookupElementFactory = object : AbstractLookupElementFactory {
+        override fun createStandardLookupElementsForDescriptor(
+            descriptor: DeclarationDescriptor,
+            useReceiverTypes: Boolean
+        ): Collection<LookupElement> {
+            if (!useReceiverTypes) return emptyList()
+            return lookupElementFactory.createLookupElement(descriptor, useReceiverTypes = false)
+                .decorateAsStaticMember(descriptor, classNameAsLookupString = false)
+                ?.assignPriority(itemPriority)
+                ?.suppressAutoInsertion()
+                .let(::listOfNotNull)
         }
+
+        override fun createLookupElement(
+            descriptor: DeclarationDescriptor, useReceiverTypes: Boolean,
+            qualifyNestedClasses: Boolean, includeClassTypeArguments: Boolean,
+            parametersAndTypeGrayed: Boolean
+        ) = null
     }
 
     fun membersFromImports(file: KtFile): Collection<DeclarationDescriptor> {
-        val containers = file.importDirectives
-                .filter { !it.isAllUnder }
-                .mapNotNull {
-                    it.targetDescriptors(resolutionFacade)
-                            .map { it.containingDeclaration }
-                            .distinct()
-                            .singleOrNull() as? ClassDescriptor
-                }
-                .toSet()
+        val containers = file.importDirectives.filter { !it.isAllUnder }.mapNotNull {
+            it.targetDescriptors(resolutionFacade).map { descriptor ->
+                descriptor.containingDeclaration
+            }.distinct().singleOrNull() as? ClassDescriptor
+        }.toSet()
 
         val result = ArrayList<DeclarationDescriptor>()
 
@@ -84,8 +72,11 @@ class StaticMembersCompletion(
         for (container in containers) {
             val memberScope = if (container.kind == ClassKind.OBJECT) container.unsubstitutedMemberScope else container.staticScope
             val members =
-                    memberScope.getDescriptorsFiltered(kindFilter, nameFilter) +
-                    memberScope.collectSyntheticStaticMembersAndConstructors(resolutionFacade, kindFilter, nameFilter)
+                memberScope.getDescriptorsFiltered(kindFilter, nameFilter) + memberScope.collectSyntheticStaticMembersAndConstructors(
+                    resolutionFacade,
+                    kindFilter,
+                    nameFilter
+                )
             members.filterTo(result) { it is CallableDescriptor && it !in alreadyAdded }
         }
         return result
@@ -109,7 +100,7 @@ class StaticMembersCompletion(
         }
 
         if (isJvmModule) {
-            indicesHelper.processJavaStaticMembers(descriptorKindFilter, nameFilter){
+            indicesHelper.processJavaStaticMembers(descriptorKindFilter, nameFilter) {
                 if (it !in alreadyAdded) {
                     processor(it)
                 }
@@ -132,9 +123,8 @@ class StaticMembersCompletion(
 
     fun completeFromImports(file: KtFile, collector: LookupElementsCollector) {
         val factory = decoratedLookupElementFactory(ItemPriority.STATIC_MEMBER_FROM_IMPORTS)
-        membersFromImports(file)
-                .flatMap { factory.createStandardLookupElementsForDescriptor(it, useReceiverTypes = true) }
-                .forEach { collector.addElement(it) }
+        membersFromImports(file).flatMap { factory.createStandardLookupElementsForDescriptor(it, useReceiverTypes = true) }
+            .forEach { collector.addElement(it) }
     }
 
     /**

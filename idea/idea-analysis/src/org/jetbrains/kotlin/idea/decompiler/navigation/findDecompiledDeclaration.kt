@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.decompiler.navigation
@@ -46,10 +35,10 @@ import org.jetbrains.kotlin.types.ErrorUtils
 import java.util.*
 
 fun findDecompiledDeclaration(
-        project: Project,
-        referencedDescriptor: DeclarationDescriptor,
-        // TODO: should not require explicitly specified scope to search for builtIns, use SourceElement to provide such information
-        builtInsSearchScope: GlobalSearchScope?
+    project: Project,
+    referencedDescriptor: DeclarationDescriptor,
+    // TODO: should not require explicitly specified scope to search for builtIns, use SourceElement to provide such information
+    builtInsSearchScope: GlobalSearchScope?
 ): KtDeclaration? {
     if (ErrorUtils.isError(referencedDescriptor)) return null
     if (isLocal(referencedDescriptor)) return null
@@ -63,9 +52,9 @@ fun findDecompiledDeclaration(
     if (KotlinBuiltIns.isBuiltIn(referencedDescriptor)) {
         // builtin module does not contain information about it's origin
         return builtInsSearchScope?.let { findInScope(referencedDescriptor, it) }
-               // fallback on searching everywhere since builtIns are accessible from any context
-               ?: findInScope(referencedDescriptor, GlobalSearchScope.allScope(project))
-               ?: findInScope(referencedDescriptor, EverythingGlobalScope(project))
+        // fallback on searching everywhere since builtIns are accessible from any context
+            ?: findInScope(referencedDescriptor, GlobalSearchScope.allScope(project))
+            ?: findInScope(referencedDescriptor, EverythingGlobalScope(project))
     }
     return null
 }
@@ -73,31 +62,27 @@ fun findDecompiledDeclaration(
 private fun findInScope(referencedDescriptor: DeclarationDescriptor, scope: GlobalSearchScope): KtDeclaration? {
     val project = scope.project ?: return null
     val decompiledFiles = findCandidateDeclarationsInIndex(
-            referencedDescriptor, KotlinSourceFilterScope.libraryClassFiles(scope, project), project
+        referencedDescriptor, KotlinSourceFilterScope.libraryClassFiles(scope, project), project
     ).mapNotNullTo(LinkedHashSet()) {
         it?.containingFile as? KtDecompiledFile
     }
 
-    return decompiledFiles.asSequence().mapNotNull {
-        file ->
+    return decompiledFiles.asSequence().mapNotNull { file ->
         ByDescriptorIndexer.getDeclarationForDescriptor(referencedDescriptor, file)
     }.firstOrNull()
 }
 
-private fun isLocal(descriptor: DeclarationDescriptor): Boolean {
-    return if (descriptor is ParameterDescriptor) {
-        isLocal(descriptor.containingDeclaration)
-    }
-    else {
-        DescriptorUtils.isLocal(descriptor)
-    }
+private fun isLocal(descriptor: DeclarationDescriptor): Boolean = if (descriptor is ParameterDescriptor) {
+    isLocal(descriptor.containingDeclaration)
+} else {
+    DescriptorUtils.isLocal(descriptor)
 }
 
 
 private fun findCandidateDeclarationsInIndex(
-        referencedDescriptor: DeclarationDescriptor,
-        scope: GlobalSearchScope,
-        project: Project
+    referencedDescriptor: DeclarationDescriptor,
+    scope: GlobalSearchScope,
+    project: Project
 ): Collection<KtDeclaration?> {
     val containingClass = DescriptorUtils.getParentOfType(referencedDescriptor, ClassDescriptor::class.java, false)
     if (containingClass != null) {
@@ -105,7 +90,7 @@ private fun findCandidateDeclarationsInIndex(
     }
 
     val topLevelDeclaration =
-            DescriptorUtils.getParentOfType(referencedDescriptor, PropertyDescriptor::class.java, false) as DeclarationDescriptor?
+        DescriptorUtils.getParentOfType(referencedDescriptor, PropertyDescriptor::class.java, false) as DeclarationDescriptor?
             ?: DescriptorUtils.getParentOfType(referencedDescriptor, TypeAliasConstructorDescriptor::class.java, false)?.typeAliasDescriptor
             ?: DescriptorUtils.getParentOfType(referencedDescriptor, FunctionDescriptor::class.java, false)
             ?: DescriptorUtils.getParentOfType(referencedDescriptor, TypeAliasDescriptor::class.java, false)
@@ -143,8 +128,10 @@ object ByDescriptorIndexer : DecompiledTextIndexer<String> {
             val callable = original.containingDeclaration
             val callableDeclaration = getDeclarationForDescriptor(callable, file) as? KtCallableDeclaration ?: return null
             if (original.index >= callableDeclaration.valueParameters.size) {
-                LOG.error("Parameter count mismatch for ${DescriptorRenderer.DEBUG_TEXT.render(callable)}[${original.index}] vs " +
-                     callableDeclaration.valueParameterList?.text)
+                LOG.error(
+                    "Parameter count mismatch for ${DescriptorRenderer.DEBUG_TEXT.render(callable)}[${original.index}] vs " +
+                            callableDeclaration.valueParameterList?.text
+                )
                 return null
             }
             return callableDeclaration.valueParameters[original.index]
@@ -158,8 +145,12 @@ object ByDescriptorIndexer : DecompiledTextIndexer<String> {
         val descriptorKey = original.toStringKey()
 
         if (!file.isContentsLoaded && original is MemberDescriptor) {
-            val hasDeclarationByKey = file.hasDeclarationWithKey(this, descriptorKey) ||
-                                      (getBuiltinsDescriptorKey(descriptor)?.let { file.hasDeclarationWithKey(this, it) } ?: false)
+            val hasDeclarationByKey = file.hasDeclarationWithKey(this, descriptorKey) || (getBuiltinsDescriptorKey(descriptor)?.let {
+                file.hasDeclarationWithKey(
+                    this,
+                    it
+                )
+            } ?: false)
             if (hasDeclarationByKey) {
                 val declarationContainer: KtDeclarationContainer? = when {
                     DescriptorUtils.isTopLevelDeclaration(original) -> file
@@ -190,7 +181,7 @@ object ByDescriptorIndexer : DecompiledTextIndexer<String> {
         if (!JvmBuiltInsSettings.isSerializableInJava(classFqName)) return null
 
         val builtInDescriptor =
-                DefaultBuiltIns.Instance.builtInsModule.resolveTopLevelClass(classFqName.toSafe(), NoLookupLocation.FROM_IDE)
+            DefaultBuiltIns.Instance.builtInsModule.resolveTopLevelClass(classFqName.toSafe(), NoLookupLocation.FROM_IDE)
         return builtInDescriptor?.toStringKey()
     }
 

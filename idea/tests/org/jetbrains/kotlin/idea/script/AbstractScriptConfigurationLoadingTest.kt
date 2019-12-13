@@ -28,6 +28,7 @@ abstract class AbstractScriptConfigurationLoadingTest : AbstractScriptConfigurat
     companion object {
         private var occurredLoadings = 0
         private var currentLoadingScriptConfigurationCallback: (() -> Unit)? = null
+
         @JvmStatic
         @Suppress("unused")
         fun loadingScriptConfigurationCallback() {

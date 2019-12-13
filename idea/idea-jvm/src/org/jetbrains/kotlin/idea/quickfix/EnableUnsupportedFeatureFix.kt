@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -33,11 +33,12 @@ import org.jetbrains.kotlin.idea.versions.updateLibraries
 import org.jetbrains.kotlin.psi.KtFile
 
 sealed class EnableUnsupportedFeatureFix(
-        element: PsiElement,
-        protected val feature: LanguageFeature,
-        protected val apiVersionOnly: Boolean
+    element: PsiElement,
+    protected val feature: LanguageFeature,
+    protected val apiVersionOnly: Boolean
 ) : KotlinQuickFixAction<PsiElement>(element) {
-    class InModule(element: PsiElement, feature: LanguageFeature, apiVersionOnly: Boolean) : EnableUnsupportedFeatureFix(element, feature, apiVersionOnly) {
+    class InModule(element: PsiElement, feature: LanguageFeature, apiVersionOnly: Boolean) :
+        EnableUnsupportedFeatureFix(element, feature, apiVersionOnly) {
         override fun getFamilyName() = "Increase module " + if (apiVersionOnly) "API version" else "language version"
 
         override fun getText() = if (apiVersionOnly)
@@ -58,18 +59,17 @@ sealed class EnableUnsupportedFeatureFix(
             val forTests = ModuleRootManager.getInstance(module).fileIndex.isInTestSourceContentKotlinAware(file.virtualFile)
 
             findApplicableConfigurator(module).updateLanguageVersion(
-                    module,
-                    if (apiVersionOnly) null else feature.sinceVersion!!.versionString,
-                    targetApiLevel,
-                    feature.sinceApiVersion,
-                    forTests
+                module,
+                if (apiVersionOnly) null else feature.sinceVersion!!.versionString,
+                targetApiLevel,
+                feature.sinceApiVersion,
+                forTests
             )
         }
     }
 
-    class InProject(element: PsiElement, feature: LanguageFeature, apiVersionOnly: Boolean)
-            : EnableUnsupportedFeatureFix(element, feature, apiVersionOnly)
-    {
+    class InProject(element: PsiElement, feature: LanguageFeature, apiVersionOnly: Boolean) :
+        EnableUnsupportedFeatureFix(element, feature, apiVersionOnly) {
         override fun getFamilyName() = "Increase project " + if (apiVersionOnly) "API version" else "language version"
 
         override fun getText() = if (apiVersionOnly)
@@ -101,7 +101,7 @@ sealed class EnableUnsupportedFeatureFix(
 
             val sinceVersion = feature.sinceVersion ?: return null
             val apiVersionOnly = sinceVersion <= languageFeatureSettings.languageVersion &&
-                                 feature.sinceApiVersion > languageFeatureSettings.apiVersion
+                    feature.sinceApiVersion > languageFeatureSettings.apiVersion
 
             if (!sinceVersion.isStable && !ApplicationManager.getApplication().isInternal) {
                 return null
@@ -110,7 +110,11 @@ sealed class EnableUnsupportedFeatureFix(
             val module = ModuleUtilCore.findModuleForPsiElement(diagnostic.psiElement) ?: return null
             if (module.getBuildSystemType() == BuildSystemType.JPS) {
                 val facetSettings = KotlinFacet.get(module)?.configuration?.settings
-                if (facetSettings == null || facetSettings.useProjectSettings) return InProject(diagnostic.psiElement, feature, apiVersionOnly)
+                if (facetSettings == null || facetSettings.useProjectSettings) return InProject(
+                    diagnostic.psiElement,
+                    feature,
+                    apiVersionOnly
+                )
             }
             return InModule(diagnostic.psiElement, feature, apiVersionOnly)
         }
@@ -126,18 +130,21 @@ fun checkUpdateRuntime(project: Project, requiredVersion: ApiVersion): Boolean {
     }
     if (modulesWithOutdatedRuntime.isNotEmpty()) {
         if (!askUpdateRuntime(project, requiredVersion,
-                              modulesWithOutdatedRuntime.mapNotNull { findKotlinRuntimeLibrary(it) })) return false
+                              modulesWithOutdatedRuntime.mapNotNull { findKotlinRuntimeLibrary(it) })
+        ) return false
     }
     return true
 }
 
 fun askUpdateRuntime(project: Project, requiredVersion: ApiVersion, librariesToUpdate: List<Library>): Boolean {
     if (!ApplicationManager.getApplication().isUnitTestMode) {
-        val rc = Messages.showOkCancelDialog(project,
-                                             "This language feature requires version $requiredVersion or later of the Kotlin runtime library. " +
-                                             "Would you like to update the runtime library in your project?",
-                                             "Update Runtime Library",
-                                             Messages.getQuestionIcon())
+        val rc = Messages.showOkCancelDialog(
+            project,
+            "This language feature requires version $requiredVersion or later of the Kotlin runtime library. " +
+                    "Would you like to update the runtime library in your project?",
+            "Update Runtime Library",
+            Messages.getQuestionIcon()
+        )
         if (rc != Messages.OK) return false
     }
 

@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.intentions
@@ -21,7 +10,8 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.*
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.references.ReferenceAccess
 import org.jetbrains.kotlin.idea.references.readWriteAccess
@@ -89,23 +79,23 @@ class OperatorToFunctionIntention :
 
         private fun isApplicableCall(element: KtCallExpression, caretOffset: Int): Boolean {
             val lbrace = (element.valueArgumentList?.leftParenthesis
-                          ?: element.lambdaArguments.firstOrNull()?.getLambdaExpression()?.leftCurlyBrace
-                          ?: return false) as PsiElement
+                ?: element.lambdaArguments.firstOrNull()?.getLambdaExpression()?.leftCurlyBrace
+                ?: return false) as PsiElement
             if (!lbrace.textRange.containsOffset(caretOffset)) return false
 
             val resolvedCall = element.resolveToCall(BodyResolveMode.FULL)
             val descriptor = resolvedCall?.resultingDescriptor
             if (descriptor is FunctionDescriptor && descriptor.getName() == OperatorNameConventions.INVOKE) {
                 if (element.parent is KtDotQualifiedExpression &&
-                    element.calleeExpression?.text == OperatorNameConventions.INVOKE.asString()) return false
+                    element.calleeExpression?.text == OperatorNameConventions.INVOKE.asString()
+                ) return false
                 return element.valueArgumentList != null || element.lambdaArguments.isNotEmpty()
             }
             return false
         }
 
         private fun convertUnary(element: KtUnaryExpression): KtExpression {
-            val op = element.operationReference.getReferencedNameElementType()
-            val operatorName = when (op) {
+            val operatorName = when (element.operationReference.getReferencedNameElementType()) {
                 KtTokens.PLUSPLUS, KtTokens.MINUSMINUS -> return convertUnaryWithAssignFix(element)
                 KtTokens.PLUS -> OperatorNameConventions.UNARY_PLUS
                 KtTokens.MINUS -> OperatorNameConventions.UNARY_MINUS
@@ -118,8 +108,7 @@ class OperatorToFunctionIntention :
         }
 
         private fun convertUnaryWithAssignFix(element: KtUnaryExpression): KtExpression {
-            val op = element.operationReference.getReferencedNameElementType()
-            val operatorName = when (op) {
+            val operatorName = when (element.operationReference.getReferencedNameElementType()) {
                 KtTokens.PLUSPLUS -> OperatorNameConventions.INC
                 KtTokens.MINUSMINUS -> OperatorNameConventions.DEC
                 else -> return element
@@ -208,7 +197,8 @@ class OperatorToFunctionIntention :
 
         private fun isAssignmentLeftSide(element: KtArrayAccessExpression): Boolean {
             val parent = element.parent
-            return parent is KtBinaryExpression && parent.operationReference.getReferencedNameElementType() == KtTokens.EQ && element == parent.left
+            return parent is KtBinaryExpression &&
+                    parent.operationReference.getReferencedNameElementType() == KtTokens.EQ && element == parent.left
         }
 
         //TODO: don't use creation by plain text
@@ -218,8 +208,8 @@ class OperatorToFunctionIntention :
             val argumentString = arguments?.text?.removeSurrounding("(", ")")
             val funcLitArgs = element.lambdaArguments
             val calleeText = callee.text
-            val transformation = "$calleeText.${OperatorNameConventions.INVOKE.asString()}" +
-                                 (if (argumentString == null) "()" else "($argumentString)")
+            val transformation =
+                "$calleeText.${OperatorNameConventions.INVOKE.asString()}" + (if (argumentString == null) "()" else "($argumentString)")
             val transformed = KtPsiFactory(element).createExpression(transformation)
             val callExpression = transformed.getCalleeExpressionIfAny()?.parent as? KtCallExpression
             if (callExpression != null) {

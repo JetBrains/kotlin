@@ -29,8 +29,8 @@ abstract class AbstractNameSuggestionProviderTest : KotlinLightCodeInsightFixtur
     protected fun doTest(path: String) {
         val file = myFixture.configureByFile(fileName())
         val targetElement = TargetElementUtil.findTargetElement(
-                myFixture.editor,
-                TargetElementUtil.ELEMENT_NAME_ACCEPTED or TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED
+            myFixture.editor,
+            TargetElementUtil.ELEMENT_NAME_ACCEPTED or TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED
         )!!
         val expectedNames = InTextDirectivesUtils.findListWithPrefixes(file.text, "// SUGGESTED_NAMES: ")
         val actualNames = getSuggestNames(targetElement)

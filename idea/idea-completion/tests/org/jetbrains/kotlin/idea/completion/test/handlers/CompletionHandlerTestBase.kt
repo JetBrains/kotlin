@@ -82,7 +82,7 @@ abstract class CompletionHandlerTestBase : KotlinLightCodeInsightFixtureTestCase
                 return items.firstOrNull()
             }
 
-            var foundElement : LookupElement? = null
+            var foundElement: LookupElement? = null
             val presentation = LookupElementPresentation()
             for (lookupElement in items) {
                 val lookupOk = if (lookupString != null) lookupElement.lookupString == lookupString else true
@@ -93,8 +93,7 @@ abstract class CompletionHandlerTestBase : KotlinLightCodeInsightFixtureTestCase
                     val textOk = if (itemText != null) {
                         val itemItemText = presentation.itemText
                         itemItemText != null && itemItemText == itemText
-                    }
-                    else {
+                    } else {
                         true
                     }
 
@@ -102,14 +101,20 @@ abstract class CompletionHandlerTestBase : KotlinLightCodeInsightFixtureTestCase
                         val tailOk = if (tailText != null) {
                             val itemTailText = presentation.tailText
                             itemTailText != null && itemTailText == tailText
-                        }
-                        else {
+                        } else {
                             true
                         }
 
                         if (tailOk) {
                             if (foundElement != null) {
-                                val dump = ExpectedCompletionUtils.listToString(ExpectedCompletionUtils.getItemsInformation(arrayOf(foundElement, lookupElement)))
+                                val dump = ExpectedCompletionUtils.listToString(
+                                    ExpectedCompletionUtils.getItemsInformation(
+                                        arrayOf(
+                                            foundElement,
+                                            lookupElement
+                                        )
+                                    )
+                                )
                                 fail("Several elements satisfy to completion restrictions:\n$dump")
                             }
 
@@ -134,8 +139,7 @@ abstract class CompletionHandlerTestBase : KotlinLightCodeInsightFixtureTestCase
             lookup.focusDegree = LookupImpl.FocusDegree.FOCUSED
             if (LookupEvent.isSpecialCompletionChar(completionChar)) {
                 lookup.finishLookup(completionChar)
-            }
-            else {
+            } else {
                 fixture.type(completionChar)
             }
         }

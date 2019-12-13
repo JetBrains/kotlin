@@ -20,10 +20,10 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
 abstract class AbstractDecompiledTextBaseTest(
-        baseDirectory: String,
-        private val isJsLibrary: Boolean = false,
-        private val allowKotlinPackage: Boolean = false,
-        private val withRuntime: Boolean = false
+    baseDirectory: String,
+    private val isJsLibrary: Boolean = false,
+    private val allowKotlinPackage: Boolean = false,
+    private val withRuntime: Boolean = false
 ) : KotlinLightCodeInsightFixtureTestCase() {
     protected val TEST_DATA_PATH: String = PluginTestCaseBase.getTestDataPathBase() + baseDirectory
 

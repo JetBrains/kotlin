@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.android
@@ -44,8 +33,7 @@ import org.jetbrains.kotlin.types.KotlinType
 
 private val CREATOR_NAME = "CREATOR"
 private val PARCEL_NAME = "parcel"
-private val CREATOR_TEXT =
-        "companion object $CREATOR_NAME : android.os.Parcelable.Creator<%1\$s> {\n" +
+private val CREATOR_TEXT = "companion object $CREATOR_NAME : android.os.Parcelable.Creator<%1\$s> {\n" +
         "    override fun createFromParcel($PARCEL_NAME: $CLASS_PARCEL): %1\$s {\n" +
         "        return %1\$s($PARCEL_NAME)\n" +
         "    }\n\n" +
@@ -56,7 +44,7 @@ private val CREATOR_TEXT =
 private val WRITE_TO_PARCEL_TEXT = "override fun writeToParcel($PARCEL_NAME: $CLASS_PARCEL, flags: Int) {\n}"
 private val WRITE_TO_PARCEL_SUPER_CALL_TEXT = "super.writeToParcel($PARCEL_NAME, flags)"
 private val WRITE_TO_PARCEL_WITH_SUPER_TEXT =
-        "override fun writeToParcel($PARCEL_NAME: $CLASS_PARCEL, flags: Int) {\n$WRITE_TO_PARCEL_SUPER_CALL_TEXT\n}"
+    "override fun writeToParcel($PARCEL_NAME: $CLASS_PARCEL, flags: Int) {\n$WRITE_TO_PARCEL_SUPER_CALL_TEXT\n}"
 private val DESCRIBE_CONTENTS_TEXT = "override fun describeContents(): Int {\nreturn 0\n}"
 private val CONSTRUCTOR_TEXT = "constructor($PARCEL_NAME: $CLASS_PARCEL)"
 
@@ -65,8 +53,7 @@ private val PARCELIZE_FQNAME = FqName(Parcelize::class.java.name)
 //TODO add test
 fun KtClass.isParcelize() = findAnnotation(PARCELIZE_FQNAME) != null
 
-fun KtClass.canAddParcelable(): Boolean =
-        findParcelableSupertype() == null
+fun KtClass.canAddParcelable(): Boolean = findParcelableSupertype() == null
         || findCreator() == null
         || findConstructorFromParcel() == null
         || findWriteToParcel() == null
@@ -74,8 +61,7 @@ fun KtClass.canAddParcelable(): Boolean =
 
 fun KtClass.canRedoParcelable(): Boolean = canRemoveParcelable()
 
-fun KtClass.canRemoveParcelable(): Boolean =
-        findParcelableSupertype()?.takeIf { it.typeReference?.isParcelableReference() ?: false }
+fun KtClass.canRemoveParcelable(): Boolean = findParcelableSupertype()?.takeIf { it.typeReference?.isParcelableReference() ?: false }
         ?: findCreator()
         ?: findConstructorFromParcel()
         ?: findWriteToParcel()
@@ -130,7 +116,7 @@ private fun KtClass.findParcelableSupertype(): KtSuperTypeListEntry? = getSuperT
 private fun KtSuperTypeList.findParcelable() = entries?.find { it.typeReference?.isParcelableSuccessorReference() ?: false }
 
 private fun KtTypeReference.isParcelableSuccessorReference() =
-        analyze(BodyResolveMode.PARTIAL)[BindingContext.TYPE, this]?.isSubclassOfParcelable() ?: false
+    analyze(BodyResolveMode.PARTIAL)[BindingContext.TYPE, this]?.isSubclassOfParcelable() ?: false
 
 private fun KtClass.superExtendsParcelable() = superTypeListEntries.find { it.typeReference?.extendsParcelable() ?: false } != null
 
@@ -161,7 +147,8 @@ private fun KtExpression.isReadFromParcelPropertyAssignment(): Boolean {
 
 private fun KtExpression.isReadFromParcel(): Boolean {
     val reference = firstChild as? KtReferenceExpression
-                    ?: (firstChild as? KtDotQualifiedExpression)?.getLeftMostReceiverExpression() as? KtReferenceExpression ?: return false
+        ?: (firstChild as? KtDotQualifiedExpression)?.getLeftMostReceiverExpression() as? KtReferenceExpression
+        ?: return false
     val target = reference.resolveToCall()?.resultingDescriptor ?: return false
     return (target as? ParameterDescriptor)?.type?.fqNameEquals(CLASS_PARCEL) ?: false
 }
@@ -174,21 +161,17 @@ private fun KtClass.addFieldWrites(function: KtFunction, factory: KtPsiFactory, 
 
     val propertyParameterDescriptors = primaryConstructor?.valueParameters?.mapNotNull { it.propertyDescriptor } ?: emptyList()
 
-    val propertyDescriptors = declarations
-            .filter { it.isParcelableProperty() }
-            .mapNotNull { it.descriptor as? PropertyDescriptor }
+    val propertyDescriptors = declarations.filter { it.isParcelableProperty() }.mapNotNull { it.descriptor as? PropertyDescriptor }
 
     val parcelName = function.valueParameters[0].name ?: return
     val flagsName = function.valueParameters[1].name ?: return
-    val blockText =
-            (propertyParameterDescriptors + propertyDescriptors)
-            .mapNotNull { it.formatWriteToParcel(parcelName, flagsName) }
-            .joinToString(separator = "\n")
+    val blockText = (propertyParameterDescriptors + propertyDescriptors).mapNotNull { it.formatWriteToParcel(parcelName, flagsName) }
+        .joinToString(separator = "\n")
 
     val block = factory.createBlock(
-            if (callSuper)
-                WRITE_TO_PARCEL_SUPER_CALL_TEXT + if (blockText.isNotBlank()) "\n$blockText" else ""
-            else blockText
+        if (callSuper)
+            WRITE_TO_PARCEL_SUPER_CALL_TEXT + if (blockText.isNotBlank()) "\n$blockText" else ""
+        else blockText
     )
 
     bodyExpression.replace(block)
@@ -201,16 +184,14 @@ private fun KtClass.addFieldReads(constructor: KtConstructor<*>, factory: KtPsiF
     }
 
     val parcelName = constructor.getValueParameters().firstOrNull()?.name ?: return
-    val parcelableProperties = declarations
-            .filter { it.isParcelableProperty() }
-            .mapNotNull { it.descriptor as? PropertyDescriptor }
+    val parcelableProperties = declarations.filter { it.isParcelableProperty() }.mapNotNull { it.descriptor as? PropertyDescriptor }
 
     if (parcelableProperties.isEmpty()) {
         return
     }
 
-    val blockText = parcelableProperties
-            .mapNotNull { descriptor -> descriptor.formatReadFromParcel(parcelName)?.let { "${descriptor.name} = $it" } }
+    val blockText =
+        parcelableProperties.mapNotNull { descriptor -> descriptor.formatReadFromParcel(parcelName)?.let { "${descriptor.name} = $it" } }
             .joinToString(separator = "\n")
 
     val block = factory.createBlock(blockText)
@@ -222,32 +203,28 @@ private fun KtClass.addFieldReads(constructor: KtConstructor<*>, factory: KtPsiF
             addNewLineBeforeDeclaration()
             addToShorteningWaitSet()
         }
-    }
-    else {
+    } else {
         bodyExpression?.replace(block) ?: constructor.add(block)
     }
 }
 
-private fun  KtDeclaration.isParcelableProperty(): Boolean =
-        this is KtProperty && isVar && !hasDelegate() && !isTransient() && getter == null && setter == null
+private fun KtDeclaration.isParcelableProperty(): Boolean =
+    this is KtProperty && isVar && !hasDelegate() && !isTransient() && getter == null && setter == null
 
 private fun KtProperty.isTransient() = annotationEntries.find { it.isTransientAnnotation() } != null
 
 private fun KtAnnotationEntry.isTransientAnnotation(): Boolean =
     typeReference?.analyze(BodyResolveMode.PARTIAL)?.get(BindingContext.TYPE, typeReference)?.fqNameEquals("kotlin.jvm.Transient") ?: false
 
-private fun KtExpression.isCallToSuperWriteToParcel() =
-        this is KtDotQualifiedExpression
+private fun KtExpression.isCallToSuperWriteToParcel() = this is KtDotQualifiedExpression
         && receiverExpression is KtSuperExpression
         && (selectorExpression as? KtCallExpression)?.calleeExpression?.text == "writeToParcel"
 
-private fun KtBlockExpression.isEmptyWriteToParcel(callSuper: Boolean): Boolean =
-        if (callSuper) {
-            statements.isEmpty() || statements.size == 1 && statements.first().isCallToSuperWriteToParcel()
-        }
-        else {
-            statements.isEmpty()
-        }
+private fun KtBlockExpression.isEmptyWriteToParcel(callSuper: Boolean): Boolean = if (callSuper) {
+    statements.isEmpty() || statements.size == 1 && statements.first().isCallToSuperWriteToParcel()
+} else {
+    statements.isEmpty()
+}
 
 private fun PropertyDescriptor.formatReadFromParcel(parcelName: String): String? {
     val type = returnType ?: return null
@@ -301,8 +278,7 @@ private fun PropertyDescriptor.formatWriteToParcel(parcelName: String, flagsName
     if (type.isMarkedNullable) {
         if (KotlinBuiltIns.isPrimitiveTypeOrNullablePrimitiveType(type)) {
             return "$parcelName.writeValue($name)"
-        }
-        else if (KotlinBuiltIns.isCharSequenceOrNullableCharSequence(type)) {
+        } else if (KotlinBuiltIns.isCharSequenceOrNullableCharSequence(type)) {
             return "$parcelName.writeString($name?.toString())"
         }
     }
@@ -373,26 +349,26 @@ private fun KtClass.createSecondaryConstructor(factory: KtPsiFactory): KtConstru
         }
 
         val argumentList = arguments.joinToString(
-                prefix = if (arguments.size > 1) "(\n" else "(",
-                postfix = ")",
-                separator = if (arguments.size > 1) ",\n" else ", ")
+            prefix = if (arguments.size > 1) "(\n" else "(",
+            postfix = ")",
+            separator = if (arguments.size > 1) ",\n" else ", "
+        )
 
         "$CONSTRUCTOR_TEXT :this$argumentList {\n}"
     } ?: "$CONSTRUCTOR_TEXT {\n}"
 
-    val constructor =  factory.createSecondaryConstructor(constructorText)
+    val constructor = factory.createSecondaryConstructor(constructorText)
     val lastProperty = declarations.findLast { it is KtProperty }
     return if (lastProperty != null) {
         addDeclarationAfter(constructor, lastProperty).apply { addNewLineBeforeDeclaration() }
-    }
-    else {
+    } else {
         val firstFunction = declarations.find { it is KtFunction }
         addDeclarationBefore(constructor, firstFunction).apply { addNewLineBeforeDeclaration() }
     }
 }
 
 private fun KtTypeReference.extendsParcelable(): Boolean =
-        analyze(BodyResolveMode.PARTIAL)[BindingContext.TYPE, this]?.isSubclassOfParcelable(true) ?: false
+    analyze(BodyResolveMode.PARTIAL)[BindingContext.TYPE, this]?.isSubclassOfParcelable(true) ?: false
 
 private fun KtClass.findWriteToParcel() = declarations.find { it.isWriteToParcel() }
 
@@ -415,8 +391,8 @@ private fun KtClass.findOrCreateWriteToParcel(factory: KtPsiFactory, callSuper: 
 private fun KtClass.findDescribeContents() = declarations.find { it.isDescribeContents() }
 
 private fun KtDeclaration.isDescribeContents(): Boolean = this is KtFunction &&
-                                                          name == "describeContents" &&
-                                                          valueParameters.isEmpty()
+        name == "describeContents" &&
+        valueParameters.isEmpty()
 
 private fun KtClass.findOrCreateDescribeContents(factory: KtPsiFactory): KtFunction {
     findDescribeContents()?.let {
@@ -442,7 +418,7 @@ private fun KtParameter.isParcelParameter(): Boolean = typeReference?.fqNameEqua
 private fun KtTypeReference.isParcelableReference() = fqNameEquals(CLASS_PARCELABLE)
 
 private fun KtTypeReference.fqNameEquals(fqName: String) =
-        analyze(BodyResolveMode.PARTIAL)[BindingContext.TYPE, this]?.fqNameEquals(fqName) ?: false
+    analyze(BodyResolveMode.PARTIAL)[BindingContext.TYPE, this]?.fqNameEquals(fqName) ?: false
 
 private fun KotlinType.getName() = constructor.declarationDescriptor?.name
 
@@ -453,25 +429,25 @@ private fun KotlinType.isSubclassOfParcelable(strict: Boolean = false): Boolean 
 private fun KotlinType.isIBinder(): Boolean = fqNameEquals("android.os.IBinder")
 
 private fun KotlinType.isArrayOfParcelable(): Boolean =
-        KotlinBuiltIns.isArray(this) && arguments.singleOrNull()?.type?.isSubclassOfParcelable(true) ?: false
+    KotlinBuiltIns.isArray(this) && arguments.singleOrNull()?.type?.isSubclassOfParcelable(true) ?: false
 
 private fun KotlinType.isArrayOfIBinder(): Boolean =
-        KotlinBuiltIns.isArray(this) && arguments.singleOrNull()?.type?.isIBinder() ?: false
+    KotlinBuiltIns.isArray(this) && arguments.singleOrNull()?.type?.isIBinder() ?: false
 
 private fun KotlinType.isArrayOfString(): Boolean =
-        KotlinBuiltIns.isArray(this) && KotlinBuiltIns.isStringOrNullableString(arguments.singleOrNull()?.type)
+    KotlinBuiltIns.isArray(this) && KotlinBuiltIns.isStringOrNullableString(arguments.singleOrNull()?.type)
 
 private fun KotlinType.isListOfString(): Boolean =
-        KotlinBuiltIns.isListOrNullableList(this) && KotlinBuiltIns.isStringOrNullableString(arguments.singleOrNull()?.type)
+    KotlinBuiltIns.isListOrNullableList(this) && KotlinBuiltIns.isStringOrNullableString(arguments.singleOrNull()?.type)
 
 private fun KotlinType.isListOfParcelable(): Boolean =
-        KotlinBuiltIns.isListOrNullableList(this) && arguments.singleOrNull()?.type?.isSubclassOfParcelable(true) ?: false
+    KotlinBuiltIns.isListOrNullableList(this) && arguments.singleOrNull()?.type?.isSubclassOfParcelable(true) ?: false
 
 private fun KotlinType.isListOfIBinder(): Boolean =
-        KotlinBuiltIns.isListOrNullableList(this) && arguments.singleOrNull()?.type?.isIBinder() ?: false
+    KotlinBuiltIns.isListOrNullableList(this) && arguments.singleOrNull()?.type?.isIBinder() ?: false
 
 private fun KotlinType.isSparseBooleanArray(): Boolean = fqNameEquals("android.util.SparseBooleanArray")
 
 private fun KotlinType.isBundle(): Boolean = fqNameEquals("android.os.Bundle")
 
-private fun <T: KtDeclaration> T.addNewLineBeforeDeclaration() = parent.addBefore(KtPsiFactory(this).createNewLine(), this)
+private fun <T : KtDeclaration> T.addNewLineBeforeDeclaration() = parent.addBefore(KtPsiFactory(this).createNewLine(), this)

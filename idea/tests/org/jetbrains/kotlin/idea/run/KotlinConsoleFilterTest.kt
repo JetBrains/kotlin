@@ -26,7 +26,8 @@ class KotlinConsoleFilterTest : KotlinLightCodeInsightFixtureTestCase() {
 
     fun testLinuxPath() {
         val filter = KotlinConsoleFilter(project, GlobalSearchScope.allScope(project))
-        val line = """e: /Users/Work/app-web/src/main/kotlin/services/teamDirectory/NewOrEditTeamPageDescriptor.kt: (58, 52): The boolean literal does not conform to the expected type TeamMemberBuilder.() -> Unit"""
+        val line =
+            """e: /Users/Work/app-web/src/main/kotlin/services/teamDirectory/NewOrEditTeamPageDescriptor.kt: (58, 52): The boolean literal does not conform to the expected type TeamMemberBuilder.() -> Unit"""
         val result = filter.applyFilter(line, line.length)!!
         val resultItem = result.resultItems.single()
         assertEquals(3, resultItem.getHighlightStartOffset())

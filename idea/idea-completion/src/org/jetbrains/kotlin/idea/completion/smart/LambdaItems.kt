@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.completion.smart
@@ -39,46 +28,49 @@ object LambdaItems {
         val functionExpectedInfos = expectedInfos.filter { it.fuzzyType?.type?.isFunctionOrSuspendFunctionType == true }
         if (functionExpectedInfos.isEmpty()) return
 
-        val functionTypes = functionExpectedInfos
-                .mapNotNull { it.fuzzyType?.type }
-                .toSet()
+        val functionTypes = functionExpectedInfos.mapNotNull { it.fuzzyType?.type }.toSet()
 
         val singleType = if (functionTypes.size == 1) functionTypes.single() else null
         val singleSignatureLength = singleType?.let(::getValueParametersCountFromFunctionType)
         val offerNoParametersLambda = singleSignatureLength == 0 || singleSignatureLength == 1
         if (offerNoParametersLambda) {
             val lookupElement = LookupElementBuilder.create(LambdaSignatureTemplates.DEFAULT_LAMBDA_PRESENTATION)
-                    .withInsertHandler(ArtificialElementInsertHandler("{ ", " }", false))
-                    .suppressAutoInsertion()
-                    .assignSmartCompletionPriority(SmartCompletionItemPriority.LAMBDA_NO_PARAMS)
-                    .addTailAndNameSimilarity(functionExpectedInfos)
+                .withInsertHandler(ArtificialElementInsertHandler("{ ", " }", false))
+                .suppressAutoInsertion()
+                .assignSmartCompletionPriority(SmartCompletionItemPriority.LAMBDA_NO_PARAMS)
+                .addTailAndNameSimilarity(functionExpectedInfos)
             collection.add(lookupElement)
         }
 
         if (singleSignatureLength != 0) {
             for (functionType in functionTypes) {
                 if (LambdaSignatureTemplates.explicitParameterTypesRequired(functionTypes, functionType)) {
-                    collection.add(createLookupElement(
+                    collection.add(
+                        createLookupElement(
                             functionType,
                             functionExpectedInfos,
                             LambdaSignatureTemplates.SignaturePresentation.NAMES_OR_TYPES,
                             explicitParameterTypes = true
-                    ))
+                        )
+                    )
 
-                }
-                else {
-                    collection.add(createLookupElement(
+                } else {
+                    collection.add(
+                        createLookupElement(
                             functionType,
                             functionExpectedInfos,
                             LambdaSignatureTemplates.SignaturePresentation.NAMES_AND_TYPES,
                             explicitParameterTypes = true
-                    ))
-                    collection.add(createLookupElement(
+                        )
+                    )
+                    collection.add(
+                        createLookupElement(
                             functionType,
                             functionExpectedInfos,
                             LambdaSignatureTemplates.SignaturePresentation.NAMES,
                             explicitParameterTypes = false
-                    ))
+                        )
+                    )
                 }
             }
         }

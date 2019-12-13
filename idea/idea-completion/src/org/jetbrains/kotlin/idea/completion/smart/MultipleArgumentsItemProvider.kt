@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.completion.smart
@@ -45,14 +34,16 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import java.util.*
 
 class MultipleArgumentsItemProvider(
-        private val bindingContext: BindingContext,
-        private val smartCastCalculator: SmartCastCalculator,
-        private val resolutionFacade: ResolutionFacade
+    private val bindingContext: BindingContext,
+    private val smartCastCalculator: SmartCastCalculator,
+    private val resolutionFacade: ResolutionFacade
 ) {
 
-    fun addToCollection(collection: MutableCollection<LookupElement>,
-                               expectedInfos: Collection<ExpectedInfo>,
-                               context: KtExpression) {
+    fun addToCollection(
+        collection: MutableCollection<LookupElement>,
+        expectedInfos: Collection<ExpectedInfo>,
+        context: KtExpression
+    ) {
         val resolutionScope = context.getResolutionScope(bindingContext, resolutionFacade)
 
         val added = HashSet<String>()
@@ -69,7 +60,8 @@ class MultipleArgumentsItemProvider(
                     for ((i, parameter) in parameters.withIndex()) {
                         variables.add(variableInScope(parameter, resolutionScope) ?: break)
 
-                        if (i > 0 && parameters.asSequence().drop(i + 1).all { it.hasDefaultValue() }) { // this is the last parameter or all others have default values
+                        // this is the last parameter or all others have default values
+                        if (i > 0 && parameters.asSequence().drop(i + 1).all { it.hasDefaultValue() }) {
                             val lookupElement = createParametersLookupElement(variables, tail)
                             if (added.add(lookupElement.lookupString)) { // check that we don't already have item with the same text
                                 collection.add(lookupElement)
@@ -88,27 +80,26 @@ class MultipleArgumentsItemProvider(
         compoundIcon.setIcon(lastIcon, 0, 2 * firstIcon.iconWidth / 5, 0)
         compoundIcon.setIcon(firstIcon, 1, 0, 0)
 
-        return LookupElementBuilder
-                .create(variables.joinToString(", ") { it.name.render() }) //TODO: use code formatting settings
-                .withInsertHandler { context, _ ->
-                    if (context.completionChar == Lookup.REPLACE_SELECT_CHAR) {
-                        val offset = context.offsetMap.tryGetOffset(SmartCompletion.MULTIPLE_ARGUMENTS_REPLACEMENT_OFFSET)
-                        if (offset != null) {
-                            context.document.deleteString(context.tailOffset, offset)
-                        }
+        return LookupElementBuilder.create(variables.joinToString(", ") { it.name.render() }) //TODO: use code formatting settings
+            .withInsertHandler { context, _ ->
+                if (context.completionChar == Lookup.REPLACE_SELECT_CHAR) {
+                    val offset = context.offsetMap.tryGetOffset(SmartCompletion.MULTIPLE_ARGUMENTS_REPLACEMENT_OFFSET)
+                    if (offset != null) {
+                        context.document.deleteString(context.tailOffset, offset)
                     }
-
                 }
-                .withIcon(compoundIcon)
-                .addTail(tail)
-                .assignSmartCompletionPriority(SmartCompletionItemPriority.MULTIPLE_ARGUMENTS_ITEM)
+
+            }
+            .withIcon(compoundIcon)
+            .addTail(tail)
+            .assignSmartCompletionPriority(SmartCompletionItemPriority.MULTIPLE_ARGUMENTS_ITEM)
     }
 
     private fun variableInScope(parameter: ValueParameterDescriptor, scope: LexicalScope): VariableDescriptor? {
         val name = parameter.name
         //TODO: there can be more than one property with such name in scope and we should be able to select one (but we need API for this)
         val variable = scope.findVariable(name, NoLookupLocation.FROM_IDE) { !it.isExtension }
-                ?: scope.getVariableFromImplicitReceivers(name) ?: return null
+            ?: scope.getVariableFromImplicitReceivers(name) ?: return null
         return if (smartCastCalculator.types(variable).any { KotlinTypeChecker.DEFAULT.isSubtypeOf(it, parameter.type) })
             variable
         else

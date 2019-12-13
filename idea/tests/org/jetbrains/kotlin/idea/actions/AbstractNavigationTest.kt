@@ -38,16 +38,15 @@ abstract class AbstractNavigationTest : KotlinLightCodeInsightFixtureTestCase() 
             val mainFileName = mainFile.name
             val mainFileBaseName = mainFileName.substring(0, mainFileName.indexOf('.'))
             configureExtra(mainFileBaseName, fileText)
-            mainFile.parentFile
-                    .listFiles { _, name ->
-                        name != mainFileName && name.startsWith("$mainFileBaseName.") && (name.endsWith(".kt") || name.endsWith(".java") || name.endsWith(".xml"))
-                    }
-                    .forEach{ myFixture.configureByFile(it.name) }
+            mainFile.parentFile.listFiles { _, name ->
+                name != mainFileName && name.startsWith("$mainFileBaseName.") && (name.endsWith(".kt") || name.endsWith(".java") || name.endsWith(
+                    ".xml"
+                ))
+            }.forEach { myFixture.configureByFile(it.name) }
             val file = myFixture.configureByFile(mainFileName)
 
             NavigationTestUtils.assertGotoDataMatching(editor, getSourceAndTargetElements(editor, file))
-        }
-        finally {
+        } finally {
             ConfigLibraryUtil.unconfigureLibrariesByDirective(module, fileText)
         }
     }

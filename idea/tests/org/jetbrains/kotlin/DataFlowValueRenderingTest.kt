@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
-abstract class AbstractDataFlowValueRenderingTest: KotlinLightCodeInsightFixtureTestCase() {
+abstract class AbstractDataFlowValueRenderingTest : KotlinLightCodeInsightFixtureTestCase() {
 
     private fun IdentifierInfo.render(): String? = when (this) {
         is IdentifierInfo.Expression -> expression.text
@@ -34,13 +34,11 @@ abstract class AbstractDataFlowValueRenderingTest: KotlinLightCodeInsightFixture
     }
 
     private fun DataFlowValue.render() =
-            // If it is not a stable identifier, there's no point in rendering it
-            if (!isStable) null
-            else identifierInfo.render()
+        // If it is not a stable identifier, there's no point in rendering it
+        if (!isStable) null
+        else identifierInfo.render()
 
-    override fun getTestDataPath() : String {
-        return PluginTestCaseBase.getTestDataPathBase() + "/dataFlowValueRendering/"
-    }
+    override fun getTestDataPath(): String = PluginTestCaseBase.getTestDataPathBase() + "/dataFlowValueRendering/"
 
     override fun getProjectDescriptor(): LightProjectDescriptor {
         return LightCodeInsightFixtureTestCase.JAVA_LATEST

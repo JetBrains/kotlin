@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.refactoring.inline
@@ -25,17 +14,18 @@ import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 
 abstract class AbstractKotlinInlineDialog(
-        protected val callable: KtCallableDeclaration,
-        protected val reference: KtSimpleNameReference?,
-        project: Project = callable.project
-) : InlineOptionsDialog(project, true, callable)  {
+    protected val callable: KtCallableDeclaration,
+    protected val reference: KtSimpleNameReference?,
+    project: Project = callable.project
+) : InlineOptionsDialog(project, true, callable) {
 
     // NB: can be -1 in case of too expensive search!
     protected val occurrencesNumber = initOccurrencesNumber(callable)
 
-    private val occurrencesString get() = if (occurrencesNumber >= 0) {
-        "" + occurrencesNumber + " " + StringUtil.pluralize("occurrence", occurrencesNumber)
-    } else null
+    private val occurrencesString
+        get() = if (occurrencesNumber >= 0) {
+            "" + occurrencesNumber + " " + StringUtil.pluralize("occurrence", occurrencesNumber)
+        } else null
 
     private val kind: String = ElementDescriptionUtil.getElementDescription(callable, UsageViewTypeLocation.INSTANCE)
 
@@ -64,20 +54,17 @@ abstract class AbstractKotlinInlineDialog(
         return "${kind.capitalize()} ${callable.nameAsSafeName} $occurrencesString"
     }
 
-    private fun getInlineText(verb: String) =
-            "Inline all references and $verb the $kind " + (occurrencesString?.let { "($it)" } ?: "")
+    private fun getInlineText(verb: String) = "Inline all references and $verb the $kind " + (occurrencesString?.let { "($it)" } ?: "")
 
-    override fun getInlineAllText() =
-            getInlineText("remove")
+    override fun getInlineAllText() = getInlineText("remove")
 
     override fun getKeepTheDeclarationText(): String? =
-            // With non-writable callable refactoring does not work anyway (for both property or function)
-            if (callable.isWritable && (occurrencesNumber > 1 || !myInvokedOnReference)) {
-                getInlineText("keep")
-            }
-            else {
-                null
-            }
+        // With non-writable callable refactoring does not work anyway (for both property or function)
+        if (callable.isWritable && (occurrencesNumber > 1 || !myInvokedOnReference)) {
+            getInlineText("keep")
+        } else {
+            null
+        }
 
     override fun getInlineThisText() = "Inline this reference and keep the $kind"
 }

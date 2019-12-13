@@ -64,7 +64,8 @@ class LightNavigateToStdlibSourceTest : KotlinLightCodeInsightFixtureTestCase() 
     fun testRefToPrintlnWithJVM() {
         doTest(
             "fun foo() { <caret>println() }",
-            "Console.kt")
+            "Console.kt"
+        )
     }
 
     @ProjectDescriptorKind(KOTLIN_JAVASCRIPT)
@@ -79,14 +80,16 @@ class LightNavigateToStdlibSourceTest : KotlinLightCodeInsightFixtureTestCase() 
     fun testRefToPrintlnWithJVMAndJS() {
         doTest(
             "fun foo() { <caret>println() }",
-            "Console.kt")
+            "Console.kt"
+        )
     }
 
     @ProjectDescriptorKind(KOTLIN_JAVASCRIPT_WITH_ADDITIONAL_JVM_WITH_STDLIB)
     fun testRefToPrintlnWithJSAndJVM() {
         doTest(
             "fun foo() { <caret>println() }",
-            "console.kt")
+            "console.kt"
+        )
     }
 
     override fun getProjectDescriptor() = getProjectDescriptorFromAnnotation()

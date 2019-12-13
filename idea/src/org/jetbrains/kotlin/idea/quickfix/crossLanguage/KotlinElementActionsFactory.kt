@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.quickfix.crossLanguage
@@ -83,10 +72,10 @@ import org.jetbrains.kotlin.types.typeUtil.supertypes
 class KotlinElementActionsFactory : JvmElementActionsFactory() {
     companion object {
         val javaPsiModifiersMapping = mapOf(
-                JvmModifier.PRIVATE to KtTokens.PRIVATE_KEYWORD,
-                JvmModifier.PUBLIC to KtTokens.PUBLIC_KEYWORD,
-                JvmModifier.PROTECTED to KtTokens.PUBLIC_KEYWORD,
-                JvmModifier.ABSTRACT to KtTokens.ABSTRACT_KEYWORD
+            JvmModifier.PRIVATE to KtTokens.PRIVATE_KEYWORD,
+            JvmModifier.PUBLIC to KtTokens.PUBLIC_KEYWORD,
+            JvmModifier.PROTECTED to KtTokens.PUBLIC_KEYWORD,
+            JvmModifier.ABSTRACT to KtTokens.ABSTRACT_KEYWORD
         )
     }
 
@@ -102,8 +91,8 @@ class KotlinElementActionsFactory : JvmElementActionsFactory() {
     }
 
     private class ModifierBuilder(
-            private val targetContainer: KtElement,
-            private val allowJvmStatic: Boolean = true
+        private val targetContainer: KtElement,
+        private val allowJvmStatic: Boolean = true
     ) {
         private val psiFactory = KtPsiFactory(targetContainer.project)
 
@@ -147,7 +136,7 @@ class KotlinElementActionsFactory : JvmElementActionsFactory() {
     }
 
     class CreatePropertyFix(
-            contextElement: KtElement,
+        contextElement: KtElement,
         propertyInfo: PropertyInfo,
         private val classOrFileName: String?
     ) : CreateCallableFromUsageFix<KtElement>(contextElement, listOf(propertyInfo)) {
@@ -177,22 +166,21 @@ class KotlinElementActionsFactory : JvmElementActionsFactory() {
 
     private inline fun <reified T : KtElement> JvmElement.toKtElement() = sourceElement?.unwrapped as? T
 
-    private fun fakeParametersExpressions(parameters: List<ExpectedParameter>, project: Project): Array<PsiExpression>? =
-            when {
-                parameters.isEmpty() -> emptyArray()
-                else -> JavaPsiFacade
-                        .getElementFactory(project)
-                        .createParameterList(
-                            parameters.map { it.semanticNames.firstOrNull() }.toTypedArray(),
-                            parameters.map {
-                                it.expectedTypes.firstOrNull()?.theType
-                                    ?.let { JvmPsiConversionHelper.getInstance(project).convertType(it) } ?: return null
-                            }.toTypedArray()
-                        )
-                        .parameters
-                        .map(::FakeExpressionFromParameter)
-                        .toTypedArray()
-            }
+    private fun fakeParametersExpressions(parameters: List<ExpectedParameter>, project: Project): Array<PsiExpression>? = when {
+        parameters.isEmpty() -> emptyArray()
+        else -> JavaPsiFacade
+            .getElementFactory(project)
+            .createParameterList(
+                parameters.map { it.semanticNames.firstOrNull() }.toTypedArray(),
+                parameters.map {
+                    it.expectedTypes.firstOrNull()?.theType
+                        ?.let { JvmPsiConversionHelper.getInstance(project).convertType(it) } ?: return null
+                }.toTypedArray()
+            )
+            .parameters
+            .map(::FakeExpressionFromParameter)
+            .toTypedArray()
+    }
 
 
     private fun ExpectedTypes.toKotlinTypeInfo(resolutionFacade: ResolutionFacade): TypeInfo {
@@ -250,11 +238,11 @@ class KotlinElementActionsFactory : JvmElementActionsFactory() {
         }
         val needPrimary = !targetKtClass.hasExplicitPrimaryConstructor()
         val constructorInfo = ConstructorInfo(
-                parameterInfos,
-                targetKtClass,
-                isPrimary = needPrimary,
-                modifierList = modifierBuilder.modifierList,
-                withBody = true
+            parameterInfos,
+            targetKtClass,
+            isPrimary = needPrimary,
+            modifierList = modifierBuilder.modifierList,
+            withBody = true
         )
         val targetClassName = targetClass.name
         val addConstructorAction = object : CreateCallableFromUsageFix<KtElement>(targetKtClass, listOf(constructorInfo)) {
@@ -267,15 +255,14 @@ class KotlinElementActionsFactory : JvmElementActionsFactory() {
             val lightMethod = primaryConstructor.toLightMethods().firstOrNull() ?: return@run null
             val project = targetKtClass.project
             val fakeParametersExpressions = fakeParametersExpressions(parameters, project) ?: return@run null
-            QuickFixFactory.getInstance()
-                    .createChangeMethodSignatureFromUsageFix(
-                            lightMethod,
-                            fakeParametersExpressions,
-                            PsiSubstitutor.EMPTY,
-                            targetKtClass,
-                            false,
-                            2
-                    ).takeIf { it.isAvailable(project, null, targetKtClass.containingFile) }
+            QuickFixFactory.getInstance().createChangeMethodSignatureFromUsageFix(
+                lightMethod,
+                fakeParametersExpressions,
+                PsiSubstitutor.EMPTY,
+                targetKtClass,
+                false,
+                2
+            ).takeIf { it.isAvailable(project, null, targetKtClass.containingFile) }
         }
 
         return listOfNotNull(changePrimaryConstructorAction, addConstructorAction)
@@ -298,17 +285,16 @@ class KotlinElementActionsFactory : JvmElementActionsFactory() {
         val ktType = (propertyType as? PsiType)?.resolveToKotlinType(resolutionFacade) ?: nullableAnyType
         val propertyInfo = PropertyInfo(
             propertyName,
-                TypeInfo.Empty,
-                TypeInfo(ktType, Variance.INVARIANT),
+            TypeInfo.Empty,
+            TypeInfo(ktType, Variance.INVARIANT),
             setterRequired,
-                listOf(targetContainer),
-                modifierList = modifierBuilder.modifierList,
-                withInitializer = true
+            listOf(targetContainer),
+            modifierList = modifierBuilder.modifierList,
+            withInitializer = true
         )
         val propertyInfos = if (setterRequired) {
             listOf(propertyInfo, propertyInfo.copyProperty(isLateinitPreferred = true))
-        }
-        else {
+        } else {
             listOf(propertyInfo)
         }
         return propertyInfos.map { CreatePropertyFix(targetContainer, it, classOrFileName) }
@@ -343,8 +329,7 @@ class KotlinElementActionsFactory : JvmElementActionsFactory() {
 
         val propertyInfos = if (writable) {
             listOf(propertyInfo(false), propertyInfo(true))
-        }
-        else {
+        } else {
             listOf(propertyInfo(false))
         }
         return propertyInfos.map { CreatePropertyFix(targetContainer, it, targetClass.name) }

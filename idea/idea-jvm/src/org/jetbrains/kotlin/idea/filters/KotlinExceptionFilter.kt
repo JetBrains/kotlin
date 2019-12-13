@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.filters
@@ -77,7 +66,8 @@ class KotlinExceptionFilter(private val searchScope: GlobalSearchScope) : Filter
             // File can't be found by class name and file name: this can happen when smap info is already applied.
             // Default filter favours looking for file from class name and that can lead to wrong navigation to inline fun call file and
             // line from inline function definition.
-            val defaultLinkFileNames = defaultResult.resultItems.mapNotNullTo(HashSet()) { (it as? FileHyperlinkInfo)?.descriptor?.file?.name }
+            val defaultLinkFileNames =
+                defaultResult.resultItems.mapNotNullTo(HashSet()) { (it as? FileHyperlinkInfo)?.descriptor?.file?.name }
             if (!defaultLinkFileNames.contains(fileName)) {
                 val filesByName = FilenameIndex.getFilesByName(project, fileName, searchScope).mapNotNullTo(HashSet()) {
                     if (!it.isValid) return@mapNotNullTo null
@@ -87,8 +77,7 @@ class KotlinExceptionFilter(private val searchScope: GlobalSearchScope) : Filter
                 if (filesByName.isNotEmpty()) {
                     return if (filesByName.size > 1) {
                         HyperlinkInfoFactoryImpl.getInstance().createMultipleFilesHyperlinkInfo(filesByName.toList(), lineNumber, project)
-                    }
-                    else {
+                    } else {
                         OpenFileHyperlinkInfo(project, filesByName.first(), lineNumber)
                     }
                 }
@@ -116,11 +105,14 @@ class KotlinExceptionFilter(private val searchScope: GlobalSearchScope) : Filter
         val inlineInfos = arrayListOf<InlineFunctionHyperLinkInfo.InlineInfo>()
 
         val (inlineFunctionBodyFile, inlineFunctionBodyLine) =
-                mapStacktraceLineToSource(smapData, line, project, SourceLineKind.EXECUTED_LINE, searchScope) ?: return null
+            mapStacktraceLineToSource(smapData, line, project, SourceLineKind.EXECUTED_LINE, searchScope) ?: return null
 
-        inlineInfos.add(InlineFunctionHyperLinkInfo.InlineInfo.InlineFunctionBodyInfo(
+        inlineInfos.add(
+            InlineFunctionHyperLinkInfo.InlineInfo.InlineFunctionBodyInfo(
                 inlineFunctionBodyFile.virtualFile,
-                inlineFunctionBodyLine))
+                inlineFunctionBodyLine
+            )
+        )
 
         val inlineFunCallInfo = mapStacktraceLineToSource(smapData, line, project, SourceLineKind.CALL_LINE, searchScope)
         if (inlineFunCallInfo != null) {

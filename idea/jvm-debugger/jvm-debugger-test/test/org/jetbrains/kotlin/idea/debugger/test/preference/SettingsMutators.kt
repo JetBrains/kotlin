@@ -13,14 +13,14 @@ import org.jetbrains.kotlin.idea.debugger.KotlinDebuggerSettings
 import org.jetbrains.kotlin.idea.debugger.ToggleKotlinVariablesState
 import org.jetbrains.kotlin.idea.debugger.emulateDexDebugInTests
 import org.jetbrains.kotlin.idea.debugger.test.preference.DebuggerPreferenceKeys.DISABLE_KOTLIN_INTERNAL_CLASSES
+import org.jetbrains.kotlin.idea.debugger.test.preference.DebuggerPreferenceKeys.EMULATE_DEX
 import org.jetbrains.kotlin.idea.debugger.test.preference.DebuggerPreferenceKeys.IS_FILTER_FOR_STDLIB_ALREADY_ADDED
 import org.jetbrains.kotlin.idea.debugger.test.preference.DebuggerPreferenceKeys.RENDER_DELEGATED_PROPERTIES
-import org.jetbrains.kotlin.idea.debugger.test.preference.DebuggerPreferenceKeys.SKIP_CONSTRUCTORS
 import org.jetbrains.kotlin.idea.debugger.test.preference.DebuggerPreferenceKeys.SKIP_CLASSLOADERS
+import org.jetbrains.kotlin.idea.debugger.test.preference.DebuggerPreferenceKeys.SKIP_CONSTRUCTORS
 import org.jetbrains.kotlin.idea.debugger.test.preference.DebuggerPreferenceKeys.SKIP_GETTERS
 import org.jetbrains.kotlin.idea.debugger.test.preference.DebuggerPreferenceKeys.SKIP_SYNTHETIC_METHODS
 import org.jetbrains.kotlin.idea.debugger.test.preference.DebuggerPreferenceKeys.TRACING_FILTERS_ENABLED
-import org.jetbrains.kotlin.idea.debugger.test.preference.DebuggerPreferenceKeys.EMULATE_DEX
 import kotlin.reflect.KMutableProperty1
 
 internal val SettingsMutators: List<SettingsMutator<*>> = listOf(
@@ -38,7 +38,7 @@ internal val SettingsMutators: List<SettingsMutator<*>> = listOf(
     ForceRankingSettingsMutator
 )
 
-private class DexSettingsMutator(key: DebuggerPreferenceKey<Boolean>): SettingsMutator<Boolean>(key) {
+private class DexSettingsMutator(key: DebuggerPreferenceKey<Boolean>) : SettingsMutator<Boolean>(key) {
     override fun setValue(value: Boolean, project: Project): Boolean {
         val oldValue = emulateDexDebugInTests
         emulateDexDebugInTests = value

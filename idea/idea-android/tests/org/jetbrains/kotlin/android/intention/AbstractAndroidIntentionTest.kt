@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.android.intention
@@ -31,15 +20,17 @@ abstract class AbstractAndroidIntentionTest : KotlinAndroidTestCase() {
         val testFile = File(path)
         val testFileText = FileUtil.loadFile(testFile)
         val intentionClassName = InTextDirectivesUtils.findStringWithPrefixes(testFileText, "// INTENTION_CLASS: ")
-                                 ?: error("Intention class not found!")
+            ?: error("Intention class not found!")
 
         val notAvailable = InTextDirectivesUtils.isDirectiveDefined(testFileText, "// NOT_AVAILABLE")
         val withRuntime = InTextDirectivesUtils.isDirectiveDefined(testFileText, "// WITH_RUNTIME")
         val checkManifest = InTextDirectivesUtils.isDirectiveDefined(testFileText, "// CHECK_MANIFEST")
 
         try {
-            ConfigLibraryUtil.addLibrary(myModule, "androidExtensionsRuntime",
-                                         "dist/kotlinc/lib", arrayOf("android-extensions-runtime.jar"))
+            ConfigLibraryUtil.addLibrary(
+                myModule, "androidExtensionsRuntime",
+                "dist/kotlinc/lib", arrayOf("android-extensions-runtime.jar")
+            )
             if (withRuntime) {
                 ConfigLibraryUtil.configureKotlinRuntime(myFixture.module)
             }
@@ -70,12 +61,10 @@ abstract class AbstractAndroidIntentionTest : KotlinAndroidTestCase() {
 
             if (checkManifest) {
                 myFixture.checkResultByFile("AndroidManifest.xml", "$customManifestPath.expected", true)
-            }
-            else {
+            } else {
                 myFixture.checkResultByFile("$path.expected")
             }
-        }
-        finally {
+        } finally {
             ConfigLibraryUtil.removeLibrary(myModule, "androidExtensionsRuntime")
             if (withRuntime) {
                 ConfigLibraryUtil.unConfigureKotlinRuntime(myFixture.module)

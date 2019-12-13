@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -20,7 +20,10 @@ import org.jetbrains.kotlin.idea.formatter.FormattingChange.ShiftIndentInsideRan
 import org.jetbrains.kotlin.psi.NotNullablePsiCopyableUserDataProperty
 import org.jetbrains.kotlin.psi.UserDataProperty
 
-private var PsiFile.collectFormattingChanges: Boolean by NotNullablePsiCopyableUserDataProperty(Key.create("COLLECT_FORMATTING_CHANGES"), false)
+private var PsiFile.collectFormattingChanges: Boolean by NotNullablePsiCopyableUserDataProperty(
+    Key.create("COLLECT_FORMATTING_CHANGES"),
+    false
+)
 private var PsiFile.collectChangesFormattingModel: CollectChangesWithoutApplyModel? by UserDataProperty(Key.create("COLLECT_CHANGES_FORMATTING_MODEL"))
 
 fun createCollectFormattingChangesModel(file: PsiFile, block: Block): FormattingModel? {
@@ -43,8 +46,7 @@ fun collectFormattingChanges(file: PsiFile): Set<FormattingChange> {
         file.collectFormattingChanges = true
         CodeStyleManager.getInstance(file.project).reformat(file, true)
         return file.collectChangesFormattingModel?.requestedChanges ?: emptySet()
-    }
-    finally {
+    } finally {
         file.collectFormattingChanges = false
         file.collectChangesFormattingModel = null
     }

@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.refactoring.cutPaste
@@ -32,11 +21,17 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.idea.core.util.range
 
-class MoveDeclarationsPassFactory(highlightingPassRegistrar: TextEditorHighlightingPassRegistrar)
-    : ProjectComponent, TextEditorHighlightingPassFactory {
-    
+class MoveDeclarationsPassFactory(highlightingPassRegistrar: TextEditorHighlightingPassRegistrar) : ProjectComponent,
+    TextEditorHighlightingPassFactory {
+
     init {
-        highlightingPassRegistrar.registerTextEditorHighlightingPass(this, TextEditorHighlightingPassRegistrar.Anchor.BEFORE, Pass.POPUP_HINTS, true, true)
+        highlightingPassRegistrar.registerTextEditorHighlightingPass(
+            this,
+            TextEditorHighlightingPassRegistrar.Anchor.BEFORE,
+            Pass.POPUP_HINTS,
+            true,
+            true
+        )
     }
 
     override fun createHighlightingPass(file: PsiFile, editor: Editor): TextEditorHighlightingPass? {
@@ -44,9 +39,9 @@ class MoveDeclarationsPassFactory(highlightingPassRegistrar: TextEditorHighlight
     }
 
     private class MyPass(
-            private val project: Project,
-            private val file: PsiFile,
-            private val editor: Editor
+        private val project: Project,
+        private val file: PsiFile,
+        private val editor: Editor
     ) : TextEditorHighlightingPass(project, editor.document, true) {
 
         override fun doCollectInformation(progress: ProgressIndicator) {}
@@ -69,8 +64,8 @@ class MoveDeclarationsPassFactory(highlightingPassRegistrar: TextEditorHighlight
             }
 
             val info = HighlightInfo.newHighlightInfo(HighlightInfoType.INFORMATION)
-                    .range(cookie.bounds.range!!)
-                    .createUnconditionally()
+                .range(cookie.bounds.range!!)
+                .createUnconditionally()
             QuickFixAction.registerQuickFixAction(info, MoveDeclarationsIntentionAction(processor, cookie.bounds, cookie.modificationCount))
 
             return info

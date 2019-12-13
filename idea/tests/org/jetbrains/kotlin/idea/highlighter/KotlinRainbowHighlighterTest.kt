@@ -15,20 +15,24 @@ class KotlinRainbowHighlighterTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
     fun testRainbowSimple() {
-        checkRainbow("""
+        checkRainbow(
+            """
              fun main(<rainbow color='ff000003'>args</rainbow>: Array<String>) {
                   val <rainbow color='ff000004'>local1</rainbow> = ""
                   println(<rainbow color='ff000004'>local1</rainbow> + <rainbow color='ff000003'>args</rainbow>)
              }
-        """)
+        """
+        )
     }
 
     fun testRainbowNestedIt() {
-        checkRainbow("""
+        checkRainbow(
+            """
              fun main(<rainbow color='ff000003'>args</rainbow>: Array<String>) {
                   listOf("abc", "def").filter { <rainbow color='ff000002'>it</rainbow>.any { <rainbow color='ff000003'>it</rainbow> == 'a' } }
              }
-        """)
+        """
+        )
     }
 
     fun testRainbowNestedVal() {
@@ -49,16 +53,19 @@ class KotlinRainbowHighlighterTest : KotlinLightCodeInsightFixtureTestCase() {
     }
 
     fun testAssignmentIt() {
-        checkRainbow("""
+        checkRainbow(
+            """
             val f : (Int) -> Unit = {
                 val <rainbow color='ff000004'>t</rainbow> = <rainbow color='ff000002'>it</rainbow>
                 <rainbow color='ff000002'>it</rainbow>
             }
-        """)
+        """
+        )
     }
 
     fun testRainbowNestedAnonymousFunction() {
-        checkRainbow("""
+        checkRainbow(
+            """
             fun main() {
                 listOf("abc", "def").filter(fun(<rainbow color='ff000002'>it</rainbow>): Boolean {
                     return <rainbow color='ff000002'>it</rainbow>.any(fun(<rainbow color='ff000003'>it</rainbow>): Boolean {
@@ -66,43 +73,51 @@ class KotlinRainbowHighlighterTest : KotlinLightCodeInsightFixtureTestCase() {
                     })
                 })
             }
-        """)
+        """
+        )
     }
 
     fun testKDoc() {
-        checkRainbow("""
+        checkRainbow(
+            """
              /**
               * @param <rainbow color='ff000003'>args</rainbow> foo
               */
              fun main(<rainbow color='ff000003'>args</rainbow>: Array<String>) {
              }
-        """)
+        """
+        )
     }
 
     fun testQualified() {
-        checkRainbow("""
+        checkRainbow(
+            """
              data class Foo(val bar: String)
 
              fun main(<rainbow color='ff000004'>foo</rainbow>: Foo) {
                   println(<rainbow color='ff000004'>foo</rainbow>.bar)
                   System.out.println(<rainbow color='ff000004'>foo</rainbow>)
              }
-        """)
+        """
+        )
     }
 
     fun testDestructuring() {
-        checkRainbow("""
+        checkRainbow(
+            """
             fun foo() {
                 val (<rainbow color='ff000003'>a</rainbow>, <rainbow color='ff000004'>b</rainbow>) = 1 to 2
 
                 println(<rainbow color='ff000003'>a</rainbow>)
                 println(<rainbow color='ff000004'>b</rainbow>)
             }
-        """)
+        """
+        )
     }
 
     fun testInitBlock() {
-        checkRainbow("""
+        checkRainbow(
+            """
             class Some {
                 init {
                     val <rainbow color='ff000004'>x</rainbow> = 128
@@ -116,7 +131,8 @@ class KotlinRainbowHighlighterTest : KotlinLightCodeInsightFixtureTestCase() {
                         println(<rainbow color='ff000003'>b</rainbow> + <rainbow color='ff000004'>x</rainbow>)
                     }
                 }
-            }""")
+            }"""
+        )
     }
 
     private fun checkRainbow(code: String) {

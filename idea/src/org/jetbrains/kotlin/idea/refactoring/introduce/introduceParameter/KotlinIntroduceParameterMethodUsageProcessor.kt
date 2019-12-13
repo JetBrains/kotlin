@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.refactoring.introduce.introduceParameter
@@ -30,12 +19,12 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaMethodDescriptor
 import org.jetbrains.kotlin.idea.j2k.j2k
-import org.jetbrains.kotlin.idea.refactoring.dropOverrideKeywordIfNecessary
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinCallableDefinitionUsage
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinConstructorDelegationCallUsage
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinFunctionCallUsage
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinUsageInfo
+import org.jetbrains.kotlin.idea.refactoring.dropOverrideKeywordIfNecessary
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
 import org.jetbrains.kotlin.idea.search.declarationsSearch.searchOverriders
 import org.jetbrains.kotlin.psi.*
@@ -65,10 +54,14 @@ class KotlinIntroduceParameterMethodUsageProcessor : IntroduceParameterMethodUsa
 
         // Temporarily assume that the new parameter is of Any type. Actual type is substituted during the signature update phase
         val defaultValueForCall = (data.parameterInitializer.expression as? PsiExpression)?.j2k()
-        changeInfo.addParameter(KotlinParameterInfo(callableDescriptor = psiMethodDescriptor,
-                                                    name = data.parameterName,
-                                                    originalTypeInfo = KotlinTypeInfo(false, psiMethodDescriptor.builtIns.anyType),
-                                                    defaultValueForCall = defaultValueForCall))
+        changeInfo.addParameter(
+            KotlinParameterInfo(
+                callableDescriptor = psiMethodDescriptor,
+                name = data.parameterName,
+                originalTypeInfo = KotlinTypeInfo(false, psiMethodDescriptor.builtIns.anyType),
+                defaultValueForCall = defaultValueForCall
+            )
+        )
         return changeInfo
     }
 
@@ -83,12 +76,13 @@ class KotlinIntroduceParameterMethodUsageProcessor : IntroduceParameterMethodUsa
         val scope = element.useScope.let {
             if (it is GlobalSearchScope) GlobalSearchScope.getScopeRestrictedByFileTypes(it, KotlinFileType.INSTANCE) else it
         }
-        val kotlinFunctions = HierarchySearchRequest(element, scope)
-                .searchOverriders()
-                .map { it.unwrapped }
-                .filterIsInstance<KtFunction>()
+        val kotlinFunctions = HierarchySearchRequest(element, scope).searchOverriders().map { it.unwrapped }.filterIsInstance<KtFunction>()
         return (kotlinFunctions + element).all {
-            KotlinCallableDefinitionUsage(it, changeInfo.originalBaseFunctionDescriptor, null, null, false).processUsage(changeInfo, it, usages)
+            KotlinCallableDefinitionUsage(it, changeInfo.originalBaseFunctionDescriptor, null, null, false).processUsage(
+                changeInfo,
+                it,
+                usages
+            )
         }.apply {
             dropOverrideKeywordIfNecessary(element)
         }
@@ -102,8 +96,7 @@ class KotlinIntroduceParameterMethodUsageProcessor : IntroduceParameterMethodUsa
         val delegateUsage = if (callElement is KtConstructorDelegationCall) {
             @Suppress("UNCHECKED_CAST")
             (KotlinConstructorDelegationCallUsage(callElement, changeInfo) as KotlinUsageInfo<KtCallElement>)
-        }
-        else {
+        } else {
             KotlinFunctionCallUsage(callElement, changeInfo.methodDescriptor.originalPrimaryCallable)
         }
         return delegateUsage.processUsage(changeInfo, callElement, usages)

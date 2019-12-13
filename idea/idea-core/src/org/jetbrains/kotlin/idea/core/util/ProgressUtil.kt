@@ -12,7 +12,7 @@ import com.intellij.openapi.progress.util.ProgressIndicatorUtils
 import com.intellij.openapi.project.Project
 
 fun <T : Any> runInReadActionWithWriteActionPriorityWithPCE(f: () -> T): T =
-        runInReadActionWithWriteActionPriority(f) ?: throw ProcessCanceledException()
+    runInReadActionWithWriteActionPriority(f) ?: throw ProcessCanceledException()
 
 fun <T : Any> runInReadActionWithWriteActionPriority(f: () -> T): T? {
     if (with(ApplicationManager.getApplication()) { isDispatchThread && isUnitTestMode }) {

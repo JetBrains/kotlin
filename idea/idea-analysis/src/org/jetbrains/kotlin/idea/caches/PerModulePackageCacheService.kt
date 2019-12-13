@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -47,7 +47,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
 
-class KotlinPackageContentModificationListener(private val project: Project): Disposable {
+class KotlinPackageContentModificationListener(private val project: Project) : Disposable {
     val connection = project.messageBus.connect()
 
     init {
@@ -63,8 +63,7 @@ class KotlinPackageContentModificationListener(private val project: Project): Di
                 if (events.size >= FULL_DROP_THRESHOLD) {
                     service.onTooComplexChange()
                 } else {
-                    events
-                        .asSequence()
+                    events.asSequence()
                         .filter(::isRelevant)
                         .filter { (it.isValid || it !is VFileCreateEvent) && it.file != null }
                         .filter {
@@ -303,7 +302,9 @@ class PerModulePackageCacheService(private val project: Project) : Disposable {
 
             pendingKtFileChanges.processPending { file ->
                 if (file.virtualFile != null && file.virtualFile !in projectScope) {
-                    LOG.debugIfEnabled(project) { "Skip $file without vFile, or not in scope: ${file.virtualFile?.let { it !in projectScope }}" }
+                    LOG.debugIfEnabled(project) {
+                        "Skip $file without vFile, or not in scope: ${file.virtualFile?.let { it !in projectScope }}"
+                    }
                     return@processPending
                 }
                 val nullableModuleInfo = file.getNullableModuleInfo()

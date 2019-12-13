@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.maven
@@ -62,7 +51,7 @@ abstract class AbstractKotlinMavenInspectionTest : MavenImportingTestCase() {
         }
 
         val inspectionClassName = "<!--\\s*inspection:\\s*([\\S]+)\\s-->".toRegex().find(pomText)?.groups?.get(1)?.value
-                ?: KotlinMavenPluginPhaseInspection::class.qualifiedName!!
+            ?: KotlinMavenPluginPhaseInspection::class.qualifiedName!!
         val inspectionClass = Class.forName(inspectionClassName)
 
         val matcher = "<!--\\s*problem:\\s*on\\s*([^,]+),\\s*title\\s*(.+)\\s*-->".toRegex()
@@ -82,9 +71,7 @@ abstract class AbstractKotlinMavenInspectionTest : MavenImportingTestCase() {
             .map { SimplifiedProblemDescription(it.descriptionTemplate, it.psiElement.text.replace("\\s+".toRegex(), "")) to it }
             .sortedBy { it.first.text }
 
-        val actualProblemsText = actual
-            .map { it.first }
-            .joinToString("\n") { "<!-- problem: on ${it.elementText}, title ${it.text} -->"}
+        val actualProblemsText = actual.map { it.first }.joinToString("\n") { "<!-- problem: on ${it.elementText}, title ${it.text} -->" }
 
         assertEquals(expectedProblemsText, actualProblemsText)
 
@@ -180,8 +167,8 @@ abstract class AbstractKotlinMavenInspectionTest : MavenImportingTestCase() {
     private fun mkJavaFile() {
         val contentEntry = getContentRoots(myProject.allModules().single().name).single()
         val sourceFolder =
-            contentEntry.getSourceFolders(JavaSourceRootType.SOURCE).singleOrNull() ?:
-            contentEntry.getSourceFolders(SourceKotlinRootType).singleOrNull()
+            contentEntry.getSourceFolders(JavaSourceRootType.SOURCE).singleOrNull() ?: contentEntry.getSourceFolders(SourceKotlinRootType)
+                .singleOrNull()
         ApplicationManager.getApplication().runWriteAction {
             val javaFile = sourceFolder?.file?.toPsiDirectory(myProject)?.createFile("Test.java") ?: throw IllegalStateException()
             javaFile.viewProvider.document!!.setText("class Test {}\n")

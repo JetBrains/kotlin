@@ -59,24 +59,36 @@ abstract class BaseKotlinVariableMacro<TState> : KotlinMacro() {
         val bindingContext = resolutionFacade.analyze(contextElement, BodyResolveMode.PARTIAL_FOR_COMPLETION)
 
         fun isVisible(descriptor: DeclarationDescriptor): Boolean {
-            return descriptor !is DeclarationDescriptorWithVisibility || descriptor.isVisible(contextElement, null, bindingContext, resolutionFacade)
+            return descriptor !is DeclarationDescriptorWithVisibility || descriptor.isVisible(
+                contextElement,
+                null,
+                bindingContext,
+                resolutionFacade
+            )
         }
 
         val state = initState(contextElement, bindingContext)
 
-        val helper = ReferenceVariantsHelper(bindingContext, resolutionFacade, resolutionFacade.moduleDescriptor, ::isVisible, NotPropertiesService.getNotProperties(contextElement))
+        val helper = ReferenceVariantsHelper(
+            bindingContext,
+            resolutionFacade,
+            resolutionFacade.moduleDescriptor,
+            ::isVisible,
+            NotPropertiesService.getNotProperties(contextElement)
+        )
         return helper
-                .getReferenceVariants(contextElement, CallTypeAndReceiver.DEFAULT, DescriptorKindFilter.VARIABLES, { true })
-                .map { it as VariableDescriptor }
-                .filter { isSuitable(it, project, state) }
+            .getReferenceVariants(contextElement, CallTypeAndReceiver.DEFAULT, DescriptorKindFilter.VARIABLES, { true })
+            .map { it as VariableDescriptor }
+            .filter { isSuitable(it, project, state) }
     }
 
     protected abstract fun initState(contextElement: KtElement, bindingContext: BindingContext): TState
 
     protected abstract fun isSuitable(
-            variableDescriptor: VariableDescriptor,
-            project: Project,
-            state: TState): Boolean
+        variableDescriptor: VariableDescriptor,
+        project: Project,
+        state: TState
+    ): Boolean
 
     override fun calculateResult(params: Array<Expression>, context: ExpressionContext): Result? {
         val vars = getVariables(params, context)

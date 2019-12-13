@@ -38,7 +38,8 @@ class InlayTypeHintsTest : KotlinLightCodeInsightFixtureTestCase() {
     }
 
     fun testQualifiedReferences() {
-        checkLocalVariable("""
+        checkLocalVariable(
+            """
             package p
             class A {
                 class B {
@@ -57,7 +58,8 @@ class InlayTypeHintsTest : KotlinLightCodeInsightFixtureTestCase() {
                 val v5 = A.F.enumCase
                 val v6 = p.A()
             }
-        """)
+        """
+        )
     }
 
     fun testPropertyType() {

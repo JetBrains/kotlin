@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.intentions.loopToCallChain
@@ -33,41 +22,40 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 class LoopToCallChainInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession) =
-            object : KtVisitorVoid() {
-                val nonLazyIntention = LoopToCallChainIntention()
-                val lazyIntention = LoopToLazyCallChainIntention()
+        object : KtVisitorVoid() {
+            val nonLazyIntention = LoopToCallChainIntention()
+            val lazyIntention = LoopToLazyCallChainIntention()
 
-                override fun visitForExpression(expression: KtForExpression) {
-                    super.visitForExpression(expression)
+            override fun visitForExpression(expression: KtForExpression) {
+                super.visitForExpression(expression)
 
-                    val nonLazyApplicable = nonLazyIntention.applicabilityRange(expression) != null
-                    val lazyApplicable = lazyIntention.applicabilityRange(expression) != null
+                val nonLazyApplicable = nonLazyIntention.applicabilityRange(expression) != null
+                val lazyApplicable = lazyIntention.applicabilityRange(expression) != null
 
-                    if (!nonLazyApplicable && !lazyApplicable) return
+                if (!nonLazyApplicable && !lazyApplicable) return
 
-                    val fixes = mutableListOf<Fix>()
-                    if (nonLazyApplicable) {
-                        fixes += Fix(lazy = false, text = nonLazyIntention.text)
-                    }
-                    if (lazyApplicable) {
-                        fixes += Fix(lazy = true, text = lazyIntention.text)
-                    }
-
-                    holder.registerProblem(
-                            expression.forKeyword,
-                            "Loop can be replaced with stdlib operations",
-                            ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                            *fixes.toTypedArray()
-                    )
+                val fixes = mutableListOf<Fix>()
+                if (nonLazyApplicable) {
+                    fixes += Fix(lazy = false, text = nonLazyIntention.text)
                 }
+                if (lazyApplicable) {
+                    fixes += Fix(lazy = true, text = lazyIntention.text)
+                }
+
+                holder.registerProblem(
+                    expression.forKeyword,
+                    "Loop can be replaced with stdlib operations",
+                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                    *fixes.toTypedArray()
+                )
             }
+        }
 
     class Fix(val lazy: Boolean, val text: String = "") : LocalQuickFix {
         override fun getFamilyName(): String {
             return if (lazy) {
                 "Replace with stdlib operations with use of 'asSequence()'"
-            }
-            else {
+            } else {
                 "Replace with stdlib operations"
             }
         }
@@ -81,9 +69,7 @@ class LoopToCallChainInspection : AbstractKotlinInspection() {
 
         fun applyFix(expression: KtForExpression, editor: Editor? = expression.findExistingEditor()) {
             val match = match(expression, lazy, true) ?: return
-            val result = convertLoop(expression, match)
-
-            val offset = when (result) {
+            val offset = when (val result = convertLoop(expression, match)) {
                 // if result is variable declaration, put the caret onto its name to allow quick inline
                 is KtProperty -> result.nameIdentifier?.startOffset ?: result.startOffset
                 else -> result.startOffset
@@ -95,21 +81,21 @@ class LoopToCallChainInspection : AbstractKotlinInspection() {
 }
 
 class LoopToCallChainIntention : AbstractLoopToCallChainIntention(
-        lazy = false,
-        text = "Replace with stdlib operations"
+    lazy = false,
+    text = "Replace with stdlib operations"
 )
 
 class LoopToLazyCallChainIntention : AbstractLoopToCallChainIntention(
-        lazy = true,
-        text = "Replace with stdlib operations with use of 'asSequence()'"
+    lazy = true,
+    text = "Replace with stdlib operations with use of 'asSequence()'"
 )
 
 abstract class AbstractLoopToCallChainIntention(
-        private val lazy: Boolean,
-        text: String
+    private val lazy: Boolean,
+    text: String
 ) : SelfTargetingRangeIntention<KtForExpression>(
-        KtForExpression::class.java,
-        text
+    KtForExpression::class.java,
+    text
 ) {
     override fun applicabilityRange(element: KtForExpression): TextRange? {
         val match = match(element, lazy, false)

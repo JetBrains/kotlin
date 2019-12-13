@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.core
@@ -28,9 +17,9 @@ import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.OverridingUtil
+import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.findOriginalTopMostOverriddenDescriptors
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
@@ -43,10 +32,10 @@ fun DeclarationDescriptorWithVisibility.isVisible(from: DeclarationDescriptor): 
 }
 
 fun DeclarationDescriptorWithVisibility.isVisible(
-        context: PsiElement,
-        receiverExpression: KtExpression?,
-        bindingContext: BindingContext,
-        resolutionFacade: ResolutionFacade
+    context: PsiElement,
+    receiverExpression: KtExpression?,
+    bindingContext: BindingContext,
+    resolutionFacade: ResolutionFacade
 ): Boolean {
     val resolutionScope = context.getResolutionScope(bindingContext, resolutionFacade)
     val from = resolutionScope.ownerDescriptor
@@ -54,10 +43,10 @@ fun DeclarationDescriptorWithVisibility.isVisible(
 }
 
 private fun DeclarationDescriptorWithVisibility.isVisible(
-        from: DeclarationDescriptor,
-        receiverExpression: KtExpression?,
-        bindingContext: BindingContext? = null,
-        resolutionScope: LexicalScope? = null
+    from: DeclarationDescriptor,
+    receiverExpression: KtExpression?,
+    bindingContext: BindingContext? = null,
+    resolutionScope: LexicalScope? = null
 ): Boolean {
     if (Visibilities.isVisibleWithAnyReceiver(this, from)) return true
 
@@ -68,8 +57,7 @@ private fun DeclarationDescriptorWithVisibility.isVisible(
         val receiverType = bindingContext.getType(receiverExpression) ?: return false
         val explicitReceiver = ExpressionReceiver.create(receiverExpression, receiverType, bindingContext)
         return Visibilities.isVisible(explicitReceiver, this, from)
-    }
-    else {
+    } else {
         return resolutionScope.getImplicitReceiversHierarchy().any {
             Visibilities.isVisible(it.value, this, from)
         }
@@ -116,19 +104,15 @@ fun compareDescriptors(project: Project, currentDescriptor: DeclarationDescripto
     return false
 }
 
-fun Visibility.toKeywordToken(): KtModifierKeywordToken {
-    val normalized = normalize()
-    return when (normalized) {
-        Visibilities.PUBLIC -> KtTokens.PUBLIC_KEYWORD
-        Visibilities.PROTECTED -> KtTokens.PROTECTED_KEYWORD
-        Visibilities.INTERNAL -> KtTokens.INTERNAL_KEYWORD
-        else -> {
-            if (Visibilities.isPrivate(normalized)) {
-                KtTokens.PRIVATE_KEYWORD
-            }
-            else {
-                error("Unexpected visibility '$normalized'")
-            }
+fun Visibility.toKeywordToken(): KtModifierKeywordToken = when (val normalized = normalize()) {
+    Visibilities.PUBLIC -> KtTokens.PUBLIC_KEYWORD
+    Visibilities.PROTECTED -> KtTokens.PROTECTED_KEYWORD
+    Visibilities.INTERNAL -> KtTokens.INTERNAL_KEYWORD
+    else -> {
+        if (Visibilities.isPrivate(normalized)) {
+            KtTokens.PRIVATE_KEYWORD
+        } else {
+            error("Unexpected visibility '$normalized'")
         }
     }
 }

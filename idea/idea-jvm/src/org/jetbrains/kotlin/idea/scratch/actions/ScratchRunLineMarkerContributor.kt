@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.scratch.actions
@@ -17,7 +17,10 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.idea.core.util.getLineCount
 import org.jetbrains.kotlin.idea.refactoring.getLineNumber
-import org.jetbrains.kotlin.idea.scratch.*
+import org.jetbrains.kotlin.idea.scratch.ScratchExpression
+import org.jetbrains.kotlin.idea.scratch.getScratchFile
+import org.jetbrains.kotlin.idea.scratch.isKotlinScratch
+import org.jetbrains.kotlin.idea.scratch.isKotlinWorksheet
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
@@ -47,10 +50,9 @@ class ScratchRunLineMarkerContributor : RunLineMarkerContributor() {
         if (declaration is KtScript && element is PsiWhiteSpace) {
             val expression = getLastExecutedExpression(element)
             if (expression == null) {
-                if (element.getLineNumber() == element.containingFile.getLineCount()
-                    || element.getLineNumber(false) == element.containingFile.getLineCount()) {
-                    return Info(RunScratchFromHereAction())
-                }
+                if (element.getLineNumber() == element.containingFile.getLineCount() ||
+                    element.getLineNumber(false) == element.containingFile.getLineCount()
+                ) return Info(RunScratchFromHereAction())
             }
         }
         return null

@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.intentions.loopToCallChain.result
@@ -23,10 +12,10 @@ import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.FilterTrans
 import org.jetbrains.kotlin.psi.*
 
 class CountTransformation(
-        loop: KtForExpression,
-        private val inputVariable: KtCallableDeclaration,
-        initialization: VariableInitialization,
-        private val filter: KtExpression?
+    loop: KtForExpression,
+    private val inputVariable: KtCallableDeclaration,
+    initialization: VariableInitialization,
+    private val filter: KtExpression?
 ) : AssignToVariableResultTransformation(loop, initialization) {
 
     override fun mergeWithPrevious(previousTransformation: SequenceTransformation, reformat: Boolean): ResultTransformation? {
@@ -35,8 +24,10 @@ class CountTransformation(
         val newFilter = if (filter == null)
             previousTransformation.effectiveCondition.asExpression(reformat)
         else
-            KtPsiFactory(filter).createExpressionByPattern("$0 && $1", previousTransformation.effectiveCondition.asExpression(reformat), filter,
-                                                           reformat = reformat)
+            KtPsiFactory(filter).createExpressionByPattern(
+                "$0 && $1", previousTransformation.effectiveCondition.asExpression(reformat), filter,
+                reformat = reformat
+            )
         return CountTransformation(loop, previousTransformation.inputVariable, initialization, newFilter)
     }
 
@@ -48,15 +39,13 @@ class CountTransformation(
         val call = if (filter != null) {
             val lambda = generateLambda(inputVariable, filter, reformat)
             chainedCallGenerator.generate("count $0:'{}'", lambda)
-        }
-        else {
+        } else {
             chainedCallGenerator.generate("count()")
         }
 
         return if (initialization.initializer.isZeroConstant()) {
             call
-        }
-        else {
+        } else {
             KtPsiFactory(call).createExpressionByPattern("$0 + $1", initialization.initializer, call, reformat = reformat)
         }
     }
@@ -78,9 +67,11 @@ class CountTransformation(
 
         override fun match(state: MatchingState): TransformationMatch.Result? {
             val operand = state.statements.singleOrNull()?.isPlusPlusOf() ?: return null
-            val initialization = operand.findVariableInitializationBeforeLoop(state.outerLoop, checkNoOtherUsagesInLoop = true) ?: return null
+            val initialization =
+                operand.findVariableInitializationBeforeLoop(state.outerLoop, checkNoOtherUsagesInLoop = true) ?: return null
 
-            if (initialization.variable.countUsages(state.outerLoop) != 1) return null // this should be the only usage of this variable inside the loop
+            // this should be the only usage of this variable inside the loop
+            if (initialization.variable.countUsages(state.outerLoop) != 1) return null
 
             val variableType = initialization.variable.resolveToDescriptorIfAny()?.type ?: return null
             if (!KotlinBuiltIns.isInt(variableType)) return null

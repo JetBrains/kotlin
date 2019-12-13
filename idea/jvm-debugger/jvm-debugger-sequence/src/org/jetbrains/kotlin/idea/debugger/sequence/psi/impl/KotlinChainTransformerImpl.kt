@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2017 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -66,8 +66,7 @@ class KotlinChainTransformerImpl(private val typeExtractor: CallTypeExtractor) :
     }
 
     private fun createQualifier(expression: PsiElement, typeAfter: GenericType): QualifierExpression {
-        val parent = expression.parent as? KtDotQualifiedExpression
-                ?: return QualifierExpressionImpl("", TextRange.EMPTY_RANGE, typeAfter)
+        val parent = expression.parent as? KtDotQualifiedExpression ?: return QualifierExpressionImpl("", TextRange.EMPTY_RANGE, typeAfter)
         val receiver = parent.receiverExpression
 
         return QualifierExpressionImpl(receiver.text, receiver.textRange, typeAfter)

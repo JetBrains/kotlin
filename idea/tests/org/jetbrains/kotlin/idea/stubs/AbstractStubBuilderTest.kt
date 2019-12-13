@@ -32,17 +32,15 @@ abstract class AbstractStubBuilderTest : KotlinLightCodeInsightFixtureTestCase()
 
             // Nodes are stored in form "NodeType:Node" and have too many repeating information for Kotlin stubs
             // Remove all repeating information (See KotlinStubBaseImpl.toString())
-            return treeStr
-                    .lines().map {
-                        if (it.contains(STUB_TO_STRING_PREFIX)) {
-                            it.takeWhile { it.isWhitespace() } + it.substringAfter("KotlinStub$")
-                        }
-                        else {
-                            it
-                        }
+            return treeStr.lines().map {
+                    if (it.contains(STUB_TO_STRING_PREFIX)) {
+                        it.takeWhile { it.isWhitespace() } + it.substringAfter("KotlinStub$")
+                    } else {
+                        it
                     }
-                    .joinToString(separator = "\n")
-                    .replace(", [", "[")
+                }
+                .joinToString(separator = "\n")
+                .replace(", [", "[")
         }
     }
 }

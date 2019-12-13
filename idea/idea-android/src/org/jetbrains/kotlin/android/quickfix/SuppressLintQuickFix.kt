@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.android.quickfix
@@ -43,10 +32,10 @@ class SuppressLintQuickFix(id: String) : AndroidLintQuickFix {
         when (annotationContainer) {
             is KtModifierListOwner -> {
                 annotationContainer.addAnnotation(
-                        FQNAME_SUPPRESS_LINT,
-                        argument,
-                        whiteSpaceText = if (annotationContainer.isNewLineNeededForAnnotation()) "\n" else " ",
-                        addToExistingAnnotation = { entry -> addArgumentToAnnotation(entry, argument) })
+                    FQNAME_SUPPRESS_LINT,
+                    argument,
+                    whiteSpaceText = if (annotationContainer.isNewLineNeededForAnnotation()) "\n" else " ",
+                    addToExistingAnnotation = { entry -> addArgumentToAnnotation(entry, argument) })
             }
         }
     }
@@ -54,9 +43,9 @@ class SuppressLintQuickFix(id: String) : AndroidLintQuickFix {
     override fun getName(): String = AndroidBundle.message(SUPPRESS_LINT_MESSAGE, lintId)
 
     override fun isApplicable(
-            startElement: PsiElement,
-            endElement: PsiElement,
-            contextType: AndroidQuickfixContexts.ContextType
+        startElement: PsiElement,
+        endElement: PsiElement,
+        contextType: AndroidQuickfixContexts.ContextType
     ): Boolean = true
 
     private fun addArgumentToAnnotation(entry: KtAnnotationEntry, argument: String): Boolean {
@@ -77,20 +66,21 @@ class SuppressLintQuickFix(id: String) : AndroidLintQuickFix {
     }
 
     private fun getLintId(intentionId: String) =
-            if (intentionId.startsWith(INTENTION_NAME_PREFIX)) intentionId.substring(INTENTION_NAME_PREFIX.length) else intentionId
+        if (intentionId.startsWith(INTENTION_NAME_PREFIX)) intentionId.substring(INTENTION_NAME_PREFIX.length) else intentionId
 
     private fun KtElement.isNewLineNeededForAnnotation(): Boolean {
         return !(this is KtParameter ||
-                 this is KtTypeParameter ||
-                 this is KtPropertyAccessor)
+                this is KtTypeParameter ||
+                this is KtPropertyAccessor)
     }
 
     private fun PsiElement.isSuppressLintTarget(): Boolean {
         return this is KtDeclaration &&
-               (this as? KtProperty)?.hasBackingField() ?: true &&
-               this !is KtFunctionLiteral &&
-               this !is KtDestructuringDeclaration
+                (this as? KtProperty)?.hasBackingField() ?: true &&
+                this !is KtFunctionLiteral &&
+                this !is KtDestructuringDeclaration
     }
+
     private companion object {
         val INTENTION_NAME_PREFIX = "AndroidLint"
         val SUPPRESS_LINT_MESSAGE = "android.lint.fix.suppress.lint.api.annotation"

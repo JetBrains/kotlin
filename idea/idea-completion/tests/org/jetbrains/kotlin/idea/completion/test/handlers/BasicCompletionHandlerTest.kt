@@ -14,8 +14,8 @@ import java.io.File
 
 @Deprecated("All tests from here to be moved to the generated test")
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
-class BasicCompletionHandlerTest : CompletionHandlerTestBase(){
-    private fun checkResult(){
+class BasicCompletionHandlerTest : CompletionHandlerTestBase() {
+    private fun checkResult() {
         fixture.checkResultByFile(getTestName(false) + ".kt.after")
     }
 
@@ -144,7 +144,11 @@ class BasicCompletionHandlerTest : CompletionHandlerTestBase(){
     fun testInfixCall() = doTest(1, "to", null, null, '\n')
     fun testInfixCallOnSpace() = doTest(1, "to", null, null, ' ')
 
-    fun testImportedEnumMember() { doTest(1, "AAA", null, null, '\n') }
+    fun testImportedEnumMember() {
+        doTest(1, "AAA", null, null, '\n')
+    }
 
-    fun testInnerClass() { doTest(1, "Inner", null, null, '\n') }
+    fun testInnerClass() {
+        doTest(1, "Inner", null, null, '\n')
+    }
 }

@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.intentions
@@ -23,7 +12,10 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 
-class ConvertToConcatenatedStringIntention : SelfTargetingOffsetIndependentIntention<KtStringTemplateExpression>(KtStringTemplateExpression::class.java, "Convert template to concatenated string"), LowPriorityAction {
+class ConvertToConcatenatedStringIntention : SelfTargetingOffsetIndependentIntention<KtStringTemplateExpression>(
+    KtStringTemplateExpression::class.java,
+    "Convert template to concatenated string"
+), LowPriorityAction {
     override fun isApplicableTo(element: KtStringTemplateExpression): Boolean {
         if (element.lastChild.node.elementType != KtTokens.CLOSING_QUOTE) return false // not available for unclosed literal
         return element.entries.any { it is KtStringTemplateEntryWithExpression }
@@ -35,12 +27,12 @@ class ConvertToConcatenatedStringIntention : SelfTargetingOffsetIndependentInten
         val entries = element.entries
 
         val text = entries
-                .filterNot { it is KtStringTemplateEntryWithExpression && it.expression == null }
-                .mapIndexed { index, entry ->
-                    entry.toSeparateString(quote, convertExplicitly = (index == 0), isFinalEntry = (index == entries.lastIndex))
-                }
-                .joinToString(separator = "+")
-                .replace("""$quote+$quote""", "")
+            .filterNot { it is KtStringTemplateEntryWithExpression && it.expression == null }
+            .mapIndexed { index, entry ->
+                entry.toSeparateString(quote, convertExplicitly = (index == 0), isFinalEntry = (index == entries.lastIndex))
+            }
+            .joinToString(separator = "+")
+            .replace("""$quote+$quote""", "")
 
         val replacement = KtPsiFactory(element).createExpression(text)
         element.replace(replacement)
@@ -61,7 +53,7 @@ class ConvertToConcatenatedStringIntention : SelfTargetingOffsetIndependentInten
             expression.text
 
         return if (convertExplicitly && !expression.isStringExpression())
-            text + ".toString()"
+            "$text.toString()"
         else
             text
     }

@@ -15,12 +15,11 @@ fun CodeInsightTestFixture.configureWithExtraFile(path: String, vararg extraName
 
     val noExtensionPath = FileUtil.getNameWithoutExtension(fileName)
     val extensions = arrayOf("kt", "java", "properties")
-    val extraPaths: List<String> = extraNameParts
-            .flatMap { extensions.map { ext -> "$noExtensionPath$it.$ext" } }
-            .mapNotNull { File(testDataPath, it).takeIf { it.exists() }?.name }
+    val extraPaths: List<String> = extraNameParts.flatMap { extensions.map { ext -> "$noExtensionPath$it.$ext" } }
+        .mapNotNull { File(testDataPath, it).takeIf { file -> file.exists() }?.name }
 
     configureByFiles(*(listOf(fileName) + extraPaths).toTypedArray())
 }
 
 @Suppress("unused") // Used in kotlin-ultimate
-inline fun <reified T: Any> Any?.assertInstanceOf() = UsefulTestCase.assertInstanceOf(this, T::class.java)
+inline fun <reified T : Any> Any?.assertInstanceOf() = UsefulTestCase.assertInstanceOf(this, T::class.java)

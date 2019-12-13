@@ -43,7 +43,8 @@ class SuitableVariableMacro : BaseKotlinVariableMacro<SuitableVariableMacro.Stat
                 val expectedInfos = ExpectedInfos(bindingContext, resolutionFacade, null).calculate(contextElement)
                 if (expectedInfos.isNotEmpty()) {
                     val scope = contextElement.getResolutionScope(bindingContext, resolutionFacade)
-                    val smartCastCalculator = SmartCastCalculator(bindingContext, scope.ownerDescriptor, contextElement, null, resolutionFacade)
+                    val smartCastCalculator =
+                        SmartCastCalculator(bindingContext, scope.ownerDescriptor, contextElement, null, resolutionFacade)
                     return State(expectedInfos, smartCastCalculator)
                 }
             }
@@ -55,6 +56,7 @@ class SuitableVariableMacro : BaseKotlinVariableMacro<SuitableVariableMacro.Stat
     override fun isSuitable(variableDescriptor: VariableDescriptor, project: Project, state: State?): Boolean {
         if (state == null) return true
         val types = state.smartCastCalculator.types(variableDescriptor)
-        return state.expectedInfos.any { expectedInfo -> types.any { expectedInfo.filter.matchingSubstitutor(it.toFuzzyType(emptyList())) != null } }
+        return state.expectedInfos
+            .any { expectedInfo -> types.any { expectedInfo.filter.matchingSubstitutor(it.toFuzzyType(emptyList())) != null } }
     }
 }

@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.properties
@@ -66,13 +55,11 @@ private fun KtExpression.getBundleNameByContext(): String? {
     (parent as? KtProperty)?.let { return it.resolveToDescriptorIfAny()?.getBundleNameByAnnotation() }
 
     val bindingContext = expression.analyze(BodyResolveMode.PARTIAL)
-    val resolvedCall =
-            if (parent is KtQualifiedExpression && expression == parent.receiverExpression) {
-                parent.selectorExpression.getResolvedCall(bindingContext)
-            }
-            else {
-                expression.getParentResolvedCall(bindingContext)
-            } ?: return null
+    val resolvedCall = if (parent is KtQualifiedExpression && expression == parent.receiverExpression) {
+        parent.selectorExpression.getResolvedCall(bindingContext)
+    } else {
+        expression.getParentResolvedCall(bindingContext)
+    } ?: return null
     val callable = resolvedCall.resultingDescriptor
 
     if ((resolvedCall.extensionReceiver as? ExpressionReceiver)?.expression == expression) {
@@ -80,9 +67,9 @@ private fun KtExpression.getBundleNameByContext(): String? {
     }
 
     return resolvedCall.valueArguments.entries
-            .singleOrNull { it.value.arguments.any { it.getArgumentExpression() == expression } }
-            ?.key
-            ?.getBundleNameByAnnotation()
+        .singleOrNull { it.value.arguments.any { it.getArgumentExpression() == expression } }
+        ?.key
+        ?.getBundleNameByAnnotation()
 }
 
 private fun KtAnnotationEntry.getPropertyKeyResolvedCall(): ResolvedCall<*>? {
@@ -93,8 +80,7 @@ private fun KtAnnotationEntry.getPropertyKeyResolvedCall(): ResolvedCall<*>? {
 }
 
 private fun KtStringTemplateExpression.isBundleName(): Boolean {
-    val parent = KtPsiUtil.safeDeparenthesize(this).parent
-    when (parent) {
+    when (val parent = KtPsiUtil.safeDeparenthesize(this).parent) {
         is KtValueArgument -> {
             val resolvedCall = parent.getStrictParentOfType<KtAnnotationEntry>()?.getPropertyKeyResolvedCall() ?: return false
             val valueParameter = (resolvedCall.getArgumentMapping(parent) as? ArgumentMatch)?.valueParameter ?: return false
@@ -106,11 +92,12 @@ private fun KtStringTemplateExpression.isBundleName(): Boolean {
         is KtProperty -> {
             val contexts = (parent.useScope as? LocalSearchScope)?.scope ?: arrayOf(parent.containingFile)
             return contexts.any {
-                it.anyDescendantOfType<KtAnnotationEntry> f@ { entry ->
+                it.anyDescendantOfType<KtAnnotationEntry> f@{ entry ->
                     if (!entry.valueArguments.any { it.getArgumentName()?.asName == PROPERTY_KEY_RESOURCE_BUNDLE }) return@f false
                     val resolvedCall = entry.getPropertyKeyResolvedCall() ?: return@f false
-                    val parameter = resolvedCall.resultingDescriptor.valueParameters.singleOrNull { it.name == PROPERTY_KEY_RESOURCE_BUNDLE }
-                                    ?: return@f false
+                    val parameter =
+                        resolvedCall.resultingDescriptor.valueParameters.singleOrNull { it.name == PROPERTY_KEY_RESOURCE_BUNDLE }
+                            ?: return@f false
                     val valueArgument = resolvedCall.valueArguments[parameter] as? ExpressionValueArgument ?: return@f false
                     val bundleNameExpression = valueArgument.valueArgument?.getArgumentExpression() ?: return@f false
                     bundleNameExpression is KtSimpleNameExpression && bundleNameExpression.mainReference.resolve() == parent

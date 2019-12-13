@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.completion
@@ -55,22 +44,22 @@ interface AbstractLookupElementFactory {
     fun createStandardLookupElementsForDescriptor(descriptor: DeclarationDescriptor, useReceiverTypes: Boolean): Collection<LookupElement>
 
     fun createLookupElement(
-            descriptor: DeclarationDescriptor,
-            useReceiverTypes: Boolean,
-            qualifyNestedClasses: Boolean = false,
-            includeClassTypeArguments: Boolean = true,
-            parametersAndTypeGrayed: Boolean = false
+        descriptor: DeclarationDescriptor,
+        useReceiverTypes: Boolean,
+        qualifyNestedClasses: Boolean = false,
+        includeClassTypeArguments: Boolean = true,
+        parametersAndTypeGrayed: Boolean = false
     ): LookupElement?
 }
 
 data /* we need copy() */
 class LookupElementFactory(
-        val basicFactory: BasicLookupElementFactory,
-        private val receiverTypes: Collection<ReceiverType>?,
-        private val callType: CallType<*>,
-        private val inDescriptor: DeclarationDescriptor,
-        private val contextVariablesProvider: ContextVariablesProvider,
-        private val standardLookupElementsPostProcessor: (LookupElement) -> LookupElement = { it }
+    val basicFactory: BasicLookupElementFactory,
+    private val receiverTypes: Collection<ReceiverType>?,
+    private val callType: CallType<*>,
+    private val inDescriptor: DeclarationDescriptor,
+    private val contextVariablesProvider: ContextVariablesProvider,
+    private val standardLookupElementsPostProcessor: (LookupElement) -> LookupElement = { it }
 ) : AbstractLookupElementFactory {
     companion object {
         fun hasSingleFunctionTypeParameter(descriptor: FunctionDescriptor): Boolean {
@@ -84,18 +73,18 @@ class LookupElementFactory(
     val insertHandlerProvider = basicFactory.insertHandlerProvider
 
     private val superFunctions: Set<FunctionDescriptor> by lazy {
-        inDescriptor.parentsWithSelf
-                .takeWhile { it !is ClassDescriptor }
-                .filterIsInstance<FunctionDescriptor>()
-                .toList()
-                .flatMap { it.findOriginalTopMostOverriddenDescriptors() }
-                .toSet()
+        inDescriptor.parentsWithSelf.takeWhile { it !is ClassDescriptor }.filterIsInstance<FunctionDescriptor>().toList()
+            .flatMap { it.findOriginalTopMostOverriddenDescriptors() }.toSet()
     }
 
-    override fun createStandardLookupElementsForDescriptor(descriptor: DeclarationDescriptor, useReceiverTypes: Boolean): Collection<LookupElement> {
+    override fun createStandardLookupElementsForDescriptor(
+        descriptor: DeclarationDescriptor,
+        useReceiverTypes: Boolean
+    ): Collection<LookupElement> {
         val result = SmartList<LookupElement>()
 
-        val isNormalCall = callType == CallType.DEFAULT || callType == CallType.DOT || callType == CallType.SAFE || callType == CallType.SUPER_MEMBERS
+        val isNormalCall =
+            callType == CallType.DEFAULT || callType == CallType.DOT || callType == CallType.SAFE || callType == CallType.SUPER_MEMBERS
 
         result.add(createLookupElement(descriptor, useReceiverTypes, parametersAndTypeGrayed = !isNormalCall && callType != CallType.INFIX))
 
@@ -103,8 +92,7 @@ class LookupElementFactory(
         if (descriptor is FunctionDescriptor && isNormalCall) {
             if (callType != CallType.SUPER_MEMBERS) {
                 result.addSpecialFunctionCallElements(descriptor, useReceiverTypes)
-            }
-            else if (useReceiverTypes) {
+            } else if (useReceiverTypes) {
                 result.addIfNotNull(createSuperFunctionCallWithArguments(descriptor))
             }
         }
@@ -149,7 +137,14 @@ class LookupElementFactory(
             val insertHandler = insertHandlerProvider.insertHandler(descriptor) as KotlinFunctionInsertHandler.Normal
             if (insertHandler.lambdaInfo == null) {
                 val functionParameterCount = getValueParametersCountFromFunctionType(parameterType)
-                add(createFunctionCallElementWithLambda(descriptor, parameterType, useReceiverTypes, explicitLambdaParameters = functionParameterCount > 1))
+                add(
+                    createFunctionCallElementWithLambda(
+                        descriptor,
+                        parameterType,
+                        useReceiverTypes,
+                        explicitLambdaParameters = functionParameterCount > 1
+                    )
+                )
             }
 
             if (isSingleParameter) {
@@ -165,10 +160,10 @@ class LookupElementFactory(
     }
 
     private fun createFunctionCallElementWithLambda(
-            descriptor: FunctionDescriptor,
-            parameterType: KotlinType,
-            useReceiverTypes: Boolean,
-            explicitLambdaParameters: Boolean
+        descriptor: FunctionDescriptor,
+        parameterType: KotlinType,
+        useReceiverTypes: Boolean,
+        explicitLambdaParameters: Boolean
     ): LookupElement {
         var lookupElement = createLookupElement(descriptor, useReceiverTypes)
         val inputTypeArguments = (insertHandlerProvider.insertHandler(descriptor) as KotlinFunctionInsertHandler.Normal).inputTypeArguments
@@ -182,14 +177,20 @@ class LookupElementFactory(
         var parametersRenderer = BasicLookupElementFactory.SHORT_NAMES_RENDERER
         if (descriptor.valueParameters.size > 1) {
             parametersRenderer = parametersRenderer.withOptions {
-                valueParametersHandler = object: DescriptorRenderer.ValueParametersHandler by this.valueParametersHandler {
-                    override fun appendBeforeValueParameter(parameter: ValueParameterDescriptor, parameterIndex: Int, parameterCount: Int, builder: StringBuilder) {
+                valueParametersHandler = object : DescriptorRenderer.ValueParametersHandler by this.valueParametersHandler {
+                    override fun appendBeforeValueParameter(
+                        parameter: ValueParameterDescriptor,
+                        parameterIndex: Int,
+                        parameterCount: Int,
+                        builder: StringBuilder
+                    ) {
                         builder.append("..., ")
                     }
                 }
             }
         }
-        val parametersPresentation = parametersRenderer.renderValueParameters(listOf(descriptor.valueParameters.last()), descriptor.hasSynthesizedParameterNames())
+        val parametersPresentation =
+            parametersRenderer.renderValueParameters(listOf(descriptor.valueParameters.last()), descriptor.hasSynthesizedParameterNames())
 
         lookupElement = object : LookupElementDecorator<LookupElement>(lookupElement) {
             override fun renderElement(presentation: LookupElementPresentation) {
@@ -202,7 +203,8 @@ class LookupElementFactory(
             }
 
             override fun handleInsert(context: InsertionContext) {
-                KotlinFunctionInsertHandler.Normal(callType, inputTypeArguments, inputValueArguments = false, lambdaInfo = lambdaInfo).handleInsert(context, this)
+                KotlinFunctionInsertHandler.Normal(callType, inputTypeArguments, inputValueArguments = false, lambdaInfo = lambdaInfo)
+                    .handleInsert(context, this)
             }
         }
 
@@ -223,7 +225,11 @@ class LookupElementFactory(
         return lookupElement
     }
 
-    private fun createFunctionCallElementWithArguments(descriptor: FunctionDescriptor, argumentText: String, useReceiverTypes: Boolean): LookupElement {
+    private fun createFunctionCallElementWithArguments(
+        descriptor: FunctionDescriptor,
+        argumentText: String,
+        useReceiverTypes: Boolean
+    ): LookupElement {
         val lookupElement = createLookupElement(descriptor, useReceiverTypes)
 
         val needTypeArguments = (insertHandlerProvider.insertHandler(descriptor) as KotlinFunctionInsertHandler.Normal).inputTypeArguments
@@ -231,13 +237,15 @@ class LookupElementFactory(
     }
 
     private inner class FunctionCallWithArgumentsLookupElement(
-            originalLookupElement: LookupElement,
-            private val descriptor: FunctionDescriptor,
-            private val argumentText: String,
-            private val needTypeArguments: Boolean
+        originalLookupElement: LookupElement,
+        private val descriptor: FunctionDescriptor,
+        private val argumentText: String,
+        private val needTypeArguments: Boolean
     ) : LookupElementDecorator<LookupElement>(originalLookupElement) {
 
-        override fun equals(other: Any?) = other is FunctionCallWithArgumentsLookupElement && delegate == other.delegate && argumentText == other.argumentText
+        override fun equals(other: Any?) =
+            other is FunctionCallWithArgumentsLookupElement && delegate == other.delegate && argumentText == other.argumentText
+
         override fun hashCode() = delegate.hashCode() * 17 + argumentText.hashCode()
 
         override fun renderElement(presentation: LookupElementPresentation) {
@@ -249,17 +257,21 @@ class LookupElementFactory(
         }
 
         override fun handleInsert(context: InsertionContext) {
-            KotlinFunctionInsertHandler.Normal(callType, inputTypeArguments = needTypeArguments, inputValueArguments = false, argumentText = argumentText)
-                    .handleInsert(context, this)
+            KotlinFunctionInsertHandler.Normal(
+                callType,
+                inputTypeArguments = needTypeArguments,
+                inputValueArguments = false,
+                argumentText = argumentText
+            ).handleInsert(context, this)
         }
     }
 
     override fun createLookupElement(
-            descriptor: DeclarationDescriptor,
-            useReceiverTypes: Boolean,
-            qualifyNestedClasses: Boolean,
-            includeClassTypeArguments: Boolean,
-            parametersAndTypeGrayed: Boolean
+        descriptor: DeclarationDescriptor,
+        useReceiverTypes: Boolean,
+        qualifyNestedClasses: Boolean,
+        includeClassTypeArguments: Boolean,
+        parametersAndTypeGrayed: Boolean
     ): LookupElement {
         var element = basicFactory.createLookupElement(descriptor, qualifyNestedClasses, includeClassTypeArguments, parametersAndTypeGrayed)
 
@@ -286,8 +298,7 @@ class LookupElementFactory(
                     super.renderElement(presentation)
                     if (style == Style.BOLD) {
                         presentation.isItemTextBold = true
-                    }
-                    else {
+                    } else {
                         presentation.itemTextForeground = CAST_REQUIRED_COLOR
                         // gray all tail fragments too:
                         val fragments = presentation.tailFragments
@@ -298,8 +309,7 @@ class LookupElementFactory(
                     }
                 }
             }
-        }
-        else {
+        } else {
             this
         }
     }
@@ -324,15 +334,11 @@ class LookupElementFactory(
 
         if (descriptor.overriddenDescriptors.isNotEmpty()) {
             // Optimization: when one of direct overridden fits, then nothing can fit better
-            descriptor.overriddenDescriptors
-                    .mapNotNull { it.callableWeightBasedOnReceiver(receiverTypes, onReceiverTypeMismatch = null) }
-                    .minBy { it.enum }
-                    ?.let { return it }
+            descriptor.overriddenDescriptors.mapNotNull { it.callableWeightBasedOnReceiver(receiverTypes, onReceiverTypeMismatch = null) }
+                .minBy { it.enum }?.let { return it }
 
             val overridden = descriptor.overriddenTreeUniqueAsSequence(useOriginal = false)
-            return overridden
-                    .map { callableWeightBasic(it, receiverTypes)!! }
-                    .minBy { it.enum }!!
+            return overridden.map { callableWeightBasic(it, receiverTypes)!! }.minBy { it.enum }!!
         }
 
         return callableWeightBasic(descriptor, receiverTypes)
@@ -348,8 +354,8 @@ class LookupElementFactory(
     }
 
     private fun CallableDescriptor.callableWeightBasedOnReceiver(
-            receiverTypes: Collection<ReceiverType>,
-            onReceiverTypeMismatch: CallableWeight?
+        receiverTypes: Collection<ReceiverType>,
+        onReceiverTypeMismatch: CallableWeight?
     ): CallableWeight? {
 
         val bothReceivers = listOfNotNull(extensionReceiverParameter, dispatchReceiverParameter)
@@ -357,18 +363,18 @@ class LookupElementFactory(
         val receiverTypesForFirstReceiver = receiverTypes.filterNot { it.implicit }.ifEmpty { receiverTypes }
 
         val weights = bothReceivers.zip(generateSequence(receiverTypesForFirstReceiver) { receiverTypes }.asIterable())
-                .map { (receiverParameter, receiverTypes) ->
-                    callableWeightBasedOnReceiver(receiverTypes, onReceiverTypeMismatch, receiverParameter)
-                }
+            .map { (receiverParameter, receiverTypes) ->
+                callableWeightBasedOnReceiver(receiverTypes, onReceiverTypeMismatch, receiverParameter)
+            }
 
         if (weights.any { it == onReceiverTypeMismatch }) return onReceiverTypeMismatch
         return weights.firstOrNull()
     }
 
     private fun CallableDescriptor.callableWeightBasedOnReceiver(
-            receiverTypes: Collection<ReceiverType>,
-            onReceiverTypeMismatch: CallableWeight?,
-            receiverParameter: ReceiverParameterDescriptor
+        receiverTypes: Collection<ReceiverType>,
+        onReceiverTypeMismatch: CallableWeight?,
+        receiverParameter: ReceiverParameterDescriptor
     ): CallableWeight? {
         if ((receiverParameter.value as? TransientReceiver)?.type?.isFunctionType == true) return null
 
@@ -403,8 +409,8 @@ class LookupElementFactory(
     }
 
     private fun CallableDescriptor.callableWeightForReceiverType(
-            receiverType: KotlinType,
-            receiverParameterType: KotlinType
+        receiverType: KotlinType,
+        receiverParameterType: KotlinType
     ): CallableWeightEnum? = when {
         TypeUtils.equalTypes(receiverType, receiverParameterType) -> when {
             isExtensionForTypeParameter() -> CallableWeightEnum.typeParameterExtension

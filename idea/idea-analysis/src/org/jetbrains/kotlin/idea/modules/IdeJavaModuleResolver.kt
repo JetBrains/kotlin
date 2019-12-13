@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.modules
@@ -20,18 +9,15 @@ import com.intellij.codeInsight.daemon.impl.analysis.JavaModuleGraphUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiJavaModule
-import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.light.LightJavaModule
-import org.jetbrains.annotations.NotNull
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 
 class IdeJavaModuleResolver(private val project: Project) : JavaModuleResolver {
-    private fun findJavaModule(file: VirtualFile): PsiJavaModule? =
-            ModuleHighlightUtil2.getModuleDescriptor(file, project)
+    private fun findJavaModule(file: VirtualFile): PsiJavaModule? = ModuleHighlightUtil2.getModuleDescriptor(file, project)
 
     override fun checkAccessibility(
-            fileFromOurModule: VirtualFile?, referencedFile: VirtualFile, referencedPackage: FqName?
+        fileFromOurModule: VirtualFile?, referencedFile: VirtualFile, referencedPackage: FqName?
     ): JavaModuleResolver.AccessError? {
         val ourModule = fileFromOurModule?.let(this::findJavaModule)
         val theirModule = findJavaModule(referencedFile)
@@ -64,5 +50,5 @@ class IdeJavaModuleResolver(private val project: Project) : JavaModuleResolver {
 
     // Returns whether or not [source] exports [packageName] to [target]
     private fun exports(source: PsiJavaModule, packageName: String, target: PsiJavaModule): Boolean =
-            source is LightJavaModule || JavaModuleGraphUtil.exports(source, packageName, target)
+        source is LightJavaModule || JavaModuleGraphUtil.exports(source, packageName, target)
 }

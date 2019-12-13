@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.refactoring.introduce.introduceParameter
@@ -47,41 +36,41 @@ import javax.swing.JLabel
 import javax.swing.JPanel
 
 class KotlinIntroduceParameterDialog private constructor(
+    project: Project,
+    val editor: Editor,
+    val descriptor: IntroduceParameterDescriptor,
+    val lambdaExtractionDescriptor: ExtractableCodeDescriptor?,
+    nameSuggestions: Array<String>,
+    typeSuggestions: List<KotlinType>,
+    val helper: KotlinIntroduceParameterHelper
+) : RefactoringDialog(project, true) {
+    constructor(
         project: Project,
-        val editor: Editor,
-        val descriptor: IntroduceParameterDescriptor,
-        val lambdaExtractionDescriptor: ExtractableCodeDescriptor?,
+        editor: Editor,
+        descriptor: IntroduceParameterDescriptor,
         nameSuggestions: Array<String>,
         typeSuggestions: List<KotlinType>,
-        val helper: KotlinIntroduceParameterHelper
-): RefactoringDialog(project, true) {
-    constructor(
-            project: Project,
-            editor: Editor,
-            descriptor: IntroduceParameterDescriptor,
-            nameSuggestions: Array<String>,
-            typeSuggestions: List<KotlinType>,
-            helper: KotlinIntroduceParameterHelper
-    ): this(project, editor, descriptor, null, nameSuggestions, typeSuggestions, helper)
+        helper: KotlinIntroduceParameterHelper
+    ) : this(project, editor, descriptor, null, nameSuggestions, typeSuggestions, helper)
 
-    constructor(project: Project,
-                editor: Editor,
-                introduceParameterDescriptor: IntroduceParameterDescriptor,
-                lambdaExtractionDescriptor: ExtractableCodeDescriptor,
-                helper: KotlinIntroduceParameterHelper
+    constructor(
+        project: Project,
+        editor: Editor,
+        introduceParameterDescriptor: IntroduceParameterDescriptor,
+        lambdaExtractionDescriptor: ExtractableCodeDescriptor,
+        helper: KotlinIntroduceParameterHelper
     ) : this(
-            project,
-            editor,
-            introduceParameterDescriptor,
-            lambdaExtractionDescriptor,
-            lambdaExtractionDescriptor.suggestedNames.toTypedArray(),
-            listOf(lambdaExtractionDescriptor.returnType),
-            helper
+        project,
+        editor,
+        introduceParameterDescriptor,
+        lambdaExtractionDescriptor,
+        lambdaExtractionDescriptor.suggestedNames.toTypedArray(),
+        listOf(lambdaExtractionDescriptor.returnType),
+        helper
     )
 
-    private val typeNameSuggestions = typeSuggestions
-            .map { IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(it) }
-            .toTypedArray()
+    private val typeNameSuggestions =
+        typeSuggestions.map { IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(it) }.toTypedArray()
 
     private val nameField = NameSuggestionsField(nameSuggestions, project, KotlinFileType.INSTANCE)
     private val typeField = NameSuggestionsField(typeNameSuggestions, project, KotlinFileType.INSTANCE)
@@ -151,8 +140,9 @@ class KotlinIntroduceParameterDialog private constructor(
         gbConstraints.fill = GridBagConstraints.BOTH
         panel.add(typeField, gbConstraints)
 
-        if (lambdaExtractionDescriptor != null
-            && (lambdaExtractionDescriptor.parameters.isNotEmpty() || lambdaExtractionDescriptor.receiverParameter != null)) {
+        if (lambdaExtractionDescriptor != null && (lambdaExtractionDescriptor.parameters
+                .isNotEmpty() || lambdaExtractionDescriptor.receiverParameter != null)
+        ) {
             val parameterTablePanel = object : ExtractFunctionParameterTablePanel() {
                 override fun onEnterAction() {
                     doOKAction()
@@ -264,19 +254,19 @@ class KotlinIntroduceParameterDialog private constructor(
 
             lambdaExtractionDescriptor?.let { oldDescriptor ->
                 val newDescriptor = KotlinExtractFunctionDialog.createNewDescriptor(
-                        oldDescriptor,
-                        chosenName,
-                        null,
-                        parameterTablePanel?.selectedReceiverInfo,
-                        parameterTablePanel?.selectedParameterInfos ?: listOf(),
-                        null
+                    oldDescriptor,
+                    chosenName,
+                    null,
+                    parameterTablePanel?.selectedReceiverInfo,
+                    parameterTablePanel?.selectedParameterInfos ?: listOf(),
+                    null
                 )
                 val options = ExtractionGeneratorOptions.DEFAULT.copy(
-                        target = ExtractionTarget.FAKE_LAMBDALIKE_FUNCTION,
-                        allowExpressionBody = false
+                    target = ExtractionTarget.FAKE_LAMBDALIKE_FUNCTION,
+                    allowExpressionBody = false
                 )
                 runWriteAction {
-                    with (ExtractionGeneratorConfiguration(newDescriptor, options).generateDeclaration()) {
+                    with(ExtractionGeneratorConfiguration(newDescriptor, options).generateDeclaration()) {
                         val function = declaration as KtFunction
                         val receiverType = function.receiverTypeReference?.text
                         val parameterTypes = function
@@ -296,24 +286,23 @@ class KotlinIntroduceParameterDialog private constructor(
             }
 
             val descriptorToRefactor = descriptor.copy(
-                    newParameterName = chosenName,
-                    newParameterTypeText = chosenType,
-                    argumentValue = newArgumentValue,
-                    withDefaultValue = defaultValueCheckBox!!.isSelected,
-                    occurrencesToReplace = with(descriptor) {
-                        if (replaceAllCheckBox?.isSelected ?: true) {
-                            occurrencesToReplace
-                        }
-                        else {
-                            Collections.singletonList(originalOccurrence)
-                        }
-                    },
-                    parametersToRemove = removeParamsCheckBoxes.filter { it.key.isEnabled && it.key.isSelected }.map { it.value },
-                    occurrenceReplacer = newReplacer
+                newParameterName = chosenName,
+                newParameterTypeText = chosenType,
+                argumentValue = newArgumentValue,
+                withDefaultValue = defaultValueCheckBox!!.isSelected,
+                occurrencesToReplace = with(descriptor) {
+                    if (replaceAllCheckBox?.isSelected != false) {
+                        occurrencesToReplace
+                    } else {
+                        Collections.singletonList(originalOccurrence)
+                    }
+                },
+                parametersToRemove = removeParamsCheckBoxes.filter { it.key.isEnabled && it.key.isSelected }.map { it.value },
+                occurrenceReplacer = newReplacer
             )
 
             helper.configure(descriptorToRefactor).performRefactoring(
-                    onExit = { FinishMarkAction.finish(myProject, editor, startMarkAction) }
+                onExit = { FinishMarkAction.finish(myProject, editor, startMarkAction) }
             )
         }
     }

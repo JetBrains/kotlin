@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.refactoring.changeSignature
@@ -50,7 +39,7 @@ interface KotlinChangeSignatureConfiguration {
     fun performSilently(affectedFunctions: Collection<PsiElement>): Boolean = false
     fun forcePerformForSelectedFunctionOnly(): Boolean = false
 
-    object Empty: KotlinChangeSignatureConfiguration
+    object Empty : KotlinChangeSignatureConfiguration
 }
 
 fun KotlinMethodDescriptor.modify(action: (KotlinMutableMethodDescriptor) -> Unit): KotlinMethodDescriptor {
@@ -59,11 +48,13 @@ fun KotlinMethodDescriptor.modify(action: (KotlinMutableMethodDescriptor) -> Uni
     return newDescriptor
 }
 
-fun runChangeSignature(project: Project,
-                              callableDescriptor: CallableDescriptor,
-                              configuration: KotlinChangeSignatureConfiguration,
-                              defaultValueContext: PsiElement,
-                              commandName: String? = null): Boolean {
+fun runChangeSignature(
+    project: Project,
+    callableDescriptor: CallableDescriptor,
+    configuration: KotlinChangeSignatureConfiguration,
+    defaultValueContext: PsiElement,
+    commandName: String? = null
+): Boolean {
     val result = KotlinChangeSignature(project, callableDescriptor, configuration, defaultValueContext, commandName).run()
     if (!result) {
         broadcastRefactoringExit(project, "refactoring.changeSignature")
@@ -72,12 +63,12 @@ fun runChangeSignature(project: Project,
 }
 
 class KotlinChangeSignature(
-        project: Project,
-        callableDescriptor: CallableDescriptor,
-        val configuration: KotlinChangeSignatureConfiguration,
-        val defaultValueContext: PsiElement,
-        commandName: String?
-): CallableRefactoring<CallableDescriptor>(project, callableDescriptor, commandName ?: ChangeSignatureHandler.REFACTORING_NAME) {
+    project: Project,
+    callableDescriptor: CallableDescriptor,
+    val configuration: KotlinChangeSignatureConfiguration,
+    val defaultValueContext: PsiElement,
+    commandName: String?
+) : CallableRefactoring<CallableDescriptor>(project, callableDescriptor, commandName ?: ChangeSignatureHandler.REFACTORING_NAME) {
 
     private val LOG = Logger.getInstance(KotlinChangeSignature::class.java)
 
@@ -86,12 +77,17 @@ class KotlinChangeSignature(
     private fun runSilentRefactoring(descriptor: KotlinMethodDescriptor) {
         val baseDeclaration = descriptor.baseDeclaration
         val processor = when (baseDeclaration) {
-            is KtFunction, is KtClass -> {
-                KotlinChangeSignatureDialog.createRefactoringProcessorForSilentChangeSignature(project, commandName, descriptor, defaultValueContext)
-            }
-            is KtProperty, is KtParameter -> {
-                KotlinChangePropertySignatureDialog.createProcessorForSilentRefactoring(project, commandName, descriptor)
-            }
+            is KtFunction, is KtClass -> KotlinChangeSignatureDialog.createRefactoringProcessorForSilentChangeSignature(
+                project,
+                commandName,
+                descriptor,
+                defaultValueContext
+            )
+            is KtProperty, is KtParameter -> KotlinChangePropertySignatureDialog.createProcessorForSilentRefactoring(
+                project,
+                commandName,
+                descriptor
+            )
             is PsiMethod -> {
                 if (baseDeclaration.language != JavaLanguage.INSTANCE) {
                     Messages.showErrorDialog("Can't change signature of ${baseDeclaration.language.displayName} method", commandName)
@@ -106,8 +102,7 @@ class KotlinChangeSignature(
     }
 
     private fun runInteractiveRefactoring(descriptor: KotlinMethodDescriptor) {
-        val baseDeclaration = descriptor.baseDeclaration
-        val dialog = when (baseDeclaration) {
+        val dialog = when (val baseDeclaration = descriptor.baseDeclaration) {
             is KtFunction, is KtClass -> KotlinChangeSignatureDialog(project, descriptor, defaultValueContext, commandName)
             is KtProperty, is KtParameter -> KotlinChangePropertySignatureDialog(project, descriptor, commandName)
             is PsiMethod -> {
@@ -127,20 +122,20 @@ class KotlinChangeSignature(
                     @Suppress("UNCHECKED_CAST")
                     override fun getParameters() = javaChangeInfo.newParameters.toMutableList() as MutableList<ParameterInfoImpl>
                 }
-                object: JavaChangeSignatureDialog(project, javaDescriptor, false, null) {
+                object : JavaChangeSignatureDialog(project, javaDescriptor, false, null) {
                     override fun createRefactoringProcessor(): BaseRefactoringProcessor? {
                         val parameters = parameters
                         LOG.assertTrue(myMethod.method.isValid)
                         val newJavaChangeInfo = JavaChangeInfoImpl(
-                                visibility ?: VisibilityUtil.getVisibilityModifier(myMethod.method.modifierList),
-                                javaChangeInfo.method,
-                                methodName,
-                                returnType ?: CanonicalTypes.createTypeWrapper(PsiType.VOID),
-                                parameters.toTypedArray(),
-                                exceptions,
-                                isGenerateDelegate,
-                                myMethodsToPropagateParameters ?: HashSet(),
-                                myMethodsToPropagateExceptions ?: HashSet()
+                            visibility ?: VisibilityUtil.getVisibilityModifier(myMethod.method.modifierList),
+                            javaChangeInfo.method,
+                            methodName,
+                            returnType ?: CanonicalTypes.createTypeWrapper(PsiType.VOID),
+                            parameters.toTypedArray(),
+                            exceptions,
+                            isGenerateDelegate,
+                            myMethodsToPropagateParameters ?: HashSet(),
+                            myMethodsToPropagateExceptions ?: HashSet()
                         ).also {
                             it.setCheckUnusedParameter()
                         }
@@ -184,15 +179,17 @@ class KotlinChangeSignature(
             KotlinAwareJavaParameterInfoImpl(paramInfo.oldIndex, param.name!!, param.type, paramInfo.defaultValueForCall)
         }.toTypedArray()
 
-        return preview to JavaChangeInfoImpl(visibility,
-                                             originalMethod,
-                                             preview.name,
-                                             returnType,
-                                             params,
-                                             arrayOf<ThrownExceptionInfo>(),
-                                             false,
-                                             emptySet<PsiMethod>(),
-                                             emptySet<PsiMethod>())
+        return preview to JavaChangeInfoImpl(
+            visibility,
+            originalMethod,
+            preview.name,
+            returnType,
+            params,
+            arrayOf<ThrownExceptionInfo>(),
+            false,
+            emptySet<PsiMethod>(),
+            emptySet<PsiMethod>()
+        )
     }
 
     override fun performRefactoring(descriptorsForChange: Collection<CallableDescriptor>) {
@@ -203,8 +200,7 @@ class KotlinChangeSignature(
 
         if (configuration.performSilently(affectedFunctions) || ApplicationManager.getApplication()!!.isUnitTestMode) {
             runSilentRefactoring(adjustedDescriptor)
-        }
-        else {
+        } else {
             runInteractiveRefactoring(adjustedDescriptor)
         }
     }
@@ -237,23 +233,24 @@ class KotlinChangeSignature(
     }
 }
 
-@TestOnly fun createChangeInfo(
-        project: Project,
-        callableDescriptor: CallableDescriptor,
-        configuration: KotlinChangeSignatureConfiguration,
-        defaultValueContext: PsiElement
+@TestOnly
+fun createChangeInfo(
+    project: Project,
+    callableDescriptor: CallableDescriptor,
+    configuration: KotlinChangeSignatureConfiguration,
+    defaultValueContext: PsiElement
 ): KotlinChangeInfo? {
     val jetChangeSignature = KotlinChangeSignature(project, callableDescriptor, configuration, defaultValueContext, null)
     val declarations =
-            (callableDescriptor as? CallableMemberDescriptor)?.getDeepestSuperDeclarations() ?: listOf(callableDescriptor)
+        (callableDescriptor as? CallableMemberDescriptor)?.getDeepestSuperDeclarations() ?: listOf(callableDescriptor)
 
     val adjustedDescriptor = jetChangeSignature.adjustDescriptor(declarations) ?: return null
 
     val processor = KotlinChangeSignatureDialog.createRefactoringProcessorForSilentChangeSignature(
-            project,
-            ChangeSignatureHandler.REFACTORING_NAME,
-            adjustedDescriptor,
-            defaultValueContext
+        project,
+        ChangeSignatureHandler.REFACTORING_NAME,
+        adjustedDescriptor,
+        defaultValueContext
     ) as KotlinChangeSignatureProcessor
     return processor.ktChangeInfo
 }

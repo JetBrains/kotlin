@@ -421,9 +421,9 @@ class IdeaModuleInfoTest : ModuleTestCase() {
     }
 
     private fun Module.addDependency(
-            other: Module,
-            dependencyScope: DependencyScope = DependencyScope.COMPILE,
-            exported: Boolean = false
+        other: Module,
+        dependencyScope: DependencyScope = DependencyScope.COMPILE,
+        exported: Boolean = false
     ) = ModuleRootModificationUtil.addDependency(this, other, dependencyScope, exported)
 
     private val VirtualFile.moduleInfo: IdeaModuleInfo

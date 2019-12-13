@@ -45,7 +45,9 @@ open class ChangeVisibilityFix(
         val pointer = element?.createSmartPointer()
         val originalElement = pointer?.element
         if (originalElement is KtDeclaration) {
-            originalElement.runOnExpectAndAllActuals(useOnSelf = true) { it.setVisibility(visibilityModifier, addImplicitVisibilityModifier) }
+            originalElement.runOnExpectAndAllActuals(useOnSelf = true) {
+                it.setVisibility(visibilityModifier, addImplicitVisibilityModifier)
+            }
         } else {
             originalElement?.setVisibility(visibilityModifier, addImplicitVisibilityModifier)
         }

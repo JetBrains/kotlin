@@ -23,7 +23,8 @@ inline fun <T : Any> hopelessAware(block: () -> T?): T? {
 
 fun handleHopelessException(e: Exception) {
     when (if (e is EvaluateException) e.cause ?: e else e) {
-        is IncompatibleThreadStateException, is VMDisconnectedException -> {}
+        is IncompatibleThreadStateException, is VMDisconnectedException -> {
+        }
         else -> {
             if (e is EvaluateException) {
                 LOG.debug("Cannot evaluate async stack trace", e)

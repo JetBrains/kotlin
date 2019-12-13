@@ -42,8 +42,8 @@ import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 
 class ConvertObjectLiteralToClassIntention : SelfTargetingRangeIntention<KtObjectLiteralExpression>(
-        KtObjectLiteralExpression::class.java,
-        "Convert object literal to class"
+    KtObjectLiteralExpression::class.java,
+    "Convert object literal to class"
 ) {
     override fun applicabilityRange(element: KtObjectLiteralExpression) = element.objectDeclaration.getObjectKeyword()?.textRange
 
@@ -70,7 +70,7 @@ class ConvertObjectLiteralToClassIntention : SelfTargetingRangeIntention<KtObjec
         val containingClass = element.containingClass()
         val hasMemberReference = containingClass?.getBody()?.allChildren?.any {
             (it is KtProperty || it is KtNamedFunction) &&
-            ReferencesSearch.search(it, element.useScope).findFirst() != null
+                    ReferencesSearch.search(it, element.useScope).findFirst() != null
         } ?: false
 
         val newClass = psiFactory.createClass("class $className")
@@ -84,32 +84,31 @@ class ConvertObjectLiteralToClassIntention : SelfTargetingRangeIntention<KtObjec
 
         project.executeWriteCommand(text) {
             ExtractionEngine(
-                    object : ExtractionEngineHelper(text) {
-                        override fun configureAndRun(
-                                project: Project,
-                                editor: Editor,
-                                descriptorWithConflicts: ExtractableCodeDescriptorWithConflicts,
-                                onFinish: (ExtractionResult) -> Unit
-                        ) {
-                            val descriptor = descriptorWithConflicts.descriptor.copy(suggestedNames = listOf(className))
-                            doRefactor(
-                                    ExtractionGeneratorConfiguration(descriptor, ExtractionGeneratorOptions.DEFAULT),
-                                    onFinish
-                            )
-                        }
+                object : ExtractionEngineHelper(text) {
+                    override fun configureAndRun(
+                        project: Project,
+                        editor: Editor,
+                        descriptorWithConflicts: ExtractableCodeDescriptorWithConflicts,
+                        onFinish: (ExtractionResult) -> Unit
+                    ) {
+                        val descriptor = descriptorWithConflicts.descriptor.copy(suggestedNames = listOf(className))
+                        doRefactor(
+                            ExtractionGeneratorConfiguration(descriptor, ExtractionGeneratorOptions.DEFAULT),
+                            onFinish
+                        )
                     }
+                }
             ).run(editor, ExtractionData(element.containingKtFile, element.toRange(), targetSibling)) { extractionResult ->
                 val functionDeclaration = extractionResult.declaration as KtFunction
                 if (functionDeclaration.valueParameters.isNotEmpty()) {
                     val valKeyword = psiFactory.createValKeyword()
-                    newClass
-                            .createPrimaryConstructorParameterListIfAbsent()
-                            .replaced(functionDeclaration.valueParameterList!!)
-                            .parameters
-                            .forEach {
-                                it.addAfter(valKeyword, null)
-                                it.addModifier(KtTokens.PRIVATE_KEYWORD)
-                            }
+                    newClass.createPrimaryConstructorParameterListIfAbsent()
+                        .replaced(functionDeclaration.valueParameterList!!)
+                        .parameters
+                        .forEach {
+                            it.addAfter(valKeyword, null)
+                            it.addModifier(KtTokens.PRIVATE_KEYWORD)
+                        }
                 }
 
                 val introducedClass = functionDeclaration.replaced(newClass).apply {
@@ -147,12 +146,12 @@ class ConvertObjectLiteralToClassIntention : SelfTargetingRangeIntention<KtObjec
         }
 
         chooseContainerElementIfNecessary(
-                containers,
-                editor,
-                if (containers.first() is KtFile) "Select target file" else "Select target code block / file",
-                true,
-                { it },
-                { doApply(editor, element, it) }
+            containers,
+            editor,
+            if (containers.first() is KtFile) "Select target file" else "Select target code block / file",
+            true,
+            { it },
+            { doApply(editor, element, it) }
         )
     }
 }

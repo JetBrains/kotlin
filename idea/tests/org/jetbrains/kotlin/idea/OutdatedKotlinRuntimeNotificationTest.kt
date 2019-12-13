@@ -41,13 +41,17 @@ class KotlinRuntimeLibraryUtilTest : TestCase() {
     }
 
     private fun outdated(bundledRuntime: String, library: String) {
-        Assert.assertTrue("Should be outdated: bundled=$bundledRuntime, library=$library",
-                          isRuntimeOutdated(library, bundledRuntime))
+        Assert.assertTrue(
+            "Should be outdated: bundled=$bundledRuntime, library=$library",
+            isRuntimeOutdated(library, bundledRuntime)
+        )
     }
 
     private fun notOutdated(bundledRuntime: String, library: String) {
-        Assert.assertFalse("Should NOT be outdated: bundled=$bundledRuntime, library=$library",
-                           isRuntimeOutdated(library, bundledRuntime))
+        Assert.assertFalse(
+            "Should NOT be outdated: bundled=$bundledRuntime, library=$library",
+            isRuntimeOutdated(library, bundledRuntime)
+        )
     }
 
 }

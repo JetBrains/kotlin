@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -26,20 +26,20 @@ class CascadeIfInspection : AbstractKotlinInspection() {
             if (expression.isOneLiner()) return
 
             if (branches.any {
-                it == null ||
-                it.lastBlockStatementOrThis() is KtIfExpression
-            }) return
+                    it == null || it.lastBlockStatementOrThis() is KtIfExpression
+                }
+            ) return
 
             if (expression.isElseIf()) return
 
             if (expression.anyDescendantOfType<KtExpressionWithLabel> {
-                it is KtBreakExpression || it is KtContinueExpression
-            }) return
+                    it is KtBreakExpression || it is KtContinueExpression
+                }
+            ) return
 
             var current: KtIfExpression? = expression
             while (current != null) {
-                val condition = current.condition
-                when (condition) {
+                when (val condition = current.condition) {
                     is KtBinaryExpression -> when (condition.operationToken) {
                         KtTokens.ANDAND, KtTokens.OROR -> return
                     }
@@ -51,10 +51,10 @@ class CascadeIfInspection : AbstractKotlinInspection() {
             }
 
             holder.registerProblem(
-                    expression.ifKeyword,
-                    "Cascade if should be replaced with when",
-                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                    IntentionWrapper(IfToWhenIntention(), expression.containingKtFile)
+                expression.ifKeyword,
+                "Cascade if should be replaced with when",
+                ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                IntentionWrapper(IfToWhenIntention(), expression.containingKtFile)
             )
         })
 }

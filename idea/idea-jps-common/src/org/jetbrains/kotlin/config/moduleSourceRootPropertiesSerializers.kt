@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,8 +13,8 @@ import org.jetbrains.jps.model.module.JpsModuleSourceRootType
 import org.jetbrains.jps.model.serialization.module.JpsModuleRootModelSerializer
 import org.jetbrains.jps.model.serialization.module.JpsModuleSourceRootPropertiesSerializer
 
-private val IS_GENERATED_ATTRIBUTE = "generated"
-private val RELATIVE_OUTPUT_PATH_ATTRIBUTE = "relativeOutputPath"
+private const val IS_GENERATED_ATTRIBUTE = "generated"
+private const val RELATIVE_OUTPUT_PATH_ATTRIBUTE = "relativeOutputPath"
 
 val KOTLIN_SOURCE_ROOT_TYPE_ID = "kotlin-source"
 val KOTLIN_TEST_ROOT_TYPE_ID = "kotlin-test"
@@ -27,13 +27,13 @@ sealed class KotlinSourceRootPropertiesSerializer(
     typeId: String
 ) : JpsModuleSourceRootPropertiesSerializer<JavaSourceRootProperties>(type, typeId) {
     object Source : KotlinSourceRootPropertiesSerializer(
-            SourceKotlinRootType,
-            KOTLIN_SOURCE_ROOT_TYPE_ID
+        SourceKotlinRootType,
+        KOTLIN_SOURCE_ROOT_TYPE_ID
     )
 
     object TestSource : KotlinSourceRootPropertiesSerializer(
-            TestSourceKotlinRootType,
-            KOTLIN_TEST_ROOT_TYPE_ID
+        TestSourceKotlinRootType,
+        KOTLIN_TEST_ROOT_TYPE_ID
     )
 
     override fun loadProperties(sourceRootTag: Element): JavaSourceRootProperties {
@@ -59,9 +59,10 @@ sealed class KotlinResourceRootPropertiesSerializer(
     typeId: String
 ) : JpsModuleSourceRootPropertiesSerializer<JavaResourceRootProperties>(type, typeId) {
     object Resource : KotlinResourceRootPropertiesSerializer(
-            ResourceKotlinRootType,
-            KOTLIN_RESOURCE_ROOT_TYPE_ID
+        ResourceKotlinRootType,
+        KOTLIN_RESOURCE_ROOT_TYPE_ID
     )
+
     object TestResource : KotlinResourceRootPropertiesSerializer(
         TestResourceKotlinRootType,
         KOTLIN_TEST_RESOURCE_ROOT_TYPE_ID

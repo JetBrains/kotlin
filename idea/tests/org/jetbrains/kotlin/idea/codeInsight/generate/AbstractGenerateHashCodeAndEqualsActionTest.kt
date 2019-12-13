@@ -20,8 +20,7 @@ abstract class AbstractGenerateHashCodeAndEqualsActionTest : AbstractCodeInsight
         val useInstanceOfOnEqualsParameterOld = codeInsightSettings.USE_INSTANCEOF_ON_EQUALS_PARAMETER
 
         try {
-            codeInsightSettings.USE_INSTANCEOF_ON_EQUALS_PARAMETER =
-                    InTextDirectivesUtils.isDirectiveDefined(fileText, "// USE_IS_CHECK")
+            codeInsightSettings.USE_INSTANCEOF_ON_EQUALS_PARAMETER = InTextDirectivesUtils.isDirectiveDefined(fileText, "// USE_IS_CHECK")
             super.doTest(path)
         } finally {
             codeInsightSettings.USE_INSTANCEOF_ON_EQUALS_PARAMETER = useInstanceOfOnEqualsParameterOld

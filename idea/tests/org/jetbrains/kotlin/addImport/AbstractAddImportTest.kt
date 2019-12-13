@@ -19,8 +19,7 @@ import org.jetbrains.kotlin.test.InTextDirectivesUtils
 
 abstract class AbstractAddImportTest : AbstractImportsTest() {
     override fun doTest(file: KtFile): String? {
-        var descriptorName = InTextDirectivesUtils.findStringWithPrefixes(file.text, "// IMPORT:")
-                             ?: error("No IMPORT directive defined")
+        var descriptorName = InTextDirectivesUtils.findStringWithPrefixes(file.text, "// IMPORT:") ?: error("No IMPORT directive defined")
 
         var filter: (DeclarationDescriptor) -> Boolean = { true }
         if (descriptorName.startsWith("class:")) {
@@ -31,14 +30,15 @@ abstract class AbstractAddImportTest : AbstractImportsTest() {
         val descriptors = file.resolveImportReference(FqName(descriptorName)).filter(filter)
 
         when {
-            descriptors.isEmpty() ->
-                error("No descriptor $descriptorName found")
+            descriptors.isEmpty() -> error("No descriptor $descriptorName found")
 
-            descriptors.size > 1 ->
-                error("Multiple descriptors found:\n    " + descriptors.map { DescriptorRenderer.FQ_NAMES_IN_TYPES.render(it) }.joinToString("\n    "))
+            descriptors.size > 1 -> error("Multiple descriptors found:\n    " + descriptors.joinToString("\n    ") {
+                DescriptorRenderer.FQ_NAMES_IN_TYPES.render(it)
+            })
 
             else -> {
-                val success = ImportInsertHelper.getInstance(project).importDescriptor(file, descriptors.single()) != ImportDescriptorResult.FAIL
+                val success = ImportInsertHelper.getInstance(project)
+                    .importDescriptor(file, descriptors.single()) != ImportDescriptorResult.FAIL
                 if (!success) {
                     val document = PsiDocumentManager.getInstance(project).getDocument(file)!!
                     document.replaceString(0, document.textLength, "Failed to add import")

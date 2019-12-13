@@ -40,10 +40,12 @@ abstract class AbstractCompletionIncrementalResolveTest : KotlinLightCodeInsight
             assertTrue("\"$CHANGE_MARKER\" is missing in file \"$testPath\"", changeMarkerOffset >= 0)
 
             val textToType = InTextDirectivesUtils.findArrayWithPrefixes(document.text, TYPE_DIRECTIVE_PREFIX).singleOrNull()
-                    ?.let { StringUtil.unquoteString(it) }
+                ?.let { StringUtil.unquoteString(it) }
             val backspaceCount = InTextDirectivesUtils.getPrefixedInt(document.text, BACKSPACES_DIRECTIVE_PREFIX)
-            assertTrue("At least one of \"$TYPE_DIRECTIVE_PREFIX\" and \"$BACKSPACES_DIRECTIVE_PREFIX\" should be defined",
-                       textToType != null || backspaceCount != null)
+            assertTrue(
+                "At least one of \"$TYPE_DIRECTIVE_PREFIX\" and \"$BACKSPACES_DIRECTIVE_PREFIX\" should be defined",
+                textToType != null || backspaceCount != null
+            )
 
             val beforeMarker = document.createRangeMarker(beforeMarkerOffset, beforeMarkerOffset + BEFORE_MARKER.length)
             val changeMarker = document.createRangeMarker(changeMarkerOffset, changeMarkerOffset + CHANGE_MARKER.length)
@@ -76,15 +78,16 @@ abstract class AbstractCompletionIncrementalResolveTest : KotlinLightCodeInsight
 
             if (caretMarker != null) {
                 editor.caretModel.moveToOffset(caretMarker.startOffset)
-            }
-            else {
+            } else {
                 editor.caretModel.moveToOffset(changeMarker.endOffset)
             }
 
-            testCompletion(FileUtil.loadFile(file, true),
-                           JvmPlatforms.unspecifiedJvmPlatform,
-                           { completionType, count -> myFixture.complete(completionType, count) },
-                           additionalValidDirectives = listOf(TYPE_DIRECTIVE_PREFIX, BACKSPACES_DIRECTIVE_PREFIX))
+            testCompletion(
+                FileUtil.loadFile(file, true),
+                JvmPlatforms.unspecifiedJvmPlatform,
+                { completionType, count -> myFixture.complete(completionType, count) },
+                additionalValidDirectives = listOf(TYPE_DIRECTIVE_PREFIX, BACKSPACES_DIRECTIVE_PREFIX)
+            )
 
             KotlinTestUtils.assertEqualsToFile(File(file.parent, file.nameWithoutExtension + ".log"), testLog.toString())
         } finally {

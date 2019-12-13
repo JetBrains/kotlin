@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.search.usagesSearch
@@ -256,7 +245,8 @@ class ExpressionsOfTypeProcessor(
         val element = reference.element
         val document = PsiDocumentManager.getInstance(project).getDocument(element.containingFile)
         val lineAndCol = PsiDiagnosticUtils.offsetToLineAndColumn(document, element.startOffset)
-        return "Unsupported reference: '${element.text}' in ${element.containingFile.name} line ${lineAndCol.line} column ${lineAndCol.column}"
+        return "Unsupported reference: '${element.text}' in ${element.containingFile
+            .name} line ${lineAndCol.line} column ${lineAndCol.column}"
     }
 
     private enum class ReferenceProcessor(val handler: (ExpressionsOfTypeProcessor, PsiReference) -> Boolean) {
@@ -473,7 +463,8 @@ class ExpressionsOfTypeProcessor(
                 val scope = GlobalSearchScope.projectScope(project).excludeFileTypes(KotlinFileType.INSTANCE, XmlFileType.INSTANCE)
                 testLog { "Searched references to ${logPresentation(psiClass)} in non-Kotlin files" }
                 searchReferences(psiClass, scope) { reference ->
-                    if (reference.element.language != JavaLanguage.INSTANCE) { // reference in some JVM language can be method parameter (but we don't know)
+                    // reference in some JVM language can be method parameter (but we don't know)
+                    if (reference.element.language != JavaLanguage.INSTANCE) {
                         downShiftToPlainSearch(reference)
                         return@searchReferences false
                     }
@@ -496,8 +487,7 @@ class ExpressionsOfTypeProcessor(
 
         when (element) {
             is KtReferenceExpression -> {
-                val parent = element.parent
-                when (parent) {
+                when (val parent = element.parent) {
                     is KtUserType -> { // usage in type
                         return processClassUsageInUserType(parent)
                     }
@@ -561,8 +551,7 @@ class ExpressionsOfTypeProcessor(
 
     private fun processClassUsageInUserType(userType: KtUserType): Boolean {
         val typeRef = userType.parents.lastOrNull { it is KtTypeReference }
-        val typeRefParent = typeRef?.parent
-        when (typeRefParent) {
+        when (val typeRefParent = typeRef?.parent) {
             is KtCallableDeclaration -> {
                 when (typeRef) {
                     typeRefParent.typeReference -> { // usage in type of callable declaration
@@ -802,8 +791,7 @@ class ExpressionsOfTypeProcessor(
                 possibleMatchHandler(element)
             }
 
-            val parent = element.parent
-            when (parent) {
+            when (val parent = element.parent) {
                 is KtDestructuringDeclaration -> { // "val (x, y) = <expr>"
                     processSuspiciousDeclaration(parent)
                     break@ParentsLoop
@@ -895,8 +883,7 @@ class ExpressionsOfTypeProcessor(
 
     //TODO: code is quite similar to PartialBodyResolveFilter.isValueNeeded
     private fun KtExpression.mayTypeAffectAncestors(): Boolean {
-        val parent = this.parent
-        when (parent) {
+        when (val parent = this.parent) {
             is KtBlockExpression -> {
                 return this == parent.statements.last() && parent.mayTypeAffectAncestors()
             }

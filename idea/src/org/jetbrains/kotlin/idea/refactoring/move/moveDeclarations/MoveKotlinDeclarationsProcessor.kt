@@ -68,7 +68,10 @@ interface Mover : (KtNamedDeclaration, KtElement) -> KtNamedDeclaration {
                 else -> error("Unexpected element: ${targetContainer.getElementTextWithContext()}")
             }.apply {
                 val container = originalElement.containingClassOrObject
-                if (container is KtObjectDeclaration && container.isCompanion() && container.declarations.singleOrNull() == originalElement) {
+                if (container is KtObjectDeclaration &&
+                    container.isCompanion() &&
+                    container.declarations.singleOrNull() == originalElement
+                ) {
                     container.deleteSingle()
                 } else {
                     originalElement.deleteSingle()

@@ -24,36 +24,39 @@ class KotlinAddRequiredModuleTest : KotlinLightJava9ModulesCodeInsightFixtureTes
     fun testAddRequiresToModuleInfo() {
         moduleInfo("module MAIN {}", MAIN)
         val editedFile = addKotlinFile(
-                "pkgB/B.kt",
-                """
+            "pkgB/B.kt",
+            """
                 package pkgB
                 import pkgA.A
                 class B(a: /*|*/A)
                 """,
-                MAIN)
+            MAIN
+        )
         myFixture.configureFromExistingVirtualFile(editedFile)
 
         findActionAndExecute(messageM2)
         assertNoErrors()
 
         checkModuleInfo(
-                """
+            """
                 module MAIN {
                     requires M_TWO;
                 }
-                """)
+                """
+        )
     }
 
     fun testNoIdeaModuleDependency() {
         moduleInfo("module M_THREE {}", M3)
         val editedFile = addKotlinFile(
-                "pkgB/B.kt",
-                """
+            "pkgB/B.kt",
+            """
                 package pkgB
                 import pkgA.A
                 class B(a: /*|*/A)
                 """,
-                M3)
+            M3
+        )
         myFixture.configureFromExistingVirtualFile(editedFile)
 
         val actions = myFixture.filterAvailableIntentions(messageM2)
@@ -63,24 +66,26 @@ class KotlinAddRequiredModuleTest : KotlinLightJava9ModulesCodeInsightFixtureTes
     fun testAddRequiresToInfoForJavaModule() {
         moduleInfo("module MAIN {}", MAIN)
         val editedFile = addKotlinFile(
-                "test.kt",
-                """
+            "test.kt",
+            """
                 fun test() {
                     java.util.logging./*|*/FileHandler()   // <-- error; "add 'requires java.logging'" quick fix expected
                 }
                 """,
-                MAIN)
+            MAIN
+        )
         myFixture.configureFromExistingVirtualFile(editedFile)
 
         findActionAndExecute(QuickFixBundle.message("module.info.add.requires.name", "java.logging"))
 
         assertNoErrors()
         checkModuleInfo(
-                """
+            """
                 module MAIN {
                     requires java.logging;
                 }
-                """)
+                """
+        )
     }
 
     private fun assertNoErrors() {

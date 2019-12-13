@@ -27,7 +27,7 @@ internal class MoveKotlinNestedClassesModel(
     private fun getCheckedTargetClass(): KtElement {
         val targetClass = this.targetClass ?: throw ConfigurationException("No destination class specified")
 
-        if (targetClass !is KtClassOrObject){
+        if (targetClass !is KtClassOrObject) {
             throw ConfigurationException("Destination class must be a Kotlin class")
         }
 

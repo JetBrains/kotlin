@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.refactoring.pullUp
@@ -114,7 +103,7 @@ class KotlinPullUpHelper(
         var initializerCandidate: KtExpression? = null
 
         for (statement in scope.statements) {
-            statement.asAssignment()?.let body@ {
+            statement.asAssignment()?.let body@{
                 val lhs = KtPsiUtil.safeDeparenthesize(it.left ?: return@body)
                 val receiver = (lhs as? KtQualifiedExpression)?.receiverExpression
                 if (receiver != null && receiver !is KtThisExpression) return@body
@@ -203,8 +192,7 @@ class KotlinPullUpHelper(
                     private fun processConstructorReference(expression: KtReferenceExpression, callingConstructorElement: KtElement) {
                         val descriptor = data.resolutionFacade.analyze(expression)[BindingContext.REFERENCE_TARGET, expression]
                         val constructorElement = (descriptor as? DeclarationDescriptorWithSource)?.source?.getPsi() ?: return
-                        if (constructorElement == data.targetClass
-                            || (constructorElement as? KtConstructor<*>)?.getContainingClassOrObject() == data.targetClass) {
+                        if (constructorElement == data.targetClass || (constructorElement as? KtConstructor<*>)?.getContainingClassOrObject() == data.targetClass) {
                             result.getOrPut(constructorElement as KtElement, { ArrayList() }).add(callingConstructorElement)
                         }
                     }
@@ -238,9 +226,8 @@ class KotlinPullUpHelper(
                     override fun getVertices() = propertyToInitializerInfo.keys
 
                     override fun getTargets(source: KtProperty) = propertyToInitializerInfo[source]?.usedProperties
-                },
-                { !propertyToInitializerInfo.containsKey(it) }
-            )
+                }
+            ) { !propertyToInitializerInfo.containsKey(it) }
 
             propertyToInitializerInfo.keys.removeAll(unmovableProperties)
             result[targetConstructor] = propertyToInitializerInfo
@@ -363,7 +350,7 @@ class KotlinPullUpHelper(
                 val superRef = sourcePsiClass.implementsList
                     ?.referenceElements
                     ?.firstOrNull { it.resolve()?.unwrapped == realMemberPsi }
-                        ?: return
+                    ?: return
                 val superTypeForTarget = substitutor.substitute(elementFactory.createType(superRef))
 
                 data.sourceClass.removeSuperTypeListEntry(currentSpecifier)
@@ -421,7 +408,7 @@ class KotlinPullUpHelper(
                 val newParameterTypes = lightMethod.parameterList.parameters.map { substitutor.substitute(it.type) }
                 val objectType = PsiType.getJavaLangObject(PsiManager.getInstance(project), GlobalSearchScope.allScope(project))
                 val newTypeParameterBounds = lightMethod.typeParameters.map {
-                    it.superTypes.map { substitutor.substitute(it) as? PsiClassType ?: objectType }
+                    it.superTypes.map { type -> substitutor.substitute(type) as? PsiClassType ?: objectType }
                 }
                 val newMethod = org.jetbrains.kotlin.idea.refactoring.createJavaMethod(member, data.targetClass)
                 RefactoringUtil.makeMethodAbstract(data.targetClass, newMethod)
@@ -599,7 +586,7 @@ class KotlinPullUpHelper(
         }
 
         fun addUsedParameters(constructorElement: KtElement, info: InitializerInfo) {
-            if (!info.usedParameters.isNotEmpty()) return
+            if (info.usedParameters.isEmpty()) return
             val constructor: KtConstructor<*> = when (constructorElement) {
                 is KtConstructor<*> -> constructorElement
                 is KtClass -> constructorElement.createPrimaryConstructorIfAbsent()
@@ -631,8 +618,8 @@ class KotlinPullUpHelper(
                     else -> null
                 }
                 superCall?.valueArgumentList?.let { args ->
-                    info.usedParameters.forEach {
-                        args.addArgument(psiFactory.createArgument(psiFactory.createExpression(it.name ?: "_")))
+                    info.usedParameters.forEach { parameter ->
+                        args.addArgument(psiFactory.createArgument(psiFactory.createExpression(parameter.name ?: "_")))
                     }
                 }
             }
@@ -652,7 +639,7 @@ class KotlinPullUpHelper(
             )
 
             for (oldProperty in properties) {
-                val info = propertyToInitializerInfo[oldProperty]!!
+                val info = propertyToInitializerInfo.getValue(oldProperty)
 
                 addUsedParameters(constructorElement, info)
 

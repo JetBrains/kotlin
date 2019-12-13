@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -30,9 +30,8 @@ class NullableBooleanElvisInspection : AbstractKotlinInspection(), CleanupLocalI
             if (!KtPsiUtil.isBooleanConstant(rhs)) return
             val lhsType = lhs.analyze(BodyResolveMode.PARTIAL).getType(lhs) ?: return
             if (TypeUtils.isNullableType(lhsType) && lhsType.isBooleanOrNullableBoolean()) {
-                val parentIfOrWhile = PsiTreeUtil.getParentOfType(
-                        expression, KtIfExpression::class.java, KtWhileExpressionBase::class.java)
-                val condition = when (parentIfOrWhile) {
+                val condition = when (val parentIfOrWhile =
+                    PsiTreeUtil.getParentOfType(expression, KtIfExpression::class.java, KtWhileExpressionBase::class.java)) {
                     is KtIfExpression -> parentIfOrWhile.condition
                     is KtWhileExpressionBase -> parentIfOrWhile.condition
                     else -> null
@@ -43,11 +42,11 @@ class NullableBooleanElvisInspection : AbstractKotlinInspection(), CleanupLocalI
                     INFORMATION to "can"
 
                 holder.registerProblemWithoutOfflineInformation(
-                        expression,
-                        "Equality check $verb be used instead of elvis for nullable boolean check",
-                        isOnTheFly,
-                        highlightType,
-                        ReplaceWithEqualityCheckFix()
+                    expression,
+                    "Equality check $verb be used instead of elvis for nullable boolean check",
+                    isOnTheFly,
+                    highlightType,
+                    ReplaceWithEqualityCheckFix()
                 )
             }
         })

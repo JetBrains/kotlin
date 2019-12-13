@@ -72,10 +72,10 @@ abstract class AbstractExtractionTest : KotlinLightCodeInsightFixtureTestCase() 
             file as KtFile
 
             KotlinIntroduceVariableHandler.invoke(
-                    fixture.project,
-                    fixture.editor,
-                    file,
-                    DataManager.getInstance().getDataContext(fixture.editor.component)
+                fixture.project,
+                fixture.editor,
+                file,
+                DataManager.getInstance().getDataContext(fixture.editor.component)
             )
         }
     }
@@ -84,23 +84,21 @@ abstract class AbstractExtractionTest : KotlinLightCodeInsightFixtureTestCase() 
         doTest(path) { file ->
             val fileText = file.text
 
-            open class HelperImpl: KotlinIntroduceParameterHelper {
-                override fun configure(descriptor: IntroduceParameterDescriptor): IntroduceParameterDescriptor {
-                    return with (descriptor) {
-                        val singleReplace = InTextDirectivesUtils.isDirectiveDefined(fileText, "// SINGLE_REPLACE")
-                        val withDefaultValue = InTextDirectivesUtils.getPrefixedBoolean(fileText, "// WITH_DEFAULT_VALUE:") ?: true
+            open class HelperImpl : KotlinIntroduceParameterHelper {
+                override fun configure(descriptor: IntroduceParameterDescriptor): IntroduceParameterDescriptor = with(descriptor) {
+                    val singleReplace = InTextDirectivesUtils.isDirectiveDefined(fileText, "// SINGLE_REPLACE")
+                    val withDefaultValue = InTextDirectivesUtils.getPrefixedBoolean(fileText, "// WITH_DEFAULT_VALUE:") ?: true
 
-                        copy(occurrencesToReplace = if (singleReplace) Collections.singletonList(originalOccurrence) else occurrencesToReplace,
-                             withDefaultValue = withDefaultValue)
-                    }
+                    copy(
+                        occurrencesToReplace = if (singleReplace) Collections.singletonList(originalOccurrence) else occurrencesToReplace,
+                        withDefaultValue = withDefaultValue
+                    )
                 }
             }
 
-            class LambdaHelperImpl: HelperImpl(), KotlinIntroduceLambdaParameterHelper {
-                override fun configureExtractLambda(descriptor: ExtractableCodeDescriptor): ExtractableCodeDescriptor {
-                    return with(descriptor) {
-                        if (name.isNullOrEmpty()) copy(suggestedNames = listOf("__dummyTestFun__")) else this
-                    }
+            class LambdaHelperImpl : HelperImpl(), KotlinIntroduceLambdaParameterHelper {
+                override fun configureExtractLambda(descriptor: ExtractableCodeDescriptor): ExtractableCodeDescriptor = with(descriptor) {
+                    if (name.isNullOrEmpty()) copy(suggestedNames = listOf("__dummyTestFun__")) else this
                 }
             }
 
@@ -109,14 +107,13 @@ abstract class AbstractExtractionTest : KotlinLightCodeInsightFixtureTestCase() 
             } else {
                 KotlinIntroduceParameterHandler(HelperImpl())
             }
-            with (handler) {
+            with(handler) {
                 val target = (file as KtFile).findElementByCommentPrefix("// TARGET:") as? KtNamedDeclaration
                 if (target != null) {
                     selectElement(fixture.editor, file, true, listOf(CodeInsightUtils.ElementKind.EXPRESSION)) { element ->
                         invoke(fixture.project, fixture.editor, element as KtExpression, target)
                     }
-                }
-                else {
+                } else {
                     invoke(fixture.project, fixture.editor, file, null)
                 }
             }
@@ -138,22 +135,22 @@ abstract class AbstractExtractionTest : KotlinLightCodeInsightFixtureTestCase() 
 
             var elementToWorkOn: ElementToWorkOn? = null
             ElementToWorkOn.processElementToWorkOn(
-                    editor,
-                    file,
-                    "Introduce parameter",
-                    null,
-                    project,
-                    object : ElementToWorkOn.ElementsProcessor<ElementToWorkOn> {
-                        override fun accept(e: ElementToWorkOn): Boolean {
-                            return true
-                        }
+                editor,
+                file,
+                "Introduce parameter",
+                null,
+                project,
+                object : ElementToWorkOn.ElementsProcessor<ElementToWorkOn> {
+                    override fun accept(e: ElementToWorkOn): Boolean {
+                        return true
+                    }
 
-                        override fun pass(e: ElementToWorkOn?) {
-                            if (e != null) {
-                                elementToWorkOn = e
-                            }
+                    override fun pass(e: ElementToWorkOn?) {
+                        if (e != null) {
+                            elementToWorkOn = e
                         }
-                    })
+                    }
+                })
 
             val expr = elementToWorkOn!!.expression
             val localVar = elementToWorkOn!!.localVariable
@@ -165,41 +162,42 @@ abstract class AbstractExtractionTest : KotlinLightCodeInsightFixtureTestCase() 
             val methodToSearchFor = if (applyToSuper) method.findDeepestSuperMethods()[0] else method
 
             val (initializer, occurrences) =
-                    if (expr == null) {
-                        localVar.initializer!! to CodeInsightUtil.findReferenceExpressions(method, localVar)
-                    }
-                    else {
-                        expr to ExpressionOccurrenceManager(expr, method, null).findExpressionOccurrences()
-                    }
+                if (expr == null) {
+                    localVar.initializer!! to CodeInsightUtil.findReferenceExpressions(method, localVar)
+                } else {
+                    expr to ExpressionOccurrenceManager(expr, method, null).findExpressionOccurrences()
+                }
             val type = initializer.type
 
             val parametersToRemove = Util.findParametersToRemove(method, initializer, occurrences)
 
             val codeStyleManager = JavaCodeStyleManager.getInstance(project)
             val info = codeStyleManager.suggestUniqueVariableName(
-                    codeStyleManager.suggestVariableName(VariableKind.PARAMETER, localVar?.name, initializer, type),
-                    expr,
-                    true
+                codeStyleManager.suggestVariableName(VariableKind.PARAMETER, localVar?.name, initializer, type),
+                expr,
+                true
             )
             val suggestedNames = AbstractJavaInplaceIntroducer.appendUnresolvedExprName(
-                    JavaCompletionUtil.completeVariableNameForRefactoring(codeStyleManager, type, VariableKind.LOCAL_VARIABLE, info),
-                    initializer
+                JavaCompletionUtil.completeVariableNameForRefactoring(codeStyleManager, type, VariableKind.LOCAL_VARIABLE, info),
+                initializer
             )
 
-            IntroduceParameterProcessor(project,
-                                        method,
-                                        methodToSearchFor,
-                                        initializer,
-                                        expr,
-                                        localVar,
-                                        true,
-                                        suggestedNames.first(),
-                                        true,
-                                        IntroduceParameterRefactoring.REPLACE_FIELDS_WITH_GETTERS_NONE,
-                                        false,
-                                        false,
-                                        null,
-                                        parametersToRemove).run()
+            IntroduceParameterProcessor(
+                project,
+                method,
+                methodToSearchFor,
+                initializer,
+                expr,
+                localVar,
+                true,
+                suggestedNames.first(),
+                true,
+                IntroduceParameterRefactoring.REPLACE_FIELDS_WITH_GETTERS_NONE,
+                false,
+                false,
+                null,
+                parametersToRemove
+            ).run()
 
             editor.selectionModel.removeSelection()
         }
@@ -217,17 +215,17 @@ abstract class AbstractExtractionTest : KotlinLightCodeInsightFixtureTestCase() 
                 override fun validate(descriptor: ExtractableCodeDescriptor) = descriptor.validate(extractionTarget)
 
                 override fun configureAndRun(
-                        project: Project,
-                        editor: Editor,
-                        descriptorWithConflicts: ExtractableCodeDescriptorWithConflicts,
-                        onFinish: (ExtractionResult) -> Unit
+                    project: Project,
+                    editor: Editor,
+                    descriptorWithConflicts: ExtractableCodeDescriptorWithConflicts,
+                    onFinish: (ExtractionResult) -> Unit
                 ) {
                     doRefactor(
-                            ExtractionGeneratorConfiguration(
-                                    descriptorWithConflicts.descriptor,
-                                    ExtractionGeneratorOptions.DEFAULT.copy(target = extractionTarget, delayInitialOccurrenceReplacement = true)
-                            ),
-                            onFinish
+                        ExtractionGeneratorConfiguration(
+                            descriptorWithConflicts.descriptor,
+                            ExtractionGeneratorOptions.DEFAULT.copy(target = extractionTarget, delayInitialOccurrenceReplacement = true)
+                        ),
+                        onFinish
                     )
                 }
             }
@@ -268,11 +266,11 @@ abstract class AbstractExtractionTest : KotlinLightCodeInsightFixtureTestCase() 
             val editor = fixture.editor
             object : KotlinIntroduceTypeAliasHandler() {
                 override fun doInvoke(
-                        project: Project,
-                        editor: Editor,
-                        elements: List<PsiElement>,
-                        targetSibling: PsiElement,
-                        descriptorSubstitutor: ((IntroduceTypeAliasDescriptor) -> IntroduceTypeAliasDescriptor)?
+                    project: Project,
+                    editor: Editor,
+                    elements: List<PsiElement>,
+                    targetSibling: PsiElement,
+                    descriptorSubstitutor: ((IntroduceTypeAliasDescriptor) -> IntroduceTypeAliasDescriptor)?
                 ) {
                     super.doInvoke(project, editor, elements, explicitPreviousSibling ?: targetSibling) {
                         it.copy(name = aliasName ?: it.name, visibility = aliasVisibility ?: it.visibility)
@@ -292,20 +290,20 @@ abstract class AbstractExtractionTest : KotlinLightCodeInsightFixtureTestCase() 
             val fileText = file.text
             val className = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// NAME:")!!
             val targetFileName = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// TARGET_FILE_NAME:")
-                    ?: "$className.${KotlinFileType.EXTENSION}"
+                ?: "$className.${KotlinFileType.EXTENSION}"
             val editor = fixture.editor
             val originalClass = file.findElementAt(editor.caretModel.offset)?.getStrictParentOfType<KtClassOrObject>()!!
             val memberInfos = chooseMembers(extractClassMembers(originalClass))
             val conflicts = ExtractSuperRefactoring.collectConflicts(originalClass, memberInfos, targetParent, className, isInterface)
             project.checkConflictsInteractively(conflicts) {
                 val extractInfo = ExtractSuperInfo(
-                        originalClass,
-                        memberInfos,
-                        targetParent,
-                        targetFileName,
-                        className,
-                        isInterface,
-                        DocCommentPolicy<PsiComment>(DocCommentPolicy.ASIS)
+                    originalClass,
+                    memberInfos,
+                    targetParent,
+                    targetFileName,
+                    className,
+                    isInterface,
+                    DocCommentPolicy<PsiComment>(DocCommentPolicy.ASIS)
                 )
                 ExtractSuperRefactoring(extractInfo).performRefactoring()
             }
@@ -330,7 +328,6 @@ abstract class AbstractExtractionTest : KotlinLightCodeInsightFixtureTestCase() 
         fixture.testDataPath = "${KotlinTestUtils.getHomeDirectory()}/${mainFile.parent}"
 
 
-
         val mainFileName = mainFile.name
         val mainFileBaseName = FileUtil.getNameWithoutExtension(mainFileName)
         val extraFiles = mainFile.parentFile.listFiles { _, name ->
@@ -349,8 +346,7 @@ abstract class AbstractExtractionTest : KotlinLightCodeInsightFixtureTestCase() 
 
         try {
             checkExtract(ExtractTestFiles(path, fixture.configureByFile(mainFileName), extraFilesToPsi), checkAdditionalAfterdata, action)
-        }
-        finally {
+        } finally {
             ConfigLibraryUtil.unconfigureLibrariesByDirective(module, fileText)
 
             if (addKotlinRuntime) {
@@ -364,10 +360,11 @@ abstract class AbstractExtractionTest : KotlinLightCodeInsightFixtureTestCase() 
 }
 
 class ExtractTestFiles(
-        val mainFile: PsiFile,
-        val afterFile: File,
-        val conflictFile: File,
-        val extraFilesToPsi: Map<PsiFile, File> = emptyMap()) {
+    val mainFile: PsiFile,
+    val afterFile: File,
+    val conflictFile: File,
+    val extraFilesToPsi: Map<PsiFile, File> = emptyMap()
+) {
     constructor(path: String, mainFile: PsiFile, extraFilesToPsi: Map<PsiFile, File> = emptyMap()) :
             this(mainFile, File("$path.after"), File("$path.conflicts"), extraFilesToPsi)
 }
@@ -387,15 +384,12 @@ fun checkExtract(files: ExtractTestFiles, checkAdditionalAfterdata: Boolean = fa
                 KotlinTestUtils.assertEqualsToFile(File("${extraFile.path}.after"), extraPsiFile.text)
             }
         }
-    }
-    catch(e: ConflictsInTestsException) {
+    } catch (e: ConflictsInTestsException) {
         val message = e.messages.sorted().joinToString(" ").replace("\n", " ")
         KotlinTestUtils.assertEqualsToFile(conflictFile, message)
-    }
-    catch(e: CommonRefactoringUtil.RefactoringErrorHintException) {
+    } catch (e: CommonRefactoringUtil.RefactoringErrorHintException) {
         KotlinTestUtils.assertEqualsToFile(conflictFile, e.message!!)
-    }
-    catch(e: RuntimeException) { // RuntimeException is thrown by IDEA code in CodeInsightUtils.java
+    } catch (e: RuntimeException) { // RuntimeException is thrown by IDEA code in CodeInsightUtils.java
         if (e::class.java != RuntimeException::class.java) throw e
         KotlinTestUtils.assertEqualsToFile(conflictFile, e.message!!)
     }
@@ -407,9 +401,9 @@ fun doExtractFunction(fixture: CodeInsightTestFixture, file: KtFile) {
     val expectedNames = InTextDirectivesUtils.findListWithPrefixes(fileText, "// SUGGESTED_NAMES: ")
     val expectedReturnTypes = InTextDirectivesUtils.findListWithPrefixes(fileText, "// SUGGESTED_RETURN_TYPES: ")
     val expectedDescriptors =
-            InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, "// PARAM_DESCRIPTOR: ").joinToString()
+        InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, "// PARAM_DESCRIPTOR: ").joinToString()
     val expectedTypes =
-            InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, "// PARAM_TYPES: ").map { "[$it]" }.joinToString()
+        InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, "// PARAM_TYPES: ").map { "[$it]" }.joinToString()
 
     val extractionOptions = InTextDirectivesUtils.findListWithPrefixes(fileText, "// OPTIONS: ").let {
         if (it.isNotEmpty()) {
@@ -423,47 +417,50 @@ fun doExtractFunction(fixture: CodeInsightTestFixture, file: KtFile) {
 
     val editor = fixture.editor
     val handler = ExtractKotlinFunctionHandler(
-            helper = object : ExtractionEngineHelper(EXTRACT_FUNCTION) {
-                override fun adjustExtractionData(data: ExtractionData): ExtractionData {
-                    return data.copy(options = extractionOptions)
-                }
-
-                override fun configureAndRun(
-                        project: Project,
-                        editor: Editor,
-                        descriptorWithConflicts: ExtractableCodeDescriptorWithConflicts,
-                        onFinish: (ExtractionResult) -> Unit
-                ) {
-                    val descriptor = descriptorWithConflicts.descriptor
-                    val actualNames = descriptor.suggestedNames
-                    val actualReturnTypes = descriptor.controlFlow.possibleReturnTypes.map {
-                        IdeDescriptorRenderers.SOURCE_CODE.renderType(it)
-                    }
-                    val allParameters = listOfNotNull(descriptor.receiverParameter) + descriptor.parameters
-                    val actualDescriptors = allParameters.map { renderer.render(it.originalDescriptor) }.joinToString()
-                    val actualTypes = allParameters.map {
-                        it.getParameterTypeCandidates().map { renderer.renderType(it) }.joinToString(", ", "[", "]")
-                    }.joinToString()
-
-                    if (actualNames.size != 1 || expectedNames.isNotEmpty()) {
-                        assertEquals(expectedNames, actualNames, "Expected names mismatch.")
-                    }
-                    if (actualReturnTypes.size != 1 || expectedReturnTypes.isNotEmpty()) {
-                        assertEquals(expectedReturnTypes, actualReturnTypes, "Expected return types mismatch.")
-                    }
-                    KotlinLightCodeInsightFixtureTestCaseBase.assertEquals("Expected descriptors mismatch.", expectedDescriptors, actualDescriptors)
-                    KotlinLightCodeInsightFixtureTestCaseBase.assertEquals("Expected types mismatch.", expectedTypes, actualTypes)
-
-                    val newDescriptor = if (descriptor.name == "") {
-                        descriptor.copy(suggestedNames = Collections.singletonList("__dummyTestFun__"))
-                    }
-                    else {
-                        descriptor
-                    }
-
-                    doRefactor(ExtractionGeneratorConfiguration(newDescriptor, ExtractionGeneratorOptions.DEFAULT), onFinish)
-                }
+        helper = object : ExtractionEngineHelper(EXTRACT_FUNCTION) {
+            override fun adjustExtractionData(data: ExtractionData): ExtractionData {
+                return data.copy(options = extractionOptions)
             }
+
+            override fun configureAndRun(
+                project: Project,
+                editor: Editor,
+                descriptorWithConflicts: ExtractableCodeDescriptorWithConflicts,
+                onFinish: (ExtractionResult) -> Unit
+            ) {
+                val descriptor = descriptorWithConflicts.descriptor
+                val actualNames = descriptor.suggestedNames
+                val actualReturnTypes = descriptor.controlFlow.possibleReturnTypes.map {
+                    IdeDescriptorRenderers.SOURCE_CODE.renderType(it)
+                }
+                val allParameters = listOfNotNull(descriptor.receiverParameter) + descriptor.parameters
+                val actualDescriptors = allParameters.map { renderer.render(it.originalDescriptor) }.joinToString()
+                val actualTypes = allParameters.map {
+                    it.getParameterTypeCandidates().map { renderer.renderType(it) }.joinToString(", ", "[", "]")
+                }.joinToString()
+
+                if (actualNames.size != 1 || expectedNames.isNotEmpty()) {
+                    assertEquals(expectedNames, actualNames, "Expected names mismatch.")
+                }
+                if (actualReturnTypes.size != 1 || expectedReturnTypes.isNotEmpty()) {
+                    assertEquals(expectedReturnTypes, actualReturnTypes, "Expected return types mismatch.")
+                }
+                KotlinLightCodeInsightFixtureTestCaseBase.assertEquals(
+                    "Expected descriptors mismatch.",
+                    expectedDescriptors,
+                    actualDescriptors
+                )
+                KotlinLightCodeInsightFixtureTestCaseBase.assertEquals("Expected types mismatch.", expectedTypes, actualTypes)
+
+                val newDescriptor = if (descriptor.name == "") {
+                    descriptor.copy(suggestedNames = Collections.singletonList("__dummyTestFun__"))
+                } else {
+                    descriptor
+                }
+
+                doRefactor(ExtractionGeneratorConfiguration(newDescriptor, ExtractionGeneratorOptions.DEFAULT), onFinish)
+            }
+        }
     )
     handler.selectElements(editor, file) { elements, previousSibling ->
         handler.doInvoke(editor, file, elements, explicitPreviousSibling ?: previousSibling)

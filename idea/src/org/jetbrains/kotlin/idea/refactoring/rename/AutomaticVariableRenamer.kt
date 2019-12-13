@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.refactoring.rename
@@ -24,7 +13,6 @@ import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.PsiVariable
 import com.intellij.psi.codeStyle.JavaCodeStyleManager
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSettings
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.rename.naming.AutomaticRenamer
 import com.intellij.refactoring.rename.naming.AutomaticRenamerFactory
@@ -36,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.unquote
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSettings
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -47,9 +36,9 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.*
 
 class AutomaticVariableRenamer(
-        klass: PsiNamedElement, // PsiClass or JetClass
-        newClassName: String,
-        usages: Collection<UsageInfo>
+    klass: PsiNamedElement, // PsiClass or JetClass
+    newClassName: String,
+    usages: Collection<UsageInfo>
 ) : AutomaticRenamer() {
     private val toUnpluralize = ArrayList<KtNamedDeclaration>()
 
@@ -58,16 +47,16 @@ class AutomaticVariableRenamer(
             val usageElement = usage.element ?: continue
 
             val parameterOrVariable = PsiTreeUtil.getParentOfType(
-                    usageElement,
-                    KtVariableDeclaration::class.java,
-                    KtParameter::class.java
+                usageElement,
+                KtVariableDeclaration::class.java,
+                KtParameter::class.java
             ) as KtCallableDeclaration? ?: continue
 
             if (parameterOrVariable.typeReference?.isAncestor(usageElement) != true) continue
 
             val descriptor = try {
                 parameterOrVariable.unsafeResolveToDescriptor()
-            } catch(e: NoDescriptorForDeclarationException) {
+            } catch (e: NoDescriptorForDeclarationException) {
                 LOG.error(e)
                 continue
             }
@@ -96,8 +85,7 @@ class AutomaticVariableRenamer(
         val propertyName = if (psiVariable != null) {
             val codeStyleManager = JavaCodeStyleManager.getInstance(psiVariable.project)
             codeStyleManager.variableNameToPropertyName(name, codeStyleManager.getVariableKind(psiVariable))
-        }
-        else name
+        } else name
 
         if (element in toUnpluralize) {
             val singular = StringUtil.unpluralize(propertyName)
@@ -114,8 +102,7 @@ class AutomaticVariableRenamer(
         val varName = if (psiVariable != null) {
             val codeStyleManager = JavaCodeStyleManager.getInstance(psiVariable.project)
             codeStyleManager.propertyNameToVariableName(canonicalName, codeStyleManager.getVariableKind(psiVariable))
-        }
-        else canonicalName
+        } else canonicalName
 
         return if (element in toUnpluralize)
             StringUtil.pluralize(varName)
@@ -139,11 +126,11 @@ private fun KotlinType.isCollectionLikeOf(classPsiElement: PsiNamedElement): Boo
 }
 
 
-open class AutomaticVariableRenamerFactory: AutomaticRenamerFactory {
+open class AutomaticVariableRenamerFactory : AutomaticRenamerFactory {
     override fun isApplicable(element: PsiElement) = element is KtClass || element is KtTypeAlias
 
     override fun createRenamer(element: PsiElement, newName: String, usages: Collection<UsageInfo>) =
-            AutomaticVariableRenamer(element as PsiNamedElement, newName, usages)
+        AutomaticVariableRenamer(element as PsiNamedElement, newName, usages)
 
     override fun isEnabled() = KotlinRefactoringSettings.instance.renameVariables
     override fun setEnabled(enabled: Boolean) {
@@ -159,12 +146,12 @@ class AutomaticVariableRenamerFactoryForJavaClass : AutomaticVariableRenamerFact
     override fun getOptionName() = null
 }
 
-class AutomaticVariableInJavaRenamerFactory: AutomaticRenamerFactory {
+class AutomaticVariableInJavaRenamerFactory : AutomaticRenamerFactory {
     override fun isApplicable(element: PsiElement) = element is KtClass && element.toLightClass() != null
 
     override fun createRenamer(element: PsiElement, newName: String, usages: Collection<UsageInfo>) =
-            // Using java variable renamer for java usages
-            com.intellij.refactoring.rename.naming.AutomaticVariableRenamer((element as KtClass).toLightClass()!!, newName, usages)
+        // Using java variable renamer for java usages
+        com.intellij.refactoring.rename.naming.AutomaticVariableRenamer((element as KtClass).toLightClass()!!, newName, usages)
 
     override fun isEnabled() = KotlinRefactoringSettings.instance.renameVariables
     override fun setEnabled(enabled: Boolean) {

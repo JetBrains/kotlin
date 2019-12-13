@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.intentions
@@ -55,8 +44,8 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 
 class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntention<KtTypeReference>(
-        KtTypeReference::class.java,
-        "Convert function type parameter to receiver"
+    KtTypeReference::class.java,
+    "Convert function type parameter to receiver"
 ) {
     class FunctionDefinitionInfo(element: KtFunction) : AbstractProcessableUsageInfo<KtFunction, ConversionData>(element) {
         override fun process(data: ConversionData, elementsToShorten: MutableList<KtElement>) {
@@ -76,25 +65,27 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
             val callExpression = element ?: return
             val argumentList = callExpression.valueArgumentList ?: return
             val expressionToMove = argumentList.arguments.getOrNull(data.typeParameterIndex)?.getArgumentExpression() ?: return
-            val callWithReceiver = KtPsiFactory(callExpression).createExpressionByPattern("$0.$1", expressionToMove, callExpression) as KtQualifiedExpression
+            val callWithReceiver =
+                KtPsiFactory(callExpression).createExpressionByPattern("$0.$1", expressionToMove, callExpression) as KtQualifiedExpression
             (callWithReceiver.selectorExpression as KtCallExpression).valueArgumentList!!.removeArgument(data.typeParameterIndex)
             callExpression.replace(callWithReceiver)
         }
     }
 
-    class InternalReferencePassInfo(element: KtSimpleNameExpression) : AbstractProcessableUsageInfo<KtSimpleNameExpression, ConversionData>(element) {
+    class InternalReferencePassInfo(element: KtSimpleNameExpression) :
+        AbstractProcessableUsageInfo<KtSimpleNameExpression, ConversionData>(element) {
         override fun process(data: ConversionData, elementsToShorten: MutableList<KtElement>) {
             val expression = element ?: return
             val lambdaType = data.lambdaType
             val validator = CollectingNameValidator()
             val parameterNames = lambdaType.arguments
-                    .dropLast(1)
-                    .map { KotlinNameSuggester.suggestNamesByType(it.type, validator, "p").first() }
+                .dropLast(1)
+                .map { KotlinNameSuggester.suggestNamesByType(it.type, validator, "p").first() }
             val receiver = parameterNames.getOrNull(data.typeParameterIndex) ?: return
             val arguments = parameterNames.filter { it != receiver }
             val adapterLambda = KtPsiFactory(expression).createLambdaExpression(
-                    parameterNames.joinToString(),
-                    "$receiver.${expression.text}(${arguments.joinToString()})"
+                parameterNames.joinToString(),
+                "$receiver.${expression.text}(${arguments.joinToString()})"
             )
             expression.replaced(adapterLambda).let {
                 it.moveFunctionLiteralOutsideParenthesesIfPossible()
@@ -141,10 +132,11 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
             }
 
             val parameterNameValidator = CollectingNameValidator(
-                    if (expression !is KtCallableReferenceExpression) listOf(calleeText) else emptyList()
+                if (expression !is KtCallableReferenceExpression) listOf(calleeText) else emptyList()
             )
             val parameterNamesWithReceiver = originalParameterTypes.mapIndexed { i, type ->
-                if (i != data.typeParameterIndex) KotlinNameSuggester.suggestNamesByType(type, parameterNameValidator, "p").first() else "this"
+                if (i != data.typeParameterIndex) KotlinNameSuggester.suggestNamesByType(type, parameterNameValidator, "p")
+                    .first() else "this"
             }
             val parameterNames = parameterNamesWithReceiver.filter { it != "this" }
 
@@ -173,7 +165,7 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
     }
 
     private inner class Converter(
-            private val data: ConversionData
+        private val data: ConversionData
     ) : CallableRefactoring<CallableDescriptor>(data.function.project, data.functionDescriptor, text) {
         override fun performRefactoring(descriptorsForChange: Collection<CallableDescriptor>) {
             val callables = getAffectedCallables(project, descriptorsForChange)
@@ -184,7 +176,7 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
 
             project.runSynchronouslyWithProgress("Looking for usages and conflicts...", true) {
                 runReadAction {
-                    val progressStep = 1.0/callables.size
+                    val progressStep = 1.0 / callables.size
                     for ((i, callable) in callables.withIndex()) {
                         ProgressManager.getInstance().progressIndicator!!.fraction = (i + 1) * progressStep
 
@@ -203,8 +195,8 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
                                 else -> {
                                     if (data.isFirstParameter) continue@usageLoop
                                     conflicts.putValue(
-                                            refElement,
-                                            "Can't replace non-Kotlin reference with call expression: " + StringUtil.htmlEmphasize(refElement.text)
+                                        refElement,
+                                        "Can't replace non-Kotlin reference with call expression: " + StringUtil.htmlEmphasize(refElement.text)
                                     )
                                 }
                             }
@@ -228,9 +220,9 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
         }
 
         private fun processExternalUsage(
-                conflicts: MultiMap<PsiElement, String>,
-                refElement: PsiElement,
-                usages: ArrayList<AbstractProcessableUsageInfo<*, ConversionData>>
+            conflicts: MultiMap<PsiElement, String>,
+            refElement: PsiElement,
+            usages: ArrayList<AbstractProcessableUsageInfo<*, ConversionData>>
         ) {
             val callElement = refElement.getParentOfTypeAndBranch<KtCallElement> { calleeExpression }
             if (callElement != null) {
@@ -241,10 +233,11 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
                     && callElement is KtConstructorDelegationCall
                     && expressionToProcess !is KtLambdaExpression
                     && expressionToProcess !is KtSimpleNameExpression
-                    && expressionToProcess !is KtCallableReferenceExpression) {
+                    && expressionToProcess !is KtCallableReferenceExpression
+                ) {
                     conflicts.putValue(
-                            expressionToProcess,
-                            "Following expression won't be processed since refactoring can't preserve its semantics: ${expressionToProcess.text}"
+                        expressionToProcess,
+                        "Following expression won't be processed since refactoring can't preserve its semantics: ${expressionToProcess.text}"
                     )
                     return
                 }
@@ -262,8 +255,8 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
             val callableReference = refElement.getParentOfTypeAndBranch<KtCallableReferenceExpression> { callableReference }
             if (callableReference != null) {
                 conflicts.putValue(
-                        refElement,
-                        "Callable reference transformation is not supported: " + StringUtil.htmlEmphasize(callableReference.text)
+                    refElement,
+                    "Callable reference transformation is not supported: " + StringUtil.htmlEmphasize(callableReference.text)
                 )
                 return
             }
@@ -271,20 +264,24 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
 
         private fun getArgumentExpressionToProcess(callElement: KtCallElement, context: BindingContext): KtExpression? {
             return callElement
-                    .getArgumentByParameterIndex(data.functionParameterIndex, context)
-                    .singleOrNull()
-                    ?.getArgumentExpression()
-                    ?.let { KtPsiUtil.safeDeparenthesize(it) }
+                .getArgumentByParameterIndex(data.functionParameterIndex, context)
+                .singleOrNull()
+                ?.getArgumentExpression()
+                ?.let { KtPsiUtil.safeDeparenthesize(it) }
         }
 
-        private fun checkThisExpressionsAreExplicatable(conflicts: MultiMap<PsiElement, String>, context: BindingContext, expressionToProcess: KtExpression): Boolean {
+        private fun checkThisExpressionsAreExplicatable(
+            conflicts: MultiMap<PsiElement, String>,
+            context: BindingContext,
+            expressionToProcess: KtExpression
+        ): Boolean {
             for (thisExpr in expressionToProcess.collectDescendantsOfType<KtThisExpression>()) {
                 if (thisExpr.getLabelName() != null) continue
                 val descriptor = context[BindingContext.REFERENCE_TARGET, thisExpr.instanceReference] ?: continue
                 if (explicateReceiverOf(descriptor) == "this") {
                     conflicts.putValue(
-                            thisExpr,
-                            "Following expression won't be processed since refactoring can't preserve its semantics: ${thisExpr.text}"
+                        thisExpr,
+                        "Following expression won't be processed since refactoring can't preserve its semantics: ${thisExpr.text}"
                     )
                     return false
                 }
@@ -304,8 +301,7 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
                     val callExpression = element.getParentOfTypeAndBranch<KtCallExpression> { calleeExpression }
                     if (callExpression != null) {
                         usages += ParameterCallInfo(callExpression)
-                    }
-                    else if (!data.isFirstParameter) {
+                    } else if (!data.isFirstParameter) {
                         usages += InternalReferencePassInfo(element)
                     }
                 }
@@ -314,10 +310,10 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
     }
 
     class ConversionData(
-            val typeParameterIndex: Int,
-            val functionParameterIndex: Int,
-            val lambdaType: KotlinType,
-            val function: KtFunction
+        val typeParameterIndex: Int,
+        val functionParameterIndex: Int,
+        val lambdaType: KotlinType,
+        val function: KtFunction
     ) {
         val isFirstParameter: Boolean get() = typeParameterIndex == 0
         val functionDescriptor by lazy { function.unsafeResolveToDescriptor() as FunctionDescriptor }

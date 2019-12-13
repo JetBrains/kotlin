@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.highlighter
@@ -35,16 +24,17 @@ import com.intellij.psi.PsiRecursiveElementVisitor
 import org.jetbrains.kotlin.psi.KtFile
 
 class KotlinBeforeResolveHighlightingPass(
-        private val file: KtFile,
-        document: Document
+    private val file: KtFile,
+    document: Document
 ) : TextEditorHighlightingPass(file.project, document), DumbAware {
 
-    @Volatile private var annotationHolder: AnnotationHolderImpl? = null
+    @Volatile
+    private var annotationHolder: AnnotationHolderImpl? = null
 
     override fun doCollectInformation(progress: ProgressIndicator) {
         val annotationHolder = AnnotationHolderImpl(AnnotationSession(file))
         val visitor = BeforeResolveHighlightingVisitor(annotationHolder)
-        file.accept(object : PsiRecursiveElementVisitor(){
+        file.accept(object : PsiRecursiveElementVisitor() {
             override fun visitElement(element: PsiElement) {
                 super.visitElement(element)
                 element.accept(visitor)
@@ -64,7 +54,13 @@ class KotlinBeforeResolveHighlightingPass(
 
     class Factory(registrar: TextEditorHighlightingPassRegistrar) : ProjectComponent, TextEditorHighlightingPassFactory {
         init {
-            registrar.registerTextEditorHighlightingPass(this, TextEditorHighlightingPassRegistrar.Anchor.BEFORE, Pass.UPDATE_FOLDING, false, false)
+            registrar.registerTextEditorHighlightingPass(
+                this,
+                TextEditorHighlightingPassRegistrar.Anchor.BEFORE,
+                Pass.UPDATE_FOLDING,
+                false,
+                false
+            )
         }
 
         override fun createHighlightingPass(file: PsiFile, editor: Editor): TextEditorHighlightingPass? {

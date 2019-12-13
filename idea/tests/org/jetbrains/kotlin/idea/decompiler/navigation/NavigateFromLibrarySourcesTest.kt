@@ -20,7 +20,7 @@ import org.junit.runner.RunWith
 import kotlin.test.assertTrue
 
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
-class NavigateFromLibrarySourcesTest: AbstractNavigateFromLibrarySourcesTest() {
+class NavigateFromLibrarySourcesTest : AbstractNavigateFromLibrarySourcesTest() {
     fun testJdkClass() {
         checkNavigationFromLibrarySource("Thread", "java.lang.Thread")
     }

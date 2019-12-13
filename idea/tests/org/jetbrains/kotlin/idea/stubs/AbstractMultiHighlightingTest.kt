@@ -33,7 +33,7 @@ abstract class AbstractMultiHighlightingTest : AbstractMultiModuleTest() {
         //to initialize caches
         if (!DumbService.isDumb(project)) {
             CacheManager.SERVICE.getInstance(myProject)
-                    .getFilesWithWord("XXX", UsageSearchContext.IN_COMMENTS, GlobalSearchScope.allScope(myProject), true)
+                .getFilesWithWord("XXX", UsageSearchContext.IN_COMMENTS, GlobalSearchScope.allScope(myProject), true)
         }
 
         val infos = doHighlighting()

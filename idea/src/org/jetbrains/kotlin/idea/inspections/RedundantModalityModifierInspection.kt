@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,11 +21,15 @@ class RedundantModalityModifierInspection : AbstractKotlinInspection(), CleanupL
 
             if (modalityModifierType != implicitModality) return@declarationVisitor
 
-            holder.registerProblem(modalityModifier,
-                                   "Redundant modality modifier",
-                                   ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                                   IntentionWrapper(RemoveModifierFix(declaration, implicitModality, isRedundant = true),
-                                                    declaration.containingFile))
+            holder.registerProblem(
+                modalityModifier,
+                "Redundant modality modifier",
+                ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                IntentionWrapper(
+                    RemoveModifierFix(declaration, implicitModality, isRedundant = true),
+                    declaration.containingFile
+                )
+            )
         }
     }
 }

@@ -120,9 +120,8 @@ class MoveKotlinDeclarationsHandlerTest : KotlinMultiFileTestCase() {
     }
 
     fun testMultipleTopLevelDeclarationsInDifferentFiles() = doTest { rootDir, handler ->
-        val declarations = listOf("test.kt", "test2.kt")
-                .flatMap { getElementsAtCarets(rootDir, it) }
-                .map { it.getNonStrictParentOfType<KtNamedDeclaration>()!! }
+        val declarations = listOf("test.kt", "test2.kt").flatMap { getElementsAtCarets(rootDir, it) }
+            .map { it.getNonStrictParentOfType<KtNamedDeclaration>()!! }
         assert(handler.canMove(declarations.toTypedArray(), null))
 
         val files = listOf("test.kt", "test2.kt").map { getPsiFile(rootDir, it) }
@@ -130,9 +129,8 @@ class MoveKotlinDeclarationsHandlerTest : KotlinMultiFileTestCase() {
     }
 
     fun testMultipleTopLevelDeclarationsInDifferentDirs() = doTest { rootDir, handler ->
-        val declarations = listOf("test1/test.kt", "test2/test2.kt")
-                .flatMap { getElementsAtCarets(rootDir, it) }
-                .map { it.getNonStrictParentOfType<KtNamedDeclaration>()!! }
+        val declarations = listOf("test1/test.kt", "test2/test2.kt").flatMap { getElementsAtCarets(rootDir, it) }
+            .map { it.getNonStrictParentOfType<KtNamedDeclaration>()!! }
         assert(!handler.canMove(declarations.toTypedArray(), null))
 
         val files = listOf("test1/test.kt", "test2/test2.kt").map { getPsiFile(rootDir, it) }
@@ -140,8 +138,10 @@ class MoveKotlinDeclarationsHandlerTest : KotlinMultiFileTestCase() {
     }
 
     fun testFileAndTopLevelDeclarations() = doTest { rootDir, handler ->
-        val elements = getElementsAtCarets(rootDir, "test.kt").map { it.getNonStrictParentOfType<KtNamedDeclaration>()!! } +
-                       getPsiFile(rootDir, "test2.kt")
+        val elements = getElementsAtCarets(rootDir, "test.kt").map { it.getNonStrictParentOfType<KtNamedDeclaration>()!! } + getPsiFile(
+            rootDir,
+            "test2.kt"
+        )
         assert(!handler.canMove(elements.toTypedArray(), null))
     }
 

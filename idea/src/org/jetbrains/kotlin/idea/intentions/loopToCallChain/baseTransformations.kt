@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.intentions.loopToCallChain
@@ -49,8 +38,8 @@ abstract class ReplaceLoopResultTransformation(final override val loop: KtForExp
  * Base class for [ResultTransformation]'s that replaces initialization of a variable with the result call chain
  */
 abstract class AssignToVariableResultTransformation(
-        final override val loop: KtForExpression,
-        protected val initialization: VariableInitialization
+    final override val loop: KtForExpression,
+    protected val initialization: VariableInitialization
 ) : ResultTransformation {
 
     override val commentSavingRange = PsiChildRange(initialization.initializationStatement, loop.unwrapIfLabeled())
@@ -64,18 +53,18 @@ abstract class AssignToVariableResultTransformation(
             fun isUniqueName(name: String): Boolean {
                 val identifier = Name.identifier(name)
                 return resolutionScope.findVariable(identifier, NoLookupLocation.FROM_IDE) == null
-                       && resolutionScope.findFunction(identifier, NoLookupLocation.FROM_IDE) == null
-                       && resolutionScope.findClassifier(identifier, NoLookupLocation.FROM_IDE) == null
-                       && resolutionScope.findPackage(identifier) == null
+                        && resolutionScope.findFunction(identifier, NoLookupLocation.FROM_IDE) == null
+                        && resolutionScope.findClassifier(identifier, NoLookupLocation.FROM_IDE) == null
+                        && resolutionScope.findPackage(identifier) == null
             }
+
             val uniqueName = KotlinNameSuggester.suggestNameByName("test", ::isUniqueName)
 
             val copy = initializationStatement.copied()
             copy.initializer!!.replace(resultCallChain)
             copy.setName(uniqueName)
             copy
-        }
-        else {
+        } else {
             psiFactory.createExpressionByPattern("$0 = $1", initialization.variable.nameAsSafeName, resultCallChain, reformat = false)
         }
     }
@@ -111,7 +100,7 @@ abstract class AssignToVariableResultTransformation(
 
     companion object {
         fun createDelegated(delegate: ResultTransformation, initialization: VariableInitialization): AssignToVariableResultTransformation {
-            return object: AssignToVariableResultTransformation(delegate.loop, initialization) {
+            return object : AssignToVariableResultTransformation(delegate.loop, initialization) {
                 override val presentation: String
                     get() = delegate.presentation
 
@@ -130,8 +119,8 @@ abstract class AssignToVariableResultTransformation(
  * [ResultTransformation] that replaces initialization of a variable with the call chain produced by the given [SequenceTransformation]
  */
 class AssignSequenceResultTransformation(
-        private val sequenceTransformation: SequenceTransformation,
-        initialization: VariableInitialization
+    private val sequenceTransformation: SequenceTransformation,
+    initialization: VariableInitialization
 ) : AssignToVariableResultTransformation(sequenceTransformation.loop, initialization) {
 
     override val presentation: String

@@ -231,7 +231,9 @@ enum class MoveAction : AbstractMultifileRefactoringTest.RefactoringAction {
                     createKotlinFile(guessNewFileName(elementsToMove)!!, moveDestination.getTargetDirectory(mainFile))
                 }
             } ?: config.getString("targetFile").let { filePath ->
-                KotlinMoveTargetForExistingElement(PsiManager.getInstance(project).findFile(rootDir.findFileByRelativePath(filePath)!!) as KtFile)
+                KotlinMoveTargetForExistingElement(
+                    PsiManager.getInstance(project).findFile(rootDir.findFileByRelativePath(filePath)!!) as KtFile
+                )
             }
 
             val descriptor = MoveDeclarationsDescriptor(project, MoveSource(elementsToMove), moveTarget, MoveDeclarationsDelegate.TopLevel)

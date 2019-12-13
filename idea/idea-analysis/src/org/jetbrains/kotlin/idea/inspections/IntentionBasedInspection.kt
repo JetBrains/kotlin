@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.inspections
@@ -43,8 +32,8 @@ import kotlin.reflect.KClass
 // thus making the original purpose useless.
 // The class still can be used, if you want to create a pair for existing intention with additional checker
 abstract class IntentionBasedInspection<TElement : PsiElement> private constructor(
-        private val intentionInfo: IntentionData<TElement>,
-        protected open val problemText: String?
+    private val intentionInfo: IntentionData<TElement>,
+    protected open val problemText: String?
 ) : AbstractKotlinInspection() {
 
     val intention: SelfTargetingRangeIntention<TElement> by lazy {
@@ -57,33 +46,32 @@ abstract class IntentionBasedInspection<TElement : PsiElement> private construct
     @Suppress("DEPRECATION")
     @Deprecated("Please do not use for new inspections. Use AbstractKotlinInspection as base class for them")
     constructor(
-            intention: KClass<out SelfTargetingRangeIntention<TElement>>,
-            problemText: String? = null
+        intention: KClass<out SelfTargetingRangeIntention<TElement>>,
+        problemText: String? = null
     ) : this(IntentionData(intention), problemText)
 
     constructor(
-            intention: KClass<out SelfTargetingRangeIntention<TElement>>,
-            additionalChecker: (TElement, IntentionBasedInspection<TElement>) -> Boolean,
-            problemText: String? = null
+        intention: KClass<out SelfTargetingRangeIntention<TElement>>,
+        additionalChecker: (TElement, IntentionBasedInspection<TElement>) -> Boolean,
+        problemText: String? = null
     ) : this(IntentionData(intention, additionalChecker), problemText)
 
     constructor(
-            intention: KClass<out SelfTargetingRangeIntention<TElement>>,
-            additionalChecker: (TElement) -> Boolean,
-            problemText: String? = null
-    ) : this(IntentionData(intention, { element, _ -> additionalChecker(element) } ), problemText)
-
+        intention: KClass<out SelfTargetingRangeIntention<TElement>>,
+        additionalChecker: (TElement) -> Boolean,
+        problemText: String? = null
+    ) : this(IntentionData(intention) { element, _ -> additionalChecker(element) }, problemText)
 
 
     data class IntentionData<TElement : PsiElement>(
-            val intention: KClass<out SelfTargetingRangeIntention<TElement>>,
-            val additionalChecker: (TElement, IntentionBasedInspection<TElement>) -> Boolean = { _, _ -> true }
+        val intention: KClass<out SelfTargetingRangeIntention<TElement>>,
+        val additionalChecker: (TElement, IntentionBasedInspection<TElement>) -> Boolean = { _, _ -> true }
     )
 
     open fun additionalFixes(element: TElement): List<LocalQuickFix>? = null
 
     open fun inspectionTarget(element: TElement): PsiElement? = null
-    
+
     open fun inspectionProblemText(element: TElement): String? = null
 
     private fun PsiElement.toRange(baseElement: PsiElement): TextRange {
@@ -127,12 +115,12 @@ abstract class IntentionBasedInspection<TElement : PsiElement> private construct
                     additionalFixes(targetElement)?.let { allFixes.addAll(it) }
                     if (!allFixes.isEmpty()) {
                         holder.registerProblemWithoutOfflineInformation(
-                                targetElement,
-                                inspectionProblemText(element) ?: problemText ?: allFixes.first().name,
-                                isOnTheFly,
-                                problemHighlightType(targetElement),
-                                range,
-                                *allFixes.toTypedArray()
+                            targetElement,
+                            inspectionProblemText(element) ?: problemText ?: allFixes.first().name,
+                            isOnTheFly,
+                            problemHighlightType(targetElement),
+                            range,
+                            *allFixes.toTypedArray()
                         )
                     }
                 }
@@ -141,25 +129,23 @@ abstract class IntentionBasedInspection<TElement : PsiElement> private construct
     }
 
     protected open fun problemHighlightType(element: TElement): ProblemHighlightType =
-            ProblemHighlightType.GENERIC_ERROR_OR_WARNING
+        ProblemHighlightType.GENERIC_ERROR_OR_WARNING
 
     private fun createQuickFix(
-            intention: SelfTargetingRangeIntention<TElement>,
-            additionalChecker: (TElement, IntentionBasedInspection<TElement>) -> Boolean,
-            targetElement: TElement
-    ): IntentionBasedQuickFix {
-        return when (intention) {
-            is LowPriorityAction -> LowPriorityIntentionBasedQuickFix(intention, additionalChecker, targetElement)
-            is HighPriorityAction -> HighPriorityIntentionBasedQuickFix(intention, additionalChecker, targetElement)
-            else -> IntentionBasedQuickFix(intention, additionalChecker, targetElement)
-        }
+        intention: SelfTargetingRangeIntention<TElement>,
+        additionalChecker: (TElement, IntentionBasedInspection<TElement>) -> Boolean,
+        targetElement: TElement
+    ): IntentionBasedQuickFix = when (intention) {
+        is LowPriorityAction -> LowPriorityIntentionBasedQuickFix(intention, additionalChecker, targetElement)
+        is HighPriorityAction -> HighPriorityIntentionBasedQuickFix(intention, additionalChecker, targetElement)
+        else -> IntentionBasedQuickFix(intention, additionalChecker, targetElement)
     }
 
     /* we implement IntentionAction to provide isAvailable which will be used to hide outdated items and make sure we never call 'invoke' for such item */
     internal open inner class IntentionBasedQuickFix(
-            val intention: SelfTargetingRangeIntention<TElement>,
-            private val additionalChecker: (TElement, IntentionBasedInspection<TElement>) -> Boolean,
-            targetElement: TElement
+        val intention: SelfTargetingRangeIntention<TElement>,
+        private val additionalChecker: (TElement, IntentionBasedInspection<TElement>) -> Boolean,
+        targetElement: TElement
     ) : LocalQuickFixOnPsiElement(targetElement), IntentionAction {
 
         private val text = intention.text
@@ -200,15 +186,15 @@ abstract class IntentionBasedInspection<TElement : PsiElement> private construct
     }
 
     private inner class LowPriorityIntentionBasedQuickFix(
-            intention: SelfTargetingRangeIntention<TElement>,
-            additionalChecker: (TElement, IntentionBasedInspection<TElement>) -> Boolean,
-            targetElement: TElement
+        intention: SelfTargetingRangeIntention<TElement>,
+        additionalChecker: (TElement, IntentionBasedInspection<TElement>) -> Boolean,
+        targetElement: TElement
     ) : IntentionBasedQuickFix(intention, additionalChecker, targetElement), LowPriorityAction
 
     private inner class HighPriorityIntentionBasedQuickFix(
-            intention: SelfTargetingRangeIntention<TElement>,
-            additionalChecker: (TElement, IntentionBasedInspection<TElement>) -> Boolean,
-            targetElement: TElement
+        intention: SelfTargetingRangeIntention<TElement>,
+        additionalChecker: (TElement, IntentionBasedInspection<TElement>) -> Boolean,
+        targetElement: TElement
     ) : IntentionBasedQuickFix(intention, additionalChecker, targetElement), HighPriorityAction
 }
 

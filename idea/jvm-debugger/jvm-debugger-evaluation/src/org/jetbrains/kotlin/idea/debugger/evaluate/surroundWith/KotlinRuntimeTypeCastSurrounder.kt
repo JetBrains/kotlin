@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.debugger.surroundWith
@@ -20,9 +20,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinRuntimeTypeEvaluator
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.surroundWith.KotlinExpressionSurrounder
+import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinRuntimeTypeEvaluator
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 
-class KotlinRuntimeTypeCastSurrounder: KotlinExpressionSurrounder() {
+class KotlinRuntimeTypeCastSurrounder : KotlinExpressionSurrounder() {
 
     override fun isApplicable(expression: KtExpression): Boolean {
         if (!super.isApplicable(expression)) return false
@@ -61,11 +61,11 @@ class KotlinRuntimeTypeCastSurrounder: KotlinExpressionSurrounder() {
     }
 
     private inner class SurroundWithCastWorker(
-            private val myEditor: Editor,
-            expression: KtExpression,
-            context: DebuggerContextImpl,
-            indicator: ProgressIndicator
-    ): KotlinRuntimeTypeEvaluator(myEditor, expression, context, indicator) {
+        private val myEditor: Editor,
+        expression: KtExpression,
+        context: DebuggerContextImpl,
+        indicator: ProgressIndicator
+    ) : KotlinRuntimeTypeEvaluator(myEditor, expression, context, indicator) {
 
         override fun typeCalculationFinished(type: KotlinType?) {
             if (type == null) return
@@ -74,29 +74,28 @@ class KotlinRuntimeTypeCastSurrounder: KotlinExpressionSurrounder() {
 
             val project = myEditor.project
             DebuggerInvocationUtil.invokeLater(project, Runnable {
-                    object : WriteCommandAction<Any>(project, CodeInsightBundle.message("command.name.surround.with.runtime.cast")) {
-                        override fun run(result: Result<Any>) {
-                            try {
-                                val factory = KtPsiFactory(myElement.project)
+                object : WriteCommandAction<Any>(project, CodeInsightBundle.message("command.name.surround.with.runtime.cast")) {
+                    override fun run(result: Result<Any>) {
+                        try {
+                            val factory = KtPsiFactory(myElement.project)
 
-                                val fqName = DescriptorUtils.getFqName(type.constructor.declarationDescriptor!!)
-                                val parentCast = factory.createExpression("(expr as " + fqName.asString() + ")") as KtParenthesizedExpression
-                                val cast = parentCast.expression as KtBinaryExpressionWithTypeRHS
-                                cast.left.replace(myElement)
-                                val expr = myElement.replace(parentCast) as KtExpression
+                            val fqName = DescriptorUtils.getFqName(type.constructor.declarationDescriptor!!)
+                            val parentCast = factory.createExpression("(expr as " + fqName.asString() + ")") as KtParenthesizedExpression
+                            val cast = parentCast.expression as KtBinaryExpressionWithTypeRHS
+                            cast.left.replace(myElement)
+                            val expr = myElement.replace(parentCast) as KtExpression
 
-                                ShortenReferences.DEFAULT.process(expr)
+                            ShortenReferences.DEFAULT.process(expr)
 
-                                val range = expr.textRange
-                                myEditor.selectionModel.setSelection(range.startOffset, range.endOffset)
-                                myEditor.caretModel.moveToOffset(range.endOffset)
-                                myEditor.scrollingModel.scrollToCaret(ScrollType.RELATIVE)
-                            }
-                            finally {
-                                release()
-                            }
+                            val range = expr.textRange
+                            myEditor.selectionModel.setSelection(range.startOffset, range.endOffset)
+                            myEditor.caretModel.moveToOffset(range.endOffset)
+                            myEditor.scrollingModel.scrollToCaret(ScrollType.RELATIVE)
+                        } finally {
+                            release()
                         }
-                    }.execute()
+                    }
+                }.execute()
             }, myProgressIndicator.modalityState)
         }
 

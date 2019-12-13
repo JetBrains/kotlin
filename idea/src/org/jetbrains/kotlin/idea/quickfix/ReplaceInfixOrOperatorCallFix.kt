@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.quickfix
@@ -32,8 +21,8 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 class ReplaceInfixOrOperatorCallFix(
-        element: KtExpression,
-        private val notNullNeeded: Boolean
+    element: KtExpression,
+    private val notNullNeeded: Boolean
 ) : KotlinQuickFixAction<KtExpression>(element) {
 
     override fun getText() = "Replace with safe (?.) call"
@@ -53,32 +42,33 @@ class ReplaceInfixOrOperatorCallFix(
                 if (assignment != null) {
                     if (right == null) return
                     val newExpression = psiFactory.createExpressionByPattern(
-                            "$0?.set($1, $2)", arrayExpression, element.indexExpressions.joinToString(", ") { it.text }, right)
+                        "$0?.set($1, $2)", arrayExpression, element.indexExpressions.joinToString(", ") { it.text }, right
+                    )
                     assignment.replace(newExpression)
-                }
-                else {
+                } else {
                     val newExpression = psiFactory.createExpressionByPattern(
-                            "$0?.get($1)$elvis", arrayExpression, element.indexExpressions.joinToString(", ") { it.text })
+                        "$0?.get($1)$elvis", arrayExpression, element.indexExpressions.joinToString(", ") { it.text })
                     replacement = element.replace(newExpression)
                 }
             }
             is KtCallExpression -> {
                 val newExpression = psiFactory.createExpressionByPattern(
-                        "$0?.invoke($1)$elvis", element.calleeExpression ?: return, element.valueArguments.joinToString(", ") { it.text })
+                    "$0?.invoke($1)$elvis", element.calleeExpression ?: return, element.valueArguments.joinToString(", ") { it.text })
                 replacement = element.replace(newExpression)
             }
             is KtBinaryExpression -> {
                 replacement = if (element.operationToken == KtTokens.IDENTIFIER) {
                     val newExpression = psiFactory.createExpressionByPattern(
-                            "$0?.$1($2)$elvis", element.left ?: return, element.operationReference.text, element.right ?: return)
+                        "$0?.$1($2)$elvis", element.left ?: return, element.operationReference.text, element.right ?: return
+                    )
                     element.replace(newExpression)
-                }
-                else {
+                } else {
                     val nameExpression = OperatorToFunctionIntention.convert(element).second
                     val callExpression = nameExpression.parent as KtCallExpression
                     val qualifiedExpression = callExpression.parent as KtDotQualifiedExpression
                     val safeExpression = psiFactory.createExpressionByPattern(
-                            "$0?.$1$elvis", qualifiedExpression.receiverExpression, callExpression)
+                        "$0?.$1$elvis", qualifiedExpression.receiverExpression, callExpression
+                    )
                     qualifiedExpression.replace(safeExpression)
                 }
             }
@@ -97,8 +87,8 @@ class ReplaceInfixOrOperatorCallFix(
                 if (expression.arrayExpression == null) return null
                 return ReplaceInfixOrOperatorCallFix(expression, expression.shouldHaveNotNullType())
             }
-            val parent = expression.parent
-            return when (parent) {
+
+            return when (val parent = expression.parent) {
                 is KtBinaryExpression -> {
                     when {
                         parent.left == null || parent.right == null -> null

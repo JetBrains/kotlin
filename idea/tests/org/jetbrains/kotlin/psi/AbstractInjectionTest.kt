@@ -32,16 +32,18 @@ abstract class AbstractInjectionTest : KotlinLightCodeInsightFixtureTestCase() {
     }
 
     data class ShredInfo(
-            val range: TextRange,
-            val hostRange: TextRange,
-            val prefix: String = "",
-            val suffix: String = "") {
+        val range: TextRange,
+        val hostRange: TextRange,
+        val prefix: String = "",
+        val suffix: String = ""
+    ) {
     }
 
     protected fun doInjectionPresentTest(
-            @Language("kotlin") text: String, @Language("Java") javaText: String? = null,
-            languageId: String? = null, unInjectShouldBePresent: Boolean = true,
-            shreds: List<ShredInfo>? = null) {
+        @Language("kotlin") text: String, @Language("Java") javaText: String? = null,
+        languageId: String? = null, unInjectShouldBePresent: Boolean = true,
+        shreds: List<ShredInfo>? = null
+    ) {
         if (javaText != null) {
             myFixture.configureByText("${getTestName(true)}.java", javaText.trimIndent())
         }
@@ -53,22 +55,24 @@ abstract class AbstractInjectionTest : KotlinLightCodeInsightFixtureTestCase() {
         if (shreds != null) {
             val actualShreds = SmartList<ShredInfo>().apply {
                 val host = InjectedLanguageManager.getInstance(project).getInjectionHost(file.viewProvider)
-                InjectedLanguageManager.getInstance(project).enumerate(host, { _, placesInFile ->
+                InjectedLanguageManager.getInstance(project).enumerate(host) { _, placesInFile ->
                     addAll(placesInFile.map {
                         ShredInfo(it.range, it.rangeInsideHost, it.prefix, it.suffix)
                     })
-                })
+                }
             }
 
             assertOrderedEquals(
-                    actualShreds.sortedBy { it.range.startOffset },
-                    shreds.sortedBy { it.range.startOffset })
+                actualShreds.sortedBy { it.range.startOffset },
+                shreds.sortedBy { it.range.startOffset })
         }
     }
 
     protected fun assertInjectionPresent(languageId: String?, unInjectShouldBePresent: Boolean) {
-        TestCase.assertFalse("Injection action is available. There's probably no injection at caret place",
-                             InjectLanguageAction().isAvailable(project, myFixture.editor, myFixture.file))
+        TestCase.assertFalse(
+            "Injection action is available. There's probably no injection at caret place",
+            InjectLanguageAction().isAvailable(project, myFixture.editor, myFixture.file)
+        )
 
         if (languageId != null) {
             val injectedFile = (editor as? EditorWindow)?.injectedFile
@@ -76,16 +80,20 @@ abstract class AbstractInjectionTest : KotlinLightCodeInsightFixtureTestCase() {
         }
 
         if (unInjectShouldBePresent) {
-            TestCase.assertTrue("UnInjection action is not available. There's no injection at caret place or some other troubles.",
-                                UnInjectLanguageAction().isAvailable(project, myFixture.editor, myFixture.file))
+            TestCase.assertTrue(
+                "UnInjection action is not available. There's no injection at caret place or some other troubles.",
+                UnInjectLanguageAction().isAvailable(project, myFixture.editor, myFixture.file)
+            )
         }
     }
 
     protected fun assertNoInjection(@Language("kotlin") text: String) {
         myFixture.configureByText("${getTestName(true)}.kt", text.trimIndent())
 
-        TestCase.assertTrue("Injection action is not available. There's probably some injection but nothing was expected.",
-                            InjectLanguageAction().isAvailable(project, myFixture.editor, myFixture.file))
+        TestCase.assertTrue(
+            "Injection action is not available. There's probably some injection but nothing was expected.",
+            InjectLanguageAction().isAvailable(project, myFixture.editor, myFixture.file)
+        )
     }
 
     protected fun doRemoveInjectionTest(@Language("kotlin") before: String, @Language("kotlin") after: String) {
@@ -112,8 +120,7 @@ abstract class AbstractInjectionTest : KotlinLightCodeInsightFixtureTestCase() {
             myFixture.configureByText("${getTestName(true)}.kt", before.trimIndent())
             InjectLanguageAction.invokeImpl(project, myFixture.editor, myFixture.file, injectable)
             myFixture.checkResult(after.trimIndent())
-        }
-        finally {
+        } finally {
             configuration.isSourceModificationAllowed = allowed
         }
     }

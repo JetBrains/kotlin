@@ -15,10 +15,16 @@ fun attachmentByPsiFile(file: PsiFile?): Attachment? {
     val virtualFile = file.virtualFile
     if (virtualFile != null) return AttachmentFactory.createAttachment(virtualFile)
 
-    val text = try { file.text
-    } catch(e: Exception) { null }
-    val name = try { file.name
-    } catch(e: Exception) { null }
+    val text = try {
+        file.text
+    } catch (e: Exception) {
+        null
+    }
+    val name = try {
+        file.name
+    } catch (e: Exception) {
+        null
+    }
 
     if (text != null && name != null) return Attachment(name, text)
 

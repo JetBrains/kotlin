@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence
@@ -43,7 +32,7 @@ object IntroduceIndexMatcher : TransformationMatcher {
     override fun match(state: MatchingState): TransformationMatch.Sequence? {
         for (statement in state.statements) {
             val unaryExpressions = statement.collectDescendantsOfType<KtUnaryExpression>(
-                    canGoInside = { it !is KtBlockExpression && it !is KtFunction }
+                canGoInside = { it !is KtBlockExpression && it !is KtFunction }
             )
             for (unaryExpression in unaryExpressions) {
                 checkIndexCandidate(unaryExpression, state)?.let { return it }
@@ -56,7 +45,7 @@ object IntroduceIndexMatcher : TransformationMatcher {
         val operand = incrementExpression.isPlusPlusOf() ?: return null
 
         val variableInitialization = operand.findVariableInitializationBeforeLoop(state.outerLoop, checkNoOtherUsagesInLoop = false)
-                                     ?: return null
+            ?: return null
         if ((variableInitialization.initializer as? KtConstantExpression)?.text != "0") return null
 
         val variable = variableInitialization.variable
@@ -74,21 +63,25 @@ object IntroduceIndexMatcher : TransformationMatcher {
         if (!isAlwaysReachedOrExitedLoop(firstInstruction, incrementInstruction, state.outerLoop, state.innerLoop)) return null
 
         val variableDescriptor = variable.unsafeResolveToDescriptor() as VariableDescriptor
-        if (isAccessedAfter(variableDescriptor, incrementInstruction, state.innerLoop)) return null // index accessed inside loop after increment
+        // index accessed inside loop after increment
+        if (isAccessedAfter(variableDescriptor, incrementInstruction, state.innerLoop)) return null
 
-        val restStatements = state.statements - incrementExpression // if it is among statements then drop it, otherwise "index++" will be replaced with "index" by generateLambda()
-        val newState = state.copy(statements = restStatements,
-                                  indexVariable = variable,
-                                  initializationStatementsToDelete = state.initializationStatementsToDelete + variableInitialization.initializationStatement,
-                                  incrementExpressions = state.incrementExpressions + incrementExpression)
+        // if it is among statements then drop it, otherwise "index++" will be replaced with "index" by generateLambda()
+        val restStatements = state.statements - incrementExpression
+        val newState = state.copy(
+            statements = restStatements,
+            indexVariable = variable,
+            initializationStatementsToDelete = state.initializationStatementsToDelete + variableInitialization.initializationStatement,
+            incrementExpressions = state.incrementExpressions + incrementExpression
+        )
         return TransformationMatch.Sequence(emptyList(), newState)
     }
 
     private fun isAlwaysReachedOrExitedLoop(
-            from: Instruction,
-            to: Instruction,
-            outerLoop: KtForExpression,
-            innerLoop: KtForExpression
+        from: Instruction,
+        to: Instruction,
+        outerLoop: KtForExpression,
+        innerLoop: KtForExpression
     ): Boolean {
         val visited = HashSet<Instruction>()
         return traverseFollowingInstructions(from, visited) { instruction ->
@@ -97,8 +90,10 @@ object IntroduceIndexMatcher : TransformationMatcher {
             // (if we won't do this on some branch we will finally exit the inner loop and return false from traverseFollowingInstructions)
             when {
                 instruction == to -> TraverseInstructionResult.SKIP
-                !outerLoop.isAncestor(nextInstructionScope, strict = false) -> TraverseInstructionResult.SKIP // we are out of the outer loop - it's ok
-                !innerLoop.isAncestor(nextInstructionScope, strict = true) -> TraverseInstructionResult.HALT // we exited or continued inner loop
+                // we are out of the outer loop - it's ok
+                !outerLoop.isAncestor(nextInstructionScope, strict = false) -> TraverseInstructionResult.SKIP
+                // we exited or continued inner loop
+                !innerLoop.isAncestor(nextInstructionScope, strict = true) -> TraverseInstructionResult.HALT
                 else -> TraverseInstructionResult.CONTINUE
             }
         } && visited.contains(to)

@@ -18,9 +18,10 @@ abstract class AbstractHighlightExitPointsTest : KotlinLightCodeInsightFixtureTe
 
         val text = myFixture.file.text
         val expectedToBeHighlighted = InTextDirectivesUtils.findLinesWithPrefixesRemoved(text, "//HIGHLIGHTED:")
-        val searchResultsTextAttributes = EditorColorsManager.getInstance().globalScheme.getAttributes(EditorColors.SEARCH_RESULT_ATTRIBUTES)
+        val searchResultsTextAttributes =
+            EditorColorsManager.getInstance().globalScheme.getAttributes(EditorColors.SEARCH_RESULT_ATTRIBUTES)
         val highlighters = myFixture.editor.markupModel.allHighlighters
-                .filter { it.textAttributes == searchResultsTextAttributes }
+            .filter { it.textAttributes == searchResultsTextAttributes }
         val actual = highlighters.map { text.substring(it.startOffset, it.endOffset) }
         assertEquals(expectedToBeHighlighted, actual)
     }

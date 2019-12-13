@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.completion
@@ -31,7 +20,6 @@ import org.jetbrains.kotlin.idea.completion.handlers.KotlinFunctionInsertHandler
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.core.completion.PackageLookupObject
 import org.jetbrains.kotlin.idea.highlighter.dsl.DslHighlighterExtension
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.name.FqName
@@ -46,8 +34,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import java.awt.Font
 
 class BasicLookupElementFactory(
-        private val project: Project,
-        val insertHandlerProvider: InsertHandlerProvider
+    private val project: Project,
+    val insertHandlerProvider: InsertHandlerProvider
 ) {
     companion object {
         // we skip parameter names in functional types in most of cases for shortness
@@ -58,10 +46,10 @@ class BasicLookupElementFactory(
     }
 
     fun createLookupElement(
-            descriptor: DeclarationDescriptor,
-            qualifyNestedClasses: Boolean = false,
-            includeClassTypeArguments: Boolean = true,
-            parametersAndTypeGrayed: Boolean = false
+        descriptor: DeclarationDescriptor,
+        qualifyNestedClasses: Boolean = false,
+        includeClassTypeArguments: Boolean = true,
+        parametersAndTypeGrayed: Boolean = false
     ): LookupElement {
         val _descriptor = if (descriptor is CallableMemberDescriptor)
             DescriptorUtils.unwrapFakeOverride(descriptor)
@@ -70,14 +58,18 @@ class BasicLookupElementFactory(
         return createLookupElementUnwrappedDescriptor(_descriptor, qualifyNestedClasses, includeClassTypeArguments, parametersAndTypeGrayed)
     }
 
-    fun createLookupElementForJavaClass(psiClass: PsiClass, qualifyNestedClasses: Boolean = false, includeClassTypeArguments: Boolean = true): LookupElement {
+    fun createLookupElementForJavaClass(
+        psiClass: PsiClass,
+        qualifyNestedClasses: Boolean = false,
+        includeClassTypeArguments: Boolean = true
+    ): LookupElement {
         val lookupObject = object : DeclarationLookupObjectImpl(null) {
             override val psiElement: PsiElement?
                 get() = psiClass
+
             override fun getIcon(flags: Int) = psiClass.getIcon(flags)
         }
-        var element = LookupElementBuilder.create(lookupObject, psiClass.name!!)
-                .withInsertHandler(KotlinClassifierInsertHandler)
+        var element = LookupElementBuilder.create(lookupObject, psiClass.name!!).withInsertHandler(KotlinClassifierInsertHandler)
 
         val typeParams = psiClass.typeParameters
         if (includeClassTypeArguments && typeParams.isNotEmpty()) {
@@ -123,10 +115,10 @@ class BasicLookupElementFactory(
     }
 
     private fun createLookupElementUnwrappedDescriptor(
-            descriptor: DeclarationDescriptor,
-            qualifyNestedClasses: Boolean,
-            includeClassTypeArguments: Boolean,
-            parametersAndTypeGrayed: Boolean
+        descriptor: DeclarationDescriptor,
+        qualifyNestedClasses: Boolean,
+        includeClassTypeArguments: Boolean,
+        parametersAndTypeGrayed: Boolean
     ): LookupElement {
         if (descriptor is JavaClassDescriptor) {
             val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor)
@@ -168,8 +160,10 @@ class BasicLookupElementFactory(
             else -> {
                 lookupObject = object : DeclarationLookupObjectImpl(descriptor) {
                     override val psiElement by lazy {
-                        DescriptorToSourceUtils.getSourceFromDescriptor(descriptor)
-                                ?: DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor)
+                        DescriptorToSourceUtils.getSourceFromDescriptor(descriptor) ?: DescriptorToSourceUtilsIde.getAnyDeclaration(
+                            project,
+                            descriptor
+                        )
                     }
 
                     override fun getIcon(flags: Int) = KotlinDescriptorIconProvider.getIcon(descriptor, psiElement, flags)
@@ -186,14 +180,20 @@ class BasicLookupElementFactory(
         when (descriptor) {
             is FunctionDescriptor -> {
                 val returnType = descriptor.returnType
-                element = element.withTypeText(if (returnType != null) SHORT_NAMES_RENDERER.renderType(returnType) else "", parametersAndTypeGrayed)
+                element = element.withTypeText(
+                    if (returnType != null) SHORT_NAMES_RENDERER.renderType(returnType) else "",
+                    parametersAndTypeGrayed
+                )
 
                 val insertsLambda = (insertHandler as? KotlinFunctionInsertHandler.Normal)?.lambdaInfo != null
                 if (insertsLambda) {
                     element = element.appendTailText(" {...} ", parametersAndTypeGrayed)
                 }
 
-                element = element.appendTailText(SHORT_NAMES_RENDERER.renderFunctionParameters(descriptor), parametersAndTypeGrayed || insertsLambda)
+                element = element.appendTailText(
+                    SHORT_NAMES_RENDERER.renderFunctionParameters(descriptor),
+                    parametersAndTypeGrayed || insertsLambda
+                )
             }
 
             is VariableDescriptor -> {
@@ -210,8 +210,7 @@ class BasicLookupElementFactory(
 
                 if (descriptor.isArtificialImportAliasedDescriptor) {
                     container = descriptor.original // we show original descriptor instead of container for import aliased descriptors
-                }
-                else if (qualifyNestedClasses) {
+                } else if (qualifyNestedClasses) {
                     element = element.withPresentableText(SHORT_NAMES_RENDERER.renderClassifierName(descriptor))
 
                     while (container is ClassDescriptor) {
@@ -287,19 +286,17 @@ class BasicLookupElementFactory(
 
         val extensionReceiver = descriptor.original.extensionReceiverParameter
         if (extensionReceiver != null) {
-            when {
-                descriptor is SamAdapterExtensionFunctionDescriptor -> {
+            when (descriptor) {
+                is SamAdapterExtensionFunctionDescriptor -> {
                     // no need to show them as extensions
                     return
                 }
-
-                descriptor is SyntheticJavaPropertyDescriptor -> {
+                is SyntheticJavaPropertyDescriptor -> {
                     var from = descriptor.getMethod.name.asString() + "()"
                     descriptor.setMethod?.let { from += "/" + it.name.asString() + "()" }
                     appendTailText(" (from $from)")
                     return
                 }
-
                 else -> {
                     val receiverPresentation = SHORT_NAMES_RENDERER.renderType(extensionReceiver.type)
                     appendTailText(" for $receiverPresentation")
@@ -321,8 +318,7 @@ class BasicLookupElementFactory(
             }
 
             descriptor.isExtension -> {
-                val container = descriptor.containingDeclaration
-                val containerPresentation = when (container) {
+                val containerPresentation = when (val container = descriptor.containingDeclaration) {
                     is ClassDescriptor -> DescriptorUtils.getFqNameFromTopLevelClass(container).toString()
                     is PackageFragmentDescriptor -> container.fqName.toString()
                     else -> return null
@@ -332,21 +328,19 @@ class BasicLookupElementFactory(
 
             else -> {
                 val container = descriptor.containingDeclaration as? PackageFragmentDescriptor
-                                // we show container only for global functions and properties
-                                ?: return null
+                // we show container only for global functions and properties
+                    ?: return null
                 //TODO: it would be probably better to show it also for static declarations which are not from the current class (imported)
                 return "(${container.fqName})"
             }
         }
     }
 
-    private fun LookupElement.withIconFromLookupObject(): LookupElement {
-        // add icon in renderElement only to pass presentation.isReal()
-        return object : LookupElementDecorator<LookupElement>(this) {
-            override fun renderElement(presentation: LookupElementPresentation) {
-                super.renderElement(presentation)
-                presentation.icon = DefaultLookupItemRenderer.getRawIcon(this@withIconFromLookupObject, presentation.isReal)
-            }
+    // add icon in renderElement only to pass presentation.isReal()
+    private fun LookupElement.withIconFromLookupObject(): LookupElement = object : LookupElementDecorator<LookupElement>(this) {
+        override fun renderElement(presentation: LookupElementPresentation) {
+            super.renderElement(presentation)
+            presentation.icon = DefaultLookupItemRenderer.getRawIcon(this@withIconFromLookupObject, presentation.isReal)
         }
     }
 }

@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.core
@@ -39,16 +28,16 @@ import java.util.*
 
 object OptionalParametersHelper {
     fun detectArgumentsToDropForDefaults(
-            resolvedCall: ResolvedCall<out CallableDescriptor>,
-            project: Project,
-            canDrop: (ValueArgument) -> Boolean = { true }
+        resolvedCall: ResolvedCall<out CallableDescriptor>,
+        project: Project,
+        canDrop: (ValueArgument) -> Boolean = { true }
     ): Collection<ValueArgument> {
         if (!resolvedCall.isReallySuccess()) return emptyList()
         val descriptor = resolvedCall.resultingDescriptor
 
         val parameterToDefaultValue = descriptor.valueParameters
-                .mapNotNull { parameter -> defaultParameterValue(parameter, project)?.let { parameter to it } }
-                .toMap()
+            .mapNotNull { parameter -> defaultParameterValue(parameter, project)?.let { parameter to it } }
+            .toMap()
         if (parameterToDefaultValue.isEmpty()) return emptyList()
 
         //TODO: drop functional literal out of parenthesis too
@@ -65,7 +54,10 @@ object OptionalParametersHelper {
         return argumentsToDrop
     }
 
-    private fun ValueArgument.matchesDefault(resolvedCall: ResolvedCall<out CallableDescriptor>, parameterToDefaultValue: Map<ValueParameterDescriptor, DefaultValue>): Boolean {
+    private fun ValueArgument.matchesDefault(
+        resolvedCall: ResolvedCall<out CallableDescriptor>,
+        parameterToDefaultValue: Map<ValueParameterDescriptor, DefaultValue>
+    ): Boolean {
         val parameter = resolvedCall.getParameterForArgument(this) ?: return false
         val defaultValue = parameterToDefaultValue[parameter] ?: return false
         val expression = defaultValue.substituteArguments(resolvedCall)
@@ -110,8 +102,8 @@ object OptionalParametersHelper {
     }
 
     data class DefaultValue(
-            val expression: KtExpression,
-            val parameterUsages: Map<ValueParameterDescriptor, Collection<KtExpression>>
+        val expression: KtExpression,
+        val parameterUsages: Map<ValueParameterDescriptor, Collection<KtExpression>>
     )
 
     fun defaultParameterValueExpression(parameter: ValueParameterDescriptor, project: Project): KtExpression? {
