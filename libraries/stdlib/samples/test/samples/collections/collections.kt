@@ -641,6 +641,22 @@ class Collections {
             val emptyMin = emptyList.minBy { it.length }
             assertPrints(emptyMin, "null")
         }
+
+        @Sample
+        fun reduceOrNull() {
+            val strings = listOf("a", "b", "c", "d")
+            assertPrints(strings.reduceOrNull { acc, string -> acc + string }, "abcd")
+
+            assertPrints(emptyList<String>().reduceOrNull { _, _ -> "" }, "null")
+        }
+
+        @Sample
+        fun reduceRightOrNull() {
+            val strings = listOf("a", "b", "c", "d")
+            assertPrints(strings.reduceRightOrNull { string, acc -> acc + string }, "dcba")
+
+            assertPrints(emptyList<String>().reduceRightOrNull { _, _ -> "" }, "null")
+        }
     }
 
     class Elements {

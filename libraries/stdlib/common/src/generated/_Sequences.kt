@@ -1386,6 +1386,8 @@ public inline fun <S, T : S> Sequence<T>.reduceIndexed(operation: (index: Int, a
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element. Returns null if the sequence is empty.
  *
  * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceOrNull
  */
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
