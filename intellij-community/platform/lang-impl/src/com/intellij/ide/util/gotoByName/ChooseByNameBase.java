@@ -660,7 +660,8 @@ public abstract class ChooseByNameBase implements ChooseByNameViewModel {
     if (component == null || myProject == null || myProject.isDisposed()) return false;
 
     ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(myProject);
-    ToolWindow toolWindow = toolWindowManager.getToolWindow(toolWindowManager.getActiveToolWindowId());
+    String activeToolWindowId = toolWindowManager.getActiveToolWindowId();
+    ToolWindow toolWindow = activeToolWindowId == null ? null : toolWindowManager.getToolWindow(activeToolWindowId);
     JComponent toolWindowComponent = toolWindow != null ? toolWindow.getComponent() : null;
     return toolWindowComponent != null &&
            toolWindowComponent.getClientProperty(TEMPORARILY_FOCUSABLE_COMPONENT_KEY) != null &&
