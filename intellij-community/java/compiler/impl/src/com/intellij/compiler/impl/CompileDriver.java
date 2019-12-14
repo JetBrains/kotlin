@@ -44,7 +44,6 @@ import com.intellij.util.Chunk;
 import com.intellij.util.ThrowableRunnable;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
-import com.intellij.util.messages.MessageBus;
 import com.intellij.util.text.DateFormatUtil;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NonNls;
@@ -116,7 +115,7 @@ public final class CompileDriver {
         return;
       }
       try {
-        final TaskFuture future = compileInExternalProcess(compileContext, true);
+        TaskFuture<?> future = compileInExternalProcess(compileContext, true);
         if (future != null) {
           while (!future.waitFor(200L, TimeUnit.MILLISECONDS)) {
             if (indicator.isCanceled()) {
@@ -171,7 +170,7 @@ public final class CompileDriver {
 
   public static void setCompilationStartedAutomatically(CompileScope scope) {
     //todo[nik] pass this option as a parameter to compile/make methods instead
-    scope.putUserData(COMPILATION_STARTED_AUTOMATICALLY, Boolean.TRUE);
+    scope.putUserData(COMPILATION_STARTED_AUTOMATICALLY, true);
   }
 
   private static boolean isCompilationStartedAutomatically(CompileScope scope) {
@@ -212,7 +211,7 @@ public final class CompileDriver {
   }
 
   @Nullable
-  private TaskFuture compileInExternalProcess(@NotNull final CompileContextImpl compileContext, final boolean onlyCheckUpToDate) {
+  private TaskFuture<?> compileInExternalProcess(@NotNull final CompileContextImpl compileContext, final boolean onlyCheckUpToDate) {
     final CompileScope scope = compileContext.getCompileScope();
     final Collection<String> paths = CompileScopeUtil.fetchFiles(compileContext);
     List<TargetTypeBuildScope> scopes = getBuildScopes(compileContext, scope, paths);
@@ -223,10 +222,10 @@ public final class CompileDriver {
       builderParams = new HashMap<>();
     }
     else {
-      final Map<Key, Object> exported = scope.exportUserData();
+      Map<Key<?>, Object> exported = scope.exportUserData();
       if (!exported.isEmpty()) {
         builderParams = new HashMap<>();
-        for (Map.Entry<Key, Object> entry : exported.entrySet()) {
+        for (Map.Entry<Key<?>, Object> entry : exported.entrySet()) {
           final String _key = entry.getKey().toString();
           final String _value = entry.getValue().toString();
           builderParams.put(_key, _value);
@@ -240,7 +239,6 @@ public final class CompileDriver {
       builderParams.put(BuildParametersKeys.LOAD_UNLOADED_MODULES, Boolean.TRUE.toString());
     }
 
-    final MessageBus messageBus = myProject.getMessageBus();
     final MultiMap<String, Artifact> outputToArtifact = ArtifactCompilerUtil.containsArtifacts(scopes) ? ArtifactCompilerUtil.createOutputToArtifactMap(myProject) : null;
     final BuildManager buildManager = BuildManager.getInstance();
     buildManager.cancelAutoMakeTasks(myProject);
@@ -304,7 +302,7 @@ public final class CompileDriver {
         switch (eventType) {
           case FILES_GENERATED:
             final List<CmdlineRemoteProto.Message.BuilderMessage.BuildEvent.GeneratedFile> generated = event.getGeneratedFilesList();
-            final CompilationStatusListener publisher = !myProject.isDisposed()? messageBus.syncPublisher(CompilerTopics.COMPILATION_STATUS) : null;
+            CompilationStatusListener publisher = myProject.isDisposed() ? null : myProject.getMessageBus().syncPublisher(CompilerTopics.COMPILATION_STATUS);
             Set<String> writtenArtifactOutputPaths = outputToArtifact != null ? new THashSet<>(FileUtil.PATH_HASHING_STRATEGY) : null;
             for (CmdlineRemoteProto.Message.BuilderMessage.BuildEvent.GeneratedFile generatedFile : generated) {
               final String root = FileUtil.toSystemIndependentName(generatedFile.getOutputRoot());
@@ -419,7 +417,7 @@ public final class CompileDriver {
           return;
         }
 
-        final TaskFuture future = compileInExternalProcess(compileContext, false);
+        TaskFuture<?> future = compileInExternalProcess(compileContext, false);
         if (future != null) {
           while (!future.waitFor(200L, TimeUnit.MILLISECONDS)) {
             if (indicator.isCanceled()) {

@@ -14,6 +14,6 @@ class PersistentSentDataInfo(private val properties: PropertiesComponent) : Dail
     set(value) = properties.setValue(SENT_DATA_SIZE_TODAY_PROPERTY, value, 0)
 
   override var latestSendingTimestamp: Long
-    get() = properties.getOrInitLong(DATA_SENT_TIMESTAMP_PROPERTY, 0L)
+    get() = properties.getLong(DATA_SENT_TIMESTAMP_PROPERTY, 0L)
     set(value) = properties.setValue(DATA_SENT_TIMESTAMP_PROPERTY, value.toString())
 }

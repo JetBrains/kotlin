@@ -93,7 +93,7 @@ open class WebServiceStatusProvider : WebServiceStatus {
   }
 
   private fun loadInfoIfActual(): ExperimentInfo {
-    val updatedTimestamp = PropertiesComponent.getInstance().getOrInitLong(STATUS_UPDATED_TIMESTAMP_KEY, 0)
+    val updatedTimestamp = PropertiesComponent.getInstance().getLong(STATUS_UPDATED_TIMESTAMP_KEY, 0)
     if (updatedTimestamp != 0L && System.currentTimeMillis() - updatedTimestamp < INFO_TTL) {
       return loadInfo() ?: DEFAULT_INFO
     }
