@@ -1,13 +1,8 @@
 package org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem
 
-import org.jetbrains.kotlin.tools.projectWizard.core.TaskResult
-import org.jetbrains.kotlin.tools.projectWizard.core.map
+import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.safeAs
-import org.jetbrains.kotlin.tools.projectWizard.core.sequence
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.BuildScriptDependencyIR
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.BuildScriptIR
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.BuildScriptRepositoryIR
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.GradleIR
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.*
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.DefaultTargetConfigurationIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.TargetConfigurationIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.TargetIR
@@ -32,6 +27,11 @@ data class BuildFileIR(
 
     override fun BuildFilePrinter.render() = when (this) {
         is GradlePrinter -> {
+            irsOfTypeOrNull<GradleImportIR>()?.let { imports ->
+                imports.listNl()
+                nl()
+                nl()
+            }
             irsOfTypeOrNull<BuildScriptIR>()?.let { buildScriptIrs ->
                 sectionCall("buildscript", needIndent = true) {
                     sectionCall("repositories", buildScriptIrs.filterIsInstance<BuildScriptRepositoryIR>())
@@ -43,11 +43,11 @@ data class BuildFileIR(
             pom.render(this); nl()
             sectionCall("repositories", irsOfType<RepositoryIR>())
             nl()
-            irsOfTypeOrNull<FreeIR>()?.let { freeIrs ->
-                freeIrs.listNl()
-                nlIndented()
-            }
             modules.render(this)
+            irsOfTypeOrNull<FreeIR>()?.let { freeIrs ->
+                nl()
+                freeIrs.listNl()
+            }.ignore()
         }
         is MavenPrinter -> pom {
             pom.render(this)

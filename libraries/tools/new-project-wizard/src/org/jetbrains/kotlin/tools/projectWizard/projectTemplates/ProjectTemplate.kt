@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.defaultTarge
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ProjectKind
+import org.jetbrains.kotlin.tools.projectWizard.projectTemplates.MultiplatformLibrary.withTemplate
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.templates.*
@@ -50,6 +51,7 @@ sealed class ProjectTemplate : DisplayableSettingItem {
             CustomSingleplatformProjectTemplate,
             CustomMultiplatformProjectTemplate,
             JvmConsoleApplication,
+            JvmServerJsClient,
             MultiplatformLibrary,
             AndroidApplication
         )
@@ -178,6 +180,31 @@ object MultiplatformLibrary : ProjectTemplate() {
                 )
             )
         )
+}
+
+object JvmServerJsClient : ProjectTemplate() {
+    override val title: String = "JS client and JVM server"
+    override val htmlDescription: String =
+        "Multiplatform Gradle project allowing reuse of the same Kotlin code between JS Client and JVM Server"
+    override val suggestedProjectName: String = "myFullStackApplication"
+    override val projectKind: ProjectKind = ProjectKind.Multiplatform
+    override val setsPluginSettings: List<SettingWithValue<*, *>> = listOf(
+        KotlinPlugin::modules withValue listOf(
+            MultiplatformModule(
+                "application",
+                listOf(
+                    ModuleType.jvm.createDefaultTarget().apply {
+                        mainSourceset?.withTemplate(KtorServerTemplate()) {
+                            template.serverEngine withValue KtorServerEngine.Netty
+                        }
+                    },
+                    ModuleType.js.createDefaultTarget().apply {
+                        mainSourceset?.withTemplate(SimpleJsClientTemplate())
+                    }
+                )
+            )
+        )
+    )
 }
 
 object AndroidApplication : ProjectTemplate() {

@@ -91,8 +91,7 @@ abstract class Template : SettingsOwner {
 
         val targetsUpdater = when (sourceset) {
             is SourcesetModuleIR -> { target: TargetConfigurationIR ->
-                val targetName = sourceset.name.removeSuffix(sourceset.sourcesetType.name.capitalize())
-                if (target.name == targetName) updateTargetIr(sourceset, target)
+                if (target.name == sourceset.targetName) updateTargetIr(sourceset, target)
                 else target
             }
             else -> idFunction()

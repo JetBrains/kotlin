@@ -1,10 +1,10 @@
 package org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle
 
+import org.jetbrains.kotlin.tools.projectWizard.ir.TaskIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.FreeIR
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.GradlePrinter
 
-interface GradleTaskIR : GradleIR, FreeIR {
-    val name: String
+interface GradleTaskIR : GradleIR, TaskIR {
     val taskClass: String
     val body: BodyIR
 }
