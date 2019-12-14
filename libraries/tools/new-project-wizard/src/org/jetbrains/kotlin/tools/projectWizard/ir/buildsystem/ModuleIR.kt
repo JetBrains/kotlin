@@ -84,3 +84,5 @@ data class SourcesetModuleIR(
     }
 }
 
+val SourcesetModuleIR.targetName
+    get() = name.removeSuffix(sourcesetType.name.capitalize())

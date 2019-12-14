@@ -61,7 +61,7 @@ data class GradleSectionIR(
 data class GradleAssignmentIR(
     val target: String,
     val assignee: BuildSystemIR
-) : GradleIR {
+) : GradleIR, FreeIR {
     override fun GradlePrinter.renderGradle() {
         +"$target = "
         assignee.render(this)
@@ -103,6 +103,13 @@ data class GradleDynamicPropertyAccessIR(val qualifier: BuildSystemIR, val prope
 data class GradlePropertyAccessIR(val propertyName: String) : GradleIR {
     override fun GradlePrinter.renderGradle() {
         +propertyName
+    }
+}
+
+data class GradleImportIR(val import: String) : GradleIR {
+    override fun GradlePrinter.renderGradle() {
+        +"import "
+        +import
     }
 }
 
