@@ -13,8 +13,8 @@ import com.intellij.openapi.compiler.CompileScope;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.wm.RegisterToolWindowTask;
 import com.intellij.openapi.wm.ToolWindow;
-import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.pom.Navigatable;
 import com.intellij.ui.AppUIUtil;
@@ -34,7 +34,7 @@ import java.util.concurrent.ExecutorService;
 final class ProblemsViewImpl extends ProblemsView {
   private static final String PROBLEMS_TOOLWINDOW_ID = "Problems";
 
-  private ProblemsViewPanel myPanel;
+  private volatile ProblemsViewPanel myPanel;
   private final ExecutorService myViewUpdater = SequentialTaskExecutor.createSequentialApplicationPoolExecutor("ProblemsView Pool");
 
   ProblemsViewImpl(@NotNull Project project) {
@@ -43,25 +43,23 @@ final class ProblemsViewImpl extends ProblemsView {
     Disposer.register(project, () -> myViewUpdater.shutdownNow());
     myViewUpdater.execute(() -> {
       ApplicationManager.getApplication().invokeAndWait(() -> {
-        if (!project.isDisposed()) {
-          myPanel = new ProblemsViewPanel(project);
-          Disposer.register(project, myPanel);
+        if (project.isDisposed()) {
+          return;
         }
-      }, ModalityState.NON_MODAL);
-    });
 
-    AppUIUtil.invokeLaterIfProjectAlive(project, () -> {
-      ToolWindow toolWindow = ToolWindowManager.getInstance(project).registerToolWindow(PROBLEMS_TOOLWINDOW_ID, false, ToolWindowAnchor.BOTTOM, project, true);
-      Content content = ContentFactory.SERVICE.getInstance().createContent(myPanel, "", false);
-      content.setHelpId("reference.problems.tool.window");
-      // todo: setup content?
-      toolWindow.getContentManager().addContent(content);
-      if (myPanel == null) {
-        myViewUpdater.execute(() -> doUpdateIcon(toolWindow));
-      }
-      else {
-        doUpdateIcon(toolWindow);
-      }
+        ProblemsViewPanel panel = new ProblemsViewPanel(project);
+
+        ToolWindow toolWindow = ToolWindowManager.getInstance(project).registerToolWindow(RegisterToolWindowTask.notClosable(PROBLEMS_TOOLWINDOW_ID));
+        Disposer.register(toolWindow.getDisposable(), panel);
+
+        Content content = ContentFactory.SERVICE.getInstance().createContent(panel, "", false);
+        content.setHelpId("reference.problems.tool.window");
+        toolWindow.getContentManager().addContent(content);
+
+        doUpdateIcon(panel, toolWindow);
+
+        myPanel = panel;
+      }, ModalityState.NON_MODAL);
     });
   }
 
@@ -125,41 +123,44 @@ final class ProblemsViewImpl extends ProblemsView {
     AppUIUtil.invokeLaterIfProjectAlive(myProject, () -> {
       ToolWindow toolWindow = ToolWindowManager.getInstance(myProject).getToolWindow(PROBLEMS_TOOLWINDOW_ID);
       if (toolWindow != null) {
-        doUpdateIcon(toolWindow);
+        doUpdateIcon(myPanel, toolWindow);
       }
     });
   }
 
-  private void doUpdateIcon(@NotNull ToolWindow toolWindow) {
-    boolean active = myPanel.getErrorViewStructure().hasMessages(
+  private static void doUpdateIcon(@NotNull ProblemsViewPanel panel, @NotNull ToolWindow toolWindow) {
+    boolean active = panel.getErrorViewStructure().hasMessages(
       EnumSet.of(ErrorTreeElementKind.ERROR, ErrorTreeElementKind.WARNING, ErrorTreeElementKind.NOTE));
     toolWindow.setIcon(active ? AllIcons.Toolwindows.Problems : AllIcons.Toolwindows.ProblemsEmpty);
   }
 
   @Override
   public void setProgress(String text, float fraction) {
-    if (myPanel == null) {
+    ProblemsViewPanel panel = myPanel;
+    if (panel == null) {
       myViewUpdater.execute(() -> myPanel.setProgress(text, fraction));
     }
     else {
-      myPanel.setProgress(text, fraction);
+      panel.setProgress(text, fraction);
     }
   }
 
   @Override
   public void setProgress(String text) {
-    if (myPanel == null) {
+    ProblemsViewPanel panel = myPanel;
+    if (panel == null) {
       myViewUpdater.execute(() -> myPanel.setProgressText(text));
     }
     else {
-      myPanel.setProgressText(text);
+      panel.setProgressText(text);
     }
   }
 
   @Override
   public void clearProgress() {
-    if (myPanel != null) {
-      myPanel.clearProgressData();
+    ProblemsViewPanel panel = myPanel;
+    if (panel != null) {
+      panel.clearProgressData();
     }
   }
 }
