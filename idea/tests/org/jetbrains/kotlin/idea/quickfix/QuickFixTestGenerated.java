@@ -11659,6 +11659,29 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/replaceJavaClassWithClassJava")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ReplaceJavaClassWithClassJava extends AbstractQuickFixTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInReplaceJavaClassWithClassJava() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/replaceJavaClassWithClassJava"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("hasType.kt")
+        public void testHasType() throws Exception {
+            runTest("idea/testData/quickfix/replaceJavaClassWithClassJava/hasType.kt");
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            runTest("idea/testData/quickfix/replaceJavaClassWithClassJava/simple.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/replaceJvmFieldWithConst")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
