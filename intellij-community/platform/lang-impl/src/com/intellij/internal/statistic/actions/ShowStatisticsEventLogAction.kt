@@ -20,8 +20,7 @@ import com.intellij.ui.content.ContentManager
 /**
  * Opens a toolwindow with feature usage statistics event log
  */
-class ShowStatisticsEventLogAction : DumbAwareAction() {
-
+internal class ShowStatisticsEventLogAction : DumbAwareAction() {
   override fun actionPerformed(event: AnActionEvent) {
     val project = event.project ?: return
     val toolWindow = getToolWindow(project)
