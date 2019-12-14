@@ -3087,6 +3087,45 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/javaClassOnCompanion")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class JavaClassOnCompanion extends AbstractQuickFixMultiFileTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTestWithExtraFile, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInJavaClassOnCompanion() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/javaClassOnCompanion"), Pattern.compile("^(\\w+)\\.((before\\.Main\\.\\w+)|(test))$"), null, true);
+        }
+
+        @TestMetadata("idea/testData/quickfix/javaClassOnCompanion/replaceWithClassJava")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ReplaceWithClassJava extends AbstractQuickFixMultiFileTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTestWithExtraFile, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInReplaceWithClassJava() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/javaClassOnCompanion/replaceWithClassJava"), Pattern.compile("^(\\w+)\\.((before\\.Main\\.\\w+)|(test))$"), null, true);
+            }
+        }
+
+        @TestMetadata("idea/testData/quickfix/javaClassOnCompanion/replaceWithCompanionClassJava")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ReplaceWithCompanionClassJava extends AbstractQuickFixMultiFileTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTestWithExtraFile, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInReplaceWithCompanionClassJava() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/javaClassOnCompanion/replaceWithCompanionClassJava"), Pattern.compile("^(\\w+)\\.((before\\.Main\\.\\w+)|(test))$"), null, true);
+            }
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/kdocMissingDocumentation")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
