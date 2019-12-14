@@ -1183,7 +1183,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
 
         public void testAllFilesPresentInAddSpreadOperatorForArrayAsVarargAfterSam() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addSpreadOperatorForArrayAsVarargAfterSam"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/addSpreadOperatorForArrayAsVarargAfterSam"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
         }
     }
 
@@ -3501,6 +3501,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 @TestMetadata("enumEntryWithSuperclass.kt")
                 public void testEnumEntryWithSuperclass() throws Exception {
                     runTest("idea/testData/quickfix/createFromUsage/createClass/referenceExpression/enumEntryWithSuperclass.kt");
+                }
+
+                @TestMetadata("enumInBinaryExpression.kt")
+                public void testEnumInBinaryExpression() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createClass/referenceExpression/enumInBinaryExpression.kt");
                 }
 
                 @TestMetadata("enumNoReceiver.kt")
