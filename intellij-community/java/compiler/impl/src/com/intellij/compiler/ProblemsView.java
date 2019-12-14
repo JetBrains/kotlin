@@ -24,7 +24,7 @@ import java.util.UUID;
 public abstract class ProblemsView {
   protected final Project myProject;
 
-  public static class SERVICE {
+  public static final class SERVICE {
     private SERVICE() {
     }
 

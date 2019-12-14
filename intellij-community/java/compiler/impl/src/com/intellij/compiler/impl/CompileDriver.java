@@ -246,9 +246,11 @@ public final class CompileDriver {
       @Override
       public void sessionTerminated(@NotNull UUID sessionId) {
         if (compileContext.shouldUpdateProblemsView()) {
-          ProblemsView view = ProblemsView.SERVICE.getInstance(myProject);
-          view.clearProgress();
-          view.clearOldMessages(compileContext.getCompileScope(), compileContext.getSessionId());
+          ProblemsView view = myProject.getServiceIfCreated(ProblemsView.class);
+          if (view != null) {
+            view.clearProgress();
+            view.clearOldMessages(compileContext.getCompileScope(), compileContext.getSessionId());
+          }
         }
       }
 
