@@ -7854,6 +7854,68 @@ public abstract class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/javaClassOnCompanion")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class JavaClassOnCompanion extends AbstractQuickFixTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        @TestMetadata("idea/testData/quickfix/javaClassOnCompanion/replaceWithClassJava")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ReplaceWithClassJava extends AbstractQuickFixTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            @TestMetadata("hasType.kt")
+            public void testHasType() throws Exception {
+                runTest("idea/testData/quickfix/javaClassOnCompanion/replaceWithClassJava/hasType.kt");
+            }
+
+            @TestMetadata("simple.kt")
+            public void testSimple() throws Exception {
+                runTest("idea/testData/quickfix/javaClassOnCompanion/replaceWithClassJava/simple.kt");
+            }
+
+            @TestMetadata("withName.kt")
+            public void testWithName() throws Exception {
+                runTest("idea/testData/quickfix/javaClassOnCompanion/replaceWithClassJava/withName.kt");
+            }
+        }
+
+        @TestMetadata("idea/testData/quickfix/javaClassOnCompanion/replaceWithCompanionClassJava")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ReplaceWithCompanionClassJava extends AbstractQuickFixTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            @TestMetadata("hasType.kt")
+            public void testHasType() throws Exception {
+                runTest("idea/testData/quickfix/javaClassOnCompanion/replaceWithCompanionClassJava/hasType.kt");
+            }
+
+            @TestMetadata("namedCompanion.kt")
+            public void testNamedCompanion() throws Exception {
+                runTest("idea/testData/quickfix/javaClassOnCompanion/replaceWithCompanionClassJava/namedCompanion.kt");
+            }
+
+            @TestMetadata("simple.kt")
+            public void testSimple() throws Exception {
+                runTest("idea/testData/quickfix/javaClassOnCompanion/replaceWithCompanionClassJava/simple.kt");
+            }
+
+            @TestMetadata("withName.kt")
+            public void testWithName() throws Exception {
+                runTest("idea/testData/quickfix/javaClassOnCompanion/replaceWithCompanionClassJava/withName.kt");
+            }
+        }
+    }
+
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/kdocMissingDocumentation")
     public static class KdocMissingDocumentation extends AbstractQuickFixTest {

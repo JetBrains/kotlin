@@ -664,5 +664,7 @@ class QuickFixRegistrar : QuickFixContributor {
         INCOMPATIBLE_THROWS_OVERRIDE.registerFactory(RemoveAnnotationFix)
 
         INLINE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER.registerFactory(InlineClassConstructorNotValParameterFactory)
+
+        JAVA_CLASS_ON_COMPANION.registerFactory(JavaClassOnCompanionFixes)
     }
 }
