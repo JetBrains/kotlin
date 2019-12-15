@@ -46,15 +46,15 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
 
         @JvmStatic
         fun getKaptGeneratedClassesDir(project: Project, sourceSetName: String) =
-            File(project.project.buildDir, "tmp/kapt3/classes/$sourceSetName")
+            File(project.buildDir, "tmp/kapt3/classes/$sourceSetName")
 
         @JvmStatic
         fun getKaptGeneratedSourcesDir(project: Project, sourceSetName: String) =
-            File(project.project.buildDir, "generated/source/kapt/$sourceSetName")
+            File(project.buildDir, "generated/source/kapt/$sourceSetName")
 
         @JvmStatic
         fun getKaptGeneratedKotlinSourcesDir(project: Project, sourceSetName: String) =
-            File(project.project.buildDir, "generated/source/kaptKotlin/$sourceSetName")
+            File(project.buildDir, "generated/source/kaptKotlin/$sourceSetName")
     }
 
     override fun apply(project: Project) {
