@@ -53,7 +53,7 @@ class KotlinCallCompleter(
 
         return if (resolutionCallbacks.inferenceSession.shouldRunCompletion(candidate))
             candidate.runCompletion(
-                candidate.computeCompletionMode(expectedType, returnType),
+                CompletionModeCalculator.computeCompletionMode(candidate, expectedType, returnType),
                 diagnosticHolder,
                 resolutionCallbacks
             )
@@ -207,69 +207,6 @@ class KotlinCallCompleter(
         val expectedType = resolutionCallbacks.getExpectedTypeFromAsExpressionAndRecordItInTrace(resolvedCall) ?: return
         csBuilder.addSubtypeConstraint(returnType, expectedType, ExpectedTypeConstraintPosition(resolvedCall.atom))
     }
-
-    private fun KotlinResolutionCandidate.computeCompletionMode(
-        expectedType: UnwrappedType?,
-        currentReturnType: UnwrappedType?
-    ): ConstraintSystemCompletionMode {
-        // Presence of expected type means that we trying to complete outermost call => completion mode should be full
-        if (expectedType != null) return ConstraintSystemCompletionMode.FULL
-
-        // This is questionable as null return type can be only for error call
-        if (currentReturnType == null) return ConstraintSystemCompletionMode.PARTIAL
-
-        return when {
-            // Consider call foo(bar(x)), if return type of bar is a proper one, then we can complete resolve for bar => full completion mode
-            // Otherwise, we shouldn't complete bar until we process call foo
-            csBuilder.isProperType(currentReturnType) -> ConstraintSystemCompletionMode.FULL
-
-            // Nested call is connected with the outer one through the UPPER constraint (returnType <: expectedOuterType)
-            // This means that there will be no new LOWER constraints =>
-            //   it's possible to complete call now if there are proper LOWER constraints
-            csBuilder.isTypeVariable(currentReturnType) ->
-                if (hasProperNonTrivialLowerConstraints(currentReturnType))
-                    ConstraintSystemCompletionMode.FULL
-                else
-                    ConstraintSystemCompletionMode.PARTIAL
-
-            // Return type has proper equal constraints => there is no need in the outer call
-            containsTypeVariablesWithProperEqualConstraints(currentReturnType) -> ConstraintSystemCompletionMode.FULL
-
-            else -> ConstraintSystemCompletionMode.PARTIAL
-        }
-    }
-
-    private fun KotlinResolutionCandidate.containsTypeVariablesWithProperEqualConstraints(type: UnwrappedType): Boolean {
-        for ((variableConstructor, variableWithConstraints) in csBuilder.currentStorage().notFixedTypeVariables) {
-            if (!type.contains { it.constructor == variableConstructor }) continue
-
-            val constraints = variableWithConstraints.constraints
-            val onlyProperEqualConstraints =
-                constraints.isNotEmpty() && constraints.any { it.kind.isEqual() && csBuilder.isProperType(it.type) }
-
-            if (!onlyProperEqualConstraints) return false
-        }
-
-        return true
-    }
-
-    private fun KotlinResolutionCandidate.hasProperNonTrivialLowerConstraints(typeVariable: UnwrappedType): Boolean {
-        assert(csBuilder.isTypeVariable(typeVariable)) { "$typeVariable is not a type variable" }
-
-        val context = getSystem() as TypeSystemInferenceExtensionContext
-        val constructor = typeVariable.constructor
-        val variableWithConstraints = csBuilder.currentStorage().notFixedTypeVariables[constructor] ?: return false
-        val constraints = variableWithConstraints.constraints
-        return constraints.isNotEmpty() && constraints.anyOrAll(requireAll = typeVariable.hasExactAnnotation()) {
-            !it.type.typeConstructor(context).isIntegerLiteralTypeConstructor(context) &&
-                    (it.kind.isLower() || it.kind.isEqual()) &&
-                    csBuilder.isProperType(it.type) &&
-                    !trivialConstraintTypeInferenceOracle.isNotInterestingConstraint(it)
-        }
-    }
-
-    private inline fun <T> Iterable<T>.anyOrAll(requireAll: Boolean, p: (T) -> Boolean): Boolean =
-        if (requireAll) all(p) else any(p)
 
     fun KotlinResolutionCandidate.asCallResolutionResult(
         type: ConstraintSystemCompletionMode,
