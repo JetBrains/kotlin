@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.resolve.calls.tower
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.*
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.resolve.calls.context.CallPosition
 import org.jetbrains.kotlin.resolve.calls.inference.buildResultingSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.FreshVariableNewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
+import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutorByConstructorMap
 import org.jetbrains.kotlin.resolve.calls.inference.components.composeWith
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.inference.substitute
@@ -53,6 +55,8 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContextDelegate
 import org.jetbrains.kotlin.types.typeUtil.contains
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
+import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
@@ -711,8 +715,39 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
         calculateExpectedTypeForSamConvertedArgumentMap(substitutor)
     }
 
+    private fun KotlinType.withNullabilityFromExplicitTypeArgument(typeArgument: SimpleTypeArgument) =
+        (if (typeArgument.type.isMarkedNullable) makeNullable() else makeNotNullable()).unwrap()
+
+    private fun getSubstitutorWithoutFlexibleTypes(
+        currentSubstitutor: NewTypeSubstitutor?,
+        explicitTypeArguments: List<SimpleTypeArgument>
+    ): NewTypeSubstitutor? {
+        if (currentSubstitutor !is NewTypeSubstitutorByConstructorMap || explicitTypeArguments.isEmpty()) return currentSubstitutor
+        if (!currentSubstitutor.map.any { (_, value) -> value.isFlexible() }) return currentSubstitutor
+
+        val typeVariables = resolvedCallAtom.freshVariablesSubstitutor.freshVariables
+        val newSubstitutorMap = currentSubstitutor.map.toMutableMap()
+
+        explicitTypeArguments.forEachIndexed { index, typeArgument ->
+            val typeVariableConstructor = typeVariables.getOrNull(index)?.freshTypeConstructor ?: return@forEachIndexed
+
+            newSubstitutorMap[typeVariableConstructor] =
+                newSubstitutorMap[typeVariableConstructor]?.withNullabilityFromExplicitTypeArgument(typeArgument)
+                    ?: return@forEachIndexed
+        }
+
+        return NewTypeSubstitutorByConstructorMap(newSubstitutorMap)
+    }
+
     private fun substitutedResultingDescriptor(substitutor: NewTypeSubstitutor?) =
         when (val candidateDescriptor = resolvedCallAtom.candidateDescriptor) {
+            is ClassConstructorDescriptor, is SyntheticMemberDescriptor<*> -> {
+                val explicitTypeArguments = resolvedCallAtom.atom.typeArguments.filterIsInstance<SimpleTypeArgument>()
+
+                candidateDescriptor.substituteInferredVariablesAndApproximate(
+                    getSubstitutorWithoutFlexibleTypes(substitutor, explicitTypeArguments)
+                )
+            }
             is FunctionDescriptor -> candidateDescriptor.substituteInferredVariablesAndApproximate(substitutor)
             is PropertyDescriptor -> {
                 val shouldRunApproximation = candidateDescriptor.returnType?.let { type ->

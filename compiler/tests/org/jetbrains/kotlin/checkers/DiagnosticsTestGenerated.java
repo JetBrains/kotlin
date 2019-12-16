@@ -8074,6 +8074,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/functionLiterals/LabeledFunctionLiterals.kt");
             }
 
+            @TestMetadata("lambdaInLambda2.kt")
+            public void testLambdaInLambda2() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/functionLiterals/lambdaInLambda2.kt");
+            }
+
             @TestMetadata("prematurelyAnalyzingLambdaWhileFixingTypeVariableForAnotherArgument.kt")
             public void testPrematurelyAnalyzingLambdaWhileFixingTypeVariableForAnotherArgument() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/functionLiterals/prematurelyAnalyzingLambdaWhileFixingTypeVariableForAnotherArgument.kt");
@@ -14850,6 +14855,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/nullableTypes/elvisOnUnit.kt");
             }
 
+            @TestMetadata("inferenceFlexibleTToNullable.kt")
+            public void testInferenceFlexibleTToNullable() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/nullableTypes/inferenceFlexibleTToNullable.kt");
+            }
+
             @TestMetadata("nullAssertOnTypeWithNullableUpperBound.kt")
             public void testNullAssertOnTypeWithNullableUpperBound() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/nullableTypes/nullAssertOnTypeWithNullableUpperBound.kt");
@@ -14893,6 +14903,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("safeCallWithInvoke.kt")
             public void testSafeCallWithInvoke() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/nullableTypes/safeCallWithInvoke.kt");
+            }
+
+            @TestMetadata("takingNullabilityFromExplicitTypeArgmentsInsteadOfUsingFlexibleTypes.kt")
+            public void testTakingNullabilityFromExplicitTypeArgmentsInsteadOfUsingFlexibleTypes() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/nullableTypes/takingNullabilityFromExplicitTypeArgmentsInsteadOfUsingFlexibleTypes.kt");
             }
 
             @TestMetadata("uselessElvis.kt")
@@ -18886,6 +18901,16 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("SAMAfterSubstitutionKT.kt")
             public void testSAMAfterSubstitutionKT() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/samConversions/SAMAfterSubstitutionKT.kt");
+            }
+
+            @TestMetadata("samConversionToGeneric.kt")
+            public void testSamConversionToGeneric() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/samConversions/samConversionToGeneric.kt");
+            }
+
+            @TestMetadata("samConversionsWithSmartCasts.kt")
+            public void testSamConversionsWithSmartCasts() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/samConversions/samConversionsWithSmartCasts.kt");
             }
 
             @TestMetadata("sameCandidatesFromKotlinAndJavaInOneScope.kt")

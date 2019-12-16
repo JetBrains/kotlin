@@ -7,7 +7,7 @@ FILE: main.kt
     public abstract interface PsiClass : R|kotlin/Any| {
     }
     public final fun test(): R|kotlin/Unit| {
-        lval processor: R|AdapterProcessor<PsiMethod, PsiClass>| = R|/AdapterProcessor.AdapterProcessor|<R|PsiMethod|, R|PsiClass|>(R|/Function|<R|PsiMethod|, R|ft<PsiClass, PsiClass?>!|>(<L> = Function@fun <anonymous>(method: R|PsiMethod?|): R|PsiClass?| {
+        lval processor: <ERROR TYPE REF: Inapplicable(INAPPLICABLE): [/AdapterProcessor.AdapterProcessor]> = <Inapplicable(INAPPLICABLE): [/AdapterProcessor.AdapterProcessor]>#<R|PsiMethod|, R|PsiClass|>(R|/Function|<R|PsiMethod?|, R|PsiClass?|>(<L> = Function@fun <anonymous>(method: R|PsiMethod?|): R|PsiClass?| {
             R|<local>/method|?.R|/PsiMethod.containingClass|
         }
         ))

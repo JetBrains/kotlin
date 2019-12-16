@@ -12,11 +12,11 @@ FILE: main.kt
             R|<local>/x|.R|kotlin/Any.toString|()
         }
         )
-        Q|JavaUsage|.R|/JavaUsage.foo3|<R|kotlin/Int|, R|kotlin/String|>(foo3@fun <anonymous>(x: R|kotlin/Int|): R|kotlin/Unit| {
+        Q|JavaUsage|.R|/JavaUsage.foo3|<R|kotlin/Int|, R|ft<kotlin/String, kotlin/String?>!|>(foo3@fun <anonymous>(x: R|kotlin/Int|): R|kotlin/String| {
             R|<local>/x|.R|kotlin/Int.plus|(Int(1)).R|kotlin/Any.toString|()
         }
         , Int(1))
-        Q|JavaUsage|.R|/JavaUsage.foo3|<R|kotlin/Int|, R|kotlin/String|>(foo3@fun <anonymous>(x: R|kotlin/Number|): R|kotlin/Unit| {
+        Q|JavaUsage|.R|/JavaUsage.foo3|<R|kotlin/Int|, R|ft<kotlin/String, kotlin/String?>!|>(foo3@fun <anonymous>(x: R|kotlin/Number|): R|kotlin/String| {
             R|<local>/x|.R|kotlin/Number.toInt|().R|kotlin/Any.toString|()
         }
         , Int(2))

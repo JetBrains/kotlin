@@ -82,10 +82,9 @@ FILE fqName:<root> fileName:/samConversionsWithSmartCasts.kt
   FUN name:test8 visibility:public modality:FINAL <> (a:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:kotlin.Function0<kotlin.Unit>
     BLOCK_BODY
-      CALL 'public open fun run1 (r: java.lang.Runnable?): kotlin.Unit [operator] declared in <root>.J' type=kotlin.Unit origin=null
-        $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.J' type=<root>.J origin=null
-        r: CALL 'public open fun id <T> (x: T of <root>.J.id?): T of <root>.J.id? [operator] declared in <root>.J' type=kotlin.Function0<kotlin.Unit> origin=null
-          <T>: kotlin.Function0<kotlin.Unit>
+      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/J.run1]>#' type=IrErrorType
+        CALL 'public open fun id <T> (x: T of <root>.J.id?): T of <root>.J.id? [operator] declared in <root>.J' type=kotlin.Function0<kotlin.Unit>? origin=null
+          <T>: kotlin.Function0<kotlin.Unit>?
           x: GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.test8' type=kotlin.Function0<kotlin.Unit> origin=null
   FUN name:test9 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY

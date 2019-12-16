@@ -1,10 +1,10 @@
 FILE fqName:<root> fileName:/samConversionInGenericConstructorCall.kt
-  FUN name:test1 visibility:public modality:FINAL <> (f:kotlin.Function1<kotlin.String, kotlin.String>) returnType:<root>.C<kotlin.String>
+  FUN name:test1 visibility:public modality:FINAL <> (f:kotlin.Function1<kotlin.String, kotlin.String>) returnType:<root>.C<kotlin.String?>
     VALUE_PARAMETER name:f index:0 type:kotlin.Function1<kotlin.String, kotlin.String>
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test1 (f: kotlin.Function1<kotlin.String, kotlin.String>): <root>.C<kotlin.String> declared in <root>'
-        CONSTRUCTOR_CALL 'public constructor <init> (jxx: <root>.J<X of <root>.C?, X of <root>.C?>?) declared in <root>.C' type=<root>.C<kotlin.String> origin=null
-          <class: X>: kotlin.String
+      RETURN type=kotlin.Nothing from='public final fun test1 (f: kotlin.Function1<kotlin.String, kotlin.String>): <root>.C<kotlin.String?> declared in <root>'
+        CONSTRUCTOR_CALL 'public constructor <init> (jxx: <root>.J<X of <root>.C?, X of <root>.C?>?) declared in <root>.C' type=<root>.C<kotlin.String?> origin=null
+          <class: X>: kotlin.String?
           jxx: TYPE_OP type=<root>.J<kotlin.String?, kotlin.String?>? origin=SAM_CONVERSION typeOperand=<root>.J<kotlin.String?, kotlin.String?>?
             GET_VAR 'f: kotlin.Function1<kotlin.String, kotlin.String> declared in <root>.test1' type=kotlin.Function1<kotlin.String, kotlin.String> origin=null
   FUN name:test2 visibility:public modality:FINAL <> (x:kotlin.Any) returnType:kotlin.Unit
@@ -14,8 +14,8 @@ FILE fqName:<root> fileName:/samConversionInGenericConstructorCall.kt
         TYPE_OP type=kotlin.Function1<kotlin.String, kotlin.String> origin=CAST typeOperand=kotlin.Function1<kotlin.String, kotlin.String>
           GET_VAR 'x: kotlin.Any declared in <root>.test2' type=kotlin.Any origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        CONSTRUCTOR_CALL 'public constructor <init> (jxx: <root>.J<X of <root>.C?, X of <root>.C?>?) declared in <root>.C' type=<root>.C<kotlin.String> origin=null
-          <class: X>: kotlin.String
+        CONSTRUCTOR_CALL 'public constructor <init> (jxx: <root>.J<X of <root>.C?, X of <root>.C?>?) declared in <root>.C' type=<root>.C<kotlin.String?> origin=null
+          <class: X>: kotlin.String?
           jxx: TYPE_OP type=<root>.J<kotlin.String?, kotlin.String?>? origin=SAM_CONVERSION typeOperand=<root>.J<kotlin.String?, kotlin.String?>?
             TYPE_OP type=kotlin.Function1<@[ParameterName(name = 'x')] kotlin.String?, kotlin.String?> origin=IMPLICIT_CAST typeOperand=kotlin.Function1<@[ParameterName(name = 'x')] kotlin.String?, kotlin.String?>
               GET_VAR 'x: kotlin.Any declared in <root>.test2' type=kotlin.Any origin=null
