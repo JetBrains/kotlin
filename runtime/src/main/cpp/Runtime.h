@@ -26,24 +26,24 @@ struct InitNode;
 extern "C" {
 #endif
 
-void RUNTIME_USED Kotlin_initRuntimeIfNeeded();
-void RUNTIME_USED Kotlin_deinitRuntimeIfNeeded();
+void Kotlin_initRuntimeIfNeeded();
+void Kotlin_deinitRuntimeIfNeeded();
 
 // Operations below allow flexible runtime scheduling on different threads.
 // Created runtime is in SUSPENDED state, and need to be resumed for actual execution.
-RuntimeState* RUNTIME_USED Kotlin_createRuntime();
+RuntimeState* Kotlin_createRuntime();
 // Runtime must be in SUSPENDED state, before it could be destroyed.
-void RUNTIME_USED Kotlin_destroyRuntime(RuntimeState*);
+void Kotlin_destroyRuntime(RuntimeState*);
 
 // Transition current runtime from RUNNING to SUSPENDED state, and clearing thread local variable caching
 // the runtime. After suspension, runtime could be rescheduled to a different thread.
-RuntimeState* RUNTIME_USED Kotlin_suspendRuntime();
+RuntimeState* Kotlin_suspendRuntime();
 // Transition runtime from SUSPENDED to RUNNING state, and sets thread local variable caching
 // the runtime. After resume, current thread could be used for executing Kotlin code.
-void RUNTIME_USED Kotlin_resumeRuntime(RuntimeState*);
+void Kotlin_resumeRuntime(RuntimeState*);
 
 // Gets currently active runtime, fails if no runtime is currently available.
-RuntimeState* RUNTIME_USED Kotlin_getRuntime();
+RuntimeState* Kotlin_getRuntime();
 
 bool Kotlin_hasRuntime();
 

@@ -18,6 +18,7 @@
 #include "Porting.h"
 #include "Common.h"
 
+#if KONAN_LINUX || KONAN_WINDOWS
 // This function replaces `__cxa_demangle` defined in GNU libstdc++
 // by adding `--defsym` flag in `konan.properties`.
 // This allows to avoid linking `__cxa_demangle` and its dependencies, thus reducing binary size.
@@ -34,3 +35,5 @@ namespace std {
     RuntimeAssert(false, __s);
   }
 }
+
+#endif // KONAN_LINUX || KONAN_WINDOWS

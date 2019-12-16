@@ -183,7 +183,7 @@ void Kotlin_resumeRuntime(RuntimeState* state) {
     WorkerResume(state->worker);
 }
 
-RuntimeState* RUNTIME_USED Kotlin_getRuntime() {
+RuntimeState* Kotlin_getRuntime() {
   RuntimeCheck(isValidRuntime(), "Runtime must be active on the current thread");
   return ::runtimeState;
 }
