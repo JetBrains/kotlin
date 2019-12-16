@@ -23,15 +23,14 @@ class FirIdeJavaModuleBasedSession(
     project: Project,
     moduleInfo: ModuleInfo,
     sessionProvider: FirProjectSessionProvider,
-    scope: GlobalSearchScope,
-    dependenciesProvider: FirSymbolProvider? = null
+    scope: GlobalSearchScope
 ) : FirModuleBasedSession(moduleInfo, sessionProvider) {
 
 
     init {
         registerComponent(
             FirProvider::class,
-            IdeFirProvider(project, scope, this)
+            FirIdeProvider(project, scope, this)
         )
         registerComponent(
             FirSymbolProvider::class,
@@ -39,7 +38,7 @@ class FirIdeJavaModuleBasedSession(
                 listOf(
                     firProvider,
                     JavaSymbolProvider(this, sessionProvider.project, scope),
-                    dependenciesProvider ?: FirDependenciesSymbolProviderImpl(this)
+                    FirDependenciesSymbolProviderImpl(this)
                 )
             ) as FirSymbolProvider
         )

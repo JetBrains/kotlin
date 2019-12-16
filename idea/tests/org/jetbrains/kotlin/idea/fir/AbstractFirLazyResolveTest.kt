@@ -101,7 +101,7 @@ abstract class AbstractFirLazyResolveTest : KotlinLightCodeInsightFixtureTestCas
         for (file in files) {
             val psiFile = psiManager.findFile(file) as KtFile
             val session = resolveState.getSession(psiFile)
-            val firProvider = FirProvider.getInstance(session) as IdeFirProvider
+            val firProvider = FirProvider.getInstance(session) as FirIdeProvider
             val firFile = firProvider.getFile(psiFile) ?: continue
             KotlinTestUtils.assertEqualsToFile(File(expectedTxtPath(file)), firFile.render())
         }

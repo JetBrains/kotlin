@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
-class IdeFirProvider(
+class FirIdeProvider(
     val project: Project,
     val scope: GlobalSearchScope,
     val session: FirSession

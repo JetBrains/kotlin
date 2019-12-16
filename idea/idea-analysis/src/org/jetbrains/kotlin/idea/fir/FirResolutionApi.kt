@@ -83,7 +83,7 @@ fun KtCallableDeclaration.getOrBuildFir(
     val klassFqName = this.containingClassOrObject?.relativeFqName()
     val declName = this.nameAsSafeName
 
-    val firProvider = FirProvider.getInstance(session) as IdeFirProvider
+    val firProvider = FirProvider.getInstance(session) as FirIdeProvider
     val firFile = firProvider.getOrBuildFile(file)
     val firMemberSymbol = firFile.findCallableMember(firProvider, this, packageFqName, klassFqName, declName).symbol
     val firMemberDeclaration = firMemberSymbol.fir
@@ -106,7 +106,7 @@ fun KtClassOrObject.getOrBuildFir(
     val packageFqName = file.packageFqName
     val klassFqName = this.relativeFqName()
 
-    val firProvider = FirProvider.getInstance(session) as IdeFirProvider
+    val firProvider = FirProvider.getInstance(session) as FirIdeProvider
     val firFile = firProvider.getOrBuildFile(file)
     val firClass = firProvider.getFirClassifierByFqName(ClassId(packageFqName, klassFqName, false)) as FirRegularClass
     if (firClass.resolvePhase >= phase) {
@@ -118,9 +118,9 @@ fun KtClassOrObject.getOrBuildFir(
     return firClass
 }
 
-private fun KtFile.getOrBuildRawFirFile(state: FirModuleResolveState): Pair<IdeFirProvider, FirFile> {
+private fun KtFile.getOrBuildRawFirFile(state: FirModuleResolveState): Pair<FirIdeProvider, FirFile> {
     val session = state.getSession(this)
-    val firProvider = FirProvider.getInstance(session) as IdeFirProvider
+    val firProvider = FirProvider.getInstance(session) as FirIdeProvider
     return firProvider to firProvider.getOrBuildFile(this)
 }
 
@@ -157,7 +157,7 @@ fun KtFile.getOrBuildFirWithDiagnostics(state: FirModuleResolveState): FirFile {
 
 private fun FirDeclaration.runResolve(
     file: FirFile,
-    firProvider: IdeFirProvider,
+    firProvider: FirIdeProvider,
     toPhase: FirResolvePhase,
     state: FirModuleResolveState
 ) {
