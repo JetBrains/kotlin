@@ -1,0 +1,33 @@
+package
+
+public fun </*0*/ @kotlin.internal.OnlyInputTypes I> id(/*0*/ arg: I): I
+public fun test1(/*0*/ argument: InvRecursive<*>, /*1*/ receiver: IFace<InvRecursive<DerivedInv>, kotlin.Any>): kotlin.Unit
+public fun test2(/*0*/ arg: InvRecursive<out DerivedInv>): kotlin.Unit
+public fun test3(/*0*/ arg: InvRecursive<in DerivedInv>): kotlin.Unit
+public fun </*0*/ @kotlin.internal.OnlyInputTypes K, /*1*/ V> IFace<out K, V>.get(/*0*/ key: K): V?
+
+public final class DerivedInv : InvBase<DerivedInv> {
+    public constructor DerivedInv()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface IFace</*0*/ K, /*1*/ out V> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface InvBase</*0*/ B> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class InvRecursive</*0*/ E : InvBase<E>> {
+    public constructor InvRecursive</*0*/ E : InvBase<E>>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
