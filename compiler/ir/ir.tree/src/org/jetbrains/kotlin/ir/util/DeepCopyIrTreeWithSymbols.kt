@@ -680,7 +680,7 @@ open class DeepCopyIrTreeWithSymbols(
         throw AssertionError("Outer loop was not transformed: ${irLoop.render()}")
 
     override fun visitWhileLoop(loop: IrWhileLoop): IrWhileLoop =
-        IrWhileLoopImpl(loop.startOffset, loop.endOffset, loop.type, mapStatementOrigin(loop.origin)).also { newLoop ->
+        IrWhileLoopImpl(loop.startOffset, loop.endOffset, loop.type.remapType(), mapStatementOrigin(loop.origin)).also { newLoop ->
             transformedLoops[loop] = newLoop
             newLoop.label = loop.label
             newLoop.condition = loop.condition.transform()
@@ -688,7 +688,7 @@ open class DeepCopyIrTreeWithSymbols(
         }.copyAttributes(loop)
 
     override fun visitDoWhileLoop(loop: IrDoWhileLoop): IrDoWhileLoop =
-        IrDoWhileLoopImpl(loop.startOffset, loop.endOffset, loop.type, mapStatementOrigin(loop.origin)).also { newLoop ->
+        IrDoWhileLoopImpl(loop.startOffset, loop.endOffset, loop.type.remapType(), mapStatementOrigin(loop.origin)).also { newLoop ->
             transformedLoops[loop] = newLoop
             newLoop.label = loop.label
             newLoop.condition = loop.condition.transform()
@@ -698,21 +698,21 @@ open class DeepCopyIrTreeWithSymbols(
     override fun visitBreak(jump: IrBreak): IrBreak =
         IrBreakImpl(
             jump.startOffset, jump.endOffset,
-            jump.type,
+            jump.type.remapType(),
             getTransformedLoop(jump.loop)
         ).apply { label = jump.label }.copyAttributes(jump)
 
     override fun visitContinue(jump: IrContinue): IrContinue =
         IrContinueImpl(
             jump.startOffset, jump.endOffset,
-            jump.type,
+            jump.type.remapType(),
             getTransformedLoop(jump.loop)
         ).apply { label = jump.label }.copyAttributes(jump)
 
     override fun visitTry(aTry: IrTry): IrTry =
         IrTryImpl(
             aTry.startOffset, aTry.endOffset,
-            aTry.type,
+            aTry.type.remapType(),
             aTry.tryResult.transform(),
             aTry.catches.map { it.transform() },
             aTry.finallyExpression?.transform()
