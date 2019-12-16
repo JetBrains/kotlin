@@ -99,7 +99,7 @@ class HectorComponentImpl extends JPanel implements HectorComponent {
     }
 
     GridBagConstraints gc = new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0, 0, GridBagConstraints.NORTHWEST,
-                                                   GridBagConstraints.NONE, new Insets(0, 5, 0, 0), 0, 0);
+                                                   GridBagConstraints.NONE, JBUI.insetsLeft(5), 0, 0);
 
     JPanel panel = new JPanel(new GridBagLayout());
     panel.setBorder(IdeBorderFactory.createTitledBorder(EditorBundle.message("hector.highlighting.level.title"), false));
@@ -167,7 +167,7 @@ class HectorComponentImpl extends JPanel implements HectorComponent {
       slider.setOrientation(SwingConstants.HORIZONTAL);
       slider.setPreferredSize(JBUI.size(200, 40));
       panel.add(slider, new GridBagConstraints(0, 1, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
-                                               new Insets(5, 0, 5, 0), 0, 0));
+                                               JBUI.insets(5, 0), 0, 0));
     }
   }
 
@@ -179,7 +179,7 @@ class HectorComponentImpl extends JPanel implements HectorComponent {
       borderPanel.add(new JLabel(language.getID()), BorderLayout.NORTH);
       borderPanel.add(slider, BorderLayout.CENTER);
       panel.add(borderPanel, new GridBagConstraints(GridBagConstraints.RELATIVE, 1, 1, 1, 0, 1, GridBagConstraints.CENTER, GridBagConstraints.VERTICAL,
-                                                    new Insets(0, 5, 0, 5), 0, 0));
+                                                    JBUI.insets(0, 5), 0, 0));
     }
   }
 

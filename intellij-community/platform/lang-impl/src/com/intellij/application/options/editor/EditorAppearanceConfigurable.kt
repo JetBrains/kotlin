@@ -8,8 +8,10 @@ import com.intellij.ide.ui.UISettings
 import com.intellij.openapi.application.ApplicationBundle
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.ex.EditorSettingsExternalizable
+import com.intellij.openapi.extensions.BaseExtensionPointName
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.options.BoundCompositeConfigurable
+import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.UnnamedConfigurable
 import com.intellij.openapi.options.ex.ConfigurableWrapper
 import com.intellij.openapi.ui.DialogPanel
@@ -50,7 +52,7 @@ val myCodeLensCheckBox = CheckboxDescriptor(IdeBundle.message("checkbox.show.edi
 class EditorAppearanceConfigurable : BoundCompositeConfigurable<UnnamedConfigurable>(
   "Appearance",
   "reference.settingsdialog.IDE.editor.appearance"
-) {
+), Configurable.WithEpDependencies {
   override fun createPanel(): DialogPanel {
     val model = EditorSettingsExternalizable.getInstance()
     return panel {
@@ -109,6 +111,10 @@ class EditorAppearanceConfigurable : BoundCompositeConfigurable<UnnamedConfigura
 
   override fun createConfigurables(): List<UnnamedConfigurable> {
     return ConfigurableWrapper.createConfigurables(EP_NAME)
+  }
+
+  override fun getDependencies(): Collection<BaseExtensionPointName<*>> {
+    return listOf(EP_NAME)
   }
 
   override fun apply() {

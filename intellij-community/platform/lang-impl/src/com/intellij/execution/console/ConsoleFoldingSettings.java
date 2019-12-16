@@ -1,12 +1,12 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.console;
 
-import com.google.common.collect.Collections2;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.containers.ContainerUtil;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 
@@ -79,8 +79,8 @@ public class ConsoleFoldingSettings implements PersistentStateComponent<ConsoleF
     return negated ? myNegativePatterns : myPositivePatterns;
   }
 
-  private Collection<String> filterEmptyStringsFromCollection(Collection<String> collection) {
-    return Collections2.filter(collection, input -> !StringUtil.isEmpty(input));
+  private static Collection<String> filterEmptyStringsFromCollection(Collection<String> collection) {
+    return ContainerUtil.filter(collection, input -> !StringUtil.isEmpty(input));
   }
 
   @Override

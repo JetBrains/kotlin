@@ -9,6 +9,7 @@ import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.ex.EditorSettingsExternalizable;
+import com.intellij.openapi.extensions.BaseExtensionPointName;
 import com.intellij.openapi.options.CompositeConfigurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.ex.ConfigurableWrapper;
@@ -19,12 +20,15 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * @author yole
  */
-public class CodeFoldingConfigurable extends CompositeConfigurable<CodeFoldingOptionsProvider> implements EditorOptionsProvider {
+public class CodeFoldingConfigurable extends CompositeConfigurable<CodeFoldingOptionsProvider> implements EditorOptionsProvider,
+                                                                                                          ConfigurableWrapper.WithEpDependencies {
   public static final String ID = "editor.preferences.folding";
 
   private JCheckBox myCbFolding;
@@ -86,6 +90,12 @@ public class CodeFoldingConfigurable extends CompositeConfigurable<CodeFoldingOp
   @Override
   protected List<CodeFoldingOptionsProvider> createConfigurables() {
     return ConfigurableWrapper.createConfigurables(CodeFoldingOptionsProviderEP.EP_NAME);
+  }
+
+  @NotNull
+  @Override
+  public Collection<BaseExtensionPointName<?>> getDependencies() {
+    return Collections.singleton(CodeFoldingOptionsProviderEP.EP_NAME);
   }
 
   @Override

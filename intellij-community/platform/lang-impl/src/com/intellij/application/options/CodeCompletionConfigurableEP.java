@@ -7,7 +7,7 @@ import com.intellij.openapi.options.UnnamedConfigurable;
 
 /**
  * To provide additional options in Editor | Code Completion section register implementation of
- * {@link com.intellij.openapi.options.UnnamedConfigurable} in the plugin.xml:
+ * {@link UnnamedConfigurable} in the plugin.xml:
  * <p/>
  * &lt;extensions defaultExtensionNs="com.intellij"&gt;<br>
  * &nbsp;&nbsp;&lt;codeCompletionConfigurable instance="class-name"/&gt;<br>

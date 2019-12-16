@@ -19,6 +19,7 @@ import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.ex.EditorSettingsExternalizable;
 import com.intellij.openapi.editor.richcopy.settings.RichCopySettings;
+import com.intellij.openapi.extensions.BaseExtensionPointName;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.TextEditor;
@@ -48,9 +49,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
-public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvider> implements SearchableConfigurable {
+public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvider> implements SearchableConfigurable,
+                                                                                               ConfigurableWrapper.WithEpDependencies {
   public static final String ID = "preferences.editor";
 
   private JPanel    myBehaviourPanel;
@@ -376,6 +380,12 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
   @Override
   protected List<ErrorOptionsProvider> createConfigurables() {
     return ConfigurableWrapper.createConfigurables(ErrorOptionsProviderEP.EP_NAME);
+  }
+
+  @NotNull
+  @Override
+  public Collection<BaseExtensionPointName<?>> getDependencies() {
+    return Collections.singleton(ErrorOptionsProviderEP.EP_NAME);
   }
 
   @Override
