@@ -7,17 +7,18 @@ package org.jetbrains.kotlin.tools.projectWizard.templates
 
 import org.jetbrains.kotlin.tools.projectWizard.core.TaskRunningContext
 import org.jetbrains.kotlin.tools.projectWizard.core.buildList
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.TemplateSetting
+import org.jetbrains.kotlin.tools.projectWizard.core.safeAs
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.*
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.DefaultTargetConfigurationIR
 import org.jetbrains.kotlin.tools.projectWizard.library.MavenArtifact
-import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
+import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
-import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.DefaultRepository
-import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Repositories
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.SourcesetType
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
+import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.Interceptor
+import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.interceptTemplate
 
 class SimpleJsClientTemplate : Template() {
     override val title: String = "Simple JS client"
@@ -39,23 +40,87 @@ class SimpleJsClientTemplate : Template() {
         FileTemplateDescriptor("$id/client.kt.vm", sourcesPath("client.kt"))
     )
 
+    override fun createInterceptors(sourceset: SourcesetIR): List<Interceptor> = buildList {
+        +interceptTemplate(KtorServerTemplate()) {
+            applicableIf { buildFileIR ->
+                val tasks = buildFileIR.irsOfTypeOrNull<GradleConfigureTaskIR>() ?: return@applicableIf false
+                tasks.none { it.taskAccess.name.endsWith("Jar") }
+            }
+
+            transformBuildFile { buildFileIR ->
+                val jsSourcesetName = sourceset.safeAs<SourcesetModuleIR>()?.targetName ?: return@transformBuildFile null
+                val jvmTarget = buildFileIR.targets.firstOrNull { target ->
+                    target.safeAs<DefaultTargetConfigurationIR>()?.targetAccess?.type == ModuleSubType.jvm
+                } as? DefaultTargetConfigurationIR ?: return@transformBuildFile null
+                val jvmTargetName = jvmTarget.name
+                val webPackTaskName = "${jsSourcesetName}BrowserWebpack"
+                val jvmJarTaskAccess = GradleByNameTaskAccessIR("${jvmTargetName}Jar", "Jar")
+
+                val jvmJarTaskConfiguration = run {
+                    val webPackTaskVariable = CreateGradleValueIR(
+                        webPackTaskName,
+                        GradleByNameTaskAccessIR(webPackTaskName, WEBPACK_TASK_CLASS)
+                    )
+                    val from = GradleCallIr(
+                        "from",
+                        listOf(
+                            GradleCallIr(
+                                "File",
+                                listOf(
+                                    GradlePropertyAccessIR("$webPackTaskName.destinationDirectory"),
+                                    GradlePropertyAccessIR("$webPackTaskName.outputFileName")
+                                )
+                            )
+                        )
+                    )
+                    GradleConfigureTaskIR(
+                        jvmJarTaskAccess,
+                        dependsOn = listOf(GradleByNameTaskAccessIR(webPackTaskName)),
+                        irs = listOf(
+                            webPackTaskVariable,
+                            from
+                        )
+                    )
+                }
+
+                val runTaskConfiguration = run {
+                    val taskAccess = GradleByNameTaskAccessIR("run", "JavaExec")
+                    val classpath = GradleCallIr("classpath", listOf(jvmJarTaskAccess))
+                    GradleConfigureTaskIR(
+                        taskAccess,
+                        dependsOn = listOf(jvmJarTaskAccess),
+                        irs = listOf(classpath)
+                    )
+                }
+
+                buildFileIR.withIrs(jvmJarTaskConfiguration, runTaskConfiguration)
+            }
+        }
+    }
+
+
     override fun TaskRunningContext.getIrsToAddToBuildFile(sourceset: SourcesetIR): List<BuildSystemIR> = buildList {
         +RepositoryIR(DefaultRepository.JCENTER)
         if (sourceset is SourcesetModuleIR) {
             +GradleImportIR("org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack")
-            val taskAccessIR = GetGradleTaskIR(
+            val taskAccessIR = GradleByNameTaskAccessIR(
                 "${sourceset.targetName}BrowserWebpack",
-                "KotlinWebpack",
-                buildBody {
-                    +GradleAssignmentIR("outputFileName", GradleStringConstIR(JS_OUTPUT_FILE_NAME))
-                }
+                WEBPACK_TASK_CLASS
             )
-            +CreateGradleValueIR(JS_BROWSER_WEBPACK_TASK_ALIAS, taskAccessIR)
+
+            +GradleConfigureTaskIR(
+                taskAccessIR,
+                irs = listOf(
+                    GradleAssignmentIR(
+                        "outputFileName", GradleStringConstIR(JS_OUTPUT_FILE_NAME)
+                    )
+                )
+            )
         }
     }
 
     companion object {
         const val JS_OUTPUT_FILE_NAME = "output.js"
-        const val JS_BROWSER_WEBPACK_TASK_ALIAS = "jsBrowserWebpack"
+        const val WEBPACK_TASK_CLASS = "KotlinWebpack"
     }
 }

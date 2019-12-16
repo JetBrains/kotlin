@@ -1,48 +1,49 @@
 package org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle
 
-import org.jetbrains.kotlin.tools.projectWizard.ir.TaskIR
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.FreeIR
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.render
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.GradlePrinter
 
-interface GradleTaskIR : GradleIR, TaskIR {
-    val taskClass: String
-    val body: BodyIR
+interface GradleTaskAccessIR : GradleIR {
+    val name: String
 }
 
-data class CreateGradleTaskIR(
+data class GradleByNameTaskAccessIR(
     override val name: String,
-    override val taskClass: String,
-    override val body: BodyIR
-) : GradleTaskIR {
-    override fun GradlePrinter.renderGradle() {
-        when (dsl) {
-            GradlePrinter.GradleDsl.GROOVY -> {
-                +"tasks.create('$name', $taskClass)"
-            }
-            GradlePrinter.GradleDsl.KOTLIN -> {
-                +"val $name by tasks.registering($taskClass::class)"
-            }
-        }
-        +" "
-        body.renderIfNotEmpty(this)
-    }
-}
-
-data class GetGradleTaskIR(
-    override val name: String,
-    override val taskClass: String,
-    override val body: BodyIR
-) : GradleTaskIR {
+    val taskClass: String? = null
+) : GradleTaskAccessIR {
     override fun GradlePrinter.renderGradle() {
         when (dsl) {
             GradlePrinter.GradleDsl.GROOVY -> {
                 +"tasks.getByName('$name')"
             }
             GradlePrinter.GradleDsl.KOTLIN -> {
-                +"tasks.getByName<$taskClass>(${name.quotified})"
+                +"tasks.getByName"
+                taskClass?.let { +"<$it>" }
+                +"(${name.quotified})"
             }
         }
+    }
+}
+
+data class GradleConfigureTaskIR(
+    val taskAccess: GradleTaskAccessIR,
+    val dependsOn: List<BuildSystemIR> = emptyList(),
+    val irs: List<BuildSystemIR> = emptyList()
+) : GradleIR, FreeIR {
+    override fun GradlePrinter.renderGradle() {
+        taskAccess.render(this)
         +" "
-        body.renderIfNotEmpty(this)
+        inBrackets {
+            if (dependsOn.isNotEmpty()) {
+                indent()
+                call("dependsOn", forceBrackets = true) {
+                    dependsOn.list { it.render(this) }
+                }
+                nl()
+            }
+            irs.listNl()
+        }
     }
 }

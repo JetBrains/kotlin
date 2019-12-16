@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.tools.projectWizard.SettingsOwner
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
 import org.jetbrains.kotlin.tools.projectWizard.core.service.FileSystemWizardService
+import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.Interceptor
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.TargetConfigurationIR
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
@@ -77,6 +78,8 @@ abstract class Template : SettingsOwner {
     ): TargetConfigurationIR = targetConfigurationIR
 
     open fun TaskRunningContext.getFileTemplates(sourceset: SourcesetIR): List<FileTemplateDescriptor> = emptyList()
+
+    open fun createInterceptors(sourceset: SourcesetIR): List<Interceptor> = emptyList()
 
     fun TaskRunningContext.applyToSourceset(
         templateEngine: TemplateEngine,

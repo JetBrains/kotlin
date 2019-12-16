@@ -16,12 +16,12 @@ fun runTaskIrs(mainClass: String, classPath: BuildSystemIR? = null) = buildList<
     })
 
     if (classPath != null) {
-        +GetGradleTaskIR(
-            name = "run",
-            taskClass = "JavaExec",
-            body = buildBody {
-                classPath.let { +GradleAssignmentIR("classpath", it) }
-            }
+        +GradleConfigureTaskIR(
+            GradleByNameTaskAccessIR(
+                name = "run",
+                taskClass = "JavaExec"
+            ),
+            irs = listOf(GradleAssignmentIR("classpath", classPath))
         )
     }
 }
