@@ -60,10 +60,10 @@ abstract class AbstractTypeCheckerContextForConstraintSystem : AbstractTypeCheck
     }
 
     private fun KotlinTypeMarker.isTypeVariableWithExact() =
-        anyBound(this@AbstractTypeCheckerContextForConstraintSystem::isMyTypeVariable) && hasExactAnnotation()
+        hasExactAnnotation() && anyBound(this@AbstractTypeCheckerContextForConstraintSystem::isMyTypeVariable)
 
     private fun KotlinTypeMarker.isTypeVariableWithNoInfer() =
-        anyBound(this@AbstractTypeCheckerContextForConstraintSystem::isMyTypeVariable) && hasNoInferAnnotation()
+        hasNoInferAnnotation() && anyBound(this@AbstractTypeCheckerContextForConstraintSystem::isMyTypeVariable)
 
     private fun internalAddSubtypeConstraint(subType: KotlinTypeMarker, superType: KotlinTypeMarker): Boolean? {
         assertInputTypes(subType, superType)

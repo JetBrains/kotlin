@@ -301,19 +301,20 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun captureFromArguments(type: SimpleTypeMarker, status: CaptureStatus): SimpleTypeMarker? {
         require(type is ConeKotlinType)
-        val argumentsCount = type.argumentsCount()
+        val argumentsCount = type.typeArguments.size
         if (argumentsCount == 0) return null
 
         val typeConstructor = type.typeConstructor()
         if (argumentsCount != typeConstructor.parametersCount()) return null
 
-        if (type.asArgumentList().all(this) { !it.isStarProjection() && it.getVariance() == TypeVariance.INV }) return null
-        val newArguments = Array(argumentsCount) { index ->
-            val argument = type.getArgument(index)
-            if (!argument.isStarProjection() && argument.getVariance() == TypeVariance.INV) return@Array argument as ConeKotlinTypeProjection
+        if (type.typeArguments.all { it !is ConeStarProjection && it.kind == ProjectionKind.INVARIANT }) return null
 
-            val lowerType = if (!argument.isStarProjection() && argument.getVariance() == TypeVariance.IN) {
-                argument.getType() as ConeKotlinType
+        val newArguments = Array(argumentsCount) { index ->
+            val argument = type.typeArguments[index]
+            if (argument !is ConeStarProjection && argument.kind == ProjectionKind.INVARIANT) return@Array argument
+
+            val lowerType = if (argument !is ConeStarProjection && argument.getVariance() == TypeVariance.IN) {
+                (argument as ConeTypedProjection).type
             } else {
                 null
             }
@@ -322,10 +323,10 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         }
 
         for (index in 0 until argumentsCount) {
-            val oldArgument = type.getArgument(index)
+            val oldArgument = type.typeArguments[index]
             val newArgument = newArguments[index]
 
-            if (!oldArgument.isStarProjection() && oldArgument.getVariance() == TypeVariance.INV) continue
+            if (oldArgument !is ConeStarProjection && oldArgument.kind == ProjectionKind.INVARIANT) continue
 
             val parameter = typeConstructor.getParameter(index)
             val upperBounds = (0 until parameter.upperBoundCount()).mapTo(mutableListOf()) { paramIndex ->

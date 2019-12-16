@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.ResultTypeResolve
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
 import org.jetbrains.kotlin.resolve.calls.model.OnlyInputTypesDiagnostic
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedAtom
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.IntersectionTypeConstructor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
@@ -43,7 +44,28 @@ class NewConstraintSystemImpl(
         COMPLETION
     }
 
+    private fun checkState(a: State) {
+        if (!AbstractTypeChecker.RUN_SLOW_ASSERTIONS) return
+        checkState(*arrayOf(a))
+    }
+
+    private fun checkState(a: State, b: State) {
+        if (!AbstractTypeChecker.RUN_SLOW_ASSERTIONS) return
+        checkState(*arrayOf(a, b))
+    }
+
+    private fun checkState(a: State, b: State, c: State) {
+        if (!AbstractTypeChecker.RUN_SLOW_ASSERTIONS) return
+        checkState(*arrayOf(a, b, c))
+    }
+
+    private fun checkState(a: State, b: State, c: State, d: State) {
+        if (!AbstractTypeChecker.RUN_SLOW_ASSERTIONS) return
+        checkState(*arrayOf(a, b, c, d))
+    }
+
     private fun checkState(vararg allowedState: State) {
+        if (!AbstractTypeChecker.RUN_SLOW_ASSERTIONS) return
         assert(state in allowedState) {
             "State $state is not allowed. AllowedStates: ${allowedState.joinToString()}"
         }
