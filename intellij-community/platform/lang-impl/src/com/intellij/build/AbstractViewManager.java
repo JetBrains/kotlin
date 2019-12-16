@@ -16,8 +16,8 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.ToolWindow;
-import com.intellij.openapi.wm.ToolWindowId;
 import com.intellij.ui.SystemNotifications;
+import com.intellij.ui.UIBundle;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentManager;
 import com.intellij.util.ObjectUtils;
@@ -162,9 +162,9 @@ public abstract class AbstractViewManager implements ViewManager, BuildProgressL
       Failure failure = failures.get(0);
       Notification notification = failure.getNotification();
       if (notification != null) {
-        final String title = notification.getTitle();
-        final String content = notification.getContent();
-        SystemNotifications.getInstance().notify(ToolWindowId.BUILD, title, content);
+        String title = notification.getTitle();
+        String content = notification.getContent();
+        SystemNotifications.getInstance().notify(UIBundle.message("tool.window.name.build"), title, content);
       }
     }
   }

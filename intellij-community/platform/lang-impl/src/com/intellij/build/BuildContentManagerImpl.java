@@ -14,14 +14,12 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
-import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.wm.RegisterToolWindowTask;
 import com.intellij.openapi.wm.ToolWindow;
-import com.intellij.openapi.wm.ToolWindowAnchor;
-import com.intellij.openapi.wm.ToolWindowId;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentManager;
@@ -31,9 +29,6 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.concurrency.AsyncPromise;
-import org.jetbrains.concurrency.Promise;
-import org.jetbrains.concurrency.Promises;
 
 import javax.swing.*;
 import java.awt.*;
@@ -55,12 +50,42 @@ public final class BuildContentManagerImpl implements BuildContentManager {
   private static final Key<Map<Object, CloseListener>> CONTENT_CLOSE_LISTENERS = Key.create("CONTENT_CLOSE_LISTENERS");
 
   private Project myProject;
-  private ToolWindow myToolWindow;
-  private final List<Runnable> myPostponedRunnables = new ArrayList<>();
+  private List<Runnable> myPostponedRunnables = new ArrayList<>();
   private final Map<Content, Pair<Icon, AtomicInteger>> liveContentsMap = ContainerUtil.newConcurrentMap();
 
   public BuildContentManagerImpl(@NotNull Project project) {
     init(project);
+  }
+
+  @Override
+  @NotNull
+  public ToolWindow getOrCreateToolWindow() {
+    ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(myProject);
+    ToolWindow toolWindow = toolWindowManager.getToolWindow(TOOL_WINDOW_ID);
+    if (toolWindow != null) {
+      return toolWindow;
+    }
+
+    toolWindow = toolWindowManager.registerToolWindow(RegisterToolWindowTask.closable(TOOL_WINDOW_ID));
+    toolWindow.setIcon(AllIcons.Toolwindows.ToolWindowBuild);
+    ContentManager contentManager = toolWindow.getContentManager();
+    contentManager.addDataProvider(new DataProvider() {
+      private int myInsideGetData = 0;
+
+      @Override
+      public Object getData(@NotNull String dataId) {
+        myInsideGetData++;
+        try {
+          return myInsideGetData == 1 ? DataManager.getInstance().getDataContext(contentManager.getComponent()).getData(dataId) : null;
+        }
+        finally {
+          myInsideGetData--;
+        }
+      }
+    });
+
+    new ContentManagerWatcher(toolWindow, contentManager);
+    return toolWindow;
   }
 
   private void init(@NotNull Project project) {
@@ -71,62 +96,27 @@ public final class BuildContentManagerImpl implements BuildContentManager {
 
     StartupManager.getInstance(project).runAfterOpened(() -> {
       ApplicationManager.getApplication().invokeLater(() -> {
-        ToolWindow toolWindow = ToolWindowManager.getInstance(project)
-          .registerToolWindow(ToolWindowId.BUILD, true, ToolWindowAnchor.BOTTOM, project, true);
-        toolWindow.setIcon(AllIcons.Toolwindows.ToolWindowBuild);
-        toolWindow.setAvailable(true, null);
-        toolWindow.hide(null);
-        myToolWindow = toolWindow;
-        ContentManager contentManager = myToolWindow.getContentManager();
-        contentManager.addDataProvider(new DataProvider() {
-          private int myInsideGetData = 0;
-
-          @Override
-          public Object getData(@NotNull String dataId) {
-            myInsideGetData++;
-            try {
-              return myInsideGetData == 1 ? DataManager.getInstance().getDataContext(contentManager.getComponent()).getData(dataId) : null;
-            }
-            finally {
-              myInsideGetData--;
-            }
-          }
-        });
-
-        new ContentManagerWatcher(toolWindow, contentManager);
-
         for (Runnable postponedRunnable : myPostponedRunnables) {
           postponedRunnable.run();
         }
-        myPostponedRunnables.clear();
+        myPostponedRunnables = null;
       }, ModalityState.NON_MODAL, project.getDisposed());
     });
   }
 
-  public Promise<Void> runWhenInitialized(@NotNull Runnable runnable) {
-    if (myToolWindow != null) {
+  private void runWhenInitialized(@NotNull Runnable runnable) {
+    if (myPostponedRunnables == null) {
       runnable.run();
-      return Promises.resolvedPromise(null);
     }
     else {
-      final AsyncPromise<Void> promise = new AsyncPromise<>();
-      myPostponedRunnables.add(() -> {
-        if (!myProject.isDisposed()) {
-          runnable.run();
-          promise.setResult(null);
-        }
-      });
-      return promise;
+      myPostponedRunnables.add(runnable);
     }
   }
 
   @Override
   public void addContent(Content content) {
     runWhenInitialized(() -> {
-      if (!myToolWindow.isAvailable()) {
-        myToolWindow.setAvailable(true, null);
-      }
-      ContentManager contentManager = myToolWindow.getContentManager();
+      ContentManager contentManager = getOrCreateToolWindow().getContentManager();
       final String name = content.getTabName();
       final String category = StringUtil.trimEnd(StringUtil.split(name, " ").get(0), ':');
       int idx = -1;
@@ -178,7 +168,8 @@ public final class BuildContentManagerImpl implements BuildContentManager {
   @Override
   public void removeContent(Content content) {
     runWhenInitialized(() -> {
-      ContentManager contentManager = myToolWindow.getContentManager();
+      ToolWindow toolWindow = ToolWindowManager.getInstance(myProject).getToolWindow(TOOL_WINDOW_ID);
+      ContentManager contentManager = toolWindow == null ? null : toolWindow.getContentManager();
       if (contentManager != null && (!contentManager.isDisposed())) {
         contentManager.removeContent(content, true);
       }
@@ -186,25 +177,21 @@ public final class BuildContentManagerImpl implements BuildContentManager {
   }
 
   @Override
-  public ActionCallback setSelectedContent(@NotNull final Content content,
-                                           final boolean requestFocus,
-                                           final boolean forcedFocus,
-                                           boolean activate,
-                                           @Nullable Runnable activationCallback) {
-    final ActionCallback actionCallback = new ActionCallback();
-    Disposer.register(content, actionCallback);
+  public void setSelectedContent(@NotNull Content content,
+                                 boolean requestFocus,
+                                 boolean forcedFocus,
+                                 boolean activate,
+                                 @Nullable Runnable activationCallback) {
     runWhenInitialized(() -> {
-      if (!myToolWindow.isAvailable()) {
-        actionCallback.setRejected();
+      ToolWindow toolWindow = getOrCreateToolWindow();
+      if (!toolWindow.isAvailable()) {
         return;
       }
       if (activate) {
-        myToolWindow.show(activationCallback);
+        toolWindow.show(activationCallback);
       }
-      ActionCallback callback = myToolWindow.getContentManager().setSelectedContent(content, requestFocus, forcedFocus, false);
-      callback.notify(actionCallback);
+      toolWindow.getContentManager().setSelectedContent(content, requestFocus, forcedFocus, false);
     });
-    return actionCallback;
   }
 
   @Override
@@ -213,7 +200,7 @@ public final class BuildContentManagerImpl implements BuildContentManager {
                                   @NotNull String tabName,
                                   @Nullable Icon icon,
                                   @Nullable Disposable childDisposable) {
-    ContentManager contentManager = myToolWindow.getContentManager();
+    ContentManager contentManager = getOrCreateToolWindow().getContentManager();
     ContentUtilEx.addTabbedContent(contentManager, contentComponent, groupPrefix, tabName, false, childDisposable);
     Content content = contentManager.findContent(getFullName(groupPrefix, tabName));
     if (icon != null) {
@@ -246,10 +233,8 @@ public final class BuildContentManagerImpl implements BuildContentManager {
       }
       content.setIcon(ExecutionUtil.getLiveIndicator(pair.first, 0, 13));
       JComponent component = content.getComponent();
-      if (component != null) {
-        component.invalidate();
-      }
-      myToolWindow.setIcon(ExecutionUtil.getLiveIndicator(AllIcons.Toolwindows.ToolWindowBuild));
+      component.invalidate();
+      getOrCreateToolWindow().setIcon(ExecutionUtil.getLiveIndicator(AllIcons.Toolwindows.ToolWindowBuild));
     });
   }
 
@@ -273,7 +258,7 @@ public final class BuildContentManagerImpl implements BuildContentManager {
         }
         liveContentsMap.remove(content);
         if (liveContentsMap.isEmpty()) {
-          myToolWindow.setIcon(AllIcons.Toolwindows.ToolWindowBuild);
+          getOrCreateToolWindow().setIcon(AllIcons.Toolwindows.ToolWindowBuild);
         }
       }
     });
