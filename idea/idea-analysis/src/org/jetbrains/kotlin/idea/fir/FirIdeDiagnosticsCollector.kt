@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.collectors.AbstractDiagnosti
 import org.jetbrains.kotlin.fir.resolve.diagnostics.collectors.registerAllComponents
 import org.jetbrains.kotlin.psi.KtElement
 
-class FirIdeDiagnosticsCollector(private val resolveState: FirResolveState) : AbstractDiagnosticCollector() {
+class FirIdeDiagnosticsCollector(private val resolveState: FirModuleResolveState) : AbstractDiagnosticCollector() {
 
     init {
         registerAllComponents()

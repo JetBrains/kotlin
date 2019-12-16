@@ -73,7 +73,7 @@ private fun FirFile.findCallableMember(
 }
 
 fun KtCallableDeclaration.getOrBuildFir(
-    state: FirResolveState,
+    state: FirModuleResolveState,
     phase: FirResolvePhase = FirResolvePhase.DECLARATIONS
 ): FirCallableDeclaration<*> {
     val session = state.getSession(this)
@@ -97,7 +97,7 @@ fun KtCallableDeclaration.getOrBuildFir(
 }
 
 fun KtClassOrObject.getOrBuildFir(
-    state: FirResolveState,
+    state: FirModuleResolveState,
     phase: FirResolvePhase = FirResolvePhase.DECLARATIONS
 ): FirRegularClass {
     val session = state.getSession(this)
@@ -118,14 +118,14 @@ fun KtClassOrObject.getOrBuildFir(
     return firClass
 }
 
-private fun KtFile.getOrBuildRawFirFile(state: FirResolveState): Pair<IdeFirProvider, FirFile> {
+private fun KtFile.getOrBuildRawFirFile(state: FirModuleResolveState): Pair<IdeFirProvider, FirFile> {
     val session = state.getSession(this)
     val firProvider = FirProvider.getInstance(session) as IdeFirProvider
     return firProvider to firProvider.getOrBuildFile(this)
 }
 
 fun KtFile.getOrBuildFir(
-    state: FirResolveState,
+    state: FirModuleResolveState,
     phase: FirResolvePhase = FirResolvePhase.DECLARATIONS
 ): FirFile {
     val (firProvider, firFile) = getOrBuildRawFirFile(state)
@@ -138,7 +138,7 @@ fun KtFile.getOrBuildFir(
     return firFile
 }
 
-fun KtFile.getOrBuildFirWithDiagnostics(state: FirResolveState): FirFile {
+fun KtFile.getOrBuildFirWithDiagnostics(state: FirModuleResolveState): FirFile {
     val (_, firFile) = getOrBuildRawFirFile(state)
     val currentResolvePhase = firFile.resolvePhase
     if (currentResolvePhase < FirResolvePhase.BODY_RESOLVE) {
@@ -159,7 +159,7 @@ private fun FirDeclaration.runResolve(
     file: FirFile,
     firProvider: IdeFirProvider,
     toPhase: FirResolvePhase,
-    state: FirResolveState
+    state: FirModuleResolveState
 ) {
     val nonLazyPhase = minOf(toPhase, FirResolvePhase.DECLARATIONS)
     file.runResolve(toPhase = nonLazyPhase, fromPhase = this.resolvePhase)
@@ -194,7 +194,7 @@ private fun FirDeclaration.runResolve(
 }
 
 fun KtElement.getOrBuildFir(
-    state: FirResolveState,
+    state: FirModuleResolveState,
     phase: FirResolvePhase = FirResolvePhase.BODY_RESOLVE
 ): FirElement {
     val containerFir: FirDeclaration =

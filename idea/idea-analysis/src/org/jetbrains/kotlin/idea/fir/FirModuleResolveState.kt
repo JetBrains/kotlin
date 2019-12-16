@@ -50,7 +50,7 @@ private fun getOrCreateIdeSession(
     }
 }
 
-interface FirResolveState {
+interface FirModuleResolveState {
     val sessionProvider: FirSessionProvider
 
     fun getSession(psi: KtElement): FirSession {
@@ -72,7 +72,7 @@ interface FirResolveState {
     fun setDiagnosticsForFile(file: KtFile, fir: FirFile, diagnostics: Iterable<ConeDiagnostic> = emptyList())
 }
 
-class FirResolveStateImpl(override val sessionProvider: FirSessionProvider) : FirResolveState {
+class FirModuleResolveStateImpl(override val sessionProvider: FirSessionProvider) : FirModuleResolveState {
     private val cache = mutableMapOf<KtElement, FirElement>()
 
     private val diagnosticCache = mutableMapOf<KtElement, MutableList<Diagnostic>>()
@@ -120,5 +120,5 @@ class FirResolveStateImpl(override val sessionProvider: FirSessionProvider) : Fi
     }
 }
 
-fun KtElement.firResolveState(): FirResolveState =
+fun KtElement.firResolveState(): FirModuleResolveState =
     FirIdeResolveStateService.getInstance(project).getResolveState(getModuleInfo())

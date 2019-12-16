@@ -21,10 +21,10 @@ interface FirIdeResolveStateService {
 
     val fallbackModificationTracker: ModificationTracker?
 
-    fun getResolveState(moduleInfo: IdeaModuleInfo): FirResolveState
+    fun getResolveState(moduleInfo: IdeaModuleInfo): FirModuleResolveState
 }
 
-private class FirModuleData(val state: FirResolveState, val modificationTracker: ModificationTracker?) {
+private class FirModuleData(val state: FirModuleResolveState, val modificationTracker: ModificationTracker?) {
     val modificationCount: Long = modificationTracker?.modificationCount ?: Long.MIN_VALUE
 
     fun isOutOfDate(): Boolean {
@@ -36,9 +36,9 @@ private class FirModuleData(val state: FirResolveState, val modificationTracker:
 class FirIdeResolveStateServiceImpl(val project: Project) : FirIdeResolveStateService {
     private val stateCache = mutableMapOf<IdeaModuleInfo, FirModuleData>()
 
-    private fun createResolveState(): FirResolveState {
+    private fun createResolveState(): FirModuleResolveState {
         val provider = FirProjectSessionProvider(project)
-        return FirResolveStateImpl(provider)
+        return FirModuleResolveStateImpl(provider)
     }
 
     private fun createModuleData(moduleInfo: IdeaModuleInfo): FirModuleData {
@@ -48,7 +48,7 @@ class FirIdeResolveStateServiceImpl(val project: Project) : FirIdeResolveStateSe
     }
 
     // TODO: multi thread protection
-    override fun getResolveState(moduleInfo: IdeaModuleInfo): FirResolveState {
+    override fun getResolveState(moduleInfo: IdeaModuleInfo): FirModuleResolveState {
         var moduleData = stateCache.getOrPut(moduleInfo) {
             createModuleData(moduleInfo)
         }
