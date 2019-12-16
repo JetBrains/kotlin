@@ -32,11 +32,6 @@ abstract class AbstractIrCheckLocalVariablesTableTest : AbstractCheckLocalVariab
         return list.map { it.toString() }
             // Ignore local index.
             .map { line -> line.replaceFirst("INDEX=\\d+".toRegex(), "INDEX=*") }
-            // Ignore the names of local functions which have integer names in
-            // the current backend and more descriptive names with the JVM_IR
-            // backend.
-            .map { line -> line.replace("\\\$\\d+".toRegex(), "\\\$*") }
-            .map { line -> line.replace("\\\$lambda-\\d+".toRegex(), "\\\$*") }
             .sorted()
     }
 
@@ -45,10 +40,6 @@ abstract class AbstractIrCheckLocalVariablesTableTest : AbstractCheckLocalVariab
             .filter { line -> line.startsWith("// VARIABLE ") }
             // Ignore local index.
             .map { line -> line.replaceFirst("INDEX=\\d+".toRegex(), "INDEX=*") }
-            // Ignore the names of local functions which have integer names in
-            // the current backend and more descriptive names with the JVM_IR
-            // backend.
-            .map { line -> line.replace("\\\$\\d+".toRegex(), "\\\$*") }
             .sorted()
     }
 

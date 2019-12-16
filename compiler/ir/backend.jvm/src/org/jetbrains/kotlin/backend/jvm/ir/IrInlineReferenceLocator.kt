@@ -49,7 +49,7 @@ internal open class IrInlineReferenceLocator(private val context: JvmBackendCont
                 handleInlineFunctionCallableReferenceParam(reference)
                 if (valueArgument is IrBlock && valueArgument.origin.isLambda) {
                     val declaration = if (parameter.isCrossinline) null else currentScope!!.irElement as IrDeclaration
-                    handleInlineFunctionLambdaParam(reference.symbol.owner, function, declaration)
+                    handleInlineFunctionLambdaParam(reference, function, declaration)
                 }
             }
         }
@@ -60,8 +60,8 @@ internal open class IrInlineReferenceLocator(private val context: JvmBackendCont
         inlineReferences.add(valueArgument)
     }
 
-    open fun handleInlineFunctionLambdaParam(lambda: IrFunction, callee: IrFunction, callSite: IrDeclaration?) {
-        lambdaToCallSite[lambda] = callSite
+    open fun handleInlineFunctionLambdaParam(lambdaReference: IrFunctionReference, callee: IrFunction, callSite: IrDeclaration?) {
+        lambdaToCallSite[lambdaReference.symbol.owner] = callSite
     }
 
     companion object {
