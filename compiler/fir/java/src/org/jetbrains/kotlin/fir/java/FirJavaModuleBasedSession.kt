@@ -124,7 +124,7 @@ class FirLibrarySession private constructor(
     }
 }
 
-class FirProjectSessionProvider(val project: Project) : FirSessionProvider {
+class FirProjectSessionProvider(override val project: Project) : FirSessionProvider {
     override fun getSession(moduleInfo: ModuleInfo): FirSession? {
         return sessionCache[moduleInfo]
     }

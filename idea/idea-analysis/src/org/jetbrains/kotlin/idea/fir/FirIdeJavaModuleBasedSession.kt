@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirCompositeSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.impl.FirDependenciesSymbolProviderImpl
 import org.jetbrains.kotlin.fir.types.FirCorrespondingSupertypesCache
 
 
@@ -38,7 +37,7 @@ class FirIdeJavaModuleBasedSession(
                 listOf(
                     firProvider,
                     JavaSymbolProvider(this, sessionProvider.project, scope),
-                    FirDependenciesSymbolProviderImpl(this)
+                    FirIdeModuleDependenciesSymbolProvider(this)
                 )
             ) as FirSymbolProvider
         )

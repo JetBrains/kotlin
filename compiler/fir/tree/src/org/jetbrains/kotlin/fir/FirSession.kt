@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.*
@@ -53,6 +54,8 @@ class BuiltinTypes {
 }
 
 interface FirSessionProvider {
+    val project: Project
+
     fun getSession(moduleInfo: ModuleInfo): FirSession?
 }
 

@@ -9,54 +9,34 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.java.FirLibrarySession
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
+import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnostic
-import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
-import org.jetbrains.kotlin.idea.caches.project.isLibraryClasses
-import org.jetbrains.kotlin.idea.caches.resolve.IDEPackagePartProvider
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.utils.addToStdlib.cast
-
-private fun createLibrarySession(moduleInfo: IdeaModuleInfo, project: Project, provider: FirProjectSessionProvider): FirLibrarySession {
-    val contentScope = moduleInfo.contentScope()
-    return FirLibrarySession.create(moduleInfo, provider, contentScope, project, IDEPackagePartProvider(contentScope))
-}
-
-private fun getOrCreateIdeSession(
-    sessionProvider: FirProjectSessionProvider,
-    project: Project,
-    moduleInfo: ModuleSourceInfo
-): FirSession {
-    sessionProvider.getSession(moduleInfo)?.let { return it }
-    return synchronized(moduleInfo.module) {
-        sessionProvider.getSession(moduleInfo) ?: FirIdeJavaModuleBasedSession(
-            project, moduleInfo, sessionProvider, moduleInfo.contentScope()
-        ).also { moduleBasedSession ->
-            val ideaModuleInfo = moduleInfo.cast<IdeaModuleInfo>()
-            ideaModuleInfo.dependenciesWithoutSelf().forEach {
-                if (it is IdeaModuleInfo && it.isLibraryClasses()) {
-                    // TODO: consider caching / synchronization here
-                    createLibrarySession(it, project, sessionProvider)
-                }
-            }
-            sessionProvider.sessionCache[moduleInfo] = moduleBasedSession
-        }
-    }
-}
 
 interface FirModuleResolveState {
-    val sessionProvider: FirSessionProvider
+    val sessionProvider: FirProjectSessionProvider
 
     fun getSession(psi: KtElement): FirSession {
-        val sessionProvider = sessionProvider as FirProjectSessionProvider
         val moduleInfo = psi.getModuleInfo() as ModuleSourceInfo
-        return getOrCreateIdeSession(sessionProvider, psi.project, moduleInfo)
+        return getSession(psi.project, moduleInfo)
+    }
+
+    fun getSession(project: Project, moduleInfo: ModuleSourceInfo): FirSession {
+        sessionProvider.getSession(moduleInfo)?.let { return it }
+        return synchronized(moduleInfo.module) {
+            sessionProvider.getSession(moduleInfo) ?: FirIdeJavaModuleBasedSession(
+                project, moduleInfo, sessionProvider, moduleInfo.contentScope()
+            ).also { moduleBasedSession ->
+                sessionProvider.sessionCache[moduleInfo] = moduleBasedSession
+            }
+        }
     }
 
     operator fun get(psi: KtElement): FirElement?
@@ -72,7 +52,7 @@ interface FirModuleResolveState {
     fun setDiagnosticsForFile(file: KtFile, fir: FirFile, diagnostics: Iterable<ConeDiagnostic> = emptyList())
 }
 
-class FirModuleResolveStateImpl(override val sessionProvider: FirSessionProvider) : FirModuleResolveState {
+class FirModuleResolveStateImpl(override val sessionProvider: FirProjectSessionProvider) : FirModuleResolveState {
     private val cache = mutableMapOf<KtElement, FirElement>()
 
     private val diagnosticCache = mutableMapOf<KtElement, MutableList<Diagnostic>>()
