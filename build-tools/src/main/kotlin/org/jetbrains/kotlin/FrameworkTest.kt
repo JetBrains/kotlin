@@ -162,7 +162,10 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
 
     private fun runTest(executorService: ExecutorService, testExecutable: Path, args: List<String> = emptyList()) {
         val (stdOut, stdErr, exitCode) = runProcess(
-                executor = executorService.add(Action { it.environment = buildEnvironment() })::execute,
+                executor = executorService.add(Action {
+                    it.environment = buildEnvironment()
+                    it.workingDir = Paths.get(testOutput).toFile()
+                })::execute,
                 executable = testExecutable.toString(),
                 args = args)
 
