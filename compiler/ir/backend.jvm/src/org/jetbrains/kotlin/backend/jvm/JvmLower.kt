@@ -223,6 +223,12 @@ private val syntheticAccessorPhase = makeIrFilePhase(
     prerequisite = setOf(objectClassPhase, staticDefaultFunctionPhase, interfacePhase)
 )
 
+private val tailrecPhase = makeIrFilePhase<JvmBackendContext>(
+    ::JvmTailrecLowering,
+    name = "Tailrec",
+    description = "Handle tailrec calls"
+)
+
 @Suppress("Reformat")
 private val jvmFilePhases =
         typeAliasAnnotationMethodsPhase then

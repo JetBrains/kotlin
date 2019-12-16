@@ -1,7 +1,5 @@
 // !LANGUAGE: -ProperComputationOrderOfTailrecDefaultParameters
-// IGNORE_BACKEND_FIR: JVM_IR
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND: JVM_IR
 
 var counter = 0
 fun calc(counter: Int) = if (counter % 2 == 0) "K" else "O"
