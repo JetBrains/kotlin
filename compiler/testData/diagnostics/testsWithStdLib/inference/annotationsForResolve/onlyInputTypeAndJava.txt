@@ -1,0 +1,18 @@
+package
+
+public fun foo(/*0*/ result: Test<*>): kotlin.Unit
+@kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) public fun </*0*/ @kotlin.internal.OnlyInputTypes K> TestBase<out K>.foo(/*0*/ key: K): kotlin.Nothing?
+
+public open class Test</*0*/ K : kotlin.Any!> : TestBase<K!> {
+    public constructor Test</*0*/ K : kotlin.Any!>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class TestBase</*0*/ T : kotlin.Any!> {
+    public constructor TestBase</*0*/ T : kotlin.Any!>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
