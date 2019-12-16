@@ -89,7 +89,19 @@ public class NavBarModel {
 
     if (PlatformDataKeys.CONTEXT_COMPONENT.getData(dataContext) instanceof NavBarPanel) return;
 
-    PsiElement psiElement = CommonDataKeys.PSI_FILE.getData(dataContext);
+    NavBarModelExtension ownerExtension = null;
+    PsiElement psiElement = null;
+    for (NavBarModelExtension extension : NavBarModelExtension.EP_NAME.getExtensionList()) {
+      psiElement = extension.getLeafElement(dataContext);
+      if (psiElement != null) {
+        ownerExtension = extension;
+        break;
+      }
+    }
+
+    if (psiElement == null) {
+      psiElement = CommonDataKeys.PSI_FILE.getData(dataContext);
+    }
     if (psiElement == null) {
       psiElement = CommonDataKeys.PSI_ELEMENT.getData(dataContext);
       if (psiElement == null) {
@@ -99,11 +111,13 @@ public class NavBarModel {
       }
     }
 
-    psiElement = normalize(psiElement);
+    if (ownerExtension == null) {
+      psiElement = normalize(psiElement);
+    }
     if (!myModel.isEmpty() && Objects.equals(get(myModel.size() - 1), psiElement) && !myChanged) return;
 
     if (psiElement != null && psiElement.isValid()) {
-      updateModel(psiElement);
+      updateModel(psiElement, ownerExtension);
     }
     else {
       if (UISettings.getInstance().getShowNavigationBar() && !myModel.isEmpty()) return;
@@ -140,7 +154,7 @@ public class NavBarModel {
     return ObjectUtils.chooseNotNull(projectGrandChild, ObjectUtils.chooseNotNull(projectChild, project));
   }
 
-  protected void updateModel(final PsiElement psiElement) {
+  protected void updateModel(final PsiElement psiElement, @Nullable NavBarModelExtension ownerExtension) {
 
     final Set<VirtualFile> roots = new HashSet<>();
     final ProjectRootManager projectRootManager = ProjectRootManager.getInstance(myProject);
@@ -162,7 +176,7 @@ public class NavBarModel {
       }
     }
 
-    List<Object> updatedModel = ReadAction.compute(() -> isValid(psiElement) ? myBuilder.createModel(psiElement, roots) : Collections.emptyList());
+    List<Object> updatedModel = ReadAction.compute(() -> isValid(psiElement) ? myBuilder.createModel(psiElement, roots, ownerExtension) : Collections.emptyList());
 
     setModel(ContainerUtil.reverse(updatedModel));
   }
@@ -203,7 +217,7 @@ public class NavBarModel {
 
   public void updateModel(final Object object) {
     if (object instanceof PsiElement) {
-      updateModel((PsiElement)object);
+      updateModel((PsiElement)object, null);
     }
     else if (object instanceof Module) {
       List<Object> l = new ArrayList<>();
