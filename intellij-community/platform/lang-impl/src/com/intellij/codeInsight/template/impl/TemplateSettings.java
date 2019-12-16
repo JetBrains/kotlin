@@ -287,6 +287,12 @@ public final class TemplateSettings implements PersistentStateComponent<Template
         }
       }
     }, ApplicationManager.getApplication());
+
+    DefaultLiveTemplateEP.EP_NAME.addExtensionPointListener((a,b) -> {
+      myDefaultTemplates.clear();
+      myTemplatesById.clear();
+      loadDefaultLiveTemplates();
+    }, ApplicationManager.getApplication());
   }
 
   private void doLoadTemplates(@NotNull Collection<? extends TemplateGroup> groups) {
