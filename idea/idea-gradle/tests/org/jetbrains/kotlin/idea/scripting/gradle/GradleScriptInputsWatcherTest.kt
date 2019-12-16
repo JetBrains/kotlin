@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.scripting.gradle
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptChangeListener
 import org.jetbrains.kotlin.idea.core.script.isScriptChangesNotifierDisabled
 import org.jetbrains.kotlin.idea.script.AbstractScriptConfigurationLoadingTest
@@ -144,7 +145,7 @@ class GradleScriptInputsWatcherTest : AbstractScriptConfigurationLoadingTest() {
     fun testFileAttributes() {
         assertAndLoadInitialConfiguration(testFiles.buildKts)
 
-        scriptConfigurationManager.clearConfigurationCachesAndRehighlight()
+        ScriptConfigurationManager.clearCaches(project)
 
         assertConfigurationUpToDate(testFiles.buildKts)
     }
@@ -152,7 +153,7 @@ class GradleScriptInputsWatcherTest : AbstractScriptConfigurationLoadingTest() {
     fun testFileAttributesUpToDate() {
         assertAndLoadInitialConfiguration(testFiles.buildKts)
 
-        scriptConfigurationManager.clearConfigurationCachesAndRehighlight()
+        ScriptConfigurationManager.clearCaches(project)
 
         changeBuildKtsInsideSections()
 
@@ -162,7 +163,7 @@ class GradleScriptInputsWatcherTest : AbstractScriptConfigurationLoadingTest() {
     fun testFileAttributesUpToDateAfterChangeOutsideSections() {
         assertAndLoadInitialConfiguration(testFiles.buildKts)
 
-        scriptConfigurationManager.clearConfigurationCachesAndRehighlight()
+        ScriptConfigurationManager.clearCaches(project)
 
         changeBuildKtsOutsideSections()
 
@@ -173,7 +174,7 @@ class GradleScriptInputsWatcherTest : AbstractScriptConfigurationLoadingTest() {
         assertAndLoadInitialConfiguration(testFiles.buildKts)
         assertAndLoadInitialConfiguration(testFiles.settings)
 
-        scriptConfigurationManager.clearConfigurationCachesAndRehighlight()
+        ScriptConfigurationManager.clearCaches(project)
 
         changeSettingsKtsOutsideSections()
 
