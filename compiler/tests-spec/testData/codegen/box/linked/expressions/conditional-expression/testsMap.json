@@ -1,0 +1,57 @@
+{
+  "1": {
+    "pos": {
+      "2": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "if-expression: check the correct branch is evaluating",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "if-expression: check the correct branch is evaluating",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "if-expression: check the correct branch is evaluating",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "if-expression: check the correct branch is evaluating",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  },
+  "4": {
+    "pos": {
+      "2": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "if-expression: check the correct branch is evaluating",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/conditional-expression/p-1/pos/2.3.kt",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  },
+  "2": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}

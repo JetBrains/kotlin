@@ -1,0 +1,92 @@
+{
+  "6": {
+    "neg": {
+      "1": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 2,
+          "description": "The type of the condition expression must be a subtype of kotlin.Boolean",
+          "unexpectedBehaviour": true
+        }
+      ]
+    },
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 4,
+          "description": "The type of the condition expression must be a subtype of kotlin.Boolean",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  },
+  "4": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-152",
+          "casesNumber": 0,
+          "description": "Kt9929",
+          "path": "compiler/testData/diagnostics/tests/when/kt9929.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-152",
+          "casesNumber": 0,
+          "description": "Kt10811",
+          "path": "compiler/testData/diagnostics/tests/when/kt10811.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-152",
+          "casesNumber": 0,
+          "description": "Kt9972",
+          "path": "compiler/testData/diagnostics/tests/when/kt9972.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-152",
+          "casesNumber": 0,
+          "description": "Kt10809",
+          "path": "compiler/testData/diagnostics/tests/when/kt10809.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-152",
+          "casesNumber": 0,
+          "description": "Kt10439",
+          "path": "compiler/testData/diagnostics/tests/when/kt10439.kt",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  },
+  "5": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-152",
+          "casesNumber": 0,
+          "description": "Kt9929",
+          "path": "compiler/testData/diagnostics/tests/when/kt9929.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-152",
+          "casesNumber": 0,
+          "description": "Kt9972",
+          "path": "compiler/testData/diagnostics/tests/when/kt9972.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-152",
+          "casesNumber": 0,
+          "description": "Kt10439",
+          "path": "compiler/testData/diagnostics/tests/when/kt10439.kt",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}

@@ -19,7 +19,6 @@ fun box(): String {
     var isTryExecuted = false
     var isCatched = false
     var isFinallyExecuted = false
-    var isExecutedFully = false
     var isTryExpressionPropagated = false
 
     try {
@@ -35,12 +34,10 @@ fun box(): String {
         isTryExpressionPropagated = true
     }
 
-    isExecutedFully = true
     return if (isTryExecuted &&
         !isCatched &&
         isFinallyExecuted &&
-        isTryExpressionPropagated &&
-        isExecutedFully
+        isTryExpressionPropagated
     ) "OK"
     else "NOK"
 }

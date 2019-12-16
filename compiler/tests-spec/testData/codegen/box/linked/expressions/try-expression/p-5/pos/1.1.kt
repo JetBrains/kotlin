@@ -15,7 +15,6 @@ fun box(): String {
     var isTryExecuted = false
     var isCatched = false
     var isFinallyExecuted = false
-    var isExecutedFully = false
     try {
         isTryExecuted = true
     } catch (e: Exception) {
@@ -23,7 +22,6 @@ fun box(): String {
     } finally {
         isFinallyExecuted = true
     }
-    isExecutedFully = true
-    return if (isTryExecuted && !isCatched && isFinallyExecuted && isExecutedFully) "OK"
+    return if (isTryExecuted && !isCatched && isFinallyExecuted) "OK"
     else "NOK"
 }
