@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.BuildFilePrinter
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.GradlePrinter
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.MavenPrinter
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.DefaultRepository
 import java.nio.file.Path
 import javax.xml.transform.Source
 
@@ -42,7 +43,14 @@ data class BuildFileIR(
             }
             sectionCall("plugins", irsOfType<BuildSystemPluginIR>()); nlIndented()
             pom.render(this); nl()
-            sectionCall("repositories", irsOfType<RepositoryIR>())
+
+            irsOfType<RepositoryIR>()
+                .distinctBy { it.repository }
+                .sortedBy { repositoryIR ->
+                    if (repositoryIR.repository is DefaultRepository) 0 else 1
+                }.let {
+                    sectionCall("repositories", it)
+                }
             nl()
             modules.render(this)
             irsOfTypeOrNull<FreeIR>()?.let { freeIrs ->
