@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.invoke
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
-import org.jetbrains.kotlin.fir.visitors.compose
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
@@ -439,7 +438,7 @@ class FirCallResolver(
                     coneSymbol is FirBackingFieldSymbol -> FirBackingFieldReferenceImpl(source, null, coneSymbol)
                     coneSymbol is FirVariableSymbol && (
                             coneSymbol !is FirPropertySymbol ||
-                                    (coneSymbol.phasedFir(session) as FirMemberDeclaration).typeParameters.isEmpty()
+                                    (coneSymbol.phasedFir() as FirMemberDeclaration).typeParameters.isEmpty()
                             ) ->
                         FirResolvedNamedReferenceImpl(source, name, coneSymbol)
                     else -> FirNamedReferenceWithCandidate(source, name, candidate)

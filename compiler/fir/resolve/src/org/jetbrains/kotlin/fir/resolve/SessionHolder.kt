@@ -41,5 +41,5 @@ interface BodyResolveComponents : SessionHolder {
     val integerOperatorsTypeUpdater: IntegerOperatorsTypeUpdater
 
     val <D> AbstractFirBasedSymbol<D>.phasedFir: D where D : FirDeclaration, D : FirSymbolOwner<D>
-        get() = phasedFir(session, FirResolvePhase.DECLARATIONS)
+        get() = phasedFir(FirResolvePhase.DECLARATIONS)
 }

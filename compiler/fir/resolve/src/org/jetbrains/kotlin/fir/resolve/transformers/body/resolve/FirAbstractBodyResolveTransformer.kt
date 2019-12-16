@@ -36,7 +36,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
     final override val <D> AbstractFirBasedSymbol<D>.phasedFir: D where D : FirDeclaration, D : FirSymbolOwner<D>
         get() {
             val requiredPhase = transformerPhase.requiredToLaunch
-            return phasedFir(session, requiredPhase)
+            return phasedFir(requiredPhase)
         }
 
     protected inline fun <T> withScopeCleanup(scopes: MutableList<*>, crossinline l: () -> T): T {

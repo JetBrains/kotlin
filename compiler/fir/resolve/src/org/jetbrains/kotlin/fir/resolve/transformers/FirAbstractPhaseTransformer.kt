@@ -29,7 +29,7 @@ abstract class FirAbstractPhaseTransformer<D>(
     open val <D> AbstractFirBasedSymbol<D>.phasedFir: D where D : FirDeclaration, D : FirSymbolOwner<D>
         get() {
             val requiredPhase = transformerPhase.requiredToLaunch
-            return phasedFir(session, requiredPhase)
+            return phasedFir(requiredPhase)
         }
 
     override fun transformFile(file: FirFile, data: D): CompositeTransformResult<FirFile> {
