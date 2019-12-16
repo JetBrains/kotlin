@@ -58,6 +58,7 @@ val abstractFirBasedSymbolType = type("fir.symbols", "AbstractFirBasedSymbol")
 val backingFieldSymbolType = type("fir.symbols.impl", "FirBackingFieldSymbol")
 val delegateFieldSymbolType = type("fir.symbols.impl", "FirDelegateFieldSymbol")
 val classSymbolType = type("fir.symbols.impl", "FirClassSymbol")
+val typeParameterSymbolType = type("fir.symbols.impl", "FirTypeParameterSymbol")
 
 val pureAbstractElementType = generatedType("FirPureAbstractElement")
 val effectDeclarationType = type("fir.contracts.description", "ConeEffectDeclaration")

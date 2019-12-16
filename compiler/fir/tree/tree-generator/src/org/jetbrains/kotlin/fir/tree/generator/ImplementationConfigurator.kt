@@ -347,6 +347,8 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             }
         }
 
+        impl(resolvedReifiedParameterReference)
+
         impl(returnExpression) {
             lateinit("target")
             default("typeRef", "FirImplicitNothingTypeRef(source)")

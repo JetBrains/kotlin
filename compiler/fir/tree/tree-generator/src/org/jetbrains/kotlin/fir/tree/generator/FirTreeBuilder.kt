@@ -108,6 +108,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val namedArgumentExpression = element("NamedArgumentExpression", Expression, wrappedArgumentExpression)
 
     val resolvedQualifier = element("ResolvedQualifier", Expression, expression)
+    val resolvedReifiedParameterReference = element("ResolvedReifiedParameterReference", Expression, expression)
     val returnExpression = element("ReturnExpression", Expression, jump)
     val stringConcatenationCall = element("StringConcatenationCall", Expression, call, expression)
     val throwExpression = element("ThrowExpression", Expression, expression)

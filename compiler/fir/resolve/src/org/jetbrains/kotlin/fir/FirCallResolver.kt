@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedQualifierImpl
+import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedReifiedParameterReferenceImpl
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -202,22 +203,28 @@ class FirCallResolver(
             is FirNamedReferenceWithCandidate -> nameReference.candidateSymbol
             else -> null
         }
-        if (referencedSymbol is FirClassLikeSymbol<*>) {
-            val classId = referencedSymbol.classId
-            return FirResolvedQualifierImpl(nameReference.source, classId.packageFqName, classId.relativeClassName).apply {
-                resultType = if (classId.isLocal) {
-                    typeForQualifierByDeclaration(referencedSymbol.fir, resultType)
-                        ?: resultType.resolvedTypeFromPrototype(
-                            session.builtinTypes.unitType.type//StandardClassIds.Unit(symbolProvider).constructType(emptyArray(), isNullable = false)
-                        )
-                } else {
-                    typeForQualifier(this)
+        when {
+            referencedSymbol is FirClassLikeSymbol<*> -> {
+                val classId = referencedSymbol.classId
+                return FirResolvedQualifierImpl(nameReference.source, classId.packageFqName, classId.relativeClassName).apply {
+                    resultType = if (classId.isLocal) {
+                        typeForQualifierByDeclaration(referencedSymbol.fir, resultType)
+                            ?: resultType.resolvedTypeFromPrototype(
+                                session.builtinTypes.unitType.type//StandardClassIds.Unit(symbolProvider).constructType(emptyArray(), isNullable = false)
+                            )
+                    } else {
+                        typeForQualifier(this)
+                    }
                 }
             }
-        }
-
-        if (qualifiedAccess.explicitReceiver == null) {
-            qualifiedResolver.reset()
+            referencedSymbol is FirTypeParameterSymbol && referencedSymbol.fir.isReified -> {
+                return FirResolvedReifiedParameterReferenceImpl(nameReference.source, referencedSymbol).apply {
+                    resultType = typeForReifiedParameterReference(this)
+                }
+            }
+            qualifiedAccess.explicitReceiver == null -> {
+                qualifiedResolver.reset()
+            }
         }
 
         @Suppress("UNCHECKED_CAST")

@@ -14,7 +14,7 @@ fun <T : Any> foo() {
 }
 
 inline fun <reified T : Any> bar() {
-    val t3 = <!OTHER_ERROR!>T<!>?::class
+    val t3 = T?::class
 }
 
 val m = Map<String>::class

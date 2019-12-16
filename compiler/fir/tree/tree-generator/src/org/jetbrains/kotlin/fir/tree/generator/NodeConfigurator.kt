@@ -430,6 +430,10 @@ object NodeConfigurator : AbstractFieldConfigurator() {
             +typeArguments.withTransform()
         }
 
+        resolvedReifiedParameterReference.configure {
+            +field("symbol", typeParameterSymbolType)
+        }
+
         stringConcatenationCall.configure {
         }
 

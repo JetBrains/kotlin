@@ -36,10 +36,10 @@ fun test8() {}
 
 inline val <reified T> T.test9
     get() = @AnnArray(arrayOf(
-        <!OTHER_ERROR!>T<!>::class,
+        T::class,
         Array<T>::class,
         Array<Array<Array<T>>>::class
     )) object {}
 
 inline val <reified T> T.test10
-    get() = @AnnArray([<!OTHER_ERROR!>T<!>::class]) object {}
+    get() = @AnnArray([T::class]) object {}

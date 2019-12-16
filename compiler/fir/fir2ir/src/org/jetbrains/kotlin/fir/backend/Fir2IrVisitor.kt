@@ -1301,10 +1301,20 @@ class Fir2IrVisitor(
 
     override fun visitGetClassCall(getClassCall: FirGetClassCall, data: Any?): IrElement {
         return getClassCall.convertWithOffsets { startOffset, endOffset ->
-            IrGetClassImpl(
-                startOffset, endOffset, getClassCall.typeRef.toIrType(session, declarationStorage),
-                getClassCall.argument.toIrExpression()
-            )
+            val argument = getClassCall.argument
+            val irType = getClassCall.typeRef.toIrType(session, declarationStorage)
+            if (argument is FirResolvedReifiedParameterReference) {
+                IrClassReferenceImpl(
+                    startOffset, endOffset, irType,
+                    argument.symbol.toTypeParameterSymbol(declarationStorage),
+                    argument.typeRef.toIrType(session, declarationStorage)
+                )
+            } else {
+                IrGetClassImpl(
+                    startOffset, endOffset, irType,
+                    argument.toIrExpression()
+                )
+            }
         }
     }
 

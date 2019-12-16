@@ -3,7 +3,7 @@
 
 inline fun<reified T> foo(block: () -> T): String = block().toString()
 
-inline fun <reified T: Any> javaClass(): Class<T> = <!OTHER_ERROR!>T<!>::class.<!INAPPLICABLE_CANDIDATE!>java<!>
+inline fun <reified T: Any> javaClass(): Class<T> = T::class.java
 
 fun box() {
     val a = arrayOf(null!!)

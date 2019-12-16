@@ -55,7 +55,7 @@ FILE fqName:<root> fileName:/classLiteralInAnnotation.kt
         BLOCK type=<root>.test2.<no name provided> origin=OBJECT_LITERAL
           CLASS OBJECT name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]
             annotations:
-              A(klass = GET_CLASS type=kotlin.reflect.KClass<IrErrorType>)
+              A(klass = CLASS_REFERENCE 'TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]' type=kotlin.reflect.KClass<T of <root>.test2>)
             $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.test2.<no name provided>
             CONSTRUCTOR visibility:private <> () returnType:kotlin.Any [primary]
               BLOCK_BODY
@@ -70,7 +70,7 @@ FILE fqName:<root> fileName:/classLiteralInAnnotation.kt
           BLOCK type=<root>.<get-test3>.<no name provided> origin=OBJECT_LITERAL
             CLASS OBJECT name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]
               annotations:
-                A(klass = GET_CLASS type=kotlin.reflect.KClass<IrErrorType>)
+                A(klass = CLASS_REFERENCE 'TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]' type=kotlin.reflect.KClass<T of <uninitialized parent>>)
               $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.<get-test3>.<no name provided>
               CONSTRUCTOR visibility:private <> () returnType:kotlin.Any [primary]
                 BLOCK_BODY
@@ -84,7 +84,7 @@ FILE fqName:<root> fileName:/classLiteralInAnnotation.kt
         BLOCK type=<root>.<set-test3>.<no name provided> origin=OBJECT_LITERAL
           CLASS OBJECT name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]
             annotations:
-              A(klass = GET_CLASS type=kotlin.reflect.KClass<IrErrorType>)
+              A(klass = CLASS_REFERENCE 'TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]' type=kotlin.reflect.KClass<T of <uninitialized parent>>)
             $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.<set-test3>.<no name provided>
             CONSTRUCTOR visibility:private <> () returnType:kotlin.Any [primary]
               BLOCK_BODY
