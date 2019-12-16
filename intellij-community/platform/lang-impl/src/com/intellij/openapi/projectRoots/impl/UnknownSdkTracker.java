@@ -40,7 +40,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.EditorNotificationPanel;
-import com.intellij.ui.awt.RelativePoint;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
@@ -319,9 +318,9 @@ public class UnknownSdkTracker {
     }
   }
 
-  static class GlobalEditorNotification implements Disposable {
-    private final Key<List<MissingSdkNotificationPanel>> NOTIFICATIONS_ADDED = Key.create("notifications added to the editor");
-    private final Key<?> myEditorNotificationKeyForFus = Key.create("fix project SDK");
+  public static class GlobalEditorNotification implements Disposable {
+    public static final Key<List<MissingSdkNotificationPanel>> NOTIFICATIONS = Key.create("notifications added to the editor");
+    private static final Key<?> EDITOR_NOTIFICATIONS_KEY = Key.create("SdkSetupNotificationNew");
 
     @NotNull
     public static GlobalEditorNotification getInstance(@NotNull Project project) {
@@ -366,7 +365,7 @@ public class UnknownSdkTracker {
 
       MissingSdkNotificationPanel panel = new MissingSdkNotificationPanel(info);
       panel.setProject(myProject);
-      panel.setProviderKey(myEditorNotificationKeyForFus);
+      panel.setProviderKey(EDITOR_NOTIFICATIONS_KEY);
       panel.setText(sdkName + " \"" + info.getSdkName() + "\" is missing");
 
       panel.createActionLabel("Download " + sdkName + " (" + fix.getDownloadDescription() + ")", () -> {
@@ -439,7 +438,7 @@ public class UnknownSdkTracker {
     private void removeNotification(@NotNull MissingSdkNotificationPanel expiredPanel) {
       myNotifications.remove(expiredPanel.myInfo);
       for (FileEditor editor : myFileEditorManager.getAllEditors()) {
-        List<MissingSdkNotificationPanel> notifications = editor.getUserData(NOTIFICATIONS_ADDED);
+        List<MissingSdkNotificationPanel> notifications = editor.getUserData(NOTIFICATIONS);
         if (notifications == null) continue;
         for (MissingSdkNotificationPanel panel : new ArrayList<>(notifications)) {
           if (panel.isSameProblemAs(expiredPanel)) {
@@ -453,7 +452,7 @@ public class UnknownSdkTracker {
     private void updateEditorNotifications(@NotNull FileEditor editor) {
       if (!editor.isValid()) return;
 
-      List<MissingSdkNotificationPanel> notifications = editor.getUserData(NOTIFICATIONS_ADDED);
+      List<MissingSdkNotificationPanel> notifications = editor.getUserData(NOTIFICATIONS);
       if (notifications != null) {
         for (JComponent component : notifications) {
           myFileEditorManager.removeTopComponent(editor, component);
@@ -461,7 +460,7 @@ public class UnknownSdkTracker {
         notifications.clear();
       } else {
         notifications = new SmartList<>();
-        editor.putUserData(NOTIFICATIONS_ADDED, notifications);
+        editor.putUserData(NOTIFICATIONS, notifications);
       }
 
       for (Map.Entry<MissingSdkInfo, DownloadSdkFix> e : myNotifications.entrySet()) {
