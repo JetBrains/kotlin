@@ -30,7 +30,7 @@ public class GotoInspectionModel extends SimpleChooseByNameModel {
   public GotoInspectionModel(@NotNull Project project) {
     super(project, IdeBundle.message("prompt.goto.inspection.enter.name"), "goto.inspection.help.id");
 
-    InspectionProfileImpl rootProfile = InspectionProfileManager.getInstance().getCurrentProfile();
+    InspectionProfileImpl rootProfile = InspectionProfileManager.getInstance(project).getCurrentProfile();
     for (ScopeToolState state : rootProfile.getAllTools()) {
       InspectionToolWrapper tool = LocalInspectionToolWrapper.findTool2RunInBatch(project, null, rootProfile, state.getTool());
       if (tool != null) {

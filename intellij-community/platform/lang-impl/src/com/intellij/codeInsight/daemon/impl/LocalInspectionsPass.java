@@ -518,6 +518,13 @@ public class LocalInspectionsPass extends ProgressableTextEditorHighlightingPass
                                              @NotNull HighlightSeverity severity,
                                              @NotNull ProblemDescriptor descriptor,
                                              @NotNull PsiElement element, boolean ignoreSuppressed) {
+    final String fakeShortName = descriptor.getFakeInspectionShortName();
+    if (fakeShortName != null) {
+      final InspectionToolWrapper<?, ?> fakeTool = myProfileWrapper.getInspectionTool(fakeShortName, null);
+      assert fakeTool instanceof LocalInspectionToolWrapper;
+      toolWrapper = (LocalInspectionToolWrapper)fakeTool;
+      severity = myProfileWrapper.getErrorLevel(HighlightDisplayKey.find(fakeShortName), file).getSeverity();
+    }
     LocalInspectionTool tool = toolWrapper.getTool();
     if (ignoreSuppressed && SuppressionUtil.inspectionResultSuppressed(element, tool)) {
       registerSuppressedElements(toolWrapper, element);
