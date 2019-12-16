@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.BuildFilePrinter
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.GradlePrinter
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.MavenPrinter
 import java.nio.file.Path
+import javax.xml.transform.Source
 
 data class BuildFileIR(
     val name: String,
@@ -80,6 +81,17 @@ data class BuildFileIR(
         else -> Unit
     }
 }
+
+val BuildFileIR.targets
+    get() = modules.safeAs<MultiplatformModulesStructureIR>()?.targets.orEmpty()
+
+val BuildFileIR.sourcesets
+    get() = modules.modules.flatMap { module ->
+        when (module) {
+            is SingleplatformModuleIR -> module.sourcesets
+            is SourcesetModuleIR -> listOf(module as SourcesetIR)
+        }
+    }
 
 sealed class ModulesStructureIR : BuildSystemIR, IrsOwner {
     abstract val modules: List<ModuleIR>

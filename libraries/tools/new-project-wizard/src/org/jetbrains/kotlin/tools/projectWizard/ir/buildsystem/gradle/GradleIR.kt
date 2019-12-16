@@ -40,12 +40,16 @@ data class CreateGradleValueIR(val name: String, val body: GradleIR) : GradleIR 
 }
 
 data class GradleCallIr(
-    val name: String
+    val name: String,
+    val parameters: List<BuildSystemIR> = emptyList()
 ) : GradleIR {
     override fun GradlePrinter.renderGradle() {
-        call(name, forceBrackets = true) {}
+        call(name, forceBrackets = true) {
+            parameters.list { it.render(this) }
+        }
     }
 }
+
 
 data class GradleSectionIR(
     val name: String,

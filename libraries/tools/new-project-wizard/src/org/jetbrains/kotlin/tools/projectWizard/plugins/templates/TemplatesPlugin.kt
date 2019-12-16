@@ -7,6 +7,8 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemP
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.updateBuildFiles
 import org.jetbrains.kotlin.tools.projectWizard.templates.*
+import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.TemplateInterceptor
+import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.fold
 
 class TemplatesPlugin(context: Context) : Plugin(context) {
     val templates by property<Map<String, Template>>(
@@ -88,6 +90,22 @@ class TemplatesPlugin(context: Context) : Plugin(context) {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    val postApplyTemplatesToSourcesets by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
+        runBefore(BuildSystemPlugin::createModules)
+        runAfter(KotlinPlugin::createModules)
+        runAfter(TemplatesPlugin::addTemplatesToSourcesets)
+
+        withAction {
+            updateBuildFiles { buildFile ->
+                @Suppress("UNCHECKED_CAST")
+                val interceptors = buildFile.sourcesets.mapNotNull { sourceset ->
+                    sourceset.template?.createInterceptors(sourceset) as? List<TemplateInterceptor>
+                }.flatten().fold()
+                interceptors.applyUntilConverge(buildFile).asSuccess()
             }
         }
     }

@@ -10,6 +10,18 @@ import kotlin.reflect.KProperty
 inline infix fun <A, B, C> ((A) -> B).andThen(crossinline then: (B) -> C): (A) -> C =
     { then(this(it)) }
 
+
+/**
+ * Composes two function together like normal composition if first function returns non-null value;
+ * Otherwise, applies second function
+ */
+inline infix fun <A : Any> ((A) -> A?).andThenNullable(crossinline then: (A) -> A?): (A) -> A? =
+    { initial ->
+        val thisResult = this(initial)
+        if (thisResult != null) then(thisResult) else then(initial)
+    }
+
+
 @Suppress("NOTHING_TO_INLINE")
 inline fun <T> idFunction(): (T) -> T = { it }
 
