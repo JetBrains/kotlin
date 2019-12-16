@@ -127,7 +127,7 @@ public class NavBarItem extends SimpleColoredComponent implements DataProvider, 
 
   public boolean isInactive() {
     final NavBarModel model = myPanel.getModel();
-    return model.getSelectedIndex() < myIndex && model.getSelectedIndex() != -1;
+    return model.getSelectedIndex() < myIndex && model.getSelectedIndex() != -1 && !myPanel.isUpdating();
   }
 
   public boolean isPopupElement() {

@@ -903,4 +903,8 @@ public class NavBarPanel extends JPanel implements DataProvider, PopupOwner, Dis
   public NavBarUI getNavBarUI() {
     return NavBarUIManager.getUI();
   }
+
+  boolean isUpdating() {
+    return myUpdateQueue.isUpdating();
+  }
 }
