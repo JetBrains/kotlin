@@ -1,0 +1,5 @@
+FILE: classLiteralForParameter.kt
+    public final inline fun <reified T : R|kotlin/Any|> foo(t: R|T|): R|T| {
+        lval klass: <ERROR TYPE REF: Inapplicable(WRONG_RECEIVER): [kotlin/jvm/java]> = <getClass>(R|?|).<Inapplicable(WRONG_RECEIVER): [kotlin/jvm/java]>#
+        ^foo R|<local>/t|
+    }

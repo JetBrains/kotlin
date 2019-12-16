@@ -582,6 +582,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/stdlib/problems"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
+        @TestMetadata("classLiteralForParameter.kt")
+        public void testClassLiteralForParameter() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/stdlib/problems/classLiteralForParameter.kt");
+        }
+
         @TestMetadata("cloneArray.kt")
         public void testCloneArray() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/stdlib/problems/cloneArray.kt");
