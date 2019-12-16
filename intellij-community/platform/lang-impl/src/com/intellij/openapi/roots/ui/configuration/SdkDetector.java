@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.roots.ui.configuration;
 
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
@@ -44,29 +45,19 @@ public class SdkDetector {
 
   /**
    * Checks and registers the {@param listener} of only is not
-   * yet registered. It is assumed the {@param component} is
-   * included in the {@link DialogWrapper} so we could implement
-   * the correct disposal logic (no SDKs are detected otherwise)
+   * yet registered.
    * <br/>
    * The {@param listener} is populated immediately with all know-by-now
-   * detected SDK infos, the listener will be called on the EDT
-   * thread to deliver more detected SDKs
-   *
-   * @param component the requestor component
-   * @param listener  the callback interface
+   * detected SDK infos, the listener will be called on the EDT thread
+   * with the provided {@param callbackModality}
    */
   public void getDetectedSdksWithUpdate(@Nullable Project project,
-                                        @NotNull Component component,
+                                        @NotNull Disposable lifetime,
+                                        @NotNull ModalityState callbackModality,
                                         @NotNull DetectedSdkListener listener) {
     ApplicationManager.getApplication().assertIsDispatchThread();
 
-    DialogWrapper dialogWrapper = DialogWrapper.findInstance(component);
-    if (dialogWrapper == null) {
-      LOG.warn("Cannot find DialogWrapper parent for the component " + component + ", SDK search is disabled", new RuntimeException());
-      return;
-    }
-
-    EdtDetectedSdkListener actualListener = new EdtDetectedSdkListener(ModalityState.stateForComponent(component), listener);
+    EdtDetectedSdkListener actualListener = new EdtDetectedSdkListener(callbackModality, listener);
     synchronized (myPublicationLock) {
       //skip multiple registrations
       if (!myListeners.add(actualListener)) return;
@@ -81,9 +72,7 @@ public class SdkDetector {
       myDetectedResults.forEach(result -> result.accept(listener));
     }
 
-    Disposer.register(dialogWrapper.getDisposable(), () -> {
-      myListeners.remove(actualListener);
-    });
+    Disposer.register(lifetime, () -> myListeners.remove(actualListener));
   }
 
   private final DetectedSdkListener myMulticaster = new DetectedSdkListener() {

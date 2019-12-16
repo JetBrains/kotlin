@@ -19,16 +19,16 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.progress.util.ProgressIndicatorBase;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.ProjectJdkTable;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.projectRoots.SdkModificator;
-import com.intellij.openapi.projectRoots.SdkType;
+import com.intellij.openapi.projectRoots.*;
 import com.intellij.openapi.projectRoots.impl.SdkUsagesCollector.SdkUsage;
 import com.intellij.openapi.projectRoots.impl.UnknownSdkResolver.DownloadSdkFix;
 import com.intellij.openapi.projectRoots.impl.UnknownSdkResolver.LocalSdkFix;
 import com.intellij.openapi.projectRoots.impl.UnknownSdkResolver.UnknownSdkLookup;
 import com.intellij.openapi.roots.ui.configuration.ProjectSettingsService;
+import com.intellij.openapi.roots.ui.configuration.SdkListModelBuilder;
 import com.intellij.openapi.roots.ui.configuration.SdkListPresenter;
+import com.intellij.openapi.roots.ui.configuration.SdkPopupFactory;
+import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.SdkDownloadTask;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.SdkDownloadTracker;
 import com.intellij.openapi.startup.StartupActivity;
@@ -40,13 +40,19 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.EditorNotificationPanel;
+import com.intellij.ui.awt.RelativePoint;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
+import java.awt.*;
 import java.util.*;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.intellij.openapi.progress.PerformInBackgroundOption.ALWAYS_BACKGROUND;
 import static com.intellij.openapi.projectRoots.impl.UnknownSdkResolver.EP_NAME;
@@ -368,10 +374,50 @@ public class UnknownSdkTracker {
         applyDownloadableFix(myProject, info, fix);
       });
 
-      panel.createActionLabel("Configure...", () -> {
-        removeNotification(panel);
-        //TODO: show popup!, position
-        ProjectSettingsService.getInstance(myProject).openProjectSettings();
+      panel.createActionLabel("Configure...", () -> {}).addHyperlinkListener(new HyperlinkListener() {
+        @Override
+        public void hyperlinkUpdate(HyperlinkEvent e) {
+          ProjectSdksModel model = new ProjectSdksModel();
+
+          SdkListModelBuilder modelBuilder = new SdkListModelBuilder(
+            myProject,
+            model,
+            sdkType -> Objects.equals(sdkType, info.getSdkType()),
+            null,
+            null);
+
+          SdkPopupFactory popup = new SdkPopupFactory(
+            myProject,
+            model,
+            modelBuilder
+          );
+
+          AtomicBoolean wasSdkCreated = new AtomicBoolean(false);
+
+          model.addListener(new SdkModel.Listener() {
+            @Override
+            public void sdkAdded(@NotNull Sdk sdk) {
+              //it is easier and safer than committing the ProjectSdksModel instance
+              WriteAction.run(() -> {
+                SdkModificator mod = sdk.getSdkModificator();
+                mod.setName(info.getSdkName());
+                mod.commitChanges();
+
+                ProjectJdkTable.getInstance().addJdk(sdk);
+                wasSdkCreated.set(true);
+              });
+            }
+          });
+
+          popup.showUnderneathToTheRightOf(
+            panel,
+            () -> {
+              if (wasSdkCreated.get()) {
+                removeNotification(panel);
+              }
+            }
+          );
+        }
       });
       return panel;
     }

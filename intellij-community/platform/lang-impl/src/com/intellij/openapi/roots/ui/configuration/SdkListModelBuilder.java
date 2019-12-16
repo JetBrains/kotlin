@@ -4,7 +4,9 @@ package com.intellij.openapi.roots.ui.configuration;
 import com.google.common.collect.ImmutableList;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.DataManager;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkType;
@@ -202,11 +204,11 @@ public class SdkListModelBuilder {
     syncModel();
   }
 
-  public void detectItems(@NotNull JComponent parent) {
+  public void detectItems(@NotNull JComponent parent, @NotNull Disposable lifetime) {
     if (mySuggestedItemsConnected) return;
     mySuggestedItemsConnected = true;
 
-    SdkDetector.getInstance().getDetectedSdksWithUpdate(myProject, parent, new DetectedSdkListener() {
+    SdkDetector.getInstance().getDetectedSdksWithUpdate(myProject, lifetime, ModalityState.stateForComponent(parent), new DetectedSdkListener() {
       @Override
       public void onSearchStarted() {
         mySuggestions = ImmutableList.of();
