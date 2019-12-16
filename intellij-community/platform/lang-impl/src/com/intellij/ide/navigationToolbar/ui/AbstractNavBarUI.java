@@ -11,7 +11,10 @@ import com.intellij.ui.JBColor;
 import com.intellij.ui.paint.PaintUtil;
 import com.intellij.ui.scale.JBUIScale;
 import com.intellij.ui.scale.ScaleContext;
-import com.intellij.util.ui.*;
+import com.intellij.util.ui.JBInsets;
+import com.intellij.util.ui.JBUI;
+import com.intellij.util.ui.StartupUiUtil;
+import com.intellij.util.ui.UIUtil;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -98,11 +101,15 @@ public abstract class AbstractNavBarUI implements NavBarUI {
 
     StartupUiUtil.drawImage(g, image, 0, 0, null);
 
-    Icon icon = item.getIcon();
     final int offset = item.isFirstElement() ? getFirstElementLeftOffset() : 0;
-    final int iconOffset = getElementPadding().left + offset;
-    icon.paintIcon(item, g, iconOffset, (item.getHeight() - icon.getIconHeight()) / 2);
-    final int textOffset = icon.getIconWidth() + getElementPadding().width() + offset;
+    int textOffset = getElementPadding().width() + offset;
+    if (item.needPaintIcon()) {
+      Icon icon = item.getIcon();
+      final int iconOffset = getElementPadding().left + offset;
+      icon.paintIcon(item, g, iconOffset, (item.getHeight() - icon.getIconHeight()) / 2);
+      textOffset += icon.getIconWidth();
+    }
+
     item.doPaintText(g, textOffset);
   }
 
