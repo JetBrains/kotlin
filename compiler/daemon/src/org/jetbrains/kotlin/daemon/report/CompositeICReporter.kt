@@ -34,6 +34,14 @@ internal class CompositeICReporter(private val reporters: Iterable<RemoteICRepor
         reporters.forEach { it.reportMarkDirty(affectedFiles, reason) }
     }
 
+    override fun startMeasure(metric: String, startNs: Long) {
+        reporters.forEach { it.startMeasure(metric, startNs) }
+    }
+
+    override fun endMeasure(metric: String, endNs: Long) {
+        reporters.forEach { it.endMeasure(metric, endNs) }
+    }
+
     override fun flush() {
         reporters.forEach { it.flush() }
     }

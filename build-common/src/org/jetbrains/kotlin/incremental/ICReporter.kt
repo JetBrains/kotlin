@@ -16,4 +16,21 @@ interface ICReporter {
     fun reportMarkDirtyClass(affectedFiles: Iterable<File>, classFqName: String)
     fun reportMarkDirtyMember(affectedFiles: Iterable<File>, scope: String, name: String)
     fun reportMarkDirty(affectedFiles: Iterable<File>, reason: String)
+
+    fun startMeasure(metric: String, startNs: Long)
+    fun endMeasure(metric: String, endNs: Long)
+}
+
+fun <T> ICReporter?.measure(metric: String, fn: () -> T): T {
+    if (this == null) return fn()
+
+    val start = System.nanoTime()
+    startMeasure(metric, start)
+
+    try {
+        return fn()
+    } finally {
+        val end = System.nanoTime()
+        endMeasure(metric, end)
+    }
 }

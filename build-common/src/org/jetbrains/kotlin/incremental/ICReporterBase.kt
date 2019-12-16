@@ -33,4 +33,10 @@ abstract class ICReporterBase(private val pathsBase: File? = null) : ICReporter 
 
     protected fun File.relativeOrCanonical(): File =
         pathsBase?.let { relativeToOrNull(it) } ?: canonicalFile
+
+    override fun startMeasure(metric: String, startNs: Long) {
+    }
+
+    override fun endMeasure(metric: String, endNs: Long) {
+    }
 }
