@@ -56,6 +56,7 @@ public class SdkListModel extends AbstractListModel<SdkListItem> implements Comb
   }
 
   @Override
+  @NotNull
   public SdkListItem getElementAt(int index) {
     return myItems.get(index);
   }

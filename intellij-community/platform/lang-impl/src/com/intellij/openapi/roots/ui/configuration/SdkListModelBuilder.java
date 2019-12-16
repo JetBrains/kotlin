@@ -39,11 +39,12 @@ public class SdkListModelBuilder {
   private boolean mySuggestedItemsConnected = false;
   private boolean myIsSdkDetectorInProgress = false;
 
-  private SdkListItem myFirstItem = null;
   private ImmutableList<SdkItem> myHead = ImmutableList.of();
   private ImmutableList<ActionItem> myDownloadActions = ImmutableList.of();
   private ImmutableList<ActionItem> myAddActions = ImmutableList.of();
   private ImmutableList<SuggestedItem> mySuggestions = ImmutableList.of();
+  private ProjectSdkItem myProjectSdkItem = null;
+  private NoneSdkItem myNoneSdkItem = null;
   private InvalidSdkItem myInvalidItem = null;
 
   public SdkListModelBuilder(@Nullable Project project,
@@ -101,20 +102,21 @@ public class SdkListModelBuilder {
   public SdkListModel buildModel() {
     ImmutableList.Builder<SdkListItem> newModel = ImmutableList.builder();
 
-    if (myFirstItem instanceof ProjectSdkItem) {
+
+    if (myNoneSdkItem != null) {
+      newModel.add(myNoneSdkItem);
+    }
+    if (myProjectSdkItem != null) {
       Sdk projectSdk = mySdkModel.getProjectSdk();
       if (projectSdk == null || mySdkFilter.value(projectSdk)) {
-        newModel.add(myFirstItem);
+        newModel.add(myProjectSdkItem);
       }
     }
-    else if (myFirstItem != null) {
-      newModel.add(myFirstItem);
-    }
-
-    newModel.addAll(myHead);
     if (myInvalidItem != null) {
       newModel.add(myInvalidItem);
     }
+
+    newModel.addAll(myHead);
 
     ImmutableList<ActionItem> subItems = ImmutableList.<ActionItem>builder()
       .addAll(myDownloadActions)
@@ -147,24 +149,24 @@ public class SdkListModelBuilder {
 
   @NotNull
   public SdkListItem showProjectSdkItem() {
-    return setFirstItem(new ProjectSdkItem());
+    ProjectSdkItem projectSdkItem = new ProjectSdkItem();
+    if (Objects.equals(myProjectSdkItem, projectSdkItem)) return myProjectSdkItem;
+    myProjectSdkItem = projectSdkItem;
+    syncModel();
+    return myProjectSdkItem;
   }
 
   @NotNull
   public SdkListItem showNoneSdkItem() {
-    return setFirstItem(new NoneSdkItem());
-  }
-
-  @NotNull
-  public SdkListItem setFirstItem(@NotNull SdkListItem firstItem) {
-    if (Objects.equals(myFirstItem, firstItem)) return myFirstItem;
-    myFirstItem = firstItem;
+    NoneSdkItem noneSdkItem = new NoneSdkItem();
+    if (Objects.equals(myNoneSdkItem, noneSdkItem)) return myNoneSdkItem;
+    myNoneSdkItem = noneSdkItem;
     syncModel();
-    return firstItem;
+    return myNoneSdkItem;
   }
 
   @NotNull
-  public SdkListItem setInvalidSdk(String name) {
+  public SdkListItem showInvalidSdkItem(String name) {
     InvalidSdkItem invalidItem = new InvalidSdkItem(name);
     if (Objects.equals(myInvalidItem, invalidItem)) return myInvalidItem;
     myInvalidItem = invalidItem;

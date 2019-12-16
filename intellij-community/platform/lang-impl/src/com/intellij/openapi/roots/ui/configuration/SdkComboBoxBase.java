@@ -33,15 +33,19 @@ public abstract class SdkComboBoxBase<T> extends ComboBox<T> {
   protected abstract void onModelUpdated(@NotNull SdkListModel model);
 
   public void setInvalidJdk(String name) {
-    setSelectedItem(myModel.setInvalidSdk(name));
+    setSelectedItem(myModel.showInvalidSdkItem(name));
   }
 
-  public void showProjectSdkItem() {
-    myModel.showProjectSdkItem();
+  public SdkListItem showInvalidSdkItem(String name) {
+    return myModel.showInvalidSdkItem(name);
   }
 
-  public void showNoneSdkItem() {
-    myModel.showNoneSdkItem();
+  public SdkListItem showProjectSdkItem() {
+    return myModel.showProjectSdkItem();
+  }
+
+  public SdkListItem showNoneSdkItem() {
+    return myModel.showNoneSdkItem();
   }
 
   public void reloadModel() {
