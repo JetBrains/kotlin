@@ -3961,6 +3961,21 @@ if (UtilsKt.testTargetSupportsCodeCoverage(project)) {
         }
     }
 
+    task coverage_jumps(type: CoverageTest) {
+        binaryName = "CoverageJumps"
+        numberOfCoveredFunctions = 7
+        numberOfCoveredLines = 66
+
+        konanArtifacts {
+            program(binaryName, targets: [ target ]) {
+                srcDir 'coverage/basic/jumps'
+                baseDir "$testOutputCoverage/$binaryName"
+                entryPoint "coverage.basic.jumps.main"
+                extraOpts "-Xcoverage", "-Xcoverage-file=$profrawFile"
+            }
+        }
+    }
+
     task coverage_smoke0(type: CoverageTest) {
         binaryName = "CoverageSmoke0"
         numberOfCoveredFunctions = 2

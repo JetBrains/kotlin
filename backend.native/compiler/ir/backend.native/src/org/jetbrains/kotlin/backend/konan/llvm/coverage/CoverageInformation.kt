@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.column
 import org.jetbrains.kotlin.backend.konan.llvm.line
 import org.jetbrains.kotlin.backend.konan.llvm.symbolName
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.name
@@ -19,27 +20,45 @@ import org.jetbrains.kotlin.ir.declarations.name
  * Besides the obvious [file] and line/column borders, it has [RegionKind] which is described later.
  */
 class Region(
+        startOffset: Int,
+        endOffset: Int,
         val file: IrFile,
-        val startLine: Int,
-        val startColumn: Int,
-        val endLine: Int,
-        val endColumn: Int,
         val kind: RegionKind
 ) {
 
+    var startOffset: Int = startOffset
+        set(value) {
+            if (value != UNDEFINED_OFFSET) {
+                field = value
+            }
+        }
+
+    var endOffset: Int = endOffset
+        set(value) {
+            if (value != UNDEFINED_OFFSET) {
+                field = value
+            }
+        }
+
+    val startLine: Int
+        get() = file.fileEntry.line(startOffset)
+
+    val startColumn: Int
+        get() = file.fileEntry.column(startOffset)
+
+    val endLine: Int
+        get() = file.fileEntry.line(endOffset)
+
+    val endColumn: Int
+        get() = file.fileEntry.column(endOffset)
+
     companion object {
-        fun fromIr(irElement: IrElement, irFile: IrFile, kind: RegionKind) =
+        fun fromIr(irElement: IrElement, irFile: IrFile, kind: RegionKind = RegionKind.Code) =
                 fromOffset(irElement.startOffset, irElement.endOffset, irFile, kind)
 
-        fun fromOffset(startOffset: Int, endOffset: Int, irFile: IrFile, kind: RegionKind) =
-                Region(
-                        irFile,
-                        irFile.fileEntry.line(startOffset),
-                        irFile.fileEntry.column(startOffset),
-                        irFile.fileEntry.line(endOffset),
-                        irFile.fileEntry.column(endOffset),
-                        kind
-                )
+        fun fromOffset(startOffset: Int, endOffset: Int, irFile: IrFile, kind: RegionKind = RegionKind.Code) =
+                if (startOffset == UNDEFINED_OFFSET || endOffset == UNDEFINED_OFFSET || startOffset == endOffset) null
+                else Region(startOffset, endOffset, irFile, kind)
     }
 
     override fun toString(): String {
