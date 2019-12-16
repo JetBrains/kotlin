@@ -151,7 +151,7 @@ public class DefaultHighlightInfoProcessor extends HighlightInfoProcessor {
         if (myProject.isDisposed()) return;
         Editor myeditor = editor;
         if (myeditor == null) {
-          myeditor = PsiEditorUtil.Service.getInstance().findEditorByPsiElement(file);
+          myeditor = PsiEditorUtil.findEditor(file);
         }
         if (myeditor != null && !myeditor.isDisposed()) {
           repaintErrorStripeAndIcon(myeditor, myProject);

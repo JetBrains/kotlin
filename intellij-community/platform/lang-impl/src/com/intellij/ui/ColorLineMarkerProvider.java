@@ -69,7 +69,7 @@ public final class ColorLineMarkerProvider extends LineMarkerProviderDescriptor 
             (e, elt) -> {
               if (!elt.isWritable()) return;
 
-              final Editor editor = PsiEditorUtil.Service.getInstance().findEditorByPsiElement(elt);
+              final Editor editor = PsiEditorUtil.findEditor(elt);
               assert editor != null;
 
               if (Registry.is("ide.new.color.picker")) {

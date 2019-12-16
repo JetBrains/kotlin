@@ -445,7 +445,7 @@ public class CodeFormatterFacade {
       return;
     }
 
-    Editor editor = PsiEditorUtil.Service.getInstance().findEditorByPsiElement(file);
+    Editor editor = PsiEditorUtil.findEditor(file);
     EditorFactory editorFactory = null;
     if (editor == null) {
       if (!ApplicationManager.getApplication().isDispatchThread()) {

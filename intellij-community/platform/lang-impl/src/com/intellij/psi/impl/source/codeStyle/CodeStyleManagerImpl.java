@@ -197,7 +197,7 @@ public class CodeStyleManagerImpl extends CodeStyleManager implements Formatting
     LOG.assertTrue(file.isValid(), "File name: " + file.getName() + " , class: " + file.getClass().getSimpleName());
 
     if (editor == null) {
-      editor = PsiEditorUtil.Service.getInstance().findEditorByPsiElement(file);
+      editor = PsiEditorUtil.findEditor(file);
     }
 
     CaretPositionKeeper caretKeeper = null;
