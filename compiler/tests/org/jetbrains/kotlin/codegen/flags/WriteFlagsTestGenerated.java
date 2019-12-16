@@ -477,6 +477,11 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
                 runTest("compiler/testData/writeFlags/function/constructors/enum.kt");
             }
 
+            @TestMetadata("localClass.kt")
+            public void testLocalClass() throws Exception {
+                runTest("compiler/testData/writeFlags/function/constructors/localClass.kt");
+            }
+
             @TestMetadata("objectInClass.kt")
             public void testObjectInClass() throws Exception {
                 runTest("compiler/testData/writeFlags/function/constructors/objectInClass.kt");
