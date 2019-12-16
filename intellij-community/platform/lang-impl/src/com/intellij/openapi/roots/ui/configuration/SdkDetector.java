@@ -160,7 +160,7 @@ public class SdkDetector {
           continue;
         }
         if (version == null) {
-          LOG.warn("No version is returned for detected SDK" + type + " at " + path);
+          LOG.warn("No version is returned for detected SDK " + type + " at " + path);
           continue;
         }
 
