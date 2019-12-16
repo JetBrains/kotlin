@@ -172,6 +172,10 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         doTestWithTxt(copyJarFileWithoutEntry(compileLibrary("library"), "test/E.class"))
     }
 
+    fun testMissingEnumReferencedInAnnotationArgumentIr() {
+        doTestBrokenLibrary("library", "a/E.class", additionalOptions = listOf("-Xuse-ir"))
+    }
+
     fun testNoWarningsOnJavaKotlinInheritance() {
         // This test checks that there are no PARAMETER_NAME_CHANGED_ON_OVERRIDE or DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES
         // warnings when subclassing in Kotlin from Java binaries (in case when no parameter names are available for Java classes)
