@@ -142,6 +142,10 @@ dependencies {
 
     libraries(kotlinStdlib("jdk8"))
 
+    Platform[193].orHigher {
+        libraries(commonDep("org.jetbrains.intellij.deps.completion", "completion-ranking-kotlin"))
+    }
+
     libraryProjects.forEach {
         libraries(project(it)) { isTransitive = false }
     }
