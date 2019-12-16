@@ -85,9 +85,8 @@ public class UnknownSdkTracker {
     ApplicationManager.getApplication().invokeLater(() -> {
       configureLocalSdks(localFixes);
 
-      notifyUser(project, localFixes, downloadFixes, () -> {
-        startDownloadingSdks(downloadFixes);
-      });
+      notifyFixedSdks(project, localFixes);
+      notifyDownloadableSdks(project, downloadFixes, () -> startDownloadingSdks(downloadFixes));
     });
   }
 
@@ -191,14 +190,13 @@ public class UnknownSdkTracker {
     return ContainerUtil.filter(myInfos.values(), sdk -> sdk.mySdkType != null);
   }
 
-  private static void notifyUser(@NotNull Project project,
-                                 @NotNull Map<MissingSdkInfo, LocalSdkFix> localFixes,
-                                 @NotNull Map<MissingSdkInfo, DownloadSdkFix> downloadFixes,
-                                 @NotNull Runnable onDownloadApproved) {
+  private static void notifyDownloadableSdks(@NotNull Project project,
+                                             @NotNull Map<MissingSdkInfo, DownloadSdkFix> downloadFixes,
+                                             @NotNull Runnable onDownloadApproved) {
     final String title;
     final StringBuilder message = new StringBuilder();
 
-    if (localFixes.isEmpty() && downloadFixes.size() == 1) {
+    if (downloadFixes.size() == 1) {
       Map.Entry<MissingSdkInfo, DownloadSdkFix> entry = downloadFixes.entrySet().iterator().next();
       MissingSdkInfo info = entry.getKey();
       DownloadSdkFix fix = entry.getValue();
@@ -206,24 +204,7 @@ public class UnknownSdkTracker {
       message.append("<a href='download'>");
       message.append("Download ").append(fix.getDownloadDescription());
       message.append("</a>");
-    } else if (localFixes.size() == 1 && downloadFixes.isEmpty()) {
-      Map.Entry<MissingSdkInfo, LocalSdkFix> entry = localFixes.entrySet().iterator().next();
-      MissingSdkInfo info = entry.getKey();
-      LocalSdkFix fix = entry.getValue();
-      title = "Missing " + info.getSdkType().getPresentableName() + " is set";
-      message.append("Using ")
-        .append(fix.getVersionString())
-        .append(" from ")
-        .append(getLocalFixPresentableHome(fix));
-    } else if (localFixes.size() > 1 && downloadFixes.isEmpty()) {
-      title = "Missing SDKs are set";
-      Set<String> usages = new TreeSet<>();
-      for (Map.Entry<MissingSdkInfo, LocalSdkFix> entry : localFixes.entrySet()) {
-        LocalSdkFix fix = entry.getValue();
-        usages.add("using " + fix.getVersionString() + " from " + getLocalFixPresentableHome(fix));
-      }
-      message.append(StringUtil.join(usages,"<br/>"));
-    } else if (localFixes.isEmpty() && downloadFixes.size() > 1) {
+    } else {
       title = "Fix Missing SDKs";
       message.append("<a href='download'>");
       message.append("Download all SDKs");
@@ -235,10 +216,6 @@ public class UnknownSdkTracker {
         usages.add(fix.getDownloadDescription());
       }
       message.append(StringUtil.join(usages,"<br/>"));
-    } else /* if(localFixes.size() > 1 && downloadFixes.size() > 1) */ {
-      notifyUser(project, localFixes, Collections.emptyMap(), () -> {});
-      notifyUser(project, Collections.emptyMap(), downloadFixes, onDownloadApproved);
-      return;
     }
 
     message.append(" or <a href='tune'>Configure Manually...</a>");
@@ -259,6 +236,42 @@ public class UnknownSdkTracker {
                               }
                             }
                           }).setImportant(true).notify(project);
+  }
+
+  private static final NotificationGroup SDK_CONFIGURED_GROUP
+    = new NotificationGroup("Missing SDKs", NotificationDisplayType.BALLOON, true);
+
+  private static void notifyFixedSdks(@NotNull Project project,
+                                      @NotNull Map<MissingSdkInfo, LocalSdkFix> localFixes) {
+    final String title;
+    final StringBuilder message = new StringBuilder();
+    if (localFixes.isEmpty()) return;
+
+    Set<String> usages = new TreeSet<>();
+    for (Map.Entry<MissingSdkInfo, LocalSdkFix> entry : localFixes.entrySet()) {
+      LocalSdkFix fix = entry.getValue();
+      String usage = "\"" + entry.getKey().getSdkName() + "\"" +
+                       " is set to " +
+                       fix.getVersionString() +
+                       " <br/> " +
+                       getLocalFixPresentableHome(fix);
+      usages.add(usage);
+    }
+    message.append(StringUtil.join(usages, "<br/><br/>"));
+
+    if (localFixes.size() == 1) {
+      Map.Entry<MissingSdkInfo, LocalSdkFix> entry = localFixes.entrySet().iterator().next();
+      MissingSdkInfo info = entry.getKey();
+      title = info.getSdkType().getPresentableName() + " is configured";
+    } else {
+      title = "SDKs are configured";
+    }
+
+    message.append(" or <a href='tune'>Configure Manually...</a>");
+    SDK_CONFIGURED_GROUP.createNotification(title, message.toString(), NotificationType.INFORMATION, null)
+      .setImportant(true)
+      .addAction(NotificationAction.createSimple("Configure SDKs", () -> ProjectSettingsService.getInstance(project).openProjectSettings()))
+      .notify(project);
   }
 
   @NotNull
