@@ -409,8 +409,11 @@ public class UnknownSdkTracker {
             }
           });
 
+          //FileEditorManager#addTopComponent wraps the panel to implement borders, unwrapping
+          Container container = panel.getParent();
+          if (container == null) container = panel;
           popup.showUnderneathToTheRightOf(
-            panel,
+            container,
             () -> {
               if (wasSdkCreated.get()) {
                 removeNotification(panel);
