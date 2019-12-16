@@ -221,6 +221,11 @@ public class IrBlackBoxAgainstJavaCodegenTestGenerated extends AbstractIrBlackBo
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxAgainstJava/enum"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
+        @TestMetadata("nameConflict.kt")
+        public void testNameConflict() throws Exception {
+            runTest("compiler/testData/codegen/boxAgainstJava/enum/nameConflict.kt");
+        }
+
         @TestMetadata("simpleJavaEnum.kt")
         public void testSimpleJavaEnum() throws Exception {
             runTest("compiler/testData/codegen/boxAgainstJava/enum/simpleJavaEnum.kt");

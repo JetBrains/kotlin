@@ -1,6 +1,5 @@
 CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>; <unbound IrClassSymbolImpl><kotlin.Int>; <unbound IrClassSymbolImpl>]
   $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-  CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:private <> () returnType:kotlin.Int [primary]
   FUN IR_EXTERNAL_DECLARATION_STUB name:and visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:kotlin.Int
     $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
     VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int
@@ -239,7 +238,6 @@ CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:publ
     VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int
   CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]
     $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int.Companion
-    CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:private <> () returnType:kotlin.Int.Companion [primary]
     PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MAX_VALUE visibility:public modality:FINAL [const,val]
       FIELD IR_EXTERNAL_DECLARATION_STUB name:MAX_VALUE type:kotlin.Int visibility:public [final]
         EXPRESSION_BODY

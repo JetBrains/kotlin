@@ -220,6 +220,11 @@ public class BlackBoxAgainstJavaCodegenTestGenerated extends AbstractBlackBoxAga
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxAgainstJava/enum"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
+        @TestMetadata("nameConflict.kt")
+        public void testNameConflict() throws Exception {
+            runTest("compiler/testData/codegen/boxAgainstJava/enum/nameConflict.kt");
+        }
+
         @TestMetadata("simpleJavaEnum.kt")
         public void testSimpleJavaEnum() throws Exception {
             runTest("compiler/testData/codegen/boxAgainstJava/enum/simpleJavaEnum.kt");

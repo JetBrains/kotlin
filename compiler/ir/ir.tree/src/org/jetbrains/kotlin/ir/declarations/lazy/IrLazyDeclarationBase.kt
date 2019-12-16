@@ -37,11 +37,13 @@ abstract class IrLazyDeclarationBase(
     }
 
     protected fun generateChildStubs(descriptors: Collection<DeclarationDescriptor>, declarations: MutableList<IrDeclaration>) {
-        descriptors.mapTo(declarations) { generateMemberStub(it) }
+        descriptors.mapNotNullTo(declarations) { generateMemberStub(it) }
     }
 
-    private fun generateMemberStub(descriptor: DeclarationDescriptor): IrDeclaration =
-        stubGenerator.generateMemberStub(descriptor)
+    private fun generateMemberStub(descriptor: DeclarationDescriptor): IrDeclaration? {
+        if (descriptor is DeclarationDescriptorWithVisibility && Visibilities.isPrivate(descriptor.visibility)) return null
+        return stubGenerator.generateMemberStub(descriptor)
+    }
 
     override var parent: IrDeclarationParent by lazyVar {
         createLazyParent()!!
