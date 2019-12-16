@@ -15,14 +15,14 @@
  */
 package org.jetbrains.plugins.gradle.util;
 
-import com.intellij.AbstractBundle;
+import com.intellij.DynamicBundle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.PropertyKey;
 
 /**
  * @author Denis Zhdanov
  */
-public class GradleBundle extends AbstractBundle {
+public class GradleBundle extends DynamicBundle {
 
   public static String message(@NotNull @PropertyKey(resourceBundle = PATH_TO_BUNDLE) String key, @NotNull Object... params) {
     return BUNDLE.getMessage(key, params);

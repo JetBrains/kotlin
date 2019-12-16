@@ -1,8 +1,8 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.configurationStore
 
-import com.intellij.AbstractBundle
 import com.intellij.CommonBundle
+import com.intellij.DynamicBundle
 import com.intellij.configurationStore.schemeManager.ROOT_CONFIG
 import com.intellij.configurationStore.schemeManager.SchemeManagerFactoryBase
 import com.intellij.ide.IdeBundle
@@ -293,7 +293,7 @@ private fun getComponentPresentableName(state: State, aClass: Class<*>, pluginDe
 private fun messageOrDefault(classLoader: ClassLoader, bundleName: String, defaultName: String): String {
   try {
     return CommonBundle.messageOrDefault(
-      AbstractBundle.getResourceBundle(bundleName, classLoader), "exportable.$defaultName.presentable.name", defaultName)
+      DynamicBundle.INSTANCE.getResourceBundle(bundleName, classLoader), "exportable.$defaultName.presentable.name", defaultName)
   }
   catch (e: MissingResourceException) {
     LOG.warn("Missing bundle ${bundleName} at ${classLoader}: ${e.message}")

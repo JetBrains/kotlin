@@ -1,7 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.template.impl;
 
-import com.intellij.AbstractBundle;
+import com.intellij.DynamicBundle;
 import com.intellij.codeInsight.template.Macro;
 import com.intellij.codeInsight.template.Template;
 import com.intellij.codeInsight.template.TemplateContextType;
@@ -640,7 +640,7 @@ public final class TemplateSettings implements PersistentStateComponent<Template
     String key = element.getAttributeValue(KEY);
     String id = element.getAttributeValue(ID);
     if (resourceBundle != null && key != null) {
-      ResourceBundle bundle = AbstractBundle.getResourceBundle(resourceBundle, classLoader);
+      ResourceBundle bundle = DynamicBundle.INSTANCE.getResourceBundle(resourceBundle, classLoader);
       description = bundle.getString(key);
     }
     else {

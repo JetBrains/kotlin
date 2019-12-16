@@ -15,8 +15,8 @@
  */
 package org.jetbrains.plugins.gradle.util;
 
-import com.intellij.AbstractBundle;
 import com.intellij.CommonBundle;
+import com.intellij.DynamicBundle;
 import com.intellij.reference.SoftReference;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.PropertyKey;
@@ -27,7 +27,7 @@ import java.util.ResourceBundle;
 /**
  * @author Vladislav.Soroka
  */
-public class GradleDocumentationBundle extends AbstractBundle {
+public class GradleDocumentationBundle extends DynamicBundle {
 
   public static String message(@NotNull @PropertyKey(resourceBundle = PATH_TO_BUNDLE) String key, @NotNull Object... params) {
     return BUNDLE.getMessage(key, params);
