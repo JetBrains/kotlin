@@ -4,11 +4,11 @@ FILE: main.kt
             R|<local>/x|.R|kotlin/Int.toInt|().R|kotlin/Any.toString|()
         }
         )
-        R|/MyFunction|<R|kotlin/Int|, R|kotlin/String|>(<L> = MyFunction@fun <anonymous>(x: R|kotlin/Int|): R|kotlin/String| {
+        R|/MyFunction|<R|ft<kotlin/Int, kotlin/Int?>!|, R|ft<kotlin/String, kotlin/String?>!|>(<L> = MyFunction@fun <anonymous>(x: R|kotlin/Int|): R|kotlin/String| {
             R|<local>/x|.R|kotlin/Any.toString|()
         }
         )
-        R|/MyFunction|<R|kotlin/Any?|, R|kotlin/String|>(<L> = MyFunction@fun <anonymous>(x: R|kotlin/Any?|): R|kotlin/String| {
+        R|/MyFunction|<R|kotlin/Any?|, R|ft<kotlin/String, kotlin/String?>!|>(<L> = MyFunction@fun <anonymous>(x: R|kotlin/Any?|): R|kotlin/String| {
             String()
         }
         )

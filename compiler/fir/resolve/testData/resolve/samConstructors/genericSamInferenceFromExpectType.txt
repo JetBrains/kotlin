@@ -10,19 +10,19 @@ FILE: main.kt
             R|<local>/x|.R|kotlin/Int.toInt|().R|kotlin/Any.toString|()
         }
         ))
-        R|/foo2|(R|/MyFunction|<R|kotlin/Number|, R|kotlin/String|>(<L> = MyFunction@fun <anonymous>(x: R|kotlin/Number|): R|kotlin/String| {
+        R|/foo2|(R|/MyFunction|<R|kotlin/Number|, R|ft<kotlin/String, kotlin/String?>!|>(<L> = MyFunction@fun <anonymous>(x: R|kotlin/Number|): R|kotlin/String| {
             R|<local>/x|.R|kotlin/Number.toInt|().R|kotlin/Any.toString|()
         }
         ))
-        <Inapplicable(INAPPLICABLE): [/foo2]>#(R|/MyFunction|<R|kotlin/Int|, R|kotlin/String|>(<L> = MyFunction@fun <anonymous>(x: R|kotlin/Int|): R|kotlin/String| {
+        <Inapplicable(INAPPLICABLE): [/foo2]>#(R|/MyFunction|<R|ft<kotlin/Int, kotlin/Int?>!|, R|ft<kotlin/String, kotlin/String?>!|>(<L> = MyFunction@fun <anonymous>(x: R|kotlin/Int|): R|kotlin/String| {
             R|<local>/x|.R|kotlin/Any.toString|()
         }
         ))
-        R|/foo3|<R|kotlin/Int|, R|kotlin/String|>(R|/MyFunction|<R|kotlin/Int|, R|kotlin/String|>(<L> = MyFunction@fun <anonymous>(x: R|kotlin/Int|): R|kotlin/String| {
+        R|/foo3|<R|kotlin/Int|, R|ft<kotlin/String, kotlin/String?>!|>(R|/MyFunction|<R|kotlin/Int|, R|ft<kotlin/String, kotlin/String?>!|>(<L> = MyFunction@fun <anonymous>(x: R|kotlin/Int|): R|kotlin/String| {
             R|<local>/x|.R|kotlin/Int.plus|(Int(1)).R|kotlin/Any.toString|()
         }
         ), Int(1))
-        R|/foo3|<R|kotlin/Int|, R|kotlin/String|>(R|/MyFunction|<R|kotlin/Int|, R|kotlin/String|>(<L> = MyFunction@fun <anonymous>(x: R|kotlin/Number|): R|kotlin/String| {
+        R|/foo3|<R|kotlin/Int|, R|ft<kotlin/String, kotlin/String?>!|>(R|/MyFunction|<R|kotlin/Int|, R|ft<kotlin/String, kotlin/String?>!|>(<L> = MyFunction@fun <anonymous>(x: R|kotlin/Number|): R|kotlin/String| {
             R|<local>/x|.R|kotlin/Number.toInt|().R|kotlin/Any.toString|()
         }
         ), Int(2))

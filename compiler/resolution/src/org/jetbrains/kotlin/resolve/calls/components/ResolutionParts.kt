@@ -21,11 +21,10 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
 import org.jetbrains.kotlin.resolve.calls.tower.InfixCallNoInfixModifier
 import org.jetbrains.kotlin.resolve.calls.tower.InvokeConventionCallNoOperatorModifier
 import org.jetbrains.kotlin.resolve.calls.tower.VisibilityError
-import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeSubstitutor
-import org.jetbrains.kotlin.types.UnwrappedType
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.contains
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
+import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal object CheckInstantiationOfAbstractClass : ResolutionPart() {
@@ -151,7 +150,7 @@ internal object CreateFreshVariablesSubstitutor : ResolutionPart() {
             if (knownTypeArgument != null) {
                 csBuilder.addEqualityConstraint(
                     freshVariable.defaultType,
-                    knownTypeArgument.unwrap(),
+                    getTypePreservingFlexibilityWrtTypeVariable(knownTypeArgument.unwrap(), freshVariable),
                     KnownTypeParameterConstraintPosition(knownTypeArgument)
                 )
                 continue
@@ -162,7 +161,7 @@ internal object CreateFreshVariablesSubstitutor : ResolutionPart() {
             if (typeArgument is SimpleTypeArgument) {
                 csBuilder.addEqualityConstraint(
                     freshVariable.defaultType,
-                    typeArgument.type,
+                    getTypePreservingFlexibilityWrtTypeVariable(typeArgument.type, freshVariable),
                     ExplicitTypeParameterConstraintPosition(typeArgument)
                 )
             } else {
@@ -172,6 +171,19 @@ internal object CreateFreshVariablesSubstitutor : ResolutionPart() {
             }
         }
     }
+
+    private fun TypeParameterDescriptor.shouldBeFlexible(): Boolean {
+        return upperBounds.any {
+            it.isFlexible() || ((it.constructor.declarationDescriptor as? TypeParameterDescriptor)?.run { shouldBeFlexible() } ?: false)
+        }
+    }
+
+    private fun getTypePreservingFlexibilityWrtTypeVariable(
+        type: KotlinType,
+        typeVariable: TypeVariableFromCallableDescriptor
+    ) = if (typeVariable.originalTypeParameter.shouldBeFlexible()) {
+        KotlinTypeFactory.flexibleType(type.makeNotNullable().lowerIfFlexible(), type.makeNullable().upperIfFlexible())
+    } else type
 
     fun createToFreshVariableSubstitutorAndAddInitialConstraints(
         candidateDescriptor: CallableDescriptor,

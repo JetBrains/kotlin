@@ -14,5 +14,5 @@ public class Matcher<T> {
 
 // FILE: main.kt
 fun test(x: List<String>) {
-    Assert.assertThat(x, Matcher.hasItem("abc"))
+    Assert.<!INAPPLICABLE_CANDIDATE!>assertThat<!>(x, Matcher.hasItem("abc"))
 }
