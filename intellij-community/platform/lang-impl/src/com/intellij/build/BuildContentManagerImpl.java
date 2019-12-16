@@ -46,7 +46,7 @@ import static com.intellij.util.ContentUtilEx.getFullName;
 /**
  * @author Vladislav.Soroka
  */
-public class BuildContentManagerImpl implements BuildContentManager {
+public final class BuildContentManagerImpl implements BuildContentManager {
   public static final String Build = "Build";
   public static final String Sync = "Sync";
   public static final String Run = "Run";
@@ -59,7 +59,7 @@ public class BuildContentManagerImpl implements BuildContentManager {
   private final List<Runnable> myPostponedRunnables = new ArrayList<>();
   private final Map<Content, Pair<Icon, AtomicInteger>> liveContentsMap = ContainerUtil.newConcurrentMap();
 
-  public BuildContentManagerImpl(Project project) {
+  public BuildContentManagerImpl(@NotNull Project project) {
     init(project);
   }
 
