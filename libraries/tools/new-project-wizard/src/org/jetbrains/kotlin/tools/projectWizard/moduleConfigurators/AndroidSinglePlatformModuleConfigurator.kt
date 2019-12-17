@@ -2,8 +2,6 @@ package org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators
 
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.ModuleConfiguratorSetting
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
-import org.jetbrains.kotlin.tools.projectWizard.core.service.AndroidWizardService
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.AndroidConfigIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.BuildScriptDependencyIR
@@ -34,15 +32,6 @@ object AndroidSinglePlatformModuleConfigurator : ModuleConfiguratorWithSettings(
 
     val androidSdkPath by pathSetting("Android SDK Path", neededAtPhase = GenerationPhase.PROJECT_GENERATION) {
         shouldExists()
-
-        validate { path ->
-            ValidationResult.create(
-                service<AndroidWizardService>()!!.isValidAndroidSdk(
-                    path
-                ),
-                "Path should point to valid Android SDK location"
-            )
-        }
     }
 
     override fun createBuildFileIRs(configurationData: ModuleConfigurationData, module: Module) =
