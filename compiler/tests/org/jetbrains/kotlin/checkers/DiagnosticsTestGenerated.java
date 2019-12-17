@@ -23500,6 +23500,16 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/varargs/AmbiguousVararg.kt");
             }
 
+            @TestMetadata("assignArrayToVararagInNamedForm_1_3.kt")
+            public void testAssignArrayToVararagInNamedForm_1_3() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/varargs/assignArrayToVararagInNamedForm_1_3.kt");
+            }
+
+            @TestMetadata("assignArrayToVararagInNamedForm_1_4.kt")
+            public void testAssignArrayToVararagInNamedForm_1_4() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/varargs/assignArrayToVararagInNamedForm_1_4.kt");
+            }
+
             @TestMetadata("assignNonConstSingleArrayElementAsVarargInAnnotation.kt")
             public void testAssignNonConstSingleArrayElementAsVarargInAnnotation() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/varargs/assignNonConstSingleArrayElementAsVarargInAnnotation.kt");
