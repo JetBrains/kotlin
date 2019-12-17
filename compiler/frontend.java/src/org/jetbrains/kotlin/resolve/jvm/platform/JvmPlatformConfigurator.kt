@@ -102,6 +102,7 @@ object JvmPlatformConfigurator : PlatformConfiguratorBase(
         container.useImpl<JvmModuleAccessibilityChecker>()
         container.useImpl<JvmModuleAccessibilityChecker.ClassifierUsage>()
         container.useImpl<JvmTypeSpecificityComparator>()
+        container.useImpl<JvmPlatformOverloadsSpecificityComparator>()
         container.useImpl<JvmDefaultSuperCallChecker>()
         container.useImpl<JvmSamConversionTransformer>()
         container.useInstance(FunctionWithBigAritySupport.LanguageVersionDependent)

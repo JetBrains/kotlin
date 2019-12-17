@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstituto
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.results.FlatSignature
 import org.jetbrains.kotlin.resolve.calls.results.OverloadingConflictResolver
+import org.jetbrains.kotlin.resolve.calls.results.PlatformOverloadsSpecificityComparator
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.calls.tower.ImplicitScopeTower
 import org.jetbrains.kotlin.resolve.calls.tower.TowerResolver
@@ -36,12 +37,14 @@ class CallableReferenceOverloadConflictResolver(
     builtIns: KotlinBuiltIns,
     module: ModuleDescriptor,
     specificityComparator: TypeSpecificityComparator,
+    platformOverloadsSpecificityComparator: PlatformOverloadsSpecificityComparator,
     statelessCallbacks: KotlinResolutionStatelessCallbacks,
     constraintInjector: ConstraintInjector
 ) : OverloadingConflictResolver<CallableReferenceCandidate>(
     builtIns,
     module,
     specificityComparator,
+    platformOverloadsSpecificityComparator,
     { it.candidate },
     { statelessCallbacks.createConstraintSystemForOverloadResolution(constraintInjector, builtIns) },
     Companion::createFlatSignature,
