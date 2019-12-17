@@ -34,6 +34,7 @@ public class UnknownSdkBalloonNotification {
 
   public void notifyFixedSdks(@NotNull Map<? extends UnknownSdk, LocalSdkFix> localFixes) {
     final String title;
+    final String change;
     final StringBuilder message = new StringBuilder();
     if (localFixes.isEmpty()) return;
 
@@ -52,16 +53,19 @@ public class UnknownSdkBalloonNotification {
     if (localFixes.size() == 1) {
       Map.Entry<? extends UnknownSdk, LocalSdkFix> entry = localFixes.entrySet().iterator().next();
       UnknownSdk info = entry.getKey();
-      title = info.getSdkType().getPresentableName() + " is configured";
+      String sdkTypeName = info.getSdkType().getPresentableName();
+      title = sdkTypeName + " is configured";
+      change = "Change " + sdkTypeName + "...";
     }
     else {
       title = "SDKs are configured";
+      change = "Change SDKs...";
     }
 
     SDK_CONFIGURED_GROUP.createNotification(title, message.toString(), NotificationType.INFORMATION, null)
       .setImportant(true)
       .addAction(createSimple(
-        "Change in the Project Structure Dialog...",
+        change,
         () -> ProjectSettingsService.getInstance(myProject).openProjectSettings()))
       .notify(myProject);
   }
