@@ -62,7 +62,9 @@ public class OneProjectItemCompileScope extends ExportableUserDataHolderBase imp
   public Module[] getAffectedModules() {
     final Collection<ModuleSourceSet> sets = getAffectedSourceSets();
     if (sets.isEmpty()) {
-      LOG.error("Module is null for file " + myFile.getPresentableUrl());
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("Module is null for file " + myFile.getPresentableUrl());
+      }
       return Module.EMPTY_ARRAY;
     }
     return new Module[] {sets.iterator().next().getModule()};
