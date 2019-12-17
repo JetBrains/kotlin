@@ -1,12 +1,8 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.openapi.externalSystem.service.ui.combobox
+package com.intellij.openapi.roots.ui.configuration
 
-import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtil.isValidJdk
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.*
-import com.intellij.openapi.roots.ui.configuration.SdkListItem
-import com.intellij.openapi.roots.ui.configuration.SdkListModel
-import com.intellij.openapi.roots.ui.configuration.SdkListModelBuilder
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel
 import com.intellij.openapi.roots.ui.configuration.projectRoot.SdkDownloadTracker
 import com.intellij.openapi.ui.ComboBoxPopupState
@@ -59,6 +55,10 @@ class SdkComboBoxModel private constructor(
       val sdkTypeCreationFilter = Condition<SdkTypeId> { noJavaSdkTypes() || it !is SimpleJavaSdkType }
       val sdkFilter = Condition<Sdk> { SdkDownloadTracker.getInstance().isDownloading(it) || isValidJdk(it.homePath) }
       return createSdkComboBoxModel(project, sdksModel, sdkTypeFilter, sdkTypeCreationFilter, sdkFilter)
+    }
+
+    private fun isValidJdk(homePath: String?): Boolean {
+      return homePath != null && homePath.isNotBlank() && JdkUtil.checkForJdk(homePath) && JdkUtil.checkForJre(homePath)
     }
   }
 }

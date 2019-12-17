@@ -10,7 +10,7 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.externalSystem.model.settings.LocationSettingType;
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtil;
-import com.intellij.openapi.externalSystem.service.ui.combobox.SdkComboBox;
+import com.intellij.openapi.roots.ui.configuration.SdkComboBox;
 import com.intellij.openapi.externalSystem.settings.ExternalProjectSettings;
 import com.intellij.openapi.externalSystem.util.ExternalSystemUiUtil;
 import com.intellij.openapi.externalSystem.util.PaintAwarePanel;
@@ -69,7 +69,7 @@ import java.util.concurrent.TimeUnit;
 
 import static com.intellij.openapi.externalSystem.service.ui.ExternalSystemJdkComboBoxUtil.getSelectedJdkReference;
 import static com.intellij.openapi.externalSystem.service.ui.ExternalSystemJdkComboBoxUtil.setSelectedJdkReference;
-import static com.intellij.openapi.externalSystem.service.ui.combobox.SdkComboBoxModel.createJdkComboBoxModel;
+import static com.intellij.openapi.roots.ui.configuration.SdkComboBoxModel.createJdkComboBoxModel;
 import static com.intellij.openapi.externalSystem.util.ExternalSystemUiUtil.INSETS;
 
 /**

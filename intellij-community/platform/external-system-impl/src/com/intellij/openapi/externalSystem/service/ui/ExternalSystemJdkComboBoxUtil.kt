@@ -4,7 +4,7 @@
 package com.intellij.openapi.externalSystem.service.ui
 
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtil
-import com.intellij.openapi.externalSystem.service.ui.combobox.SdkComboBox
+import com.intellij.openapi.roots.ui.configuration.SdkComboBox
 import com.intellij.openapi.roots.ui.configuration.SdkListItem
 
 fun SdkComboBox.getSelectedJdkReference(): String? {
