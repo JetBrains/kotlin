@@ -375,6 +375,7 @@ object PathSettingType : SettingType<Path>() {
         }
 
         fun shouldExists() = validate { pathValue ->
+            if (isUnitTestMode) return@validate ValidationResult.OK
             if (!Files.exists(pathValue))
                 ValidationResult.ValidationError("File for ${title.capitalize()} should exists")
             else ValidationResult.OK

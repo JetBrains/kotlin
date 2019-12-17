@@ -6,9 +6,9 @@ import org.jetbrains.kotlin.tools.projectWizard.core.service.WizardService
 import org.jetbrains.kotlin.tools.projectWizard.core.service.ServicesManager
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 
-abstract class Wizard(createPlugins: PluginsCreator, val servicesManager: ServicesManager) {
+abstract class Wizard(createPlugins: PluginsCreator, val servicesManager: ServicesManager, private val isUnitTestMode: Boolean) {
     val context = Context(createPlugins, EventManager())
-    val valuesReadingContext = ValuesReadingContext(context, servicesManager)
+    val valuesReadingContext = ValuesReadingContext(context, servicesManager, isUnitTestMode)
     protected val plugins = context.plugins
     protected val pluginSettings = plugins.flatMap { it.declaredSettings }.distinctBy { it.path }
 
@@ -34,7 +34,7 @@ abstract class Wizard(createPlugins: PluginsCreator, val servicesManager: Servic
         onTaskExecuting: (PipelineTask) -> Unit = {}
     ): TaskResult<Unit> = computeM {
         context.checkAllRequiredSettingPresent(phases).ensure()
-        val taskRunningContext = TaskRunningContext(context, servicesManager.withServices(services))
+        val taskRunningContext = TaskRunningContext(context, servicesManager.withServices(services), isUnitTestMode)
         taskRunningContext.validate(phases).ensure()
         val (tasksSorted) = context.sortTasks().map { tasks ->
             tasks.groupBy { it.phase }.toList().sortedBy { it.first }.flatMap { it.second }

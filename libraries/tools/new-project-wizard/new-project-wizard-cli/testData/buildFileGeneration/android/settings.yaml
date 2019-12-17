@@ -4,7 +4,7 @@ kotlin:
   modules:
     - type:
         name: android
-        androidSdkPath: /home/ilya/Android/Sdk
+        androidSdkPath: /home/user/Android/Sdk
       kind: singleplatform
       name: android
       sourcesets:
