@@ -8,6 +8,7 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.registry.Registry;
+import com.intellij.util.PlatformUtils;
 import com.jetbrains.completion.ranker.WeakModelProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,6 +31,10 @@ public class CompletionMLRankingSettings implements PersistentStateComponent<Com
 
   public boolean isRankingEnabled() {
     return myState.rankingEnabled;
+  }
+
+  public boolean isShowDiffEnabled() {
+    return myState.showDiff;
   }
 
   void setRankingEnabled(boolean value) {
@@ -75,6 +80,7 @@ public class CompletionMLRankingSettings implements PersistentStateComponent<Com
 
   public static class State {
     public boolean rankingEnabled = !ENABLED_BY_DEFAULT.isEmpty();
+    public boolean showDiff = PlatformUtils.isPyCharm();
     // this map stores only different compare to default values to have ability to enable/disable models from build to build
     public Map<String, Boolean> language2state = new HashMap<>();
   }
