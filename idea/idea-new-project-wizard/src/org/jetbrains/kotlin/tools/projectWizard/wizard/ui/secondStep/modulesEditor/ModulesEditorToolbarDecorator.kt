@@ -28,7 +28,8 @@ class ModulesEditorToolbarDecorator(
             val isRootModule = target == null
             val popup = moduleCreator.create(
                 target = tree.selectedSettingItem?.safeAs(),
-                allowMultiplatform = isRootModule
+                allowMultiplatform = isMultiplatformProject()
+                        && isRootModule
                         && allModules.none { it.configurator == MppModuleConfigurator },
                 allowAndroid = isRootModule
                         && isMultiplatformProject()
