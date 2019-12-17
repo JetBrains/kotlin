@@ -21,7 +21,7 @@ import java.io.File
 import java.nio.file.Path
 
 class LightTree2Fir(
-    private val session: FirSession = object : FirSessionBase(null) {},
+    val session: FirSession = object : FirSessionBase(null) {},
     private val stubMode: Boolean = false
 ) {
     //private val ktDummyFile = KtFile(SingleRootFileViewProvider(PsiManager.getInstance(project), LightVirtualFile()), false)

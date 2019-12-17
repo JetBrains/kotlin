@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.diagnostics.FirStubDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.utils.addToStdlib.sumByLong
+import java.io.File
 import java.io.PrintStream
 import kotlin.math.max
 import kotlin.reflect.KClass
@@ -96,6 +98,26 @@ class FirResolveBench(val withProgress: Boolean) {
         ktFiles: List<KtFile>
     ): List<FirFile> {
         return ktFiles.map { file ->
+            val before = vmStateSnapshot()
+            var firFile: FirFile? = null
+            val time = measureNanoTime {
+                firFile = builder.buildFirFile(file)
+                (builder.session.firProvider as FirProviderImpl).recordFile(firFile!!)
+            }
+            val after = vmStateSnapshot()
+            val diff = after - before
+            recordTime(builder::class, diff, time)
+            firFile!!
+        }.also {
+            totalTime = timePerTransformer.values.sumByLong { it.time }
+        }
+    }
+
+    fun buildFiles(
+        builder: LightTree2Fir,
+        files: List<File>
+    ): List<FirFile> {
+        return files.map { file ->
             val before = vmStateSnapshot()
             var firFile: FirFile? = null
             val time = measureNanoTime {
