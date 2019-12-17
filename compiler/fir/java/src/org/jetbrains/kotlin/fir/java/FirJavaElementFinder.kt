@@ -68,7 +68,7 @@ class FirJavaElementFinder(
             firProvider.getFirClassifierByFqName(classId) as? FirRegularClass
                 ?: return null
 
-        val ktFile = firClass.psi?.containingFile as KtFile
+        val ktFile = firClass.psi?.containingFile as? KtFile ?: return null
         val fileStub = createJavaFileStub(classId.packageFqName, listOf(ktFile))
 
         return buildStub(firClass, fileStub).psi
