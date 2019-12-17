@@ -78,7 +78,7 @@ open class ConvertLambdaToReferenceIntention(text: String) :
             dispatchReceiverParameter != null || extensionReceiverParameter != null
         }
 
-        if (!descriptorHasReceiver && explicitReceiver != null) return false
+        if (!descriptorHasReceiver && explicitReceiver != null && calleeDescriptor !is ClassConstructorDescriptor) return false
         val noBoundReferences = !callableExpression.languageVersionSettings.supportsFeature(LanguageFeature.BoundCallableReferences)
         if (noBoundReferences && descriptorHasReceiver && explicitReceiver == null) return false
 
