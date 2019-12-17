@@ -43,7 +43,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
     }
 
     private fun compareAll(stubMode: Boolean) {
-        val lightTreeConverter = LightTree2Fir(stubMode = stubMode, project = myProject)
+        val lightTreeConverter = LightTree2Fir(stubMode = stubMode)
         compareBase(System.getProperty("user.dir"), withTestData = false) { file ->
             val text = FileUtil.loadFile(file, CharsetToolkit.UTF8, true).trim()
 
@@ -61,7 +61,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
     }
 
     fun testCompareDiagnostics() {
-        val lightTreeConverter = LightTree2Fir(stubMode = false, project = myProject)
+        val lightTreeConverter = LightTree2Fir(stubMode = false)
         compareBase("compiler/testData/diagnostics/tests", withTestData = true) { file ->
             val notEditedText = FileUtil.loadFile(file, CharsetToolkit.UTF8, true).trim()
             val text = notEditedText.replace("(<!>)|(<!.*?!>)".toRegex(), "").replaceAfter(".java", "")

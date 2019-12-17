@@ -16,13 +16,13 @@ import java.io.File
 @State(Scope.Benchmark)
 open class LightTree2FirGenerator : TreeGenerator, AbstractRawFirBuilderTestCase() {
     override fun generateBaseTree(text: String, file: File) {
-        val lightTreeConverter = LightTree2Fir(stubMode = false, project = myProject)
+        val lightTreeConverter = LightTree2Fir(stubMode = false)
         val lightTree = lightTreeConverter.buildLightTree(text)
         DebugUtil.lightTreeToString(lightTree, false)
     }
 
     override fun generateFir(text: String, file: File, stubMode: Boolean) {
-        val lightTreeConverter = LightTree2Fir(stubMode = stubMode, project = myProject)
+        val lightTreeConverter = LightTree2Fir(stubMode = stubMode)
         val firFile = lightTreeConverter.buildFirFile(text, file.name)
         StringBuilder().also { FirRenderer(it).visitFile(firFile) }.toString()
     }

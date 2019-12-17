@@ -15,7 +15,7 @@ import java.nio.file.Paths
 abstract class AbstractLightTree2FirConverterTestCase : AbstractRawFirBuilderTestCase() {
 
     override fun doTest(filePath: String) {
-        val firFile = LightTree2Fir(stubMode = false, project = myProject).buildFirFile(Paths.get(filePath))
+        val firFile = LightTree2Fir(stubMode = false).buildFirFile(Paths.get(filePath))
         val firDump = firFile.render()
 
         val expectedFile = File(filePath.replace(".kt", ".txt"))

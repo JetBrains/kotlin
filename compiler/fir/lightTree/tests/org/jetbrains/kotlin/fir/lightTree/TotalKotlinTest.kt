@@ -46,7 +46,7 @@ class TotalKotlinTest : AbstractRawFirBuilderTestCase() {
         var counter = 0
         var time = 0L
 
-        val lightTreeConverter = LightTree2Fir(stubMode = true, project = myProject)
+        val lightTreeConverter = LightTree2Fir(stubMode = true)
 
         if (onlyLightTree) println("LightTree generation") else println("Fir from LightTree converter")
         println("BASE PATH: $path")
