@@ -689,7 +689,7 @@ interface AbstractPrinter<in T : KotlinClassMetadata> {
 
 class ClassPrinter(private val settings: KotlinpSettings) : KmClassVisitor(), AbstractPrinter<KotlinClassMetadata.Class> {
     private val sb = StringBuilder()
-    private val result = StringBuilder()
+    internal val result = StringBuilder()
 
     private var flags: Flags? = null
     private var name: ClassName? = null
@@ -880,7 +880,9 @@ class MultiFileClassFacadePrinter : AbstractPrinter<KotlinClassMetadata.MultiFil
         }
 }
 
-class ModuleFilePrinter : KmModuleVisitor() {
+class ModuleFilePrinter(private val settings: KotlinpSettings) : KmModuleVisitor() {
+    private val optionalAnnotations = mutableListOf<ClassPrinter>()
+
     private val sb = StringBuilder().apply {
         appendln("module {")
     }
@@ -901,7 +903,18 @@ class ModuleFilePrinter : KmModuleVisitor() {
         // TODO
     }
 
+    override fun visitOptionalAnnotationClass(): KmClassVisitor =
+        ClassPrinter(settings).also(optionalAnnotations::add)
+
     override fun visitEnd() {
+        if (optionalAnnotations.isNotEmpty()) {
+            sb.appendln()
+            sb.appendln("  // Optional annotations")
+            sb.appendln()
+            for (element in optionalAnnotations) {
+                sb.appendln("  " + element.result.toString().replace("\n", "\n  ").trimEnd())
+            }
+        }
         sb.appendln("}")
     }
 

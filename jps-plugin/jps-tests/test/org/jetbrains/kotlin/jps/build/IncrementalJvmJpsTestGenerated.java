@@ -598,6 +598,11 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
             runTest("jps-plugin/testData/incremental/multiModule/multiplatform/custom/complementaryFiles/");
         }
 
+        @TestMetadata("modifyOptionalAnnotationUsage")
+        public void testModifyOptionalAnnotationUsage() throws Exception {
+            runTest("jps-plugin/testData/incremental/multiModule/multiplatform/custom/modifyOptionalAnnotationUsage/");
+        }
+
         @TestMetadata("notSameCompiler")
         public void testNotSameCompiler() throws Exception {
             runTest("jps-plugin/testData/incremental/multiModule/multiplatform/custom/notSameCompiler/");
@@ -652,6 +657,19 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
 
             public void testAllFilesPresentInComplementaryFiles() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/custom/complementaryFiles"), Pattern.compile("^([^\\.]+)$"), null, true);
+            }
+        }
+
+        @TestMetadata("jps-plugin/testData/incremental/multiModule/multiplatform/custom/modifyOptionalAnnotationUsage")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ModifyOptionalAnnotationUsage extends AbstractIncrementalJvmJpsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInModifyOptionalAnnotationUsage() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/custom/modifyOptionalAnnotationUsage"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 

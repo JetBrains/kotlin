@@ -63,6 +63,11 @@ public class KotlinpTestGenerated extends AbstractKotlinpTest {
         runTest("libraries/tools/kotlinp/testData/NestedClasses.kt");
     }
 
+    @TestMetadata("OptionalAnnotation.kt")
+    public void testOptionalAnnotation() throws Exception {
+        runTest("libraries/tools/kotlinp/testData/OptionalAnnotation.kt");
+    }
+
     @TestMetadata("PlatformType.kt")
     public void testPlatformType() throws Exception {
         runTest("libraries/tools/kotlinp/testData/PlatformType.kt");

@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.konan.util.KlibMetadataFactories
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_DEPENDS
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer
 import org.jetbrains.kotlin.load.java.JavaClassesTracker
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolver
 import org.jetbrains.kotlin.load.java.structure.JavaClass
@@ -68,10 +69,10 @@ import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
+import org.jetbrains.kotlin.resolve.jvm.multiplatform.OptionalAnnotationPackageFragmentProvider
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
-import org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 import java.util.*
@@ -195,7 +196,8 @@ object TopDownAnalyzerFacadeForJVM {
                 CompositePackageFragmentProvider(
                     listOf(
                         moduleClassResolver.compiledCodeResolver.packageFragmentProvider,
-                        dependenciesContainer.get<JvmBuiltInsPackageFragmentProvider>()
+                        dependenciesContainer.get<JvmBuiltInsPackageFragmentProvider>(),
+                        dependenciesContainer.get<OptionalAnnotationPackageFragmentProvider>()
                     )
                 )
             )
@@ -252,7 +254,10 @@ object TopDownAnalyzerFacadeForJVM {
         )
         module.initialize(
             CompositePackageFragmentProvider(
-                listOf(container.get<KotlinCodeAnalyzer>().packageFragmentProvider) + additionalProviders
+                listOf(
+                    container.get<KotlinCodeAnalyzer>().packageFragmentProvider,
+                    container.get<OptionalAnnotationPackageFragmentProvider>()
+                ) + additionalProviders
             )
         )
 

@@ -372,9 +372,6 @@ internal fun getSignature(
 */
 fun IrClass.getVisibilityAccessFlagForClass(): Int {
     /* Original had a check for SyntheticClassDescriptorForJava, never invoked in th IR backend. */
-    if (isOptionalAnnotationClass()) {
-        return AsmUtil.NO_FLAG_PACKAGE_PRIVATE
-    }
     if (kind == ClassKind.ENUM_ENTRY) {
         return AsmUtil.NO_FLAG_PACKAGE_PRIVATE
     }

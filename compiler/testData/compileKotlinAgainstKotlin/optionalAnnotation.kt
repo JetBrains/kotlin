@@ -31,8 +31,10 @@ fun box(): String {
     val annotations = Test::class.java.declaredMethods.single().annotations.toList()
     if (annotations.toString() != "[@a.A(x=42)]") return "Fail 1: $annotations"
 
-    // Can't use B::class.java because "Declaration annotated with '@OptionalExpectation' can only be used inside an annotation entry"
-    if (Modifier.isPublic(Class.forName("a.B").modifiers)) return "Fail 2: optional annotation class should not be public in the bytecode"
-
-    return "OK"
+    try {
+        Class.forName("a.B")
+        return "Fail 2: there should be no class file for a.B"
+    } catch (e: ClassNotFoundException) {
+        return "OK"
+    }
 }

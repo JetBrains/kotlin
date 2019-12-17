@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.jvm.compiler.AbstractLoadJavaTest
 import org.jetbrains.kotlin.kotlinp.Kotlinp
 import org.jetbrains.kotlin.kotlinp.KotlinpSettings
 import org.jetbrains.kotlin.test.ConfigurationKind
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import java.io.File
@@ -63,7 +64,7 @@ fun compileAndPrintAllFiles(file: File, disposable: Disposable, tmpdir: File, co
         KotlinTestUtils.assertEqualsToFile(File(file.path.replace(".kt", ".txt")), main.toString())
     }
 
-    if (readWriteAndCompare) {
+    if (readWriteAndCompare && InTextDirectivesUtils.findStringWithPrefixes(file.readText(), "// NO_READ_WRITE_COMPARE") == null) {
         assertEquals("Metadata is different after transformation with visitors.", main.toString(), afterVisitors.toString())
         assertEquals("Metadata is different after transformation with nodes.", main.toString(), afterNodes.toString())
     }

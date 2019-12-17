@@ -146,6 +146,41 @@ public final class JvmModuleProtoBuf {
      * </pre>
      */
     int getAnnotationCount();
+
+    /**
+     * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
+     *
+     * <pre>
+     * &#64;OptionalExpectation-annotated annotation classes in this module. This list is only used in the compiler frontend when compiling
+     * a second-tier multiplatform module against a multiplatform module which uses optional annotations, not actualized on the JVM.
+     * This is not needed in the IDE because optional annotations can only be used in common modules, where the IDE plugin resolves
+     * it to the corresponding class with the resolution capabilities of common modules.
+     * </pre>
+     */
+    java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Class> 
+        getOptionalAnnotationClassList();
+    /**
+     * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
+     *
+     * <pre>
+     * &#64;OptionalExpectation-annotated annotation classes in this module. This list is only used in the compiler frontend when compiling
+     * a second-tier multiplatform module against a multiplatform module which uses optional annotations, not actualized on the JVM.
+     * This is not needed in the IDE because optional annotations can only be used in common modules, where the IDE plugin resolves
+     * it to the corresponding class with the resolution capabilities of common modules.
+     * </pre>
+     */
+    org.jetbrains.kotlin.metadata.ProtoBuf.Class getOptionalAnnotationClass(int index);
+    /**
+     * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
+     *
+     * <pre>
+     * &#64;OptionalExpectation-annotated annotation classes in this module. This list is only used in the compiler frontend when compiling
+     * a second-tier multiplatform module against a multiplatform module which uses optional annotations, not actualized on the JVM.
+     * This is not needed in the IDE because optional annotations can only be used in common modules, where the IDE plugin resolves
+     * it to the corresponding class with the resolution capabilities of common modules.
+     * </pre>
+     */
+    int getOptionalAnnotationClassCount();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.metadata.jvm.Module}
@@ -256,6 +291,14 @@ public final class JvmModuleProtoBuf {
               annotation_.add(input.readMessage(org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.PARSER, extensionRegistry));
               break;
             }
+            case 130: {
+              if (!((mutable_bitField0_ & 0x00000040) == 0x00000040)) {
+                optionalAnnotationClass_ = new java.util.ArrayList<org.jetbrains.kotlin.metadata.ProtoBuf.Class>();
+                mutable_bitField0_ |= 0x00000040;
+              }
+              optionalAnnotationClass_.add(input.readMessage(org.jetbrains.kotlin.metadata.ProtoBuf.Class.PARSER, extensionRegistry));
+              break;
+            }
           }
         }
       } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -275,6 +318,9 @@ public final class JvmModuleProtoBuf {
         }
         if (((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
           annotation_ = java.util.Collections.unmodifiableList(annotation_);
+        }
+        if (((mutable_bitField0_ & 0x00000040) == 0x00000040)) {
+          optionalAnnotationClass_ = java.util.Collections.unmodifiableList(optionalAnnotationClass_);
         }
         try {
           unknownFieldsCodedOutput.flush();
@@ -546,6 +592,76 @@ public final class JvmModuleProtoBuf {
       return annotation_.get(index);
     }
 
+    public static final int OPTIONAL_ANNOTATION_CLASS_FIELD_NUMBER = 16;
+    private java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Class> optionalAnnotationClass_;
+    /**
+     * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
+     *
+     * <pre>
+     * &#64;OptionalExpectation-annotated annotation classes in this module. This list is only used in the compiler frontend when compiling
+     * a second-tier multiplatform module against a multiplatform module which uses optional annotations, not actualized on the JVM.
+     * This is not needed in the IDE because optional annotations can only be used in common modules, where the IDE plugin resolves
+     * it to the corresponding class with the resolution capabilities of common modules.
+     * </pre>
+     */
+    public java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Class> getOptionalAnnotationClassList() {
+      return optionalAnnotationClass_;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
+     *
+     * <pre>
+     * &#64;OptionalExpectation-annotated annotation classes in this module. This list is only used in the compiler frontend when compiling
+     * a second-tier multiplatform module against a multiplatform module which uses optional annotations, not actualized on the JVM.
+     * This is not needed in the IDE because optional annotations can only be used in common modules, where the IDE plugin resolves
+     * it to the corresponding class with the resolution capabilities of common modules.
+     * </pre>
+     */
+    public java.util.List<? extends org.jetbrains.kotlin.metadata.ProtoBuf.ClassOrBuilder> 
+        getOptionalAnnotationClassOrBuilderList() {
+      return optionalAnnotationClass_;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
+     *
+     * <pre>
+     * &#64;OptionalExpectation-annotated annotation classes in this module. This list is only used in the compiler frontend when compiling
+     * a second-tier multiplatform module against a multiplatform module which uses optional annotations, not actualized on the JVM.
+     * This is not needed in the IDE because optional annotations can only be used in common modules, where the IDE plugin resolves
+     * it to the corresponding class with the resolution capabilities of common modules.
+     * </pre>
+     */
+    public int getOptionalAnnotationClassCount() {
+      return optionalAnnotationClass_.size();
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
+     *
+     * <pre>
+     * &#64;OptionalExpectation-annotated annotation classes in this module. This list is only used in the compiler frontend when compiling
+     * a second-tier multiplatform module against a multiplatform module which uses optional annotations, not actualized on the JVM.
+     * This is not needed in the IDE because optional annotations can only be used in common modules, where the IDE plugin resolves
+     * it to the corresponding class with the resolution capabilities of common modules.
+     * </pre>
+     */
+    public org.jetbrains.kotlin.metadata.ProtoBuf.Class getOptionalAnnotationClass(int index) {
+      return optionalAnnotationClass_.get(index);
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
+     *
+     * <pre>
+     * &#64;OptionalExpectation-annotated annotation classes in this module. This list is only used in the compiler frontend when compiling
+     * a second-tier multiplatform module against a multiplatform module which uses optional annotations, not actualized on the JVM.
+     * This is not needed in the IDE because optional annotations can only be used in common modules, where the IDE plugin resolves
+     * it to the corresponding class with the resolution capabilities of common modules.
+     * </pre>
+     */
+    public org.jetbrains.kotlin.metadata.ProtoBuf.ClassOrBuilder getOptionalAnnotationClassOrBuilder(
+        int index) {
+      return optionalAnnotationClass_.get(index);
+    }
+
     private void initFields() {
       packageParts_ = java.util.Collections.emptyList();
       metadataParts_ = java.util.Collections.emptyList();
@@ -553,6 +669,7 @@ public final class JvmModuleProtoBuf {
       stringTable_ = org.jetbrains.kotlin.metadata.ProtoBuf.StringTable.getDefaultInstance();
       qualifiedNameTable_ = org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTable.getDefaultInstance();
       annotation_ = java.util.Collections.emptyList();
+      optionalAnnotationClass_ = java.util.Collections.emptyList();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -584,6 +701,12 @@ public final class JvmModuleProtoBuf {
           return false;
         }
       }
+      for (int i = 0; i < getOptionalAnnotationClassCount(); i++) {
+        if (!getOptionalAnnotationClass(i).isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -608,6 +731,9 @@ public final class JvmModuleProtoBuf {
       }
       for (int i = 0; i < annotation_.size(); i++) {
         output.writeMessage(6, annotation_.get(i));
+      }
+      for (int i = 0; i < optionalAnnotationClass_.size(); i++) {
+        output.writeMessage(16, optionalAnnotationClass_.get(i));
       }
       output.writeRawBytes(unknownFields);
     }
@@ -646,6 +772,10 @@ public final class JvmModuleProtoBuf {
       for (int i = 0; i < annotation_.size(); i++) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(6, annotation_.get(i));
+      }
+      for (int i = 0; i < optionalAnnotationClass_.size(); i++) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(16, optionalAnnotationClass_.get(i));
       }
       size += unknownFields.size();
       memoizedSerializedSize = size;
@@ -753,6 +883,8 @@ public final class JvmModuleProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000010);
         annotation_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000020);
+        optionalAnnotationClass_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000040);
         return this;
       }
 
@@ -804,6 +936,11 @@ public final class JvmModuleProtoBuf {
           bitField0_ = (bitField0_ & ~0x00000020);
         }
         result.annotation_ = annotation_;
+        if (((bitField0_ & 0x00000040) == 0x00000040)) {
+          optionalAnnotationClass_ = java.util.Collections.unmodifiableList(optionalAnnotationClass_);
+          bitField0_ = (bitField0_ & ~0x00000040);
+        }
+        result.optionalAnnotationClass_ = optionalAnnotationClass_;
         result.bitField0_ = to_bitField0_;
         return result;
       }
@@ -856,6 +993,16 @@ public final class JvmModuleProtoBuf {
           }
           
         }
+        if (!other.optionalAnnotationClass_.isEmpty()) {
+          if (optionalAnnotationClass_.isEmpty()) {
+            optionalAnnotationClass_ = other.optionalAnnotationClass_;
+            bitField0_ = (bitField0_ & ~0x00000040);
+          } else {
+            ensureOptionalAnnotationClassIsMutable();
+            optionalAnnotationClass_.addAll(other.optionalAnnotationClass_);
+          }
+          
+        }
         setUnknownFields(
             getUnknownFields().concat(other.unknownFields));
         return this;
@@ -882,6 +1029,12 @@ public final class JvmModuleProtoBuf {
         }
         for (int i = 0; i < getAnnotationCount(); i++) {
           if (!getAnnotation(i).isInitialized()) {
+            
+            return false;
+          }
+        }
+        for (int i = 0; i < getOptionalAnnotationClassCount(); i++) {
+          if (!getOptionalAnnotationClass(i).isInitialized()) {
             
             return false;
           }
@@ -1681,6 +1834,215 @@ public final class JvmModuleProtoBuf {
       public Builder removeAnnotation(int index) {
         ensureAnnotationIsMutable();
         annotation_.remove(index);
+
+        return this;
+      }
+
+      private java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Class> optionalAnnotationClass_ =
+        java.util.Collections.emptyList();
+      private void ensureOptionalAnnotationClassIsMutable() {
+        if (!((bitField0_ & 0x00000040) == 0x00000040)) {
+          optionalAnnotationClass_ = new java.util.ArrayList<org.jetbrains.kotlin.metadata.ProtoBuf.Class>(optionalAnnotationClass_);
+          bitField0_ |= 0x00000040;
+         }
+      }
+
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
+       *
+       * <pre>
+       * &#64;OptionalExpectation-annotated annotation classes in this module. This list is only used in the compiler frontend when compiling
+       * a second-tier multiplatform module against a multiplatform module which uses optional annotations, not actualized on the JVM.
+       * This is not needed in the IDE because optional annotations can only be used in common modules, where the IDE plugin resolves
+       * it to the corresponding class with the resolution capabilities of common modules.
+       * </pre>
+       */
+      public java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Class> getOptionalAnnotationClassList() {
+        return java.util.Collections.unmodifiableList(optionalAnnotationClass_);
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
+       *
+       * <pre>
+       * &#64;OptionalExpectation-annotated annotation classes in this module. This list is only used in the compiler frontend when compiling
+       * a second-tier multiplatform module against a multiplatform module which uses optional annotations, not actualized on the JVM.
+       * This is not needed in the IDE because optional annotations can only be used in common modules, where the IDE plugin resolves
+       * it to the corresponding class with the resolution capabilities of common modules.
+       * </pre>
+       */
+      public int getOptionalAnnotationClassCount() {
+        return optionalAnnotationClass_.size();
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
+       *
+       * <pre>
+       * &#64;OptionalExpectation-annotated annotation classes in this module. This list is only used in the compiler frontend when compiling
+       * a second-tier multiplatform module against a multiplatform module which uses optional annotations, not actualized on the JVM.
+       * This is not needed in the IDE because optional annotations can only be used in common modules, where the IDE plugin resolves
+       * it to the corresponding class with the resolution capabilities of common modules.
+       * </pre>
+       */
+      public org.jetbrains.kotlin.metadata.ProtoBuf.Class getOptionalAnnotationClass(int index) {
+        return optionalAnnotationClass_.get(index);
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
+       *
+       * <pre>
+       * &#64;OptionalExpectation-annotated annotation classes in this module. This list is only used in the compiler frontend when compiling
+       * a second-tier multiplatform module against a multiplatform module which uses optional annotations, not actualized on the JVM.
+       * This is not needed in the IDE because optional annotations can only be used in common modules, where the IDE plugin resolves
+       * it to the corresponding class with the resolution capabilities of common modules.
+       * </pre>
+       */
+      public Builder setOptionalAnnotationClass(
+          int index, org.jetbrains.kotlin.metadata.ProtoBuf.Class value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureOptionalAnnotationClassIsMutable();
+        optionalAnnotationClass_.set(index, value);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
+       *
+       * <pre>
+       * &#64;OptionalExpectation-annotated annotation classes in this module. This list is only used in the compiler frontend when compiling
+       * a second-tier multiplatform module against a multiplatform module which uses optional annotations, not actualized on the JVM.
+       * This is not needed in the IDE because optional annotations can only be used in common modules, where the IDE plugin resolves
+       * it to the corresponding class with the resolution capabilities of common modules.
+       * </pre>
+       */
+      public Builder setOptionalAnnotationClass(
+          int index, org.jetbrains.kotlin.metadata.ProtoBuf.Class.Builder builderForValue) {
+        ensureOptionalAnnotationClassIsMutable();
+        optionalAnnotationClass_.set(index, builderForValue.build());
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
+       *
+       * <pre>
+       * &#64;OptionalExpectation-annotated annotation classes in this module. This list is only used in the compiler frontend when compiling
+       * a second-tier multiplatform module against a multiplatform module which uses optional annotations, not actualized on the JVM.
+       * This is not needed in the IDE because optional annotations can only be used in common modules, where the IDE plugin resolves
+       * it to the corresponding class with the resolution capabilities of common modules.
+       * </pre>
+       */
+      public Builder addOptionalAnnotationClass(org.jetbrains.kotlin.metadata.ProtoBuf.Class value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureOptionalAnnotationClassIsMutable();
+        optionalAnnotationClass_.add(value);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
+       *
+       * <pre>
+       * &#64;OptionalExpectation-annotated annotation classes in this module. This list is only used in the compiler frontend when compiling
+       * a second-tier multiplatform module against a multiplatform module which uses optional annotations, not actualized on the JVM.
+       * This is not needed in the IDE because optional annotations can only be used in common modules, where the IDE plugin resolves
+       * it to the corresponding class with the resolution capabilities of common modules.
+       * </pre>
+       */
+      public Builder addOptionalAnnotationClass(
+          int index, org.jetbrains.kotlin.metadata.ProtoBuf.Class value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureOptionalAnnotationClassIsMutable();
+        optionalAnnotationClass_.add(index, value);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
+       *
+       * <pre>
+       * &#64;OptionalExpectation-annotated annotation classes in this module. This list is only used in the compiler frontend when compiling
+       * a second-tier multiplatform module against a multiplatform module which uses optional annotations, not actualized on the JVM.
+       * This is not needed in the IDE because optional annotations can only be used in common modules, where the IDE plugin resolves
+       * it to the corresponding class with the resolution capabilities of common modules.
+       * </pre>
+       */
+      public Builder addOptionalAnnotationClass(
+          org.jetbrains.kotlin.metadata.ProtoBuf.Class.Builder builderForValue) {
+        ensureOptionalAnnotationClassIsMutable();
+        optionalAnnotationClass_.add(builderForValue.build());
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
+       *
+       * <pre>
+       * &#64;OptionalExpectation-annotated annotation classes in this module. This list is only used in the compiler frontend when compiling
+       * a second-tier multiplatform module against a multiplatform module which uses optional annotations, not actualized on the JVM.
+       * This is not needed in the IDE because optional annotations can only be used in common modules, where the IDE plugin resolves
+       * it to the corresponding class with the resolution capabilities of common modules.
+       * </pre>
+       */
+      public Builder addOptionalAnnotationClass(
+          int index, org.jetbrains.kotlin.metadata.ProtoBuf.Class.Builder builderForValue) {
+        ensureOptionalAnnotationClassIsMutable();
+        optionalAnnotationClass_.add(index, builderForValue.build());
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
+       *
+       * <pre>
+       * &#64;OptionalExpectation-annotated annotation classes in this module. This list is only used in the compiler frontend when compiling
+       * a second-tier multiplatform module against a multiplatform module which uses optional annotations, not actualized on the JVM.
+       * This is not needed in the IDE because optional annotations can only be used in common modules, where the IDE plugin resolves
+       * it to the corresponding class with the resolution capabilities of common modules.
+       * </pre>
+       */
+      public Builder addAllOptionalAnnotationClass(
+          java.lang.Iterable<? extends org.jetbrains.kotlin.metadata.ProtoBuf.Class> values) {
+        ensureOptionalAnnotationClassIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, optionalAnnotationClass_);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
+       *
+       * <pre>
+       * &#64;OptionalExpectation-annotated annotation classes in this module. This list is only used in the compiler frontend when compiling
+       * a second-tier multiplatform module against a multiplatform module which uses optional annotations, not actualized on the JVM.
+       * This is not needed in the IDE because optional annotations can only be used in common modules, where the IDE plugin resolves
+       * it to the corresponding class with the resolution capabilities of common modules.
+       * </pre>
+       */
+      public Builder clearOptionalAnnotationClass() {
+        optionalAnnotationClass_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000040);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
+       *
+       * <pre>
+       * &#64;OptionalExpectation-annotated annotation classes in this module. This list is only used in the compiler frontend when compiling
+       * a second-tier multiplatform module against a multiplatform module which uses optional annotations, not actualized on the JVM.
+       * This is not needed in the IDE because optional annotations can only be used in common modules, where the IDE plugin resolves
+       * it to the corresponding class with the resolution capabilities of common modules.
+       * </pre>
+       */
+      public Builder removeOptionalAnnotationClass(int index) {
+        ensureOptionalAnnotationClassIsMutable();
+        optionalAnnotationClass_.remove(index);
 
         return this;
       }

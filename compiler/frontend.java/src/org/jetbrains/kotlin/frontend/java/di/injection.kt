@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.jvm.JvmDiagnosticComponents
+import org.jetbrains.kotlin.resolve.jvm.multiplatform.OptionalAnnotationPackageFragmentProvider
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
@@ -121,6 +122,7 @@ fun StorageComponentContainer.configureJavaSpecificComponents(
         useInstance((moduleContext.module.builtIns as JvmBuiltIns).settings)
         useImpl<JvmBuiltInsPackageFragmentProvider>()
     }
+    useImpl<OptionalAnnotationPackageFragmentProvider>()
 
     useInstance(javaClassTracker ?: JavaClassesTracker.Default)
     useInstance(

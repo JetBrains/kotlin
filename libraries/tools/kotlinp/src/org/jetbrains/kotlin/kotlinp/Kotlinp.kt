@@ -10,7 +10,7 @@ import kotlinx.metadata.jvm.KotlinClassMetadata
 import kotlinx.metadata.jvm.KotlinModuleMetadata
 import java.io.File
 
-class Kotlinp(val settings: KotlinpSettings) {
+class Kotlinp(private val settings: KotlinpSettings) {
     internal fun renderClassFile(classFile: KotlinClassMetadata?): String =
         when (classFile) {
             is KotlinClassMetadata.Class -> ClassPrinter(settings).print(classFile)
@@ -35,7 +35,7 @@ class Kotlinp(val settings: KotlinpSettings) {
     }
 
     internal fun renderModuleFile(metadata: KotlinModuleMetadata?): String =
-        if (metadata != null) ModuleFilePrinter().print(metadata)
+        if (metadata != null) ModuleFilePrinter(settings).print(metadata)
         else buildString { appendln("unsupported file") }
 
     internal fun readModuleFile(file: File): KotlinModuleMetadata? =
