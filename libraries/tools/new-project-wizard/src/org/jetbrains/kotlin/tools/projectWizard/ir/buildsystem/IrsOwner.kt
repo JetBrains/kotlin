@@ -14,7 +14,7 @@ fun <I : IrsOwner> I.withIrs(vararg irs: BuildSystemIR) = withReplacedIrs(irs = 
 
 
 inline fun <reified I : BuildSystemIR> IrsOwner.irsOfType(): List<I> =
-  irs.filterIsInstance<I>()
+    irs.filterIsInstance<I>()
 
 
 inline fun <reified I : BuildSystemIR> IrsOwner.irsOfTypeOrNull() =

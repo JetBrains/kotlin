@@ -50,6 +50,22 @@ data class GradleCallIr(
     }
 }
 
+data class GradleNewInstanceCall(
+    val name: String,
+    val parameters: List<BuildSystemIR> = emptyList()
+) : GradleIR {
+    override fun GradlePrinter.renderGradle() {
+        if (dsl == GradlePrinter.GradleDsl.GROOVY) {
+            +"new "
+        }
+        call(name, forceBrackets = true) {
+            parameters.list { it.render(this) }
+        }
+    }
+}
+
+
+
 
 data class GradleSectionIR(
     val name: String,

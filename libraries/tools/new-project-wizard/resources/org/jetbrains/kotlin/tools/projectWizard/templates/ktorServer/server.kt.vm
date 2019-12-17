@@ -5,6 +5,9 @@ import io.ktor.routing.get
 import io.ktor.routing.routing
 import io.ktor.server.engine.embeddedServer
 import ${serverEngine.getImport()}
+#foreach($import in $imports)
+import $import
+#end
 import kotlinx.html.*
 
 fun HTML.index() {
@@ -15,6 +18,9 @@ fun HTML.index() {
         div {
             +"Hello from Ktor"
         }
+        #foreach($element in $elements)
+        $element
+        #end
     }
 }
 
@@ -24,6 +30,9 @@ fun main() {
             get("/") {
                 call.respondHtml(HttpStatusCode.OK, HTML::index)
             }
+            #foreach($route in $routes)
+            $route
+            #end
         }
     }.start(wait = true)
 }

@@ -4,8 +4,6 @@ import org.jetbrains.kotlin.tools.projectWizard.Identificator
 import org.jetbrains.kotlin.tools.projectWizard.SettingsOwner
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
-import org.jetbrains.kotlin.tools.projectWizard.core.service.FileSystemWizardService
-import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.Interceptor
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.TargetConfigurationIR
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
@@ -15,6 +13,8 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Sourceset
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.SourcesetType
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
+import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.InterceptionPoint
+import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.TemplateInterceptor
 import java.nio.file.Path
 import kotlin.properties.ReadOnlyProperty
 
@@ -64,6 +64,7 @@ abstract class Template : SettingsOwner {
     abstract val sourcesetTypes: Set<SourcesetType>
 
     open val settings: List<TemplateSetting<*, *>> = emptyList()
+    open val interceptionPoints: List<InterceptionPoint<Any>> = emptyList()
 
     open fun TaskRunningContext.getRequiredLibraries(sourceset: SourcesetIR): List<DependencyIR> = emptyList()
 
@@ -79,16 +80,11 @@ abstract class Template : SettingsOwner {
 
     open fun TaskRunningContext.getFileTemplates(sourceset: SourcesetIR): List<FileTemplateDescriptor> = emptyList()
 
-    open fun createInterceptors(sourceset: SourcesetIR): List<Interceptor> = emptyList()
+    open fun createInterceptors(sourceset: SourcesetIR): List<TemplateInterceptor> = emptyList()
 
     fun TaskRunningContext.applyToSourceset(
-        templateEngine: TemplateEngine,
         sourceset: SourcesetIR
     ): TaskResult<TemplateApplicationResult> {
-        val fileSystemService = service<FileSystemWizardService>()!!
-
-        val allSettings = createDefaultSettings() + settingsAsMap(sourceset.original)
-
         val librariesToAdd = getRequiredLibraries(sourceset)
         val irsToAddToBuildFile = getIrsToAddToBuildFile(sourceset)
 
@@ -101,20 +97,15 @@ abstract class Template : SettingsOwner {
         }
 
         val result = TemplateApplicationResult(librariesToAdd, irsToAddToBuildFile, targetsUpdater)
-
-        return getFileTemplates(sourceset).map { fileTemplate ->
-            val fileText = templateEngine.renderTemplate(fileTemplate, allSettings)
-            val path = sourceset.path / fileTemplate.relativePath
-            fileSystemService.createFile(path, fileText)
-        }.sequenceIgnore() andThen result.asSuccess()
+        return result.asSuccess()
     }
 
-    private fun TaskRunningContext.settingsAsMap(sourceset: Sourceset): Map<String, Any> =
+    fun TaskRunningContext.settingsAsMap(sourceset: Sourceset): Map<String, Any> =
         withSettingsOf(sourceset) {
             settings.associate { setting ->
                 setting.path to setting.reference.settingValue
             }
-        }
+        } + createDefaultSettings()
 
 
     private fun TaskRunningContext.createDefaultSettings() = mapOf(
@@ -250,7 +241,7 @@ fun TaskRunningContext.applyTemplateToSourceset(
 ): TaskResult<TemplateApplicationResult> = when (template) {
     null -> TemplateApplicationResult.EMPTY.asSuccess()
     else -> with(template) {
-        applyToSourceset(templateEngine, sourceset)
+        applyToSourceset(sourceset)
     }
 }
 
