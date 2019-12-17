@@ -108,12 +108,8 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver {
             is FirUserTypeRef -> {
                 resolveUserType(typeRef, resolveToSymbol(typeRef, scope), scope)
             }
-            is FirErrorTypeRef -> typeRef.type
             is FirFunctionTypeRef -> {
                 createFunctionalType(typeRef)
-            }
-            is FirImplicitBuiltinTypeRef -> {
-                resolveToSymbol(typeRef, scope)!!.constructType(emptyList(), isNullable = false, symbolOriginSession = session)
             }
             is FirDelegatedTypeRef -> {
                 resolveType(typeRef.typeRef, scope)
