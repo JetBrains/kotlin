@@ -1,9 +1,9 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.projectRoots.impl;
 
-import com.google.common.collect.*;
+import com.google.common.collect.MultimapBuilder;
+import com.google.common.collect.SetMultimap;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.application.WriteAction;
@@ -27,17 +27,16 @@ import com.intellij.openapi.roots.ui.configuration.projectRoot.SdkDownloadTracke
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.util.Consumer;
 import com.intellij.util.TripleFunction;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static com.intellij.openapi.progress.PerformInBackgroundOption.ALWAYS_BACKGROUND;
 import static com.intellij.openapi.projectRoots.impl.UnknownSdkResolver.UnknownSdk;
@@ -69,28 +68,28 @@ public class UnknownSdkTracker {
   }
 
   private void updateUnknownSdksWithProgress(@NotNull ProgressIndicator indicator) {
-    List<String> totallyUnknownSdks = new ArrayList<>();
+    List<SdkUsage> unsetSdks = new ArrayList<>();
+    List<String> missingSdks = new ArrayList<>();
     List<UnknownSdk> fixable = new ArrayList<>();
-    ReadAction.run(() -> collectAndGroupSdkUsages(totallyUnknownSdks, fixable));
+    ReadAction.run(() -> collectAndGroupSdkUsages(unsetSdks, missingSdks, fixable));
 
     List<UnknownSdkLookup> lookups = collectSdkLookups(indicator);
     Map<UnknownSdk, LocalSdkFix> localFixes = findFixesAndRemoveFixable(indicator, fixable, lookups, UnknownSdkLookup::proposeLocalFix);
     Map<UnknownSdk, DownloadSdkFix> downloadFixes = findFixesAndRemoveFixable(indicator, fixable, lookups, UnknownSdkLookup::proposeDownload);
-    fixable.forEach(it -> totallyUnknownSdks.add(it.getSdkName()));
+    fixable.forEach(it -> missingSdks.add(it.getSdkName()));
 
     ApplicationManager.getApplication().invokeLater(() -> {
       indicator.setText("Configuring SDKs...");
       configureLocalSdks(localFixes);
 
       UnknownSdkBalloonNotification.getInstance(myProject).notifyFixedSdks(localFixes);
-      UnknownSdkEditorNotification.getInstance(myProject).showNotifications(totallyUnknownSdks, downloadFixes);
+      UnknownSdkEditorNotification.getInstance(myProject).showNotifications(unsetSdks, missingSdks, downloadFixes);
     });
   }
 
   @NotNull
   private List<UnknownSdkLookup> collectSdkLookups(@NotNull ProgressIndicator indicator) {
     List<UnknownSdkLookup> lookups = new ArrayList<>();
-
     UnknownSdkResolver.EP_NAME.forEachExtensionSafe(ext -> {
       UnknownSdkLookup resolver = ext.createResolver(myProject, indicator);
       if (resolver != null) {
@@ -100,7 +99,15 @@ public class UnknownSdkTracker {
     return lookups;
   }
 
-  private void collectAndGroupSdkUsages(@NotNull List<String> totallyUnknownSdks,
+  /**
+   * Collects all SDK usages from the project model and splits them
+   * into the specified groups
+   * @param undefinedSdks all usages where SDK is not set, e.g. lack of Project or Module SDK
+   * @param totallyUnknownSdks all named SDKs that are not present and where SdkType is missing or contains different values
+   * @param resolvableSdks all usages where fix extension points from {@link UnknownSdkResolver#EP_NAME} are possible to apply
+   */
+  private void collectAndGroupSdkUsages(@NotNull List<SdkUsage> undefinedSdks,
+                                        @NotNull List<String> totallyUnknownSdks,
                                         @NotNull List<UnknownSdk> resolvableSdks) {
     SetMultimap<String, String> sdkToTypes = MultimapBuilder
       .treeKeys(String.CASE_INSENSITIVE_ORDER)
@@ -110,6 +117,11 @@ public class UnknownSdkTracker {
     ProjectJdkTable jdkTable = ProjectJdkTable.getInstance();
     for (SdkUsage usage : SdkUsagesCollector.getInstance(myProject).collectSdkUsages()) {
       String sdkName = usage.getSdkName();
+
+      if (sdkName == null) {
+        undefinedSdks.add(usage);
+        continue;
+      }
 
       //we do not track existing SDKs
       if (jdkTable.findJdk(sdkName) != null) continue;
@@ -177,6 +189,15 @@ public class UnknownSdkTracker {
                                     @Nullable SdkType sdkType,
                                     @NotNull Container underneathRightOfComponent,
                                     @NotNull Runnable onSelectionMade) {
+    showSdkSelectionPopup(sdkType, underneathRightOfComponent, sdk -> {
+      registerNewSdkInJdkTable(sdkName, sdk);
+      onSelectionMade.run();
+    });
+  }
+
+  public void showSdkSelectionPopup(@Nullable SdkType sdkType,
+                                    @NotNull Container underneathRightOfComponent,
+                                    @NotNull Consumer<? super Sdk> onSelectionMade) {
     ProjectSdksModel model = new ProjectSdksModel();
     SdkListModelBuilder modelBuilder = new SdkListModelBuilder(
       myProject,
@@ -191,21 +212,22 @@ public class UnknownSdkTracker {
       modelBuilder
     );
 
-    AtomicBoolean wasSdkCreated = new AtomicBoolean(false);
+    AtomicReference<Sdk> wasSdkCreated = new AtomicReference<>(null);
     model.addListener(new SdkModel.Listener() {
       @Override
       public void sdkAdded(@NotNull Sdk sdk) {
+        //TODO: handle if an existing item is selected!
         //it is easier and safer than committing the ProjectSdksModel instance
-        registerNewSdkInJdkTable(sdkName, sdk);
-        wasSdkCreated.set(true);
+        wasSdkCreated.set(sdk);
       }
     });
 
     popup.showUnderneathToTheRightOf(
       underneathRightOfComponent,
       () -> {
-        if (wasSdkCreated.get()) {
-          onSelectionMade.run();
+        Sdk sdk = wasSdkCreated.get();
+        if (sdk != null) {
+          onSelectionMade.consume(sdk);
         }
       }
     );
@@ -298,19 +320,6 @@ public class UnknownSdkTracker {
     @Override
     public SdkType getSdkType() {
       return mySdkType;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-      if (this == o) return true;
-      if (!(o instanceof MissingSdkInfo)) return false;
-      MissingSdkInfo info = (MissingSdkInfo)o;
-      return mySdkName.equals(info.mySdkName);
-    }
-
-    @Override
-    public int hashCode() {
-      return Objects.hash(mySdkName);
     }
   }
 }

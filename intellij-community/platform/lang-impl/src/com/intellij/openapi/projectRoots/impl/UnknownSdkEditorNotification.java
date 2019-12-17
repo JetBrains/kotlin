@@ -7,11 +7,12 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkType;
+import com.intellij.openapi.projectRoots.impl.SdkUsagesCollector.SdkUsage;
 import com.intellij.openapi.projectRoots.impl.UnknownSdkResolver.DownloadSdkFix;
 import com.intellij.openapi.projectRoots.impl.UnknownSdkResolver.UnknownSdk;
 import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.util.SmartList;
@@ -22,6 +23,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class UnknownSdkEditorNotification implements Disposable {
   public static final Key<List<MissingSdkNotificationPanel>> NOTIFICATIONS = Key.create("notifications added to the editor");
@@ -34,7 +36,7 @@ public class UnknownSdkEditorNotification implements Disposable {
 
   private final Project myProject;
   private final FileEditorManager myFileEditorManager;
-  private final Map<String, SdkFixInfo> myNotifications = new TreeMap<>();
+  private final Set<SdkFixInfo> myNotifications = new LinkedHashSet<>();
 
   UnknownSdkEditorNotification(@NotNull Project project) {
     myProject = project;
@@ -51,23 +53,17 @@ public class UnknownSdkEditorNotification implements Disposable {
       });
   }
 
-  @NotNull
-  private MissingSdkNotificationPanel createPanelFor(@NotNull SdkFixInfo info) {
-    Pair<UnknownSdk, DownloadSdkFix> fixInfo = info.getFixInfo();
-    String sdkName = info.getSdkName();
+  private void setupPanel(@NotNull MissingSdkNotificationPanel panel,
+                          @NotNull String sdkName,
+                          @Nullable UnknownSdk unknownSdk,
+                          @Nullable DownloadSdkFix fix) {
 
-    SdkType sdkType = fixInfo != null ? fixInfo.first.getSdkType() : null;
+    SdkType sdkType = unknownSdk != null ? unknownSdk.getSdkType() : null;
     String sdkTypeName = sdkType != null ? sdkType.getPresentableName() : "SDK";
 
-    MissingSdkNotificationPanel panel = new MissingSdkNotificationPanel(info);
-    panel.setProject(myProject);
-    panel.setProviderKey(EDITOR_NOTIFICATIONS_KEY);
     panel.setText(sdkTypeName + " \"" + sdkName + "\" is missing");
 
-    if (fixInfo != null) {
-      UnknownSdk unknownSdk = fixInfo.first;
-      DownloadSdkFix fix = fixInfo.second;
-
+    if (fix != null && unknownSdk != null) {
       panel.createActionLabel("Download " + sdkTypeName + " (" + fix.getDownloadDescription() + ")", () -> {
         removeNotification(panel);
         UnknownSdkTracker.getInstance(myProject).applyDownloadableFix(unknownSdk, fix);
@@ -85,8 +81,37 @@ public class UnknownSdkEditorNotification implements Disposable {
                                 .showSdkSelectionPopup(sdkName, sdkType, container, () -> removeNotification(panel));
                             }
     );
+  }
 
-    return panel;
+  private void setupPanel(@NotNull MissingSdkNotificationPanel panel,
+                          @NotNull String source,
+                          @Nullable Runnable setProjectSdk,
+                          @Nullable Consumer<Sdk> setSdk) {
+
+    panel.setProviderKey(EDITOR_NOTIFICATIONS_KEY);
+    panel.setText("SDK is not set for " + source);
+
+    if (setProjectSdk != null) {
+      panel.createActionLabel("Use Project SDK", () -> {
+        setProjectSdk.run();
+        removeNotification(panel);
+      });
+    }
+
+    if (setSdk != null) {
+      panel.createActionLabel("Configure...", () -> {
+        //FileEditorManager#addTopComponent wraps the panel to implement borders, unwrapping
+        Container container = panel.getParent();
+        if (container == null) container = panel;
+
+        UnknownSdkTracker
+          .getInstance(myProject)
+          .showSdkSelectionPopup(null, container, sdk -> {
+            setSdk.accept(sdk);
+            removeNotification(panel);
+          });
+      });
+    }
   }
 
   @Override
@@ -94,19 +119,56 @@ public class UnknownSdkEditorNotification implements Disposable {
 
   @NotNull
   public List<SdkFixInfo> getNotifications() {
-    return ImmutableList.copyOf(myNotifications.values());
+    return ImmutableList.copyOf(myNotifications);
   }
 
-  public void showNotifications(@NotNull List<String> unifiableSdkNames,
+  public void showNotifications(@NotNull List<SdkUsage> unsetSdks,
+                                @NotNull List<String> unifiableSdkNames,
                                 @NotNull Map<UnknownSdk, DownloadSdkFix> files) {
     myNotifications.clear();
 
+    for (SdkUsage usage : unsetSdks) {
+      myNotifications.add(new SdkFixInfo() {
+        @Override
+        public void setupNotificationPanel(@NotNull MissingSdkNotificationPanel panel) {
+          setupPanel(panel, usage.getUsagePresentableText(), usage.getProjectSdkSetAction(), usage.getSdkSetAction());
+        }
+
+        @Override
+        public String toString() {
+          return "SdkFixInfo { sdkUsage: " + usage.getUsagePresentableText() + " }";
+        }
+      });
+    }
+
     for (String name : unifiableSdkNames) {
-      myNotifications.put(name, SdkFixInfo.forBroken(name));
+      myNotifications.add(new SdkFixInfo() {
+        @Override
+        public void setupNotificationPanel(@NotNull MissingSdkNotificationPanel panel) {
+          setupPanel(panel, name, (UnknownSdk)null, null);
+        }
+
+        @Override
+        public String toString() {
+          return "SdkFixInfo { unknownName: '" + name + "' }";
+        }
+      });
     }
 
     for (Map.Entry<UnknownSdk, DownloadSdkFix> e : files.entrySet()) {
-      myNotifications.put(e.getKey().getSdkName(), SdkFixInfo.forFix(e));
+      UnknownSdk key = e.getKey();
+      DownloadSdkFix fix = e.getValue();
+      myNotifications.add(new SdkFixInfo() {
+        @Override
+        public void setupNotificationPanel(@NotNull MissingSdkNotificationPanel panel) {
+          setupPanel(panel, key.getSdkName(), key, fix);
+        }
+
+        @Override
+        public String toString() {
+          return "SdkFixInfo { name: '" + key.getSdkName() + "', fix: " + fix.getDownloadDescription() + " }";
+        }
+      });
     }
 
     for (FileEditor editor : myFileEditorManager.getAllEditors()) {
@@ -115,7 +177,7 @@ public class UnknownSdkEditorNotification implements Disposable {
   }
 
   private void removeNotification(@NotNull MissingSdkNotificationPanel expiredPanel) {
-    myNotifications.remove(expiredPanel.myInfo.getSdkName());
+    myNotifications.remove(expiredPanel.myInfo);
 
     for (FileEditor editor : myFileEditorManager.getAllEditors()) {
       List<MissingSdkNotificationPanel> notifications = editor.getUserData(NOTIFICATIONS);
@@ -145,8 +207,11 @@ public class UnknownSdkEditorNotification implements Disposable {
       editor.putUserData(NOTIFICATIONS, notifications);
     }
 
-    for (SdkFixInfo info : myNotifications.values()) {
-      MissingSdkNotificationPanel notification = createPanelFor(info);
+    for (SdkFixInfo info : myNotifications) {
+      MissingSdkNotificationPanel notification = new MissingSdkNotificationPanel(info);
+      notification.setProject(myProject);
+      notification.setProviderKey(EDITOR_NOTIFICATIONS_KEY);
+      info.setupNotificationPanel(notification);
 
       notifications.add(notification);
       myFileEditorManager.addTopComponent(editor, notification);
@@ -166,56 +231,7 @@ public class UnknownSdkEditorNotification implements Disposable {
     }
   }
 
-  public static class SdkFixInfo {
-    @NotNull
-    static SdkFixInfo forBroken(@NotNull String sdkName) {
-      return new SdkFixInfo(sdkName);
-    }
-
-    @NotNull
-    static SdkFixInfo forFix(@NotNull Map.Entry<? extends UnknownSdk, DownloadSdkFix> e) {
-      UnknownSdk sdk = e.getKey();
-      DownloadSdkFix fix = e.getValue();
-      return new SdkFixInfo(sdk.getSdkName()) {
-        @NotNull
-        @Override
-        public Pair<UnknownSdk, DownloadSdkFix> getFixInfo() {
-          return Pair.create(sdk, fix);
-        }
-      };
-    }
-
-    private final String mySdkName;
-
-    private SdkFixInfo(@NotNull String sdkName) {
-      mySdkName = sdkName;
-    }
-
-    @NotNull
-    public String getSdkName() {
-      return mySdkName;
-    }
-
-    @Nullable
-    public Pair<UnknownSdk, DownloadSdkFix> getFixInfo() {
-      return null;
-    }
-
-    @Override
-    public final int hashCode() {
-      return Objects.hashCode(mySdkName);
-    }
-
-    @Override
-    public final boolean equals(Object obj) {
-      return obj instanceof SdkFixInfo && Objects.equals(((SdkFixInfo)obj).mySdkName, mySdkName);
-    }
-
-    @Override
-    public String toString() {
-      return "SdkFixInfo{" +
-             "mySdkName='" + mySdkName + '\'' +
-             '}';
-    }
+  public interface SdkFixInfo {
+    void setupNotificationPanel(@NotNull MissingSdkNotificationPanel panel);
   }
 }
