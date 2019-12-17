@@ -41,7 +41,7 @@ class ConeIntegerLiteralTypeImpl : ConeIntegerLiteralType {
     override val supertypes: List<ConeClassLikeType> by lazy {
         listOf(
             NUMBER_TYPE,
-            ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(StandardClassIds.Comparable), arrayOf(ConeKotlinTypeProjectionOut(this)), false)
+            ConeClassLikeTypeImpl(COMPARABLE_TAG, arrayOf(ConeKotlinTypeProjectionOut(this)), false)
         )
     }
 
@@ -62,6 +62,8 @@ class ConeIntegerLiteralTypeImpl : ConeIntegerLiteralType {
         private val INT_RANGE = Int.MIN_VALUE.toLong()..Int.MAX_VALUE.toLong()
         private val BYTE_RANGE = Byte.MIN_VALUE.toLong()..Byte.MAX_VALUE.toLong()
         private val SHORT_RANGE = Short.MIN_VALUE.toLong()..Short.MAX_VALUE.toLong()
+
+        private val COMPARABLE_TAG = ConeClassLikeLookupTagImpl(StandardClassIds.Comparable)
 
         fun findCommonSuperType(types: Collection<SimpleTypeMarker>): SimpleTypeMarker? {
             return findCommonSuperTypeOrIntersectionType(types, Mode.COMMON_SUPER_TYPE)
