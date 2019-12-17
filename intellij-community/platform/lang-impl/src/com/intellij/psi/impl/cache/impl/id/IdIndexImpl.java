@@ -5,6 +5,7 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.util.indexing.CustomInputsIndexFileBasedIndexExtension;
+import com.intellij.util.indexing.InvertedIndex;
 import com.intellij.util.io.DataExternalizer;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,12 +19,16 @@ public class IdIndexImpl extends IdIndex implements CustomInputsIndexFileBasedIn
     Arrays.sort(types, (o1, o2) -> Comparing.compare(o1.getName(), o2.getName()));
 
     int version = super.getVersion();
-    for(FileType fileType:types) {
-      if (!isIndexable(fileType)) continue;
-      IdIndexer indexer = IdTableBuilding.getFileTypeIndexer(fileType);
-      if (indexer == null) continue;
-      version = version * 31 + (indexer.getVersion() ^ indexer.getClass().getName().hashCode());
+
+    if (!InvertedIndex.ARE_COMPOSITE_INDEXERS_ENABLED) {
+      for(FileType fileType:types) {
+        if (!isIndexable(fileType)) continue;
+        IdIndexer indexer = IdTableBuilding.getFileTypeIndexer(fileType);
+        if (indexer == null) continue;
+        version = version * 31 + (indexer.getVersion() ^ indexer.getClass().getName().hashCode());
+      }
     }
+
     return version;
   }
 
