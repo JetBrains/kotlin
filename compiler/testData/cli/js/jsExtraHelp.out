@@ -43,6 +43,7 @@ where advanced options include:
   -Xnew-inference            Enable new experimental generic type inference algorithm
   -Xno-check-actual          Do not check presence of 'actual' modifier in multi-platform projects
   -Xno-inline                Disable method inlining
+  -Xopt-in=<fq.name>         Enable usages of API that requires opt-in with an opt-in requirement marker with the given fully qualified name
   -Xphases-to-dump           Dump backend state both before and after these phases
   -Xphases-to-dump-after     Dump backend state after these phases
   -Xphases-to-dump-before    Dump backend state before these phases
