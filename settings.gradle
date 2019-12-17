@@ -47,9 +47,6 @@ gradleEnterprise {
             server = buildProperties.buildScanServer
             allowUntrustedServer = true
             publishAlways()
-            if (buildProperties.isTeamcityBuild) {
-                tag "teamcity"
-            }
         } else {
             setTermsOfServiceUrl("https://gradle.com/terms-of-service")
             setTermsOfServiceAgree("yes")
