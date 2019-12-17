@@ -18693,6 +18693,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/primitiveTypes/nullAsNullableIntIsNull.kt");
         }
 
+        @TestMetadata("nullableAsIndex.kt")
+        public void testNullableAsIndex() throws Exception {
+            runTest("compiler/testData/codegen/box/primitiveTypes/nullableAsIndex.kt");
+        }
+
         @TestMetadata("nullableCharBoolean.kt")
         public void testNullableCharBoolean() throws Exception {
             runTest("compiler/testData/codegen/box/primitiveTypes/nullableCharBoolean.kt");

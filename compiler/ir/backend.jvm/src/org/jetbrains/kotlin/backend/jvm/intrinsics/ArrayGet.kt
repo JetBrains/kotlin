@@ -19,12 +19,15 @@ package org.jetbrains.kotlin.backend.jvm.intrinsics
 import org.jetbrains.kotlin.backend.jvm.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
+import org.jetbrains.org.objectweb.asm.Type
 
 object ArrayGet : IntrinsicMethod() {
     override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? {
         val receiver = expression.dispatchReceiver!!.accept(codegen, data).materialized
         val elementType = AsmUtil.correctElementType(receiver.type)
-        expression.getValueArgument(0)!!.accept(codegen, data).materialize()
+        expression.getValueArgument(0)!!.accept(codegen, data)
+            .coerce(Type.INT_TYPE, codegen.context.irBuiltIns.intType)
+            .materialize()
         codegen.mv.aload(elementType)
         return MaterialValue(codegen, elementType, expression.type)
     }
