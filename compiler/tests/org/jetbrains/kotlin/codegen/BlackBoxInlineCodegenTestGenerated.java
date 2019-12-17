@@ -2874,6 +2874,21 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
                 runTest("compiler/testData/codegen/boxInline/reified/checkCast/chain.kt");
             }
 
+            @TestMetadata("kt26435.kt")
+            public void testKt26435() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/reified/checkCast/kt26435.kt");
+            }
+
+            @TestMetadata("kt26435_2.kt")
+            public void testKt26435_2() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/reified/checkCast/kt26435_2.kt");
+            }
+
+            @TestMetadata("kt26435_3.kt")
+            public void testKt26435_3() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/reified/checkCast/kt26435_3.kt");
+            }
+
             @TestMetadata("kt8043.kt")
             public void testKt8043() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/reified/checkCast/kt8043.kt");
