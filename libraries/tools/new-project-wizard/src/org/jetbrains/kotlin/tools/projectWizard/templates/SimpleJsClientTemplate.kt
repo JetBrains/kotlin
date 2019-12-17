@@ -12,9 +12,11 @@ import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.*
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.DefaultTargetConfigurationIR
 import org.jetbrains.kotlin.tools.projectWizard.library.MavenArtifact
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JsBrowserTargetConfigurator
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.DefaultRepository
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Sourceset
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.SourcesetType
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.TemplateInterceptor
@@ -26,6 +28,9 @@ class SimpleJsClientTemplate : Template() {
     override val moduleTypes: Set<ModuleType> = setOf(ModuleType.js)
     override val sourcesetTypes: Set<SourcesetType> = setOf(SourcesetType.main)
     override val id: String = "simpleJsClient"
+
+    override fun isApplicableTo(sourceset: Sourceset): Boolean =
+        sourceset.parent?.configurator == JsBrowserTargetConfigurator
 
     override fun TaskRunningContext.getRequiredLibraries(sourceset: SourcesetIR): List<DependencyIR> =
         buildList {
