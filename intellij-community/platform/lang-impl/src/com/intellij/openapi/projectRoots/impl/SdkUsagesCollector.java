@@ -23,6 +23,11 @@ import java.util.List;
  */
 public class SdkUsagesCollector {
   private static final ExtensionPointName<SdkUsagesContributor> EP_NAME = ExtensionPointName.create("com.intellij.sdkUsagesContributor");
+  private final Project myProject;
+
+  public SdkUsagesCollector(@NotNull Project project) {
+    myProject = project;
+  }
 
   @NotNull
   public static SdkUsagesCollector getInstance(@NotNull Project project) {
@@ -58,9 +63,9 @@ public class SdkUsagesCollector {
    * Iterates the project model to detect usages if SDKs
    */
   @NotNull
-  public List<SdkUsage> collectSdkUsages(@NotNull Project project) {
+  public List<SdkUsage> collectSdkUsages() {
     List<SdkUsage> usages = new ArrayList<>();
-    EP_NAME.forEachExtensionSafe(it -> usages.addAll(it.contributeUsages(project)));
+    EP_NAME.forEachExtensionSafe(it -> usages.addAll(it.contributeUsages(myProject)));
     return usages;
   }
 
