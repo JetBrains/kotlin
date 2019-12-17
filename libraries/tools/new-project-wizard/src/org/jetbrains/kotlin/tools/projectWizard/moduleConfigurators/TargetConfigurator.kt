@@ -56,6 +56,7 @@ interface JsTargetConfigurator : TargetConfigurator, SingleCoexistenceTargetConf
 object JsBrowserTargetConfigurator : JsTargetConfigurator {
     override val id = "jsBrowser"
     override val text = "Browser"
+    override val suggestedModuleName = "browser"
 
     override fun createTargetIrs(module: Module): List<BuildSystemIR> = buildList {
         +DefaultTargetConfigurationIR(
@@ -72,6 +73,7 @@ object JsBrowserTargetConfigurator : JsTargetConfigurator {
 object JsNodeTargetConfigurator : JsTargetConfigurator {
     override val id = "jsNode"
     override val text = "Node.js"
+    override val suggestedModuleName = "nodeJs"
 
     override fun createTargetIrs(module: Module): List<BuildSystemIR> = buildList {
         +DefaultTargetConfigurationIR(
