@@ -8247,6 +8247,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/removeCurlyBracesFromTemplate/necessaryBrackets7.kt");
         }
 
+        @TestMetadata("necessaryBrackets8.kt")
+        public void testNecessaryBrackets8() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeCurlyBracesFromTemplate/necessaryBrackets8.kt");
+        }
+
         @TestMetadata("unnecessaryBrackets1.kt")
         public void testUnnecessaryBrackets1() throws Exception {
             runTest("idea/testData/inspectionsLocal/removeCurlyBracesFromTemplate/unnecessaryBrackets1.kt");

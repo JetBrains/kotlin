@@ -542,8 +542,11 @@ fun KtModifierList.normalize(): KtModifierList {
     }
 }
 
-fun KtBlockStringTemplateEntry.canDropBraces() =
-    (expression is KtNameReferenceExpression || expression is KtThisExpression) && canPlaceAfterSimpleNameEntry(nextSibling)
+fun KtBlockStringTemplateEntry.canDropBraces(): Boolean {
+    val expression = this.expression
+    return (expression is KtNameReferenceExpression || (expression is KtThisExpression && expression.labelQualifier == null))
+            && canPlaceAfterSimpleNameEntry(nextSibling)
+}
 
 fun KtBlockStringTemplateEntry.dropBraces(): KtSimpleNameStringTemplateEntry {
     val name = if (expression is KtThisExpression) {
