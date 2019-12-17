@@ -3614,6 +3614,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/parameterlessMain"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
+        @TestMetadata("dontGenerateOnExtensionReceiver.kt")
+        public void testDontGenerateOnExtensionReceiver() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/parameterlessMain/dontGenerateOnExtensionReceiver.kt");
+        }
+
         @TestMetadata("dontGenerateOnJvmNameMain.kt")
         public void testDontGenerateOnJvmNameMain() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/parameterlessMain/dontGenerateOnJvmNameMain.kt");
