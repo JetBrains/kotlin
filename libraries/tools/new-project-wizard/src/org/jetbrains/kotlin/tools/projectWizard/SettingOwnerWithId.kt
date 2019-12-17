@@ -13,7 +13,7 @@ sealed class Identificator {
 }
 
 class GeneratedIdentificator(prefix: String?) : Identificator() {
-    override val id = """${prefix.orEmpty()}_${RandomIdGenerator.generate()}"""
+    override val id = "${prefix.orEmpty()}_${RandomIdGenerator.generate()}"
 }
 
 

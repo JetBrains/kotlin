@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.DefaultRepository
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.SourcesetType
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
-import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.Interceptor
+import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.TemplateInterceptor
 import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.interceptTemplate
 
 class SimpleJsClientTemplate : Template() {
@@ -40,11 +40,40 @@ class SimpleJsClientTemplate : Template() {
         FileTemplateDescriptor("$id/client.kt.vm", sourcesPath("client.kt"))
     )
 
-    override fun createInterceptors(sourceset: SourcesetIR): List<Interceptor> = buildList {
+    override fun createInterceptors(sourceset: SourcesetIR): List<TemplateInterceptor> = buildList {
         +interceptTemplate(KtorServerTemplate()) {
             applicableIf { buildFileIR ->
                 val tasks = buildFileIR.irsOfTypeOrNull<GradleConfigureTaskIR>() ?: return@applicableIf false
                 tasks.none { it.taskAccess.name.endsWith("Jar") }
+            }
+
+            interceptAtPoint(template.routes) { value ->
+                if (value.isNotEmpty()) return@interceptAtPoint value
+                buildList {
+                    +value
+                    +"""
+                    static("/static") {
+                        resources()
+                    }
+                    """.trimIndent()
+                }
+            }
+
+            interceptAtPoint(template.imports) { value ->
+                if (value.isNotEmpty()) return@interceptAtPoint value
+                buildList {
+                    +value
+                    +"io.ktor.http.content.resources"
+                    +"io.ktor.http.content.static"
+                }
+            }
+
+            interceptAtPoint(template.elements) { value ->
+                if (value.isNotEmpty()) return@interceptAtPoint value
+                buildList {
+                    +value
+                    +"""script(src = "/static/output.js") {}"""
+                }
             }
 
             transformBuildFile { buildFileIR ->
@@ -64,7 +93,7 @@ class SimpleJsClientTemplate : Template() {
                     val from = GradleCallIr(
                         "from",
                         listOf(
-                            GradleCallIr(
+                            GradleNewInstanceCall(
                                 "File",
                                 listOf(
                                     GradlePropertyAccessIR("$webPackTaskName.destinationDirectory"),
@@ -120,7 +149,7 @@ class SimpleJsClientTemplate : Template() {
     }
 
     companion object {
-        const val JS_OUTPUT_FILE_NAME = "output.js"
-        const val WEBPACK_TASK_CLASS = "KotlinWebpack"
+        private const val JS_OUTPUT_FILE_NAME = "output.js"
+        private const val WEBPACK_TASK_CLASS = "KotlinWebpack"
     }
 }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors
 
+import org.jetbrains.kotlin.tools.projectWizard.Identificator
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildFileIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.sourcesets
 import org.jetbrains.kotlin.tools.projectWizard.templates.Template
@@ -13,34 +14,60 @@ import org.jetbrains.kotlin.tools.projectWizard.transformers.TransformerFunction
 
 interface Interceptor
 
+typealias InterceptionPointValues = Map<InterceptionPoint<Any>, Any>
+typealias SourcesetInterceptionPointValues = Map<Identificator, InterceptionPointValues>
+
+data class TemplateInterceptionApplicationState(
+    val buildFileIR: BuildFileIR,
+    val sourcesetToSettings: SourcesetInterceptionPointValues
+)
+
 data class TemplateInterceptor(
+    val template: Template,
     val applicabilityCheckers: List<Predicate<BuildFileIR>>,
-    val buildFileTransformers: List<TransformerFunction<BuildFileIR>>
+    val buildFileTransformers: List<TransformerFunction<BuildFileIR>>,
+    val interceptionPointModifiers: List<InterceptionPointModifier<Any>>
 ) : Interceptor {
-    fun applyTo(buildFileIR: BuildFileIR): BuildFileIR? {
-        if (applicabilityCheckers.any { checker -> !checker(buildFileIR) }) return null
+    fun applyTo(state: TemplateInterceptionApplicationState): TemplateInterceptionApplicationState {
+        if (applicabilityCheckers.any { checker -> !checker(state.buildFileIR) }) return state
 
-        var isApplied = false
-        var result: BuildFileIR = buildFileIR
+        val sourcesetsWithTemplate = state.buildFileIR.sourcesets.filter { it.template?.id == template.id }
+        if (sourcesetsWithTemplate.isEmpty()) return state
 
-        for (transformer in buildFileTransformers) {
-            val newResult = transformer(result)
-            if (newResult != null) {
-                result = newResult
-                isApplied = true
+        val transformedBuildFile = applyBuildFileTransformers(state.buildFileIR)
+
+        val mutableValues = state.sourcesetToSettings.toMutableMap()
+        for (sourceset in sourcesetsWithTemplate) {
+            mutableValues.compute(sourceset.original.identificator) { _, values ->
+                applyInterceptionPointModifiers(values.orEmpty())
             }
         }
 
-        return result.takeIf { isApplied }
+        return TemplateInterceptionApplicationState(transformedBuildFile, mutableValues)
     }
 
-    fun applyUntilConverge(buildFileIR: BuildFileIR) =
-        generateSequence(buildFileIR, { buildFile ->
-            applyTo(buildFile)
-        }).last()
+    private fun applyInterceptionPointModifiers(values: InterceptionPointValues): InterceptionPointValues {
+        val mutableValues = values.toMutableMap()
+        for (modifier in interceptionPointModifiers) {
+            mutableValues.compute(modifier.point) { _, value ->
+                modifier.modifier(value ?: modifier.point.initialValue)
+            }
+        }
+        return mutableValues
+    }
+
+    private fun applyBuildFileTransformers(buildFile: BuildFileIR): BuildFileIR =
+        buildFileTransformers.fold(buildFile) { result, transformer ->
+            transformer(result) ?: result
+        }
 }
 
-class TemplateInterceptorBuilder<T : Template>(private val template: T) {
+fun List<TemplateInterceptor>.applyAll(state: TemplateInterceptionApplicationState) =
+    fold(state) { currentState, interceptor ->
+        interceptor.applyTo(currentState)
+    }
+
+class TemplateInterceptorBuilder<T : Template>(val template: T) {
     private val buildFileTransformers = mutableListOf<TransformerFunction<BuildFileIR>>()
     fun transformBuildFile(transform: TransformerFunction<BuildFileIR>) {
         buildFileTransformers += transform
@@ -51,20 +78,19 @@ class TemplateInterceptorBuilder<T : Template>(private val template: T) {
         applicabilityCheckers += checker
     }
 
-    init {
-        applicableIf { buildFile ->
-            buildFile.sourcesets.any { it.template?.id == template.id }
-        }
+    private val interceptionPointModifiers = mutableListOf<InterceptionPointModifier<Any>>()
+    fun <T : Any> interceptAtPoint(point: InterceptionPoint<T>, modifier: (T) -> T) {
+        interceptionPointModifiers.add(InterceptionPointModifier(point, modifier))
     }
 
-    fun build() = TemplateInterceptor(applicabilityCheckers, buildFileTransformers)
-}
 
-fun List<TemplateInterceptor>.fold() =
-    TemplateInterceptor(
-        flatMap { it.applicabilityCheckers },
-        flatMap { it.buildFileTransformers }
+    fun build() = TemplateInterceptor(
+        template,
+        applicabilityCheckers,
+        buildFileTransformers,
+        interceptionPointModifiers
     )
+}
 
 
 fun <T : Template> interceptTemplate(template: T, builder: TemplateInterceptorBuilder<T>.() -> Unit) =

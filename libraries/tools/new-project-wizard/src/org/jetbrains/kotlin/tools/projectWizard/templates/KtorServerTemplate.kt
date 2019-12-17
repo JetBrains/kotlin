@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.DefaultRepo
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Repositories
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.SourcesetType
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
+import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.InterceptionPoint
 
 class KtorServerTemplate : Template() {
     override val title: String = "Ktor-based Server"
@@ -55,6 +56,11 @@ class KtorServerTemplate : Template() {
 
     val serverEngine by enumSetting<KtorServerEngine>("Ktor Server", GenerationPhase.PROJECT_GENERATION)
 
+    val imports = InterceptionPoint("imports", emptyList<String>())
+    val routes = InterceptionPoint("routes", emptyList<String>())
+    val elements = InterceptionPoint("elements", emptyList<String>())
+
+    override val interceptionPoints: List<InterceptionPoint<Any>> = listOf(imports, routes, elements)
     override val settings: List<TemplateSetting<*, *>> = listOf(serverEngine)
 }
 

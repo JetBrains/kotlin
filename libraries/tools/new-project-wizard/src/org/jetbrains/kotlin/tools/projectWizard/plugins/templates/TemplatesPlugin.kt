@@ -1,14 +1,16 @@
 package org.jetbrains.kotlin.tools.projectWizard.plugins.templates
 
 import org.jetbrains.kotlin.tools.projectWizard.core.*
+import org.jetbrains.kotlin.tools.projectWizard.core.service.FileSystemWizardService
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.updateBuildFiles
 import org.jetbrains.kotlin.tools.projectWizard.templates.*
-import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.TemplateInterceptor
-import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.fold
+import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.InterceptionPoint
+import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.TemplateInterceptionApplicationState
+import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.applyAll
 
 class TemplatesPlugin(context: Context) : Plugin(context) {
     val templates by property<Map<String, Template>>(
@@ -101,12 +103,37 @@ class TemplatesPlugin(context: Context) : Plugin(context) {
 
         withAction {
             updateBuildFiles { buildFile ->
-                @Suppress("UNCHECKED_CAST")
-                val interceptors = buildFile.sourcesets.mapNotNull { sourceset ->
-                    sourceset.template?.createInterceptors(sourceset) as? List<TemplateInterceptor>
-                }.flatten().fold()
-                interceptors.applyUntilConverge(buildFile).asSuccess()
+                val sourcesets = buildFile.sourcesets
+
+                val applicationState = sourcesets.mapNotNull { sourceset ->
+                    sourceset.template?.createInterceptors(sourceset)
+                }.flatten()
+                    .applyAll(TemplateInterceptionApplicationState(buildFile, emptyMap()))
+
+                val templateEngine = VelocityTemplateEngine()
+
+                val templatesApplicationResult = sourcesets.map { sourceset ->
+                    val settings = applicationState.sourcesetToSettings[sourceset.original.identificator].orEmpty()
+                    applyFileTemplatesFromSourceset(sourceset, templateEngine, settings)
+                }.sequenceIgnore()
+
+                templatesApplicationResult andThen applicationState.buildFileIR.asSuccess()
             }
         }
+    }
+
+    private fun TaskRunningContext.applyFileTemplatesFromSourceset(
+        sourceset: SourcesetIR,
+        templateEngine: TemplateEngine,
+        interceptionPointSettings: Map<InterceptionPoint<Any>, Any>
+    ): TaskResult<Unit> {
+        val template = sourceset.template ?: return UNIT_SUCCESS
+        val settings = with(template) { settingsAsMap(sourceset.original) }
+        val allSettings = settings + interceptionPointSettings.mapKeys { it.key.name }
+        return with(template) { getFileTemplates(sourceset) }.map { fileTemplate ->
+            val fileText = templateEngine.renderTemplate(fileTemplate, allSettings)
+            val path = sourceset.path / fileTemplate.relativePath
+            service<FileSystemWizardService>()!!.createFile(path, fileText)
+        }.sequenceIgnore()
     }
 }
