@@ -4,7 +4,6 @@ package com.intellij.codeInsight.daemon.impl;
 import com.intellij.codeInsight.daemon.HighlightDisplayKey;
 import com.intellij.codeInsight.daemon.impl.analysis.HighlightingLevelManager;
 import com.intellij.codeInspection.ex.InspectionProfileImpl;
-import com.intellij.concurrency.SensitiveProgressWrapper;
 import com.intellij.diagnostic.PluginException;
 import com.intellij.lang.ExternalLanguageAnnotators;
 import com.intellij.lang.Language;
@@ -24,7 +23,6 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.util.BackgroundTaskUtil;
-import com.intellij.openapi.progress.util.ProgressIndicatorBase;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -217,7 +215,7 @@ public class ExternalToolPass extends ProgressableTextEditorHighlightingPass {
     for (MyData data : myAnnotationData) {
       if (data.annotationResult != null && data.psiRoot != null && data.psiRoot.isValid()) {
         try {
-          data.annotator.apply(data.psiRoot, data.annotationResult, myAnnotationHolder);
+          myAnnotationHolder.applyExternalAnnotatorWithContext(data.psiRoot, data.annotator, data.annotationResult);
         }
         catch (Throwable t) {
           process(t, data.annotator, data.psiRoot);

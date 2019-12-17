@@ -23,7 +23,6 @@ import com.intellij.codeInspection.*;
 import com.intellij.codeInspection.ex.LocalInspectionToolWrapper;
 import com.intellij.compiler.options.ValidationConfiguration;
 import com.intellij.lang.ExternalLanguageAnnotators;
-import com.intellij.lang.StdLanguages;
 import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationSession;
 import com.intellij.lang.annotation.ExternalAnnotator;
@@ -352,7 +351,7 @@ public class InspectionValidatorWrapper implements Validator {
     if (initial != null) {
       Y result = annotator.doAnnotate(initial);
       if (result != null) {
-        annotator.apply(xmlFile, result, holder);
+        holder.applyExternalAnnotatorWithContext(xmlFile, annotator, result);
       }
     }
   }
