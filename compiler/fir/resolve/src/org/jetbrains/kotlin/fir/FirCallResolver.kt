@@ -33,9 +33,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.phasedFir
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
-import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.symbols.invoke
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.name.Name
@@ -203,6 +201,11 @@ class FirCallResolver(
             is FirNamedReferenceWithCandidate -> nameReference.candidateSymbol
             else -> null
         }
+
+        if (qualifiedAccess.explicitReceiver == null) {
+            qualifiedResolver.reset()
+        }
+
         when {
             referencedSymbol is FirClassLikeSymbol<*> -> {
                 val classId = referencedSymbol.classId
@@ -221,9 +224,6 @@ class FirCallResolver(
                 return FirResolvedReifiedParameterReferenceImpl(nameReference.source, referencedSymbol).apply {
                     resultType = typeForReifiedParameterReference(this)
                 }
-            }
-            qualifiedAccess.explicitReceiver == null -> {
-                qualifiedResolver.reset()
             }
         }
 
