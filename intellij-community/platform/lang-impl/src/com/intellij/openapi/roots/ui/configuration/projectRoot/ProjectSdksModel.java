@@ -384,8 +384,6 @@ public class ProjectSdksModel implements SdkModel {
     String homeDir = FileUtil.toSystemIndependentName(item.getPlannedHomeDir());
     Sdk sdk = createSdk(type, suggestedName, homeDir);
 
-    SdkDownloadTracker.configureSdk(sdk, item);
-
     SdkDownloadTracker tracker = SdkDownloadTracker.getInstance();
     tracker.registerSdkDownload(sdk, item);
     Sdk editableSdk = doAddInternal(sdk, callback);

@@ -96,6 +96,7 @@ public class SdkDownloadTracker implements Disposable {
     LOG.assertTrue(findTask(originalSdk) == null, "Download is already running for the Sdk " + originalSdk);
 
     PendingDownload pd = new PendingDownload(originalSdk, item);
+    pd.configureSdk(originalSdk);
     myPendingTasks.add(pd);
   }
 
@@ -304,7 +305,7 @@ public class SdkDownloadTracker implements Disposable {
           for (Sdk sdk : myEditableSdks.copy()) {
             try {
               SdkType sdkType = (SdkType)sdk.getSdkType();
-              configureSdk(sdk, myTask);
+              configureSdk(sdk);
 
               try {
                 String actualVersion = sdkType.getVersionString(sdk);
@@ -340,12 +341,12 @@ public class SdkDownloadTracker implements Disposable {
       myProgressIndicator.cancel();
       myModalityTracker.invokeLater(() -> disposeNow(false));
     }
-  }
 
-  public static void configureSdk(@NotNull Sdk sdk, @NotNull SdkDownloadTask task) {
-    SdkModificator mod = sdk.getSdkModificator();
-    mod.setVersionString(task.getPlannedVersion());
-    mod.setHomePath(FileUtil.toSystemIndependentName(task.getPlannedHomeDir()));
-    mod.commitChanges();
+    void configureSdk(@NotNull Sdk sdk) {
+      SdkModificator mod = sdk.getSdkModificator();
+      mod.setVersionString(myTask.getPlannedVersion());
+      mod.setHomePath(FileUtil.toSystemIndependentName(myTask.getPlannedHomeDir()));
+      mod.commitChanges();
+    }
   }
 }
