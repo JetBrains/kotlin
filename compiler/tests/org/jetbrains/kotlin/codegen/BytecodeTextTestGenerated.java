@@ -1646,6 +1646,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/disabledOptimizations/noJumpInSingleBranch.kt");
         }
 
+        @TestMetadata("noObjectCastAfterReification.kt")
+        public void testNoObjectCastAfterReification() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/disabledOptimizations/noObjectCastAfterReification.kt");
+        }
+
         @TestMetadata("noUnitInstanceInDefaultParameterInitialization.kt")
         public void testNoUnitInstanceInDefaultParameterInitialization() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/disabledOptimizations/noUnitInstanceInDefaultParameterInitialization.kt");
