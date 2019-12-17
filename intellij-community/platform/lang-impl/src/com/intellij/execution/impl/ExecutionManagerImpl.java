@@ -399,7 +399,7 @@ public abstract class ExecutionManagerImpl extends ExecutionManager implements D
   }
 
   @Override
-  public void restartRunProfile(@NotNull final ExecutionEnvironment environment) {
+  public void restartRunProfile(@NotNull ExecutionEnvironment environment) {
     RunnerAndConfigurationSettings configuration = environment.getRunnerAndConfigurationSettings();
 
     List<RunContentDescriptor> runningIncompatible;
@@ -453,6 +453,7 @@ public abstract class ExecutionManagerImpl extends ExecutionManager implements D
       // defense from rerunning exactly the same ExecutionEnvironment
       return;
     }
+
     myAwaitingRunProfiles.put(environment.getRunProfile(), environment);
 
     List<RunContentDescriptor> finalRunningOfTheSameType = runningOfTheSameType;
