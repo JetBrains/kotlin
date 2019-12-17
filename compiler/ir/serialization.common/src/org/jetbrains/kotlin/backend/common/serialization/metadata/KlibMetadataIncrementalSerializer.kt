@@ -24,10 +24,9 @@ import org.jetbrains.kotlin.serialization.DescriptorSerializer
 class KlibMetadataIncrementalSerializer(
     languageVersionSettings: LanguageVersionSettings,
     metadataVersion: BinaryVersion,
-    moduleDescriptor: ModuleDescriptor,
     descriptorTable: DescriptorTable,
     skipExpects: Boolean
-) : KlibMetadataSerializer(languageVersionSettings, metadataVersion, moduleDescriptor, descriptorTable, skipExpects) {
+) : KlibMetadataSerializer(languageVersionSettings, metadataVersion, descriptorTable, skipExpects) {
 
     fun serializePackageFragment(
         module: ModuleDescriptor,

@@ -33,7 +33,6 @@ internal fun <T, R> Iterable<T>.maybeChunked(size: Int?, transform: (List<T>) ->
 abstract class KlibMetadataSerializer(
     val languageVersionSettings: LanguageVersionSettings,
     val metadataVersion: BinaryVersion,
-    val moduleDescriptor: ModuleDescriptor,
     val descriptorTable: DescriptorTable,
     val skipExpects: Boolean = false
 ) {
