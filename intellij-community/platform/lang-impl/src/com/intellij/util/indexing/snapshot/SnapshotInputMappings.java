@@ -208,7 +208,7 @@ public class SnapshotInputMappings<Key, Value, Input> implements UpdatableSnapsh
     if (SharedIndicesData.ourFileSharedIndicesEnabled && !SharedIndicesData.DO_CHECKS) return null;
     final File saved = new File(IndexInfrastructure.getPersistentIndexRootDir(myIndexId), "values");
     try {
-      return new PersistentMapBasedForwardIndex(saved);
+      return new PersistentMapBasedForwardIndex(saved, false);
     }
     catch (IOException ex) {
       IOUtil.deleteAllFilesStartingWith(saved);

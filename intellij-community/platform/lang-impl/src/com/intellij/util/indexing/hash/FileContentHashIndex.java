@@ -17,7 +17,7 @@ public class FileContentHashIndex extends VfsAwareMapReduceIndex<Integer, Void, 
   FileContentHashIndex(@NotNull FileContentHashIndexExtension extension, IndexStorage<Integer, Void> storage) throws IOException {
     super(extension,
           storage,
-          new PersistentMapBasedForwardIndex(IndexInfrastructure.getInputIndexStorageFile(extension.getName())),
+          new PersistentMapBasedForwardIndex(IndexInfrastructure.getInputIndexStorageFile(extension.getName()), false),
           new MapForwardIndexAccessor<>(new InputMapExternalizer<>(extension)), null, null);
   }
 
