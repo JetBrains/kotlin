@@ -36,7 +36,7 @@ public final class ProgramRunnerUtil {
     return configuration == null ? null : ProgramRunner.getRunner(executorId, configuration.getConfiguration());
   }
 
-  public static void executeConfiguration(@NotNull final ExecutionEnvironment environment, boolean showSettings, boolean assignNewId) {
+  public static void executeConfiguration(@NotNull ExecutionEnvironment environment, boolean showSettings, boolean assignNewId) {
     executeConfigurationAsync(environment, showSettings, assignNewId, null);
   }
 
@@ -54,11 +54,12 @@ public final class ProgramRunnerUtil {
     }
 
     RunnerAndConfigurationSettings runnerAndConfigurationSettings = environment.getRunnerAndConfigurationSettings();
-    final Project project = environment.getProject();
+    Project project = environment.getProject();
     ProgramRunner<?> runner = environment.getRunner();
 
     if (runnerAndConfigurationSettings != null) {
-      if (!ExecutionTargetManager.canRun(environment)) {
+      ExecutionTargetManager targetManager = ExecutionTargetManager.getInstance(project);
+      if (!targetManager.doCanRun(runnerAndConfigurationSettings.getConfiguration(), environment.getExecutionTarget())) {
         ExecutionUtil.handleExecutionError(environment, new ExecutionException(
           getCannotRunOnErrorMessage(environment.getRunProfile(), environment.getExecutionTarget())));
         return;

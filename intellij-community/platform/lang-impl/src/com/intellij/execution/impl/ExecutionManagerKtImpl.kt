@@ -16,7 +16,6 @@ import com.intellij.internal.statistic.IdeActivity
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
-import com.intellij.openapi.application.TransactionGuard
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
@@ -28,7 +27,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 class ExecutionManagerKtImpl(project: Project) : ExecutionManagerImpl(project) {
   @set:TestOnly
   @Volatile
-  var forceCompilationInTests: Boolean = false
+  var forceCompilationInTests = false
 
   override fun startRunProfile(starter: RunProfileStarter, state: RunProfileState, environment: ExecutionEnvironment) {
     val activity = triggerUsage(environment)
@@ -118,7 +117,9 @@ class ExecutionManagerKtImpl(project: Project) : ExecutionManagerImpl(project) {
       startRunnable.run()
     }
     else {
-      compileAndRun(Runnable { TransactionGuard.submitTransaction(project, startRunnable) }, environment, state, Runnable {
+      compileAndRun(Runnable {
+        ApplicationManager.getApplication().invokeLater(startRunnable, project.disposed)
+      }, environment, state, Runnable {
         if (!project.isDisposed) {
           processNotStarted()
         }
@@ -128,8 +129,7 @@ class ExecutionManagerKtImpl(project: Project) : ExecutionManagerImpl(project) {
 }
 
 private fun triggerUsage(environment: ExecutionEnvironment): IdeActivity? {
-  val runConfiguration = environment.runnerAndConfigurationSettings?.configuration ?: return null
-  val configurationFactory = runConfiguration.factory ?: return null
+  val configurationFactory = environment.runnerAndConfigurationSettings?.configuration?.factory ?: return null
   return RunConfigurationUsageTriggerCollector.trigger(environment.project, configurationFactory, environment.executor)
 }
 
@@ -147,16 +147,16 @@ private class ProcessExecutionListener(private val project: Project,
       return
     }
 
-    ApplicationManager.getApplication().invokeLater({
+    ApplicationManager.getApplication().invokeLater(Runnable {
       val ui = descriptor.runnerLayoutUi
       if (ui != null && !ui.isDisposed) {
         ui.updateActionsNow()
       }
-    }, ModalityState.any())
+    }, ModalityState.any(), project.disposed)
 
     project.messageBus.syncPublisher(ExecutionManager.EXECUTION_TOPIC).processTerminated(executorId, environment, processHandler, event.exitCode)
 
-    activity?.finished();
+    activity?.finished()
 
     SaveAndSyncHandler.getInstance().scheduleRefresh()
   }

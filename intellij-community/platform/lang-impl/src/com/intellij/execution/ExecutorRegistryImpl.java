@@ -55,13 +55,13 @@ public final class ExecutorRegistryImpl extends ExecutorRegistry implements Disp
   public ExecutorRegistryImpl() {
     init();
     Executor.EXECUTOR_EXTENSION_NAME.addExtensionPointListener(
-      (e, pd) -> {initExecutor(e);},
-      (e, pd) -> {deinitExecutor(e);},
+      (e, pd) -> initExecutor(e),
+      (e, pd) -> deinitExecutor(e),
       this
     );
   }
 
-  static class ExecutorRegistryPreloader extends PreloadingActivity {
+  final static class ExecutorRegistryPreloader extends PreloadingActivity {
     @Override
     public void preload(@NotNull ProgressIndicator indicator) {
       getInstance();
@@ -77,8 +77,8 @@ public final class ExecutorRegistryImpl extends ExecutorRegistry implements Disp
       LOG.error("Executor with context action id: \"" + executor.getContextActionId() + "\" was already registered!");
     }
 
-    final AnAction toolbarAction;
-    final AnAction runContextAction;
+    AnAction toolbarAction;
+    AnAction runContextAction;
     if (executor instanceof ExecutorGroup) {
       ActionGroup toolbarActionGroup = new SplitButtonAction(new ExecutorGroupActionGroup((ExecutorGroup<?>)executor, ExecutorAction::new));
       final Presentation presentation = toolbarActionGroup.getTemplatePresentation();
@@ -92,7 +92,8 @@ public final class ExecutorRegistryImpl extends ExecutorRegistry implements Disp
       toolbarAction = new ExecutorAction(executor);
       runContextAction = new RunContextAction(executor);
     }
-    final Executor.ActionWrapper customizer = executor.runnerActionsGroupExecutorActionCustomizer();
+
+    Executor.ActionWrapper customizer = executor.runnerActionsGroupExecutorActionCustomizer();
     registerAction(executor.getId(), customizer != null ? customizer.wrap(toolbarAction) : toolbarAction, RUNNERS_GROUP, myIdToAction);
     registerAction(executor.getContextActionId(), runContextAction, RUN_CONTEXT_GROUP, myContextActionIdToAction);
 
@@ -374,7 +375,7 @@ public final class ExecutorRegistryImpl extends ExecutorRegistry implements Disp
 
   // TODO: make private as soon as IDEA-207986 will be fixed
   // RunExecutorSettings configurations can be modified, so we request current childExecutors on each AnAction#update call
-  public static class ExecutorGroupActionGroup extends ActionGroup implements DumbAware {
+  public final static class ExecutorGroupActionGroup extends ActionGroup implements DumbAware {
     private final ExecutorGroup<?> myExecutorGroup;
     private final Function<? super Executor, ? extends AnAction> myChildConverter;
 

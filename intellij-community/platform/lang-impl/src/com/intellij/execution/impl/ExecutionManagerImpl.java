@@ -89,14 +89,16 @@ public abstract class ExecutionManagerImpl extends ExecutionManager implements D
 
   private static void restart(@NotNull ExecutionEnvironment environment) {
     //start() can be called during restartRunProfile() after pretty long 'awaitTermination()' so we have to check if the project is still here
-    if (environment.getProject().isDisposed()) return;
+    if (environment.getProject().isDisposed()) {
+      return;
+    }
 
     RunnerAndConfigurationSettings settings = environment.getRunnerAndConfigurationSettings();
-    ProgramRunnerUtil.executeConfiguration(environment, settings != null && settings.isEditBeforeRun(), true);
+    ProgramRunnerUtil.executeConfiguration(environment, settings != null && settings.isEditBeforeRun(), /* assignNewId = */ true);
   }
 
   private static boolean userApprovesStopForSameTypeConfigurations(@NotNull  Project project, String configName, int instancesCount) {
-    final RunManagerConfig config = RunManagerImpl.getInstanceImpl(project).getConfig();
+    RunManagerConfig config = RunManagerImpl.getInstanceImpl(project).getConfig();
     if (!config.isRestartRequiresConfirmation()) {
       return true;
     }
@@ -172,8 +174,8 @@ public abstract class ExecutionManagerImpl extends ExecutionManager implements D
       }
     };
 
-    final StringBuilder names = new StringBuilder();
-    for (final RunContentDescriptor descriptor : runningIncompatibleDescriptors) {
+    StringBuilder names = new StringBuilder();
+    for (RunContentDescriptor descriptor : runningIncompatibleDescriptors) {
       String name = descriptor.getDisplayName();
       if (names.length() > 0) {
         names.append(", ");
@@ -258,10 +260,10 @@ public abstract class ExecutionManagerImpl extends ExecutionManager implements D
   }
 
   @Override
-  public void compileAndRun(@NotNull final Runnable startRunnable,
-                            @NotNull final ExecutionEnvironment environment,
-                            @Nullable final RunProfileState state,
-                            @Nullable final Runnable onCancelRunnable) {
+  public void compileAndRun(@NotNull Runnable startRunnable,
+                            @NotNull ExecutionEnvironment environment,
+                            @Nullable RunProfileState state,
+                            @Nullable Runnable onCancelRunnable) {
     long id = environment.getExecutionId();
     if (id == 0) {
       id = environment.assignNewExecutionId();
@@ -273,98 +275,105 @@ public abstract class ExecutionManagerImpl extends ExecutionManager implements D
       return;
     }
 
-    final RunConfiguration runConfiguration = (RunConfiguration)profile;
-    final List<BeforeRunTask<?>> beforeRunTasks = RunManagerImplKt.doGetBeforeRunTasks(runConfiguration);
+    RunConfiguration runConfiguration = (RunConfiguration)profile;
+    List<BeforeRunTask<?>> beforeRunTasks = RunManagerImplKt.doGetBeforeRunTasks(runConfiguration);
     if (beforeRunTasks.isEmpty()) {
       startRunnable.run();
+      return;
     }
-    else {
-      DataContext context = environment.getDataContext();
-      final DataContext projectContext = context != null ? context : SimpleDataContext.getProjectContext(myProject);
-      final long finalId = id;
-      final Long executionSessionId = new Long(id);
-      Map<BeforeRunTask, Executor> runBeforeRunExecutorMap = Collections.synchronizedMap(new LinkedHashMap<>());
+
+    DataContext context = environment.getDataContext();
+    DataContext projectContext = context != null ? context : SimpleDataContext.getProjectContext(myProject);
+    long finalId = id;
+    Long executionSessionId = new Long(id);
+    Map<BeforeRunTask, Executor> runBeforeRunExecutorMap = Collections.synchronizedMap(new LinkedHashMap<>());
+    for (BeforeRunTask task : beforeRunTasks) {
+      @SuppressWarnings("unchecked")
+      BeforeRunTaskProvider<BeforeRunTask> provider = BeforeRunTaskProvider.getProvider(myProject, task.getProviderId());
+      if (provider == null || !(task instanceof RunConfigurationBeforeRunProvider.RunConfigurableBeforeRunTask)) {
+        continue;
+      }
+
+      RunConfigurationBeforeRunProvider.RunConfigurableBeforeRunTask runBeforeRun =
+        (RunConfigurationBeforeRunProvider.RunConfigurableBeforeRunTask)task;
+      RunnerAndConfigurationSettings settings = runBeforeRun.getSettings();
+      if (settings != null) {
+        Executor executor = Registry.is("lock.run.executor.for.before.run.tasks", false)
+                            ? DefaultRunExecutor.getRunExecutorInstance()
+                            : environment.getExecutor();
+        // as side-effect here we setup  runners list ( required for com.intellij.execution.impl.RunManagerImpl.canRunConfiguration() )
+        ExecutionEnvironmentBuilder builder = ExecutionEnvironmentBuilder.createOrNull(executor, settings);
+        if (builder == null || !RunManagerImpl.canRunConfiguration(settings, executor)) {
+            executor = DefaultRunExecutor.getRunExecutorInstance();
+            if (!RunManagerImpl.canRunConfiguration(settings, executor)) {
+              // We should stop here as before run task cannot be executed at all (possibly it's invalid)
+              if (onCancelRunnable != null) {
+                onCancelRunnable.run();
+              }
+              ExecutionUtil.handleExecutionError(environment, new ExecutionException("cannot start before run task '" + settings + "'."));
+              return;
+            }
+        }
+        runBeforeRunExecutorMap.put(task, executor);
+      }
+    }
+
+    ApplicationManager.getApplication().executeOnPooledThread(() -> {
       for (BeforeRunTask task : beforeRunTasks) {
+        if (myProject.isDisposed()) {
+          return;
+        }
         @SuppressWarnings("unchecked")
         BeforeRunTaskProvider<BeforeRunTask> provider = BeforeRunTaskProvider.getProvider(myProject, task.getProviderId());
-        if (provider != null && task instanceof RunConfigurationBeforeRunProvider.RunConfigurableBeforeRunTask) {
-          RunConfigurationBeforeRunProvider.RunConfigurableBeforeRunTask runBeforeRun =
-            (RunConfigurationBeforeRunProvider.RunConfigurableBeforeRunTask)task;
-          RunnerAndConfigurationSettings settings = runBeforeRun.getSettings();
-          if (settings != null) {
-            Executor executor = Registry.is("lock.run.executor.for.before.run.tasks", false)
-                                ? DefaultRunExecutor.getRunExecutorInstance()
-                                : environment.getExecutor();
-            //As side-effect here we setup  runners list ( required for com.intellij.execution.impl.RunManagerImpl.canRunConfiguration() )
-            ExecutionEnvironmentBuilder builder = ExecutionEnvironmentBuilder.createOrNull(executor, settings);
-            if (builder == null || !RunManagerImpl.canRunConfiguration(settings, executor)) {
-                executor = DefaultRunExecutor.getRunExecutorInstance();
-                if (!RunManagerImpl.canRunConfiguration(settings, executor)) {
-                  // We should stop here as before run task cannot be executed at all (possibly it's invalid)
-                  if (onCancelRunnable != null) {
-                    onCancelRunnable.run();
-                  }
-                  ExecutionUtil.handleExecutionError(environment, new ExecutionException("cannot start before run task '" + settings + "'."));
-                  return;
-                }
-            }
-            runBeforeRunExecutorMap.put(task, executor);
+        if (provider == null) {
+          LOG.warn("Cannot find BeforeRunTaskProvider for id='" + task.getProviderId() + "'");
+          continue;
+        }
+
+        ExecutionEnvironmentBuilder builder = new ExecutionEnvironmentBuilder(environment).contentToReuse(null);
+        Executor executor = runBeforeRunExecutorMap.get(task);
+        if (executor != null) {
+          builder.executor(executor);
+        }
+        ExecutionEnvironment taskEnvironment = builder.build();
+        taskEnvironment.setExecutionId(finalId);
+        EXECUTION_SESSION_ID_KEY.set(taskEnvironment, executionSessionId);
+        if (!provider.executeTask(projectContext, runConfiguration, taskEnvironment, task)) {
+          if (onCancelRunnable != null) {
+            SwingUtilities.invokeLater(onCancelRunnable);
           }
+          return;
         }
       }
-      ApplicationManager.getApplication().executeOnPooledThread(() -> {
-        for (BeforeRunTask task : beforeRunTasks) {
-          if (myProject.isDisposed()) {
-            return;
-          }
-          @SuppressWarnings("unchecked")
-          BeforeRunTaskProvider<BeforeRunTask> provider = BeforeRunTaskProvider.getProvider(myProject, task.getProviderId());
-          if (provider == null) {
-            LOG.warn("Cannot find BeforeRunTaskProvider for id='" + task.getProviderId() + "'");
-            continue;
-          }
-          ExecutionEnvironmentBuilder builder = new ExecutionEnvironmentBuilder(environment).contentToReuse(null);
-          Executor executor = runBeforeRunExecutorMap.get(task);
-          if (executor != null) {
-            builder.executor(executor);
-          }
-          ExecutionEnvironment taskEnvironment = builder.build();
-          taskEnvironment.setExecutionId(finalId);
-          EXECUTION_SESSION_ID_KEY.set(taskEnvironment, executionSessionId);
-          if (!provider.executeTask(projectContext, runConfiguration, taskEnvironment, task)) {
-            if (onCancelRunnable != null) {
-              SwingUtilities.invokeLater(onCancelRunnable);
-            }
-            return;
-          }
-        }
 
-        doRun(environment, startRunnable);
-      });
-    }
+      doRun(environment, startRunnable);
+    });
   }
 
-  protected void doRun(@NotNull final ExecutionEnvironment environment, @NotNull final Runnable startRunnable) {
+  protected void doRun(@NotNull ExecutionEnvironment environment, @NotNull Runnable startRunnable) {
     Boolean allowSkipRun = environment.getUserData(EXECUTION_SKIP_RUN);
     if (allowSkipRun != null && allowSkipRun) {
-      environment.getProject().getMessageBus().syncPublisher(EXECUTION_TOPIC).processNotStarted(environment.getExecutor().getId(),
-                                                                                                environment);
+      environment.getProject().getMessageBus().syncPublisher(EXECUTION_TOPIC).processNotStarted(environment.getExecutor().getId(), environment);
     }
     else {
       // important! Do not use DumbService.smartInvokeLater here because it depends on modality state
       // and execution of startRunnable could be skipped if modality state check fails
       //noinspection SSBasedInspection
       SwingUtilities.invokeLater(() -> {
-        if (!myProject.isDisposed()) {
-          RunnerAndConfigurationSettings settings = environment.getRunnerAndConfigurationSettings();
-          if (settings != null && !settings.getType().isDumbAware() && DumbService.isDumb(myProject)) {
-            DumbService.getInstance(myProject).runWhenSmart(startRunnable);
-          } else {
-            try {
-              startRunnable.run();
-            } catch (IndexNotReadyException ignored) {
-              ExecutionUtil.handleExecutionError(environment, new ExecutionException("cannot start while indexing is in progress."));
-            }
+        if (myProject.isDisposed()) {
+          return;
+        }
+
+        RunnerAndConfigurationSettings settings = environment.getRunnerAndConfigurationSettings();
+        if (settings != null && !settings.getType().isDumbAware() && DumbService.isDumb(myProject)) {
+          DumbService.getInstance(myProject).runWhenSmart(startRunnable);
+        }
+        else {
+          try {
+            startRunnable.run();
+          }
+          catch (IndexNotReadyException ignored) {
+            ExecutionUtil.handleExecutionError(environment, new ExecutionException("cannot start while indexing is in progress."));
           }
         }
       });
