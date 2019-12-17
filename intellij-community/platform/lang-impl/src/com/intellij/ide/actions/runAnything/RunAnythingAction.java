@@ -3,6 +3,7 @@ package com.intellij.ide.actions.runAnything;
 
 import com.intellij.execution.Executor;
 import com.intellij.featureStatistics.FeatureUsageTracker;
+import com.intellij.ide.HelpTooltip;
 import com.intellij.ide.IdeBundle;
 import com.intellij.ide.IdeEventQueue;
 import com.intellij.ide.actions.GotoActionBase;
@@ -101,10 +102,19 @@ public class RunAnythingAction extends AnAction implements CustomComponentAction
   @Override
   public JComponent createCustomComponent(@NotNull Presentation presentation, @NotNull String place) {
     return new ActionButton(this, presentation, place, ActionToolbar.DEFAULT_MINIMUM_BUTTON_SIZE) {
+      @Override
+      protected void updateToolTipText() {
+        HelpTooltip.dispose(this);
+
+        new HelpTooltip()
+          .setTitle(myPresentation.getText())
+          .setShortcut(getShortcut())
+          .setDescription(IdeBundle.message("run.anything.action.tooltip.text"))
+          .installOn(this);
+      }
 
       @Nullable
-      @Override
-      protected String getShortcutText() {
+      private String getShortcut() {
         if (myIsDoubleCtrlRegistered) {
           return IdeBundle.message("run.anything.double.ctrl.shortcut",
                                    SystemInfo.isMac ? FontUtil.thinSpace() + MacKeymapUtil.CONTROL : "Ctrl");
