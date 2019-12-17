@@ -134,5 +134,13 @@ fun main(args: Array<String>) {
         testClass<AbstractJsLegacyPrimitiveArraysBoxTest> {
             model("codegen/box/arrays", targetBackend = TargetBackend.JS)
         }
+
+        testClass<AbstractJsInlineMultiModuleTests> {
+            model("codegen/boxInline/multiModule/", targetBackend = TargetBackend.JS)
+        }
+
+        testClass<AbstractIrJsInlineMultiModuleTests> {
+            model("codegen/boxInline/multiModule/", targetBackend = TargetBackend.JS_IR)
+        }
     }
 }

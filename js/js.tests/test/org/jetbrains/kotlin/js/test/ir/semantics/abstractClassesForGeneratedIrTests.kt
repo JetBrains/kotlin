@@ -44,3 +44,5 @@ abstract class AbstractIrInlineDefaultValuesTests : BorrowedIrInlineTest("defaul
 abstract class AbstractIrInlineSuspendTests : BorrowedIrInlineTest("suspend/")
 
 abstract class AbstractIrJsInlineContractsTests : BorrowedIrInlineTest("contracts/")
+
+abstract class AbstractIrJsInlineMultiModuleTests : BorrowedIrInlineTest("multiModule/")
