@@ -3,6 +3,7 @@ package com.intellij.stats.completion
 
 
 import com.intellij.codeInsight.lookup.impl.LookupImpl
+import com.intellij.completion.settings.CompletionMLRankingSettings
 import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.ide.ui.UISettings
 import com.intellij.openapi.util.registry.Registry
@@ -49,7 +50,7 @@ class CompletionFileLogger(private val installationUID: String,
         event.isAutoPopup = CompletionUtil.getCurrentCompletionParameters()?.isAutoPopup
         event.fillCompletionParameters()
         event.additionalDetails["alphabetical"] = UISettings.instance.sortLookupElementsLexicographically.toString()
-        if (Registry.`is`("completion.stats.show.ml.ranking.diff", false)) {
+        if (CompletionMLRankingSettings.getInstance().isShowDiffEnabled) {
             event.additionalDetails["diff"] = "1"
         }
 

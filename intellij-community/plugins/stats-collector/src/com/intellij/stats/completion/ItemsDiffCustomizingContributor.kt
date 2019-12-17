@@ -35,7 +35,7 @@ class ItemsDiffCustomizingContributor : CompletionContributor() {
 
   private fun shouldShowDiff(parameters: CompletionParameters): Boolean {
     val mlRankingSettings = CompletionMLRankingSettings.getInstance()
-    if (!mlRankingSettings.isShowDiffEnabled && !Registry.`is`("completion.stats.show.ml.ranking.diff")) return false
+    if (!mlRankingSettings.isShowDiffEnabled) return false
     if (!mlRankingSettings.isRankingEnabled) return false
     val lookup = LookupManager.getActiveLookup(parameters.editor) as? LookupImpl ?: return false
     return LookupStorage.get(lookup)?.model != null

@@ -7,6 +7,7 @@ import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupManager
 import com.intellij.codeInsight.lookup.impl.LookupImpl
+import com.intellij.completion.settings.CompletionMLRankingSettings
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.Pair
 import com.intellij.openapi.util.registry.Registry
@@ -180,7 +181,7 @@ class MLSorter : CompletionFinalSorter() {
   }
 
   private fun Iterable<LookupElement>.addDiagnosticsIfNeeded(positionsBefore: Map<LookupElement, Int>, reordered: Int): Iterable<LookupElement> {
-    if (Registry.`is`("completion.stats.show.ml.ranking.diff")) {
+    if (CompletionMLRankingSettings.getInstance().isShowDiffEnabled) {
       this.forEachIndexed { position, element ->
         val before = positionsBefore.getValue(element)
         if (before < reordered || position < reordered) {
