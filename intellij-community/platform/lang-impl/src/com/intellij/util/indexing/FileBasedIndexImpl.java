@@ -1642,9 +1642,15 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
     final VirtualFile file = content.getVirtualFile();
     Ref<Boolean> setIndexedStatus = Ref.create(Boolean.TRUE);
     getFileTypeManager().freezeFileTypeTemporarilyIn(file, () -> {
-      final Project finalProject = project == null ? ProjectUtil.guessProjectForFile(file) : project;
-      PsiFile psiFile = null;
-      FileContentImpl fc = null;
+
+      FileContentImpl fc = new FileContentImpl(file, content.getBytesOrEmptyArray());
+      PsiFile psiFile = content.getUserData(IndexingDataKeys.PSI_FILE);
+      initFileContent(fc, project == null ? ProjectUtil.guessProjectForFile(file) : project, psiFile);
+
+      if (FileBasedIndex.ourSnapshotMappingsEnabled) {
+        IndexedHashesSupport.initIndexedHash(fc);
+      }
+
       int inputId = Math.abs(getFileId(file));
       Set<ID<?, ?>> currentIndexedStates = new THashSet<>(IndexingStamp.getNontrivialFileIndexedStates(inputId));
 
@@ -1652,25 +1658,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
       //noinspection ForLoopReplaceableByForEach
       for (int i = 0, size = affectedIndexCandidates.size(); i < size; ++i) {
         final ID<?, ?> indexId = affectedIndexCandidates.get(i);
-        if (shouldIndexFile(file, indexId)) {
-          if (fc == null) {
-            byte[] currentBytes;
-            try {
-              currentBytes = content.getBytes();
-            }
-            catch (IOException e) {
-              currentBytes = ArrayUtilRt.EMPTY_BYTE_ARRAY;
-            }
-            fc = new FileContentImpl(file, currentBytes);
-
-            psiFile = content.getUserData(IndexingDataKeys.PSI_FILE);
-            initFileContent(fc, finalProject, psiFile);
-
-            if (FileBasedIndex.ourSnapshotMappingsEnabled) {
-              IndexedHashesSupport.initIndexedHash(fc);
-            }
-          }
-
+        if (shouldIndexFile(fc, indexId)) {
           try {
             ProgressManager.checkCanceled();
             if (!updateSingleIndex(indexId, file, inputId, fc)) {
@@ -1690,7 +1678,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
       }
 
       for(ID<?, ?> indexId:currentIndexedStates) {
-        if(!getIndex(indexId).isIndexedStateForFile(inputId, file)) {
+        if(!getIndex(indexId).isIndexedStateForFile(inputId, fc)) {
           ProgressManager.checkCanceled();
           if (!updateSingleIndex(indexId, file, inputId, null)) {
             setIndexedStatus.set(Boolean.FALSE);
@@ -1748,7 +1736,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
       final Computable<Boolean> update = index.update(inputId, currentFC);
       updateCalculated = true;
 
-      runIndexUpdate(indexId, update, file, inputId);
+      runIndexUpdate(indexId, update, currentFC, inputId);
     }
     catch (RuntimeException exception) {
       Throwable causeToRebuildIndex = getCauseToRebuildIndex(exception);
@@ -1824,7 +1812,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
 
   private void runIndexUpdate(@NotNull ID<?, ?> indexId,
                               @NotNull Computable<Boolean> update,
-                              @Nullable VirtualFile file,
+                              @Nullable IndexedFile file,
                               int inputId) {
     if (runUpdate(false, update)) {
       ConcurrencyUtil.withLock(myReadLock, () -> {
@@ -2261,6 +2249,8 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
           return true;
         }
         getFileTypeManager().freezeFileTypeTemporarilyIn(file, () -> {
+          IndexedFile fileContent = new IndexedFileImpl(file);
+
           boolean isUptoDate = true;
           boolean isDirectory = file.isDirectory();
           if (!isDirectory && !isTooLarge(file)) {
@@ -2269,7 +2259,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
             for (int i = 0, size = affectedIndexCandidates.size(); i < size; ++i) {
               final ID<?, ?> indexId = affectedIndexCandidates.get(i);
               try {
-                if (needsFileContentLoading(indexId) && shouldIndexFile(file, indexId)) {
+                if (needsFileContentLoading(indexId) && shouldIndexFile(fileContent, indexId)) {
                   if (myDoTraceForFilesToBeIndexed) {
                     LOG.trace("Scheduling indexing of " + file + " by request of index " + indexId);
                   }
@@ -2292,14 +2282,10 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
               }
             }
           }
-          FileContent fileContent = null;
           int inputId = Math.abs(getIdMaskingNonIdBasedFile(file));
           for (ID<?, ?> indexId : isDirectory ? myRegisteredIndexes.getIndicesForDirectories() : myRegisteredIndexes.getNotRequiringContentIndices()) {
-            if (shouldIndexFile(file, indexId)) {
-              if (fileContent == null) {
-                fileContent = new FileContentImpl(file);
-              }
-              updateSingleIndex(indexId, file, inputId, fileContent);
+            if (shouldIndexFile(fileContent, indexId)) {
+              updateSingleIndex(indexId, file, inputId, new IndexedFileWrapper(fileContent));
             }
           }
           IndexingStamp.flushCache(inputId);
@@ -2315,9 +2301,10 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
     }
   }
 
-  private boolean shouldIndexFile(@NotNull VirtualFile file, @NotNull ID<?, ?> indexId) {
-    return getInputFilter(indexId).acceptInput(file) &&
-           (isMock(file) || !getIndex(indexId).isIndexedStateForFile(((NewVirtualFile)file).getId(), file));
+  private boolean shouldIndexFile(@NotNull IndexedFile file, @NotNull ID<?, ?> indexId) {
+    VirtualFile virtualFile = file.getFile();
+    return getInputFilter(indexId).acceptInput(virtualFile) &&
+            (isMock(virtualFile) || !getIndex(indexId).isIndexedStateForFile(((NewVirtualFile) virtualFile).getId(), file));
   }
 
   static boolean isMock(final VirtualFile file) {

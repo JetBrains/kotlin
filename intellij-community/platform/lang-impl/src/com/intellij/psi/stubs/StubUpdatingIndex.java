@@ -66,7 +66,7 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
         FileBasedIndex fileBasedIndex = FileBasedIndex.getInstance();
         if (file instanceof NewVirtualFile &&
             fileBasedIndex instanceof FileBasedIndexImpl &&
-            ((FileBasedIndexImpl)fileBasedIndex).getIndex(INDEX_ID).isIndexedStateForFile(((NewVirtualFile)file).getId(), file)) {
+            ((FileBasedIndexImpl)fileBasedIndex).getIndex(INDEX_ID).isIndexedStateForFile(((NewVirtualFile)file).getId(), new IndexedFileImpl(file, fileType))) {
           return true;
         }
       }
@@ -354,10 +354,10 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
     }
 
     @Override
-    public void setIndexedStateForFile(int fileId, @NotNull VirtualFile file) {
+    public void setIndexedStateForFile(int fileId, @NotNull IndexedFile file) {
       super.setIndexedStateForFile(fileId, file);
       try {
-        myStubVersionMap.persistIndexedState(fileId, file);
+        myStubVersionMap.persistIndexedState(fileId, file.getFile());
       } catch (IOException e) {
         LOG.error(e);
       }
@@ -365,12 +365,12 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
     }
 
     @Override
-    public boolean isIndexedStateForFile(int fileId, @NotNull VirtualFile file) {
+    public boolean isIndexedStateForFile(int fileId, @NotNull IndexedFile file) {
       boolean indexedStateForFile = super.isIndexedStateForFile(fileId, file);
       if (!indexedStateForFile) return false;
 
       try {
-        return myStubVersionMap.isIndexed(fileId, file);
+        return myStubVersionMap.isIndexed(fileId, file.getFile());
       }
       catch (IOException e) {
         LOG.error(e);

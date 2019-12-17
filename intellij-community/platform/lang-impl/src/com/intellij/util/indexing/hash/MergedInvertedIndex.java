@@ -2,7 +2,6 @@
 package com.intellij.util.indexing.hash;
 
 import com.intellij.openapi.util.Computable;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.Processor;
 import com.intellij.util.indexing.*;
@@ -129,7 +128,7 @@ public class MergedInvertedIndex<Key, Value> implements UpdatableIndex<Key, Valu
   }
 
   @Override
-  public void setIndexedStateForFile(int fileId, @NotNull VirtualFile file) {
+  public void setIndexedStateForFile(int fileId, @NotNull IndexedFile file) {
     myBaseIndex.setIndexedStateForFile(fileId, file);
   }
 
@@ -139,7 +138,7 @@ public class MergedInvertedIndex<Key, Value> implements UpdatableIndex<Key, Valu
   }
 
   @Override
-  public boolean isIndexedStateForFile(int fileId, @NotNull VirtualFile file) {
+  public boolean isIndexedStateForFile(int fileId, @NotNull IndexedFile file) {
     return myBaseIndex.isIndexedStateForFile(fileId, file);
   }
 

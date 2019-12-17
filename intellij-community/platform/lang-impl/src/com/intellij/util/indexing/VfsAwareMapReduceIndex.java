@@ -8,13 +8,13 @@ import com.intellij.openapi.application.impl.ApplicationInfoImpl;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.util.io.ByteArraySequence;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.ConcurrencyUtil;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.impl.*;
 import com.intellij.util.indexing.impl.forward.*;
+import com.intellij.util.indexing.impl.perFileVersion.PersistentSubIndexerRetriever;
 import com.intellij.util.indexing.snapshot.*;
 import gnu.trove.THashSet;
 import gnu.trove.TIntObjectHashMap;
@@ -48,6 +48,8 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
   private final AtomicBoolean myInMemoryMode = new AtomicBoolean();
   private final TIntObjectHashMap<Map<Key, Value>> myInMemoryKeysAndValues = new TIntObjectHashMap<>();
 
+  @SuppressWarnings("rawtypes")
+  private final PersistentSubIndexerRetriever mySubIndexerRetriever;
   private final SnapshotInputMappingIndex<Key, Value, Input> mySnapshotInputMappings;
   private final boolean myUpdateMappings;
   private final boolean mySingleEntryIndex;
@@ -89,6 +91,19 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
         LOG.assertTrue(forwardIndexMap instanceof IntForwardIndex);
         ((SnapshotSingleValueIndexStorage<Key, Value, Input>)backendStorage).init(snapshotInputMappings, ((IntForwardIndex)forwardIndexMap));
       }
+    }
+    if (myIndexer instanceof CompositeDataIndexer && InvertedIndex.ARE_COMPOSITE_INDEXERS_ENABLED) {
+      try {
+        //noinspection unchecked,rawtypes,ConstantConditions
+        mySubIndexerRetriever = new PersistentSubIndexerRetriever((ID)myIndexId,
+                                                                  extension.getVersion(),
+                                                                  (CompositeDataIndexer) myIndexer);
+      }
+      catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+    } else {
+      mySubIndexerRetriever = null;
     }
     mySnapshotInputMappings = IndexImporterMappingIndex.wrap(snapshotInputMappings, extension);
     myUpdateMappings = mySnapshotInputMappings instanceof UpdatableSnapshotInputMappingIndex;
@@ -167,8 +182,16 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
   }
 
   @Override
-  public void setIndexedStateForFile(int fileId, @NotNull VirtualFile file) {
+  public void setIndexedStateForFile(int fileId, @NotNull IndexedFile file) {
     IndexingStamp.setFileIndexedStateCurrent(fileId, (ID<?, ?>)myIndexId);
+    if (mySubIndexerRetriever != null) {
+      try {
+        mySubIndexerRetriever.setIndexedState(fileId, file);
+      }
+      catch (IOException e) {
+        LOG.error(e);
+      }
+    }
   }
 
   @Override
@@ -177,8 +200,23 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
   }
 
   @Override
-  public boolean isIndexedStateForFile(int fileId, @NotNull VirtualFile file) {
-    return IndexingStamp.isFileIndexedStateCurrent(fileId, (ID<?, ?>)myIndexId);
+  public boolean isIndexedStateForFile(int fileId, @NotNull IndexedFile file) {
+    if (!IndexingStamp.isFileIndexedStateCurrent(fileId, (ID<?, ?>)myIndexId)) {
+      return false;
+    }
+    if (mySubIndexerRetriever == null) return true;
+    if (!(file instanceof FileContent)) {
+      if (((CompositeDataIndexer)myIndexer).requiresContentForSubIndexerEvaluation(file)) {
+        return false;
+      }
+    }
+    try {
+      return mySubIndexerRetriever.isIndexed(fileId, file);
+    }
+    catch (IOException e) {
+      LOG.error(e);
+      return false;
+    }
   }
 
   @Override
@@ -343,6 +381,14 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
         LOG.error(e);
       }
     }
+    if (mySubIndexerRetriever != null) {
+      try {
+        mySubIndexerRetriever.clear();
+      }
+      catch (IOException e) {
+        LOG.error(e);
+      }
+    }
   }
 
   @Override
@@ -350,6 +396,9 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
     super.doFlush();
     if (mySnapshotInputMappings != null && myUpdateMappings) {
       ((UpdatableSnapshotInputMappingIndex<Key, Value, Input>)mySnapshotInputMappings).flush();
+    }
+    if (mySubIndexerRetriever != null) {
+      mySubIndexerRetriever.flush();
     }
   }
 
@@ -360,6 +409,14 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
     if (mySnapshotInputMappings != null) {
       try {
         mySnapshotInputMappings.close();
+      }
+      catch (IOException e) {
+        LOG.error(e);
+      }
+    }
+    if (mySubIndexerRetriever != null) {
+      try {
+        mySubIndexerRetriever.close();
       }
       catch (IOException e) {
         LOG.error(e);
