@@ -19,14 +19,6 @@ class ModuleSettingsComponent(valuesReadingContext: ValuesReadingContext) : Dyna
         StringValidators.shouldNotBeBlank("Module name") and
                 StringValidators.shouldBeValidIdentifier("Module Name")
 
-    private val moduleConfigurator = DropDownComponent<ModuleConfigurator>(
-        valuesReadingContext,
-        iconProvider = { it.icon },
-        labelText = "Consider as"
-    ) { value ->
-        module?.configurator = value
-    }
-
     private val moduleConfiguratorSettingsList = SettingsList(emptyList(), valuesReadingContext)
 
     private val nameField = TextFieldComponent(
@@ -48,7 +40,6 @@ class ModuleSettingsComponent(valuesReadingContext: ValuesReadingContext) : Dyna
             UiConstants.GAP_BORDER_SIZE
         )
         add(nameField.component)
-        add(moduleConfigurator.component)
         add(moduleConfiguratorSettingsList.component)
     }
 
@@ -62,24 +53,10 @@ class ModuleSettingsComponent(valuesReadingContext: ValuesReadingContext) : Dyna
 
     private fun updateModule(module: Module) {
         nameField.value = module.name
-        val newValues = ModuleConfigurator.BY_MODULE_KIND.getValue(module.configurator.moduleKind)
-            .filter { configurator ->
-                if (configurator.moduleKind == ModuleKind.target)
-                    configurator.moduleType == module.configurator.moduleType
-                else false
-            }
-
         nameField.component.isVisible = module.kind != ModuleKind.target
                 || module.configurator.moduleType != ModuleType.common
 
         moduleConfiguratorSettingsList.setSettings(module.configuratorSettings)
-
-        moduleConfigurator.apply {
-            updateValues(newValues)
-            component.isVisible = newValues.size > 1
-            value = module.configurator
-            component.updateUI()
-        }
     }
 }
 
