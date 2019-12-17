@@ -63,6 +63,8 @@ abstract class Template : SettingsOwner {
     abstract val moduleTypes: Set<ModuleType>
     abstract val sourcesetTypes: Set<SourcesetType>
 
+    open fun isApplicableTo(sourceset: Sourceset): Boolean = true
+
     open val settings: List<TemplateSetting<*, *>> = emptyList()
     open val interceptionPoints: List<InterceptionPoint<Any>> = emptyList()
 

@@ -109,6 +109,7 @@ class ChooseTemplateComponent(
         get() = allTemplates.values.filter { template ->
             selectedModule!!.containingModuleType in template.moduleTypes
                     && selectedModule!!.sourcesetType in template.sourcesetTypes
+                    && template.isApplicableTo(selectedModule!!)
         }
 
     private val state: State
