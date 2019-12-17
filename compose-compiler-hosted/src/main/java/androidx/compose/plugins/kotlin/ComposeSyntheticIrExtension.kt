@@ -90,9 +90,7 @@ class ComposeSyntheticIrExtension : SyntheticIrExtension {
         val descriptor = resolvedCall.candidateDescriptor
 
         if (descriptor is ComposableFunctionDescriptor) {
-            if (descriptor.isInline) {
-                return statementGenerator.visitCallExpressionWithoutInterception(element)
-            } else if (resolvedCall is VariableAsFunctionResolvedCall) {
+            if (resolvedCall is VariableAsFunctionResolvedCall) {
                 val param = resolvedCall.variableCall.candidateDescriptor
                 if (
                     param is ParameterDescriptor &&
