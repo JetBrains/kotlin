@@ -10506,6 +10506,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         public void testReceiverEvaluatedOnce() throws Exception {
             runTest("compiler/testData/codegen/box/funInterface/receiverEvaluatedOnce.kt");
         }
+
+        @TestMetadata("suspendFunInterfaceConversionCodegen.kt")
+        public void testSuspendFunInterfaceConversionCodegen() throws Exception {
+            runTest("compiler/testData/codegen/box/funInterface/suspendFunInterfaceConversionCodegen.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/functions")
