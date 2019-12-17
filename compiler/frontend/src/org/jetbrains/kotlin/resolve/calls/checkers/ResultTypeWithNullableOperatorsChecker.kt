@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.reportDiagnosticOnce
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -16,6 +17,8 @@ import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils
 
 class ResultTypeWithNullableOperatorsChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
+        if (context.languageVersionSettings.supportsFeature(LanguageFeature.AllowNullOperatorsForResult)) return
+
         val name = resolvedCall.resultingDescriptor.name
         val operationNode = resolvedCall.call.callOperationNode
 

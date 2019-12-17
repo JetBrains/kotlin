@@ -1513,9 +1513,29 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/coroutines"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
         }
 
+        @TestMetadata("allowNullOperatorsForResult_1_3.kt")
+        public void testAllowNullOperatorsForResult_1_3() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/allowNullOperatorsForResult_1_3.kt");
+        }
+
+        @TestMetadata("allowNullOperatorsForResult_1_4.kt")
+        public void testAllowNullOperatorsForResult_1_4() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/allowNullOperatorsForResult_1_4.kt");
+        }
+
         @TestMetadata("allowResultInReturnTypeWithFlag.kt")
         public void testAllowResultInReturnTypeWithFlag() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/allowResultInReturnTypeWithFlag.kt");
+        }
+
+        @TestMetadata("allowResultInReturnType_1_3.kt")
+        public void testAllowResultInReturnType_1_3() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/allowResultInReturnType_1_3.kt");
+        }
+
+        @TestMetadata("allowResultInReturnType_1_4.kt")
+        public void testAllowResultInReturnType_1_4() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/allowResultInReturnType_1_4.kt");
         }
 
         @TestMetadata("callableReferences.kt")
@@ -1761,6 +1781,11 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
         @TestMetadata("usageOfResultTypeInReturnType.kt")
         public void testUsageOfResultTypeInReturnType() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/usageOfResultTypeInReturnType.kt");
+        }
+
+        @TestMetadata("usageOfResultTypeInReturnType_1_4.kt")
+        public void testUsageOfResultTypeInReturnType_1_4() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/usageOfResultTypeInReturnType_1_4.kt");
         }
 
         @TestMetadata("usageOfResultTypeWithNullableOperators.kt")
