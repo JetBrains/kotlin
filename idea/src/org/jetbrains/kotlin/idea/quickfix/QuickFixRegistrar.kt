@@ -579,6 +579,7 @@ class QuickFixRegistrar : QuickFixContributor {
         ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION_ERROR.registerFactory(SurroundWithArrayOfWithSpreadOperatorInFunctionFix)
 
         REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_ANNOTATION.registerFactory(ReplaceWithArrayCallInAnnotationFix)
+        REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_FUNCTION.registerFactory(RemoveRedundantSpreadOperatorFix)
 
         JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE.registerFactory(KotlinAddRequiredModuleFix)
 

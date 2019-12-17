@@ -3809,6 +3809,19 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/removeRedundantSpreadOperator")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RemoveRedundantSpreadOperator extends AbstractQuickFixMultiFileTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTestWithExtraFile, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInRemoveRedundantSpreadOperator() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/removeRedundantSpreadOperator"), Pattern.compile("^(\\w+)\\.((before\\.Main\\.\\w+)|(test))$"), null, true);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/removeSingleLambdaParameter")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
