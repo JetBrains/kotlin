@@ -17,6 +17,11 @@ abstract class AbstractJsMangler : KotlinManglerImpl() {
 
 object JsMangler : AbstractJsMangler()
 
+
+/*
+ * JsManglerForBE is a special verison of kotlin mangler used in case when IR is not completely correct from Type Parameter perspective.
+ * I.e. usage of TypeParameter is not in TP's container. It's acceptable if only required to distinguish declaration somehow.
+ */
 object JsManglerForBE : AbstractJsMangler() {
 
     override fun mangleTypeParameter(typeParameter: IrTypeParameter, typeParameterNamer: (IrTypeParameter) -> String): String =
