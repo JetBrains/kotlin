@@ -901,6 +901,9 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
 
       String reportableContributorID = SearchEverywhereUsageTriggerCollector.getReportableContributorID(contributor);
       FeatureUsageData data = SearchEverywhereUsageTriggerCollector.createData(reportableContributorID, selectedTabContributorID);
+      if (value instanceof PsiElement) {
+        data.addLanguage(((PsiElement) value).getLanguage());
+      }
       featureTriggered(SearchEverywhereUsageTriggerCollector.CONTRIBUTOR_ITEM_SELECTED, data);
 
       closePopup |= contributor.processSelectedItem(value, modifiers, searchText);
