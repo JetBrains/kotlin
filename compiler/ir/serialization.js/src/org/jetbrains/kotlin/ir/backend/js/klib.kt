@@ -136,7 +136,7 @@ fun generateKLib(
     val moduleName = configuration[CommonConfigurationKeys.MODULE_NAME]!!
 
     if (!configuration.klibMpp) {
-        moduleFragment.acceptVoid(ExpectDeclarationRemover(psi2IrContext.symbolTable, false))
+        moduleFragment.acceptVoid(ExpectDeclarationRemover(psi2IrContext.symbolTable, doRemove = false, keepOptionalAnnotations = false))
     }
 
     serializeModuleIntoKlib(

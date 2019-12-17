@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.util
 
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -22,7 +23,11 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
 
 // `doRemove` means should expect-declaration be removed from IR
-class ExpectDeclarationRemover(val symbolTable: ReferenceSymbolTable, private val doRemove: Boolean) : IrElementVisitorVoid {
+class ExpectDeclarationRemover(
+    val symbolTable: ReferenceSymbolTable,
+    private val doRemove: Boolean,
+    private val keepOptionalAnnotations: Boolean
+) : IrElementVisitorVoid {
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
     }
@@ -30,12 +35,16 @@ class ExpectDeclarationRemover(val symbolTable: ReferenceSymbolTable, private va
     override fun visitFile(declaration: IrFile) {
         // All declarations with `isExpect == true` are nested into a top-level declaration with `isExpect == true`.
         declaration.declarations.removeAll {
+            // TODO: rewrite findCompatibleActualForExpected using IR structures instead of descriptors
             val descriptor = it.descriptor
-            if (descriptor is MemberDescriptor && descriptor.isExpect) {
+            if (descriptor !is MemberDescriptor || !descriptor.isExpect ||
+                (keepOptionalAnnotations && descriptor is ClassDescriptor &&
+                        ExpectedActualDeclarationChecker.shouldGenerateExpectClass(descriptor))
+            ) {
+                false
+            } else {
                 copyDefaultArgumentsFromExpectToActual(it)
                 doRemove
-            } else {
-                false
             }
         }
     }
@@ -56,9 +65,7 @@ class ExpectDeclarationRemover(val symbolTable: ReferenceSymbolTable, private va
                 assert(function.valueParameters[index] == declaration)
 
                 if (function is IrConstructor &&
-                    ExpectedActualDeclarationChecker.isOptionalAnnotationClass(
-                        function.descriptor.constructedClass
-                    )
+                    ExpectedActualDeclarationChecker.isOptionalAnnotationClass(function.descriptor.constructedClass)
                 ) {
                     return
                 }

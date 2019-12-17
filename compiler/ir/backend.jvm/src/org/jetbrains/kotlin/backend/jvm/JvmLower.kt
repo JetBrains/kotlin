@@ -74,8 +74,8 @@ private val arrayConstructorPhase = makeIrFilePhase(
     description = "Transform `Array(size) { index -> value }` into a loop"
 )
 
-private val expectDeclarationsRemovingPhase = makeIrModulePhase(
-    ::ExpectDeclarationsRemoveLowering,
+private val expectDeclarationsRemovingPhase = makeIrModulePhase<JvmBackendContext>(
+    { context -> ExpectDeclarationsRemoveLowering(context, keepOptionalAnnotations = true) },
     name = "ExpectDeclarationsRemoving",
     description = "Remove expect declaration from module fragment"
 )
