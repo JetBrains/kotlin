@@ -8,7 +8,6 @@ object Services {
     val IDEA_INDEPENDENT_SERVICES: List<IdeaIndependentWizardService> = listOf(
         ProjectImportingWizardServiceImpl(),
         OsFileSystemWizardService(),
-        AndroidWizardServiceImpl(),
         BuildSystemAvailabilityWizardServiceImpl(),
         DummyFileFormattingService()
     )
