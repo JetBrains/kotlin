@@ -472,7 +472,7 @@ open class Kapt3GradleSubplugin @Inject internal constructor(private val registr
 
         val dslJavacOptions: Provider<Map<String, String>> = project.provider {
             kaptExtension.getJavacOptions().toMutableMap().also { result ->
-                if (javaCompile != null && "-source" !in dslJavacOptions && "--source" !in dslJavacOptions && "--release" !in dslJavacOptions) {
+                if (javaCompile != null && "-source" !in result && "--source" !in result && "--release" !in result) {
                     val sourceOptionKey = if (SystemInfo.isJavaVersionAtLeast(12, 0, 0)) {
                         "--source"
                     } else {
