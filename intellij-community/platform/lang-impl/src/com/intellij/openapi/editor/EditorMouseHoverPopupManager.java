@@ -32,8 +32,6 @@ import com.intellij.openapi.editor.ex.*;
 import com.intellij.openapi.editor.ex.util.EditorUtil;
 import com.intellij.openapi.editor.impl.EditorMouseHoverPopupControl;
 import com.intellij.openapi.progress.ProcessCanceledException;
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.util.ProgressIndicatorBase;
 import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopup;
@@ -68,8 +66,6 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
@@ -86,12 +82,12 @@ public final class EditorMouseHoverPopupManager implements Disposable {
   private WeakReference<Editor> myCurrentEditor;
   private WeakReference<AbstractPopup> myPopupReference;
   private Context myContext;
-  private ProgressIndicator myCurrentProgress;
+  private CancellablePromise<Info> myCurrentProgress;
   private CancellablePromise<Context> myPreparationTask;
   private boolean mySkipNextMovement;
 
   public EditorMouseHoverPopupManager() {
-    myAlarm = new Alarm(Alarm.ThreadToUse.POOLED_THREAD, this);
+    myAlarm = new Alarm(this);
     EditorEventMulticaster multicaster = EditorFactory.getInstance().getEventMulticaster();
     multicaster.addCaretListener(new CaretListener() {
       @Override
@@ -193,12 +189,9 @@ public final class EditorMouseHoverPopupManager implements Disposable {
                                   boolean updateExistingPopup,
                                   boolean forceShowing,
                                   boolean requestFocus) {
-    ProgressIndicatorBase progress = new ProgressIndicatorBase();
-    myCurrentProgress = progress;
     myAlarm.addRequest(() -> {
       CancellablePromise<Info> promise = ReadAction
         .nonBlocking(() -> context.calcInfo(editor))
-        .cancelWith(progress)
         .expireWith(Objects.requireNonNull(editor.getProject()))
         .finishOnUiThread(ModalityState.defaultModalityState(), info -> {
           if (info == null ||
@@ -227,15 +220,9 @@ public final class EditorMouseHoverPopupManager implements Disposable {
         })
         .submit(AppExecutorUtil.getAppExecutorService());
 
+      myCurrentProgress = promise;
       promise.onProcessed(__ -> UIUtil.invokeLaterIfNeeded(() -> myCurrentProgress = null));
-
-      cancelOnTimeout(promise, 5000);
     }, context.getShowingDelay());
-  }
-
-  private static void cancelOnTimeout(CancellablePromise<?> promise, int timeoutMillis) {
-    ScheduledFuture<?> timeout = AppExecutorUtil.getAppScheduledExecutorService().schedule(() -> promise.cancel(), timeoutMillis, TimeUnit.MILLISECONDS);
-    promise.onProcessed(__ -> timeout.cancel(false));
   }
 
   private void onActivity() {
