@@ -2332,6 +2332,11 @@ class FcsCodegenTests : AbstractCodegenTest() {
             var output = ArrayList<String>()
 
             class NotStable { val value = 10 }
+            
+            @Stable
+            class StableClass {
+                override fun equals(other: Any?) = true
+            }
 
             enum class EnumState {
               One,
@@ -2373,6 +2378,12 @@ class FcsCodegenTests : AbstractCodegenTest() {
               output.add("MemoEnum")
               Button(text="memo ${'$'}{a}")
             }
+            
+            @Composable
+            fun MemoStable(a: StableClass) {
+              output.add("MemoStable")
+              Button(text="memo stable")
+            }
 
             @Composable
             fun TestSkipping(
@@ -2381,7 +2392,8 @@ class FcsCodegenTests : AbstractCodegenTest() {
                 c: Double,
                 d: NotStable,
                 e: ValueHolder,
-                f: EnumState
+                f: EnumState,
+                g: StableClass
             ) {
               val am = a + m.count
               output.add("TestSkipping a=${'$'}a am=${'$'}am")
@@ -2391,11 +2403,12 @@ class FcsCodegenTests : AbstractCodegenTest() {
               MemoNotStable(a=d)
               MemoModel(a=e)
               MemoEnum(a=f)
+              MemoStable(a=g)
             }
 
             @Composable
             fun Main(v: ValueHolder, n: NotStable) {
-              TestSkipping(a=1, b=1f, c=2.0, d=NotStable(), e=v, f=EnumState.One)
+              TestSkipping(a=1, b=1f, c=2.0, d=NotStable(), e=v, f=EnumState.One, g=StableClass())
             }
         """, {
             mapOf(
@@ -2409,7 +2422,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
             // Expect that all the methods are called in order
             assertEquals(
                 "TestSkipping a=1 am=1, MemoInt a=1, MemoFloat, " +
-                        "MemoDouble, MemoNotStable, MemoModelHolder, MemoEnum",
+                        "MemoDouble, MemoNotStable, MemoModelHolder, MemoEnum, MemoStable",
                 output.joinToString()
             )
             output.clear()
