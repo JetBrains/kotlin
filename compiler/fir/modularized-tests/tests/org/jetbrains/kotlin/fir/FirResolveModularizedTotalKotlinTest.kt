@@ -126,6 +126,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
 
     override fun beforePass() {
         if (DUMP_FIR) dump = MultiModuleHtmlFirDump(File(FIR_HTML_DUMP_PATH))
+        System.gc()
     }
 
     override fun afterPass(pass: Int) {
