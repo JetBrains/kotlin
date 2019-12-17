@@ -209,6 +209,11 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
             runTest("testData/incremental/multiModule/multiplatform/custom/complementaryFiles/");
         }
 
+        @TestMetadata("modifyOptionalAnnotationUsage")
+        public void testModifyOptionalAnnotationUsage() throws Exception {
+            runTest("testData/incremental/multiModule/multiplatform/custom/modifyOptionalAnnotationUsage/");
+        }
+
         @TestMetadata("notSameCompiler")
         public void testNotSameCompiler() throws Exception {
             runTest("testData/incremental/multiModule/multiplatform/custom/notSameCompiler/");
