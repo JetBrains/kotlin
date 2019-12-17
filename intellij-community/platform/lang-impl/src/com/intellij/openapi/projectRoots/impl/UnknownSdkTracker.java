@@ -132,41 +132,43 @@ public class UnknownSdkTracker {
       return;
     }
 
-    Sdk sdk = ProjectJdkTable.getInstance().createSdk(info.getSdkName(), info.getSdkType());
-    {
-      SdkModificator mod = sdk.getSdkModificator();
-      mod.setHomePath(task.getPlannedHomeDir());
-      mod.setVersionString(task.getPlannedVersion());
-      mod.commitChanges();
-    }
-
     ApplicationManager.getApplication().invokeLater(() -> {
+      Disposable lifetime = Disposer.newDisposable();
+      Disposer.register(project,lifetime);
+
+      Sdk sdk = createSdkPrototype(info);
+
       SdkDownloadTracker downloadTracker = SdkDownloadTracker.getInstance();
       downloadTracker.registerSdkDownload(sdk, task);
-      downloadTracker.tryRegisterDownloadingListener(sdk, Disposer.newDisposable(), new ProgressIndicatorBase(), succeeded -> {
+      downloadTracker.tryRegisterDownloadingListener(sdk, lifetime, new ProgressIndicatorBase(), succeeded -> {
         if (succeeded) {
-          WriteAction.run(() -> ProjectJdkTable.getInstance().addJdk(sdk));
+          registerNewSdkInJdkTable(info, sdk);
         }
+        Disposer.dispose(lifetime);
       });
+
       downloadTracker.startSdkDownloadIfNeeded(sdk);
     });
   }
 
   private static void configureLocalSdks(@NotNull Map<MissingSdkInfo, LocalSdkFix> localFixes) {
-    ProjectJdkTable jdkTable = ProjectJdkTable.getInstance();
     for (Map.Entry<MissingSdkInfo, LocalSdkFix> e : localFixes.entrySet()) {
       MissingSdkInfo info = e.getKey();
       LocalSdkFix fix = e.getValue();
 
-      Sdk sdk = jdkTable.createSdk(info.getSdkName(), info.getSdkType());
-      {
-        SdkModificator mod = sdk.getSdkModificator();
-        mod.setHomePath(FileUtil.toSystemIndependentName(fix.getExistingSdkHome()));
-        mod.setVersionString(fix.getVersionString());
-        mod.commitChanges();
+      Sdk sdk = createSdkPrototype(info);
+      SdkModificator mod = sdk.getSdkModificator();
+      mod.setHomePath(FileUtil.toSystemIndependentName(fix.getExistingSdkHome()));
+      mod.setVersionString(fix.getVersionString());
+      mod.commitChanges();
+
+      try {
+        info.getSdkType().setupSdkPaths(sdk);
+      } catch (Exception error) {
+        LOG.warn("Failed to setupPaths for " + sdk + ". " + error.getMessage(), error);
       }
 
-      WriteAction.run(() -> jdkTable.addJdk(sdk));
+      registerNewSdkInJdkTable(info, sdk);
       LOG.info("Automatically set Sdk " + info.getSdkName() + " to " + fix.getExistingSdkHome());
     }
   }
@@ -397,14 +399,8 @@ public class UnknownSdkTracker {
             @Override
             public void sdkAdded(@NotNull Sdk sdk) {
               //it is easier and safer than committing the ProjectSdksModel instance
-              WriteAction.run(() -> {
-                SdkModificator mod = sdk.getSdkModificator();
-                mod.setName(info.getSdkName());
-                mod.commitChanges();
-
-                ProjectJdkTable.getInstance().addJdk(sdk);
-                wasSdkCreated.set(true);
-              });
+              registerNewSdkInJdkTable(info, sdk);
+              wasSdkCreated.set(true);
             }
           });
 
@@ -470,5 +466,27 @@ public class UnknownSdkTracker {
         myFileEditorManager.addTopComponent(editor, notification);
       }
     }
+  }
+
+  @NotNull
+  private static Sdk createSdkPrototype(@NotNull MissingSdkInfo info) {
+    return ProjectJdkTable.getInstance().createSdk(info.getSdkName(), info.getSdkType());
+  }
+
+  private static void registerNewSdkInJdkTable(@NotNull MissingSdkInfo info, @NotNull Sdk sdk) {
+    WriteAction.run(() -> {
+      ProjectJdkTable table = ProjectJdkTable.getInstance();
+      Sdk clash = table.findJdk(info.getSdkName());
+      if (clash != null) {
+        LOG.warn("SDK with name " + info.getSdkName() + " already exists: clash=" + clash + ", new=" + sdk);
+        return;
+      }
+
+      SdkModificator mod = sdk.getSdkModificator();
+      mod.setName(info.getSdkName());
+      mod.commitChanges();
+
+      table.addJdk(sdk);
+    });
   }
 }

@@ -334,7 +334,7 @@ public class SdkDownloadTracker implements Disposable {
       getInstance().removeTask(this);
       //collections may change from the callbacks
       new ArrayList<>(myCompleteListeners).forEach(it -> it.consume(succeeded));
-      new ArrayList<>(myDisposables).forEach(Disposable::dispose);
+      new ArrayList<>(myDisposables).forEach(it -> Disposer.dispose(it));
     }
 
     void cancel() {
