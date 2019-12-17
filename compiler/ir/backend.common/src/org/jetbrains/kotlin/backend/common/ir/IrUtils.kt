@@ -352,7 +352,7 @@ fun Scope.createTemporaryVariableWithWrappedDescriptor(
     irExpression: IrExpression,
     nameHint: String? = null,
     isMutable: Boolean = false,
-    origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE): IrVariable {
+    origin: IrVariableOrigin = IrVariableOrigin.DEFAULT): IrVariable {
 
     val descriptor = WrappedVariableDescriptor()
     return createTemporaryVariableWithGivenDescriptor(

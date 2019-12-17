@@ -390,7 +390,8 @@ class FunctionInlining(val context: CommonBackendContext) : IrElementTransformer
                                 data = null
                             ),
                             nameHint = callee.symbol.owner.name.toString(),
-                            isMutable = false
+                            isMutable = false,
+                            origin = IrVariableOriginImpl(it.parameter.name.toString())
                         )
 
                     evaluationStatements.add(newVariable)
@@ -443,7 +444,8 @@ class FunctionInlining(val context: CommonBackendContext) : IrElementTransformer
                             statements.add(variableInitializer)
                         },
                         nameHint = callee.symbol.owner.name.toString(),
-                        isMutable = false
+                        isMutable = false,
+                        origin = IrVariableOriginImpl(it.parameter.name.toString())
                     )
 
                 evaluationStatements.add(newVariable)

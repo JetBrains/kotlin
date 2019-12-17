@@ -18,10 +18,7 @@ package org.jetbrains.kotlin.ir.builders
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
-import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptor
 import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptorImpl
@@ -70,7 +67,7 @@ class Scope(val scopeOwnerSymbol: IrSymbol) {
         nameHint: String? = null,
         isMutable: Boolean = false,
         type: KotlinType? = null,
-        origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
+        origin: IrVariableOrigin = IrVariableOrigin.DEFAULT,
         startOffset: Int = UNDEFINED_OFFSET,
         endOffset: Int = UNDEFINED_OFFSET
     ): IrVariable {
@@ -92,7 +89,7 @@ class Scope(val scopeOwnerSymbol: IrSymbol) {
         nameHint: String? = null,
         isMutable: Boolean = false,
         type: KotlinType? = null,
-        origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
+        origin: IrVariableOrigin = IrVariableOrigin.DEFAULT,
         irType: IrType? = null
     ): IrVariable {
         val originalKotlinType = type ?: (irExpression.type.originalKotlinType ?: irExpression.type.toKotlinType())
@@ -109,13 +106,13 @@ class Scope(val scopeOwnerSymbol: IrSymbol) {
         irExpression: IrExpression,
         nameHint: String? = null,
         isMutable: Boolean = false,
-        origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
+        origin: IrVariableOrigin = IrVariableOrigin.DEFAULT,
         descriptor: VariableDescriptor
     ): IrVariable {
         return IrVariableImpl(
             irExpression.startOffset, irExpression.endOffset, origin,
             IrVariableSymbolImpl(descriptor),
-            Name.identifier(getNameForTemporary(nameHint)),
+            Name.identifier(origin.name),
             irExpression.type,
             isVar = isMutable,
             isConst = false,

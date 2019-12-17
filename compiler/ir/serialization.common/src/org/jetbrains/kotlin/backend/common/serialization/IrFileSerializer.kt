@@ -178,9 +178,13 @@ open class IrFileSerializer(
     /* ------- Common fields ---------------------------------------------------- */
 
     private fun serializeIrDeclarationOrigin(origin: IrDeclarationOrigin) =
-        ProtoDeclarationOrigin.newBuilder()
-            .setCustom(serializeString((origin as IrDeclarationOriginImpl).name))
-            .build()
+        ProtoDeclarationOrigin.newBuilder().run {
+            if (origin is IrVariableOrigin)
+                setCustom(serializeString((origin as IrVariableOrigin).toDeclarationOrigin().name))
+            else
+                setCustom(serializeString((origin as IrDeclarationOriginImpl).name))
+
+        }.build()
 
     private fun serializeIrStatementOrigin(origin: IrStatementOrigin) =
         ProtoStatementOrigin.newBuilder()

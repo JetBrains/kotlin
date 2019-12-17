@@ -15,10 +15,7 @@ import org.jetbrains.kotlin.ir.builders.createTmpVariable
 import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irInt
 import org.jetbrains.kotlin.ir.builders.irReturn
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrCallableReference
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
@@ -77,7 +74,7 @@ internal class FakeInliningLocalVariablesLowering(val context: JvmBackendContext
             body = irBlockBody {
                 // Create temporary variable, but make sure it's origin is `DEFINED` so that
                 // it will materialize in the code.
-                createTmpVariable(irInt(0), name, origin = IrDeclarationOrigin.DEFINED)
+                createTmpVariable(irInt(0), name, origin = IrVariableOriginImpl(name))
                 if (body is IrExpressionBody) {
                     +irReturn((body as IrExpressionBody).expression)
                 } else {

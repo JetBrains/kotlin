@@ -586,7 +586,7 @@ open class SymbolTable(val mangler: KotlinMangler? = null) : ReferenceSymbolTabl
     fun declareVariable(
         startOffset: Int,
         endOffset: Int,
-        origin: IrDeclarationOrigin,
+        origin: IrVariableOrigin,
         descriptor: VariableDescriptor,
         type: IrType,
         variableFactory: (IrVariableSymbol) -> IrVariable = {
@@ -603,7 +603,7 @@ open class SymbolTable(val mangler: KotlinMangler? = null) : ReferenceSymbolTabl
     fun declareVariable(
         startOffset: Int,
         endOffset: Int,
-        origin: IrDeclarationOrigin,
+        origin: IrVariableOrigin,
         descriptor: VariableDescriptor,
         type: IrType,
         irInitializerExpression: IrExpression?

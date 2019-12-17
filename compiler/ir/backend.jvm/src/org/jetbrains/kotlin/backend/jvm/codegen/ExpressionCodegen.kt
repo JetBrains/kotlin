@@ -312,8 +312,8 @@ class ExpressionCodegen(
     private fun writeLocalVariablesInTable(info: BlockInfo, endLabel: Label) {
         info.variables.forEach {
             when (it.declaration.origin) {
-                IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
-                IrDeclarationOrigin.FOR_LOOP_ITERATOR -> {
+                is IrTemporaryVariableOrigin,
+                is IrForLoopIteratorVariableOrigin -> {
                     // Ignore implicitly created variables
                 }
                 else -> {

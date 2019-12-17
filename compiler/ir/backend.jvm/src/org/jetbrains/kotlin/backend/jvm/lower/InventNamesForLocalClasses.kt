@@ -91,8 +91,8 @@ class InventNamesForLocalClasses(private val context: JvmBackendContext) : FileL
 
             // We explicitly skip temporary variables (such as a for loop iterator, or a temporary value for an elvis operator)
             // because they are not present in the original source code and their names should not affect names of local entities.
-            if (declaration.origin == IrDeclarationOrigin.FOR_LOOP_ITERATOR ||
-                declaration.origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE
+            if (declaration.origin is IrForLoopIteratorVariableOrigin ||
+                declaration.origin is IrTemporaryVariableOrigin
             ) {
                 declaration.acceptChildren(this, data)
                 return

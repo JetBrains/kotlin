@@ -54,7 +54,7 @@ class JsSharedVariablesManager(val builtIns: IrBuiltIns, val implicitDeclaration
         return IrVariableImpl(
             originalDeclaration.startOffset,
             originalDeclaration.endOffset,
-            originalDeclaration.origin,
+            originalDeclaration.origin as IrVariableOrigin,
             IrVariableSymbolImpl(descriptor),
             originalDeclaration.name,
             irCall.type,

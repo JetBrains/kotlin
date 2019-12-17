@@ -212,7 +212,7 @@ class FinallyBlocksLowering(val context: CommonBackendContext, private val throw
             val transformedFinallyExpression = finallyExpression.transform(transformer, null)
             val parameter = WrappedVariableDescriptor()
             val catchParameter = IrVariableImpl(
-                startOffset, endOffset, IrDeclarationOrigin.CATCH_PARAMETER, IrVariableSymbolImpl(parameter),
+                startOffset, endOffset, IrCatchParameterOriginImpl("t"), IrVariableSymbolImpl(parameter),
                 Name.identifier("t"), throwableType, isVar = false, isConst = false, isLateinit = false
             ).also { parameter.bind(it) }
 

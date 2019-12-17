@@ -204,7 +204,7 @@ object JsIrBuilder {
         return IrVariableImpl(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
-            SYNTHESIZED_DECLARATION,
+            IrVariableOrigin.DEFAULT,
             IrVariableSymbolImpl(descriptor),
             Name.identifier(name),
             type,

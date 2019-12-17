@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrForLoopIteratorVariableOrigin
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
@@ -146,7 +147,7 @@ private class RangeLoopTransformer(
         with(expression.statements) {
             assert(size == 2) { "Expected 2 statements in for-loop block, was:\n${expression.dump()}" }
             val iteratorVariable = get(0) as IrVariable
-            assert(iteratorVariable.origin == IrDeclarationOrigin.FOR_LOOP_ITERATOR) { "Expected FOR_LOOP_ITERATOR origin for iterator variable, was:\n${iteratorVariable.dump()}" }
+            assert(iteratorVariable.origin is IrForLoopIteratorVariableOrigin) { "Expected IrForLoopIteratorVariableOrigin origin for iterator variable, was:\n${iteratorVariable.dump()}" }
             val loopHeader = headerProcessor.extractHeader(iteratorVariable)
                 ?: return super.visitBlock(expression)  // The iterable in the header is not supported.
             val loweredHeader = lowerHeader(iteratorVariable, loopHeader)

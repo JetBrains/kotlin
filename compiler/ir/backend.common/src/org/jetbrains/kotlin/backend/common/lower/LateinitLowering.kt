@@ -82,7 +82,7 @@ class LateinitLowering(val backendContext: CommonBackendContext) : FileLoweringP
                 val newVar = IrVariableImpl(
                     declaration.startOffset,
                     declaration.endOffset,
-                    declaration.origin,
+                    declaration.origin.toVariableOrigin(declaration.name.identifier),
                     IrVariableSymbolImpl(descriptor),
                     declaration.name,
                     type,

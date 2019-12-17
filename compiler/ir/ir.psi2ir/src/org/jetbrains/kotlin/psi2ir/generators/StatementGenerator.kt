@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.assertCast
 import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrVariableOriginImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -99,7 +100,7 @@ class StatementGenerator(
         }
 
         return context.symbolTable.declareVariable(
-            property.startOffsetSkippingComments, property.endOffset, IrDeclarationOrigin.DEFINED,
+            property.startOffsetSkippingComments, property.endOffset, IrVariableOriginImpl(variableDescriptor.name.identifier),
             variableDescriptor,
             variableDescriptor.type.toIrType(),
             property.initializer?.genExpr()
@@ -150,7 +151,7 @@ class StatementGenerator(
                 IrStatementOrigin.COMPONENT_N.withIndex(index + 1)
             )
             val irComponentVar = context.symbolTable.declareVariable(
-                ktEntry.startOffsetSkippingComments, ktEntry.endOffset, IrDeclarationOrigin.DEFINED,
+                ktEntry.startOffsetSkippingComments, ktEntry.endOffset, IrVariableOriginImpl(componentVariable.name.identifier),
                 componentVariable, componentVariable.type.toIrType(), irComponentCall
             )
             irBlock.statements.add(irComponentVar)

@@ -290,7 +290,7 @@ open class DeepCopyIrTreeWithSymbols(
     override fun visitVariable(declaration: IrVariable): IrVariable =
         IrVariableImpl(
             declaration.startOffset, declaration.endOffset,
-            mapDeclarationOrigin(declaration.origin),
+            mapDeclarationOrigin(declaration.origin) as IrVariableOrigin,
             symbolRemapper.getDeclaredVariable(declaration.symbol),
             symbolRenamer.getVariableName(declaration.symbol),
             declaration.type.remapType(),

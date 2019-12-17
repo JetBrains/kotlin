@@ -17,6 +17,9 @@
 package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrForLoopIteratorVariableOrigin
+import org.jetbrains.kotlin.ir.declarations.IrForLoopIteratorVariableOriginImpl
+import org.jetbrains.kotlin.ir.declarations.IrForLoopVariableOriginImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
@@ -168,7 +171,7 @@ class LoopExpressionGenerator(statementGenerator: StatementGenerator) : Statemen
 
         val iteratorCall = statementGenerator.pregenerateCall(iteratorResolvedCall)
         val irIteratorCall = callGenerator.generateCall(ktLoopRange, iteratorCall, IrStatementOrigin.FOR_LOOP_ITERATOR)
-        val irIterator = scope.createTemporaryVariable(irIteratorCall, "iterator", origin = IrDeclarationOrigin.FOR_LOOP_ITERATOR)
+        val irIterator = scope.createTemporaryVariable(irIteratorCall, "iterator", origin = IrForLoopIteratorVariableOriginImpl("iterator"))
         val iteratorValue = VariableLValue(context, irIterator)
         irForBlock.statements.add(irIterator)
 
@@ -192,7 +195,7 @@ class LoopExpressionGenerator(statementGenerator: StatementGenerator) : Statemen
             if (ktLoopParameter != null && ktLoopDestructuringDeclaration == null) {
                 val loopParameter = getOrFail(BindingContext.VALUE_PARAMETER, ktLoopParameter)
                 context.symbolTable.declareVariable(
-                    ktLoopParameter.startOffsetSkippingComments, ktLoopParameter.endOffset, IrDeclarationOrigin.FOR_LOOP_VARIABLE,
+                    ktLoopParameter.startOffsetSkippingComments, ktLoopParameter.endOffset, IrForLoopVariableOriginImpl(loopParameter.name.identifier),
                     loopParameter, loopParameter.type.toIrType(),
                     irNextCall
                 )

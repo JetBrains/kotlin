@@ -183,7 +183,7 @@ class JvmSharedVariablesManager(
         }
 
         return IrVariableImpl(
-            originalDeclaration.startOffset, originalDeclaration.endOffset, originalDeclaration.origin,
+            originalDeclaration.startOffset, originalDeclaration.endOffset, originalDeclaration.origin as IrVariableOrigin,
             IrVariableSymbolImpl(WrappedVariableDescriptor()),
             originalDeclaration.name,
             refType,

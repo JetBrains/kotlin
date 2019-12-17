@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
+import org.jetbrains.kotlin.ir.declarations.IrCatchParameterOriginImpl
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCatchImpl
@@ -41,7 +42,7 @@ class TryCatchExpressionGenerator(statementGenerator: StatementGenerator) : Stat
                 ktCatchClause.startOffsetSkippingComments, ktCatchClause.endOffset,
                 context.symbolTable.declareVariable(
                     ktCatchParameter.startOffsetSkippingComments, ktCatchParameter.endOffset,
-                    IrDeclarationOrigin.CATCH_PARAMETER,
+                    IrCatchParameterOriginImpl(catchParameterDescriptor.name.identifier),
                     catchParameterDescriptor, catchParameterDescriptor.type.toIrType()
                 )
             ).apply {

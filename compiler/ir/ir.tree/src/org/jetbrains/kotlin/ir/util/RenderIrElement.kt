@@ -42,7 +42,7 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
 
     private val IrVariable.normalizedName: String
         get() {
-            if (!normalizeNames || (origin != IrDeclarationOrigin.IR_TEMPORARY_VARIABLE && origin != IrDeclarationOrigin.FOR_LOOP_ITERATOR))
+            if (!normalizeNames || (origin !is IrTemporaryVariableOrigin && origin !is IrForLoopIteratorVariableOrigin))
                 return name.asString()
 
             return nameMap.getOrPut(symbol) { "tmp_${temporaryIndex++}" }
@@ -189,7 +189,7 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
         override fun visitVariable(declaration: IrVariable, data: Nothing?) =
             buildTrimEnd {
                 if (declaration.isVar) append("var ") else append("val ")
-
+                append("(origin: ${declaration.origin})")
                 append(declaration.normalizedName)
                 append(": ")
                 append(declaration.type.render())

@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.ir.builders
 
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.declarations.IrVariableOrigin
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.descriptors.WrappedVariableDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -48,7 +48,7 @@ fun <T : IrElement> IrStatementsBuilder<T>.createTmpVariable(
     irExpression: IrExpression,
     nameHint: String? = null,
     isMutable: Boolean = false,
-    origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
+    origin: IrVariableOrigin = IrVariableOrigin.DEFAULT,
     irType: IrType? = null
 ): IrVariable {
     val variable = scope.createTmpVariable(irExpression, nameHint, isMutable, origin, irType)
@@ -60,7 +60,7 @@ fun Scope.createTmpVariable(
     irExpression: IrExpression,
     nameHint: String? = null,
     isMutable: Boolean = false,
-    origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
+    origin: IrVariableOrigin = IrVariableOrigin.DEFAULT,
     irType: IrType? = null
 ): IrVariable {
     val varType = irType ?: irExpression.type

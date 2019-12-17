@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrForLoopIteratorVariableOrigin
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
@@ -568,7 +569,7 @@ internal class HeaderProcessor(
      */
     fun extractHeader(variable: IrVariable): ForLoopHeader? {
         // Verify the variable type is a subtype of Iterator<*>.
-        assert(variable.origin == IrDeclarationOrigin.FOR_LOOP_ITERATOR)
+        assert(variable.origin is IrForLoopIteratorVariableOrigin)
         if (!variable.type.isSubtypeOfClass(symbols.iterator)) {
             return null
         }

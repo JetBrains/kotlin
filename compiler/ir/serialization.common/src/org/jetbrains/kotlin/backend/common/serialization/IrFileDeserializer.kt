@@ -1063,16 +1063,17 @@ abstract class IrFileDeserializer(
             }
         }
 
-    private fun deserializeIrVariable(proto: ProtoVariable) =
-        withDeserializedIrDeclarationBase(proto.base) { symbol, startOffset, endOffset, origin ->
+    private fun deserializeIrVariable(proto: ProtoVariable): IrVariableImpl {
+        return withDeserializedIrDeclarationBase(proto.base) { symbol, startOffset, endOffset, origin ->
+            val variableName = deserializeName(proto.name)
             IrVariableImpl(
-                startOffset, endOffset, origin,
-                symbol as IrVariableSymbol,
-                deserializeName(proto.name),
-                deserializeIrType(proto.type),
-                proto.isVar,
-                proto.isConst,
-                proto.isLateinit
+                    startOffset, endOffset, origin.toVariableOrigin(variableName.identifier),
+                    symbol as IrVariableSymbol,
+                    variableName,
+                    deserializeIrType(proto.type),
+                    proto.isVar,
+                    proto.isConst,
+                    proto.isLateinit
             ).apply {
                 if (proto.hasInitializer())
                     initializer = deserializeExpression(proto.initializer)
@@ -1080,6 +1081,7 @@ abstract class IrFileDeserializer(
                 (descriptor as? WrappedVariableDescriptor)?.bind(this)
             }
         }
+    }
 
     private fun deserializeIrEnumEntry(proto: ProtoEnumEntry): IrEnumEntry =
         withDeserializedIrDeclarationBase(proto.base) { symbol, startOffset, endOffset, origin ->

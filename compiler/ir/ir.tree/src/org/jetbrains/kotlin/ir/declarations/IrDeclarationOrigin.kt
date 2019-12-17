@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
+import org.jetbrains.kotlin.name.Name
+
 interface IrDeclarationOrigin {
     object DEFINED : IrDeclarationOriginImpl("DEFINED")
     object FAKE_OVERRIDE : IrDeclarationOriginImpl("FAKE_OVERRIDE")
@@ -53,6 +55,41 @@ interface IrDeclarationOrigin {
     object FIELD_FOR_OBJECT_INSTANCE : IrDeclarationOriginImpl("FIELD_FOR_OBJECT_INSTANCE")
 
     val isSynthetic: Boolean get() = false
+}
+
+interface IrVariableOrigin: IrDeclarationOrigin {
+    val name:String
+    object DEFAULT : IrTemporaryVariableOrigin, IrVariableOriginImpl("tmp")
+}
+interface IrForLoopVariableOrigin:IrVariableOrigin
+interface IrForLoopIteratorVariableOrigin:IrForLoopVariableOrigin
+interface IrForLoopImplicitVariableOrigin:IrForLoopVariableOrigin
+interface IrTemporaryVariableOrigin:IrVariableOrigin
+interface IrCatchParameterOrigin:IrVariableOrigin
+interface IrDelegationVariable:IrVariableOrigin
+
+open class IrVariableOriginImpl(override val name: String) : IrVariableOrigin
+open class IrForLoopVariableOriginImpl(name:String) : IrTemporaryVariableOrigin, IrVariableOriginImpl(name)
+open class IrForLoopIteratorVariableOriginImpl(name: String) : IrForLoopIteratorVariableOrigin, IrForLoopVariableOriginImpl(name)
+object IrTemporaryVariableOriginImpl : IrTemporaryVariableOrigin, IrVariableOriginImpl("tmp")
+open class IrCatchParameterOriginImpl(name: String) : IrCatchParameterOrigin, IrVariableOriginImpl(name)
+open class IrDelegationVariableImpl(name : String): IrDeclarationOrigin, IrVariableOriginImpl(name)
+
+fun IrDeclarationOrigin.toVariableOrigin(name:String) = when (this) {
+    IrDeclarationOrigin.DEFINED -> IrVariableOriginImpl(name)
+    IrDeclarationOrigin.FOR_LOOP_ITERATOR -> IrForLoopIteratorVariableOriginImpl(name)
+    IrDeclarationOrigin.FOR_LOOP_VARIABLE -> IrForLoopVariableOriginImpl(name)
+    IrDeclarationOrigin.IR_TEMPORARY_VARIABLE -> IrVariableOrigin.DEFAULT
+    IrDeclarationOrigin.CATCH_PARAMETER -> IrCatchParameterOriginImpl(name)
+    else -> TODO("$this")
+}
+
+fun IrVariableOrigin.toDeclarationOrigin() = when (this) {
+    is IrForLoopIteratorVariableOrigin -> IrDeclarationOrigin.FOR_LOOP_ITERATOR
+    is IrForLoopVariableOrigin -> IrDeclarationOrigin.FOR_LOOP_VARIABLE
+    is IrTemporaryVariableOrigin -> IrDeclarationOrigin.IR_TEMPORARY_VARIABLE
+    is IrCatchParameterOrigin -> IrDeclarationOrigin.CATCH_PARAMETER
+    else -> IrDeclarationOrigin.DEFINED
 }
 
 abstract class IrDeclarationOriginImpl(
