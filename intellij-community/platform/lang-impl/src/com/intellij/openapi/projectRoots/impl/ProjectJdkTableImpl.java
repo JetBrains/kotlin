@@ -150,18 +150,13 @@ public class ProjectJdkTableImpl extends ProjectJdkTable implements ExportableCo
     final String jdkPath = System.getProperty(jdkPrefix + name);
     if (jdkPath == null) return null;
 
-    final SdkType[] sdkTypes = SdkType.getAllTypes();
-    for (SdkType sdkType : sdkTypes) {
-      if (Comparing.strEqual(type, sdkType.getName())) {
-        if (sdkType.isValidSdkHome(jdkPath)) {
-          ProjectJdkImpl projectJdkImpl = new ProjectJdkImpl(name, sdkType);
-          projectJdkImpl.setHomePath(jdkPath);
-          sdkType.setupSdkPaths(projectJdkImpl);
-          myCachedProjectJdks.put(uniqueName, projectJdkImpl);
-          return projectJdkImpl;
-        }
-        break;
-      }
+    final SdkType sdkType = SdkType.findByName(type);
+    if (sdkType != null && sdkType.isValidSdkHome(jdkPath)) {
+      ProjectJdkImpl projectJdkImpl = new ProjectJdkImpl(name, sdkType);
+      projectJdkImpl.setHomePath(jdkPath);
+      sdkType.setupSdkPaths(projectJdkImpl);
+      myCachedProjectJdks.put(uniqueName, projectJdkImpl);
+      return projectJdkImpl;
     }
     return null;
   }

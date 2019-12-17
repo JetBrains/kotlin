@@ -179,8 +179,9 @@ public class SdkDetector {
           callback.onSearchStarted();
           indicator.setIndeterminate(false);
           int item = 0;
-          for (SdkType type : SdkType.getAllTypes()) {
-            indicator.setFraction((float)item++ / SdkType.getAllTypes().length);
+          SdkType[] types = SdkType.getAllTypes();
+          for (SdkType type : types) {
+            indicator.setFraction((float)item++ / types.length);
             indicator.checkCanceled();
             detect(type, indicator, callback);
           }
