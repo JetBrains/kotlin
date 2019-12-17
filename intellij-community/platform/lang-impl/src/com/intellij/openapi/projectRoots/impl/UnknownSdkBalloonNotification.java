@@ -33,10 +33,11 @@ public class UnknownSdkBalloonNotification {
   }
 
   public void notifyFixedSdks(@NotNull Map<? extends UnknownSdk, LocalSdkFix> localFixes) {
+    if (localFixes.isEmpty()) return;
+
     final String title;
     final String change;
     final StringBuilder message = new StringBuilder();
-    if (localFixes.isEmpty()) return;
 
     Set<String> usages = new TreeSet<>();
     for (Map.Entry<? extends UnknownSdk, LocalSdkFix> entry : localFixes.entrySet()) {
