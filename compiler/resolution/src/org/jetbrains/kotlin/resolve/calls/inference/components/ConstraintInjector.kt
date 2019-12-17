@@ -182,6 +182,7 @@ class ConstraintInjector(
 
         // from ConstraintIncorporator.Context
         override fun addNewIncorporatedConstraint(lowerType: KotlinTypeMarker, upperType: KotlinTypeMarker) {
+            if (lowerType === upperType) return
             if (c.isAllowedType(lowerType) && c.isAllowedType(upperType)) {
                 runIsSubtypeOf(lowerType, upperType)
             }
