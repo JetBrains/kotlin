@@ -728,7 +728,7 @@ class CacheBuilder(val project: Project, val binary: NativeBinary) {
         for (library in sortedLibraries) {
             project.logger.info("Compiling ${library.uniqueName} to cache")
             val args = mutableListOf(
-                "-p", "dynamic_cache",
+                "-p", "static_cache",
                 "-target", target
             )
             if (debuggable)
@@ -769,7 +769,7 @@ class CacheBuilder(val project: Project, val binary: NativeBinary) {
             ensureCompilerProvidedLibPrecached(dependency.path, platformLibs, visitedLibs)
         project.logger.info("Compiling $platformLibName (${visitedLibs.size}/${platformLibs.size}) to cache")
         val args = mutableListOf(
-            "-p", "dynamic_cache",
+            "-p", "static_cache",
             "-target", target
         )
         if (debuggable)
