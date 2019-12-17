@@ -1,7 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.plugins.templates
 
 import org.jetbrains.kotlin.tools.projectWizard.core.*
-import org.jetbrains.kotlin.tools.projectWizard.core.service.FileSystemWizardService
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemPlugin
@@ -130,10 +129,9 @@ class TemplatesPlugin(context: Context) : Plugin(context) {
         val template = sourceset.template ?: return UNIT_SUCCESS
         val settings = with(template) { settingsAsMap(sourceset.original) }
         val allSettings = settings + interceptionPointSettings.mapKeys { it.key.name }
-        return with(template) { getFileTemplates(sourceset) }.map { fileTemplate ->
-            val fileText = templateEngine.renderTemplate(fileTemplate, allSettings)
-            val path = sourceset.path / fileTemplate.relativePath
-            service<FileSystemWizardService>()!!.createFile(path, fileText)
+        return with(template) { getFileTemplates(sourceset) }.map { fileTemplateDescriptor ->
+            val fileTemplate = FileTemplate(fileTemplateDescriptor, sourceset.path, allSettings)
+            with(templateEngine) { writeTemplate(fileTemplate) }
         }.sequenceIgnore()
     }
 }

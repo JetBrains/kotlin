@@ -9,7 +9,8 @@ object Services {
         ProjectImportingWizardServiceImpl(),
         OsFileSystemWizardService(),
         AndroidWizardServiceImpl(),
-        BuildSystemAvailabilityWizardServiceImpl()
+        BuildSystemAvailabilityWizardServiceImpl(),
+        DummyFileFormattingService()
     )
 }
 
