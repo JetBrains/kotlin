@@ -7872,6 +7872,54 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
         }
     }
 
+    @TestMetadata("compiler/testData/diagnostics/tests/funInterface")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class FunInterface extends AbstractFirOldFrontendDiagnosticsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInFunInterface() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/funInterface"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+        }
+
+        @TestMetadata("basicFunInterface.kt")
+        public void testBasicFunInterface() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/funInterface/basicFunInterface.kt");
+        }
+
+        @TestMetadata("basicFunInterfaceConversion.kt")
+        public void testBasicFunInterfaceConversion() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/funInterface/basicFunInterfaceConversion.kt");
+        }
+
+        @TestMetadata("basicFunInterfaceDisabled.kt")
+        public void testBasicFunInterfaceDisabled() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/funInterface/basicFunInterfaceDisabled.kt");
+        }
+
+        @TestMetadata("funInterfaceSyntheticConstructors.kt")
+        public void testFunInterfaceSyntheticConstructors() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/funInterface/funInterfaceSyntheticConstructors.kt");
+        }
+
+        @TestMetadata("genericSubstitutionForFunInterface.kt")
+        public void testGenericSubstitutionForFunInterface() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/funInterface/genericSubstitutionForFunInterface.kt");
+        }
+
+        @TestMetadata("severalConversionsForFunInterface.kt")
+        public void testSeveralConversionsForFunInterface() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/funInterface/severalConversionsForFunInterface.kt");
+        }
+
+        @TestMetadata("suspendFunInterfaceConversion.kt")
+        public void testSuspendFunInterfaceConversion() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/funInterface/suspendFunInterfaceConversion.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/diagnostics/tests/functionAsExpression")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
