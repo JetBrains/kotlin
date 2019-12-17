@@ -25,7 +25,7 @@ interface SingleCoexistenceTargetConfigurator : TargetConfigurator {
         other.none { it == this }
 }
 
-interface SimpleTargetConfigurator : TargetConfigurator {
+interface SimpleTargetConfigurator : TargetConfigurator, SingleCoexistenceTargetConfigurator {
     val moduleSubType: ModuleSubType
     override val moduleType get() = moduleSubType.moduleType
     override val id get() = "${moduleSubType.name}Target"
@@ -49,7 +49,7 @@ private fun Module.createTargetAccessIr(moduleSubType: ModuleSubType) =
     )
 
 
-interface JsTargetConfigurator : TargetConfigurator {
+interface JsTargetConfigurator : TargetConfigurator, SingleCoexistenceTargetConfigurator {
     override val moduleType: ModuleType get() = ModuleType.js
 }
 
