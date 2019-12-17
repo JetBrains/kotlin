@@ -152,10 +152,15 @@ class FirResolveBench(val withProgress: Boolean) {
                 try {
                     transformer.transformFile(firFile, null)
                 } catch (e: Throwable) {
-                    val ktFile = firFile.psi as KtFile
-                    println("Fail in file: ${ktFile.virtualFilePath}")
+                    val ktFile = firFile.psi
+                    if (ktFile is KtFile) {
+                        println("Fail in file: ${ktFile.virtualFilePath}")
+                        fails += FailureInfo(transformer::class, e, ktFile.virtualFilePath)
+                    } else {
+                        println("Fail in file: ${firFile.packageFqName} / ${firFile.name}")
+                        fails += FailureInfo(transformer::class, e, firFile.packageFqName.asString() + "/" + firFile.name)
+                    }
                     fail = true
-                    fails += FailureInfo(transformer::class, e, ktFile.virtualFilePath)
                     //println(ktFile.text)
                     //throw e
                 }
