@@ -7,18 +7,18 @@ public class J {
 // FILE: test.kt
 class A {
     init {
-        <!UNRESOLVED_REFERENCE!>foo<!>()
+        foo()
         bar()
     }
 
     fun test1() {
-        <!UNRESOLVED_REFERENCE!>foo<!>()
+        foo()
         bar()
     }
 
     object O {
         fun test() {
-            <!UNRESOLVED_REFERENCE!>foo<!>()
+            foo()
             bar()
         }
     }

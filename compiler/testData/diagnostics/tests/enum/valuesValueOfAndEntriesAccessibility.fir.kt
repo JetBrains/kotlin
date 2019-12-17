@@ -3,9 +3,9 @@ enum class E {
 
     companion object {
         fun foo(): E = ENTRY
-        fun bar(): Array<E> = <!UNRESOLVED_REFERENCE!>values<!>()
-        fun baz(): E = <!UNRESOLVED_REFERENCE!>valueOf<!>("ENTRY")
-        val valuez = <!UNRESOLVED_REFERENCE!>values<!>()
+        fun bar(): Array<E> = values()
+        fun baz(): E = valueOf("ENTRY")
+        val valuez = values()
     }
 
     fun oof(): E = ENTRY

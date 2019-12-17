@@ -1,26 +1,22 @@
 FILE: enumWithCompanion.kt
     public final enum class EC : R|kotlin/Enum<EC>| {
         private constructor(): R|EC| {
-            super<R|kotlin/Enum<EC>|>()
+            super<R|kotlin/Any|>()
         }
 
-        public final static val A: R|EC| = object : R|EC| {
-            private constructor(): R|EC| {
-                super<R|EC|>()
+        public final enum entry A : R|kotlin/Any| {
+            public constructor(): R|EC.A| {
+                super<R|kotlin/Any|>()
             }
 
         }
 
-
-
-        public final static val B: R|EC| = object : R|EC| {
-            private constructor(): R|EC| {
-                super<R|EC|>()
+        public final enum entry B : R|kotlin/Any| {
+            public constructor(): R|EC.B| {
+                super<R|kotlin/Any|>()
             }
 
         }
-
-
 
         public final companion object Companion : R|kotlin/Any| {
             private constructor(): R|EC.Companion| {
@@ -29,10 +25,10 @@ FILE: enumWithCompanion.kt
 
             public final fun u(ec: R|EC|): R|kotlin/Boolean| {
                 ^u when (R|<local>/ec|) {
-                    ==($subj$, R|/EC.A|) ->  {
+                    ==($subj$, Q|EC.A|) ->  {
                         Boolean(true)
                     }
-                    ==($subj$, R|/EC.B|) ->  {
+                    ==($subj$, Q|EC.B|) ->  {
                         Boolean(false)
                     }
                 }

@@ -10,8 +10,8 @@ public class A {
 class B: A() {
     companion object {
         init {
-            val a: Int = <!UNRESOLVED_REFERENCE!>foo<!>()
-            val b: Int = <!UNRESOLVED_REFERENCE!>bar<!>
+            val a: Int = foo()
+            val b: Int = bar
         }
     }
 

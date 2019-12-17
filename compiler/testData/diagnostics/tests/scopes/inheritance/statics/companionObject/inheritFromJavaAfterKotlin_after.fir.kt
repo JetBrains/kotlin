@@ -12,20 +12,20 @@ open class B : J() {
 
 class A {
     init {
-        <!UNRESOLVED_REFERENCE!>foo<!>()
+        foo()
         bar()
         <!UNRESOLVED_REFERENCE!>baz<!>()
     }
 
     fun test1() {
-        <!UNRESOLVED_REFERENCE!>foo<!>()
+        foo()
         bar()
         <!UNRESOLVED_REFERENCE!>baz<!>()
     }
 
     object O {
         fun test() {
-            <!UNRESOLVED_REFERENCE!>foo<!>()
+            foo()
             bar()
             <!UNRESOLVED_REFERENCE!>baz<!>()
         }
