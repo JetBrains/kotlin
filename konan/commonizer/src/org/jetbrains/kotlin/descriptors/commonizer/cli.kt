@@ -230,7 +230,8 @@ private fun saveModules(
     val serializer = KlibMetadataMonolithicSerializer(
         languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
         metadataVersion = KlibMetadataVersion.INSTANCE,
-        descriptorTable = EmptyDescriptorTable
+        descriptorTable = EmptyDescriptorTable,
+        skipExpects = false
     )
 
     val stdlibName = Name.special("<$KONAN_STDLIB_NAME>")
