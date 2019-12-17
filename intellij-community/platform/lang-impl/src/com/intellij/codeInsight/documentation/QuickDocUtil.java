@@ -29,6 +29,7 @@ import com.intellij.util.Consumer;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.SingleAlarm;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -84,7 +85,10 @@ public class QuickDocUtil {
    * @param pauseBetweenRetries pause between retries in milliseconds 
    * @param progressIndicator optional progress indicator, which can be used to cancel the action externally
    * @return {@code true} if the action succeeded to run without interruptions, {@code false} otherwise
+   * @deprecated use {@link com.intellij.openapi.application.ReadAction#nonBlocking}
    */
+  @Deprecated
+  @ApiStatus.ScheduledForRemoval(inVersion = "2020.2")
   public static boolean runInReadActionWithWriteActionPriorityWithRetries(@NotNull final Runnable action,
                                                                           long timeout, long pauseBetweenRetries,
                                                                           @Nullable ProgressIndicator progressIndicator) {
@@ -108,7 +112,10 @@ public class QuickDocUtil {
   /**
    * Same as {@link #runInReadActionWithWriteActionPriorityWithRetries(Runnable, long, long, ProgressIndicator)} using current thread's
    * progress indicator ({@link ProgressManager#getProgressIndicator()}).
+   * @deprecated use {@link com.intellij.openapi.application.ReadAction#nonBlocking}
    */
+  @Deprecated
+  @ApiStatus.ScheduledForRemoval(inVersion = "2020.2")
   public static boolean runInReadActionWithWriteActionPriorityWithRetries(@NotNull final Runnable action,
                                                                           long timeout, long pauseBetweenRetries) {
     return runInReadActionWithWriteActionPriorityWithRetries(action, timeout, pauseBetweenRetries,
