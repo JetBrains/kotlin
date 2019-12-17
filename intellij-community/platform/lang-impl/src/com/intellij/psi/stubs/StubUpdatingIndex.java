@@ -10,6 +10,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -50,7 +51,8 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
   private static final FileBasedIndex.InputFilter INPUT_FILTER = file -> canHaveStub(file);
 
   public static boolean canHaveStub(@NotNull VirtualFile file) {
-    FileType fileType = SubstitutedFileType.substituteFileType(file, file.getFileType(), ProjectUtil.guessProjectForFile(file));
+    Project project = ProjectUtil.guessProjectForFile(file);
+    FileType fileType = SubstitutedFileType.substituteFileType(file, file.getFileType(), project);
     if (fileType instanceof LanguageFileType) {
       final Language l = ((LanguageFileType)fileType).getLanguage();
       final ParserDefinition parserDefinition = LanguageParserDefinitions.INSTANCE.forLanguage(l);
@@ -66,7 +68,7 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
         FileBasedIndex fileBasedIndex = FileBasedIndex.getInstance();
         if (file instanceof NewVirtualFile &&
             fileBasedIndex instanceof FileBasedIndexImpl &&
-            ((FileBasedIndexImpl)fileBasedIndex).getIndex(INDEX_ID).isIndexedStateForFile(((NewVirtualFile)file).getId(), new IndexedFileImpl(file, fileType))) {
+            ((FileBasedIndexImpl)fileBasedIndex).getIndex(INDEX_ID).isIndexedStateForFile(((NewVirtualFile)file).getId(), new IndexedFileImpl(file, fileType, project))) {
           return true;
         }
       }

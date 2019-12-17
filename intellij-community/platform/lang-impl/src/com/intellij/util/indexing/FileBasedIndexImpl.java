@@ -2205,7 +2205,12 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
 
   private class UnindexedFilesFinder implements CollectingContentIterator {
     private final List<VirtualFile> myFiles = new ArrayList<>();
+    private final Project myProject;
     private final boolean myDoTraceForFilesToBeIndexed = LOG.isTraceEnabled();
+
+    UnindexedFilesFinder(@NotNull Project project) {
+      myProject = project;
+    }
 
     @NotNull
     @Override
@@ -2249,7 +2254,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
           return true;
         }
         getFileTypeManager().freezeFileTypeTemporarilyIn(file, () -> {
-          IndexedFile fileContent = new IndexedFileImpl(file);
+          IndexedFile fileContent = new IndexedFileImpl(file, myProject);
 
           boolean isUptoDate = true;
           boolean isDirectory = file.isDirectory();
@@ -2326,8 +2331,8 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
   }
 
   @NotNull
-  CollectingContentIterator createContentIterator() {
-    return new UnindexedFilesFinder();
+  CollectingContentIterator createContentIterator(@NotNull Project project) {
+    return new UnindexedFilesFinder(project);
   }
 
   @Override
