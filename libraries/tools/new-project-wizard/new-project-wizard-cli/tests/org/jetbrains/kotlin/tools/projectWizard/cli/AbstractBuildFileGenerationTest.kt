@@ -38,7 +38,7 @@ abstract class AbstractBuildFileGenerationTest : AbstractPluginBasedTest() {
                 defaultStructure + "\n" +
                 buildSystem.yaml
         val tempDir = Files.createTempDirectory(null)
-        val wizard = YamlWizard(yaml, tempDir.toString(), testData.createPlugins)
+        val wizard = YamlWizard(yaml, tempDir.toString(), testData.createPlugins, isUnitTestMode = true)
         val result = wizard.apply(Services.IDEA_INDEPENDENT_SERVICES, GenerationPhase.ALL)
         result.onFailure { errors ->
             errors.forEach { error ->

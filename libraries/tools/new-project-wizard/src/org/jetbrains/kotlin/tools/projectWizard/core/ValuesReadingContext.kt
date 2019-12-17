@@ -6,8 +6,11 @@ import org.jetbrains.kotlin.tools.projectWizard.core.service.ServicesManager
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 
-@Suppress("UNCHECKED_CAST")
-open class ValuesReadingContext(val context: Context, private val servicesManager: ServicesManager) {
+open class ValuesReadingContext(
+    val context: Context,
+    private val servicesManager: ServicesManager,
+    val isUnitTestMode: Boolean
+) {
     inline fun <reified S : WizardService> service(noinline filter: (S) -> Boolean = { true }) = serviceByClass(S::class, filter)
 
     fun <S : WizardService> serviceByClass(klass: KClass<S>, filter: (S) -> Boolean = { true }) =

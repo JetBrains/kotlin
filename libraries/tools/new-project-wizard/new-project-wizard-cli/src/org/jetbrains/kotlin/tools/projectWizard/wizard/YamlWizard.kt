@@ -14,12 +14,13 @@ import java.nio.file.Paths
 class YamlWizard(
     private val yaml: String,
     private val path: String,
-    createPlugins: (Context) -> List<Plugin>
+    createPlugins: (Context) -> List<Plugin>,
+    isUnitTestMode: Boolean
 ) : Wizard(
     createPlugins,
     ServicesManager(Services.IDEA_INDEPENDENT_SERVICES) { services ->
         services.firstOrNull { it is IdeaIndependentWizardService }
-    }
+    }, isUnitTestMode
 ) {
     override fun apply(
         services: List<WizardService>,

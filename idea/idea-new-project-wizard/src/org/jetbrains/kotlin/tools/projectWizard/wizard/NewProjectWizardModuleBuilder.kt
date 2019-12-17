@@ -35,7 +35,7 @@ import com.intellij.openapi.module.Module as IdeaModule
 
 
 class NewProjectWizardModuleBuilder : ModuleBuilder() {
-    private val wizard = IdeWizard(Plugins.allPlugins, IdeaServices.PROJECT_INDEPENDENT)
+    private val wizard = IdeWizard(Plugins.allPlugins, IdeaServices.PROJECT_INDEPENDENT, isUnitTestMode = false)
 
     companion object {
         const val MODULE_BUILDER_ID = "kotlin.newProjectWizard.builder"

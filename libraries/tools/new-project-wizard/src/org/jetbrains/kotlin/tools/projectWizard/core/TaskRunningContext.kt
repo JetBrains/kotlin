@@ -7,8 +7,9 @@ import org.jetbrains.kotlin.tools.projectWizard.core.service.ServicesManager
 
 class TaskRunningContext(
     context: Context,
-    servicesManager: ServicesManager
-) : ValuesReadingContext(context, servicesManager) {
+    servicesManager: ServicesManager,
+    isUnitTestMode: Boolean
+) : ValuesReadingContext(context, servicesManager, isUnitTestMode) {
     fun <A, B : Any> Task1Reference<A, B>.execute(value: A): TaskResult<B> {
         @Suppress("UNCHECKED_CAST")
         val task = context.taskContext.getEntity(this) as Task1<A, B>

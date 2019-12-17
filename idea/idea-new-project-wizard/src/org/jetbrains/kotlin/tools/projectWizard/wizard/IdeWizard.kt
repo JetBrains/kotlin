@@ -14,13 +14,15 @@ import kotlin.reflect.KProperty
 
 class IdeWizard(
     createPlugins: PluginsCreator,
-    initialServices: List<WizardService>
+    initialServices: List<WizardService>,
+    isUnitTestMode: Boolean
 ) : Wizard(
     createPlugins,
     ServicesManager(initialServices) { services ->
         services.firstOrNull { it is IdeaWizardService }
             ?: services.firstOrNull()
-    }
+    },
+    isUnitTestMode
 ) {
     private val allSettings = plugins.flatMap { it.declaredSettings }
 
