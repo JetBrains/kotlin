@@ -11,6 +11,9 @@ sourceSets {
         java {
             srcDir "${rootDir}/core/reflection.jvm/src"
         }
+        resources {
+            srcDir("${rootDir}/core/reflection.jvm/resources")
+        }
     }
 
     if (includeJava9) {
