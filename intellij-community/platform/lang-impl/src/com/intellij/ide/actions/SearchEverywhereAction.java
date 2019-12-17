@@ -591,7 +591,7 @@ public class SearchEverywhereAction extends AnAction implements CustomComponentA
         return;
       }
 
-      FeatureUsageData data = SearchEverywhereUsageTriggerCollector.createData(searchProviderID);
+      FeatureUsageData data = SearchEverywhereUsageTriggerCollector.createData(searchProviderID).addInputEvent(e);
       SearchEverywhereUsageTriggerCollector.trigger(e.getProject(), SearchEverywhereUsageTriggerCollector.DIALOG_OPEN, data);
       IdeEventQueue.getInstance().getPopupManager().closeAllPopups(false);
       String text = GotoActionBase.getInitialTextForNavigation(e);
