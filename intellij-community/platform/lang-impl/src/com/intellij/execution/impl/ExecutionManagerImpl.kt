@@ -419,7 +419,8 @@ class ExecutionManagerImpl(private val project: Project) : ExecutionManager(), D
           return
         }
 
-        if (DumbService.getInstance(project).isDumb && configuration != null && !configuration.type.isDumbAware || ExecutorRegistry.getInstance().isStarting(environment)) {
+        if ((DumbService.getInstance(project).isDumb && configuration != null && !configuration.type.isDumbAware)
+            || ExecutorRegistry.getInstance().isStarting(environment)) {
           awaitTermination(this, 100)
           return
         }
@@ -432,7 +433,14 @@ class ExecutionManagerImpl(private val project: Project) : ExecutionManager(), D
           }
         }
         awaitingRunProfiles.remove(environment.runProfile)
-        restart(environment)
+
+        // start() can be called during restartRunProfile() after pretty long 'awaitTermination()' so we have to check if the project is still here
+        if (environment.project.isDisposed) {
+          return
+        }
+
+        val settings = environment.runnerAndConfigurationSettings
+        ProgramRunnerUtil.executeConfiguration(environment, settings != null && settings.isEditBeforeRun, /* assignNewId = */ true)
       }
     }, 50)
   }
@@ -521,16 +529,6 @@ private fun createEnvironmentBuilder(project: Project,
     builder.runnerAndSettings(runner, configuration!!)
   }
   return builder
-}
-
-private fun restart(environment: ExecutionEnvironment) {
-  // start() can be called during restartRunProfile() after pretty long 'awaitTermination()' so we have to check if the project is still here
-  if (environment.project.isDisposed) {
-    return
-  }
-
-  val settings = environment.runnerAndConfigurationSettings
-  ProgramRunnerUtil.executeConfiguration(environment, settings != null && settings.isEditBeforeRun, /* assignNewId = */ true)
 }
 
 private fun userApprovesStopForSameTypeConfigurations(project: Project, configName: String, instancesCount: Int): Boolean {

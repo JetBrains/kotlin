@@ -143,7 +143,7 @@ public final class ExecutorRegistryImpl extends ExecutorRegistry implements Disp
   }
 
   @Override
-  public Executor getExecutorById(final String executorId) {
+  public Executor getExecutorById(@NotNull String executorId) {
     return myIdToExecutor.get(executorId);
   }
 
@@ -195,13 +195,8 @@ public final class ExecutorRegistryImpl extends ExecutorRegistry implements Disp
   }
 
   @Override
-  public boolean isStarting(Project project, String executorId, String runnerId) {
+  public boolean isStarting(@NotNull Project project, @NotNull String executorId, @NotNull String runnerId) {
     return myInProgress.contains(Trinity.create(project, executorId, runnerId));
-  }
-
-  @Override
-  public boolean isStarting(@NotNull ExecutionEnvironment environment) {
-    return isStarting(environment.getProject(), environment.getExecutor().getId(), environment.getRunner().getRunnerId());
   }
 
   @Override
