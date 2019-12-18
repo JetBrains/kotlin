@@ -12,6 +12,7 @@ import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.impl.ActionToolbarImpl;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopup;
@@ -32,7 +33,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -77,7 +81,7 @@ public class NewRunConfigurationPopup {
                                        @Nullable final ConfigurationType selectedConfigurationType,
                                        @Nullable final Runnable finalStep, boolean showTitle) {
     if (Registry.is("run.configuration.use.tree.popup.to.add.new", false)) {
-      return createAddTreePopup(project, typesToShow, creator, selectedConfigurationType, showTitle);
+      return createAddTreePopup(project, creator, selectedConfigurationType, showTitle);
     }
 
     BaseListPopupStep<ConfigurationType> step = new BaseListPopupStep<ConfigurationType>(
@@ -169,16 +173,11 @@ public class NewRunConfigurationPopup {
   }
 
   private static JBPopup createAddTreePopup(@NotNull Project project,
-                                            @NotNull final List<? extends ConfigurationType> typesToShow,
                                             @NotNull final Consumer<? super ConfigurationFactory> creator,
                                             @Nullable final ConfigurationType selectedConfigurationType,
                                             boolean showTitle) {
-    typesToShow.remove(HIDDEN_ITEMS_STUB);
-    List<ConfigurationType> otherTypes = new ArrayList<>(ConfigurationType.CONFIGURATION_TYPE_EP.getExtensionList());
-    Collections.sort(otherTypes, (o1, o2) -> RunConfigurationListManagerHelperKt.compareTypesForUi(o1, o2));
-    otherTypes.removeAll(typesToShow);
-    //todo get IDE-specific factory from some ExtensionPoint or smth like this
-    DefaultNewRunConfigurationTreePopupFactory treePopupFactory = new DefaultNewRunConfigurationTreePopupFactory(project, typesToShow, otherTypes);
+    NewRunConfigurationTreePopupFactory treePopupFactory = ApplicationManager.getApplication().getService(NewRunConfigurationTreePopupFactory.class);
+    treePopupFactory.initStructure(project);
 
     AbstractTreeStructure structure = new AbstractTreeStructure() {
       private final Map<NodeDescriptor<?>, NodeDescriptor<?>[]> myCache = new HashMap<>();
@@ -194,7 +193,7 @@ public class NewRunConfigurationPopup {
       public NodeDescriptor<?>[] getChildElements(@NotNull Object element) {
         NodeDescriptor<?> nodeDescriptor = (NodeDescriptor<?>)element;
         if (!myCache.containsKey(nodeDescriptor)) {
-          myCache.put(nodeDescriptor, treePopupFactory.createChildElements(nodeDescriptor));
+          myCache.put(nodeDescriptor, treePopupFactory.createChildElements(project, nodeDescriptor));
         }
         return myCache.get(nodeDescriptor);
       }
@@ -208,7 +207,7 @@ public class NewRunConfigurationPopup {
       @NotNull
       @Override
       public NodeDescriptor<?> createDescriptor(@NotNull Object element, @Nullable NodeDescriptor parentDescriptor) {
-        return treePopupFactory.createDescriptor(element, parentDescriptor, NodeDescriptor.DEFAULT_WEIGHT);
+        return treePopupFactory.createDescriptor(project, element, parentDescriptor, NodeDescriptor.DEFAULT_WEIGHT);
       }
 
       @Override
