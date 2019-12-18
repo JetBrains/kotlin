@@ -33,6 +33,12 @@ excludedFunctions = __tg_promote KERNEL_AUDIT_TOKEN KERNEL_SECURITY_TOKEN \
                     asl_decode_buffer asl_encode_buffer asl_remove_index \
                     averunnable dbm_forder pidlock ttyaction ttylock ttymsg ttyunlock uuid_generate_early_random
 
+# These functions are depend on __arm__ macro. Include them back
+# when our LLVM distribution will gain support for arm64_32 target.
+excludedFunctions.watchos_arm64 = _simd_ceil_f4 _simd_ceil_d2 _simd_floor_f4 _simd_floor_d2 \
+                                  _simd_rint_f4 _simd_rint_d2 _simd_trunc_f4 _simd_trunc_d2 \
+                                  __tg_trunc __tg_ceil __tg_rint __tg_floor simd_fract
+
 compilerOpts = -D_XOPEN_SOURCE -DSYSCTL_DEF_ENABLED
 linkerOpts = -ldl -lz -lbz2 -lcompression
 
