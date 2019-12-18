@@ -8,6 +8,7 @@ import com.intellij.execution.dashboard.RunDashboardRunConfigurationNode;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.JBIterable;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,7 +18,11 @@ public class HideConfigurationAction extends DumbAwareAction {
   @Override
   public void update(@NotNull AnActionEvent e) {
     JBIterable<RunDashboardRunConfigurationNode> nodes = RunDashboardActionUtils.getTargets(e);
-    e.getPresentation().setEnabledAndVisible(nodes.isNotEmpty());
+    boolean enabled = nodes.isNotEmpty();
+    e.getPresentation().setEnabledAndVisible(enabled);
+    if (enabled) {
+      e.getPresentation().setText("Hide " + StringUtil.pluralize("Configuration", nodes.size()));
+    }
   }
 
   @Override
