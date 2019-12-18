@@ -1147,7 +1147,7 @@ class MethodInliner(
         ) {
             val actualParams = Type.getArgumentTypes(descriptor)
             assert(actualParams.size == directOrder.size) {
-                "Number of expected and actual params should be equals, but ${actualParams.size} != ${directOrder.size}}!"
+                "Number of expected and actual parameters should be equal, but ${actualParams.size} != ${directOrder.size}!"
             }
 
             var currentShift = shift + directOrder.sumBy { it.size }
