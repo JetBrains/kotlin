@@ -139,9 +139,9 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
 
   private void registerToolWindow(String toolWindowId, boolean active) {
     AppUIUtil.invokeOnEdt(() -> {
-      ToolWindowManagerEx toolWindowManager = ToolWindowManagerEx.getInstanceEx(myProject);
-      if (toolWindowManager == null) return;
+      if (myProject.isDisposed() || myProject.isDefault()) return;
 
+      ToolWindowManagerEx toolWindowManager = ToolWindowManagerEx.getInstanceEx(myProject);
       toolWindowManager.invokeLater(() -> {
         if (myProject.isDisposed()) return;
 
@@ -176,9 +176,9 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
 
   private void updateToolWindow(@NotNull String toolWindowId, boolean active, boolean show) {
     AppUIUtil.invokeOnEdt(() -> {
-      ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(myProject);
-      if (toolWindowManager == null) return;
+      if (myProject.isDisposed() || myProject.isDefault()) return;
 
+      ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(myProject);
       toolWindowManager.invokeLater(() -> {
         if (myProject.isDisposed()) return;
 
