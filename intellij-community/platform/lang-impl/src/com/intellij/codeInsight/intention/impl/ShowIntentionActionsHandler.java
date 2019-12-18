@@ -42,6 +42,7 @@ import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.stubs.StubTextInconsistencyException;
 import com.intellij.util.PairProcessor;
 import com.intellij.util.ThreeState;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -99,7 +100,8 @@ public class ShowIntentionActionsHandler implements CodeInsightActionHandler {
   }
 
   @NotNull
-  private static ShowIntentionsPass.IntentionsInfo calcIntentions(@NotNull Project project,
+  @ApiStatus.Internal
+  public static ShowIntentionsPass.IntentionsInfo calcIntentions(@NotNull Project project,
                                                                   @NotNull Editor editor,
                                                                   @NotNull PsiFile file) {
     ShowIntentionsPass.IntentionsInfo intentions = ActionUtil.underModalProgress(project, "Searching for Context Actions", () ->
