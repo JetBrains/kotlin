@@ -37,7 +37,8 @@ object CopyTBXReferenceAction {
                                RUBY_PREFIX to "rubymine",
                                WEB_PREFIX to "web-storm",
                                RIDER_PREFIX to "rd",
-                               GOIDE_PREFIX to "goland")
+                               GOIDE_PREFIX to "goland",
+                               DBE_PREFIX to "dbe")
 
   fun createJetbrainsLink(project: Project, elements: List<PsiElement>, editor: Editor?): String? {
     val entries = IntArray(elements.size) { i -> i }
