@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.java.FirJavaModuleBasedSession
 import org.jetbrains.kotlin.fir.java.FirLibrarySession
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
+import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
@@ -60,7 +62,7 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
         }
     }
 
-    protected open fun analyzeAndCheckUnhandled(testDataFile: File, files: List<TestFile>) {
+    open fun analyzeAndCheckUnhandled(testDataFile: File, files: List<TestFile>, useLightTree: Boolean = false) {
         val groupedByModule = files.groupBy(TestFile::module)
 
         val modules = createModules(groupedByModule)
@@ -90,19 +92,28 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
 
             val session = configToSession.getValue(testModule)
 
-
-            val firBuilder = RawFirBuilder(session, false)
-
-            ktFiles.mapTo(firFiles) {
-                val firFile = firBuilder.buildFirFile(it)
-
-                (session.firProvider as FirProviderImpl).recordFile(firFile)
-
-                firFile
-            }
+            mapKtFilesToFirFiles(session, ktFiles, firFiles, useLightTree)
         }
 
         runAnalysis(testDataFile, files, firFiles)
+    }
+
+    private fun mapKtFilesToFirFiles(session: FirSession, ktFiles: List<KtFile>, firFiles: MutableList<FirFile>, useLightTree: Boolean) {
+        if (useLightTree) {
+            val lightTreeBuilder = LightTree2Fir(session, stubMode = false)
+            ktFiles.mapTo(firFiles) {
+                val firFile = lightTreeBuilder.buildFirFile(it.text, it.name)
+                (session.firProvider as FirProviderImpl).recordFile(firFile)
+                firFile
+            }
+        } else {
+            val firBuilder = RawFirBuilder(session, false)
+            ktFiles.mapTo(firFiles) {
+                val firFile = firBuilder.buildFirFile(it)
+                (session.firProvider as FirProviderImpl).recordFile(firFile)
+                firFile
+            }
+        }
     }
 
     protected abstract fun runAnalysis(testDataFile: File, testFiles: List<TestFile>, firFiles: List<FirFile>)
