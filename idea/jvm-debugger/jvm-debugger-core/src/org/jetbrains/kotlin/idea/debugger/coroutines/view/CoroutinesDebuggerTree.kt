@@ -28,9 +28,8 @@ import java.util.*
 /**
  * Tree of coroutines for [CoroutinesPanel]
  */
+@Deprecated("moved to XCoroutineView")
 class CoroutinesDebuggerTree(project: Project) : ThreadsDebuggerTree(project) {
-    private val log by logger
-
     // called on every step/frame
     override fun build(context: DebuggerContextImpl) {
         val session = context.debuggerSession
@@ -38,9 +37,11 @@ class CoroutinesDebuggerTree(project: Project) : ThreadsDebuggerTree(project) {
         val command = RefreshCoroutinesTreeCommand(context, this)
         val debuggerSessionState = session?.state ?: DebuggerSession.State.DISPOSED
 
-        if (ApplicationManager.getApplication().isUnitTestMode || debuggerSessionState in EnumSet.of(DebuggerSession.State.PAUSED, DebuggerSession.State.RUNNING)) {
+        if (ApplicationManager.getApplication().isUnitTestMode || debuggerSessionState in EnumSet
+                .of(DebuggerSession.State.PAUSED, DebuggerSession.State.RUNNING)
+        ) {
             showMessage(MessageDescriptor.EVALUATING)
-            ManagerThreadExecutor(context.debugProcess!!).schedule(command)
+            context.debugProcess!!.managerThread.schedule(command)
         } else {
             showMessage(session?.stateDescription ?: DebuggerBundle.message("status.debug.stopped"))
         }
@@ -48,7 +49,7 @@ class CoroutinesDebuggerTree(project: Project) : ThreadsDebuggerTree(project) {
 
 
     override fun getBuildNodeCommand(node: DebuggerTreeNodeImpl): DebuggerCommandImpl? {
-        return when(val descriptor = node.descriptor) {
+        return when (val descriptor = node.descriptor) {
             is CoroutineDescriptorImpl ->
                 CoroutineBuildFrameCommand(node, descriptor, myNodeManager, debuggerContext)
             is CreationFramesDescriptor ->
@@ -71,7 +72,8 @@ class CoroutinesDebuggerTree(project: Project) : ThreadsDebuggerTree(project) {
     }
 }
 
-class CoroutineInfoCache(val cache: MutableList<CoroutineInfoData> = mutableListOf(), var state: CacheState = CacheState.INIT
+class CoroutineInfoCache(
+    val cache: MutableList<CoroutineInfoData> = mutableListOf(), var state: CacheState = CacheState.INIT
 ) {
     fun ok(infoList: List<CoroutineInfoData>) {
         cache.clear()
@@ -84,11 +86,11 @@ class CoroutineInfoCache(val cache: MutableList<CoroutineInfoData> = mutableList
         state = CacheState.FAIL
     }
 
-    fun isOk() : Boolean {
+    fun isOk(): Boolean {
         return state == CacheState.OK
     }
 }
 
-enum class CacheState() {
-    OK,FAIL,INIT
+enum class CacheState {
+    OK, FAIL, INIT
 }

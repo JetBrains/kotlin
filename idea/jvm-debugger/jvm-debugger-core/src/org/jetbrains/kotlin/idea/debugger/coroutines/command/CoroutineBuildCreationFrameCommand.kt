@@ -11,6 +11,7 @@ import com.intellij.debugger.ui.impl.watch.NodeManagerImpl
 import org.jetbrains.kotlin.idea.debugger.coroutines.data.CreationFramesDescriptor
 import org.jetbrains.kotlin.idea.debugger.coroutines.data.CoroutineCreatedStackFrameDescriptor
 
+@Deprecated("moved to XCoroutineView")
 class CoroutineBuildCreationFrameCommand(
     node: DebuggerTreeNodeImpl,
     val descriptor: CreationFramesDescriptor,
@@ -21,10 +22,11 @@ class CoroutineBuildCreationFrameCommand(
         val threadProxy = debuggerContext.suspendContext?.thread ?: return
         val evalContext = debuggerContext.createEvaluationContext() ?: return
         val proxy = threadProxy.forceFrames().first()
-        descriptor.frames.forEach {
+        for(it in descriptor.frames) {
             val descriptor = myNodeManager.createNode(
                 CoroutineCreatedStackFrameDescriptor(it, proxy), evalContext)
             myChildren.add(descriptor)
+
         }
         updateUI(true)
     }

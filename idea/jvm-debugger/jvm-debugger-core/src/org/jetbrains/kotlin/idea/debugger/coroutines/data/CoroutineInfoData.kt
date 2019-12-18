@@ -15,12 +15,10 @@ import org.jetbrains.kotlin.idea.debugger.coroutines.command.CoroutineStackFrame
 data class CoroutineInfoData(
     val name: String,
     val state: State,
-    val threadName: String,
-    val threadStatus: Int,
 
     val stackTrace: List<StackTraceElement>,
     // links to jdi.* references
-    val thread: ThreadReference? = null, // for suspended coroutines should be null
+    val activeThread: ThreadReference? = null, // for suspended coroutines should be null
     val frame: ObjectReference?
 ) {
     var stackFrameList = mutableListOf<CoroutineStackFrameItem>()

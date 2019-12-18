@@ -19,6 +19,7 @@ import com.intellij.icons.AllIcons
 import com.sun.jdi.ObjectReference
 import javax.swing.Icon
 
+@Deprecated("moved to XCoroutineView")
 class CoroutineDescriptorImpl(val infoData: CoroutineInfoData) : NodeDescriptorImpl() {
     lateinit var icon: Icon
 
@@ -26,10 +27,11 @@ class CoroutineDescriptorImpl(val infoData: CoroutineInfoData) : NodeDescriptorI
 
     @Throws(EvaluateException::class)
     override fun calcRepresentation(context: EvaluationContextImpl?, labelListener: DescriptorLabelListener): String {
-        val thread = infoData.thread
+        val thread = infoData.activeThread
         val name = thread?.name()?.substringBefore(" @${infoData.name}") ?: ""
         val threadState = if (thread != null) DebuggerUtilsEx.getThreadStatusText(thread.status()) else ""
-        return "${infoData.name}: ${infoData.state}${if (name.isNotEmpty()) " on thread \"$name\":$threadState" else ""}"
+        val threadName = if (name.isNotEmpty()) " on thread \"$name\":$threadState" else ""
+        return "${infoData.name}: ${infoData.state} $threadName"
     }
 
     override fun isExpandable() = infoData.state != CoroutineInfoData.State.CREATED
@@ -45,8 +47,9 @@ class CoroutineDescriptorImpl(val infoData: CoroutineInfoData) : NodeDescriptorI
     }
 }
 
-class CreationFramesDescriptor(val frames: List<StackTraceElement>)
-    : MessageDescriptor("Coroutine creation stack trace", INFORMATION) {
+@Deprecated("moved to XCoroutineView")
+class CreationFramesDescriptor(val frames: List<StackTraceElement>) :
+    MessageDescriptor("Coroutine creation stack trace", INFORMATION) {
 
     override fun isExpandable() = true
 }
@@ -54,6 +57,7 @@ class CreationFramesDescriptor(val frames: List<StackTraceElement>)
 /**
  * Descriptor for suspend functions
  */
+@Deprecated("moved to XCoroutineView")
 class SuspendStackFrameDescriptor(
     val infoData: CoroutineInfoData,
     val frame: StackTraceElement,
@@ -64,8 +68,8 @@ class SuspendStackFrameDescriptor(
     override fun calcRepresentation(context: EvaluationContextImpl?, labelListener: DescriptorLabelListener?): String {
         return with(frame) {
             val pack = className.substringBeforeLast(".", "")
-            "$methodName:$lineNumber, ${className.substringAfterLast(".")} " +
-                    if (pack.isNotEmpty()) "{$pack}" else ""
+            val packDisplay = if (pack.isNotEmpty()) "{$pack}" else ""
+            "$methodName:$lineNumber, ${className.substringAfterLast(".")} $packDisplay"
         }
     }
 
@@ -76,32 +80,35 @@ class SuspendStackFrameDescriptor(
 /**
  * For the case when no data inside frame is available
  */
+@Deprecated("moved to XCoroutineView")
 class CoroutineCreatedStackFrameDescriptor(val frame: StackTraceElement, proxy: StackFrameProxyImpl) :
     CoroutineStackFrameDescriptor(proxy) {
     override fun calcRepresentation(context: EvaluationContextImpl?, labelListener: DescriptorLabelListener?): String {
         return with(frame) {
             val pack = className.substringBeforeLast(".", "")
-            "$methodName:$lineNumber, ${className.substringAfterLast(".")} ${if (pack.isNotEmpty()) "{$pack}" else ""}"
+            val packDisplay = if (pack.isNotEmpty()) "{$pack}" else ""
+            "$methodName:$lineNumber, ${className.substringAfterLast(".")} $packDisplay"
         }
     }
 
     override fun getName() = null
 }
 
+@Deprecated("moved to XCoroutineView")
 class AsyncStackFrameDescriptor(val infoData: CoroutineInfoData, val frame: StackFrameItem, proxy: StackFrameProxyImpl) :
     CoroutineStackFrameDescriptor(proxy) {
     override fun calcRepresentation(context: EvaluationContextImpl?, labelListener: DescriptorLabelListener?): String {
         return with(frame) {
             val pack = path().substringBeforeLast(".", "")
-            "${method()}:${line()}, ${path().substringAfterLast(".")} ${if (pack.isNotEmpty()) "{$pack}" else ""}"
+            val packDisplay = if (pack.isNotEmpty()) "{$pack}" else ""
+            "${method()}:${line()}, ${path().substringAfterLast(".")} $packDisplay"
         }
     }
 
     override fun getName() = frame.method()
-
 }
 
-
+@Deprecated("moved to XCoroutineView")
 open class CoroutineStackFrameDescriptor(proxy: StackFrameProxyImpl) : StackFrameDescriptorImpl(proxy, MethodsTracker()) {
     override fun isExpandable() = false
 }

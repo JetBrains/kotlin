@@ -17,7 +17,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.util.Disposer
@@ -29,10 +28,10 @@ import org.jetbrains.kotlin.idea.debugger.coroutines.view.CoroutineDumpPanel
 import org.jetbrains.kotlin.idea.debugger.coroutines.coroutineDebuggerEnabled
 import org.jetbrains.kotlin.idea.debugger.coroutines.data.CoroutineInfoData
 import org.jetbrains.kotlin.idea.debugger.coroutines.proxy.CoroutinesDebugProbesProxy
+import org.jetbrains.kotlin.idea.debugger.coroutines.util.logger
 
 @Suppress("ComponentNotRegistered")
 class CoroutineDumpAction : AnAction(), AnAction.TransparentUpdate {
-    private val logger = Logger.getInstance(this::class.java)
 
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project ?: return
@@ -42,20 +41,15 @@ class CoroutineDumpAction : AnAction(), AnAction.TransparentUpdate {
             val process = context.debugProcess ?: return
             process.managerThread.schedule(object : SuspendContextCommandImpl(context.suspendContext) {
                 override fun contextAction() {
-                    val states = CoroutinesDebugProbesProxy(context.suspendContext!!).dumpCoroutines() ?: return
+                    val states = CoroutinesDebugProbesProxy(context.suspendContext ?: return)
+                        .dumpCoroutines()
                     if (states.isOk()) {
-                        XDebuggerManagerImpl.NOTIFICATION_GROUP.createNotification(
-                            KotlinBundle.message("debugger.session.tab.coroutine.message.error"),
-                            MessageType.ERROR
-                        ).notify(project)
+                        val message = KotlinBundle.message("debugger.session.tab.coroutine.message.error")
+                        XDebuggerManagerImpl.NOTIFICATION_GROUP.createNotification(message,MessageType.ERROR).notify(project)
                     } else {
                         val f = fun() {
-                            addCoroutineDump(
-                                project,
-                                states.cache,
-                                session.xDebugSession?.ui ?: return,
-                                session.searchScope
-                            )
+                            val ui = session.xDebugSession?.ui ?: return
+                            addCoroutineDump(project, states.cache, ui, session.searchScope)
                         }
                         ApplicationManager.getApplication().invokeLater(f, ModalityState.NON_MODAL)
                     }

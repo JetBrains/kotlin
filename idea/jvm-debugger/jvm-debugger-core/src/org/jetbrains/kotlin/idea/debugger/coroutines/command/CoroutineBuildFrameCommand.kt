@@ -89,13 +89,13 @@ class CoroutineBuildFrameCommand(
         debugProcess: DebugProcessImpl,
         evalContext: EvaluationContextImpl
     ): Boolean {
-        if (descriptor.infoData.thread == null) {
+        if (descriptor.infoData.activeThread == null) {
             myChildren.add(myNodeManager.createMessageNode("Frames are not available"))
             return true
         }
         val proxy = ThreadReferenceProxyImpl(
             debugProcess.virtualMachineProxy,
-            descriptor.infoData.thread
+            descriptor.infoData.activeThread
         )
         val frames = proxy.forceFrames()
         var endRange = findResumeWithMethodFrameIndex(frames)

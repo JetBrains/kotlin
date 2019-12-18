@@ -13,6 +13,7 @@ import com.intellij.debugger.jdi.ThreadReferenceProxyImpl
 import com.intellij.debugger.ui.impl.watch.DebuggerTreeNodeImpl
 import com.intellij.debugger.ui.impl.watch.NodeManagerImpl
 
+@Deprecated("moved to XCoroutineView")
 open class BuildCoroutineNodeCommand(
     val node: DebuggerTreeNodeImpl,
     debuggerContext: DebuggerContextImpl,

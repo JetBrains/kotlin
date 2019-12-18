@@ -5,54 +5,66 @@
 
 package org.jetbrains.kotlin.idea.debugger.coroutines.view
 
+import com.intellij.debugger.DebuggerManagerEx
 import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.engine.JavaDebugProcess
+import com.intellij.debugger.engine.JavaExecutionStack
 import com.intellij.debugger.engine.SuspendContextImpl
-import com.intellij.debugger.impl.DebuggerUtilsEx
-import com.intellij.debugger.settings.ThreadsViewSettings
-import com.intellij.icons.AllIcons
+import com.intellij.debugger.jdi.ThreadReferenceProxyImpl
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
+import com.intellij.psi.JavaPsiFacade
+import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.ui.DoubleClickListener
 import com.intellij.ui.OnePixelSplitter
-import com.intellij.ui.SimpleColoredComponent
-import com.intellij.ui.SimpleColoredText
-import com.intellij.ui.SimpleTextAttributes
 import com.intellij.util.SingleAlarm
 import com.intellij.xdebugger.XDebugSession
+import com.intellij.xdebugger.XDebuggerUtil
 import com.intellij.xdebugger.XSourcePosition
 import com.intellij.xdebugger.frame.*
-import com.intellij.xdebugger.frame.presentation.XRegularValuePresentation
-import com.intellij.xdebugger.frame.presentation.XValuePresentation
 import com.intellij.xdebugger.impl.ui.DebuggerUIUtil
-import com.intellij.xdebugger.impl.ui.XDebuggerUIConstants
 import com.intellij.xdebugger.impl.ui.tree.XDebuggerTree
 import com.intellij.xdebugger.impl.ui.tree.XDebuggerTreePanel
+import com.intellij.xdebugger.impl.ui.tree.XDebuggerTreeRestorer
+import com.intellij.xdebugger.impl.ui.tree.XDebuggerTreeState
 import com.intellij.xdebugger.impl.ui.tree.nodes.XValueContainerNode
 import com.intellij.xdebugger.impl.ui.tree.nodes.XValueNodeImpl
-import com.sun.jdi.Location
-import com.sun.jdi.ReferenceType
+import com.sun.jdi.ClassType
+import javaslang.control.Either
 import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.debugger.coroutines.CoroutineAsyncStackTraceProvider
 import org.jetbrains.kotlin.idea.debugger.coroutines.CoroutineDebuggerContentInfo
 import org.jetbrains.kotlin.idea.debugger.coroutines.CoroutineDebuggerContentInfo.Companion.XCOROUTINE_POPUP_ACTION_GROUP
-import org.jetbrains.kotlin.idea.debugger.coroutines.command.CoroutineStackFrameItem
-import org.jetbrains.kotlin.idea.debugger.coroutines.command.CreationCoroutineStackFrameItem
+import org.jetbrains.kotlin.idea.debugger.coroutines.command.*
 import org.jetbrains.kotlin.idea.debugger.coroutines.data.CoroutineInfoData
+import org.jetbrains.kotlin.idea.debugger.coroutines.data.SuspendStackFrameDescriptor
+import org.jetbrains.kotlin.idea.debugger.coroutines.data.SyntheticStackFrame
+import org.jetbrains.kotlin.idea.debugger.coroutines.proxy.ApplicationThreadExecutor
+import org.jetbrains.kotlin.idea.debugger.coroutines.proxy.AsyncStackTraceContext
 import org.jetbrains.kotlin.idea.debugger.coroutines.proxy.CoroutinesDebugProbesProxy
 import org.jetbrains.kotlin.idea.debugger.coroutines.proxy.ManagerThreadExecutor
-import org.jetbrains.kotlin.idea.debugger.coroutines.util.CreateContentParams
-import org.jetbrains.kotlin.idea.debugger.coroutines.util.CreateContentParamsProvider
-import org.jetbrains.kotlin.idea.debugger.coroutines.util.XDebugSessionListenerProvider
-import org.jetbrains.kotlin.idea.debugger.coroutines.util.logger
-import javax.swing.Icon
+import org.jetbrains.kotlin.idea.debugger.coroutines.util.*
+import org.jetbrains.kotlin.idea.debugger.evaluate.ExecutionContext
+import java.awt.event.KeyAdapter
+import java.awt.event.KeyEvent
+import java.awt.event.MouseEvent
 
 
 class XCoroutineView(val project: Project, val session: XDebugSession) :
     Disposable, XDebugSessionListenerProvider, CreateContentParamsProvider {
+    private var needToRestoreState: Boolean = false
     val log by logger
     val splitter = OnePixelSplitter("SomeKey", 0.25f)
     val panel = XDebuggerTreePanel(project, session.debugProcess.editorsProvider, this, null, XCOROUTINE_POPUP_ACTION_GROUP, null)
-    val alarm = SingleAlarm(Runnable { clear() }, VIEW_CLEAR_DELAY, this)
-    val debugProcess: DebugProcessImpl = (session.debugProcess as JavaDebugProcess).debuggerSession.process
+    val alarm = SingleAlarm(Runnable { resetRoot() }, VIEW_CLEAR_DELAY, this)
+    val javaDebugProcess = session.debugProcess as JavaDebugProcess
+    val debugProcess: DebugProcessImpl = javaDebugProcess.debuggerSession.process
+    val renderer = SimpleColoredTextIconPresentationRenderer()
+    val managerThreadExecutor = ManagerThreadExecutor(debugProcess)
+    val applicationThreadExecutor = ApplicationThreadExecutor()
+    var treeState: XDebuggerTreeState? = null
+    private var restorer: XDebuggerTreeRestorer? = null
+    private var selectedNodeListener =  XDebuggerTreeSelectedNodeListener(panel.tree)
 
     companion object {
         private val VIEW_CLEAR_DELAY = 100 //ms
@@ -60,25 +72,41 @@ class XCoroutineView(val project: Project, val session: XDebugSession) :
 
     init {
         splitter.firstComponent = panel.mainPanel
+        selectedNodeListener.installOn()
     }
 
-    fun clear() {
+
+    fun saveState() {
         DebuggerUIUtil.invokeLater {
-            panel.tree
-                .setRoot(object : XValueContainerNode<XValueContainer>(panel.tree, null, true, object : XValueContainer() {}) {}, false)
+            if (! (panel.tree.root is EmptyNode)) {
+                treeState = XDebuggerTreeState.saveState(panel.tree)
+                log.info("Tree state saved")
+            }
+        }
+    }
+
+    fun resetRoot() {
+        DebuggerUIUtil.invokeLater {
+            panel.tree.setRoot(EmptyNode(), false)
+        }
+    }
+
+    fun renewRoot(suspendContext: XSuspendContext) {
+        panel.tree.setRoot(XCoroutinesRootNode(suspendContext), false)
+        if(treeState != null) {
+            restorer?.dispose()
+            restorer = treeState?.restoreState(panel.tree)
+            log.info("Tree state restored")
         }
     }
 
     override fun dispose() {
+        restorer?.dispose()
     }
 
     fun forceClear() {
         alarm.cancel()
-        clear()
     }
-
-    fun createRoot(suspendContext: XSuspendContext) =
-        XCoroutinesRootNode(panel.tree, suspendContext)
 
     override fun debugSessionListener(session: XDebugSession) =
         CoroutineViewDebugSessionListener(session, this)
@@ -92,172 +120,211 @@ class XCoroutineView(val project: Project, val session: XDebugSession) :
             panel.tree
         )
 
-}
+    inner class EmptyNode : XValueContainerNode<XValueContainer>(panel.tree, null, true, object : XValueContainer() {})
 
-class XCoroutinesRootNode(tree: XDebuggerTree, suspendContext: XSuspendContext) :
-    XValueContainerNode<CoroutineGroupContainer>(tree, null, false, CoroutineGroupContainer(suspendContext)) {
-}
+    inner class XCoroutinesRootNode(suspendContext: XSuspendContext) :
+        XValueContainerNode<CoroutineGroupContainer>(panel.tree, null, false, CoroutineGroupContainer(suspendContext, "Default group"))
 
-class CoroutineGroupContainer(
-    val suspendContext: XSuspendContext
-) : XValueContainer() {
-    override fun computeChildren(node: XCompositeNode) {
-        val children = XValueChildrenList()
-        children.add("", CoroutineContainer(suspendContext as SuspendContextImpl, "Default group"))
-        node.addChildren(children, true)
-    }
-}
-
-class CoroutineContainer(
-    val suspendContext: SuspendContextImpl,
-    val groupName: String
-) : XValue() {
-    override fun computeChildren(node: XCompositeNode) {
-        val managerThreadExecutor = ManagerThreadExecutor(suspendContext.debugProcess)
-        managerThreadExecutor.schedule {
-            val debugProbesProxy = CoroutinesDebugProbesProxy(suspendContext)
-
-            var coroutineCache = debugProbesProxy.dumpCoroutines()
-            if(coroutineCache.isOk()) {
-                val children = XValueChildrenList()
-                coroutineCache.cache.forEach {
-                    children.add("", FramesContainer(it, debugProbesProxy, managerThreadExecutor))
-                }
-                node.addChildren(children, true)
-            } else
-                node.addChildren(XValueChildrenList.EMPTY, true)
+    inner class CoroutineGroupContainer(val suspendContext: XSuspendContext, val groupName: String) : XValueContainer() {
+        override fun computeChildren(node: XCompositeNode) {
+            val groups = XValueChildrenList.singleton(CoroutineContainer(suspendContext, groupName))
+            node.addChildren(groups, true)
         }
     }
 
-    override fun computePresentation(node: XValueNode, place: XValuePlace) {
-        node.setPresentation(AllIcons.Debugger.ThreadGroup, XRegularValuePresentation(groupName, null, ""), true)
-    }
-}
+    inner class CoroutineContainer(
+        val suspendContext: XSuspendContext,
+        val groupName: String
+    ) : RendererContainer(renderer.renderGroup(groupName)) {
 
-class FramesContainer(
-    private val coroutineInfoData: CoroutineInfoData,
-    private val debugProbesProxy: CoroutinesDebugProbesProxy,
-    private val managerThreadExecutor: ManagerThreadExecutor
-) : XValue() {
-    override fun computeChildren(node: XCompositeNode) {
-        managerThreadExecutor.schedule {
-            val children = XValueChildrenList()
-            debugProbesProxy.frameBuilder().build(coroutineInfoData)
-            val creationStack = mutableListOf<CreationCoroutineStackFrameItem>()
-            coroutineInfoData.stackFrameList.forEach {
-                val frameValue = when (it) {
-                    is CreationCoroutineStackFrameItem -> {
-                        creationStack.add(it)
-                        null
+        override fun computeChildren(node: XCompositeNode) {
+            managerThreadExecutor.on(suspendContext).schedule {
+                val debugProbesProxy = CoroutinesDebugProbesProxy(suspendContext)
+
+                var coroutineCache = debugProbesProxy.dumpCoroutines()
+                if (coroutineCache.isOk()) {
+                    val children = XValueChildrenList()
+                    coroutineCache.cache.forEach {
+                        children.add(FramesContainer(it, suspendContext))
                     }
-                    else -> CoroutineFrameValue(it)
-                }
-                frameValue?.let {
-                    children.add("", frameValue)
+                    node.addChildren(children, true)
+                } else {
+                    node.addChildren(XValueChildrenList.singleton(ErrorNode("Error occured while fetching information")), true)
                 }
             }
-            children.add("", CreationFramesContainer(creationStack))
+        }
+    }
+
+    inner class ErrorNode(val error: String) : RendererContainer(renderer.renderErrorNode(error))
+
+    inner class FramesContainer(
+        private val infoData: CoroutineInfoData,
+        private val suspendContext: XSuspendContext
+    ) : RendererContainer(renderer.render(infoData)) {
+
+        override fun computeChildren(node: XCompositeNode) {
+            managerThreadExecutor.on(suspendContext).schedule {
+                val debugProbesProxy = CoroutinesDebugProbesProxy(suspendContext)
+                val children = XValueChildrenList()
+                debugProbesProxy.frameBuilder().build(infoData)
+                val creationStack = mutableListOf<CreationCoroutineStackFrameItem>()
+                infoData.stackFrameList.forEach {
+                    if (it is CreationCoroutineStackFrameItem)
+                        creationStack.add(it)
+                    else
+                        children.add(CoroutineFrameValue(it))
+                }
+                children.add(CreationFramesContainer(infoData, creationStack))
+                node.addChildren(children, true)
+            }
+        }
+    }
+
+    inner class CreationFramesContainer(
+        private val infoData: CoroutineInfoData,
+        private val creationFrames: List<CreationCoroutineStackFrameItem>
+    ) : RendererContainer(renderer.renderCreationNode(infoData)) {
+
+        override fun computeChildren(node: XCompositeNode) {
+            val children = XValueChildrenList()
+
+            creationFrames.forEach {
+                children.add(CoroutineFrameValue(it))
+            }
             node.addChildren(children, true)
         }
     }
 
-    override fun computePresentation(node: XValueNode, place: XValuePlace) {
-        val icon = when (coroutineInfoData.state) {
-            CoroutineInfoData.State.SUSPENDED -> AllIcons.Debugger.ThreadSuspended
-            CoroutineInfoData.State.RUNNING -> AllIcons.Debugger.ThreadRunning
-            CoroutineInfoData.State.CREATED -> AllIcons.Debugger.ThreadStates.Idle
+    inner class CoroutineFrameValue(val frame: CoroutineStackFrameItem
+    ) : XNamedValue(frame.uniqueId()) {
+        override fun computePresentation(node: XValueNode, place: XValuePlace) =
+            applyRenderer(node, renderer.render(frame.location()))
+    }
+
+    private fun applyRenderer(node: XValueNode, presentation: SimpleColoredTextIcon) =
+        node.setPresentation(presentation.icon, presentation.valuePresentation(), presentation.hasChildrens)
+
+    open inner class RendererContainer(val presentation: SimpleColoredTextIcon) : XNamedValue(presentation.simpleString()) {
+        override fun computePresentation(node: XValueNode, place: XValuePlace) =
+            applyRenderer(node, presentation)
+    }
+
+    inner class XDebuggerTreeSelectedNodeListener(val tree: XDebuggerTree) {
+
+        fun installOn() {
+            object : DoubleClickListener() {
+                override fun onDoubleClick(e: MouseEvent) =
+                    nodeSelected(Either.left(e))
+            }.installOn(tree)
+
+            tree.addKeyListener(object : KeyAdapter() {
+                override fun keyPressed(e: KeyEvent) {
+                    val key = e.keyCode
+                    if (key == KeyEvent.VK_ENTER || key == KeyEvent.VK_SPACE || key == KeyEvent.VK_RIGHT)
+                        nodeSelected(Either.right(e))
+                }
+            })
         }
 
-        val valuePresentation = customizePresentation(coroutineInfoData)
-        node.setPresentation(icon, valuePresentation, true)
-    }
+        fun nodeSelected(event: Either<MouseEvent, KeyEvent>) : Boolean {
+            val selectedNodes = tree.getSelectedNodes(XValueNodeImpl::class.java, null)
+            if (selectedNodes.size == 1) {
+                val node = selectedNodes[0]
+                val valueContainer = node.valueContainer
+                if (valueContainer is XCoroutineView.CoroutineFrameValue) {
+                    val frame = valueContainer.frame
+                    val threadSuspendContext = session.suspendContext as SuspendContextImpl
+                    when (frame) {
+                        is RunningCoroutineStackFrameItem -> {
+                            val threadProxy = valueContainer.frame.frame.threadProxy()
+                            val isCurrentContext = threadSuspendContext.thread == threadProxy
+                            createStackAndSetFrame(threadProxy, { frame.stackFrame }, isCurrentContext)
+                        }
+                        is CreationCoroutineStackFrameItem -> {
+                            val position = getPosition(frame.stackTraceElement) ?: return false
+                            val threadProxy = threadSuspendContext.thread as ThreadReferenceProxyImpl
+                            val stackFrame =
+                                createStackAndSetFrame(threadProxy, { SyntheticStackFrame(frame.emptyDescriptor(), emptyList(), position) })
+                        }
+                        is SuspendCoroutineStackFrameItem -> {
+                            val position = getPosition(frame.stackTraceElement) ?: return false
+                        }
+                        is AsyncCoroutineStackFrameItem -> {
 
-    private fun customizePresentation(coroutineInfoData: CoroutineInfoData): XRegularValuePresentation {
-        val component = SimpleColoredComponent()
-        val thread = coroutineInfoData.thread
-        val name = thread?.name()?.substringBefore(" @${coroutineInfoData.name}") ?: ""
-        val threadState = if (thread != null) DebuggerUtilsEx.getThreadStatusText(thread.status()) else ""
-
-        component.append("\"").append(coroutineInfoData.name, XDebuggerUIConstants.VALUE_NAME_ATTRIBUTES)
-        component.append("\": ${coroutineInfoData.state} ${if (name.isNotEmpty()) "on thread \"$name\":$threadState" else ""}")
-        return XRegularValuePresentation(component.getCharSequence(false).toString(), null, "")
-    }
-}
-
-class CreationFramesContainer(val creationFrames: List<CreationCoroutineStackFrameItem>) : XValue() {
-    override fun computeChildren(node: XCompositeNode) {
-        val children = XValueChildrenList()
-
-        creationFrames.forEach {
-            children.add("", CoroutineFrameValue(it))
-        }
-        node.addChildren(children, true)
-    }
-
-    override fun computePresentation(node: XValueNode, place: XValuePlace) {
-        node.setPresentation(AllIcons.Debugger.ThreadSuspended, XRegularValuePresentation("Creation stack frame", null, ""), true)
-    }
-}
-
-class CoroutineFrameValue(val frame: CoroutineStackFrameItem) : XValue() {
-    override fun computePresentation(node: XValueNode, place: XValuePlace) {
-        val presentation = customizePresentation(frame)
-        if(node is XValueNodeImpl) {
-            node.setPresentation(null, XRegularValuePresentation("", null, ""), false)
-            presentation.texts.forEachIndexed { i, s ->
-                node.text.append(s, presentation.attributes[i])
-            }
-        } else {
-            val component = SimpleColoredComponent()
-            presentation.appendToComponent(component)
-            val valuePresentation = XRegularValuePresentation(component.getCharSequence(false).toString(), null, "")
-            node.setPresentation(null, valuePresentation, false)
-        }
-    }
-}
-
-fun customizePresentation(frame: CoroutineStackFrameItem) : SimpleColoredText =
-   calcRepresentation(frame.location(), ThreadsViewSettings.getInstance())
-
-
-/**
- * Taken from #StackFrameDescriptorImpl.calcRepresentation
- */
-fun calcRepresentation(location: Location, settings: ThreadsViewSettings): SimpleColoredText {
-    val label = SimpleColoredText()
-    DebuggerUIUtil.getColorScheme(null)
-    if (location.method() != null) {
-        val myName = location.method().name()
-        label.append(if (settings.SHOW_ARGUMENTS_TYPES) DebuggerUtilsEx.methodNameWithArguments(location.method()) else myName, XDebuggerUIConstants.VALUE_NAME_ATTRIBUTES)
-    }
-    if (settings.SHOW_LINE_NUMBER) {
-        label.append(":", SimpleTextAttributes.REGULAR_ATTRIBUTES)
-        label.append("" + DebuggerUtilsEx.getLineNumber(location, false), SimpleTextAttributes.REGULAR_ATTRIBUTES)
-    }
-    if (settings.SHOW_CLASS_NAME) {
-        val name: String?
-        name = try {
-            val refType: ReferenceType = location.declaringType()
-            refType?.name()
-        } catch (e: InternalError) {
-            e.toString()
-        }
-        if (name != null) {
-            label.append(", ", SimpleTextAttributes.REGULAR_ATTRIBUTES)
-            val dotIndex = name.lastIndexOf('.')
-            if (dotIndex < 0) {
-                label.append(name, SimpleTextAttributes.REGULAR_ATTRIBUTES)
-            } else {
-                label.append(name.substring(dotIndex + 1), SimpleTextAttributes.REGULAR_ATTRIBUTES)
-                if (settings.SHOW_PACKAGE_NAME) {
-                    label.append(" (${name.substring( 0, dotIndex)})", SimpleTextAttributes.REGULAR_ATTRIBUTES)
+                        }
+//                        else -> {
+//                            val (stack, stackFrame) = createSyntheticStackFrame(descriptor, pos) ?: return
+//                            val action: () -> Unit = { context.debuggerSession?.xDebugSession?.setCurrentStackFrame(stack, stackFrame) }
+//                            -                ApplicationManager.getApplication()
+//                            -                    .invokeLater(action, ModalityState.stateForComponent(this@CoroutinesDebuggerTree))
+//                        }
+                    }
                 }
             }
+            return false
         }
     }
-    if (settings.SHOW_SOURCE_NAME) {
-        label.append(", ", SimpleTextAttributes.REGULAR_ATTRIBUTES)
-        label.append(DebuggerUtilsEx.getSourceName(location) { e: Throwable? -> "Unknown Source" }, SimpleTextAttributes.REGULAR_ATTRIBUTES)
+
+    fun createSyntheticStackFrame() {}
+
+    fun createStackAndSetFrame(threadReferenceProxy: ThreadReferenceProxyImpl, stackFrameProvider: () -> XStackFrame, isCurrentContext: Boolean = false) {
+        val threadSuspendContext = session.suspendContext as SuspendContextImpl
+        managerThreadExecutor.on(threadSuspendContext).schedule {
+            val stackFrame = stackFrameProvider.invoke()
+            val executionStack = createExecutionStack(threadReferenceProxy, isCurrentContext)
+            applicationThreadExecutor.schedule(
+                {
+                    session.setCurrentStackFrame(executionStack, stackFrame)
+                }, panel.tree)
+        }
     }
-    return label
+
+    fun createExecutionStack(proxy: ThreadReferenceProxyImpl, isCurrentContext: Boolean = false) : XExecutionStack {
+        val executionStack = CoroutineDebuggerExecutionStack(proxy, isCurrentContext)
+        executionStack.initTopFrame()
+        return executionStack
+    }
+
+    inner class CoroutineDebuggerExecutionStack(threadReferenceProxy: ThreadReferenceProxyImpl, isCurrentContext: Boolean) :
+        JavaExecutionStack(threadReferenceProxy, debugProcess, isCurrentContext)
+
+
+    private fun getPosition(frame: StackTraceElement): XSourcePosition? {
+        val psiFacade = JavaPsiFacade.getInstance(project)
+        val psiClass = psiFacade.findClass(
+            frame.className.substringBefore("$"), // find outer class, for which psi exists TODO
+            GlobalSearchScope.everythingScope(project)
+        )
+        val classFile = psiClass?.containingFile?.virtualFile
+        // to convert to 0-based line number or '-1' to do not move
+        val lineNumber = if (frame.lineNumber > 0) frame.lineNumber - 1 else return null
+        return XDebuggerUtil.getInstance().createPosition(classFile, lineNumber)
+    }
+
+    private fun createSyntheticStackFrame(
+        descriptor: SuspendStackFrameDescriptor,
+        pos: XSourcePosition
+    ): Pair<XExecutionStack, SyntheticStackFrame>? {
+        val context = DebuggerManagerEx.getInstanceEx(project).context
+        val suspendContext = context.suspendContext ?: return null
+        val proxy = suspendContext.thread ?: return null
+        val executionStack = JavaExecutionStack(proxy, suspendContext.debugProcess, false)
+        executionStack.initTopFrame()
+        val evalContext = context.createEvaluationContext()
+        val frameProxy = evalContext?.frameProxy ?: return null
+        val execContext = ExecutionContext(evalContext, frameProxy)
+        val continuation = descriptor.continuation // guaranteed that it is a BaseContinuationImpl
+        val aMethod = (continuation.type() as ClassType).concreteMethodByName(
+            "getStackTraceElement",
+            "()Ljava/lang/StackTraceElement;"
+        )
+        val vars = with(CoroutineAsyncStackTraceProvider()) {
+            AsyncStackTraceContext(
+                execContext,
+                aMethod
+            ).getSpilledVariables(continuation)
+        } ?: return null
+        return executionStack to SyntheticStackFrame(descriptor, vars, pos)
+    }
 }
+

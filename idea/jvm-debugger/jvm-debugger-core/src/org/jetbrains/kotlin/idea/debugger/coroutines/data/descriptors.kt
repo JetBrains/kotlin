@@ -17,8 +17,13 @@ import com.sun.jdi.*
 import org.jetbrains.kotlin.idea.debugger.coroutines.proxy.LookupContinuation
 import org.jetbrains.kotlin.idea.debugger.evaluate.ExecutionContext
 
-class CoroutineStackTraceData(infoData: CoroutineInfoData, proxy: StackFrameProxyImpl, evalContext: EvaluationContextImpl, val frame: StackTraceElement)
-    : CoroutineStackDescriptorData(infoData, proxy, evalContext) {
+@Deprecated("moved to XCoroutineView")
+class CoroutineStackTraceData(
+    infoData: CoroutineInfoData,
+    proxy: StackFrameProxyImpl,
+    evalContext: EvaluationContextImpl,
+    val frame: StackTraceElement
+) : CoroutineStackDescriptorData(infoData, proxy, evalContext) {
 
     override fun hashCode() = frame.hashCode()
 
@@ -34,13 +39,19 @@ class CoroutineStackTraceData(infoData: CoroutineInfoData, proxy: StackFrameProx
 
         return if (continuation is ObjectReference)
             SuspendStackFrameDescriptor(infoData, frame, proxy, continuation)
-            else
+        else
             CoroutineCreatedStackFrameDescriptor(frame, proxy)
     }
 }
 
-class CoroutineStackFrameData(infoData: CoroutineInfoData, proxy: StackFrameProxyImpl, evalContext: EvaluationContextImpl, val frame: StackFrameItem)
-    : CoroutineStackDescriptorData(infoData, proxy, evalContext) {
+@Deprecated("moved to XCoroutineView")
+class CoroutineStackFrameData(
+    infoData: CoroutineInfoData,
+    proxy: StackFrameProxyImpl,
+    evalContext: EvaluationContextImpl,
+    val frame: StackFrameItem
+) :
+    CoroutineStackDescriptorData(infoData, proxy, evalContext) {
     override fun createDescriptorImpl(project: Project): NodeDescriptorImpl =
         AsyncStackFrameDescriptor(infoData, frame, proxy)
 
@@ -49,8 +60,12 @@ class CoroutineStackFrameData(infoData: CoroutineInfoData, proxy: StackFrameProx
     override fun equals(other: Any?) = other is CoroutineStackFrameData && frame == other.frame
 }
 
-abstract class CoroutineStackDescriptorData(val infoData: CoroutineInfoData, val proxy: StackFrameProxyImpl, val evalContext: EvaluationContextImpl)
-    : DescriptorData<NodeDescriptorImpl>() {
+@Deprecated("moved to XCoroutineView")
+abstract class CoroutineStackDescriptorData(
+    val infoData: CoroutineInfoData,
+    val proxy: StackFrameProxyImpl,
+    val evalContext: EvaluationContextImpl
+) : DescriptorData<NodeDescriptorImpl>() {
 
     override fun getDisplayKey(): DisplayKey<NodeDescriptorImpl> = SimpleDisplayKey(infoData)
 }
@@ -58,6 +73,7 @@ abstract class CoroutineStackDescriptorData(val infoData: CoroutineInfoData, val
 /**
  * Describes coroutine itself in the tree (name: STATE), has children if stacktrace is not empty (state = CREATED)
  */
+@Deprecated("moved to XCoroutineView")
 class CoroutineDescriptorData(private val infoData: CoroutineInfoData) : DescriptorData<CoroutineDescriptorImpl>() {
 
     override fun createDescriptorImpl(project: Project) =

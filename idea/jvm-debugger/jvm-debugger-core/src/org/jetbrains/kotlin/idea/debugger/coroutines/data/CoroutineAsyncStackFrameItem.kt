@@ -12,6 +12,4 @@ import com.intellij.xdebugger.frame.XNamedValue
 class CoroutineAsyncStackFrameItem(
     val location: GeneratedLocation,
     spilledVariables: List<XNamedValue>
-) : StackFrameItem(location, spilledVariables) {
-
-}
+) : StackFrameItem(location, spilledVariables)
