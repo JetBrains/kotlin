@@ -28,8 +28,10 @@ fun test() {
     test(fun test() = 4)
 }
 
-fun d = fun(a: Int,
-            b: String) {
+fun d = fun(
+        a: Int,
+        b: String,
+) {
 }
 
 fun e = fun() {

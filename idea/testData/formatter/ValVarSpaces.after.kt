@@ -3,3 +3,5 @@ class Foo(val x: Int,
     val a = 1
     var b = 2
 }
+
+// TRAILING_COMMA: false

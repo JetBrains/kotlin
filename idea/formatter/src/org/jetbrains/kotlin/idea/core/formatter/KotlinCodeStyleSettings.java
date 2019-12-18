@@ -11,7 +11,10 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
-import com.intellij.psi.codeStyle.*;
+import com.intellij.psi.codeStyle.CodeStyleSettings;
+import com.intellij.psi.codeStyle.CustomCodeStyleSettings;
+import com.intellij.psi.codeStyle.PackageEntry;
+import com.intellij.psi.codeStyle.PackageEntryTable;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -50,6 +53,7 @@ public class KotlinCodeStyleSettings extends CustomCodeStyleSettings {
     public int WRAP_EXPRESSION_BODY_FUNCTIONS = 0;
     public int WRAP_ELVIS_EXPRESSIONS = 1;
     public boolean IF_RPAREN_ON_NEW_LINE = false;
+    public boolean ALLOW_TRAILING_COMMA = true;
 
     @ReflectionUtil.SkipInEquals
     public String CODE_STYLE_DEFAULTS = null;

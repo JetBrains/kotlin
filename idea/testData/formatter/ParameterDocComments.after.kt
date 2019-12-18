@@ -8,7 +8,8 @@ class A(
         /**
          * Doc
          */
-        val p2: String)
+        val p2: String,
+)
 
 class B(
         /** Doc1 */
@@ -17,5 +18,5 @@ class B(
         /**
          *  Doc2
          */
-        val v2: Int
+        val v2: Int,
 )

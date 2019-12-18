@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -292,6 +292,8 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                 consumer.renameStandardOption("METHOD_CALL_CHAIN_WRAP", "Chained function calls")
                 consumer.renameStandardOption("METHOD_ANNOTATION_WRAP", "Function annotations")
                 consumer.renameStandardOption(CodeStyleSettingsCustomizable.WRAPPING_METHOD_PARENTHESES, "Function parentheses")
+
+                showCustomOption(KotlinCodeStyleSettings::ALLOW_TRAILING_COMMA, "Use trailing comma")
 
                 showCustomOption(
                     KotlinCodeStyleSettings::ALIGN_IN_COLUMNS_CASE_BRANCH,

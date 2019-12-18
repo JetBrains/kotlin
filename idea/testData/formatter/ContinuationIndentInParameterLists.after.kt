@@ -1,5 +1,5 @@
 fun foo(
-        x: Int
+        x: Int,
 ) {
 }
 

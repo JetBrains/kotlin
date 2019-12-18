@@ -1,5 +1,5 @@
 open class GFMOutputBuilder(
-        to: StringBuilder
+        to: StringBuilder,
 ) : MarkdownOutputBuilder(to) {
 }
 

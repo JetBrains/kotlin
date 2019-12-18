@@ -22,6 +22,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
+import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings;
 import org.jetbrains.kotlin.idea.test.KotlinLightIdeaTestCase;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
@@ -137,6 +138,11 @@ public abstract class AbstractFormatterTest extends KotlinLightIdeaTestCase {
             Integer rightMargin = InTextDirectivesUtils.getPrefixedInt(originalFileText, "// RIGHT_MARGIN: ");
             if (rightMargin != null) {
                 codeStyleSettings.setRightMargin(KotlinLanguage.INSTANCE, rightMargin);
+            }
+
+            Boolean trailingComma = InTextDirectivesUtils.getPrefixedBoolean(originalFileText, "// TRAILING_COMMA: ");
+            if (trailingComma != null) {
+                codeStyleSettings.getCustomSettings(KotlinCodeStyleSettings.class).ALLOW_TRAILING_COMMA = trailingComma;
             }
 
             SettingsConfigurator configurator = FormatSettingsUtil.createConfigurator(originalFileText, codeStyleSettings);

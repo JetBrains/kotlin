@@ -19,6 +19,7 @@ import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.formatter.NodeIndentStrategy.Companion.strategy
+import org.jetbrains.kotlin.idea.util.getLineCount
 import org.jetbrains.kotlin.idea.util.requireNode
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.kdoc.parser.KDocElementTypes
@@ -598,7 +599,14 @@ abstract class KotlinCommonBlock(
                     parentElementType === SECONDARY_CONSTRUCTOR
                 ) {
                     val wrap = Wrap.createWrap(commonSettings.METHOD_PARAMETERS_WRAP, false)
-                    return { childElement -> wrap.takeIf { childElement.elementType === VALUE_PARAMETER } }
+                    val withTrailingComma = node.withTrailingComma
+                    return { childElement ->
+                        val childElementType = childElement.elementType
+                        if (withTrailingComma && (childElementType === RPAR || getPrevWithoutWhitespaceAndComments(childElement)?.elementType === LPAR))
+                            Wrap.createWrap(WrapType.ALWAYS, true)
+                        else
+                            wrap.takeIf { childElementType === VALUE_PARAMETER }
+                    }
                 }
             }
 
@@ -698,6 +706,13 @@ abstract class KotlinCommonBlock(
 
         return ::noWrapping
     }
+
+    private val ASTNode.withTrailingComma: Boolean
+        get() = when {
+            lastChildNode?.let { getPrevWithoutWhitespaceAndComments(it) }?.elementType === COMMA -> true
+            settings.kotlinCustomSettings.ALLOW_TRAILING_COMMA -> psi?.getLineCount()?.let { it > 1 } == true
+            else -> false
+        }
 }
 
 private fun ASTNode.isFirstParameter(): Boolean = treePrev?.elementType == LPAR

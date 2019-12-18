@@ -1151,6 +1151,52 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
                 runTest("idea/testData/formatter/parameterList/ParameterListWrapAsNeeded.after.kt");
             }
         }
+
+        @TestMetadata("idea/testData/formatter/trailingComma")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class TrailingComma extends AbstractFormatterTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInTrailingComma() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma"), Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), null, true);
+            }
+
+            @TestMetadata("idea/testData/formatter/trailingComma/valueParameters")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class ValueParameters extends AbstractFormatterTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInValueParameters() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma/valueParameters"), Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), null, true);
+                }
+
+                @TestMetadata("Function.after.kt")
+                public void testFunction() throws Exception {
+                    runTest("idea/testData/formatter/trailingComma/valueParameters/Function.after.kt");
+                }
+
+                @TestMetadata("OptionalTypes.after.kt")
+                public void testOptionalTypes() throws Exception {
+                    runTest("idea/testData/formatter/trailingComma/valueParameters/OptionalTypes.after.kt");
+                }
+
+                @TestMetadata("PrimaryConstructor.after.kt")
+                public void testPrimaryConstructor() throws Exception {
+                    runTest("idea/testData/formatter/trailingComma/valueParameters/PrimaryConstructor.after.kt");
+                }
+
+                @TestMetadata("SecondConstructor.after.kt")
+                public void testSecondConstructor() throws Exception {
+                    runTest("idea/testData/formatter/trailingComma/valueParameters/SecondConstructor.after.kt");
+                }
+            }
+        }
     }
 
     @TestMetadata("idea/testData/formatter")
@@ -1514,6 +1560,52 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             @TestMetadata("DefaultParameterValues.after.inv.kt")
             public void testDefaultParameterValues() throws Exception {
                 runTest("idea/testData/formatter/parameterList/DefaultParameterValues.after.inv.kt");
+            }
+        }
+
+        @TestMetadata("idea/testData/formatter/trailingComma")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class TrailingComma extends AbstractFormatterTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTestInverted, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInTrailingComma() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma"), Pattern.compile("^([^\\.]+)\\.after\\.inv\\.kt.*$"), null, true);
+            }
+
+            @TestMetadata("idea/testData/formatter/trailingComma/valueParameters")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class ValueParameters extends AbstractFormatterTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTestInverted, this, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInValueParameters() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma/valueParameters"), Pattern.compile("^([^\\.]+)\\.after\\.inv\\.kt.*$"), null, true);
+                }
+
+                @TestMetadata("Function.after.inv.kt")
+                public void testFunction() throws Exception {
+                    runTest("idea/testData/formatter/trailingComma/valueParameters/Function.after.inv.kt");
+                }
+
+                @TestMetadata("OptionalTypes.after.inv.kt")
+                public void testOptionalTypes() throws Exception {
+                    runTest("idea/testData/formatter/trailingComma/valueParameters/OptionalTypes.after.inv.kt");
+                }
+
+                @TestMetadata("PrimaryConstructor.after.inv.kt")
+                public void testPrimaryConstructor() throws Exception {
+                    runTest("idea/testData/formatter/trailingComma/valueParameters/PrimaryConstructor.after.inv.kt");
+                }
+
+                @TestMetadata("SecondConstructor.after.inv.kt")
+                public void testSecondConstructor() throws Exception {
+                    runTest("idea/testData/formatter/trailingComma/valueParameters/SecondConstructor.after.inv.kt");
+                }
             }
         }
     }

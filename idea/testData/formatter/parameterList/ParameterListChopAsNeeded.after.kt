@@ -15,7 +15,8 @@ fun test(foo: Int, bar: Int)
 fun testtesttesttest(foofoo: Int,
                      barbar: Int,
                      foobar: Int,
-                     barfoo: Int)
+                     barfoo: Int,
+)
 
 fun test() {
     for (foo: Int in bar) {
@@ -41,20 +42,24 @@ class SN
 
 class A(longLongLongLongNameCLass1: LongLongLongLongNameCLass,
         longLongLongLongNameCLass2: LongLongLongLongNameCLass,
-        longLongLongLongNameCLass3: LongLongLongLongNameCLass) {
+        longLongLongLongNameCLass3: LongLongLongLongNameCLass,
+) {
     constructor(
             longLongLongLongNameCLass1: LongLongLongLongNameCLass,
             longLongLongLongNameCLass2: LongLongLongLongNameCLass,
-            longLongLongLongNameCLass3: LongLongLongLongNameCLass) {
+            longLongLongLongNameCLass3: LongLongLongLongNameCLass,
+    ) {
     }
 }
 
 class B(a: LongLongLongLongNameCLass,
         b: LongLongLongLongNameCLass,
-        c: LongLongLongLongNameCLass) {
+        c: LongLongLongLongNameCLass,
+) {
     constructor(a: LongLongLongLongNameCLass,
                 b: LongLongLongLongNameCLass,
-                c: LongLongLongLongNameCLass) {
+                c: LongLongLongLongNameCLass,
+    ) {
     }
 }
 
@@ -66,7 +71,8 @@ class C(sn1: ShorName,
         sn6: ShorName,
         sn6: ShorName,
         sn8: ShorName,
-        sn9: ShorName) {
+        sn9: ShorName,
+) {
     constructor(sn1: ShorName,
                 sn2: ShorName,
                 sn3: ShorName,
@@ -75,7 +81,8 @@ class C(sn1: ShorName,
                 sn6: ShorName,
                 sn6: ShorName,
                 sn8: ShorName,
-                sn9: ShorName) {
+                sn9: ShorName,
+    ) {
     }
 }
 
@@ -92,7 +99,8 @@ class D(sn1: SN,
         sn11: SN,
         sn12: SN,
         sn13: SN,
-        sn14: SN) {
+        sn14: SN,
+) {
     constructor(sn1: SN,
                 sn2: SN,
                 sn3: SN,
@@ -106,13 +114,15 @@ class D(sn1: SN,
                 sn11: SN,
                 sn12: SN,
                 sn13: SN,
-                sn14: SN) {
+                sn14: SN,
+    ) {
     }
 }
 
 class E(longLongLongLongNameCLass1: LongLongLongLongNameCLass) {
     constructor(
-            longLongLongLongNameCLass1: LongLongLongLongNameCLass) {
+            longLongLongLongNameCLass1: LongLongLongLongNameCLass,
+    ) {
     }
 }
 

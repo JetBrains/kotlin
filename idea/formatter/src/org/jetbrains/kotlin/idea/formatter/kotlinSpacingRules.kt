@@ -271,9 +271,8 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
             after(DOC_COMMENT).lineBreakInCode()
 
             // =============== Spacing ================
-            before(COMMA).spaceIf(kotlinCommonSettings.SPACE_BEFORE_COMMA)
+            before(COMMA).spacesNoLineBreak(if (kotlinCommonSettings.SPACE_BEFORE_COMMA) 1 else 0)
             after(COMMA).spaceIf(kotlinCommonSettings.SPACE_AFTER_COMMA)
-
 
             val spacesAroundAssignment = if (kotlinCommonSettings.SPACE_AROUND_ASSIGNMENT_OPERATORS) 1 else 0
             beforeInside(EQ, PROPERTY).spacesNoLineBreak(spacesAroundAssignment)
