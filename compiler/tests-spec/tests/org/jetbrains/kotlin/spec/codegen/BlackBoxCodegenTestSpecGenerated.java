@@ -25,7 +25,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
     }
 
     public void testAllFilesPresentInBox() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/codegen/box"), Pattern.compile("^(.+)\\.kt$"), true, "helpers", "templates", "linked/statements", "linked/expressions.conditional-expression", "linked/expressions/equality-expressions/reference-equality-expressions/p-1/neg", "linked/expressions/built-in-types-and-their-semantics/kotlin.unit/p-1/neg", "linked/expressions/prefix-expressions/prefix-increment-expression/p-1/neg");
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/codegen/box"), Pattern.compile("^(.+)\\.kt$"), true, "helpers", "templates", "linked/expressions.when-expression", "linked/statements", "linked/expressions.conditional-expression", "linked/expressions/equality-expressions/reference-equality-expressions/p-1/neg", "linked/expressions/built-in-types-and-their-semantics/kotlin.unit/p-1/neg", "linked/expressions/prefix-expressions/prefix-increment-expression/p-1/neg");
     }
 
     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked")
@@ -37,7 +37,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
         }
 
         public void testAllFilesPresentInLinked() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked"), Pattern.compile("^(.+)\\.kt$"), true, "statements", "expressions.conditional-expression", "expressions/equality-expressions/reference-equality-expressions/p-1/neg", "expressions/built-in-types-and-their-semantics/kotlin.unit/p-1/neg", "expressions/prefix-expressions/prefix-increment-expression/p-1/neg");
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked"), Pattern.compile("^(.+)\\.kt$"), true, "expressions.when-expression", "statements", "expressions.conditional-expression", "expressions/equality-expressions/reference-equality-expressions/p-1/neg", "expressions/built-in-types-and-their-semantics/kotlin.unit/p-1/neg", "expressions/prefix-expressions/prefix-increment-expression/p-1/neg");
         }
 
         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions")
@@ -1476,6 +1476,147 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             public void testAllFilesPresentInPos() throws Exception {
                                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), true);
                             }
+                        }
+                    }
+                }
+            }
+
+            @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class When_expression extends AbstractBlackBoxCodegenTestSpec {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInWhen_expression() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-4")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class P_4 extends AbstractBlackBoxCodegenTestSpec {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInP_4() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-4"), Pattern.compile("^(.+)\\.kt$"), true);
+                    }
+
+                    @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-4/neg")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class Neg extends AbstractBlackBoxCodegenTestSpec {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                        }
+
+                        @TestMetadata("1.1.kt")
+                        public void test1_1() throws Exception {
+                            runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-4/neg/1.1.kt");
+                        }
+
+                        @TestMetadata("1.2.kt")
+                        public void test1_2() throws Exception {
+                            runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-4/neg/1.2.kt");
+                        }
+
+                        @TestMetadata("1.3.kt")
+                        public void test1_3() throws Exception {
+                            runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-4/neg/1.3.kt");
+                        }
+
+                        @TestMetadata("1.4.kt")
+                        public void test1_4() throws Exception {
+                            runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-4/neg/1.4.kt");
+                        }
+
+                        public void testAllFilesPresentInNeg() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-4/neg"), Pattern.compile("^(.+)\\.kt$"), true);
+                        }
+                    }
+
+                    @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-4/pos")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class Pos extends AbstractBlackBoxCodegenTestSpec {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                        }
+
+                        @TestMetadata("1.1.kt")
+                        public void test1_1() throws Exception {
+                            runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-4/pos/1.1.kt");
+                        }
+
+                        @TestMetadata("1.2.kt")
+                        public void test1_2() throws Exception {
+                            runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-4/pos/1.2.kt");
+                        }
+
+                        @TestMetadata("1.3.kt")
+                        public void test1_3() throws Exception {
+                            runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-4/pos/1.3.kt");
+                        }
+
+                        @TestMetadata("1.4.kt")
+                        public void test1_4() throws Exception {
+                            runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-4/pos/1.4.kt");
+                        }
+
+                        public void testAllFilesPresentInPos() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-4/pos"), Pattern.compile("^(.+)\\.kt$"), true);
+                        }
+                    }
+                }
+
+                @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-5")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class P_5 extends AbstractBlackBoxCodegenTestSpec {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInP_5() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-5"), Pattern.compile("^(.+)\\.kt$"), true);
+                    }
+
+                    @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-5/neg")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class Neg extends AbstractBlackBoxCodegenTestSpec {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                        }
+
+                        @TestMetadata("2.1.kt")
+                        public void test2_1() throws Exception {
+                            runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-5/neg/2.1.kt");
+                        }
+
+                        public void testAllFilesPresentInNeg() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-5/neg"), Pattern.compile("^(.+)\\.kt$"), true);
+                        }
+                    }
+
+                    @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-5/pos")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class Pos extends AbstractBlackBoxCodegenTestSpec {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                        }
+
+                        @TestMetadata("1.1.kt")
+                        public void test1_1() throws Exception {
+                            runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-5/pos/1.1.kt");
+                        }
+
+                        public void testAllFilesPresentInPos() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), true);
                         }
                     }
                 }

@@ -25,7 +25,7 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
     }
 
     public void testAllFilesPresentInDiagnostics() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), true, "helpers", "linked/type-inference", "linked/type-system/type-kinds/type-parameters", "linked/type-system/subtyping", "linked/control--and-data-flow-analysis.control-flow-graph.expressions-1.conditional-expressions", "linked/declarations/classifier-declaration/classifier-initialization", "linked/declarations/function-declaration", "linked/annotations", "linked/statements", "linked/inheritance", "linked/expressions.conditional-expression", "linked/expressions/function-literals", "linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1/neg", "linked/overload-resolution", "linked/control--and-data-flow-analysis/performing-analysis-on-the-control-flow-graph");
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), true, "helpers", "linked/type-inference", "linked/expressions.when-expression", "linked/type-system/type-kinds/type-parameters", "linked/type-system/subtyping", "linked/control--and-data-flow-analysis.control-flow-graph.expressions-1.conditional-expressions", "linked/declarations/classifier-declaration/classifier-initialization", "linked/declarations/function-declaration", "linked/annotations", "linked/statements", "linked/inheritance", "linked/expressions.conditional-expression", "linked/expressions/function-literals", "linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1/neg", "linked/overload-resolution", "linked/control--and-data-flow-analysis/performing-analysis-on-the-control-flow-graph");
     }
 
     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked")
@@ -37,7 +37,7 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
         }
 
         public void testAllFilesPresentInLinked() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked"), Pattern.compile("^(.+)\\.kt$"), true, "type-inference", "type-system/type-kinds/type-parameters", "type-system/subtyping", "control--and-data-flow-analysis.control-flow-graph.expressions-1.conditional-expressions", "declarations/classifier-declaration/classifier-initialization", "declarations/function-declaration", "annotations", "statements", "inheritance", "expressions.conditional-expression", "expressions/function-literals", "expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1/neg", "overload-resolution", "control--and-data-flow-analysis/performing-analysis-on-the-control-flow-graph");
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked"), Pattern.compile("^(.+)\\.kt$"), true, "type-inference", "expressions.when-expression", "type-system/type-kinds/type-parameters", "type-system/subtyping", "control--and-data-flow-analysis.control-flow-graph.expressions-1.conditional-expressions", "declarations/classifier-declaration/classifier-initialization", "declarations/function-declaration", "annotations", "statements", "inheritance", "expressions.conditional-expression", "expressions/function-literals", "expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1/neg", "overload-resolution", "control--and-data-flow-analysis/performing-analysis-on-the-control-flow-graph");
         }
 
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis")
@@ -2054,6 +2054,86 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
 
                         public void testAllFilesPresentInPos() throws Exception {
                             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), true);
+                        }
+                    }
+                }
+
+                @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-3")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class P_3 extends AbstractDiagnosticsTestSpec {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInP_3() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-3"), Pattern.compile("^(.+)\\.kt$"), true);
+                    }
+
+                    @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-3/neg")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class Neg extends AbstractDiagnosticsTestSpec {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                        }
+
+                        @TestMetadata("2.1.kt")
+                        public void test2_1() throws Exception {
+                            runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-3/neg/2.1.kt");
+                        }
+
+                        public void testAllFilesPresentInNeg() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-3/neg"), Pattern.compile("^(.+)\\.kt$"), true);
+                        }
+                    }
+                }
+
+                @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-4")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class P_4 extends AbstractDiagnosticsTestSpec {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInP_4() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-4"), Pattern.compile("^(.+)\\.kt$"), true);
+                    }
+
+                    @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-4/neg")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class Neg extends AbstractDiagnosticsTestSpec {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                        }
+
+                        @TestMetadata("1.1.kt")
+                        public void test1_1() throws Exception {
+                            runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-4/neg/1.1.kt");
+                        }
+
+                        public void testAllFilesPresentInNeg() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-4/neg"), Pattern.compile("^(.+)\\.kt$"), true);
+                        }
+                    }
+
+                    @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-4/pos")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class Pos extends AbstractDiagnosticsTestSpec {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                        }
+
+                        @TestMetadata("1.1.kt")
+                        public void test1_1() throws Exception {
+                            runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-4/pos/1.1.kt");
+                        }
+
+                        public void testAllFilesPresentInPos() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-4/pos"), Pattern.compile("^(.+)\\.kt$"), true);
                         }
                     }
                 }
