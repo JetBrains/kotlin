@@ -338,34 +338,6 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         runTest("compiler/testData/compileKotlinAgainstKotlin/unsignedTypesInAnnotations.kt");
     }
 
-    @TestMetadata("compiler/testData/compileKotlinAgainstKotlin/coroutines")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class Coroutines extends AbstractCompileKotlinAgainstKotlinTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInCoroutines() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileKotlinAgainstKotlin/coroutines"), Pattern.compile("^(.+)\\.kt$"), null, true);
-        }
-
-        @TestMetadata("builder.kt")
-        public void testBuilder() throws Exception {
-            runTest("compiler/testData/compileKotlinAgainstKotlin/coroutines/builder.kt");
-        }
-
-        @TestMetadata("receiver.kt")
-        public void testReceiver() throws Exception {
-            runTest("compiler/testData/compileKotlinAgainstKotlin/coroutines/receiver.kt");
-        }
-
-        @TestMetadata("simple.kt")
-        public void testSimple() throws Exception {
-            runTest("compiler/testData/compileKotlinAgainstKotlin/coroutines/simple.kt");
-        }
-    }
-
     @TestMetadata("compiler/testData/compileKotlinAgainstKotlin/jvm8")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
