@@ -267,7 +267,7 @@ class MoveKotlinDeclarationsHandler internal constructor(private val handlerActi
                 || element.parent?.let { recursivelyTryToMove(it, project, dataContext, reference, editor) } ?: false
     }
 
-    override fun canMove(elements: Array<out PsiElement>, targetContainer: PsiElement?): Boolean {
+    override fun canMove(elements: Array<out PsiElement>, targetContainer: PsiElement?, reference: PsiReference?): Boolean {
         return canMove(elements, targetContainer, false)
     }
 

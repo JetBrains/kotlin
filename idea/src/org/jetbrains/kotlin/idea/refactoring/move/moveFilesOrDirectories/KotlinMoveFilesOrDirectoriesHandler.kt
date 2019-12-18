@@ -35,11 +35,11 @@ class KotlinMoveFilesOrDirectoriesHandler : MoveFilesOrDirectoriesHandler() {
         }.toTypedArray()
     }
 
-    override fun canMove(elements: Array<PsiElement>, targetContainer: PsiElement?): Boolean {
+    override fun canMove(elements: Array<PsiElement>, targetContainer: PsiElement?, reference: PsiReference?): Boolean {
         val adjustedElements = adjustElements(elements) ?: return false
         if (adjustedElements.none { it is KtFile }) return false
 
-        return super.canMove(adjustedElements, targetContainer)
+        return super.canMove(adjustedElements, targetContainer, reference)
     }
 
     override fun adjustForMove(

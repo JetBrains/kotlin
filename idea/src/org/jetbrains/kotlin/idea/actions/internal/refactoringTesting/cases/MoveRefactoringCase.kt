@@ -36,7 +36,7 @@ internal class MoveRefactoringCase : RefactoringCase {
 
         val handler = MoveKotlinDeclarationsHandler(MoveKotlinDeclarationsHandlerTestActions(testDataKeeper))
 
-        if (!handler.canMove(sourceClassAsArray, targetClass)) {
+        if (!handler.canMove(sourceClassAsArray, targetClass, /*reference = */ null)) {
             return RandomMoveRefactoringResult.Failed
         }
 
