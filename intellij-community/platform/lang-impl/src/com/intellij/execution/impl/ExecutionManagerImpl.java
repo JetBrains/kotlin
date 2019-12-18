@@ -6,7 +6,6 @@ import com.intellij.execution.*;
 import com.intellij.execution.configuration.CompatibilityAwareRunProfile;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.RunProfile;
-import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.executors.DefaultRunExecutor;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
@@ -262,7 +261,6 @@ public abstract class ExecutionManagerImpl extends ExecutionManager implements D
   @Override
   public void compileAndRun(@NotNull Runnable startRunnable,
                             @NotNull ExecutionEnvironment environment,
-                            @Nullable RunProfileState state,
                             @Nullable Runnable onCancelRunnable) {
     long id = environment.getExecutionId();
     if (id == 0) {

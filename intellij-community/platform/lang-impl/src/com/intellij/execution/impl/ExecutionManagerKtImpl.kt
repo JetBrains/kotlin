@@ -119,7 +119,7 @@ class ExecutionManagerKtImpl(project: Project) : ExecutionManagerImpl(project) {
     else {
       compileAndRun(Runnable {
         ApplicationManager.getApplication().invokeLater(startRunnable, project.disposed)
-      }, environment, state, Runnable {
+      }, environment, Runnable {
         if (!project.isDisposed) {
           processNotStarted()
         }
