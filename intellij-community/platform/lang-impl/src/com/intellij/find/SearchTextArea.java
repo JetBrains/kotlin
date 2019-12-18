@@ -167,7 +167,7 @@ public class SearchTextArea extends NonOpaquePanel implements PropertyChangeList
     });
     myScrollPane.getViewport().setBorder(null);
     myScrollPane.getViewport().setOpaque(false);
-    myScrollPane.setBorder(JBUI.Borders.empty(0, 0, 2, 2));
+    myScrollPane.setBorder(JBUI.Borders.empty(1, 0, 2, 2));
     myScrollPane.setOpaque(false);
 
     myInfoLabel = new JBLabel(UIUtil.ComponentStyle.SMALL);
