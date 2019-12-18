@@ -771,7 +771,8 @@ configure<IdeaModel> {
             commonLocalDataDir,
             ".gradle",
             "dependencies",
-            "dist"
+            "dist",
+            "tmp"
         ).toSet()
     }
 }
