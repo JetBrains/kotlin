@@ -1,5 +1,5 @@
 warning: '-Xexperimental' is deprecated and will be removed in a future release
-warning: experimental API marker org.test.Unresolved2 is unresolved. Please make sure it's present in the module dependencies
-warning: experimental API marker org.test.Unresolved1 is unresolved. Please make sure it's present in the module dependencies
-warning: experimental API marker org.test.Unresolved3 is unresolved. Please make sure it's present in the module dependencies
+warning: opt-in requirement marker org.test.Unresolved2 is unresolved. Please make sure it's present in the module dependencies
+warning: opt-in requirement marker org.test.Unresolved1 is unresolved. Please make sure it's present in the module dependencies
+warning: opt-in requirement marker org.test.Unresolved3 is unresolved. Please make sure it's present in the module dependencies
 OK

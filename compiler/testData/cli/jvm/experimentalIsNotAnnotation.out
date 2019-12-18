@@ -1,4 +1,4 @@
 warning: '-Xexperimental' is deprecated and will be removed in a future release
-warning: class org.test.NotAnAnnotation1 is not an experimental API marker annotation
-warning: class org.test.NotAnAnnotation2 is not an experimental API marker annotation
+warning: class org.test.NotAnAnnotation1 is not an opt-in requirement marker
+warning: class org.test.NotAnAnnotation2 is not an opt-in requirement marker
 OK

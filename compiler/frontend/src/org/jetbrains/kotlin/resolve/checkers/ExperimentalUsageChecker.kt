@@ -224,16 +224,16 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
             val deprecationResolver =
                 DeprecationResolver(LockBasedStorageManager("ExperimentalUsageChecker"), languageVersionSettings, CoroutineCompatibilitySupport.ENABLED, DeprecationSettings.Default)
 
-            // Returns true if fqName refers to a valid experimental API marker.
+            // Returns true if fqName resolves to a valid opt-in requirement marker.
             fun checkAnnotation(fqName: String): Boolean {
                 val descriptor = module.resolveClassByFqName(FqName(fqName), NoLookupLocation.FOR_NON_TRACKED_SCOPE)
                 if (descriptor == null) {
-                    reportWarning("Experimental API marker $fqName is unresolved. Please make sure it's present in the module dependencies")
+                    reportWarning("Opt-in requirement marker $fqName is unresolved. Please make sure it's present in the module dependencies")
                     return false
                 }
 
                 if (descriptor.loadExperimentalityForMarkerAnnotation() == null) {
-                    reportWarning("Class $fqName is not an experimental API marker annotation")
+                    reportWarning("Class $fqName is not an opt-in requirement marker")
                     return false
                 }
 
@@ -242,7 +242,7 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
                         DeprecationLevelValue.WARNING -> reportWarning
                         DeprecationLevelValue.ERROR, DeprecationLevelValue.HIDDEN -> reportError
                     }
-                    report("Experimental API marker $fqName is deprecated" + deprecation.message?.let { ". $it" }.orEmpty())
+                    report("Opt-in requirement marker $fqName is deprecated" + deprecation.message?.let { ". $it" }.orEmpty())
                 }
                 return true
             }
@@ -253,7 +253,7 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
             }
 
             for (fqName in validExperimental.intersect(validUseExperimental)) {
-                reportError("'-Xuse-experimental=$fqName' has no effect because '-Xexperimental=$fqName' is used")
+                reportError("'-Xopt-in=$fqName' has no effect because '-Xexperimental=$fqName' is used")
             }
         }
     }
