@@ -29,7 +29,7 @@ internal class IntentionPreviewEditor(private val psiFileCopy: PsiFile, private 
   override fun getDocument(): Document = document
   override fun getCaretModel() = caretModel
 
-  override fun isViewer(): Boolean = throw IntentionPreviewUnsupportedOperationException()
+  override fun isViewer(): Boolean = true
   override fun getComponent(): JComponent = throw IntentionPreviewUnsupportedOperationException()
   override fun getContentComponent(): JComponent = throw IntentionPreviewUnsupportedOperationException()
   override fun setBorder(border: Border?) = throw IntentionPreviewUnsupportedOperationException()
