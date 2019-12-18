@@ -33,7 +33,7 @@ public interface NavBarModelExtension {
   PsiElement getParent(PsiElement psiElement);
 
   @Nullable
-  PsiElement adjustElement(PsiElement psiElement);
+  PsiElement adjustElement(@NotNull PsiElement psiElement);
 
   @NotNull
   Collection<VirtualFile> additionalRoots(Project project);

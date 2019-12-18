@@ -45,10 +45,11 @@ public class NavBarModelBuilderImpl extends NavBarModelBuilder {
 
   @Nullable
   protected static PsiElement normalize(@Nullable PsiElement e, NavBarModelExtension ownerExtension) {
+    PsiElement originalElement = getOriginalElement(e);
     if (ownerExtension != null) {
-      return e != null ? ownerExtension.adjustElement(getOriginalElement(e)) : null;
+      return originalElement != null ? ownerExtension.adjustElement(originalElement) : null;
     }
-    return NavBarModel.normalize(getOriginalElement(e));
+    return NavBarModel.normalize(originalElement);
   }
 
   @Nullable
