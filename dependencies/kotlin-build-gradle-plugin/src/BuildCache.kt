@@ -14,6 +14,10 @@ fun Settings.setupBuildCache() {
         buildCache.remote(HttpBuildCache::class.java) { remoteCache ->
             remoteCache.url = URI(remoteCacheUrl)
             remoteCache.isPush = kotlinBuildProperties.pushToBuildCache
+            if (kotlinBuildProperties.buildCacheUser != null && kotlinBuildProperties.buildCachePassword != null) {
+                remoteCache.credentials.username = kotlinBuildProperties.buildCacheUser
+                remoteCache.credentials.password = kotlinBuildProperties.buildCachePassword
+            }
         }
     }
 }
