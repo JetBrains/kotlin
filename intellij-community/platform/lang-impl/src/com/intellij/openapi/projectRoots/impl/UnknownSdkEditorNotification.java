@@ -74,7 +74,7 @@ public class UnknownSdkEditorNotification implements Disposable {
                             () -> {
                               UnknownSdkTracker
                                 .getInstance(myProject)
-                                .showSdkSelectionPopup(sdkName, sdkType, parentJComponentOrSelf(panel), () -> removeNotification(panel));
+                                .showSdkSelectionPopup(sdkName, sdkType, parentJComponentOrSelf(panel), sdk -> removeNotification(panel));
                             }
     );
   }
@@ -108,7 +108,7 @@ public class UnknownSdkEditorNotification implements Disposable {
       panel.createActionLabel("Configure...", () -> {
         UnknownSdkTracker
           .getInstance(myProject)
-          .showSdkSelectionPopup(null, parentJComponentOrSelf(panel), sdk -> {
+          .showSdkSelectionPopup(null, null, parentJComponentOrSelf(panel), sdk -> {
             setSdk.accept(sdk);
             removeNotification(panel);
           });

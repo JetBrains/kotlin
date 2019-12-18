@@ -178,28 +178,14 @@ public class UnknownSdkTracker {
 
       SdkDownloadTracker downloadTracker = SdkDownloadTracker.getInstance();
       downloadTracker.registerSdkDownload(sdk, task);
-      downloadTracker.tryRegisterDownloadingListener(sdk, lifetime, new ProgressIndicatorBase(), succeeded -> {
-        if (succeeded) {
-          registerNewSdkInJdkTable(info, sdk);
-        }
-        Disposer.dispose(lifetime);
-      });
-
+      downloadTracker.tryRegisterDownloadingListener(sdk, lifetime, new ProgressIndicatorBase(), __ -> Disposer.dispose(lifetime));
       downloadTracker.startSdkDownloadIfNeeded(sdk);
+      registerNewSdkInJdkTable(info, sdk);
     });
   }
 
-  public void showSdkSelectionPopup(@NotNull String sdkName,
+  public void showSdkSelectionPopup(@Nullable String sdkName,
                                     @Nullable SdkType sdkType,
-                                    @NotNull JComponent underneathRightOfComponent,
-                                    @NotNull Runnable onSelectionMade) {
-    showSdkSelectionPopup(sdkType, underneathRightOfComponent, sdk -> {
-      registerNewSdkInJdkTable(sdkName, sdk);
-      onSelectionMade.run();
-    });
-  }
-
-  public void showSdkSelectionPopup(@Nullable SdkType sdkType,
                                     @NotNull JComponent underneathRightOfComponent,
                                     @NotNull Consumer<? super Sdk> onSelectionMade) {
     ProjectSdksModel model = new ProjectSdksModel();
@@ -219,9 +205,12 @@ public class UnknownSdkTracker {
     popup.createPopup(underneathRightOfComponent, new SdkPopup.SdkPopupListener() {
       private void handleNewItem(@NotNull SdkListItem item) {
         if (item instanceof SdkListItem.SdkItem) {
-          onSelectionMade.consume(((SdkListItem.SdkItem)item).getSdk());
+          Sdk sdk = ((SdkListItem.SdkItem)item).getSdk();
+          registerNewSdkInJdkTable(sdkName, sdk);
+          onSelectionMade.consume(sdk);
         }
       }
+
       @Override
       public void onNewItemAdded(@NotNull SdkListItem item) {
         handleNewItem(item);
@@ -285,18 +274,20 @@ public class UnknownSdkTracker {
     registerNewSdkInJdkTable(info.getSdkName(), sdk);
   }
 
-  private static void registerNewSdkInJdkTable(@NotNull String sdkName, @NotNull Sdk sdk) {
+  private static void registerNewSdkInJdkTable(@Nullable String sdkName, @NotNull Sdk sdk) {
     WriteAction.run(() -> {
       ProjectJdkTable table = ProjectJdkTable.getInstance();
-      Sdk clash = table.findJdk(sdkName);
-      if (clash != null) {
-        LOG.warn("SDK with name " + sdkName + " already exists: clash=" + clash + ", new=" + sdk);
-        return;
-      }
+      if (sdkName != null) {
+        Sdk clash = table.findJdk(sdkName);
+        if (clash != null) {
+          LOG.warn("SDK with name " + sdkName + " already exists: clash=" + clash + ", new=" + sdk);
+          return;
+        }
 
-      SdkModificator mod = sdk.getSdkModificator();
-      mod.setName(sdkName);
-      mod.commitChanges();
+        SdkModificator mod = sdk.getSdkModificator();
+        mod.setName(sdkName);
+        mod.commitChanges();
+      }
 
       table.addJdk(sdk);
     });
