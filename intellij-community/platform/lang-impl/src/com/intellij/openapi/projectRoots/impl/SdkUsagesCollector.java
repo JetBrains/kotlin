@@ -6,9 +6,11 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleTypeId;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.*;
+import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.function.Consumer;
@@ -151,6 +153,8 @@ public class SdkUsagesCollector {
     }
 
     private void contributeForModule(@NotNull Module module, @NotNull List<SdkUsage> usages) {
+      if (!ModuleTypeId.JAVA_MODULE.equals(module.getModuleTypeName())) return;
+
       ModuleRootManager manager = ModuleRootManager.getInstance(module);
       String jdkName = null;
       String jdkType = null;
