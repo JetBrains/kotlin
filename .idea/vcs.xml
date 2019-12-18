@@ -2,8 +2,10 @@
 <project version="4">
   <component name="CommitMessageInspectionProfile">
     <profile version="1.0">
+      <inspection_tool class="BodyLimit" enabled="true" level="WARNING" enabled_by_default="true" />
       <inspection_tool class="GrazieCommit" enabled="true" level="TYPO" enabled_by_default="true" />
-      <inspection_tool class="GrazieCommit" enabled="true" level="TYPO" enabled_by_default="true" />
+      <inspection_tool class="SubjectBodySeparation" enabled="true" level="WARNING" enabled_by_default="true" />
+      <inspection_tool class="SubjectLimit" enabled="true" level="WARNING" enabled_by_default="true" />
     </profile>
   </component>
   <component name="IssueNavigationConfiguration">
