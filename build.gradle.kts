@@ -5,7 +5,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import proguard.gradle.ProGuardTask
 
 buildscript {
-    extra["defaultSnapshotVersion"] = "1.3-SNAPSHOT"
+    extra["defaultSnapshotVersion"] = "1.4-SNAPSHOT"
     val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
 
     kotlinBootstrapFrom(BootstrapOption.BintrayBootstrap("1.3.70-dev-1806", cacheRedirectorEnabled))

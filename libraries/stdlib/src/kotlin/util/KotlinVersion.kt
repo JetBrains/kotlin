@@ -72,6 +72,6 @@ public class KotlinVersion(val major: Int, val minor: Int, val patch: Int) : Com
          * Returns the current version of the Kotlin standard library.
          */
         @kotlin.jvm.JvmField
-        public val CURRENT: KotlinVersion = KotlinVersion(1, 3, 0) // value is written here automatically during build
+        public val CURRENT: KotlinVersion = KotlinVersion(1, 4, 0) // value is written here automatically during build
     }
 }

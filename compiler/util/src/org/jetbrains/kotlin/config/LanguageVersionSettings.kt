@@ -263,7 +263,7 @@ enum class LanguageVersion(val major: Int, val minor: Int) : DescriptionAware {
         val FIRST_SUPPORTED = KOTLIN_1_2
 
         @JvmField
-        val LATEST_STABLE = KOTLIN_1_3
+        val LATEST_STABLE = KOTLIN_1_4
     }
 }
 
