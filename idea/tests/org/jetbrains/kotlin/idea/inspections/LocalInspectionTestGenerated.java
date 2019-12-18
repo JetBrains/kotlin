@@ -12246,6 +12246,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/scopeFunctions/runToLet/capturedIt.kt");
             }
 
+            @TestMetadata("noReceiver.kt")
+            public void testNoReceiver() throws Exception {
+                runTest("idea/testData/inspectionsLocal/scopeFunctions/runToLet/noReceiver.kt");
+            }
+
             @TestMetadata("simple.kt")
             public void testSimple() throws Exception {
                 runTest("idea/testData/inspectionsLocal/scopeFunctions/runToLet/simple.kt");
