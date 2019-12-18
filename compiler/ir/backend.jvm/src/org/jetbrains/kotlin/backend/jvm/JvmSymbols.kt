@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.jvm
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_CALL_RESULT_NAME
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME
@@ -44,6 +45,7 @@ class JvmSymbols(
     private val kotlinJvmPackage: IrPackageFragment = createPackage(FqName("kotlin.jvm"))
     private val kotlinJvmInternalPackage: IrPackageFragment = createPackage(FqName("kotlin.jvm.internal"))
     private val kotlinJvmFunctionsPackage: IrPackageFragment = createPackage(FqName("kotlin.jvm.functions"))
+    private val kotlinReflectPackage: IrPackageFragment = createPackage(FqName("kotlin.reflect"))
     private val javaLangPackage: IrPackageFragment = createPackage(FqName("java.lang"))
 
     private val irBuiltIns = context.irBuiltIns
@@ -99,6 +101,7 @@ class JvmSymbols(
                 "kotlin.coroutines.jvm.internal" -> kotlinCoroutinesJvmInternalPackage
                 "kotlin.jvm.internal" -> kotlinJvmInternalPackage
                 "kotlin.jvm.functions" -> kotlinJvmFunctionsPackage
+                "kotlin.reflect" -> kotlinReflectPackage
                 "java.lang" -> javaLangPackage
                 else -> error("Other packages are not supported yet: $fqName")
             }
@@ -189,6 +192,9 @@ class JvmSymbols(
     override val returnIfSuspended: IrSimpleFunctionSymbol
         get() = TODO("not implemented")
 
+    private val kDeclarationContainer: IrClassSymbol =
+        createClass(KotlinBuiltIns.FQ_NAMES.kDeclarationContainer.toSafe(), ClassKind.INTERFACE, Modality.ABSTRACT)
+
     val javaLangClass: IrClassSymbol =
         createClass(FqName("java.lang.Class")) { klass ->
             klass.addTypeParameter("T", irBuiltIns.anyNType, Variance.INVARIANT)
@@ -259,7 +265,7 @@ class JvmSymbols(
     private fun generateCallableReferenceMethods(klass: IrClass) {
         klass.addFunction("getSignature", irBuiltIns.stringType, Modality.OPEN)
         klass.addFunction("getName", irBuiltIns.stringType, Modality.OPEN)
-        klass.addFunction("getOwner", irBuiltIns.kDeclarationContainerClass.defaultType, Modality.OPEN)
+        klass.addFunction("getOwner", kDeclarationContainer.defaultType, Modality.OPEN)
     }
 
     val functionReference: IrClassSymbol = createClass(FqName("kotlin.jvm.internal.FunctionReference")) { klass ->
@@ -350,7 +356,7 @@ class JvmSymbols(
             ) { klass ->
                 if (impl) {
                     klass.addConstructor().apply {
-                        addValueParameter("owner", irBuiltIns.kDeclarationContainerClass.defaultType)
+                        addValueParameter("owner", kDeclarationContainer.defaultType)
                         addValueParameter("name", irBuiltIns.stringType)
                         addValueParameter("string", irBuiltIns.stringType)
                     }
@@ -409,7 +415,7 @@ class JvmSymbols(
         val javaLangClassType = javaLangClass.starProjectedType
         val kClassType = irBuiltIns.kClassClass.starProjectedType
 
-        klass.addFunction("getOrCreateKotlinPackage", irBuiltIns.kDeclarationContainerClass.defaultType, isStatic = true).apply {
+        klass.addFunction("getOrCreateKotlinPackage", kDeclarationContainer.defaultType, isStatic = true).apply {
             addValueParameter("javaClass", javaLangClassType)
             addValueParameter("moduleName", irBuiltIns.stringType)
         }

@@ -226,7 +226,6 @@ class IrBuiltIns(
 
     val kCallableClass = builtIns.kCallable.toIrSymbol()
     val kPropertyClass = builtIns.kProperty.toIrSymbol()
-    val kDeclarationContainerClass = builtIns.kDeclarationContainer.toIrSymbol()
     val kClassClass = builtIns.kClass.toIrSymbol()
 
     private val kProperty0Class = builtIns.kProperty0.toIrSymbol()

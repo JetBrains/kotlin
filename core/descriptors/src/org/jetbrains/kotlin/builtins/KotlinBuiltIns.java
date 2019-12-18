@@ -494,11 +494,6 @@ public abstract class KotlinBuiltIns {
     }
 
     @NotNull
-    public ClassDescriptor getKDeclarationContainer() {
-        return getBuiltInClassByFqName(FQ_NAMES.kDeclarationContainer.toSafe());
-    }
-
-    @NotNull
     public ClassDescriptor getKCallable() {
         return getBuiltInClassByFqName(FQ_NAMES.kCallable.toSafe());
     }
