@@ -1,3 +1,17 @@
+# v1.3.70 (Dec 2019)
+  * Support compiler caches for debug mode (GH-3650)
+  * Support running Kotlin/Native compiler from Gradle daemon (GH-3442)
+  * Support multiple independent Kotlin frameworks in the same application (GH-3457)
+  * Compile-time allocation for some singleton objects (GH-3645)
+  * Native support for SIMD vector types in compiler and interop (GH-3498)
+  * API for runtime detector of cyclic garbage (GH-3616)
+  * Commonized StringBuilder (GH-3593) and Float.rangeTo (KT-35299)
+  * Fix interop with localized strings (GH-3562)
+  * Provide utility for user-side generation of platform libraries (GH-3538)
+  * On-stack allocation using local escape analysis (GH-3625)
+  * Code coverage support on Linux and Windows (GH-3403)
+  * Debugging experience improvements (GH-3561, GH-3638, GH-3606)
+
 # v1.3.60 (Oct 2019)
   * Support XCode 11
   * Switch to LLVM 8.0
