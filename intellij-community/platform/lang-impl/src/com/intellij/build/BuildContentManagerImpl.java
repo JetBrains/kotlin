@@ -49,12 +49,24 @@ public final class BuildContentManagerImpl implements BuildContentManager {
   private static final String[] ourPresetOrder = {Sync, Build, Run, Debug};
   private static final Key<Map<Object, CloseListener>> CONTENT_CLOSE_LISTENERS = Key.create("CONTENT_CLOSE_LISTENERS");
 
-  private Project myProject;
+  private final Project myProject;
   private List<Runnable> myPostponedRunnables = new ArrayList<>();
   private final Map<Content, Pair<Icon, AtomicInteger>> liveContentsMap = ContainerUtil.newConcurrentMap();
 
   public BuildContentManagerImpl(@NotNull Project project) {
-    init(project);
+    myProject = project;
+    if (project.isDefault()) {
+      return;
+    }
+
+    StartupManager.getInstance(project).runAfterOpened(() -> {
+      ApplicationManager.getApplication().invokeLater(() -> {
+        for (Runnable postponedRunnable : myPostponedRunnables) {
+          postponedRunnable.run();
+        }
+        myPostponedRunnables = null;
+      }, ModalityState.NON_MODAL, project.getDisposed());
+    });
   }
 
   @Override
@@ -86,22 +98,6 @@ public final class BuildContentManagerImpl implements BuildContentManager {
 
     new ContentManagerWatcher(toolWindow, contentManager);
     return toolWindow;
-  }
-
-  private void init(@NotNull Project project) {
-    myProject = project;
-    if (project.isDefault()) {
-      return;
-    }
-
-    StartupManager.getInstance(project).runAfterOpened(() -> {
-      ApplicationManager.getApplication().invokeLater(() -> {
-        for (Runnable postponedRunnable : myPostponedRunnables) {
-          postponedRunnable.run();
-        }
-        myPostponedRunnables = null;
-      }, ModalityState.NON_MODAL, project.getDisposed());
-    });
   }
 
   private void runWhenInitialized(@NotNull Runnable runnable) {
