@@ -27,9 +27,10 @@ import com.intellij.ui.treeStructure.SimpleTreeBuilder
 import com.intellij.ui.treeStructure.SimpleTreeStructure
 import com.intellij.ui.treeStructure.Tree
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSessionBase
-import org.jetbrains.kotlin.fir.builder.RawFirBuilder
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.idea.fir.firResolveState
+import org.jetbrains.kotlin.idea.fir.getOrBuildFir
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -73,7 +74,7 @@ class FirExplorerToolWindow(private val project: Project, private val toolWindow
                     val psiDocumentManager = PsiDocumentManager.getInstance(project)
                     val file = runReadAction { psiDocumentManager.getPsiFile(editor.document) as? KtFile }
                     if (file != null) {
-                        val firFile = runReadAction { RawFirBuilder(object : FirSessionBase(null) {}, stubMode = false).buildFirFile(file) }
+                        val firFile = runReadAction { file.getOrBuildFir(file.firResolveState(), phase = FirResolvePhase.RAW_FIR) }
                         runInEdt {
                             treeStructure.root = FirExplorerTreeNode("root = ", firFile, null)
                             builder.updateFromRoot(!init)
