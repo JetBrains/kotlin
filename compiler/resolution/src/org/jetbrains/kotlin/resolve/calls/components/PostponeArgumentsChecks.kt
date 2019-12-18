@@ -191,8 +191,8 @@ private fun ConstraintSystemBuilder.addConstraintFromLHS(lhsResult: LHSResult.Ty
 
     when (expectedTypeProjectionForLHS.projectionKind) {
         Variance.INVARIANT -> addEqualityConstraint(lhsType, expectedTypeForLHS, constraintPosition)
-        Variance.IN_VARIANCE -> addSubtypeConstraint(expectedType, lhsType, constraintPosition)
-        Variance.OUT_VARIANCE -> addSubtypeConstraint(lhsType, expectedType, constraintPosition)
+        Variance.IN_VARIANCE -> addSubtypeConstraint(expectedTypeForLHS, lhsType, constraintPosition)
+        Variance.OUT_VARIANCE -> addSubtypeConstraint(lhsType, expectedTypeForLHS, constraintPosition)
     }
 }
 
