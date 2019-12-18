@@ -4,7 +4,7 @@
 
 package api
 
-@RequiresOptIn(RequiresOptIn.Level.ERROR)
+@RequiresOptIn(level = RequiresOptIn.Level.ERROR)
 annotation class ExperimentalAPI
 
 @ExperimentalAPI

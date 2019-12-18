@@ -255,11 +255,11 @@ public interface Errors {
     DiagnosticFactory1<PsiElement, FqName> ILLEGAL_KOTLIN_VERSION_STRING_VALUE = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, String> NEWER_VERSION_IN_SINCE_KOTLIN = DiagnosticFactory1.create(WARNING);
 
-    DiagnosticFactory1<PsiElement, FqName> EXPERIMENTAL_API_USAGE = DiagnosticFactory1.create(WARNING);
-    DiagnosticFactory1<PsiElement, FqName> EXPERIMENTAL_API_USAGE_ERROR = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<PsiElement, String> EXPERIMENTAL_API_USAGE = DiagnosticFactory1.create(WARNING);
+    DiagnosticFactory1<PsiElement, String> EXPERIMENTAL_API_USAGE_ERROR = DiagnosticFactory1.create(ERROR);
 
-    DiagnosticFactory2<PsiElement, FqName, DeclarationDescriptor> EXPERIMENTAL_OVERRIDE = DiagnosticFactory2.create(WARNING);
-    DiagnosticFactory2<PsiElement, FqName, DeclarationDescriptor> EXPERIMENTAL_OVERRIDE_ERROR = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory1<PsiElement, String> EXPERIMENTAL_OVERRIDE = DiagnosticFactory1.create(WARNING);
+    DiagnosticFactory1<PsiElement, String> EXPERIMENTAL_OVERRIDE_ERROR = DiagnosticFactory1.create(ERROR);
 
     DiagnosticFactory0<PsiElement> EXPERIMENTAL_IS_NOT_ENABLED = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<PsiElement> EXPERIMENTAL_CAN_ONLY_BE_USED_AS_ANNOTATION = DiagnosticFactory0.create(ERROR);
@@ -270,8 +270,8 @@ public interface Errors {
     DiagnosticFactory1<KtAnnotationEntry, FqName> USE_EXPERIMENTAL_ARGUMENT_IS_NOT_MARKER = DiagnosticFactory1.create(WARNING);
     DiagnosticFactory1<KtAnnotationEntry, String> EXPERIMENTAL_ANNOTATION_WITH_WRONG_TARGET = DiagnosticFactory1.create(ERROR);
 
-    DiagnosticFactory1<PsiElement, FqName> EXPERIMENTAL_UNSIGNED_LITERALS = DiagnosticFactory1.create(WARNING);
-    DiagnosticFactory1<PsiElement, FqName> EXPERIMENTAL_UNSIGNED_LITERALS_ERROR = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<PsiElement, String> EXPERIMENTAL_UNSIGNED_LITERALS = DiagnosticFactory1.create(WARNING);
+    DiagnosticFactory1<PsiElement, String> EXPERIMENTAL_UNSIGNED_LITERALS_ERROR = DiagnosticFactory1.create(ERROR);
 
     DiagnosticFactory0<PsiElement> NON_PARENTHESIZED_ANNOTATIONS_ON_FUNCTIONAL_TYPES = DiagnosticFactory0.create(ERROR);
 

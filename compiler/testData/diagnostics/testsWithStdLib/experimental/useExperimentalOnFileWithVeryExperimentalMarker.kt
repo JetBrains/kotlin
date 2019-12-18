@@ -3,11 +3,11 @@
 
 package api
 
-@RequiresOptIn(RequiresOptIn.Level.WARNING)
+@RequiresOptIn(level = RequiresOptIn.Level.WARNING)
 annotation class ExperimentalAPI
 
 @ExperimentalAPI
-@RequiresOptIn(RequiresOptIn.Level.WARNING)
+@RequiresOptIn(level = RequiresOptIn.Level.WARNING)
 annotation class VeryExperimentalAPI
 
 @ExperimentalAPI

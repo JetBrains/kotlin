@@ -160,6 +160,7 @@ public abstract interface annotation class kotlin/ReplaceWith : java/lang/annota
 
 public abstract interface annotation class kotlin/RequiresOptIn : java/lang/annotation/Annotation {
 	public abstract fun level ()Lkotlin/RequiresOptIn$Level;
+	public abstract fun message ()Ljava/lang/String;
 }
 
 public final class kotlin/RequiresOptIn$Level : java/lang/Enum {
