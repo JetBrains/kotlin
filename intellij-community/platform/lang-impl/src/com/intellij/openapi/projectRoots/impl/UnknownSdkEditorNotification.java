@@ -72,15 +72,21 @@ public class UnknownSdkEditorNotification implements Disposable {
 
     panel.createActionLabel("Configure...",
                             () -> {
-                              //FileEditorManager#addTopComponent wraps the panel to implement borders, unwrapping
-                              Container container = panel.getParent();
-                              if (container == null) container = panel;
-
                               UnknownSdkTracker
                                 .getInstance(myProject)
-                                .showSdkSelectionPopup(sdkName, sdkType, container, () -> removeNotification(panel));
+                                .showSdkSelectionPopup(sdkName, sdkType, parentJComponentOrSelf(panel), () -> removeNotification(panel));
                             }
     );
+  }
+
+  @NotNull
+  private static JComponent parentJComponentOrSelf(@NotNull JComponent panel) {
+    //FileEditorManager#addTopComponent wraps the panel to implement borders, unwrapping
+    Container parent = panel.getParent();
+    if (parent instanceof JComponent) {
+      return (JComponent)parent;
+    }
+    return panel;
   }
 
   private void setupPanel(@NotNull MissingSdkNotificationPanel panel,
@@ -100,13 +106,9 @@ public class UnknownSdkEditorNotification implements Disposable {
 
     if (setSdk != null) {
       panel.createActionLabel("Configure...", () -> {
-        //FileEditorManager#addTopComponent wraps the panel to implement borders, unwrapping
-        Container container = panel.getParent();
-        if (container == null) container = panel;
-
         UnknownSdkTracker
           .getInstance(myProject)
-          .showSdkSelectionPopup(null, container, sdk -> {
+          .showSdkSelectionPopup(null, parentJComponentOrSelf(panel), sdk -> {
             setSdk.accept(sdk);
             removeNotification(panel);
           });

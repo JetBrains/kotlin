@@ -11,6 +11,7 @@ import com.intellij.openapi.ui.popup.LightweightWindowEvent;
 import com.intellij.ui.AnActionButton;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.popup.list.ComboBoxPopup;
+import java.util.function.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,12 +33,11 @@ public class SdkPopupFactory {
   }
 
   @NotNull
-  public SdkPopup createPopup(@NotNull SdkPopupListener listener) {
+  public SdkPopup createPopup(@NotNull JComponent parent,
+                              @NotNull SdkPopupListener listener) {
     SdkListItemContext context = new SdkListItemContext();
-    SdkPopupImpl popup = new SdkPopupImpl(context);
-
-    popup.addItemSelectedListener(value -> {
-      if (myModelBuilder.executeAction(popup.getList(), value, listener::onNewItemAdded)) {
+    SdkPopupImpl popup = new SdkPopupImpl(context, value -> {
+      if (myModelBuilder.executeAction(parent, value, listener::onNewItemAdded)) {
         return;
       }
       listener.onExistingItemSelected(value);
@@ -71,8 +71,8 @@ public class SdkPopupFactory {
   }
 
   private class SdkPopupImpl extends ComboBoxPopup<SdkListItem> implements SdkPopup {
-    SdkPopupImpl(SdkListItemContext context) {
-      super(context, null);
+    SdkPopupImpl(SdkListItemContext context, Consumer<SdkListItem> onItemSelected) {
+      super(context, null, onItemSelected);
     }
 
     @Override

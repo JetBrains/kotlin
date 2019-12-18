@@ -38,7 +38,7 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
+import javax.swing.*;
 import java.util.List;
 import java.util.*;
 
@@ -191,7 +191,7 @@ public class UnknownSdkTracker {
 
   public void showSdkSelectionPopup(@NotNull String sdkName,
                                     @Nullable SdkType sdkType,
-                                    @NotNull Container underneathRightOfComponent,
+                                    @NotNull JComponent underneathRightOfComponent,
                                     @NotNull Runnable onSelectionMade) {
     showSdkSelectionPopup(sdkType, underneathRightOfComponent, sdk -> {
       registerNewSdkInJdkTable(sdkName, sdk);
@@ -200,7 +200,7 @@ public class UnknownSdkTracker {
   }
 
   public void showSdkSelectionPopup(@Nullable SdkType sdkType,
-                                    @NotNull Container underneathRightOfComponent,
+                                    @NotNull JComponent underneathRightOfComponent,
                                     @NotNull Consumer<? super Sdk> onSelectionMade) {
     ProjectSdksModel model = new ProjectSdksModel();
     SdkListModelBuilder modelBuilder = new SdkListModelBuilder(
@@ -216,7 +216,7 @@ public class UnknownSdkTracker {
       modelBuilder
     );
 
-    popup.createPopup(new SdkPopup.SdkPopupListener() {
+    popup.createPopup(underneathRightOfComponent, new SdkPopup.SdkPopupListener() {
       private void handleNewItem(@NotNull SdkListItem item) {
         if (item instanceof SdkListItem.SdkItem) {
           onSelectionMade.consume(((SdkListItem.SdkItem)item).getSdk());
