@@ -20,6 +20,10 @@ fun generatePlatformLibraries(args: Array<String>) {
             ArgType.String, "target", "t", "Compilation target").required()
     val saveTemps by argParser.option(
             ArgType.Boolean, "save-temps", "s", "Save temporary files").default(false)
+    val stdlibPath by argParser.option(
+            ArgType.String, "stdlib-path", "S", "Place where stdlib is located")
+    val cacheKind by argParser.option(
+            ArgType.String, "cache-kind", "k", "Type of cache").default("dynamic_cache")
     val cacheDirectoryPath by argParser.option(
             ArgType.String, "cache-directory", "c", "Cache output directory")
 
@@ -33,9 +37,12 @@ fun generatePlatformLibraries(args: Array<String>) {
     if (!outputDirectory.exists) {
         outputDirectory.mkdirs()
     }
+    cacheDirectory?.mkdirs()
     File("${outputDirectoryPath}/../cache").mkdirs()
 
-    generatePlatformLibraries(target, inputDirectory, outputDirectory, saveTemps, cacheDirectory)
+    val stdlibFile = stdlibPath?.File()
+
+    generatePlatformLibraries(target, inputDirectory, outputDirectory, saveTemps, cacheDirectory, stdlibFile, cacheKind)
 }
 
 private class DefFile(val name: String, val depends: MutableList<DefFile>) {
@@ -68,7 +75,8 @@ private fun topoSort(defFiles: List<DefFile>): List<DefFile> {
 }
 
 private fun generatePlatformLibraries(target: String, inputDirectory: File, outputDirectory: File,
-                                      saveTemps: Boolean, cacheDirectory: File?) {
+                                      saveTemps: Boolean, cacheDirectory: File?, stdlibFile: File?,
+                                      cacheKind: String) {
     fun buildKlib(def: DefFile) {
         val file = File("$inputDirectory/${def.name}.def")
         File("${outputDirectory.absolutePath}/build-${def.name}").mkdirs()
@@ -88,7 +96,7 @@ private fun generatePlatformLibraries(target: String, inputDirectory: File, outp
                     "-repository", "${outputDirectory.absolutePath}"
             ))
             if (cacheDirectory != null)
-                K2Native.mainNoExit(arrayOf("-p", "dynamic_cache",
+                K2Native.mainNoExit(arrayOf("-p", cacheKind,
                     "-target", target,
                     "-repo", "${outputDirectory.absolutePath}",
                     "-Xadd-cache=${outputDirectory.absolutePath}/${def.name}",
@@ -100,9 +108,9 @@ private fun generatePlatformLibraries(target: String, inputDirectory: File, outp
         }
     }
     if (cacheDirectory != null) {
-        val stdlib = inputDirectory.parentFile.parentFile.parentFile.child("klib/common/stdlib")
+        val stdlib = stdlibFile ?: inputDirectory.parentFile.parentFile.parentFile.child("klib/common/stdlib")
         println("Caching standard library ${stdlib.absolutePath} to ${cacheDirectory.absolutePath}...")
-        K2Native.mainNoExit(arrayOf("-p", "dynamic_cache",
+        K2Native.mainNoExit(arrayOf("-p", cacheKind,
                 "-target", target,
                 "-Xadd-cache=${stdlib.absolutePath}",
                 "-Xcache-directory=${cacheDirectory.absolutePath}"))
