@@ -284,10 +284,11 @@ public abstract class ExecutionManagerImpl extends ExecutionManager implements D
     DataContext projectContext = context != null ? context : SimpleDataContext.getProjectContext(myProject);
     long finalId = id;
     Long executionSessionId = new Long(id);
-    Map<BeforeRunTask, Executor> runBeforeRunExecutorMap = Collections.synchronizedMap(new LinkedHashMap<>());
+    Map<BeforeRunTask<?>, Executor> runBeforeRunExecutorMap = Collections.synchronizedMap(new LinkedHashMap<>());
+    //noinspection rawtypes
     for (BeforeRunTask task : beforeRunTasks) {
       @SuppressWarnings("unchecked")
-      BeforeRunTaskProvider<BeforeRunTask> provider = BeforeRunTaskProvider.getProvider(myProject, task.getProviderId());
+      BeforeRunTaskProvider<BeforeRunTask<?>> provider = BeforeRunTaskProvider.getProvider(myProject, task.getProviderId());
       if (provider == null || !(task instanceof RunConfigurationBeforeRunProvider.RunConfigurableBeforeRunTask)) {
         continue;
       }
@@ -317,12 +318,12 @@ public abstract class ExecutionManagerImpl extends ExecutionManager implements D
     }
 
     ApplicationManager.getApplication().executeOnPooledThread(() -> {
-      for (BeforeRunTask task : beforeRunTasks) {
+      for (@SuppressWarnings("rawtypes") BeforeRunTask task : beforeRunTasks) {
         if (myProject.isDisposed()) {
           return;
         }
         @SuppressWarnings("unchecked")
-        BeforeRunTaskProvider<BeforeRunTask> provider = BeforeRunTaskProvider.getProvider(myProject, task.getProviderId());
+        BeforeRunTaskProvider<BeforeRunTask<?>> provider = BeforeRunTaskProvider.getProvider(myProject, task.getProviderId());
         if (provider == null) {
           LOG.warn("Cannot find BeforeRunTaskProvider for id='" + task.getProviderId() + "'");
           continue;
