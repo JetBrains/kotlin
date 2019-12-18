@@ -165,10 +165,9 @@ public class SearchTextArea extends NonOpaquePanel implements PropertyChangeList
         return false;
       }
     });
-    myScrollPane.getVerticalScrollBar().setBackground(UIUtil.TRANSPARENT_COLOR);
     myScrollPane.getViewport().setBorder(null);
     myScrollPane.getViewport().setOpaque(false);
-    myScrollPane.setBorder(JBUI.Borders.emptyRight(2));
+    myScrollPane.setBorder(JBUI.Borders.empty(0, 0, 2, 2));
     myScrollPane.setOpaque(false);
 
     myInfoLabel = new JBLabel(UIUtil.ComponentStyle.SMALL);
@@ -210,7 +209,7 @@ public class SearchTextArea extends NonOpaquePanel implements PropertyChangeList
     setLayout(new MigLayout(myPainter.getLayoutConstraints()));
     removeAll();
     add(myHistoryPopupButton, myPainter.getHistoryButtonConstraints());
-    add(myScrollPane, "ay top, growx, pushx");
+    add(myScrollPane, "ay top, growx, push, growy");
     //TODO combine icons/info modes
     if (myInfoMode) {
       add(myInfoLabel, "gapright " + JBUIScale.scale(4));
