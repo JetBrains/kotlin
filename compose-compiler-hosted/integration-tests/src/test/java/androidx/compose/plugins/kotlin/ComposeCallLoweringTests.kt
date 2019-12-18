@@ -43,6 +43,45 @@ import kotlin.reflect.KClass
 class ComposeCallLoweringTests : AbstractCodegenTest() {
 
     @Test
+    fun testInlineGroups(): Unit = ensureSetup {
+        compose("""
+
+            @Composable
+            fun App() {
+                val cond = state { true }
+                val text = if (cond.value) remember { "abc" } else remember { "def" }
+                Button(id=1, text=text, onClick={ cond.value = !cond.value })
+            }
+        """,
+            "App()"
+        ).then { activity ->
+            val tv = activity.findViewById<Button>(1)
+            assertEquals("abc", tv.text)
+            tv.performClick()
+        }.then { activity ->
+            val tv = activity.findViewById<Button>(1)
+            assertEquals("def", tv.text)
+        }
+    }
+
+    @Test
+    fun testSimpleInlining(): Unit = ensureSetup {
+        compose("""
+            @Composable
+            inline fun foo(block: @Composable() () -> Unit) {
+                block()
+            }
+
+            @Composable
+            fun App() {
+                foo {}
+            }
+        """,
+            "App()"
+        )
+    }
+
+    @Test
     fun testComposableLambdaCall(): Unit = ensureSetup {
         codegen(
             """
