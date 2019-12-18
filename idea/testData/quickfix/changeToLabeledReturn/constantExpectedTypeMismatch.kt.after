@@ -1,0 +1,9 @@
+// "Change to 'return@foo'" "true"
+inline fun foo(f: (Int) -> Int) {}
+
+fun test() {
+    foo { i ->
+        if (i == 1) return@foo 1
+        0
+    }
+}
