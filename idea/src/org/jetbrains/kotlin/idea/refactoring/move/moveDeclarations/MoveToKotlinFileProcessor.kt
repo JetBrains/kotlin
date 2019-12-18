@@ -76,18 +76,13 @@ class MoveToKotlinFileProcessor @JvmOverloads constructor(
     }
 
     override fun performRefactoring(usages: Array<UsageInfo>) {
-        val needTemporaryRename = targetDirectory.findFile(targetFileName) != null
+        val needTemporaryRename = targetDirectory.findFile(sourceFile.name) != null
         if (needTemporaryRename) {
             renameFileTemporarily()
         }
 
-        try {
-            super.performRefactoring(usages)
-        } finally {
-            if (needTemporaryRename) {
-                sourceFile.name = targetFileName
-            }
-        }
+        super.performRefactoring(usages)
+        sourceFile.name = targetFileName
     }
 
     companion object {
