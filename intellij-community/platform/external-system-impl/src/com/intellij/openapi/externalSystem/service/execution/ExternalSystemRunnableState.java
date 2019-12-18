@@ -113,7 +113,7 @@ public class ExternalSystemRunnableState extends UserDataHolderBase implements R
 
   @Nullable
   @Override
-  public ExecutionResult execute(Executor executor, @NotNull ProgramRunner runner) throws ExecutionException {
+  public ExecutionResult execute(Executor executor, @NotNull ProgramRunner<?> runner) throws ExecutionException {
     if (myProject.isDisposed()) return null;
 
     String jvmParametersSetup = getJvmParametersSetup();

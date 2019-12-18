@@ -93,7 +93,7 @@ public class ToolRunProfile implements ModuleRunProfile{
 
       @Override
       @NotNull
-      public ExecutionResult execute(@NotNull final Executor executor, @NotNull ProgramRunner runner) throws ExecutionException {
+      public ExecutionResult execute(@NotNull final Executor executor, @NotNull ProgramRunner<?> runner) throws ExecutionException {
         final ExecutionResult result = super.execute(executor, runner);
         final ProcessHandler processHandler = result.getProcessHandler();
         if (processHandler != null) {

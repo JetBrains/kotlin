@@ -60,7 +60,7 @@ public class FakeRunConfiguration extends LocatableConfigurationBase {
   public class FakeRunProfileState implements RunProfileState {
     @Nullable
     @Override
-    public ExecutionResult execute(Executor executor, @NotNull ProgramRunner runner) {
+    public ExecutionResult execute(Executor executor, @NotNull ProgramRunner<?> runner) {
       return new DefaultExecutionResult(null, new FakeProcessHandler(mySurviveSoftKill));
     }
   }

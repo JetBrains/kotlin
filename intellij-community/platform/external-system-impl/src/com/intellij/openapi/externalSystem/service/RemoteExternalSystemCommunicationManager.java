@@ -170,7 +170,7 @@ public final class RemoteExternalSystemCommunicationManager implements ExternalS
 
       @Override
       @NotNull
-      public ExecutionResult execute(@NotNull Executor executor, @NotNull ProgramRunner runner) throws ExecutionException {
+      public ExecutionResult execute(@NotNull Executor executor, @NotNull ProgramRunner<?> runner) throws ExecutionException {
         ProcessHandler processHandler = startProcess();
         return new DefaultExecutionResult(processHandler);
       }
