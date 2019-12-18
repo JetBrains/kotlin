@@ -11,7 +11,6 @@ class SdkComboBox(model: SdkComboBoxModel) : SdkComboBoxBase<SdkListItem>(model.
   }
 
   override fun onNewSdkAdded(sdk: Sdk) {
-    reloadModel()
     setSelectedSdk(sdk)
   }
 
@@ -19,11 +18,12 @@ class SdkComboBox(model: SdkComboBoxModel) : SdkComboBoxBase<SdkListItem>(model.
     if (anObject is SdkListItem.ActionableItem) {
       anObject.executeAction()
     }
-    super.setSelectedItem(anObject)
     reloadModel()
+    super.setSelectedItem(anObject)
   }
 
   fun setSelectedSdk(sdk: Sdk?) {
+    reloadModel()
     val sdkItem = sdk?.let { model.listModel.findSdkItem(sdk) }
     selectedItem = when {
       sdk == null -> showNoneSdkItem()

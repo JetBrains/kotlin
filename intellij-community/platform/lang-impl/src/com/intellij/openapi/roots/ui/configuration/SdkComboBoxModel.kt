@@ -4,7 +4,6 @@ package com.intellij.openapi.roots.ui.configuration
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.*
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel
-import com.intellij.openapi.roots.ui.configuration.projectRoot.SdkDownloadTracker
 import com.intellij.openapi.ui.ComboBoxPopupState
 import com.intellij.openapi.util.Condition
 import javax.swing.ComboBoxModel
@@ -53,12 +52,7 @@ class SdkComboBoxModel private constructor(
       val sdkTypeFilter = Condition<SdkTypeId> { it is JavaSdkType }
       val noJavaSdkTypes = { SdkType.getAllTypes().filterNot { it is SimpleJavaSdkType }.isEmpty() }
       val sdkTypeCreationFilter = Condition<SdkTypeId> { noJavaSdkTypes() || it !is SimpleJavaSdkType }
-      val sdkFilter = Condition<Sdk> { SdkDownloadTracker.getInstance().isDownloading(it) || isValidJdk(it.homePath) }
-      return createSdkComboBoxModel(project, sdksModel, sdkTypeFilter, sdkTypeCreationFilter, sdkFilter)
-    }
-
-    private fun isValidJdk(homePath: String?): Boolean {
-      return homePath != null && homePath.isNotBlank() && JdkUtil.checkForJdk(homePath) && JdkUtil.checkForJre(homePath)
+      return createSdkComboBoxModel(project, sdksModel, sdkTypeFilter, sdkTypeCreationFilter, null)
     }
   }
 }
