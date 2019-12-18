@@ -3,6 +3,7 @@ package com.intellij.execution.impl
 
 import com.intellij.execution.ExecutionManager
 import com.intellij.execution.ProgramRunnerUtil
+import com.intellij.execution.RunManager
 import com.intellij.execution.RunProfileStarter
 import com.intellij.execution.impl.statistics.RunConfigurationUsageTriggerCollector
 import com.intellij.execution.process.ProcessAdapter
@@ -30,6 +31,8 @@ class ExecutionManagerKtImpl(project: Project) : ExecutionManagerImpl(project) {
 
   override fun startRunProfile(starter: RunProfileStarter, environment: ExecutionEnvironment) {
     val activity = triggerUsage(environment)
+
+    RunManager.getInstance(environment.project).refreshUsagesList(environment.runProfile)
 
     val project = environment.project
     val reuseContent = contentManager.getReuseContent(environment)
