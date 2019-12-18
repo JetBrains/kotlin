@@ -8100,6 +8100,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             public void testSimpleInitWithType2() throws Exception {
                 runTest("idea/testData/intentions/declarations/split/simpleInitWithType2.kt");
             }
+
+            @TestMetadata("whenSubject.kt")
+            public void testWhenSubject() throws Exception {
+                runTest("idea/testData/intentions/declarations/split/whenSubject.kt");
+            }
         }
     }
 
