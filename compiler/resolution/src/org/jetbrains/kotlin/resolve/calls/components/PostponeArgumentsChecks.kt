@@ -162,7 +162,7 @@ private fun preprocessCallableReference(
 
     val lhsResult = argument.lhsResult
     if (lhsResult is LHSResult.Type) {
-        csBuilder.addConstraintFromLHS(lhsResult, expectedType)
+        csBuilder.addConstraintFromLHS(argument, lhsResult, expectedType)
     }
 
     val notCallableTypeConstructor =
@@ -181,13 +181,17 @@ private fun preprocessCallableReference(
     return result
 }
 
-private fun ConstraintSystemBuilder.addConstraintFromLHS(lhsResult: LHSResult.Type, expectedType: UnwrappedType) {
+private fun ConstraintSystemBuilder.addConstraintFromLHS(
+    argument: CallableReferenceKotlinCallArgument,
+    lhsResult: LHSResult.Type,
+    expectedType: UnwrappedType
+) {
     if (!ReflectionTypes.isNumberedTypeWithOneOrMoreNumber(expectedType)) return
 
     val lhsType = lhsResult.unboundDetailedReceiver.stableType
     val expectedTypeProjectionForLHS = expectedType.arguments.first()
     val expectedTypeForLHS = expectedTypeProjectionForLHS.type
-    val constraintPosition = LHSArgumentConstraintPosition(lhsResult.qualifier ?: lhsResult.unboundDetailedReceiver)
+    val constraintPosition = LHSArgumentConstraintPosition(argument, lhsResult.qualifier ?: lhsResult.unboundDetailedReceiver)
 
     when (expectedTypeProjectionForLHS.projectionKind) {
         Variance.INVARIANT -> addEqualityConstraint(lhsType, expectedTypeForLHS, constraintPosition)
