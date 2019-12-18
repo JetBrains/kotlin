@@ -28,6 +28,7 @@ import com.intellij.openapi.roots.ModuleRootEvent
 import com.intellij.openapi.roots.ModuleRootListener
 import com.intellij.openapi.updateSettings.impl.pluginsAdvertisement.UnknownFeaturesCollector
 import com.intellij.openapi.util.ClearableLazyValue
+import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.project.isDirectoryBased
@@ -838,8 +839,10 @@ open class RunManagerImpl @JvmOverloads constructor(val project: Project, shared
     var result: MutableList<BeforeRunTask<*>>? = null
     if (element != null) {
       for (methodElement in element.getChildren(OPTION)) {
-        val key = methodElement.getAttributeValue(NAME_ATTR)
-        val provider = stringIdToBeforeRunProvider.value.getOrPut(key) { UnknownBeforeRunTaskProvider(key) }
+        val key = methodElement.getAttributeValue(NAME_ATTR) ?: continue
+        val provider = stringIdToBeforeRunProvider.value.getOrPut(key) {
+          UnknownBeforeRunTaskProvider(key)
+        }
         val beforeRunTask = provider.createTask(configuration) ?: continue
         if (beforeRunTask is PersistentStateComponent<*>) {
           // for PersistentStateComponent we don't write default value for enabled, so, set it to true explicitly
@@ -957,7 +960,7 @@ open class RunManagerImpl @JvmOverloads constructor(val project: Project, shared
     }
     var icon = iconCache.get(uniqueId, settings, project)
     if (withLiveIndicator) {
-      val runningDescriptors = ExecutionManagerImpl.getInstance(project).getRunningDescriptors { it === settings }
+      val runningDescriptors = ExecutionManagerImpl.getInstance(project).getRunningDescriptors(Condition { it === settings })
       when {
         runningDescriptors.size == 1 -> icon = ExecutionUtil.getLiveIndicator(icon)
         runningDescriptors.size > 1 -> icon = IconUtil.addText(icon, runningDescriptors.size.toString())
