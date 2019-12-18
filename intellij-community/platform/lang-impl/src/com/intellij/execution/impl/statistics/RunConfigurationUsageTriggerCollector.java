@@ -22,7 +22,7 @@ public class RunConfigurationUsageTriggerCollector {
   public static IdeActivity trigger(@NotNull Project project, @NotNull ConfigurationFactory factory, @NotNull Executor executor) {
     final ConfigurationType configurationType = factory.getType();
     return new IdeActivity(project, "run.configuration.exec").startedWithData(data -> {
-      data.addAll(newFeatureUsageData(configurationType, factory).addExecutor(executor));
+      data.addAll(newFeatureUsageData(configurationType, factory).addData("executor", executor.getId()));
     });
   }
 

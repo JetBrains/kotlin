@@ -29,7 +29,7 @@ class ExternalSystemActionsCollector {
       if (place != null) {
         data.addPlace(place).addData("context_menu", isFromContextMenu)
       }
-      executor?.let { data.addExecutor(it) }
+      executor?.let { data.addData("executor", it.id) }
 
       addExternalSystemId(data, systemId)
 
