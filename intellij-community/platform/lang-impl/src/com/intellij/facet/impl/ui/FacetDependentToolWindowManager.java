@@ -47,7 +47,7 @@ final class FacetDependentToolWindowManager implements ProjectComponent {
                 return;
               }
             }
-            toolWindowManager.unregisterToolWindow(extension.id);
+            toolWindow.remove();
           }
         }
       }
