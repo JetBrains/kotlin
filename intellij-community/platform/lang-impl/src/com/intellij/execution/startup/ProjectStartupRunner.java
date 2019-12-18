@@ -61,7 +61,7 @@ final class ProjectStartupRunner implements StartupActivity.DumbAware {
       final Executor executor = DefaultRunExecutor.getRunExecutorInstance();
       for (final RunnerAndConfigurationSettings configuration : configurations) {
         if (! canBeRun(configuration)) {
-          showNotification(project, "Run Configuration '" + configuration.getName() + "' can not be started with 'Run' action.", MessageType.ERROR);
+          showNotification(project, "Run Configuration '" + configuration.getName() + "' can not be started with 'Run' action.");
           return;
         }
 
@@ -69,15 +69,15 @@ final class ProjectStartupRunner implements StartupActivity.DumbAware {
           alarm.addRequest(new MyExecutor(executor, configuration, alarm), pause);
         }
         catch (ExecutionException e) {
-          showNotification(project, e.getMessage(), MessageType.ERROR);
+          showNotification(project, e.getMessage());
         }
         pause = MyExecutor.PAUSE;
       }
     }, project.getDisposed());
   }
 
-  private static void showNotification(Project project, String text, MessageType type) {
-    ProjectStartupTaskManager.NOTIFICATION_GROUP.createNotification(ProjectStartupTaskManager.PREFIX + " " + text, type).notify(project);
+  private static void showNotification(Project project, String text) {
+    ProjectStartupTaskManager.NOTIFICATION_GROUP.createNotification(ProjectStartupTaskManager.PREFIX + " " + text, MessageType.ERROR).notify(project);
   }
 
   private static class MyExecutor implements Runnable {
@@ -100,9 +100,9 @@ final class ProjectStartupRunner implements StartupActivity.DumbAware {
 
     @Override
     public void run() {
-      if (ExecutorRegistry.getInstance().isStarting(myEnvironment)) {
+      if (ExecutionManager.getInstance(myProject).isStarting(myEnvironment)) {
         if (myCnt <= 0) {
-          showNotification(myProject, "'" + myName + "' not started after " + ATTEMPTS + " attempts.", MessageType.ERROR);
+          showNotification(myProject, "'" + myName + "' not started after " + ATTEMPTS + " attempts.");
           return;
         }
         --myCnt;

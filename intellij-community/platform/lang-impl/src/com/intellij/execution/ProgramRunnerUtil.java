@@ -49,7 +49,7 @@ public final class ProgramRunnerUtil {
                                                boolean showSettings,
                                                boolean assignNewId,
                                                ProgramRunner.Callback callback) {
-    if (ExecutorRegistry.getInstance().isStarting(environment)) {
+    if (ExecutionManager.getInstance(environment.getProject()).isStarting(environment)) {
       return;
     }
 

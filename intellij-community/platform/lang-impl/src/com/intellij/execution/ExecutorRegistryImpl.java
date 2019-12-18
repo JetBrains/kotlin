@@ -162,7 +162,7 @@ public final class ExecutorRegistryImpl extends ExecutorRegistry implements Disp
     myExecutors = null;
   }
 
-  private class ExecutorAction extends AnAction implements DumbAware, UpdateInBackground {
+  private static final class ExecutorAction extends AnAction implements DumbAware, UpdateInBackground {
     private final Executor myExecutor;
 
     private ExecutorAction(@NotNull final Executor executor) {
@@ -191,7 +191,7 @@ public final class ExecutorRegistryImpl extends ExecutorRegistry implements Disp
         ProgramRunner<?> runner = ProgramRunner.getRunner(myExecutor.getId(), configuration);
         if (runner == null
             || !ExecutionTargetManager.canRun(configuration, pair.getTarget())
-            || isStarting(project, myExecutor.getId(), runner.getRunnerId())) {
+            || ExecutionManager.getInstance(project).isStarting(myExecutor.getId(), runner.getRunnerId())) {
           return false;
         }
       }
@@ -285,7 +285,7 @@ public final class ExecutorRegistryImpl extends ExecutorRegistry implements Disp
     }
 
     @Nullable
-    private RunnerAndConfigurationSettings getSelectedConfiguration(@NotNull final Project project) {
+    private static RunnerAndConfigurationSettings getSelectedConfiguration(@NotNull Project project) {
       return RunManager.getInstance(project).getSelectedConfiguration();
     }
 

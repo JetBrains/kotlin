@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.actions;
 
 import com.intellij.execution.*;
@@ -12,6 +12,7 @@ import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.registry.Registry;
@@ -29,7 +30,7 @@ import static com.intellij.execution.SuggestUsingRunDashBoardUtil.promptUserToUs
 public class RunContextAction extends BaseRunConfigurationAction {
   private final Executor myExecutor;
 
-  public RunContextAction(@NotNull final Executor executor) {
+  public RunContextAction(@NotNull Executor executor) {
     super(ExecutionBundle.message("perform.action.with.context.configuration.action.name", executor.getStartActionText()), null, new IconLoader.LazyIcon() {
       @NotNull
       @Override
@@ -41,7 +42,7 @@ public class RunContextAction extends BaseRunConfigurationAction {
   }
 
   @Override
-  protected void perform(final ConfigurationContext context) {
+  protected void perform(@NotNull ConfigurationContext context) {
     RunnerAndConfigurationSettings configuration = context.findExisting();
     final RunManagerEx runManager = (RunManagerEx)context.getRunManager();
     if (configuration == null) {
@@ -63,12 +64,12 @@ public class RunContextAction extends BaseRunConfigurationAction {
   }
 
   @Override
-  protected boolean isEnabledFor(RunConfiguration configuration) {
+  protected boolean isEnabledFor(@NotNull RunConfiguration configuration) {
     return getRunner(configuration) != null;
   }
 
   @Nullable
-  private ProgramRunner getRunner(final RunConfiguration configuration) {
+  private ProgramRunner<?> getRunner(@NotNull RunConfiguration configuration) {
     return ProgramRunner.getRunner(myExecutor.getId(), configuration);
   }
 
@@ -94,11 +95,13 @@ public class RunContextAction extends BaseRunConfigurationAction {
       configuration = context.getConfiguration();
     }
 
-    ProgramRunner runner = configuration == null ? null : getRunner(configuration.getConfiguration());
+    ProgramRunner<?> runner = configuration == null ? null : getRunner(configuration.getConfiguration());
     if (runner == null) {
       return Pair.create(false, false);
     }
-    return Pair.create(!ExecutorRegistry.getInstance().isStarting(context.getProject(), myExecutor.getId(), runner.getRunnerId()), true);
+
+    Project project = context.getProject();
+    return Pair.create(!ExecutionManager.getInstance(project).isStarting(myExecutor.getId(), runner.getRunnerId()), true);
   }
 
   @NotNull
@@ -119,7 +122,7 @@ public class RunContextAction extends BaseRunConfigurationAction {
   @NotNull
   private AnAction runAllConfigurationsAction(@NotNull ConfigurationContext context, @NotNull List<? extends ConfigurationFromContext> configurationsFromContext) {
     return new AnAction(
-      "Run all",
+      "Run All",
       "Run all configurations available in this context",
       AllIcons.RunConfigurations.Compound
     ) {
