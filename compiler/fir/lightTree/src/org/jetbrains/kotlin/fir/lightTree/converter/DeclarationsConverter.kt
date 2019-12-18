@@ -1268,6 +1268,8 @@ class DeclarationsConverter(
         firTypeParameter.annotations += typeParameterModifiers.annotations
         firType?.let { firTypeParameter.bounds += it }
 
+        firTypeParameter.addDefaultBoundIfNecessary()
+
         return firTypeParameter
     }
 
