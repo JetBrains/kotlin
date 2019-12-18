@@ -29,7 +29,6 @@ class CodeConformanceTest : TestCase() {
         private val SOURCES_BUNCH_FILE_PATTERN = Pattern.compile("(.+\\.java|.+\\.kt|.+\\.js)(\\.\\w+)?")
         private const val MAX_STEPS_COUNT = 100
         private val EXCLUDED_FILES_AND_DIRS = listOf(
-            "android.tests.dependencies",
             "buildSrc",
             "core/reflection.jvm/src/kotlin/reflect/jvm/internal/pcollections",
             "js/js.tests/.gradle",
