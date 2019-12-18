@@ -142,6 +142,11 @@ public class GotoTestOrCodeHandler extends GotoTargetHandler {
   }
 
   @Override
+  protected boolean useEditorFont() {
+    return false;
+  }
+
+  @Override
   protected void navigateToElement(@NotNull Navigatable element) {
     if (element instanceof PsiElement) {
       NavigationUtil.activateFileWithPsiElement((PsiElement)element, true);

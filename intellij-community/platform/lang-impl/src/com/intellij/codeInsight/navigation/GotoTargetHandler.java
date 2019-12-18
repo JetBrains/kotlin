@@ -74,6 +74,10 @@ public abstract class GotoTargetHandler implements CodeInsightActionHandler {
   @NonNls
   protected abstract String getFeatureUsedKey();
 
+  protected boolean useEditorFont() {
+    return true;
+  }
+
   @Nullable
   protected abstract GotoData getSourceAndTargetElements(Editor editor, PsiFile file);
 
@@ -112,25 +116,26 @@ public abstract class GotoTargetHandler implements CodeInsightActionHandler {
 
     final IPopupChooserBuilder<Object> builder = JBPopupFactory.getInstance().createPopupChooserBuilder(allElements);
     final Ref<UsageView> usageView = new Ref<>();
-    final JBPopup popup = builder.setNamerForFiltering(o -> {
+    builder.setNamerForFiltering(o -> {
       if (o instanceof AdditionalAction) {
         return ((AdditionalAction)o).getText();
       }
       return getRenderer(o, gotoData).getElementText((PsiElement)o);
-    }).
-      setTitle(title).
-      setFont(EditorUtil.getEditorFont()).
-      setRenderer(new DefaultListCellRenderer() {
-        @Override
-        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-          if (value == null) return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-          if (value instanceof AdditionalAction) {
-            return myActionElementRenderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-          }
-          PsiElementListCellRenderer renderer = getRenderer(value, gotoData);
-          return renderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+    }).setTitle(title);
+    if (useEditorFont()) {
+      builder.setFont(EditorUtil.getEditorFont());
+    }
+    builder.setRenderer(new DefaultListCellRenderer() {
+      @Override
+      public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+        if (value == null) return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+        if (value instanceof AdditionalAction) {
+          return myActionElementRenderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
         }
-      }).
+        PsiElementListCellRenderer renderer = getRenderer(value, gotoData);
+        return renderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+      }
+    }).
       setItemsChosenCallback(selectedElements -> {
         for (Object element : selectedElements) {
           if (element instanceof AdditionalAction) {
@@ -159,17 +164,19 @@ public abstract class GotoTargetHandler implements CodeInsightActionHandler {
         return true;
       }).
       setCouldPin(popup1 -> {
-        usageView.set(FindUtil.showInUsageView(gotoData.source, gotoData.targets, getFindUsagesTitle(gotoData.source, name, gotoData.targets.length), gotoData.source.getProject()));
+        usageView.set(FindUtil.showInUsageView(gotoData.source, gotoData.targets,
+                                               getFindUsagesTitle(gotoData.source, name, gotoData.targets.length),
+                                               gotoData.source.getProject()));
         popup1.cancel();
         return false;
       }).
-      setAdText(getAdText(gotoData.source, targets.length)).
-      createPopup();
+      setAdText(getAdText(gotoData.source, targets.length));
+    final JBPopup popup = builder.createPopup();
 
     JScrollPane pane = builder instanceof PopupChooserBuilder ? ((PopupChooserBuilder)builder).getScrollPane() : null;
     if (pane != null) {
-        pane.setBorder(null);
-        pane.setViewportBorder(null);
+      pane.setBorder(null);
+      pane.setViewportBorder(null);
     }
 
     if (gotoData.listUpdaterTask != null) {
