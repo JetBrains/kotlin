@@ -98,7 +98,7 @@ public class ConsoleHistoryController implements Disposable {
   public void dispose() {
   }
 
-  //@Nullable
+  @Nullable
   public static ConsoleHistoryController getController(@NotNull LanguageConsoleView console) {
     return ourControllers.get(console);
   }
