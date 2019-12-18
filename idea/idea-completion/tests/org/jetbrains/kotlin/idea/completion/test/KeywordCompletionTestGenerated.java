@@ -293,6 +293,11 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
         runTest("idea/idea-completion/testData/keywords/InParameterDefaultValue.kt");
     }
 
+    @TestMetadata("InParameterType.kt")
+    public void testInParameterType() throws Exception {
+        runTest("idea/idea-completion/testData/keywords/InParameterType.kt");
+    }
+
     @TestMetadata("InPrimaryConstructorParametersList.kt")
     public void testInPrimaryConstructorParametersList() throws Exception {
         runTest("idea/idea-completion/testData/keywords/InPrimaryConstructorParametersList.kt");
