@@ -132,7 +132,7 @@ public class SdkUsagesCollector {
       String sdkName = manager.getProjectSdkName();
       String sdkType = manager.getProjectSdkTypeName();
 
-      SdkUsage usage = new SdkUsage("Project SDK", sdkName, sdkType)
+      SdkUsage usage = new SdkUsage("project", sdkName, sdkType)
         .withSetSdkAction(sdk -> WriteAction.run(() -> ProjectRootManager.getInstance(project).setProjectSdk(sdk)));
 
       return Collections.singletonList(usage);
