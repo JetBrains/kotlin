@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.idea.debugger.coroutines.CoroutineDebuggerActions
 /**
  * Added into ui in [CoroutineProjectConnectionListener.registerCoroutinesPanel]
  */
+@Deprecated("moved to XCoroutineView")
 class CoroutinesPanel(project: Project, stateManager: DebuggerStateManager) : ThreadsPanel(project, stateManager) {
 
     override fun createTreeView(): DebuggerTree {

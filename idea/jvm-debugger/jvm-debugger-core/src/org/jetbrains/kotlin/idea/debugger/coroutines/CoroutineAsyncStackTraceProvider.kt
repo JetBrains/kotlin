@@ -8,10 +8,11 @@ package org.jetbrains.kotlin.idea.debugger.coroutines
 import com.intellij.debugger.engine.*
 import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
 import com.intellij.debugger.jdi.StackFrameProxyImpl
-import com.intellij.debugger.memory.utils.StackFrameItem
+import com.intellij.xdebugger.frame.XSuspendContext
 import com.sun.jdi.*
 import org.jetbrains.kotlin.idea.debugger.*
 import org.jetbrains.kotlin.idea.debugger.coroutines.data.CoroutineAsyncStackFrameItem
+import org.jetbrains.kotlin.idea.debugger.coroutines.proxy.AsyncStackTraceContext
 import org.jetbrains.kotlin.idea.debugger.evaluate.ExecutionContext
 
 class CoroutineAsyncStackTraceProvider : AsyncStackTraceProvider {
@@ -21,7 +22,12 @@ class CoroutineAsyncStackTraceProvider : AsyncStackTraceProvider {
         return null
     }
 
-    fun getAsyncStackTraceSafe(frameProxy: StackFrameProxyImpl, suspendContext: SuspendContext): List<CoroutineAsyncStackFrameItem> {
+    fun getAsyncStackTrace(stackFrame: JavaStackFrame, suspendContext: XSuspendContext): List<CoroutineAsyncStackFrameItem>? {
+        val stackFrameList = hopelessAware { getAsyncStackTraceSafe(stackFrame.stackFrameProxy, suspendContext) } ?: emptyList()
+        return null
+    }
+
+    fun getAsyncStackTraceSafe(frameProxy: StackFrameProxyImpl, suspendContext: XSuspendContext): List<CoroutineAsyncStackFrameItem> {
         val defaultResult = emptyList<CoroutineAsyncStackFrameItem>()
 
         val location = frameProxy.location()
@@ -31,7 +37,7 @@ class CoroutineAsyncStackTraceProvider : AsyncStackTraceProvider {
         val method = location.safeMethod() ?: return defaultResult
         val threadReference = frameProxy.threadProxy().threadReference
 
-        if (threadReference == null || !threadReference.isSuspended || !(suspendContext.debugProcess as DebugProcessImpl).canRunEvaluation)
+        if (threadReference == null || !threadReference.isSuspended || !canRunEvaluation(suspendContext))
             return defaultResult
 
 
@@ -41,7 +47,7 @@ class CoroutineAsyncStackTraceProvider : AsyncStackTraceProvider {
 
     private fun createAsyncStackTraceContext(
         frameProxy: StackFrameProxyImpl,
-        suspendContext: SuspendContext,
+        suspendContext: XSuspendContext,
         method: Method
     ): AsyncStackTraceContext {
         val evaluationContext = EvaluationContextImpl(suspendContext as SuspendContextImpl, frameProxy)
@@ -49,5 +55,8 @@ class CoroutineAsyncStackTraceProvider : AsyncStackTraceProvider {
         // DebugMetadataKt not found, probably old kotlin-stdlib version
         return AsyncStackTraceContext(context, method)
     }
+
+    fun canRunEvaluation(suspendContext: XSuspendContext) =
+        (suspendContext as SuspendContextImpl).debugProcess.canRunEvaluation
 }
 

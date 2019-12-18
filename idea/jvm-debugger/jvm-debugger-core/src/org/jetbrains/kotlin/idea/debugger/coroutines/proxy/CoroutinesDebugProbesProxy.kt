@@ -4,12 +4,10 @@
  */
 package org.jetbrains.kotlin.idea.debugger.coroutines.proxy
 
-import com.intellij.debugger.engine.DebuggerManagerThreadImpl
 import com.intellij.debugger.engine.SuspendContextImpl
 import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
-import com.intellij.debugger.impl.PrioritizedTask
 import com.intellij.debugger.jdi.StackFrameProxyImpl
-import com.intellij.xdebugger.XDebugProcess
+import com.intellij.xdebugger.frame.XSuspendContext
 import com.sun.jdi.*
 import org.jetbrains.kotlin.idea.debugger.coroutines.command.CoroutineBuilder
 import org.jetbrains.kotlin.idea.debugger.coroutines.view.CoroutineInfoCache
@@ -17,16 +15,10 @@ import org.jetbrains.kotlin.idea.debugger.coroutines.data.CoroutineInfoData
 import org.jetbrains.kotlin.idea.debugger.coroutines.util.logger
 import org.jetbrains.kotlin.idea.debugger.evaluate.ExecutionContext
 
-fun SuspendContextImpl.createEvaluationContext() =
-    EvaluationContextImpl(this, this.frameProxy)
-
-class CoroutinesDebugProbesProxy(val suspendContext: SuspendContextImpl) {
+class CoroutinesDebugProbesProxy(val suspendContext: XSuspendContext) {
     private val log by logger
 
-    // @TODO refactor to extract initialization logic
-    private var executionContext: ExecutionContext = ExecutionContext(
-        EvaluationContextImpl(suspendContext, suspendContext.frameProxy),
-        suspendContext.frameProxy as StackFrameProxyImpl)
+    private var executionContext: ExecutionContext = executionContext()
     // might want to use inner class but also having to monitor order of fields
     private var refs: ProcessReferences = ProcessReferences(executionContext)
 
@@ -89,24 +81,14 @@ class CoroutinesDebugProbesProxy(val suspendContext: SuspendContextImpl) {
         val state = getState(instance)
         val thread = getLastObservedThread(instance, refs.lastObservedThreadFieldRef)
         val lastObservedFrameFieldRef = instance.getValue(refs.lastObservedFrameFieldRef) as? ObjectReference
+        val stackTrace = getStackTrace(instance)
         return CoroutineInfoData(
             name,
             CoroutineInfoData.State.valueOf(state),
-            getThreadName(instance),
-            getThreadState(instance),
-
-            getStackTrace(instance),
+            stackTrace,
             thread,
             lastObservedFrameFieldRef
         )
-    }
-
-    private fun getThreadName(instance: ObjectReference) : String {
-        return "thread name"
-    }
-
-    private fun getThreadState(instance: ObjectReference) : Int {
-        return 1
     }
 
     private fun getName(
@@ -202,6 +184,11 @@ class CoroutinesDebugProbesProxy(val suspendContext: SuspendContextImpl) {
 
     private fun sizeOf(args: ObjectReference): Int =
         (executionContext.invokeMethod(args, refs.sizeRef, emptyList()) as IntegerValue).value()
+
+    private fun executionContext() :  ExecutionContext {
+        val evaluationContextImpl = EvaluationContextImpl(suspendContext as SuspendContextImpl, suspendContext.frameProxy)
+        return ExecutionContext(evaluationContextImpl, suspendContext.frameProxy as StackFrameProxyImpl)
+    }
 
     /**
      * @TODO refactor later

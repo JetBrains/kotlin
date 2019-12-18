@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.debugger.coroutines
+package org.jetbrains.kotlin.idea.debugger.coroutines.proxy
 
 import com.intellij.debugger.DebuggerContext
 import com.intellij.debugger.engine.JavaValue
@@ -37,7 +37,7 @@ class AsyncStackTraceContext(
         val continuation = locateContinuation() ?: return emptyList()
         val frames = mutableListOf<CoroutineAsyncStackFrameItem>()
         collectFramesRecursively(continuation, frames)
-        return frames;
+        return frames
     }
 
     private fun locateContinuation() : ObjectReference? {
@@ -105,7 +105,7 @@ class AsyncStackTraceContext(
     fun getSpilledVariables(continuation: ObjectReference): List<XNamedValue>? {
 
         val rawSpilledVariables =
-            context.invokeMethodAsArray(debugMetadataKtType, "getSpilledVariableFieldMapping", "(Lkotlin/coroutines/jvm/internal/BaseContinuationImpl;)[Ljava/lang/String;", continuation) as? ArrayReference ?: return null
+            context.invokeMethodAsArray(debugMetadataKtType, "getSpilledVariableFieldMapping", "(Lkotlin/coroutines/jvm/internal/BaseContinuationImpl;)[Ljava/lang/String;", continuation)  ?: return null
 
         context.keepReference(rawSpilledVariables)
 
