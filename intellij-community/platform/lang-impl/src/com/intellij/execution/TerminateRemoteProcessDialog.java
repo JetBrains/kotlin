@@ -11,18 +11,18 @@ import com.intellij.ide.GeneralSettings;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.util.ArrayUtilRt;
+import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class TerminateRemoteProcessDialog {
-
-  public static GeneralSettings.ProcessCloseConfirmation show(Project project,
-                                                              String sessionName,
-                                                              ProcessHandler processHandler) {
+  public static @Nullable GeneralSettings.ProcessCloseConfirmation show(Project project,
+                                                                        @NotNull String sessionName,
+                                                                        @NotNull ProcessHandler processHandler) {
     //noinspection deprecation
     if (processHandler.isSilentlyDestroyOnClose() ||
         Boolean.TRUE.equals(processHandler.getUserData(ProcessHandler.SILENTLY_DESTROY_ON_CLOSE))) {
@@ -38,6 +38,7 @@ public class TerminateRemoteProcessDialog {
       }
       return confirmation;
     }
+
     List<String> options = new ArrayList<>(3);
     options.add(ExecutionBundle.message("button.terminate"));
     if (canDisconnect) {
@@ -67,12 +68,11 @@ public class TerminateRemoteProcessDialog {
     };
     processHandler.addProcessListener(listener);
 
-
     boolean defaultDisconnect = processHandler.detachIsDefault();
     int exitCode = Messages.showDialog(project,
                                        ExecutionBundle.message("terminate.process.confirmation.text", sessionName),
                                        ExecutionBundle.message("process.is.running.dialog.title", sessionName),
-                                       ArrayUtilRt.toStringArray(options),
+                                       ArrayUtil.toStringArray(options),
                                        canDisconnect && defaultDisconnect ? 1 : 0,
                                        Messages.getWarningIcon(),
                                        doNotAskOption);
@@ -80,19 +80,13 @@ public class TerminateRemoteProcessDialog {
     if (alreadyGone.get()) {
       return GeneralSettings.ProcessCloseConfirmation.DISCONNECT;
     }
+
     return getConfirmation(exitCode, canDisconnect);
   }
 
   private static GeneralSettings.ProcessCloseConfirmation getConfirmation(int button, boolean withDisconnect) {
-    switch (button) {
-      case 0:
-        return GeneralSettings.ProcessCloseConfirmation.TERMINATE;
-      case 1:
-        if (withDisconnect) {
-          return GeneralSettings.ProcessCloseConfirmation.DISCONNECT;
-        }
-      default:
-          return null;
-    }
+    if (button == 0) return GeneralSettings.ProcessCloseConfirmation.TERMINATE;
+    if (button == 1 && withDisconnect) return GeneralSettings.ProcessCloseConfirmation.DISCONNECT;
+    return null;
   }
 }
