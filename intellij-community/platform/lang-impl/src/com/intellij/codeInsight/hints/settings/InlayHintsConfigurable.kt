@@ -12,7 +12,7 @@ import com.intellij.openapi.options.ex.Settings
 import com.intellij.openapi.project.Project
 import javax.swing.JComponent
 
-class InlayHintsConfigurable(val project: Project) : Configurable, Configurable.Composite, Configurable.WithEpDependencies {
+class InlayHintsConfigurable(val project: Project) : Configurable, Configurable.Composite {
   private val settings = InlayHintsSettings.instance()
   private val configurables: List<SingleLanguageInlayHintsConfigurable>
   private val panel: InlayHintsPanel
@@ -97,7 +97,5 @@ class InlayHintsConfigurable(val project: Project) : Configurable, Configurable.
       }
     }
   }
-
-  override fun getDependencies() = listOf(InlaySettingsProvider.EP.EXTENSION_POINT_NAME)
 }
 
