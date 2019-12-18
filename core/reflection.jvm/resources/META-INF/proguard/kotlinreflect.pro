@@ -3,7 +3,7 @@
 -keep class kotlin.Metadata { *; }
 
 # Keep kotlin-reflect internals.
--keep class kotlin.reflect.jvm.* { *; }
+-keep class kotlin.reflect.jvm.** { *; }
 
 # Keep generic signatures and annotations at runtime.
 # R8 requires InnerClasses and EnclosingMethod if you keepattributes Signature.
