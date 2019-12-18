@@ -56,7 +56,7 @@ abstract class MultiplePluginVersionGradleImportingTestCase : GradleImportingTes
             File("libraries/tools/kotlin-gradle-plugin/build/libs").listFiles()?.map { it.name }?.firstOrNull { it.contains("-original.jar") }?.replace(
                 "kotlin-gradle-plugin-",
                 ""
-            )?.replace("-original.jar", "") ?: "1.3-SNAPSHOT"
+            )?.replace("-original.jar", "") ?: "1.4-SNAPSHOT"
 
         @JvmStatic
         @Parameterized.Parameters(name = "{index}: Gradle-{0}, KotlinGradlePlugin-{1}")
