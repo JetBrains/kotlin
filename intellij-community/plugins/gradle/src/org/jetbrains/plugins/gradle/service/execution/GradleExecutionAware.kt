@@ -24,7 +24,10 @@ import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ui.configuration.projectRoot.SdkDownloadTracker
 import com.intellij.openapi.util.Disposer
 import com.intellij.util.Consumer
+import org.jetbrains.annotations.PropertyKey
 import org.jetbrains.plugins.gradle.settings.GradleSettings
+import org.jetbrains.plugins.gradle.util.GradleBundle
+import org.jetbrains.plugins.gradle.util.GradleBundle.PATH_TO_BUNDLE
 import java.lang.System.currentTimeMillis
 import java.util.concurrent.CountDownLatch
 
@@ -47,28 +50,30 @@ class GradleExecutionAware : ExternalSystemExecutionAware {
   ) {
     val settings = GradleSettings.getInstance(project)
     val projectSettings = settings.getLinkedProjectSettings(externalProjectPath) ?: return
-    val gradleJvm = projectSettings.gradleJvm ?: jdkConfigurationError("Invalid Gradle JDK configuration found.")
+    val gradleJvm = projectSettings.gradleJvm ?: jdkConfigurationError("gradle.jvm.is.invalid")
 
     val sdk = try {
-      ExternalSystemJdkUtil.getJdk(project, gradleJvm) ?: jdkConfigurationError("Invalid Gradle JDK configuration found.")
+      ExternalSystemJdkUtil.getJdk(project, gradleJvm) ?: jdkConfigurationError("gradle.jvm.is.invalid")
     }
     catch (e: ExternalSystemJdkException) {
-      jdkConfigurationError("Invalid Gradle JDK configuration found.", e)
+      jdkConfigurationError("gradle.jvm.is.invalid")
     }
 
     waitForDownloadingIfNeeded(sdk, taskId, taskNotificationListener, project)
 
-    val sdkHomePath = sdk.homePath ?: jdkConfigurationError("Invalid Gradle JDK configuration found.")
+    val sdkHomePath = sdk.homePath ?: jdkConfigurationError("gradle.jvm.is.invalid")
     if (!JdkUtil.checkForJdk(sdkHomePath)) {
       if (JdkUtil.checkForJre(sdkHomePath)) {
-        jdkConfigurationError("Please, use JDK instead of JRE for Gradle importer.")
+        jdkConfigurationError("gradle.jvm.is.jre")
       }
-      jdkConfigurationError("Invalid Gradle JDK configuration found.")
+      jdkConfigurationError("gradle.jvm.is.invalid")
     }
   }
 
-  private fun jdkConfigurationError(message: String, cause: Throwable? = null): Nothing {
-    val exceptionMessage = String.format("$message <a href='%s'>Open Gradle Settings</a> \n", OpenExternalSystemSettingsCallback.ID)
+  private fun jdkConfigurationError(@PropertyKey(resourceBundle = PATH_TO_BUNDLE) key: String, cause: Throwable? = null): Nothing {
+    val errorMessage = GradleBundle.message(key)
+    val openSettingsMessage = GradleBundle.message("gradle.open.gradle.settings")
+    val exceptionMessage = String.format("$errorMessage <a href='%s'>$openSettingsMessage</a> \n", OpenExternalSystemSettingsCallback.ID)
     throw ExternalSystemJdkException(exceptionMessage, cause, OpenExternalSystemSettingsCallback.ID)
   }
 
@@ -92,7 +97,7 @@ class GradleExecutionAware : ExternalSystemExecutionAware {
 
     if (ApplicationManager.getApplication().isDispatchThread) {
       LOG.error("Do not perform synchronous wait for sdk downloading in EDT - causes deadlock.")
-      jdkConfigurationError("Jdk is downloading. Please, wait for it is ready.")
+      jdkConfigurationError("gradle.jvm.is.downloading")
     }
 
     taskNotificationListener.submitProgressStarted(taskId, progressIndicator)

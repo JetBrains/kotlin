@@ -9,7 +9,7 @@ import com.intellij.openapi.util.KeyedExtensionCollector
 import org.jetbrains.annotations.ApiStatus
 
 /**
- * Describes appendix task steps to configure or cleanup execution context
+ * Describes additional steps to configure or cleanup execution context
  * @see com.intellij.openapi.externalSystem.model.task.ExternalSystemTask for details
  */
 @ApiStatus.Experimental
@@ -17,7 +17,7 @@ interface ExternalSystemExecutionAware {
 
   /**
    * Prepares execution context to execution
-   * This method called after execution start but before main execution:
+   * This method called after execution start but before
    * [com.intellij.openapi.externalSystem.model.task.ExternalSystemTask.execute]
    */
   fun prepareExecution(
