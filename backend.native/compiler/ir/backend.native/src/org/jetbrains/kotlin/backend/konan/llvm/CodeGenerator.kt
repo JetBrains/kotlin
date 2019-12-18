@@ -64,46 +64,6 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
     fun functionEntryPointAddress(function: IrFunction) = function.entryPointAddress.llvm
     fun functionHash(function: IrFunction): LLVMValueRef = function.functionName.localHash.llvm
 
-    fun getObjectInstanceStorage(irClass: IrClass, kind: ObjectStorageKind): LLVMValueRef {
-        assert (!irClass.isUnit())
-        val llvmGlobal = if (!isExternal(irClass)) {
-            context.llvmDeclarations.forSingleton(irClass).instanceFieldRef
-        } else {
-            val llvmType = getLLVMType(irClass.defaultType)
-            importGlobal(
-                    irClass.objectInstanceFieldSymbolName,
-                    llvmType,
-                    origin = irClass.llvmSymbolOrigin,
-                    threadLocal = kind == ObjectStorageKind.THREAD_LOCAL
-            )
-        }
-        when (kind) {
-            ObjectStorageKind.SHARED -> context.llvm.sharedObjects += llvmGlobal
-            ObjectStorageKind.THREAD_LOCAL -> context.llvm.objects += llvmGlobal
-            ObjectStorageKind.PERMANENT -> { /* Do nothing, no need to free such an instance. */ }
-        }
-
-        return llvmGlobal
-    }
-
-    fun getObjectInstanceShadowStorage(irClass: IrClass): LLVMValueRef {
-        assert (!irClass.isUnit())
-        assert (irClass.storageKind(context) == ObjectStorageKind.SHARED)
-        val llvmGlobal = if (!isExternal(irClass)) {
-            context.llvmDeclarations.forSingleton(irClass).instanceShadowFieldRef!!
-        } else {
-            val llvmType = getLLVMType(irClass.defaultType)
-            importGlobal(
-                    irClass.objectInstanceShadowFieldSymbolName,
-                    llvmType,
-                    origin = irClass.llvmSymbolOrigin,
-                    threadLocal = true
-            )
-        }
-        context.llvm.objects += llvmGlobal
-        return llvmGlobal
-    }
-
     fun typeInfoForAllocation(constructedClass: IrClass): LLVMValueRef {
         assert(!constructedClass.isObjCClass())
         return typeInfoValue(constructedClass)
@@ -911,11 +871,8 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         return null
     }
 
-    fun getObjectValue(
-            irClass: IrClass,
-            exceptionHandler: ExceptionHandler,
-            startLocationInfo: LocationInfo?,
-            endLocationInfo: LocationInfo? = null
+    fun getObjectValue(irClass: IrClass, exceptionHandler: ExceptionHandler,
+            startLocationInfo: LocationInfo?, endLocationInfo: LocationInfo? = null
     ): LLVMValueRef {
         // TODO: could be processed the same way as other stateless objects.
         if (irClass.isUnit()) {
@@ -926,7 +883,6 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
             val parent = irClass.parent as IrClass
             if (parent.isObjCClass()) {
                 // TODO: cache it too.
-
                 return call(
                         codegen.llvmFunction(context.ir.symbols.interopInterpretObjCPointer.owner),
                         listOf(getObjCClass(parent, exceptionHandler)),
@@ -935,12 +891,33 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                 )
             }
         }
-        val storageKind = irClass.storageKind(context)
-        if (storageKind == ObjectStorageKind.PERMANENT) {
-            return loadSlot(codegen.getObjectInstanceStorage(irClass, storageKind), false)
+
+        // If object is imported - access it via getter function.
+        if (isExternal(irClass)) {
+            val valueGetterName = irClass.objectInstanceGetterSymbolName
+            val valueGetterFunction = LLVMGetNamedFunction(context.llvmModule, valueGetterName) ?:
+                LLVMAddFunction(context.llvmModule, valueGetterName,
+                        functionType(kObjHeaderPtr, false, kObjHeaderPtrPtr))
+            return call(valueGetterFunction!!,
+                        listOf(),
+                        resultLifetime = Lifetime.GLOBAL,
+                        exceptionHandler = exceptionHandler)
         }
 
-        val objectPtr = codegen.getObjectInstanceStorage(irClass, storageKind)
+        val storageKind = irClass.storageKind(context)
+        when (storageKind) {
+            ObjectStorageKind.SHARED -> context.llvm.sharedObjects += irClass
+            ObjectStorageKind.THREAD_LOCAL -> context.llvm.objects += irClass
+            ObjectStorageKind.PERMANENT -> { /* Do nothing, no need to free such an instance. */ }
+        }
+        val singleton = context.llvmDeclarations.forSingleton(irClass)
+        val instanceAddress = singleton.instanceStorage
+        val instanceShadowAddress = singleton.instanceShadowStorage
+
+        if (storageKind == ObjectStorageKind.PERMANENT) {
+            return loadSlot(instanceAddress.getAddress(this), false)
+        }
+        val objectPtr = instanceAddress.getAddress(this)
         val bbInit = basicBlock("label_init", startLocationInfo, endLocationInfo)
         val bbExit = basicBlock("label_continue", startLocationInfo, endLocationInfo)
         val objectVal = loadSlot(objectPtr, false)
@@ -954,7 +931,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         val ctor = codegen.llvmFunction(defaultConstructor)
         val (initFunction, args) =
                 if (storageKind == ObjectStorageKind.SHARED && context.config.threadsAreAllowed) {
-                    val shadowObjectPtr = codegen.getObjectInstanceShadowStorage(irClass)
+                    val shadowObjectPtr = instanceShadowAddress!!.getAddress(this)
                     context.llvm.initSharedInstanceFunction to listOf(objectPtr, shadowObjectPtr, typeInfo, ctor)
                 } else {
                     context.llvm.initInstanceFunction to listOf(objectPtr, typeInfo, ctor)

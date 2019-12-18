@@ -157,7 +157,7 @@ internal interface ContextUtils : RuntimeAware {
      * It may be declared as external function prototype.
      */
     val IrFunction.llvmFunction: LLVMValueRef
-    get() = llvmFunctionOrNull ?: error("$name in $file/${parent.fqNameForIrSerialization}")
+        get() = llvmFunctionOrNull ?: error("$name in $file/${parent.fqNameForIrSerialization}")
 
     val IrFunction.llvmFunctionOrNull: LLVMValueRef?
         get() {
@@ -259,8 +259,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
             throw IllegalArgumentException("function $name already exists")
         }
 
-        val externalFunction = LLVMGetNamedFunction(otherModule, name) ?:
-            throw Error("function $name not found")
+        val externalFunction = LLVMGetNamedFunction(otherModule, name) ?: throw Error("function $name not found")
 
         val functionType = getFunctionType(externalFunction)
         val function = LLVMAddFunction(llvmModule, name, functionType)!!
@@ -315,10 +314,10 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     }
 
     internal fun externalFunction(
-        name: String,
-        type: LLVMTypeRef,
-        origin: CompiledKlibModuleOrigin,
-        independent: Boolean = false
+            name: String,
+            type: LLVMTypeRef,
+            origin: CompiledKlibModuleOrigin,
+            independent: Boolean = false
     ): LLVMValueRef {
         this.imports.add(origin, onlyBitcode = independent)
 
@@ -451,6 +450,9 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     val isInstanceOfClassFastFunction = importRtFunction("IsInstanceOfClassFast")
     val throwExceptionFunction = importRtFunction("ThrowException")
     val appendToInitalizersTail = importRtFunction("AppendToInitializersTail")
+    val addTLSRecord = importRtFunction("AddTLSRecord")
+    val clearTLSRecord = importRtFunction("ClearTLSRecord")
+    val lookupTLS = importRtFunction("LookupTLS")
     val initRuntimeIfNeeded = importRtFunction("Kotlin_initRuntimeIfNeeded")
     val mutationCheck = importRtFunction("MutationCheck")
     val freezeSubgraph = importRtFunction("FreezeSubgraph")
@@ -484,6 +486,15 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
             is KonanTarget.ZEPHYR -> LLVMThreadLocalMode.LLVMNotThreadLocal
             else -> LLVMThreadLocalMode.LLVMGeneralDynamicTLSModel
         }
+    }
+
+    var tlsCount = 0
+
+    val tlsKey by lazy {
+        val global = LLVMAddGlobal(llvmModule, kInt8Ptr, "__KonanTlsKey")!!
+        LLVMSetLinkage(global, LLVMLinkage.LLVMInternalLinkage)
+        LLVMSetInitializer(global, LLVMConstNull(kInt8Ptr))
+        global
     }
 
     private val personalityFunctionName = when (target) {
@@ -535,8 +546,8 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     val irStaticInitializers = mutableListOf<IrStaticInitializer>()
     val otherStaticInitializers = mutableListOf<LLVMValueRef>()
     val fileInitializers = mutableListOf<IrField>()
-    val objects = mutableSetOf<LLVMValueRef>()
-    val sharedObjects = mutableSetOf<LLVMValueRef>()
+    val objects = mutableSetOf<IrClass>()
+    val sharedObjects = mutableSetOf<IrClass>()
 
     private object lazyRtFunction {
         operator fun provideDelegate(
@@ -548,6 +559,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
             override fun getValue(thisRef: Llvm, property: KProperty<*>): LLVMValueRef = value
         }
     }
+
     val llvmInt8 = int8Type
     val llvmInt16 = int16Type
     val llvmInt32 = int32Type

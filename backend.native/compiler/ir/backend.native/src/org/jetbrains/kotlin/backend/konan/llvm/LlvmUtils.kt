@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlinx.cinterop.*
 import llvm.*
+import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.descriptors.konan.CompiledKlibModuleOrigin
 
 private val llvmContextHolder = ThreadLocal<LLVMContextRef>()
@@ -253,18 +254,49 @@ internal fun ContextUtils.importGlobal(name: String, type: LLVMTypeRef, origin: 
     context.llvm.imports.add(origin)
 
     val found = LLVMGetNamedGlobal(context.llvmModule, name)
-    if (found != null) {
+    return if (found != null) {
         assert (getGlobalType(found) == type)
         assert (LLVMGetInitializer(found) == null) { "$name is already declared in the current module" }
         if (threadLocal)
             assert(LLVMGetThreadLocalMode(found) == context.llvm.tlsMode)
-        return found
+        found
     } else {
-        val result = LLVMAddGlobal(context.llvmModule, type, name)!!
-        if (threadLocal)
-            LLVMSetThreadLocalMode(result, context.llvm.tlsMode)
-        return result
+        addGlobal(name, type, false, threadLocal)
     }
+}
+
+internal abstract class AddressAccess {
+    abstract fun getAddress(generationContext: FunctionGenerationContext?): LLVMValueRef
+}
+
+internal class GlobalAddressAccess(private val address: LLVMValueRef): AddressAccess() {
+    override fun getAddress(generationContext: FunctionGenerationContext?): LLVMValueRef = address
+}
+
+internal class TLSAddressAccess(
+        private val context: Context, private val index: Int): AddressAccess() {
+
+    override fun getAddress(generationContext: FunctionGenerationContext?): LLVMValueRef {
+        return generationContext!!.call(context.llvm.lookupTLS,
+                listOf(context.llvm.tlsKey, Int32(index).llvm))
+    }
+}
+
+internal fun ContextUtils.addKotlinGlobal(name: String, type: LLVMTypeRef, threadLocal: Boolean): AddressAccess {
+    if (threadLocal) {
+        return if (isObjectType(type)) {
+            val index = context.llvm.tlsCount++
+            TLSAddressAccess(context, index)
+        } else {
+            GlobalAddressAccess(LLVMAddGlobal(context.llvmModule, type, name)!!.also {
+                LLVMSetThreadLocalMode(it, context.llvm.tlsMode)
+                LLVMSetLinkage(it, LLVMLinkage.LLVMInternalLinkage)
+            })
+        }
+    }
+    return GlobalAddressAccess(LLVMAddGlobal(context.llvmModule, type, name)!!.also {
+        LLVMSetLinkage(it, LLVMLinkage.LLVMInternalLinkage)
+    })
 }
 
 internal fun functionType(returnType: LLVMTypeRef, isVarArg: Boolean = false, vararg paramTypes: LLVMTypeRef) =

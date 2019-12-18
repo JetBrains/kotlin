@@ -30,7 +30,7 @@ struct RuntimeState {
   volatile int executionStatus;
 };
 
-typedef void (*Initializer)(int initialize);
+typedef void (*Initializer)(int initialize, MemoryState* memory);
 struct InitNode {
   Initializer init;
   InitNode* next;
@@ -66,11 +66,11 @@ bool updateStatusIf(RuntimeState* state, int oldStatus, int newStatus) {
 #endif
 }
 
-void InitOrDeinitGlobalVariables(int initialize) {
-  InitNode *currNode = initHeadNode;
-  while (currNode != nullptr) {
-    currNode->init(initialize);
-    currNode = currNode->next;
+void InitOrDeinitGlobalVariables(int initialize, MemoryState* memory) {
+  InitNode* currentNode = initHeadNode;
+  while (currentNode != nullptr) {
+    currentNode->init(initialize, memory);
+    currentNode = currentNode->next;
   }
 }
 
@@ -98,23 +98,21 @@ RuntimeState* initRuntime() {
   if (firstRuntime) {
     isMainThread = 1;
     konan::consoleInit();
-
 #if KONAN_OBJC_INTEROP
     Kotlin_ObjCExport_initialize();
 #endif
-
-    InitOrDeinitGlobalVariables(INIT_GLOBALS);
+    InitOrDeinitGlobalVariables(INIT_GLOBALS, result->memoryState);
   }
-  InitOrDeinitGlobalVariables(INIT_THREAD_LOCAL_GLOBALS);
+  InitOrDeinitGlobalVariables(INIT_THREAD_LOCAL_GLOBALS, result->memoryState);
   return result;
 }
 
 void deinitRuntime(RuntimeState* state) {
   ResumeMemory(state->memoryState);
   bool lastRuntime = atomicAdd(&aliveRuntimesCount, -1) == 0;
-  InitOrDeinitGlobalVariables(DEINIT_THREAD_LOCAL_GLOBALS);
+  InitOrDeinitGlobalVariables(DEINIT_THREAD_LOCAL_GLOBALS, state->memoryState);
   if (lastRuntime)
-    InitOrDeinitGlobalVariables(DEINIT_GLOBALS);
+    InitOrDeinitGlobalVariables(DEINIT_GLOBALS, state->memoryState);
   WorkerDeinit(state->worker);
   DeinitMemory(state->memoryState);
   konanDestructInstance(state);
@@ -266,7 +264,8 @@ KBoolean Konan_Platform_isDebugBinary() {
 }
 
 void Kotlin_zeroOutTLSGlobals() {
-  InitOrDeinitGlobalVariables(DEINIT_THREAD_LOCAL_GLOBALS);
+  if (runtimeState != nullptr && runtimeState->memoryState != nullptr)
+    InitOrDeinitGlobalVariables(DEINIT_THREAD_LOCAL_GLOBALS, runtimeState->memoryState);
 }
 
 }  // extern "C"

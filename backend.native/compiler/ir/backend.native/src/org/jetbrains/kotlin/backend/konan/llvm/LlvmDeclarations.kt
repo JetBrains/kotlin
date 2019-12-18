@@ -67,7 +67,7 @@ internal class ClassLlvmDeclarations(
         val singletonDeclarations: SingletonLlvmDeclarations?,
         val objCDeclarations: KotlinObjCClassLlvmDeclarations?)
 
-internal class SingletonLlvmDeclarations(val instanceFieldRef: LLVMValueRef, val instanceShadowFieldRef: LLVMValueRef?)
+internal class SingletonLlvmDeclarations(val instanceStorage: AddressAccess, val instanceShadowStorage: AddressAccess?)
 
 internal class KotlinObjCClassLlvmDeclarations(
         val classPointerGlobal: StaticData.Global,
@@ -79,7 +79,7 @@ internal class FunctionLlvmDeclarations(val llvmFunction: LLVMValueRef)
 
 internal class FieldLlvmDeclarations(val index: Int, val classBodyType: LLVMTypeRef)
 
-internal class StaticFieldLlvmDeclarations(val storage: LLVMValueRef)
+internal class StaticFieldLlvmDeclarations(val storageAddressAccess: AddressAccess)
 
 internal class UniqueLlvmDeclarations(val pointer: ConstPointer)
 
@@ -262,35 +262,28 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
     }
 
     private fun createSingletonDeclarations(irClass: IrClass): SingletonLlvmDeclarations? {
-
         if (irClass.isUnit()) {
             return null
         }
 
         val isExported = irClass.isExported()
-        val symbolName = if (isExported) {
-            irClass.objectInstanceFieldSymbolName
+        val valueGetterName = if (isExported) {
+            irClass.objectInstanceGetterSymbolName
         } else {
-            "kobjref:" + qualifyInternalName(irClass)
+            null
         }
-        val threadLocal = irClass.storageKind(context) == ObjectStorageKind.THREAD_LOCAL
-        val instanceFieldRef = addGlobal(
-                symbolName, getLLVMType(irClass.defaultType), isExported = isExported, threadLocal = threadLocal)
 
-        val instanceShadowFieldRef =
-                if (threadLocal) null
-                else {
-                    val shadowSymbolName = if (isExported) {
-                        irClass.objectInstanceShadowFieldSymbolName
-                    } else {
-                        "kshadowobjref:" + qualifyInternalName(irClass)
-                    }
-                    addGlobal(shadowSymbolName, getLLVMType(irClass.defaultType), isExported = isExported, threadLocal = true)
-                }
+        val storageKind = irClass.storageKind(context)
+        val threadLocal = storageKind == ObjectStorageKind.THREAD_LOCAL
+        val symbolName = "kobjref:" + qualifyInternalName(irClass)
+        val instanceAddress = addKotlinGlobal(symbolName, getLLVMType(irClass.defaultType), threadLocal = threadLocal)
 
-        instanceShadowFieldRef?.let { LLVMSetInitializer(it, kNullObjHeaderPtr) }
+        val instanceShadowAddress = if (threadLocal || storageKind == ObjectStorageKind.PERMANENT) null else {
+            val shadowSymbolName = "kshadowobjref:" + qualifyInternalName(irClass)
+            addKotlinGlobal(shadowSymbolName, getLLVMType(irClass.defaultType), threadLocal = true)
+        }
 
-        return SingletonLlvmDeclarations(instanceFieldRef, instanceShadowFieldRef)
+        return SingletonLlvmDeclarations(instanceAddress, instanceShadowAddress)
     }
 
     private fun createKotlinObjCClassDeclarations(irClass: IrClass): KotlinObjCClassLlvmDeclarations {
@@ -325,9 +318,8 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
         } else {
             // Fields are module-private, so we use internal name:
             val name = "kvar:" + qualifyInternalName(declaration)
-            val storage = addGlobal(
-                    name, getLLVMType(declaration.type), isExported = false,
-                    threadLocal = declaration.storageKind == FieldStorageKind.THREAD_LOCAL)
+            val storage = addKotlinGlobal(
+                    name, getLLVMType(declaration.type), threadLocal = declaration.storageKind == FieldStorageKind.THREAD_LOCAL)
 
             this.staticFields[declaration] = StaticFieldLlvmDeclarations(storage)
         }

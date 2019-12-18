@@ -129,22 +129,13 @@ internal val IrClass.writableTypeInfoSymbolName: String
         return "ktypew:" + this.fqNameForIrSerialization.toString()
     }
 
-internal val IrClass.objectInstanceFieldSymbolName: String
+internal val IrClass.objectInstanceGetterSymbolName: String
     get() {
         assert (this.isExported())
         assert (this.kind.isSingleton)
         assert (!this.isUnit())
 
-        return "kobjref:$fqNameForIrSerialization"
-    }
-
-internal val IrClass.objectInstanceShadowFieldSymbolName: String
-    get() {
-        assert (this.isExported())
-        assert (this.kind.isSingleton)
-        assert (!this.isUnit())
-
-        return "kshadowobjref:$fqNameForIrSerialization"
+        return "kobjget:$fqNameForIrSerialization"
     }
 
 val IrFunction.functionName get() = with(KonanMangler) { functionName }
