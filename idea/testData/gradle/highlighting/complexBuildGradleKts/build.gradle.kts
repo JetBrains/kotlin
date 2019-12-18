@@ -119,6 +119,7 @@ extra["compilerModules"] = arrayOf(
     ":compiler:fir:psi2fir",
     ":compiler:fir:fir2ir",
     ":compiler:fir:java",
+    ":compiler:fir:jvm",
     ":compiler:frontend",
     ":compiler:frontend.common",
     ":compiler:frontend.java",

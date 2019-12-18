@@ -22,6 +22,7 @@ dependencies {
     compile(commonDep("org.jline", "jline"))
     compile(project(":compiler:fir:psi2fir"))
     compile(project(":compiler:fir:resolve"))
+    compile(project(":compiler:fir:jvm"))
     compile(project(":compiler:fir:java"))
     compile(project(":compiler:fir:fir2ir"))
     compile(toolsJar())
