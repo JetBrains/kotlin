@@ -70,6 +70,9 @@ int main(void) {
 
     __ kotlin.root.testNullableWithNulls(nullableIntNull, nullableUnitNull);
 
+    printf("IsInstance1 = %s\n", __ IsInstance(singleton.pinned, __ kotlin.root.Singleton._type()) ? "PASS" : "FAIL");
+    printf("IsInstance2 = %s\n", !(__ IsInstance(singleton.pinned, __ kotlin.root.Codeable._type())) ? "PASS" : "FAIL");
+
     testVector128();
 
     __ DisposeStablePointer(singleton.pinned);
