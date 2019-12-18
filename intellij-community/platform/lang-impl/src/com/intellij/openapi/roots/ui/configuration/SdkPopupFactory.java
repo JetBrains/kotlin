@@ -4,6 +4,7 @@ package com.intellij.openapi.roots.ui.configuration;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ui.configuration.SdkListModelBuilder.ModelListener;
+import com.intellij.openapi.roots.ui.configuration.SdkPopup.SdkPopupListener;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel;
 import com.intellij.openapi.ui.popup.JBPopupListener;
 import com.intellij.openapi.ui.popup.LightweightWindowEvent;
@@ -16,9 +17,10 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.util.Collections;
+import java.util.function.Consumer;
 
 public class SdkPopupFactory {
-  private final SdkListModelBuilder myModel;
+  private final SdkListModelBuilder myModelBuilder;
   @Nullable private final Project myProject;
   @NotNull private final ProjectSdksModel mySdkModel;
 
@@ -27,13 +29,21 @@ public class SdkPopupFactory {
                          @NotNull SdkListModelBuilder modelBuilder) {
     myProject = project;
     mySdkModel = sdkModel;
-    myModel = modelBuilder;
+    myModelBuilder = modelBuilder;
   }
 
   @NotNull
-  private ComboBoxPopup<SdkListItem> createPopup(@NotNull Runnable onClosed) {
+  public SdkPopup createPopup(@NotNull SdkPopupListener listener) {
     SdkListItemContext context = new SdkListItemContext();
-    ComboBoxPopup<SdkListItem> popup = new ComboBoxPopup<>(context, null);
+
+    SdkPopupImpl popup = new SdkPopupImpl(context, value -> {
+      if (value instanceof SdkListItem.ActionableItem) {
+        ((SdkListItem.ActionableItem)value).executeAction();
+        //TODO: handle the outcome of the action execution here
+        return;
+      }
+      listener.onExistingItemSelected(value);
+    });
 
     ModelListener modelListener = new ModelListener() {
       @Override
@@ -42,46 +52,45 @@ public class SdkPopupFactory {
         popup.syncWithModelChange();
       }
     };
-    myModel.addModelListener(modelListener);
+
+    myModelBuilder.addModelListener(modelListener);
 
     popup.addListener(new JBPopupListener() {
       @Override
       public void beforeShown(@NotNull LightweightWindowEvent event) {
-        myModel.reloadActions(popup.getList(), null);
-        myModel.detectItems(popup.getList(), popup);
+        myModelBuilder.reloadActions(popup.getList(), null);
+        myModelBuilder.detectItems(popup.getList(), popup);
       }
 
       @Override
       public void onClosed(@NotNull LightweightWindowEvent event) {
-        myModel.removeListener(modelListener);
-        onClosed.run();
+        myModelBuilder.removeListener(modelListener);
+        listener.onClosed();
       }
     });
 
     return popup;
   }
 
-  public void showPopup(@NotNull AnActionEvent e,
-                        @NotNull Runnable onClosed) {
-    ComboBoxPopup<SdkListItem> popup = createPopup(onClosed);
-
-    if (e instanceof AnActionButton.AnActionEventWrapper) {
-      ((AnActionButton.AnActionEventWrapper)e).showPopup(popup);
-    } else {
-      popup.showInBestPositionFor(e.getDataContext());
+  private class SdkPopupImpl extends ComboBoxPopup<SdkListItem> implements SdkPopup {
+    SdkPopupImpl(SdkListItemContext context, Consumer<SdkListItem> onItemSelected) {
+      super(context, null, onItemSelected);
     }
-  }
 
-  public void showPopup(@NotNull RelativePoint aPoint,
-                        @NotNull Runnable onClosed) {
-    createPopup(onClosed).show(aPoint);
-  }
+    @Override
+    public void showPopup(@NotNull AnActionEvent e) {
+      if (e instanceof AnActionButton.AnActionEventWrapper) {
+        ((AnActionButton.AnActionEventWrapper)e).showPopup(this);
+      } else {
+        showInBestPositionFor(e.getDataContext());
+      }
+    }
 
-  public void showUnderneathToTheRightOf(@NotNull Component component,
-                                         @NotNull Runnable onClosed) {
-    ComboBoxPopup<SdkListItem> popup = createPopup(onClosed);
-    int popupWidth = popup.getList().getPreferredSize().width;
-    popup.show(new RelativePoint(component, new Point(component.getWidth() - popupWidth, component.getHeight())));
+    @Override
+    public void showUnderneathToTheRightOf(@NotNull Component component) {
+      int popupWidth = getList().getPreferredSize().width;
+      show(new RelativePoint(component, new Point(component.getWidth() - popupWidth, component.getHeight())));
+    }
   }
 
   private class SdkListItemContext implements ComboBoxPopup.Context<SdkListItem> {
@@ -119,15 +128,6 @@ public class SdkPopupFactory {
     @Override
     public ListCellRenderer<? super SdkListItem> getRenderer() {
       return myRenderer;
-    }
-
-    @Override
-    public void setSelectedItem(SdkListItem value) {
-      if (value != null) {
-        if (value instanceof SdkListItem.ActionableItem) {
-          ((SdkListItem.ActionableItem)value).executeAction();
-        }
-      }
     }
   }
 }

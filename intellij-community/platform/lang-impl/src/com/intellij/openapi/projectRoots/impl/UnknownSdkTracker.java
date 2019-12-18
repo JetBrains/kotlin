@@ -14,12 +14,17 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.progress.util.ProgressIndicatorBase;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.*;
+import com.intellij.openapi.projectRoots.ProjectJdkTable;
+import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.projectRoots.SdkModificator;
+import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.projectRoots.impl.SdkUsagesCollector.SdkUsage;
 import com.intellij.openapi.projectRoots.impl.UnknownSdkResolver.DownloadSdkFix;
 import com.intellij.openapi.projectRoots.impl.UnknownSdkResolver.LocalSdkFix;
 import com.intellij.openapi.projectRoots.impl.UnknownSdkResolver.UnknownSdkLookup;
+import com.intellij.openapi.roots.ui.configuration.SdkListItem;
 import com.intellij.openapi.roots.ui.configuration.SdkListModelBuilder;
+import com.intellij.openapi.roots.ui.configuration.SdkPopup;
 import com.intellij.openapi.roots.ui.configuration.SdkPopupFactory;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.SdkDownloadTask;
@@ -36,7 +41,6 @@ import org.jetbrains.annotations.Nullable;
 import java.awt.*;
 import java.util.List;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static com.intellij.openapi.progress.PerformInBackgroundOption.ALWAYS_BACKGROUND;
 import static com.intellij.openapi.projectRoots.impl.UnknownSdkResolver.UnknownSdk;
@@ -212,25 +216,22 @@ public class UnknownSdkTracker {
       modelBuilder
     );
 
-    AtomicReference<Sdk> wasSdkCreated = new AtomicReference<>(null);
-    model.addListener(new SdkModel.Listener() {
-      @Override
-      public void sdkAdded(@NotNull Sdk sdk) {
-        //TODO: handle if an existing item is selected!
-        //it is easier and safer than committing the ProjectSdksModel instance
-        wasSdkCreated.set(sdk);
-      }
-    });
-
-    popup.showUnderneathToTheRightOf(
-      underneathRightOfComponent,
-      () -> {
-        Sdk sdk = wasSdkCreated.get();
-        if (sdk != null) {
-          onSelectionMade.consume(sdk);
+    popup.createPopup(new SdkPopup.SdkPopupListener() {
+      private void handleNewItem(@NotNull SdkListItem item) {
+        if (item instanceof SdkListItem.SdkItem) {
+          onSelectionMade.consume(((SdkListItem.SdkItem)item).getSdk());
         }
       }
-    );
+      @Override
+      public void onNewItemAdded(@NotNull SdkListItem item) {
+        handleNewItem(item);
+      }
+
+      @Override
+      public void onExistingItemSelected(@NotNull SdkListItem item) {
+        handleNewItem(item);
+      }
+    }).showUnderneathToTheRightOf(underneathRightOfComponent);
   }
 
   private static void configureLocalSdks(@NotNull Map<UnknownSdk, LocalSdkFix> localFixes) {
