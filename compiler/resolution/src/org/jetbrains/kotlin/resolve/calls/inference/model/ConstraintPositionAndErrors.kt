@@ -63,7 +63,10 @@ class KnownTypeParameterConstraintPosition(val typeArgument: KotlinType) : Const
     override fun toString() = "TypeArgument $typeArgument"
 }
 
-class LHSArgumentConstraintPosition(val receiver: DetailedReceiver) : ConstraintPosition() {
+class LHSArgumentConstraintPosition(
+    val argument: CallableReferenceKotlinCallArgument,
+    val receiver: DetailedReceiver
+) : ConstraintPosition() {
     override fun toString(): String {
         return "LHS receiver $receiver"
     }

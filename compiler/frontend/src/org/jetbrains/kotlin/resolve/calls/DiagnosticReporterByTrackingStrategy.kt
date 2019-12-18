@@ -265,8 +265,13 @@ class DiagnosticReporterByTrackingStrategy(
             NewConstraintError::class.java -> {
                 val constraintError = diagnostic as NewConstraintError
                 val position = constraintError.position.from
-                val argument = (position as? ArgumentConstraintPosition)?.argument
-                    ?: (position as? ReceiverConstraintPosition)?.argument
+                val argument =
+                    when (position) {
+                        is ArgumentConstraintPosition -> position.argument
+                        is ReceiverConstraintPosition -> position.argument
+                        is LHSArgumentConstraintPosition -> position.argument
+                        else -> null
+                    }
                 argument?.let {
                     it.safeAs<LambdaKotlinCallArgument>()?.let lambda@{ lambda ->
                         val parameterTypes = lambda.parametersTypes?.toList() ?: return@lambda
