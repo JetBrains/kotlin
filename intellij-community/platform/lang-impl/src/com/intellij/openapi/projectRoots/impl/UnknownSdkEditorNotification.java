@@ -64,7 +64,7 @@ public class UnknownSdkEditorNotification implements Disposable {
     panel.setText(sdkTypeName + " \"" + sdkName + "\" is missing");
 
     if (fix != null && unknownSdk != null) {
-      panel.createActionLabel("Download " + sdkTypeName + " (" + fix.getDownloadDescription() + ")", () -> {
+      panel.createActionLabel("Download " + fix.getDownloadDescription(), () -> {
         removeNotification(panel);
         UnknownSdkTracker.getInstance(myProject).applyDownloadableFix(unknownSdk, fix);
       });
