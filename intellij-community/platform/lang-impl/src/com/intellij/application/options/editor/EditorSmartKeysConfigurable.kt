@@ -78,7 +78,7 @@ const val ID = "editor.preferences.smartKeys"
  *
  * @author yole
  */
-class EditorSmartKeysConfigurable : BoundCompositeConfigurable<UnnamedConfigurable>(
+class EditorSmartKeysConfigurable : Configurable.WithEpDependencies, BoundCompositeConfigurable<UnnamedConfigurable>(
   "Smart Keys",
   "reference.settingsdialog.IDE.editor.smartkey"
 ), SearchableConfigurable, SearchableConfigurable.Parent {
@@ -186,7 +186,8 @@ class EditorSmartKeysConfigurable : BoundCompositeConfigurable<UnnamedConfigurab
   override fun hasOwnContent() = true
 
   override fun getId() = ID
-
+  override fun getDependencies() = listOf(EP_NAME)
+  
   companion object {
     private val EP_NAME = ExtensionPointName.create<EditorSmartKeysConfigurableEP>("com.intellij.editorSmartKeysConfigurable")
   }
