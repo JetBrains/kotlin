@@ -69,6 +69,10 @@ open class ClasspathSnapshot protected constructor(
         if (!isCompatible(previousSnapshot)) {
             return KaptClasspathChanges.Unknown
         }
+        if (annotationProcessorClasspath.any { it in changedFiles }) {
+            // in case annotation processor classpath changes, we have to run non-incrementally
+            return KaptClasspathChanges.Unknown
+        }
 
         val unchangedBetweenCompilations = dataForFiles.keys.intersect(previousSnapshot.dataForFiles.keys).filter { it !in changedFiles }
         val currentToLoad = dataForFiles.keys.filter { it !in unchangedBetweenCompilations }.also { loadEntriesFor(it) }
