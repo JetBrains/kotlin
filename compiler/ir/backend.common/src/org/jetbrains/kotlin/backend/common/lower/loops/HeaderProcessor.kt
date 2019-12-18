@@ -22,9 +22,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrDoWhileLoopImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrWhileLoopImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.coerceToUnitIfNeeded
-import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
-import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 /**
@@ -303,6 +301,22 @@ internal class ProgressionLoopHeader(
         }
 }
 
+private class InitializerCallReplacer(symbolRemapper: SymbolRemapper, typeRemapper: TypeRemapper, val replacementCall: IrCall) :
+    DeepCopyIrTreeWithSymbols(symbolRemapper, typeRemapper) {
+    var initializerCall: IrCall? = null
+
+    override fun visitCall(expression: IrCall): IrCall {
+        if (initializerCall == null) {
+            initializerCall = expression
+            return replacementCall
+        } else {
+            throw IllegalStateException(
+                "Multiple initializer calls found. First: ${initializerCall!!.render()}\nSecond: ${expression.render()}"
+            )
+        }
+    }
+}
+
 internal class IndexedGetLoopHeader(
     headerInfo: IndexedGetHeaderInfo,
     builder: DeclarationIrBuilder
@@ -319,11 +333,15 @@ internal class IndexedGetLoopHeader(
         with(builder) {
             // loopVariable = objectVariable[inductionVariable]
             val indexedGetFun = with(headerInfo.expressionHandler) { headerInfo.objectVariable.type.getFunction }
-            val get = irCall(indexedGetFun).apply {
+            val get = irCall(indexedGetFun.symbol).apply {
                 dispatchReceiver = irGet(headerInfo.objectVariable)
                 putValueArgument(0, irGet(inductionVariable))
             }
-            loopVariable?.initializer = get
+            // The call could be wrapped in an IMPLICIT_NOTNULL type-cast (see comment in ForLoopsLowering.gatherLoopVariableInfo()).
+            // Find and replace the call to preserve any type-casts.
+            loopVariable?.initializer = loopVariable?.initializer?.deepCopyWithSymbols { symbolRemapper, typeRemapper ->
+                InitializerCallReplacer(symbolRemapper, typeRemapper, get)
+            }
             // Even if there is no loop variable, we always want to call `get()` as it may have side-effects.
             // The un-lowered loop always calls `get()` on each iteration.
             listOf(loopVariable ?: get) + incrementInductionVariable(this)
@@ -517,10 +535,16 @@ internal class IterableLoopHeader(
             // loopVariable = iteratorVar.next()
             val iteratorClass = headerInfo.iteratorVariable.type.getClass()!!
             val next =
-                irCall(iteratorClass.functions.first { it.name == OperatorNameConventions.NEXT && it.valueParameters.isEmpty() }).apply {
+                irCall(iteratorClass.functions.first {
+                    it.name == OperatorNameConventions.NEXT && it.valueParameters.isEmpty()
+                }.symbol).apply {
                     dispatchReceiver = irGet(headerInfo.iteratorVariable)
                 }
-            loopVariable?.initializer = next
+            // The call could be wrapped in an IMPLICIT_NOTNULL type-cast (see comment in ForLoopsLowering.gatherLoopVariableInfo()).
+            // Find and replace the call to preserve any type-casts.
+            loopVariable?.initializer = loopVariable?.initializer?.deepCopyWithSymbols { symbolRemapper, typeRemapper ->
+                InitializerCallReplacer(symbolRemapper, typeRemapper, next)
+            }
             // Even if there is no loop variable, we always want to call `next()` for iterables and sequences.
             listOf(loopVariable ?: next.coerceToUnitIfNeeded(next.type, context.irBuiltIns))
         }

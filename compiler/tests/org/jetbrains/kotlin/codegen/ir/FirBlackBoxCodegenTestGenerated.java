@@ -19413,6 +19413,192 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             }
         }
 
+        @TestMetadata("compiler/testData/codegen/box/ranges/javaInterop")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class JavaInterop extends AbstractFirBlackBoxCodegenTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JVM_IR, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
+            }
+
+            public void testAllFilesPresentInJavaInterop() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/javaInterop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @TestMetadata("javaArrayOfInheritedNotNull.kt")
+            public void testJavaArrayOfInheritedNotNull() throws Exception {
+                runTest("compiler/testData/codegen/box/ranges/javaInterop/javaArrayOfInheritedNotNull.kt");
+            }
+
+            @TestMetadata("javaArrayOfInheritedNotNullFailFast.kt")
+            public void testJavaArrayOfInheritedNotNullFailFast() throws Exception {
+                runTest("compiler/testData/codegen/box/ranges/javaInterop/javaArrayOfInheritedNotNullFailFast.kt");
+            }
+
+            @TestMetadata("javaArrayOfMaybeNullable.kt")
+            public void testJavaArrayOfMaybeNullable() throws Exception {
+                runTest("compiler/testData/codegen/box/ranges/javaInterop/javaArrayOfMaybeNullable.kt");
+            }
+
+            @TestMetadata("javaArrayOfMaybeNullableWithNotNullLoopVariable.kt")
+            public void testJavaArrayOfMaybeNullableWithNotNullLoopVariable() throws Exception {
+                runTest("compiler/testData/codegen/box/ranges/javaInterop/javaArrayOfMaybeNullableWithNotNullLoopVariable.kt");
+            }
+
+            @TestMetadata("javaArrayOfMaybeNullableWithNotNullLoopVariableFailFast.kt")
+            public void testJavaArrayOfMaybeNullableWithNotNullLoopVariableFailFast() throws Exception {
+                runTest("compiler/testData/codegen/box/ranges/javaInterop/javaArrayOfMaybeNullableWithNotNullLoopVariableFailFast.kt");
+            }
+
+            @TestMetadata("javaCollectionOfExplicitNotNull.kt")
+            public void testJavaCollectionOfExplicitNotNull() throws Exception {
+                runTest("compiler/testData/codegen/box/ranges/javaInterop/javaCollectionOfExplicitNotNull.kt");
+            }
+
+            @TestMetadata("javaCollectionOfExplicitNotNullFailFast.kt")
+            public void testJavaCollectionOfExplicitNotNullFailFast() throws Exception {
+                runTest("compiler/testData/codegen/box/ranges/javaInterop/javaCollectionOfExplicitNotNullFailFast.kt");
+            }
+
+            @TestMetadata("javaCollectionOfExplicitNullable.kt")
+            public void testJavaCollectionOfExplicitNullable() throws Exception {
+                runTest("compiler/testData/codegen/box/ranges/javaInterop/javaCollectionOfExplicitNullable.kt");
+            }
+
+            @TestMetadata("javaCollectionOfInheritedNotNull.kt")
+            public void testJavaCollectionOfInheritedNotNull() throws Exception {
+                runTest("compiler/testData/codegen/box/ranges/javaInterop/javaCollectionOfInheritedNotNull.kt");
+            }
+
+            @TestMetadata("javaCollectionOfInheritedNotNullFailFast.kt")
+            public void testJavaCollectionOfInheritedNotNullFailFast() throws Exception {
+                runTest("compiler/testData/codegen/box/ranges/javaInterop/javaCollectionOfInheritedNotNullFailFast.kt");
+            }
+
+            @TestMetadata("javaCollectionOfMaybeNullable.kt")
+            public void testJavaCollectionOfMaybeNullable() throws Exception {
+                runTest("compiler/testData/codegen/box/ranges/javaInterop/javaCollectionOfMaybeNullable.kt");
+            }
+
+            @TestMetadata("javaCollectionOfMaybeNullableWithNotNullLoopVariable.kt")
+            public void testJavaCollectionOfMaybeNullableWithNotNullLoopVariable() throws Exception {
+                runTest("compiler/testData/codegen/box/ranges/javaInterop/javaCollectionOfMaybeNullableWithNotNullLoopVariable.kt");
+            }
+
+            @TestMetadata("javaCollectionOfMaybeNullableWithNotNullLoopVariableFailFast.kt")
+            public void testJavaCollectionOfMaybeNullableWithNotNullLoopVariableFailFast() throws Exception {
+                runTest("compiler/testData/codegen/box/ranges/javaInterop/javaCollectionOfMaybeNullableWithNotNullLoopVariableFailFast.kt");
+            }
+
+            @TestMetadata("javaCollectionOfNotNullFromStdlib.kt")
+            public void testJavaCollectionOfNotNullFromStdlib() throws Exception {
+                runTest("compiler/testData/codegen/box/ranges/javaInterop/javaCollectionOfNotNullFromStdlib.kt");
+            }
+
+            @TestMetadata("javaCollectionOfNotNullFromStdlibToTypedArray.kt")
+            public void testJavaCollectionOfNotNullFromStdlibToTypedArray() throws Exception {
+                runTest("compiler/testData/codegen/box/ranges/javaInterop/javaCollectionOfNotNullFromStdlibToTypedArray.kt");
+            }
+
+            @TestMetadata("javaCollectionOfNotNullToTypedArray.kt")
+            public void testJavaCollectionOfNotNullToTypedArray() throws Exception {
+                runTest("compiler/testData/codegen/box/ranges/javaInterop/javaCollectionOfNotNullToTypedArray.kt");
+            }
+
+            @TestMetadata("javaCollectionOfNotNullToTypedArrayFailFast.kt")
+            public void testJavaCollectionOfNotNullToTypedArrayFailFast() throws Exception {
+                runTest("compiler/testData/codegen/box/ranges/javaInterop/javaCollectionOfNotNullToTypedArrayFailFast.kt");
+            }
+
+            @TestMetadata("javaIteratorOfNotNull.kt")
+            public void testJavaIteratorOfNotNull() throws Exception {
+                runTest("compiler/testData/codegen/box/ranges/javaInterop/javaIteratorOfNotNull.kt");
+            }
+
+            @TestMetadata("javaIteratorOfNotNullFailFast.kt")
+            public void testJavaIteratorOfNotNullFailFast() throws Exception {
+                runTest("compiler/testData/codegen/box/ranges/javaInterop/javaIteratorOfNotNullFailFast.kt");
+            }
+
+            @TestMetadata("compiler/testData/codegen/box/ranges/javaInterop/withIndex")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class WithIndex extends AbstractFirBlackBoxCodegenTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JVM_IR, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
+                }
+
+                public void testAllFilesPresentInWithIndex() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/javaInterop/withIndex"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                }
+
+                @TestMetadata("javaArrayOfInheritedNotNullWithIndex.kt")
+                public void testJavaArrayOfInheritedNotNullWithIndex() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/javaInterop/withIndex/javaArrayOfInheritedNotNullWithIndex.kt");
+                }
+
+                @TestMetadata("javaArrayOfInheritedNotNullWithIndexFailFast.kt")
+                public void testJavaArrayOfInheritedNotNullWithIndexFailFast() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/javaInterop/withIndex/javaArrayOfInheritedNotNullWithIndexFailFast.kt");
+                }
+
+                @TestMetadata("javaArrayOfMaybeNullableWithIndex.kt")
+                public void testJavaArrayOfMaybeNullableWithIndex() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/javaInterop/withIndex/javaArrayOfMaybeNullableWithIndex.kt");
+                }
+
+                @TestMetadata("javaArrayOfMaybeNullableWithIndexWithNotNullLoopVariable.kt")
+                public void testJavaArrayOfMaybeNullableWithIndexWithNotNullLoopVariable() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/javaInterop/withIndex/javaArrayOfMaybeNullableWithIndexWithNotNullLoopVariable.kt");
+                }
+
+                @TestMetadata("javaArrayOfMaybeNullableWithIndexWithNotNullLoopVariableFailFast.kt")
+                public void testJavaArrayOfMaybeNullableWithIndexWithNotNullLoopVariableFailFast() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/javaInterop/withIndex/javaArrayOfMaybeNullableWithIndexWithNotNullLoopVariableFailFast.kt");
+                }
+
+                @TestMetadata("javaCollectionOfExplicitNotNullWithIndex.kt")
+                public void testJavaCollectionOfExplicitNotNullWithIndex() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/javaInterop/withIndex/javaCollectionOfExplicitNotNullWithIndex.kt");
+                }
+
+                @TestMetadata("javaCollectionOfExplicitNotNullWithIndexFailFast.kt")
+                public void testJavaCollectionOfExplicitNotNullWithIndexFailFast() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/javaInterop/withIndex/javaCollectionOfExplicitNotNullWithIndexFailFast.kt");
+                }
+
+                @TestMetadata("javaCollectionOfExplicitNullableWithIndex.kt")
+                public void testJavaCollectionOfExplicitNullableWithIndex() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/javaInterop/withIndex/javaCollectionOfExplicitNullableWithIndex.kt");
+                }
+
+                @TestMetadata("javaCollectionOfMaybeNullableWithIndex.kt")
+                public void testJavaCollectionOfMaybeNullableWithIndex() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/javaInterop/withIndex/javaCollectionOfMaybeNullableWithIndex.kt");
+                }
+
+                @TestMetadata("javaCollectionOfMaybeNullableWithIndexWithNotNullLoopVariable.kt")
+                public void testJavaCollectionOfMaybeNullableWithIndexWithNotNullLoopVariable() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/javaInterop/withIndex/javaCollectionOfMaybeNullableWithIndexWithNotNullLoopVariable.kt");
+                }
+
+                @TestMetadata("javaCollectionOfMaybeNullableWithIndexWithNotNullLoopVariableFailFast.kt")
+                public void testJavaCollectionOfMaybeNullableWithIndexWithNotNullLoopVariableFailFast() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/javaInterop/withIndex/javaCollectionOfMaybeNullableWithIndexWithNotNullLoopVariableFailFast.kt");
+                }
+
+                @TestMetadata("javaIteratorOfNotNullWithIndex.kt")
+                public void testJavaIteratorOfNotNullWithIndex() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/javaInterop/withIndex/javaIteratorOfNotNullWithIndex.kt");
+                }
+
+                @TestMetadata("javaIteratorOfNotNullWithIndexFailFast.kt")
+                public void testJavaIteratorOfNotNullWithIndexFailFast() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/javaInterop/withIndex/javaIteratorOfNotNullWithIndexFailFast.kt");
+                }
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/box/ranges/literal")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

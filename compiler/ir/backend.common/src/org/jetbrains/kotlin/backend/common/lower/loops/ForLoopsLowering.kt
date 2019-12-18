@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -17,8 +18,8 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.visitors.*
 
 val forLoopsPhase = makeIrFilePhase(
     ::ForLoopsLowering,
@@ -230,7 +231,7 @@ private class RangeLoopTransformer(
         //
         //   val i = inductionVariable  // For progressions, or `array[inductionVariable]` for arrays
         //   inductionVariable = inductionVariable + step
-        val initializer = mainLoopVariable.initializer as IrCall
+        val initializer = mainLoopVariable.initializer!!
         val replacement = with(context.createIrBuilder(getScopeOwnerSymbol(), initializer.startOffset, initializer.endOffset)) {
             IrCompositeImpl(
                 mainLoopVariable.startOffset,
@@ -269,6 +270,35 @@ private class RangeLoopTransformer(
         val loopVariableComponentIndices: List<Int>
     )
 
+    private class FindInitializerCallVisitor(private val mainLoopVariable: IrVariable?) : IrElementVisitorVoid {
+        var initializerCall: IrCall? = null
+
+        override fun visitElement(element: IrElement) {
+            element.acceptChildrenVoid(this)
+        }
+
+        override fun visitCall(expression: IrCall) {
+            val candidateCall = when (expression.origin) {
+                IrStatementOrigin.FOR_LOOP_NEXT -> expression
+                is IrStatementOrigin.COMPONENT_N ->
+                    if (mainLoopVariable != null && (expression.dispatchReceiver as? IrGetValue)?.symbol == mainLoopVariable.symbol) {
+                        expression
+                    } else {
+                        null
+                    }
+                else -> null
+            }
+
+            when {
+                candidateCall == null -> super.visitCall(expression)
+                initializerCall == null -> initializerCall = candidateCall
+                else -> throw IllegalStateException(
+                    "Multiple initializer calls found. First: ${initializerCall!!.render()}\nSecond: ${candidateCall.render()}"
+                )
+            }
+        }
+    }
+
     private fun gatherLoopVariableInfo(statements: MutableList<IrStatement>): LoopVariableInfo {
         // The "next" statement (at the top of the loop) looks something like:
         //
@@ -288,19 +318,58 @@ private class RangeLoopTransformer(
         val loopVariableComponentIndices = mutableListOf<Int>()
         for ((i, stmt) in statements.withIndex()) {
             if (stmt !is IrVariable) continue
-            val initializer = stmt.initializer as? IrCall
+            val initializer = stmt.initializer?.let {
+                // The `next()` and `componentN()` calls could be wrapped in an IMPLICIT_NOTNULL type-cast when the iterator comes from Java
+                // and the iterator's type parameter has enhanced nullability information (either explicit or implicit). Therefore we need
+                // to traverse the initializer to find the `next()` or `componentN()` call. Example:
+                //
+                //   // In Java:
+                //   public static Collection<@NotNull String> collection() { /* ... */ }
+                //
+                //   // In Kotlin:
+                //   for ((i, s) in JavaClass.collection().withIndex()) {
+                //     println("$i: ${s.toUpperCase()}")   // NOTE: `s` is not nullable
+                //   }
+                //
+                // The variable declaration for `s` looks like this:
+                //
+                //   VAR name:s type:@[NotNull(...)] kotlin.String [val]
+                //     TYPE_OP type=@[NotNull(...)] kotlin.String origin=IMPLICIT_NOTNULL typeOperand=@[NotNull(...)] kotlin.String
+                //       CALL 'public final fun component2 (): T of ...IndexedValue [operator] declared in ...IndexedValue' type=@[NotNull(...)] kotlin.String origin=COMPONENT_N(index=2)
+                //         $this: GET_VAR 'val tmp1_loop_parameter: ...IndexedValue<@[NotNull(...)] kotlin.String> [val] declared in <root>.box' type=...IndexedValue<@[NotNull(...)] kotlin.String> origin=null
+                //
+                // Enhanced nullability information can be implicit if the Java function overrides a Kotlin function. Example:
+                //
+                //   // In Java:
+                //   public class AImpl implements A {
+                //     // NOTE: The array and String are both implicitly not nullable because they are not nullable in A.array()
+                //     @Override public String[] array() { return new String[0]; }
+                //   }
+                //
+                //   // In Kotlin
+                //   interface A {
+                //     fun array(): Array<String>
+                //   }
+                //   for (s in AImpl().array()) {
+                //     println(s.toUpperCase())   // NOTE: `s` is not nullable
+                //   }
+                //
+                // The variable declaration for `s` looks like this:
+                //
+                //   VAR name:s type:kotlin.String [val]
+                //     TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
+                //       CALL 'public abstract fun next (): T of ...Iterator [operator] declared in ...Iterator' type=kotlin.String origin=FOR_LOOP_NEXT
+                //         $this: GET_VAR 'val tmp0_iterator: ...Iterator<kotlin.String> [val] declared in <root>.box' type=...Iterator<kotlin.String> origin=null
+                FindInitializerCallVisitor(mainLoopVariable).apply { it.acceptVoid(this) }.initializerCall
+            }
             when (val origin = initializer?.origin) {
                 IrStatementOrigin.FOR_LOOP_NEXT -> {
                     mainLoopVariable = stmt
                     mainLoopVariableIndex = i
                 }
                 is IrStatementOrigin.COMPONENT_N -> {
-                    if (mainLoopVariable != null &&
-                        (initializer.dispatchReceiver as? IrGetValue)?.symbol == mainLoopVariable.symbol
-                    ) {
-                        loopVariableComponents[origin.index] = stmt
-                        loopVariableComponentIndices.add(i)
-                    }
+                    loopVariableComponents[origin.index] = stmt
+                    loopVariableComponentIndices.add(i)
                 }
             }
         }
