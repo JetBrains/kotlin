@@ -15,13 +15,23 @@ repositories {
 }
 
 dependencies {
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core", "guava", rootProject = rootProject) }
     compile(project(":compiler:psi"))
     compile(project(":compiler:fir:tree"))
     compile(project(":compiler:fir:psi2fir"))
 
-    testCompile("junit", "junit", "4.4")
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core", "guava", rootProject = rootProject) }
+
+    testCompile(intellijDep())
+
+    testCompile(commonDep("junit:junit"))
+    testCompileOnly(project(":kotlin-test:kotlin-test-jvm"))
+    testCompileOnly(project(":kotlin-test:kotlin-test-junit"))
+    testCompile(projectTests(":compiler:tests-common"))
     testCompile(projectTests(":compiler:fir:psi2fir"))
+
+    testCompileOnly(project(":kotlin-reflect-api"))
+    testRuntime(project(":kotlin-reflect"))
+    testRuntime(project(":core:descriptors.runtime"))
 
     compile("org.openjdk.jmh", "jmh-core", jmhVersion)
     compile("org.openjdk.jmh", "jmh-generator-bytecode", jmhVersion)
@@ -71,12 +81,12 @@ val jmhBytecode by tasks.registering(JavaExec::class) {
     )
 }
 
-tasks {
-    compileTestJava {
-        source(fileTree("${project.buildDir}/generated-sources/jmh/"))
-        destinationDir = file("${project.buildDir}/generated-classes/jmh/")
-    }
-}
+//tasks {
+//    compileTestJava {
+//        source(fileTree("${project.buildDir}/generated-sources/jmh/"))
+//        destinationDir = file("${project.buildDir}/generated-classes/jmh/")
+//    }
+//}
 
 val jmhCompile by tasks.registering(JavaCompile::class) {
     /*classpath = sourceSets["test"].runtimeClasspath + files("${project.buildDir}/generated-sources/jmh/")
