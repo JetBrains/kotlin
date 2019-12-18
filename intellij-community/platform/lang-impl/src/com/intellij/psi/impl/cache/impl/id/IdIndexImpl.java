@@ -15,12 +15,11 @@ import java.util.Collection;
 public class IdIndexImpl extends IdIndex implements CustomInputsIndexFileBasedIndexExtension<IdIndexEntry> {
   @Override
   public int getVersion() {
-    FileType[] types = FileTypeRegistry.getInstance().getRegisteredFileTypes();
-    Arrays.sort(types, (o1, o2) -> Comparing.compare(o1.getName(), o2.getName()));
-
     int version = super.getVersion();
 
     if (!InvertedIndex.ARE_COMPOSITE_INDEXERS_ENABLED) {
+      FileType[] types = FileTypeRegistry.getInstance().getRegisteredFileTypes();
+      Arrays.sort(types, (o1, o2) -> Comparing.compare(o1.getName(), o2.getName()));
       for(FileType fileType:types) {
         if (!isIndexable(fileType)) continue;
         IdIndexer indexer = IdTableBuilding.getFileTypeIndexer(fileType);
