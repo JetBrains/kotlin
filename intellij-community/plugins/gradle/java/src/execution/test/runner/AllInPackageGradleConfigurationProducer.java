@@ -5,7 +5,7 @@ import com.intellij.execution.ExecutionBundle;
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.actions.ConfigurationFromContext;
 import com.intellij.execution.configurations.ConfigurationFactory;
-import com.intellij.execution.junit.JavaRuntimeConfigurationProducerBase;
+import com.intellij.execution.testframework.AbstractJavaTestConfigurationProducer;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.externalSystem.model.execution.ExternalSystemTaskExecutionSettings;
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemRunConfiguration;
@@ -144,7 +144,7 @@ public final class AllInPackageGradleConfigurationProducer extends GradleTestRun
 
   @Nullable
   static PsiPackage extractPackage(@NotNull PsiElement location) {
-    PsiPackage psiPackage = JavaRuntimeConfigurationProducerBase.checkPackage(location);
+    PsiPackage psiPackage = AbstractJavaTestConfigurationProducer.checkPackage(location);
     if (psiPackage == null) return null;
     if (psiPackage.getQualifiedName().isEmpty()) return null;
     return psiPackage;
