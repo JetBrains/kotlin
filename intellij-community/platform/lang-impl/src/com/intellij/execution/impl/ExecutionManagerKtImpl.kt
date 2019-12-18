@@ -4,7 +4,6 @@ package com.intellij.execution.impl
 import com.intellij.execution.ExecutionManager
 import com.intellij.execution.ProgramRunnerUtil
 import com.intellij.execution.RunProfileStarter
-import com.intellij.execution.configurations.RunProfileState
 import com.intellij.execution.impl.statistics.RunConfigurationUsageTriggerCollector
 import com.intellij.execution.process.ProcessAdapter
 import com.intellij.execution.process.ProcessEvent
@@ -29,7 +28,7 @@ class ExecutionManagerKtImpl(project: Project) : ExecutionManagerImpl(project) {
   @Volatile
   var forceCompilationInTests = false
 
-  override fun startRunProfile(starter: RunProfileStarter, state: RunProfileState, environment: ExecutionEnvironment) {
+  override fun startRunProfile(starter: RunProfileStarter, environment: ExecutionEnvironment) {
     val activity = triggerUsage(environment)
 
     val project = environment.project
@@ -62,7 +61,7 @@ class ExecutionManagerKtImpl(project: Project) : ExecutionManagerImpl(project) {
       }
 
       try {
-        starter.executeAsync(state, environment)
+        starter.executeAsync(environment)
           .onSuccess { descriptor ->
             AppUIUtil.invokeLaterIfProjectAlive(project) {
               if (descriptor == null) {
