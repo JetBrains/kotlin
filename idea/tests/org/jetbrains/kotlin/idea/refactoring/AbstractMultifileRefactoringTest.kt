@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.refactoring
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.intellij.codeInsight.TargetElementUtil
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
@@ -22,6 +23,7 @@ import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.UsefulTestCase
+import org.jetbrains.kotlin.idea.core.script.isScriptChangesNotifierDisabled
 import org.jetbrains.kotlin.idea.jsonUtils.getNullableString
 import org.jetbrains.kotlin.idea.refactoring.rename.loadTestConfiguration
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
@@ -34,6 +36,16 @@ import java.io.File
 abstract class AbstractMultifileRefactoringTest : KotlinLightCodeInsightFixtureTestCase() {
     interface RefactoringAction {
         fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementsAtCaret: List<PsiElement>, config: JsonObject)
+    }
+
+    override fun setUp() {
+        super.setUp()
+        ApplicationManager.getApplication().isScriptChangesNotifierDisabled = true
+    }
+
+    override fun tearDown() {
+        ApplicationManager.getApplication().isScriptChangesNotifierDisabled = false
+        super.tearDown()
     }
 
     override fun getProjectDescriptor(): LightProjectDescriptor {
