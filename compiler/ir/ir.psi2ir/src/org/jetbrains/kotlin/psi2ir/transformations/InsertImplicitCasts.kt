@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.psi2ir.transformations
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -38,10 +40,7 @@ import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.types.typeUtil.isNullableAny
-import org.jetbrains.kotlin.types.typeUtil.isUnit
-import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
-import org.jetbrains.kotlin.types.typeUtil.makeNullable
+import org.jetbrains.kotlin.types.typeUtil.*
 
 fun insertImplicitCasts(element: IrElement, context: GeneratorContext) {
     element.transformChildren(
@@ -77,9 +76,26 @@ open class InsertImplicitCasts(
     }
 
     private fun IrMemberAccessExpression.transformReceiverArguments(substitutedDescriptor: CallableDescriptor) {
-        dispatchReceiver = dispatchReceiver?.cast(substitutedDescriptor.dispatchReceiverParameter?.type)
+        dispatchReceiver = dispatchReceiver?.cast(getEffectiveDispatchReceiverType(substitutedDescriptor))
         extensionReceiver = extensionReceiver?.cast(substitutedDescriptor.extensionReceiverParameter?.type)
     }
+
+    private fun getEffectiveDispatchReceiverType(descriptor: CallableDescriptor): KotlinType? =
+        when {
+            descriptor !is CallableMemberDescriptor ->
+                null
+
+            descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE -> {
+                val containingDeclaration = descriptor.containingDeclaration
+                if (containingDeclaration !is ClassDescriptor)
+                    throw AssertionError("Containing declaration for $descriptor should be a class: $containingDeclaration")
+                else
+                    containingDeclaration.defaultType.replaceArgumentsWithStarProjections()
+            }
+
+            else ->
+                descriptor.dispatchReceiverParameter?.type
+        }
 
     override fun visitMemberAccess(expression: IrMemberAccessExpression): IrExpression {
         val substitutedDescriptor = expression.substitutedDescriptor
@@ -132,8 +148,14 @@ open class InsertImplicitCasts(
             value = value.cast(expression.symbol.descriptor.type)
         }
 
+    override fun visitGetField(expression: IrGetField): IrExpression =
+        expression.transformPostfix {
+            receiver = receiver?.cast(getEffectiveDispatchReceiverType(expression.symbol.descriptor))
+        }
+
     override fun visitSetField(expression: IrSetField): IrExpression =
         expression.transformPostfix {
+            receiver = receiver?.cast(getEffectiveDispatchReceiverType(expression.symbol.descriptor))
             value = value.cast(expression.symbol.descriptor.type)
         }
 

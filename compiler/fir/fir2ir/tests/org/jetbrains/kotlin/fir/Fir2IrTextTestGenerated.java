@@ -1740,6 +1740,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             runTest("compiler/testData/ir/irText/types/platformTypeReceiver.kt");
         }
 
+        @TestMetadata("smartCastOnFakeOverrideReceiver.kt")
+        public void testSmartCastOnFakeOverrideReceiver() throws Exception {
+            runTest("compiler/testData/ir/irText/types/smartCastOnFakeOverrideReceiver.kt");
+        }
+
         @TestMetadata("smartCastOnFieldReceiverOfGenericType.kt")
         public void testSmartCastOnFieldReceiverOfGenericType() throws Exception {
             runTest("compiler/testData/ir/irText/types/smartCastOnFieldReceiverOfGenericType.kt");
