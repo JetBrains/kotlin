@@ -26,9 +26,7 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.components.serviceIfCreated
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProcessCanceledException
-import com.intellij.openapi.project.DumbService
-import com.intellij.openapi.project.IndexNotReadyException
-import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.*
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.Condition
@@ -40,6 +38,7 @@ import com.intellij.ui.UIBundle
 import com.intellij.util.Alarm
 import com.intellij.util.SmartList
 import com.intellij.util.containers.ContainerUtil
+import gnu.trove.THashSet
 import org.jetbrains.annotations.TestOnly
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
@@ -101,6 +100,17 @@ class ExecutionManagerImpl(private val project: Project) : ExecutionManager(), D
     }
   }
 
+  init {
+    val connection = ApplicationManager.getApplication().messageBus.connect(this)
+    connection.subscribe(ProjectManager.TOPIC, object : ProjectManagerListener {
+      override fun projectClosed(project: Project) {
+        if (project === this@ExecutionManagerImpl.project) {
+          inProgress.clear()
+        }
+      }
+    })
+  }
+
   @set:TestOnly
   @Volatile
   var forceCompilationInTests = false
@@ -108,6 +118,15 @@ class ExecutionManagerImpl(private val project: Project) : ExecutionManager(), D
   private val awaitingTerminationAlarm = Alarm(Alarm.ThreadToUse.SWING_THREAD)
   private val awaitingRunProfiles = HashMap<RunProfile, ExecutionEnvironment>()
   private val runningConfigurations: MutableList<RunningConfigurationEntry> = ContainerUtil.createLockFreeCopyOnWriteList()
+
+  // [Project, ExecutorId, RunnerId]
+  private val inProgress = Collections.synchronizedSet(THashSet<InProgressEntry>())
+
+  private fun processNotStarted(environment: ExecutionEnvironment) {
+    val executorId = environment.executor.id
+    inProgress.remove(InProgressEntry(executorId, environment.runner.runnerId))
+    project.messageBus.syncPublisher(EXECUTION_TOPIC).processNotStarted(executorId, environment)
+  }
 
   override fun startRunProfile(starter: RunProfileStarter, environment: ExecutionEnvironment) {
     val activity = triggerUsage(environment)
@@ -122,11 +141,8 @@ class ExecutionManagerImpl(private val project: Project) : ExecutionManager(), D
     }
 
     val executor = environment.executor
+    inProgress.add(InProgressEntry(executor.id, environment.runner.runnerId))
     project.messageBus.syncPublisher(EXECUTION_TOPIC).processStartScheduled(executor.id, environment)
-
-    fun processNotStarted() {
-      project.messageBus.syncPublisher(EXECUTION_TOPIC).processNotStarted(executor.id, environment)
-    }
 
     val startRunnable = Runnable {
       if (project.isDisposed) {
@@ -140,7 +156,7 @@ class ExecutionManagerImpl(private val project: Project) : ExecutionManager(), D
           ProgramRunnerUtil.handleExecutionError(project, environment, e, environment.runProfile)
           LOG.debug(e)
         }
-        processNotStarted()
+        processNotStarted(environment)
       }
 
       try {
@@ -148,7 +164,7 @@ class ExecutionManagerImpl(private val project: Project) : ExecutionManager(), D
           .onSuccess { descriptor ->
             AppUIUtil.invokeLaterIfProjectAlive(project) {
               if (descriptor == null) {
-                processNotStarted()
+                processNotStarted(environment)
                 return@invokeLaterIfProjectAlive
               }
 
@@ -165,6 +181,7 @@ class ExecutionManagerImpl(private val project: Project) : ExecutionManager(), D
                 if (!processHandler.isStartNotified) {
                   processHandler.startNotify()
                 }
+                inProgress.remove(InProgressEntry(executor.id, environment.runner.runnerId))
                 project.messageBus.syncPublisher(EXECUTION_TOPIC).processStarted(executor.id, environment, processHandler)
 
                 val listener = ProcessExecutionListener(project, executor.id, environment, processHandler, descriptor, activity)
@@ -202,15 +219,15 @@ class ExecutionManagerImpl(private val project: Project) : ExecutionManager(), D
         ApplicationManager.getApplication().invokeLater(startRunnable, project.disposed)
       }, environment, Runnable {
         if (!project.isDisposed) {
-          processNotStarted()
+          processNotStarted(environment)
         }
       })
     }
   }
 
   override fun dispose() {
-    for (trinity in runningConfigurations) {
-      Disposer.dispose(trinity.descriptor)
+    for (entry in runningConfigurations) {
+      Disposer.dispose(entry.descriptor)
     }
     runningConfigurations.clear()
   }
@@ -318,7 +335,7 @@ class ExecutionManagerImpl(private val project: Project) : ExecutionManager(), D
   private fun doRun(environment: ExecutionEnvironment, startRunnable: Runnable) {
     val allowSkipRun = environment.getUserData(EXECUTION_SKIP_RUN)
     if (allowSkipRun != null && allowSkipRun) {
-      environment.project.messageBus.syncPublisher(EXECUTION_TOPIC).processNotStarted(environment.executor.id, environment)
+      processNotStarted(environment)
       return
     }
 
@@ -420,7 +437,7 @@ class ExecutionManagerImpl(private val project: Project) : ExecutionManager(), D
         }
 
         if ((DumbService.getInstance(project).isDumb && configuration != null && !configuration.type.isDumbAware)
-            || ExecutorRegistry.getInstance().isStarting(environment)) {
+            || inProgress.contains(InProgressEntry(environment.executor.id, environment.runner.runnerId))) {
           awaitTermination(this, 100)
           return
         }
@@ -432,6 +449,7 @@ class ExecutionManagerImpl(private val project: Project) : ExecutionManager(), D
             return
           }
         }
+
         awaitingRunProfiles.remove(environment.runProfile)
 
         // start() can be called during restartRunProfile() after pretty long 'awaitTermination()' so we have to check if the project is still here
@@ -443,6 +461,10 @@ class ExecutionManagerImpl(private val project: Project) : ExecutionManager(), D
         ProgramRunnerUtil.executeConfiguration(environment, settings != null && settings.isEditBeforeRun, /* assignNewId = */ true)
       }
     }, 50)
+  }
+
+  override fun isStarting(executorId: String, runnerId: String): Boolean {
+    return inProgress.contains(InProgressEntry(executorId, runnerId))
   }
 
   private fun awaitTermination(request: Runnable, delayMillis: Long) {
@@ -644,5 +666,7 @@ private class ProcessExecutionListener(private val project: Project,
     project.messageBus.syncPublisher(ExecutionManager.EXECUTION_TOPIC).processTerminating(executorId, environment, processHandler)
   }
 }
+
+private data class InProgressEntry(val executorId: String, val runnerId: String)
 
 private data class RunningConfigurationEntry(val descriptor: RunContentDescriptor, val settings: RunnerAndConfigurationSettings?, val executor: Executor)

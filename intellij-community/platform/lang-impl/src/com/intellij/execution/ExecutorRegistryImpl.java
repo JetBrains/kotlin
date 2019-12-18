@@ -8,8 +8,6 @@ import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.executors.DefaultRunExecutor;
 import com.intellij.execution.executors.ExecutorGroup;
 import com.intellij.execution.impl.ExecutionManagerImpl;
-import com.intellij.execution.process.ProcessHandler;
-import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ExecutionEnvironmentBuilder;
 import com.intellij.execution.runners.ExecutionUtil;
 import com.intellij.execution.runners.ProgramRunner;
@@ -18,16 +16,15 @@ import com.intellij.icons.AllIcons;
 import com.intellij.ide.macro.MacroManager;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PreloadingActivity;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.project.*;
+import com.intellij.openapi.project.DumbAware;
+import com.intellij.openapi.project.DumbService;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
-import com.intellij.openapi.util.Trinity;
 import com.intellij.util.IconUtil;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.messages.MessageBusConnection;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
@@ -48,9 +45,6 @@ public final class ExecutorRegistryImpl extends ExecutorRegistry implements Disp
   private final Set<String> myContextActionIdSet = new THashSet<>();
   private final Map<String, AnAction> myIdToAction = new THashMap<>();
   private final Map<String, AnAction> myContextActionIdToAction = new THashMap<>();
-
-  // [Project, ExecutorId, RunnerId]
-  private final Set<Trinity<Project, String, String>> myInProgress = Collections.synchronizedSet(new THashSet<>());
 
   public ExecutorRegistryImpl() {
     init();
@@ -148,37 +142,6 @@ public final class ExecutorRegistryImpl extends ExecutorRegistry implements Disp
   }
 
   private void init() {
-    MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect(this);
-    connection.subscribe(ExecutionManager.EXECUTION_TOPIC, new ExecutionListener() {
-      @Override
-      public void processStartScheduled(@NotNull String executorId, @NotNull ExecutionEnvironment environment) {
-        myInProgress.add(createExecutionId(executorId, environment));
-      }
-
-      @Override
-      public void processNotStarted(@NotNull String executorId, @NotNull ExecutionEnvironment environment) {
-        myInProgress.remove(createExecutionId(executorId, environment));
-      }
-
-      @Override
-      public void processStarted(@NotNull String executorId, @NotNull ExecutionEnvironment environment, @NotNull ProcessHandler handler) {
-        myInProgress.remove(createExecutionId(executorId, environment));
-      }
-    });
-    connection.subscribe(ProjectManager.TOPIC, new ProjectManagerListener() {
-      @Override
-      public void projectClosed(@NotNull final Project project) {
-        // perform cleanup
-        synchronized (myInProgress) {
-          for (Iterator<Trinity<Project, String, String>> it = myInProgress.iterator(); it.hasNext(); ) {
-            if (project == it.next().first) {
-              it.remove();
-            }
-          }
-        }
-      }
-    });
-
     for (Executor executor : Executor.EXECUTOR_EXTENSION_NAME.getExtensionList()) {
       try {
         initExecutor(executor);
@@ -187,16 +150,6 @@ public final class ExecutorRegistryImpl extends ExecutorRegistry implements Disp
         LOG.error("executor initialization failed: " + executor.getClass().getName(), t);
       }
     }
-  }
-
-  @NotNull
-  private static Trinity<Project, String, String> createExecutionId(String executorId, @NotNull ExecutionEnvironment environment) {
-    return Trinity.create(environment.getProject(), executorId, environment.getRunner().getRunnerId());
-  }
-
-  @Override
-  public boolean isStarting(@NotNull Project project, @NotNull String executorId, @NotNull String runnerId) {
-    return myInProgress.contains(Trinity.create(project, executorId, runnerId));
   }
 
   @Override
