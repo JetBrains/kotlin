@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.lookup.impl;
 
 import com.intellij.codeInsight.CodeInsightSettings;
@@ -22,6 +22,7 @@ import com.intellij.openapi.editor.LogicalPosition;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.registry.Registry;
+import com.intellij.ui.ComponentUtil;
 import com.intellij.ui.ScreenUtil;
 import com.intellij.ui.ScrollPaneFactory;
 import com.intellij.ui.components.JBLayeredPane;
@@ -216,7 +217,7 @@ class LookupUi {
     location.y += editor.getLineHeight();
     location.x -= myLookup.myCellRenderer.getTextIndent();
     // extra check for other borders
-    final Window window = UIUtil.getWindow(lookupComponent);
+    final Window window = ComponentUtil.getWindow(lookupComponent);
     if (window != null) {
       final Point point = SwingUtilities.convertPoint(lookupComponent, 0, 0, window);
       location.x -= point.x;

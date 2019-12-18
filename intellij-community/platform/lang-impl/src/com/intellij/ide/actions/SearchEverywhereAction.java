@@ -2038,7 +2038,8 @@ public class SearchEverywhereAction extends AnAction implements CustomComponentA
                 final AWTEvent event = IdeEventQueue.getInstance().getTrueCurrentEvent();
                 if (event instanceof MouseEvent) {
                   final Component comp = ((MouseEvent)event).getComponent();
-                  if (balloon != null && !balloon.isDisposed() && UIUtil.getWindow(comp) == UIUtil.getWindow(balloon.getContent())) {
+                  if (balloon != null && !balloon.isDisposed() && ComponentUtil.getWindow(comp) ==
+                                                                  ComponentUtil.getWindow(balloon.getContent())) {
                     return false;
                   }
                 }
