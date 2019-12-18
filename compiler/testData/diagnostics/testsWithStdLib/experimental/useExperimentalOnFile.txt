@@ -4,14 +4,14 @@ package api {
     @api.ExperimentalAPI1 public fun compilation(): kotlin.Unit
     @api.ExperimentalAPI2 public fun runtime(): kotlin.Unit
 
-    @kotlin.Experimental(level = Level.WARNING) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION}) public final annotation class ExperimentalAPI1 : kotlin.Annotation {
+    @kotlin.RequiresOptIn(level = Level.WARNING) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION}) public final annotation class ExperimentalAPI1 : kotlin.Annotation {
         public constructor ExperimentalAPI1()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    @kotlin.Experimental(level = Level.WARNING) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION}) public final annotation class ExperimentalAPI2 : kotlin.Annotation {
+    @kotlin.RequiresOptIn(level = Level.WARNING) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION}) public final annotation class ExperimentalAPI2 : kotlin.Annotation {
         public constructor ExperimentalAPI2()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

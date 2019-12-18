@@ -3,9 +3,9 @@ package
 @Marker public fun f(): kotlin.Unit
 public fun use1(): kotlin.Unit
 @Marker public fun use2(): kotlin.Unit
-@kotlin.UseExperimental(markerClass = {Marker::class}) public fun use3(): kotlin.Unit
+@kotlin.OptIn(markerClass = {Marker::class}) public fun use3(): kotlin.Unit
 
-@kotlin.Experimental public final annotation class Marker : kotlin.Annotation {
+@kotlin.RequiresOptIn public final annotation class Marker : kotlin.Annotation {
     public constructor Marker()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

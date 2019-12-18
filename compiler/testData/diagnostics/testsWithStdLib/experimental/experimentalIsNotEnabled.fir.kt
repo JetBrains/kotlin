@@ -1,6 +1,6 @@
 // FILE: api.kt
 
-@Experimental
+@RequiresOptIn
 annotation class Marker
 
 @Marker
@@ -17,7 +17,7 @@ fun use2() {
     f()
 }
 
-@UseExperimental(Marker::class)
+@OptIn(Marker::class)
 fun use3() {
     f()
 }

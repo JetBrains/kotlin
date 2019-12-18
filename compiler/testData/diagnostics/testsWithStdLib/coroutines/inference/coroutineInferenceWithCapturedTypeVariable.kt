@@ -1,6 +1,6 @@
 // !LANGUAGE: +NewInference
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-// !USE_EXPERIMENTAL: kotlin.Experimental
+// !USE_EXPERIMENTAL: kotlin.RequiresOptIn
 
 import kotlin.experimental.ExperimentalTypeInference
 
@@ -9,7 +9,7 @@ suspend fun main() {
 }
 
 
-@UseExperimental(ExperimentalTypeInference::class)
+@OptIn(ExperimentalTypeInference::class)
 fun <K> iFlow(@BuilderInference block: suspend iFlowCollector<in K>.() -> Unit): iFlow<K> = TODO()
 
 interface iFlowCollector<S> {

@@ -1,10 +1,10 @@
-// !USE_EXPERIMENTAL: kotlin.Experimental
+// !USE_EXPERIMENTAL: kotlin.RequiresOptIn
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // FILE: api.kt
 
 package api
 
-@Experimental(Experimental.Level.WARNING)
+@RequiresOptIn(RequiresOptIn.Level.WARNING)
 @Target(AnnotationTarget.CLASS)
 annotation class E
 
@@ -15,7 +15,7 @@ open class Foo(val s: String = "")
 
 import api.*
 
-@UseExperimental(E::class)
+@OptIn(E::class)
 class Klass {
     init {
         Foo()
@@ -23,35 +23,35 @@ class Klass {
 }
 
 class Constructor {
-    @UseExperimental(E::class) constructor() {
+    @OptIn(E::class) constructor() {
         Foo()
     }
 }
 
-@UseExperimental(E::class)
+@OptIn(E::class)
 val property = Foo().s
 
-@UseExperimental(E::class)
+@OptIn(E::class)
 fun function() {
     Foo()
 }
 
-fun valueParameter(@UseExperimental(E::class) p: String = Foo().s): String {
-    @UseExperimental(E::class)
+fun valueParameter(@OptIn(E::class) p: String = Foo().s): String {
+    @OptIn(E::class)
     val localVariable: String = Foo().s
     return localVariable
 }
 
 var propertyAccessors: String
-    @UseExperimental(E::class)
+    @OptIn(E::class)
     get() = Foo().s
-    @UseExperimental(E::class)
+    @OptIn(E::class)
     set(value) { Foo() }
 
 fun expression(): String {
-    val s = @UseExperimental(E::class) Foo().s
+    val s = @OptIn(E::class) Foo().s
     return s
 }
 
-@UseExperimental(E::class)
+@OptIn(E::class)
 typealias TypeAlias = Foo

@@ -1,11 +1,11 @@
-// !USE_EXPERIMENTAL: kotlin.Experimental
+// !USE_EXPERIMENTAL: kotlin.RequiresOptIn
 
 package test.abc
 
-@Experimental
+@RequiresOptIn
 annotation class E
 
-@UseExperimental(test.abc.E::class)
+@OptIn(test.abc.E::class)
 fun f() {}
 
 @test.abc.E

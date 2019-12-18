@@ -16,7 +16,7 @@ package feature {
                 public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
             }
 
-            @kotlin.Experimental public final annotation class ImportedMarker : kotlin.Annotation {
+            @kotlin.RequiresOptIn public final annotation class ImportedMarker : kotlin.Annotation {
                 public constructor ImportedMarker()
                 public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
                 public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

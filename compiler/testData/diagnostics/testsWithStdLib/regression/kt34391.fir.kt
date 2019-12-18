@@ -15,5 +15,5 @@ class A {
     }
 }
 
-@Experimental(level = Experimental.Level.ERROR)
+@RequiresOptIn(level = RequiresOptIn.Level.ERROR)
 annotation class ExperimentalTime
