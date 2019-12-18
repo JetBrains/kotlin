@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
+import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
@@ -31,6 +32,7 @@ interface FirModifiableClass<F : FirClass<F>>  : FirClass<F>, FirAbstractAnnotat
     override val superTypeRefs: MutableList<FirTypeRef>
     override val declarations: MutableList<FirDeclaration>
     override val annotations: MutableList<FirAnnotationCall>
+    override val scopeProvider: FirScopeProvider
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirModifiableClass<F>
 
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)

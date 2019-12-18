@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.classId
 import org.jetbrains.kotlin.fir.dependenciesWithoutSelf
 import org.jetbrains.kotlin.fir.java.FirJavaModuleBasedSession
 import org.jetbrains.kotlin.fir.java.FirLibrarySession
@@ -26,6 +25,7 @@ import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.java.scopes.JavaClassEnhancementScope
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.buildUseSiteMemberScope
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirCompositeSymbolProvider
@@ -86,7 +86,8 @@ abstract class AbstractFirMultiModuleResolveTest : AbstractMultiModuleTest() {
             val session = createSession(module, provider)
             sessions += session
 
-            val builder = RawFirBuilder(session, stubMode = false)
+            val firProvider = (session.firProvider as FirProviderImpl)
+            val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider, stubMode = false)
             val psiManager = PsiManager.getInstance(project)
 
             val ideaModuleInfo = session.moduleInfo.cast<IdeaModuleInfo>()
@@ -106,7 +107,7 @@ abstract class AbstractFirMultiModuleResolveTest : AbstractMultiModuleTest() {
             files.forEach {
                 val file = psiManager.findFile(it) as? KtFile ?: return@forEach
                 val firFile = builder.buildFirFile(file)
-                (session.firProvider as FirProviderImpl).recordFile(firFile)
+                firProvider.recordFile(firFile)
                 firFiles += firFile
             }
             firFilesPerSession[session] = firFiles
@@ -151,7 +152,7 @@ abstract class AbstractFirMultiModuleResolveTest : AbstractMultiModuleTest() {
                 val javaProvider = symbolProvider.providers.filterIsInstance<JavaSymbolProvider>().first()
                 for (javaClass in javaProvider.getJavaTopLevelClasses().sortedBy { it.name }) {
                     if (javaClass !is FirJavaClass || javaClass in processedJavaClasses) continue
-                    val enhancementScope = javaProvider.getClassUseSiteMemberScope(javaClass.classId, session, ScopeSession()).let {
+                    val enhancementScope = javaClass.buildUseSiteMemberScope(session, ScopeSession()).let {
                         when (it) {
                             is FirCompositeScope -> it.scopes.filterIsInstance<JavaClassEnhancementScope>().first()
                             is JavaClassEnhancementScope -> it

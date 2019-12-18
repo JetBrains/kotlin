@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.getOrPut
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
 import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -40,8 +41,11 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import java.io.InputStream
 
-class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider() {
-    private class BuiltInsPackageFragment(stream: InputStream, val fqName: FqName, val session: FirSession) {
+class FirLibrarySymbolProviderImpl(val session: FirSession, val kotlinScopeProvider: KotlinScopeProvider) : FirSymbolProvider() {
+    private class BuiltInsPackageFragment(
+        stream: InputStream, val fqName: FqName, val session: FirSession,
+        val kotlinScopeProvider: KotlinScopeProvider
+    ) {
         lateinit var version: BuiltInsBinaryVersion
 
         val packageProto: ProtoBuf.PackageFragment = run {
@@ -92,7 +96,7 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider(
             }
             return lookup.getOrPut(classId, { FirRegularClassSymbol(classId) }) { symbol ->
                 if (shouldBeEnumEntry) {
-                    FirEnumEntryImpl(null, session, classId.shortClassName, symbol).apply {
+                    FirEnumEntryImpl(null, session, classId.shortClassName, kotlinScopeProvider, symbol).apply {
                         resolvePhase = FirResolvePhase.DECLARATIONS
                     }
                 } else {
@@ -101,7 +105,7 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider(
 
                     deserializeClassToSymbol(
                         classId, classProto, symbol, nameResolver, session,
-                        null, parentContext,
+                        null, kotlinScopeProvider, parentContext,
                         this::findAndDeserializeClass
                     )
                 }
@@ -123,15 +127,6 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider(
         }
     }
 
-    override fun getClassUseSiteMemberScope(
-        classId: ClassId,
-        useSiteSession: FirSession,
-        scopeSession: ScopeSession
-    ): FirScope? {
-        val symbol = this.getClassLikeSymbolByFqName(classId) ?: return null
-        return buildDefaultUseSiteMemberScope(symbol.fir, useSiteSession, scopeSession)
-    }
-
     override fun getPackage(fqName: FqName): FqName? {
         if (allPackageFragments.containsKey(fqName)) return fqName
         return null
@@ -145,7 +140,7 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider(
         return packageFqNames.map { fqName ->
             val resourcePath = BuiltInSerializerProtocol.getBuiltInsFilePath(fqName)
             val inputStream = streamProvider(resourcePath) ?: throw IllegalStateException("Resource not found in classpath: $resourcePath")
-            BuiltInsPackageFragment(inputStream, fqName, session)
+            BuiltInsPackageFragment(inputStream, fqName, session, kotlinScopeProvider)
         }
     }
 
@@ -177,6 +172,7 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider(
                         relativeClassName.shortName(),
                         status,
                         ClassKind.INTERFACE,
+                        kotlinScopeProvider,
                         this
                     ).apply klass@{
                         resolvePhase = FirResolvePhase.DECLARATIONS

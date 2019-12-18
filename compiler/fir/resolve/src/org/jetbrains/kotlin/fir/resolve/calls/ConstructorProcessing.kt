@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
 import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
+import org.jetbrains.kotlin.fir.scopes.scope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -147,7 +148,7 @@ private fun processConstructors(
                         ) ?: return ProcessorAction.STOP
                     } else basicScope
                 }
-                is FirClassSymbol -> matchedSymbol.buildUseSiteMemberScope(session, scopeSession)
+                is FirClassSymbol -> (matchedSymbol.fir as FirClass<*>).scope(ConeSubstitutor.Empty, session, scopeSession)
             }
 
             val constructorName = when (matchedSymbol) {

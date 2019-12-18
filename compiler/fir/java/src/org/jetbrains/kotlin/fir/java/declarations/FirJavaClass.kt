@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableClass
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
+import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -37,6 +38,7 @@ class FirJavaClass internal constructor(
     override val classKind: ClassKind,
     isTopLevel: Boolean,
     isStatic: Boolean,
+    override val scopeProvider: FirScopeProvider,
     internal val javaTypeParameterStack: JavaTypeParameterStack,
     internal val existingNestedClassifierNames: List<Name>
 ) : FirPureAbstractElement(), FirRegularClass, FirModifiableClass<FirRegularClass> {

@@ -17,14 +17,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 class FirCompositeSymbolProvider(val providers: List<FirSymbolProvider>) : FirSymbolProvider() {
-    override fun getClassUseSiteMemberScope(
-        classId: ClassId,
-        useSiteSession: FirSession,
-        scopeSession: ScopeSession
-    ): FirScope? {
-        return providers.firstNotNullResult { it.getClassUseSiteMemberScope(classId, useSiteSession, scopeSession) }
-    }
-
     override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> {
         return providers.flatMap { it.getTopLevelCallableSymbols(packageFqName, name) }
     }

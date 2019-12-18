@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
+import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
@@ -35,6 +36,7 @@ interface FirModifiableRegularClass : FirRegularClass, FirModifiableClass<FirReg
     override var status: FirDeclarationStatus
     override val classKind: ClassKind
     override val declarations: MutableList<FirDeclaration>
+    override val scopeProvider: FirScopeProvider
     override val symbol: FirRegularClassSymbol
     override var companionObject: FirRegularClass?
     override val superTypeRefs: MutableList<FirTypeRef>

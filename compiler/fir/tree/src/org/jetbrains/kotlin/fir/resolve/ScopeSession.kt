@@ -9,8 +9,13 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 
 class ScopeSession {
     private val scopes = hashMapOf<Any, HashMap<ScopeSessionKey<*, *>, FirScope>>()
-    fun <ID : Any, FS : FirScope> getOrBuild(id: ID, key: ScopeSessionKey<ID, FS>, build: () -> FS): FS {
-        return scopes.getOrPut(id) {
+
+    @Deprecated(level = DeprecationLevel.ERROR, message = "Only for getOrBuild")
+    fun scopes() = scopes
+
+    inline fun <reified ID : Any, reified FS : FirScope> getOrBuild(id: ID, key: ScopeSessionKey<ID, FS>, build: () -> FS): FS {
+        @Suppress("DEPRECATION_ERROR")
+        return scopes().getOrPut(id) {
             hashMapOf()
         }.getOrPut(key) {
             build()

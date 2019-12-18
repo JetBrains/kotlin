@@ -58,68 +58,8 @@ abstract class FirSymbolProvider : FirSessionComponent {
 
     abstract fun getNestedClassifierScope(classId: ClassId): FirScope?
 
-    abstract fun getClassUseSiteMemberScope(
-        classId: ClassId,
-        useSiteSession: FirSession,
-        scopeSession: ScopeSession
-    ): FirScope?
-
-    protected fun wrapScopeWithJvmMapped(
-        klass: FirClass<*>,
-        declaredMemberScope: FirScope,
-        useSiteSession: FirSession,
-        scopeSession: ScopeSession
-    ): FirScope {
-        val classId = klass.classId
-        val javaClassId = JavaToKotlinClassMap.mapKotlinToJava(classId.asSingleFqName().toUnsafe())
-            ?: return declaredMemberScope
-        val symbolProvider = useSiteSession.firSymbolProvider
-        val javaClass = symbolProvider.getClassLikeSymbolByFqName(javaClassId)?.fir as? FirRegularClass
-            ?: return declaredMemberScope
-        val preparedSignatures = JvmMappedScope.prepareSignatures(javaClass)
-        return if (preparedSignatures.isNotEmpty()) {
-            symbolProvider.getClassUseSiteMemberScope(javaClassId, useSiteSession, scopeSession)?.let { javaClassUseSiteScope ->
-                val jvmMappedScope = JvmMappedScope(declaredMemberScope, javaClassUseSiteScope, preparedSignatures)
-                if (klass !is FirRegularClass) {
-                    jvmMappedScope
-                } else {
-                    // We should substitute Java type parameters with base Kotlin type parameters to match overrides properly
-                    // It's necessary for MutableMap, which has *two* JavaMappedScope inside (one for itself and another for base Map)
-                    (klass.symbol.constructType(
-                        klass.typeParameters.map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false) }.toTypedArray(),
-                        false
-                    ) as ConeClassLikeType).wrapSubstitutionScopeIfNeed(useSiteSession, jvmMappedScope, klass, scopeSession)
-                }
-            } ?: declaredMemberScope
-        } else {
-            declaredMemberScope
-        }
-    }
-
     fun buildDefaultUseSiteMemberScope(klass: FirClass<*>, useSiteSession: FirSession, scopeSession: ScopeSession): FirScope {
-        return scopeSession.getOrBuild(klass.symbol, USE_SITE) {
-
-            val declaredScope = declaredMemberScope(klass)
-            val wrappedDeclaredScope = wrapScopeWithJvmMapped(
-                klass, declaredScope, useSiteSession, scopeSession
-            )
-            val scopes = lookupSuperTypes(klass, lookupInterfaces = true, deep = false, useSiteSession = useSiteSession)
-                .mapNotNull { useSiteSuperType ->
-                    if (useSiteSuperType is ConeClassErrorType) return@mapNotNull null
-                    val symbol = useSiteSuperType.lookupTag.toSymbol(useSiteSession)
-                    if (symbol is FirRegularClassSymbol) {
-                        val useSiteMemberScope = symbol.fir.buildUseSiteMemberScope(useSiteSession, scopeSession)!!
-                        useSiteSuperType.wrapSubstitutionScopeIfNeed(useSiteSession, useSiteMemberScope, symbol.fir, scopeSession)
-                    } else {
-                        null
-                    }
-                }
-            FirClassUseSiteMemberScope(
-                useSiteSession,
-                FirSuperTypeScope.prepareSupertypeScope(useSiteSession, FirStandardOverrideChecker(useSiteSession), scopes),
-                wrappedDeclaredScope
-            )
-        }
+        TODO("REMOVE")
     }
 
     open fun getAllCallableNamesInPackage(fqName: FqName): Set<Name> = emptySet()

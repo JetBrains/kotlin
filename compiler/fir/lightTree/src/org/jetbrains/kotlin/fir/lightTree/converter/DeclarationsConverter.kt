@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.lightTree.fir.modifier.Modifier
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.TypeModifier
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.TypeParameterModifier
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.TypeProjectionModifier
+import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -43,6 +44,7 @@ import org.jetbrains.kotlin.name.SpecialNames
 
 class DeclarationsConverter(
     session: FirSession,
+    val scopeProvider: FirScopeProvider,
     private val stubMode: Boolean,
     tree: FlyweightCapableTreeStructure<LighterASTNode>,
     context: Context = Context()
@@ -372,6 +374,7 @@ class DeclarationsConverter(
                     className,
                     status,
                     classKind,
+                    scopeProvider,
                     FirRegularClassSymbol(context.currentClassId)
                 )
             } else {
@@ -381,6 +384,7 @@ class DeclarationsConverter(
                     className,
                     status,
                     classKind,
+                    scopeProvider,
                     FirRegularClassSymbol(context.currentClassId)
                 )
             }
@@ -485,7 +489,7 @@ class DeclarationsConverter(
         val delegatedType = delegatedSuperTypeRef ?: implicitAnyType
 
         return withChildClassName(ANONYMOUS_OBJECT_NAME) {
-            FirAnonymousObjectImpl(null, session, FirAnonymousObjectSymbol()).apply {
+            FirAnonymousObjectImpl(null, session, scopeProvider, FirAnonymousObjectSymbol()).apply {
                 annotations += modifiers.annotations
                 this.superTypeRefs += superTypeRefs
                 this.typeRef = superTypeRefs.first()
@@ -536,6 +540,7 @@ class DeclarationsConverter(
                 null,
                 session,
                 enumEntryName,
+                scopeProvider,
                 FirRegularClassSymbol(context.currentClassId)
             )
             firEnumEntry.annotations += modifiers.annotations
@@ -1123,7 +1128,7 @@ class DeclarationsConverter(
         }
         return if (!stubMode) {
             val blockTree = LightTree2Fir.buildLightTreeBlockExpression(block.asText)
-            return DeclarationsConverter(session, stubMode, blockTree, context).convertBlockExpression(blockTree.root)
+            return DeclarationsConverter(session, scopeProvider, stubMode, blockTree, context).convertBlockExpression(blockTree.root)
         } else {
             FirSingleExpressionBlock(
                 FirExpressionStub(null).toReturn()

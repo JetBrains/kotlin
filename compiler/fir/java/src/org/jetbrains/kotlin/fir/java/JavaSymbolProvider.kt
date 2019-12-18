@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.java.scopes.JavaClassEnhancementScope
 import org.jetbrains.kotlin.fir.java.scopes.JavaClassUseSiteMemberScope
 import org.jetbrains.kotlin.fir.java.scopes.JavaOverrideChecker
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.symbols.CallableId
@@ -53,6 +54,8 @@ class JavaSymbolProvider(
     private val searchScope: GlobalSearchScope
 ) : AbstractFirSymbolProvider<FirRegularClassSymbol>() {
 
+    private val scopeProvider = JavaScopeProvider(::wrapScopeWithJvmMapped, this)
+
     private val facade: KotlinJavaPsiFacade get() = KotlinJavaPsiFacade.getInstance(project)
 
     private fun findClass(
@@ -74,71 +77,6 @@ class JavaSymbolProvider(
             )
         } else {
             nestedClassifierScope(regularClass)
-        }
-    }
-
-    override fun getClassUseSiteMemberScope(
-        classId: ClassId,
-        useSiteSession: FirSession,
-        scopeSession: ScopeSession
-    ): FirScope? {
-        val symbol = this.getClassLikeSymbolByFqName(classId) ?: return null
-        return buildJavaEnhancementScope(useSiteSession, symbol, scopeSession, mutableSetOf())
-    }
-
-    private fun buildJavaEnhancementScope(
-        useSiteSession: FirSession,
-        symbol: FirRegularClassSymbol,
-        scopeSession: ScopeSession,
-        visitedSymbols: MutableSet<FirClassLikeSymbol<*>>
-    ): JavaClassEnhancementScope {
-        return scopeSession.getOrBuild(symbol, JAVA_ENHANCEMENT) {
-            JavaClassEnhancementScope(
-                useSiteSession,
-                buildJavaUseSiteMemberScope(symbol.fir, useSiteSession, scopeSession, visitedSymbols)
-            )
-        }
-    }
-
-    private fun buildJavaUseSiteMemberScope(
-        regularClass: FirRegularClass,
-        useSiteSession: FirSession,
-        scopeSession: ScopeSession,
-        visitedSymbols: MutableSet<FirClassLikeSymbol<*>>
-    ): JavaClassUseSiteMemberScope {
-        return scopeSession.getOrBuild(regularClass.symbol, JAVA_USE_SITE) {
-            val declaredScope = if (regularClass is FirJavaClass) declaredMemberScopeWithLazyNestedScope(
-                regularClass,
-                existingNames = regularClass.existingNestedClassifierNames,
-                symbolProvider = this
-            ) else declaredMemberScope(regularClass)
-            val wrappedDeclaredScope = wrapScopeWithJvmMapped(regularClass, declaredScope, useSiteSession, scopeSession)
-            val superTypeEnhancementScopes =
-                lookupSuperTypes(regularClass, lookupInterfaces = true, deep = false, useSiteSession = useSiteSession)
-                    .mapNotNull { useSiteSuperType ->
-                        if (useSiteSuperType is ConeClassErrorType) return@mapNotNull null
-                        val symbol = useSiteSuperType.lookupTag.toSymbol(useSiteSession)
-                        if (symbol is FirRegularClassSymbol && visitedSymbols.add(symbol)) {
-                            // We need JavaClassEnhancementScope here to have already enhanced signatures from supertypes
-                            val scope = buildJavaEnhancementScope(useSiteSession, symbol, scopeSession, visitedSymbols)
-                            visitedSymbols.remove(symbol)
-                            useSiteSuperType.wrapSubstitutionScopeIfNeed(useSiteSession, scope, symbol.fir, scopeSession)
-                        } else {
-                            null
-                        }
-                    }
-            JavaClassUseSiteMemberScope(
-                regularClass, useSiteSession,
-                FirSuperTypeScope.prepareSupertypeScope(
-                    useSiteSession,
-                    JavaOverrideChecker(
-                        useSiteSession,
-                        if (regularClass is FirJavaClass) regularClass.javaTypeParameterStack
-                        else JavaTypeParameterStack.EMPTY
-                    ),
-                    superTypeEnhancementScopes
-                ), wrappedDeclaredScope
-            )
         }
     }
 
@@ -218,7 +156,8 @@ class JavaSymbolProvider(
                     javaClass.classKind, isTopLevel = isTopLevel,
                     isStatic = javaClass.isStatic,
                     javaTypeParameterStack = javaTypeParameterStack,
-                    existingNestedClassifierNames = javaClass.innerClassNames.toList()
+                    existingNestedClassifierNames = javaClass.innerClassNames.toList(),
+                    scopeProvider = scopeProvider
                 ).apply {
                     this.typeParameters += foundClass.typeParameters.convertTypeParameters(javaTypeParameterStack)
                     addAnnotationsFrom(this@JavaSymbolProvider.session, javaClass, javaTypeParameterStack)
@@ -356,5 +295,3 @@ fun FqName.topLevelName() =
     asString().substringBefore(".")
 
 
-private val JAVA_ENHANCEMENT = scopeSessionKey<FirRegularClassSymbol, JavaClassEnhancementScope>()
-private val JAVA_USE_SITE = scopeSessionKey<FirRegularClassSymbol, JavaClassUseSiteMemberScope>()

@@ -9,28 +9,6 @@ import org.jetbrains.kotlin.fir.resolve.withNullability
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
-import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
-
-
-abstract class ConeSubstitutor : TypeSubstitutorMarker {
-    open fun substituteOrSelf(type: ConeKotlinType): ConeKotlinType = substituteOrNull(type) ?: type
-    abstract fun substituteOrNull(type: ConeKotlinType): ConeKotlinType?
-
-    object Empty : ConeSubstitutor() {
-        override fun substituteOrSelf(type: ConeKotlinType): ConeKotlinType {
-            return type
-        }
-
-        override fun substituteOrNull(type: ConeKotlinType): ConeKotlinType? {
-            return null
-        }
-
-    }
-}
-
-fun ConeSubstitutor.substituteOrNull(type: ConeKotlinType?): ConeKotlinType? {
-    return type?.let { substituteOrNull(it) }
-}
 
 abstract class AbstractConeSubstitutor : ConeSubstitutor() {
     protected fun wrapProjection(old: ConeKotlinTypeProjection, newType: ConeKotlinType): ConeKotlinTypeProjection {
@@ -140,14 +118,14 @@ fun substitutorByMap(substitution: Map<FirTypeParameterSymbol, ConeKotlinType>):
     return ConeSubstitutorByMap(substitution)
 }
 
-class ChainedSubstitutor(private val first: ConeSubstitutor, private val second: ConeSubstitutor) : ConeSubstitutor() {
+data class ChainedSubstitutor(private val first: ConeSubstitutor, private val second: ConeSubstitutor) : ConeSubstitutor() {
     override fun substituteOrNull(type: ConeKotlinType): ConeKotlinType? {
         first.substituteOrNull(type)?.let { return second.substituteOrSelf(it) }
         return second.substituteOrNull(type)
     }
 }
 
-class ConeSubstitutorByMap(val substitution: Map<FirTypeParameterSymbol, ConeKotlinType>) : AbstractConeSubstitutor() {
+data class ConeSubstitutorByMap(val substitution: Map<FirTypeParameterSymbol, ConeKotlinType>) : AbstractConeSubstitutor() {
     override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
         if (type !is ConeTypeParameterType) return null
         return makeNullableIfNeed(type.isMarkedNullable, substitution[type.lookupTag.symbol])

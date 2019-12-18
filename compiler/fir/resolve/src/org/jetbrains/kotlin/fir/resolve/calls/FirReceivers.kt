@@ -13,7 +13,9 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirThisReceiverExpressionImpl
 import org.jetbrains.kotlin.fir.references.impl.FirImplicitThisReference
 import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.scope
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -90,10 +92,10 @@ class ImplicitDispatchReceiverValue(
 ) : ImplicitReceiverValue<FirClassSymbol<*>>(boundSymbol, type, useSiteSession, scopeSession) {
     val implicitCompanionScopes: List<FirScope> = run {
         val klass = boundSymbol.fir as? FirRegularClass ?: return@run emptyList()
-        listOfNotNull(klass.companionObject?.buildUseSiteMemberScope(useSiteSession, scopeSession)) +
+        listOfNotNull(klass.companionObject?.scope(ConeSubstitutor.Empty, useSiteSession, scopeSession)) +
                 lookupSuperTypes(klass, lookupInterfaces = false, deep = true, useSiteSession = useSiteSession).mapNotNull {
                     val superClass = (it as? ConeClassLikeType)?.lookupTag?.toSymbol(useSiteSession)?.fir as? FirRegularClass
-                    superClass?.companionObject?.buildUseSiteMemberScope(useSiteSession, scopeSession)
+                    superClass?.companionObject?.scope(ConeSubstitutor.Empty, useSiteSession, scopeSession)
                 }
     }
 }

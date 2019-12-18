@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.ClassId
@@ -31,6 +32,7 @@ abstract class FirSealedClass : FirPureAbstractElement(), FirRegularClass {
     abstract override val status: FirDeclarationStatus
     abstract override val classKind: ClassKind
     abstract override val declarations: List<FirDeclaration>
+    abstract override val scopeProvider: FirScopeProvider
     abstract override val symbol: FirRegularClassSymbol
     abstract override val companionObject: FirRegularClass?
     abstract override val superTypeRefs: List<FirTypeRef>

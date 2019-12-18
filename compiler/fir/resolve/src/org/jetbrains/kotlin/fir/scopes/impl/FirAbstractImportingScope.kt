@@ -10,9 +10,11 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.declarations.expandedConeType
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.calls.TowerScopeLevel
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.fir.scopes.scope
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.ClassId
@@ -25,14 +27,16 @@ abstract class FirAbstractImportingScope(
     lookupInFir: Boolean
 ) : FirAbstractProviderBasedScope(session, lookupInFir) {
 
+    // TODO: Rewrite somehow?
     private fun getStaticsScope(classId: ClassId): FirScope? {
-        provider.getClassUseSiteMemberScope(classId, session, scopeSession)?.let { return it }
         val symbol = provider.getClassLikeSymbolByFqName(classId) ?: return null
         if (symbol is FirTypeAliasSymbol) {
             val expansionSymbol = symbol.fir.expandedConeType?.lookupTag?.toSymbol(session)
             if (expansionSymbol != null) {
                 return getStaticsScope(expansionSymbol.classId)
             }
+        } else {
+            return (symbol as FirClassSymbol<*>).fir.scope(ConeSubstitutor.Empty, session, scopeSession)
         }
 
         return null

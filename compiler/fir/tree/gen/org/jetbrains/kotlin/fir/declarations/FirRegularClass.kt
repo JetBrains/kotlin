@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
@@ -29,6 +30,7 @@ interface FirRegularClass : FirMemberDeclaration, FirTypeParametersOwner, FirCla
     override val status: FirDeclarationStatus
     override val classKind: ClassKind
     override val declarations: List<FirDeclaration>
+    override val scopeProvider: FirScopeProvider
     override val symbol: FirRegularClassSymbol
     val companionObject: FirRegularClass?
     override val superTypeRefs: List<FirTypeRef>

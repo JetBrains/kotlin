@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.fir.resolve.impl.FirCompositeSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirDependenciesSymbolProviderImpl
 import org.jetbrains.kotlin.fir.resolve.impl.FirLibrarySymbolProviderImpl
 import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
+import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
+import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
 import org.jetbrains.kotlin.fir.scopes.impl.FirMemberScopeProvider
 import org.jetbrains.kotlin.fir.types.FirCorrespondingSupertypesCache
 import org.jetbrains.kotlin.load.java.JavaClassFinder
@@ -41,7 +43,10 @@ class FirJavaModuleBasedSession(
 
     init {
         sessionProvider.sessionCache[moduleInfo] = this
-        val firProvider = FirProviderImpl(this)
+
+        val kotlinScopeProvider = KotlinScopeProvider(::wrapScopeWithJvmMapped)
+
+        val firProvider = FirProviderImpl(this, kotlinScopeProvider)
         registerComponent(FirProvider::class, firProvider)
 
         registerComponent(
@@ -84,17 +89,20 @@ class FirLibrarySession private constructor(
     init {
         val javaSymbolProvider = JavaSymbolProvider(this, sessionProvider.project, scope)
 
+        val kotlinScopeProvider = KotlinScopeProvider(::wrapScopeWithJvmMapped)
+
         registerComponent(
             FirSymbolProvider::class,
             FirCompositeSymbolProvider(
                 listOf(
-                    FirLibrarySymbolProviderImpl(this),
+                    FirLibrarySymbolProviderImpl(this, kotlinScopeProvider),
                     KotlinDeserializedJvmSymbolsProvider(
                         this, sessionProvider.project,
                         packagePartProvider,
                         javaSymbolProvider,
                         kotlinClassFinder,
-                        javaClassFinder
+                        javaClassFinder,
+                        kotlinScopeProvider
                     ),
                     javaSymbolProvider,
                     FirDependenciesSymbolProviderImpl(this)

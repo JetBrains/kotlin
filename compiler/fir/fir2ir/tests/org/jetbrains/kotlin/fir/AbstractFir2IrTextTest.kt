@@ -76,12 +76,13 @@ abstract class AbstractFir2IrTextTest : AbstractIrTextTestCase() {
             .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(project))
         val session = createSession(myEnvironment, scope)
 
-        val builder = RawFirBuilder(session, stubMode = false)
+        val firProvider = (session.firProvider as FirProviderImpl)
+        val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider, stubMode = false)
 
         val resolveTransformer = FirTotalResolveTransformer()
         val firFiles = psiFiles.map {
             val firFile = builder.buildFirFile(it)
-            (session.firProvider as FirProviderImpl).recordFile(firFile)
+            firProvider.recordFile(firFile)
             firFile
         }.also {
             try {

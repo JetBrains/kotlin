@@ -16,8 +16,10 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirTypeParameterImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
 import org.jetbrains.kotlin.fir.inferenceContext
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticFunctionSymbol
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.fir.scopes.scope
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -245,7 +247,7 @@ private fun FirRegularClass.findSingleAbstractMethodByNames(
     var resultMethod: FirSimpleFunction? = null
     var metIncorrectMember = false
 
-    val classUseSiteMemberScope = session.firSymbolProvider.getClassUseSiteMemberScope(classId, session, scopeSession)
+    val classUseSiteMemberScope = this.scope(ConeSubstitutor.Empty, session, scopeSession)
 
     for (candidateName in samCandidateNames) {
         if (classUseSiteMemberScope == null) break

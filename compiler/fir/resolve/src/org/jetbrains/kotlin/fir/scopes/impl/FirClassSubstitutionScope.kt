@@ -31,7 +31,7 @@ class FirClassSubstitutionScope(
     private val session: FirSession,
     private val useSiteMemberScope: FirScope,
     scopeSession: ScopeSession,
-    substitution: Map<FirTypeParameterSymbol, ConeKotlinType>
+    private val substitutor: ConeSubstitutor
 ) : FirScope() {
 
     private val fakeOverrideFunctions = mutableMapOf<FirFunctionSymbol<*>, FirFunctionSymbol<*>>()
@@ -39,7 +39,10 @@ class FirClassSubstitutionScope(
     private val fakeOverrideFields = mutableMapOf<FirFieldSymbol, FirFieldSymbol>()
     private val fakeOverrideAccessors = mutableMapOf<FirAccessorSymbol, FirAccessorSymbol>()
 
-    private val substitutor = substitutorByMap(substitution)
+    constructor(
+        session: FirSession, useSiteMemberScope: FirScope, scopeSession: ScopeSession,
+        substitution: Map<FirTypeParameterSymbol, ConeKotlinType>
+    ) : this(session, useSiteMemberScope, scopeSession, substitutorByMap(substitution))
 
     override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> ProcessorAction): ProcessorAction {
         useSiteMemberScope.processFunctionsByName(name) process@{ original ->

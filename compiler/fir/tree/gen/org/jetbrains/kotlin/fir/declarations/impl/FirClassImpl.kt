@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
+import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
@@ -32,6 +33,7 @@ class FirClassImpl(
     override val name: Name,
     override var status: FirDeclarationStatus,
     override val classKind: ClassKind,
+    override val scopeProvider: FirScopeProvider,
     override val symbol: FirRegularClassSymbol
 ) : FirPureAbstractElement(), FirRegularClass, FirModifiableRegularClass, FirAbstractAnnotatedElement {
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR

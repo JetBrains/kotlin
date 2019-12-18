@@ -14,6 +14,7 @@ import com.intellij.testFramework.TestDataPath
 import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.FirSessionBase
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
+import org.jetbrains.kotlin.fir.builder.StubFirScopeProvider
 import org.jetbrains.kotlin.fir.lightTree.converter.DeclarationsConverter
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.parsing.*
@@ -62,6 +63,7 @@ class SimpleTestCase : AbstractRawFirBuilderTestCase() {
 
         val firFromLightTreeFile = DeclarationsConverter(
             object : FirSessionBase(null) {},
+            StubFirScopeProvider,
             true,
             builder.lightTree
         ).convertFile(builder.lightTree.root)

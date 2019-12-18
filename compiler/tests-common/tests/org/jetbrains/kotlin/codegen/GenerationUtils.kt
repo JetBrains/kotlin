@@ -112,11 +112,12 @@ object GenerationUtils {
         val librariesScope = ProjectScope.getLibrariesScope(project)
         val session = createSession(project, scope, librariesScope, "main", packagePartProvider)
 
-        val builder = RawFirBuilder(session, stubMode = false)
+        val firProvider = (session.firProvider as FirProviderImpl)
+        val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider, stubMode = false)
         val resolveTransformer = FirTotalResolveTransformer()
         val firFiles = files.map {
             val firFile = builder.buildFirFile(it)
-            (session.firProvider as FirProviderImpl).recordFile(firFile)
+            firProvider.recordFile(firFile)
             firFile
         }.also {
             try {

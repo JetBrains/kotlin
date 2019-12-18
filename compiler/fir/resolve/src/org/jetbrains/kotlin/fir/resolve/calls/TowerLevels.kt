@@ -12,14 +12,21 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedImportImpl
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.scope
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractImportingScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirExplicitSimpleImportingScope
+import org.jetbrains.kotlin.fir.scopes.scope
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeNullability
+import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
 import org.jetbrains.kotlin.fir.types.isExtensionFunctionType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -262,8 +269,13 @@ class QualifiedReceiverTowerLevel(
                 )
             }
             else -> {
-                session.firSymbolProvider.getClassUseSiteMemberScope(classId, session, bodyResolveComponents.scopeSession)
-                    ?: return ProcessorAction.NEXT
+                val symbol = session.firSymbolProvider.getClassLikeSymbolByFqName(classId) ?: return ProcessorAction.NEXT
+                when (symbol) {
+                    is FirClassSymbol<*> -> symbol.fir.scope(ConeSubstitutor.Empty, session, bodyResolveComponents.scopeSession)
+                    is FirTypeAliasSymbol ->
+                        symbol.fir.expandedTypeRef.coneTypeUnsafe<ConeKotlinType>()
+                            .scope(session, bodyResolveComponents.scopeSession) ?: return ProcessorAction.NEXT
+                }
             }
         }
 
