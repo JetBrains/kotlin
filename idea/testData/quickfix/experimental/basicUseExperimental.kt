@@ -1,4 +1,4 @@
-// "Add '@UseExperimental(MyExperimentalAPI::class)' annotation to 'bar'" "true"
+// "Add '@OptIn(MyExperimentalAPI::class)' annotation to 'bar'" "true"
 // COMPILER_ARGUMENTS: -Xuse-experimental=kotlin.Experimental
 // WITH_RUNTIME
 

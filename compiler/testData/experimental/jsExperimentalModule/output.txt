@@ -1,7 +1,7 @@
-compiler/testData/experimental/jsExperimentalModule/usage.kt:5:15: error: this declaration is experimental and its usage must be marked with '@lib.ExperimentalAPI' or '@UseExperimental(lib.ExperimentalAPI::class)'
+compiler/testData/experimental/jsExperimentalModule/usage.kt:5:15: error: this declaration is experimental and its usage must be marked with '@lib.ExperimentalAPI' or '@OptIn(lib.ExperimentalAPI::class)'
 fun fail(foo: Foo) {
               ^
-compiler/testData/experimental/jsExperimentalModule/usage.kt:6:5: error: this declaration is experimental and its usage must be marked with '@lib.ExperimentalAPI' or '@UseExperimental(lib.ExperimentalAPI::class)'
+compiler/testData/experimental/jsExperimentalModule/usage.kt:6:5: error: this declaration is experimental and its usage must be marked with '@lib.ExperimentalAPI' or '@OptIn(lib.ExperimentalAPI::class)'
     bar()
     ^
 COMPILATION_ERROR
