@@ -7,6 +7,7 @@ import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.layout.*
+import com.intellij.util.PlatformUtils
 
 class MLRankingConfigurable(private val supportedLanguages: List<String>)
   : BoundConfigurable("ML Ranking") {
@@ -27,14 +28,12 @@ class MLRankingConfigurable(private val supportedLanguages: List<String>)
           }
           enableRankingCheckbox = enableRanking
         }
-        val registry = Registry.get("completion.stats.show.ml.ranking.diff")
         row {
           enableRankingCheckbox?.let { enableRanking ->
             checkBox(StatsCollectorBundle.message("ml.completion.show.diff"),
-                     { registry.asBoolean() },
-                     { registry.setValue(it) }).enableIf(enableRanking.selected)
+                     { settings.isShowDiffEnabled },
+                     { settings.isShowDiffEnabled = it }).enableIf(enableRanking.selected)
           }
-
         }
       }
     }

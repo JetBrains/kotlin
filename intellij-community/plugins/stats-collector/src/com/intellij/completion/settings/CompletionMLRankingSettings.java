@@ -34,7 +34,7 @@ public class CompletionMLRankingSettings implements PersistentStateComponent<Com
   }
 
   public boolean isShowDiffEnabled() {
-    return myState.showDiff || Registry.is("completion.stats.show.ml.ranking.diff", false);
+    return myState.rankingEnabled && myState.showDiff;
   }
 
   void setRankingEnabled(boolean value) {
@@ -61,6 +61,10 @@ public class CompletionMLRankingSettings implements PersistentStateComponent<Com
     logCompletionState(languageName, isEnabled);
   }
 
+  public void setShowDiffEnabled(boolean isEnabled) {
+    myState.showDiff = isEnabled;
+  }
+
   @Nullable
   @Override
   public State getState() {
@@ -70,12 +74,14 @@ public class CompletionMLRankingSettings implements PersistentStateComponent<Com
   @Override
   public void loadState(@NotNull State state) {
     myState.rankingEnabled = state.rankingEnabled;
+    myState.showDiff = state.showDiff;
     state.language2state.forEach((lang, enabled) -> setLanguageEnabled(lang, enabled));
   }
 
   private void logCompletionState(@NotNull String languageName, boolean isEnabled) {
     final boolean enabled = myState.rankingEnabled && isEnabled;
-    LOG.info("ML Completion " + (enabled ? "enabled" : "disabled") + " for: " + languageName);
+    final boolean showDiff = enabled && myState.showDiff;
+    LOG.info("ML Completion " + (enabled ? "enabled" : "disabled") + " ,show diff " + (showDiff ? "on" : "off") + " for: " + languageName);
   }
 
   public static class State {

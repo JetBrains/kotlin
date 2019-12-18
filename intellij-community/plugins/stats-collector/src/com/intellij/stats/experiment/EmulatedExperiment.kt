@@ -1,6 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.stats.experiment
 
+import com.intellij.completion.settings.CompletionMLRankingSettings
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.internal.statistic.DeviceIdManager
 import com.intellij.lang.Language
@@ -51,7 +52,7 @@ class EmulatedExperiment {
     private fun enableOnceDiffShowing() {
         val properties = PropertiesComponent.getInstance()
         if (!properties.getBoolean(DIFF_ENABLED_PROPERTY_KEY, false)) {
-            Registry.get("completion.stats.show.ml.ranking.diff").setValue(true)
+            CompletionMLRankingSettings.getInstance().isShowDiffEnabled = true
             properties.setValue(DIFF_ENABLED_PROPERTY_KEY, true)
         }
     }
