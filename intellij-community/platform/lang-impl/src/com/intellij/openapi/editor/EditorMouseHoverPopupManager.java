@@ -221,7 +221,11 @@ public final class EditorMouseHoverPopupManager implements Disposable {
         .submit(AppExecutorUtil.getAppExecutorService());
 
       myCurrentProgress = promise;
-      promise.onProcessed(__ -> UIUtil.invokeLaterIfNeeded(() -> myCurrentProgress = null));
+      promise.onProcessed(__ -> UIUtil.invokeLaterIfNeeded(() -> {
+        if (myCurrentProgress == promise) {
+          myCurrentProgress = null;
+        }
+      }));
     }, context.getShowingDelay());
   }
 
