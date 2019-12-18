@@ -2422,6 +2422,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     runTest("compiler/testData/diagnostics/tests/callableReference/property/extensionPropertyOnNullable.kt");
                 }
 
+                @TestMetadata("extensionsSameName.kt")
+                public void testExtensionsSameName() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/callableReference/property/extensionsSameName.kt");
+                }
+
                 @TestMetadata("genericClass.kt")
                 public void testGenericClass() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/callableReference/property/genericClass.kt");
