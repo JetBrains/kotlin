@@ -1,7 +1,6 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.roots.ui.configuration.projectRoot;
 
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.application.ApplicationManager;
@@ -246,23 +245,27 @@ public class ProjectSdksModel implements SdkModel {
                                @NotNull final Consumer<? super Sdk> updateTree,
                                @Nullable Condition<? super SdkTypeId> filter) {
 
-    Map<SdkType, NewSdkAction> downloadActions = createDownloadActions(parent, selectedSdk, updateTree, filter);
-    Map<SdkType, NewSdkAction> defaultAddActions = createAddActions(parent, selectedSdk, updateTree, filter);
+    Map<SdkType, NewSdkAction> downloadActions = createDownloadActions(filter);
+    Map<SdkType, NewSdkAction> defaultAddActions = createAddActions(filter);
 
     for (SdkType type : getAddableSdkTypes(filter)) {
-      AnAction downloadAction = downloadActions.get(type);
+      NewSdkAction downloadAction = downloadActions.get(type);
       if (downloadAction != null) {
-        group.add(downloadAction);
+        group.add(downloadAction.setOverrides(selectedSdk, parent, updateTree));
       }
-      AnAction defaultAction = defaultAddActions.get(type);
+      NewSdkAction defaultAction = defaultAddActions.get(type);
       if (defaultAction != null) {
-        group.add(defaultAction);
+        group.add(defaultAction.setOverrides(selectedSdk, parent, updateTree));
       }
     }
   }
 
   public static abstract class NewSdkAction extends DumbAwareAction {
     private final SdkType mySdkType;
+
+    private Sdk mySelectedSdkOverride;
+    private JComponent myParentOverride;
+    private Consumer<? super Sdk> myCallbackOverride;
 
     private NewSdkAction(@NotNull SdkType sdkType,
                          @Nls(capitalization = Nls.Capitalization.Title) @Nullable String text,
@@ -272,16 +275,37 @@ public class ProjectSdksModel implements SdkModel {
     }
 
     @NotNull
-    public SdkType getSdkType() {
+    NewSdkAction setOverrides(@Nullable Sdk selectedSdkFallback,
+                              @NotNull JComponent parentFallback,
+                              @NotNull Consumer<? super Sdk> callbackFallback) {
+      mySelectedSdkOverride = selectedSdkFallback;
+      myParentOverride = parentFallback;
+      myCallbackOverride = callbackFallback;
+      return this;
+    }
+
+    @NotNull
+    public final SdkType getSdkType() {
       return mySdkType;
     }
+
+    @Override
+    public final void actionPerformed(@NotNull AnActionEvent e) {
+      Sdk selectedSdk = mySelectedSdkOverride;
+      JComponent parent = myParentOverride;
+      Consumer<? super Sdk> callback = myCallbackOverride;
+
+      if (callback == null || parent == null) return;
+      actionPerformed(selectedSdk, parent, callback);
+    }
+
+    public abstract void actionPerformed(@Nullable Sdk selectedSdk,
+                                         @NotNull JComponent parent,
+                                         @NotNull Consumer<? super Sdk> callback);
   }
 
   @NotNull
-  public Map<SdkType, NewSdkAction> createDownloadActions(@NotNull final JComponent parent,
-                                                          @Nullable final Sdk selectedSdk,
-                                                          @NotNull final Consumer<? super Sdk> updateTree,
-                                                          @Nullable Condition<? super SdkTypeId> filter) {
+  public Map<SdkType, NewSdkAction> createDownloadActions(@Nullable Condition<? super SdkTypeId> filter) {
     Map<SdkType, NewSdkAction> result = new LinkedHashMap<>();
     for (final SdkType type : getAddableSdkTypes(filter)) {
       SdkDownload downloadExtension = SdkDownload.EP_NAME.findFirstSafe(it -> it.supportsDownload(type));
@@ -290,8 +314,10 @@ public class ProjectSdksModel implements SdkModel {
       String downloadText = ProjectBundle.message("sdk.configure.download.action", type.getPresentableName());
       NewSdkAction downloadAction = new NewSdkAction(type, downloadText, downloadExtension.getIconForDownloadAction(type)) {
         @Override
-        public void actionPerformed(@NotNull AnActionEvent e) {
-          doDownload(downloadExtension, parent, selectedSdk, type, updateTree);
+        public void actionPerformed(@Nullable Sdk selectedSdk,
+                                    @NotNull JComponent parent,
+                                    @NotNull Consumer<? super Sdk> callback) {
+          doDownload(downloadExtension, parent, selectedSdk, type, callback);
         }
       };
 
@@ -301,21 +327,20 @@ public class ProjectSdksModel implements SdkModel {
   }
 
   @NotNull
-  public Map<SdkType, NewSdkAction> createAddActions(@NotNull final JComponent parent,
-                                                     @Nullable final Sdk selectedSdk,
-                                                     @NotNull final Consumer<? super Sdk> updateTree,
-                                                     @Nullable Condition<? super SdkTypeId> filter) {
+  public Map<SdkType, NewSdkAction> createAddActions(@Nullable Condition<? super SdkTypeId> filter) {
     Map<SdkType, NewSdkAction> result = new LinkedHashMap<>();
     for (final SdkType type : getAddableSdkTypes(filter)) {
       String addOnDiskText = ProjectBundle.message("sdk.configure.add.default.action", type.getPresentableName());
 
       NewSdkAction addAction = new NewSdkAction(type, addOnDiskText, type.getIconForAddAction()) {
         @Override
-        public void actionPerformed(@NotNull AnActionEvent e) {
+        public void actionPerformed(@Nullable Sdk selectedSdk,
+                                    @NotNull JComponent parent,
+                                    @NotNull Consumer<? super Sdk> callback) {
           if (type.supportsCustomCreateUI()) {
-            type.showCustomCreateUI(ProjectSdksModel.this, parent, selectedSdk, sdk -> setupSdk(sdk, updateTree));
+            type.showCustomCreateUI(ProjectSdksModel.this, parent, selectedSdk, sdk -> setupSdk(sdk, callback));
           } else {
-            SdkConfigurationUtil.selectSdkHome(type, home -> addSdk(type, home, updateTree));
+            SdkConfigurationUtil.selectSdkHome(type, home -> addSdk(type, home, callback));
           }
         }
       };

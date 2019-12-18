@@ -3,10 +3,9 @@ package com.intellij.openapi.roots.ui.configuration;
 
 import com.google.common.collect.ImmutableList;
 import com.intellij.icons.AllIcons;
-import com.intellij.ide.DataManager;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkType;
@@ -30,12 +29,13 @@ import java.util.Map;
 import java.util.Objects;
 
 public class SdkListModelBuilder {
+  private static final Logger LOG = Logger.getInstance(SdkListModelBuilder.class);
+
   @Nullable private final Project myProject;
   @NotNull private final ProjectSdksModel mySdkModel;
   @NotNull private final Condition<? super Sdk> mySdkFilter;
   @NotNull private final Condition<? super SdkTypeId> mySdkTypeFilter;
   @NotNull private final Condition<? super SdkTypeId> mySdkTypeCreationFilter;
-  @NotNull private final Consumer<Sdk> myOnNewSdkAdded;
 
   @NotNull private final EventDispatcher<ModelListener> myModelListener = EventDispatcher.create(ModelListener.class);
 
@@ -68,9 +68,6 @@ public class SdkListModelBuilder {
     mySdkFilter = sdk -> sdk != null
                          && mySdkTypeFilter.value(sdk.getSdkType())
                          && (sdkFilter == null || sdkFilter.value(sdk));
-    myOnNewSdkAdded = sdk -> {
-      if (sdk != null) myModelListener.getMulticaster().onNewSdkAdded(sdk);
-    };
   }
 
   /**
@@ -84,11 +81,6 @@ public class SdkListModelBuilder {
      * into a specific model and apply it for the control
      */
     default void syncModel(@NotNull SdkListModel model) {}
-
-    /**
-     * A callback executed when a new Sdk was created and added
-     */
-    default void onNewSdkAdded(@NotNull Sdk sdk) {}
   }
 
   public void addModelListener(@NotNull ModelListener listener) {
@@ -99,8 +91,11 @@ public class SdkListModelBuilder {
     myModelListener.removeListener(listener);
   }
 
-  private void syncModel() {
-    myModelListener.getMulticaster().syncModel(buildModel());
+  @NotNull
+  private SdkListModel syncModel() {
+    SdkListModel model = buildModel();
+    myModelListener.getMulticaster().syncModel(model);
+    return model;
   }
 
   @NotNull
@@ -183,24 +178,70 @@ public class SdkListModelBuilder {
     for (Sdk sdk : sortSdks(mySdkModel.getSdks())) {
       if (!mySdkFilter.value(sdk)) continue;
 
-      newHead.add(new SdkItem(sdk) {
-        @Override
-        boolean hasSameSdk(@NotNull Sdk value) {
-          return Objects.equals(getSdk(), value) || Objects.equals(mySdkModel.findSdk(getSdk()), value);
-        }
-      });
+      newHead.add(newSdkItem(sdk));
     }
 
     myHead = newHead.build();
     syncModel();
   }
 
-  public void reloadActions(@NotNull JComponent parent, @Nullable Sdk selectedSdk) {
-    Map<SdkType, NewSdkAction> downloadActions = mySdkModel.createDownloadActions(parent, selectedSdk, myOnNewSdkAdded, mySdkTypeCreationFilter);
-    Map<SdkType, NewSdkAction> addActions = mySdkModel.createAddActions(parent, selectedSdk, myOnNewSdkAdded, mySdkTypeCreationFilter);
+  @NotNull
+  private SdkItem newSdkItem(@NotNull Sdk sdk) {
+    return new SdkItem(sdk) {
+      @Override
+      boolean hasSameSdk(@NotNull Sdk value) {
+        return Objects.equals(getSdk(), value) || Objects.equals(mySdkModel.findSdk(getSdk()), value);
+      }
+    };
+  }
 
-    myDownloadActions = createActions(parent, ActionRole.DOWNLOAD, downloadActions);
-    myAddActions = createActions(parent, ActionRole.ADD, addActions);
+  /**
+   * Executes an action that is associated with the given {@param item}.
+   * <br/>
+   * If there are no actions associated, method returns {@code false},
+   * the {@param afterExecution} is NOT executed
+   * <br/>
+   * If there is action associated, it is scheduled for execution. The
+   * {@param afterExecution} callback is ONLY if the action execution
+   * ended up successfully and a new item was added to the model. In that
+   * case the callback is executed after the model is updated and the
+   * {@link #syncModel()} is invoked. The implementation may not
+   * execute the callback or and model update for any internal and
+   * non-selectable items
+   *
+   * @return {@code true} if action was started and the {@param afterExecution}
+   *                      callback could happen later, {@code false} otherwise
+   */
+  public boolean executeAction(@NotNull JComponent parent,
+                               @NotNull SdkListItem item,
+                               @NotNull Consumer<? super SdkListItem> afterExecution) {
+    Consumer<Sdk> onNewSdkAdded = sdk -> {
+      reloadSdks();
+      SdkItem sdkItem = newSdkItem(sdk);
+      afterExecution.consume(sdkItem);
+    };
+
+    if (item instanceof ActionItem) {
+      NewSdkAction action = ((ActionItem)item).myAction;
+      action.actionPerformed(null, parent, onNewSdkAdded);
+      return true;
+    }
+
+    if (item instanceof SuggestedItem) {
+      SuggestedItem suggestedItem = (SuggestedItem)item;
+      mySdkModel.addSdk(suggestedItem.getSdkType(), suggestedItem.getHomePath(), onNewSdkAdded);
+      return true;
+    }
+
+    return false;
+  }
+
+  public void reloadActions() {
+    Map<SdkType, NewSdkAction> downloadActions = mySdkModel.createDownloadActions(mySdkTypeCreationFilter);
+    Map<SdkType, NewSdkAction> addActions = mySdkModel.createAddActions(mySdkTypeCreationFilter);
+
+    myDownloadActions = createActions(ActionRole.DOWNLOAD, downloadActions);
+    myAddActions = createActions(ActionRole.ADD, addActions);
     syncModel();
   }
 
@@ -218,12 +259,7 @@ public class SdkListModelBuilder {
 
       @Override
       public void onSdkDetected(@NotNull SdkType type, @NotNull String version, @NotNull String home) {
-        SuggestedItem item = new SuggestedItem(type, version, home) {
-          @Override
-          public void executeAction() {
-            mySdkModel.addSdk(getSdkType(), getHomePath(), myOnNewSdkAdded);
-          }
-        };
+        SuggestedItem item = new SuggestedItem(type, version, home);
 
         mySuggestions = ImmutableList.<SuggestedItem>builder()
           .addAll(mySuggestions)
@@ -242,24 +278,11 @@ public class SdkListModelBuilder {
   }
 
   @NotNull
-  private static ImmutableList<ActionItem> createActions(@NotNull JComponent parent,
-                                                         @NotNull ActionRole role,
+  private static ImmutableList<ActionItem> createActions(@NotNull ActionRole role,
                                                          @NotNull Map<SdkType, NewSdkAction> actions) {
     ImmutableList.Builder<ActionItem> builder = ImmutableList.builder();
     for (NewSdkAction action : actions.values()) {
-      builder.add(new ActionItem(role, action, null) {
-        @Override
-        public void executeAction() {
-          DataContext dataContext = DataManager.getInstance().getDataContext(parent);
-          AnActionEvent event = new AnActionEvent(null,
-                                                  dataContext,
-                                                  ActionPlaces.UNKNOWN,
-                                                  new Presentation(""),
-                                                  ActionManager.getInstance(),
-                                                  0);
-          myAction.actionPerformed(event);
-        }
-      });
+      builder.add(new ActionItem(role, action, null));
     }
     return builder.build();
   }

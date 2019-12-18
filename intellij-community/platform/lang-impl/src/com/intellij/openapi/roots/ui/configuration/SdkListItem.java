@@ -16,10 +16,6 @@ import java.util.Objects;
 public abstract class SdkListItem {
   private SdkListItem() {}
 
-  public interface ActionableItem {
-    void executeAction();
-  }
-
   public static abstract class SdkItem extends SdkListItem {
     private final Sdk mySdk;
 
@@ -93,7 +89,7 @@ public abstract class SdkListItem {
     }
   }
 
-  public static abstract class SuggestedItem extends SdkListItem implements ActionableItem {
+  public static final class SuggestedItem extends SdkListItem {
     private final SdkType mySdkType;
     private final String myHomePath;
     private final String myVersion;
@@ -118,20 +114,16 @@ public abstract class SdkListItem {
     public String getVersion() {
       return myVersion;
     }
-
-    @Override
-    public abstract void executeAction();
   }
 
   enum ActionRole {
     DOWNLOAD, ADD
   }
 
-  public static abstract class ActionItem extends SdkListItem implements ActionableItem {
-    @Nullable
-    final GroupItem myGroup;
-    final ActionRole myRole;
-    final NewSdkAction myAction;
+  public static final class ActionItem extends SdkListItem {
+    @Nullable final GroupItem myGroup;
+    @NotNull final ActionRole myRole;
+    @NotNull  final NewSdkAction myAction;
 
     ActionItem(@NotNull ActionRole role, @NotNull NewSdkAction action, @Nullable GroupItem group) {
       myRole = role;
@@ -141,17 +133,8 @@ public abstract class SdkListItem {
 
     @NotNull
     ActionItem withGroup(@NotNull GroupItem group) {
-      ActionItem that = this;
-      return new ActionItem(myRole, myAction, group) {
-        @Override
-        public void executeAction() {
-          that.executeAction();
-        }
-      };
+      return new ActionItem(myRole, myAction, group);
     }
-
-    @Override
-    public abstract void executeAction();
   }
 
   public static final class GroupItem extends SdkListItem {

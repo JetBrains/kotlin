@@ -17,7 +17,6 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.util.Collections;
-import java.util.function.Consumer;
 
 public class SdkPopupFactory {
   private final SdkListModelBuilder myModelBuilder;
@@ -35,11 +34,10 @@ public class SdkPopupFactory {
   @NotNull
   public SdkPopup createPopup(@NotNull SdkPopupListener listener) {
     SdkListItemContext context = new SdkListItemContext();
+    SdkPopupImpl popup = new SdkPopupImpl(context);
 
-    SdkPopupImpl popup = new SdkPopupImpl(context, value -> {
-      if (value instanceof SdkListItem.ActionableItem) {
-        ((SdkListItem.ActionableItem)value).executeAction();
-        //TODO: handle the outcome of the action execution here
+    popup.addItemSelectedListener(value -> {
+      if (myModelBuilder.executeAction(popup.getList(), value, listener::onNewItemAdded)) {
         return;
       }
       listener.onExistingItemSelected(value);
@@ -58,7 +56,7 @@ public class SdkPopupFactory {
     popup.addListener(new JBPopupListener() {
       @Override
       public void beforeShown(@NotNull LightweightWindowEvent event) {
-        myModelBuilder.reloadActions(popup.getList(), null);
+        myModelBuilder.reloadActions();
         myModelBuilder.detectItems(popup.getList(), popup);
       }
 
@@ -73,8 +71,8 @@ public class SdkPopupFactory {
   }
 
   private class SdkPopupImpl extends ComboBoxPopup<SdkListItem> implements SdkPopup {
-    SdkPopupImpl(SdkListItemContext context, Consumer<SdkListItem> onItemSelected) {
-      super(context, null, onItemSelected);
+    SdkPopupImpl(SdkListItemContext context) {
+      super(context, null);
     }
 
     @Override
