@@ -86,12 +86,14 @@ public class InstalledPackagesPanel extends JPanel {
     myUpgradeButton = new DumbAwareActionButton("Upgrade", IconUtil.getMoveUpIcon()) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
+        PackageManagementUsageCollector.triggerUpgradePerformed(myProject, myPackageManagementService);
         upgradeAction();
       }
     };
     myInstallButton = new DumbAwareActionButton("Install", IconUtil.getAddIcon()) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
+        PackageManagementUsageCollector.triggerInstallPerformed(myProject, myPackageManagementService);
         if (myPackageManagementService != null) {
           ManagePackagesDialog dialog = createManagePackagesDialog();
           dialog.show();
@@ -102,6 +104,7 @@ public class InstalledPackagesPanel extends JPanel {
     myUninstallButton = new DumbAwareActionButton("Uninstall", IconUtil.getRemoveIcon()) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
+        PackageManagementUsageCollector.triggerUninstallPerformed(myProject, myPackageManagementService);
         uninstallAction();
       }
     };
