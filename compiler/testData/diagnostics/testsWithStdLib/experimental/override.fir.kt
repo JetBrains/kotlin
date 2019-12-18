@@ -3,7 +3,7 @@
 
 package api
 
-@RequiresOptIn(RequiresOptIn.Level.WARNING)
+@RequiresOptIn(level = RequiresOptIn.Level.WARNING)
 annotation class E
 
 open class Base {

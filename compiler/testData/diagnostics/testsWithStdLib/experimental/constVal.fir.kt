@@ -3,7 +3,7 @@
 
 package api
 
-@RequiresOptIn(RequiresOptIn.Level.WARNING)
+@RequiresOptIn(level = RequiresOptIn.Level.WARNING)
 @Target(AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION)
 annotation class ExperimentalAPI
 

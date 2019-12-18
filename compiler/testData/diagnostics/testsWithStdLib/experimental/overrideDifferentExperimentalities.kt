@@ -1,8 +1,8 @@
 // !USE_EXPERIMENTAL: kotlin.RequiresOptIn
 
-@RequiresOptIn(RequiresOptIn.Level.WARNING)
+@RequiresOptIn(level = RequiresOptIn.Level.WARNING)
 annotation class E1
-@RequiresOptIn(RequiresOptIn.Level.WARNING)
+@RequiresOptIn(level = RequiresOptIn.Level.WARNING)
 annotation class E3
 
 interface Base1 {

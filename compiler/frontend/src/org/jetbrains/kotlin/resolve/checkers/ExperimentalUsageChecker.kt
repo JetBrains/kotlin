@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.constants.KClassValue
+import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.deprecation.CoroutineCompatibilitySupport
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
@@ -51,7 +52,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 class ExperimentalUsageChecker(project: Project) : CallChecker {
     private val moduleAnnotationsResolver = ModuleAnnotationsResolver.getInstance(project)
 
-    data class Experimentality(val annotationFqName: FqName, val severity: Severity) {
+    data class Experimentality(val annotationFqName: FqName, val severity: Severity, val message: String?) {
         enum class Severity { WARNING, ERROR }
 
         companion object {
@@ -59,9 +60,14 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
         }
     }
 
+    class ExperimentalityDiagnostic(
+        val factory: DiagnosticFactory1<PsiElement, String>,
+        val defaultMessage: (FqName) -> String
+    )
+
     data class ExperimentalityDiagnostics(
-        val warning: DiagnosticFactory1<PsiElement, FqName>,
-        val error: DiagnosticFactory1<PsiElement, FqName>
+        val warning: ExperimentalityDiagnostic,
+        val error: ExperimentalityDiagnostic
     )
 
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
@@ -84,18 +90,30 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
         internal val WAS_EXPERIMENTAL_ANNOTATION_CLASS = Name.identifier("markerClass")
 
         private val LEVEL = Name.identifier("level")
+        private val MESSAGE = Name.identifier("message")
         private val WARNING_LEVEL = Name.identifier("WARNING")
         private val ERROR_LEVEL = Name.identifier("ERROR")
 
-        private val EXPERIMENTAL_API_DIAGNOSTICS = ExperimentalityDiagnostics(
-            Errors.EXPERIMENTAL_API_USAGE, Errors.EXPERIMENTAL_API_USAGE_ERROR
+        internal fun getDefaultDiagnosticMessage(prefix: String) = fun(fqName: FqName): String {
+            return "$prefix with '@${fqName.asString()}' or '@OptIn(${fqName.asString()}::class)'"
+        }
+
+        private val USAGE_DIAGNOSTICS = ExperimentalityDiagnostics(
+            warning = ExperimentalityDiagnostic(
+                Errors.EXPERIMENTAL_API_USAGE,
+                getDefaultDiagnosticMessage("This declaration is experimental and its usage should be marked")
+            ),
+            error = ExperimentalityDiagnostic(
+                Errors.EXPERIMENTAL_API_USAGE_ERROR,
+                getDefaultDiagnosticMessage("This declaration is experimental and its usage must be marked")
+            )
         )
 
         fun reportNotAcceptedExperimentalities(
             experimentalities: Collection<Experimentality>, element: PsiElement, context: CheckerContext
         ) {
             reportNotAcceptedExperimentalities(
-                experimentalities, element, context.languageVersionSettings, context.trace, EXPERIMENTAL_API_DIAGNOSTICS
+                experimentalities, element, context.languageVersionSettings, context.trace, USAGE_DIAGNOSTICS
             )
         }
 
@@ -106,13 +124,13 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
             trace: BindingTrace,
             diagnostics: ExperimentalityDiagnostics
         ) {
-            for ((annotationFqName, severity) in experimentalities) {
+            for ((annotationFqName, severity, message) in experimentalities) {
                 if (!element.isExperimentalityAccepted(annotationFqName, languageVersionSettings, trace.bindingContext)) {
                     val diagnostic = when (severity) {
                         Experimentality.Severity.WARNING -> diagnostics.warning
                         Experimentality.Severity.ERROR -> diagnostics.error
                     }
-                    trace.reportDiagnosticOnce(diagnostic.on(element, annotationFqName))
+                    trace.reportDiagnosticOnce(diagnostic.factory.on(element, message ?: diagnostic.defaultMessage(annotationFqName)))
                 }
             }
         }
@@ -153,13 +171,16 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
                     ?: annotations.findAnnotation(OLD_EXPERIMENTAL_FQ_NAME)
                     ?: return null
 
-            val severity = when ((experimental.allValueArguments[LEVEL] as? EnumValue)?.enumEntryName) {
+            val arguments = experimental.allValueArguments
+            val severity = when ((arguments[LEVEL] as? EnumValue)?.enumEntryName) {
                 WARNING_LEVEL -> Experimentality.Severity.WARNING
                 ERROR_LEVEL -> Experimentality.Severity.ERROR
                 else -> Experimentality.DEFAULT_SEVERITY
             }
 
-            return Experimentality(fqNameSafe, severity)
+            val message = (arguments[MESSAGE] as? StringValue)?.value
+
+            return Experimentality(fqNameSafe, severity, message)
         }
 
         private fun PsiElement.isExperimentalityAccepted(annotationFqName: FqName, context: CheckerContext): Boolean =
@@ -344,12 +365,17 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
 
             for ((experimentality, member) in experimentalOverridden) {
                 if (!declaration.isExperimentalityAccepted(experimentality.annotationFqName, context)) {
-                    val diagnostic = when (experimentality.severity) {
-                        Experimentality.Severity.WARNING -> Errors.EXPERIMENTAL_OVERRIDE
-                        Experimentality.Severity.ERROR -> Errors.EXPERIMENTAL_OVERRIDE_ERROR
-                    }
                     val reportOn = (declaration as? KtNamedDeclaration)?.nameIdentifier ?: declaration
-                    context.trace.report(diagnostic.on(reportOn, experimentality.annotationFqName, member.containingDeclaration))
+
+                    val (diagnostic, defaultMessageVerb) = when (experimentality.severity) {
+                        Experimentality.Severity.WARNING -> Errors.EXPERIMENTAL_OVERRIDE to "should"
+                        Experimentality.Severity.ERROR -> Errors.EXPERIMENTAL_OVERRIDE_ERROR to "must"
+                    }
+                    val message = experimentality.message
+                        ?: "This declaration overrides experimental member of supertype " +
+                        "'${member.containingDeclaration.name.asString()}' and $defaultMessageVerb be annotated " +
+                        "with '@${experimentality.annotationFqName.asString()}'"
+                    context.trace.report(diagnostic.on(reportOn, message))
                 }
             }
         }

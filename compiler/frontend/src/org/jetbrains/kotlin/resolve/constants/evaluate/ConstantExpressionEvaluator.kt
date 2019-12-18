@@ -319,7 +319,14 @@ class ConstantExpressionEvaluator(
 
     companion object {
         private val EXPERIMENTAL_UNSIGNED_LITERALS_DIAGNOSTICS = ExperimentalUsageChecker.ExperimentalityDiagnostics(
-            Errors.EXPERIMENTAL_UNSIGNED_LITERALS, Errors.EXPERIMENTAL_UNSIGNED_LITERALS_ERROR
+            warning = ExperimentalUsageChecker.ExperimentalityDiagnostic(
+                Errors.EXPERIMENTAL_UNSIGNED_LITERALS,
+                ExperimentalUsageChecker.getDefaultDiagnosticMessage("Unsigned literals are experimental and their usages should be marked")
+            ),
+            error = ExperimentalUsageChecker.ExperimentalityDiagnostic(
+                Errors.EXPERIMENTAL_UNSIGNED_LITERALS_ERROR,
+                ExperimentalUsageChecker.getDefaultDiagnosticMessage("Unsigned literals are experimental and their usages must be marked")
+            )
         )
 
         @JvmStatic

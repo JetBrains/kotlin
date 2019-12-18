@@ -14,7 +14,7 @@ import kotlin.RequiresOptIn
 
 // Usages with FQ names should be OK
 
-@kotlin.RequiresOptIn(kotlin.RequiresOptIn.Level.ERROR)
+@kotlin.RequiresOptIn(level = kotlin.RequiresOptIn.Level.ERROR)
 annotation class M
 
 
