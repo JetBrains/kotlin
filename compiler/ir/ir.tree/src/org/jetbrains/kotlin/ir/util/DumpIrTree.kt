@@ -28,9 +28,13 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.utils.Printer
 
 fun IrElement.dump(normalizeNames: Boolean = false): String =
-    StringBuilder().also { sb ->
-        accept(DumpIrTreeVisitor(sb, normalizeNames), "")
-    }.toString()
+    try {
+        StringBuilder().also { sb ->
+            accept(DumpIrTreeVisitor(sb, normalizeNames), "")
+        }.toString()
+    } catch (e: Exception) {
+        "(Full dump is not available: ${e.message})\n" + render()
+    }
 
 fun IrFile.dumpTreesFromLineNumber(lineNumber: Int, normalizeNames: Boolean = false): String {
     val sb = StringBuilder()
