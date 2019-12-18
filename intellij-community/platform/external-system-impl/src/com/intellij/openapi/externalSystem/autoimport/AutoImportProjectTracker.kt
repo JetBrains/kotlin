@@ -5,7 +5,6 @@ import com.intellij.codeInsight.daemon.DaemonCodeAnalyzerSettings
 import com.intellij.ide.file.BatchFileChangeListener
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
@@ -39,7 +38,6 @@ class AutoImportProjectTracker(private val project: Project) : ExternalSystemPro
   private val projectStates = ConcurrentHashMap<State.Id, State.Project>()
   private val projectDataMap = ConcurrentHashMap<ExternalSystemProjectId, ProjectData>()
   private val isDisabled = AtomicBooleanProperty(ApplicationManager.getApplication().isUnitTestMode)
-  private val initializationProperty = AtomicBooleanProperty(false)
   private val projectChangeOperation = AnonymousParallelOperationTrace(debugName = "Project change operation")
   private val projectRefreshOperation = CompoundParallelOperationTrace<String>(debugName = "Project refresh operation")
   private val dispatcher = MergingUpdateQueue("project tracker", AUTO_REPARSE_DELAY, false, null, project)
@@ -201,14 +199,12 @@ class AutoImportProjectTracker(private val project: Project) : ExternalSystemPro
     projectData.settingsTracker.refreshChanges()
   }
 
-  fun initialize() = initializationProperty.set()
-
-  private fun init() {
+  override fun initializeComponent() {
     LOG.debug("Project tracker initialization")
     val connections = ApplicationManager.getApplication().messageBus.connect(project)
     connections.subscribe(BatchFileChangeListener.TOPIC, createProjectChangesListener())
     dispatcher.usePassThroughInUnitTestMode()
-    runInEdt { dispatcher.activate() }
+    dispatcher.activate()
   }
 
   /**
@@ -231,8 +227,6 @@ class AutoImportProjectTracker(private val project: Project) : ExternalSystemPro
     projectChangeOperation.afterOperation { scheduleChangeProcessing() }
     projectChangeOperation.afterOperation { LOG.debug("Project change finished") }
     isDisabled.afterReset { scheduleProjectRefresh() }
-    initializationProperty.afterSet { init() }
-    projectRefreshOperation.afterOperation { initializationProperty.set() }
   }
 
   private fun ProjectData.getState() = State.Project(status.isDirty(), settingsTracker.getState())

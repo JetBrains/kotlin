@@ -152,9 +152,14 @@ abstract class AutoImportTestCase : ExternalSystemTestCase() {
 
   protected fun refreshProject() = projectTracker.scheduleProjectRefresh()
 
+  protected fun forceRefreshProject(projectId: ExternalSystemProjectId) {
+    projectTracker.markDirty(projectId)
+    projectTracker.scheduleProjectRefresh()
+  }
+
   private fun loadState(state: AutoImportProjectTracker.State) = projectTracker.loadState(state)
 
-  protected fun initialize() = projectTracker.initialize()
+  protected fun initialize() = projectTracker.initializeComponent()
 
   protected fun getState() = projectTracker.state
 

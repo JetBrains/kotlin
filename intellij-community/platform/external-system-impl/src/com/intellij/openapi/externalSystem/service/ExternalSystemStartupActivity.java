@@ -34,10 +34,6 @@ final class ExternalSystemStartupActivity implements StartupActivity.DumbAware {
                                                .createDirectoriesForEmptyContentRoots());
         });
       }
-      else {
-        ExternalSystemProjectTracker projectTracker = ExternalSystemProjectTracker.getInstance(project);
-        if (projectTracker instanceof AutoImportProjectTracker) ((AutoImportProjectTracker)projectTracker).initialize();
-      }
       ExternalToolWindowManager.handle(project);
       ProjectRenameAware.beAware(project);
     }, project.getDisposed());

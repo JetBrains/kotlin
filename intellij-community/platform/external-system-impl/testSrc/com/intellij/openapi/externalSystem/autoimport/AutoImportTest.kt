@@ -476,35 +476,25 @@ class AutoImportTest : AutoImportTestCase() {
     val projectId = ExternalSystemProjectId(systemId, projectPath)
     val projectAware = MockProjectAware(projectId)
 
+    initialize()
     register(projectAware)
-    assertProjectAware(projectAware, refresh = 0, event = "register project before initialization")
-    assertNotificationAware(event = "register project before initialization")
+    assertProjectAware(projectAware, refresh = 1, event = "register project")
+    assertNotificationAware(event = "register project")
 
-    // create project
-    val projectScript = createIoFile("project.groovy")
+    val settingsFile = createIoFile("project.groovy")
     projectAware.onceDuringRefresh {
-      projectAware.settingsFiles.add(projectScript.path)
-      projectScript.replaceContentInIoFile("println 'generated project'")
+      projectAware.settingsFiles.add(settingsFile.path)
+      settingsFile.replaceContentInIoFile("println 'generated project'")
     }
-    projectAware.refreshProject()
-    assertProjectAware(projectAware, refresh = 1, event = "initial project refresh")
-    assertNotificationAware(event = "initial project refresh")
-
-    // create module
-    val moduleScript = createVirtualFile("module.groovy")
-    projectAware.onceDuringRefresh {
-      projectAware.settingsFiles.add(moduleScript.path)
-      moduleScript.replaceContentInIoFile("println 'generated module'")
-    }
-    projectAware.refreshProject()
+    forceRefreshProject(projectId)
     assertProjectAware(projectAware, refresh = 2, event = "registration of settings file during project refresh")
     assertNotificationAware(event = "registration of settings file during project refresh")
 
     // modification during refresh
     projectAware.onceDuringRefresh {
-      moduleScript.appendString("println 'hello'")
+      settingsFile.appendString("println 'hello'")
     }
-    projectAware.refreshProject()
+    forceRefreshProject(projectId)
     assertProjectAware(projectAware, refresh = 3, event = "modification during project refresh")
     assertNotificationAware(projectId, event = "modification during project refresh")
   }
