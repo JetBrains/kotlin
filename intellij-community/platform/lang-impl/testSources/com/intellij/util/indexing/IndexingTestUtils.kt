@@ -19,5 +19,5 @@ package com.intellij.util.indexing
  * @author traff
  */
 fun FileBasedIndex.clearIndices() {
-  (this as FileBasedIndexImpl).doClearIndices()
+  (this as FileBasedIndexImpl).doClearIndices { true }
 }

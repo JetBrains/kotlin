@@ -59,6 +59,7 @@ import com.intellij.psi.impl.PsiTreeChangeEventImpl;
 import com.intellij.psi.impl.cache.impl.id.PlatformIdTableBuilding;
 import com.intellij.psi.impl.source.PsiFileImpl;
 import com.intellij.psi.search.EverythingGlobalScope;
+import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.SerializationManagerEx;
 import com.intellij.util.*;
@@ -101,6 +102,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.IntPredicate;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.intellij.serviceContainer.PlatformComponentManagerImplKt.handleComponentError;
@@ -244,7 +246,17 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
       }
 
       private void rebuildAllIndices(@NotNull String reason) {
-        doClearIndices();
+        doClearIndices(id -> {
+          if (!InvertedIndex.ARE_COMPOSITE_INDEXERS_ENABLED) return true;
+
+          if (id.equals(FileTypeIndex.NAME)) return false;
+
+          if (getState().getIndex(id).getExtension().getIndexer() instanceof CompositeDataIndexer) {
+            return false;
+          }
+
+          return true;
+        });
         scheduleIndexRebuild("File type change" + ", " + reason);
       }
     });
@@ -281,7 +293,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
   }
 
   @VisibleForTesting
-  void doClearIndices() {
+  void doClearIndices(@NotNull Predicate<ID<?, ?>> filter) {
     try {
       waitUntilIndicesAreInitialized();
     }
@@ -290,14 +302,26 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
       return;
     }
     IndexingStamp.flushCaches();
+
+    List<ID<?, ?>> clearedIndexes = new ArrayList<>();
+    List<ID<?, ?>> survivedIndexes = new ArrayList<>();
     for (ID<?, ?> indexId : getState().getIndexIDs()) {
-      try {
-        clearIndex(indexId);
-      }
-      catch (StorageException e) {
-        LOG.info(e);
+      if (filter.test(indexId)) {
+        try {
+          clearIndex(indexId);
+        } catch (StorageException e) {
+          LOG.info(e);
+        } catch (Exception e) {
+          LOG.error(e);
+        }
+        clearedIndexes.add(indexId);
+      } else {
+        survivedIndexes.add(indexId);
       }
     }
+
+    LOG.info("indexes cleared: " + clearedIndexes.stream().map(id -> id.getName()).collect(Collectors.joining(", ")) + "\n" +
+             "survived indexes: " + survivedIndexes.stream().map(id -> id.getName()).collect(Collectors.joining(", ")));
   }
 
   boolean processChangedFiles(@NotNull Project project, @NotNull Processor<? super VirtualFile> processor) {
