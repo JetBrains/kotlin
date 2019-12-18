@@ -126,6 +126,10 @@ public final class kotlin/NumbersKt {
 	public static final fun rotateRight (SI)S
 }
 
+public abstract interface annotation class kotlin/OptIn : java/lang/annotation/Annotation {
+	public abstract fun markerClass ()[Ljava/lang/Class;
+}
+
 public abstract interface annotation class kotlin/OptionalExpectation : java/lang/annotation/Annotation {
 }
 
@@ -152,6 +156,17 @@ public abstract interface annotation class kotlin/PublishedApi : java/lang/annot
 public abstract interface annotation class kotlin/ReplaceWith : java/lang/annotation/Annotation {
 	public abstract fun expression ()Ljava/lang/String;
 	public abstract fun imports ()[Ljava/lang/String;
+}
+
+public abstract interface annotation class kotlin/RequiresOptIn : java/lang/annotation/Annotation {
+	public abstract fun level ()Lkotlin/RequiresOptIn$Level;
+}
+
+public final class kotlin/RequiresOptIn$Level : java/lang/Enum {
+	public static final field ERROR Lkotlin/RequiresOptIn$Level;
+	public static final field WARNING Lkotlin/RequiresOptIn$Level;
+	public static fun valueOf (Ljava/lang/String;)Lkotlin/RequiresOptIn$Level;
+	public static fun values ()[Lkotlin/RequiresOptIn$Level;
 }
 
 public final class kotlin/Result : java/io/Serializable {
