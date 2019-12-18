@@ -22,7 +22,7 @@ interface LiveDataScope<T> {
     suspend fun emit(value: T)
 }
 
-@UseExperimental(ExperimentalTypeInference::class)
+@OptIn(ExperimentalTypeInference::class)
 fun <T> liveData(@BuilderInference block: suspend LiveDataScope<T>.() -> Unit): LiveData<T> = null!!
 
 fun <Value> Flow<Value>.asLiveData() = liveData {

@@ -1,6 +1,6 @@
 $TESTDATA_DIR$/experimentalAndUseExperimentalWithSameAnnotation.kt
 -d
 $TEMP_DIR$
--Xuse-experimental=kotlin.Experimental
+-Xopt-in=kotlin.RequiresOptIn
 -Xexperimental=org.test.ExperimentalAPI
--Xuse-experimental=org.test.ExperimentalAPI
+-Xopt-in=org.test.ExperimentalAPI

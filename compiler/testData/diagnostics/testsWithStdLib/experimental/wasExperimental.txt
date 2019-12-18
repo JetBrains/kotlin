@@ -1,23 +1,23 @@
 package
 
-@kotlin.SinceKotlin(version = "1.3") @kotlin.WasExperimental(markerClass = {Marker::class}) public val newValExperimentalInThePast: kotlin.String = ""
-@kotlin.SinceKotlin(version = "1.3") @kotlin.WasExperimental(markerClass = {Marker::class}) public fun newFunExperimentalInThePast(): kotlin.Unit
-@kotlin.SinceKotlin(version = "1.3") public fun newPublishedFun(): kotlin.Unit
+@kotlin.SinceKotlin(version = "1.4") @kotlin.WasExperimental(markerClass = {Marker::class}) public val newValExperimentalInThePast: kotlin.String = ""
+@kotlin.SinceKotlin(version = "1.4") @kotlin.WasExperimental(markerClass = {Marker::class}) public fun newFunExperimentalInThePast(): kotlin.Unit
+@kotlin.SinceKotlin(version = "1.4") public fun newPublishedFun(): kotlin.Unit
 public fun use1(/*0*/ c1: NewClassExperimentalInThePast, /*1*/ t1: TypeAliasToNewClass /* = NewClassExperimentalInThePast */): kotlin.Unit
-@kotlin.UseExperimental(markerClass = {Marker::class}) public fun use2(/*0*/ c2: NewClassExperimentalInThePast, /*1*/ t2: TypeAliasToNewClass /* = NewClassExperimentalInThePast */): kotlin.Unit
+@kotlin.OptIn(markerClass = {Marker::class}) public fun use2(/*0*/ c2: NewClassExperimentalInThePast, /*1*/ t2: TypeAliasToNewClass /* = NewClassExperimentalInThePast */): kotlin.Unit
 @Marker public fun use3(/*0*/ c3: NewClassExperimentalInThePast, /*1*/ t3: TypeAliasToNewClass /* = NewClassExperimentalInThePast */): kotlin.Unit
 
-@kotlin.Experimental public final annotation class Marker : kotlin.Annotation {
+@kotlin.RequiresOptIn public final annotation class Marker : kotlin.Annotation {
     public constructor Marker()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.SinceKotlin(version = "1.3") @kotlin.WasExperimental(markerClass = {Marker::class}) public final class NewClassExperimentalInThePast {
+@kotlin.SinceKotlin(version = "1.4") @kotlin.WasExperimental(markerClass = {Marker::class}) public final class NewClassExperimentalInThePast {
     public constructor NewClassExperimentalInThePast()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
-@kotlin.SinceKotlin(version = "1.3") @kotlin.WasExperimental(markerClass = {Marker::class}) public typealias TypeAliasToNewClass = NewClassExperimentalInThePast
+@kotlin.SinceKotlin(version = "1.4") @kotlin.WasExperimental(markerClass = {Marker::class}) public typealias TypeAliasToNewClass = NewClassExperimentalInThePast

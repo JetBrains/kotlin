@@ -16,7 +16,7 @@ fun myLaunch(
     block: suspend MyCoroutineScope.() -> Unit
 ) {}
 
-@UseExperimental(kotlin.experimental.ExperimentalTypeInference::class)
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 public fun <E> myProduce(@BuilderInference block: suspend MyProducerScope<E>.() -> Unit) {}
 
 fun <T> MyReceiveChannel<T>.debounce(period: Long) {

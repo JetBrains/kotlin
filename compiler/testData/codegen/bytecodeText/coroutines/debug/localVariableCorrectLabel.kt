@@ -10,7 +10,7 @@ fun main(args: Array<String>) {
     println(s.toList())
 }
 
-@UseExperimental(ExperimentalTypeInference::class)
+@OptIn(ExperimentalTypeInference::class)
 @BuilderInference
 suspend fun SequenceScope<Int>.awaitSeq(): Int = 42
 

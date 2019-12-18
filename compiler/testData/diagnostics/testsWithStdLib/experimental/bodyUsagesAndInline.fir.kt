@@ -1,10 +1,10 @@
 // !DIAGNOSTICS: -NOTHING_TO_INLINE -UNUSED_PARAMETER
-// !USE_EXPERIMENTAL: kotlin.Experimental
+// !USE_EXPERIMENTAL: kotlin.RequiresOptIn
 // FILE: api.kt
 
 package api
 
-@Experimental(Experimental.Level.WARNING)
+@RequiresOptIn(RequiresOptIn.Level.WARNING)
 annotation class API
 
 @API

@@ -1,9 +1,9 @@
-// !USE_EXPERIMENTAL: kotlin.Experimental
+// !USE_EXPERIMENTAL: kotlin.RequiresOptIn
 // FILE: api.kt
 
 package feature.experimental.self
 
-@Experimental
+@RequiresOptIn
 annotation class ImportedMarker
 
 @ImportedMarker

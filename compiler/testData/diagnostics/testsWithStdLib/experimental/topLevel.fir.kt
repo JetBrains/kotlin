@@ -1,10 +1,10 @@
-// !USE_EXPERIMENTAL: kotlin.Experimental
+// !USE_EXPERIMENTAL: kotlin.RequiresOptIn
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 // FILE: api.kt
 
 package api
 
-@Experimental(Experimental.Level.WARNING)
+@RequiresOptIn(RequiresOptIn.Level.WARNING)
 @Target(AnnotationTarget.TYPE, AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.TYPEALIAS,
         AnnotationTarget.VALUE_PARAMETER)
 annotation class ExperimentalAPI
@@ -47,7 +47,7 @@ package usage2
 import api.*
 
 fun useAll() {
-    @UseExperimental(ExperimentalAPI::class)
+    @OptIn(ExperimentalAPI::class)
     <!UNRESOLVED_REFERENCE!>{
         function()
         property
@@ -55,7 +55,7 @@ fun useAll() {
     }()<!>
 }
 
-@UseExperimental(ExperimentalAPI::class)
+@OptIn(ExperimentalAPI::class)
 class Use {
     fun useAll() {
         function()

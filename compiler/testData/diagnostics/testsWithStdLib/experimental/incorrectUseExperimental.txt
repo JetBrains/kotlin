@@ -1,7 +1,7 @@
 package
 
-@kotlin.UseExperimental(markerClass = {}) public fun f1(): kotlin.Unit
-@kotlin.UseExperimental(markerClass = {NotAMarker::class}) public fun f2(): kotlin.Unit
+@kotlin.OptIn(markerClass = {}) public fun f1(): kotlin.Unit
+@kotlin.OptIn(markerClass = {NotAMarker::class}) public fun f2(): kotlin.Unit
 
 public final annotation class NotAMarker : kotlin.Annotation {
     public constructor NotAMarker()

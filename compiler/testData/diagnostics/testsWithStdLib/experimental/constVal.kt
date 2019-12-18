@@ -1,9 +1,9 @@
-// !USE_EXPERIMENTAL: kotlin.Experimental
+// !USE_EXPERIMENTAL: kotlin.RequiresOptIn
 // FILE: api.kt
 
 package api
 
-@Experimental(Experimental.Level.WARNING)
+@RequiresOptIn(RequiresOptIn.Level.WARNING)
 @Target(AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION)
 annotation class ExperimentalAPI
 
@@ -24,7 +24,7 @@ fun usage() {}
 
 // FILE: usage-use.kt
 
-@file:UseExperimental(ExperimentalAPI::class)
+@file:OptIn(ExperimentalAPI::class)
 package usage2
 
 import api.*

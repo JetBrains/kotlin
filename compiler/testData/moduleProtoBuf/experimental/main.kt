@@ -1,12 +1,12 @@
 package org.foo
 
-@Experimental
+@RequiresOptIn
 annotation class A
 
 class B {
-    @Experimental
+    @RequiresOptIn
     annotation class C
 }
 
-@Experimental(Experimental.Level.ERROR)
+@RequiresOptIn(level = RequiresOptIn.Level.ERROR)
 annotation class D

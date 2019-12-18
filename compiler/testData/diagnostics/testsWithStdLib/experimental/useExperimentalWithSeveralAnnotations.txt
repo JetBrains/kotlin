@@ -5,21 +5,21 @@ package api {
     @api.E2 public fun e2(): kotlin.Unit
     @api.E3 public fun e3(): kotlin.Unit
 
-    @kotlin.Experimental(level = Level.WARNING) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION}) public final annotation class E1 : kotlin.Annotation {
+    @kotlin.RequiresOptIn(level = Level.WARNING) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION}) public final annotation class E1 : kotlin.Annotation {
         public constructor E1()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    @kotlin.Experimental(level = Level.WARNING) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION}) public final annotation class E2 : kotlin.Annotation {
+    @kotlin.RequiresOptIn(level = Level.WARNING) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION}) public final annotation class E2 : kotlin.Annotation {
         public constructor E2()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    @kotlin.Experimental(level = Level.WARNING) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION}) public final annotation class E3 : kotlin.Annotation {
+    @kotlin.RequiresOptIn(level = Level.WARNING) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION}) public final annotation class E3 : kotlin.Annotation {
         public constructor E3()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -28,7 +28,7 @@ package api {
 }
 
 package usage {
-    @kotlin.UseExperimental(markerClass = {api.E1::class, api.E2::class, api.E3::class}) public fun use1(): kotlin.Unit
-    @kotlin.UseExperimental(markerClass = {api.E1::class, api.E3::class}) public fun use2(): kotlin.Unit
-    @kotlin.UseExperimental(markerClass = {api.E1::class, api.E2::class}) public fun use3(): kotlin.Unit
+    @kotlin.OptIn(markerClass = {api.E1::class, api.E2::class, api.E3::class}) public fun use1(): kotlin.Unit
+    @kotlin.OptIn(markerClass = {api.E1::class, api.E3::class}) public fun use2(): kotlin.Unit
+    @kotlin.OptIn(markerClass = {api.E1::class, api.E2::class}) public fun use3(): kotlin.Unit
 }

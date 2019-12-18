@@ -20,7 +20,7 @@ interface AsyncIterator<out T> {
     operator suspend fun next(): T
 }
 
-@UseExperimental(ExperimentalTypeInference::class)
+@OptIn(ExperimentalTypeInference::class)
 fun <T> asyncGenerate(@BuilderInference block: suspend AsyncGenerator<T>.() -> Unit): AsyncSequence<T> = object : AsyncSequence<T> {
     override fun iterator(): AsyncIterator<T> {
         val iterator = AsyncGeneratorIterator<T>()

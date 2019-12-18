@@ -1,6 +1,6 @@
 // FILE: api.kt
 
-@<!EXPERIMENTAL_IS_NOT_ENABLED!>Experimental<!>
+@<!EXPERIMENTAL_IS_NOT_ENABLED!>RequiresOptIn<!>
 annotation class Marker
 
 @Marker
@@ -17,7 +17,7 @@ fun use2() {
     f()
 }
 
-@<!EXPERIMENTAL_IS_NOT_ENABLED!>UseExperimental<!>(Marker::class)
+@<!EXPERIMENTAL_IS_NOT_ENABLED!>OptIn<!>(Marker::class)
 fun use3() {
     f()
 }

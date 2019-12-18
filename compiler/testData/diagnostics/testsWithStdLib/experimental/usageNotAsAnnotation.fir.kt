@@ -1,5 +1,5 @@
 // !LANGUAGE: +NestedClassesInAnnotations
-// !USE_EXPERIMENTAL: kotlin.Experimental
+// !USE_EXPERIMENTAL: kotlin.RequiresOptIn
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // FILE: api.kt
 
@@ -8,25 +8,25 @@ package test
 import kotlin.reflect.KClass
 
 // Usages in import should be OK
-import kotlin.Experimental.Level.*
-import kotlin.Experimental.Level
-import kotlin.Experimental
+import kotlin.RequiresOptIn.Level.*
+import kotlin.RequiresOptIn.Level
+import kotlin.RequiresOptIn
 
 // Usages with FQ names should be OK
 
-@kotlin.Experimental(kotlin.Experimental.Level.ERROR)
+@kotlin.RequiresOptIn(kotlin.RequiresOptIn.Level.ERROR)
 annotation class M
 
 
 // Usages as types should be errors
 
-fun f1(e: Experimental) {}
-fun f2(u: UseExperimental?) {}
+fun f1(e: RequiresOptIn) {}
+fun f2(u: OptIn?) {}
 
-typealias Experimental0 = Experimental
-typealias UseExperimental0 = UseExperimental
+typealias Experimental0 = RequiresOptIn
+typealias OptIn0 = OptIn
 fun f3(e: Experimental0 /* TODO */) {}
-fun f4(u: UseExperimental0 /* TODO */) {}
+fun f4(u: OptIn0 /* TODO */) {}
 
 
 // Usages as ::class literals should be errors
@@ -34,17 +34,17 @@ fun f4(u: UseExperimental0 /* TODO */) {}
 annotation class VarargKClasses(vararg val k: KClass<*>)
 
 @VarargKClasses(
-    Experimental::class,
-    UseExperimental::class,
-    kotlin.Experimental::class,
-    kotlin.UseExperimental::class
+    RequiresOptIn::class,
+    OptIn::class,
+    kotlin.RequiresOptIn::class,
+    kotlin.OptIn::class
 )
 fun f5() {}
 
 
 // Usages of markers as types should be errors
 
-@Experimental
+@RequiresOptIn
 annotation class Marker {
     class NestedClass
 

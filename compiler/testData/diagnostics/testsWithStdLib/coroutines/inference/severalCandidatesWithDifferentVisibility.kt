@@ -1,4 +1,4 @@
-// !USE_EXPERIMENTAL: kotlin.Experimental
+// !USE_EXPERIMENTAL: kotlin.RequiresOptIn
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 // FILE: a.kt
@@ -19,7 +19,7 @@ public class Queue {
 
 // FILE: c.kt
 
-@file:UseExperimental(ExperimentalTypeInference::class)
+@file:OptIn(ExperimentalTypeInference::class)
 
 package c
 

@@ -1,7 +1,7 @@
 package org.test
 
 class Outer {
-    @Experimental
+    @RequiresOptIn
     annotation class Nested
 }
 
