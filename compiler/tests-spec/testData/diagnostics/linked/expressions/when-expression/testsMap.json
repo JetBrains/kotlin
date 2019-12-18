@@ -178,7 +178,7 @@
       "2": [
         {
           "specVersion": "0.1-218",
-          "casesNumber": 2,
+          "casesNumber": 3,
           "description": "The else condition must also be in the last when entry of when expression, otherwise it is a compile-time error",
           "unexpectedBehaviour": false
         }

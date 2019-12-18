@@ -25,7 +25,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
     }
 
     public void testAllFilesPresentInBox() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/codegen/box"), Pattern.compile("^(.+)\\.kt$"), true, "helpers", "templates", "linked/expressions.when-expression", "linked/statements", "linked/expressions.conditional-expression", "linked/expressions/equality-expressions/reference-equality-expressions/p-1/neg", "linked/expressions/built-in-types-and-their-semantics/kotlin.unit/p-1/neg", "linked/expressions/prefix-expressions/prefix-increment-expression/p-1/neg");
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/codegen/box"), Pattern.compile("^(.+)\\.kt$"), true, "helpers", "templates", "linked/expressions.when-expression", "linked/statements", "linked/expressions.conditional-expression", "linked/expressions/logical-disjunction-expression", "linked/expressions/equality-expressions/reference-equality-expressions/p-1/neg", "linked/expressions/built-in-types-and-their-semantics/kotlin.unit/p-1/neg", "linked/expressions/prefix-expressions/prefix-increment-expression/p-1/neg");
     }
 
     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked")
@@ -37,7 +37,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
         }
 
         public void testAllFilesPresentInLinked() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked"), Pattern.compile("^(.+)\\.kt$"), true, "expressions.when-expression", "statements", "expressions.conditional-expression", "expressions/equality-expressions/reference-equality-expressions/p-1/neg", "expressions/built-in-types-and-their-semantics/kotlin.unit/p-1/neg", "expressions/prefix-expressions/prefix-increment-expression/p-1/neg");
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked"), Pattern.compile("^(.+)\\.kt$"), true, "expressions.when-expression", "statements", "expressions.conditional-expression", "expressions/logical-disjunction-expression", "expressions/equality-expressions/reference-equality-expressions/p-1/neg", "expressions/built-in-types-and-their-semantics/kotlin.unit/p-1/neg", "expressions/prefix-expressions/prefix-increment-expression/p-1/neg");
         }
 
         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions")
@@ -49,7 +49,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
             }
 
             public void testAllFilesPresentInExpressions() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions"), Pattern.compile("^(.+)\\.kt$"), true, "equality-expressions/reference-equality-expressions/p-1/neg", "built-in-types-and-their-semantics/kotlin.unit/p-1/neg", "prefix-expressions/prefix-increment-expression/p-1/neg");
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions"), Pattern.compile("^(.+)\\.kt$"), true, "logical-disjunction-expression", "equality-expressions/reference-equality-expressions/p-1/neg", "built-in-types-and-their-semantics/kotlin.unit/p-1/neg", "prefix-expressions/prefix-increment-expression/p-1/neg");
             }
 
             @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics")

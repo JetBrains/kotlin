@@ -1,0 +1,14 @@
+{
+  "5": {
+    "neg": {
+      "2": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 2,
+          "description": "check returning is not allowed from run{...}",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}
