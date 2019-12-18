@@ -178,7 +178,7 @@ class ExecutionManagerImpl(private val project: Project) : ExecutionManager(), D
                 val terminating = processHandler.isProcessTerminating
                 val terminated = processHandler.isProcessTerminated
                 if (terminating || terminated) {
-                  listener.processWillTerminate(ProcessEvent(processHandler), false /*doesn't matter*/)
+                  listener.processWillTerminate(ProcessEvent(processHandler), false /* doesn't matter */)
                   if (terminated) {
                     listener.processTerminated(ProcessEvent(processHandler, if (processHandler.isStartNotified) processHandler.exitCode ?: -1 else -1))
                   }
@@ -277,7 +277,7 @@ class ExecutionManagerImpl(private val project: Project) : ExecutionManager(), D
             return
           }
         }
-        runBeforeRunExecutorMap[task] = executor
+        runBeforeRunExecutorMap.put(task, executor)
       }
     }
 
@@ -287,7 +287,8 @@ class ExecutionManagerImpl(private val project: Project) : ExecutionManager(), D
           return@executeOnPooledThread
         }
 
-        val provider = BeforeRunTaskProvider.getProvider(project, task.providerId)
+        @Suppress("UNCHECKED_CAST")
+        val provider = BeforeRunTaskProvider.getProvider(project, task.providerId) as BeforeRunTaskProvider<BeforeRunTask<*>>?
         if (provider == null) {
           LOG.warn("Cannot find BeforeRunTaskProvider for id='${task.providerId}'")
           continue
@@ -302,8 +303,7 @@ class ExecutionManagerImpl(private val project: Project) : ExecutionManager(), D
         val taskEnvironment = builder.build()
         taskEnvironment.executionId = id
         EXECUTION_SESSION_ID_KEY.set(taskEnvironment, id)
-        @Suppress("CAST_NEVER_SUCCEEDS", "UNREACHABLE_CODE")
-        if (!provider.executeTask(projectContext, profile, taskEnvironment, task as Nothing)) {
+        if (!provider.executeTask(projectContext, profile, taskEnvironment, task)) {
           if (onCancelRunnable != null) {
             SwingUtilities.invokeLater(onCancelRunnable)
           }
