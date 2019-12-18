@@ -570,6 +570,9 @@ class QuickFixRegistrar : QuickFixContributor {
         MUST_BE_INITIALIZED_OR_BE_ABSTRACT.registerFactory(AddModifierFix.AddLateinitFactory)
 
         RETURN_NOT_ALLOWED.registerFactory(ChangeToLabeledReturnFix)
+        TYPE_MISMATCH.registerFactory(ChangeToLabeledReturnFix)
+        CONSTANT_EXPECTED_TYPE_MISMATCH.registerFactory(ChangeToLabeledReturnFix)
+        NULL_FOR_NONNULL_TYPE.registerFactory(ChangeToLabeledReturnFix)
 
         WRONG_ANNOTATION_TARGET.registerFactory(AddAnnotationTargetFix)
         WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET.registerFactory(MoveReceiverAnnotationFix, AddAnnotationTargetFix)

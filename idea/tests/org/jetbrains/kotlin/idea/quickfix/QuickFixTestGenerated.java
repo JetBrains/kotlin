@@ -2687,6 +2687,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/changeToLabeledReturn"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
         }
 
+        @TestMetadata("constantExpectedTypeMismatch.kt")
+        public void testConstantExpectedTypeMismatch() throws Exception {
+            runTest("idea/testData/quickfix/changeToLabeledReturn/constantExpectedTypeMismatch.kt");
+        }
+
         @TestMetadata("multipleInner.kt")
         public void testMultipleInner() throws Exception {
             runTest("idea/testData/quickfix/changeToLabeledReturn/multipleInner.kt");
@@ -2705,6 +2710,26 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("normal.kt")
         public void testNormal() throws Exception {
             runTest("idea/testData/quickfix/changeToLabeledReturn/normal.kt");
+        }
+
+        @TestMetadata("nullForNonnullType.kt")
+        public void testNullForNonnullType() throws Exception {
+            runTest("idea/testData/quickfix/changeToLabeledReturn/nullForNonnullType.kt");
+        }
+
+        @TestMetadata("nullForNonnullType2.kt")
+        public void testNullForNonnullType2() throws Exception {
+            runTest("idea/testData/quickfix/changeToLabeledReturn/nullForNonnullType2.kt");
+        }
+
+        @TestMetadata("typeMismatch.kt")
+        public void testTypeMismatch() throws Exception {
+            runTest("idea/testData/quickfix/changeToLabeledReturn/typeMismatch.kt");
+        }
+
+        @TestMetadata("typeMismatch2.kt")
+        public void testTypeMismatch2() throws Exception {
+            runTest("idea/testData/quickfix/changeToLabeledReturn/typeMismatch2.kt");
         }
     }
 
