@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
+import org.jetbrains.kotlin.fir.resolve.calls.jvm.JvmCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirCompositeSymbolProvider
 import org.jetbrains.kotlin.fir.types.FirCorrespondingSupertypesCache
@@ -45,6 +47,11 @@ class FirIdeJavaModuleBasedSession(
         registerComponent(
             FirCorrespondingSupertypesCache::class,
             FirCorrespondingSupertypesCache(this)
+        )
+
+        registerComponent(
+            ConeCallConflictResolverFactory::class,
+            JvmCallConflictResolverFactory
         )
     }
 }

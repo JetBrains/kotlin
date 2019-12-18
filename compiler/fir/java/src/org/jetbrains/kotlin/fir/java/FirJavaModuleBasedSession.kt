@@ -10,10 +10,15 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.ModuleInfo
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirModuleBasedSession
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirSessionBase
+import org.jetbrains.kotlin.fir.FirSessionProvider
 import org.jetbrains.kotlin.fir.java.deserialization.KotlinDeserializedJvmSymbolsProvider
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
+import org.jetbrains.kotlin.fir.resolve.calls.jvm.JvmCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.impl.FirCompositeSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirDependenciesSymbolProviderImpl
 import org.jetbrains.kotlin.fir.resolve.impl.FirLibrarySymbolProviderImpl
@@ -53,6 +58,11 @@ class FirJavaModuleBasedSession(
         registerComponent(
             FirCorrespondingSupertypesCache::class,
             FirCorrespondingSupertypesCache(this)
+        )
+
+        registerComponent(
+            ConeCallConflictResolverFactory::class,
+            JvmCallConflictResolverFactory
         )
 
         Extensions.getArea(sessionProvider.project)

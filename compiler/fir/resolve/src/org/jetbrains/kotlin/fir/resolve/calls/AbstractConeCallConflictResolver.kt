@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.classId
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.results.*
@@ -16,7 +15,7 @@ import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 abstract class AbstractConeCallConflictResolver(
     private val specificityComparator: TypeSpecificityComparator,
     protected val inferenceComponents: InferenceComponents
-) : ConeCallConflictResolver {
+) : ConeCallConflictResolver() {
     protected fun Collection<Candidate>.setIfOneOrEmpty(): Set<Candidate>? = when (size) {
         0 -> emptySet()
         1 -> setOf(single())
