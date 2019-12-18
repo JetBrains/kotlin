@@ -15,42 +15,19 @@
  */
 package com.intellij.openapi.compiler;
 
-import com.intellij.CommonBundle;
-import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.DynamicBundle;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.PropertyKey;
 
-import java.lang.ref.Reference;
-import java.lang.ref.SoftReference;
-import java.util.ResourceBundle;
+public class CompilerBundle extends DynamicBundle {
+  @NonNls private static final String BUNDLE = "messages.CompilerBundle";
+  private static final CompilerBundle INSTANCE = new CompilerBundle();
 
-/**
- * @author Eugene Zhuravlev
- */
-public class CompilerBundle {
+  private CompilerBundle() { super(BUNDLE); }
 
   @NotNull
   public static String message(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key, @NotNull Object... params) {
-    return CommonBundle.message(getBundle(), key, params);
-  }
-
-  private static Reference<ResourceBundle> ourBundle;
-  @NonNls private static final String BUNDLE = "messages.CompilerBundle";
-
-  private CompilerBundle() {
-  }
-
-  public static String jdkHomeNotFoundMessage(final Sdk jdk) {
-    return message("javac.error.jdk.home.missing", jdk.getName(), jdk.getHomePath());
-  }
-
-  private static ResourceBundle getBundle() {
-    ResourceBundle bundle = com.intellij.reference.SoftReference.dereference(ourBundle);
-    if (bundle == null) {
-      bundle = ResourceBundle.getBundle(BUNDLE);
-      ourBundle = new SoftReference<>(bundle);
-    }
-    return bundle;
+    return INSTANCE.getMessage(key, params);
   }
 }
