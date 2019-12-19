@@ -216,7 +216,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             temporary.commit();
             return rightInfo.clearType();
         } else if (!ArgumentTypeResolver.isFunctionLiteralOrCallableReference(right, context) &&
-                   !context.languageVersionSettings.supportsFeature(LanguageFeature.AdditionalBuiltInsMembers)
+                   !context.languageVersionSettings.supportsFeature(LanguageFeature.NewInference)
         ) {
             // Cache the type info for the right hand side so that we don't evaluate it twice if there is no valid plusAssign.
             // We skip over function literals and references, since ArgumentTypeResolver will only resolve the shape of the
