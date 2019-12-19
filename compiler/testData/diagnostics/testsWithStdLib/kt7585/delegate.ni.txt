@@ -39,7 +39,7 @@ public final class ExoticWrapper : Wrapper<Exotic> {
 
 public final class My {
     public constructor My(/*0*/ x: kotlin.Int)
-    public final val wrapper: Wrapper<kotlin.Any>!
+    public final val wrapper: Wrapper<*>!
     public final val x: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

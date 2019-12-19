@@ -9848,6 +9848,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
             runTest("compiler/testData/diagnostics/tests/inference/intersectionTypeMultipleBoundsAsReceiver.kt");
         }
 
+        @TestMetadata("intersectionWithEnum.kt")
+        public void testIntersectionWithEnum() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/inference/intersectionWithEnum.kt");
+        }
+
         @TestMetadata("invokeLambdaAsFunction.kt")
         public void testInvokeLambdaAsFunction() throws Exception {
             runTest("compiler/testData/diagnostics/tests/inference/invokeLambdaAsFunction.kt");
