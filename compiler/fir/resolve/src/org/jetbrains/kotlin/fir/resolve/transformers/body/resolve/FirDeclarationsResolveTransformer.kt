@@ -372,7 +372,7 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
         return withScopeCleanup(localScopes) {
             dataFlowAnalyzer.enterInitBlock(anonymousInitializer)
             localScopes.addIfNotNull(primaryConstructorParametersScope)
-            transformDeclaration(anonymousInitializer, data).also {
+            transformDeclaration(anonymousInitializer, ResolutionMode.ContextIndependent).also {
                 dataFlowAnalyzer.exitInitBlock(it.single as FirAnonymousInitializer)
             }
         }

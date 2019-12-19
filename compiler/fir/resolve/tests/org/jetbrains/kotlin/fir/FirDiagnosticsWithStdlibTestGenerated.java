@@ -173,6 +173,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         runTest("compiler/fir/resolve/testData/resolve/stdlib/reflectionClass.kt");
     }
 
+    @TestMetadata("runOnIntegerLiteral.kt")
+    public void testRunOnIntegerLiteral() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/stdlib/runOnIntegerLiteral.kt");
+    }
+
     @TestMetadata("simpleDelegateProvider.kt")
     public void testSimpleDelegateProvider() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/stdlib/simpleDelegateProvider.kt");
