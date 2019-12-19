@@ -90,7 +90,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
 import java.util.*;
 
-public final class DocumentationManager extends DockablePopupManager<DocumentationComponent> {
+public class DocumentationManager extends DockablePopupManager<DocumentationComponent> {
   public static final String JAVADOC_LOCATION_AND_SIZE = "javadoc.popup";
   public static final String NEW_JAVADOC_LOCATION_AND_SIZE = "javadoc.popup.new";
   public static final DataKey<String> SELECTED_QUICK_DOC_TEXT = DataKey.create("QUICK_DOC.SELECTED_TEXT");
