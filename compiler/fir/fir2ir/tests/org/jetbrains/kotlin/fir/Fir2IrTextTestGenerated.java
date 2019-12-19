@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -21,7 +22,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
     private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.ANY, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
     }
 
     public void testAllFilesPresentInIrText() throws Exception {
@@ -33,7 +34,7 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Classes extends AbstractFir2IrTextTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.ANY, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
         }
 
         @TestMetadata("abstractMembers.kt")
@@ -135,6 +136,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             runTest("compiler/testData/ir/irText/classes/initVal.kt");
         }
 
+        @TestMetadata("initValInLambda.kt")
+        public void testInitValInLambda() throws Exception {
+            runTest("compiler/testData/ir/irText/classes/initValInLambda.kt");
+        }
+
         @TestMetadata("initVar.kt")
         public void testInitVar() throws Exception {
             runTest("compiler/testData/ir/irText/classes/initVar.kt");
@@ -221,7 +227,7 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Declarations extends AbstractFir2IrTextTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.ANY, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
         }
 
         public void testAllFilesPresentInDeclarations() throws Exception {
@@ -328,7 +334,7 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Annotations extends AbstractFir2IrTextTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.ANY, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
             }
 
             public void testAllFilesPresentInAnnotations() throws Exception {
@@ -491,7 +497,7 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Multiplatform extends AbstractFir2IrTextTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.ANY, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
             }
 
             public void testAllFilesPresentInMultiplatform() throws Exception {
@@ -519,7 +525,7 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Parameters extends AbstractFir2IrTextTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.ANY, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
             }
 
             public void testAllFilesPresentInParameters() throws Exception {
@@ -597,7 +603,7 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ProvideDelegate extends AbstractFir2IrTextTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.ANY, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
             }
 
             public void testAllFilesPresentInProvideDelegate() throws Exception {
@@ -641,7 +647,7 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Errors extends AbstractFir2IrTextTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.ANY, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
         }
 
         public void testAllFilesPresentInErrors() throws Exception {
@@ -664,7 +670,7 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Expressions extends AbstractFir2IrTextTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.ANY, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
         }
 
         public void testAllFilesPresentInExpressions() throws Exception {
@@ -1326,7 +1332,7 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class FloatingPointComparisons extends AbstractFir2IrTextTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.ANY, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
             }
 
             public void testAllFilesPresentInFloatingPointComparisons() throws Exception {
@@ -1394,7 +1400,7 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Sam extends AbstractFir2IrTextTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.ANY, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
             }
 
             public void testAllFilesPresentInSam() throws Exception {
@@ -1448,7 +1454,7 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Lambdas extends AbstractFir2IrTextTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.ANY, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
         }
 
         public void testAllFilesPresentInLambdas() throws Exception {
@@ -1501,7 +1507,7 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Regressions extends AbstractFir2IrTextTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.ANY, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
         }
 
         public void testAllFilesPresentInRegressions() throws Exception {
@@ -1533,7 +1539,7 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class NewInference extends AbstractFir2IrTextTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.ANY, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
             }
 
             public void testAllFilesPresentInNewInference() throws Exception {
@@ -1552,7 +1558,7 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Singletons extends AbstractFir2IrTextTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.ANY, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
         }
 
         public void testAllFilesPresentInSingletons() throws Exception {
@@ -1580,7 +1586,7 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Stubs extends AbstractFir2IrTextTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.ANY, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
         }
 
         public void testAllFilesPresentInStubs() throws Exception {
@@ -1658,7 +1664,7 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Types extends AbstractFir2IrTextTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.ANY, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
         }
 
         @TestMetadata("abbreviatedTypes.kt")

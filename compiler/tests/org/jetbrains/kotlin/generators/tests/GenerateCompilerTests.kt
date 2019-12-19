@@ -587,7 +587,11 @@ fun main(args: Array<String>) {
         }
     }
 
-    testGroup("compiler/fir/fir2ir/tests", "compiler/testData") {
+    testGroup(
+        "compiler/fir/fir2ir/tests", "compiler/testData",
+        testRunnerMethodName = "runTestWithCustomIgnoreDirective",
+        additionalRunnerArguments = listOf("\"// IGNORE_BACKEND_FIR: \"")
+    ) {
         testClass<AbstractFir2IrTextTest> {
             model("ir/irText")
         }
