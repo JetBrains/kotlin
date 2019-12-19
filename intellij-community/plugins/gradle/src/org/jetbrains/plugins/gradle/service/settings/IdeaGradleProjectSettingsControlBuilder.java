@@ -486,7 +486,7 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
         throw new ConfigurationException(GradleBundle.message("gradle.jvm.undefined"));
       }
       String homePath = selectedJdk.getHomePath();
-      if(!ExternalSystemJdkUtil.isValidJdk(homePath)) {
+      if(!ExternalSystemJdkUtil.isValidJdk(selectedJdk)) {
         throw new ConfigurationException(GradleBundle.message("gradle.jvm.incorrect", homePath));
       }
     }

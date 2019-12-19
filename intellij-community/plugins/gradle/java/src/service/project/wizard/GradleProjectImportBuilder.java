@@ -98,7 +98,7 @@ public final class GradleProjectImportBuilder extends AbstractExternalProjectImp
     Predicate<Sdk> sdkCondition = sdk -> {
       JavaSdkVersion v = javaSdkType.getVersion(sdk);
       return v != null && v.isAtLeast(JavaSdkVersion.JDK_1_6) && !v.isAtLeast(JavaSdkVersion.JDK_1_9) &&
-             ExternalSystemJdkUtil.isValidJdk(sdk.getHomePath());
+             ExternalSystemJdkUtil.isValidJdk(sdk);
     };
 
     Sdk mostRecentSdk = jdkTable.getSdksOfType(javaSdkType).stream().filter(sdkCondition).max(javaSdkType.versionComparator()).orElse(null);
