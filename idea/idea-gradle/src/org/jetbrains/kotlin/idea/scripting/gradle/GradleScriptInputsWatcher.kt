@@ -6,15 +6,14 @@
 package org.jetbrains.kotlin.idea.scripting.gradle
 
 import com.intellij.openapi.components.*
-import com.intellij.openapi.externalSystem.service.project.autoimport.ConfigurationFileCrcFactory
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.openapi.vfs.newvfs.BulkFileListener
+import com.intellij.openapi.vfs.newvfs.events.VFileEvent
 import com.intellij.util.PathUtil
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.plugins.gradle.settings.GradleLocalSettings
-import java.nio.file.Paths
 
 @State(
     name = "KotlinBuildScriptsModificationInfo",
@@ -23,21 +22,22 @@ import java.nio.file.Paths
 class GradleScriptInputsWatcher(val project: Project) : PersistentStateComponent<GradleScriptInputsWatcher.Storage> {
     private var storage = Storage()
 
-    init {
-        initStorage(project)
-    }
+    fun startWatching() {
+        project.messageBus.connect().subscribe(
+            VirtualFileManager.VFS_CHANGES,
+            object : BulkFileListener {
+                override fun after(events: List<VFileEvent>) {
+                    if (project.isDisposed) return
 
-    private fun initStorage(project: Project) {
-        val localSettings = GradleLocalSettings.getInstance(project)
-        localSettings.externalConfigModificationStamps.forEach { (path, stamp) ->
-            val file = VfsUtil.findFile(Paths.get(path), true)
-            if (file != null && !file.isDirectory) {
-                val calculateCrc = ConfigurationFileCrcFactory(file).create()
-                if (calculateCrc != stamp) {
-                    storage.fileChanged(file, file.timeStamp)
+                    val files = getAffectedGradleProjectFiles(project)
+                    for (event in events) {
+                        val file = event.file ?: return
+                        if (isInAffectedGradleProjectFiles(files, file)) {
+                            storage.fileChanged(file, file.timeStamp)
+                        }
+                    }
                 }
-            }
-        }
+            })
     }
 
     fun areRelatedFilesUpToDate(file: VirtualFile, timeStamp: Long): Boolean {
