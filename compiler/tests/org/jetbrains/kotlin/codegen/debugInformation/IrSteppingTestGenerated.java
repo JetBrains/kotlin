@@ -32,6 +32,12 @@ public class IrSteppingTestGenerated extends AbstractIrSteppingTest {
     }
 
     @Test
+    @TestMetadata("callableReference.kt")
+    public void testCallableReference() throws Exception {
+        runTest("compiler/testData/debug/stepping/callableReference.kt");
+    }
+
+    @Test
     @TestMetadata("conjunction.kt")
     public void testConjunction() throws Exception {
         runTest("compiler/testData/debug/stepping/conjunction.kt");
@@ -53,6 +59,24 @@ public class IrSteppingTestGenerated extends AbstractIrSteppingTest {
     @TestMetadata("IfTrueThenFalse.kt")
     public void testIfTrueThenFalse() throws Exception {
         runTest("compiler/testData/debug/stepping/IfTrueThenFalse.kt");
+    }
+
+    @Test
+    @TestMetadata("inlineCallableReference.kt")
+    public void testInlineCallableReference() throws Exception {
+        runTest("compiler/testData/debug/stepping/inlineCallableReference.kt");
+    }
+
+    @Test
+    @TestMetadata("inlineNamedCallableReference.kt")
+    public void testInlineNamedCallableReference() throws Exception {
+        runTest("compiler/testData/debug/stepping/inlineNamedCallableReference.kt");
+    }
+
+    @Test
+    @TestMetadata("namedCallableReference.kt")
+    public void testNamedCallableReference() throws Exception {
+        runTest("compiler/testData/debug/stepping/namedCallableReference.kt");
     }
 
     @Test
