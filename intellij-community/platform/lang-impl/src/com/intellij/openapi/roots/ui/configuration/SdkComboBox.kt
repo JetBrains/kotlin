@@ -15,14 +15,11 @@ class SdkComboBox(model: SdkComboBoxModel) : SdkComboBoxBase<SdkListItem>(model.
     setModel(model.copyAndSetListModel(listModel))
   }
 
-  override fun onNewSdkAdded(sdk: Sdk) {
-    setSelectedSdk(sdk)
-  }
-
   override fun setSelectedItem(anObject: Any?) {
-    if (anObject is SdkListItem.ActionableItem) {
-      anObject.executeAction()
-      return
+    if (anObject is SdkListItem) {
+      if (myModel.executeAction(this, anObject, ::setSelectedItem)) {
+        return
+      }
     }
     reloadModel()
     super.setSelectedItem(anObject)
@@ -62,7 +59,7 @@ class SdkComboBox(model: SdkComboBoxModel) : SdkComboBoxBase<SdkListItem>(model.
     override fun popupMenuWillBecomeVisible(e: PopupMenuEvent) {
       val disposable = Disposer.newDisposable()
       setReloadDisposable(disposable)
-      myModel.reloadActions(this@SdkComboBox, getSelectedSdk())
+      myModel.reloadActions()
       myModel.detectItems(this@SdkComboBox, disposable)
     }
 
