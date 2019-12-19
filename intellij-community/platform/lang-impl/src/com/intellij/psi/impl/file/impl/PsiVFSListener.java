@@ -9,6 +9,9 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.Service;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.extensions.ExtensionPoint;
+import com.intellij.openapi.extensions.ExtensionPointListener;
+import com.intellij.openapi.extensions.PluginDescriptor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileDocumentManagerListener;
 import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
@@ -34,6 +37,7 @@ import com.intellij.psi.impl.DebugUtil;
 import com.intellij.psi.impl.PsiManagerImpl;
 import com.intellij.psi.impl.PsiTreeChangeEventImpl;
 import com.intellij.util.FileContentUtilCore;
+import com.intellij.util.KeyedLazyInstance;
 import com.intellij.util.messages.MessageBusConnection;
 import one.util.streamex.StreamEx;
 import org.jetbrains.annotations.NotNull;
@@ -66,6 +70,31 @@ public final class PsiVFSListener implements BulkFileListener {
     @Override
     public void runActivity(@NotNull Project project) {
       MessageBusConnection connection = project.getMessageBus().connect();
+      
+      ExtensionPoint<KeyedLazyInstance<LanguageSubstitutor>> point = LanguageSubstitutors.getInstance().getPoint();
+      if (point != null) {
+        point.addExtensionPointListener(
+          new ExtensionPointListener<KeyedLazyInstance<LanguageSubstitutor>>() {
+
+            @Override
+            public void extensionRemoved(@NotNull KeyedLazyInstance<LanguageSubstitutor> extension,
+                                         @NotNull PluginDescriptor pluginDescriptor) {
+              if (project.isDisposed()) return;
+              
+              PsiManagerImpl psiManager = (PsiManagerImpl)PsiManager.getInstance(project);
+              ((FileManagerImpl)(psiManager.getFileManager())).processFileTypesChanged(true);
+            }
+
+            @Override
+            public void extensionAdded(@NotNull KeyedLazyInstance<LanguageSubstitutor> extension,
+                                       @NotNull PluginDescriptor pluginDescriptor) {
+              if (project.isDisposed()) return;
+              PsiManagerImpl psiManager = (PsiManagerImpl)PsiManager.getInstance(project);
+              ((FileManagerImpl)(psiManager.getFileManager())).processFileTypesChanged(true);
+            }
+          }, false, project);
+      }
+      
       connection.subscribe(ProjectTopics.PROJECT_ROOTS, new MyModuleRootListener(project));
       connection.subscribe(FileTypeManager.TOPIC, new FileTypeListener() {
         @Override

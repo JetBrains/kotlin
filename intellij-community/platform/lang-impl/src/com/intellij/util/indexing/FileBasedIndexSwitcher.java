@@ -32,14 +32,16 @@ public class FileBasedIndexSwitcher {
         FileBasedIndexImpl.LOG.assertTrue(mySemaphore.isUp());
         mySemaphore.down();
 
-        for (Project project : ProjectManager.getInstance().getOpenProjects()) {
-            DumbService.getInstance(project).queueTask(new DumbModeTask() {
-                @Override
-                public void performInDumbMode(@NotNull ProgressIndicator indicator) {
-                    indicator.setText(IdeBundle.message("progress.indexing.reload"));
-                    mySemaphore.waitFor();
-                }
-            });
+        if (!ApplicationManager.getApplication().isUnitTestMode()) {
+            for (Project project : ProjectManager.getInstance().getOpenProjects()) {
+                DumbService.getInstance(project).queueTask(new DumbModeTask() {
+                    @Override
+                    public void performInDumbMode(@NotNull ProgressIndicator indicator) {
+                        indicator.setText(IdeBundle.message("progress.indexing.reload"));
+                        mySemaphore.waitFor();
+                    }
+                });
+            }
         }
 
         myFileBasedIndex.performShutdown(true);
