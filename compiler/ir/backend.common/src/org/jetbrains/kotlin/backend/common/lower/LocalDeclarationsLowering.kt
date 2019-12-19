@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementVisitorVoidWithContext
 import org.jetbrains.kotlin.backend.common.ScopeWithIr
-import org.jetbrains.kotlin.backend.common.descriptors.*
+import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
@@ -411,9 +412,9 @@ class LocalDeclarationsLowering(
                     0,
                     localClassContext.capturedValueToField.map { (capturedValue, field) ->
                         IrSetFieldImpl(
-                            irClass.startOffset, irClass.endOffset, field.symbol,
-                            IrGetValueImpl(irClass.startOffset, irClass.endOffset, irClass.thisReceiver!!.symbol),
-                            constructorContext.irGet(irClass.startOffset, irClass.endOffset, capturedValue)!!,
+                            UNDEFINED_OFFSET, UNDEFINED_OFFSET, field.symbol,
+                            IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irClass.thisReceiver!!.symbol),
+                            constructorContext.irGet(UNDEFINED_OFFSET, UNDEFINED_OFFSET, capturedValue)!!,
                             context.irBuiltIns.unitType,
                             STATEMENT_ORIGIN_INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE
                         )

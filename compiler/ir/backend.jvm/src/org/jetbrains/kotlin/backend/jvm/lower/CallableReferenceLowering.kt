@@ -185,7 +185,6 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
 
         private fun createConstructor(): IrConstructor =
             functionReferenceClass.addConstructor {
-                setSourceRange(irFunctionReference)
                 origin = JvmLoweredDeclarationOrigin.GENERATED_MEMBER_IN_CALLABLE_REFERENCE
                 returnType = functionReferenceClass.defaultType
                 isPrimary = true
@@ -227,6 +226,7 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
 
         private fun createInvokeMethod(receiverVar: IrValueDeclaration?): IrSimpleFunction =
             functionReferenceClass.addFunction {
+                setSourceRange(if (isLambda) callee else irFunctionReference)
                 name = superMethod.owner.name
                 returnType = callee.returnType
                 isSuspend = callee.isSuspend
@@ -244,8 +244,9 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
             }
             valueParameters += valueParameterMap.values
 
-            body = context.createIrBuilder(symbol).irBlockBody(startOffset, endOffset) {
-                callee.body?.statements?.forEach { statement ->
+            val calleeBody = callee.body as IrBlockBody
+            body = context.createIrBuilder(symbol).irBlockBody(calleeBody.startOffset, calleeBody.endOffset) {
+                calleeBody.statements.forEach { statement ->
                     +statement.transform(object : IrElementTransformerVoid() {
                         override fun visitGetValue(expression: IrGetValue): IrExpression {
                             val replacement = valueParameterMap[expression.symbol.owner]
