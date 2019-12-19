@@ -4,16 +4,16 @@
       "1": [
         {
           "specVersion": "0.1-218",
-          "casesNumber": 6,
-          "description": "Both operands of a logical conjunction expression must have a type which is a subtype of kotlin.Boolean, otherwise it is a type error.",
+          "casesNumber": 7,
+          "description": "Both operands of a logical disjunction expression must have a type which is a subtype of kotlin.Boolean, otherwise it is a type error.",
           "unexpectedBehaviour": false
         }
       ],
       "2": [
         {
           "specVersion": "0.1-218",
-          "casesNumber": 6,
-          "description": "Both operands of a logical conjunction expression must have a type which is a subtype of kotlin.Boolean, otherwise it is a type error.",
+          "casesNumber": 7,
+          "description": "Both operands of a logical disjunction expression must have a type which is a subtype of kotlin.Boolean, otherwise it is a type error.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/logical-disjunction-expression/p-2/neg/1.1.kt",
           "unexpectedBehaviour": false
         }
@@ -24,7 +24,7 @@
         {
           "specVersion": "0.1-218",
           "casesNumber": 1,
-          "description": "Both operands of a logical conjunction expression must have a type which is a subtype of kotlin.Boolean",
+          "description": "Both operands of a logical disjunction expression must have a type which is a subtype of kotlin.Boolean",
           "unexpectedBehaviour": false
         }
       ],
@@ -32,7 +32,7 @@
         {
           "specVersion": "0.1-218",
           "casesNumber": 1,
-          "description": "Both operands of a logical conjunction expression must have a type which is a subtype of kotlin.Boolean",
+          "description": "Both operands of a logical disjunction expression must have a type which is a subtype of kotlin.Boolean",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/logical-disjunction-expression/p-2/pos/1.1.kt",
           "unexpectedBehaviour": false
         }
