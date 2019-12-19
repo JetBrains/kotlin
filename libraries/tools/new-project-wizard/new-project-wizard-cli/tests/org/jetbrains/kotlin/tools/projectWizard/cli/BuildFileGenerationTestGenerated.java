@@ -25,7 +25,7 @@ public class BuildFileGenerationTestGenerated extends AbstractBuildFileGeneratio
     }
 
     public void testAllFilesPresentInBuildFileGeneration() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/buildFileGeneration"), Pattern.compile("^([^\\.]+)$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/buildFileGeneration"), Pattern.compile("^([^\\.]+)$"), null, false);
     }
 
     @TestMetadata("android")
