@@ -763,10 +763,6 @@ public class KotlinTestUtils {
     }
 
     private static DoTest testWithCustomIgnoreDirective(DoTest test, TargetBackend targetBackend, String ignoreDirective) throws Exception {
-        if (targetBackend == TargetBackend.ANY && !AUTOMATICALLY_MUTE_FAILED_TESTS) {
-            return test;
-        }
-
         return filePath -> {
             File testDataFile = new File(filePath);
 
