@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irTemporary
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrDynamicOperatorExpressionImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -39,7 +38,6 @@ import org.jetbrains.kotlin.resolve.PropertyImportedFromObject
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
-import org.jetbrains.kotlin.resolve.scopes.receivers.ThisClassReceiver
 import org.jetbrains.kotlin.types.KotlinType
 
 class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
@@ -277,16 +275,10 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
                         isAssignmentReceiver = isAssignmentStatement
                     )
                 )
-            isValInitializationInConstructor(descriptor, resolvedCall) -> {
-                val thisClass = getThisClass()
-                val thisAsReceiverParameter = thisClass.thisAsReceiverParameter
-                val thisType = thisAsReceiverParameter.type.toIrType()
-                val irThis = IrGetValueImpl(
-                    ktLeft.startOffsetSkippingComments, ktLeft.endOffset,
-                    thisType,
-                    context.symbolTable.referenceValueParameter(thisAsReceiverParameter)
-                )
-                createBackingFieldLValue(ktLeft, descriptor, RematerializableValue(irThis), null)
+            origin == IrStatementOrigin.EQ && !descriptor.isVar -> {
+                // An assignment to a val property can only be its initialization in the constructor.
+                val receiver = resolvedCall.dispatchReceiver ?: descriptor.dispatchReceiverParameter?.value
+                createBackingFieldLValue(ktLeft, descriptor, statementGenerator.generateReceiverOrNull(ktLeft, receiver), null)
             }
             else -> {
                 val propertyReceiver = statementGenerator.generateCallReceiver(
@@ -355,12 +347,6 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
                 superQualifierSymbol
             )
     }
-
-    private fun isValInitializationInConstructor(descriptor: PropertyDescriptor, resolvedCall: ResolvedCall<*>): Boolean =
-        !descriptor.isVar &&
-                descriptor.kind != CallableMemberDescriptor.Kind.FAKE_OVERRIDE &&
-                statementGenerator.scopeOwner.let { it is ConstructorDescriptor || it is ClassDescriptor } &&
-                resolvedCall.dispatchReceiver is ThisClassReceiver
 
     private fun getThisClass(): ClassDescriptor {
         val scopeOwner = statementGenerator.scopeOwner
