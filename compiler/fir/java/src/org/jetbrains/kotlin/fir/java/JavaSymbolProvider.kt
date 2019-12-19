@@ -356,5 +356,5 @@ fun FqName.topLevelName() =
     asString().substringBefore(".")
 
 
-private val JAVA_ENHANCEMENT = scopeSessionKey<JavaClassEnhancementScope>()
-private val JAVA_USE_SITE = scopeSessionKey<JavaClassUseSiteMemberScope>()
+private val JAVA_ENHANCEMENT = scopeSessionKey<FirRegularClassSymbol, JavaClassEnhancementScope>()
+private val JAVA_USE_SITE = scopeSessionKey<FirRegularClassSymbol, JavaClassUseSiteMemberScope>()

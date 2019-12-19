@@ -38,25 +38,25 @@ fun lookupSuperTypes(
 }
 
 class ScopeSession {
-    private val scopes = hashMapOf<FirClassifierSymbol<*>, HashMap<ScopeSessionKey<*>, FirScope>>()
-    fun <T : FirScope> getOrBuild(symbol: FirClassifierSymbol<*>, key: ScopeSessionKey<T>, build: () -> T): T {
-        return scopes.getOrPut(symbol) {
+    private val scopes = hashMapOf<Any, HashMap<ScopeSessionKey<*, *>, FirScope>>()
+    fun <ID : Any, FS : FirScope> getOrBuild(id: ID, key: ScopeSessionKey<ID, FS>, build: () -> FS): FS {
+        return scopes.getOrPut(id) {
             hashMapOf()
         }.getOrPut(key) {
             build()
-        } as T
+        } as FS
     }
 }
 
-abstract class ScopeSessionKey<T : FirScope>()
+abstract class ScopeSessionKey<ID : Any, FS : FirScope>
 
-inline fun <reified T : FirScope> scopeSessionKey(): ScopeSessionKey<T> {
-    return object : ScopeSessionKey<T>() {}
+inline fun <reified ID : Any, reified FS : FirScope> scopeSessionKey(): ScopeSessionKey<ID, FS> {
+    return object : ScopeSessionKey<ID, FS>() {}
 }
 
-val USE_SITE = scopeSessionKey<FirScope>()
+val USE_SITE = scopeSessionKey<FirClassSymbol<*>, FirScope>()
 
-data class SubstitutionScopeKey(val type: ConeClassLikeType) : ScopeSessionKey<FirClassSubstitutionScope>() {}
+data class SubstitutionScopeKey(val type: ConeClassLikeType) : ScopeSessionKey<FirClassLikeSymbol<*>, FirClassSubstitutionScope>() {}
 
 fun FirClassSymbol<*>.buildUseSiteMemberScope(useSiteSession: FirSession, builder: ScopeSession): FirScope? {
     return when (this) {

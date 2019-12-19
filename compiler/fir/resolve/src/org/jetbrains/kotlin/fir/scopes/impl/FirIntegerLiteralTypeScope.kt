@@ -76,7 +76,7 @@ class FirIntegerLiteralTypeScope(private val session: FirSession) : FirScope() {
         private val ALL_OPERATORS = FirIntegerOperator.Kind.values().map { it.operatorName to it }.toMap()
 
         val ILT_SYMBOL: FirClassifierSymbol<*> = FirIntegerLiteralTypeClassifierSymbol
-        val SCOPE_SESSION_KEY = scopeSessionKey<FirIntegerLiteralTypeScope>()
+        val SCOPE_SESSION_KEY = scopeSessionKey<FirClassifierSymbol<*>, FirIntegerLiteralTypeScope>()
     }
 
     private val BINARY_OPERATOR_SYMBOLS = BINARY_OPERATOR_NAMES.map { name ->
