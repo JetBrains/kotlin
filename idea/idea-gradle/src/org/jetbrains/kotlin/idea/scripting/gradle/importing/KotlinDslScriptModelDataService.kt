@@ -69,8 +69,7 @@ class KotlinDslScriptModelDataService : AbstractProjectDataService<ProjectData, 
             val scriptFile = File(buildScript.file)
             val virtualFile = VfsUtil.findFile(scriptFile.toPath(), true)!!
 
-            // todo(KT-34440): take inputs snapshot before starting import
-            val inputs = getGradleScriptInputsStamp(project, virtualFile)
+            val inputs = getGradleScriptInputsStamp(project, virtualFile, givenTimeStamp = buildScript.inputsTimeStamp)
 
             val definition = virtualFile.findScriptDefinition(project) ?: return@forEach
 

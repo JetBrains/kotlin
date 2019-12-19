@@ -102,7 +102,7 @@ private class ScriptConfigurationSnapshotForFS(
 
 private var VirtualFile.scriptConfigurationSnapshot: ScriptConfigurationSnapshotForFS? by cachedFileAttribute(
     name = "kotlin-script-dependencies",
-    version = 4,
+    version = 5,
     read = { readObject<ScriptConfigurationSnapshotForFS>() },
     write = { writeObject<ScriptConfigurationSnapshotForFS>(it) }
 )

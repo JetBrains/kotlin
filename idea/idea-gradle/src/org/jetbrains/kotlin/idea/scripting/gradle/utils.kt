@@ -56,7 +56,8 @@ fun getAffectedGradleProjectFiles(project: Project): List<File> {
 fun getGradleScriptInputsStamp(
     project: Project,
     file: VirtualFile,
-    givenKtFile: KtFile? = null
+    givenKtFile: KtFile? = null,
+    givenTimeStamp: Long = System.currentTimeMillis()
 ): GradleKotlinScriptConfigurationInputs? {
     if (!isGradleKotlinScript(file)) return null
 
@@ -87,8 +88,7 @@ fun getGradleScriptInputsStamp(
                     }
                 }
 
-            val relatedFilesTimeStamp = project.service<GradleScriptInputsWatcher>().lastModifiedFileTimeStamp(file)
-            GradleKotlinScriptConfigurationInputs(result.toString(), file.timeStamp, relatedFilesTimeStamp)
+            GradleKotlinScriptConfigurationInputs(result.toString(), givenTimeStamp)
         } else null
     }
 }

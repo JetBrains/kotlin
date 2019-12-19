@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.idea.scripting.gradle.importing
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.project.ProjectData
 import com.intellij.openapi.util.Key
-import org.gradle.tooling.model.kotlin.dsl.EditorReportSeverity
-import org.gradle.tooling.model.kotlin.dsl.KotlinDslScriptsModel
 import org.jetbrains.kotlin.idea.util.NotNullableCopyableDataNodeUserDataProperty
 
 var DataNode<out ProjectData>.KOTLIN_DSL_SCRIPT_MODELS: MutableList<KotlinDslScriptModel>
@@ -22,6 +20,7 @@ var DataNode<out ProjectData>.KOTLIN_DSL_SCRIPT_MODELS: MutableList<KotlinDslScr
 
 data class KotlinDslScriptModel(
     val file: String,
+    val inputsTimeStamp: Long,
     val classPath: List<String>,
     val sourcePath: List<String>,
     val imports: List<String>,
