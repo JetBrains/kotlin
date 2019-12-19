@@ -1,9 +1,11 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.service.execution;
 
-import com.intellij.build.*;
+import com.intellij.build.BuildProgressListener;
+import com.intellij.build.BuildViewManager;
 import com.intellij.diagnostic.logging.LogConfigurationPanel;
-import com.intellij.execution.*;
+import com.intellij.execution.ExecutionBundle;
+import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.console.DuplexConsoleView;
 import com.intellij.execution.impl.ConsoleViewImpl;
@@ -30,7 +32,9 @@ import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.options.SettingsEditorGroup;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.impl.DirectoryIndex;
-import com.intellij.openapi.util.*;
+import com.intellij.openapi.util.InvalidDataException;
+import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -51,11 +55,6 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.Collections;
 
-import static com.intellij.openapi.util.text.StringUtil.nullize;
-
-/**
- * @author Denis Zhdanov
- */
 public class ExternalSystemRunConfiguration extends LocatableConfigurationBase implements SearchScopeProvidingRunProfile {
   static final ExtensionPointName<ExternalSystemRunConfigurationExtension> EP_NAME
     = ExtensionPointName.create("com.intellij.externalSystem.runConfigurationExtension");

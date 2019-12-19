@@ -1,7 +1,10 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.ui;
 
-import com.intellij.execution.*;
+import com.intellij.execution.ExecutionBundle;
+import com.intellij.execution.Executor;
+import com.intellij.execution.KillableProcess;
+import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.dashboard.RunDashboardManager;
 import com.intellij.execution.process.ProcessAdapter;
@@ -19,8 +22,8 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.*;
+import com.intellij.openapi.wm.RegisterToolWindowTask;
 import com.intellij.openapi.wm.ToolWindow;
-import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.openapi.wm.ex.ToolWindowManagerEx;
 import com.intellij.openapi.wm.ex.ToolWindowManagerListener;
@@ -67,11 +70,8 @@ public final class RunContentManagerImpl implements RunContentManager, Disposabl
   // must be called on EDT
   private void init() {
     ToolWindowManagerEx toolWindowManager = ToolWindowManagerEx.getInstanceEx(myProject);
-    if (toolWindowManager == null) {
-      return;
-    }
 
-    for (Executor executor : ExecutorRegistry.getInstance().getRegisteredExecutors()) {
+    for (Executor executor : Executor.EXECUTOR_EXTENSION_NAME.getExtensionList()) {
       registerToolWindow(executor, toolWindowManager);
     }
 
@@ -101,14 +101,14 @@ public final class RunContentManagerImpl implements RunContentManager, Disposabl
   public void dispose() {
   }
 
-  private void registerToolWindow(@NotNull final Executor executor, @NotNull ToolWindowManagerEx toolWindowManager) {
-    final String toolWindowId = executor.getToolWindowId();
+  private void registerToolWindow(@NotNull Executor executor, @NotNull ToolWindowManagerEx toolWindowManager) {
+    String toolWindowId = executor.getToolWindowId();
     if (toolWindowManager.getToolWindow(toolWindowId) != null) {
       return;
     }
 
-    final ToolWindow toolWindow = toolWindowManager.registerToolWindow(toolWindowId, true, ToolWindowAnchor.BOTTOM, this, true);
-    final ContentManager contentManager = toolWindow.getContentManager();
+    ToolWindow toolWindow = toolWindowManager.registerToolWindow(RegisterToolWindowTask.closable(toolWindowId));
+    ContentManager contentManager = toolWindow.getContentManager();
     contentManager.addDataProvider(new DataProvider() {
       private int myInsideGetData = 0;
 

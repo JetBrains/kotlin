@@ -1,16 +1,13 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-
 package com.intellij.execution.impl;
 
 import com.intellij.execution.ExecutionBundle;
 import com.intellij.execution.Executor;
-import com.intellij.execution.ExecutorRegistry;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.DataManager;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
@@ -62,14 +59,11 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
   private boolean myIsAllowRunningInParallel = false;
   private String myFolderName;
   private boolean myChangingNameFromCode;
-  private VcsIgnoreManager myVcsIgnoreManager;
 
   private SingleConfigurationConfigurable(@NotNull RunnerAndConfigurationSettings settings, @Nullable Executor executor) {
     super(new ConfigurationSettingsEditorWrapper(settings), settings);
 
     myExecutor = executor;
-
-    myVcsIgnoreManager = ServiceManager.getService(getConfiguration().getProject(), VcsIgnoreManager.class);
 
     final Config configuration = getConfiguration();
     myDisplayName = getSettings().getName();
@@ -184,8 +178,8 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
         snapshot = createSnapshot(false);
         snapshot.setName(getNameText());
         snapshot.checkSettings(myExecutor);
-        for (Executor executor : ExecutorRegistry.getInstance().getRegisteredExecutors()) {
-          ProgramRunner runner = ProgramRunner.getRunner(executor.getId(), snapshot.getConfiguration());
+        for (Executor executor : Executor.EXECUTOR_EXTENSION_NAME.getExtensionList()) {
+          ProgramRunner<?> runner = ProgramRunner.getRunner(executor.getId(), snapshot.getConfiguration());
           if (runner != null) {
             checkConfiguration(runner, snapshot);
           }
@@ -221,10 +215,9 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
     return quickFix;
   }
 
-  private static void checkConfiguration(final ProgramRunner runner, final RunnerAndConfigurationSettings snapshot)
-      throws RuntimeConfigurationException {
-    final RunnerSettings runnerSettings = snapshot.getRunnerSettings(runner);
-    final ConfigurationPerRunnerSettings configurationSettings = snapshot.getConfigurationSettings(runner);
+  private static void checkConfiguration(@NotNull ProgramRunner<?> runner, @NotNull RunnerAndConfigurationSettings snapshot) throws RuntimeConfigurationException {
+    RunnerSettings runnerSettings = snapshot.getRunnerSettings(runner);
+    ConfigurationPerRunnerSettings configurationSettings = snapshot.getConfigurationSettings(runner);
     try {
       runner.checkConfiguration(runnerSettings, configurationSettings);
     }
@@ -338,13 +331,11 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
     private JPanel myValidationPanel;
     private JBScrollPane myJBScrollPane;
     private JPanel myCbStoreProjectConfigurationPanel;
-    private final Project myProject;
     private final ComponentValidator myCbStoreProjectConfigurationValidator;
 
     private Runnable myQuickFix = null;
 
     MyValidatableComponent(@NotNull Project project) {
-      myProject = project;
       myNameLabel.setLabelFor(myNameText);
       myNameText.setDocument(myNameDocument);
 
@@ -377,7 +368,7 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
             @Override
             public void hyperlinkUpdate(HyperlinkEvent e) {
               if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                myVcsIgnoreManager.removeRunConfigurationFromVcsIgnore(getConfiguration().getName());
+                VcsIgnoreManager.getInstance(getConfiguration().getProject()).removeRunConfigurationFromVcsIgnore(getConfiguration().getName());
                 myCbStoreProjectConfigurationValidator.revalidate();
               }
             }
@@ -396,10 +387,10 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
       myJBScrollPane.setViewportBorder(JBUI.Borders.empty());
 
       ComponentPanelBuilder componentPanelBuilder = new ComponentPanelBuilder(myCbStoreProjectConfiguration);
-      @SystemIndependent VirtualFile projectFile = myProject.getProjectFile();
+      @SystemIndependent VirtualFile projectFile = project.getProjectFile();
       if (projectFile != null) {
         componentPanelBuilder.withTooltip(
-          ProjectKt.isDirectoryBased(myProject)
+          ProjectKt.isDirectoryBased(project)
           ? ExecutionBundle.message("run.configuration.share.hint", ".idea folder")
           : ExecutionBundle.message("run.configuration.share.hint", projectFile.getName())
         );
@@ -424,7 +415,7 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
         return new ValidationInfo(ExecutionBundle.message("run.configuration.share.vcs.disabled", fileAddToVcs),
                                   myCbStoreProjectConfiguration).asWarning();
       }
-      else if (myVcsIgnoreManager.isRunConfigurationVcsIgnored(getConfiguration().getName())) {
+      else if (VcsIgnoreManager.getInstance(getConfiguration().getProject()).isRunConfigurationVcsIgnored(getConfiguration().getName())) {
         return new ValidationInfo(ExecutionBundle.message("run.configuration.share.vcs.ignored", getConfiguration().getName()),
                                   myCbStoreProjectConfiguration).asWarning();
       }

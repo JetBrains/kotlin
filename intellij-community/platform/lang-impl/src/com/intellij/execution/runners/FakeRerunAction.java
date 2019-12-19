@@ -72,7 +72,10 @@ public class FakeRerunAction extends AnAction  {
     ProcessHandler processHandler = descriptor == null ? null : descriptor.getProcessHandler();
     ExecutionEnvironment environment = getEnvironment(event);
     Project project = getEventProject(event);
-    if (environment == null || project == null) return false;
+    if (environment == null || project == null) {
+      return false;
+    }
+
     RunnerAndConfigurationSettings settings = environment.getRunnerAndConfigurationSettings();
     return (!DumbService.isDumb(project) || settings == null || settings.getType().isDumbAware()) &&
            !ExecutionManager.getInstance(project).isStarting(environment) &&
