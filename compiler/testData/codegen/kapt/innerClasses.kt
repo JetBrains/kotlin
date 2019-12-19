@@ -1,3 +1,4 @@
+// !LANGUAGE: +UseGetterNameForPropertyAnnotationsMethodOnJvm
 // WITH_RUNTIME
 
 package test

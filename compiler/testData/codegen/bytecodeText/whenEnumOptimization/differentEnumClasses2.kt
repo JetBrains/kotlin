@@ -1,3 +1,5 @@
+// !LANGUAGE: -ProhibitComparisonOfIncompatibleEnums
+
 enum class A {
     OK
 }
