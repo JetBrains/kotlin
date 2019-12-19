@@ -40,14 +40,6 @@ open class GradleScriptListener(project: Project) : ScriptChangeListener(project
     }
 
     override fun isApplicable(vFile: VirtualFile): Boolean {
-        val gradleSettings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID)
-        if (gradleSettings.getLinkedProjectsSettings().isEmpty()) return false
-
-        val projectSettings = gradleSettings.getLinkedProjectsSettings().filterIsInstance<GradleProjectSettings>().firstOrNull()
-            ?: return false
-
-        val affectedFiles = ExternalSystemApiUtil.getAllManagers().filterIsInstance<GradleManager>().firstOrNull()
-            ?.getAffectedExternalProjectFiles(projectSettings.externalProjectPath, project)
-        return affectedFiles?.any { it.toPath().systemIndependentPath == vFile.path } == true
+        return isInAffectedGradleProjectFiles(project, vFile)
     }
 }
