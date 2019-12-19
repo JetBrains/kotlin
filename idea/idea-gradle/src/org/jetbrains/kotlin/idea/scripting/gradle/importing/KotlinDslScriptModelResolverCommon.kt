@@ -61,8 +61,10 @@ abstract class KotlinDslScriptModelResolverCommon : AbstractProjectResolverExten
                     ))
             }
 
+            // todo(KT-34440): take inputs snapshot before starting import
             KotlinDslScriptModel(
                 file.absolutePath,
+                System.currentTimeMillis(),
                 model.classPath.map { it.absolutePath },
                 model.sourcePath.map { it.absolutePath },
                 model.implicitImports,

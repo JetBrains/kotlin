@@ -18,23 +18,17 @@ import org.jetbrains.kotlin.psi.KtFile
  * 2. When some related file is changed (other gradle script, gradle.properties file)
  * @see GradleScriptInputsWatcher.areRelatedFilesUpToDate
  *
- * [inputsTimeStamp] is needed to check if some related file was changed between updates
- * [relatedFilesTimeStamp] is needed to check if we already loaded a configuration after the last related file change
- *
- * In case when [relatedFilesTimeStamp]s are equal there is no needs to check if related files were changed
+ * [inputsTS] is needed to check if some related file was changed since last update
  */
 data class GradleKotlinScriptConfigurationInputs(
     val sections: String,
-    val inputsTimeStamp: Long,
-    val relatedFilesTimeStamp: Long
+    val inputsTS: Long
 ) : CachedConfigurationInputs {
     override fun isUpToDate(project: Project, file: VirtualFile, ktFile: KtFile?): Boolean {
         val actualStamp = getGradleScriptInputsStamp(project, file, ktFile) ?: return false
 
         if (actualStamp.sections != this.sections) return false
 
-        if (actualStamp.relatedFilesTimeStamp == this.relatedFilesTimeStamp) return true
-
-        return project.service<GradleScriptInputsWatcher>().areRelatedFilesUpToDate(file, inputsTimeStamp)
+        return project.service<GradleScriptInputsWatcher>().areRelatedFilesUpToDate(file, inputsTS)
     }
 }

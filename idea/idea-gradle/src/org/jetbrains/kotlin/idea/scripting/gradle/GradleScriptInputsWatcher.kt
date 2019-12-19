@@ -40,10 +40,8 @@ class GradleScriptInputsWatcher(val project: Project) : PersistentStateComponent
         }
     }
 
-    fun lastModifiedFileTimeStamp(file: VirtualFile): Long = storage.lastModifiedTimeStampExcept(file)
-
     fun areRelatedFilesUpToDate(file: VirtualFile, timeStamp: Long): Boolean {
-        return lastModifiedFileTimeStamp(file) < timeStamp
+        return storage.lastModifiedTimeStampExcept(file) < timeStamp
     }
 
     class Storage(
