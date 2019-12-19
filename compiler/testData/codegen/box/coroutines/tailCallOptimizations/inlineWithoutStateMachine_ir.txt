@@ -24,9 +24,7 @@ final class InlineWithoutStateMachineKt$complexSuspend$1 {
 }
 
 @kotlin.Metadata
-@kotlin.coroutines.jvm.internal.DebugMetadata
 final class InlineWithoutStateMachineKt$suspendHere$1 {
-    field L$0: java.lang.Object
     field label: int
     @org.jetbrains.annotations.NotNull field result: java.lang.Object
     public method <init>(p0: kotlin.coroutines.Continuation): void

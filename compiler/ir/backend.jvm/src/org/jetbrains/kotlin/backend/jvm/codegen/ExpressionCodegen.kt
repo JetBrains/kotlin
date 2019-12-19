@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
@@ -400,7 +401,7 @@ class ExpressionCodegen(
             }
             expression.symbol.descriptor is ConstructorDescriptor ->
                 throw AssertionError("IrCall with ConstructorDescriptor: ${expression.javaClass.simpleName}")
-            callee.isSuspend && !irFunction.shouldNotContainSuspendMarkers() ->
+            callee.shouldGenerateSuspendMarkers() ->
                 addInlineMarker(mv, isStartNotEnd = true)
         }
 
@@ -426,13 +427,20 @@ class ExpressionCodegen(
         expression.markLineNumber(true)
 
         // Do not generate redundant markers in continuation class.
-        if (callee.isSuspend && !irFunction.shouldNotContainSuspendMarkers()) {
+        if (callee.shouldGenerateSuspendMarkers()) {
             addSuspendMarker(mv, isStartNotEnd = true)
         }
 
         callGenerator.genCall(callable, this, expression)
 
-        if (callee.isSuspend && !irFunction.shouldNotContainSuspendMarkers()) {
+        if (callee.shouldGenerateSuspendMarkers()) {
+            // Check return type of non-lowered suspend call, in order to replace the result of the call with Unit,
+            // otherwise, it would seem like the call returns non-unit upon resume.
+            // See box/coroutines/tailCallOptimization/unit tests.
+            if (context.suspendFunctionViewToOriginal[expression.symbol.owner]?.returnType?.isUnit() == true) {
+                addReturnsUnitMarker(mv)
+            }
+
             addSuspendMarker(mv, isStartNotEnd = false)
             addInlineMarker(mv, isStartNotEnd = false)
         }
@@ -455,6 +463,12 @@ class ExpressionCodegen(
             else ->
                 MaterialValue(this, callable.asmMethod.returnType, returnType).coerce(expression.type)
         }
+    }
+
+    private fun IrFunction.shouldGenerateSuspendMarkers(): Boolean {
+        if (!isSuspend) return false
+        if (irFunction.shouldNotContainSuspendMarkers()) return false
+        return !symbol.owner.isInline || fqNameForIrSerialization == FqName("kotlin.coroutines.intrinsics.IntrinsicsKt.suspendCoroutineUninterceptedOrReturn")
     }
 
     override fun visitVariable(declaration: IrVariable, data: BlockInfo): PromisedValue {

@@ -423,7 +423,7 @@ internal fun addReturnsUnitMarkerIfNecessary(v: InstructionAdapter, resolvedCall
     }
 }
 
-private fun addReturnsUnitMarker(v: InstructionAdapter) {
+fun addReturnsUnitMarker(v: InstructionAdapter) {
     v.emitInlineMarker(INLINE_MARKER_RETURNS_UNIT)
 }
 
