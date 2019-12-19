@@ -5,7 +5,7 @@ fun foo() = 1
 val nonConst = foo()
 
 annotation class ValidAnn(
-    val p1: Int = 1 <!AMBIGUITY!>+<!> CONST,
+    val p1: Int = 1 + CONST,
     val p2: String = "",
     val p3: KClass<*> = String::class,
     val p4: IntArray = intArrayOf(1, 2, 3),

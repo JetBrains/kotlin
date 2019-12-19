@@ -137,7 +137,8 @@ class FirCallResolver(
         val result = towerResolver.runResolver(
             consumer,
             implicitReceiverStack.receiversAsReversed(),
-            shouldProcessExtensionsBeforeMembers = name in HIDES_MEMBERS_NAME_LIST
+            shouldProcessExtensionsBeforeMembers = name in HIDES_MEMBERS_NAME_LIST,
+            shouldProcessExplicitReceiverScopeOnly = explicitReceiver?.typeRef?.coneTypeSafe<ConeIntegerLiteralType>() != null
         )
         val bestCandidates = result.bestCandidates()
         val reducedCandidates = if (result.currentApplicability < CandidateApplicability.SYNTHETIC_RESOLVED) {

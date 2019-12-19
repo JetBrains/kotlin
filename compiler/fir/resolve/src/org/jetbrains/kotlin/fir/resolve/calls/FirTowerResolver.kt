@@ -184,7 +184,8 @@ class FirTowerResolver(
     fun runResolver(
         consumer: TowerDataConsumer,
         implicitReceiverValues: List<ImplicitReceiverValue<*>>,
-        shouldProcessExtensionsBeforeMembers: Boolean = false
+        shouldProcessExtensionsBeforeMembers: Boolean = false,
+        shouldProcessExplicitReceiverScopeOnly: Boolean = false
     ): CandidateCollector {
         this.implicitReceiverValues = implicitReceiverValues
         towerDataConsumer = consumer
@@ -202,6 +203,10 @@ class FirTowerResolver(
         // class Foo(val x: Int)
         // fun test(f: Foo) { f.x }
         towerDataConsumer.consume(EMPTY, TowerScopeLevel.Empty, group++)
+
+        if (shouldProcessExplicitReceiverScopeOnly) {
+            return collector
+        }
 
         // Member of local scope
         // fun test(x: Int) = x
