@@ -1,4 +1,4 @@
-// !LANGUAGE: +InlineClasses
+// !LANGUAGE: +InlineClasses -UseGetterNameForPropertyAnnotationsMethodOnJvm
 
 interface IFoo {
     fun overridingFun()

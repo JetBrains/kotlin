@@ -1,3 +1,4 @@
+// !LANGUAGE: -UseGetterNameForPropertyAnnotationsMethodOnJvm
 // WITH_RUNTIME
 
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
