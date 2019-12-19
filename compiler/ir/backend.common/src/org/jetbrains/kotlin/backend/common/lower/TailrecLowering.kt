@@ -17,20 +17,20 @@
 package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.BackendContext
-import org.jetbrains.kotlin.backend.common.FunctionLoweringPass
+import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.collectTailRecursionCalls
 import org.jetbrains.kotlin.backend.common.deepCopyWithVariables
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.util.explicitParameters
 import org.jetbrains.kotlin.ir.util.getArgumentsWithIr
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 /**
@@ -39,9 +39,24 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  * Note: it currently can't handle local functions and classes declared in default arguments.
  * See [deepCopyWithVariables].
  */
-open class TailrecLowering(val context: BackendContext) : FunctionLoweringPass {
-    override fun lower(irFunction: IrFunction) {
-        lowerTailRecursionCalls(context, irFunction, useProperComputationOrderOfTailrecDefaultParameters())
+open class TailrecLowering(val context: BackendContext) : BodyLoweringPass {
+    override fun lower(irBody: IrBody, container: IrDeclaration) {
+        if (container is IrFunction) {
+            // TODO Shouldn't this be done after local declarations lowering?
+            // Lower local declarations
+            irBody.acceptChildrenVoid(object : IrElementVisitorVoid {
+                override fun visitElement(element: IrElement) {
+                    element.acceptChildrenVoid(this)
+                }
+
+                override fun visitFunction(declaration: IrFunction) {
+                    declaration.acceptChildrenVoid(this)
+                    lowerTailRecursionCalls(context, declaration, useProperComputationOrderOfTailrecDefaultParameters())
+                }
+            })
+
+            lowerTailRecursionCalls(context, container, useProperComputationOrderOfTailrecDefaultParameters())
+        }
     }
 
     open fun useProperComputationOrderOfTailrecDefaultParameters() = true
@@ -54,11 +69,13 @@ private fun lowerTailRecursionCalls(context: BackendContext, irFunction: IrFunct
     }
 
     val oldBody = irFunction.body as IrBlockBody
+    val oldBodyStatements = ArrayList(oldBody.statements)
     val builder = context.createIrBuilder(irFunction.symbol).at(oldBody)
 
     val parameters = irFunction.explicitParameters
 
-    irFunction.body = builder.irBlockBody {
+    oldBody.statements.clear()
+    oldBody.statements += builder.irBlockBody {
         // Define variables containing current values of parameters:
         val parameterToVariable = parameters.associate {
             it to createTmpVariable(irGet(it), nameHint = it.symbol.suggestVariableName(), isMutable = true)
@@ -82,14 +99,14 @@ private fun lowerTailRecursionCalls(context: BackendContext, irFunction: IrFunct
                     properComputationOrderOfTailrecDefaultParameters
                 )
 
-                oldBody.statements.forEach {
+                oldBodyStatements.forEach {
                     +it.transform(transformer, null)
                 }
 
                 +irBreak(loop)
             }
         }
-    }
+    }.statements
 }
 
 private class BodyTransformer(
