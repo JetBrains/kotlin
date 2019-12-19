@@ -83,6 +83,11 @@ public class CommonDecompiledTextTestGenerated extends AbstractCommonDecompiledT
         runTest("idea/testData/decompiler/decompiledText/FlexibleTypes/");
     }
 
+    @TestMetadata("FunInterfaceDeclaration")
+    public void testFunInterfaceDeclaration() throws Exception {
+        runTest("idea/testData/decompiler/decompiledText/FunInterfaceDeclaration/");
+    }
+
     @TestMetadata("FunctionTypes")
     public void testFunctionTypes() throws Exception {
         runTest("idea/testData/decompiler/decompiledText/FunctionTypes/");
@@ -278,6 +283,19 @@ public class CommonDecompiledTextTestGenerated extends AbstractCommonDecompiledT
 
         public void testAllFilesPresentInFlexibleTypes() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/decompiler/decompiledText/FlexibleTypes"), Pattern.compile("^([^\\.]+)$"), null, true);
+        }
+    }
+
+    @TestMetadata("idea/testData/decompiler/decompiledText/FunInterfaceDeclaration")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class FunInterfaceDeclaration extends AbstractCommonDecompiledTextTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInFunInterfaceDeclaration() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/decompiler/decompiledText/FunInterfaceDeclaration"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
     }
 

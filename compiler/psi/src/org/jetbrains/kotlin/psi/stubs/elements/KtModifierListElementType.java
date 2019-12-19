@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.psi.stubs.elements;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
+import com.intellij.util.io.DataInputOutputUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.psi.KtModifierList;
@@ -41,14 +42,14 @@ public class KtModifierListElementType<T extends KtModifierList> extends KtStubE
 
     @Override
     public void serialize(@NotNull KotlinModifierListStub stub, @NotNull StubOutputStream dataStream) throws IOException {
-        int mask = ((KotlinModifierListStubImpl) stub).getMask();
-        dataStream.writeVarInt(mask);
+        long mask = ((KotlinModifierListStubImpl) stub).getMask();
+        DataInputOutputUtil.writeLONG(dataStream, mask);
     }
 
     @NotNull
     @Override
     public KotlinModifierListStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
-        int mask = dataStream.readVarInt();
+        long mask = DataInputOutputUtil.readLONG(dataStream);
         return new KotlinModifierListStubImpl(parentStub, mask, this);
     }
 }

@@ -25,14 +25,14 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtModifierListElementType;
 
 public class KotlinModifierListStubImpl extends KotlinStubBaseImpl<KtDeclarationModifierList> implements KotlinModifierListStub {
 
-    private final int mask;
+    private final long mask;
 
-    public KotlinModifierListStubImpl(StubElement parent, int mask, @NotNull KtModifierListElementType<?> elementType) {
+    public KotlinModifierListStubImpl(StubElement parent, long mask, @NotNull KtModifierListElementType<?> elementType) {
         super(parent, elementType);
         this.mask = mask;
     }
 
-    public int getMask() {
+    public long getMask() {
         return mask;
     }
 

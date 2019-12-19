@@ -118,6 +118,11 @@ public class ClsStubBuilderTestGenerated extends AbstractClsStubBuilderTest {
         runTest("idea/testData/decompiler/stubBuilder/FlexibleTypes/");
     }
 
+    @TestMetadata("FunInterfaceDeclaration")
+    public void testFunInterfaceDeclaration() throws Exception {
+        runTest("idea/testData/decompiler/stubBuilder/FunInterfaceDeclaration/");
+    }
+
     @TestMetadata("InheritingClasses")
     public void testInheritingClasses() throws Exception {
         runTest("idea/testData/decompiler/stubBuilder/InheritingClasses/");

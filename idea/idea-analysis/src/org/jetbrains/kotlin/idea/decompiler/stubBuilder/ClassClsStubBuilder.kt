@@ -104,6 +104,9 @@ private class ClassClsStubBuilder(
             relevantFlags.add(MODALITY)
             relevantFlags.add(INLINE_CLASS)
         }
+        if (isInterface()) {
+            relevantFlags.add(FUN_INTERFACE)
+        }
         val additionalModifiers = when (classKind) {
             ProtoBuf.Class.Kind.ENUM_CLASS -> listOf(KtTokens.ENUM_KEYWORD)
             ProtoBuf.Class.Kind.COMPANION_OBJECT -> listOf(KtTokens.COMPANION_KEYWORD)
@@ -225,6 +228,10 @@ private class ClassClsStubBuilder(
         return classKind == ProtoBuf.Class.Kind.CLASS ||
                 classKind == ProtoBuf.Class.Kind.ENUM_CLASS ||
                 classKind == ProtoBuf.Class.Kind.ANNOTATION_CLASS
+    }
+
+    private fun isInterface(): Boolean {
+        return classKind == ProtoBuf.Class.Kind.INTERFACE
     }
 
     private fun createInnerAndNestedClasses(classBody: KotlinPlaceHolderStubImpl<KtClassBody>) {
