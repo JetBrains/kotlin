@@ -8,11 +8,12 @@ import com.intellij.execution.ui.RunContentManagerImpl;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.DataManager;
 import com.intellij.ide.impl.ContentManagerWatcher;
+import com.intellij.ide.startup.StartupManagerEx;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.DataProvider;
-import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
@@ -20,6 +21,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.RegisterToolWindowTask;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
+import com.intellij.ui.GuiUtils;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentManager;
 import com.intellij.ui.content.TabbedContent;
@@ -51,6 +53,8 @@ public final class BuildContentManagerImpl implements BuildContentManager {
 
   private final Project myProject;
   private final Map<Content, Pair<Icon, AtomicInteger>> liveContentsMap = ContainerUtil.newConcurrentMap();
+
+  private static final Logger LOG = Logger.getInstance(BuildContentManagerImpl.class);
 
   public BuildContentManagerImpl(@NotNull Project project) {
     myProject = project;
@@ -87,17 +91,17 @@ public final class BuildContentManagerImpl implements BuildContentManager {
     return toolWindow;
   }
 
-  private void runAfterProjectOpened(@NotNull Runnable runnable) {
+  private void invokeLaterIfNeeded(@NotNull Runnable runnable) {
     if (myProject.isDefault()) {
       return;
     }
-    StartupManager.getInstance(myProject)
-      .runAfterOpened(() -> ApplicationManager.getApplication().invokeLater(runnable, myProject.getDisposed()));
+    LOG.assertTrue(StartupManagerEx.getInstanceEx(myProject).startupActivityPassed());
+    GuiUtils.invokeLaterIfNeeded(runnable, ModalityState.defaultModalityState(), myProject.getDisposed());
   }
 
   @Override
   public void addContent(Content content) {
-    runAfterProjectOpened(() -> {
+    invokeLaterIfNeeded(() -> {
       ContentManager contentManager = getOrCreateToolWindow().getContentManager();
       final String name = content.getTabName();
       final String category = StringUtil.trimEnd(StringUtil.split(name, " ").get(0), ':');
@@ -138,7 +142,7 @@ public final class BuildContentManagerImpl implements BuildContentManager {
   }
 
   public void updateTabDisplayName(Content content, String tabName) {
-    runAfterProjectOpened(() -> {
+    invokeLaterIfNeeded(() -> {
       if (!tabName.equals(content.getDisplayName())) {
         // we are going to adjust display name, so we need to ensure tab name is not retrieved based on display name
         content.setTabName(tabName);
@@ -149,7 +153,7 @@ public final class BuildContentManagerImpl implements BuildContentManager {
 
   @Override
   public void removeContent(Content content) {
-    runAfterProjectOpened(() -> {
+    invokeLaterIfNeeded(() -> {
       ToolWindow toolWindow = ToolWindowManager.getInstance(myProject).getToolWindow(TOOL_WINDOW_ID);
       ContentManager contentManager = toolWindow == null ? null : toolWindow.getContentManager();
       if (contentManager != null && (!contentManager.isDisposed())) {
@@ -164,7 +168,7 @@ public final class BuildContentManagerImpl implements BuildContentManager {
                                  boolean forcedFocus,
                                  boolean activate,
                                  @Nullable Runnable activationCallback) {
-    runAfterProjectOpened(() -> {
+    invokeLaterIfNeeded(() -> {
       ToolWindow toolWindow = getOrCreateToolWindow();
       if (!toolWindow.isAvailable()) {
         return;
@@ -206,7 +210,7 @@ public final class BuildContentManagerImpl implements BuildContentManager {
       }
       closeListenerMap.put(buildDescriptor.getId(), new CloseListener(content, processHandler));
     }
-    runAfterProjectOpened(() -> {
+    invokeLaterIfNeeded(() -> {
       Pair<Icon, AtomicInteger> pair = liveContentsMap.computeIfAbsent(content, c -> Pair.pair(c.getIcon(), new AtomicInteger(0)));
       pair.second.incrementAndGet();
       content.putUserData(ToolWindow.SHOW_CONTENT_ICON, Boolean.TRUE);
@@ -231,7 +235,7 @@ public final class BuildContentManagerImpl implements BuildContentManager {
         }
       }
     }
-    runAfterProjectOpened(() -> {
+    invokeLaterIfNeeded(() -> {
       Pair<Icon, AtomicInteger> pair = liveContentsMap.get(content);
       if (pair != null && pair.second.decrementAndGet() == 0) {
         content.setIcon(pair.first);
