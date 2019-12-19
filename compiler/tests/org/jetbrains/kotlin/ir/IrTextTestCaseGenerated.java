@@ -135,6 +135,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/classes/initVal.kt");
         }
 
+        @TestMetadata("initValInLambda.kt")
+        public void testInitValInLambda() throws Exception {
+            runTest("compiler/testData/ir/irText/classes/initValInLambda.kt");
+        }
+
         @TestMetadata("initVar.kt")
         public void testInitVar() throws Exception {
             runTest("compiler/testData/ir/irText/classes/initVar.kt");

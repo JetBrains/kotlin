@@ -589,7 +589,7 @@ fun main(args: Array<String>) {
 
     testGroup("compiler/fir/fir2ir/tests", "compiler/testData") {
         testClass<AbstractFir2IrTextTest> {
-            model("ir/irText")
+            model("ir/irText", targetBackend = TargetBackend.ANY_FIR)
         }
     }
 

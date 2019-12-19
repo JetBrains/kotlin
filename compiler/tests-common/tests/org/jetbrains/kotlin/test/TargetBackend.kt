@@ -10,6 +10,7 @@ enum class TargetBackend(
     private val compatibleWithTargetBackend: TargetBackend? = null
 ) {
     ANY(false),
+    ANY_FIR(true, ANY),
     JVM(false),
     JVM_IR(true, JVM),
     JS(false),
