@@ -25,4 +25,9 @@ interface KonanTestExecutable : Task {
      * or as its `doFirst` action.
      */
     var doBeforeBuild: Action<in Task>?
+
+    /**
+     * Build tasks that this [executable] depends on, or is built from.
+     */
+    val buildTasks: List<Task>
 }

@@ -12,8 +12,6 @@ import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.konan.properties.saveProperties
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_NATIVE_TARGETS
-import java.io.FileInputStream
-import java.io.IOException
 import java.io.File
 import java.util.concurrent.TimeUnit
 import java.net.HttpURLConnection
@@ -99,6 +97,9 @@ fun Project.getFilesToCompile(compile: List<String>, exclude: List<String>): Lis
 
 //region Task dependency.
 
+fun Project.findKonanBuildTask(artifact: String, target: KonanTarget): Task =
+    tasks.getByName("compileKonan${artifact.capitalize()}${target.name.capitalize()}")
+
 fun Project.dependsOnDist(taskName: String) {
     project.tasks.getByName(taskName).dependsOnDist()
 }
@@ -111,7 +112,7 @@ fun Task.dependsOnDist() {
         val target = project.testTarget
         if (target != HostManager.host) {
             // if a test_target property is set then tests should depend on a crossDist
-            // otherwise runtime components would not be build for a target.
+            // otherwise, runtime components would not be build for a target.
             dependsOn(rootTasks.getByName("${target.name}CrossDist"))
         }
     }
@@ -134,14 +135,14 @@ fun Task.sameDependenciesAs(task: Task) {
 }
 
 /**
- * Set dependency on [lib] built by the Konan Plugin for the [task],
- * also make [lib] depend on `dist` and all dependencies of the [task] to make [lib] execute before the [task].
+ * Set dependency on [artifact] built by the Konan Plugin for the receiver task,
+ * also make [artifact] depend on `dist` and all dependencies of the task to make [artifact] execute before the task.
  */
-fun Project.dependOnKonanBuildingTask(lib: String, target: KonanTarget, task: Task) {
-    val libTask = "compileKonan${lib.capitalize()}${target.name.capitalize()}"
-    this.dependsOnDist(libTask)
-    libTask.sameDependenciesAs(task)
-    task.dependsOn(libTask)
+fun Task.dependsOnKonanBuildingTask(artifact: String, target: KonanTarget) {
+    val buildTask = project.findKonanBuildTask(artifact, target)
+    buildTask.dependsOnDist()
+    buildTask.sameDependenciesAs(this)
+    dependsOn(buildTask)
 }
 
 //endregion
@@ -210,7 +211,7 @@ fun getBuild(buildLocator: String, user: String, password: String) =
 fun sendGetRequest(url: String, username: String? = null, password: String? = null) : String {
     val connection = URL(url).openConnection() as HttpURLConnection
     if (username != null && password != null) {
-        val auth = Base64.getEncoder().encode((username + ":" + password).toByteArray()).toString(Charsets.UTF_8)
+        val auth = Base64.getEncoder().encode(("$username:$password").toByteArray()).toString(Charsets.UTF_8)
         connection.addRequestProperty("Authorization", "Basic $auth")
     }
     connection.setRequestProperty("Accept", "application/json");

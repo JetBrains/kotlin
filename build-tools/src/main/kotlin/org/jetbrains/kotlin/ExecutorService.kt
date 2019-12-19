@@ -501,7 +501,8 @@ fun KonanTestExecutable.configureXcodeBuild() {
                         // Create a Frameworks folder inside the build dir.
                         it += "mkdir -p \"\$TARGET_BUILD_DIR/\$FRAMEWORKS_FOLDER_PATH\""
                         // Copy each framework to the Frameworks dir.
-                        it += frameworkArtifactNames.map { name ->
+                        it += frameworks.map { framework ->
+                            val name = framework.artifact
                             "cp -r \"$testOutput/$testName/${project.testTarget.name}/$name.framework\" " +
                                     "\"\$TARGET_BUILD_DIR/\$FRAMEWORKS_FOLDER_PATH/$name.framework\""
                         }

@@ -78,6 +78,9 @@ abstract class KonanTest : DefaultTask(), KonanTestExecutable {
     @Input @Optional
     override var doBeforeRun: Action<in Task>? = null
 
+    override val buildTasks: List<Task>
+        get() = listOf(project.findKonanBuildTask(name, project.testTarget))
+
     @Suppress("UnstableApiUsage")
     override fun configure(config: Closure<*>): Task {
         super.configure(config)
@@ -117,20 +120,19 @@ abstract class KonanTest : DefaultTask(), KonanTestExecutable {
 /**
  * Create a test task of the given type. Supports configuration with Closure passed form build.gradle file.
  */
-fun <T: KonanTest> Project.createTest(name: String, type: Class<T>, config: Closure<*>): T =
+fun <T: KonanTestExecutable> Project.createTest(name: String, type: Class<T>, config: Closure<*>): T =
         project.tasks.create(name, type).apply {
             // Apply closure set in build.gradle to get all parameters.
             this.configure(config)
             if (enabled) {
-                // Configure test task.
-                val target = project.testTarget
-                // If run task depends on something, compile task should also depend on this.
-                val compileTask = project.tasks.getByName("compileKonan${name.capitalize()}${target.name.capitalize()}")
-                compileTask.sameDependenciesAs(this)
-                // Run task should depend on compile task
-                this.dependsOn(compileTask)
-                doBeforeBuild?.let { compileTask.doFirst(it) }
-                compileTask.enabled = enabled
+                // If run task depends on something, build tasks should also depend on this.
+                buildTasks.forEach { buildTask ->
+                    buildTask.sameDependenciesAs(this)
+                    // Run task should depend on compile task
+                    this.dependsOn(buildTask)
+                    doBeforeBuild?.let { buildTask.doFirst(it) }
+                    buildTask.enabled = enabled
+                }
             }
         }
 
@@ -177,7 +179,7 @@ open class KonanGTest : KonanTest() {
                 .apply { if (find()) fail(group(1).toInt()) }
         if (total == 0) {
             // No test were run. Try to find if we've tried to run something
-            this.error(Pattern.compile("\\[={10}] Running ([0-9]*) tests from ([0-9]*) test cases\\..*")
+            error(Pattern.compile("\\[={10}] Running ([0-9]*) tests from ([0-9]*) test cases\\..*")
                     .matcher(output)
                     .run { if (find()) group(1).toInt() else 1 })
         }

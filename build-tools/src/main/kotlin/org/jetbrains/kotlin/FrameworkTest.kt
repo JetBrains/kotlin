@@ -4,10 +4,14 @@ import groovy.lang.Closure
 import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.Task
+import org.gradle.api.file.FileCollection
+import org.gradle.api.file.FileTree
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
+import org.gradle.language.base.plugins.LifecycleBasePlugin
 
 import org.jetbrains.kotlin.konan.target.*
+import java.io.File
 
 import java.io.FileWriter
 import java.nio.file.Files
@@ -21,7 +25,7 @@ import java.nio.file.Paths
  *
  * @property swiftSources  Swift-language test sources that use a given framework
  * @property testName test name
- * @property frameworkNames names of frameworks
+ * @property frameworks names of frameworks
  */
 open class FrameworkTest : DefaultTask(), KonanTestExecutable {
     @Input
@@ -31,10 +35,7 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
     lateinit var testName: String
 
     @Input
-    lateinit var frameworkNames: List<String>
-
-    @Input
-    lateinit var frameworkArtifactNames: List<String>
+    lateinit var frameworks: MutableList<Framework>
 
     @Input
     var fullBitcode: Boolean = false
@@ -43,6 +44,56 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
     var codesign: Boolean = true
 
     val testOutput: String = project.testOutputFramework
+
+    /**
+     * Framework description.
+     * @param name is the framework name,
+     * @param sources framework sources,
+     * @param bitcode bitcode embedding in the framework,
+     * @param artifact the name of the resulting artifact,
+     * @param library library dependency name,
+     * @param opts additional options for the compiler.
+     */
+    data class Framework(
+            val name: String,
+            val sources: List<String>,
+            val bitcode: Boolean = false,
+            val artifact: String = name,
+            val library: String? = null,
+            val opts: List<String> = emptyList()
+    )
+
+    @JvmOverloads
+    fun createFramework(name: String,
+                        sources: List<String>,
+                        bitcode: Boolean = false,
+                        artifact: String = name,
+                        library: String? = null,
+                        opts: List<String> = emptyList()
+    ) = Framework(
+            name,
+            sources.toFiles(Language.Kotlin).map { it.path },
+            bitcode, artifact, library, opts
+    ).also {
+        if (!::frameworks.isInitialized) {
+            frameworks = mutableListOf(it)
+        } else {
+            frameworks.add(it)
+        }
+    }
+
+    enum class Language(val extension: String) {
+        Kotlin(".kt"), ObjC(".m"), Swift(".swift")
+    }
+
+    fun Language.filesFrom(dir: String): FileTree = project.fileTree(dir) {
+        // include only files with 
+        it.include("*${this.extension}")
+    }
+
+    fun List<String>.toFiles(language: Language): List<File> =
+            this.map { language.filesFrom(it) }
+                    .flatMap { it.files }
 
     override val executable: String
         get() {
@@ -54,38 +105,31 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
 
     override var doBeforeBuild: Action<in Task>? = null
 
+    override val buildTasks: List<Task>
+        get() = frameworks.map { project.tasks.getByName("compileKonan${it.name}") }
+
+    @Suppress("UnstableApiUsage")
     override fun configure(config: Closure<*>): Task {
         super.configure(config)
-        val target = project.testTarget.name
-
         // set crossdist build dependency if custom konan.home wasn't set
-        if (!(project.property("useCustomDist") as Boolean)) {
-            setRootDependency("${target}CrossDist", "${target}CrossDistRuntime", "distCompiler")
-        }
+        this.dependsOnDist()
+
+        // Set Gradle properties for the better navigation
+        group = LifecycleBasePlugin.VERIFICATION_GROUP
+        description = "Kotlin/Native test infrastructure task"
+
         check(::testName.isInitialized) { "Test name should be set" }
-        check(::frameworkNames.isInitialized) { "Framework names should be set" }
+        check(::frameworks.isInitialized) { "Frameworks should be set" }
 
-        if (!::frameworkArtifactNames.isInitialized) {
-            frameworkArtifactNames = frameworkNames
-        }
-
-        frameworkNames.forEach { frameworkName ->
-            val compileTask = project.tasks.getByName("compileKonan$frameworkName")
-            doBeforeBuild?.let { compileTask.doFirst(it) }
-            dependsOn(compileTask)
-        }
-        // Build test executable as a first action of the task before executing the test
-        this.doFirst { buildTestExecutable() }
         return this
     }
 
-    private fun setRootDependency(vararg s: String) = s.forEach { dependsOn(project.rootProject.tasks.getByName(it)) }
-
     private fun buildTestExecutable() {
         val frameworkParentDirPath = "$testOutput/$testName/${project.testTarget.name}"
-        frameworkArtifactNames.forEach { frameworkName ->
-            val frameworkPath = "$frameworkParentDirPath/$frameworkName.framework"
-            val frameworkBinaryPath = "$frameworkPath/$frameworkName"
+        frameworks.forEach { framework ->
+            val frameworkArtifact = framework.artifact
+            val frameworkPath = "$frameworkParentDirPath/$frameworkArtifact.framework"
+            val frameworkBinaryPath = "$frameworkPath/$frameworkArtifact"
             validateBitcodeEmbedding(frameworkBinaryPath)
             if (codesign) codesign(project, frameworkPath)
         }
@@ -93,8 +137,8 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
         // create a test provider and get main entry point
         val provider = Paths.get(testOutput, testName, "provider.swift")
         FileWriter(provider.toFile()).use { writer ->
-            val providers = swiftSources
-                    .map { Paths.get(it).fileName.toString().removeSuffix(".swift").capitalize() }
+            val providers = swiftSources.toFiles(Language.Swift)
+                    .map { it.name.toString().removeSuffix(".swift").capitalize() }
                     .map { "${it}Tests" }
 
             writer.write("""
@@ -109,8 +153,8 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
         val swiftMain = Paths.get(testHome.toString(), "main.swift").toString()
 
         // Compile swift sources
-        val sources = swiftSources.map { Paths.get(it).toString() } +
-                listOf(provider.toString(), swiftMain)
+        val sources = swiftSources.toFiles(Language.Swift)
+                .map { it.path } + listOf(provider.toString(), swiftMain)
         val options = listOf(
                 "-g",
                 "-Xlinker", "-rpath", "-Xlinker", "@executable_path/Frameworks",
@@ -123,6 +167,8 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
 
     @TaskAction
     fun run() {
+        // Build test executable as a first action of the task before executing the test
+        buildTestExecutable()
         doBeforeRun?.execute(this)
         runTest(executorService = project.executor, testExecutable = Paths.get(executable))
     }
