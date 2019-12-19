@@ -57,14 +57,13 @@ fun test7(cls: Cls) {
 }
 
 fun test8(cls: Cls) {
-    // TODO
-    <!IMPLICIT_NOTHING_AS_TYPE_PARAMETER, TYPE_MISMATCH!>id<!>(
+    id(
         <!DEBUG_INFO_EXPRESSION_TYPE("Inv<in Cls>")!>wrapIn(cls)<!>
     )
 }
 
 fun test9(cls: Cls) {
     id(
-        <!DEBUG_INFO_EXPRESSION_TYPE("InB<Bound>")!>InB(cls)<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("InB<Cls>")!>InB(cls)<!>
     )
 }
