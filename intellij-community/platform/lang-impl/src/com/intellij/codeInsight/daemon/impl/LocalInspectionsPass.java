@@ -520,7 +520,7 @@ public class LocalInspectionsPass extends ProgressableTextEditorHighlightingPass
                                              @NotNull PsiElement element, boolean ignoreSuppressed) {
     final String fakeShortName = descriptor.getFakeInspectionShortName();
     if (fakeShortName != null) {
-      final InspectionToolWrapper<?, ?> fakeTool = myProfileWrapper.getInspectionTool(fakeShortName, null);
+      final InspectionToolWrapper<?, ?> fakeTool = myProfileWrapper.getInspectionTool(fakeShortName, element);
       assert fakeTool instanceof LocalInspectionToolWrapper;
       toolWrapper = (LocalInspectionToolWrapper)fakeTool;
       severity = myProfileWrapper.getErrorLevel(HighlightDisplayKey.find(fakeShortName), file).getSeverity();
@@ -674,7 +674,6 @@ public class LocalInspectionsPass extends ProgressableTextEditorHighlightingPass
                                                  @NotNull List<? super PsiElement> outElements,
                                                  @NotNull Set<? super String> outDialects) {
     final FileViewProvider viewProvider = file.getViewProvider();
-    final Set<PsiElement> result = new LinkedHashSet<>();
     Set<Language> processedLanguages = new SmartHashSet<>();
     final PsiElementVisitor visitor = new PsiRecursiveElementVisitor() {
       @Override public void visitElement(@NotNull PsiElement element) {
@@ -686,8 +685,8 @@ public class LocalInspectionsPass extends ProgressableTextEditorHighlightingPass
         else {
           // composite element
           while (child != null) {
+            outElements.add(child);
             child.accept(this);
-            result.add(child);
             appendDialects(child, processedLanguages, outDialects);
             child = child.getNextSibling();
           }
@@ -699,11 +698,10 @@ public class LocalInspectionsPass extends ProgressableTextEditorHighlightingPass
       if (psiRoot == null || !HighlightingLevelManager.getInstance(file.getProject()).shouldInspect(psiRoot)) {
         continue;
       }
+      outElements.add(psiRoot);
       psiRoot.accept(visitor);
-      result.add(psiRoot);
       appendDialects(psiRoot, processedLanguages, outDialects);
     }
-    outElements.addAll(result);
   }
 
   private static void appendDialects(PsiElement element, Set<? super Language> outProcessedLanguages, Set<? super String> outDialectIds) {
