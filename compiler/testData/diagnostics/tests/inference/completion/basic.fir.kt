@@ -57,7 +57,6 @@ fun test7(cls: Cls) {
 }
 
 fun test8(cls: Cls) {
-    // TODO
     id(
         wrapIn(cls)
     )
