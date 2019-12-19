@@ -54,7 +54,7 @@ class JsDefaultArgumentStubGenerator(override val context: JsIrBackendContext) :
 val BIND_CALL = object : IrStatementOriginImpl("BIND_CALL") {}
 
 class JsDefaultCallbackGenerator(val context: JsIrBackendContext): BodyLoweringPass {
-    override fun lower(irBody: IrBody) {
+    override fun lower(irBody: IrBody, container: IrDeclaration) {
         irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitCall(expression: IrCall): IrExpression {
                 super.visitCall(expression)
