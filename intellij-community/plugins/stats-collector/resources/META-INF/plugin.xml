@@ -69,7 +69,7 @@
     <completion.contributor language="any" id="ml_diff" order="first"
                             implementationClass="com.intellij.stats.completion.ItemsDiffCustomizingContributor"/>
 
-    <statistics.counterUsagesCollector groupId="completion" version="1"/>
+    <statistics.counterUsagesCollector groupId="completion" version="2"/>
 
     <registryKey key="completion.ml.reorder.only.top.items" defaultValue="true"
                  description="Reorder only a few items on the top in the lookup to preserve a proper grouping for the items below"/>
