@@ -20,6 +20,10 @@ public class PackageManagementUsageCollector {
 
   private PackageManagementUsageCollector() {}
 
+  public static void triggerBrowseAvailablePackagesPerformed(@NotNull Project project, @Nullable PackageManagementService service) {
+    trigger(project, service, "browseAvailablePackages");
+  }
+
   public static void triggerInstallPerformed(@NotNull Project project, @Nullable PackageManagementService service) {
     trigger(project, service, "install");
   }

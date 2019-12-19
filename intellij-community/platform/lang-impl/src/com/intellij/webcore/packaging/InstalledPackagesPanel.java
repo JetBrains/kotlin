@@ -93,7 +93,7 @@ public class InstalledPackagesPanel extends JPanel {
     myInstallButton = new DumbAwareActionButton("Install", IconUtil.getAddIcon()) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
-        PackageManagementUsageCollector.triggerInstallPerformed(myProject, myPackageManagementService);
+        PackageManagementUsageCollector.triggerBrowseAvailablePackagesPerformed(myProject, myPackageManagementService);
         if (myPackageManagementService != null) {
           ManagePackagesDialog dialog = createManagePackagesDialog();
           dialog.show();

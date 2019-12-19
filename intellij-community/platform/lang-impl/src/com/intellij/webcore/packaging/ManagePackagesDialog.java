@@ -229,6 +229,7 @@ public class ManagePackagesDialog extends DialogWrapper {
           myController.installPackage(repoPackage, version, false, extraOptions, listener, myInstallToUser.isSelected());
           myInstallButton.setEnabled(false);
         }
+        PackageManagementUsageCollector.triggerInstallPerformed(myProject, myController);
       }
     });
   }
