@@ -12523,6 +12523,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/inference/kt10822.kt");
         }
 
+        @TestMetadata("kt32429.kt")
+        public void testKt32429() throws Exception {
+            runTest("compiler/testData/codegen/box/inference/kt32429.kt");
+        }
+
         @TestMetadata("lastExpressionOfLambdaWithNothingConstraint.kt")
         public void testLastExpressionOfLambdaWithNothingConstraint() throws Exception {
             runTest("compiler/testData/codegen/box/inference/lastExpressionOfLambdaWithNothingConstraint.kt");
