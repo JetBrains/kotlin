@@ -7,6 +7,7 @@ import com.intellij.execution.KillableProcess;
 import com.intellij.execution.impl.ExecutionManagerImpl;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.execution.ui.RunContentManager;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -15,7 +16,10 @@ import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.ui.popup.Balloon;
 import com.intellij.openapi.ui.popup.BalloonBuilder;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.openapi.util.*;
+import com.intellij.openapi.util.Conditions;
+import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.WindowManager;
@@ -38,7 +42,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-public class ShowRunningListAction extends AnAction {
+public final class ShowRunningListAction extends AnAction {
   public ShowRunningListAction() {
     super(ExecutionBundle.message("show.running.list.action.name"), ExecutionBundle.message("show.running.list.action.description"), null);
   }
@@ -96,7 +100,7 @@ public class ShowRunningListAction extends AnAction {
                 if (aFrame != null && !aFrame.isActive()) {
                   IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(() -> IdeFocusManager.getGlobalInstance().requestFocus(aFrame, true));
                 }
-                ExecutionManagerImpl.getInstance(aProject).getContentManager().
+                RunContentManager.getInstance(aProject).
                   toFrontRunContent((Executor)((Trinity)value).second, (RunContentDescriptor)((Trinity)value).third);
               }
             }

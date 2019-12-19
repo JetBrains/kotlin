@@ -12,6 +12,7 @@ import com.intellij.execution.runners.ExecutionEnvironmentBuilder;
 import com.intellij.execution.runners.ExecutionUtil;
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.execution.ui.RunContentManager;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.macro.MacroManager;
 import com.intellij.openapi.actionSystem.*;
@@ -254,8 +255,7 @@ public final class ExecutorRegistryImpl extends ExecutorRegistry {
       List<RunContentDescriptor> runningDescriptors =
         executionManager.getRunningDescriptors(s -> s != null && s.getConfiguration() == selectedConfiguration.getConfiguration());
       runningDescriptors = ContainerUtil.filter(runningDescriptors, descriptor -> {
-        RunContentDescriptor contentDescriptor =
-          executionManager.getContentManager().findContentDescriptor(myExecutor, descriptor.getProcessHandler());
+        RunContentDescriptor contentDescriptor = RunContentManager.getInstance(project).findContentDescriptor(myExecutor, descriptor.getProcessHandler());
         return contentDescriptor != null && executionManager.getExecutors(contentDescriptor).contains(myExecutor);
       });
 

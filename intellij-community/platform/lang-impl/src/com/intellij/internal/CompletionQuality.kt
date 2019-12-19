@@ -11,11 +11,11 @@ import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupManager
 import com.intellij.codeInsight.lookup.impl.LookupImpl
-import com.intellij.execution.ExecutionManager
 import com.intellij.execution.executors.DefaultRunExecutor
 import com.intellij.execution.filters.TextConsoleBuilderFactory
 import com.intellij.execution.ui.ConsoleViewContentType
 import com.intellij.execution.ui.RunContentDescriptor
+import com.intellij.execution.ui.RunContentManager
 import com.intellij.ide.util.scopeChooser.ScopeChooserCombo
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -61,10 +61,6 @@ import javax.swing.JComponent
 import javax.swing.JLabel
 import kotlin.collections.HashMap
 
-/**
- * @author traff
- */
-
 private data class CompletionTime(var cnt: Int, var time: Long)
 
 private data class CompletionQualityParameters(
@@ -91,7 +87,7 @@ private val saveResultToFile = "${System.getProperty("user.dir")}/result.json"
 private const val doProcessingWords = true
 private const val checkAfterDotOnly = true
 
-class CompletionQualityStatsAction : AnAction() {
+internal class CompletionQualityStatsAction : AnAction() {
   override fun actionPerformed(e: AnActionEvent) {
     val editor = e.getData(CommonDataKeys.EDITOR) as? EditorImpl
     val project = e.getData(CommonDataKeys.PROJECT) ?: return
@@ -201,7 +197,7 @@ class CompletionQualityStatsAction : AnAction() {
     val consoleBuilder = TextConsoleBuilderFactory.getInstance().createBuilder(project)
     val console = consoleBuilder.console
     val descriptor = RunContentDescriptor(console, null, console.component, "Completion Quality Statistics")
-    ExecutionManager.getInstance(project).contentManager.showRunContent(DefaultRunExecutor.getRunExecutorInstance(), descriptor)
+    RunContentManager.getInstance(project).showRunContent(DefaultRunExecutor.getRunExecutorInstance(), descriptor)
     console.print(text, ConsoleViewContentType.NORMAL_OUTPUT)
     File(saveResultToFile).writeText(text)
   }

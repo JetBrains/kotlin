@@ -1,13 +1,13 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.actions;
 
 import com.intellij.execution.ExecutionBundle;
-import com.intellij.execution.ExecutionManager;
 import com.intellij.execution.KillableProcess;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.impl.ExecutionManagerImpl;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.execution.ui.RunContentManager;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
@@ -235,7 +235,7 @@ public class StopAction extends DumbAwareAction implements AnAction.TransparentU
     else {
       // main menu toolbar
       final Project project = CommonDataKeys.PROJECT.getData(dataContext);
-      return project == null ? null : ExecutionManager.getInstance(project).getContentManager().getSelectedContent();
+      return project == null ? null : RunContentManager.getInstance(project).getSelectedContent();
     }
   }
 

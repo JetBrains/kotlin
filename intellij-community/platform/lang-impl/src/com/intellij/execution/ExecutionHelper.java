@@ -237,7 +237,7 @@ public class ExecutionHelper {
     final Ref<Collection<RunContentDescriptor>> ref = new Ref<>();
 
     final Runnable computeDescriptors = () -> {
-      RunContentManager contentManager = ExecutionManager.getInstance(project).getContentManager();
+      RunContentManager contentManager = RunContentManager.getInstance(project);
       final RunContentDescriptor selectedContent = contentManager.getSelectedContent();
       if (selectedContent != null) {
         final ToolWindow toolWindow = contentManager.getToolWindowByDescriptor(selectedContent);
@@ -309,7 +309,7 @@ public class ExecutionHelper {
 
   private static void descriptorToFront(@NotNull final Project project, @NotNull final RunContentDescriptor descriptor) {
     ApplicationManager.getApplication().invokeLater(() -> {
-      RunContentManager manager = ExecutionManager.getInstance(project).getContentManager();
+      RunContentManager manager = RunContentManager.getInstance(project);
       ToolWindow toolWindow = manager.getToolWindowByDescriptor(descriptor);
       if (toolWindow != null) {
         toolWindow.show(null);

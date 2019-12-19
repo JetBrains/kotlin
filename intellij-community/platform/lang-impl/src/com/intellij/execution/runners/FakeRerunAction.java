@@ -7,6 +7,7 @@ import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.impl.ExecutionManagerImpl;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.execution.ui.RunContentManager;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.DataManager;
 import com.intellij.ide.macro.MacroManager;
@@ -56,7 +57,7 @@ public class FakeRerunAction extends AnAction  {
     ExecutionEnvironment environment = event.getData(LangDataKeys.EXECUTION_ENVIRONMENT);
     if (environment == null) {
       Project project = event.getProject();
-      RunContentDescriptor contentDescriptor = project == null ? null : ExecutionManager.getInstance(project).getContentManager().getSelectedContent();
+      RunContentDescriptor contentDescriptor = project == null ? null : RunContentManager.getInstance(project).getSelectedContent();
       if (contentDescriptor != null) {
         JComponent component = contentDescriptor.getComponent();
         if (component != null) {

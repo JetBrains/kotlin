@@ -15,6 +15,7 @@ import com.intellij.execution.services.ServiceEventListener;
 import com.intellij.execution.services.ServiceViewManager;
 import com.intellij.execution.services.ServiceViewManagerImpl;
 import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.execution.ui.RunContentManager;
 import com.intellij.execution.ui.RunContentManagerImpl;
 import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.execution.ui.layout.impl.RunnerLayoutUiImpl;
@@ -232,8 +233,7 @@ public final class RunDashboardManagerImpl implements RunDashboardManager, Persi
   }
 
   private void moveRemovedContent(Condition<? super RunnerAndConfigurationSettings> condition) {
-    ExecutionManagerImpl executionManager = (ExecutionManagerImpl)ExecutionManager.getInstance(myProject);
-    RunContentManagerImpl runContentManager = (RunContentManagerImpl)executionManager.getContentManager();
+    RunContentManagerImpl runContentManager = (RunContentManagerImpl)RunContentManager.getInstance(myProject);
     for (RunDashboardService service : getRunConfigurations()) {
       Content content = service.getContent();
       if (content == null || !condition.value(service.getSettings())) continue;
@@ -251,9 +251,8 @@ public final class RunDashboardManagerImpl implements RunDashboardManager, Persi
   }
 
   private void moveAddedContent(Condition<? super RunnerAndConfigurationSettings> condition) {
-    ExecutionManagerImpl executionManager = (ExecutionManagerImpl)ExecutionManager.getInstance(myProject);
-    RunContentManagerImpl runContentManager = (RunContentManagerImpl)executionManager.getContentManager();
-    List<RunContentDescriptor> descriptors = executionManager.getRunningDescriptors(condition);
+    RunContentManagerImpl runContentManager = (RunContentManagerImpl)RunContentManager.getInstance(myProject);
+    List<RunContentDescriptor> descriptors = ((ExecutionManagerImpl)ExecutionManager.getInstance(myProject)).getRunningDescriptors(condition);
     for (RunContentDescriptor descriptor : descriptors) {
       Content content = descriptor.getAttachedContent();
       if (content == null) continue;

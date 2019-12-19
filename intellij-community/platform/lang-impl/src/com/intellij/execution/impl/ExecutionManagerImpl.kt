@@ -134,7 +134,7 @@ class ExecutionManagerImpl(private val project: Project) : ExecutionManager(), D
     RunManager.getInstance(environment.project).refreshUsagesList(environment.runProfile)
 
     val project = environment.project
-    val reuseContent = contentManager.getReuseContent(environment)
+    val reuseContent = RunContentManager.getInstance(project).getReuseContent(environment)
     if (reuseContent != null) {
       reuseContent.executionId = environment.executionId
       environment.contentToReuse = reuseContent
@@ -172,7 +172,7 @@ class ExecutionManagerImpl(private val project: Project) : ExecutionManager(), D
               runningConfigurations.add(entry)
               Disposer.register(descriptor, Disposable { runningConfigurations.remove(entry) })
               if (!descriptor.isHiddenContent) {
-                contentManager.showRunContent(executor, descriptor, environment.contentToReuse)
+                RunContentManager.getInstance(project).showRunContent(executor, descriptor, environment.contentToReuse)
               }
               activity?.stageStarted("ui.shown")
 

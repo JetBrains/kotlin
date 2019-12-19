@@ -10,6 +10,7 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ExecutionEnvironmentBuilder;
 import com.intellij.execution.runners.ExecutionUtil;
 import com.intellij.execution.runners.ProgramRunner;
+import com.intellij.execution.ui.RunContentManager;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.ex.SingleConfigurableEditor;
@@ -114,7 +115,7 @@ public final class ProgramRunnerUtil {
                                           Throwable e,
                                           RunProfile configuration) {
     String name = configuration != null ? configuration.getName() : environment.getRunProfile().getName();
-    String windowId = ExecutionManager.getInstance(project).getContentManager().getToolWindowIdByEnvironment(environment);
+    String windowId = RunContentManager.getInstance(project).getToolWindowIdByEnvironment(environment);
     if (configuration instanceof ConfigurationWithCommandLineShortener && ExecutionUtil.isProcessNotCreated(e)) {
       handleProcessNotStartedError((ConfigurationWithCommandLineShortener)configuration, (ProcessNotCreatedException)e, name, windowId);
     }
