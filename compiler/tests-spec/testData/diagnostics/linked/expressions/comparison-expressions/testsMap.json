@@ -1,0 +1,26 @@
+{
+  "4": {
+    "neg": {
+      "1": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 4,
+          "description": "The compareTo operator function must have return type kotlin.Int",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  },
+  "5": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 4,
+          "description": "All comparison expressions always have type kotlin.Boolean.",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}
