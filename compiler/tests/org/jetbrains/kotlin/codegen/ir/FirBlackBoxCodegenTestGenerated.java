@@ -136,6 +136,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             runTest("compiler/testData/codegen/box/annotations/kt10136.kt");
         }
 
+        @TestMetadata("nestedAnnotation.kt")
+        public void testNestedAnnotation() throws Exception {
+            runTest("compiler/testData/codegen/box/annotations/nestedAnnotation.kt");
+        }
+
         @TestMetadata("nestedClassPropertyAsParameter.kt")
         public void testNestedClassPropertyAsParameter() throws Exception {
             runTest("compiler/testData/codegen/box/annotations/nestedClassPropertyAsParameter.kt");
@@ -15796,7 +15801,7 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             }
 
             public void testAllFilesPresentInMultiModule() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/multiModule"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/multiModule"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
             }
 
             @TestMetadata("expectActualLink.kt")
