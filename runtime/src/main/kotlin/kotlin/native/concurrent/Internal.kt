@@ -6,6 +6,7 @@
 package kotlin.native.concurrent
 
 import kotlin.native.internal.ExportForCppRuntime
+import kotlin.native.identityHashCode
 import kotlin.reflect.KClass
 import kotlinx.cinterop.*
 

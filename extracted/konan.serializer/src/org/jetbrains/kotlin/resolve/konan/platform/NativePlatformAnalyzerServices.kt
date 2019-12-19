@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.konan.platform
 
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.PlatformConfigurator
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
@@ -16,4 +17,9 @@ object NativePlatformAnalyzerServices : PlatformDependentAnalyzerServices() {
     }
 
     override val platformConfigurator: PlatformConfigurator = KonanPlatformConfigurator
+
+    override val excludedImports: List<FqName> =
+            listOf("identityHashCode").map {
+                FqName("kotlin.native.$it")
+            }
 }

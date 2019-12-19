@@ -5,6 +5,7 @@
 
 package kotlin
 
+import kotlin.native.identityHashCode
 import kotlin.native.internal.ExportTypeInfo
 
 /**
@@ -47,7 +48,3 @@ public open class Any {
         return "$className@$hashCodeStr"
     }
 }
-
-@PublishedApi
-@SymbolName("Kotlin_Any_hashCode")
-external internal fun Any.identityHashCode(): Int
