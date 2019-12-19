@@ -45,7 +45,7 @@ fun test1(int: Int, any: Any) {
     readFromMyList(getMyList(any), int)
     readFromMyList<Int>(<!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, OI;TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>getMyList(any)<!>, int)
 
-    readFromMyList<Int>(<!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, OI;TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>getMyListToReadFrom(any)<!>, int)
+    readFromMyList<Int>(<!NI;TYPE_MISMATCH, OI;TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>getMyListToReadFrom(any)<!>, int)
     readFromMyList(getMyListToReadFrom(any), int)
 
     readFromMyList(getMyListToReadFrom(int), any)

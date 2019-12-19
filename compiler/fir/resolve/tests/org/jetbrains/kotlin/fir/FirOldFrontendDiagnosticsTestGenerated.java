@@ -10379,6 +10379,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
                 runTest("compiler/testData/diagnostics/tests/inference/completion/basic.kt");
             }
 
+            @TestMetadata("equalityConstraintUpstairs.kt")
+            public void testEqualityConstraintUpstairs() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/completion/equalityConstraintUpstairs.kt");
+            }
+
             @TestMetadata("kt33166.kt")
             public void testKt33166() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/completion/kt33166.kt");
@@ -10387,6 +10392,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
             @TestMetadata("partialForIlt.kt")
             public void testPartialForIlt() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/completion/partialForIlt.kt");
+            }
+
+            @TestMetadata("transitiveConstraint.kt")
+            public void testTransitiveConstraint() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/completion/transitiveConstraint.kt");
             }
 
             @TestMetadata("withExact.kt")
