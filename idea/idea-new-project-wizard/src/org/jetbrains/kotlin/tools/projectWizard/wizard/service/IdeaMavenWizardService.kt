@@ -6,9 +6,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.service
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.LocalFileSystem
-import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.idea.maven.project.MavenProjectsManager
 import org.jetbrains.kotlin.tools.projectWizard.core.TaskResult
 import org.jetbrains.kotlin.tools.projectWizard.core.safe
 import org.jetbrains.kotlin.tools.projectWizard.core.service.ProjectImportingWizardService
@@ -25,23 +22,6 @@ class IdeaMavenWizardService(private val project: Project) : ProjectImportingWiz
         path: Path,
         modulesIrs: List<ModuleIR>
     ): TaskResult<Unit> = safe {
-        val mavenProjectManager = MavenProjectsManager.getInstance(project)
-
-        val rootFile = LocalFileSystem.getInstance().findFileByPath(path.toString())!!
-        mavenProjectManager.addManagedFilesOrUnignore(rootFile.findAllPomFiles())
-    }
-
-    private fun VirtualFile.findAllPomFiles(): List<VirtualFile> {
-        val result = mutableListOf<VirtualFile>()
-
-        fun VirtualFile.find() {
-            when {
-                !isDirectory && name == "pom.xml" -> result += this
-                isDirectory -> children.forEach(VirtualFile::find)
-            }
-        }
-
-        find()
-        return result
+        MavenProjectImporter(project).importProject(path)
     }
 }
