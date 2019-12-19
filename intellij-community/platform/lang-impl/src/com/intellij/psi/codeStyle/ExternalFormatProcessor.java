@@ -35,7 +35,7 @@ public interface ExternalFormatProcessor {
    * @return the range after formatting or null, if external format procedure cannot be applied to the source
    */
   @Nullable
-  TextRange format(@NotNull PsiFile source, @NotNull TextRange range, boolean canChangeWhiteSpacesOnly);
+  TextRange format(@NotNull PsiFile source, @NotNull TextRange range, boolean canChangeWhiteSpacesOnly, boolean keepLineBreaks);
 
   /**
    * Indents the line.
@@ -96,9 +96,12 @@ public interface ExternalFormatProcessor {
    * @return the range after formatting or null, if external format procedure was not found or inactive (disabled)
    */
   @Nullable
-  static TextRange formatRangeInFile(@NotNull PsiFile source, @NotNull TextRange range, boolean canChangeWhiteSpacesOnly) {
+  static TextRange formatRangeInFile(@NotNull PsiFile source,
+                                     @NotNull TextRange range,
+                                     boolean canChangeWhiteSpacesOnly,
+                                     boolean keepLineBreaks) {
     ExternalFormatProcessor efp = activeExternalFormatProcessor(source);
-    return efp != null ? efp.format(source, range, canChangeWhiteSpacesOnly) : null;
+    return efp != null ? efp.format(source, range, canChangeWhiteSpacesOnly, keepLineBreaks) : null;
   }
 
   /**
@@ -110,11 +113,12 @@ public interface ExternalFormatProcessor {
   @NotNull
   static PsiElement formatElement(@NotNull PsiElement elementToFormat,
                                   @NotNull TextRange range,
-                                  boolean canChangeWhiteSpacesOnly) {
+                                  boolean canChangeWhiteSpacesOnly,
+                                  boolean keepLineBreaks) {
     final PsiFile file = elementToFormat.getContainingFile();
     final Document document = file.getViewProvider().getDocument();
     if (document != null) {
-      final TextRange rangeAfterFormat = formatRangeInFile(file, range, canChangeWhiteSpacesOnly);
+      final TextRange rangeAfterFormat = formatRangeInFile(file, range, canChangeWhiteSpacesOnly, keepLineBreaks);
       if (rangeAfterFormat != null) {
         PsiDocumentManager.getInstance(file.getProject()).commitDocument(document);
         if (!elementToFormat.isValid()) {
