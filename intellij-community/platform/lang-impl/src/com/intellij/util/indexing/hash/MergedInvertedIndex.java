@@ -13,6 +13,7 @@ import org.jetbrains.annotations.TestOnly;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -32,9 +33,9 @@ public class MergedInvertedIndex<Key, Value> implements UpdatableIndex<Key, Valu
                                                                     @NotNull FileBasedIndexExtension<Key, Value> originalExtension,
                                                                     @NotNull UpdatableIndex<Key, Value, FileContent> baseIndex)
     throws IOException {
-    File file = providedExtension.getIndexPath();
+    Path file = providedExtension.getIndexPath();
     HashBasedMapReduceIndex<Key, Value> index = HashBasedMapReduceIndex.create(providedExtension, originalExtension);
-    return new MergedInvertedIndex<>(index, ((FileBasedIndexImpl)FileBasedIndex.getInstance()).getFileContentHashIndex(file), baseIndex);
+    return new MergedInvertedIndex<>(index, ((FileBasedIndexImpl)FileBasedIndex.getInstance()).getFileContentHashIndex(file.toFile()), baseIndex);
   }
 
   public MergedInvertedIndex(@NotNull HashBasedMapReduceIndex<Key, Value> index,

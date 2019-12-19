@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 
 class HashBasedMapReduceIndex<Key, Value> extends VfsAwareMapReduceIndex<Key, Value, FileContent> {
   @NotNull
@@ -20,11 +21,11 @@ class HashBasedMapReduceIndex<Key, Value> extends VfsAwareMapReduceIndex<Key, Va
   static <Key, Value> HashBasedMapReduceIndex<Key, Value> create(@NotNull ProvidedIndexExtension<Key, Value> providedExtension,
                                                                  @NotNull FileBasedIndexExtension<Key, Value> originalExtension)
     throws IOException {
-    File file = providedExtension.getIndexPath();
-    return new HashBasedMapReduceIndex<>(file, originalExtension, providedExtension, ((FileBasedIndexImpl)FileBasedIndex.getInstance()).getFileContentHashIndex(file));
+    Path file = providedExtension.getIndexPath();
+    return new HashBasedMapReduceIndex<>(file, originalExtension, providedExtension, ((FileBasedIndexImpl)FileBasedIndex.getInstance()).getFileContentHashIndex(file.toFile()));
   }
 
-  private HashBasedMapReduceIndex(@NotNull File baseFile,
+  private HashBasedMapReduceIndex(@NotNull Path baseFile,
                                   @NotNull FileBasedIndexExtension<Key, Value> originalExtension,
                                   @NotNull ProvidedIndexExtension<Key, Value> providedExtension,
                                   @NotNull FileContentHashIndex hashIndex) throws IOException {
@@ -37,11 +38,11 @@ class HashBasedMapReduceIndex<Key, Value> extends VfsAwareMapReduceIndex<Key, Va
     return myProvidedExtension;
   }
 
-  private static <Key, Value> IndexStorage<Key, Value> createStorage(@NotNull File baseFile,
+  private static <Key, Value> IndexStorage<Key, Value> createStorage(@NotNull Path baseFile,
                                                                      @NotNull FileBasedIndexExtension<Key, Value> originalExtension,
                                                                      @NotNull ProvidedIndexExtension<Key, Value> providedExtension,
                                                                      @NotNull IntIntFunction hashToFileId) throws IOException {
-    return new MapIndexStorage<Key, Value>(new File(baseFile, originalExtension.getName().getName()),
+    return new MapIndexStorage<Key, Value>(baseFile.resolve(originalExtension.getName().getName()),
                                            providedExtension.createKeyDescriptor(),
                                            providedExtension.createValueExternalizer(),
                                            originalExtension.getCacheSize(),

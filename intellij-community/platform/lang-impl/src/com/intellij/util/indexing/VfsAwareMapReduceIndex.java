@@ -437,7 +437,7 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
     if (!shouldCreateForwardIndex(indexExtension)) return null;
     if (indexExtension instanceof SingleEntryFileBasedIndexExtension<?>) return new EmptyForwardIndex(); // indexStorage and forwardIndex are same here
     File indexStorageFile = IndexInfrastructure.getInputIndexStorageFile((ID<?, ?>)indexExtension.getName());
-    return new PersistentMapBasedForwardIndex(indexStorageFile, false, false);
+    return new PersistentMapBasedForwardIndex(indexStorageFile.toPath(), false, false);
   }
 
   private static boolean shouldCreateForwardIndex(@NotNull IndexExtension<?, ?, ?> indexExtension) {

@@ -170,7 +170,7 @@ public class SnapshotInputMappings<Key, Value, Input> implements UpdatableSnapsh
   public void clear() throws IOException {
     try {
       if (myIndexingTrace != null) {
-        File baseFile = myIndexingTrace.getBaseFile();
+        File baseFile = myIndexingTrace.getBaseFile().toFile();
         try {
           myIndexingTrace.close();
         }
@@ -208,7 +208,7 @@ public class SnapshotInputMappings<Key, Value, Input> implements UpdatableSnapsh
     if (SharedIndicesData.ourFileSharedIndicesEnabled && !SharedIndicesData.DO_CHECKS) return null;
     final File saved = new File(IndexInfrastructure.getPersistentIndexRootDir(myIndexId), "values");
     try {
-      return new PersistentMapBasedForwardIndex(saved, false);
+      return new PersistentMapBasedForwardIndex(saved.toPath(), false);
     }
     catch (IOException ex) {
       IOUtil.deleteAllFilesStartingWith(saved);
@@ -219,7 +219,7 @@ public class SnapshotInputMappings<Key, Value, Input> implements UpdatableSnapsh
   private PersistentHashMap<Integer, String> createIndexingTrace() throws IOException {
     final File mapFile = new File(IndexInfrastructure.getIndexRootDir(myIndexId), "indextrace");
     try {
-      return new PersistentHashMap<>(mapFile, EnumeratorIntegerDescriptor.INSTANCE,
+      return new PersistentHashMap<>(mapFile.toPath(), EnumeratorIntegerDescriptor.INSTANCE,
                                      new DataExternalizer<String>() {
                                        @Override
                                        public void save(@NotNull DataOutput out, String value) throws IOException {

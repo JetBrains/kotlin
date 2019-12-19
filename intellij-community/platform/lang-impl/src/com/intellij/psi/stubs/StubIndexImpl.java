@@ -185,7 +185,7 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
     for (int attempt = 0; attempt < 2; attempt++) {
       try {
         final VfsAwareMapIndexStorage<K, Void> storage = new VfsAwareMapIndexStorage<>(
-          IndexInfrastructure.getStorageFile(indexKey),
+          IndexInfrastructure.getStorageFile(indexKey).toPath(),
           wrappedExtension.getKeyDescriptor(),
           wrappedExtension.getValueExternalizer(),
           wrappedExtension.getCacheSize(),

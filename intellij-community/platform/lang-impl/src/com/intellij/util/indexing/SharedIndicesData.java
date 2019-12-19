@@ -80,7 +80,7 @@ public class SharedIndicesData {
     final IndexedStateCache myStateCache;
 
     IndexedStateMap(@NotNull File file) throws IOException {
-      super(file, EnumeratorIntegerDescriptor.INSTANCE,
+      super(file.toPath(), EnumeratorIntegerDescriptor.INSTANCE,
             new DataExternalizer<byte[]>() {
               @Override
               public void save(@NotNull DataOutput out, byte[] value) throws IOException {

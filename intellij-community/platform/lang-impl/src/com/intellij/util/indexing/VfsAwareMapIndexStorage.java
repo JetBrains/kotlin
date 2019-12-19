@@ -39,6 +39,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 
 import java.io.*;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 
 /**
  * @author Eugene Zhuravlev
@@ -53,7 +55,7 @@ public final class VfsAwareMapIndexStorage<Key, Value> extends MapIndexStorage<K
   private static final ConcurrentIntObjectMap<Boolean> ourInvalidatedSessionIds = ContainerUtil.createConcurrentIntObjectMap();
 
   @TestOnly
-  public VfsAwareMapIndexStorage(@NotNull File storageFile,
+  public VfsAwareMapIndexStorage(@NotNull Path storageFile,
                                  @NotNull KeyDescriptor<Key> keyDescriptor,
                                  @NotNull DataExternalizer<Value> valueExternalizer,
                                  final int cacheSize,
@@ -69,6 +71,17 @@ public final class VfsAwareMapIndexStorage<Key, Value> extends MapIndexStorage<K
                                  final int cacheSize,
                                  boolean keyIsUniqueForIndexedFile,
                                  boolean buildKeyHashToVirtualFileMapping) throws IOException {
+    super(storageFile.toPath(), keyDescriptor, valueExternalizer, cacheSize, keyIsUniqueForIndexedFile, false, false, null);
+    myBuildKeyHashToVirtualFileMapping = buildKeyHashToVirtualFileMapping;
+    initMapAndCache();
+  }
+
+  public VfsAwareMapIndexStorage(@NotNull Path storageFile,
+                                 @NotNull KeyDescriptor<Key> keyDescriptor,
+                                 @NotNull DataExternalizer<Value> valueExternalizer,
+                                 final int cacheSize,
+                                 boolean keyIsUniqueForIndexedFile,
+                                 boolean buildKeyHashToVirtualFileMapping) throws IOException {
     super(storageFile, keyDescriptor, valueExternalizer, cacheSize, keyIsUniqueForIndexedFile, false, false, null);
     myBuildKeyHashToVirtualFileMapping = buildKeyHashToVirtualFileMapping;
     initMapAndCache();
@@ -77,8 +90,14 @@ public final class VfsAwareMapIndexStorage<Key, Value> extends MapIndexStorage<K
   @Override
   protected void initMapAndCache() throws IOException {
     super.initMapAndCache();
-    myKeyHashToVirtualFileMapping = myBuildKeyHashToVirtualFileMapping ?
-                                    new AppendableStorageBackedByResizableMappedFile(getProjectFile(), 4096, null, PagedFileStorage.MB, true) : null;
+    if (myBuildKeyHashToVirtualFileMapping) {
+      assert getProjectFile().getFileSystem() == FileSystems.getDefault();
+      myKeyHashToVirtualFileMapping =
+        new AppendableStorageBackedByResizableMappedFile(getProjectFile(), 4096, null, PagedFileStorage.MB, true);
+    }
+    else {
+      myKeyHashToVirtualFileMapping = null;
+    }
   }
 
   @Override
@@ -87,8 +106,8 @@ public final class VfsAwareMapIndexStorage<Key, Value> extends MapIndexStorage<K
   }
 
   @NotNull
-  private File getProjectFile() {
-    return new File(myBaseStorageFile.getPath() + ".project");
+  private Path getProjectFile() {
+    return myBaseStorageFile.resolveSibling(myBaseStorageFile.getFileName() + ".project");
   }
 
   private <T extends Throwable> void withLock(ThrowableRunnable<T> r) throws T {
@@ -138,7 +157,7 @@ public final class VfsAwareMapIndexStorage<Key, Value> extends MapIndexStorage<K
       LOG.info(e);
     }
     try {
-      if (myKeyHashToVirtualFileMapping != null) IOUtil.deleteAllFilesStartingWith(getProjectFile());
+      if (myKeyHashToVirtualFileMapping != null) IOUtil.deleteAllFilesStartingWith(getProjectFile().toFile());
     }
     catch (RuntimeException e) {
       unwrapCauseAndRethrow(e);
@@ -288,7 +307,7 @@ public final class VfsAwareMapIndexStorage<Key, Value> extends MapIndexStorage<K
   private File getSavedProjectFileValueIds(int id, @NotNull GlobalSearchScope scope) {
     Project project = scope.getProject();
     if (project == null) return null;
-    return new File(getSessionDir(), getProjectFile().getName() + "." + project.hashCode() + "." + id + "." + scope.isSearchInLibraries());
+    return new File(getSessionDir(), getProjectFile().toFile().getName() + "." + project.hashCode() + "." + id + "." + scope.isSearchInLibraries());
   }
 
   @Override

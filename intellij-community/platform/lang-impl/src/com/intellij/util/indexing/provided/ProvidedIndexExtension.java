@@ -10,12 +10,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 
 public interface ProvidedIndexExtension<K, V> {
   Logger LOG = Logger.getInstance(ProvidedIndexExtension.class);
 
   @NotNull
-  File getIndexPath();
+  Path getIndexPath();
 
   @NotNull
   ID<K, V> getIndexId();

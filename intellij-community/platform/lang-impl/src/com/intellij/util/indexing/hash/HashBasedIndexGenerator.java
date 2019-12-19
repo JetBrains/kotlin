@@ -67,7 +67,7 @@ public class HashBasedIndexGenerator<K, V> {
   public void openIndex() throws IOException {
     myHashEnumerator = getHashEnumerator();
     String indexName = myExtension.getName().getName();
-    myIndex = new MapReduceIndex<K, V, FileContent>(myExtension, new MapIndexStorage<K, V>(new File(new File(myOut, StringUtil.toLowerCase(indexName)), indexName),
+    myIndex = new MapReduceIndex<K, V, FileContent>(myExtension, new MapIndexStorage<K, V>(new File(new File(myOut, StringUtil.toLowerCase(indexName)), indexName).toPath(),
                                                                                            myExtension.getKeyDescriptor(),
                                                                                            myExtension.getValueExternalizer(),
                                                                                            myExtension.getCacheSize(),
@@ -102,7 +102,7 @@ public class HashBasedIndexGenerator<K, V> {
 
   @NotNull
   protected ContentHashesUtil.HashEnumerator getHashEnumerator() throws IOException {
-    return new ContentHashesUtil.HashEnumerator(new File(myHashOut, "hashes"));
+    return new ContentHashesUtil.HashEnumerator(new File(myHashOut, "hashes").toPath());
   }
 
   protected void visitInputData(int hashId, @NotNull InputData<K, V> data) throws StorageException {

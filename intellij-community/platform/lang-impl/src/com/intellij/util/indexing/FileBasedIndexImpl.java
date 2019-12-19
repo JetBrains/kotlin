@@ -425,7 +425,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
         }
         else {
           storage = new VfsAwareMapIndexStorage<>(
-            IndexInfrastructure.getStorageFile(name),
+            IndexInfrastructure.getStorageFile(name).toPath(),
             extension.getKeyDescriptor(),
             extension.getValueExternalizer(),
             extension.getCacheSize(),

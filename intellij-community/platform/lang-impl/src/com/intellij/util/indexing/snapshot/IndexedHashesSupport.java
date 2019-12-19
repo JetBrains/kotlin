@@ -35,7 +35,7 @@ public class IndexedHashesSupport {
       if (ourHashesWithFileType != null) return;
       final File hashEnumeratorFile = new File(IndexInfrastructure.getPersistentIndexRoot(), "hashesWithFileType");
       try {
-        ContentHashesUtil.HashEnumerator hashEnumerator = new ContentHashesUtil.HashEnumerator(hashEnumeratorFile, null);
+        ContentHashesUtil.HashEnumerator hashEnumerator = new ContentHashesUtil.HashEnumerator(hashEnumeratorFile.toPath(), null);
         FlushingDaemon.everyFiveSeconds(IndexedHashesSupport::flushContentHashes);
         ShutDownTracker.getInstance().registerShutdownTask(IndexedHashesSupport::flushContentHashes);
         ourHashesWithFileType = hashEnumerator;

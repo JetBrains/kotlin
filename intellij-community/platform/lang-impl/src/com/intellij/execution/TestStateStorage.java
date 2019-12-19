@@ -93,7 +93,7 @@ public class TestStateStorage implements Disposable {
 
   @NotNull
   private static ThrowableComputable<PersistentHashMap<String, Record>, IOException> getComputable(final File file) {
-    return () -> new PersistentHashMap<>(file, EnumeratorStringDescriptor.INSTANCE, new DataExternalizer<Record>() {
+    return () -> new PersistentHashMap<>(file.toPath(), EnumeratorStringDescriptor.INSTANCE, new DataExternalizer<Record>() {
       @Override
       public void save(@NotNull DataOutput out, Record value) throws IOException {
         out.writeInt(value.magnitude);

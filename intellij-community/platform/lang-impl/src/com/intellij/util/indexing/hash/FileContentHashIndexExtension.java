@@ -34,7 +34,7 @@ public class FileContentHashIndexExtension extends FileBasedIndexExtension<Integ
   }
 
   private FileContentHashIndexExtension(@NotNull File enumeratorDir) throws IOException {
-    myEnumerator = new ContentHashesUtil.HashEnumerator(enumeratorDir);
+    myEnumerator = new ContentHashesUtil.HashEnumerator(enumeratorDir.toPath());
     myDirHash = enumeratorDir.getAbsolutePath().hashCode();
     ShutDownTracker.getInstance().registerShutdownTask(() -> closeEnumerator());
   }
