@@ -35,6 +35,10 @@ buildscript {
     }
 }
 
+if (kotlinBuildProperties.buildScanServer != null) {
+    apply(from = "gradle/buildScanUserData.gradle")
+}
+
 plugins {
     idea
     id("jps-compatible")
