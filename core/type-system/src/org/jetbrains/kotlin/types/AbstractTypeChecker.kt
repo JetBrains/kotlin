@@ -580,3 +580,28 @@ object AbstractNullabilityChecker {
         return isEqualTypeConstructors(type.typeConstructor(), end)
     }
 }
+
+
+object AbstractFlexibilityChecker {
+    fun TypeSystemCommonSuperTypesContext.hasDifferentFlexibilityAtDepth(types: Collection<KotlinTypeMarker>): Boolean {
+        if (types.isEmpty()) return false
+        if (hasDifferentFlexibility(types)) return true
+
+        for (i in 0 until types.first().argumentsCount()) {
+            val typeArgumentForOtherTypes = types.mapNotNull {
+                if (it.argumentsCount() > i && !it.getArgument(i).isStarProjection()) it.getArgument(i).getType() else null
+            }
+
+            if (hasDifferentFlexibilityAtDepth(typeArgumentForOtherTypes)) return true
+        }
+
+        return false
+    }
+
+    private fun TypeSystemCommonSuperTypesContext.hasDifferentFlexibility(types: Collection<KotlinTypeMarker>): Boolean {
+        val firstType = types.first()
+        if (types.all { it === firstType }) return false
+
+        return !types.all { it.isFlexible() } && !types.all { !it.isFlexible() }
+    }
+}

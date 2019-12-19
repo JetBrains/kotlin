@@ -11198,6 +11198,16 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     runTest("compiler/testData/diagnostics/tests/inference/upperBounds/doNotInferFromBoundsOnly.kt");
                 }
 
+                @TestMetadata("flexibilityInCommonSuperTypeCalculation.kt")
+                public void testFlexibilityInCommonSuperTypeCalculation() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/upperBounds/flexibilityInCommonSuperTypeCalculation.kt");
+                }
+
+                @TestMetadata("flexibilityInCommonSuperTypeCalculation.ni.kt")
+                public void testFlexibilityInCommonSuperTypeCalculation_ni() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/upperBounds/flexibilityInCommonSuperTypeCalculation.ni.kt");
+                }
+
                 @TestMetadata("intersectUpperBounds.kt")
                 public void testIntersectUpperBounds() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/upperBounds/intersectUpperBounds.kt");
