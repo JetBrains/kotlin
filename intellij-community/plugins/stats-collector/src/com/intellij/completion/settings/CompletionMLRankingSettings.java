@@ -86,7 +86,7 @@ public class CompletionMLRankingSettings implements PersistentStateComponent<Com
 
   public static class State {
     public boolean rankingEnabled = !ENABLED_BY_DEFAULT.isEmpty();
-    public boolean showDiff = PlatformUtils.isPyCharm();
+    public boolean showDiff = false;
     // this map stores only different compare to default values to have ability to enable/disable models from build to build
     public Map<String, Boolean> language2state = new HashMap<>();
   }
