@@ -204,7 +204,7 @@ private class CollectionStubMethodLowering(val context: JvmBackendContext) : Cla
         }.toHashSet()
     }
 
-    fun IrClass.comesFromJava() = origin in ORIGINS_FROM_JAVA
+    fun IrClass.comesFromJava() = origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
 
     private fun Collection<IrType>.findMostSpecificTypeForClass(classifier: IrClassSymbol): IrType {
         val types = this.filter { it.classifierOrNull == classifier }

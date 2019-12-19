@@ -108,7 +108,7 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
             irFunction.modality !== Modality.ABSTRACT &&
             irFunction.visibility !== Visibilities.INVISIBLE_FAKE &&
             irFunction.overriddenInClasses().firstOrNull { it.getJvmSignature() != ourSignature || it.origin != IrDeclarationOrigin.FAKE_OVERRIDE }
-                ?.let { (it.getJvmName() != ourMethodName || it.getJvmSignature() == specialOverrideSignature) && it.comesFromJava() } == true
+                ?.let { (it.getJvmName() != ourMethodName || it.getJvmSignature() == specialOverrideSignature) && it.isExternalDeclaration() } == true
         ) {
             val resolved = irFunction.findConcreteSuperDeclaration()!!
             val resolvedSignature = resolved.getJvmSignature()
@@ -492,10 +492,11 @@ fun IrSimpleFunction.overriddenInClasses(): Sequence<IrSimpleFunction> =
 fun IrSimpleFunction.isCollectionStub(): Boolean =
     origin == IrDeclarationOrigin.IR_BUILTINS_STUB
 
-// TODO: At present, there is no reliable way to distinguish Java imports from Kotlin cross-module imports.
-val ORIGINS_FROM_JAVA = setOf(IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB)
+val EXTERNAL_ORIGIN = setOf(IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB)
 
-fun IrDeclaration.comesFromJava() = parentAsClass.origin in ORIGINS_FROM_JAVA
+fun IrDeclaration.comesFromJava() = parentAsClass.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
+
+fun IrDeclaration.isExternalDeclaration() = parentAsClass.origin in EXTERNAL_ORIGIN
 
 // Method has the same name, same arguments as `other`. Return types may differ.
 fun Method.sameCallAs(other: Method) =

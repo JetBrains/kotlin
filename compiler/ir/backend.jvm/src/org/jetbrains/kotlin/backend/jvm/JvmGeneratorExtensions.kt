@@ -72,7 +72,7 @@ class JvmGeneratorExtensions(private val generateFacades: Boolean = true) : Gene
             null
 
     override fun computeExternalDeclarationOrigin(descriptor: DeclarationDescriptor): IrDeclarationOrigin? =
-        if (descriptor is JavaCallableMemberDescriptor)
+        if (descriptor is JavaCallableMemberDescriptor || descriptor is JavaClassDescriptor)
             IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
         else
             IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
