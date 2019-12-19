@@ -16,11 +16,9 @@
 
 package org.jetbrains.kotlin.resolve.calls
 
-import org.jetbrains.kotlin.types.AbstractNullabilityChecker
+import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.AbstractFlexibilityChecker.hasDifferentFlexibilityAtDepth
 import org.jetbrains.kotlin.types.AbstractNullabilityChecker.hasPathByNotMarkedNullableNodes
-import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
-import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext
 import org.jetbrains.kotlin.types.model.*
 
@@ -32,10 +30,14 @@ object NewCommonSuperTypeCalculator {
 
     fun TypeSystemCommonSuperTypesContext.commonSuperType(types: List<KotlinTypeMarker>): KotlinTypeMarker {
         val maxDepth = types.maxBy { it.typeDepth() }?.typeDepth() ?: 0
-        return commonSuperType(types, -maxDepth)
+        return commonSuperType(types, -maxDepth, true)
     }
 
-    private fun TypeSystemCommonSuperTypesContext.commonSuperType(types: List<KotlinTypeMarker>, depth: Int): KotlinTypeMarker {
+    private fun TypeSystemCommonSuperTypesContext.commonSuperType(
+        types: List<KotlinTypeMarker>,
+        depth: Int,
+        isTopLevelType: Boolean = false
+    ): KotlinTypeMarker {
         if (types.isEmpty()) throw IllegalStateException("Empty collection for input")
 
         types.singleOrNull()?.let { return it }
@@ -69,6 +71,22 @@ object NewCommonSuperTypeCalculator {
         val upperSuperType = commonSuperTypeForSimpleTypes(
             types.map { it.upperBoundIfFlexible() }, depth, contextStubTypesEqualToAnything, contextStubTypesNotEqual
         )
+
+        if (!isTopLevelType) {
+            val nonStubTypes =
+                types.filter { !isStubRelatedType(it.lowerBoundIfFlexible()) && !isStubRelatedType(it.upperBoundIfFlexible()) }
+            val equalToEachOtherTypes = nonStubTypes.filter { potentialCommonSuperType ->
+                nonStubTypes.all {
+                    AbstractTypeChecker.equalTypes(this, it, potentialCommonSuperType)
+                }
+            }
+
+            if (equalToEachOtherTypes.isNotEmpty()) {
+                // TODO: merge flexibilities of type arguments instead of select the first suitable type
+                return equalToEachOtherTypes.first()
+            }
+        }
+
         return createFlexibleType(lowerSuperType, upperSuperType)
     }
 
@@ -109,8 +127,10 @@ object NewCommonSuperTypeCalculator {
         val uniqueTypes = arrayListOf<SimpleTypeMarker>()
         for (type in types) {
             val isNewUniqueType = uniqueTypes.all {
-                !AbstractTypeChecker.equalTypes(contextStubTypesNotEqual, it, type) ||
-                        it.typeConstructor().isIntegerLiteralTypeConstructor()
+                val equalsModuloFlexibility = AbstractTypeChecker.equalTypes(contextStubTypesNotEqual, it, type) &&
+                        !it.typeConstructor().isIntegerLiteralTypeConstructor()
+
+                !equalsModuloFlexibility || hasDifferentFlexibilityAtDepth(listOf(it, type))
             }
             if (isNewUniqueType) {
                 uniqueTypes += type
@@ -121,7 +141,7 @@ object NewCommonSuperTypeCalculator {
 
     // This function leaves only supertypes, i.e. A0 is a strong supertype for A iff A != A0 && A <: A0
     // Explanation: consider types (A : A0, B : B0, A0, B0), then CST(A, B, A0, B0) == CST(CST(A, A0), CST(B, B0)) == CST(A0, B0)
-    private fun filterSupertypes(
+    private fun TypeSystemCommonSuperTypesContext.filterSupertypes(
         list: List<SimpleTypeMarker>,
         contextStubTypesNotEqual: AbstractTypeCheckerContext
     ): List<SimpleTypeMarker> {
@@ -130,7 +150,9 @@ object NewCommonSuperTypeCalculator {
         while (iterator.hasNext()) {
             val potentialSubtype = iterator.next()
             val isSubtype = supertypes.any { supertype ->
-                supertype !== potentialSubtype && AbstractTypeChecker.isSubtypeOf(contextStubTypesNotEqual, potentialSubtype, supertype)
+                supertype !== potentialSubtype &&
+                        AbstractTypeChecker.isSubtypeOf(contextStubTypesNotEqual, potentialSubtype, supertype) &&
+                        !hasDifferentFlexibilityAtDepth(listOf(potentialSubtype, supertype))
             }
 
             if (isSubtype) iterator.remove()
@@ -352,14 +374,26 @@ object NewCommonSuperTypeCalculator {
         // CS(Out<X>, Out<Y>) = Out<CS(X, Y)>
         // CS(In<X>, In<Y>) = In<X & Y>
         if (asOut) {
-            val type = commonSuperType(arguments.map { it.getType() }, depth + 1)
-            return if (parameter.getVariance() != TypeVariance.INV) return type.asTypeArgument() else createTypeArgument(
-                type,
-                TypeVariance.OUT
-            )
+            val argumentTypes = arguments.map { it.getType() }
+            val parameterIsNotInv = parameter.getVariance() != TypeVariance.INV
+
+            if (parameterIsNotInv) {
+                return commonSuperType(argumentTypes, depth + 1).asTypeArgument()
+            }
+
+            val equalToEachOtherType = arguments.firstOrNull { potentialSuperType ->
+                arguments.all { AbstractTypeChecker.equalTypes(this, it.getType(), potentialSuperType.getType()) }
+            }
+
+            return if (equalToEachOtherType == null) {
+                createTypeArgument(commonSuperType(argumentTypes, depth + 1), TypeVariance.OUT)
+            } else {
+                createTypeArgument(equalToEachOtherType.getType(), TypeVariance.INV)
+            }
         } else {
             val type = intersectTypes(arguments.map { it.getType() })
-            return if (parameter.getVariance() != TypeVariance.INV) return type.asTypeArgument() else createTypeArgument(
+
+            return if (parameter.getVariance() != TypeVariance.INV) type.asTypeArgument() else createTypeArgument(
                 type,
                 TypeVariance.IN
             )

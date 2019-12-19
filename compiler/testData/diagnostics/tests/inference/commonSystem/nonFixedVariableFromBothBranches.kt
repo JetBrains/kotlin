@@ -16,5 +16,5 @@ fun <R> foo(f: () -> R): R = f()
 fun test(n: Number) {
     val a = select(foo { JavaTest.createNumberArray() }, emptyArray())
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.Array<(kotlin.Number..kotlin.Number?)>..kotlin.Array<out (kotlin.Number..kotlin.Number?)>?)")!>a<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.Array<(kotlin.Number..kotlin.Number?)>..kotlin.Array<(kotlin.Number..kotlin.Number?)>?)")!>a<!>
 }
