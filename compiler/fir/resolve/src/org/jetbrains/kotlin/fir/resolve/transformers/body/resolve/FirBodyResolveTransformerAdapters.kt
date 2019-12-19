@@ -59,7 +59,7 @@ class FirImplicitTypeBodyResolveTransformerAdapter : FirTransformer<Nothing?>() 
             implicitTypeOnly = true,
             scopeSession = scopeSession
         )
-        return file.transform(transformer, ResolutionMode.ContextDependent)
+        return file.transform(transformer, ResolutionMode.ContextIndependent)
     }
 }
 
@@ -79,6 +79,6 @@ class FirBodyResolveTransformerAdapter : FirTransformer<Nothing?>() {
             implicitTypeOnly = false,
             scopeSession = scopeSession
         )
-        return file.transform(transformer, ResolutionMode.ContextDependent)
+        return file.transform(transformer, ResolutionMode.ContextIndependent)
     }
 }
