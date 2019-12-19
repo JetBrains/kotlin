@@ -2,7 +2,6 @@ package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.firstStep
 
 import com.intellij.icons.AllIcons
 import icons.GradleIcons
-import icons.MavenIcons
 import icons.OpenapiIcons
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.DropDownSettingType
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingReference
