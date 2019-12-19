@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.resolve.BindingContext.REFERENCE_TARGET
 import org.jetbrains.kotlin.resolve.calls.callUtil.getParameterForArgument
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
 
@@ -42,6 +43,7 @@ class ConvertReferenceToLambdaIntention : SelfTargetingOffsetIndependentIntentio
         val resolvedCall = callGrandParent?.getResolvedCall(context)
         val matchingParameterType = resolvedCall?.getParameterForArgument(valueArgumentParent)?.type
         val matchingParameterIsExtension = matchingParameterType?.isExtensionFunctionType ?: false
+        val firstArgumentIsThis = matchingParameterIsExtension && resolvedCall?.resultingDescriptor?.isExtension == true
 
         val receiverExpression = element.receiverExpression
         val receiverType = receiverExpression?.let {
@@ -87,23 +89,29 @@ class ConvertReferenceToLambdaIntention : SelfTargetingOffsetIndependentIntentio
                         if (targetDescriptor is PropertyDescriptor) "it.$targetName"
                         else "it.$targetName()"
                     else ->
-                        "$receiverPrefix$targetName(it)"
+                        "$receiverPrefix$targetName(${if (firstArgumentIsThis) "this" else "it"})"
                 }
             )
         } else {
+            val (lambdaParams, args) = if (firstArgumentIsThis) {
+                val thisArgument = if (parameterNamesAndTypes.isNotEmpty()) listOf("this") else emptyList()
+                lambdaParameterNamesAndTypes.drop(1) to (thisArgument + parameterNamesAndTypes.drop(1).map { it.first })
+            } else {
+                lambdaParameterNamesAndTypes to parameterNamesAndTypes.map { it.first }
+            }
             factory.createLambdaExpression(
-                parameters = lambdaParameterNamesAndTypes.joinToString(separator = ", ") {
+                parameters = lambdaParams.joinToString(separator = ", ") {
                     if (valueArgumentParent != null) it.first
                     else it.first + ": " + SOURCE_RENDERER.renderType(it.second)
                 },
                 body = if (targetDescriptor is PropertyDescriptor) {
                     "$receiverPrefix$targetName"
                 } else {
-                    parameterNamesAndTypes.joinToString(
+                    args.joinToString(
                         prefix = "$receiverPrefix$targetName(",
                         separator = ", ",
                         postfix = ")"
-                    ) { it.first }
+                    )
                 }
             )
         }
