@@ -73,26 +73,12 @@ public final class PsiVFSListener implements BulkFileListener {
       
       ExtensionPoint<KeyedLazyInstance<LanguageSubstitutor>> point = LanguageSubstitutors.getInstance().getPoint();
       if (point != null) {
-        point.addExtensionPointListener(
-          new ExtensionPointListener<KeyedLazyInstance<LanguageSubstitutor>>() {
+        point.addExtensionPointListener((e, pd) -> {
+          if (project.isDisposed()) return;
 
-            @Override
-            public void extensionRemoved(@NotNull KeyedLazyInstance<LanguageSubstitutor> extension,
-                                         @NotNull PluginDescriptor pluginDescriptor) {
-              if (project.isDisposed()) return;
-              
-              PsiManagerImpl psiManager = (PsiManagerImpl)PsiManager.getInstance(project);
-              ((FileManagerImpl)(psiManager.getFileManager())).processFileTypesChanged(true);
-            }
-
-            @Override
-            public void extensionAdded(@NotNull KeyedLazyInstance<LanguageSubstitutor> extension,
-                                       @NotNull PluginDescriptor pluginDescriptor) {
-              if (project.isDisposed()) return;
-              PsiManagerImpl psiManager = (PsiManagerImpl)PsiManager.getInstance(project);
-              ((FileManagerImpl)(psiManager.getFileManager())).processFileTypesChanged(true);
-            }
-          }, false, project);
+          PsiManagerImpl psiManager = (PsiManagerImpl)PsiManager.getInstance(project);
+          ((FileManagerImpl)(psiManager.getFileManager())).processFileTypesChanged(true);
+        }, false, project);
       }
       
       connection.subscribe(ProjectTopics.PROJECT_ROOTS, new MyModuleRootListener(project));
