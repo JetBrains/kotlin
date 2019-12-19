@@ -46,6 +46,9 @@ val Project.testOutputStdlib
 val Project.testOutputFramework
     get() = (findProperty("testOutputFramework") as File).toString()
 
+val Project.testOutputExternal
+    get() = (findProperty("testOutputExternal") as File).toString()
+
 val Project.kotlinNativeDist
     get() = this.rootProject.file(this.findProperty("org.jetbrains.kotlin.native.home")
             ?: this.findProperty("konan.home") ?: "dist")
@@ -254,8 +257,8 @@ fun compileSwift(project: Project, target: KonanTarget, sources: List<String>, o
         |stdout: $stdOut
         |stderr: $stdErr
         """.trimMargin())
-    check(exitCode == 0, { "Compilation failed" })
-    check(output.toFile().exists(), { "Compiler swiftc hasn't produced an output file: $output" })
+    check(exitCode == 0) { "Compilation failed" }
+    check(output.toFile().exists()) { "Compiler swiftc hasn't produced an output file: $output" }
 }
 
 fun targetSupportsMimallocAllocator(targetName: String) =

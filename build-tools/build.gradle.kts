@@ -42,8 +42,12 @@ repositories {
     maven("https://kotlin.bintray.com/kotlinx")
 }
 
+val kotlinCompilerJar by configurations.creating
+
 dependencies {
     compileOnly(gradleApi())
+
+    kotlinCompilerJar("org.jetbrains.kotlin:kotlin-compiler:${kotlinVersion}@jar")
 
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
@@ -92,6 +96,7 @@ val compileGroovy: GroovyCompile by tasks
 // Add Kotlin classes to a classpath for the Groovy compiler
 compileGroovy.apply {
     classpath += project.files(compileKotlin.destinationDir)
+    classpath += kotlinCompilerJar
     dependsOn(compileKotlin)
 }
 

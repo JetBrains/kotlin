@@ -9,6 +9,7 @@ import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
@@ -334,7 +335,11 @@ open class KonanStandaloneTest : KonanLocalTest() {
     var flags: List<String> = listOf()
         get() = if (enableKonanAssertions) field + "-ea" else field
 
-    fun getSources() = buildCompileList(outputDirectory)
+    fun getSources(): Provider<List<String>> = project.provider {
+        val sources = buildCompileList(project.file(source).toPath(), outputDirectory)
+        sources.forEach { it.writeTextToFile() }
+        sources.map { it.path }
+    }
 }
 
 /**
@@ -363,7 +368,7 @@ open class KonanDriverTest : KonanStandaloneTest() {
                 add("-target")
                 add(project.testTarget.visibleName)
             }
-            addAll(getSources())
+            addAll(getSources().get())
             addAll(flags)
             addAll(project.globalTestArgs)
         }

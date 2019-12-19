@@ -106,12 +106,12 @@ final CacheTesting cacheTesting = CacheTestingKt.configureCacheTesting(project)
 if (cacheTesting != null) {
     // Note: can't do this in [CacheTesting.configure] since task classes aren't accessible there.
 
-    tasks.withType(KonanCompileNativeBinary.class) {
+    tasks.withType(KonanCompileNativeBinary.class).configureEach {
         dependsOn cacheTesting.buildCacheTask
         extraOpts cacheTesting.compilerArgs
     }
 
-    tasks.withType(RunExternalTestGroup.class) {
+    tasks.withType(RunExternalTestGroup.class).configureEach {
         dependsOn cacheTesting.buildCacheTask
         flags = (flags ?: []) + cacheTesting.compilerArgs
     }
@@ -120,11 +120,11 @@ if (cacheTesting != null) {
 // Enable two-stage test compilation if the test_two_stage property is set.
 ext.twoStageEnabled = project.hasProperty("test_two_stage")
 
-tasks.withType(KonanCompileNativeBinary.class) {
+tasks.withType(KonanCompileNativeBinary.class).configureEach {
     enableTwoStageCompilation = twoStageEnabled
 }
 
-tasks.withType(RunExternalTestGroup.class) {
+tasks.withType(RunExternalTestGroup.class).configureEach {
     enableTwoStageCompilation = twoStageEnabled
 }
 
@@ -290,22 +290,20 @@ boolean isExcluded(String dir) {
     return result
 }
 
-def createTestTasks(File testRoot, Class<Task> taskType, Closure taskConfiguration) {
+def createTestTasks(File testRoot, Class<Task> taskType) {
     testRoot.eachDirRecurse {
         // Skip build directory and directories without *.kt files.
         if (it.name == "build" || it.listFiles().count { it.name.endsWith(".kt") && it.isFile() } == 0) {
             return
         }
 
-        def taskDirectory = project.relativePath(it)
+        def taskDirectory = project.relativePath(it).substring("build/".length())
         if (!isExcluded(taskDirectory)) {
             def taskName = taskDirectory.replaceAll("[-/\\\\]", '_')
-
-            def task = project.task(taskName, type: taskType) {
-                groupDirectory = taskDirectory
-                finalizedBy resultsTask
+            project.tasks.register(taskName, taskType) {
+                it.groupDirectory = taskDirectory
+                it.finalizedBy resultsTask
             }
-            taskConfiguration(task)
         } else {
             println("$taskDirectory is excluded")
         }
@@ -404,7 +402,7 @@ task run_external () {
     }
 
     // Create tasks for external tests.
-    createTestTasks(externalTestsDir, RunExternalTestGroup) { }
+    createTestTasks(externalTestsDir, RunExternalTestGroup)
 
     // Set up dependencies.
     dependsOn(tasksOf(RunExternalTestGroup))
@@ -4399,7 +4397,7 @@ task buildKonanTests { t ->
     // These tests should not be built into the TestRunner's test executable
     def excludeList = [ "codegen/inline/returnLocalClassFromBlock.kt" ]
     project.tasks
-            .matching { it instanceof KonanStandaloneTest }
+            .withType(KonanStandaloneTest.class)
             .each {
                 // add library and source files
                 if (it instanceof KonanLinkTest) {
@@ -4426,7 +4424,8 @@ task buildKonanTests { t ->
 
     // Local tests build into a single binary should depend on this task
     project.tasks
-            .matching { !(it instanceof KonanStandaloneTest) && it instanceof KonanLocalTest }
+            .withType(KonanLocalTest.class)
+            .matching { !(it instanceof KonanStandaloneTest) }
             .forEach { it.dependsOn(t) }
 }
 
@@ -4478,12 +4477,13 @@ dependencies {
 // Configure build for iOS device targets.
 if (target.family == Family.IOS && (target.architecture == ARM32 || target.architecture == ARM64)) {
     project.tasks
-            .matching { it instanceof KonanTestExecutable }
+            .withType(KonanTestExecutable.class)
             .forEach {
                 ExecutorServiceKt.configureXcodeBuild((KonanTestExecutable) it)
             }
-    // Exclude tasks that can not be run on device
+    // Exclude tasks that cannot be run on device
     project.tasks
+            .withType(KonanTest.class)
             .matching { (it instanceof KonanLocalTest && ((KonanLocalTest) it).testData != null) ||
                     // Filter out tests that depend on libs. TODO: copy them too
                     it instanceof KonanInteropTest ||
