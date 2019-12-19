@@ -2,7 +2,6 @@
 package com.intellij.execution.lineMarker
 
 import com.intellij.execution.Executor
-import com.intellij.execution.ExecutorRegistry
 import com.intellij.execution.actions.*
 import com.intellij.execution.configurations.LocatableConfiguration
 import com.intellij.execution.impl.RunManagerImpl
@@ -39,7 +38,7 @@ class ExecutorAction private constructor(val origin: AnAction,
     fun getActionList(order: Int = 0): List<AnAction> {
       val actionManager = ActionManager.getInstance()
       val createAction = actionManager.getAction("CreateRunConfiguration")
-      val list = ExecutorRegistry.getInstance().registeredExecutors
+      val list = Executor.EXECUTOR_EXTENSION_NAME.extensionList
         .mapNotNull { executor ->
           val action = actionManager.getAction(executor.contextActionId) ?: return@mapNotNull null
           ExecutorAction(action, executor, order)

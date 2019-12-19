@@ -7,7 +7,6 @@ import com.intellij.configurationStore.serializeStateInto
 import com.intellij.diagnostic.PluginException
 import com.intellij.execution.ExecutionBundle
 import com.intellij.execution.Executor
-import com.intellij.execution.ExecutorRegistry
 import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.execution.configuration.PersistentAwareRunConfiguration
 import com.intellij.execution.configurations.*
@@ -478,7 +477,7 @@ class RunnerAndConfigurationSettingsImpl @JvmOverloads constructor(
         runnersById.size == 1 -> runnersById.firstOrNull()
         else -> {
           RunManagerImpl.LOG.error("More than one runner found for ID: $runnerId")
-          for (executor in ExecutorRegistry.getInstance().registeredExecutors) {
+          for (executor in Executor.EXECUTOR_EXTENSION_NAME.extensionList) {
             runnersById.firstOrNull { it.canRun(executor.id, configuration)  }?.let {
               return it
             }

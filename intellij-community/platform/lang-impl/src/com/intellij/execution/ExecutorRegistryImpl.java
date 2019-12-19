@@ -131,12 +131,6 @@ public final class ExecutorRegistryImpl extends ExecutorRegistry implements Disp
   }
 
   @Override
-  @NotNull
-  public synchronized Executor[] getRegisteredExecutors() {
-    return myExecutors.toArray(new Executor[0]);
-  }
-
-  @Override
   public Executor getExecutorById(@NotNull String executorId) {
     return myIdToExecutor.get(executorId);
   }
