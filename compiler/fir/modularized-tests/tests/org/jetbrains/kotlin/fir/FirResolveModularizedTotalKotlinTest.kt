@@ -66,7 +66,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
             bench.buildFiles(builder, ktFiles)
         }
 
-        println("Raw FIR up, files: ${firFiles.size}")
+        //println("Raw FIR up, files: ${firFiles.size}")
 
         bench.processFiles(firFiles, totalTransformer.transformers)
 
