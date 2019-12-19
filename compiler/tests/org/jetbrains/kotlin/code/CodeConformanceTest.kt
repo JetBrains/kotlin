@@ -161,7 +161,8 @@ class CodeConformanceTest : TestCase() {
                 { source ->
                     // substring check is an optimization
                     "@author" in source && atAuthorPattern.matcher(source).find() &&
-                            "ASM: a very small and fast Java bytecode manipulation framework" !in source
+                            "ASM: a very small and fast Java bytecode manipulation framework" !in source &&
+                            "package org.jetbrains.kotlin.tools.projectWizard.settings.version.maven" !in source
                 }
             ),
             TestData(
