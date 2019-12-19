@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: ANY
 class TestInitValInLambdaCalledOnce {
     val x: Int
     init {
