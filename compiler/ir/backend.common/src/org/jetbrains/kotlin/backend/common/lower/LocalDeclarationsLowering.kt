@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.lower
 
-import org.jetbrains.kotlin.backend.common.BackendContext
-import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.IrElementVisitorVoidWithContext
-import org.jetbrains.kotlin.backend.common.ScopeWithIr
+import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.descriptors.Modality
@@ -43,6 +40,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -95,7 +93,7 @@ class LocalDeclarationsLowering(
     val localNameProvider: LocalNameProvider = LocalNameProvider.DEFAULT,
     val visibilityPolicy: VisibilityPolicy = VisibilityPolicy.DEFAULT
 ) :
-    FileLoweringPass {
+    BodyLoweringPass {
 
     object DECLARATION_ORIGIN_FIELD_FOR_CAPTURED_VALUE :
         IrDeclarationOriginImpl("FIELD_FOR_CAPTURED_VALUE", isSynthetic = true)
@@ -106,9 +104,22 @@ class LocalDeclarationsLowering(
     private object STATEMENT_ORIGIN_INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE :
         IrStatementOriginImpl("INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE")
 
-    override fun lower(irFile: IrFile) {
-        LocalDeclarationsTransformer(irFile).lowerLocalDeclarations()
+    override fun lower(irBody: IrBody, container: IrDeclaration) {
+        LocalDeclarationsTransformer(irBody, container).lowerLocalDeclarations()
     }
+
+    private class ScopeWithCounter(scope: Scope, irElement: IrElement) : ScopeWithIr(scope, irElement) {
+        // Continuous numbering across all declarations in the container.
+        var counter: Int = 0
+    }
+
+    private val scopeMap: MutableMap<IrSymbolOwner, ScopeWithCounter> = mutableMapOf()
+    // Need to keep LocalFunctionContext.index
+    private val IrSymbolOwner.scopeWithCounter: ScopeWithCounter
+        get() = scopeMap.getOrPut(this) {
+            ScopeWithCounter(Scope(symbol), this)
+        }
+
 
     private abstract class LocalContext {
         val capturedTypeParameterToTypeParameter: MutableMap<IrTypeParameter, IrTypeParameter> = mutableMapOf()
@@ -203,7 +214,7 @@ class LocalDeclarationsLowering(
             abbreviation.annotations
         )
 
-    private inner class LocalDeclarationsTransformer(val irFile: IrFile) {
+    private inner class LocalDeclarationsTransformer(val irBody: IrBody, val container: IrDeclaration) {
         val localFunctions: MutableMap<IrFunction, LocalFunctionContext> = LinkedHashMap()
         val localClasses: MutableMap<IrClass, LocalClassContext> = LinkedHashMap()
         val localClassConstructors: MutableMap<IrConstructor, LocalClassConstructorContext> = LinkedHashMap()
@@ -481,7 +492,7 @@ class LocalDeclarationsLowering(
                 rewriteClassMembers(it.declaration, it)
             }
 
-            rewriteFunctionBody(irFile, null)
+            rewriteFunctionBody(container, null)
         }
 
         private fun createNewCall(oldCall: IrCall, newCallee: IrFunction) =
@@ -794,7 +805,7 @@ class LocalDeclarationsLowering(
 
         private fun collectClosureForLocalDeclarations() {
             //TODO: maybe use for granular declarations
-            val annotator = ClosureAnnotator(irFile)
+            val annotator = ClosureAnnotator(irBody, container)
 
             localFunctions.forEach { (declaration, context) ->
                 context.closure = annotator.getFunctionClosure(declaration)
@@ -806,19 +817,25 @@ class LocalDeclarationsLowering(
         }
 
         private fun collectLocalDeclarations() {
-            class ScopeWithCounter(scope: Scope, irElement: IrElement) : ScopeWithIr(scope, irElement) {
-                // Continuous numbering across all declarations in the container.
-                var counter: Int = 0
-            }
+            val enclosingFileScope = container.file.scopeWithCounter
 
-            irFile.acceptVoid(object : IrElementVisitorVoidWithContext() {
+            val enclosingClassScope = run {
+                var currentParent = container as? IrClass ?: container.parent
+                while (currentParent is IrDeclaration && currentParent !is IrClass) {
+                    currentParent = currentParent.parent
+                }
+
+                currentParent as? IrClass
+            }?.scopeWithCounter
+
+            irBody.acceptVoid(object : IrElementVisitorVoidWithContext() {
 
                 override fun visitElement(element: IrElement) {
                     element.acceptChildrenVoid(this)
                 }
 
                 override fun createScope(declaration: IrSymbolOwner): ScopeWithIr {
-                    return ScopeWithCounter(Scope(declaration.symbol), declaration)
+                    return ScopeWithCounter(Scope(declaration.symbol), declaration) // Don't cache local declarations
                 }
 
                 override fun visitSimpleFunction(declaration: IrSimpleFunction) {
@@ -826,7 +843,7 @@ class LocalDeclarationsLowering(
 
                     if (declaration.visibility == Visibilities.LOCAL) {
                         val scopeWithIr =
-                            (currentClass ?: currentFile /*file is required for K/N cause file declarations are not split by classes*/
+                            (currentClass ?: enclosingClassScope ?: enclosingFileScope /*file is required for K/N cause file declarations are not split by classes*/
                             ?: error("No scope for ${declaration.dump()}"))
                         localFunctions[declaration] =
                             LocalFunctionContext(
@@ -858,7 +875,8 @@ class LocalDeclarationsLowering(
                 }
 
                 private val inInlineFunctionScope: Boolean
-                    get() = allScopes.any { scope -> (scope.irElement as? IrFunction)?.isInline ?: false }
+                    get() = allScopes.any { scope -> (scope.irElement as? IrFunction)?.isInline ?: false } ||
+                            generateSequence(container) { it.parent as? IrDeclaration }.any { it is IrFunction && it.isInline }
             })
         }
     }
