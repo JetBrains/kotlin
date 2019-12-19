@@ -37,16 +37,20 @@ class GradleScriptConfigurationLoader(project: Project) : DefaultScriptConfigura
             // todo: use default configuration loader for out-of-project scripts?
 
             return true
-        } else {
-            // Gradle read files from FS
-            GlobalScope.launch(EDT(project)) {
-                runWriteAction {
-                    FileDocumentManager.getInstance().saveAllDocuments()
-                }
-            }
-
-            return super.loadDependencies(isFirstLoad, ktFile, scriptDefinition, context)
         }
+
+        if (!isInAffectedGradleProjectFiles(ktFile.project, ktFile.originalFile.virtualFile)) {
+            // todo: provide an action to load configuration through scripting API: KT-34625, KT-35268
+        }
+
+        // Gradle read files from FS
+        GlobalScope.launch(EDT(project)) {
+            runWriteAction {
+                FileDocumentManager.getInstance().saveAllDocuments()
+            }
+        }
+
+        return super.loadDependencies(isFirstLoad, ktFile, scriptDefinition, context)
     }
 
     override fun getInputsStamp(virtualFile: VirtualFile, file: KtFile): CachedConfigurationInputs {
