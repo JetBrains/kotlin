@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.tools;
 
+import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ex.ActionManagerEx;
 import com.intellij.openapi.options.SchemeManager;
 import com.intellij.openapi.options.SchemeManagerFactory;
@@ -23,7 +24,6 @@ public abstract class BaseToolManager<T extends Tool> {
     //noinspection AbstractMethodCallInConstructor
     mySchemeManager = factory.create(schemePath, createProcessor(), presentableName);
     mySchemeManager.loadSchemes();
-    registerActions();
   }
 
   protected abstract SchemeProcessor<ToolsGroup<T>, ToolsGroup<T>> createProcessor();
@@ -72,16 +72,15 @@ public abstract class BaseToolManager<T extends Tool> {
 
   public void setTools(@NotNull List<ToolsGroup<T>> tools) {
     mySchemeManager.setSchemes(tools);
-    registerActions();
+    registerActions(getActionManager());
   }
 
-  void registerActions() {
-    ActionManagerEx actionManager = getActionManager();
+  protected final void registerActions(@Nullable ActionManager actionManager) {
     if (actionManager == null) {
       return;
     }
 
-    unregisterActions();
+    unregisterActions(actionManager);
 
     // register
     // to prevent exception if 2 or more targets have the same name
@@ -101,8 +100,7 @@ public abstract class BaseToolManager<T extends Tool> {
 
   protected abstract String getActionIdPrefix();
 
-  private void unregisterActions() {
-    ActionManagerEx actionManager = getActionManager();
+  private void unregisterActions(@Nullable ActionManager actionManager) {
     if (actionManager == null) {
       return;
     }
