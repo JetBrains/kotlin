@@ -2,20 +2,36 @@
 package com.intellij.openapi.options.colors.pages;
 
 import com.intellij.application.options.colors.ColorSettingsUtil;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.editor.colors.ColorKey;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
+import com.intellij.openapi.extensions.ExtensionPointChangeListener;
 import com.intellij.openapi.options.colors.*;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.containers.ConcurrentFactoryMap;
 import com.intellij.util.containers.JBIterable;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.Map;
 
-public class ColorSettingsPagesImpl extends ColorSettingsPages {
+public class ColorSettingsPagesImpl extends ColorSettingsPages implements Disposable {
   private final Map<Object, Pair<ColorAndFontDescriptorsProvider, ? extends AbstractKeyDescriptor>> myCache =
     ConcurrentFactoryMap.createMap(this::getDescriptorImpl);
+
+  @NotNull
+  private final Disposable myListenersDisposable;
+  
+  public ColorSettingsPagesImpl() {
+    myListenersDisposable = Disposer.newDisposable();
+    ExtensionPointChangeListener<ColorAndFontDescriptorsProvider> listener = (e, pd) -> {
+      myCache.clear();
+    };
+    ColorAndFontDescriptorsProvider.EP_NAME.addExtensionPointListener(listener, myListenersDisposable);
+    ColorSettingsPage.EP_NAME.addExtensionPointListener(listener, myListenersDisposable);
+  }
 
   @Override
   public void registerPage(ColorSettingsPage page) {
@@ -56,5 +72,10 @@ public class ColorSettingsPagesImpl extends ColorSettingsPages {
       }
     }
     return null;
+  }
+
+  @Override
+  public void dispose() {
+    Disposer.dispose(myListenersDisposable);
   }
 }
