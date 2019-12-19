@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.dump.MultiModuleHtmlFirDump
+import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveTransformer
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.test.ConfigurationKind
@@ -46,7 +47,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
     private var bestStatistics: FirResolveBench.TotalStatistics? = null
     private var bestPass: Int = 0
 
-    private fun runAnalysis(moduleData: ModuleData, environment: KotlinCoreEnvironment) {
+    private fun runAnalysis(moduleData: ModuleData, environment: KotlinCoreEnvironment, useLightTree: Boolean = false) {
         val project = environment.project
         val ktFiles = environment.getSourceFiles()
 
@@ -55,10 +56,15 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
             .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(project))
         val librariesScope = ProjectScope.getLibrariesScope(project)
         val session = createSession(environment, scope, librariesScope, moduleData.qualifiedName)
-        val builder = RawFirBuilder(session, stubMode = false)
-
         val totalTransformer = FirTotalResolveTransformer()
-        val firFiles = bench.buildFiles(builder, ktFiles)
+
+        val firFiles = if (useLightTree) {
+            val lightTree2Fir = LightTree2Fir(session, stubMode = false)
+            bench.buildFiles(lightTree2Fir, moduleData.sources.filter { it.extension == "kt" })
+        } else {
+            val builder = RawFirBuilder(session, stubMode = false)
+            bench.buildFiles(builder, ktFiles)
+        }
 
         println("Raw FIR up, files: ${firFiles.size}")
 
