@@ -47,7 +47,9 @@ import org.jetbrains.kotlin.kapt3.stubs.ErrorTypeCorrector.TypeKind.METHOD_PARAM
 import org.jetbrains.kotlin.kapt3.stubs.ErrorTypeCorrector.TypeKind.RETURN_TYPE
 import org.jetbrains.kotlin.kapt3.util.*
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
@@ -1193,6 +1195,21 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
                 }
 
                 treeMaker.Select(treeMaker.Type(enumType), treeMaker.name(valueName))
+            }
+            is Pair<*, *> -> {
+                assert(value.first is ClassId)
+                assert(value.second is Name)
+                val valueName = with((value.second as Name).identifier) {
+                    if (isValidIdentifier(this)) {
+                        this
+                    } else {
+                        kaptContext.compiler.log.report(kaptContext.kaptError("'$this' is an invalid Java enum value name"))
+                        "InvalidFieldName"
+                    }
+                }
+                val asSingleFqName = (value.first as ClassId).asSingleFqName()
+
+                treeMaker.Select(treeMaker.FqName(asSingleFqName), treeMaker.name(value.second.toString()))
             }
             is List<*> -> treeMaker.NewArray(null, JavacList.nil(), mapJList(value) { convertLiteralExpression(it) })
 

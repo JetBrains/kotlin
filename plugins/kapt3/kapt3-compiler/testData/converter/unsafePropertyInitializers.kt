@@ -22,3 +22,12 @@ object Boo {
     val z = foo()
     fun foo() = "abc"
 }
+
+class HavingState {
+    val state = State.START
+}
+
+enum class State {
+    START,
+    FINISH,
+}
