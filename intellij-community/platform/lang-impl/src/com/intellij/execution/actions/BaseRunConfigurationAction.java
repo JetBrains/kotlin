@@ -223,7 +223,7 @@ public abstract class BaseRunConfigurationAction extends ActionGroup {
     ourLastTimeoutStamp = IdeEventQueue.getInstance().getEventCount();
   }
 
-  // we assume that presence of anything runnable in a file changes rarely, so using last recorded state is mostly OK 
+  // we assume that presence of anything runnable in a file changes rarely, so using last recorded state is mostly OK
   protected void approximatePresentationByPreviousAvailability(AnActionEvent event, ThreeState hadAnythingRunnable) {
     event.getPresentation().copyFrom(getTemplatePresentation());
     event.getPresentation().setEnabledAndVisible(hadAnythingRunnable == ThreeState.YES);
@@ -262,7 +262,7 @@ public abstract class BaseRunConfigurationAction extends ActionGroup {
   }
 
   @NotNull
-  public static String suggestRunActionName(final LocatableConfiguration configuration) {
+  public static String suggestRunActionName(@NotNull LocatableConfiguration configuration) {
     if (configuration instanceof LocatableConfigurationBase && configuration.isGeneratedName()) {
       String actionName = ((LocatableConfigurationBase<?>)configuration).getActionName();
       if (actionName != null) {

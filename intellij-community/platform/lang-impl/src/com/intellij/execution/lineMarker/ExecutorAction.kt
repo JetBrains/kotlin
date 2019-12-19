@@ -38,12 +38,18 @@ class ExecutorAction private constructor(val origin: AnAction,
     fun getActionList(order: Int = 0): List<AnAction> {
       val actionManager = ActionManager.getInstance()
       val createAction = actionManager.getAction("CreateRunConfiguration")
-      val list = Executor.EXECUTOR_EXTENSION_NAME.extensionList
-        .mapNotNull { executor ->
-          val action = actionManager.getAction(executor.contextActionId) ?: return@mapNotNull null
-          ExecutorAction(action, executor, order)
+      val extensions = Executor.EXECUTOR_EXTENSION_NAME.extensionList
+      val result = ArrayList<AnAction>(extensions.size + (if (createAction == null) 0 else 1))
+      extensions
+        .mapNotNullTo(result) { executor ->
+          actionManager.getAction(executor.contextActionId)?.let {
+            ExecutorAction(it, executor, order)
+          }
         }
-      return if (createAction == null) list else list + createAction
+      if (createAction != null) {
+        result.add(createAction)
+      }
+      return result
     }
 
     private fun getConfigurations(dataContext: DataContext): List<ConfigurationFromContext> {
@@ -88,7 +94,7 @@ class ExecutorAction private constructor(val origin: AnAction,
 
   override fun canBePerformed(context: DataContext) = origin !is ActionGroup || origin.canBePerformed(context)
 
-  override fun getChildren(e: AnActionEvent?) = (origin as? ActionGroup)?.getChildren(e) ?: AnAction.EMPTY_ARRAY
+  override fun getChildren(e: AnActionEvent?): Array<AnAction> = (origin as? ActionGroup)?.getChildren(e) ?: AnAction.EMPTY_ARRAY
 
   override fun isDumbAware() = origin.isDumbAware
 
@@ -104,15 +110,17 @@ class ExecutorAction private constructor(val origin: AnAction,
       return null
     }
 
-    val configuration = list.getOrNull(if (order < list.size) order else 0)?.configuration as LocatableConfiguration
+    val configuration = list.get(if (order < list.size) order else 0).configuration as LocatableConfiguration
     return executor.getStartActionText(BaseRunConfigurationAction.suggestRunActionName(configuration))
   }
 
   override fun equals(other: Any?): Boolean {
-    if (this === other) return true
-    if (other?.javaClass != javaClass) return false
-
-    other as ExecutorAction
+    if (this === other) {
+      return true
+    }
+    if (other !is ExecutorAction) {
+      return false
+    }
 
     if (origin != other.origin) return false
     if (executor != other.executor) return false
