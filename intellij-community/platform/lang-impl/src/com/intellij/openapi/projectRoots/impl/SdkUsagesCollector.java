@@ -10,21 +10,20 @@ import com.intellij.openapi.module.ModuleTypeId;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.*;
-import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import java.util.function.Consumer;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Collects usages of all possible SDK references in the project,
  * including both references for a known SDKs (which are from {@link com.intellij.openapi.projectRoots.ProjectJdkTable}
  * and unknown (which are not yet created in the project)
  */
-public class SdkUsagesCollector {
+public final class SdkUsagesCollector {
   private static final ExtensionPointName<SdkUsagesContributor> EP_NAME = ExtensionPointName.create("com.intellij.sdkUsagesContributor");
   private final Project myProject;
 
@@ -98,7 +97,7 @@ public class SdkUsagesCollector {
     /**
      * @return an action to change the currently selected SDK
      * to a project SDK. The action should work no matter if project SDK is valid or not.
-     * Return {@code null} to diasllow that action
+     * Return {@code null} to disallow that action
      */
     @Nullable
     public Runnable getProjectSdkSetAction() {
@@ -126,7 +125,7 @@ public class SdkUsagesCollector {
     return usages;
   }
 
-  public static class ProjectSdkUsages implements SdkUsagesContributor {
+  public static final class ProjectSdkUsages implements SdkUsagesContributor {
     @NotNull
     @Override
     public List<SdkUsage> contributeUsages(@NotNull Project project) {
@@ -141,7 +140,7 @@ public class SdkUsagesCollector {
     }
   }
 
-  public static class ModuleSdkUsages implements SdkUsagesContributor {
+  public static final class ModuleSdkUsages implements SdkUsagesContributor {
     @NotNull
     @Override
     public List<SdkUsage> contributeUsages(@NotNull Project project) {
