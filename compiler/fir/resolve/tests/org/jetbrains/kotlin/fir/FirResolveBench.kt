@@ -182,14 +182,14 @@ class FirResolveBench(val withProgress: Boolean) {
         fileCount += firFiles.size
         try {
             for ((stage, transformer) in transformers.withIndex()) {
-                println("Starting stage #$stage. $transformer")
+                //println("Starting stage #$stage. $transformer")
                 val firFileSequence = if (withProgress) firFiles.progress("   ~ ") else firFiles.asSequence()
                 runStage(transformer, firFileSequence)
                 checkFirProvidersConsistency(firFiles)
             }
 
             if (fails.none()) {
-                println("SUCCESS!")
+                //println("SUCCESS!")
             } else {
                 println("ERROR!")
             }
