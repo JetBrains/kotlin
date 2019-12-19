@@ -89,7 +89,7 @@ class KotlinConstraintSystemCompleter(
                 val variableWithConstraints = c.notFixedTypeVariables.getValue(variableForFixation.variable)
 
                 if (variableForFixation.hasProperConstraint)
-                    fixVariable(c, topLevelType, variableWithConstraints, postponedKtPrimitives, topLevelAtoms)
+                    fixVariable(c, variableWithConstraints, topLevelAtoms)
                 else
                     processVariableWhenNotEnoughInformation(c, variableWithConstraints, topLevelAtoms)
 
@@ -206,13 +206,10 @@ class KotlinConstraintSystemCompleter(
 
     private fun fixVariable(
         c: Context,
-        topLevelType: UnwrappedType,
         variableWithConstraints: VariableWithConstraints,
-        postponedResolveKtPrimitives: List<PostponedResolvedAtom>,
         topLevelAtoms: List<ResolvedAtom>
     ) {
-        val direction = TypeVariableDirectionCalculator(c, postponedResolveKtPrimitives, topLevelType).getDirection(variableWithConstraints)
-        fixVariable(c, variableWithConstraints, direction, topLevelAtoms)
+        fixVariable(c, variableWithConstraints, TypeVariableDirectionCalculator.ResolveDirection.UNKNOWN, topLevelAtoms)
     }
 
     fun fixVariable(
