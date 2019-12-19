@@ -18,5 +18,5 @@ public class Foo {
 
 // FILE: 1.kt
 fun bar() {
-    Foo().test {} checkType { <!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Int>() }
+    Foo().test {} checkType { _<Int>() }
 }

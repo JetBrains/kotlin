@@ -1,5 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNCHECKED_CAST -USELESS_CAST
 // !LANGUAGE: +ProhibitNonReifiedArraysAsReifiedTypeArguments
+// !WITH_NEW_INFERENCE
 class A<T>
 
 fun test1(

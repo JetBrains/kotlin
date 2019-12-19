@@ -1,5 +1,8 @@
+// !DIAGNOSTICS: -UNUSED_VARIABLE
 // !WITH_NEW_INFERENCE
 
 fun <T : Any> nullable(): T? = null
 
-val value = nullable<Int>() ?: nullable()
+fun test() {
+    val value = nullable<Int>() ?: nullable()
+}
