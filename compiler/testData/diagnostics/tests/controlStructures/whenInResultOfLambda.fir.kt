@@ -1,4 +1,6 @@
 // !WITH_NEW_INFERENCE
+// NI_EXPECTED_FILE
+
 val test1 = { when (true) { true -> 1; else -> "" } }
 
 val test2 = { { when (true) { true -> 1; else -> "" } } }

@@ -1,0 +1,8 @@
+package
+
+public val test1: () -> kotlin.Any
+public val test2: () -> () -> kotlin.Any
+public val test3: (kotlin.Boolean) -> kotlin.Any
+public val test4: (kotlin.Boolean) -> kotlin.Any?
+public val test5: () -> kotlin.Unit
+public fun println(): kotlin.Unit
