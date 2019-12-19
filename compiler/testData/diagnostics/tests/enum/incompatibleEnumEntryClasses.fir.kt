@@ -1,3 +1,5 @@
+// !LANGUAGE: -ProhibitComparisonOfIncompatibleEnums
+
 interface I {
     fun foo()
 }
