@@ -1,0 +1,11 @@
+package
+
+public fun test(/*0*/ inv: Inv<kotlin.Int>): kotlin.Unit
+public fun </*0*/ R : kotlin.Any> Inv<kotlin.Int>.mapNotNull(/*0*/ transform: (kotlin.Int) -> R?): Inv<R>
+
+public final class Inv</*0*/ T> {
+    public constructor Inv</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

@@ -18,10 +18,7 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
 import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator.ResolveDirection
-import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
-import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
-import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
-import org.jetbrains.kotlin.resolve.calls.inference.model.checkConstraint
+import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.types.AbstractTypeApproximator
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
@@ -82,7 +79,15 @@ class ResultTypeResolver(
             if (!checkConstraint(this, constraint.type, constraint.kind, resultType)) return false
         }
 
-        if (!trivialConstraintTypeInferenceOracle.isSuitableResultedType(resultType)) return false
+        /*
+         * If all upper constraints came from declared upper bounds we should accept Nothing
+         *   as suitable type as OI does
+         */
+        if (
+            variableWithConstraints.constraints.any {
+                it.kind == ConstraintKind.UPPER && it.position.from !is DeclaredUpperBoundConstraintPosition
+            } && !trivialConstraintTypeInferenceOracle.isSuitableResultedType(resultType)
+        ) return false
 
         return true
     }
