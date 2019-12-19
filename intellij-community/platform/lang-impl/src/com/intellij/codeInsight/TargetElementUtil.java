@@ -30,6 +30,8 @@ import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.util.BitUtil;
 import com.intellij.util.Consumer;
 import com.intellij.util.ThreeState;
+import com.intellij.util.indexing.DumbModeAccessType;
+import com.intellij.util.indexing.FileBasedIndex;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -332,14 +334,23 @@ public class TargetElementUtil  {
     PsiReference ref = findReference(editor, offset);
     if (ref == null) return null;
 
-    final Language language = ref.getElement().getLanguage();
-    TargetElementEvaluator evaluator = TargetElementUtilBase.TARGET_ELEMENT_EVALUATOR.forLanguage(language);
-    if (evaluator != null) {
-      final PsiElement element = evaluator.getElementByReference(ref, flags);
-      if (element != null) return element;
-    }
+    Project project = editor.getProject();
+    if (project == null) return null;
+    PsiElement[] result = {null};
+    FileBasedIndex.getInstance().ignoreDumbMode(() -> {
+      final Language language = ref.getElement().getLanguage();
+      TargetElementEvaluator evaluator = TargetElementUtilBase.TARGET_ELEMENT_EVALUATOR.forLanguage(language);
+      if (evaluator != null) {
+        final PsiElement element = evaluator.getElementByReference(ref, flags);
+        if (element != null) {
+          result[0] = element;
+          return;
+        }
+      }
+      result[0] = ref.resolve();
+    }, project, DumbModeAccessType.RELIABLE_DATA_ONLY);
 
-    return ref.resolve();
+    return result[0];
   }
 
   @NotNull
