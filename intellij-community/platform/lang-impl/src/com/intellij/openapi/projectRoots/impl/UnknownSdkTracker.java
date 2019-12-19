@@ -39,7 +39,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.List;
 import java.util.*;
 
 import static com.intellij.openapi.progress.PerformInBackgroundOption.ALWAYS_BACKGROUND;
@@ -88,7 +87,7 @@ public class UnknownSdkTracker {
 
       UnknownSdkBalloonNotification.getInstance(myProject).notifyFixedSdks(localFixes);
       UnknownSdkEditorNotification.getInstance(myProject).showNotifications(unsetSdks, missingSdks, downloadFixes);
-    });
+    }, myProject.getDisposed());
   }
 
   @NotNull
