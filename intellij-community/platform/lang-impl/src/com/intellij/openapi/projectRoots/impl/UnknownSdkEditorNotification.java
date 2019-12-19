@@ -13,6 +13,7 @@ import com.intellij.openapi.projectRoots.impl.SdkUsagesCollector.SdkUsage;
 import com.intellij.openapi.projectRoots.impl.UnknownSdkResolver.DownloadSdkFix;
 import com.intellij.openapi.projectRoots.impl.UnknownSdkResolver.UnknownSdk;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.util.SmartList;
@@ -127,20 +128,24 @@ public class UnknownSdkEditorNotification implements Disposable {
   public void showNotifications(@NotNull List<SdkUsage> unsetSdks,
                                 @NotNull List<String> unifiableSdkNames,
                                 @NotNull Map<UnknownSdk, DownloadSdkFix> files) {
+    if (!Registry.is("sdk.auto.use.editor.notification")) return;
+
     myNotifications.clear();
 
-    for (SdkUsage usage : unsetSdks) {
-      myNotifications.add(new SdkFixInfo() {
-        @Override
-        public void setupNotificationPanel(@NotNull MissingSdkNotificationPanel panel) {
-          setupPanel(panel, usage.getUsagePresentableText(), usage.getProjectSdkSetAction(), usage.getSdkSetAction());
-        }
+    if (Registry.is("sdk.auto.use.editor.notification.for.unset")) {
+      for (SdkUsage usage : unsetSdks) {
+        myNotifications.add(new SdkFixInfo() {
+          @Override
+          public void setupNotificationPanel(@NotNull MissingSdkNotificationPanel panel) {
+            setupPanel(panel, usage.getUsagePresentableText(), usage.getProjectSdkSetAction(), usage.getSdkSetAction());
+          }
 
-        @Override
-        public String toString() {
-          return "SdkFixInfo { sdkUsage: " + usage.getUsagePresentableText() + " }";
-        }
-      });
+          @Override
+          public String toString() {
+            return "SdkFixInfo { sdkUsage: " + usage.getUsagePresentableText() + " }";
+          }
+        });
+      }
     }
 
     for (String name : unifiableSdkNames) {

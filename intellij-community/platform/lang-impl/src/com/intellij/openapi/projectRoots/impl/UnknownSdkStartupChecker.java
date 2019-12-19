@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 final class UnknownSdkStartupChecker implements StartupActivity.DumbAware {
   @Override
   public void runActivity(@NotNull Project project) {
-    if (Registry.is("sdk.auto.check.unknown.sdk", true)){
+    if (Registry.is("sdk.auto")){
       UnknownSdkTracker.getInstance(project).updateUnknownSdks();
     }
   }
