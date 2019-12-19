@@ -7,11 +7,20 @@ import com.intellij.execution.configurations.RunProfileState
 import com.intellij.execution.configurations.RunnerSettings
 import com.intellij.execution.executors.DefaultRunExecutor
 import com.intellij.execution.ui.RunContentDescriptor
+import org.jetbrains.concurrency.resolvedPromise
 
 @Deprecated(message = "Do not use and do not extend. Use DefaultProgramRunner instead.", level = DeprecationLevel.ERROR)
-abstract class BasicProgramRunner : GenericProgramRunner<RunnerSettings>() {
+abstract class BasicProgramRunner : ProgramRunner<RunnerSettings> {
   @Throws(ExecutionException::class)
-  override fun doExecute(state: RunProfileState, environment: ExecutionEnvironment): RunContentDescriptor? {
+  override fun execute(environment: ExecutionEnvironment, callback: ProgramRunner.Callback?) {
+    val state = environment.state ?: return
+    startRunProfile(environment, callback) {
+      resolvedPromise(doExecute(state, environment))
+    }
+  }
+
+  @Throws(ExecutionException::class)
+  protected open fun doExecute(state: RunProfileState, environment: ExecutionEnvironment): RunContentDescriptor? {
     return executeState(state, environment, this)
   }
 
