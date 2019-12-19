@@ -17,14 +17,9 @@ import java.util.List;
 import java.util.Set;
 
 public abstract class BaseToolManager<T extends Tool> {
-  @Nullable private final ActionManagerEx myActionManager;
   private final SchemeManager<ToolsGroup<T>> mySchemeManager;
 
-  public BaseToolManager(@Nullable ActionManagerEx ex,
-                         @NotNull SchemeManagerFactory factory,
-                         @NotNull String schemePath,
-                         @NotNull String presentableName) {
-    myActionManager = ex;
+  public BaseToolManager(@NotNull SchemeManagerFactory factory, @NotNull String schemePath, @NotNull String presentableName) {
     //noinspection AbstractMethodCallInConstructor
     mySchemeManager = factory.create(schemePath, createProcessor(), presentableName);
     mySchemeManager.loadSchemes();
@@ -32,6 +27,11 @@ public abstract class BaseToolManager<T extends Tool> {
   }
 
   protected abstract SchemeProcessor<ToolsGroup<T>, ToolsGroup<T>> createProcessor();
+
+  @Nullable
+  protected ActionManagerEx getActionManager() {
+    return ActionManagerEx.getInstanceEx();
+  }
 
   @Nullable
   public static String convertString(String s) {
@@ -76,7 +76,8 @@ public abstract class BaseToolManager<T extends Tool> {
   }
 
   void registerActions() {
-    if (myActionManager == null) {
+    ActionManagerEx actionManager = getActionManager();
+    if (actionManager == null) {
       return;
     }
 
@@ -88,7 +89,7 @@ public abstract class BaseToolManager<T extends Tool> {
     for (T tool : getTools()) {
       String actionId = tool.getActionId();
       if (registeredIds.add(actionId)) {
-        myActionManager.registerAction(actionId, createToolAction(tool));
+        actionManager.registerAction(actionId, createToolAction(tool));
       }
     }
   }
@@ -101,12 +102,13 @@ public abstract class BaseToolManager<T extends Tool> {
   protected abstract String getActionIdPrefix();
 
   private void unregisterActions() {
-    // unregister Tool actions
-    if (myActionManager == null) {
+    ActionManagerEx actionManager = getActionManager();
+    if (actionManager == null) {
       return;
     }
-    for (String oldId : myActionManager.getActionIds(getActionIdPrefix())) {
-      myActionManager.unregisterAction(oldId);
+
+    for (String oldId : actionManager.getActionIds(getActionIdPrefix())) {
+      actionManager.unregisterAction(oldId);
     }
   }
 }
