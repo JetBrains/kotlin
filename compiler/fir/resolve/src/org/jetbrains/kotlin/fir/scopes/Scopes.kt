@@ -26,7 +26,7 @@ fun createImportingScopes(
         FirExplicitStarImportingScope(file.imports, session, scopeSession),
         FirDefaultSimpleImportingScope(session, scopeSession, priority = DefaultImportPriority.LOW),
         FirDefaultSimpleImportingScope(session, scopeSession, priority = DefaultImportPriority.HIGH),
-        selfImportingScope(file.packageFqName, session),
+        packageMemberScope(file.packageFqName, session),
         // TODO: explicit simple importing scope should have highest priority (higher than inner scopes added in process)
         FirExplicitSimpleImportingScope(file.imports, session, scopeSession)
     )

@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.resolve.getClassDeclaredCallableSymbols
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDesignatedBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.runResolve
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
-import org.jetbrains.kotlin.fir.scopes.impl.FirSelfImportingScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
@@ -51,7 +51,7 @@ private fun FirFile.findCallableMember(
             }?.fir ?: error("Cannot find FIR callable declaration ${CallableId(packageFqName, klassFqName, declName)}")
     }
     // NB: not sure it's correct to use member scope provider from here (because of possible changes)
-    val memberScope = FirSelfImportingScope(this.packageFqName, session)
+    val memberScope = FirPackageMemberScope(this.packageFqName, session)
     var result: FirCallableDeclaration<*>? = null
     val processor = { symbol: FirCallableSymbol<*> ->
         val fir = symbol.fir
