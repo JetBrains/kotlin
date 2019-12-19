@@ -29,6 +29,6 @@ import p.*
 
 fun <Y, Z> test(b: B<Y, Z>?) {
     if (b is C<Y, Z>) {
-        b?.foo(null)
+        b?.<!AMBIGUITY!>foo<!>(null)
     }
 }

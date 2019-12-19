@@ -38,6 +38,6 @@ import p.*
 
 fun test(b: B?) {
     if (b is C) {
-        b?.foo(null, null)
+        b?.<!AMBIGUITY!>foo<!>(null, null)
     }
 }

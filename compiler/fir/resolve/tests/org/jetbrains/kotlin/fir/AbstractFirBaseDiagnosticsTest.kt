@@ -84,7 +84,7 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
             FirJavaModuleBasedSession(info, sessionProvider, scope)
         }
 
-        val firFiles = mutableListOf<FirFile>()
+        val firFilesPerSession = mutableMapOf<FirSession, List<FirFile>>()
 
         // TODO: make module/session/transformer handling like in AbstractFirMultiModuleTest (IDE)
         for ((testModule, testFilesInModule) in groupedByModule) {
@@ -92,10 +92,12 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
 
             val session = configToSession.getValue(testModule)
 
+            val firFiles = mutableListOf<FirFile>()
             mapKtFilesToFirFiles(session, ktFiles, firFiles, useLightTree)
+            firFilesPerSession[session] = firFiles
         }
 
-        runAnalysis(testDataFile, files, firFiles)
+        runAnalysis(testDataFile, files, firFilesPerSession)
     }
 
     private fun mapKtFilesToFirFiles(session: FirSession, ktFiles: List<KtFile>, firFiles: MutableList<FirFile>, useLightTree: Boolean) {
@@ -116,7 +118,7 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
         }
     }
 
-    protected abstract fun runAnalysis(testDataFile: File, testFiles: List<TestFile>, firFiles: List<FirFile>)
+    protected abstract fun runAnalysis(testDataFile: File, testFiles: List<TestFile>, firFilesPerSession: Map<FirSession, List<FirFile>>)
 
     private fun createModules(
         groupedByModule: Map<TestModule?, List<TestFile>>

@@ -24,21 +24,24 @@ abstract class AbstractFirOldFrontendDiagnosticsTest : AbstractFirDiagnosticsTes
         }
     }
 
-    override fun runAnalysis(testDataFile: File, testFiles: List<TestFile>, firFiles: List<FirFile>) {
+    override fun runAnalysis(testDataFile: File, testFiles: List<TestFile>, firFilesPerSession: Map<FirSession, List<FirFile>>) {
         val failure: AssertionError? = try {
-            doFirResolveTestBench(firFiles, FirTotalResolveTransformer().transformers, gc = false)
+            for ((_, firFiles) in firFilesPerSession) {
+                doFirResolveTestBench(firFiles, FirTotalResolveTransformer().transformers, gc = false)
+            }
             null
         } catch (e: AssertionError) {
             e
         }
         val failureFile = File(testDataFile.path.replace(".kt", ".fail"))
         if (failure == null) {
-            checkResultingFirFiles(firFiles, testDataFile)
+            val allFirFiles = firFilesPerSession.values.flatten()
+            checkResultingFirFiles(allFirFiles, testDataFile)
             assertFalse("Test is good but there is expected exception", failureFile.exists())
-            checkDiagnostics(testDataFile, testFiles, firFiles)
+            checkDiagnostics(testDataFile, testFiles, allFirFiles)
             val needDump = testFiles.any { it.directives.containsKey("FIR_DUMP") }
             if (needDump) {
-                checkFir(testDataFile, firFiles)
+                checkFir(testDataFile, allFirFiles)
             }
         } else {
             if (!failureFile.exists()) {
