@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.BackendContext
-import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -26,7 +26,9 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.visitors.*
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 val sharedVariablesPhase = makeIrFilePhase(
     ::SharedVariablesLowering,
@@ -36,35 +38,16 @@ val sharedVariablesPhase = makeIrFilePhase(
 
 object CoroutineIntrinsicLambdaOrigin : IrStatementOriginImpl("Coroutine intrinsic lambda")
 
-class SharedVariablesLowering(val context: BackendContext) : FileLoweringPass {
-    override fun lower(irFile: IrFile) {
-        irFile.acceptChildrenVoid(object : IrElementVisitorVoid {
-            override fun visitElement(element: IrElement) {
-                element.acceptChildrenVoid(this)
-            }
+class SharedVariablesLowering(val context: BackendContext) : BodyLoweringPass {
 
-            override fun visitFunction(declaration: IrFunction) {
-                declaration.acceptChildrenVoid(this)
-
-                SharedVariablesTransformer(declaration).lowerSharedVariables()
-            }
-
-            override fun visitField(declaration: IrField) {
-                declaration.acceptChildrenVoid(this)
-
-                SharedVariablesTransformer(declaration).lowerSharedVariables()
-            }
-
-            override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer) {
-                declaration.acceptChildrenVoid(this)
-
-                SharedVariablesTransformer(declaration).lowerSharedVariables()
-            }
-        })
+    override fun lower(irBody: IrBody, container: IrDeclaration) {
+        // TODO remove this condition
+        if (container is IrFunction || container is IrField || container is IrAnonymousInitializer) {
+            SharedVariablesTransformer(irBody, container).lowerSharedVariables()
+        }
     }
 
-
-    private inner class SharedVariablesTransformer(val irDeclaration: IrDeclaration) {
+    private inner class SharedVariablesTransformer(val irBody: IrBody, val irDeclaration: IrDeclaration) {
         private val sharedVariables = HashSet<IrVariable>()
 
         fun lowerSharedVariables() {
@@ -75,7 +58,7 @@ class SharedVariablesLowering(val context: BackendContext) : FileLoweringPass {
         }
 
         private fun collectSharedVariables() {
-            irDeclaration.accept(object : IrElementVisitor<Unit, IrDeclarationParent?> {
+            irBody.accept(object : IrElementVisitor<Unit, IrDeclarationParent?> {
                 val relevantVars = HashSet<IrVariable>()
                 val relevantVals = HashSet<IrVariable>()
 
@@ -134,7 +117,7 @@ class SharedVariablesLowering(val context: BackendContext) : FileLoweringPass {
         private fun rewriteSharedVariables() {
             val transformedSymbols = HashMap<IrValueSymbol, IrVariableSymbol>()
 
-            irDeclaration.transformChildrenVoid(object : IrElementTransformerVoid() {
+            irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
                 override fun visitVariable(declaration: IrVariable): IrStatement {
                     declaration.transformChildrenVoid(this)
 
@@ -148,7 +131,7 @@ class SharedVariablesLowering(val context: BackendContext) : FileLoweringPass {
                 }
             })
 
-            irDeclaration.transformChildrenVoid(object : IrElementTransformerVoid() {
+            irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
                 override fun visitGetValue(expression: IrGetValue): IrExpression {
                     expression.transformChildrenVoid(this)
 
