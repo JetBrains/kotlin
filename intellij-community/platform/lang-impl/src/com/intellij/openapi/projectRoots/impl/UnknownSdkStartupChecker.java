@@ -3,11 +3,14 @@ package com.intellij.openapi.projectRoots.impl;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupActivity;
+import com.intellij.openapi.util.registry.Registry;
 import org.jetbrains.annotations.NotNull;
 
 final class UnknownSdkStartupChecker implements StartupActivity.DumbAware {
   @Override
   public void runActivity(@NotNull Project project) {
-    UnknownSdkTracker.getInstance(project).updateUnknownSdks();
+    if (Registry.is("sdk.auto.check.unknown.sdk", true)){
+      UnknownSdkTracker.getInstance(project).updateUnknownSdks();
+    }
   }
 }
