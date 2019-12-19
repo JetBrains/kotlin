@@ -1159,7 +1159,7 @@ public final class BuildManager implements Disposable {
     // portable caches
     if (isGeneratePortableCachesEnabled()) {
       //cmdLine.addParameter("-Didea.resizeable.file.truncate.on.close=true");
-      cmdLine.addParameter("-Dkotlin.jps.non.caching.storage=true");
+      //cmdLine.addParameter("-Dkotlin.jps.non.caching.storage=true");
       cmdLine.addParameter("-Dorg.jetbrains.jps.portable.caches=true");
     }
 
