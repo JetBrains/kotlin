@@ -19,6 +19,9 @@
 @file:kotlin.jvm.JvmPackageName("kotlin.jdk7")
 package kotlin
 
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
+
 /**
  * Executes the given [block] function on this resource and then closes it down correctly whether an exception
  * is thrown or not.
@@ -32,6 +35,9 @@ package kotlin
 @SinceKotlin("1.2")
 @kotlin.internal.InlineOnly
 public inline fun <T : AutoCloseable?, R> T.use(block: (T) -> R): R {
+    contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
     var exception: Throwable? = null
     try {
         return block(this)
