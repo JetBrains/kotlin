@@ -1,0 +1,7 @@
+// "Change type of 'x' to 'String?'" "true"
+fun foo(condition: Boolean) {
+    var x: String? = null
+    if (condition) {
+        x = "abc"
+    }
+}
