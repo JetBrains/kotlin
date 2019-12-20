@@ -75,7 +75,7 @@ class Fir2IrVisitor(
 
     private val typeContext = session.typeContext
 
-    private val declarationStorage = Fir2IrDeclarationStorage(session, symbolTable, moduleDescriptor)
+    private val declarationStorage = Fir2IrDeclarationStorage(session, symbolTable, moduleDescriptor, irBuiltIns)
 
     private val nothingType = session.builtinTypes.nothingType.toIrType(session, declarationStorage)
 
@@ -137,6 +137,9 @@ class Fir2IrVisitor(
         if (this != null) subjectVariableStack.removeAt(subjectVariableStack.size - 1)
         return result
     }
+
+    private fun FirTypeRef.toIrType(session: FirSession, declarationStorage: Fir2IrDeclarationStorage) =
+        toIrType(session, declarationStorage, irBuiltIns)
 
     override fun visitElement(element: FirElement, data: Any?): IrElement {
         TODO("Should not be here: ${element.render()}")
@@ -711,7 +714,7 @@ class Fir2IrVisitor(
     private fun FirAnnotationCall.toIrExpression(): IrExpression {
         val coneType = (annotationTypeRef as? FirResolvedTypeRef)?.type as? ConeLookupTagBasedType
         val firSymbol = coneType?.lookupTag?.toSymbol(session) as? FirClassSymbol
-        val type = coneType?.toIrType(this@Fir2IrVisitor.session, declarationStorage)
+        val type = coneType?.toIrType(session, declarationStorage, irBuiltIns)
         val symbol = type?.classifierOrNull
         return convertWithOffsets { startOffset, endOffset ->
             when (symbol) {

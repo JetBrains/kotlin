@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.descriptors.*
@@ -40,7 +41,8 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 class Fir2IrDeclarationStorage(
     private val session: FirSession,
     private val irSymbolTable: SymbolTable,
-    private val moduleDescriptor: FirModuleDescriptor
+    private val moduleDescriptor: FirModuleDescriptor,
+    private val irBuiltIns: IrBuiltIns
 ) {
     private val firSymbolProvider = session.firSymbolProvider
 
@@ -89,6 +91,9 @@ class Fir2IrDeclarationStorage(
         }
         irSymbolTable.leaveScope(descriptor)
     }
+
+    private fun FirTypeRef.toIrType(session: FirSession, declarationStorage: Fir2IrDeclarationStorage) =
+        toIrType(session, declarationStorage, irBuiltIns)
 
     private fun getIrExternalPackageFragment(fqName: FqName): IrExternalPackageFragment {
         return fragmentCache.getOrPut(fqName) {
