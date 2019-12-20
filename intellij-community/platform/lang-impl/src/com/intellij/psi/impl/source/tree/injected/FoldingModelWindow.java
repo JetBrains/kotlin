@@ -107,18 +107,14 @@ class FoldingModelWindow implements FoldingModelEx, ModificationTracker {
   }
 
   @Override
-  public void runBatchFoldingOperation(@NotNull Runnable operation) {
-    myDelegate.runBatchFoldingOperation(operation);
+  public void runBatchFoldingOperation(@NotNull Runnable operation, boolean allowMovingCaret, boolean keepRelativeCaretPosition) {
+    myDelegate.runBatchFoldingOperation(operation, allowMovingCaret, keepRelativeCaretPosition);
   }
 
   @Override
   public void runBatchFoldingOperation(@NotNull Runnable operation, boolean moveCaretFromCollapsedRegion) {
+    //noinspection deprecation
     myDelegate.runBatchFoldingOperation(operation, moveCaretFromCollapsedRegion);
-  }
-
-  @Override
-  public void runBatchFoldingOperationDoNotCollapseCaret(@NotNull Runnable operation) {
-    myDelegate.runBatchFoldingOperationDoNotCollapseCaret(operation);
   }
 
   @Override
