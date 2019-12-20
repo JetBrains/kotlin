@@ -423,12 +423,9 @@ public final class PushedFilePropertiesUpdaterImpl extends PushedFilePropertiesU
   private static void reloadPsi(final VirtualFile file, final Project project) {
     final FileManagerImpl fileManager = (FileManagerImpl)PsiManagerEx.getInstanceEx(project).getFileManager();
     if (fileManager.findCachedViewProvider(file) != null) {
-      Runnable runnable = () -> WriteAction.run(() -> fileManager.forceReload(file));
-      if (ApplicationManager.getApplication().isDispatchThread()) {
-        runnable.run();
-      } else {
-        TransactionGuard.submitTransaction(project, runnable);
-      }
+      GuiUtils.invokeLaterIfNeeded(() -> WriteAction.run(() -> fileManager.forceReload(file)),
+                                   ModalityState.defaultModalityState(),
+                                   project.getDisposed());
     }
   }
 }
