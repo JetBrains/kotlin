@@ -1,19 +1,11 @@
 package org.jetbrains.kotlin.gradle.targets.js.nodejs
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
-import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
-import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
-import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinRootNpmResolution
-import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinProjectNpmResolution
-import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinRootNpmResolver
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
 import org.jetbrains.kotlin.gradle.targets.js.yarn.Yarn
 import java.io.File
@@ -72,7 +64,8 @@ open class NodeJsRootExtension(val rootProject: Project) {
             val platform = NodeJsPlatform.name
             val architecture = NodeJsPlatform.architecture
 
-            val nodeDir = installationDir.resolve("node-v$nodeVersion-$platform-$architecture")
+            val nodeDirName = "node-v$nodeVersion-$platform-$architecture"
+            val nodeDir = installationDir.resolve(nodeDirName)
             val isWindows = NodeJsPlatform.name == NodeJsPlatform.WIN
             val nodeBinDir = if (isWindows) nodeDir else nodeDir.resolve("bin")
 
@@ -85,6 +78,8 @@ open class NodeJsRootExtension(val rootProject: Project) {
                 val type = if (isWindows) "zip" else "tar.gz"
                 return "org.nodejs:node:$nodeVersion:$platform-$architecture@$type"
             }
+
+            addAccessFile(installationDir, nodeDirName)
 
             return NodeJsEnv(
                 nodeDir = nodeDir,
@@ -110,5 +105,12 @@ open class NodeJsRootExtension(val rootProject: Project) {
 
     companion object {
         const val EXTENSION_NAME: String = "kotlinNodeJs"
+    }
+
+    fun addAccessFile(path: File, version: String) {
+        val fileName = "$version-access"
+
+        val accessFile = File(path, fileName)
+        accessFile.createNewFile()
     }
 }
