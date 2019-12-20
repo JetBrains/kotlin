@@ -188,6 +188,7 @@ public final class CompilerTask extends Task.Backgroundable {
       try {
         indicator.stop();
         ProjectManager.getInstance().removeProjectManagerListener(myProject, myCloseListener);
+        cleanupMessageViewIfEmpty();
       }
       finally {
         if (acquired) {
@@ -198,23 +199,35 @@ public final class CompilerTask extends Task.Backgroundable {
   }
 
   private void prepareMessageView() {
-    if (!myIndicator.isRunning()) {
-      return;
+    if (myIndicator.isRunning() && !myMessageViewWasPrepared.getAndSet(true)) {
+      ApplicationManager.getApplication().invokeLater(() -> {
+        final Project project = myProject;
+        if (project != null && !project.isDisposed()) {
+          synchronized (myMessageViewLock) {
+            if (myErrorTreeView == null && MessageView.SERVICE.getInstance(project).getContentManager().getContentCount() > 0) {
+              // only do something if there are already contans from previous compilations present
+              // this will add the new content for this task and clear messages from previous compilations
+              openMessageView();
+            }
+          }
+        }
+      });
     }
-    if (myMessageViewWasPrepared.getAndSet(true)) {
-      return;
-    }
+  }
 
+  private void cleanupMessageViewIfEmpty() {
     ApplicationManager.getApplication().invokeLater(() -> {
       final Project project = myProject;
-      if (project == null || project.isDisposed()) {
-        return;
-      }
-      synchronized (myMessageViewLock) {
-        // clear messages from the previous compilation
-        if (myErrorTreeView == null) {
-          // if message view != null, the contents has already been cleared
-          removeAllContents(project, null);
+      if (project != null && !project.isDisposed() ) {
+        synchronized (myMessageViewLock) {
+          final NewErrorTreeViewPanel errorTreeView = myErrorTreeView;
+          if (errorTreeView != null && errorTreeView.getErrorViewStructure().isEmpty()) {
+            final ToolWindow tw = ToolWindowManager.getInstance(project).getToolWindow(ToolWindowId.MESSAGES_WINDOW);
+            if (tw == null || !tw.isVisible()) {
+              // if message view is not visible and current content is empty, remove the content
+              removeTaskContents(project);
+            }
+          }
         }
       }
     });
@@ -313,8 +326,6 @@ public final class CompilerTask extends Task.Backgroundable {
   }
 
   public void addMessage(final CompilerMessage message) {
-    prepareMessageView();
-
     final CompilerMessageCategory messageCategory = message.getCategory();
     if (CompilerMessageCategory.WARNING.equals(messageCategory)) {
       myWarningCount += 1;
@@ -423,23 +434,15 @@ public final class CompilerTask extends Task.Backgroundable {
 
   // error tree view initialization must be invoked from event dispatch thread
   private void openMessageView() {
-    if (isHeadlessMode()) {
+    if (isHeadlessMode() || myIndicator.isCanceled()) {
       return;
     }
-    if (myIndicator.isCanceled()) {
-      return;
-    }
-
     final JComponent component;
     synchronized (myMessageViewLock) {
       if (myErrorTreeView != null) {
         return;
       }
-      myErrorTreeView = new CompilerErrorTreeView(
-          myProject,
-          myRestartWork
-      );
-
+      myErrorTreeView = new CompilerErrorTreeView(myProject, myRestartWork);
       myErrorTreeView.setProcessController(new NewErrorTreeViewPanel.ProcessController() {
         @Override
         public void stopProcess() {
@@ -461,7 +464,7 @@ public final class CompilerTask extends Task.Backgroundable {
     SESSION_ID_KEY.set(content, mySessionId);
     messageView.getContentManager().addContent(content);
     myCloseListener.setContent(content, messageView.getContentManager());
-    removeAllContents(myProject, content);
+    removeOldContents(myProject, content);
     messageView.getContentManager().setSelectedContent(content);
   }
 
@@ -484,17 +487,13 @@ public final class CompilerTask extends Task.Backgroundable {
     return false;
   }
 
-  private void removeAllContents(Project project, Content notRemove) {
+  private void removeOldContents(final Project project, final Content notRemove) {
     if (project.isDisposed()) {
       return;
     }
-    final MessageView messageView = MessageView.SERVICE.getInstance(project);
-    Content[] contents = messageView.getContentManager().getContents();
-    for (Content content : contents) {
-      if (content.isPinned()) {
-        continue;
-      }
-      if (content == notRemove) {
+    final ContentManager contentManager = MessageView.SERVICE.getInstance(project).getContentManager();
+    for (Content content : contentManager.getContents()) {
+      if (content.isPinned() || content == notRemove) {
         continue;
       }
       boolean toRemove = CONTENT_ID_KEY.get(content) == myContentId;
@@ -503,7 +502,21 @@ public final class CompilerTask extends Task.Backgroundable {
         toRemove = contentSessionId != null && contentSessionId != mySessionId; // the content was added by previous compilation
       }
       if (toRemove) {
-        messageView.getContentManager().removeContent(content, true);
+        contentManager.removeContent(content, true);
+      }
+    }
+  }
+
+  private void removeTaskContents(Project project) {
+    if (project.isDisposed()) {
+      return;
+    }
+    final ContentManager contentManager = MessageView.SERVICE.getInstance(project).getContentManager();
+    for (Content content : contentManager.getContents()) {
+      if (!content.isPinned()) {
+        if (CONTENT_ID_KEY.get(content) == myContentId || SESSION_ID_KEY.get(content) == mySessionId) {
+          contentManager.removeContent(content, true);
+        }
       }
     }
   }
