@@ -425,7 +425,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                     context.llvm.fileInitializers
                             .forEach { irField ->
                                 val expression = irField.initializer?.expression
-                                if (irField.storageKind == FieldStorageKind.THREAD_LOCAL) {
+                                if (irField.initializer != null && irField.storageKind == FieldStorageKind.THREAD_LOCAL) {
                                     val initialization = evaluateExpression(irField.initializer!!.expression)
                                     val address = context.llvmDeclarations.forStaticField(irField).storageAddressAccess.getAddress(
                                             functionGenerationContext
