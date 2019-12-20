@@ -237,4 +237,6 @@ class ComposedSubstitutor(val left: NewTypeSubstitutor, val right: NewTypeSubsti
             right.substituteNotNullTypeWithConstructor(constructor)?.constructor ?: constructor
         )
     }
+
+    override val isEmpty: Boolean get() = left.isEmpty && right.isEmpty
 }

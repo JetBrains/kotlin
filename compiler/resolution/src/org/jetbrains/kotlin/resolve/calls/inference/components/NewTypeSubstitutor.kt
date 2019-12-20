@@ -21,6 +21,8 @@ interface NewTypeSubstitutor: TypeSubstitutorMarker {
     fun safeSubstitute(type: UnwrappedType): UnwrappedType =
         substitute(type, runCapturedChecks = true, keepAnnotation = true) ?: type
 
+    val isEmpty: Boolean
+
     private fun substitute(type: UnwrappedType, keepAnnotation: Boolean, runCapturedChecks: Boolean): UnwrappedType? =
         when (type) {
             is SimpleType -> substitute(type, keepAnnotation, runCapturedChecks)
@@ -170,10 +172,14 @@ interface NewTypeSubstitutor: TypeSubstitutorMarker {
 
 object EmptySubstitutor : NewTypeSubstitutor {
     override fun substituteNotNullTypeWithConstructor(constructor: TypeConstructor): UnwrappedType? = null
+
+    override val isEmpty: Boolean get() = true
 }
 
 class NewTypeSubstitutorByConstructorMap(val map: Map<TypeConstructor, UnwrappedType>) : NewTypeSubstitutor {
     override fun substituteNotNullTypeWithConstructor(constructor: TypeConstructor): UnwrappedType? = map[constructor]
+
+    override val isEmpty: Boolean get() = map.isEmpty()
 }
 
 class FreshVariableNewTypeSubstitutor(val freshVariables: List<TypeVariableFromCallableDescriptor>) : NewTypeSubstitutor {
@@ -184,6 +190,8 @@ class FreshVariableNewTypeSubstitutor(val freshVariables: List<TypeVariableFromC
 
         return typeVariable.defaultType
     }
+
+    override val isEmpty: Boolean get() = freshVariables.isEmpty()
 
     companion object {
         val Empty = FreshVariableNewTypeSubstitutor(emptyList())
@@ -205,6 +213,8 @@ fun createCompositeSubstitutor(appliedFirst: NewTypeSubstitutor, appliedLast: Ty
                 }
             }
         }
+
+        override val isEmpty: Boolean get() = appliedFirst.isEmpty && appliedLast.isEmpty
     }
 }
 

@@ -264,15 +264,25 @@ class ResolvedAtomCompleter(
             return
         }
         val resultTypeParameters =
-            callableCandidate.freshSubstitutor!!.freshVariables.map { resultSubstitutor.safeSubstitute(it.defaultType) }
+            callableCandidate.freshSubstitutor!!.freshVariables.map { resultSubstitutor.safeSubstitute(it.defaultType).asTypeProjection() }
 
+        val firstSubstitutor = IndexedParametersSubstitution(callableCandidate.candidate.typeParameters, resultTypeParameters)
+        val secondSubstitution = object : TypeSubstitution() {
+            override fun get(key: KotlinType): TypeProjection? {
+                return resultSubstitutor.safeSubstitute(key.unwrap()).takeIf { it !== key }?.asTypeProjection()
+            }
+
+            override fun isEmpty(): Boolean {
+                return resultSubstitutor.isEmpty
+            }
+        }
+        val resultSubstitutor = TypeSubstitutor.createChainedSubstitutor(
+            firstSubstitutor,
+            secondSubstitution
+        )
 
         val psiCallArgument = resolvedAtom.atom.psiCallArgument as CallableReferenceKotlinCallArgumentImpl
         val callableReferenceExpression = psiCallArgument.ktCallableReferenceExpression
-        val resultSubstitutor = IndexedParametersSubstitution(
-            callableCandidate.candidate.typeParameters,
-            resultTypeParameters.map { it.asTypeProjection() }).buildSubstitutor()
-
 
         // write down type for callable reference expression
         val resultType = resultSubstitutor.safeSubstitute(callableCandidate.reflectionCandidateType, Variance.INVARIANT)
