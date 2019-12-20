@@ -2161,6 +2161,63 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
                 }
             }
 
+            @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Type_checking_and_containment_checking_expressions extends AbstractDiagnosticsTestSpec {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInType_checking_and_containment_checking_expressions() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class Type_checking_expression extends AbstractDiagnosticsTestSpec {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInType_checking_expression() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression"), Pattern.compile("^(.+)\\.kt$"), true);
+                    }
+
+                    @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-3")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class P_3 extends AbstractDiagnosticsTestSpec {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                        }
+
+                        public void testAllFilesPresentInP_3() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-3"), Pattern.compile("^(.+)\\.kt$"), true);
+                        }
+
+                        @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-3/pos")
+                        @TestDataPath("$PROJECT_ROOT")
+                        @RunWith(JUnit3RunnerWithInners.class)
+                        public static class Pos extends AbstractDiagnosticsTestSpec {
+                            private void runTest(String testDataFilePath) throws Exception {
+                                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                            }
+
+                            @TestMetadata("1.1.kt")
+                            public void test1_1() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-3/pos/1.1.kt");
+                            }
+
+                            public void testAllFilesPresentInPos() throws Exception {
+                                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), true);
+                            }
+                        }
+                    }
+                }
+            }
+
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)

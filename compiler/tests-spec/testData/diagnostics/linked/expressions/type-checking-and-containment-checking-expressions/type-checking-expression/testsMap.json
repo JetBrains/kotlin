@@ -1,0 +1,27 @@
+{
+  "3": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 4,
+          "description": "Type-checking expression always has type kotlin.Boolean.",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  },
+  "4": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 4,
+          "description": "Type-checking expression always has type kotlin.Boolean.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-3/pos/1.1.kt",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}

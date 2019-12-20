@@ -1,5 +1,15 @@
 {
   "1": {
+    "neg": {
+      "2": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "E is T: The type T must be runtime-available, otherwise it is a compiler error",
+          "unexpectedBehaviour": false
+        }
+      ]
+    },
     "pos": {
       "3": [
         {
@@ -12,6 +22,18 @@
           "specVersion": "0.1-213",
           "casesNumber": 0,
           "description": "checks whether the runtime type of EE is a subtype of TT for is operator",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  },
+  "4": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "the expression null is T? for any type T always evaluates to true",
           "unexpectedBehaviour": false
         }
       ]
