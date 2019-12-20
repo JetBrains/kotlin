@@ -30,10 +30,8 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.Xcode
 import java.io.*
 
-import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
-import java.nio.file.StandardCopyOption
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
@@ -400,21 +398,25 @@ private fun deviceLauncher(project: Project) = object : ExecutorService {
         absolutePath
     }
 
-    private fun kill() = project.exec {
-        it.commandLine(idb, "kill")
+    private fun kill() = project.exec { it.commandLine(idb, "kill") }
+
+    private inline fun tryUntilTrue(times: Int = 3, f: () -> Boolean) {
+        for (i in 1..times) {
+            if (f()) break
+            else TimeUnit.SECONDS.sleep(i.toLong())
+        }
     }
 
     private fun targetUDID(): String {
         val out = ByteArrayOutputStream()
         // idb launches idb_companion but doesn't wait for it and just exits.
         // So relaunch `list-targets` again.
-        for (i in 1..3) {
+        tryUntilTrue {
             project.exec {
                 it.commandLine(idb, "list-targets", "--json")
                 it.standardOutput = out
             }.assertNormalExitValue()
-            if (out.toString().trim().isNotEmpty()) break
-            else TimeUnit.SECONDS.sleep(i.toLong())
+            out.toString().trim().isNotEmpty()
         }
         return out.toString().run {
             check(isNotEmpty())
@@ -432,15 +434,18 @@ private fun deviceLauncher(project: Project) = object : ExecutorService {
 
     private fun install(udid: String, bundlePath: String) {
         val out = ByteArrayOutputStream()
-
-        val result = project.exec {
-            it.workingDir = xcProject.toFile()
-            it.commandLine = listOf(idb, "install", "--udid", udid, bundlePath)
-            it.standardOutput = out
-            it.errorOutput = out
-            it.isIgnoreExitValue = true
+        lateinit var result: ExecResult
+        tryUntilTrue {
+            result = project.exec {
+                it.workingDir = xcProject.toFile()
+                it.commandLine = listOf(idb, "install", "--udid", udid, bundlePath)
+                it.standardOutput = out
+                it.errorOutput = out
+                it.isIgnoreExitValue = true
+            }
+            println(out.toString())
+            result.exitValue == 0
         }
-        println(out.toString())
         check(result.exitValue == 0) { "Installation of $bundlePath failed: $out" }
     }
 
