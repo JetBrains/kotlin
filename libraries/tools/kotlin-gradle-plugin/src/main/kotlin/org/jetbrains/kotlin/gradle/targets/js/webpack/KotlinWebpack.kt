@@ -56,6 +56,12 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
     var entry: File? = null
         get() = field ?: compilation.compileKotlinTask.outputFile
 
+    init {
+        onlyIf {
+            entry!!.exists()
+        }
+    }
+
     @get:Internal
     internal var resolveFromModulesFirst: Boolean = false
 

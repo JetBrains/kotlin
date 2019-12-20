@@ -22,6 +22,13 @@ open class NodeJsExec : AbstractExecTask<NodeJsExec>(NodeJsExec::class.java), Re
     @get:Internal
     override lateinit var compilation: KotlinJsCompilation
 
+    init {
+        onlyIf {
+            compilation.compileKotlinTask.outputFile
+                .exists()
+        }
+    }
+
     @Input
     var sourceMapStackTraces = true
 
