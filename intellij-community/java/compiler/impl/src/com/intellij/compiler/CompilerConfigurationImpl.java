@@ -126,7 +126,10 @@ public class CompilerConfigurationImpl extends CompilerConfiguration implements 
         updateModuleNames(modules.stream().collect(Collectors.toMap(oldNameProvider::fun, Module::getName)));
       }
     });
-    StartupManager.getInstance(project).runAfterOpened(() -> createCompilers());
+
+    if (!project.isDefault()) {
+      StartupManager.getInstance(project).runAfterOpened(() -> createCompilers());
+    }
   }
 
   // Overridden in Upsource
