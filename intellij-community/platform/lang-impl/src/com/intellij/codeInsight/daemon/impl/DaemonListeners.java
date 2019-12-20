@@ -171,7 +171,7 @@ public final class DaemonListeners implements Disposable {
 
       myActiveEditors = activeEditors;
       // do not stop daemon if idea loses/gains focus
-      DaemonListeners.this.stopDaemon(true, "Active editor change");
+      stopDaemon(true, "Active editor change");
       if (ApplicationManager.getApplication().isDispatchThread() && LaterInvocator.isInModalContext()) {
         // editor appear in modal context, re-enable the daemon
         myDaemonCodeAnalyzer.setUpdateByTimerEnabled(true);
@@ -660,11 +660,11 @@ public final class DaemonListeners implements Disposable {
       if (info == null) continue;
       List<Pair<HighlightInfo.IntentionActionDescriptor, TextRange>> ranges = info.quickFixActionRanges;
       if (ranges != null) {
-        ranges.removeIf((pair) -> isContributedByPlugin(pair.first, pluginDescriptor));
+        ranges.removeIf(pair -> isContributedByPlugin(pair.first, pluginDescriptor));
       }
       List<Pair<HighlightInfo.IntentionActionDescriptor, RangeMarker>> markers = info.quickFixActionMarkers;
       if (markers != null) {
-        markers.removeIf((pair) -> isContributedByPlugin(pair.first, pluginDescriptor));
+        markers.removeIf(pair -> isContributedByPlugin(pair.first, pluginDescriptor));
       }
     }
   }
