@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.LinkerOutputKind
 import org.jetbrains.kotlin.backend.konan.files.renameAtomic
+import org.jetbrains.kotlin.konan.library.KonanLibrary
 
 internal fun determineLinkerOutput(context: Context): LinkerOutputKind =
         when (context.config.produce) {
@@ -34,8 +35,19 @@ internal class Linker(val context: Context) {
 
     fun link(objectFiles: List<ObjectFile>) {
         val nativeDependencies = context.llvm.nativeDependenciesToLink
-        val includedBinaries = nativeDependencies.map { it.includedPaths }.flatten()
-        val libraryProvidedLinkerFlags = nativeDependencies.map { it.linkerOpts }.flatten()
+
+        val includedBinariesLibraries = if (context.config.produce.isCache) {
+            context.config.librariesToCache
+        } else {
+            nativeDependencies.filterNot { context.config.cachedLibraries.isLibraryCached(it) }
+        }
+        val includedBinaries = includedBinariesLibraries.map { (it as? KonanLibrary)?.includedPaths.orEmpty() }.flatten()
+
+        val cachedLibraries = context.librariesWithDependencies
+                .filter { context.config.cachedLibraries.isLibraryCached(it) }
+        val libraryProvidedLinkerFlags = (nativeDependencies + cachedLibraries)
+                .distinct().map { it.linkerOpts }.flatten()
+
         runLinker(objectFiles, includedBinaries, libraryProvidedLinkerFlags)
         renameOutput()
     }
