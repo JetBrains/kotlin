@@ -3,7 +3,6 @@ package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.ui.ColoredListCellRenderer
 import com.intellij.ui.SimpleTextAttributes
-import com.intellij.ui.layout.selectedValueIs
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingValidator
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
 import org.jetbrains.kotlin.tools.projectWizard.core.ValuesReadingContext
@@ -58,7 +57,7 @@ class DropDownComponent<T : DisplayableSettingItem>(
                 value.greyText?.let {
                     append(" $it", SimpleTextAttributes.GRAYED_ATTRIBUTES)
                 }
-                if (!this@apply.selectedValueIs(value).invoke()) {
+                if (this@apply.selectedItem != value) {
                     validator.validate(valuesReadingContext, value)
                         .safeAs<ValidationResult.ValidationError>()
                         ?.messages

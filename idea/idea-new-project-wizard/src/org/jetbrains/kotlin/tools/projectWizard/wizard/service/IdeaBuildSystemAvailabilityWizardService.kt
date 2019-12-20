@@ -5,15 +5,19 @@
 
 package org.jetbrains.kotlin.tools.projectWizard.wizard.service
 
-import com.intellij.ide.plugins.PluginManagerCore
+import com.intellij.ide.plugins.PluginManager
+import com.intellij.openapi.extensions.PluginId
 import org.jetbrains.kotlin.tools.projectWizard.core.service.BuildSystemAvailabilityWizardService
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.isGradle
 
 class IdeaBuildSystemAvailabilityWizardService : BuildSystemAvailabilityWizardService, IdeaWizardService {
     override fun isAvailable(buildSystemType: BuildSystemType): Boolean = when {
-        buildSystemType.isGradle -> !PluginManagerCore.isDisabled("org.jetbrains.plugins.gradle")
-        buildSystemType == BuildSystemType.Maven -> !PluginManagerCore.isDisabled("org.jetbrains.idea.maven")
+        buildSystemType.isGradle -> isPluginEnabled("org.jetbrains.plugins.gradle")
+        buildSystemType == BuildSystemType.Maven -> isPluginEnabled("org.jetbrains.idea.maven")
         else -> true
     }
+
+    private fun isPluginEnabled(id: String) =
+        PluginManager.getPlugin(PluginId.getId(id))?.isEnabled == true
 }
