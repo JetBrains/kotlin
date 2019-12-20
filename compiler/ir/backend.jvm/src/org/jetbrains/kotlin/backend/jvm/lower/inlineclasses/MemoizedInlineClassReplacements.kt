@@ -151,12 +151,15 @@ class MemoizedInlineClassReplacements {
                 val name = if (parameter == function.extensionReceiverParameter) Name.identifier("\$receiver") else parameter.name
                 val newParameter: IrValueParameter
                 if (parameter == function.dispatchReceiverParameter) {
-                    newParameter = parameter.copyTo(this, index = -1, name = name)
+                    newParameter = parameter.copyTo(this, index = -1, name = name, defaultValue = null)
                     dispatchReceiverParameter = newParameter
                 } else {
-                    newParameter = parameter.copyTo(this, index = index - 1, name = name)
+                    newParameter = parameter.copyTo(this, index = index - 1, name = name, defaultValue = null)
                     valueParameters.add(newParameter)
                 }
+                // Assuming that constructors and non-override functions are always replaced with the unboxed
+                // equivalent, deep-copying the value here is unnecessary. See `JvmInlineClassLowering`.
+                newParameter.defaultValue = parameter.defaultValue
                 parameterMap[parameter.symbol] = newParameter
             }
         }
@@ -176,8 +179,10 @@ class MemoizedInlineClassReplacements {
                     else -> parameter.name
                 }
 
-                val newParameter = parameter.copyTo(this, index = index, name = name)
+                val newParameter = parameter.copyTo(this, index = index, name = name, defaultValue = null)
                 valueParameters.add(newParameter)
+                // See comment next to a similar line above.
+                newParameter.defaultValue = parameter.defaultValue
                 parameterMap[parameter.symbol] = newParameter
             }
         }

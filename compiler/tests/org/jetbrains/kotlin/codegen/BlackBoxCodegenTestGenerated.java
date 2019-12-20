@@ -12731,6 +12731,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/inlineClasses/defaultFunctionsFromAnyForInlineClass.kt");
         }
 
+        @TestMetadata("defaultWithInlineClassArgument.kt")
+        public void testDefaultWithInlineClassArgument() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/defaultWithInlineClassArgument.kt");
+        }
+
         @TestMetadata("elvisWithInlineClassAndNullConstant.kt")
         public void testElvisWithInlineClassAndNullConstant() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/elvisWithInlineClassAndNullConstant.kt");
@@ -23898,6 +23903,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             @TestMetadata("parameterNamesAndNullability.kt")
             public void testParameterNamesAndNullability() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/lambdaClasses/parameterNamesAndNullability.kt");
+            }
+
+            @TestMetadata("reflectOnDefaultWithInlineClassArgument.kt")
+            public void testReflectOnDefaultWithInlineClassArgument() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/lambdaClasses/reflectOnDefaultWithInlineClassArgument.kt");
             }
 
             @TestMetadata("reflectOnLambdaInField.kt")
