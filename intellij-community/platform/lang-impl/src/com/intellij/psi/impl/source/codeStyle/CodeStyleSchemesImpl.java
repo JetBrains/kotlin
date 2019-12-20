@@ -58,6 +58,22 @@ public abstract class CodeStyleSchemesImpl extends CodeStyleSchemes {
             .unregisterFileTypeIndentOptions(getAllSettings(), extension.getFileType());
         }
       }, ApplicationManager.getApplication());
+
+    LanguageCodeStyleSettingsProvider.EP_NAME.addExtensionPointListener(
+      new ExtensionPointListener<LanguageCodeStyleSettingsProvider>() {
+        @Override
+        public void extensionAdded(@NotNull LanguageCodeStyleSettingsProvider extension, @NotNull PluginDescriptor pluginDescriptor) {
+          //noinspection deprecation
+          CodeStyleSettingsManager.getInstance().registerLanguageSettings(getAllSettings(), extension);
+        }
+
+        @Override
+        public void extensionRemoved(@NotNull LanguageCodeStyleSettingsProvider extension, @NotNull PluginDescriptor pluginDescriptor) {
+          //noinspection deprecation
+          CodeStyleSettingsManager.getInstance().unregisterLanguageSettings(getAllSettings(), extension);
+        }
+      }, ApplicationManager.getApplication()
+    );
   }
 
   private List<CodeStyleSettings> getAllSettings() {
