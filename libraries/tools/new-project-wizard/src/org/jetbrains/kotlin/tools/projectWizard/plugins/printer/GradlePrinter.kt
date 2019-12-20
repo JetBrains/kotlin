@@ -6,7 +6,7 @@ import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.isEmpty
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.render
 
 class GradlePrinter(val dsl: GradleDsl, override val indent: Int = 4) : BuildFilePrinter() {
-    inline fun inBrackets(inner: () -> Unit) {
+    fun inBrackets(inner: () -> Unit) {
         indented {
             +"{"
             nl()

@@ -29,7 +29,7 @@ abstract class BuildFilePrinter {
         builder.append(this)
     }
 
-    inline fun indented(inner: () -> Unit) {
+    fun indented(inner: () -> Unit) {
         currentIndent += indent
         inner()
         currentIndent -= indent
