@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.lower
 
+import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
@@ -175,10 +176,10 @@ class InlineClassLowering(val context: CommonBackendContext) {
         }
     }
 
-    val inlineClassUsageLowering = object : FileLoweringPass {
+    val inlineClassUsageLowering = object : BodyLoweringPass {
 
-        override fun lower(irFile: IrFile) {
-            irFile.transformChildrenVoid(object : IrElementTransformerVoid() {
+        override fun lower(irBody: IrBody, container: IrDeclaration) {
+            irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
 
                 override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
                     expression.transformChildrenVoid(this)
