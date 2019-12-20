@@ -797,10 +797,10 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
       ReadAction
         .<Runnable>nonBlocking(() -> {
           try {
-            String text = collector.getDocumentation();
+            PsiElement element = collector.element;
+            String text = element.isValid() ? collector.getDocumentation() : null;
             LOG.debug("Documentation fetched successfully:\n", text);
             return () -> {
-              PsiElement element = collector.element;
               if (!element.isValid()) {
                 LOG.debug("Element for which documentation was requested is not valid");
                 callback.setDone();
