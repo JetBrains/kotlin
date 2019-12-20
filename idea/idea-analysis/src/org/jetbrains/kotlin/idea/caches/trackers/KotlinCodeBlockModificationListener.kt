@@ -48,7 +48,7 @@ class KotlinCodeBlockModificationListener(
     @Suppress("UnstableApiUsage")
     private val isLanguageTrackerEnabled = modificationTrackerImpl.isEnableLanguageTrackerCompat
 
-    // BUNCH: 183
+    // BUNCH: 191
     // When there're we no per-language trackers we had to increment global tracker first and process result afterward
     private val customIncrement = if (isLanguageTrackerEnabled) 0 else 1
 

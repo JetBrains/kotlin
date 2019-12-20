@@ -238,17 +238,8 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
             return renderKotlinDeclaration(element, quickNavigation)
         }
 
-        private fun getText(element: PsiElement, originalElement: PsiElement?, quickNavigation: Boolean): String? {
-            // INRE is already fixed in 191 in CtrlMouseHandler.updateOnPsiChanges(), so after abandoning 183 branch try-catch can be removed.
-            // BUNCH: 183
-            return try {
-                getTextImpl(element, originalElement, quickNavigation)
-            } catch (_: IndexNotReadyException) {
-                DumbService.getInstance(element.project)
-                    .showDumbModeNotification("Element information is not available during index update")
-                null
-            }
-        }
+        private fun getText(element: PsiElement, originalElement: PsiElement?, quickNavigation: Boolean) =
+            getTextImpl(element, originalElement, quickNavigation)
 
         private fun getTextImpl(element: PsiElement, originalElement: PsiElement?, quickNavigation: Boolean): String? {
             if (element is PsiWhiteSpace) {

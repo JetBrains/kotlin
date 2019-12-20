@@ -9,7 +9,6 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil.toCanonica
 import org.jetbrains.plugins.gradle.service.settings.GradleSettingsService
 import com.intellij.openapi.module.Module
 
-//BUNCH: 183
 fun isDelegatedBuild(module: Module): Boolean {
     val projectUrl = module.project.presentableUrl
     if (projectUrl == null || !GradleSettingsService.getInstance(module.project).isDelegatedBuildEnabled(toCanonicalPath(projectUrl))) {

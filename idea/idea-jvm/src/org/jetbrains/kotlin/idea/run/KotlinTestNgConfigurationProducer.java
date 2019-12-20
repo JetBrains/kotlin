@@ -216,7 +216,7 @@ public class KotlinTestNgConfigurationProducer extends TestNGConfigurationProduc
         }
         configuration.restoreOriginalModule(originalModule);
         configuration.setName(configuration.getName());
-        JavaRunConfigurationExtensionManagerUtil.getInstance().extendCreatedConfiguration(configuration, location);
+        JavaRunConfigurationExtensionManager.getInstance().extendCreatedConfiguration(configuration, location);
         return true;
     }
 

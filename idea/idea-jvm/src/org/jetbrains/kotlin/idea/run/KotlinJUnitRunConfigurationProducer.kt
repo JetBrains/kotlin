@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.idea.run
 
-import com.intellij.execution.CommonJavaRunConfigurationParameters
-import com.intellij.execution.PsiLocation
-import com.intellij.execution.RunManager
-import com.intellij.execution.RunnerAndConfigurationSettings
+import com.intellij.execution.*
 import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.actions.ConfigurationFromContext
 import com.intellij.execution.actions.RunConfigurationProducer
@@ -110,7 +107,7 @@ class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUnitConfig
         val method = getTestMethod(leaf)
         if (method != null) {
             configuration.beMethodConfiguration(method.toLocation())
-            JavaRunConfigurationExtensionManagerUtil.getInstance().extendCreatedConfiguration(configuration, location)
+            JavaRunConfigurationExtensionManager.instance.extendCreatedConfiguration(configuration, location)
             configuration.setModule(module)
             return true
         }
@@ -118,7 +115,7 @@ class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUnitConfig
         val testClass = getTestClass(leaf)
         if (testClass != null) {
             configuration.beClassConfiguration(testClass)
-            JavaRunConfigurationExtensionManagerUtil.getInstance().extendCreatedConfiguration(configuration, location)
+            JavaRunConfigurationExtensionManager.instance.extendCreatedConfiguration(configuration, location)
             configuration.setModule(module)
             return true
         }

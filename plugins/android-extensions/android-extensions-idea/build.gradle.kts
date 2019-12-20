@@ -71,13 +71,8 @@ dependencies {
 }
 
 sourceSets {
-    if (Ide.IJ183()) {
-        "main" { projectDefault() }
-        "test" { projectDefault() }
-    } else {
-        "main" { }
-        "test" { }
-    }
+    "main" { }
+    "test" { }
 }
 
 testsJar {}

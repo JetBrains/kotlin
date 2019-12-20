@@ -15,10 +15,6 @@ dependencies {
     compileOnly(project(":compiler:frontend.java"))
     compileOnly(project(":idea:idea-core"))
 
-    Ide.IJ183 {
-        compileOnly(project(":idea:idea-android"))
-    }
-
     compileOnly(project(":idea"))
     compileOnly(project(":idea:idea-jvm"))
 
