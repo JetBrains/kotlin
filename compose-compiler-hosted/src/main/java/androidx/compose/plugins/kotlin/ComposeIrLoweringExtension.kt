@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.extensions.IrLoweringExtension
 import androidx.compose.plugins.kotlin.compiler.lower.ComposableCallTransformer
 import androidx.compose.plugins.kotlin.compiler.lower.ComposeObservePatcher
+import androidx.compose.plugins.kotlin.compiler.lower.ComposerParamTransformer
 import androidx.compose.plugins.kotlin.frames.FrameIrTransformer
 import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -44,10 +45,20 @@ val ComposeCallPhase = makeIrModulePhase(
     description = "Rewrite FCS descriptors to IR bytecode"
 )
 
+val ComposerParameterPhase = makeIrModulePhase(
+    ::ComposerParamTransformer,
+    name = "ComposerParameterPhase",
+    description = "Transform @Composable functions to have extra Composer parameter"
+)
+
 class ComposeIrLoweringExtension : IrLoweringExtension {
     override fun interceptLoweringPhases(
         phases: CompilerPhase<JvmBackendContext, IrModuleFragment, IrModuleFragment>
     ): CompilerPhase<JvmBackendContext, IrModuleFragment, IrModuleFragment> {
+        if (ComposeFlags.COMPOSER_PARAM) {
+            return ComposerParameterPhase then
+                    phases
+        }
         return FrameClassGenPhase then
                 ComposeCallPhase then
                 ComposeObservePhase then
