@@ -3,6 +3,7 @@ package com.intellij.openapi.projectRoots.impl;
 
 import com.google.common.collect.ImmutableList;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
@@ -22,8 +23,8 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class UnknownSdkEditorNotification implements Disposable {
@@ -132,7 +133,7 @@ public class UnknownSdkEditorNotification implements Disposable {
 
     myNotifications.clear();
 
-    if (Registry.is("sdk.auto.use.editor.notification.for.unset")) {
+    if (ApplicationManager.getApplication().isUnitTestMode() || Registry.is("sdk.auto.use.editor.notification.for.unset")) {
       for (SdkUsage usage : unsetSdks) {
         myNotifications.add(new SdkFixInfo() {
           @Override
