@@ -9991,6 +9991,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/inlineClasses/defaultFunctionsFromAnyForInlineClass.kt");
         }
 
+        @TestMetadata("defaultWithInlineClassArgument.kt")
+        public void testDefaultWithInlineClassArgument() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/defaultWithInlineClassArgument.kt");
+        }
+
         @TestMetadata("elvisWithInlineClassAndNullConstant.kt")
         public void testElvisWithInlineClassAndNullConstant() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/elvisWithInlineClassAndNullConstant.kt");
