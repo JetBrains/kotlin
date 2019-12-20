@@ -84,6 +84,7 @@ class ComposeSyntheticIrExtension : SyntheticIrExtension {
         statementGenerator: StatementGenerator,
         element: KtCallExpression
     ): IrExpression? {
+        if (ComposeFlags.COMPOSER_PARAM) return null
         val resolvedCall = statementGenerator.getResolvedCall(element)
             ?: return ErrorExpressionGenerator(statementGenerator).generateErrorCall(element)
 
@@ -113,6 +114,7 @@ class ComposeSyntheticIrExtension : SyntheticIrExtension {
         statementGenerator: StatementGenerator,
         element: KtSimpleNameExpression
     ): IrExpression? {
+        if (ComposeFlags.COMPOSER_PARAM) return null
         val resolvedCall = statementGenerator.getResolvedCall(element)
             ?: return super.visitSimpleNameExpression(statementGenerator, element)
 
