@@ -82,7 +82,8 @@ compileKotlin {
             "-Xallow-kotlin-package",
             "-Xmultifile-parts-inherit",
             "-Xnormalize-constructor-calls=enable",
-            "-module-name", project.name
+            "-module-name", project.name,
+            "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
     ]
 }
 
