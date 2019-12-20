@@ -12,7 +12,7 @@ import org.jetbrains.jps.model.java.compiler.AnnotationProcessingConfiguration;
 import java.util.List;
 
 public abstract class CompilerConfiguration {
-  public static CompilerConfiguration getInstance(Project project) {
+  public static CompilerConfiguration getInstance(@NotNull Project project) {
     return project.getService(CompilerConfiguration.class);
   }
 
