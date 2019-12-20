@@ -67,6 +67,22 @@ sealed class KonanTarget(override val name: String, val family: Family, val arch
     class ZEPHYR(val subName: String, val genericName: String = "zephyr") : KonanTarget("${genericName}_$subName", Family.ZEPHYR, Architecture.ARM32)
 
     override fun toString() = name
+
+    val supportsOptimizedAllocator: Boolean
+        get() = when(this) {
+            is LINUX_X64 -> true
+            is MINGW_X86 -> true
+            is MINGW_X64 -> true
+            is MACOS_X64 -> true
+            is LINUX_ARM64 -> true
+            is LINUX_ARM32_HFP -> true
+            is ANDROID_X64 -> true
+            is ANDROID_ARM64 -> true
+            is IOS_ARM32 -> true
+            is IOS_ARM64 -> true
+            is IOS_X64 -> true
+            else -> false
+        }
 }
 
 fun hostTargetSuffix(host: KonanTarget, target: KonanTarget) =
