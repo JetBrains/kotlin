@@ -514,6 +514,21 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("testData/quickfix/addDefaultConstructor/expect.kt");
         }
 
+        @TestMetadata("expectAnnotation.kt")
+        public void testExpectAnnotation() throws Exception {
+            runTest("idea/testData/quickfix/addDefaultConstructor/expectAnnotation.kt");
+        }
+
+        @TestMetadata("expectAnnotation2.kt")
+        public void testExpectAnnotation2() throws Exception {
+            runTest("idea/testData/quickfix/addDefaultConstructor/expectAnnotation2.kt");
+        }
+
+        @TestMetadata("expectAnnotation3.kt")
+        public void testExpectAnnotation3() throws Exception {
+            runTest("idea/testData/quickfix/addDefaultConstructor/expectAnnotation3.kt");
+        }
+
         @TestMetadata("expectInterface.kt")
         public void testExpectInterface() throws Exception {
             runTest("testData/quickfix/addDefaultConstructor/expectInterface.kt");
