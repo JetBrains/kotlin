@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.compilerRunner.konanVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonToolOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
+import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
@@ -426,8 +427,8 @@ open class KotlinNativeLink : AbstractKotlinNativeCompile<KotlinCommonToolOption
         get() = binary.baseName
 
     @get:Input
-    protected val disableKonanCache: Boolean
-        get() = project.disableKonanCache
+    protected val konanCacheKind: NativeCacheKind
+        get() = project.konanCacheKind
 
     inner class NativeLinkOptions: KotlinCommonToolOptions {
         override var allWarningsAsErrors: Boolean = false
@@ -628,8 +629,8 @@ class CacheBuilder(val project: Project, val binary: NativeBinary) {
     private val debuggable: Boolean
         get() = binary.debuggable
 
-    private val disableKonanCache: Boolean
-        get() = project.disableKonanCache
+    private val konanCacheKind: NativeCacheKind
+        get() = project.konanCacheKind
 
     // Inputs and outputs
     private val libraries: FileCollection
@@ -638,7 +639,7 @@ class CacheBuilder(val project: Project, val binary: NativeBinary) {
     private val target: String
         get() = compilation.konanTarget.name
 
-    private val optionsAwareCacheName get() = "$target${if (debuggable) "-g" else ""}"
+    private val optionsAwareCacheName get() = "$target${if (debuggable) "-g" else ""}$konanCacheKind"
 
     private val rootCacheDirectory
         get() = File(project.konanHome).resolve("klib/cache/$optionsAwareCacheName")
@@ -726,9 +727,11 @@ class CacheBuilder(val project: Project, val binary: NativeBinary) {
                 dfs(library)
 
         for (library in sortedLibraries) {
+            if (File(cacheDirectory, library.uniqueName.cachedName).exists())
+                continue
             project.logger.info("Compiling ${library.uniqueName} to cache")
             val args = mutableListOf(
-                "-p", "static_cache",
+                "-p", konanCacheKind.produce!!,
                 "-target", target
             )
             if (debuggable)
@@ -758,18 +761,23 @@ class CacheBuilder(val project: Project, val binary: NativeBinary) {
         }
     }
 
+    private val String.cachedName
+        get() = konanCacheKind.outputKind?.let {
+            "${it.prefix(compilation.konanTarget)}${this}-cache${it.suffix(compilation.konanTarget)}"
+        } ?: error("No output for kind $konanCacheKind")
+
     private fun ensureCompilerProvidedLibPrecached(platformLibName: String, platformLibs: Map<String, File>, visitedLibs: MutableSet<String>) {
         if (platformLibName in visitedLibs)
             return
         visitedLibs += platformLibName
         val platformLib = platformLibs[platformLibName] ?: error("$platformLibName is not found in platform libs")
-        if (File(rootCacheDirectory, System.mapLibraryName("$platformLibName-cache")).exists())
+        if (File(rootCacheDirectory, platformLibName.cachedName).exists())
             return
         for (dependency in createKotlinLibrary(org.jetbrains.kotlin.konan.file.File(platformLib.absolutePath)).unresolvedDependencies)
             ensureCompilerProvidedLibPrecached(dependency.path, platformLibs, visitedLibs)
         project.logger.info("Compiling $platformLibName (${visitedLibs.size}/${platformLibs.size}) to cache")
         val args = mutableListOf(
-            "-p", "static_cache",
+            "-p", konanCacheKind.produce!!,
             "-target", target
         )
         if (debuggable)
@@ -787,7 +795,7 @@ class CacheBuilder(val project: Project, val binary: NativeBinary) {
     }
 
     fun buildCompilerArgs(): List<String> = mutableListOf<String>().apply {
-        if (!disableKonanCache && !optimized && compilation.konanTarget.family.isAppleFamily) {
+        if (konanCacheKind != NativeCacheKind.NONE && !optimized && compilation.konanTarget.family.isAppleFamily) {
             rootCacheDirectory.mkdirs()
             ensureCompilerProvidedLibsPrecached()
             add("-Xcache-directory=${rootCacheDirectory.absolutePath}")
