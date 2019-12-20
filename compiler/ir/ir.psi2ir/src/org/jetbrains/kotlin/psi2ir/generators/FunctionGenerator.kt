@@ -268,7 +268,13 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         }
 
     fun generateSyntheticFunctionParameterDeclarations(irFunction: IrFunction) {
-        declarationGenerator.generateGlobalTypeParametersDeclarations(irFunction, irFunction.descriptor.typeParameters)
+        val descriptor = irFunction.descriptor
+        val typeParameters =
+            if (descriptor is PropertyAccessorDescriptor)
+                descriptor.correspondingProperty.typeParameters
+            else
+                descriptor.typeParameters
+        declarationGenerator.generateScopedTypeParameterDeclarations(irFunction, typeParameters)
         generateValueParameterDeclarations(irFunction, null, null, withDefaultValues = false)
     }
 
