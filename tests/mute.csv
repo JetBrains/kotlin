@@ -8,6 +8,7 @@ org.jetbrains.kotlin.gradle.GradleMultiplatformWizardTest.testNative, KT-35368
 org.jetbrains.kotlin.gradle.GradleMultiplatformWizardTest.testShared, KT-35368
 org.jetbrains.kotlin.gradle.GradleMultiplatformWizardTest.testSharedWithQualifiedName, KT-35368
 org.jetbrains.kotlin.gradle.GradleMultiplatformWizardTest.testWeb, KT-35095
+org.jetbrains.kotlin.idea.codeInsight.gradle.GradleBuildFileHighlightingTest.testKtsInJsProject, "Diagnostic's list should be empty" error
 org.jetbrains.kotlin.idea.codeInsight.gradle.GradleConfiguratorTest.testAddLibraryGSK[1: with Gradle-5.6.4], unresolved kotlinModule
 org.jetbrains.kotlin.idea.codeInsight.gradle.GradleConfiguratorTest.testAddNonKotlinLibraryGSK[1: with Gradle-5.6.4], unresolved kotlinModule
 org.jetbrains.kotlin.idea.codeInsight.gradle.GradleConfiguratorTest.testAddTestLibraryGSK[1: with Gradle-5.6.4], unresolved kotlinModule

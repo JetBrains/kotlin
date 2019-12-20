@@ -15,6 +15,7 @@ org.jetbrains.kotlin.gradle.MultiplatformProjectImportingTest.testTransitiveImpl
 org.jetbrains.kotlin.idea.caches.resolve.MultiModuleLineMarkerTestGenerated.testKotlinTestAnnotations, No line markers for test run
 org.jetbrains.kotlin.idea.caches.resolve.MultiPlatformHighlightingTestGenerated.testMultifileFacade, KT-34689 invalid light class
 org.jetbrains.kotlin.idea.codeInsight.InspectionTestGenerated.Inspections.testAndroidIllegalIdentifiers_inspectionData_Inspections_test, Unprocessed
+org.jetbrains.kotlin.idea.codeInsight.gradle.GradleBuildFileHighlightingTest.testKtsInJsProject, "Diagnostic's list should be empty" error
 org.jetbrains.kotlin.idea.codeInsight.gradle.GradleConfiguratorTest.testAddLibraryGSK[1: with Gradle-5.6.4], unresolved kotlinModule
 org.jetbrains.kotlin.idea.codeInsight.gradle.GradleConfiguratorTest.testAddNonKotlinLibraryGSK[1: with Gradle-5.6.4], unresolved kotlinModule
 org.jetbrains.kotlin.idea.codeInsight.gradle.GradleConfiguratorTest.testAddTestLibraryGSK[1: with Gradle-5.6.4], unresolved kotlinModule
