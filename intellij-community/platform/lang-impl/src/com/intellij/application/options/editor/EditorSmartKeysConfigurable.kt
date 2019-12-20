@@ -111,18 +111,16 @@ class EditorSmartKeysConfigurable : Configurable.WithEpDependencies, BoundCompos
       row {
         checkBox(myCbTabExistsBracketsAndQuotes)
       }
-      row {
-        titledRow("Enter") {
+      titledRow("Enter") {
+        row {
+          checkBox(myCbSmartIndentOnEnter)
+        }
+        row {
+          checkBox(myCbInsertPairCurlyBraceOnEnter)
+        }
+        if (hasAnyDocAwareCommenters()) {
           row {
-            checkBox(myCbSmartIndentOnEnter)
-          }
-          row {
-            checkBox(myCbInsertPairCurlyBraceOnEnter)
-          }
-          if (hasAnyDocAwareCommenters()) {
-            row {
-              checkBox(myCbInsertJavadocStubOnEnter)
-            }
+            checkBox(myCbInsertJavadocStubOnEnter)
           }
         }
       }

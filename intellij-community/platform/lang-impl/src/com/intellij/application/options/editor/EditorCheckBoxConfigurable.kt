@@ -71,39 +71,29 @@ class EditorCheckBoxConfigurable : BoundConfigurable(""), SearchableConfigurable
 
   override fun createPanel(): DialogPanel {
     return panel {
-      row {
-        titledRow(message("group.advanced.mouse.usages")) {
-          row { checkBox(honorCamelHumpsWhenSelectingByClicking) }
-          row { checkBox(enableWheelFontChange) }
-          row { checkBox(enableDnD) }
-        }
+      titledRow(message("group.advanced.mouse.usages")) {
+        row { checkBox(honorCamelHumpsWhenSelectingByClicking) }
+        row { checkBox(enableWheelFontChange) }
+        row { checkBox(enableDnD) }
       }
-      row {
-        titledRow(message("group.virtual.space")) {
-          row { checkBox(virtualSpace) }
-          row { checkBox(caretInsideTabs) }
-          row { checkBox(virtualPageAtBottom) }
-        }
+      titledRow(message("group.virtual.space")) {
+        row { checkBox(virtualSpace) }
+        row { checkBox(caretInsideTabs) }
+        row { checkBox(virtualPageAtBottom) }
       }
-      row {
-        titledRow(message("group.brace.highlighting")) {
-          row { checkBox(highlightBraces) }
-          row { checkBox(highlightScope) }
-          row { checkBox(highlightIdentifierUnderCaret) }
-        }
+      titledRow(message("group.brace.highlighting")) {
+        row { checkBox(highlightBraces) }
+        row { checkBox(highlightScope) }
+        row { checkBox(highlightIdentifierUnderCaret) }
       }
-      row {
-        titledRow("Formatting") {
-          row { checkBox(showNotificationAfterReformatCodeCheckBox) }
-          row { checkBox(myShowNotificationAfterOptimizeImportsCheckBox) }
-        }
+      titledRow("Formatting") {
+        row { checkBox(showNotificationAfterReformatCodeCheckBox) }
+        row { checkBox(myShowNotificationAfterOptimizeImportsCheckBox) }
       }
-      row {
-        titledRow("Refactorings") {
-          row { checkBox(renameLocalVariablesInplace) }
-          row { checkBox(preselectCheckBox) }
-          row { checkBox(showInlineDialogForCheckBox) }
-        }
+      titledRow("Refactorings") {
+        row { checkBox(renameLocalVariablesInplace) }
+        row { checkBox(preselectCheckBox) }
+        row { checkBox(showInlineDialogForCheckBox) }
       }
     }
   }
