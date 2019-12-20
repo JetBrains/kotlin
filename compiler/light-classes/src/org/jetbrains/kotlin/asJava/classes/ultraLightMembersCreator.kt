@@ -261,7 +261,10 @@ internal class UltraLightMembersCreator(
 
         override fun hasModifierProperty(name: String): Boolean {
 
-            if (name != PsiModifier.FINAL || !outerDeclaration.isOrdinaryClass) return hasModifier(name)
+            val hasModifierByDeclaration = hasModifier(name)
+            if (name != PsiModifier.FINAL) return hasModifierByDeclaration
+
+            if (!hasModifierByDeclaration) return false //AllOpen can't modify open to final
 
             //AllOpen can affect on modality of the member. We ought to check if the extension could override the modality
             val descriptor = lazy { declaration.resolve() }
