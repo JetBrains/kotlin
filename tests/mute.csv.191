@@ -3,6 +3,8 @@ org.jetbrains.kotlin.checkers.JavaAgainstKotlinSourceCheckerTestGenerated.JavaAg
 org.jetbrains.kotlin.checkers.JavaAgainstKotlinSourceCheckerTestGenerated.JavaAgainstKotlin.testExtendingReadOnlyInterfaces, KT-34105
 org.jetbrains.kotlin.checkers.JavaAgainstKotlinSourceCheckerWithoutUltraLightTestGenerated.JavaAgainstKotlin.testExtendingMutableInterfaces, KT-34105
 org.jetbrains.kotlin.gradle.GradleMultiplatformWizardTest.testWeb, KT-35095
+org.jetbrains.kotlin.idea.caches.resolve.MultiModuleHighlightingTest.testLazyResolvers
+org.jetbrains.kotlin.idea.caches.resolve.MultiModuleHighlightingTest.testRecomputeResolversOnChange
 org.jetbrains.kotlin.idea.codeInsight.gradle.GradleConfiguratorTest.testAddLibraryGSK[1: with Gradle-5.6.4], unresolved kotlinModule
 org.jetbrains.kotlin.idea.codeInsight.gradle.GradleConfiguratorTest.testAddNonKotlinLibraryGSK[1: with Gradle-5.6.4], unresolved kotlinModule
 org.jetbrains.kotlin.idea.codeInsight.gradle.GradleConfiguratorTest.testAddTestLibraryGSK[1: with Gradle-5.6.4], unresolved kotlinModule
@@ -11,8 +13,9 @@ org.jetbrains.kotlin.idea.codeInsight.gradle.GradleConfiguratorTest.testConfigur
 org.jetbrains.kotlin.idea.codeInsight.gradle.GradleConfiguratorTest.testConfigureGradleKtsKotlinDevVersion[1: with Gradle-5.6.4], absent test data
 org.jetbrains.kotlin.idea.codeInsight.gradle.GradleConfiguratorTest.testConfigureKotlinDevVersion[1: with Gradle-5.6.4], absent test data
 org.jetbrains.kotlin.idea.codeInsight.gradle.GradleConfiguratorTest.testConfigureKotlinWithPluginsBlock[1: with Gradle-5.6.4], absent test data
-org.jetbrains.kotlin.idea.caches.resolve.MultiModuleHighlightingTest.testLazyResolvers
-org.jetbrains.kotlin.idea.caches.resolve.MultiModuleHighlightingTest.testRecomputeResolversOnChange
+org.jetbrains.kotlin.idea.debugger.test.CoroutineDumpTestGenerated.testNoCoroutines, Stable on windows
+org.jetbrains.kotlin.idea.debugger.test.CoroutineDumpTestGenerated.testThreeCoroutines, Stable on windows
+org.jetbrains.kotlin.idea.debugger.test.CoroutineDumpTestGenerated.testTwoDumps, Stable on windows
 org.jetbrains.kotlin.idea.refactoring.move.MultiModuleMoveTestGenerated.testMoveFromJsModuleToJvmModule_MoveFromJsModuleToJvmModule, KT-34106
 org.jetbrains.kotlin.idea.refactoring.move.MultiModuleMoveTestGenerated.testMoveFromJvmModuleToJsModule_MoveFromJvmModuleToJsModule, KT-34106
 org.jetbrains.kotlin.idea.refactoring.move.MultiModuleMoveTestGenerated.testMoveJdkDependentToJsModule_MoveJdkDependentToJsModule, KT-34106
