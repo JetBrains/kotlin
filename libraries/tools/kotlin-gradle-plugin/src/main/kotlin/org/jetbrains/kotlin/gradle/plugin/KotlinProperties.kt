@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.Coroutines
+import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.targets.native.DisabledNativeTargetsReporter
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
@@ -147,10 +148,10 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = booleanProperty("kotlin.native.disableCompilerDaemon")
 
     /**
-     * Forbids dependencies precompilation to dynamic/static libraries.
+     * Dependencies caching strategy. The default is static.
      */
-    val nativeDisableCompilerCache: Boolean?
-        get() = booleanProperty("kotlin.native.disableCompilerCache")
+    val nativeCacheKind: NativeCacheKind
+        get() = property("kotlin.native.cacheKind")?.let { NativeCacheKind.byCompilerArgument(it) } ?: NativeCacheKind.STATIC
 
     /**
      * Generate kotlin/js external declarations from all .d.ts files found in npm modules
