@@ -1,0 +1,14 @@
+{
+  "5": {
+    "pos": {
+      "2": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 4,
+          "description": "Containment-checking expressions always have type kotlin.Boolean.",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}

@@ -2173,6 +2173,50 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
 
+                @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class Containment_checking_expression extends AbstractDiagnosticsTestSpec {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInContainment_checking_expression() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression"), Pattern.compile("^(.+)\\.kt$"), true);
+                    }
+
+                    @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression/p-5")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class P_5 extends AbstractDiagnosticsTestSpec {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                        }
+
+                        public void testAllFilesPresentInP_5() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression/p-5"), Pattern.compile("^(.+)\\.kt$"), true);
+                        }
+
+                        @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression/p-5/pos")
+                        @TestDataPath("$PROJECT_ROOT")
+                        @RunWith(JUnit3RunnerWithInners.class)
+                        public static class Pos extends AbstractDiagnosticsTestSpec {
+                            private void runTest(String testDataFilePath) throws Exception {
+                                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                            }
+
+                            @TestMetadata("2.1.kt")
+                            public void test2_1() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression/p-5/pos/2.1.kt");
+                            }
+
+                            public void testAllFilesPresentInPos() throws Exception {
+                                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), true);
+                            }
+                        }
+                    }
+                }
+
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression")
                 @TestDataPath("$PROJECT_ROOT")
                 @RunWith(JUnit3RunnerWithInners.class)
