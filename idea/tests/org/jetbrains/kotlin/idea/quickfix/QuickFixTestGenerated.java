@@ -14258,6 +14258,26 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/typeMismatch/unresolvableTypeParams.kt");
         }
 
+        @TestMetadata("variableInitializedWithNull.kt")
+        public void testVariableInitializedWithNull() throws Exception {
+            runTest("idea/testData/quickfix/typeMismatch/variableInitializedWithNull.kt");
+        }
+
+        @TestMetadata("variableInitializedWithNull2.kt")
+        public void testVariableInitializedWithNull2() throws Exception {
+            runTest("idea/testData/quickfix/typeMismatch/variableInitializedWithNull2.kt");
+        }
+
+        @TestMetadata("variableInitializedWithNull3.kt")
+        public void testVariableInitializedWithNull3() throws Exception {
+            runTest("idea/testData/quickfix/typeMismatch/variableInitializedWithNull3.kt");
+        }
+
+        @TestMetadata("variableInitializedWithNull4.kt")
+        public void testVariableInitializedWithNull4() throws Exception {
+            runTest("idea/testData/quickfix/typeMismatch/variableInitializedWithNull4.kt");
+        }
+
         @TestMetadata("when.kt")
         public void testWhen() throws Exception {
             runTest("idea/testData/quickfix/typeMismatch/when.kt");

@@ -316,6 +316,7 @@ class QuickFixRegistrar : QuickFixContributor {
         PROPERTY_TYPE_MISMATCH_ON_OVERRIDE.registerFactory(changeVariableTypeFix)
         VAR_TYPE_MISMATCH_ON_OVERRIDE.registerFactory(changeVariableTypeFix)
         COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH.registerFactory(ChangeVariableTypeFix.ComponentFunctionReturnTypeMismatchFactory)
+        TYPE_MISMATCH.registerFactory(ChangeVariableTypeFix.VariableInitializedWithNullFactory)
 
         val changeFunctionReturnTypeFix = ChangeCallableReturnTypeFix.ChangingReturnTypeToUnitFactory
         RETURN_TYPE_MISMATCH.registerFactory(changeFunctionReturnTypeFix)
