@@ -71,4 +71,14 @@ internal class A {
         val d4 = Double.NEGATIVE_INFINITY
         val d5 = Double.NaN
     }
+
+    fun kt35593() {
+        val number: Number = 1
+        val b: Byte = number.byteValue()
+        val d: Double = number.doubleValue()
+        val f: Float = number.floatValue()
+        val i: Int = number.intValue()
+        val l: Long = number.longValue()
+        val s: Short = number.shortValue()
+    }
 }
