@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.types.AbstractTypeCheckerContext.LowerCapturedTypePolicy.*
-import org.jetbrains.kotlin.types.AbstractTypeCheckerContext.SeveralSupertypesWithSameConstructorPolicy
 import org.jetbrains.kotlin.types.AbstractTypeCheckerContext.SupertypesPolicy
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.SmartList
@@ -49,14 +48,6 @@ abstract class AbstractTypeCheckerContext : TypeSystemContext {
 
     open fun getLowerCapturedTypePolicy(subType: SimpleTypeMarker, superType: CapturedTypeMarker): LowerCapturedTypePolicy = CHECK_SUBTYPE_AND_LOWER
     open fun addSubtypeConstraint(subType: KotlinTypeMarker, superType: KotlinTypeMarker): Boolean? = null
-    open val sameConstructorPolicy get() = SeveralSupertypesWithSameConstructorPolicy.INTERSECT_ARGUMENTS_AND_CHECK_AGAIN
-
-    enum class SeveralSupertypesWithSameConstructorPolicy {
-        TAKE_FIRST_FOR_SUBTYPING,
-        FORCE_NOT_SUBTYPE,
-        CHECK_ANY_OF_THEM,
-        INTERSECT_ARGUMENTS_AND_CHECK_AGAIN
-    }
 
     enum class LowerCapturedTypePolicy {
         CHECK_ONLY_LOWER,
@@ -278,20 +269,7 @@ object AbstractTypeChecker {
             1 -> return isSubtypeForSameConstructor(supertypesWithSameConstructor.first().asArgumentList(), superType)
 
             else -> { // at least 2 supertypes with same constructors. Such case is rare
-                when (sameConstructorPolicy) {
-                    SeveralSupertypesWithSameConstructorPolicy.FORCE_NOT_SUBTYPE -> return false
-                    SeveralSupertypesWithSameConstructorPolicy.TAKE_FIRST_FOR_SUBTYPING -> return isSubtypeForSameConstructor(
-                        supertypesWithSameConstructor.first().asArgumentList(),
-                        superType
-                    )
-
-                    SeveralSupertypesWithSameConstructorPolicy.CHECK_ANY_OF_THEM,
-                    SeveralSupertypesWithSameConstructorPolicy.INTERSECT_ARGUMENTS_AND_CHECK_AGAIN ->
-                        if (supertypesWithSameConstructor.any { isSubtypeForSameConstructor(it.asArgumentList(), superType) }) return true
-                }
-
-                if (sameConstructorPolicy != SeveralSupertypesWithSameConstructorPolicy.INTERSECT_ARGUMENTS_AND_CHECK_AGAIN) return false
-
+                if (supertypesWithSameConstructor.any { isSubtypeForSameConstructor(it.asArgumentList(), superType) }) return true
 
                 val newArguments = ArgumentList(superConstructor.parametersCount())
                 for (index in 0 until superConstructor.parametersCount()) {
