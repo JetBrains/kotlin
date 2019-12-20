@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.idea.highlighter.dsl.DslHighlighterExtension
 import javax.swing.Icon
 
 // BUNCH: as35
-// BUNCH: as34
 // BUNCH: 191
 internal fun createDslStyleIcon(styleId: Int): Icon {
     val globalScheme = EditorColorsManager.getInstance().globalScheme
