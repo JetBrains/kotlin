@@ -7,7 +7,6 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.EmptyAction;
 import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.TransactionGuard;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
@@ -63,7 +62,7 @@ public class ConsoleExecutionEditor implements Disposable {
     public void focusGained(@NotNull Editor editor) {
       myCurrentEditor = (EditorEx)editor;
       if (GeneralSettings.getInstance().isSaveOnFrameDeactivation()) {
-        TransactionGuard.submitTransaction(ConsoleExecutionEditor.this, () -> FileDocumentManager.getInstance().saveAllDocuments()); // PY-12487
+        ApplicationManager.getApplication().invokeLater(() -> FileDocumentManager.getInstance().saveAllDocuments()); // PY-12487
       }
     }
 
