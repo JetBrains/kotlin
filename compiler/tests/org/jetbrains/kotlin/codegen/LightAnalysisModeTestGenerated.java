@@ -14514,6 +14514,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/mapPut.kt");
             }
 
+            @TestMetadata("nonNullableTypeParameter.kt")
+            public void testNonNullableTypeParameter() throws Exception {
+                runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/nonNullableTypeParameter.kt");
+            }
+
             @TestMetadata("nullabilityAssertionOnDispatchReceiver.kt")
             public void testNullabilityAssertionOnDispatchReceiver() throws Exception {
                 runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/nullabilityAssertionOnDispatchReceiver.kt");
@@ -14537,6 +14542,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestMetadata("nullabilityAssertionOnPrivateMemberExtensionReceiver.kt")
             public void testNullabilityAssertionOnPrivateMemberExtensionReceiver() throws Exception {
                 runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/nullabilityAssertionOnPrivateMemberExtensionReceiver.kt");
+            }
+
+            @TestMetadata("nullableTypeParameter.kt")
+            public void testNullableTypeParameter() throws Exception {
+                runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/nullableTypeParameter.kt");
             }
 
             @TestMetadata("paramAssertionMessage.kt")
