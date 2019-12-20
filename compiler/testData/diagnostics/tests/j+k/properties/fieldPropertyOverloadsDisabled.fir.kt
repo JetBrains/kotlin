@@ -1,3 +1,5 @@
+// !LANGUAGE: -PreferJavaFieldOverload
+
 // SKIP_TXT
 // !CHECK_TYPE
 

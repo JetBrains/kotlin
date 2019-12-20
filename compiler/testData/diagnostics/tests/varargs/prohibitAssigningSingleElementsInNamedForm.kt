@@ -1,4 +1,4 @@
-// !LANGUAGE: +ProhibitAssigningSingleElementsToVarargsInNamedForm
+// !LANGUAGE: +ProhibitAssigningSingleElementsToVarargsInNamedForm +AllowAssigningArrayElementsToVarargsInNamedFormForFunctions
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 annotation class Anno1(vararg val s: String)
@@ -16,5 +16,5 @@ fun foo(vararg ints: Int) {}
 
 fun test() {
     foo(ints = <!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION_ERROR!>1<!>)
-    foo(ints = *intArrayOf(1))
+    foo(ints = *<!REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_FUNCTION!>intArrayOf(1)<!>)
 }
