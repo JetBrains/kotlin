@@ -14,10 +14,6 @@ import org.jetbrains.kotlin.idea.scripting.gradle.minimal_gradle_version_support
 import org.jetbrains.plugins.gradle.service.project.AbstractProjectResolverExtension
 
 abstract class KotlinDslScriptModelResolverCommon : AbstractProjectResolverExtension() {
-    override fun getExtraProjectModelClasses(): Set<Class<out Any>> {
-        return setOf(KotlinDslScriptsModel::class.java)
-    }
-
     override fun getExtraJvmArgs(): List<Pair<String, String>> {
         return listOf(
             Pair(

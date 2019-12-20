@@ -12,6 +12,9 @@ import org.gradle.tooling.model.kotlin.dsl.KotlinDslScriptsModel
 import org.jetbrains.kotlin.idea.scripting.gradle.kotlinDslScriptsModelImportSupported
 
 class KotlinDslScriptModelResolver : KotlinDslScriptModelResolverCommon() {
+    override fun getExtraProjectModelClasses(): Set<Class<out Any>> {
+        return setOf(KotlinDslScriptsModel::class.java)
+    }
     override fun getExtraModelProvider() = KotlinDslScriptModelProvider()
     override fun requiresTaskRunning() = true
 
