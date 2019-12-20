@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanCacheTask
 import org.jetbrains.kotlin.KlibInstall
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.util.*
@@ -58,6 +59,15 @@ project.rootProject.ext.platformManager.enabled.each { target ->
     def targetName = target.visibleName
 
     ArrayList<Task> installTasks = []
+    ArrayList<Task> cacheTasks = []
+
+    if (target in cacheableTargets) {
+        task "${targetName}StdlibCache"(type: KonanCacheTask) {
+            it.target = targetName
+            originalKlib = file("$konanHome/klib/common/stdlib")
+            cacheDirectory = file("$konanHome/klib/cache/$targetName-g")
+        }
+    }
 
     targetDefFiles(target).each { df ->
         def libName = defFileToLibName(targetName, df.name)
@@ -89,10 +99,36 @@ project.rootProject.ext.platformManager.enabled.each { target ->
 
         }
         installTasks.add(tasks[libName])
+
+        if (target in cacheableTargets) {
+            task "${libName}Cache"(type: KonanCacheTask) {
+                it.target = targetName
+                originalKlib = tasks[libName].installDir
+                cacheDirectory = file("$konanHome/klib/cache/$targetName-g")
+
+                dependsOn "${targetName}StdlibCache"
+                dependsOn tasks[libName]
+                dependsOn df.config.depends.collect {
+                    def depName = defFileToLibName(targetName, it)
+                    "${depName}Cache"
+                }
+
+                cacheTasks.add(it)
+            }
+        }
     }
 
     task "${targetName}Install" {
         dependsOn installTasks
+    }
+
+    if (target in cacheableTargets) {
+        task "${targetName}Cache" {
+            dependsOn cacheTasks
+
+            group = BasePlugin.BUILD_GROUP
+            description = "Builds the compilation cache for platform: ${targetName}"
+        }
     }
 }
 
@@ -103,8 +139,21 @@ task hostInstall {
     }
 }
 
+task hostCache {
+    dependsOn tasks.withType(KonanCacheTask.class).findAll {
+        it.target == HostManager.hostName
+    }
+}
+
 task install {
     dependsOn tasks.withType(KlibInstall.class)
+}
+
+task cache {
+    dependsOn tasks.withType(KonanCacheTask.class)
+
+    group = BasePlugin.BUILD_GROUP
+    description = "Builds all the compilation caches"
 }
 
 
