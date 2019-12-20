@@ -214,9 +214,22 @@ static inline void mi_atomic_write(volatile _Atomic(uintptr_t)* p, uintptr_t x) 
     asm volatile ("pause" ::: "memory");
   }
 #elif defined(__arm__) || defined(__aarch64__)
+  #if defined(KONAN_MI_MALLOC)
+    #if defined(__arm__)
+      #include <sched.h>
+      static inline void mi_atomic_yield(void) {
+        sched_yield();
+      }
+    #else
+      static inline void mi_atomic_yield(void) {
+        asm volatile("yield");
+      }
+    #endif
+  #else
   static inline void mi_atomic_yield(void) {
     asm volatile("yield");
   }
+  #endif
 #endif
 #elif defined(__wasi__)
   #include <sched.h>

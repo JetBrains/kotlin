@@ -457,6 +457,10 @@ static inline uintptr_t _mi_thread_id(void) mi_attr_noexcept {
 }
 #elif (defined(__GNUC__) || defined(__clang__)) && \
       (defined(__x86_64__) || defined(__i386__) || defined(__arm__) || defined(__aarch64__))
+#if defined(KONAN_MI_MALLOC)
+  #include <pthread.h>
+  pthread_t pthread_self(void);
+#endif
 // TLS register on x86 is in the FS or GS register
 // see: https://akkadia.org/drepper/tls.pdf
 static inline uintptr_t _mi_thread_id(void) mi_attr_noexcept {
@@ -464,7 +468,16 @@ static inline uintptr_t _mi_thread_id(void) mi_attr_noexcept {
   #if defined(__i386__)
   __asm__("movl %%gs:0, %0" : "=r" (tid) : : );  // 32-bit always uses GS
   #elif defined(__MACH__)
-  __asm__("movq %%gs:0, %0" : "=r" (tid) : : );  // x86_64 macOS uses GS
+  #if defined(KONAN_MI_MALLOC)
+  #include <TargetConditionals.h>
+    #if TARGET_OS_EMBEDDED // iOS/tvOS/watchOS devices.
+      tid = pthread_self();
+    #else
+       __asm__("movq %%gs:0, %0" : "=r" (tid) : : );  // x86_64 macOS uses GS
+    #endif
+  #else
+    __asm__("movq %%gs:0, %0" : "=r" (tid) : : );  // x86_64 macOS uses GS
+  #endif
   #elif defined(__x86_64__)
   __asm__("movq %%fs:0, %0" : "=r" (tid) : : );  // x86_64 Linux, BSD uses FS
   #elif defined(__arm__)
