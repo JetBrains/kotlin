@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.fileClasses.internalNameWithoutInnerClasses
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
+import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
@@ -31,7 +32,7 @@ import org.jetbrains.org.objectweb.asm.Type
 object IteratorNext : IntrinsicMethod() {
 
     override fun toCallable(expression: IrFunctionAccessExpression, signature: JvmMethodSignature, context: JvmBackendContext): IrIntrinsicFunction {
-        val type = AsmUtil.unboxType(signature.returnType)
+        val type = if (expression.type.isPrimitiveType()) signature.returnType else AsmUtil.unboxType(signature.returnType)
         val newSignature = signature.newReturnType(type)
         return IrIntrinsicFunction.create(expression, newSignature, context, AsmTypes.OBJECT_TYPE) {
             val primitiveClassName = getKotlinPrimitiveClassName(type)
