@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.js.yarn
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
+import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
 
 open class YarnRootExtension(val project: Project) {
     init {
@@ -20,6 +21,9 @@ open class YarnRootExtension(val project: Project) {
 
     var installationDir = gradleHome.resolve("yarn")
 
+    // TODO: Split configuration and execution phases to support changed installationDir
+    val cleanableStore = CleanableStore[installationDir.path]
+
     var downloadBaseUrl = "https://github.com/yarnpkg/yarn/releases/download"
     var version = "1.21.1"
 
@@ -31,20 +35,19 @@ open class YarnRootExtension(val project: Project) {
     val useWorkspaces: Boolean
         get() = !disableWorkspaces
 
+    // TODO: Split configuration and execution phases to support changed settings
+    internal val environment = YarnEnv(
+        downloadUrl = "$downloadBaseUrl/v$version/yarn-v$version.tar.gz",
+        home = cleanableStore["yarn-v$version"].use()
+    )
+
     internal fun executeSetup() {
         NodeJsRootPlugin.apply(project).executeSetup()
 
-        val env = environment
-        if (!env.home.isDirectory) {
+        if (!environment.home.isDirectory) {
             yarnSetupTask.setup()
         }
     }
-
-    internal val environment
-        get() = YarnEnv(
-            downloadUrl = "$downloadBaseUrl/v$version/yarn-v$version.tar.gz",
-            home = installationDir.resolve("yarn-v$version")
-        )
 
     companion object {
         const val YARN: String = "kotlinYarn"

@@ -3,9 +3,9 @@ package org.jetbrains.kotlin.gradle.targets.js.nodejs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.BasePlugin
-import org.gradle.api.tasks.Delete
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension.Companion.EXTENSION_NAME
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
+import org.jetbrains.kotlin.gradle.tasks.CleanDataTask
 
 open class NodeJsRootPlugin : Plugin<Project> {
     override fun apply(project: Project): Unit = project.run {
@@ -15,7 +15,7 @@ open class NodeJsRootPlugin : Plugin<Project> {
             "NodeJsRootPlugin can be applied only to root project"
         }
 
-        this.extensions.create(EXTENSION_NAME, NodeJsRootExtension::class.java, this)
+        val settings = this.extensions.create(EXTENSION_NAME, NodeJsRootExtension::class.java, this)
 
         val setupTask = tasks.create(NodeJsSetupTask.NAME, NodeJsSetupTask::class.java) {
             it.group = TASKS_GROUP_NAME
@@ -26,6 +26,12 @@ open class NodeJsRootPlugin : Plugin<Project> {
             it.dependsOn(setupTask)
             it.group = TASKS_GROUP_NAME
             it.description = "Find, download and link NPM dependencies and projects"
+        }
+
+        tasks.create("node" + CleanDataTask.NAME, CleanDataTask::class.java) {
+            it.cleanableStore = settings.cleanableStore
+            it.group = TASKS_GROUP_NAME
+            it.description = "Clean unused local node version"
         }
     }
 

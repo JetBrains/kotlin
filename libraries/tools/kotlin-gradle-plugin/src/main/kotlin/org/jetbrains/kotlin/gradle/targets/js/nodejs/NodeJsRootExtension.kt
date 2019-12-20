@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
 import org.jetbrains.kotlin.gradle.targets.js.yarn.Yarn
+import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
 import java.io.File
 
 open class NodeJsRootExtension(val rootProject: Project) {
@@ -20,6 +21,7 @@ open class NodeJsRootExtension(val rootProject: Project) {
     }
 
     var installationDir = gradleHome.resolve("nodejs")
+    var cleanableStore = CleanableStore[installationDir.absolutePath]
 
     var download = true
     var nodeDownloadBaseUrl = "https://nodejs.org/dist"
@@ -64,7 +66,8 @@ open class NodeJsRootExtension(val rootProject: Project) {
             val platform = NodeJsPlatform.name
             val architecture = NodeJsPlatform.architecture
 
-            val nodeDir = installationDir.resolve("node-v$nodeVersion-$platform-$architecture")
+            val nodeDirName = "node-v$nodeVersion-$platform-$architecture"
+            val nodeDir = cleanableStore[nodeDirName].use()
             val isWindows = NodeJsPlatform.name == NodeJsPlatform.WIN
             val nodeBinDir = if (isWindows) nodeDir else nodeDir.resolve("bin")
 

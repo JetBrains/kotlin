@@ -25,7 +25,8 @@ abstract class YarnBasics : NpmApi {
     ) {
         val nodeJs = NodeJsRootPlugin.apply(project)
         val nodeJsEnv = nodeJs.environment
-        val yarnEnv = YarnPlugin.apply(project).environment
+        val yarnPlugin = YarnPlugin.apply(project)
+        val yarnEnv = yarnPlugin.environment
 
         project.execWithProgress(description) { exec ->
             exec.executable = nodeJsEnv.nodeExecutable
@@ -34,6 +35,7 @@ abstract class YarnBasics : NpmApi {
                     if (project.logger.isDebugEnabled) "--verbose" else ""
             exec.workingDir = dir
         }
+
     }
 
     protected fun yarnLockReadTransitiveDependencies(
