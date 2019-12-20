@@ -34,4 +34,6 @@ org.jetbrains.kotlin.idea.debugger.test.CoroutineDumpTestGenerated.testTwoDumps,
 org.jetbrains.kotlin.idea.refactoring.move.MultiModuleMoveTestGenerated.testMoveFromJsModuleToJvmModule_MoveFromJsModuleToJvmModule, KT-34106
 org.jetbrains.kotlin.idea.refactoring.move.MultiModuleMoveTestGenerated.testMoveFromJvmModuleToJsModule_MoveFromJvmModuleToJsModule, KT-34106
 org.jetbrains.kotlin.idea.refactoring.move.MultiModuleMoveTestGenerated.testMoveJdkDependentToJsModule_MoveJdkDependentToJsModule, KT-34106
+org.jetbrains.kotlin.j2k.JavaToKotlinConverterSingleFileTestGenerated.AnonymousClass.testKt_13146
+org.jetbrains.kotlin.j2k.JavaToKotlinConverterSingleFileTestGenerated.Issues.testKt_807
 org.jetbrains.kotlin.util.KotlinVersionsTest.testVersionsAreConsistent, KT-35567

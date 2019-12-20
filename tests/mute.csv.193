@@ -150,5 +150,7 @@ org.jetbrains.kotlin.idea.resolve.ReferenceResolveInLibrarySourcesTestGenerated.
 org.jetbrains.kotlin.idea.resolve.ReferenceResolveInLibrarySourcesTestGenerated.testToFunParameter, KT-34542, FAIL
 org.jetbrains.kotlin.idea.resolve.ReferenceResolveInLibrarySourcesTestGenerated.testToLocalFun, KT-34542, FAIL
 org.jetbrains.kotlin.idea.script.ScriptConfigurationHighlightingTestGenerated.Highlighting.testCustomJavaHome, No Java
+org.jetbrains.kotlin.j2k.JavaToKotlinConverterSingleFileTestGenerated.AnonymousClass.testKt_13146
+org.jetbrains.kotlin.j2k.JavaToKotlinConverterSingleFileTestGenerated.Issues.testKt_807
 org.jetbrains.kotlin.util.KotlinVersionsTest.testVersionsAreConsistent, KT-35567
 org.jetbrains.uast.test.kotlin.KotlinUastReferencesTest.`test original getter is visible when reference is under renaming`, Extensions API changed
