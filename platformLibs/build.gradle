@@ -65,7 +65,7 @@ project.rootProject.ext.platformManager.enabled.each { target ->
         task "${targetName}StdlibCache"(type: KonanCacheTask) {
             it.target = targetName
             originalKlib = file("$konanHome/klib/common/stdlib")
-            cacheDirectory = file("$konanHome/klib/cache/$targetName-g")
+            cacheRoot = file("$konanHome/klib/cache")
 
             dependsOn ":${targetName}CrossDist"
         }
@@ -106,7 +106,7 @@ project.rootProject.ext.platformManager.enabled.each { target ->
             task "${libName}Cache"(type: KonanCacheTask) {
                 it.target = targetName
                 originalKlib = tasks[libName].installDir
-                cacheDirectory = file("$konanHome/klib/cache/$targetName-g")
+                cacheRoot = file("$konanHome/klib/cache")
 
                 dependsOn "${targetName}StdlibCache"
                 dependsOn tasks[libName]
