@@ -12,18 +12,16 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.constructors
-import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.types.TypeUtils
 import java.lang.invoke.MethodHandles
 import java.lang.invoke.MethodType
 
@@ -31,10 +29,27 @@ enum class Code(var info: String = "") {
     NEXT, RETURN, BREAK_LOOP, BREAK_WHEN, CONTINUE, EXCEPTION
 }
 
-class IrInterpreter(private val irBuiltIns: IrBuiltIns) {
+class IrInterpreter(irModule: IrModuleFragment) {
+    private val irBuiltIns = irModule.irBuiltins
+
+    private fun Any?.getType(defaultType: IrType): IrType {
+        return when (this) {
+            is Boolean -> irBuiltIns.booleanType
+            is Char -> irBuiltIns.charType
+            is Byte -> irBuiltIns.byteType
+            is Short -> irBuiltIns.shortType
+            is Int -> irBuiltIns.intType
+            is Long -> irBuiltIns.longType
+            is String -> irBuiltIns.stringType
+            is Float -> irBuiltIns.floatType
+            is Double -> irBuiltIns.doubleType
+            null -> irBuiltIns.nothingType
+            else -> defaultType
+        }
+    }
 
     fun interpret(expression: IrExpression): IrExpression {
-        return InterpreterFrame().apply { expression.interpret(this) }.popReturnValue().toIrExpression(irBuiltIns, expression)
+        return InterpreterFrame().apply { expression.interpret(this) }.popReturnValue().toIrExpression(expression)
     }
 
     private fun IrElement.interpret(data: Frame): Code {
@@ -60,6 +75,7 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns) {
                 is IrWhen -> interpretWhen(this, data)
                 is IrBreak -> interpretBreak(this, data)
                 is IrContinue -> interpretContinue(this, data)
+                is IrVararg -> interpretVararg(this, data)
 
                 else -> TODO("${this.javaClass} not supported")
             }
@@ -133,11 +149,11 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns) {
         val descriptor = irFunction.descriptor
         val methodName = descriptor.name.asString()
         val receiverType = descriptor.dispatchReceiverParameter?.type ?: descriptor.extensionReceiverParameter?.type
-        val argsType = listOfNotNull(receiverType) + descriptor.valueParameters.map { TypeUtils.makeNotNullable(it.original.type) }
+        val argsType = listOfNotNull(receiverType) + descriptor.valueParameters.map { it.original.type }
         val argsValues = data.getAll()
             .map { it.state }
             .map { it as? Primitive<*> ?: throw IllegalArgumentException("Builtin functions accept only const args") }
-            .map { it.getValue() }
+            .map { it.value }
         val signature = CompileTimeFunction(methodName, argsType.map { it.toString() })
         //todo try catch
         val result = when (argsType.size) {
@@ -161,7 +177,7 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns) {
             }
             else -> throw UnsupportedOperationException("Unsupported number of arguments")
         }
-        data.pushReturnValue(result.toState(irBuiltIns))
+        data.pushReturnValue(result.toState(result.getType(irFunction.returnType)))
         return Code.NEXT
     }
 
@@ -170,7 +186,9 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns) {
         val constructorCall = IrConstructorCallImpl.fromSymbolOwner(constructor.returnType, constructor.symbol)
 
         val primitiveValueParameters = data.getAll().map { it.state as Primitive<*> }
-        primitiveValueParameters.forEachIndexed { index, primitive -> constructorCall.putValueArgument(index, primitive.getValue().toIrConst(irBuiltIns)) }
+        primitiveValueParameters.forEachIndexed { index, primitive ->
+            constructorCall.putValueArgument(index, primitive.value.toIrConst(primitive.type))
+        }
 
         val constructorValueParameters = constructor.valueParameters.map { it.descriptor }.zip(primitiveValueParameters)
         val newFrame = InterpreterFrame(constructorValueParameters.map { Variable(it.first, it.second) }.toMutableList())
@@ -180,12 +198,13 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns) {
         return code
     }
 
+    // TODO extract in Wrapper
     private fun calculateIntrinsic(irFunction: IrFunction, data: Frame): Code {
         val annotation = irFunction.getAnnotation(evaluateIntrinsicAnnotation)
         val argsValues = data.getAll()
             .map { it.state }
             .map { it as? Primitive<*> ?: throw IllegalArgumentException("Builtin functions accept only const args") }
-            .map { it.getValue() }
+            .map { it.value }
 
         val textClass = Class.forName((annotation.getValueArgument(0) as IrConst<*>).value.toString())
         val returnClass = irFunction.returnType.getFqName()!!.let { getPrimitiveClass(it) ?: Class.forName(it) }
@@ -197,7 +216,7 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns) {
         val methodSignature = MethodType.methodType(returnClass, listOfNotNull(extensionClass) + argsClasses)
         val method = MethodHandles.lookup().findStatic(textClass, irFunction.name.asString(), methodSignature)
         val result = method.invokeWithArguments(argsValues)
-        data.pushReturnValue(result.toState(irBuiltIns))
+        data.pushReturnValue(result.toState(result.getType(irFunction.returnType)))
         return Code.NEXT
     }
 
@@ -218,8 +237,8 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns) {
         // dispatch receiver processing
         val rawDispatchReceiver = expression.dispatchReceiver
         rawDispatchReceiver?.interpret(data)?.also { if (it != Code.NEXT) return it }
-        val irCallReceiver = rawDispatchReceiver?.let { data.popReturnValue() }
-        val irFunctionReceiver = if (expression.superQualifierSymbol == null) irCallReceiver else (irCallReceiver as Complex).superType
+        val dispatchReceiver = rawDispatchReceiver?.let { data.popReturnValue() }
+        val irFunctionReceiver = if (expression.superQualifierSymbol == null) dispatchReceiver else (dispatchReceiver as Complex).superType
         // it is important firstly to add receiver, then arguments; this order is used in builtin method call
         val irFunction = irFunctionReceiver?.getIrFunction(expression.symbol.descriptor) ?: expression.symbol.owner
         irFunctionReceiver?.let { newFrame.addVar(Variable(irFunction.symbol.getDispatchReceiver()!!, it)) }
@@ -227,11 +246,15 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns) {
         // extension receiver processing
         val rawExtensionReceiver = expression.extensionReceiver
         rawExtensionReceiver?.interpret(data)?.also { if (it != Code.NEXT) return it }
-        rawExtensionReceiver?.let { newFrame.addVar(Variable(irFunction.symbol.getExtensionReceiver()!!, data.popReturnValue())) }
+        val extensionReceiver = rawExtensionReceiver?.let { data.popReturnValue() }
+        extensionReceiver?.let { newFrame.addVar(Variable(irFunction.symbol.getExtensionReceiver()!!, it)) }
 
         newFrame.addAll(valueParameters)
 
+        val isWrapper = (dispatchReceiver is Wrapper && rawExtensionReceiver == null) ||
+                (extensionReceiver is Wrapper && rawDispatchReceiver == null)
         val code = when {
+            isWrapper -> ((dispatchReceiver ?: extensionReceiver) as Wrapper).invoke(irFunction as IrFunctionImpl, newFrame)
             irFunction.hasAnnotation(evaluateIntrinsicAnnotation) -> calculateIntrinsic(irFunction, newFrame)
             irFunction.isAbstract() -> calculateAbstract(irFunction, newFrame) //abstract check must be before fake overridden check
             irFunction.isFakeOverridden() -> calculateOverridden(irFunction as IrFunctionImpl, newFrame)
@@ -307,7 +330,7 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns) {
         var code = Code.NEXT
         while (code == Code.NEXT) {
             code = expression.condition.interpret(data)
-            if (code == Code.NEXT && (data.popReturnValue() as? Primitive<*>)?.getValue() as? Boolean == true) {
+            if (code == Code.NEXT && (data.popReturnValue() as? Primitive<*>)?.value as? Boolean == true) {
                 code = expression.body?.interpret(data) ?: Code.NEXT
             } else {
                 break
@@ -327,7 +350,7 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns) {
 
     private fun interpretBranch(expression: IrBranch, data: Frame): Code {
         var code = expression.condition.interpret(data)
-        if (code == Code.NEXT && (data.popReturnValue() as? Primitive<*>)?.getValue() as? Boolean == true) {
+        if (code == Code.NEXT && (data.popReturnValue() as? Primitive<*>)?.value as? Boolean == true) {
             code = expression.result.interpret(data)
             if (code == Code.NEXT) return Code.BREAK_WHEN
         }
@@ -403,4 +426,26 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns) {
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
+    private fun interpretVararg(expression: IrVararg, data: Frame): Code {
+        val args = expression.elements.map {
+            it.interpret(data).apply { if (this != Code.NEXT) return this }
+            data.popReturnValue()
+        }
+        val type = expression.type
+        val array = when (type.getFqName()) {
+            "kotlin.ByteArray" -> Primitive(args.map { (it as Primitive<Byte>).value }.toByteArray(), type)
+            "kotlin.CharArray" -> Primitive(args.map { (it as Primitive<Char>).value }.toCharArray(), type)
+            "kotlin.ShortArray" -> Primitive(args.map { (it as Primitive<Short>).value }.toShortArray(), type)
+            "kotlin.IntArray" -> Primitive(args.map { (it as Primitive<Int>).value }.toIntArray(), type)
+            "kotlin.LongArray" -> Primitive(args.map { (it as Primitive<Long>).value }.toLongArray(), type)
+            "kotlin.FloatArray" -> Primitive(args.map { (it as Primitive<Float>).value }.toFloatArray(), type)
+            "kotlin.DoubleArray" -> Primitive(args.map { (it as Primitive<Double>).value }.toDoubleArray(), type)
+            "kotlin.BooleanArray" -> Primitive(args.map { (it as Primitive<Boolean>).value }.toBooleanArray(), type)
+            else -> Primitive<Array<*>>(args.toTypedArray(), type)
+        }
+        data.pushReturnValue(array)
+
+        return Code.NEXT
+    }
 }

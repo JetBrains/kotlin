@@ -5,15 +5,14 @@
 
 package org.jetbrains.kotlin.backend.common.interpreter
 
-import org.jetbrains.kotlin.backend.common.interpreter.stack.Complex
 import org.jetbrains.kotlin.backend.common.interpreter.stack.Primitive
 import org.jetbrains.kotlin.backend.common.interpreter.stack.State
+import org.jetbrains.kotlin.backend.common.interpreter.stack.Wrapper
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
@@ -81,35 +80,37 @@ fun IrFunction.isFakeOverridden(): Boolean {
     return this.symbol.owner.isFakeOverride
 }
 
-fun State.toIrExpression(irBuiltIns: IrBuiltIns, expression: IrExpression): IrExpression {
+fun State.toIrExpression(expression: IrExpression): IrExpression {
     return when (this) {
-        is Primitive<*> -> this.getValue().toIrConst(   // this is necessary to replace ir offsets
-            irBuiltIns, expression.startOffset, expression.endOffset
+        is Primitive<*> -> this.value.toIrConst(   // this is necessary to replace ir offsets
+            this.type, expression.startOffset, expression.endOffset
         )
         else -> TODO("not supported")
     }
 }
 
-fun Any?.toState(irBuiltIns: IrBuiltIns): State {
+fun Any?.toState(irType: IrType): State {
     return when (this) {
-        is Complex -> this
-        else -> this.toIrConst(irBuiltIns).toPrimitive()
+        is State -> this
+        is Boolean, is Char, is Byte, is Short, is Int, is Long, is String, is Float, is Double -> Primitive(this, irType)
+        null -> Primitive(this, irType)
+        else -> Wrapper(irType.classOrNull!!.owner, this)
     }
 }
 
-fun Any?.toIrConst(irBuiltIns: IrBuiltIns, startOffset: Int = UNDEFINED_OFFSET, endOffset: Int = UNDEFINED_OFFSET): IrConst<*> {
+fun Any?.toIrConst(irType: IrType, startOffset: Int = UNDEFINED_OFFSET, endOffset: Int = UNDEFINED_OFFSET): IrConst<*> {
     return when (this) {
-        is Boolean -> IrConstImpl(startOffset, endOffset, irBuiltIns.booleanType, IrConstKind.Boolean, this)
-        is Char -> IrConstImpl(startOffset, endOffset, irBuiltIns.charType, IrConstKind.Char, this)
-        is Byte -> IrConstImpl(startOffset, endOffset, irBuiltIns.byteType, IrConstKind.Byte, this)
-        is Short -> IrConstImpl(startOffset, endOffset, irBuiltIns.shortType, IrConstKind.Short, this)
-        is Int -> IrConstImpl(startOffset, endOffset, irBuiltIns.intType, IrConstKind.Int, this)
-        is Long -> IrConstImpl(startOffset, endOffset, irBuiltIns.longType, IrConstKind.Long, this)
-        is String -> IrConstImpl(startOffset, endOffset, irBuiltIns.stringType, IrConstKind.String, this)
-        is Float -> IrConstImpl(startOffset, endOffset, irBuiltIns.floatType, IrConstKind.Float, this)
-        is Double -> IrConstImpl(startOffset, endOffset, irBuiltIns.doubleType, IrConstKind.Double, this)
-        null -> IrConstImpl(startOffset, endOffset, irBuiltIns.nothingType, IrConstKind.Null, this)
-        else -> throw UnsupportedOperationException("Unsupported const element type $this")
+        is Boolean -> IrConstImpl(startOffset, endOffset, irType, IrConstKind.Boolean, this)
+        is Char -> IrConstImpl(startOffset, endOffset, irType, IrConstKind.Char, this)
+        is Byte -> IrConstImpl(startOffset, endOffset, irType, IrConstKind.Byte, this)
+        is Short -> IrConstImpl(startOffset, endOffset, irType, IrConstKind.Short, this)
+        is Int -> IrConstImpl(startOffset, endOffset, irType, IrConstKind.Int, this)
+        is Long -> IrConstImpl(startOffset, endOffset, irType, IrConstKind.Long, this)
+        is String -> IrConstImpl(startOffset, endOffset, irType, IrConstKind.String, this)
+        is Float -> IrConstImpl(startOffset, endOffset, irType, IrConstKind.Float, this)
+        is Double -> IrConstImpl(startOffset, endOffset, irType, IrConstKind.Double, this)
+        null -> IrConstImpl(startOffset, endOffset, irType, IrConstKind.Null, this)
+        else -> throw UnsupportedOperationException("Unsupported const element type ${this::class}")
     }
 }
 
@@ -128,17 +129,17 @@ fun IrAnnotationContainer.getAnnotation(annotation: FqName): IrConstructorCall {
     return this.annotations.first { it.symbol.descriptor.containingDeclaration.fqNameSafe == annotation }
 }
 
-fun getPrimitiveClass(fqName: String): Class<*>? {
+fun getPrimitiveClass(fqName: String, asObject: Boolean = false): Class<*>? {
     return when (fqName) {
-        "kotlin.Boolean" -> Boolean::class.java
-        "kotlin.Char" -> Char::class.java
-        "kotlin.Byte" -> Byte::class.java
-        "kotlin.Short" -> Short::class.java
-        "kotlin.Int" -> Int::class.java
-        "kotlin.Long" -> Long::class.java
-        "kotlin.String" -> String::class.java
-        "kotlin.Float" -> Float::class.java
-        "kotlin.Double" -> Double::class.java
+        "kotlin.Boolean" -> if (asObject) Boolean::class.javaObjectType else Boolean::class.java
+        "kotlin.Char" -> if (asObject) Char::class.javaObjectType else Char::class.java
+        "kotlin.Byte" -> if (asObject) Byte::class.javaObjectType else Byte::class.java
+        "kotlin.Short" -> if (asObject) Short::class.javaObjectType else Short::class.java
+        "kotlin.Int" -> if (asObject) Int::class.javaObjectType else Int::class.java
+        "kotlin.Long" -> if (asObject) Long::class.javaObjectType else Long::class.java
+        "kotlin.String" -> if (asObject) String::class.javaObjectType else String::class.java
+        "kotlin.Float" -> if (asObject) Float::class.javaObjectType else Float::class.java
+        "kotlin.Double" -> if (asObject) Double::class.javaObjectType else Double::class.java
         else -> null
     }
 }
