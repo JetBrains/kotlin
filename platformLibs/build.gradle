@@ -66,6 +66,8 @@ project.rootProject.ext.platformManager.enabled.each { target ->
             it.target = targetName
             originalKlib = file("$konanHome/klib/common/stdlib")
             cacheDirectory = file("$konanHome/klib/cache/$targetName-g")
+
+            dependsOn ":${targetName}CrossDist"
         }
     }
 
