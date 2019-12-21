@@ -85,7 +85,7 @@ public class GradleDocumentationProvider implements DocumentationProvider {
             }, "."
             );
 
-            result = GradleDocumentationBundle.messageOrDefault(key, "");
+            result = GradleDocumentationBundle.INSTANCE.messageOrDefault(key, "");
           }
         }
       }

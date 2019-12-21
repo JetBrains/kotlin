@@ -40,7 +40,7 @@ public class GradlePluginDescriptions implements GradlePluginDescriptionsExtensi
 
   @NotNull
   private static String getDescription(@NotNull String pluginName) {
-    return GradleDocumentationBundle
+    return GradleDocumentationBundle.INSTANCE
       .messageOrDefault(String.format("gradle.documentation.org.gradle.api.Project.apply.plugin.%s.non-html", pluginName), "");
   }
 }
