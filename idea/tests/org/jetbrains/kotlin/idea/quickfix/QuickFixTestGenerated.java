@@ -8914,6 +8914,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/modifiers/notAnAnnotationClass.kt");
         }
 
+        @TestMetadata("openCompanionObject.kt")
+        public void testOpenCompanionObject() throws Exception {
+            runTest("idea/testData/quickfix/modifiers/openCompanionObject.kt");
+        }
+
+        @TestMetadata("openCompanionObject2.kt")
+        public void testOpenCompanionObject2() throws Exception {
+            runTest("idea/testData/quickfix/modifiers/openCompanionObject2.kt");
+        }
+
         @TestMetadata("openMemberInFinalClass1.kt")
         public void testOpenMemberInFinalClass1() throws Exception {
             runTest("idea/testData/quickfix/modifiers/openMemberInFinalClass1.kt");
@@ -8937,6 +8947,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("openModifierInEnum.kt")
         public void testOpenModifierInEnum() throws Exception {
             runTest("idea/testData/quickfix/modifiers/openModifierInEnum.kt");
+        }
+
+        @TestMetadata("openObject.kt")
+        public void testOpenObject() throws Exception {
+            runTest("idea/testData/quickfix/modifiers/openObject.kt");
         }
 
         @TestMetadata("openVarWithPrivateSetter.kt")
