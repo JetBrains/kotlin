@@ -1,8 +1,8 @@
 @kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
 final class LambdaWithLongReceiverKt$box$1$1 {
-    private field $p: long
     private field label: int
+    private field p$: long
     inner class LambdaWithLongReceiverKt$box$1
     inner class LambdaWithLongReceiverKt$box$1$1
     public method <init>(p0: kotlin.coroutines.Continuation): void

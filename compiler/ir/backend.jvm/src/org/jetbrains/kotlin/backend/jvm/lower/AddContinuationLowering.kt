@@ -110,7 +110,8 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
 
             val receiverField = info.function.extensionReceiverParameter?.let {
                 assert(info.arity != 0)
-                addField("\$p", it.type)
+                // Do not put '$' at the start, to avoid being caught by inlineCodegenUtils.isCapturedFieldName()
+                addField("p\$", it.type)
             }
 
             val parametersFields = info.function.valueParameters.map { addField(it.name.asString(), it.type) }
