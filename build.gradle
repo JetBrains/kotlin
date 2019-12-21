@@ -516,8 +516,14 @@ task bundleRestricted(type: Tar) {
         exclude 'dependencies'
         exclude 'klib/testLibrary'
         platformManager.targetValues.each { target ->
-            if (PlatformInfo.isAppleTarget(target))
+            if (PlatformInfo.isAppleTarget(target)) {
                 exclude "klib/platform/${target.name}"
+                exclude {
+                    // Exclude platform libraries caches too.
+                    !it.isDirectory && it.relativePath.startsWithAny("klib/cache/${target.name}-g") &&
+                            it.name != "libstdlib-cache.a"
+                }
+            }
         }
         exclude '**/xcode_license.pdf'
         into baseName
