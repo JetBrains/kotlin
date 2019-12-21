@@ -95,6 +95,8 @@ open class AddModifierFix(
                 val nameIdentifier = modifierListOwner.nameIdentifier
                 if (nameIdentifier != null) {
                     name = nameIdentifier.text
+                } else if ((modifierListOwner as? KtObjectDeclaration)?.isCompanion() == true) {
+                    name = "companion object"
                 }
             } else if (modifierListOwner is KtPropertyAccessor) {
                 name = modifierListOwner.namePlaceholder.text
