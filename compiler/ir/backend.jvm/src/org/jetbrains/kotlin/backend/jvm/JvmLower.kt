@@ -178,14 +178,21 @@ private val staticInitializersPhase = makeIrFilePhase(
 )
 
 private val initializersPhase = makeIrFilePhase<JvmBackendContext>(
-    { context ->
-        object : InitializersLowering(context) {
-            override fun shouldEraseFieldInitializer(irField: IrField): Boolean =
-                irField.constantValue(context) == null
-        }
-    },
+    ::InitializersLowering,
     name = "Initializers",
     description = "Merge init blocks and field initializers into constructors",
+    // Depends on local class extraction, because otherwise local classes in initializers will be copied into each constructor.
+    prerequisite = setOf(jvmLocalClassExtractionPhase)
+)
+
+private val initializersCleanupPhase = makeIrFilePhase<JvmBackendContext>(
+    { context ->
+        InitializersCleanupLowering(context) {
+            it.constantValue(context) == null && (!it.isStatic || it.correspondingPropertySymbol?.owner?.isConst != true)
+        }
+    },
+    name = "InitializersCleanup",
+    description = "Remove non-static anonymous initializers and non-constant non-static field init expressions",
     stickyPostconditions = setOf(fun(irFile: IrFile) {
         irFile.acceptVoid(object : IrElementVisitorVoid {
             override fun visitElement(element: IrElement) {
@@ -197,8 +204,7 @@ private val initializersPhase = makeIrFilePhase<JvmBackendContext>(
             }
         })
     }),
-    // Depends on local class extraction, because otherwise local classes in initializers will be copied into each constructor.
-    prerequisite = setOf(jvmLocalClassExtractionPhase)
+    prerequisite = setOf(initializersPhase)
 )
 
 private val returnableBlocksPhase = makeIrFilePhase(
@@ -293,6 +299,7 @@ private val jvmFilePhases =
         objectClassPhase then
         staticInitializersPhase then
         initializersPhase then
+        initializersCleanupPhase then
         collectionStubMethodLowering then
         functionNVarargBridgePhase then
         bridgePhase then

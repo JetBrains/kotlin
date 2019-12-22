@@ -208,6 +208,13 @@ private val initializersLoweringPhase = makeWasmModulePhase(
     prerequisite = setOf(primaryConstructorLoweringPhase)
 )
 
+private val initializersCleanupLoweringPhase = makeWasmModulePhase(
+    ::InitializersCleanupLowering,
+    name = "InitializersCleanupLowering",
+    description = "Remove non-static anonymous initializers and field init expressions",
+    prerequisite = setOf(initializersLoweringPhase)
+)
+
 private val excludeDeclarationsFromCodegenPhase = makeCustomWasmModulePhase(
     { context, module ->
         excludeDeclarationsFromCodegen(context, module)
@@ -336,6 +343,7 @@ val wasmPhases = namedIrModulePhase<WasmBackendContext>(
             propertiesLoweringPhase then
             primaryConstructorLoweringPhase then
             initializersLoweringPhase then
+            initializersCleanupLoweringPhase then
             // Common prefix ends
 
             builtInsLoweringPhase then
