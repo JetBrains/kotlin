@@ -167,3 +167,6 @@ org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.Libraries.testJunit, ER
 org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.Libraries.testTestNG, ERROR: Couldn't find the following libraries
 org.jetbrains.kotlin.checkers.JavaAgainstKotlinBinariesCheckerTestGenerated.testClassObjects, ERROR: Access to tree elements not allowed.
 org.jetbrains.kotlin.checkers.JavaAgainstKotlinBinariesCheckerTestGenerated.testUsingKotlinPackageDeclarations, ERROR: Access to tree elements not allowed.
+org.jetbrains.kotlin.jps.build.IncrementalJvmJpsTestGenerated.Custom.testBuildError, Since dc8240c24ebd-ab79c3e0a06f0 Function has several compatible actual declarations in modules
+org.jetbrains.kotlin.jps.build.IncrementalJvmJpsTestGenerated.Custom.testBuildError2Levels, Since dc8240c24ebd-ab79c3e0a06f0 Function has several compatible actual declarations in modules
+org.jetbrains.kotlin.jps.build.IncrementalJvmJpsTestGenerated.WithJava.JavaUsedInKotlin.testMixedInheritance, Different clean up
