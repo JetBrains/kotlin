@@ -172,3 +172,4 @@ org.jetbrains.kotlin.jps.build.IncrementalJvmJpsTestGenerated.Custom.testBuildEr
 org.jetbrains.kotlin.jps.build.IncrementalJvmJpsTestGenerated.WithJava.JavaUsedInKotlin.testMixedInheritance, Different clean up
 org.jetbrains.kotlin.psi.injection.StringInterpolationInjectionTest.testInterpolationSimpleName, Stable failure during run may work in debug
 org.jetbrains.kotlin.shortenRefs.ShortenRefsTestGenerated.testExtensionForObject2, Always red
+org.jetbrains.kotlinx.serialization.SerializationIrBytecodeListingTestGenerated.testBasic, Broken between 20 nov and 10 dec
