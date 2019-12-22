@@ -44,3 +44,5 @@ org.jetbrains.kotlin.j2k.JavaToKotlinConverterSingleFileTestGenerated.AnonymousC
 org.jetbrains.kotlin.j2k.JavaToKotlinConverterSingleFileTestGenerated.Issues.testKt_807
 org.jetbrains.kotlin.util.KotlinVersionsTest.testVersionsAreConsistent, KT-35567
 org.jetbrains.kotlin.idea.run.RunConfigurationTest.testWithModuleForJdk9, Always red
+org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.Libraries.testJunit, ERROR: Couldn't find the following libraries
+org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.Libraries.testTestNG, ERROR: Couldn't find the following libraries
