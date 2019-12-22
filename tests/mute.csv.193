@@ -165,3 +165,5 @@ org.jetbrains.uast.test.kotlin.KotlinUastReferencesTest.`test original getter is
 org.jetbrains.kotlin.idea.run.RunConfigurationTest.testWithModuleForJdk9, Always red
 org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.Libraries.testJunit, ERROR: Couldn't find the following libraries
 org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.Libraries.testTestNG, ERROR: Couldn't find the following libraries
+org.jetbrains.kotlin.checkers.JavaAgainstKotlinBinariesCheckerTestGenerated.testClassObjects, ERROR: Access to tree elements not allowed.
+org.jetbrains.kotlin.checkers.JavaAgainstKotlinBinariesCheckerTestGenerated.testUsingKotlinPackageDeclarations, ERROR: Access to tree elements not allowed.
