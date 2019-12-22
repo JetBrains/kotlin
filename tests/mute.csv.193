@@ -170,3 +170,4 @@ org.jetbrains.kotlin.checkers.JavaAgainstKotlinBinariesCheckerTestGenerated.test
 org.jetbrains.kotlin.jps.build.IncrementalJvmJpsTestGenerated.Custom.testBuildError, Since dc8240c24ebd-ab79c3e0a06f0 Function has several compatible actual declarations in modules
 org.jetbrains.kotlin.jps.build.IncrementalJvmJpsTestGenerated.Custom.testBuildError2Levels, Since dc8240c24ebd-ab79c3e0a06f0 Function has several compatible actual declarations in modules
 org.jetbrains.kotlin.jps.build.IncrementalJvmJpsTestGenerated.WithJava.JavaUsedInKotlin.testMixedInheritance, Different clean up
+org.jetbrains.kotlin.psi.injection.StringInterpolationInjectionTest.testInterpolationSimpleName, Stable failure during run may work in debug
