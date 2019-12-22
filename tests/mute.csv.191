@@ -3,6 +3,8 @@ org.jetbrains.kotlin.checkers.JavaAgainstKotlinSourceCheckerTestGenerated.JavaAg
 org.jetbrains.kotlin.checkers.JavaAgainstKotlinSourceCheckerTestGenerated.JavaAgainstKotlin.testExtendingReadOnlyInterfaces, KT-34105
 org.jetbrains.kotlin.checkers.JavaAgainstKotlinSourceCheckerWithoutUltraLightTestGenerated.JavaAgainstKotlin.testExtendingMutableInterfaces, KT-34105
 org.jetbrains.kotlin.gradle.GradleMultiplatformWizardTest.testWeb, KT-35095
+org.jetbrains.kotlin.gradle.NewMultiplatformProjectImportingTest.testSingleAndroidTarget[1: Gradle-4.9, KotlinGradlePlugin-latest stable], Stable on windows
+org.jetbrains.kotlin.gradle.NewMultiplatformProjectImportingTest.testSingleAndroidTarget[3: Gradle-5.6.4, KotlinGradlePlugin-latest stable], Stable on windows
 org.jetbrains.kotlin.idea.caches.resolve.MultiModuleHighlightingTest.testLazyResolvers
 org.jetbrains.kotlin.idea.caches.resolve.MultiModuleHighlightingTest.testRecomputeResolversOnChange
 org.jetbrains.kotlin.idea.codeInsight.gradle.GradleBuildFileHighlightingTest.testKtsInJsProject, "Diagnostic's list should be empty" error
