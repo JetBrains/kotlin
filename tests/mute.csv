@@ -58,3 +58,4 @@ org.jetbrains.kotlin.idea.highlighter.NoErrorsInStdlibTest.testNoErrors, Always 
 org.jetbrains.kotlin.idea.highlighter.HighlightingTestGenerated.testSuspend, Always red
 org.jetbrains.kotlin.idea.stubs.MultiFileHighlightingTestGenerated.testTopLevelMembersReference, Always red
 org.jetbrains.kotlin.idea.quickfix.DeprecatedSymbolUsageFixSpecialTest.testDefaultParameterValuesFromLibrary, Always red because of additional import
+org.jetbrains.kotlin.idea.quickfix.QuickFixMultiModuleTestGenerated.CreateActual.testWithTestDummy, Very FLAKY on teamcity
