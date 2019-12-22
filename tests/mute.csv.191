@@ -16,12 +16,16 @@ org.jetbrains.kotlin.idea.codeInsight.gradle.GradleConfiguratorTest.testConfigur
 org.jetbrains.kotlin.idea.codeInsight.gradle.GradleConfiguratorTest.testConfigureGradleKtsKotlinDevVersion[1: with Gradle-5.6.4], absent test data
 org.jetbrains.kotlin.idea.codeInsight.gradle.GradleConfiguratorTest.testConfigureKotlinDevVersion[1: with Gradle-5.6.4], absent test data
 org.jetbrains.kotlin.idea.codeInsight.gradle.GradleConfiguratorTest.testConfigureKotlinWithPluginsBlock[1: with Gradle-5.6.4], absent test data
+org.jetbrains.kotlin.idea.configuration.ConfigureKotlinTest.testJava9WithModuleInfo, Error: "Require directive for kotlin.stdlib is expected"
+org.jetbrains.kotlin.idea.configuration.GradleConfigureProjectByChangingFileTestGenerated.Gradle.testWithJava9ModuleInfo, Probably test data should be updated
 org.jetbrains.kotlin.idea.debugger.test.CoroutineDumpTestGenerated.testNoCoroutines, Stable on windows
 org.jetbrains.kotlin.idea.debugger.test.CoroutineDumpTestGenerated.testThreeCoroutines, Stable on windows
 org.jetbrains.kotlin.idea.debugger.test.CoroutineDumpTestGenerated.testTwoDumps, Stable on windows
+org.jetbrains.kotlin.idea.maven.configuration.MavenConfigureProjectByChangingFileTestGenerated.Jvm.testWithJava9ModuleInfo, Probably test data should be updated
 org.jetbrains.kotlin.idea.refactoring.move.MultiModuleMoveTestGenerated.testMoveFromJsModuleToJvmModule_MoveFromJsModuleToJvmModule, KT-34106
 org.jetbrains.kotlin.idea.refactoring.move.MultiModuleMoveTestGenerated.testMoveFromJvmModuleToJsModule_MoveFromJvmModuleToJsModule, KT-34106
 org.jetbrains.kotlin.idea.refactoring.move.MultiModuleMoveTestGenerated.testMoveJdkDependentToJsModule_MoveJdkDependentToJsModule, KT-34106
 org.jetbrains.kotlin.j2k.JavaToKotlinConverterSingleFileTestGenerated.AnonymousClass.testKt_13146
 org.jetbrains.kotlin.j2k.JavaToKotlinConverterSingleFileTestGenerated.Issues.testKt_807
 org.jetbrains.kotlin.util.KotlinVersionsTest.testVersionsAreConsistent, KT-35567
+org.jetbrains.kotlin.idea.run.RunConfigurationTest.testWithModuleForJdk9, Always red

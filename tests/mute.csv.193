@@ -46,6 +46,8 @@ org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Java.S
 org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Java.SyntheticExtensions.testSmartCast2, KT-32919
 org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Java.SyntheticExtensions.testSyntheticExtensions1, KT-32919
 org.jetbrains.kotlin.idea.completion.test.KotlinSourceInJavaCompletionTestGenerated.testMultiFileFacadeMembers, KT-34689
+org.jetbrains.kotlin.idea.configuration.ConfigureKotlinTest.testJava9WithModuleInfo, Error: "Require directive for kotlin.stdlib is expected"
+org.jetbrains.kotlin.idea.configuration.GradleConfigureProjectByChangingFileTestGenerated.Gradle.testWithJava9ModuleInfo, Probably test data should be updated
 org.jetbrains.kotlin.idea.debugger.test.CoroutineDumpTestGenerated.testNoCoroutines, Stable on windows
 org.jetbrains.kotlin.idea.debugger.test.CoroutineDumpTestGenerated.testThreeCoroutines, Stable on windows
 org.jetbrains.kotlin.idea.debugger.test.CoroutineDumpTestGenerated.testTwoDumps, Stable on windows
@@ -127,6 +129,7 @@ org.jetbrains.kotlin.idea.intentions.declarations.JoinLinesTestGenerated.RemoveB
 org.jetbrains.kotlin.idea.intentions.declarations.JoinLinesTestGenerated.RemoveBraces.testIf, KT-34408
 org.jetbrains.kotlin.idea.intentions.declarations.JoinLinesTestGenerated.RemoveBraces.testNotSingleLineStatement, KT-34408
 org.jetbrains.kotlin.idea.intentions.declarations.JoinLinesTestGenerated.RemoveBraces.testWhenEntry, KT-34408
+org.jetbrains.kotlin.idea.maven.configuration.MavenConfigureProjectByChangingFileTestGenerated.Jvm.testWithJava9ModuleInfo, Probably test data should be updated
 org.jetbrains.kotlin.idea.navigation.KotlinGotoImplementationMultiModuleTestGenerated.testExpectClassSuperclassFun, Flaky failure
 org.jetbrains.kotlin.idea.parameterInfo.ParameterInfoTestGenerated.WithLib1.testUseJavaFromLib, KT-34542, FAIL
 org.jetbrains.kotlin.idea.parameterInfo.ParameterInfoTestGenerated.WithLib2.testUseJavaSAMFromLib, KT-34542, FAIL
@@ -159,3 +162,4 @@ org.jetbrains.kotlin.j2k.JavaToKotlinConverterSingleFileTestGenerated.AnonymousC
 org.jetbrains.kotlin.j2k.JavaToKotlinConverterSingleFileTestGenerated.Issues.testKt_807
 org.jetbrains.kotlin.util.KotlinVersionsTest.testVersionsAreConsistent, KT-35567
 org.jetbrains.uast.test.kotlin.KotlinUastReferencesTest.`test original getter is visible when reference is under renaming`, Extensions API changed
+org.jetbrains.kotlin.idea.run.RunConfigurationTest.testWithModuleForJdk9, Always red
