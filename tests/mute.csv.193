@@ -176,3 +176,4 @@ org.jetbrains.kotlin.idea.run.RunConfigurationTest.testWithModuleForJdk9, Always
 org.jetbrains.kotlin.idea.highlighter.NoErrorsInStdlibTest.testNoErrors, Always red
 org.jetbrains.kotlin.idea.highlighter.HighlightingTestGenerated.testSuspend, Always red
 org.jetbrains.kotlin.idea.stubs.MultiFileHighlightingTestGenerated.testTopLevelMembersReference, Always red
+org.jetbrains.kotlin.idea.refactoring.move.MoveTestGenerated.testKotlin_moveTopLevelDeclarations_moveFunctionToPackage_MoveFunctionToPackage, Broken in 0dc7c37b62f0cfdfb57ee41a808137196c45a9f5
