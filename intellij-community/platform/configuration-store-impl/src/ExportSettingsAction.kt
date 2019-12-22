@@ -269,7 +269,7 @@ private fun getComponentPresentableName(state: State, aClass: Class<*>, pluginDe
     resourceBundleName = pluginDescriptor.resourceBundleBaseName
     if (resourceBundleName == null) {
       if (pluginDescriptor.vendor == "JetBrains") {
-        resourceBundleName = OptionsBundle.PATH_TO_BUNDLE
+        resourceBundleName = OptionsBundle.BUNDLE
       }
       else {
         return trimDefaultName()
@@ -277,7 +277,7 @@ private fun getComponentPresentableName(state: State, aClass: Class<*>, pluginDe
     }
   }
   else {
-    resourceBundleName = OptionsBundle.PATH_TO_BUNDLE
+    resourceBundleName = OptionsBundle.BUNDLE
   }
 
   val classLoader = pluginDescriptor?.pluginClassLoader ?: aClass.classLoader
