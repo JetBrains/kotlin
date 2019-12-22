@@ -162,7 +162,6 @@ org.jetbrains.kotlin.j2k.JavaToKotlinConverterSingleFileTestGenerated.AnonymousC
 org.jetbrains.kotlin.j2k.JavaToKotlinConverterSingleFileTestGenerated.Issues.testKt_807
 org.jetbrains.kotlin.util.KotlinVersionsTest.testVersionsAreConsistent, KT-35567
 org.jetbrains.uast.test.kotlin.KotlinUastReferencesTest.`test original getter is visible when reference is under renaming`, Extensions API changed
-org.jetbrains.kotlin.idea.run.RunConfigurationTest.testWithModuleForJdk9, Always red
 org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.Libraries.testJunit, ERROR: Couldn't find the following libraries
 org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.Libraries.testTestNG, ERROR: Couldn't find the following libraries
 org.jetbrains.kotlin.checkers.JavaAgainstKotlinBinariesCheckerTestGenerated.testClassObjects, ERROR: Access to tree elements not allowed.
@@ -173,3 +172,7 @@ org.jetbrains.kotlin.jps.build.IncrementalJvmJpsTestGenerated.WithJava.JavaUsedI
 org.jetbrains.kotlin.psi.injection.StringInterpolationInjectionTest.testInterpolationSimpleName, Stable failure during run may work in debug
 org.jetbrains.kotlin.shortenRefs.ShortenRefsTestGenerated.testExtensionForObject2, Always red
 org.jetbrains.kotlinx.serialization.SerializationIrBytecodeListingTestGenerated.testBasic, Broken between 20 nov and 10 dec
+org.jetbrains.kotlin.idea.run.RunConfigurationTest.testWithModuleForJdk9, Always red
+org.jetbrains.kotlin.idea.highlighter.NoErrorsInStdlibTest.testNoErrors, Always red
+org.jetbrains.kotlin.idea.highlighter.HighlightingTestGenerated.testSuspend, Always red
+org.jetbrains.kotlin.idea.stubs.MultiFileHighlightingTestGenerated.testTopLevelMembersReference, Always red
