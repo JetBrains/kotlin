@@ -8,5 +8,5 @@ fun test(a: A, foo: Foo) {
 }
 
 fun test(a: Int, foo: Int.()->Unit) {
-    a.<!UNRESOLVED_REFERENCE!>foo<!>()
+    a.foo()
 }

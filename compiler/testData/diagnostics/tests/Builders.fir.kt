@@ -70,7 +70,7 @@ abstract class Tag(val name : String) : Element() {
   val attributes = HashMap<String, String>()
 
   protected fun <T : Element> initTag(tag : T, init : T.() -> Unit) : T {
-    tag.<!UNRESOLVED_REFERENCE!>init<!>()
+    tag.init()
     children.add(tag)
     return tag
   }
@@ -143,7 +143,7 @@ class A() : BodyTag("a") {
 
 fun html(init : HTML.() -> Unit) : HTML {
   val html = HTML()
-  html.<!UNRESOLVED_REFERENCE!>init<!>()
+  html.init()
   return html
 }
 

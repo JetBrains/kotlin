@@ -20,14 +20,14 @@ package test
 
 import a.A
 
-fun <T, R> T.with(f: T.() -> R) = <!INAPPLICABLE_CANDIDATE!>f<!>()
+fun <T, R> T.with(f: T.() -> R) = f()
 
 fun A.extFun1() = b.length
 
 // fun A.extFun2() = c.length // TODO fix KT-9953
 
-val x1 = A("").with { b.<!UNRESOLVED_REFERENCE!>length<!> }
+val x1 = A("").with { b.length }
 
 // val x2 = A("").with { c.length } // TODO fix KT-9953
 
-val x3 = A.with { c.<!UNRESOLVED_REFERENCE!>length<!> }
+val x3 = A.with { c.length }

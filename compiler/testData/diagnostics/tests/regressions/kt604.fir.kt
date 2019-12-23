@@ -14,7 +14,7 @@ interface ChannelPipelineFactory{
 class StandardPipelineFactory(val config:  ChannelPipeline.()->Unit) : ChannelPipelineFactory {
     override fun getPipeline() : ChannelPipeline {
         val pipeline = DefaultChannelPipeline()
-        pipeline.<!UNRESOLVED_REFERENCE!>config<!> ()
+        pipeline.config ()
         return pipeline
     }
 }

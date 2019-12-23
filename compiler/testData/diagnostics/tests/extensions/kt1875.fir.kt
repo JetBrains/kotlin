@@ -3,7 +3,7 @@
 
 package kt1875
 
-fun foo(a : Int?, b : Int.(Int)->Int) = a?.<!UNRESOLVED_REFERENCE!>b<!>(1) //unnecessary safe call warning
+fun foo(a : Int?, b : Int.(Int)->Int) = a?.b(1) //unnecessary safe call warning
 
 interface T {
     val f : ((i: Int) -> Unit)?

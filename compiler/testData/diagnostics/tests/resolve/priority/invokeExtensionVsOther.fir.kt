@@ -9,7 +9,7 @@ class B {
 
 fun test(foo: A.() -> Int) {
     with(A()) {
-        <!INAPPLICABLE_CANDIDATE!>foo<!>() <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><Int>() }
+        foo() checkType { _<Int>() }
         with(B()) {
             foo() checkType { _<B>() }
             this.foo() checkType { _<B>() }

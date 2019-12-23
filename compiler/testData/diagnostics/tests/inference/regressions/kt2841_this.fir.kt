@@ -7,7 +7,7 @@ interface Closeable {
 class C : Closeable
 
 public inline fun <T: Closeable, R> T.use(block: T.()-> R) : R {
-    return this.<!UNRESOLVED_REFERENCE!>block<!>()
+    return this.block()
 }
 
 fun test() {

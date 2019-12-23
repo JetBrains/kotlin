@@ -4,7 +4,7 @@ package a
 import java.util.HashMap
 
 private fun <T> test(value: T, extf: String.(value: T)->Unit) {
-    "".<!UNRESOLVED_REFERENCE!>extf<!>(value)
+    "".extf(value)
 }
 
 fun main() {

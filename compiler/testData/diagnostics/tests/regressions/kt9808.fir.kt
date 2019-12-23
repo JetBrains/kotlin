@@ -4,5 +4,5 @@ object O
 val foo: O.() -> Unit  = null!!
 
 fun test() {
-    O.<!UNRESOLVED_REFERENCE!>foo<!>()
+    O.foo()
 }

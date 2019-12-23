@@ -1,7 +1,7 @@
 // !WITH_NEW_INFERENCE
 
 fun f(s: String, action: (String.() -> Unit)?) {
-    s.foo().bar().<!UNRESOLVED_REFERENCE!>action<!>()
+    s.foo().bar().<!INAPPLICABLE_CANDIDATE!>action<!>()
 }
 
 fun String.foo() = ""

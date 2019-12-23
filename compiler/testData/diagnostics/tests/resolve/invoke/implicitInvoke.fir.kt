@@ -24,10 +24,10 @@ fun test(c: () -> String, e: Int.() -> String) {
     c()
     (c)()
 
-    3.<!UNRESOLVED_REFERENCE!>e<!>()
-    3.(<!UNRESOLVED_REFERENCE!>e<!>)()
+    3.e()
+    3.(e)()
     with(3) {
-        <!INAPPLICABLE_CANDIDATE!>e<!>()
-        (<!INAPPLICABLE_CANDIDATE!>e<!>)()
+        e()
+        (e)()
     }
 }

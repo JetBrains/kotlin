@@ -4,7 +4,7 @@ package kt2514
 //+JDK
 import java.io.Closeable
 
-fun <T> Thread.use(block: Thread.() -> T): T = <!INAPPLICABLE_CANDIDATE!>block<!>()
+fun <T> Thread.use(block: Thread.() -> T): T = block()
 
 fun <T: Closeable, R> T.use(block: (T)-> R) : R = block(this)
 

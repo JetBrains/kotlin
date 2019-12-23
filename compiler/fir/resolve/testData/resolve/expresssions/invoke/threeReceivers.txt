@@ -32,7 +32,7 @@ FILE: threeReceivers.kt
             }
 
         public final fun R|FooBar|.chk(buz: R|Buz|): R|kotlin/Unit| {
-            R|<local>/buz|.<Unresolved name: foobar>#()
+            ((this@R|/Foo|, R|<local>/buz|).R|/Foo.foobar|, this@R|/Foo.chk|).R|/Bar.invoke|()
         }
 
     }

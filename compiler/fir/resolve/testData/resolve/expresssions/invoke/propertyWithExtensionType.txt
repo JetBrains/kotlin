@@ -1,0 +1,24 @@
+FILE: propertyWithExtensionType.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(x: R|kotlin/String.() -> kotlin/Unit|, y: R|kotlin/String.() -> kotlin/Int|): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/String.() -> kotlin/Unit| = R|<local>/x|
+            public get(): R|kotlin/String.() -> kotlin/Unit|
+
+        public final val y: R|kotlin/String.() -> kotlin/Int| = R|<local>/y|
+            public get(): R|kotlin/String.() -> kotlin/Int|
+
+    }
+    public final fun test(a: R|A|): R|kotlin/Unit| {
+        when () {
+            !=(R|<local>/a|.R|/A.x|, Null(null)) ->  {
+                lval b: R|kotlin/String.() -> kotlin/Unit| = R|<local>/a|.R|/A.x|
+                String().R|<local>/b|.R|FakeOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|()
+            }
+        }
+
+        lval c: R|kotlin/String.() -> kotlin/Int| = R|<local>/a|.R|/A.y|
+        lval d: R|kotlin/Int| = String().R|<local>/c|.R|FakeOverride<kotlin/Function1.invoke: R|kotlin/Int|>|()
+    }

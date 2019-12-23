@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
+import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
@@ -17,10 +19,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -84,7 +83,11 @@ internal sealed class CheckReceivers : ResolutionStage() {
         override fun Candidate.getReceiverType(): ConeKotlinType? {
             val callableSymbol = symbol as? FirCallableSymbol<*> ?: return null
             val callable = callableSymbol.fir
-            return (callable.receiverTypeRef as FirResolvedTypeRef?)?.type
+            val receiverType = (callable.receiverTypeRef as FirResolvedTypeRef?)?.type
+            if (receiverType != null) return receiverType
+            val returnTypeRef = callable.returnTypeRef as? FirResolvedTypeRef ?: return null
+            if (!returnTypeRef.isExtensionFunctionType()) return null
+            return (returnTypeRef.type.typeArguments.firstOrNull() as? ConeTypedProjection)?.type
         }
     }
 
@@ -136,6 +139,23 @@ internal object MapArguments : ResolutionStage() {
     override suspend fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
         val symbol = candidate.symbol as? FirFunctionSymbol<*> ?: return sink.reportApplicability(CandidateApplicability.HIDDEN)
         val function = symbol.fir
+        if (candidate.dispatchReceiverValue?.type?.isBuiltinFunctionalType == true) {
+            // We don't know is it extension function or not due to lack of annotations
+            // So we have to check both variants, with receiver and without it
+            // TODO: remove this double-check after KT-30066
+            val lambdaExtensionReceiver =
+                (callInfo.explicitReceiver as? FirQualifiedAccess)?.extensionReceiver?.takeIf { it !is FirNoReceiverExpression }
+                    ?: (candidate.implicitExtensionReceiverValue as? ImplicitReceiverValue)?.receiverExpression
+            val processorWithReceiver = FirCallArgumentsProcessor(
+                function,
+                listOfNotNull(lambdaExtensionReceiver) + callInfo.arguments
+            )
+            val mappingResult = processorWithReceiver.process()
+            candidate.argumentMapping = mappingResult.argumentMapping
+            if (mappingResult.isSuccess) {
+                return
+            }
+        }
         val processor = FirCallArgumentsProcessor(function, callInfo.arguments)
         val mappingResult = processor.process()
         candidate.argumentMapping = mappingResult.argumentMapping

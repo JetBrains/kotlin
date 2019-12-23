@@ -9,7 +9,7 @@ class OverloadTest {
 object Literal
 
 inline fun <T : Any> OverloadTest.overload(value: T?, function: OverloadTest.(T) -> Unit) {
-    if (value == null) foo(Literal) else <!INAPPLICABLE_CANDIDATE!>function<!>(value)
+    if (value == null) foo(Literal) else function(value)
 }
 
 // Overload resolution ambiguity

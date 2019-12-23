@@ -12,6 +12,6 @@ class Foo {
     val Buz.foobar: Bar get() = Bar()
 
     fun FooBar.chk(buz: Buz) {
-        buz.<!UNRESOLVED_REFERENCE!>foobar<!>()
+        buz.foobar()
     }
 }

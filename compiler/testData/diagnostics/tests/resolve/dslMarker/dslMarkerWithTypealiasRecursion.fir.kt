@@ -12,13 +12,13 @@ class Bar
 typealias YBar = ZBar
 typealias ZBar = <!OTHER_ERROR!>YBar<!>
 
-fun Foo.foo(body: Foo.() -> Unit) = <!INAPPLICABLE_CANDIDATE!>body<!>()
-fun Foo.zbar(body: ZBar.() -> Unit) = Bar().<!UNRESOLVED_REFERENCE!>body<!>()
+fun Foo.foo(body: Foo.() -> Unit) = body()
+fun Foo.zbar(body: ZBar.() -> Unit) = Bar().body()
 
 fun test() {
     Foo().foo {
-        <!UNRESOLVED_REFERENCE!>zbar<!> {
-            <!UNRESOLVED_REFERENCE!>foo<!> {}
+        zbar {
+            foo {}
         }
     }
 }

@@ -3,7 +3,7 @@
 
 fun string(init: StringBuilder.() -> Unit): String{
     val answer = StringBuilder()
-    answer.<!UNRESOLVED_REFERENCE!>init<!>()
+    answer.init()
     return answer.toString()
 }
 

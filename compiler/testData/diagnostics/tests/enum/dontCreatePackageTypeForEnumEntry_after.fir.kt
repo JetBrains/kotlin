@@ -9,8 +9,8 @@ enum class E {
 
 val foo: Any.() -> Unit = {}
 
-fun f1() = E.FIRST.<!UNRESOLVED_REFERENCE!>foo<!>()
-fun f2() = E.FIRST.(<!UNRESOLVED_REFERENCE!>foo<!>)()
-fun f3() = E.SECOND.<!UNRESOLVED_REFERENCE!>foo<!>()
-fun f4() = E.SECOND.(<!UNRESOLVED_REFERENCE!>foo<!>)()
+fun f1() = E.FIRST.foo()
+fun f2() = E.FIRST.(foo)()
+fun f3() = E.SECOND.foo()
+fun f4() = E.SECOND.(foo)()
 fun f5() = E.SECOND.A()

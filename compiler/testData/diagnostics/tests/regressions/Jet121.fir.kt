@@ -10,5 +10,5 @@ return if (answer == 2) "OK" else "FAIL"
 }
 
 fun apply(arg:String, f :  String.() -> Int) : Int {
-  return arg.<!UNRESOLVED_REFERENCE!>f<!>()
+  return arg.f()
 }
