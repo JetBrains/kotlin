@@ -1,4 +1,4 @@
-// !LANGUAGE: +NewInference
+// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 fun <K> select2(x: K, y: K): K = TODO()

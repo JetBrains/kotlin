@@ -17,17 +17,21 @@
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
+import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionStatelessCallbacks
 import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator.ResolveDirection
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.types.AbstractTypeApproximator
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeVariableMarker
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
 import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
 
 class ResultTypeResolver(
     val typeApproximator: AbstractTypeApproximator,
-    val trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle
+    val trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle,
+    private val statelessCallbacks: KotlinResolutionStatelessCallbacks? // TODO injection in FIR
 ) {
     interface Context : TypeSystemInferenceExtensionContext {
         fun isProperType(type: KotlinTypeMarker): Boolean
@@ -43,18 +47,20 @@ class ResultTypeResolver(
         }
     }
 
-    fun findResultTypeOrNull(c: Context, variableWithConstraints: VariableWithConstraints, direction: ResolveDirection): KotlinTypeMarker? {
+    private fun findResultTypeOrNull(
+        c: Context,
+        variableWithConstraints: VariableWithConstraints,
+        direction: ResolveDirection
+    ): KotlinTypeMarker? {
         findResultIfThereIsEqualsConstraint(c, variableWithConstraints)?.let { return it }
 
         val subType = c.findSubType(variableWithConstraints)
         val superType = c.findSuperType(variableWithConstraints)
-        val result = if (direction == ResolveDirection.TO_SUBTYPE || direction == ResolveDirection.UNKNOWN) {
+        return if (direction == ResolveDirection.TO_SUBTYPE || direction == ResolveDirection.UNKNOWN) {
             c.resultType(subType, superType, variableWithConstraints)
         } else {
             c.resultType(superType, subType, variableWithConstraints)
         }
-
-        return result
     }
 
     private fun Context.resultType(
@@ -66,10 +72,10 @@ class ResultTypeResolver(
 
         if (isSuitableType(firstCandidate, variableWithConstraints)) return firstCandidate
 
-        if (isSuitableType(secondCandidate, variableWithConstraints)) {
-            return secondCandidate
+        return if (isSuitableType(secondCandidate, variableWithConstraints)) {
+            secondCandidate
         } else {
-            return firstCandidate
+            firstCandidate
         }
     }
 
@@ -78,18 +84,19 @@ class ResultTypeResolver(
             if (!isProperType(constraint.type)) continue
             if (!checkConstraint(this, constraint.type, constraint.kind, resultType)) return false
         }
-
-        /*
-         * If all upper constraints came from declared upper bounds we should accept Nothing
-         *   as suitable type as OI does
-         */
         if (
-            variableWithConstraints.constraints.any {
-                it.kind == ConstraintKind.UPPER && it.position.from !is DeclaredUpperBoundConstraintPosition
-            } && !trivialConstraintTypeInferenceOracle.isSuitableResultedType(resultType)
+            !trivialConstraintTypeInferenceOracle.isSuitableResultedType(resultType)
+            && isNothingNotSuitableFor(variableWithConstraints.typeVariable)
         ) return false
 
         return true
+    }
+
+    private fun isNothingNotSuitableFor(variable: TypeVariableMarker): Boolean {
+        val parameterName = variable.safeAs<TypeVariableFromCallableDescriptor>()?.originalTypeParameter?.name ?: return false
+        val isSpecialFunctionParameter = statelessCallbacks?.isSpecialFunctionTypeParameterName(parameterName) ?: false
+        val isBangBangParameter = isSpecialFunctionParameter && statelessCallbacks?.isExclExclTypeParameterName(parameterName) ?: false
+        return isSpecialFunctionParameter && !isBangBangParameter
     }
 
     private fun Context.findSubType(variableWithConstraints: VariableWithConstraints): KotlinTypeMarker? {
@@ -163,22 +170,27 @@ class ResultTypeResolver(
     }
 
     private fun Context.findSuperType(variableWithConstraints: VariableWithConstraints): KotlinTypeMarker? {
-        val upperConstraints = variableWithConstraints.constraints.filter { it.kind == ConstraintKind.UPPER && this@findSuperType.isProperType(it.type) }
+        val upperConstraints =
+            variableWithConstraints.constraints.filter { it.kind == ConstraintKind.UPPER && this@findSuperType.isProperType(it.type) }
         if (upperConstraints.isNotEmpty()) {
             val upperType = intersectTypes(upperConstraints.map { it.type })
 
-            return typeApproximator.approximateToSubType(upperType, TypeApproximatorConfiguration.CapturedAndIntegerLiteralsTypesApproximation) ?: upperType
+            return typeApproximator.approximateToSubType(
+                upperType,
+                TypeApproximatorConfiguration.CapturedAndIntegerLiteralsTypesApproximation
+            ) ?: upperType
         }
         return null
     }
 
-    fun findResultIfThereIsEqualsConstraint(c: Context, variableWithConstraints: VariableWithConstraints): KotlinTypeMarker? = with(c) {
-        val properEqualityConstraints = variableWithConstraints.constraints.filter {
-            it.kind == ConstraintKind.EQUALITY && c.isProperType(it.type)
-        }
+    private fun findResultIfThereIsEqualsConstraint(c: Context, variableWithConstraints: VariableWithConstraints): KotlinTypeMarker? =
+        with(c) {
+            val properEqualityConstraints = variableWithConstraints.constraints.filter {
+                it.kind == ConstraintKind.EQUALITY && c.isProperType(it.type)
+            }
 
-        return c.representativeFromEqualityConstraints(properEqualityConstraints)
-    }
+            return c.representativeFromEqualityConstraints(properEqualityConstraints)
+        }
 
     // Discriminate integer literal types as they are less specific than separate integer types (Int, Short...)
     private fun Context.representativeFromEqualityConstraints(constraints: List<Constraint>): KotlinTypeMarker? {

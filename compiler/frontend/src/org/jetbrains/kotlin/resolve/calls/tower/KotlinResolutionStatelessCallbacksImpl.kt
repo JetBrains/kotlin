@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtSuperExpression
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isConventionCall
@@ -39,6 +40,7 @@ import org.jetbrains.kotlin.resolve.calls.model.KotlinCallArgument
 import org.jetbrains.kotlin.resolve.calls.model.SimpleKotlinCallArgument
 import org.jetbrains.kotlin.resolve.calls.results.SimpleConstraintSystem
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
+import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class KotlinResolutionStatelessCallbacksImpl(
@@ -94,5 +96,13 @@ class KotlinResolutionStatelessCallbacksImpl(
             SimpleConstraintSystemImpl(constraintInjector, builtIns)
         else
             ConstraintSystemBuilderImpl.forSpecificity()
+    }
+
+    override fun isSpecialFunctionTypeParameterName(name: Name): Boolean {
+        return ControlStructureTypingUtils.ResolveConstruct.values().any { it.specialTypeParameterName == name }
+    }
+
+    override fun isExclExclTypeParameterName(name: Name): Boolean {
+        return name == ControlStructureTypingUtils.ResolveConstruct.EXCL_EXCL.specialTypeParameterName
     }
 }
