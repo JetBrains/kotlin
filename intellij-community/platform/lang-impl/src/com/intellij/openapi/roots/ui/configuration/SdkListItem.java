@@ -68,11 +68,16 @@ public abstract class SdkListItem {
     }
   }
 
-  static final class InvalidSdkItem extends SdkListItem {
-    final String mySdkName;
+  public static final class InvalidSdkItem extends SdkListItem {
+    private final String mySdkName;
 
     InvalidSdkItem(@NotNull String name) {
       mySdkName = name;
+    }
+
+    @NotNull
+    public String getSdkName() {
+      return mySdkName;
     }
 
     @Override

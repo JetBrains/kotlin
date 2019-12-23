@@ -6,6 +6,7 @@ import com.intellij.openapi.projectRoots.*
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel
 import com.intellij.openapi.ui.ComboBoxPopupState
 import com.intellij.openapi.util.Condition
+import java.util.function.Predicate
 import javax.swing.ComboBoxModel
 import javax.swing.ListModel
 
@@ -36,12 +37,15 @@ class SdkComboBoxModel private constructor(
     fun createSdkComboBoxModel(
       project: Project,
       sdksModel: ProjectSdksModel,
-      sdkTypeFilter: Condition<SdkTypeId>? = null,
-      sdkTypeCreationFilter: Condition<SdkTypeId>? = null,
-      sdkFilter: Condition<Sdk>? = null
+      sdkTypeFilter: Predicate<SdkTypeId>? = null,
+      sdkTypeCreationFilter: Predicate<SdkTypeId>? = null,
+      sdkFilter: Predicate<Sdk>? = null
     ): SdkComboBoxModel {
       val selectedItem = SdkListItem.NoneSdkItem()
-      val modelBuilder = SdkListModelBuilder(project, sdksModel, sdkTypeFilter, sdkTypeCreationFilter, sdkFilter)
+      val sdkTypeCondition = sdkTypeFilter?.let { f -> Condition<SdkTypeId> { f.test(it) } }
+      val sdkTypeCreationCondition = sdkTypeCreationFilter?.let { f -> Condition<SdkTypeId> { f.test(it) } }
+      val sdkCondition = sdkFilter?.let { f -> Condition<Sdk> { f.test(it) } }
+      val modelBuilder = SdkListModelBuilder(project, sdksModel, sdkTypeCondition, sdkTypeCreationCondition, sdkCondition)
       if (sdksModel.projectSdk != null) modelBuilder.showProjectSdkItem()
       val listModel = modelBuilder.buildModel()
       return SdkComboBoxModel(selectedItem, project, sdksModel, listModel, modelBuilder)
@@ -49,9 +53,9 @@ class SdkComboBoxModel private constructor(
 
     @JvmStatic
     fun createJdkComboBoxModel(project: Project, sdksModel: ProjectSdksModel): SdkComboBoxModel {
-      val sdkTypeFilter = Condition<SdkTypeId> { it is JavaSdkType }
+      val sdkTypeFilter = Predicate<SdkTypeId> { it is JavaSdkType }
       val noJavaSdkTypes = { SdkType.getAllTypes().filterNot { it is SimpleJavaSdkType }.isEmpty() }
-      val sdkTypeCreationFilter = Condition<SdkTypeId> { noJavaSdkTypes() || it !is SimpleJavaSdkType }
+      val sdkTypeCreationFilter = Predicate<SdkTypeId> { it !is SimpleJavaSdkType || noJavaSdkTypes() }
       return createSdkComboBoxModel(project, sdksModel, sdkTypeFilter, sdkTypeCreationFilter, null)
     }
   }

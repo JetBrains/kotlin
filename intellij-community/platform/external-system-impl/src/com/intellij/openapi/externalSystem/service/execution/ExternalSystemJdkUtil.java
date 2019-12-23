@@ -172,6 +172,8 @@ public class ExternalSystemJdkUtil {
   @Contract("null -> false")
   public static boolean isValidJdk(@Nullable Sdk jdk) {
     if (jdk == null) return false;
+    SdkType javaSdkType = getJavaSdkType();
+    if (!javaSdkType.equals(jdk.getSdkType())) return false;
     if (SdkDownloadTracker.getInstance().isDownloading(jdk)) return true;
     return isValidJdk(jdk.getHomePath());
   }

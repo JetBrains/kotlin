@@ -129,7 +129,7 @@ public abstract class SdkListPresenter extends ColoredListCellRenderer<SdkListIt
     setIcon(EMPTY_ICON);    // to fix vertical size
     if (value instanceof InvalidSdkItem) {
       InvalidSdkItem item = (InvalidSdkItem)value;
-      final String str = ProjectBundle.message("jdk.combo.box.invalid.item", item.mySdkName);
+      final String str = ProjectBundle.message("jdk.combo.box.invalid.item", item.getSdkName());
       append(str, SimpleTextAttributes.ERROR_ATTRIBUTES);
     }
     else if (value instanceof ProjectSdkItem) {

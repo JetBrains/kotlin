@@ -10,7 +10,6 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.externalSystem.model.settings.LocationSettingType;
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtil;
-import com.intellij.openapi.roots.ui.configuration.SdkComboBox;
 import com.intellij.openapi.externalSystem.settings.ExternalProjectSettings;
 import com.intellij.openapi.externalSystem.util.ExternalSystemUiUtil;
 import com.intellij.openapi.externalSystem.util.PaintAwarePanel;
@@ -18,6 +17,10 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.projectRoots.SdkType;
+import com.intellij.openapi.projectRoots.SdkTypeId;
+import com.intellij.openapi.projectRoots.SimpleJavaSdkType;
+import com.intellij.openapi.roots.ui.configuration.SdkComboBox;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel;
 import com.intellij.openapi.roots.ui.util.CompositeAppearance;
 import com.intellij.openapi.ui.ComboBox;
@@ -64,13 +67,16 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import static com.intellij.openapi.externalSystem.service.ui.ExternalSystemJdkComboBoxUtil.getSelectedJdkReference;
 import static com.intellij.openapi.externalSystem.service.ui.ExternalSystemJdkComboBoxUtil.setSelectedJdkReference;
-import static com.intellij.openapi.roots.ui.configuration.SdkComboBoxModel.createJdkComboBoxModel;
 import static com.intellij.openapi.externalSystem.util.ExternalSystemUiUtil.INSETS;
+import static com.intellij.openapi.roots.ui.configuration.SdkComboBoxModel.createSdkComboBoxModel;
 
 /**
  * @author Vladislav.Soroka
@@ -717,7 +723,11 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
     if (myGradleJdkComboBox != null) {
       myGradleJdkComboBoxWrapper.remove(myGradleJdkComboBox);
     }
-    myGradleJdkComboBox = new SdkComboBox(createJdkComboBoxModel(project, sdksModel));
+    Predicate<SdkTypeId> sdkTypeFilter = it -> ExternalSystemJdkUtil.getJavaSdkType().equals(it);
+    Supplier<Boolean> allIsSimpleSdk = () -> Arrays.stream(SdkType.getAllTypes()).allMatch(it -> it instanceof SimpleJavaSdkType);
+    Predicate<SdkTypeId> sdkTypeCreationFilter = it -> !(it instanceof SimpleJavaSdkType) || allIsSimpleSdk.get();
+    Predicate<Sdk> sdkFilter = it -> ExternalSystemJdkUtil.isValidJdk(it);
+    myGradleJdkComboBox = new SdkComboBox(createSdkComboBoxModel(project, sdksModel, sdkTypeFilter, sdkTypeCreationFilter, sdkFilter));
     myGradleJdkComboBoxWrapper.add(myGradleJdkComboBox, BorderLayout.CENTER);
   }
 

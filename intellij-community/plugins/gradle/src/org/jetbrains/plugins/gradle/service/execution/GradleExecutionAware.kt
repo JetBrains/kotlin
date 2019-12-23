@@ -61,8 +61,8 @@ class GradleExecutionAware : ExternalSystemExecutionAware {
 
     waitForDownloadingIfNeeded(sdk, taskId, taskNotificationListener, project)
 
-    val sdkHomePath = sdk.homePath ?: jdkConfigurationError("gradle.jvm.is.invalid")
-    if (!JdkUtil.checkForJdk(sdkHomePath)) {
+    if (!ExternalSystemJdkUtil.isValidJdk(sdk)) {
+      val sdkHomePath = sdk.homePath ?: jdkConfigurationError("gradle.jvm.is.invalid")
       if (JdkUtil.checkForJre(sdkHomePath)) {
         jdkConfigurationError("gradle.jvm.is.jre")
       }
