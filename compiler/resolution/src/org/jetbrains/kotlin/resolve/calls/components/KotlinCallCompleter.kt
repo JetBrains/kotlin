@@ -53,7 +53,7 @@ class KotlinCallCompleter(
 
         return if (resolutionCallbacks.inferenceSession.shouldRunCompletion(candidate))
             candidate.runCompletion(
-                CompletionModeCalculator.computeCompletionMode(candidate, expectedType, returnType),
+                CompletionModeCalculator.computeCompletionMode(candidate, expectedType, returnType, trivialConstraintTypeInferenceOracle),
                 diagnosticHolder,
                 resolutionCallbacks
             )

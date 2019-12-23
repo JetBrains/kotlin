@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 fun bar(x: Int) = x + 1
 
 fun f1(x: Int?) {
