@@ -280,7 +280,13 @@ public class SnapshotInputMappings<Key, Value, Input> implements UpdatableSnapsh
 
     Integer previouslyCalculatedContentHashId = content.getUserData(key);
     if (previouslyCalculatedContentHashId == null) {
-      byte[] hash = IndexedHashesSupport.getOrInitIndexedHash(content, fromDocument);
+      byte[] hash = content.getHash(fromDocument);
+      if (hash == null) {
+        IndexedHashesSupport.initIndexedHash(content);
+        hash = content.getHash(fromDocument);
+        LOG.assertTrue(hash != null);
+      }
+
       previouslyCalculatedContentHashId = IndexedHashesSupport.enumerateHash(hash);
       content.putUserData(key, previouslyCalculatedContentHashId);
     }

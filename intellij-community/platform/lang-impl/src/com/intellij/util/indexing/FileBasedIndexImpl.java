@@ -93,7 +93,6 @@ import org.jetbrains.annotations.TestOnly;
 import java.io.*;
 import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
-import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -450,14 +449,9 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
 
         UpdatableIndex<K, V, FileContent> index = createIndex(extension, new MemoryIndexStorage<>(storage, name));
 
-        if (!(extension instanceof FileContentHashIndexExtension)) {
-          List<ProvidedIndexExtension<K, V>> providedExtensions = ProvidedIndexExtensionLocator.findProvidedIndexExtensionFor(extension);
-          if (!providedExtensions.isEmpty()) {
-            Path[] paths = ContainerUtil.map2Array(providedExtensions, Path.class, ex -> ex.getIndexPath());
-            FileContentHashIndex contentHashIndex = ((FileBasedIndexImpl)FileBasedIndex.getInstance()).getFileContentHashIndex(paths, state);
-
-            index = ProvidedIndexExtension.wrapWithProvidedIndex(providedExtensions, extension, index, contentHashIndex);
-          }
+        ProvidedIndexExtension<K, V> providedExtension = ProvidedIndexExtensionLocator.findProvidedIndexExtensionFor(extension);
+        if (providedExtension != null) {
+          index = ProvidedIndexExtension.wrapWithProvidedIndex(providedExtension, extension, index);
         }
 
         state.registerIndex(name,
@@ -2683,20 +2677,19 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
     }
   }
 
-  public synchronized FileContentHashIndex getFileContentHashIndex(@Nullable Path[] enumeratorPaths, @NotNull IndexConfiguration state) {
-    UpdatableIndex<Long, Void, FileContent> index = state.getIndex(FileContentHashIndexExtension.HASH_INDEX_ID);
+  public synchronized FileContentHashIndex getFileContentHashIndex(@NotNull File enumeratorPath) {
+    UpdatableIndex<Integer, Void, FileContent> index = getState().getIndex(FileContentHashIndexExtension.HASH_INDEX_ID);
     if (index == null) {
-      LOG.assertTrue(enumeratorPaths != null);
       IndicesRegistrationResult registrationResult = new IndicesRegistrationResult();
       try {
-        registerIndexer(FileContentHashIndexExtension.create(enumeratorPaths, ApplicationManager.getApplication()), state, registrationResult);
+        registerIndexer(FileContentHashIndexExtension.create(enumeratorPath, ApplicationManager.getApplication()), myRegisteredIndexes.getState(), registrationResult);
         registrationResult.logChangedAndFullyBuiltIndices(LOG, "Version was changed for:", "Index is to be rebuilt:");
       }
       catch (IOException e) {
         throw new RuntimeException(e);
       }
     } else return (FileContentHashIndex)index;
-    return (FileContentHashIndex)state.getIndex(FileContentHashIndexExtension.HASH_INDEX_ID);
+    return (FileContentHashIndex)getState().getIndex(FileContentHashIndexExtension.HASH_INDEX_ID);
   }
 
   private static final boolean INDICES_ARE_PSI_DEPENDENT_BY_DEFAULT = SystemProperties.getBooleanProperty("idea.indices.psi.dependent.default", true);
