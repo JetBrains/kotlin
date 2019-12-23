@@ -289,9 +289,7 @@ public final class TemplateSettings implements PersistentStateComponent<Template
     }, ApplicationManager.getApplication());
 
     DefaultLiveTemplateEP.EP_NAME.addExtensionPointListener((a,b) -> {
-      myDefaultTemplates.clear();
-      myTemplatesById.clear();
-      loadDefaultLiveTemplates();
+      mySchemeManager.reload();
     }, ApplicationManager.getApplication());
   }
 
@@ -487,6 +485,7 @@ public final class TemplateSettings implements PersistentStateComponent<Template
 
   private void loadDefaultLiveTemplates() {
     try {
+      myPredefinedTemplates.clear();
       for (DefaultLiveTemplatesProvider provider : DefaultLiveTemplatesProvider.EP_NAME.getExtensionList()) {
         loadDefaultLiveTemplatesFromProvider(provider);
       }
