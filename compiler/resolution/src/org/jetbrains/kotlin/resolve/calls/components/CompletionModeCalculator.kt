@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.resolve.calls.components
 
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode
+import org.jetbrains.kotlin.resolve.calls.inference.components.TrivialConstraintTypeInferenceOracle
 import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
 import org.jetbrains.kotlin.resolve.calls.model.KotlinResolutionCandidate
@@ -23,7 +24,8 @@ class CompletionModeCalculator {
         fun computeCompletionMode(
             candidate: KotlinResolutionCandidate,
             expectedType: UnwrappedType?,
-            returnType: UnwrappedType?
+            returnType: UnwrappedType?,
+            trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle
         ): ConstraintSystemCompletionMode = with(candidate) {
             val csCompleterContext = getSystem().asConstraintSystemCompleterContext()
 
@@ -37,13 +39,14 @@ class CompletionModeCalculator {
             if (csBuilder.isProperType(returnType)) return ConstraintSystemCompletionMode.FULL
 
             // For nested call with variables in return type check possibility of full completion
-            return CalculatorForNestedCall(returnType, csCompleterContext).computeCompletionMode()
+            return CalculatorForNestedCall(returnType, csCompleterContext, trivialConstraintTypeInferenceOracle).computeCompletionMode()
         }
     }
 
     private class CalculatorForNestedCall(
         private val returnType: UnwrappedType?,
-        private val csCompleterContext: CsCompleterContext
+        private val csCompleterContext: CsCompleterContext,
+        private val trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle
     ) {
         private enum class FixationDirection {
             TO_SUBTYPE, EQUALITY
@@ -166,6 +169,7 @@ class CompletionModeCalculator {
                 constraint.hasRequiredKind(direction)
                         && !constraint.type.typeConstructor().isIntegerLiteralTypeConstructor()
                         && isProperType(constraint.type)
+                        && trivialConstraintTypeInferenceOracle.isSuitableResultedType(constraint.type)
             }
         }
 
