@@ -28,10 +28,20 @@ abstract class AbstractTypeCheckerContextForConstraintSystem : AbstractTypeCheck
 
     abstract fun addLowerConstraint(typeVariable: TypeConstructorMarker, subType: KotlinTypeMarker)
 
-    override fun getLowerCapturedTypePolicy(subType: SimpleTypeMarker, superType: CapturedTypeMarker): LowerCapturedTypePolicy = when {
-        isMyTypeVariable(subType) -> LowerCapturedTypePolicy.SKIP_LOWER
-        subType.contains { it.anyBound(this::isMyTypeVariable) } -> LowerCapturedTypePolicy.CHECK_ONLY_LOWER
-        else -> LowerCapturedTypePolicy.CHECK_SUBTYPE_AND_LOWER
+    override fun getLowerCapturedTypePolicy(subType: SimpleTypeMarker, superType: CapturedTypeMarker): LowerCapturedTypePolicy {
+        return when {
+            isMyTypeVariable(subType) -> {
+                val projection = superType.typeConstructorProjection()
+                val type = projection.getType().asSimpleType()
+                if (projection.getVariance() == TypeVariance.IN && type != null && isMyTypeVariable(type)) {
+                    LowerCapturedTypePolicy.CHECK_ONLY_LOWER
+                } else {
+                    LowerCapturedTypePolicy.SKIP_LOWER
+                }
+            }
+            subType.contains { it.anyBound(this::isMyTypeVariable) } -> LowerCapturedTypePolicy.CHECK_ONLY_LOWER
+            else -> LowerCapturedTypePolicy.CHECK_SUBTYPE_AND_LOWER
+        }
     }
 
     /**
