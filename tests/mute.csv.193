@@ -183,3 +183,4 @@ org.jetbrains.kotlin.idea.caches.resolve.MultiPlatformHighlightingTestGenerated.
 org.jetbrains.kotlin.idea.maven.KotlinMavenInspectionTestGenerated.testWrongPhaseExecution, Always red
 org.jetbrains.kotlin.idea.decompiler.stubBuilder.BuiltInDecompilerTest.testBuiltInStubTreeEqualToStubTreeFromDecompiledText, FLAKY No classes with this name found: kotlin.ArithmeticException
 org.jetbrains.kotlin.idea.decompiler.stubBuilder.BuiltInDecompilerConsistencyTest.testSameAsClsDecompilerForCompiledBuiltInClasses, FLAKY No classes with this name found: kotlin.ArithmeticException
+org.jetbrains.kotlin.idea.completion.test.JvmSmartCompletionTestGenerated.testFilterTo, KT-32919 Broken in 71cb65c064c7 or 2d5a05466dfa
