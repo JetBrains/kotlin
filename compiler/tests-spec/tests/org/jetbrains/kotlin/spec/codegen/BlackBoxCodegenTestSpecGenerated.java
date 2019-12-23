@@ -1481,6 +1481,60 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                 }
             }
 
+            @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/not-null-assertion-expression")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Not_null_assertion_expression extends AbstractBlackBoxCodegenTestSpec {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInNot_null_assertion_expression() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/not-null-assertion-expression"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/not-null-assertion-expression/p-2")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class P_2 extends AbstractBlackBoxCodegenTestSpec {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInP_2() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/not-null-assertion-expression/p-2"), Pattern.compile("^(.+)\\.kt$"), true);
+                    }
+
+                    @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/not-null-assertion-expression/p-2/pos")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class Pos extends AbstractBlackBoxCodegenTestSpec {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                        }
+
+                        @TestMetadata("2.1.kt")
+                        public void test2_1() throws Exception {
+                            runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/not-null-assertion-expression/p-2/pos/2.1.kt");
+                        }
+
+                        @TestMetadata("2.2.kt")
+                        public void test2_2() throws Exception {
+                            runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/not-null-assertion-expression/p-2/pos/2.2.kt");
+                        }
+
+                        @TestMetadata("3.1.kt")
+                        public void test3_1() throws Exception {
+                            runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/not-null-assertion-expression/p-2/pos/3.1.kt");
+                        }
+
+                        public void testAllFilesPresentInPos() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/not-null-assertion-expression/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), true);
+                        }
+                    }
+                }
+            }
+
             @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)

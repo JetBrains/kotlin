@@ -1,0 +1,44 @@
+{
+  "2": {
+    "pos": {
+      "2": [
+        {
+          "specVersion": "0.1-220",
+          "casesNumber": 0,
+          "description": "For an expression e!!, if the type of e is nullable, a not-null assertion expression checks, whether the evaluation result of e is equal to null and, if it is, throws a runtime exception.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-220",
+          "casesNumber": 0,
+          "description": "For an expression e!!, if the type of e is nullable, a not-null assertion expression checks, whether the evaluation result of e is equal to null and, if it is, throws a runtime exception.",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "1": [
+        {
+          "specVersion": "0.1-220",
+          "casesNumber": 0,
+          "description": "For an expression e!!, if the type of e is nullable, a not-null assertion expression checks, whether the evaluation result of e is equal to null and, if it is, throws a runtime exception.",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/not-null-assertion-expression/p-2/pos/2.1.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-220",
+          "casesNumber": 0,
+          "description": "For an expression e!!, if the type of e is nullable, a not-null assertion expression checks, whether the evaluation result of e is equal to null and, if it is, throws a runtime exception.",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/not-null-assertion-expression/p-2/pos/2.2.kt",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "3": [
+        {
+          "specVersion": "0.1-220",
+          "casesNumber": 0,
+          "description": "If the evaluation result of e is not equal to null, the result of e!! is the evaluation result of e.",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}
