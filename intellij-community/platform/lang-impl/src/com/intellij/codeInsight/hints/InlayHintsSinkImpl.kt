@@ -133,7 +133,7 @@ class InlayHintsSinkImpl<T>(val key: SettingsKey<T>) : InlayHintsSink {
     // TODO be more accurate during invalidation (requires changes in Inlay)
     override fun contentChanged(area: Rectangle) = inlay.repaint()
 
-    override fun sizeChanged(previous: Dimension, current: Dimension) = inlay.updateSize()
+    override fun sizeChanged(previous: Dimension, current: Dimension) = inlay.update()
   }
 
   private fun updateOrDeleteExistingHints(

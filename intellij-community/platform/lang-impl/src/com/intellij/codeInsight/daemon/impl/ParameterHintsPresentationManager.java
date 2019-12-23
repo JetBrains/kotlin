@@ -114,7 +114,7 @@ public class ParameterHintsPresentationManager implements Disposable {
                               boolean useAnimation) {
     MyRenderer renderer = (MyRenderer)hint.getRenderer();
     renderer.update(editor, newText, widthAdjuster, useAnimation);
-    hint.updateSize();
+    hint.update();
     if (useAnimation) scheduleRendererUpdate(editor, hint);
   }
 
@@ -221,7 +221,7 @@ public class ParameterHintsPresentationManager implements Disposable {
             Disposer.dispose(inlay);
           }
           else {
-            inlay.updateSize();
+            inlay.update();
           }
         }
         else {
