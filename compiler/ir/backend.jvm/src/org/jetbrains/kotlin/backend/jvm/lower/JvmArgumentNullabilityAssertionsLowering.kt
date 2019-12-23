@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.config.ApiVersion
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature
 
 val jvmArgumentNullabilityAssertions =
     makeIrFilePhase(
@@ -61,7 +63,7 @@ class JvmArgumentNullabilityAssertionsLowering(context: JvmBackendContext) :
                 extensionReceiver = extensionReceiver?.replaceImplicitNotNullWithArgument()
             }
 
-            if (isCallAssertionsDisabled) {
+            if (isCallAssertionsDisabled || isValueArgumentForCallToMethodWithTypeCheckBarrier(expression)) {
                 for (i in 0 until expression.valueArgumentsCount) {
                     getValueArgument(i)?.let { irArgument ->
                         putValueArgument(i, irArgument.replaceImplicitNotNullWithArgument())
@@ -239,5 +241,14 @@ class JvmArgumentNullabilityAssertionsLowering(context: JvmBackendContext) :
             else
                 this
 
+        internal fun isValueArgumentForCallToMethodWithTypeCheckBarrier(expression: IrMemberAccessExpression): Boolean {
+            val descriptor = expression.symbol.descriptor
+            if (descriptor !is CallableMemberDescriptor) return false
+
+            val specialSignatureInfo = with(BuiltinMethodsWithSpecialGenericSignature) {
+                descriptor.getSpecialSignatureInfo()
+            }
+            return specialSignatureInfo?.isObjectReplacedWithTypeParameter ?: false
+        }
     }
 }
