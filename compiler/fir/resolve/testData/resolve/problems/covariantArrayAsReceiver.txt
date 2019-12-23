@@ -20,7 +20,7 @@ FILE: covariantArrayAsReceiver.kt
         lval adjusted: R|kotlin/collections/List<UsageInfo>?| = when () {
             (R|<local>/element| is R|KtParameter|) ->  {
                 R|<local>/usages|.R|/filterNot|<R|UsageInfo|>(<L> = filterNot@fun <implicit>.<anonymous>(): <implicit> {
-                    (it#.usage# is KtLightMethod)
+                    (R|<local>/it|.R|/UsageInfo.usage| is R|KtLightMethod|)
                 }
                 )
             }
