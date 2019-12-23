@@ -59,3 +59,4 @@ org.jetbrains.kotlin.idea.highlighter.HighlightingTestGenerated.testSuspend, Alw
 org.jetbrains.kotlin.idea.stubs.MultiFileHighlightingTestGenerated.testTopLevelMembersReference, Always red
 org.jetbrains.kotlin.idea.quickfix.DeprecatedSymbolUsageFixSpecialTest.testDefaultParameterValuesFromLibrary, Always red because of additional import
 org.jetbrains.kotlin.idea.quickfix.QuickFixMultiModuleTestGenerated.CreateActual.testWithTestDummy, Very FLAKY on teamcity
+org.jetbrains.kotlin.idea.caches.resolve.MultiPlatformHighlightingTestGenerated.testJvmKotlinReferencesCommonKotlinThroughJavaDifferentJvmImpls, Always red
