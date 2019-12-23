@@ -47,11 +47,11 @@ private class MutedTest(
 
         methodKey = (beforeParamsKey.substringAfterLast(".", "") + params)
             .also {
-                if (it.isEmpty()) throw IllegalArgumentException("Can't get method name")
+                if (it.isEmpty()) throw IllegalArgumentException("Can't get method name: '$key'")
             }
 
         classNameKey = beforeParamsKey.substringBeforeLast(".", "").also {
-            if (it.isEmpty()) throw IllegalArgumentException("Can't get class name")
+            if (it.isEmpty()) throw IllegalArgumentException("Can't get class name: '$key'")
         }
 
         simpleClassName = classNameKey.substringAfterLast(".")
