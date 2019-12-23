@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.resolve.calls.SPECIAL_FUNCTION_NAMES
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.types.DeferredType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -17,8 +18,6 @@ import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 
 object ImplicitNothingAsTypeParameterCallChecker : CallChecker {
-    private val SPECIAL_FUNCTION_NAMES = ControlStructureTypingUtils.ResolveConstruct.values().map { it.specialFunctionName }.toSet()
-
     /*
      * The warning isn't reported in cases where there are lambda among the function arguments,
      * the return type of which is a type variable, that was inferred to Nothing.

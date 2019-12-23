@@ -10595,6 +10595,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
                 runTest("compiler/testData/diagnostics/tests/inference/nothingType/implicitNothingConstraintFromReturn.kt");
             }
 
+            @TestMetadata("inferArgumentToNothingFromNullConstant.kt")
+            public void testInferArgumentToNothingFromNullConstant() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/nothingType/inferArgumentToNothingFromNullConstant.kt");
+            }
+
             @TestMetadata("kt24490.kt")
             public void testKt24490() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/nothingType/kt24490.kt");
@@ -10887,6 +10892,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
             @TestMetadata("kt3174.kt")
             public void testKt3174() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/regressions/kt3174.kt");
+            }
+
+            @TestMetadata("kt32106.kt")
+            public void testKt32106() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/regressions/kt32106.kt");
             }
 
             @TestMetadata("kt32250.kt")

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
+import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionStatelessCallbacks
 import org.jetbrains.kotlin.resolve.calls.inference.model.NotEnoughInformationForTypeParameter
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableFromCallableDescriptor
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
@@ -21,7 +22,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class KotlinConstraintSystemCompleter(
     private val resultTypeResolver: ResultTypeResolver,
-    private val variableFixationFinder: VariableFixationFinder
+    private val variableFixationFinder: VariableFixationFinder,
+    private val statelessCallbacks: KotlinResolutionStatelessCallbacks
 ) {
     enum class ConstraintSystemCompletionMode {
         FULL,

@@ -6,7 +6,7 @@ val <!OI;IMPLICIT_NOTHING_PROPERTY_TYPE!>test1<!> = when {
 }
 
 val test1a: () -> Boolean = when {
-    true -> <!NI;TYPE_MISMATCH!>{ { true } }<!>
+    true -> { { true } }
     else -> TODO()
 }
 
@@ -33,7 +33,7 @@ val <!OI;IMPLICIT_NOTHING_PROPERTY_TYPE!>test3<!> = when {
 }
 
 val test3a: () -> Boolean = when {
-    true -> <!NI;TYPE_MISMATCH!>{ { true } }<!>
-    true -> <!NI;TYPE_MISMATCH!>{ { true } }<!>
+    true -> { { true } }
+    true -> { { true } }
     else -> TODO()
 }

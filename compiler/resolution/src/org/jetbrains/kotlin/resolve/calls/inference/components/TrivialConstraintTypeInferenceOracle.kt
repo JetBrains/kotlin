@@ -23,6 +23,15 @@ class TrivialConstraintTypeInferenceOracle private constructor(context: TypeSyst
         return constraint.kind == ConstraintKind.LOWER && constraint.type.typeConstructor().isNothingConstructor()
     }
 
+    // This function controls the choice between sub and super result type
+    // Even that Nothing(?) is the most specific type for subtype, it doesn't bring valuable information to the user,
+    // therefore it is discriminated in favor of supertype
+    fun isSuitableResultedType(
+        resultType: KotlinTypeMarker
+    ): Boolean {
+        return !resultType.typeConstructor().isNothingConstructor()
+    }
+
     // It's possible to generate Nothing-like constraints inside incorporation mechanism:
     // For instance, when two type variables are in subtyping relation `T <: K`, after incorporation
     // there will be constraint `approximation(out K) <: K` => `Nothing <: K`, which is innocent
