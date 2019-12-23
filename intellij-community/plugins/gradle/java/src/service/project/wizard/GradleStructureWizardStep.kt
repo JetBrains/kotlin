@@ -8,6 +8,7 @@ import com.intellij.openapi.externalSystem.service.project.ProjectDataManager
 import com.intellij.openapi.externalSystem.service.project.wizard.MavenizedStructureWizardStep
 import com.intellij.openapi.externalSystem.util.ui.DataView
 import com.intellij.openapi.ui.ValidationInfo
+import com.intellij.ui.layout.*
 import icons.GradleIcons
 import org.jetbrains.plugins.gradle.util.GradleBundle
 import org.jetbrains.plugins.gradle.util.GradleConstants
@@ -30,22 +31,22 @@ class GradleStructureWizardStep(
       .map { it.data }
   }
 
-  override fun validateGroupId(): ValidationInfo? = null
+  override fun ValidationInfoBuilder.validateGroupId(): ValidationInfo? = null
 
-  override fun validateVersion(): ValidationInfo? = null
+  override fun ValidationInfoBuilder.validateVersion(): ValidationInfo? = null
 
-  override fun validateName(): ValidationInfo? {
-    return validateNameAndArtifactId() ?: super.validateName()
+  override fun ValidationInfoBuilder.validateName(): ValidationInfo? {
+    return validateNameAndArtifactId() ?: superValidateName()
   }
 
-  override fun validateArtifactId(): ValidationInfo? {
-    return validateNameAndArtifactId() ?: super.validateArtifactId()
+  override fun ValidationInfoBuilder.validateArtifactId(): ValidationInfo? {
+    return validateNameAndArtifactId() ?: superValidateArtifactId()
   }
 
-  private fun validateNameAndArtifactId(): ValidationInfo? {
+  private fun ValidationInfoBuilder.validateNameAndArtifactId(): ValidationInfo? {
     if (artifactId == entityName) return null
     val presentationName = context.presentationName.capitalize()
-    return ValidationInfo(GradleBundle.message("gradle.structure.wizard.name.and.artifact.id.is.different.error", presentationName))
+    return error(GradleBundle.message("gradle.structure.wizard.name.and.artifact.id.is.different.error", presentationName))
   }
 
   override fun updateProjectData() {

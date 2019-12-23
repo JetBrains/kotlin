@@ -7,15 +7,13 @@ import com.intellij.ide.util.projectWizard.ModuleWizardStep
 import com.intellij.ide.util.projectWizard.WizardContext
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.externalSystem.util.ExternalSystemBundle
-import com.intellij.openapi.observable.properties.PropertyGraph
+import com.intellij.openapi.externalSystem.util.ui.DataView
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory.createSingleLocalFileDescriptor
+import com.intellij.openapi.observable.properties.GraphPropertyImpl.Companion.graphProperty
 import com.intellij.openapi.observable.properties.ObservableClearableProperty
+import com.intellij.openapi.observable.properties.PropertyGraph
 import com.intellij.openapi.observable.properties.PropertyView.Companion.comap
 import com.intellij.openapi.observable.properties.PropertyView.Companion.map
-import com.intellij.openapi.observable.properties.UiPropertyImpl.Companion.uiProperty
-import com.intellij.openapi.externalSystem.util.ui.DataView
-import com.intellij.openapi.externalSystem.util.ui.bind
-import com.intellij.openapi.externalSystem.util.ui.myComboBox
-import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory.createSingleLocalFileDescriptor
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.openapi.util.io.FileUtil.*
@@ -37,12 +35,12 @@ abstract class MavenizedStructureWizardStep<Data : Any>(val context: WizardConte
   abstract fun findAllParents(): List<Data>
 
   private val propertyGraph = PropertyGraph()
-  private val entityNameProperty = propertyGraph.uiProperty(::suggestName)
-  private val locationProperty = propertyGraph.uiProperty { getUiPath(suggestLocationByName()) }
-  private val parentProperty = propertyGraph.uiProperty(::suggestParentByLocation)
-  private val groupIdProperty = propertyGraph.uiProperty(::suggestGroupIdByParent)
-  private val artifactIdProperty = propertyGraph.uiProperty(::suggestArtifactIdByName)
-  private val versionProperty = propertyGraph.uiProperty(::suggestVersionByParent)
+  private val entityNameProperty = propertyGraph.graphProperty(::suggestName)
+  private val locationProperty = propertyGraph.graphProperty { getUiPath(suggestLocationByName()) }
+  private val parentProperty = propertyGraph.graphProperty(::suggestParentByLocation)
+  private val groupIdProperty = propertyGraph.graphProperty(::suggestGroupIdByParent)
+  private val artifactIdProperty = propertyGraph.graphProperty(::suggestArtifactIdByName)
+  private val versionProperty = propertyGraph.graphProperty(::suggestVersionByParent)
 
   var entityName by entityNameProperty.map { it.trim() }
   var location by locationProperty.map { getModelPath(it) }.comap { getUiPath(it) }
@@ -78,43 +76,40 @@ abstract class MavenizedStructureWizardStep<Data : Any>(val context: WizardConte
           val parentComboBoxModel = SortedComboBoxModel(comparing(presentationName, String.CASE_INSENSITIVE_ORDER))
           parentComboBoxModel.add(EMPTY_VIEW)
           parentComboBoxModel.addAll(parents)
-          myComboBox(parentComboBoxModel, parentProperty.asBinding(), getParentRenderer()).apply {
-            component.bind(parentProperty, ::validateParent, context.disposable)
-          }
+          comboBox(parentComboBoxModel, parentProperty, renderer = getParentRenderer())
+            .withValidationOnProperty { validateParent() }
         }
       }
       row(ExternalSystemBundle.message("external.system.mavenized.structure.wizard.name.label")) {
-        textField(entityNameProperty.asBinding()).focused().apply {
-          component.bind(entityNameProperty, ::validateName, context.disposable)
-        }
+        textField(entityNameProperty)
+          .withValidationOnProperty { validateName() }
+          .focused()
       }
       row(ExternalSystemBundle.message("external.system.mavenized.structure.wizard.location.label")) {
         val fileChooserDescriptor = createSingleLocalFileDescriptor().withFileFilter { it.isDirectory }
         val fileChosen = { file: VirtualFile -> getUiPath(file.path) }
         val title = IdeBundle.message("title.select.project.file.directory", context.presentationName)
-        textFieldWithBrowseButton(locationProperty.asBinding(), title, context.project, fileChooserDescriptor, fileChosen).apply {
-          component.bind(locationProperty, ::validateLocation, context.disposable)
-        }
+        textFieldWithBrowseButton(locationProperty, title, context.project, fileChooserDescriptor, fileChosen)
+          .withValidationOnProperty { validateLocation() }
       }
       hideableRow(ExternalSystemBundle.message("external.system.mavenized.structure.wizard.artifact.coordinates.title")) {
         row(ExternalSystemBundle.message("external.system.mavenized.structure.wizard.group.id.label")) {
-          textField(groupIdProperty.asBinding()).apply {
-            comment(ExternalSystemBundle.message("external.system.mavenized.structure.wizard.group.id.help"))
-            component.bind(groupIdProperty, ::validateGroupId, context.disposable)
-          }
+          textField(groupIdProperty)
+            .withValidationOnProperty { validateGroupId() }
+            .comment(ExternalSystemBundle.message("external.system.mavenized.structure.wizard.group.id.help"))
         }
         row(ExternalSystemBundle.message("external.system.mavenized.structure.wizard.artifact.id.label")) {
-          textField(artifactIdProperty.asBinding()).apply {
-            comment(ExternalSystemBundle.message("external.system.mavenized.structure.wizard.artifact.id.help", context.presentationName))
-            component.bind(artifactIdProperty, ::validateArtifactId, context.disposable)
-          }
+          textField(artifactIdProperty)
+            .withValidationOnProperty { validateArtifactId() }
+            .comment(ExternalSystemBundle.message("external.system.mavenized.structure.wizard.artifact.id.help", context.presentationName))
         }
         row(ExternalSystemBundle.message("external.system.mavenized.structure.wizard.version.label")) {
-          textField(versionProperty.asBinding()).apply {
-            component.bind(versionProperty, ::validateVersion, context.disposable)
-          }
+          textField(versionProperty)
+            .withValidationOnProperty { validateVersion() }
         }
       }
+    }.apply {
+      registerValidators(context.disposable) {}
     }
   }
 
@@ -124,15 +119,16 @@ abstract class MavenizedStructureWizardStep<Data : Any>(val context: WizardConte
 
   override fun updateStep() = (preferredFocusedComponent as JTextField).selectAll()
 
-  private fun getParentRenderer(): ListCellRenderer<DataView<Data>> {
-    return object : SimpleListCellRenderer<DataView<Data>>() {
-      override fun customize(list: JList<out DataView<Data>>,
-                             value: DataView<Data>,
+  private fun getParentRenderer(): ListCellRenderer<DataView<Data>?> {
+    return object : SimpleListCellRenderer<DataView<Data>?>() {
+      override fun customize(list: JList<out DataView<Data>?>,
+                             value: DataView<Data>?,
                              index: Int,
                              selected: Boolean,
                              hasFocus: Boolean) {
-        text = value.presentationName
-        icon = DataView.getIcon(value)
+        val view = value ?: EMPTY_VIEW
+        text = view.presentationName
+        icon = DataView.getIcon(view)
       }
     }
   }
@@ -181,70 +177,70 @@ abstract class MavenizedStructureWizardStep<Data : Any>(val context: WizardConte
   }
 
   override fun validate(): Boolean {
-    val validationResults = listOf(
-      parentProperty.validate(),
-      entityNameProperty.validate(),
-      locationProperty.validate(),
-      groupIdProperty.validate(),
-      artifactIdProperty.validate(),
-      versionProperty.validate()
-    )
-    return validationResults.filterNotNull().all { it.okEnabled }
+    return contentPanel.validateCallbacks
+      .asSequence()
+      .mapNotNull { it() }
+      .all { it.okEnabled }
   }
 
-  protected open fun validateGroupId(): ValidationInfo? {
+  protected open fun ValidationInfoBuilder.validateGroupId() = superValidateGroupId()
+  protected fun ValidationInfoBuilder.superValidateGroupId(): ValidationInfo? {
     if (groupId.isEmpty()) {
       val propertyPresentation = ExternalSystemBundle.message("external.system.mavenized.structure.wizard.group.id.presentation")
       val message = ExternalSystemBundle.message("external.system.mavenized.structure.wizard.missing.error",
                                                  context.presentationName, propertyPresentation)
-      return ValidationInfo(message)
+      return error(message)
     }
     return null
   }
 
-  protected open fun validateArtifactId(): ValidationInfo? {
+  protected open fun ValidationInfoBuilder.validateArtifactId() = superValidateArtifactId()
+  protected fun ValidationInfoBuilder.superValidateArtifactId(): ValidationInfo? {
     if (artifactId.isEmpty()) {
       val propertyPresentation = ExternalSystemBundle.message("external.system.mavenized.structure.wizard.artifact.id.presentation")
       val message = ExternalSystemBundle.message("external.system.mavenized.structure.wizard.missing.error",
                                                  context.presentationName, propertyPresentation)
-      return ValidationInfo(message)
+      return error(message)
     }
     return null
   }
 
-  protected open fun validateVersion(): ValidationInfo? {
+  protected open fun ValidationInfoBuilder.validateVersion() = superValidateVersion()
+  protected fun ValidationInfoBuilder.superValidateVersion(): ValidationInfo? {
     if (version.isEmpty()) {
       val propertyPresentation = ExternalSystemBundle.message("external.system.mavenized.structure.wizard.version.presentation")
       val message = ExternalSystemBundle.message("external.system.mavenized.structure.wizard.missing.error",
                                                  context.presentationName, propertyPresentation)
-      return ValidationInfo(message)
+      return error(message)
     }
     return null
   }
 
-  protected open fun validateName(): ValidationInfo? {
+  protected open fun ValidationInfoBuilder.validateName() = superValidateName()
+  protected fun ValidationInfoBuilder.superValidateName(): ValidationInfo? {
     if (entityName.isEmpty()) {
       val propertyPresentation = ExternalSystemBundle.message("external.system.mavenized.structure.wizard.name.presentation")
       val message = ExternalSystemBundle.message("external.system.mavenized.structure.wizard.missing.error",
                                                  context.presentationName, propertyPresentation)
-      return ValidationInfo(message)
+      return error(message)
     }
     return null
   }
 
-  protected open fun validateLocation(): ValidationInfo? {
+  protected open fun ValidationInfoBuilder.validateLocation() = superValidateLocation()
+  protected fun ValidationInfoBuilder.superValidateLocation(): ValidationInfo? {
     val location = location
     if (location.isEmpty()) {
       val propertyPresentation = ExternalSystemBundle.message("external.system.mavenized.structure.wizard.location.presentation")
       val message = ExternalSystemBundle.message("external.system.mavenized.structure.wizard.missing.error",
                                                  context.presentationName, propertyPresentation)
-      return ValidationInfo(message)
+      return error(message)
     }
 
     for (project in ProjectManager.getInstance().openProjects) {
       if (ProjectUtil.isSameProject(location, project)) {
         val message = ExternalSystemBundle.message("external.system.mavenized.structure.wizard.directory.already.taken.error", project.name)
-        return ValidationInfo(message)
+        return error(message)
       }
     }
 
@@ -252,24 +248,28 @@ abstract class MavenizedStructureWizardStep<Data : Any>(val context: WizardConte
     if (file.exists()) {
       if (!file.canWrite()) {
         val message = ExternalSystemBundle.message("external.system.mavenized.structure.wizard.directory.not.writable.error")
-        return ValidationInfo(message)
+        return error(message)
       }
       val children = file.list()
       if (children == null) {
         val message = ExternalSystemBundle.message("external.system.mavenized.structure.wizard.file.not.directory.error")
-        return ValidationInfo(message)
+        return error(message)
       }
       if (!ApplicationManager.getApplication().isUnitTestMode) {
         if (children.isNotEmpty()) {
           val message = ExternalSystemBundle.message("external.system.mavenized.structure.wizard.directory.not.empty.warning")
-          return ValidationInfo(message).asWarning().withOKEnabled()
+          return warning(message)
         }
       }
     }
     return null
   }
 
-  protected open fun validateParent(): ValidationInfo? = null
+  protected open fun ValidationInfoBuilder.validateParent() = superValidateParent()
+  protected fun ValidationInfoBuilder.superValidateParent(): ValidationInfo? {
+    if (parent.isPresent) return null
+    return warning("Lel")
+  }
 
   override fun updateDataModel() {
     val location = location
