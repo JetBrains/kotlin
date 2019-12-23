@@ -18718,6 +18718,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
             runTest("compiler/testData/diagnostics/tests/samConversions/SAMAfterSubstitutionKT.kt");
         }
 
+        @TestMetadata("sameCandidatesFromKotlinAndJavaInOneScope.kt")
+        public void testSameCandidatesFromKotlinAndJavaInOneScope() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/samConversions/sameCandidatesFromKotlinAndJavaInOneScope.kt");
+        }
+
         @TestMetadata("SimpleCorrect.kt")
         public void testSimpleCorrect() throws Exception {
             runTest("compiler/testData/diagnostics/tests/samConversions/SimpleCorrect.kt");
