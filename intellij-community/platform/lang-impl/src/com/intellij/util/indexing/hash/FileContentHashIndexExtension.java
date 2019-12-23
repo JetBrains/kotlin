@@ -6,8 +6,8 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.ShutDownTracker;
-import com.intellij.openapi.vfs.newvfs.persistent.ContentHashesUtil;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.hash.ContentHashEnumerator;
 import com.intellij.util.indexing.*;
 import com.intellij.util.indexing.impl.IndexStorage;
 import com.intellij.util.indexing.snapshot.IndexedHashesSupport;
@@ -29,7 +29,7 @@ public class FileContentHashIndexExtension extends FileBasedIndexExtension<Long,
   public static final ID<Long, Void> HASH_INDEX_ID = ID.create("file.content.hash.index");
 
   @NotNull
-  private final ContentHashesUtil.HashEnumerator[] myEnumerators;
+  private final ContentHashEnumerator[] myEnumerators;
 
   @NotNull
   public static FileContentHashIndexExtension create(@NotNull Path[] enumeratorDirs, @NotNull Disposable parent) throws IOException {
@@ -41,9 +41,9 @@ public class FileContentHashIndexExtension extends FileBasedIndexExtension<Long,
 
   private FileContentHashIndexExtension(@NotNull Path[] enumeratorDirs) throws IOException {
     IOException[] exception = {null};
-    myEnumerators = ContainerUtil.map2Array(enumeratorDirs, ContentHashesUtil.HashEnumerator.class, d -> {
+    myEnumerators = ContainerUtil.map2Array(enumeratorDirs, ContentHashEnumerator.class, d -> {
       try {
-        return new ContentHashesUtil.HashEnumerator(d.getParent().resolve("hashes"));
+        return new ContentHashEnumerator(d.getParent().resolve("hashes"));
       }
       catch (IOException e) {
         exception[0] = e;
@@ -93,7 +93,7 @@ public class FileContentHashIndexExtension extends FileBasedIndexExtension<Long,
 
   private Long tryEnumerate(byte[] hash) throws IOException {
     for (int i = 0; i < myEnumerators.length; i++) {
-      ContentHashesUtil.HashEnumerator enumerator = myEnumerators[i];
+      ContentHashEnumerator enumerator = myEnumerators[i];
       //noinspection SynchronizationOnLocalVariableOrMethodParameter
       synchronized (enumerator) {
         int id = Math.abs(enumerator.tryEnumerate(hash));
@@ -166,7 +166,7 @@ public class FileContentHashIndexExtension extends FileBasedIndexExtension<Long,
   }
 
   private void closeEnumerator() {
-    for (ContentHashesUtil.HashEnumerator enumerator : myEnumerators) {
+    for (ContentHashEnumerator enumerator : myEnumerators) {
       synchronized (enumerator) {
         if (enumerator.isClosed()) return;
         try {

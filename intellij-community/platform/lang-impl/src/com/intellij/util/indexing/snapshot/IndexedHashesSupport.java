@@ -6,11 +6,17 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.util.ShutDownTracker;
-import com.intellij.openapi.vfs.newvfs.persistent.*;
+import com.intellij.openapi.vfs.newvfs.persistent.FlushingDaemon;
+import com.intellij.openapi.vfs.newvfs.persistent.PersistentFS;
+import com.intellij.openapi.vfs.newvfs.persistent.PersistentFSImpl;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
+import com.intellij.util.ArrayUtilRt;
+import com.intellij.util.hash.ContentHashEnumerator;
+import com.intellij.util.indexing.FileContent;
 import com.intellij.util.indexing.FileContentImpl;
 import com.intellij.util.indexing.IndexInfrastructure;
+import com.intellij.util.io.DigestUtil;
 import com.intellij.util.io.IOUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,15 +24,19 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 
 /**
  * @author Maxim.Mossienko
  */
 public class IndexedHashesSupport {
+
   private static final Logger LOG = Logger.getInstance("#" + IndexedHashesSupport.class.getPackage().getName());
 
-  private static volatile ContentHashesUtil.HashEnumerator ourHashesWithFileType;
+  private static final MessageDigest CONTENT_HASH_WITH_FILE_TYPE_DIGEST = DigestUtil.sha1();
+
+  private static volatile ContentHashEnumerator ourHashesWithFileType;
 
   public static void initContentHashesEnumerator() throws IOException {
     if (ourHashesWithFileType != null) return;
@@ -35,7 +45,7 @@ public class IndexedHashesSupport {
       if (ourHashesWithFileType != null) return;
       final File hashEnumeratorFile = new File(IndexInfrastructure.getPersistentIndexRoot(), "hashesWithFileType");
       try {
-        ContentHashesUtil.HashEnumerator hashEnumerator = new ContentHashesUtil.HashEnumerator(hashEnumeratorFile.toPath());
+        ContentHashEnumerator hashEnumerator = new ContentHashEnumerator(hashEnumeratorFile.toPath());
         FlushingDaemon.everyFiveSeconds(IndexedHashesSupport::flushContentHashes);
         ShutDownTracker.getInstance().registerShutdownTask(IndexedHashesSupport::flushContentHashes);
         ourHashesWithFileType = hashEnumerator;
@@ -83,16 +93,15 @@ public class IndexedHashesSupport {
     }
 
     if (contentHash == null) {
-      byte[] bytes = content.getContent();
-      contentHash = calculateFileContentHash(bytes);
+      contentHash = calculateContentHash(content);
       // todo store content hash in FS
     }
 
     return mergeIndexedHash(contentHash, binary ? null : content.getCharset(), content.getFileType());
   }
 
-  private static byte[] calculateFileContentHash(byte[] bytes) {
-    return ContentHashesUtil.calculateContentHash(bytes, 0, bytes.length);
+  private static byte[] calculateContentHash(@NotNull FileContent content) {
+    return DigestUtil.calculateContentHash(CONTENT_HASH_WITH_FILE_TYPE_DIGEST, content.getContent());
   }
 
   @Nullable
@@ -107,7 +116,7 @@ public class IndexedHashesSupport {
         if (file != null) {
           Charset charset = content.getCharset();
           FileType fileType = content.getFileType();
-          return mergeIndexedHash(calculateFileContentHash(file.getText().getBytes(charset)), charset, fileType);
+          return mergeIndexedHash(DigestUtil.calculateContentHash(CONTENT_HASH_WITH_FILE_TYPE_DIGEST, file.getText().getBytes(charset)), charset, fileType);
         }
       }
     }
@@ -118,18 +127,10 @@ public class IndexedHashesSupport {
   private static byte[] mergeIndexedHash(@NotNull byte[] binaryContentHash,
                                          @Nullable Charset charsetOrNullForBinary,
                                          @NotNull FileType fileType) {
-    MessageDigest messageDigest = ContentHashesUtil.HASHER_CACHE.getValue();
-
-    LOG.assertTrue(binaryContentHash.length == ContentHashesUtil.SIGNATURE_LENGTH,
-                   "binaryContentHash should be a pre-calculated sha1 signature");
-
-    messageDigest.reset();
-    messageDigest.update(binaryContentHash);
-    messageDigest.update(fileType.getName().getBytes(ContentHashesUtil.HASHER_CHARSET));
-    if (charsetOrNullForBinary != null) {
-      messageDigest.update(charsetOrNullForBinary.name().getBytes(ContentHashesUtil.HASHER_CHARSET));
-    }
-
-    return messageDigest.digest();
+    byte[] fileTypeBytes = fileType.getName().getBytes(StandardCharsets.UTF_8);
+    byte[] charsetBytes = charsetOrNullForBinary != null
+                          ? charsetOrNullForBinary.name().getBytes(StandardCharsets.UTF_8)
+                          : ArrayUtilRt.EMPTY_BYTE_ARRAY;
+    return DigestUtil.calculateMergedHash(CONTENT_HASH_WITH_FILE_TYPE_DIGEST, new byte[][]{binaryContentHash, fileTypeBytes, charsetBytes});
   }
 }

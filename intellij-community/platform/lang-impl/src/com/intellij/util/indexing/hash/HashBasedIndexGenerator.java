@@ -5,7 +5,7 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.newvfs.persistent.ContentHashesUtil;
+import com.intellij.util.hash.ContentHashEnumerator;
 import com.intellij.util.indexing.*;
 import com.intellij.util.indexing.impl.IndexStorage;
 import com.intellij.util.indexing.impl.InputData;
@@ -66,10 +66,10 @@ public class HashBasedIndexGenerator<K, V> {
 
   public void openIndex() throws IOException {
     IndexStorage<K, V> indexStorage = new MapIndexStorage<K, V>(myStorageFile,
-                                                             myExtension.getKeyDescriptor(),
-                                                             myExtension.getValueExternalizer(),
-                                                             myExtension.getCacheSize(),
-                                                             myExtension.keyIsUniqueForIndexedFile()) {
+                                                                myExtension.getKeyDescriptor(),
+                                                                myExtension.getValueExternalizer(),
+                                                                myExtension.getCacheSize(),
+                                                                myExtension.keyIsUniqueForIndexedFile()) {
       @Override
       protected void checkCanceled() {
         //ignore
@@ -132,7 +132,7 @@ public class HashBasedIndexGenerator<K, V> {
     }
   }
 
-  public void indexFile(@NotNull VirtualFile f, @NotNull Project project, @NotNull ContentHashesUtil.HashEnumerator hashEnumerator) {
+  public void indexFile(@NotNull VirtualFile f, @NotNull Project project, @NotNull ContentHashEnumerator hashEnumerator) {
     if (!myInputFilter.acceptInput(f)) {
       return;
     }
