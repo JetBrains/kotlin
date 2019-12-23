@@ -1,11 +1,10 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.webcore.packaging;
 
+import com.google.common.collect.ImmutableMap;
 import com.intellij.internal.statistic.eventLog.FeatureUsageData;
 import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Pair;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,9 +12,9 @@ import java.util.Map;
 
 public class PackageManagementUsageCollector {
 
-  private static final Map<String, String> CLASS_TO_NAME = ContainerUtil.newHashMap(
-    Pair.create("com.intellij.javascript.nodejs.settings.NodePackageManagementService", "Node.js"),
-    Pair.create("com.jetbrains.python.packaging.ui.PyPackageManagementService", "Python")
+  private static final Map<String, String> CLASS_TO_NAME = ImmutableMap.of(
+    "com.intellij.javascript.nodejs.settings.NodePackageManagementService", "Node.js",
+    "com.jetbrains.python.packaging.ui.PyPackageManagementService", "Python"
   );
 
   private PackageManagementUsageCollector() {}
