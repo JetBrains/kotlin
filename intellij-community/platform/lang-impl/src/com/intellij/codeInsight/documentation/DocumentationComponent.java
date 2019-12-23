@@ -23,7 +23,6 @@ import com.intellij.openapi.actionSystem.impl.ActionButton;
 import com.intellij.openapi.actionSystem.impl.ActionManagerImpl;
 import com.intellij.openapi.actionSystem.impl.ActionToolbarImpl;
 import com.intellij.openapi.actionSystem.impl.MenuItemPresentationFactory;
-import com.intellij.openapi.application.ApplicationBundle;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.colors.ColorKey;
@@ -41,7 +40,6 @@ import com.intellij.openapi.options.FontSize;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.ui.popup.JBPopup;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.util.PopupUtil;
 import com.intellij.openapi.util.DimensionService;
 import com.intellij.openapi.util.Disposer;
@@ -62,7 +60,6 @@ import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.reference.SoftReference;
 import com.intellij.ui.*;
-import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.components.JBLayeredPane;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.popup.AbstractPopup;
@@ -82,8 +79,6 @@ import org.jetbrains.ide.BuiltInServerManager;
 
 import javax.swing.*;
 import javax.swing.border.Border;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.plaf.TextUI;
@@ -135,8 +130,6 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
   private final ActionToolbarImpl myToolBar;
   private volatile boolean myIsEmpty;
   private boolean mySizeTrackerRegistered;
-  private JSlider myFontSizeSlider;
-  private final JComponent mySettingsPanel;
   private boolean myIgnoreFontSizeSliderChange;
   private String myExternalUrl;
   private DocumentationProvider myProvider;
@@ -337,7 +330,6 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
 
     setLayout(new BorderLayout());
 
-    mySettingsPanel = createSettingsPanel();
     //add(myScrollPane, BorderLayout.CENTER);
     setOpaque(true);
     myScrollPane.setBorder(JBUI.Borders.empty());
@@ -622,40 +614,6 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
     return null;
   }
 
-  private JComponent createSettingsPanel() {
-    JPanel result = new JPanel(new FlowLayout(FlowLayout.RIGHT, 3, 0));
-    result.add(new JLabel(ApplicationBundle.message("label.font.size")));
-    myFontSizeSlider = new JSlider(SwingConstants.HORIZONTAL, 0, FontSize.values().length - 1, 3);
-    myFontSizeSlider.setMinorTickSpacing(1);
-    myFontSizeSlider.setPaintTicks(true);
-    myFontSizeSlider.setPaintTrack(true);
-    myFontSizeSlider.setSnapToTicks(true);
-    UIUtil.setSliderIsFilled(myFontSizeSlider, true);
-    result.add(myFontSizeSlider);
-    result.setBorder(BorderFactory.createLineBorder(JBColor.border(), 1));
-
-    myFontSizeSlider.addChangeListener(new ChangeListener() {
-      @Override
-      public void stateChanged(ChangeEvent e) {
-        if (myIgnoreFontSizeSliderChange) {
-          return;
-        }
-        setQuickDocFontSize(FontSize.values()[myFontSizeSlider.getValue()]);
-        applyFontProps();
-        // resize popup according to new font size, if user didn't set popup size manually
-        if (!myManuallyResized && myHint != null && myHint.getDimensionServiceKey() == null) showHint();
-      }
-    });
-
-    String tooltipText = ApplicationBundle.message("quickdoc.tooltip.font.size.by.wheel");
-    result.setToolTipText(tooltipText);
-    myFontSizeSlider.setToolTipText(tooltipText);
-    result.setVisible(false);
-    result.setOpaque(true);
-    myFontSizeSlider.setOpaque(true);
-    return result;
-  }
-
   @NotNull
   public static FontSize getQuickDocFontSize() {
     FontSize fontSize = readFontSizeFromSettings(QUICK_DOC_FONT_SIZE_PROPERTY);
@@ -687,22 +645,6 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
 
   public static void setQuickDocFontSize(@NotNull FontSize fontSize) {
     PropertiesComponent.getInstance().setValue(QUICK_DOC_FONT_SIZE_PROPERTY, fontSize.toString());
-  }
-
-  private void setFontSizeSliderSize(FontSize fontSize) {
-    myIgnoreFontSizeSliderChange = true;
-    try {
-      FontSize[] sizes = FontSize.values();
-      for (int i = 0; i < sizes.length; i++) {
-        if (fontSize == sizes[i]) {
-          myFontSizeSlider.setValue(i);
-          break;
-        }
-      }
-    }
-    finally {
-      myIgnoreFontSizeSliderChange = false;
-    }
   }
 
   public boolean isEmpty() {
@@ -1613,7 +1555,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
     private final boolean myOnToolbar;
 
     MyShowSettingsAction(boolean onToolbar) {
-      super("Adjust font size...");
+      super(CodeInsightBundle.message("javadoc.adjust.font.size"));
       myOnToolbar = onToolbar;
     }
 
@@ -1626,12 +1568,14 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
-      JBPopup popup = JBPopupFactory.getInstance().createComponentPopupBuilder(mySettingsPanel, myFontSizeSlider).createPopup();
-      setFontSizeSliderSize(getQuickDocFontSize());
-      mySettingsPanel.setVisible(true);
-      Point location = MouseInfo.getPointerInfo().getLocation();
-      popup.show(new RelativePoint(new Point(location.x - mySettingsPanel.getPreferredSize().width / 2,
-                                             location.y - mySettingsPanel.getPreferredSize().height / 2)));
+      DocFontSizePopup.show(() -> {
+        if (myIgnoreFontSizeSliderChange) {
+          return;
+        }
+        applyFontProps();
+        // resize popup according to new font size, if user didn't set popup size manually
+        if (!myManuallyResized && myHint != null && myHint.getDimensionServiceKey() == null) showHint();
+      });
     }
   }
 
@@ -1794,7 +1738,13 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
 
       setQuickDocFontSize(newFontSize);
       applyFontProps();
-      setFontSizeSliderSize(newFontSize);
+      myIgnoreFontSizeSliderChange = true;
+      try {
+        DocFontSizePopup.update();
+      }
+      finally {
+        myIgnoreFontSizeSliderChange = false;
+      }
     }
   }
 
