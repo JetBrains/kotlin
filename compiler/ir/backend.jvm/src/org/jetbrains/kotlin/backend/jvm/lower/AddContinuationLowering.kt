@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.codegen.isInlineIrBlock
+import org.jetbrains.kotlin.backend.jvm.ir.IrInlineReferenceLocator
 import org.jetbrains.kotlin.codegen.coroutines.*
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.descriptors.Modality
@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JavaVisibilities
@@ -608,50 +607,25 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
 
     private fun markSuspendLambdas(irElement: IrElement): Pair<List<SuspendLambdaInfo>, List<IrFunction>> {
         val suspendLambdas = arrayListOf<SuspendLambdaInfo>()
-        val inlineLambdas = mutableSetOf<IrFunctionReference>()
-        val capturesCrossinline = mutableSetOf<IrFunctionReference>()
-        irElement.acceptChildrenVoid(object : IrElementVisitorVoid {
+        val capturesCrossinline = mutableSetOf<IrCallableReference>()
+        val visitor = object : IrInlineReferenceLocator(context) {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }
 
-            override fun visitCall(expression: IrCall) {
-                val owner = expression.symbol.owner
-                // Collect inline lambdas
-                if (owner.isInline) {
-                    for (i in 0 until expression.valueArgumentsCount) {
-                        if (owner.valueParameters[i].isNoinline) continue
-
-                        val valueArgument = expression.getValueArgument(i) ?: continue
-                        if (valueArgument is IrBlock && valueArgument.isInlineIrBlock()) {
-                            assert(valueArgument !is IrCallableReference) {
-                                "callable references should be lowered to function references"
-                            }
-                            inlineLambdas += valueArgument.statements.filterIsInstance<IrFunctionReference>().single()
-                        }
-                    }
+            override fun handleInlineFunctionCallableReferenceParam(valueArgument: IrCallableReference) {
+                super.handleInlineFunctionCallableReferenceParam(valueArgument)
+                val getValue = (valueArgument as? IrGetValue) ?: return
+                val parameter = getValue.symbol.owner as? IrValueParameter ?: return
+                if (parameter.isCrossinline) {
+                    capturesCrossinline += valueArgument
                 }
-                // collect lambdas, which capture crossinline
-                for (i in 0 until expression.valueArgumentsCount) {
-                    val valueArgument = expression.getValueArgument(i) as? IrBlock ?: continue
-                    if (valueArgument.origin != IrStatementOrigin.LAMBDA) continue
-                    val reference = valueArgument.statements.last() as? IrFunctionReference ?: continue
-                    for (j in 0 until reference.valueArgumentsCount) {
-                        val getValue = (reference.getValueArgument(j) as? IrGetValue) ?: continue
-                        val parameter = getValue.symbol.owner as? IrValueParameter ?: continue
-                        if (parameter.isCrossinline) {
-                            capturesCrossinline += reference
-                            break
-                        }
-                    }
-                }
-                expression.acceptChildrenVoid(this)
             }
 
             override fun visitFunctionReference(expression: IrFunctionReference) {
                 expression.acceptChildrenVoid(this)
 
-                if (expression.isSuspend && expression !in inlineLambdas && expression.origin == IrStatementOrigin.LAMBDA) {
+                if (expression.isSuspend && expression !in inlineReferences && expression.origin == IrStatementOrigin.LAMBDA) {
                     var expressionCapturesCrossinline = false
                     for (i in 0 until expression.valueArgumentsCount) {
                         val getValue = expression.getValueArgument(i) as? IrGetValue ?: continue
@@ -669,8 +643,9 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                     )
                 }
             }
-        })
-        return suspendLambdas to inlineLambdas.map { it.symbol.owner }
+        }
+        irElement.acceptChildrenVoid(visitor)
+        return suspendLambdas to visitor.inlineReferences.map { it.symbol.owner as IrFunction }
     }
 
     private class SuspendLambdaInfo(
