@@ -47,3 +47,8 @@ org.jetbrains.kotlin.idea.maven.KotlinMavenInspectionTestGenerated.testWrongPhas
 org.jetbrains.kotlin.idea.decompiler.stubBuilder.BuiltInDecompilerTest.testBuiltInStubTreeEqualToStubTreeFromDecompiledText, FLAKY No classes with this name found: kotlin.ArithmeticException
 org.jetbrains.kotlin.idea.decompiler.stubBuilder.BuiltInDecompilerConsistencyTest.testSameAsClsDecompilerForCompiledBuiltInClasses, FLAKY No classes with this name found: kotlin.ArithmeticException
 org.jetbrains.kotlin.idea.completion.test.JvmSmartCompletionTestGenerated.testFilterTo, KT-32919 Broken in 71cb65c064c7 or 2d5a05466dfa
+org.jetbrains.kotlin.checkers.JavaAgainstKotlinSourceCheckerWithoutUltraLightTestGenerated.JavaAgainstKotlin.testUsingMutableInterfaces, FLAKY
+org.jetbrains.kotlin.checkers.JavaAgainstKotlinSourceCheckerWithoutUltraLightTestGenerated.JavaAgainstKotlin.testUsingReadOnlyInterfaces, FLAKY
+org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInTempDirTest.testKotlincExistsNoSettingsLatestRuntimeNoVersionAutoAdvance, FLAKY
+org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInTempDirTest.testNoKotlincExistsNoSettingsRuntime10, FLAKY
+org.jetbrains.kotlin.idea.maven.MavenMigrateTest.testMigrateApiAndLanguageVersions, FLAKY on windows
