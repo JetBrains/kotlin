@@ -12,6 +12,7 @@ import kotlin.reflect.KProperty
 interface Mapping {
     val defaultArgumentsDispatchFunction: Delegate<IrFunction, IrFunction>
     val defaultArgumentsOriginalFunction: Delegate<IrFunction, IrFunction>
+    val lateInitFieldToNullableField: Delegate<IrField, IrField>
     val inlineClassMemberToStatic: Delegate<IrFunction, IrSimpleFunction>
 
     abstract class Delegate<K : IrDeclaration, V> {
@@ -31,6 +32,7 @@ open class DefaultMapping : Mapping {
 
     override val defaultArgumentsDispatchFunction: Mapping.Delegate<IrFunction, IrFunction> = newMapping()
     override val defaultArgumentsOriginalFunction: Mapping.Delegate<IrFunction, IrFunction> = newMapping()
+    override val lateInitFieldToNullableField: Mapping.Delegate<IrField, IrField> = newMapping()
     override val inlineClassMemberToStatic: Mapping.Delegate<IrFunction, IrSimpleFunction> = newMapping()
 
     protected fun <K : IrDeclaration, V> newMapping() = object : Mapping.Delegate<K, V>() {

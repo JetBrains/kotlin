@@ -50,7 +50,8 @@ class JsIrBackendContext(
     override val transformedFunction
         get() = error("Use Mapping.inlineClassMemberToStatic instead")
 
-    override val lateinitNullableFields = mutableMapOf<IrField, IrField>()
+    override val lateinitNullableFields
+        get() = error("Use Mapping.lateInitFieldToNullableField instead")
 
     val memberMap = mutableMapOf<IrSimpleFunctionSymbol, IrSimpleFunction>()
 

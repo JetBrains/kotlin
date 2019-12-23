@@ -73,9 +73,21 @@ private val expectDeclarationsRemovingPhase = makeJsModulePhase(
     description = "Remove expect declaration from module fragment"
 )
 
-private val lateinitLoweringPhase = makeJsModulePhase(
-    ::LateinitLowering,
-    name = "LateinitLowering",
+private val lateinitNullableFieldsPhase = makeJsModulePhase(
+    ::NullableFieldsForLateinitCreationLowering,
+    name = "LateinitNullableFields",
+    description = "Create nullable fields for lateinit properties"
+)
+
+private val lateinitDeclarationLoweringPhase = makeJsModulePhase(
+    ::NullableFieldsDeclarationLowering,
+    name = "LateinitDeclarations",
+    description = "Reference nullable fields from properties and getters + insert checks"
+)
+
+private val lateinitUsageLoweringPhase = makeJsModulePhase(
+    ::LateinitUsageLowering,
+    name = "LateinitUsage",
     description = "Insert checks for lateinit field references"
 )
 
@@ -422,7 +434,9 @@ val jsPhases = namedIrModulePhase(
             functionInliningPhase then
             createScriptFunctionsPhase then
             provisionalFunctionExpressionPhase then
-            lateinitLoweringPhase then
+            lateinitNullableFieldsPhase then
+            lateinitDeclarationLoweringPhase then
+            lateinitUsageLoweringPhase then
             tailrecLoweringPhase then
             enumClassConstructorLoweringPhase then
             sharedVariablesLoweringPhase then

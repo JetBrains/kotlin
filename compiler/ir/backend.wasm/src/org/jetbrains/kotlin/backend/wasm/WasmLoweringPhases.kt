@@ -71,11 +71,24 @@ private val expectDeclarationsRemovingPhase = makeWasmModulePhase(
     description = "Remove expect declaration from module fragment"
 )
 
-private val lateinitLoweringPhase = makeWasmModulePhase(
-    ::LateinitLowering,
-    name = "LateinitLowering",
+private val lateinitNullableFieldsPhase = makeWasmModulePhase(
+    ::NullableFieldsForLateinitCreationLowering,
+    name = "LateinitNullableFields",
+    description = "Create nullable fields for lateinit properties"
+)
+
+private val lateinitDeclarationLoweringPhase = makeWasmModulePhase(
+    ::NullableFieldsDeclarationLowering,
+    name = "LateinitDeclarations",
+    description = "Reference nullable fields from properties and getters + insert checks"
+)
+
+private val lateinitUsageLoweringPhase = makeWasmModulePhase(
+    ::LateinitUsageLowering,
+    name = "LateinitUsage",
     description = "Insert checks for lateinit field references"
 )
+
 
 // TODO make all lambda-related stuff work with IrFunctionExpression and drop this phase
 private val provisionalFunctionExpressionPhase = makeWasmModulePhase(
@@ -329,7 +342,9 @@ val wasmPhases = namedIrModulePhase<WasmBackendContext>(
             // arrayConstructorPhase then
 
             functionInliningPhase then
-            lateinitLoweringPhase then
+            lateinitNullableFieldsPhase then
+            lateinitDeclarationLoweringPhase then
+            lateinitUsageLoweringPhase then
             tailrecLoweringPhase then
 
             enumClassConstructorLoweringPhase then

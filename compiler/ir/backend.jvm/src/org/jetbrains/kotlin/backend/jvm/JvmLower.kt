@@ -79,9 +79,21 @@ private val expectDeclarationsRemovingPhase = makeIrModulePhase<JvmBackendContex
     description = "Remove expect declaration from module fragment"
 )
 
-private val lateinitPhase = makeIrFilePhase(
-    ::LateinitLowering,
-    name = "Lateinit",
+private val lateinitNullableFieldsPhase = makeIrFilePhase(
+    ::NullableFieldsForLateinitCreationLowering,
+    name = "LateinitNullableFields",
+    description = "Create nullable fields for lateinit properties"
+)
+
+private val lateinitDeclarationLoweringPhase = makeIrFilePhase(
+    ::NullableFieldsDeclarationLowering,
+    name = "LateinitDeclarations",
+    description = "Reference nullable fields from properties and getters + insert checks"
+)
+
+private val lateinitUsageLoweringPhase = makeIrFilePhase(
+    ::LateinitUsageLowering,
+    name = "LateinitUsage",
     description = "Insert checks for lateinit field references"
 )
 
@@ -241,7 +253,9 @@ private val jvmFilePhases =
         arrayConstructorPhase then
         checkNotNullPhase then
 
-        lateinitPhase then
+        lateinitNullableFieldsPhase then
+        lateinitDeclarationLoweringPhase then
+        lateinitUsageLoweringPhase then
 
         moveOrCopyCompanionObjectFieldsPhase then
         inlineCallableReferenceToLambdaPhase then
