@@ -1,0 +1,23 @@
+{
+  "1": {
+    "pos": {
+      "2": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "Check Elvis evaluation",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "1": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "Check Elvis evaluation",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/elvis-operator-expression/p-1/pos/2.1.kt",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}

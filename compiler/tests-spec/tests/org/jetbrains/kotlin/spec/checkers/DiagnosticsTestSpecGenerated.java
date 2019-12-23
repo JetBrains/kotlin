@@ -1591,6 +1591,50 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
                 }
             }
 
+            @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/elvis-operator-expression")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Elvis_operator_expression extends AbstractDiagnosticsTestSpec {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInElvis_operator_expression() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/elvis-operator-expression"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/elvis-operator-expression/p-3")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class P_3 extends AbstractDiagnosticsTestSpec {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInP_3() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/elvis-operator-expression/p-3"), Pattern.compile("^(.+)\\.kt$"), true);
+                    }
+
+                    @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/elvis-operator-expression/p-3/pos")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class Pos extends AbstractDiagnosticsTestSpec {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                        }
+
+                        @TestMetadata("1.1.kt")
+                        public void test1_1() throws Exception {
+                            runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/elvis-operator-expression/p-3/pos/1.1.kt");
+                        }
+
+                        public void testAllFilesPresentInPos() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/elvis-operator-expression/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), true);
+                        }
+                    }
+                }
+            }
+
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/equality-expressions")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
