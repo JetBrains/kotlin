@@ -10,6 +10,7 @@ import com.intellij.openapi.extensions.PluginDescriptor;
 import com.intellij.openapi.options.SchemeManager;
 import com.intellij.openapi.options.SchemeManagerFactory;
 import com.intellij.psi.codeStyle.*;
+import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xmlb.annotations.Transient;
 import org.jetbrains.annotations.NonNls;
@@ -64,13 +65,15 @@ public abstract class CodeStyleSchemesImpl extends CodeStyleSchemes {
         @Override
         public void extensionAdded(@NotNull LanguageCodeStyleSettingsProvider extension, @NotNull PluginDescriptor pluginDescriptor) {
           //noinspection deprecation
-          CodeStyleSettingsManager.getInstance().registerLanguageSettings(getAllSettings(), extension);
+          ObjectUtils.consumeIfNotNull(CodeStyleSettingsManager.getInstance(),
+                                       instance -> instance.registerLanguageSettings(getAllSettings(), extension));
         }
 
         @Override
         public void extensionRemoved(@NotNull LanguageCodeStyleSettingsProvider extension, @NotNull PluginDescriptor pluginDescriptor) {
           //noinspection deprecation
-          CodeStyleSettingsManager.getInstance().unregisterLanguageSettings(getAllSettings(), extension);
+          ObjectUtils.consumeIfNotNull(CodeStyleSettingsManager.getInstance(),
+                                       instance -> instance.unregisterLanguageSettings(getAllSettings(), extension));
         }
       }, ApplicationManager.getApplication()
     );
