@@ -27,7 +27,7 @@ fun case_2(x: ClassWithThreeTypeParameters<*, *, *>?) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!><!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<*, *, *>? & InterfaceWithTwoTypeParameters<*, *>?")!>x<!>?.x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x?.y<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x?.z<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("{ClassWithThreeTypeParameters<out Any?, out Any?, out Any?> & InterfaceWithTwoTypeParameters<out Any?, out Any?>}")!>x!!<!>.ip2test()
+        <!DEBUG_INFO_EXPRESSION_TYPE("{ClassWithThreeTypeParameters<*, *, *> & InterfaceWithTwoTypeParameters<*, *>}")!>x!!<!>.ip2test()
         <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<*, *, *> & ClassWithThreeTypeParameters<*, *, *>? & InterfaceWithTwoTypeParameters<*, *>")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!><!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<*, *, *> & ClassWithThreeTypeParameters<*, *, *>? & InterfaceWithTwoTypeParameters<*, *>")!>x<!>.x<!>
     }
@@ -40,7 +40,7 @@ fun case_3(x: ClassWithThreeTypeParameters<*, *, *>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!><!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<*, *, *> & InterfaceWithTwoTypeParameters<*, *>")!>x<!>.x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x.y<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x.z<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("{ClassWithThreeTypeParameters<out Any?, out Any?, out Any?> & InterfaceWithTwoTypeParameters<out Any?, out Any?>}")!>x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!><!>.ip2test()
+        <!DEBUG_INFO_EXPRESSION_TYPE("{ClassWithThreeTypeParameters<*, *, *> & InterfaceWithTwoTypeParameters<*, *>}")!>x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!><!>.ip2test()
         <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<*, *, *> & InterfaceWithTwoTypeParameters<*, *>")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!><!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<*, *, *> & InterfaceWithTwoTypeParameters<*, *>")!>x<!>.x<!>
     }
@@ -54,7 +54,7 @@ fun case_4(x: ClassWithSixTypeParameters<*, *, *, *, *, *>?) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x.y<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x.z<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x.u<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("{ClassWithSixTypeParameters<out Any?, Nothing, Any?, out Any?, Nothing, Any?> & InterfaceWithTwoTypeParameters<out Any?, out Any?>}")!>x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!><!>.ip2test()
+        <!DEBUG_INFO_EXPRESSION_TYPE("{ClassWithSixTypeParameters<*, Nothing, *, *, Nothing, *> & InterfaceWithTwoTypeParameters<*, *>}")!>x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!><!>.ip2test()
         <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithSixTypeParameters<*, *, *, *, *, *> & ClassWithSixTypeParameters<*, *, *, *, *, *>? & InterfaceWithTwoTypeParameters<*, *>")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!><!DEBUG_INFO_EXPRESSION_TYPE("ClassWithSixTypeParameters<*, *, *, *, *, *> & ClassWithSixTypeParameters<*, *, *, *, *, *>? & InterfaceWithTwoTypeParameters<*, *>")!>x<!>.x<!>
     }

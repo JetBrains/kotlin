@@ -10010,6 +10010,21 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/inference/reportAboutUnresolvedReferenceAsUnresolved.kt");
             }
 
+            @TestMetadata("starApproximation.kt")
+            public void testStarApproximation() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/starApproximation.kt");
+            }
+
+            @TestMetadata("starApproximationBangBang.kt")
+            public void testStarApproximationBangBang() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/starApproximationBangBang.kt");
+            }
+
+            @TestMetadata("starApproximationFlexible.kt")
+            public void testStarApproximationFlexible() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/starApproximationFlexible.kt");
+            }
+
             @TestMetadata("tryNumberLowerBoundsBeforeUpperBounds.kt")
             public void testTryNumberLowerBoundsBeforeUpperBounds() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/tryNumberLowerBoundsBeforeUpperBounds.kt");
