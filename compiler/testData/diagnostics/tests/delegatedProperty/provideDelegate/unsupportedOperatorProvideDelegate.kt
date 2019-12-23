@@ -11,5 +11,5 @@ class WrongDelegate(val x: Int) {
 operator fun String.getValue(thisRef: Any?, prop: Any) = this
 
 val test1: String by "OK"
-val test2: Int by <!DELEGATE_SPECIAL_FUNCTION_RETURN_TYPE_MISMATCH!>"OK"<!>
+val test2: Int by <!NI;DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE, OI;DELEGATE_SPECIAL_FUNCTION_RETURN_TYPE_MISMATCH!>"OK"<!>
 val test3 by "OK"

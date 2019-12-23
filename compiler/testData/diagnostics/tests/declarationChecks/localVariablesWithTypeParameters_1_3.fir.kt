@@ -1,5 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 // !LANGUAGE: -ProhibitTypeParametersForLocalVariables
+// !WITH_NEW_INFERENCE
 
 import kotlin.reflect.KProperty
 
