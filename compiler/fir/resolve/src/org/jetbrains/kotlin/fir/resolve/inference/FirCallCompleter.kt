@@ -79,7 +79,7 @@ class FirCallCompleter(
 
         val analyzer =
             PostponedArgumentsAnalyzer(
-                LambdaAnalyzerImpl(replacements), { it.resultType }, inferenceComponents, candidate, replacements,
+                LambdaAnalyzerImpl(replacements), inferenceComponents, candidate, replacements,
                 transformer.components.callResolver
             )
 

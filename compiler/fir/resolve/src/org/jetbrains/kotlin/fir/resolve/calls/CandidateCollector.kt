@@ -113,8 +113,7 @@ class InvokeReceiverCandidateCollector(
                 invokeCallInfo.implicitReceiverStack,
                 invokeCallInfo.expectedType,
                 invokeCallInfo.outerCSBuilder,
-                invokeCallInfo.lhs,
-                invokeCallInfo.typeProvider
+                invokeCallInfo.lhs
             ).let {
                 if (useExtensionReceiverAsArgument) it.withReceiverAsArgument(extensionReceiverExpression)
                 else it

@@ -128,7 +128,7 @@ class FirCallResolver(
             session,
             file,
             transformer.components.implicitReceiverStack
-        ) { it.resultType }
+        )
         towerResolver.reset()
 
         val consumer = createFunctionConsumer(session, name, info, this, towerResolver.collector, towerResolver)
@@ -165,7 +165,7 @@ class FirCallResolver(
             session,
             file,
             transformer.components.implicitReceiverStack
-        ) { it.resultType }
+        )
         towerResolver.reset()
 
         val consumer = createVariableAndObjectConsumer(
@@ -301,7 +301,7 @@ class FirCallResolver(
             session,
             file,
             implicitReceiverStack
-        ) { it.resultType }
+        )
         val candidateFactory = CandidateFactory(this, callInfo)
         val candidates = mutableListOf<Candidate>()
 
@@ -405,7 +405,7 @@ class FirCallResolver(
             expectedType,
             outerConstraintSystemBuilder,
             lhs
-        ) { it.resultType }
+        )
 
         return createCallableReferencesConsumer(session, name, info, this, resultCollector)
     }

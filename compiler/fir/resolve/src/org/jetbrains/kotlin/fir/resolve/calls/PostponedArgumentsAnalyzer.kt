@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.references.impl.FirErrorNamedReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.diagnostics.FirUnresolvedReferenceError
 import org.jetbrains.kotlin.fir.resolve.transformers.StoreNameReference
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer
@@ -39,7 +38,6 @@ interface LambdaAnalyzer {
 
 class PostponedArgumentsAnalyzer(
     private val lambdaAnalyzer: LambdaAnalyzer,
-    private val typeProvider: (FirExpression) -> FirTypeRef?,
     private val components: InferenceComponents,
     private val candidate: Candidate,
     private val replacements: MutableMap<FirExpression, FirExpression>,
@@ -148,8 +146,7 @@ class PostponedArgumentsAnalyzer(
                 checkerSink,
                 isReceiver = false,
                 isDispatch = false,
-                isSafeCall = false,
-                typeProvider = typeProvider
+                isSafeCall = false
             )
 //            resolveKtPrimitive(
 //                c.getBuilder(), it, lambda.returnType.let(::substitute), diagnosticHolder, isReceiver = false

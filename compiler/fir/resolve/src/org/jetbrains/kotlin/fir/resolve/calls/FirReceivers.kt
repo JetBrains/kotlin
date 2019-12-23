@@ -46,11 +46,10 @@ class ClassDispatchReceiverValue(val klassSymbol: FirClassSymbol<*>) : ReceiverV
 }
 
 class ExpressionReceiverValue(
-    val explicitReceiverExpression: FirExpression,
-    val typeProvider: (FirExpression) -> FirTypeRef?
+    val explicitReceiverExpression: FirExpression
 ) : ReceiverValue {
     override val type: ConeKotlinType
-        get() = typeProvider(explicitReceiverExpression)?.coneTypeSafe()
+        get() = explicitReceiverExpression.typeRef.coneTypeSafe()
             ?: ConeKotlinErrorType("No type calculated for: ${explicitReceiverExpression.renderWithType()}") // TODO: assert here
 
     override val receiverExpression: FirExpression

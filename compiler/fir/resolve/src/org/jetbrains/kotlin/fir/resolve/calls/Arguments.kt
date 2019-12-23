@@ -41,8 +41,7 @@ fun Candidate.resolveArgumentExpression(
     sink: CheckerSink,
     isReceiver: Boolean,
     isDispatch: Boolean,
-    isSafeCall: Boolean,
-    typeProvider: (FirExpression) -> FirTypeRef?
+    isSafeCall: Boolean
 ) {
     return when (argument) {
         is FirFunctionCall, is FirWhenExpression, is FirTryExpression, is FirCheckNotNullCall -> resolveSubCallArgument(
@@ -52,8 +51,7 @@ fun Candidate.resolveArgumentExpression(
             sink,
             isReceiver,
             isDispatch,
-            isSafeCall,
-            typeProvider
+            isSafeCall
         )
         is FirCallableReferenceAccess ->
             if (argument.calleeReference is FirResolvedNamedReference)
@@ -64,8 +62,7 @@ fun Candidate.resolveArgumentExpression(
                     sink,
                     isReceiver,
                     isDispatch,
-                    isSafeCall,
-                    typeProvider
+                    isSafeCall
                 )
             else
                 preprocessCallableReference(argument, expectedType)
@@ -77,8 +74,7 @@ fun Candidate.resolveArgumentExpression(
             sink,
             isReceiver,
             isDispatch,
-            isSafeCall,
-            typeProvider
+            isSafeCall
         )
         // TODO:!
         is FirAnonymousFunction -> preprocessLambdaArgument(csBuilder, argument, expectedType, expectedTypeRef)
@@ -92,8 +88,7 @@ fun Candidate.resolveArgumentExpression(
             sink,
             isReceiver,
             isDispatch,
-            isSafeCall,
-            typeProvider
+            isSafeCall
         )
         is FirBlock -> resolveBlockArgument(
             csBuilder,
@@ -103,10 +98,9 @@ fun Candidate.resolveArgumentExpression(
             sink,
             isReceiver,
             isDispatch,
-            isSafeCall,
-            typeProvider
+            isSafeCall
         )
-        else -> resolvePlainExpressionArgument(csBuilder, argument, expectedType, sink, isReceiver, isDispatch, isSafeCall, typeProvider)
+        else -> resolvePlainExpressionArgument(csBuilder, argument, expectedType, sink, isReceiver, isDispatch, isSafeCall)
     }
 }
 
@@ -118,8 +112,7 @@ private fun Candidate.resolveBlockArgument(
     sink: CheckerSink,
     isReceiver: Boolean,
     isDispatch: Boolean,
-    isSafeCall: Boolean,
-    typeProvider: (FirExpression) -> FirTypeRef?
+    isSafeCall: Boolean
 ) {
     val returnArguments = block.returnExpressions()
     if (returnArguments.isEmpty()) {
@@ -144,8 +137,7 @@ private fun Candidate.resolveBlockArgument(
             sink,
             isReceiver,
             isDispatch,
-            isSafeCall,
-            typeProvider
+            isSafeCall
         )
     }
 }
@@ -157,8 +149,7 @@ fun Candidate.resolveSubCallArgument(
     sink: CheckerSink,
     isReceiver: Boolean,
     isDispatch: Boolean,
-    isSafeCall: Boolean,
-    typeProvider: (FirExpression) -> FirTypeRef?
+    isSafeCall: Boolean
 ) {
     val candidate = argument.candidate() ?: return resolvePlainExpressionArgument(
         csBuilder,
@@ -167,8 +158,7 @@ fun Candidate.resolveSubCallArgument(
         sink,
         isReceiver,
         isDispatch,
-        isSafeCall,
-        typeProvider
+        isSafeCall
     )
     /*
      * It's important to extract type from argument neither from symbol, because of symbol contains
@@ -190,11 +180,10 @@ fun Candidate.resolvePlainExpressionArgument(
     sink: CheckerSink,
     isReceiver: Boolean,
     isDispatch: Boolean,
-    isSafeCall: Boolean,
-    typeProvider: (FirExpression) -> FirTypeRef?
+    isSafeCall: Boolean
 ) {
     if (expectedType == null) return
-    val argumentType = typeProvider(argument)?.coneTypeSafe<ConeKotlinType>() ?: return
+    val argumentType = argument.typeRef.coneTypeSafe<ConeKotlinType>() ?: return
     resolvePlainArgumentType(csBuilder, argumentType, expectedType, sink, isReceiver, isDispatch, isSafeCall)
     checkApplicabilityForIntegerOperatorCall(sink, argument)
 }
@@ -276,7 +265,6 @@ internal fun Candidate.resolveArgument(
     parameter: FirValueParameter,
     isReceiver: Boolean,
     isSafeCall: Boolean,
-    typeProvider: (FirExpression) -> FirTypeRef?,
     sink: CheckerSink
 ) {
 
@@ -289,8 +277,7 @@ internal fun Candidate.resolveArgument(
         sink,
         isReceiver,
         false,
-        isSafeCall,
-        typeProvider
+        isSafeCall
     )
 }
 

@@ -110,8 +110,7 @@ internal sealed class CheckReceivers : ResolutionStage() {
                     sink = sink,
                     isReceiver = true,
                     isDispatch = this is Dispatch,
-                    isSafeCall = callInfo.isSafeCall,
-                    typeProvider = callInfo.typeProvider
+                    isSafeCall = callInfo.isSafeCall
                 )
                 sink.yieldIfNeed()
             } else {
@@ -156,7 +155,6 @@ internal object CheckArguments : CheckerStage() {
                 parameter,
                 isReceiver = false,
                 isSafeCall = false,
-                typeProvider = callInfo.typeProvider,
                 sink = sink
             )
             if (candidate.system.hasContradiction) {

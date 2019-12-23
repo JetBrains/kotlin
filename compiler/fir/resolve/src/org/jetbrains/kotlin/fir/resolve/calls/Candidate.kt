@@ -40,9 +40,7 @@ class CallInfo(
     // Three properties for callable references only
     val expectedType: ConeKotlinType? = null,
     val outerCSBuilder: ConstraintSystemBuilder? = null,
-    val lhs: DoubleColonLHS? = null,
-
-    val typeProvider: (FirExpression) -> FirTypeRef?
+    val lhs: DoubleColonLHS? = null
 ) {
     val argumentCount get() = arguments.size
 
