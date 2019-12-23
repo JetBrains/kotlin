@@ -17,7 +17,6 @@ FILE: covariantArrayAsReceiver.kt
         ^toList Null(null)
     }
     public final fun foo(element: R|PsiElement|, usages: R|kotlin/Array<UsageInfo>|): R|kotlin/Unit| {
-        (R|<local>/element| is R|KtLightMethod|)
         lval adjusted: R|kotlin/collections/List<UsageInfo>?| = when () {
             (R|<local>/element| is R|KtParameter|) ->  {
                 R|<local>/usages|.R|/filterNot|<R|UsageInfo|>(<L> = filterNot@fun <implicit>.<anonymous>(): <implicit> {

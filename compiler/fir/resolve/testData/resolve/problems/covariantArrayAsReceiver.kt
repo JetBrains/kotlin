@@ -17,7 +17,6 @@ fun <T> Array<out T>.filterNot(f: (T) -> Boolean): List<T> {
 fun <T> Array<T>.toList(): List<T>? = null
 
 fun foo(element: PsiElement, usages: Array<UsageInfo>) {
-    element is KtLightMethod
     val adjusted = if (element is KtParameter) usages.filterNot {
         it.usage is KtLightMethod
     } else usages.toList()
