@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -34,6 +34,7 @@ import java.util.Collections;
 
 import static org.jetbrains.kotlin.builtins.FunctionTypesKt.isFunctionTypeOrSubtype;
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isArray;
+import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isNotNullOrNullableFunctionSupertype;
 import static org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsKt.getNameIfStandardType;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getTypeByReference;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.equality;
@@ -181,7 +182,9 @@ public final class PatternTranslator extends AbstractTranslator {
 
     @Nullable
     private JsExpression getIsTypeCheckCallableForBuiltin(@NotNull KotlinType type) {
-        if (isFunctionTypeOrSubtype(type) && !ReflectionTypes.isNumberedKPropertyOrKMutablePropertyType(type)) {
+        if ((isNotNullOrNullableFunctionSupertype(type) || isFunctionTypeOrSubtype(type)) &&
+            !ReflectionTypes.isNumberedKPropertyOrKMutablePropertyType(type)
+        ) {
             return namer().isTypeOf(new JsStringLiteral("function"));
         }
 

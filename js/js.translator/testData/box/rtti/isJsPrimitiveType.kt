@@ -6,6 +6,7 @@ val STRING = 2
 val BOOLEAN = 3
 val OBJECT = 4
 val FUNCTION = 5
+val FUNCTION0 = FUNCTION // right now we can't distinguish functions with different arity
 
 fun test(a: Any, actualType: Int) {
     assertEquals(actualType == NUMBER, a is Int, "$a is Int")
@@ -13,7 +14,8 @@ fun test(a: Any, actualType: Int) {
     assertEquals(actualType == NUMBER, a is Double, "$a is Double")
     assertEquals(actualType == BOOLEAN, a is Boolean, "$a is Boolean")
     assertEquals(actualType == STRING, a is String, "$a is String")
-    assertEquals(actualType == FUNCTION, a is Function0<*>, "$a is Function")
+    assertEquals(actualType == FUNCTION0, a is Function0<*>, "$a is Function0")
+    assertEquals(actualType == FUNCTION || actualType == FUNCTION0, a is Function<*>, "$a is Function")
 }
 
 fun box(): String {
@@ -29,7 +31,10 @@ fun box(): String {
 
     test(object {}, OBJECT)
 
+    test({}, FUNCTION0)
+
     test({}, FUNCTION)
+    test({a: Any -> }, FUNCTION)
 
     return "OK"
 }
