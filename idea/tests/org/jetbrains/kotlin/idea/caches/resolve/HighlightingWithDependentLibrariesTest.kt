@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.caches.resolve
 
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.libraries.Library
@@ -27,12 +28,12 @@ class HighlightingWithDependentLibrariesTest : KotlinLightCodeInsightFixtureTest
             val compiledJar2 =
                 MockLibraryUtil.compileJvmLibraryToJar("$TEST_DATA_PATH/lib2", "lib2", extraClasspath = listOf(compiledJar1.canonicalPath))
 
-            model.addLibraryEntry(createLibrary(compiledJar1, "baseLibrary"))
-            model.addLibraryEntry(createLibrary(compiledJar2, "dependentLibrary"))
+            model.addLibraryEntry(createLibrary(module.project, compiledJar1, "baseLibrary"))
+            model.addLibraryEntry(createLibrary(module.project, compiledJar2, "dependentLibrary"))
         }
 
-        private fun createLibrary(jarFile: File, name: String): Library {
-            val library = LibraryTablesRegistrar.getInstance()!!.getLibraryTable(project).createLibrary(name)!!
+        private fun createLibrary(project: Project, jarFile: File, name: String): Library {
+            val library = LibraryTablesRegistrar.getInstance()!!.getLibraryTable(project).createLibrary(name)
             val model = library.modifiableModel
             model.addRoot(VfsUtil.getUrlForLibraryRoot(jarFile), OrderRootType.CLASSES)
             model.commit()
