@@ -1,0 +1,57 @@
+{
+  "2": {
+    "pos": {
+      "2": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "A / B is exactly the same as A.div(B)",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "3": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "A % B is exactly the same as A.rem(B)",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "1": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "A * B is exactly the same as A.times(B)",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  },
+  "1": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "A / B is exactly the same as A.div(B)",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/multiplicative-expression/p-2/pos/2.1.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "A % B is exactly the same as A.rem(B)",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/multiplicative-expression/p-2/pos/3.1.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "A * B is exactly the same as A.times(B)",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/multiplicative-expression/p-2/pos/1.1.kt",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}
