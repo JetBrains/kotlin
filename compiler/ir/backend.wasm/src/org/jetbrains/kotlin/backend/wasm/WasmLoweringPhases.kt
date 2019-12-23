@@ -165,6 +165,13 @@ private val innerClassesLoweringPhase = makeWasmModulePhase(
     description = "Capture outer this reference to inner class"
 )
 
+private val innerClassesMemberBodyLoweringPhase = makeWasmModulePhase(
+    ::InnerClassesMemberBodyLowering,
+    name = "InnerClassesMemberBody",
+    description = "Replace `this` with 'outer this' field references",
+    prerequisite = setOf(innerClassesLoweringPhase)
+)
+
 private val innerClassConstructorCallsLoweringPhase = makeWasmModulePhase(
     ::InnerClassConstructorCallsLowering,
     name = "InnerClassConstructorCallsLowering",
@@ -354,6 +361,7 @@ val wasmPhases = namedIrModulePhase<WasmBackendContext>(
             localDeclarationsLoweringPhase then
             localClassExtractionPhase then
             innerClassesLoweringPhase then
+            innerClassesMemberBodyLoweringPhase then
             innerClassConstructorCallsLoweringPhase then
             propertiesLoweringPhase then
             primaryConstructorLoweringPhase then

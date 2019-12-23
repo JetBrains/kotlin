@@ -14,4 +14,5 @@ class JsMapping : DefaultMapping() {
     val singletonFieldDescriptors = newMapping<IrClass, IrField>()
     val outerThisFieldSymbols = newMapping<IrClass, IrField>()
     val innerClassConstructors = newMapping<IrConstructor, IrConstructor>()
+    val originalInnerClassPrimaryConstructorByClass = newMapping<IrClass, IrConstructor>()
 }

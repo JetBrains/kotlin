@@ -14,5 +14,6 @@ interface DeclarationFactory {
     fun getFieldForEnumEntry(enumEntry: IrEnumEntry): IrField
     fun getOuterThisField(innerClass: IrClass): IrField
     fun getInnerClassConstructorWithOuterThisParameter(innerClassConstructor: IrConstructor): IrConstructor
+    fun getInnerClassOriginalPrimaryConstructorOrNull(innerClass: IrClass): IrConstructor?
     fun getFieldForObjectInstance(singleton: IrClass): IrField
 }

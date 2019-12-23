@@ -183,6 +183,13 @@ private val innerClassesPhase = makeIrFilePhase(
     prerequisite = setOf(localDeclarationsPhase)
 )
 
+private val innerClassesMemberBodyPhase = makeIrFilePhase(
+    ::InnerClassesMemberBodyLowering,
+    name = "InnerClassesMemberBody",
+    description = "Replace `this` with 'outer this' field references",
+    prerequisite = setOf(innerClassesPhase)
+)
+
 private val staticInitializersPhase = makeIrFilePhase(
     ::StaticInitializersLowering,
     name = "StaticInitializers",
@@ -305,6 +312,7 @@ private val jvmFilePhases =
         addContinuationPhase then
 
         innerClassesPhase then
+        innerClassesMemberBodyPhase then
         innerClassConstructorCallsPhase then
 
         makePatchParentsPhase(2) then
