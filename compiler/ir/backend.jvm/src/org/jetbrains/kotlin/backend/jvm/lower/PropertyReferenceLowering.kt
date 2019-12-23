@@ -19,10 +19,12 @@ import org.jetbrains.kotlin.backend.jvm.ir.irArrayOf
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.createType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
@@ -64,13 +66,10 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
     private val IrField.signature: String
         get() = "${JvmAbi.getterName(name.asString())}()${context.methodSignatureMapper.mapReturnType(this)}"
 
-    private val IrMemberAccessExpression.signature: String
-        get() = getter?.let { getter ->
-            localPropertyIndices[getter]?.let { "<v#$it>" }
-        } ?: getter?.owner?.signature ?: field!!.owner.signature
-
     private val arrayItemGetter =
         context.ir.symbols.array.owner.functions.single { it.name.asString() == "get" }
+
+    private val signatureStringIntrinsic = context.ir.symbols.signatureStringIntrinsic
 
     private val kPropertyStarType = IrSimpleTypeImpl(
         context.irBuiltIns.kPropertyClass,
@@ -94,6 +93,23 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
         with(CallableReferenceLowering) {
             calculateOwner(expression.propertyContainer, this@PropertyReferenceLowering.context)
         }
+
+    private fun IrBuilderWithScope.computeSignatureString(expression: IrCallableReference): IrExpression {
+        return expression.getter?.let { getter ->
+            localPropertyIndices[getter]?.let { irString("<v#$it>") }
+                ?: if (getter.owner.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR) {
+                    // Default property accessor. Compute the signature now, so that we will not get into trouble
+                    // if the getter is transformed to a static method by inline classes lowering.
+                    irString(getter.owner.signature)
+                } else {
+                    // Delay the computation of the signature until after inline classes lowering to make sure
+                    // we mangle the function names correctly for things like extension methods on inline classes.
+                    irCall(signatureStringIntrinsic).apply {
+                        putValueArgument(0, IrFunctionReferenceImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, expression.type, getter, 0, null))
+                    }
+                }
+        } ?: irString(expression.field!!.owner.signature)
+    }
 
     private fun IrClass.addOverride(method: IrSimpleFunction, buildBody: IrBuilderWithScope.(List<IrValueParameter>) -> IrExpression) =
         addFunction {
@@ -204,7 +220,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
                         putValueArgument(0, irCall(referenceKind.reflectedSymbol.constructors.single()).apply {
                             putValueArgument(0, buildReflectedContainerReference(expression))
                             putValueArgument(1, irString(expression.symbol.descriptor.name.asString()))
-                            putValueArgument(2, irString(expression.signature))
+                            putValueArgument(2, computeSignatureString(expression))
                         })
                     }
                 }
@@ -266,7 +282,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
                 referenceClass.addSimpleDelegatingConstructor(superConstructor, context.irBuiltIns, isPrimary = true)
                 referenceClass.addOverride(getName) { irString(expression.symbol.descriptor.name.asString()) }
                 referenceClass.addOverride(getOwner) { buildReflectedContainerReference(expression) }
-                referenceClass.addOverride(getSignature) { irString(expression.signature) }
+                referenceClass.addOverride(getSignature) { computeSignatureString(expression) }
 
                 val receiverField = referenceClass.addField {
                     name = backingFieldFromSuper.name
