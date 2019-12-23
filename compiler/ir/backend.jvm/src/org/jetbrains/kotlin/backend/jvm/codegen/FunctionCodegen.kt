@@ -14,6 +14,9 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_IMPL_NAME_SUFFIX
 import org.jetbrains.kotlin.codegen.mangleNameIfNeeded
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.codegen.ClassBuilderMode
+import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_IMPL_NAME_SUFFIX
+import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.codegen.visitAnnotableParameterCount
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
@@ -31,6 +34,7 @@ import org.jetbrains.kotlin.resolve.jvm.annotations.SYNCHRONIZED_ANNOTATION_FQ_N
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.org.objectweb.asm.MethodVisitor
@@ -125,17 +129,17 @@ open class FunctionCodegen(
             // We do not generate continuation and state-machine for synthetic accessors, bridges, and delegated members,
             // in a sense, they are tail-call
             !isKnownToBeTailCall() &&
-            // TODO: We should generate two versions of inline suspend function: one with state-machine and one without
-            !isInline &&
             // This is suspend lambda parameter of inline function
             origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA &&
             // This is just a template for inliner
             origin != JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE &&
             // Continuations are generated for suspendImpls
-            parentAsClass.functions.none { it.name.asString() == name.asString() + SUSPEND_IMPL_NAME_SUFFIX }
+            parentAsClass.functions.none { it.name.asString() == name.asString() + SUSPEND_IMPL_NAME_SUFFIX } &&
+            // $$forInline functions never have a continuation
+            origin != JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE
 
     private fun continuationClass(): IrClass =
-        irFunction.body!!.statements[0] as IrClass
+        irFunction.body!!.statements.firstIsInstance() ?: error("No continuation class generated for ${irFunction.name}")
 
     private fun IrFunction.getVisibilityForDefaultArgumentStub(): Int =
         when (visibility) {

@@ -407,13 +407,13 @@ class ExpressionCodegen(
 
         expression.dispatchReceiver?.let { receiver ->
             val type = if ((expression as? IrCall)?.superQualifierSymbol != null) receiver.asmType else callable.owner
-            callGenerator.genValueAndPut(callee.dispatchReceiverParameter!!, receiver, type, this, data)
+            continuationAwareGenValueAndPut(receiver, type, callee.dispatchReceiverParameter!!, data, callGenerator)
         }
 
         expression.extensionReceiver?.let { receiver ->
             val type = callable.signature.valueParameters.singleOrNull { it.kind == JvmMethodParameterKind.RECEIVER }?.asmType
                 ?: error("No single extension receiver parameter: ${callable.signature.valueParameters}")
-            callGenerator.genValueAndPut(callee.extensionReceiverParameter!!, receiver, type, this, data)
+            continuationAwareGenValueAndPut(receiver, type, callee.extensionReceiverParameter!!, data, callGenerator)
         }
 
         callGenerator.beforeValueParametersStart()
@@ -421,7 +421,7 @@ class ExpressionCodegen(
             val arg = expression.getValueArgument(i)
             val parameterType = callable.valueParameterTypes[i]
             require(arg != null) { "Null argument in ExpressionCodegen for parameter ${irParameter.render()}" }
-            callGenerator.genValueAndPut(irParameter, arg, parameterType, this, data)
+            continuationAwareGenValueAndPut(arg, parameterType, irParameter, data, callGenerator)
         }
 
         expression.markLineNumber(true)
@@ -431,7 +431,14 @@ class ExpressionCodegen(
             addSuspendMarker(mv, isStartNotEnd = true)
         }
 
-        callGenerator.genCall(callable, this, expression)
+        if (irFunction.isInvokeSuspendOfContinuation()) {
+            // Do not inline callee to continuation, instead, call it
+            with(callable) {
+                mv.visitMethodInsn(invokeOpcode, owner.internalName, asmMethod.name, asmMethod.descriptor, isInterfaceMethod)
+            }
+        } else {
+            callGenerator.genCall(callable, this, expression)
+        }
 
         if (callee.shouldGenerateSuspendMarkers()) {
             // Check return type of non-lowered suspend call, in order to replace the result of the call with Unit,
@@ -462,6 +469,23 @@ class ExpressionCodegen(
                 MaterialValue(this, callable.asmMethod.returnType, returnType).discard().coerce(expression.type)
             else ->
                 MaterialValue(this, callable.asmMethod.returnType, returnType).coerce(expression.type)
+        }
+    }
+
+    // In order to support java interop of inline suspend functions, we generate continuations of inline suspend functions.
+    // They should behave as ordinary suspend functions, i.e. we should not inline the content of the inline function into continuation.
+    // Thus, we should put its arguments to stack.
+    private fun continuationAwareGenValueAndPut(
+        arg: IrExpression,
+        parameterType: Type,
+        irParameter: IrValueParameter,
+        data: BlockInfo,
+        callGenerator: IrCallGenerator
+    ) {
+        if (irFunction.isInvokeSuspendOfContinuation()) {
+            gen(arg, parameterType, irParameter.type, data)
+        } else {
+            callGenerator.genValueAndPut(irParameter, arg, parameterType, this, data)
         }
     }
 

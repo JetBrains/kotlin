@@ -77,6 +77,14 @@ final class flow/InnerObjectRetransformationKt$check$1 {
 }
 
 @kotlin.Metadata
+final class flow/InnerObjectRetransformationKt$collect$1 {
+    field label: int
+    @org.jetbrains.annotations.NotNull field result: java.lang.Object
+    public method <init>(p0: kotlin.coroutines.Continuation): void
+    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.Metadata
 final class flow/InnerObjectRetransformationKt$collect$2$emit$1 {
     field label: int
     @org.jetbrains.annotations.NotNull field result: java.lang.Object
@@ -164,7 +172,8 @@ public final class flow/InnerObjectRetransformationKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method builder(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): void
     public final static @org.jetbrains.annotations.Nullable method check(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
-    private final static @org.jetbrains.annotations.Nullable method collect(@org.jetbrains.annotations.NotNull p0: flow.Flow, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function2, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final static @org.jetbrains.annotations.Nullable method collect$$forInline(@org.jetbrains.annotations.NotNull p0: flow.Flow, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function2, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final static @org.jetbrains.annotations.Nullable method collect(@org.jetbrains.annotations.NotNull p0: flow.Flow, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function2, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
     public final static @org.jetbrains.annotations.NotNull method flow(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function2): flow.Flow
     public final static @org.jetbrains.annotations.NotNull method flowWith(@org.jetbrains.annotations.NotNull p0: flow.Flow, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function2): flow.Flow
 }

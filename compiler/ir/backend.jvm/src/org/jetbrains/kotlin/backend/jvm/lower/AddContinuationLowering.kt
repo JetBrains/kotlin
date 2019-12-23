@@ -47,16 +47,10 @@ internal val addContinuationPhase = makeIrFilePhase(
 )
 
 private class AddContinuationLowering(private val context: JvmBackendContext) : FileLoweringPass {
-    private val functionsToAdd = mutableMapOf<IrClass, MutableSet<IrFunction>>()
 
     override fun lower(irFile: IrFile) {
         val (suspendLambdas, inlineLambdas) = markSuspendLambdas(irFile)
         transformSuspendFunctions(irFile, (suspendLambdas.map { it.function } + inlineLambdas).toSet())
-        for ((clazz, functions) in functionsToAdd) {
-            for (function in functions) {
-                clazz.declarations.add(function)
-            }
-        }
         transformReferencesToSuspendLambdas(irFile, suspendLambdas)
     }
 
@@ -533,11 +527,19 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
         return static
     }
 
-    // TODO: Generate two copies of inline suspend functions
     private fun transformSuspendFunctions(irFile: IrFile, suspendAndInlineLambdas: Set<IrFunction>) {
         irFile.transformChildrenVoid(object : IrElementTransformerVoid() {
             private val functionsStack = arrayListOf<IrFunction>()
             private val suspendFunctionsCapturingCrossinline = mutableSetOf<IrFunction>()
+            private val functionsToAdd = arrayListOf<MutableSet<IrFunction>>()
+
+            override fun visitClass(declaration: IrClass): IrStatement {
+                functionsToAdd.push(mutableSetOf())
+                val res = super.visitClass(declaration)
+                (res as IrClass).declarations.addAll(functionsToAdd.peek()!!)
+                functionsToAdd.pop()
+                return res
+            }
 
             override fun visitFunction(declaration: IrFunction): IrStatement {
                 functionsStack.push(declaration)
@@ -546,27 +548,34 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                 if (skip(function)) return function
 
                 function as IrSimpleFunction
-                if (function in suspendFunctionsCapturingCrossinline) {
-                    val newFunction = buildFun {
+                if (function in suspendFunctionsCapturingCrossinline || function.isInline) {
+                    val newFunction = buildFunWithDescriptorForInlining(function.descriptor) {
                         name = Name.identifier(function.name.asString() + FOR_INLINE_SUFFIX)
                         returnType = function.returnType
                         modality = function.modality
                         isSuspend = function.isSuspend
-                        origin = JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE
+                        isInline = function.isInline
+                        origin =
+                            if (function.isInline) JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE
+                            else JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE
                     }.apply {
+                        copyTypeParameters(function.typeParameters)
                         dispatchReceiverParameter = function.dispatchReceiverParameter?.copyTo(this)
                         extensionReceiverParameter = function.extensionReceiverParameter?.copyTo(this)
                         function.valueParameters.mapTo(valueParameters) { it.copyTo(this) }
                         body = function.copyBodyTo(this)
                         copyAttributes(function)
                     }
-                    registerNewFunction(function.parentAsClass, newFunction)
+                    registerNewFunction(newFunction)
+                    if (function.isInline) {
+                        context.originalToForInline[function] = newFunction
+                    }
                 }
 
                 val newFunction = if (function.isOverridable) {
                     // Create static method for the suspend state machine method so that reentering the method
                     // does not lead to virtual dispatch to the wrong method.
-                    registerNewFunction(function.parentAsClass, function)
+                    registerNewFunction(function)
                     createStaticSuspendImpl(function)
                 } else function
 
@@ -584,10 +593,14 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
             }
 
             private fun skip(function: IrFunction) =
-                !function.isSuspend || function in suspendAndInlineLambdas || function.isInline || function.body == null ||
+                !function.isSuspend || function in suspendAndInlineLambdas || function.body == null ||
                         function.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE ||
                         function.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER ||
                         function.parentAsClass.origin == JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
+
+            private fun registerNewFunction(function: IrFunction) {
+                functionsToAdd.peek()!!.add(function)
+            }
 
             override fun visitFieldAccess(expression: IrFieldAccessExpression): IrExpression {
                 val result = super.visitFieldAccess(expression)
@@ -600,10 +613,6 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                 return result
             }
         })
-    }
-
-    private fun registerNewFunction(container: IrClass, function: IrFunction) {
-        functionsToAdd.getOrPut(container) { mutableSetOf() }.add(function)
     }
 
     private fun markSuspendLambdas(irElement: IrElement): Pair<List<SuspendLambdaInfo>, List<IrFunction>> {

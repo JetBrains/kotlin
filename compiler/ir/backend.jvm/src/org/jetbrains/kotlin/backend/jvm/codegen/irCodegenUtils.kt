@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
-import org.jetbrains.kotlin.resolve.inline.INLINE_ONLY_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.resolve.inline.*
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmClassSignature
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -279,9 +279,13 @@ fun IrDeclarationWithVisibility.isInlineOnlyOrReifiable(): Boolean =
     this is IrFunction && (isReifiable() || isInlineOnly())
 
 fun IrDeclarationWithVisibility.isEffectivelyInlineOnly(): Boolean =
-    isInlineOnlyOrReifiable() ||
-            (this is IrSimpleFunction && isSuspend && isInline &&
-                    (valueParameters.any { it.isCrossinline } || visibility === Visibilities.PRIVATE))
+    isInlineOnlyOrReifiable() || isInlineOnlyPrivateInBytecode()
+
+fun IrDeclarationWithVisibility.isInlineOnlyPrivateInBytecode(): Boolean =
+    (this is IrFunction && isInlineOnly()) || isPrivateInlineSuspend()
+
+private fun IrDeclarationWithVisibility.isPrivateInlineSuspend(): Boolean =
+    this is IrFunction && isSuspend && isInline && visibility == Visibilities.PRIVATE
 
 fun IrFunction.isInlineOnly() =
     isInline && hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME)

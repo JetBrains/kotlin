@@ -32,11 +32,20 @@ final class InlineWithoutStateMachineKt$suspendHere$1 {
 }
 
 @kotlin.Metadata
+final class InlineWithoutStateMachineKt$suspendThere$1 {
+    field label: int
+    @org.jetbrains.annotations.NotNull field result: java.lang.Object
+    public method <init>(p0: kotlin.coroutines.Continuation): void
+    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.Metadata
 public final class InlineWithoutStateMachineKt {
     inner class InlineWithoutStateMachineKt$box$1
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method builder(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): void
     public final static @org.jetbrains.annotations.Nullable method complexSuspend(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
     public final static @org.jetbrains.annotations.Nullable method suspendHere(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final static @org.jetbrains.annotations.Nullable method suspendThere$$forInline(@org.jetbrains.annotations.NotNull p0: java.lang.String, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
     public final static @org.jetbrains.annotations.Nullable method suspendThere(@org.jetbrains.annotations.NotNull p0: java.lang.String, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
 }

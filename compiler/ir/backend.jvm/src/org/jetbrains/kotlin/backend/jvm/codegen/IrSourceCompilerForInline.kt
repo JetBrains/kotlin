@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.OwnerKind
 import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
 import org.jetbrains.kotlin.codegen.inline.*
+import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -23,11 +24,9 @@ import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
-import org.jetbrains.kotlin.ir.util.isSuspend
-import org.jetbrains.kotlin.ir.util.nameForIrSerialization
-import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -35,6 +34,7 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.resolve.source.getPsi
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.commons.Method
@@ -80,10 +80,21 @@ class IrSourceCompilerForInline(
 
     private fun makeInlineNode(function: IrFunction, classCodegen: ClassCodegen, isLambda: Boolean): SMAPAndMethodNode {
         var node: MethodNode? = null
-        val functionCodegen = object : FunctionCodegen(function, classCodegen, codegen.takeIf { isLambda }) {
+        val forInlineFunctionView =
+            if (function.isSuspend)
+                codegen.context.originalToForInline[codegen.context.suspendFunctionViewToOriginal[function]] ?: function
+            else function
+        val functionCodegen = object : FunctionCodegen(forInlineFunctionView, classCodegen, codegen.takeIf { isLambda }) {
             override fun createMethod(flags: Int, signature: JvmMethodGenericSignature): MethodVisitor {
                 val asmMethod = signature.asmMethod
-                node = MethodNode(Opcodes.API_VERSION, flags, asmMethod.name, asmMethod.descriptor, signature.genericsSignature, null)
+                node = MethodNode(
+                    Opcodes.API_VERSION,
+                    flags,
+                    asmMethod.name.removeSuffix(FOR_INLINE_SUFFIX),
+                    asmMethod.descriptor,
+                    signature.genericsSignature,
+                    null
+                )
                 return wrapWithMaxLocalCalc(node!!)
             }
         }
