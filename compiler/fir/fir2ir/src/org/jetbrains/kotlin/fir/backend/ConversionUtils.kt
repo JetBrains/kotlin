@@ -59,10 +59,9 @@ fun ConeKotlinType.toIrType(
     return when (this) {
         is ConeKotlinErrorType -> createErrorType()
         is ConeLookupTagBasedType -> {
-            var irSymbol = getPrimitiveArrayType(this.classId, irBuiltIns)
-            if (irSymbol == null) {
+            val irSymbol = getPrimitiveArrayType(this.classId, irBuiltIns) ?: run {
                 val firSymbol = this.lookupTag.toSymbol(session) ?: return createErrorType()
-                irSymbol = firSymbol.toIrSymbol(session, declarationStorage)
+                firSymbol.toIrSymbol(session, declarationStorage)
             }
             // TODO: annotations
             IrSimpleTypeImpl(

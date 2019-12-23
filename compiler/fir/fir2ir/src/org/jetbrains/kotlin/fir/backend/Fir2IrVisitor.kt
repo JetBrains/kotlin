@@ -713,7 +713,7 @@ class Fir2IrVisitor(
     private fun FirAnnotationCall.toIrExpression(): IrExpression {
         val coneType = (annotationTypeRef as? FirResolvedTypeRef)?.type as? ConeLookupTagBasedType
         val firSymbol = coneType?.lookupTag?.toSymbol(session) as? FirClassSymbol
-        val type = coneType?.toIrType(this@Fir2IrVisitor.session, declarationStorage, this@Fir2IrVisitor.irBuiltIns)
+        val type = coneType?.toIrType(session, declarationStorage, irBuiltIns)
         val symbol = type?.classifierOrNull
         return convertWithOffsets { startOffset, endOffset ->
             when (symbol) {
