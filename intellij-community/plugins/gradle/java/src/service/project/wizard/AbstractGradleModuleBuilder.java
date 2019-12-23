@@ -31,6 +31,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.JavaSdkType;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkTypeId;
+import com.intellij.openapi.projectRoots.impl.DependentSdkType;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
 import com.intellij.openapi.util.Disposer;
@@ -289,7 +290,7 @@ public abstract class AbstractGradleModuleBuilder extends AbstractExternalModule
 
   @Override
   public boolean isSuitableSdkType(SdkTypeId sdk) {
-    return sdk instanceof JavaSdkType;
+    return sdk instanceof JavaSdkType && !(sdk instanceof DependentSdkType);
   }
 
   @Override
