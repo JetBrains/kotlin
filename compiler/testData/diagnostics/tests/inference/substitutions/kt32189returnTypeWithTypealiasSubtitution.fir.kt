@@ -33,5 +33,5 @@ fun consume(f: F) {}
 
 fun problem() {
     val p = guess()
-    consume(p ?: {})
+    <!INAPPLICABLE_CANDIDATE!>consume<!>(p ?: {})
 }
