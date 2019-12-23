@@ -49,15 +49,14 @@ public final class StructureViewFactoryImpl extends StructureViewFactoryEx imple
     }
   };
   static {
-    StructureViewExtension.EXTENSION_POINT_NAME.addExtensionPointListener((e, pd) -> {
-      myExtensions.drop();
-    }, null);
+    StructureViewExtension.EXTENSION_POINT_NAME.addExtensionPointListener(
+      myExtensions::drop, null);
   }
   private final MultiMap<Class<? extends PsiElement>, StructureViewExtension> myImplExtensions = new MultiMap<>();
 
   public StructureViewFactoryImpl(Project project) {
     myProject = project;
-    StructureViewExtension.EXTENSION_POINT_NAME.addExtensionPointListener((e, pd) -> {
+    StructureViewExtension.EXTENSION_POINT_NAME.addExtensionPointListener(() -> {
       myImplExtensions.clear();
       if (myStructureViewWrapperImpl != null) {
         myStructureViewWrapperImpl.rebuild();

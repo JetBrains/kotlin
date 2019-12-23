@@ -10,8 +10,6 @@ import com.intellij.openapi.components.Service;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.extensions.ExtensionPoint;
-import com.intellij.openapi.extensions.ExtensionPointListener;
-import com.intellij.openapi.extensions.PluginDescriptor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileDocumentManagerListener;
 import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
@@ -73,7 +71,7 @@ public final class PsiVFSListener implements BulkFileListener {
       
       ExtensionPoint<KeyedLazyInstance<LanguageSubstitutor>> point = LanguageSubstitutors.getInstance().getPoint();
       if (point != null) {
-        point.addExtensionPointListener((e, pd) -> {
+        point.addExtensionPointListener(() -> {
           if (project.isDisposed()) return;
 
           PsiManagerImpl psiManager = (PsiManagerImpl)PsiManager.getInstance(project);

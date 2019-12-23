@@ -32,7 +32,7 @@ public class BuildProcessClasspathManager {
   private volatile List<String> myCompileServerPluginsClasspath;
 
   public BuildProcessClasspathManager(Disposable parentDisposable) {
-    CompileServerPlugin.EP_NAME.addExtensionPointListener((e, pd) -> { myCompileServerPluginsClasspath = null; }, parentDisposable);
+    CompileServerPlugin.EP_NAME.addExtensionPointListener(() -> myCompileServerPluginsClasspath = null, parentDisposable);
   }
 
   public List<String> getBuildProcessPluginsClasspath(Project project) {

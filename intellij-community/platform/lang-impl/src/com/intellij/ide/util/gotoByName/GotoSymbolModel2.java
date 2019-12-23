@@ -37,9 +37,7 @@ public class GotoSymbolModel2 extends FilteringGotoByModel<Language> {
 
   private void addEpListener(@NotNull Project project) {
     ChooseByNameContributor.CLASS_EP_NAME.addExtensionPointListener(
-      (e, pd) -> { mySeparators = null; },
-      (e, pd) -> { mySeparators = null; },
-      project);
+      () -> mySeparators = null, project);
   }
 
   @Override

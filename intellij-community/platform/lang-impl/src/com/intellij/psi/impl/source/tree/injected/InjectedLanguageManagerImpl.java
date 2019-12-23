@@ -56,7 +56,8 @@ public class InjectedLanguageManagerImpl extends InjectedLanguageManager impleme
     myDumbService = DumbService.getInstance(myProject);
     myDocManager = PsiDocumentManager.getInstance(project);
 
-    MultiHostInjector.MULTIHOST_INJECTOR_EP_NAME.getPoint(project).addExtensionPointListener((e, pd) -> clearInjectorCache(), false, this);
+    MultiHostInjector.MULTIHOST_INJECTOR_EP_NAME.getPoint(project).addExtensionPointListener(
+      this::clearInjectorCache, false, this);
 
     LanguageInjector.EXTENSION_POINT_NAME.addExtensionPointListener(new ExtensionPointListener<LanguageInjector>() {
       @Override

@@ -64,7 +64,7 @@ public class TemplateManagerImpl extends TemplateManager implements Disposable {
     EditorFactory.getInstance().addEditorFactoryListener(myEditorFactoryListener, myProject);
 
     TemplateContextType.EP_NAME.addExtensionPointListener(
-      (e, pd) -> {
+      () -> {
         for (TemplateContextType type : getAllContextTypes()) {
           type.clearCachedBaseContextType();
         }

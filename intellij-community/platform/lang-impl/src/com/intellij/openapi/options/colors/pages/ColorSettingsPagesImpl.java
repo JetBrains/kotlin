@@ -5,7 +5,6 @@ import com.intellij.application.options.colors.ColorSettingsUtil;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.editor.colors.ColorKey;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
-import com.intellij.openapi.extensions.ExtensionPointChangeListener;
 import com.intellij.openapi.options.colors.*;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
@@ -26,11 +25,8 @@ public class ColorSettingsPagesImpl extends ColorSettingsPages implements Dispos
   
   public ColorSettingsPagesImpl() {
     myListenersDisposable = Disposer.newDisposable();
-    ExtensionPointChangeListener<ColorAndFontDescriptorsProvider> listener = (e, pd) -> {
-      myCache.clear();
-    };
-    ColorAndFontDescriptorsProvider.EP_NAME.addExtensionPointListener(listener, myListenersDisposable);
-    ColorSettingsPage.EP_NAME.addExtensionPointListener(listener, myListenersDisposable);
+    ColorAndFontDescriptorsProvider.EP_NAME.addExtensionPointListener(myCache::clear, myListenersDisposable);
+    ColorSettingsPage.EP_NAME.addExtensionPointListener(myCache::clear, myListenersDisposable);
   }
 
   @Override

@@ -14,7 +14,6 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.extensions.ExtensionPointAdapter;
 import com.intellij.openapi.options.BaseSchemeProcessor;
 import com.intellij.openapi.options.SchemeManager;
 import com.intellij.openapi.options.SchemeManagerFactory;
@@ -276,21 +275,17 @@ public final class TemplateSettings implements PersistentStateComponent<Template
 
     doLoadTemplates(mySchemeManager.loadSchemes());
 
-    Macro.EP_NAME.addExtensionPointListener(new ExtensionPointAdapter<Macro>() {
-      @Override
-      public void extensionListChanged() {
-        for (TemplateImpl template : myTemplates.values()) {
-          template.dropParsedData();
-        }
-        for (TemplateImpl template : myDefaultTemplates.values()) {
-          template.dropParsedData();
-        }
+    Macro.EP_NAME.addExtensionPointListener(() -> {
+      for (TemplateImpl template : myTemplates.values()) {
+        template.dropParsedData();
+      }
+      for (TemplateImpl template : myDefaultTemplates.values()) {
+        template.dropParsedData();
       }
     }, ApplicationManager.getApplication());
 
-    DefaultLiveTemplateEP.EP_NAME.addExtensionPointListener((a,b) -> {
-      mySchemeManager.reload();
-    }, ApplicationManager.getApplication());
+    DefaultLiveTemplateEP.EP_NAME.addExtensionPointListener(mySchemeManager::reload,
+                                                            ApplicationManager.getApplication());
   }
 
   private void doLoadTemplates(@NotNull Collection<? extends TemplateGroup> groups) {
