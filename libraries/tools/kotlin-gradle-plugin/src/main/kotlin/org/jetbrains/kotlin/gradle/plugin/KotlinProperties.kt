@@ -144,8 +144,8 @@ internal class PropertiesProvider private constructor(private val project: Proje
     /**
      * Forces to run a compilation in a separate JVM.
      */
-    val nativeDisableCompilerDaemon: Boolean?
-        get() = booleanProperty("kotlin.native.disableCompilerDaemon")
+    val nativeDisableCompilerDaemon: Boolean
+        get() = booleanProperty("kotlin.native.disableCompilerDaemon") ?: true
 
     /**
      * Dependencies caching strategy. The default is static.
