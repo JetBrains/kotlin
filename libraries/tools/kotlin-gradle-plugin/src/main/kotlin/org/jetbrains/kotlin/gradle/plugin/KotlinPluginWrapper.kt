@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSetFactory
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlugin
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.addNpmDependencyExtension
 import org.jetbrains.kotlin.gradle.tasks.KOTLIN_COMPILER_EMBEDDABLE
 import org.jetbrains.kotlin.gradle.tasks.KOTLIN_MODULE_GROUP
@@ -160,6 +161,18 @@ open class KotlinJsPluginWrapper @Inject constructor(
 
     override val projectExtensionClass: KClass<out KotlinJsProjectExtension>
         get() = KotlinJsProjectExtension::class
+
+    override fun createTestRegistry(project: Project) = KotlinTestsRegistry(project, "test")
+}
+
+open class KotlinJsIrPluginWrapper @Inject constructor(
+    fileResolver: FileResolver
+) : KotlinBasePluginWrapper(fileResolver) {
+    override fun getPlugin(project: Project, kotlinGradleBuildServices: KotlinGradleBuildServices): Plugin<Project> =
+        KotlinJsIrPlugin(kotlinPluginVersion)
+
+    override val projectExtensionClass: KClass<out KotlinJsIrProjectExtension>
+        get() = KotlinJsIrProjectExtension::class
 
     override fun createTestRegistry(project: Project) = KotlinTestsRegistry(project, "test")
 }

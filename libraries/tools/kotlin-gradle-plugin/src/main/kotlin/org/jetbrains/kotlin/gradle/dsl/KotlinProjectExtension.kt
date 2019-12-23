@@ -24,8 +24,10 @@ import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetContainer
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import kotlin.reflect.KClass
 
@@ -68,7 +70,7 @@ abstract class KotlinSingleTargetExtension : KotlinProjectExtension() {
 }
 
 abstract class KotlinSingleJavaTargetExtension : KotlinSingleTargetExtension() {
-    override abstract val target: KotlinWithJavaTarget<*>
+    abstract override val target: KotlinWithJavaTarget<*>
 }
 
 open class KotlinJvmProjectExtension : KotlinSingleJavaTargetExtension() {
@@ -89,6 +91,19 @@ open class KotlinJsProjectExtension : KotlinSingleTargetExtension() {
     override lateinit var target: KotlinJsTarget
 
     open fun target(body: KotlinJsTarget.() -> Unit) = target.run(body)
+
+    @Deprecated(
+        "Needed for IDE import using the MPP import mechanism",
+        level = DeprecationLevel.HIDDEN
+    )
+    fun getTargets() =
+        target.project.container(KotlinTarget::class.java).apply { add(target) }
+}
+
+open class KotlinJsIrProjectExtension : KotlinSingleTargetExtension() {
+    override lateinit var target: KotlinJsIrTarget
+
+    open fun target(body: KotlinJsIrTarget.() -> Unit) = target.run(body)
 
     @Deprecated(
         "Needed for IDE import using the MPP import mechanism",

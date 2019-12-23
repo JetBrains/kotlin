@@ -9,11 +9,32 @@ import groovy.lang.Closure
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
+import org.jetbrains.kotlin.gradle.targets.js.KotlinJsIrReportAggregatingTestRun
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlatformTestRun
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
+
+interface KotlinJsIrTargetDsl {
+    fun browser() = browser { }
+    fun browser(body: KotlinJsBrowserDsl.() -> Unit)
+    fun browser(fn: Closure<*>) {
+        browser {
+            ConfigureUtil.configure(fn, this)
+        }
+    }
+
+    fun nodejs() = nodejs { }
+    fun nodejs(body: KotlinJsNodeDsl.() -> Unit)
+    fun nodejs(fn: Closure<*>) {
+        nodejs {
+            ConfigureUtil.configure(fn, this)
+        }
+    }
+
+    val testRuns: NamedDomainObjectContainer<KotlinJsIrReportAggregatingTestRun>
+}
 
 interface KotlinJsTargetDsl {
     fun browser() = browser { }

@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.gradle.targets.js
 
 import org.jetbrains.kotlin.gradle.execution.KotlinAggregateExecutionSource
-import org.jetbrains.kotlin.gradle.execution.KotlinAggregatingExecution
 import org.jetbrains.kotlin.gradle.plugin.CompilationExecutionSource
 import org.jetbrains.kotlin.gradle.plugin.CompilationExecutionSourceSupport
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetTestRun
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.KotlinJsSubTarget
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.testing.KotlinReportAggregatingTestRun
@@ -48,6 +48,13 @@ class JsAggregatingExecutionSource(private val aggregatingTestRun: KotlinJsRepor
         get() = aggregatingTestRun.getConfiguredExecutions().map { it.executionSource }
 }
 
+class JsIrAggregatingExecutionSource(private val aggregatingTestRun: KotlinJsIrReportAggregatingTestRun) :
+    KotlinAggregateExecutionSource<JsCompilationExecutionSource> {
+
+    override val executionSources: Iterable<JsCompilationExecutionSource>
+        get() = aggregatingTestRun.getConfiguredExecutions().map { it.executionSource }
+}
+
 open class KotlinJsReportAggregatingTestRun(
     testRunName: String,
     override val target: KotlinJsTarget
@@ -61,6 +68,41 @@ open class KotlinJsReportAggregatingTestRun(
 
     override val executionSource: JsAggregatingExecutionSource
         get() = JsAggregatingExecutionSource(this)
+
+    private fun KotlinJsSubTarget.getChildTestExecution() = testRuns.maybeCreate(testRunName)
+
+    override fun getConfiguredExecutions(): Iterable<KotlinJsPlatformTestRun> = mutableListOf<KotlinJsPlatformTestRun>().apply {
+        if (target.isNodejsConfigured) {
+            add(target.nodejs.getChildTestExecution())
+        }
+        if (target.isBrowserConfigured) {
+            add(target.browser.getChildTestExecution())
+        }
+    }
+
+    override fun configureAllExecutions(configure: KotlinJsPlatformTestRun.() -> Unit) {
+        val doConfigureInChildren: KotlinJsSubTarget.() -> Unit = {
+            configure(getChildTestExecution())
+        }
+
+        target.whenBrowserConfigured { doConfigureInChildren(this as KotlinJsSubTarget) }
+        target.whenNodejsConfigured { doConfigureInChildren(this as KotlinJsSubTarget) }
+    }
+}
+
+open class KotlinJsIrReportAggregatingTestRun(
+    testRunName: String,
+    override val target: KotlinJsIrTarget
+) : KotlinReportAggregatingTestRun<JsCompilationExecutionSource, JsIrAggregatingExecutionSource, KotlinJsPlatformTestRun>(testRunName),
+    KotlinTargetTestRun<JsIrAggregatingExecutionSource>,
+    CompilationExecutionSourceSupport<KotlinJsCompilation> {
+
+    override fun setExecutionSourceFrom(compilation: KotlinJsCompilation) = configureAllExecutions {
+        setExecutionSourceFrom(compilation)
+    }
+
+    override val executionSource: JsIrAggregatingExecutionSource
+        get() = JsIrAggregatingExecutionSource(this)
 
     private fun KotlinJsSubTarget.getChildTestExecution() = testRuns.maybeCreate(testRunName)
 
