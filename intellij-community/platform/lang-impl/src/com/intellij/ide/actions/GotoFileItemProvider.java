@@ -144,7 +144,12 @@ public class GotoFileItemProvider extends DefaultChooseByNameItemProvider {
 
   @NotNull
   public static MinusculeMatcher getQualifiedNameMatcher(@NotNull String pattern) {
-    return NameUtil.buildMatcher("*" + StringUtil.replace(StringUtil.replace(pattern, "\\", "*\\*"), "/", "*/*"), NameUtil.MatchingCaseSensitivity.NONE);
+    pattern = "*" + StringUtil.replace(StringUtil.replace(pattern, "\\", "*\\*"), "/", "*/*");
+
+    return NameUtil.buildMatcher(pattern)
+      .withCaseSensitivity(NameUtil.MatchingCaseSensitivity.NONE)
+      .preferringStartMatches()
+      .build();
   }
 
   @NotNull
@@ -318,7 +323,15 @@ public class GotoFileItemProvider extends DefaultChooseByNameItemProvider {
 
     SuffixMatches(@NotNull String pattern, int from, @NotNull ProgressIndicator indicator) {
       patternSuffix = pattern.substring(from);
-      matcher = NameUtil.buildMatcher((from > 0 ? " " : "*") + patternSuffix, NameUtil.MatchingCaseSensitivity.NONE);
+      boolean preferStartMatches = from == 0 && !patternSuffix.startsWith("*");
+      String matchPattern = (from > 0 ? " " : "*") + patternSuffix;
+
+      NameUtil.MatcherBuilder builder = NameUtil.buildMatcher(matchPattern).withCaseSensitivity(NameUtil.MatchingCaseSensitivity.NONE);
+      if (preferStartMatches) {
+        builder.preferringStartMatches();
+      }
+
+      this.matcher = builder.build();
       this.indicator = indicator;
     }
 
@@ -355,7 +368,7 @@ public class GotoFileItemProvider extends DefaultChooseByNameItemProvider {
         }
       }
 
-      List<List<MatchResult>> groups = groupByMatchingDegree(!parameters.getCompletePattern().startsWith("*"), matchingNames);
+      List<List<MatchResult>> groups = groupByMatchingDegree(matchingNames);
       for (List<MatchResult> group : groups) {
         JBIterable<FoundItemDescriptor<PsiFileSystemItem>> filesMatchingPath = getFilesMatchingPath(parameters, group, dirMatcher, indicator);
         Iterable<FoundItemDescriptor<PsiFileSystemItem>> matchedFiles =
@@ -389,13 +402,13 @@ public class GotoFileItemProvider extends DefaultChooseByNameItemProvider {
     }
 
     @NotNull
-    private List<List<MatchResult>> groupByMatchingDegree(boolean preferStartMatches, @NotNull List<MatchResult> matchingNames) {
+    private List<List<MatchResult>> groupByMatchingDegree(@NotNull List<MatchResult> matchingNames) {
       Comparator<MatchResult> comparator = (mr1, mr2) -> {
         boolean exactPrefix1 = StringUtil.startsWith(mr1.elementName, patternSuffix);
         boolean exactPrefix2 = StringUtil.startsWith(mr2.elementName, patternSuffix);
         if (exactPrefix1 && exactPrefix2) return 0;
         if (exactPrefix1 != exactPrefix2) return exactPrefix1 ? -1 : 1;
-        return mr1.compareDegrees(mr2, preferStartMatches);
+        return mr1.compareDegrees(mr2);
       };
 
       return sortAndGroup(matchingNames, comparator);

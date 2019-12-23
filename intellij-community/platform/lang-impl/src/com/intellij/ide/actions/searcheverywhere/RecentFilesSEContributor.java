@@ -62,7 +62,12 @@ public class RecentFilesSEContributor extends FileSearchEverywhereContributor {
     }
 
     String searchString = filterControlSymbols(pattern);
-    MinusculeMatcher matcher = NameUtil.buildMatcher("*" + searchString).build();
+    boolean preferStartMatches = !searchString.startsWith("*");
+    NameUtil.MatcherBuilder builder = NameUtil.buildMatcher("*" + searchString);
+    if (preferStartMatches) {
+      builder = builder.preferringStartMatches();
+    }
+    MinusculeMatcher matcher = builder.build();
     List<VirtualFile> opened = Arrays.asList(FileEditorManager.getInstance(myProject).getSelectedFiles());
     List<VirtualFile> history = Lists.reverse(EditorHistoryManager.getInstance(myProject).getFileList());
 
