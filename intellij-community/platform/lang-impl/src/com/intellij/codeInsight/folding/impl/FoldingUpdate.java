@@ -31,6 +31,7 @@ import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
+import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
@@ -78,7 +79,7 @@ public class FoldingUpdate {
                                                                       final Project project,
                                                                       final Editor editor,
                                                                       final boolean applyDefaultState) {
-
+    PsiUtilCore.ensureValid(file);
     final List<RegionInfo> elementsToFold = getFoldingsFor(file, document, quick);
     final UpdateFoldRegionsOperation operation = new UpdateFoldRegionsOperation(project, editor, file, elementsToFold,
                                                                                 applyDefaultStateMode(applyDefaultState),
@@ -88,12 +89,18 @@ public class FoldingUpdate {
     Runnable runnable = () -> {
       if (alreadyExecuted.compareAndSet(false, true)) {
         int curLength = editor.getDocument().getTextLength();
-        boolean committed = PsiDocumentManager.getInstance(project).isCommitted(document);
+        PsiDocumentManager pdm = PsiDocumentManager.getInstance(project);
+        boolean committed = pdm.isCommitted(document);
         if (documentLength != curLength || !committed) {
-          LOG.error("Document has changed since fold regions were calculated: " +
-                    "lengths " + documentLength + " vs " + curLength + ", " +
-                    "document=" + document + ", " +
-                    "committed=" + committed);
+          Document fileDoc = file.getViewProvider().getDocument();
+          PsiFile docFile = pdm.getCachedPsiFile(document);
+          LOG.error("Document has changed since fold regions were calculated:\n" +
+                    "  lengths: " + documentLength + " vs " + curLength + "\n" +
+                    "  document=" + document + "\n" +
+                    "  file.document=" + (fileDoc == document ? "same" : fileDoc) + "\n" +
+                    "  document.file=" + (docFile == file ? "same" : docFile) + "\n" +
+                    "  committed=" + committed + "\n" +
+                    "  file.valid=" + file);
         }
         editor.getFoldingModel().runBatchFoldingOperationDoNotCollapseCaret(operation);
       }
