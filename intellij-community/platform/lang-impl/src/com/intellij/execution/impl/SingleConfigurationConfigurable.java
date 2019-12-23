@@ -3,6 +3,7 @@ package com.intellij.execution.impl;
 
 import com.intellij.execution.ExecutionBundle;
 import com.intellij.execution.Executor;
+import com.intellij.execution.RunOnTargetComboBox;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.runners.ProgramRunner;
@@ -14,7 +15,6 @@ import com.intellij.icons.AllIcons;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.DataKey;
 import com.intellij.openapi.application.Experiments;
-import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
@@ -560,10 +560,11 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
 
     private void createUIComponents() {
       myComponentPlace = new NonOpaquePanel();
-      myRunOnComboBox = new RunOnTargetComboBox(myProject);
+      Project project = getConfiguration().getProject();
+      myRunOnComboBox = new RunOnTargetComboBox(project);
       myManageTargetsLabel = LinkLabel.create(ExecutionBundle.message("edit.run.configuration.run.configuration.manage.targets.label"), () -> {
             String selectedName = ((RunOnTargetComboBox)myRunOnComboBox).getSelectedTargetName();
-            TargetEnvironmentsConfigurable configurable = new TargetEnvironmentsConfigurable(myProject, selectedName);
+            TargetEnvironmentsConfigurable configurable = new TargetEnvironmentsConfigurable(project, selectedName);
             if (ShowSettingsUtil.getInstance().editConfigurable(myWholePanel, configurable)) {
               resetRunOnComboBox(selectedName);
             }
