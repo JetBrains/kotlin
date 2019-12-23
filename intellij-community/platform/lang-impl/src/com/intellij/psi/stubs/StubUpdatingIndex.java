@@ -47,6 +47,15 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
   public static final ID<Integer, SerializedStubTree> INDEX_ID = ID.create("Stubs");
 
   private static final FileBasedIndex.InputFilter INPUT_FILTER = file -> canHaveStub(file);
+  private final StubForwardIndexExternalizer<?> myStubIndexesExternalizer;
+
+  public StubUpdatingIndex() {
+    myStubIndexesExternalizer = SerializedStubTree.IDE_USED_EXTERNALIZER;
+  }
+
+  public StubUpdatingIndex(StubForwardIndexExternalizer<?> stubIndexesExternalizer) {
+    myStubIndexesExternalizer = stubIndexesExternalizer;
+  }
 
   public static boolean canHaveStub(@NotNull VirtualFile file) {
     Project project = ProjectUtil.guessProjectForFile(file);
@@ -238,7 +247,7 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
   @NotNull
   @Override
   public DataExternalizer<SerializedStubTree> getValueExternalizer() {
-    return new SerializedStubTreeDataExternalizer();
+    return new SerializedStubTreeDataExternalizer(true, null, myStubIndexesExternalizer);
   }
 
   @NotNull

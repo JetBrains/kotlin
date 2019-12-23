@@ -12,14 +12,14 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * @author peter
  */
-enum RebuildStatus {
+public enum RebuildStatus {
   OK,
   REQUIRES_REBUILD,
   DOING_REBUILD;
 
   private static final Map<ID<?, ?>, AtomicReference<RebuildStatus>> ourRebuildStatus = new THashMap<>();
 
-  static void registerIndex(ID<?, ?> indexId) {
+  public static void registerIndex(ID<?, ?> indexId) {
     ourRebuildStatus.put(indexId, new AtomicReference<>(OK));
   }
 

@@ -37,7 +37,7 @@ public final class StubProcessingHelper extends StubProcessingHelperBase {
         return null;
       }
       SerializedStubTree tree = data.values().iterator().next();
-      StubIdList stubIdList = tree.restoreIndexedStubs(SerializedStubTree.IDE_USED_EXTERNALIZER, indexKey, key);
+      StubIdList stubIdList = tree.restoreIndexedStubs(indexKey, key);
       if (stubIdList == null) {
         LOG.error("Stub ids not found for key in index = " + indexKey.getName() + ", file type = " + file.getFileType());
         onInternalError(file);

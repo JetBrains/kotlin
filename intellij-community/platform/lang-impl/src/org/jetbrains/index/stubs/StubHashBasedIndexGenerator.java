@@ -1,10 +1,10 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.index.stubs;
 
+import com.google.common.collect.Maps;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.newvfs.persistent.ContentHashesUtil;
 import com.intellij.psi.stubs.*;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileBasedIndexExtension;
@@ -26,19 +26,19 @@ public class StubHashBasedIndexGenerator extends HashBasedIndexGenerator<Integer
   private final Set<StubIndexKey> myUsedKeys = new HashSet<>();
 
   public StubHashBasedIndexGenerator(@NotNull File out) {
-    super(EnumeratorIntegerDescriptor.INSTANCE, new SerializedStubTreeDataExternalizer(false, null), getExtension(), out, out);
+    super(EnumeratorIntegerDescriptor.INSTANCE, new SerializedStubTreeDataExternalizer(
+            true,
+            null,
+            StubForwardIndexExternalizer.FileLocalStubForwardIndexExternalizer.INSTANCE), getExtension(), out);
     for (StubIndexExtension<?, ?> stubIndexExtension : StubIndexExtension.EP_NAME.getExtensionList()) {
-      myStubIndexesGeneratorMap.put(stubIndexExtension.getKey(), new HashBasedIndexGenerator(stubIndexExtension.getKeyDescriptor(),
-                                                                                             StubIndexImpl.StubIdExternalizer.INSTANCE,
-                                                                                             StubIndexImpl
-                                                                                               .wrapStubIndexExtension(stubIndexExtension),
-                                                                                             new File(out, getStubsDir()),
-                                                                                             out) {
-        @NotNull
-        @Override
-        protected ContentHashesUtil.HashEnumerator getHashEnumerator() {
-          return StubHashBasedIndexGenerator.this.myHashEnumerator;
-        }
+      FileBasedIndexExtension<?, Void> ex = StubIndexImpl
+              .wrapStubIndexExtension(stubIndexExtension);
+      myStubIndexesGeneratorMap.put(stubIndexExtension.getKey(), new HashBasedIndexGenerator(ex.getKeyDescriptor(),
+              ex.getValueExternalizer(),
+              ex,
+              new File(out, getStubsDir())
+      ) {
+
       });
     }
   }
@@ -59,7 +59,8 @@ public class StubHashBasedIndexGenerator extends HashBasedIndexGenerator<Integer
       Map<Object, StubIdList> value = entry.getValue();
       myUsedKeys.add(key);
       MapReduceIndex index = (MapReduceIndex)myStubIndexesGeneratorMap.get(key).getIndex();
-      index.updateWithMap(new UpdateData(hashId, value, () -> new EmptyInputDataDiffBuilder(hashId), index.getExtension().getName(), null));
+      Map<Object, Object> reducedValue = Maps.asMap(value.keySet(), k -> null);
+      index.updateWithMap(new UpdateData(hashId, reducedValue, () -> new EmptyInputDataDiffBuilder(hashId), index.getExtension().getName(), null));
     }
   }
 
@@ -83,6 +84,6 @@ public class StubHashBasedIndexGenerator extends HashBasedIndexGenerator<Integer
   }
 
   private static StubUpdatingIndex getExtension() {
-    return (StubUpdatingIndex)FileBasedIndexExtension.EXTENSION_POINT_NAME.extensions().filter(ex -> ex instanceof StubUpdatingIndex).findAny().get();
+    return (new StubUpdatingIndex(StubForwardIndexExternalizer.FileLocalStubForwardIndexExternalizer.INSTANCE));
   }
 }

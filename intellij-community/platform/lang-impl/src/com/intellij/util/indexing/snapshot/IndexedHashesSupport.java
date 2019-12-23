@@ -65,6 +65,17 @@ public class IndexedHashesSupport {
   }
 
   @NotNull
+  public static byte[] getOrInitIndexedHash(@NotNull FileContentImpl content, boolean fromDocument) {
+    byte[] hash = content.getHash(fromDocument);
+    if (hash == null) {
+      initIndexedHash(content);
+      hash = content.getHash(fromDocument);
+      LOG.assertTrue(hash != null);
+    }
+    return hash;
+  }
+
+  @NotNull
   private static byte[] calculateIndexedHashForFileContent(@NotNull FileContentImpl content, boolean binary) {
     byte[] contentHash = null;
     if (content.isPhysicalContent()) {
