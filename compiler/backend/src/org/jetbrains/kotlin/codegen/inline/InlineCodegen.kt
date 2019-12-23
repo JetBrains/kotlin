@@ -118,28 +118,29 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         AsmUtil.genThrow(codegen.v, "java/lang/UnsupportedOperationException", message)
     }
 
-    protected fun endCall(result: InlineResult) {
+    protected fun endCall(result: InlineResult, registerLineNumberAfterwards: Boolean) {
         leaveTemps()
 
         codegen.propagateChildReifiedTypeParametersUsages(result.reifiedTypeParametersUsages)
 
         state.factory.removeClasses(result.calcClassesToRemove())
 
-        codegen.markLineNumberAfterInlineIfNeeded()
+        codegen.markLineNumberAfterInlineIfNeeded(registerLineNumberAfterwards)
     }
 
     fun performInline(
         typeArguments: List<TypeParameterMarker>?,
         inlineDefaultLambdas: Boolean,
         mapDefaultSignature: Boolean,
-        typeSystem: TypeSystemCommonBackendContext
+        typeSystem: TypeSystemCommonBackendContext,
+        registerLineNumberAfterwards: Boolean
     ) {
         var nodeAndSmap: SMAPAndMethodNode? = null
         try {
             nodeAndSmap = createInlineMethodNode(
                 functionDescriptor, methodOwner, jvmSignature, mapDefaultSignature, typeArguments, typeSystem, state, sourceCompiler
             )
-            endCall(inlineCall(nodeAndSmap, inlineDefaultLambdas))
+            endCall(inlineCall(nodeAndSmap, inlineDefaultLambdas), registerLineNumberAfterwards)
         } catch (e: CompilationException) {
             throw e
         } catch (e: InlineException) {

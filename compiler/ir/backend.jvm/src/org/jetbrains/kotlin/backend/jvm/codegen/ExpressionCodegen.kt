@@ -1119,7 +1119,7 @@ class ExpressionCodegen(
         //TODO
     }
 
-    override fun markLineNumberAfterInlineIfNeeded() {
+    override fun markLineNumberAfterInlineIfNeeded(registerLineNumberAfterwards: Boolean) {
         // Inline function has its own line number which is in a separate instance of codegen,
         // therefore we need to reset lastLineNumber to force a line number generation after visiting inline function.
         lastLineNumber = -1
