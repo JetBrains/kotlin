@@ -9,9 +9,11 @@ import com.google.common.collect.Lists
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.VariableAccessorDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
 import org.jetbrains.kotlin.diagnostics.Errors.*
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext.*
@@ -25,7 +27,6 @@ import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemCompleter
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
-import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.FROM_COMPLETER
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableTypeConstructor
 import org.jetbrains.kotlin.resolve.calls.inference.toHandle
@@ -36,9 +37,7 @@ import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.tower.PSICallResolver
-import org.jetbrains.kotlin.resolve.calls.tower.ResolutionResultCallInfo
 import org.jetbrains.kotlin.resolve.constants.IntegerLiteralTypeConstructor
-import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.ScopeUtils
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
@@ -87,7 +86,7 @@ class DelegatedPropertyResolver(
                 ScopeUtils.makeScopeForPropertyInitializer(propertyHeaderScope, variableDescriptor)
             else propertyHeaderScope
 
-        val byExpressionType =resolveDelegateExpression(
+        val byExpressionType = resolveDelegateExpression(
             delegateExpression, property, variableDescriptor, initializerScope, trace, outerDataFlowInfo, inferenceSession
         )
 
@@ -372,7 +371,7 @@ class DelegatedPropertyResolver(
         val resolutionResult =
             fakeCallResolver.makeAndResolveFakeCallInContext(receiver, context, arguments, functionName, delegateExpression)
 
-        trace.record(BindingContext.DELEGATED_PROPERTY_CALL, accessor, resolutionResult.first)
+        trace.record(DELEGATED_PROPERTY_CALL, accessor, resolutionResult.first)
 
         return resolutionResult.second
     }
@@ -475,9 +474,18 @@ class DelegatedPropertyResolver(
         dataFlowInfo: DataFlowInfo,
         inferenceSession: InferenceSession
     ): KotlinType {
-        val traceToResolveDelegatedProperty = TemporaryBindingTrace.create(trace, "Trace to resolve delegated property")
-
         val propertyExpectedType = if (property.typeReference != null) variableDescriptor.type else NO_EXPECTED_TYPE
+
+        resolveWithNewInference(
+            delegateExpression,
+            variableDescriptor,
+            scopeForDelegate,
+            trace,
+            dataFlowInfo,
+            inferenceSession
+        )?.let { return it }
+
+        val traceToResolveDelegatedProperty = TemporaryBindingTrace.create(trace, "Trace to resolve delegated property")
         val completer = ConstraintSystemCompleterImpl(
             property,
             propertyExpectedType,
@@ -492,12 +500,10 @@ class DelegatedPropertyResolver(
             traceToResolveDelegatedProperty.record(CONSTRAINT_SYSTEM_COMPLETER, it, completer)
         }
 
-        val delegatedPropertyTypeFromNI =
-            resolveWithNewInference(delegateExpression, variableDescriptor, scopeForDelegate, trace, dataFlowInfo, inferenceSession)
         val delegateType = expressionTypingServices.safeGetType(
             scopeForDelegate,
             delegateExpression,
-            delegatedPropertyTypeFromNI ?: NO_EXPECTED_TYPE,
+            NO_EXPECTED_TYPE,
             dataFlowInfo,
             inferenceSession,
             traceToResolveDelegatedProperty
@@ -548,9 +554,9 @@ class DelegatedPropertyResolver(
                     delegateType = provideDelegateDescriptor.returnType ?: return null
                     delegateDataFlow = provideDelegateResults.resultingCall.dataFlowInfoForArguments.resultInfo
                 }
+                trace.record(PROVIDE_DELEGATE_RESOLVED_CALL, variableDescriptor, provideDelegateResults.resultingCall)
             }
         }
-
         return inferDelegateTypeFromGetSetValueMethods(
             delegateExpression, variableDescriptor, scopeForDelegate, traceToResolveDelegatedProperty, delegateType, delegateDataFlow
         )
@@ -560,7 +566,7 @@ class DelegatedPropertyResolver(
         delegateExpression: KtExpression,
         variableDescriptor: VariableDescriptorWithAccessors,
         scopeForDelegate: LexicalScope,
-        trace: BindingTrace,
+        trace: TemporaryBindingTrace,
         delegateType: KotlinType,
         delegateDataFlow: DataFlowInfo
     ): UnwrappedType {
@@ -575,6 +581,24 @@ class DelegatedPropertyResolver(
         val context = createContextForGetSetValueMethods(
             variableDescriptor, scopeForDelegate, delegateDataFlow, trace, inferenceSession
         )
+
+        fun recordResolvedDelegateOrReportError(
+            result: OverloadResolutionResults<FunctionDescriptor>,
+            isGet: Boolean
+        ) {
+            val accessor = when (isGet) {
+                true -> variableDescriptor.getter
+                false -> variableDescriptor.setter
+            }
+            requireNotNull(accessor) {
+                "Delegated property should have getter/setter $variableDescriptor ${delegateExpression.text}"
+            }
+            if (result.isSuccess) {
+                recordDelegateOperatorResults(result, variableDescriptor, accessor, trace)
+            } else {
+                reportGetSetValueResolutionError(result, accessor, delegateExpression, delegateType, trace, isGet)
+            }
+        }
 
         getGetSetValueMethod(
             variableDescriptor, delegateExpression, delegateType,
@@ -591,11 +615,19 @@ class DelegatedPropertyResolver(
         }
 
         val resolutionCallbacks = psiCallResolver.createResolutionCallbacks(trace, inferenceSession, context = null)
-        inferenceSession.resolveCandidates(resolutionCallbacks)
+        val resolutionResults = inferenceSession.resolveCandidates(resolutionCallbacks)
+
+        for ((name, isGet) in listOf(OperatorNameConventions.GET_VALUE to true, OperatorNameConventions.SET_VALUE to false)) {
+            val result = resolutionResults.firstOrNull {
+                it.resolutionResult.resultCallAtom()?.atom?.name == name
+            }
+            result?.let { recordResolvedDelegateOrReportError(it.overloadResolutionResults, isGet) }
+        }
 
         val resolvedDelegateType = extractResolvedDelegateType(delegateExpression, trace)
-
-        return TypeSubstitutor.create(AnonymousTypeSubstitutor).safeSubstitute(resolvedDelegateType, Variance.INVARIANT).unwrap()
+        trace.recordType(delegateExpression, resolvedDelegateType)
+        trace.commit()
+        return resolvedDelegateType.unwrap()
     }
 
     private fun extractResolvedDelegateType(delegateExpression: KtExpression, trace: BindingTrace): KotlinType {
@@ -724,13 +756,3 @@ class DelegatedPropertyResolver(
     }
 }
 
-private object AnonymousTypeSubstitutor : TypeConstructorSubstitution() {
-    override fun get(key: TypeConstructor): TypeProjection? {
-        val declarationDescriptor = key.declarationDescriptor
-        if (declarationDescriptor is ClassifierDescriptor && DescriptorUtils.isAnonymousObject(declarationDescriptor)) {
-            return key.supertypes.firstOrNull()?.let(::TypeProjectionImpl)
-        }
-
-        return null
-    }
-}

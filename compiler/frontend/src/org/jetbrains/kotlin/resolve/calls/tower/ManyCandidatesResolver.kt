@@ -66,36 +66,62 @@ abstract class ManyCandidatesResolver<D : CallableDescriptor>(
     fun resolveCandidates(resolutionCallbacks: KotlinResolutionCallbacks): List<ResolutionResultCallInfo<D>> {
         val resolvedCallsInfo = partiallyResolvedCallsInfo.toList()
 
-        val commonSystem = NewConstraintSystemImpl(callComponents.constraintInjector, builtIns).apply {
-            addOtherSystem(currentConstraintSystem())
-        }
-
-        prepareForCompletion(commonSystem, resolvedCallsInfo)
-
         val diagnosticHolder = KotlinDiagnosticsHolder.SimpleHolder()
 
-        kotlinConstraintSystemCompleter.runCompletion(
-            commonSystem.asConstraintSystemCompleterContext(),
-            KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.FULL,
-            resolvedCallsInfo.map { it.callResolutionResult },
-            builtIns.unitType
-        ) {
-            postponedArgumentsAnalyzer.analyze(
-                commonSystem.asPostponedArgumentsAnalyzerContext(), resolutionCallbacks, it, diagnosticHolder
-            )
+        val hasOneSuccessfulAndOneErrorCandidate = if (resolvedCallsInfo.size > 1) {
+            val hasErrors = resolvedCallsInfo.map {
+                it.callResolutionResult.constraintSystem.errors.isNotEmpty() || it.callResolutionResult.diagnostics.isNotEmpty()
+            }
+            hasErrors.any { it } && !hasErrors.all { it }
+        } else {
+            false
+        }
+
+        fun runCompletion(constraintSystem: NewConstraintSystem, atoms: List<ResolvedAtom>) {
+            kotlinConstraintSystemCompleter.runCompletion(
+                constraintSystem.asConstraintSystemCompleterContext(),
+                KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.FULL,
+                atoms,
+                builtIns.unitType
+            ) {
+                postponedArgumentsAnalyzer.analyze(
+                    constraintSystem.asPostponedArgumentsAnalyzerContext(), resolutionCallbacks, it, diagnosticHolder
+                )
+            }
+
         }
 
         val allCandidates = arrayListOf<ResolutionResultCallInfo<D>>()
 
-        resolvedCallsInfo.mapTo(allCandidates) {
-            val resolutionResult = it.asCallResolutionResult(diagnosticHolder, commonSystem)
-            ResolutionResultCallInfo(
-                resolutionResult, psiCallResolver.convertToOverloadResolutionResults(it.context, resolutionResult, it.tracingStrategy)
-            )
+        if (hasOneSuccessfulAndOneErrorCandidate) {
+            for (callInfo in resolvedCallsInfo) {
+                val system = NewConstraintSystemImpl(callComponents.constraintInjector, builtIns).apply {
+                    addOtherSystem(callInfo.callResolutionResult.constraintSystem)
+                }
+                runCompletion(system, listOf(callInfo.callResolutionResult))
+                val resolutionResult = callInfo.asCallResolutionResult(diagnosticHolder, system)
+                allCandidates += ResolutionResultCallInfo(
+                    resolutionResult,
+                    psiCallResolver.convertToOverloadResolutionResults(callInfo.context, resolutionResult, callInfo.tracingStrategy)
+                )
+            }
+        } else {
+            val commonSystem = NewConstraintSystemImpl(callComponents.constraintInjector, builtIns).apply {
+                addOtherSystem(currentConstraintSystem())
+            }
+
+            prepareForCompletion(commonSystem, resolvedCallsInfo)
+            runCompletion(commonSystem, resolvedCallsInfo.map { it.callResolutionResult })
+            resolvedCallsInfo.mapTo(allCandidates) {
+                val resolutionResult = it.asCallResolutionResult(diagnosticHolder, commonSystem)
+                ResolutionResultCallInfo(
+                    resolutionResult, psiCallResolver.convertToOverloadResolutionResults(it.context, resolutionResult, it.tracingStrategy)
+                )
+            }
         }
 
-        errorCallsInfo.mapTo(allCandidates) { ResolutionResultCallInfo(it.callResolutionResult, it.result) }
-
+        val results = allCandidates.map { it.resolutionResult }
+        errorCallsInfo.filter { it.callResolutionResult !in results }.mapTo(allCandidates) { ResolutionResultCallInfo(it.callResolutionResult, it.result) }
         return allCandidates
     }
 

@@ -2908,6 +2908,34 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
                 runTest("compiler/testData/diagnostics/testsWithStdLib/inference/annotationsForResolve/resolveWithOnlyInputTypesAnnotation.kt");
             }
         }
+
+        @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/inference/delegates")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Delegates extends AbstractDiagnosticsTestWithStdLibUsingJavac {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInDelegates() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/inference/delegates"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+            }
+
+            @TestMetadata("kt31219.kt")
+            public void testKt31219() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/inference/delegates/kt31219.kt");
+            }
+
+            @TestMetadata("kt31679.kt")
+            public void testKt31679() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/inference/delegates/kt31679.kt");
+            }
+
+            @TestMetadata("kt32249.kt")
+            public void testKt32249() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/inference/delegates/kt32249.kt");
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/inline")
