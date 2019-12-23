@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public class BraceHighlighter implements StartupActivity {
+public class BraceHighlighter implements StartupActivity.DumbAware {
   private final Alarm myAlarm = new Alarm();
 
   @Override
