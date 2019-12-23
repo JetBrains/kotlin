@@ -1,40 +1,44 @@
 {
-  "5": {
+  "6": {
     "pos": {
       "1": [
         {
           "specVersion": "0.1-213",
           "casesNumber": 0,
           "description": "check postfix increment expression has the same type as its operand expression",
-          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-increment-expression/p-6/pos/1.2.kt",
           "unexpectedBehaviour": false
         },
         {
           "specVersion": "0.1-213",
           "casesNumber": 0,
-          "description": "",
-          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-6/pos/1.2.kt",
+          "description": " check postfix increment expression",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  },
+  "5": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 0,
+          "description": " check postfix increment expression",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-increment-expression/p-6/pos/1.1.kt",
           "unexpectedBehaviour": false
         },
         {
           "specVersion": "0.1-213",
           "casesNumber": 0,
-          "description": "",
-          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-6/pos/1.1.kt",
+          "description": "check postfix increment expression",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-increment-expression/p-1/pos/1.2.kt",
           "unexpectedBehaviour": false
         },
         {
           "specVersion": "0.1-213",
           "casesNumber": 0,
-          "description": "",
-          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-1/pos/1.2.kt",
-          "unexpectedBehaviour": false
-        },
-        {
-          "specVersion": "0.1-213",
-          "casesNumber": 0,
-          "description": "",
-          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-1/pos/1.1.kt",
+          "description": "check postfix increment expression",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-increment-expression/p-1/pos/1.1.kt",
           "unexpectedBehaviour": false
         },
         {
@@ -46,37 +50,19 @@
       ]
     }
   },
-  "6": {
-    "pos": {
-      "1": [
-        {
-          "specVersion": "0.1-213",
-          "casesNumber": 0,
-          "description": "",
-          "unexpectedBehaviour": false
-        },
-        {
-          "specVersion": "0.1-213",
-          "casesNumber": 0,
-          "description": "",
-          "unexpectedBehaviour": false
-        }
-      ]
-    }
-  },
   "1": {
     "pos": {
       "1": [
         {
           "specVersion": "0.1-213",
           "casesNumber": 0,
-          "description": "",
+          "description": "check postfix increment expression",
           "unexpectedBehaviour": false
         },
         {
           "specVersion": "0.1-213",
           "casesNumber": 0,
-          "description": "",
+          "description": "check postfix increment expression",
           "unexpectedBehaviour": false
         }
       ]
@@ -88,13 +74,13 @@
         {
           "specVersion": "0.1-213",
           "casesNumber": 0,
-          "description": "check for a prefix increment expression ++A expression A must be an assignable expression (a navigation expression referring to a mutable property)",
+          "description": "check for A++ expression A must be an assignable expression (a navigation expression referring to a mutable property)",
           "unexpectedBehaviour": false
         },
         {
           "specVersion": "0.1-213",
           "casesNumber": 0,
-          "description": "check for a prefix increment expression ++A expression A must be an assignable expression (an indexing expression)",
+          "description": "check for a  increment expression A++ expression A must be an assignable expression (an indexing expression)",
           "unexpectedBehaviour": false
         }
       ]

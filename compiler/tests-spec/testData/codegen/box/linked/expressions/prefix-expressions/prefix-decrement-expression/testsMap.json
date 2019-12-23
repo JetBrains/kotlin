@@ -1,25 +1,14 @@
 {
-  "6": {
-    "pos": {
-      "1": [
-        {
-          "specVersion": "0.1-213",
-          "casesNumber": 0,
-          "description": "",
-          "unexpectedBehaviour": false
-        },
-        {
-          "specVersion": "0.1-213",
-          "casesNumber": 0,
-          "description": "",
-          "unexpectedBehaviour": false
-        }
-      ]
-    }
-  },
   "5": {
     "pos": {
       "1": [
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 0,
+          "description": "check postfix decrement expression has the same type as its operand expression",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression/p-6/pos/1.2.kt",
+          "unexpectedBehaviour": false
+        },
         {
           "specVersion": "0.1-213",
           "casesNumber": 0,
@@ -52,6 +41,24 @@
           "specVersion": "0.1-213",
           "casesNumber": 0,
           "description": "check the result of dec() is assigned to A, the return type of inc must be a subtype of A.",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  },
+  "6": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 0,
+          "description": "",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 0,
+          "description": "",
           "unexpectedBehaviour": false
         }
       ]
