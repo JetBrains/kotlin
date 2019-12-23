@@ -12,7 +12,7 @@ import com.intellij.ide.startup.StartupManagerEx;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.application.ModalityState;
-import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.project.DumbAwareRunnable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
@@ -54,8 +54,6 @@ public final class BuildContentManagerImpl implements BuildContentManager {
   private final Project myProject;
   private final Map<Content, Pair<Icon, AtomicInteger>> liveContentsMap = ContainerUtil.newConcurrentMap();
 
-  private static final Logger LOG = Logger.getInstance(BuildContentManagerImpl.class);
-
   public BuildContentManagerImpl(@NotNull Project project) {
     myProject = project;
   }
@@ -91,12 +89,17 @@ public final class BuildContentManagerImpl implements BuildContentManager {
     return toolWindow;
   }
 
-  private void invokeLaterIfNeeded(@NotNull Runnable runnable) {
+  private void invokeLaterIfNeeded(@NotNull DumbAwareRunnable runnable) {
     if (myProject.isDefault()) {
       return;
     }
-    LOG.assertTrue(StartupManagerEx.getInstanceEx(myProject).startupActivityPassed());
-    GuiUtils.invokeLaterIfNeeded(runnable, ModalityState.defaultModalityState(), myProject.getDisposed());
+    if (!StartupManagerEx.getInstanceEx(myProject).startupActivityPassed()) {
+      StartupManagerEx.getInstanceEx(myProject).registerPostStartupDumbAwareActivity(
+        () -> GuiUtils.invokeLaterIfNeeded(runnable, ModalityState.defaultModalityState(), myProject.getDisposed()));
+    }
+    else {
+      GuiUtils.invokeLaterIfNeeded(runnable, ModalityState.defaultModalityState(), myProject.getDisposed());
+    }
   }
 
   @Override
