@@ -1,0 +1,96 @@
+{
+  "6": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 0,
+          "description": "",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 0,
+          "description": "",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  },
+  "5": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 0,
+          "description": "",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-6/pos/1.2.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 0,
+          "description": "",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-6/pos/1.1.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 0,
+          "description": "",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-1/pos/1.2.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 0,
+          "description": "A prefix decrement expression is an expression which uses the prefix form of operator --",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-1/pos/1.1.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 0,
+          "description": "check the result of dec() is assigned to A, the return type of inc must be a subtype of A.",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  },
+  "1": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 0,
+          "description": "",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 0,
+          "description": "A prefix decrement expression is an expression which uses the prefix form of operator --",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  },
+  "4": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 0,
+          "description": "check for a prefix decrement expression --A expression A must be an assignable expression (a navigation expression referring to a mutable property)",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 0,
+          "description": "check for a prefix increment expression --A expression A must be an assignable expression (an indexing expression)",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}

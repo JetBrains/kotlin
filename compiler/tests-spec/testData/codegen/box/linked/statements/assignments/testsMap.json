@@ -8,6 +8,13 @@
           "description": "check for a prefix increment expression ++A expression A must be an assignable expression (a navigation expression referring to a mutable property)",
           "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-4/pos/1.2.kt",
           "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 0,
+          "description": "check for a prefix decrement expression --A expression A must be an assignable expression (a navigation expression referring to a mutable property)",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-4/pos/1.2.kt",
+          "unexpectedBehaviour": false
         }
       ],
       "3": [
@@ -16,6 +23,13 @@
           "casesNumber": 0,
           "description": "check for a prefix increment expression ++A expression A must be an assignable expression (an indexing expression)",
           "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-4/pos/1.1.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 0,
+          "description": "check for a prefix increment expression --A expression A must be an assignable expression (an indexing expression)",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-4/pos/1.1.kt",
           "unexpectedBehaviour": false
         }
       ]

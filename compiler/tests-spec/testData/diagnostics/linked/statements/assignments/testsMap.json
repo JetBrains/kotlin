@@ -8,6 +8,13 @@
           "description": "check unsafe prefix increment expression call for an assignable expression",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-increment-expression/p-4/neg/1.1.kt",
           "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 2,
+          "description": "check unsafe prefix decrement expression call for an assignable expression",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-decrement-expression/p-4/neg/1.1.kt",
+          "unexpectedBehaviour": false
         }
       ]
     }

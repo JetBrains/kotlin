@@ -25,7 +25,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
     }
 
     public void testAllFilesPresentInBox() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/codegen/box"), Pattern.compile("^(.+)\\.kt$"), true, "helpers", "templates", "linked/declarations", "linked/statements", "linked/expressions/equality-expressions/reference-equality-expressions/p-1/neg", "linked/expressions/built-in-types-and-their-semantics/kotlin.unit/p-1/neg", "linked/expressions/prefix-expressions/prefix-increment-expression/p-1/neg");
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/codegen/box"), Pattern.compile("^(.+)\\.kt$"), true, "helpers", "templates", "linked/declarations", "linked/statements", "linked/expressions/equality-expressions/reference-equality-expressions/p-1/neg", "linked/expressions/built-in-types-and-their-semantics/kotlin.unit/p-1/neg");
     }
 
     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked")
@@ -37,7 +37,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
         }
 
         public void testAllFilesPresentInLinked() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked"), Pattern.compile("^(.+)\\.kt$"), true, "declarations", "statements", "expressions/equality-expressions/reference-equality-expressions/p-1/neg", "expressions/built-in-types-and-their-semantics/kotlin.unit/p-1/neg", "expressions/prefix-expressions/prefix-increment-expression/p-1/neg");
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked"), Pattern.compile("^(.+)\\.kt$"), true, "declarations", "statements", "expressions/equality-expressions/reference-equality-expressions/p-1/neg", "expressions/built-in-types-and-their-semantics/kotlin.unit/p-1/neg");
         }
 
         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions")
@@ -49,7 +49,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
             }
 
             public void testAllFilesPresentInExpressions() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions"), Pattern.compile("^(.+)\\.kt$"), true, "equality-expressions/reference-equality-expressions/p-1/neg", "built-in-types-and-their-semantics/kotlin.unit/p-1/neg", "prefix-expressions/prefix-increment-expression/p-1/neg");
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions"), Pattern.compile("^(.+)\\.kt$"), true, "equality-expressions/reference-equality-expressions/p-1/neg", "built-in-types-and-their-semantics/kotlin.unit/p-1/neg");
             }
 
             @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/additive-expression")
@@ -1490,7 +1490,159 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                 }
 
                 public void testAllFilesPresentInPrefix_expressions() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions"), Pattern.compile("^(.+)\\.kt$"), true, "prefix-increment-expression/p-1/neg");
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class Prefix_decrement_expression extends AbstractBlackBoxCodegenTestSpec {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInPrefix_decrement_expression() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression"), Pattern.compile("^(.+)\\.kt$"), true);
+                    }
+
+                    @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-1")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class P_1 extends AbstractBlackBoxCodegenTestSpec {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                        }
+
+                        public void testAllFilesPresentInP_1() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-1"), Pattern.compile("^(.+)\\.kt$"), true);
+                        }
+
+                        @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-1/pos")
+                        @TestDataPath("$PROJECT_ROOT")
+                        @RunWith(JUnit3RunnerWithInners.class)
+                        public static class Pos extends AbstractBlackBoxCodegenTestSpec {
+                            private void runTest(String testDataFilePath) throws Exception {
+                                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                            }
+
+                            @TestMetadata("1.1.kt")
+                            public void test1_1() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-1/pos/1.1.kt");
+                            }
+
+                            @TestMetadata("1.2.kt")
+                            public void test1_2() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-1/pos/1.2.kt");
+                            }
+
+                            public void testAllFilesPresentInPos() throws Exception {
+                                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), true);
+                            }
+                        }
+                    }
+
+                    @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-4")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class P_4 extends AbstractBlackBoxCodegenTestSpec {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                        }
+
+                        public void testAllFilesPresentInP_4() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-4"), Pattern.compile("^(.+)\\.kt$"), true);
+                        }
+
+                        @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-4/pos")
+                        @TestDataPath("$PROJECT_ROOT")
+                        @RunWith(JUnit3RunnerWithInners.class)
+                        public static class Pos extends AbstractBlackBoxCodegenTestSpec {
+                            private void runTest(String testDataFilePath) throws Exception {
+                                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                            }
+
+                            @TestMetadata("1.1.kt")
+                            public void test1_1() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-4/pos/1.1.kt");
+                            }
+
+                            @TestMetadata("1.2.kt")
+                            public void test1_2() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-4/pos/1.2.kt");
+                            }
+
+                            public void testAllFilesPresentInPos() throws Exception {
+                                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-4/pos"), Pattern.compile("^(.+)\\.kt$"), true);
+                            }
+                        }
+                    }
+
+                    @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-5")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class P_5 extends AbstractBlackBoxCodegenTestSpec {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                        }
+
+                        public void testAllFilesPresentInP_5() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-5"), Pattern.compile("^(.+)\\.kt$"), true);
+                        }
+
+                        @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-5/pos")
+                        @TestDataPath("$PROJECT_ROOT")
+                        @RunWith(JUnit3RunnerWithInners.class)
+                        public static class Pos extends AbstractBlackBoxCodegenTestSpec {
+                            private void runTest(String testDataFilePath) throws Exception {
+                                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                            }
+
+                            @TestMetadata("1.1.kt")
+                            public void test1_1() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-5/pos/1.1.kt");
+                            }
+
+                            public void testAllFilesPresentInPos() throws Exception {
+                                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), true);
+                            }
+                        }
+                    }
+
+                    @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-6")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class P_6 extends AbstractBlackBoxCodegenTestSpec {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                        }
+
+                        public void testAllFilesPresentInP_6() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-6"), Pattern.compile("^(.+)\\.kt$"), true);
+                        }
+
+                        @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-6/pos")
+                        @TestDataPath("$PROJECT_ROOT")
+                        @RunWith(JUnit3RunnerWithInners.class)
+                        public static class Pos extends AbstractBlackBoxCodegenTestSpec {
+                            private void runTest(String testDataFilePath) throws Exception {
+                                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                            }
+
+                            @TestMetadata("1.1.kt")
+                            public void test1_1() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-6/pos/1.1.kt");
+                            }
+
+                            @TestMetadata("1.2.kt")
+                            public void test1_2() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-6/pos/1.2.kt");
+                            }
+
+                            public void testAllFilesPresentInPos() throws Exception {
+                                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-6/pos"), Pattern.compile("^(.+)\\.kt$"), true);
+                            }
+                        }
+                    }
                 }
 
                 @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression")
@@ -1502,7 +1654,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInPrefix_increment_expression() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression"), Pattern.compile("^(.+)\\.kt$"), true, "p-1/neg");
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression"), Pattern.compile("^(.+)\\.kt$"), true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-1")
@@ -1514,7 +1666,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInP_1() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-1"), Pattern.compile("^(.+)\\.kt$"), true, "neg");
+                            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-1"), Pattern.compile("^(.+)\\.kt$"), true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-1/pos")
