@@ -86,6 +86,7 @@ import com.intellij.openapi.wm.ToolWindowId;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.openapi.wm.ex.ProgressIndicatorEx;
 import com.intellij.openapi.wm.ex.ToolWindowManagerEx;
+import com.intellij.openapi.wm.impl.ToolWindowImpl;
 import com.intellij.pom.Navigatable;
 import com.intellij.pom.NonNavigatable;
 import com.intellij.util.ArrayUtil;
@@ -106,7 +107,10 @@ import java.util.function.Supplier;
 import static com.intellij.openapi.externalSystem.settings.AbstractExternalSystemLocalSettings.SyncType.*;
 import static com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil.doWriteAction;
 
-public final class ExternalSystemUtil {
+/**
+ * @author Denis Zhdanov
+ */
+public class ExternalSystemUtil {
   private static final Logger LOG = Logger.getInstance(ExternalSystemUtil.class);
 
   @NotNull private static final Map<String, String> RUNNER_IDS = new HashMap<>();
@@ -181,7 +185,16 @@ public final class ExternalSystemUtil {
 
   @Nullable
   public static ToolWindow ensureToolWindowContentInitialized(@NotNull Project project, @NotNull ProjectSystemId externalSystemId) {
-    return ToolWindowManager.getInstance(project).getToolWindow(externalSystemId.getReadableName());
+    final ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
+    if (toolWindowManager == null) return null;
+
+    final ToolWindow toolWindow = toolWindowManager.getToolWindow(externalSystemId.getReadableName());
+    if (toolWindow == null) return null;
+
+    if (toolWindow instanceof ToolWindowImpl) {
+      ((ToolWindowImpl)toolWindow).ensureContentInitialized();
+    }
+    return toolWindow;
   }
 
   /**
@@ -269,9 +282,9 @@ public final class ExternalSystemUtil {
     }
   }
 
-  @NotNull
+  @Nullable
   private static String extractDetails(@NotNull Throwable e) {
-    Throwable unwrapped = RemoteUtil.unwrap(e);
+    final Throwable unwrapped = RemoteUtil.unwrap(e);
     if (unwrapped instanceof ExternalSystemException) {
       return ((ExternalSystemException)unwrapped).getOriginalReason();
     }

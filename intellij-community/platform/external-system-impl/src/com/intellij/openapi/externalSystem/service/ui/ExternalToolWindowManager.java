@@ -14,6 +14,7 @@ import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.openapi.wm.impl.ToolWindowHeadlessManagerImpl;
+import com.intellij.openapi.wm.impl.ToolWindowImpl;
 import com.intellij.util.Consumer;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +31,8 @@ import java.util.Set;
  *
  * @author Denis Zhdanov
  */
-public final class ExternalToolWindowManager {
+public class ExternalToolWindowManager {
+
   @SuppressWarnings("unchecked")
   public static void handle(@NotNull Project project) {
     for (final ExternalSystemManager<?, ?, ?, ?, ?> manager : ExternalSystemApiUtil.getAllManagers()) {
@@ -80,7 +82,14 @@ public final class ExternalToolWindowManager {
 
   @Nullable
   public static ToolWindow getToolWindow(@NotNull Project project, @NotNull ProjectSystemId externalSystemId) {
-    ToolWindow result = ToolWindowManager.getInstance(project).getToolWindow(externalSystemId.getReadableName());
+    final ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
+    if (toolWindowManager == null) {
+      return null;
+    }
+    ToolWindow result = toolWindowManager.getToolWindow(externalSystemId.getReadableName());
+    if (result instanceof ToolWindowImpl) {
+      ((ToolWindowImpl)result).ensureContentInitialized();
+    }
     if (result == null && ApplicationManager.getApplication().isUnitTestMode()) {
       result = new ToolWindowHeadlessManagerImpl.MockToolWindow(project);
     }
