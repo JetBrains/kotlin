@@ -274,7 +274,7 @@ object ExpectedCompletionUtils {
         for (unexpectedProposal in unexpected) {
             for (proposal in itemsInformation) {
                 Assert.assertFalse(
-                    "Unexpected '$unexpectedProposal' presented in $allItemsString",
+                    "Unexpected '$unexpectedProposal' presented in\n$allItemsString",
                     proposal.matches(unexpectedProposal)
                 )
             }
