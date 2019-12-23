@@ -8,9 +8,10 @@ package org.jetbrains.kotlin.backend.jvm.intrinsics
 import org.jetbrains.kotlin.backend.jvm.codegen.BlockInfo
 import org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.backend.jvm.codegen.PromisedValue
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
-import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.ir.util.collectRealOverrides
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 
 /**
@@ -20,15 +21,9 @@ import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 object SignatureString : IntrinsicMethod() {
     override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? {
         val function = (expression.getValueArgument(0) as IrFunctionReference).symbol.owner
-
-        // TODO do not use descriptors
-        val declaration = codegen.context.referenceFunction(
-            DescriptorUtils.unwrapFakeOverride(function.descriptor).original
-        ).owner
-
-        val method = codegen.context.methodSignatureMapper.mapAsmMethod(declaration)
+        val resolved = if (function is IrSimpleFunction) function.collectRealOverrides().first() else function
+        val method = codegen.context.methodSignatureMapper.mapAsmMethod(resolved)
         val descriptor = method.name + method.descriptor
-
         return object : PromisedValue(codegen, AsmTypes.JAVA_STRING_TYPE, codegen.context.irBuiltIns.stringType) {
             override fun materialize() {
                 codegen.mv.aconst(descriptor)
