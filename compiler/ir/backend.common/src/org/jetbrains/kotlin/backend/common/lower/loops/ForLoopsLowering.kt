@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.lower.loops
 
+import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
@@ -12,9 +13,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.util.dump
@@ -96,15 +95,15 @@ val forLoopsPhase = makeIrFilePhase(
  *   }
  * ```
  */
-class ForLoopsLowering(val context: CommonBackendContext) : FileLoweringPass {
+class ForLoopsLowering(val context: CommonBackendContext) : BodyLoweringPass {
 
-    override fun lower(irFile: IrFile) {
+    override fun lower(irBody: IrBody, container: IrDeclaration) {
         val oldLoopToNewLoop = mutableMapOf<IrLoop, IrLoop>()
-        val transformer = RangeLoopTransformer(context, oldLoopToNewLoop)
-        irFile.transformChildrenVoid(transformer)
+        val transformer = RangeLoopTransformer(context, container as IrSymbolOwner, oldLoopToNewLoop)
+        irBody.transformChildrenVoid(transformer)
 
         // Update references in break/continue.
-        irFile.transformChildrenVoid(object : IrElementTransformerVoid() {
+        irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitBreakContinue(jump: IrBreakContinue): IrExpression {
                 oldLoopToNewLoop[jump.loop]?.let { jump.loop = it }
                 return jump
@@ -115,6 +114,7 @@ class ForLoopsLowering(val context: CommonBackendContext) : FileLoweringPass {
 
 private class RangeLoopTransformer(
     val context: CommonBackendContext,
+    val container: IrSymbolOwner,
     val oldLoopToNewLoop: MutableMap<IrLoop, IrLoop>
 ) : IrElementTransformerVoidWithContext() {
 
@@ -122,7 +122,7 @@ private class RangeLoopTransformer(
     private val headerInfoBuilder = DefaultHeaderInfoBuilder(context, this::getScopeOwnerSymbol)
     private val headerProcessor = HeaderProcessor(context, headerInfoBuilder, this::getScopeOwnerSymbol)
 
-    fun getScopeOwnerSymbol() = currentScope!!.scope.scopeOwnerSymbol
+    fun getScopeOwnerSymbol() = currentScope?.scope?.scopeOwnerSymbol ?: container.symbol
 
     override fun visitBlock(expression: IrBlock): IrExpression {
         // LoopExpressionGenerator in psi2ir lowers `for (loopVar in <someIterable>) { // Loop body }` into an IrBlock with origin FOR_LOOP.
