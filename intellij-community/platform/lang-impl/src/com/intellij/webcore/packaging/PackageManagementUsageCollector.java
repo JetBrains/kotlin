@@ -38,8 +38,8 @@ public class PackageManagementUsageCollector {
   private static void trigger(@NotNull Project project, @Nullable PackageManagementService service, @NotNull String actionName) {
     String serviceName = toKnownServiceName(service);
     if (serviceName != null) {
-      FeatureUsageData data = new FeatureUsageData().addData("action", actionName);
-      FUCounterUsageLogger.getInstance().logEvent(project, "package.management.ui", serviceName, data);
+      FeatureUsageData data = new FeatureUsageData().addData("service", serviceName);
+      FUCounterUsageLogger.getInstance().logEvent(project, "package.management.ui", actionName, data);
     }
   }
 
