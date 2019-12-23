@@ -7,17 +7,24 @@ package org.jetbrains.kotlin.konan.file
 
 import java.net.URI
 import java.nio.file.*
+import java.util.concurrent.ConcurrentHashMap
 
 private val File.zipUri: URI
     get() = URI.create("jar:${this.toPath().toUri()}")
+
+private val counters = ConcurrentHashMap<FileSystem, Int>()
 
 fun File.zipFileSystem(mutable: Boolean = false): FileSystem {
     val zipUri = this.zipUri
     val attributes = hashMapOf("create" to mutable.toString())
     return try {
-        FileSystems.newFileSystem(zipUri, attributes, null)
+        FileSystems.newFileSystem(zipUri, attributes, null).also {
+            counters[it] = 1
+        }
     } catch (e: FileSystemAlreadyExistsException) {
-        FileSystems.getFileSystem(zipUri)
+        FileSystems.getFileSystem(zipUri).also {
+            counters.computeIfPresent(it, { t, u -> u + 1})
+        }
     }
 }
 
@@ -46,7 +53,13 @@ fun <T> File.withZipFileSystem(mutable: Boolean = false, action: (FileSystem) ->
     return try {
         action(zipFileSystem)
     } finally {
-        zipFileSystem.close()
+        val counter = counters[zipFileSystem]!!
+        if (counter == 1) {
+            zipFileSystem.close()
+            counters.remove(zipFileSystem)
+        } else {
+            counters.computeIfPresent(zipFileSystem, { t, u -> u - 1})
+        }
     }
 }
 
