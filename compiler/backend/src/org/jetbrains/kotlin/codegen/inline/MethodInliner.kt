@@ -911,7 +911,7 @@ class MethodInliner(
             return
         }
 
-        if (inliningContext.isInliningLambda && inliningContext.lambdaInfo is IrExpressionLambda) {
+        if (inliningContext.isInliningLambda && inliningContext.lambdaInfo is IrExpressionLambda && !inliningContext.parent!!.isInliningLambda) {
             val capturedVars = inliningContext.lambdaInfo.capturedVars
             var offset = parameters.realParametersSizeOnStack
             val map = capturedVars.map {
