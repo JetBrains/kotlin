@@ -39,8 +39,6 @@ import one.util.streamex.StreamEx;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.debugger.stepping.filter.KotlinSuspendCallStepOverFilter;
-import org.jetbrains.kotlin.psi.KtFunctionLiteral;
-import org.jetbrains.kotlin.psi.KtNamedFunction;
 import java.util.List;
 
 public class DebuggerSteppingHelper {
@@ -101,12 +99,7 @@ public class DebuggerSteppingHelper {
         };
     }
 
-    public static DebugProcessImpl.ResumeCommand createStepOutCommand(
-            SuspendContextImpl suspendContext,
-            boolean ignoreBreakpoints,
-            List<KtNamedFunction> inlineFunctions,
-            KtFunctionLiteral inlineArgument
-    ) {
+    public static DebugProcessImpl.ResumeCommand createStepOutCommand(SuspendContextImpl suspendContext, boolean ignoreBreakpoints) {
         DebugProcessImpl debugProcess = suspendContext.getDebugProcess();
         return debugProcess.new ResumeCommand(suspendContext) {
             @Override
@@ -114,12 +107,8 @@ public class DebuggerSteppingHelper {
                 try {
                     StackFrameProxyImpl frameProxy = suspendContext.getFrameProxy();
                     if (frameProxy != null) {
-                        KotlinStepAction action = KotlinSteppingCommandProviderKt.getStepOutAction(
-                                frameProxy.location(),
-                                suspendContext,
-                                inlineFunctions,
-                                inlineArgument
-                        );
+                        Location location = frameProxy.location();
+                        KotlinStepAction action = KotlinSteppingCommandProviderKt.getStepOutAction(location, frameProxy);
 
                         createStepRequest(
                                 suspendContext, getContextThread(),
@@ -132,7 +121,8 @@ public class DebuggerSteppingHelper {
 
                     debugProcess.createStepOverCommand(suspendContext, ignoreBreakpoints).contextAction();
                 }
-                catch (EvaluateException ignored) {
+                catch (EvaluateException e) {
+                    LOG.error(e);
                 }
             }
         };
