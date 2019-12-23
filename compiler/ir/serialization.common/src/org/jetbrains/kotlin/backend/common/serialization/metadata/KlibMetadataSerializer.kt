@@ -12,13 +12,13 @@ import org.jetbrains.kotlin.backend.common.serialization.newDescriptorUniqId
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
@@ -34,7 +34,8 @@ abstract class KlibMetadataSerializer(
     val languageVersionSettings: LanguageVersionSettings,
     val metadataVersion: BinaryVersion,
     val descriptorTable: DescriptorTable,
-    val skipExpects: Boolean = false
+    val skipExpects: Boolean = false,
+    val includeOnlyModuleContent: Boolean = false
 ) {
 
     lateinit var serializerContext: SerializerContext
@@ -234,9 +235,16 @@ abstract class KlibMetadataSerializer(
     protected fun getPackagesFqNames(module: ModuleDescriptor): Set<FqName> {
         val result = mutableSetOf<FqName>()
 
+        fun getSubPackagesOfModule(fqName: FqName) =
+            if (includeOnlyModuleContent) {
+                module.packageFragmentProviderForModuleContentWithoutDependencies.getSubPackagesOf(fqName) { true }
+            } else {
+                module.getSubPackagesOf(fqName) { true }
+            }
+
         fun getSubPackages(fqName: FqName) {
             result.add(fqName)
-            module.getSubPackagesOf(fqName) { true }.forEach { getSubPackages(it) }
+            getSubPackagesOfModule(fqName).forEach { getSubPackages(it) }
         }
 
         getSubPackages(FqName.ROOT)
@@ -292,3 +300,7 @@ fun DeclarationDescriptor.extractFileId(): Int? = when (this) {
     is DeserializedPropertyDescriptor -> proto.getExtension(KlibMetadataProtoBuf.propertyFile)
     else -> null
 }
+
+internal val ModuleDescriptor.packageFragmentProviderForModuleContentWithoutDependencies: PackageFragmentProvider
+    get() = (this as? ModuleDescriptorImpl)?.packageFragmentProviderForModuleContentWithoutDependencies
+        ?: error("Can't get a module content package fragments, it's not a ${ModuleDescriptorImpl::class.simpleName}.")
