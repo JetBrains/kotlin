@@ -143,7 +143,8 @@ class AccumulatingTowerDataConsumer(
 
     fun addConsumer(consumer: TowerDataConsumer): ProcessorAction {
         additionalConsumers += consumer
-        for ((kind, level, group) in accumulatedTowerData) {
+        if (accumulatedTowerData.isEmpty()) return ProcessorAction.NEXT
+        for ((kind, level, group) in accumulatedTowerData.asSequence().take(accumulatedTowerData.size - 1)) {
             if (consumer.consume(kind, level, group).stop()) {
                 return ProcessorAction.STOP
             }
