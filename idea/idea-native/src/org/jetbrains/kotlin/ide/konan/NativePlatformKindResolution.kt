@@ -9,7 +9,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.analyzer.ModuleInfo
@@ -41,8 +40,9 @@ import org.jetbrains.kotlin.idea.compiler.IDELanguageSettingsProvider
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
 import org.jetbrains.kotlin.konan.library.KonanFactories
-import org.jetbrains.kotlin.library.*
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.impl.createKotlinLibrary
+import org.jetbrains.kotlin.library.isInterop
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.impl.NativeIdePlatformKind
 import org.jetbrains.kotlin.platform.konan.KonanPlatforms
@@ -100,24 +100,7 @@ class NativePlatformKindResolution : IdePlatformKindResolution {
         )
     }
 
-    override fun isLibraryFileForPlatform(virtualFile: VirtualFile): Boolean {
-        return when {
-            // The virtual file for a library packed in a ZIP file will have path like "/some/path/to/the/file.klib!/",
-            // and therefore will be recognized by VFS as a directory (isDirectory == true).
-            // So, first, let's check the extension.
-            virtualFile.extension == KLIB_FILE_EXTENSION -> true
-
-            virtualFile.isDirectory -> {
-                val linkdataDir = virtualFile.findChild("linkdata") ?: return false
-                // False means we hit .knm file
-                !VfsUtil.processFilesRecursively(linkdataDir) {
-                    it.extension != KLIB_METADATA_FILE_EXTENSION
-                }
-            }
-
-            else -> false
-        }
-    }
+    override fun isLibraryFileForPlatform(virtualFile: VirtualFile): Boolean = virtualFile.isKonanLibraryRoot
 
     override fun createResolverForModuleFactory(
         settings: PlatformAnalysisParameters,
