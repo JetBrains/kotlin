@@ -2,17 +2,14 @@
 package com.intellij.execution.lineMarker
 
 import com.intellij.execution.Executor
-import com.intellij.execution.actions.*
+import com.intellij.execution.actions.BaseRunConfigurationAction
+import com.intellij.execution.actions.ConfigurationContext
+import com.intellij.execution.actions.ConfigurationFromContext
 import com.intellij.execution.configurations.LocatableConfiguration
-import com.intellij.execution.impl.RunManagerImpl
-import com.intellij.execution.impl.RunnerAndConfigurationSettingsImpl
 import com.intellij.ide.DataManager
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.diagnostic.logger
-import com.intellij.openapi.diagnostic.runAndLogException
 import com.intellij.openapi.util.Key
-import com.intellij.util.containers.mapSmart
-import com.intellij.util.containers.mapSmartNotNull
 
 private val LOG = logger<ExecutorAction>()
 private val CONFIGURATION_CACHE = Key.create<List<ConfigurationFromContext>>("ConfigurationFromContext")
@@ -63,19 +60,7 @@ class ExecutorAction private constructor(val origin: AnAction,
 
     private fun computeConfigurations(dataContext: DataContext): List<ConfigurationFromContext> {
       val originalContext = ConfigurationContext.getFromContext(dataContext)
-      val location = originalContext.location ?: return emptyList()
-
-      val alternativeLocations = MultipleRunLocationsProvider.findAlternativeLocations(location)?.alternativeLocations
-      val contexts = alternativeLocations?.mapSmart { ConfigurationContext.createEmptyContextForLocation(it) } ?: listOf(originalContext)
-      return contexts.flatMap { context ->
-        RunConfigurationProducer.getProducers(context.project).mapSmartNotNull {
-          LOG.runAndLogException {
-            val configuration = it.createLightConfiguration(context) ?: return@mapSmartNotNull null
-            val settings = RunnerAndConfigurationSettingsImpl(RunManagerImpl.getInstanceImpl(context.project), configuration, false)
-            ConfigurationFromContextImpl(it, settings, context.psiLocation)
-          }
-        }
-      }
+      return originalContext.configurationsFromContext ?: return emptyList()
     }
   }
 
