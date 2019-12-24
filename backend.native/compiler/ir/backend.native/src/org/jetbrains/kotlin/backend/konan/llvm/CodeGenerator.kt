@@ -47,6 +47,7 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
     fun llvmFunctionOrNull(function: IrFunction): LLVMValueRef? = function.llvmFunctionOrNull
     val intPtrType = LLVMIntPtrTypeInContext(llvmContext, llvmTargetData)!!
     internal val immOneIntPtrType = LLVMConstInt(intPtrType, 1, 1)!!
+    internal val immThreeIntPtrType = LLVMConstInt(intPtrType, 3, 1)!!
     // Keep in sync with OBJECT_TAG_MASK in C++.
     internal val immTypeInfoMask = LLVMConstNot(LLVMConstInt(intPtrType, 3, 0)!!)!!
 
@@ -481,7 +482,8 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
     fun setTypeInfoForLocalObject(objectHeader: LLVMValueRef) {
         val typeInfo = structGep(objectHeader, 0, "typeInfoOrMeta_")
         // Set tag OBJECT_TAG_PERMANENT_CONTAINER | OBJECT_TAG_NONTRIVIAL_CONTAINER.
-        val typeInfoValue = intToPtr(or(ptrToInt(alloca(kTypeInfo), int32Type), Int32(3).llvm), kTypeInfoPtr)
+        val typeInfoValue = intToPtr(or(ptrToInt(alloca(kTypeInfo), codegen.intPtrType),
+                codegen.immThreeIntPtrType), kTypeInfoPtr)
         store(typeInfoValue, typeInfo)
     }
 
