@@ -39,15 +39,31 @@ class IrFunctionImpl(
     IrFunctionBase(startOffset, endOffset, origin, name, visibility, isInline, isExternal, isExpect, returnType),
     IrSimpleFunction {
 
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        symbol: IrSimpleFunctionSymbol,
-        returnType: IrType,
-        visibility: Visibility = symbol.descriptor.visibility,
-        modality: Modality = symbol.descriptor.modality
-    ) : this(
+    override val descriptor: FunctionDescriptor = symbol.descriptor
+
+    override val overriddenSymbols: MutableList<IrSimpleFunctionSymbol> = SmartList()
+    override var attributeOwnerId: IrAttributeContainer = this
+
+    override var correspondingPropertySymbol: IrPropertySymbol? = null
+
+    init {
+        symbol.bind(this)
+    }
+
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+        visitor.visitSimpleFunction(this, data)
+}
+
+fun IrFunctionImpl(
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
+    symbol: IrSimpleFunctionSymbol,
+    returnType: IrType,
+    visibility: Visibility = symbol.descriptor.visibility,
+    modality: Modality = symbol.descriptor.modality
+) =
+    IrFunctionImpl(
         startOffset, endOffset, origin, symbol,
         symbol.descriptor.name,
         visibility,
@@ -62,29 +78,15 @@ class IrFunctionImpl(
         isOperator = symbol.descriptor.isOperator
     )
 
-    override val descriptor: FunctionDescriptor = symbol.descriptor
-
-    override val overriddenSymbols: MutableList<IrSimpleFunctionSymbol> = SmartList()
-    override var attributeOwnerId: IrAttributeContainer = this
-
-    override var correspondingPropertySymbol: IrPropertySymbol? = null
-
-    // Used by kotlin-native in InteropLowering.kt and IrUtils2.kt
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        descriptor: FunctionDescriptor,
-        returnType: IrType
-    ) : this(
+// Used by kotlin-native in InteropLowering.kt and IrUtils2.kt
+fun IrFunctionImpl(
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
+    descriptor: FunctionDescriptor,
+    returnType: IrType
+): IrFunctionImpl =
+    IrFunctionImpl(
         startOffset, endOffset, origin,
         IrSimpleFunctionSymbolImpl(descriptor), returnType
     )
-
-    init {
-        symbol.bind(this)
-    }
-
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-        visitor.visitSimpleFunction(this, data)
-}

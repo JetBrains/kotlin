@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.declarations.impl
@@ -44,35 +33,6 @@ class IrValueParameterImpl(
     IrDeclarationBase(startOffset, endOffset, origin),
     IrValueParameter {
 
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        symbol: IrValueParameterSymbol,
-        type: IrType,
-        varargElementType: IrType?
-    ) :
-            this(
-                startOffset, endOffset, origin,
-                symbol,
-                symbol.descriptor.name,
-                symbol.descriptor.safeAs<ValueParameterDescriptor>()?.index ?: -1,
-                type,
-                varargElementType,
-                symbol.descriptor.safeAs<ValueParameterDescriptor>()?.isCrossinline ?: false,
-                symbol.descriptor.safeAs<ValueParameterDescriptor>()?.isNoinline ?: false
-            )
-
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        descriptor: ParameterDescriptor,
-        type: IrType,
-        varargElementType: IrType?
-    ) :
-            this(startOffset, endOffset, origin, IrValueParameterSymbolImpl(descriptor), type, varargElementType)
-
     override val descriptor: ParameterDescriptor = symbol.descriptor
 
     init {
@@ -95,3 +55,32 @@ class IrValueParameterImpl(
         defaultValue = defaultValue?.transform(transformer, data)
     }
 }
+
+fun IrValueParameterImpl(
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
+    symbol: IrValueParameterSymbol,
+    type: IrType,
+    varargElementType: IrType?
+) =
+    IrValueParameterImpl(
+        startOffset, endOffset, origin,
+        symbol,
+        symbol.descriptor.name,
+        symbol.descriptor.safeAs<ValueParameterDescriptor>()?.index ?: -1,
+        type,
+        varargElementType,
+        symbol.descriptor.safeAs<ValueParameterDescriptor>()?.isCrossinline ?: false,
+        symbol.descriptor.safeAs<ValueParameterDescriptor>()?.isNoinline ?: false
+    )
+
+fun IrValueParameterImpl(
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
+    descriptor: ParameterDescriptor,
+    type: IrType,
+    varargElementType: IrType?
+) =
+    IrValueParameterImpl(startOffset, endOffset, origin, IrValueParameterSymbolImpl(descriptor), type, varargElementType)

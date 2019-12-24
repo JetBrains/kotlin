@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.declarations.impl
@@ -46,87 +35,6 @@ class IrPropertyImpl(
 ) : IrDeclarationBase(startOffset, endOffset, origin),
     IrProperty {
 
-    @Deprecated(message = "Don't use descriptor-based API for IrProperty", level = DeprecationLevel.WARNING)
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        descriptor: PropertyDescriptor,
-        name: Name,
-        visibility: Visibility,
-        modality: Modality,
-        isVar: Boolean,
-        isConst: Boolean,
-        isLateinit: Boolean,
-        isDelegated: Boolean,
-        isExternal: Boolean
-    ) : this(
-        startOffset, endOffset, origin,
-        IrPropertySymbolImpl(descriptor),
-        name, visibility, modality,
-        isVar = isVar,
-        isConst = isConst,
-        isLateinit = isLateinit,
-        isDelegated = isDelegated,
-        isExternal = isExternal
-    )
-
-    @Suppress("DEPRECATION")
-    @Deprecated(message = "Don't use descriptor-based API for IrProperty", level = DeprecationLevel.WARNING)
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        isDelegated: Boolean,
-        descriptor: PropertyDescriptor
-    ) : this(
-        startOffset, endOffset, origin, descriptor,
-        descriptor.name, descriptor.visibility, descriptor.modality,
-        isVar = descriptor.isVar,
-        isConst = descriptor.isConst,
-        isLateinit = descriptor.isLateInit,
-        isDelegated = isDelegated,
-        isExternal = descriptor.isEffectivelyExternal()
-    )
-
-    @Suppress("DEPRECATION")
-    @Deprecated(message = "Don't use descriptor-based API for IrProperty", level = DeprecationLevel.WARNING)
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        descriptor: PropertyDescriptor
-    ) : this(startOffset, endOffset, origin, descriptor.isDelegated, descriptor)
-
-    @Suppress("DEPRECATION")
-    @Deprecated(message = "Don't use descriptor-based API for IrProperty", level = DeprecationLevel.WARNING)
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        isDelegated: Boolean,
-        descriptor: PropertyDescriptor,
-        backingField: IrField?
-    ) : this(startOffset, endOffset, origin, isDelegated, descriptor) {
-        this.backingField = backingField
-    }
-
-    @Suppress("DEPRECATION")
-    @Deprecated(message = "Don't use descriptor-based API for IrProperty", level = DeprecationLevel.WARNING)
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        isDelegated: Boolean,
-        descriptor: PropertyDescriptor,
-        backingField: IrField?,
-        getter: IrSimpleFunction?,
-        setter: IrSimpleFunction?
-    ) : this(startOffset, endOffset, origin, isDelegated, descriptor, backingField) {
-        this.getter = getter
-        this.setter = setter
-    }
-
     init {
         symbol.bind(this)
     }
@@ -155,3 +63,89 @@ class IrPropertyImpl(
         setter = setter?.run { transform(transformer, data) as IrSimpleFunction }
     }
 }
+
+@Deprecated(message = "Don't use descriptor-based API for IrProperty", level = DeprecationLevel.ERROR)
+fun IrPropertyImpl(
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
+    descriptor: PropertyDescriptor,
+    name: Name,
+    visibility: Visibility,
+    modality: Modality,
+    isVar: Boolean,
+    isConst: Boolean,
+    isLateinit: Boolean,
+    isDelegated: Boolean,
+    isExternal: Boolean
+) =
+    IrPropertyImpl(
+        startOffset, endOffset, origin,
+        IrPropertySymbolImpl(descriptor),
+        name, visibility, modality,
+        isVar = isVar,
+        isConst = isConst,
+        isLateinit = isLateinit,
+        isDelegated = isDelegated,
+        isExternal = isExternal
+    )
+
+@Suppress("DEPRECATION_ERROR")
+@Deprecated(message = "Don't use descriptor-based API for IrProperty", level = DeprecationLevel.ERROR)
+fun IrPropertyImpl(
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
+    isDelegated: Boolean,
+    descriptor: PropertyDescriptor
+) =
+    IrPropertyImpl(
+        startOffset, endOffset, origin, descriptor,
+        descriptor.name, descriptor.visibility, descriptor.modality,
+        isVar = descriptor.isVar,
+        isConst = descriptor.isConst,
+        isLateinit = descriptor.isLateInit,
+        isDelegated = isDelegated,
+        isExternal = descriptor.isEffectivelyExternal()
+    )
+
+@Suppress("DEPRECATION", "DEPRECATION_ERROR")
+@Deprecated(message = "Don't use descriptor-based API for IrProperty", level = DeprecationLevel.ERROR)
+fun IrPropertyImpl(
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
+    descriptor: PropertyDescriptor
+) =
+    IrPropertyImpl(startOffset, endOffset, origin, descriptor.isDelegated, descriptor)
+
+@Suppress("DEPRECATION_ERROR")
+@Deprecated(message = "Don't use descriptor-based API for IrProperty", level = DeprecationLevel.ERROR)
+fun IrPropertyImpl(
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
+    isDelegated: Boolean,
+    descriptor: PropertyDescriptor,
+    backingField: IrField?
+) =
+    IrPropertyImpl(startOffset, endOffset, origin, isDelegated, descriptor).apply {
+        this.backingField = backingField
+    }
+
+@Suppress("DEPRECATION_ERROR")
+@Deprecated(message = "Don't use descriptor-based API for IrProperty", level = DeprecationLevel.ERROR)
+fun IrPropertyImpl(
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
+    isDelegated: Boolean,
+    descriptor: PropertyDescriptor,
+    backingField: IrField?,
+    getter: IrSimpleFunction?,
+    setter: IrSimpleFunction?
+) =
+    IrPropertyImpl(startOffset, endOffset, origin, isDelegated, descriptor, backingField).apply {
+        this.getter = getter
+        this.setter = setter
+    }

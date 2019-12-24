@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.impl.IrPropertySymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
@@ -223,8 +225,8 @@ interface IrBuilderExtension {
     ): IrProperty {
         val irProperty = IrPropertyImpl(
             propertyParent.startOffset, propertyParent.endOffset,
-            SERIALIZABLE_PLUGIN_ORIGIN, false,
-            propertyDescriptor
+            SERIALIZABLE_PLUGIN_ORIGIN, IrPropertySymbolImpl(propertyDescriptor),
+            isDelegated = false
         )
         irProperty.parent = propertyParent
         irProperty.backingField = generatePropertyBackingField(propertyDescriptor, irProperty).apply {
@@ -370,7 +372,7 @@ interface IrBuilderExtension {
             IrTypeParameterImpl(
                 startOffset, endOffset,
                 SERIALIZABLE_PLUGIN_ORIGIN,
-                it
+                IrTypeParameterSymbolImpl(it)
             ).also { typeParameter ->
                 typeParameter.parent = this
             }
