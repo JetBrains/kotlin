@@ -405,3 +405,20 @@ fun IrDeclarationFactory.createVariable(
     createVariable(startOffset, endOffset, origin, descriptor, type).apply {
         this.initializer = initializer
     }
+
+fun IrDeclarationFactory.createTypeAlias(
+    startOffset: Int,
+    endOffset: Int,
+    symbol: IrTypeAliasSymbol,
+    expandedType: IrType,
+    origin: IrDeclarationOrigin
+): IrTypeAlias =
+    createTypeAlias(
+        startOffset, endOffset,
+        symbol,
+        symbol.descriptor.name,
+        symbol.descriptor.visibility,
+        expandedType,
+        symbol.descriptor.isActual,
+        origin
+    )
