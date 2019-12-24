@@ -12,7 +12,6 @@ import com.intellij.openapi.externalSystem.autoimport.AutoImportProjectTracker.M
 import com.intellij.openapi.externalSystem.autoimport.AutoImportProjectTracker.ModificationType.EXTERNAL
 import com.intellij.openapi.externalSystem.autoimport.AutoImportProjectTracker.ModificationType.INTERNAL
 import com.intellij.openapi.externalSystem.autoimport.NonBlockingReadActionBuilder.Companion.nonBlockingReadAction
-import com.intellij.openapi.externalSystem.service.project.autoimport.ProjectStatus
 import com.intellij.openapi.externalSystem.util.calculateCrc
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.observable.operations.AnonymousParallelOperationTrace
@@ -40,7 +39,8 @@ class ProjectSettingsTracker(
 
   private val LOG = Logger.getInstance("#com.intellij.openapi.externalSystem.autoimport")
 
-  private val status = ProjectStatus(debugName = "Settings ${projectAware.projectId.readableName}")
+  private val status = ProjectStatus(
+    debugName = "Settings ${projectAware.projectId.readableName}")
 
   private val modificationType = AtomicReference<ModificationType?>(null)
 

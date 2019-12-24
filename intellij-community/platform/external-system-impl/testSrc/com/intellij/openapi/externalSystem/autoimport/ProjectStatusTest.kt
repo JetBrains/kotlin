@@ -1,8 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.openapi.externalSystem.service.project.autoimport.states
+package com.intellij.openapi.externalSystem.autoimport
 
-import com.intellij.openapi.externalSystem.service.project.autoimport.ProjectStatus
-import com.intellij.openapi.externalSystem.service.project.autoimport.ProjectStatus.ProjectState.*
+import com.intellij.openapi.externalSystem.autoimport.ProjectStatus.ProjectState.*
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
