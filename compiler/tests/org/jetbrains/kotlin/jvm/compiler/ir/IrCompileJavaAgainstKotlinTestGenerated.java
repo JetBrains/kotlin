@@ -311,6 +311,11 @@ public class IrCompileJavaAgainstKotlinTestGenerated extends AbstractIrCompileJa
             runTest("compiler/testData/compileJavaAgainstKotlin/method/TraitImpl.kt");
         }
 
+        @TestMetadata("TypeParamInInner.kt")
+        public void testTypeParamInInner() throws Exception {
+            runTest("compiler/testData/compileJavaAgainstKotlin/method/TypeParamInInner.kt");
+        }
+
         @TestMetadata("Vararg.kt")
         public void testVararg() throws Exception {
             runTest("compiler/testData/compileJavaAgainstKotlin/method/Vararg.kt");

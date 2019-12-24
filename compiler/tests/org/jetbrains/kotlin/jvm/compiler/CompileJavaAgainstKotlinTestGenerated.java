@@ -313,6 +313,11 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
                 runTest("compiler/testData/compileJavaAgainstKotlin/method/TraitImpl.kt");
             }
 
+            @TestMetadata("TypeParamInInner.kt")
+            public void testTypeParamInInner() throws Exception {
+                runTest("compiler/testData/compileJavaAgainstKotlin/method/TypeParamInInner.kt");
+            }
+
             @TestMetadata("Vararg.kt")
             public void testVararg() throws Exception {
                 runTest("compiler/testData/compileJavaAgainstKotlin/method/Vararg.kt");
@@ -954,6 +959,11 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
             @TestMetadata("TraitImpl.kt")
             public void testTraitImpl() throws Exception {
                 runTest("compiler/testData/compileJavaAgainstKotlin/method/TraitImpl.kt");
+            }
+
+            @TestMetadata("TypeParamInInner.kt")
+            public void testTypeParamInInner() throws Exception {
+                runTest("compiler/testData/compileJavaAgainstKotlin/method/TypeParamInInner.kt");
             }
 
             @TestMetadata("Vararg.kt")

@@ -36,12 +36,12 @@ interface IrMemberAccessExpression : IrExpression, IrDeclarationReference {
 fun IrMemberAccessExpression.getTypeArgument(typeParameterDescriptor: TypeParameterDescriptor): IrType? =
     getTypeArgument(typeParameterDescriptor.index)
 
-fun IrMemberAccessExpression.copyTypeArgumentsFrom(other: IrMemberAccessExpression) {
-    assert(typeArgumentsCount == other.typeArgumentsCount) {
-        "Mismatching type arguments: $typeArgumentsCount vs ${other.typeArgumentsCount} "
+fun IrMemberAccessExpression.copyTypeArgumentsFrom(other: IrMemberAccessExpression, shift: Int = 0) {
+    assert(typeArgumentsCount == other.typeArgumentsCount + shift) {
+        "Mismatching type arguments: $typeArgumentsCount vs ${other.typeArgumentsCount} + $shift"
     }
-    for (i in 0 until typeArgumentsCount) {
-        putTypeArgument(i, other.getTypeArgument(i))
+    for (i in 0 until other.typeArgumentsCount) {
+        putTypeArgument(i + shift, other.getTypeArgument(i))
     }
 }
 

@@ -23,17 +23,18 @@ import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
-import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
-import org.jetbrains.kotlin.ir.expressions.IrValueAccessExpression
+import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
+import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import kotlin.collections.set
 
-class Closure(val capturedValues: List<IrValueSymbol> = emptyList())
+data class Closure(val capturedValues: List<IrValueSymbol>, val capturedTypeParameters: List<IrTypeParameter>)
 
 class ClosureAnnotator(irFile: IrFile) {
     private val closureBuilders = mutableMapOf<IrDeclaration, ClosureBuilder>()
@@ -58,6 +59,9 @@ class ClosureAnnotator(irFile: IrFile) {
         private val declaredValues = mutableSetOf<IrValueDeclaration>()
         private val includes = mutableSetOf<ClosureBuilder>()
 
+        private val potentiallyCapturedTypeParameters = mutableSetOf<IrTypeParameter>()
+        private val capturedTypeParameters = mutableSetOf<IrTypeParameter>()
+
         var processed = false
 
         /*
@@ -74,7 +78,7 @@ class ClosureAnnotator(irFile: IrFile) {
                 }
             }
             // TODO: We can save the closure and reuse it.
-            return Closure(result.toList())
+            return Closure(result.toList(), capturedTypeParameters.toList())
         }
 
 
@@ -94,6 +98,31 @@ class ClosureAnnotator(irFile: IrFile) {
 
         fun isExternal(valueDeclaration: IrValueDeclaration): Boolean {
             return !declaredValues.contains(valueDeclaration)
+        }
+
+        fun isExternal(typeParameter: IrTypeParameter): Boolean {
+            return potentiallyCapturedTypeParameters.contains(typeParameter)
+        }
+
+        fun addPotentiallyCapturedTypeParameter(param: IrTypeParameter) {
+            potentiallyCapturedTypeParameters.add(param)
+        }
+
+        fun seeType(type: IrType) {
+            if (type !is IrSimpleType) return
+            (type.classifier as? IrTypeParameterSymbol)?.let { typeParameterSymbol ->
+                val typeParameter = typeParameterSymbol.owner
+                if (isExternal(typeParameter))
+                    capturedTypeParameters.add(typeParameter)
+            }
+            for (arg in type.arguments) {
+                (arg as? IrTypeProjection)?.let { seeType(arg.type) }
+            }
+            type.abbreviation?.let { abbreviation ->
+                for (arg in abbreviation.arguments) {
+                    (arg as? IrTypeProjection)?.let { seeType(arg.type) }
+                }
+            }
         }
     }
 
@@ -129,6 +158,8 @@ class ClosureAnnotator(irFile: IrFile) {
                 constructor.valueParameters.forEach { v -> closureBuilder.declareVariable(v) }
             }
 
+            collectPotentiallyCapturedTypeParameters(closureBuilder)
+
             closuresStack.push(closureBuilder)
             declaration.acceptChildrenVoid(this)
             closuresStack.pop()
@@ -154,6 +185,7 @@ class ClosureAnnotator(irFile: IrFile) {
                 }
             }
 
+            collectPotentiallyCapturedTypeParameters(closureBuilder)
 
             closuresStack.push(closureBuilder)
             declaration.acceptChildrenVoid(this)
@@ -188,6 +220,16 @@ class ClosureAnnotator(irFile: IrFile) {
             expression.setter?.let { processMemberAccess(it.owner) }
         }
 
+        override fun visitExpression(expression: IrExpression) {
+            super.visitExpression(expression)
+            val typeParameterContainerScopeBuilder = closuresStack.peek()?.let {
+                if (it.owner is IrConstructor) {
+                    closuresStack[closuresStack.size - 2]
+                } else it
+            }
+            typeParameterContainerScopeBuilder?.seeType(expression.type)
+        }
+
         private fun processMemberAccess(declaration: IrDeclaration) {
             if (declaration.isLocal) {
                 if (declaration is IrSimpleFunction && declaration.visibility != Visibilities.LOCAL) {
@@ -197,6 +239,16 @@ class ClosureAnnotator(irFile: IrFile) {
                 val builder = closureBuilders[declaration]
                 builder?.let {
                     closuresStack.peek()?.include(builder)
+                }
+            }
+        }
+
+        private fun collectPotentiallyCapturedTypeParameters(closureBuilder: ClosureBuilder) {
+            closuresStack.takeLastWhile { it.owner !is IrClass }.forEach {
+                (it.owner as? IrTypeParametersContainer)?.let { container ->
+                    for (tp in container.typeParameters) {
+                        closureBuilder.addPotentiallyCapturedTypeParameter(tp)
+                    }
                 }
             }
         }

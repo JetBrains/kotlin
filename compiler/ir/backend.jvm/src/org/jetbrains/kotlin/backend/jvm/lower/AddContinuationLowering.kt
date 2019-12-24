@@ -78,8 +78,8 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                             "Inconsistency between callable reference to suspend lambda and the corresponding continuation"
                         }
                         +irCall(constructor.symbol).apply {
-                            for (tp in info.constructor.parentAsClass.typeParameters) {
-                                putTypeArgument(tp.index, expression.getTypeArgument(tp.index))
+                            for (typeParameter in info.constructor.parentAsClass.typeParameters) {
+                                putTypeArgument(typeParameter.index, expression.getTypeArgument(typeParameter.index))
                             }
                             expressionArguments.forEachIndexed { index, argument ->
                                 putValueArgument(index, argument)
@@ -134,7 +134,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
             if (info.arity <= 1) {
                 val singleParameterField = receiverField ?: parametersWithoutArguments.singleOrNull()
                 val create = addCreate(constructor, suspendLambda, info, parametersWithArguments, singleParameterField)
-                addInvokeCallingCreate(info.function, create, invokeSuspend, invokeToOverride, singleParameterField)
+                addInvokeCallingCreate(create, invokeSuspend, invokeToOverride, singleParameterField)
             } else {
                 addInvokeCallingConstructor(
                     constructor,
@@ -242,7 +242,6 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
     //   2) starting newly created coroutine by calling `invokeSuspend`.
     // Thus, it creates a clone of suspend lambda and starts it.
     private fun IrClass.addInvokeCallingCreate(
-        suspendLambdaFunction: IrFunction,
         create: IrFunction,
         invokeSuspend: IrFunction,
         invokeToOverride: IrSimpleFunctionSymbol,
@@ -289,8 +288,8 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
             function.body = context.createIrBuilder(function.symbol).irBlockBody {
                 // Create a copy
                 val newlyCreatedObject = irTemporary(irCall(constructor).also { constructorCall ->
-                    for (tp in typeParameters) {
-                        constructorCall.putTypeArgument(tp.index, tp.defaultType)
+                    for (typeParameter in typeParameters) {
+                        constructorCall.putTypeArgument(typeParameter.index, typeParameter.defaultType)
                     }
                     for ((index, field) in parametersWithArguments.withIndex()) {
                         constructorCall.putValueArgument(index, irGetField(irGet(function.dispatchReceiverParameter!!), field))
@@ -328,8 +327,8 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
             function.body = context.createIrBuilder(function.symbol).irBlockBody {
                 var index = 0
                 val constructorCall = irCall(constructor).also {
-                    for (tp in typeParameters) {
-                        it.putTypeArgument(tp.index, tp.defaultType)
+                    for (typeParameter in typeParameters) {
+                        it.putTypeArgument(typeParameter.index, typeParameter.defaultType)
                     }
                     for ((i, field) in parametersWithArguments.withIndex()) {
                         if (info.reference.getValueArgument(i) == null) continue
