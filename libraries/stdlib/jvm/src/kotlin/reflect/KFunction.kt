@@ -8,7 +8,7 @@ package kotlin.reflect
 /**
  * Represents a function with introspection capabilities.
  */
-public interface KFunction<out R> : KCallable<R>, Function<R> {
+public actual interface KFunction<out R> : KCallable<R>, Function<R> {
     /**
      * `true` if this function is `inline`.
      * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/inline-functions.html)
