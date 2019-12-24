@@ -32,6 +32,8 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
 
     private lateinit var buildVariants: NamedDomainObjectContainer<BuildVariant>
 
+    private val producingConfiguredHandlers: MutableList<KotlinBrowserJsIr.() -> Unit> = mutableListOf()
+
     override val testTaskDescription: String
         get() = "Run all ${target.name} tests inside browser using karma and webpack"
 
@@ -200,6 +202,14 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
         }
         buildVariants.create(DEVELOPMENT) {
             it.kind = BuildVariantKind.DEVELOPMENT
+        }
+    }
+
+    fun whenProducingConfigured(body: KotlinBrowserJsIr.() -> Unit) {
+        if (producingConfigured) {
+            this.body()
+        } else {
+            producingConfiguredHandlers += body
         }
     }
 

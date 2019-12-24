@@ -36,12 +36,13 @@ abstract class KotlinJsIrSubTarget(
     final override lateinit var testRuns: NamedDomainObjectContainer<KotlinJsIrPlatformTestRun>
         private set
 
-    fun configure() {
+    protected val producingConfigured: Boolean = false
+
+    private fun configure() {
         NpmResolverPlugin.apply(project)
 
         configureBuildVariants()
         configureTests()
-        configureMain()
 
         target.compilations.all {
             val npmProject = it.npmProject
@@ -50,6 +51,9 @@ abstract class KotlinJsIrSubTarget(
     }
 
     override fun produceKotlinLibrary() {
+        configure()
+//        configureMain()
+
         target.compilations
             .matching { it.name == KotlinCompilation.TEST_COMPILATION_NAME }
             .all {

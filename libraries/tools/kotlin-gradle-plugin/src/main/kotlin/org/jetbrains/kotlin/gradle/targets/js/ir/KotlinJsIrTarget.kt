@@ -43,8 +43,11 @@ open class KotlinJsIrTarget @Inject constructor(project: Project, platformType: 
 
     private val browserLazyDelegate = lazy {
         project.objects.newInstance(KotlinBrowserJsIr::class.java, this).also {
-            it.configure()
-            browserConfiguredHandlers.forEach { handler -> handler(it) }
+            browserConfiguredHandlers.forEach { handler ->
+                it.whenProducingConfigured {
+                    handler(this)
+                }
+            }
             browserConfiguredHandlers.clear()
         }
     }
@@ -61,8 +64,12 @@ open class KotlinJsIrTarget @Inject constructor(project: Project, platformType: 
 
     private val nodejsLazyDelegate = lazy {
         project.objects.newInstance(KotlinNodeJsIr::class.java, this).also {
-            it.configure()
-            nodejsConfiguredHandlers.forEach { handler -> handler(it) }
+            nodejsConfiguredHandlers.forEach { handler ->
+                it.whenProducingConfigured {
+                    handler(this)
+                }
+            }
+
             nodejsConfiguredHandlers.clear()
         }
     }
