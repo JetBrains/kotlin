@@ -5,18 +5,21 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower
 
-import org.jetbrains.kotlin.backend.common.ClassLoweringPass
-import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.BodyLoweringPass
+import org.jetbrains.kotlin.backend.common.DeclarationTransformer
+import org.jetbrains.kotlin.backend.common.getOrPut
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
@@ -26,38 +29,36 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
-data class ConstructorPair(val delegate: IrSimpleFunction, val stub: IrSimpleFunction)
+class SecondaryConstructorLowering(val context: JsIrBackendContext) : DeclarationTransformer {
 
-class SecondaryConstructorLowering(val context: JsIrBackendContext) : ClassLoweringPass {
+    override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
 
-    private val oldCtorToNewMap = context.secondaryConstructorToFactoryCache
+        if (declaration is IrConstructor && !declaration.isPrimary) {
+            val irClass = declaration.parentAsClass
 
-    override fun lower(irClass: IrClass) {
-        if (irClass.isInline) return
+            if (irClass.isInline) return null
 
-        irClass.declarations.transformFlat {
-            if (it is IrConstructor) {
-                if (it.isPrimary) null else transformConstructor(it, irClass)
-            } else null
+            return transformConstructor(declaration, irClass)
         }
+
+        return null
     }
 
     private fun transformConstructor(constructor: IrConstructor, irClass: IrClass): List<IrSimpleFunction> {
-        val stubs = oldCtorToNewMap.getOrPut(constructor) {
-            buildConstructorStubDeclarations(constructor, irClass)
-        }
+        val delegate = context.buildConstructorDelegate(constructor, irClass)
 
-        generateStubsBody(constructor, irClass, stubs)
+        val factory = context.buildConstructorFactory(constructor, irClass)
 
-        return listOf(stubs.delegate, stubs.stub)
+        generateStubsBody(constructor, irClass, delegate, factory)
+
+        return listOf(delegate, factory)
     }
 
-    private fun generateStubsBody(constructor: IrConstructor, irClass: IrClass, stubs: ConstructorPair) {
+    private fun generateStubsBody(constructor: IrConstructor, irClass: IrClass, delegate: IrSimpleFunction, factory: IrSimpleFunction) {
         // We should split secondary constructor into two functions,
         //   *  Initializer which contains constructor's body and takes just created object as implicit param `$this`
         //   **   This function is also delegation constructor
@@ -76,41 +77,42 @@ class SecondaryConstructorLowering(val context: JsIrBackendContext) : ClassLower
         //   val t = Object.create(Foo.prototype);
         //   return Foo_init_$Init$(..., t)
         // }
-        generateInitBody(constructor, irClass, stubs.delegate)
-        generateFactoryBody(constructor, irClass, stubs.stub, stubs.delegate)
+        generateInitBody(constructor, irClass, delegate)
+        generateFactoryBody(constructor, irClass, factory, delegate)
     }
 
     private fun generateFactoryBody(constructor: IrConstructor, irClass: IrClass, stub: IrSimpleFunction, delegate: IrSimpleFunction) {
-        val type = irClass.defaultType
-        val createFunctionIntrinsic = context.intrinsics.jsObjectCreate
-        val irCreateCall = JsIrBuilder.buildCall(createFunctionIntrinsic.symbol, type, listOf(type))
-        val irDelegateCall = JsIrBuilder.buildCall(delegate.symbol, type).also { call ->
-            for (i in 0 until stub.typeParameters.size) {
-                call.putTypeArgument(i, stub.typeParameters[i].toIrType())
-            }
+        stub.body = IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
+            val type = irClass.defaultType
+            val createFunctionIntrinsic = context.intrinsics.jsObjectCreate
+            val irCreateCall = JsIrBuilder.buildCall(createFunctionIntrinsic.symbol, type, listOf(type))
+            val irDelegateCall = JsIrBuilder.buildCall(delegate.symbol, type).also { call ->
+                for (i in 0 until stub.typeParameters.size) {
+                    call.putTypeArgument(i, stub.typeParameters[i].toIrType())
+                }
 
-            for (i in 0 until stub.valueParameters.size) {
-                call.putValueArgument(i, JsIrBuilder.buildGetValue(stub.valueParameters[i].symbol))
-            }
+                for (i in 0 until stub.valueParameters.size) {
+                    call.putValueArgument(i, JsIrBuilder.buildGetValue(stub.valueParameters[i].symbol))
+                }
 
-            call.putValueArgument(constructor.valueParameters.size, irCreateCall)
+                call.putValueArgument(constructor.valueParameters.size, irCreateCall)
+            }
+            val irReturn = JsIrBuilder.buildReturn(stub.symbol, irDelegateCall, context.irBuiltIns.nothingType)
+
+            statements += irReturn
         }
-        val irReturn = JsIrBuilder.buildReturn(stub.symbol, irDelegateCall, context.irBuiltIns.nothingType)
-
-
-        stub.body = JsIrBuilder.buildBlockBody(listOf(irReturn))
     }
 
     private fun generateInitBody(constructor: IrConstructor, irClass: IrClass, delegate: IrSimpleFunction) {
         val thisParam = delegate.valueParameters.last()
         val oldThisReceiver = irClass.thisReceiver!!
-        val retStmt = JsIrBuilder.buildReturn(delegate.symbol, JsIrBuilder.buildGetValue(thisParam.symbol), context.irBuiltIns.nothingType)
-        val statements = (constructor.body!!.deepCopyWithSymbols(delegate) as IrStatementContainer).statements
-
+        val constructorBody = constructor.body!!
         val oldValueParameters = constructor.valueParameters + oldThisReceiver
 
         // TODO: replace parameters as well
-        delegate.body = JsIrBuilder.buildBlockBody(statements + retStmt).apply {
+        delegate.body = IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
+            statements += (constructorBody.deepCopyWithSymbols(delegate) as IrStatementContainer).statements
+            statements += JsIrBuilder.buildReturn(delegate.symbol, JsIrBuilder.buildGetValue(thisParam.symbol), context.irBuiltIns.nothingType)
             transformChildrenVoid(ThisUsageReplaceTransformer(delegate.symbol, oldValueParameters.zip(delegate.valueParameters).toMap()))
         }
     }
@@ -179,18 +181,40 @@ private fun buildFactoryDeclaration(constructor: IrConstructor, irClass: IrClass
     }
 }
 
-private fun buildConstructorStubDeclarations(constructor: IrConstructor, klass: IrClass) =
-    ConstructorPair(buildInitDeclaration(constructor, klass), buildFactoryDeclaration(constructor, klass))
-
-class SecondaryFactoryInjectorLowering(val context: JsIrBackendContext) : FileLoweringPass {
-    override fun lower(irFile: IrFile) {
-        irFile.accept(CallsiteRedirectionTransformer(context), null)
+private fun JsIrBackendContext.buildConstructorDelegate(constructor: IrConstructor, klass: IrClass): IrSimpleFunction {
+    return mapping.secondaryConstructorToDelegate.getOrPut(constructor) {
+        buildInitDeclaration(constructor, klass)
     }
 }
 
-private class CallsiteRedirectionTransformer(context: JsIrBackendContext) : IrElementTransformer<IrFunction?> {
+private fun JsIrBackendContext.buildConstructorFactory(constructor: IrConstructor, klass: IrClass): IrSimpleFunction {
+    return mapping.secondaryConstructorToFactory.getOrPut(constructor) {
+        buildFactoryDeclaration(constructor, klass)
+    }
+}
 
-    private val oldCtorToNewMap = context.secondaryConstructorToFactoryCache
+class SecondaryFactoryInjectorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
+
+    override fun lower(irBody: IrBody, container: IrDeclaration) {
+        // TODO Simplify? Is this needed at all?
+        var parentFunction: IrFunction? = container as? IrFunction
+        var declaration = container
+        while (parentFunction == null) {
+            val parent = declaration.parent
+
+            if (parent is IrFunction) {
+                parentFunction = parent
+            }
+
+            declaration = parent as? IrDeclaration ?: break
+        }
+
+        irBody.accept(CallsiteRedirectionTransformer(context), parentFunction)
+    }
+}
+
+private class CallsiteRedirectionTransformer(private val context: JsIrBackendContext) : IrElementTransformer<IrFunction?> {
+
     private val defaultThrowableConstructor = context.defaultThrowableCtor
 
     private val IrConstructor.isSecondaryConstructorCall
@@ -204,10 +228,8 @@ private class CallsiteRedirectionTransformer(context: JsIrBackendContext) : IrEl
 
         val target = expression.symbol.owner
         return if (target.isSecondaryConstructorCall) {
-            val ctor = oldCtorToNewMap.getOrPut(target) {
-                buildConstructorStubDeclarations(target, target.parentAsClass)
-            }
-            replaceSecondaryConstructorWithFactoryFunction(expression, ctor.stub.symbol)
+            val factory = context.buildConstructorFactory(target, target.parentAsClass)
+            replaceSecondaryConstructorWithFactoryFunction(expression, factory.symbol)
         } else expression
     }
 
@@ -218,8 +240,8 @@ private class CallsiteRedirectionTransformer(context: JsIrBackendContext) : IrEl
 
         return if (target.isSecondaryConstructorCall) {
             val klass = target.parentAsClass
-            val ctor = oldCtorToNewMap.getOrPut(target) { buildConstructorStubDeclarations(target, klass) }
-            val newCall = replaceSecondaryConstructorWithFactoryFunction(expression, ctor.delegate.symbol)
+            val delegate = context.buildConstructorDelegate(target, klass)
+            val newCall = replaceSecondaryConstructorWithFactoryFunction(expression, delegate.symbol)
 
             val readThis = expression.run {
                 if (data!! is IrConstructor) {
