@@ -19,12 +19,17 @@ import org.jetbrains.kotlin.ide.konan.decompiler.KotlinNativeLoadingMetadataCach
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.LoggingErrorReporter
+import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
+import org.jetbrains.kotlin.library.KLIB_MANIFEST_FILE_NAME
+import org.jetbrains.kotlin.library.KLIB_PROPERTY_UNIQUE_NAME
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.impl.KotlinLibraryImpl
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.library.metadata.PackageAccessHandler
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
+import java.io.IOException
+import java.util.*
 import org.jetbrains.kotlin.konan.file.File as KFile
 
 fun createFileStub(project: Project, text: String): PsiFileStub<*> {
@@ -76,3 +81,21 @@ internal object CachingIdeKonanLibraryMetadataLoader : PackageAccessHandler {
         get() = (this as KotlinLibraryImpl).base.access.layout.isZipped
 }
 
+internal val VirtualFile.isKonanLibraryRoot: Boolean
+    get() {
+        // The virtual file for a library packed in a ZIP file will have path like "/some/path/to/the/file.klib!/",
+        // and therefore will be recognized by VFS as a directory (isDirectory == true).
+        // So, first, let's check the extension.
+        val extension = extension
+        if (!extension.isNullOrEmpty() && extension != KLIB_FILE_EXTENSION) return false
+
+        val manifestFile = findChild(KLIB_MANIFEST_FILE_NAME)?.takeIf { !it.isDirectory } ?: return false
+
+        val manifestProperties = try {
+            manifestFile.inputStream.use { Properties().apply { load(it) } }
+        } catch (_: IOException) {
+            return false
+        }
+
+        return manifestProperties.containsKey(KLIB_PROPERTY_UNIQUE_NAME)
+    }
