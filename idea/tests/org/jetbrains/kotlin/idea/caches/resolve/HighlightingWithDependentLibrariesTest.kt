@@ -42,7 +42,11 @@ class HighlightingWithDependentLibrariesTest : KotlinLightCodeInsightFixtureTest
     }
 
     fun testHighlightingWithDependentLibraries() {
-        myFixture.configureByFile("$TEST_DATA_PATH/module/usingLibs.kt")
+        myFixture.configureByFile("module/usingLibs.kt")
         myFixture.checkHighlighting(false, false, false)
+    }
+
+    override fun getTestDataPath(): String {
+        return TEST_DATA_PATH
     }
 }
