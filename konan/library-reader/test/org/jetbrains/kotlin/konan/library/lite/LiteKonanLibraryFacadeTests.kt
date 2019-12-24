@@ -72,9 +72,9 @@ class LiteKonanLibraryFacadeTests {
         val roots = mutableListOf(externalLibsDir)
 
         roots += klibDir.resolve(KONAN_DISTRIBUTION_COMMON_LIBS_DIR)
-        roots += klibDir.resolve(KONAN_DISTRIBUTION_PLATFORM_LIBS_DIR).listFiles(FileFilter { it.isDirectory }).toList()
+        roots += klibDir.resolve(KONAN_DISTRIBUTION_PLATFORM_LIBS_DIR).listFiles(FileFilter { it.isDirectory })?.toList() ?: emptyList()
 
-        return roots.flatMap { it.listFiles().toList() }
+        return roots.flatMap { it.listFiles()?.toList() ?: emptyList() }
     }
 
     private fun collectLibrariesFromLocalFS(libraryProvider: LiteKonanLibraryProvider): Map<File, LiteKonanLibrary> =
