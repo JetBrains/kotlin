@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeAbbreviation
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
@@ -54,9 +55,11 @@ class TypeTranslator(
         return result
     }
 
-    private fun resolveTypeParameter(typeParameterDescriptor: TypeParameterDescriptor) =
-        typeParametersResolver.resolveScopedTypeParameter(typeParameterDescriptor)
-            ?: symbolTable.referenceTypeParameter(typeParameterDescriptor)
+    private fun resolveTypeParameter(typeParameterDescriptor: TypeParameterDescriptor): IrTypeParameterSymbol {
+        val originalTypeParameter = typeParameterDescriptor.originalTypeParameter
+        return typeParametersResolver.resolveScopedTypeParameter(originalTypeParameter)
+            ?: symbolTable.referenceTypeParameter(originalTypeParameter)
+    }
 
     fun translateType(kotlinType: KotlinType): IrType =
         translateType(kotlinType, kotlinType, Variance.INVARIANT).type
