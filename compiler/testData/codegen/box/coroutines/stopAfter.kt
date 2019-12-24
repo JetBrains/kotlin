@@ -1,5 +1,6 @@
 // IGNORE_BACKEND_FIR: JVM_IR
 // WITH_RUNTIME
+// KJS_WITH_FULL_RUNTIME
 
 /**
  * _Example_
