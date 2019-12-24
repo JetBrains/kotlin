@@ -43,7 +43,7 @@ public class GradleConsoleFilterProvider implements ConsoleFilterProvider {
 
         @Override
         public Result applyFilter(@NotNull String line, int entireLength) {
-          if (line == null || !FileUtil.isAbsolutePlatformIndependent(line)) return null;
+          if (!FileUtil.isAbsolutePlatformIndependent(line)) return null;
           if (Boolean.FALSE.equals(myIsGradleProject.getValue())) return null;
           Result result = super.applyFilter(line, entireLength);
           if (result == null) return null;
