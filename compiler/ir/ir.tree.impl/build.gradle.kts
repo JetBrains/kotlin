@@ -7,6 +7,7 @@ plugins {
 dependencies {
 //    compile(project(":compiler:util"))
 //    compile(project(":compiler:frontend"))
+    compile(project(":compiler:ir.tree"))
 //    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 }
 
