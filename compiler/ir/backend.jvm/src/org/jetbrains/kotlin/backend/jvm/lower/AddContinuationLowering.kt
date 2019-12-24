@@ -537,6 +537,9 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                 functionsToAdd.push(mutableSetOf())
                 val res = super.visitClass(declaration)
                 (res as IrClass).declarations.addAll(functionsToAdd.peek()!!)
+                for (function in functionsToAdd.peek()!!) {
+                    function.patchDeclarationParents(res)
+                }
                 functionsToAdd.pop()
                 return res
             }
