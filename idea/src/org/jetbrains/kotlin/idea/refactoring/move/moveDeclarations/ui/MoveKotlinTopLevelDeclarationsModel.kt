@@ -18,7 +18,6 @@ import com.intellij.refactoring.move.MoveCallback
 import com.intellij.refactoring.move.moveClassesOrPackages.AutocreatingSingleSourceRootMoveDestination
 import com.intellij.refactoring.move.moveClassesOrPackages.MultipleRootsMoveDestination
 import com.intellij.util.IncorrectOperationException
-import org.jetbrains.kotlin.backend.common.onlyIf
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.core.util.toPsiFile
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
@@ -67,7 +66,7 @@ internal class MoveKotlinTopLevelDeclarationsModel(
 
         val targetPackageWrapper = PackageWrapper(PsiManager.getInstance(project), targetPackage)
 
-        return if (selectedPsiDirectory === null)
+        return if (selectedPsiDirectory == null)
             TargetDirAndDestination(null, MultipleRootsMoveDestination(targetPackageWrapper))
         else {
             TargetDirAndDestination(
@@ -99,6 +98,7 @@ internal class MoveKotlinTopLevelDeclarationsModel(
 
         val (targetDir, moveDestination) = selectPackageBasedTargetDirAndDestination()
         val targetDirectory = moveDestination.getTargetIfExists(sourceDirectory)
+            ?: throw ConfigurationException("Can't get target directory for selected package")
 
         val destination = sourceFiles
             .mapToSingleOrNull { moveDestination.getTargetIfExists(it) }
@@ -155,8 +155,12 @@ internal class MoveKotlinTopLevelDeclarationsModel(
         }
 
         val targetDirPath = targetFile.toPath().parent
-        val projectBasePath = project.basePath ?: throw ConfigurationException("Can't move for current project")
-        if (targetDirPath === null || !targetDirPath.startsWith(projectBasePath)) {
+            ?: throw ConfigurationException("Incorrect target path. Directory is not specified.")
+
+        val projectBasePath = project.basePath
+            ?: throw ConfigurationException("Can't move for current project")
+
+        if (!targetDirPath.startsWith(projectBasePath)) {
             throw ConfigurationException("Incorrect target path. Directory $targetDirPath does not belong to current project.")
         }
 
@@ -222,7 +226,7 @@ internal class MoveKotlinTopLevelDeclarationsModel(
         if (targetFileName != null) checkTargetFileName(targetFileName)
 
         val moveDestination = selectPackageBasedTargetDirAndDestination().destination
-        val targetDir = moveDestination.getTargetIfExists(sourceDirectory)
+        val targetDir = moveDestination.getTargetIfExists(sourceDirectory) ?: return null
 
         val filesExistingInTargetDir = getFilesExistingInTargetDir(targetFileName, targetDir)
 

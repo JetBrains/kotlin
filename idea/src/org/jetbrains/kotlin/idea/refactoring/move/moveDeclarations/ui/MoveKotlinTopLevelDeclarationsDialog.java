@@ -272,15 +272,21 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
 
                     File targetFile1 = new File(fileChooser.getText());
                     PsiFile targetPsiFile = PhysicalFileSystemUtilsKt.toPsiFile(targetFile1, myProject);
-                    if (targetPsiFile instanceof KtFile) {
-                        dialog.select((KtFile) targetPsiFile);
-                    }
-                    else {
-                        PsiDirectory targetDir = PhysicalFileSystemUtilsKt.toPsiDirectory(targetFile1.getParentFile(), myProject);
-                        if (targetDir == null) {
-                            targetDir = sourceDir;
+
+                    if (targetPsiFile != null) {
+                        if (targetPsiFile instanceof KtFile) {
+                            dialog.select((KtFile) targetPsiFile);
                         }
-                        dialog.selectDirectory(targetDir);
+                        else {
+                            PsiDirectory targetDir = PhysicalFileSystemUtilsKt.toPsiDirectory(targetFile1.getParentFile(), myProject);
+                            if (targetDir != null) {
+                                dialog.selectDirectory(targetDir);
+                            } else {
+                                dialog.selectDirectory(sourceDir);
+                            }
+                        }
+                    } else {
+                        dialog.selectDirectory(sourceDir);
                     }
 
                     dialog.showDialog();
