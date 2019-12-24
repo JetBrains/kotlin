@@ -16,6 +16,7 @@ import kotlin.internal.InlineOnly
  * annotating that usage with the [OptIn] annotation, e.g. `@OptIn(ExperimentalContracts::class)`,
  * or by using the compiler argument `-Xopt-in=kotlin.contracts.ExperimentalContracts`.
  */
+@Suppress("DEPRECATION")
 @Retention(AnnotationRetention.BINARY)
 @SinceKotlin("1.3")
 @Experimental

@@ -14,6 +14,7 @@ import kotlin.annotation.AnnotationTarget.*
  * annotating that usage with the [OptIn] annotation, e.g. `@OptIn(ExperimentalStdlibApi::class)`,
  * or by using the compiler argument `-Xopt-in=kotlin.ExperimentalStdlibApi`.
  */
+@Suppress("DEPRECATION")
 @Experimental(level = Experimental.Level.ERROR)
 @RequiresOptIn(level = RequiresOptIn.Level.ERROR)
 @Retention(AnnotationRetention.BINARY)

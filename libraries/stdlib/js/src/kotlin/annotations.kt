@@ -170,6 +170,7 @@ public annotation class JsQualifier(val value: String)
  * the [OptIn] annotation, e.g. `@OptIn(ExperimentalJsExport::class)`,
  * or with the `-Xopt-in=kotlin.js.ExperimentalJsExport` compiler option is given.
  */
+@Suppress("DEPRECATION")
 @Experimental(level = Experimental.Level.WARNING)
 @RequiresOptIn(level = RequiresOptIn.Level.WARNING)
 @SinceKotlin("1.3")
