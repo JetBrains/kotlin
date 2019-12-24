@@ -57,6 +57,8 @@ open class KotlinJsIrTargetConfigurator(kotlinPluginVersion: String) :
                 moduleKind = "umd"
                 sourceMap = true
                 sourceMapEmbedSources = null
+
+                freeCompilerArgs += listOf("-Xir-only")
             }
         }
     }

@@ -49,6 +49,24 @@ abstract class KotlinJsIrSubTarget(
         }
     }
 
+    override fun produceKotlinLibrary() {
+        target.compilations
+            .matching { it.name == KotlinCompilation.TEST_COMPILATION_NAME }
+            .all {
+                it.kotlinOptions {
+                    freeCompilerArgs += listOf("-Xir-produce-klib-dir", "-Xir-produce-js")
+                }
+            }
+
+        target.compilations
+            .matching { it.name == KotlinCompilation.MAIN_COMPILATION_NAME }
+            .all {
+                it.kotlinOptions {
+                    freeCompilerArgs += listOf("-Xir-produce-klib-dir")
+                }
+            }
+    }
+
     override fun testTask(body: KotlinJsTest.() -> Unit) {
         testRuns.getByName(KotlinTargetWithTests.DEFAULT_TEST_RUN_NAME).executionTask.configure(body)
     }

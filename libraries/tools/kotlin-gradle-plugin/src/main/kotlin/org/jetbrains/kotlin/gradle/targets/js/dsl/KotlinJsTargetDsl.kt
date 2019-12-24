@@ -76,6 +76,8 @@ interface KotlinJsIrSubTargetDsl {
         }
     }
 
+    fun produceKotlinLibrary()
+
     val testRuns: NamedDomainObjectContainer<KotlinJsIrPlatformTestRun>
 }
 
