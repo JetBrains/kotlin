@@ -25,6 +25,7 @@ abstract class AbstractFirOldFrontendDiagnosticsTest : AbstractFirDiagnosticsTes
     }
 
     override fun runAnalysis(testDataFile: File, testFiles: List<TestFile>, firFiles: List<FirFile>) {
+        if (testFiles.any { it.directives.containsKey("FIR_IGNORE") }) return
         val failure: AssertionError? = try {
             doFirResolveTestBench(firFiles, FirTotalResolveTransformer().transformers, gc = false)
             null
