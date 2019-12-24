@@ -38,7 +38,10 @@ abstract class KotlinJsIrSubTarget(
 
     protected val producingConfigured: Boolean = false
 
-    private fun configure() {
+    protected val browserProducingConfiguredHandlers: MutableList<KotlinBrowserJsIr.() -> Unit> = mutableListOf()
+    protected val nodejsProducingConfiguredHandlers: MutableList<KotlinNodeJsIr.() -> Unit> = mutableListOf()
+
+    protected open fun configure() {
         NpmResolverPlugin.apply(project)
 
         configureBuildVariants()

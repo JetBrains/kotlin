@@ -17,9 +17,14 @@ open class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
     override val testTaskDescription: String
         get() = "Run all ${target.name} tests inside nodejs using the builtin test framework"
 
-    private val producingConfiguredHandlers: MutableList<KotlinNodeJsIr.() -> Unit> = mutableListOf()
-
     private val runTaskName = disambiguateCamelCased("run")
+
+    override fun configure() {
+        super.configure()
+        nodejsProducingConfiguredHandlers.forEach { handler ->
+            handler(this)
+        }
+    }
 
     override fun runTask(body: NodeJsExec.() -> Unit) {
         (project.tasks.getByName(runTaskName) as NodeJsExec).body()
@@ -47,7 +52,7 @@ open class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
         if (producingConfigured) {
             this.body()
         } else {
-            producingConfiguredHandlers += body
+            nodejsProducingConfiguredHandlers += body
         }
     }
 }

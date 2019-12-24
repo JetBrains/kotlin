@@ -32,10 +32,15 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
 
     private lateinit var buildVariants: NamedDomainObjectContainer<BuildVariant>
 
-    private val producingConfiguredHandlers: MutableList<KotlinBrowserJsIr.() -> Unit> = mutableListOf()
-
     override val testTaskDescription: String
         get() = "Run all ${target.name} tests inside browser using karma and webpack"
+
+    override fun configure() {
+        super.configure()
+        browserProducingConfiguredHandlers.forEach { handler ->
+            handler(this)
+        }
+    }
 
     override fun configureDefaultTestFramework(it: KotlinJsTest) {
         it.useKarma {
@@ -209,7 +214,7 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
         if (producingConfigured) {
             this.body()
         } else {
-            producingConfiguredHandlers += body
+            browserProducingConfiguredHandlers += body
         }
     }
 
