@@ -1,0 +1,5 @@
+FILE: inBrackets.kt
+    public final fun test(e: R|kotlin/Int.() -> kotlin/String|): R|kotlin/Unit| {
+        lval s: <ERROR TYPE REF: Unresolved name: e> = Int(3).<Unresolved name: e>#()
+        lval ss: <ERROR TYPE REF: Unresolved name: e> = Int(3).<Unresolved name: e>#()
+    }

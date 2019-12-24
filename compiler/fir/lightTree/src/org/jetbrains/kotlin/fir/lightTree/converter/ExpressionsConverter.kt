@@ -440,17 +440,29 @@ class ExpressionsConverter(
         val valueArguments = mutableListOf<LighterASTNode>()
         var additionalArgument: FirExpression? = null
         var hasArguments = false
-        callSuffix.forEachChildren {
-            when (it.tokenType) {
-                REFERENCE_EXPRESSION -> name = it.asText
-                TYPE_ARGUMENT_LIST -> firTypeArguments += declarationsConverter.convertTypeArguments(it)
-                VALUE_ARGUMENT_LIST, LAMBDA_ARGUMENT -> {
-                    hasArguments = true
-                    valueArguments += it
+        callSuffix.forEachChildren { child ->
+            fun process(node: LighterASTNode) {
+                when (node.tokenType) {
+                    REFERENCE_EXPRESSION -> {
+                        name = node.asText
+                    }
+                    PARENTHESIZED -> node.getExpressionInParentheses()?.let { process(it) } ?: run {
+                        additionalArgument = getAsFirExpression(node, "Incorrect invoke receiver")
+                    }
+                    TYPE_ARGUMENT_LIST -> {
+                        firTypeArguments += declarationsConverter.convertTypeArguments(node)
+                    }
+                    VALUE_ARGUMENT_LIST, LAMBDA_ARGUMENT -> {
+                        hasArguments = true
+                        valueArguments += node
+                    }
+                    else -> if (node.tokenType != TokenType.ERROR_ELEMENT) {
+                        additionalArgument = getAsFirExpression(node, "Incorrect invoke receiver")
+                    }
                 }
-                else -> if (it.tokenType != TokenType.ERROR_ELEMENT) additionalArgument =
-                    getAsFirExpression(it, "Incorrect invoke receiver")
             }
+
+            process(child)
         }
 
         val (calleeReference, explicitReceiver) = when {

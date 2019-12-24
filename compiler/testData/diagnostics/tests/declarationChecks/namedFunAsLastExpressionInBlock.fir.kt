@@ -45,7 +45,7 @@ fun test() {
     x4 checkType { <!UNRESOLVED_REFERENCE!>_<!><Function1<Int, Unit>>() }
 
     { y: Int -> fun named14(): Int {return 1} }
-    val b = <!UNRESOLVED_REFERENCE!><!INFERENCE_ERROR!>(fun named15(): Boolean { return true })<!>()<!>
+    val b = <!UNRESOLVED_REFERENCE!>(<!INFERENCE_ERROR!>fun named15(): Boolean { return true }<!>)()<!>
 
     baz(<!INFERENCE_ERROR!>fun named16(){}<!>)
 }

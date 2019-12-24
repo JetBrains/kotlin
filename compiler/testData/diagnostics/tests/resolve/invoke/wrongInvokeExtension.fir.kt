@@ -9,10 +9,10 @@ val B.a: () -> Int  get() = { 5 }
 fun test(a: A, b: B) {
     val x: Int = b.a()
 
-    b.<!UNRESOLVED_REFERENCE!>(a)()<!>
+    b.(a)()
 
     with(b) {
         val y: Int = <!UNRESOLVED_REFERENCE!>a<!>()
-        <!UNRESOLVED_REFERENCE!>(a)()<!>
+        (<!UNRESOLVED_REFERENCE!>a<!>)()
     }
 }

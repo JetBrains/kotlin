@@ -679,6 +679,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
                 runTest("compiler/fir/resolve/testData/resolve/expresssions/invoke/implicitTypeOrder.kt");
             }
 
+            @TestMetadata("inBrackets.kt")
+            public void testInBrackets() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/expresssions/invoke/inBrackets.kt");
+            }
+
             @TestMetadata("propertyFromParameter.kt")
             public void testPropertyFromParameter() throws Exception {
                 runTest("compiler/fir/resolve/testData/resolve/expresssions/invoke/propertyFromParameter.kt");

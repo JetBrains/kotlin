@@ -213,6 +213,11 @@ public class LightTree2FirConverterTestCaseGenerated extends AbstractLightTree2F
             runTest("compiler/fir/psi2fir/testData/rawBuilder/expressions/in.kt");
         }
 
+        @TestMetadata("inBrackets.kt")
+        public void testInBrackets() throws Exception {
+            runTest("compiler/fir/psi2fir/testData/rawBuilder/expressions/inBrackets.kt");
+        }
+
         @TestMetadata("init.kt")
         public void testInit() throws Exception {
             runTest("compiler/fir/psi2fir/testData/rawBuilder/expressions/init.kt");

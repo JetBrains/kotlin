@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.impl.FirLabelImpl
+import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.impl.*
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -1253,23 +1254,29 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
             }
         }
 
-        override fun visitCallExpression(expression: KtCallExpression, data: Unit): FirElement {
-            val calleeExpression = expression.calleeExpression
-            val source = expression.toFirSourceElement()
-
-            val (calleeReference, explicitReceiver) = when (calleeExpression) {
+        private fun splitToCalleeAndReceiver(
+            calleeExpression: KtExpression?,
+            defaultSource: FirPsiSourceElement
+        ): Pair<FirNamedReference, FirExpression?> {
+            return when (calleeExpression) {
                 is KtSimpleNameExpression -> FirSimpleNamedReference(
                     calleeExpression.toFirSourceElement(), calleeExpression.getReferencedNameAsName(), null
                 ) to null
+                is KtParenthesizedExpression -> splitToCalleeAndReceiver(calleeExpression.expression, defaultSource)
                 null -> FirErrorNamedReferenceImpl(
                     null, FirSimpleDiagnostic("Call has no callee", DiagnosticKind.Syntax)
                 ) to null
                 else -> {
                     FirSimpleNamedReference(
-                        source, OperatorNameConventions.INVOKE, null
+                        defaultSource, OperatorNameConventions.INVOKE, null
                     ) to calleeExpression.toFirExpression("Incorrect invoke receiver")
                 }
             }
+        }
+
+        override fun visitCallExpression(expression: KtCallExpression, data: Unit): FirElement {
+            val source = expression.toFirSourceElement()
+            val (calleeReference, explicitReceiver) = splitToCalleeAndReceiver(expression.calleeExpression, source)
 
             val result = if (expression.valueArgumentList == null && expression.lambdaArguments.isEmpty()) {
                 FirQualifiedAccessExpressionImpl(source).apply {

@@ -25,9 +25,9 @@ fun test(c: () -> String, e: Int.() -> String) {
     (c)()
 
     3.<!UNRESOLVED_REFERENCE!>e<!>()
-    3.<!UNRESOLVED_REFERENCE!>(e)()<!>
+    3.(<!UNRESOLVED_REFERENCE!>e<!>)()
     with(3) {
         <!INAPPLICABLE_CANDIDATE!>e<!>()
-        <!INAPPLICABLE_CANDIDATE!>(e)()<!>
+        (<!INAPPLICABLE_CANDIDATE!>e<!>)()
     }
 }
