@@ -8308,6 +8308,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/generics/argumentsForT.kt");
             }
 
+            @TestMetadata("bareTypesWithStarProjections.kt")
+            public void testBareTypesWithStarProjections() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/generics/bareTypesWithStarProjections.kt");
+            }
+
             @TestMetadata("commonSupertypeContravariant.kt")
             public void testCommonSupertypeContravariant() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/generics/commonSupertypeContravariant.kt");
