@@ -5,8 +5,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.stubs.*;
-import com.intellij.util.indexing.FileBasedIndex;
-import com.intellij.util.indexing.FileBasedIndexImpl;
 import com.intellij.util.indexing.ID;
 import com.intellij.util.indexing.provided.ProvidedIndexExtension;
 import com.intellij.util.io.DataExternalizer;
@@ -16,7 +14,6 @@ import com.intellij.util.io.VoidDataExternalizer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -52,7 +49,7 @@ public class StubProvidedIndexExtension implements ProvidedIndexExtension<Intege
       new SerializationManagerImpl(path.resolve(StringUtil.toLowerCase(StubUpdatingIndex.INDEX_ID.getName())).resolve("rep.names"),
                                    true);
     Disposer.register(ApplicationManager.getApplication(), manager);
-    return new SerializedStubTreeDataExternalizer(false, manager);
+    return new SerializedStubTreeDataExternalizer(false, manager, StubForwardIndexExternalizer.FileLocalStubForwardIndexExternalizer.INSTANCE);
   }
 
   @Nullable

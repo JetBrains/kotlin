@@ -119,7 +119,7 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
 
   @NotNull
   @Override
-  protected InputData<Key, Value> mapInput(@Nullable Input content) {
+  protected InputData<Key, Value> mapInput(int inputId, @Nullable Input content) {
     InputData<Key, Value> data;
     boolean containsSnapshotData = true;
     if (mySnapshotInputMappings != null && content != null) {
@@ -135,7 +135,7 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
         throw new RuntimeException(e);
       }
     }
-    data = super.mapInput(content);
+    data = super.mapInput(inputId, content);
     if (!containsSnapshotData && !UpdatableSnapshotInputMappingIndex.ignoreMappingIndexUpdate(content)) {
       try {
         return ((UpdatableSnapshotInputMappingIndex<Key, Value, Input>)mySnapshotInputMappings).putData(content, data);

@@ -2,15 +2,19 @@
 package com.intellij.util.indexing.provided;
 
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.util.indexing.*;
+import com.intellij.util.indexing.FileBasedIndexExtension;
+import com.intellij.util.indexing.FileContent;
+import com.intellij.util.indexing.ID;
+import com.intellij.util.indexing.UpdatableIndex;
+import com.intellij.util.indexing.hash.FileContentHashIndex;
 import com.intellij.util.indexing.hash.MergedInvertedIndex;
 import com.intellij.util.io.DataExternalizer;
 import com.intellij.util.io.KeyDescriptor;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.List;
 
 public interface ProvidedIndexExtension<K, V> {
   Logger LOG = Logger.getInstance(ProvidedIndexExtension.class);
@@ -28,11 +32,12 @@ public interface ProvidedIndexExtension<K, V> {
   DataExternalizer<V> createValueExternalizer();
 
   @NotNull
-  static <K, V> UpdatableIndex<K, V, FileContent> wrapWithProvidedIndex(@NotNull ProvidedIndexExtension<K, V> providedIndexExtension,
+  static <K, V> UpdatableIndex<K, V, FileContent> wrapWithProvidedIndex(@NotNull List<ProvidedIndexExtension<K, V>> providedIndexExtensions,
                                                                         @NotNull FileBasedIndexExtension<K, V> originalExtension,
-                                                                        @NotNull UpdatableIndex<K, V, FileContent> index) {
+                                                                        @NotNull UpdatableIndex<K, V, FileContent> index,
+                                                                        @NotNull FileContentHashIndex contentHashIndex) {
     try {
-      return MergedInvertedIndex.create(providedIndexExtension, originalExtension, index);
+      return MergedInvertedIndex.create(providedIndexExtensions, originalExtension, index, contentHashIndex);
     }
     catch (IOException e) {
       LOG.error(e);

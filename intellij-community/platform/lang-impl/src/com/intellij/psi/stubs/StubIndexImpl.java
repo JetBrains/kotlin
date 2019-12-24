@@ -52,6 +52,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.function.IntPredicate;
+import java.util.stream.Collectors;
 
 @State(name = "FileBasedIndex", storages = {
   @Storage(value = StoragePathMacros.CACHE_FILE),
@@ -196,14 +197,13 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
         UpdatableIndex<K, Void, FileContent> index = new VfsAwareMapReduceIndex<>(wrappedExtension, memStorage, null, null, null, lock);
 
         if (stubUpdatingIndex instanceof MergedInvertedIndex) {
-          ProvidedIndexExtension<Integer, SerializedStubTree> ex =
-            ((MergedInvertedIndex<Integer, SerializedStubTree>)stubUpdatingIndex).getProvidedExtension();
-          if (ex instanceof StubProvidedIndexExtension) {
-            ProvidedIndexExtension<K, Void> providedStubIndexExtension =
-              ((StubProvidedIndexExtension)ex).findProvidedStubIndex(extension);
-            if (providedStubIndexExtension != null) {
-              index = ProvidedIndexExtension.wrapWithProvidedIndex(providedStubIndexExtension, wrappedExtension, index);
-            }
+          List<ProvidedIndexExtension<K, Void>> providedIndexExtensions = ((MergedInvertedIndex<Integer, SerializedStubTree>)stubUpdatingIndex)
+                  .getProvidedExtensions()
+                  .filter(ex -> ex instanceof StubProvidedIndexExtension)
+                  .map(ex -> ((StubProvidedIndexExtension)ex).findProvidedStubIndex(extension))
+                  .collect(Collectors.toList());
+          if (!providedIndexExtensions.isEmpty()) {
+            index = ProvidedIndexExtension.wrapWithProvidedIndex(providedIndexExtensions, wrappedExtension, index, ((MergedInvertedIndex<Integer, SerializedStubTree>)stubUpdatingIndex).getHashIndex());
           }
         }
 

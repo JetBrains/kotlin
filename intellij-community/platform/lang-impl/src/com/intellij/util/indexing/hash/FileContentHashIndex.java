@@ -13,8 +13,8 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.util.Map;
 
-public class FileContentHashIndex extends VfsAwareMapReduceIndex<Integer, Void, FileContent> {
-  FileContentHashIndex(@NotNull FileContentHashIndexExtension extension, IndexStorage<Integer, Void> storage) throws IOException {
+public class FileContentHashIndex extends VfsAwareMapReduceIndex<Long, Void, FileContent> {
+  FileContentHashIndex(@NotNull FileContentHashIndexExtension extension, IndexStorage<Long, Void> storage) throws IOException {
     super(extension,
           storage,
           new PersistentMapBasedForwardIndex(IndexInfrastructure.getInputIndexStorageFile(extension.getName()).toPath(), false),
@@ -23,22 +23,22 @@ public class FileContentHashIndex extends VfsAwareMapReduceIndex<Integer, Void, 
 
   @NotNull
   @Override
-  protected Computable<Boolean> createIndexUpdateComputation(@NotNull AbstractUpdateData<Integer, Void> updateData) {
+  protected Computable<Boolean> createIndexUpdateComputation(@NotNull AbstractUpdateData<Long, Void> updateData) {
     return new HashIndexUpdateComputable(super.createIndexUpdateComputation(updateData), updateData.newDataIsEmpty());
   }
 
-  public int getHashId(int fileId) throws StorageException {
-    Map<Integer, Void> data = getIndexedFileData(fileId);
-    if (data.isEmpty()) return 0;
+  public Long getHashId(int fileId) throws StorageException {
+    Map<Long, Void> data = getIndexedFileData(fileId);
+    if (data.isEmpty()) return FileContentHashIndexExtension.NULL_HASH_ID;
     return data.keySet().iterator().next();
   }
 
   @NotNull
-  IntIntFunction toHashIdToFileIdFunction() {
+  IntIntFunction toHashIdToFileIdFunction(int indexId) {
     return hash -> {
       try {
-        ValueContainer<Void> data = getData(hash);
-        assert data.size() == 1;
+        ValueContainer<Void> data = getData(FileContentHashIndexExtension.getHashId(hash, indexId));
+        if (data.size() == 0) return -1;
         return data.getValueIterator().getInputIdsIterator().next();
       }
       catch (StorageException e) {

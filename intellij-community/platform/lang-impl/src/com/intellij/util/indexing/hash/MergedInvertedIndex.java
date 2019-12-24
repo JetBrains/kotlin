@@ -4,57 +4,74 @@ package com.intellij.util.indexing.hash;
 import com.intellij.openapi.util.Computable;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.Processor;
+import com.intellij.util.SmartList;
 import com.intellij.util.indexing.*;
 import com.intellij.util.indexing.impl.AbstractUpdateData;
+import com.intellij.util.indexing.impl.MergedValueContainer;
 import com.intellij.util.indexing.provided.ProvidedIndexExtension;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
+import java.nio.file.Files;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
+import java.util.stream.Stream;
 
 public class MergedInvertedIndex<Key, Value> implements UpdatableIndex<Key, Value, FileContent> {
   @NotNull
-  private final HashBasedMapReduceIndex<Key, Value> myProvidedIndex;
+  private final HashBasedMapReduceIndex<Key, Value>[] myProvidedIndexes;
   @NotNull
   private final FileContentHashIndex myHashIndex;
   @NotNull
-  private final UpdatableIndex<Key, Value, FileContent> myBaseIndex;
+  public final UpdatableIndex<Key, Value, FileContent> myBaseIndex;
 
   @NotNull
-  public static <Key, Value> MergedInvertedIndex<Key, Value> create(@NotNull ProvidedIndexExtension<Key, Value> providedExtension,
+  public static <Key, Value> MergedInvertedIndex<Key, Value> create(@NotNull List<ProvidedIndexExtension<Key, Value>> providedExtensions,
                                                                     @NotNull FileBasedIndexExtension<Key, Value> originalExtension,
-                                                                    @NotNull UpdatableIndex<Key, Value, FileContent> baseIndex)
-    throws IOException {
-    Path file = providedExtension.getIndexPath();
-    HashBasedMapReduceIndex<Key, Value> index = HashBasedMapReduceIndex.create(providedExtension, originalExtension);
-    return new MergedInvertedIndex<>(index, ((FileBasedIndexImpl)FileBasedIndex.getInstance()).getFileContentHashIndex(file.toFile()), baseIndex);
+                                                                    @NotNull UpdatableIndex<Key, Value, FileContent> baseIndex,
+                                                                    @NotNull FileContentHashIndex contentHashIndex) throws IOException {
+    HashBasedMapReduceIndex<Key, Value>[] providedIndexes = new HashBasedMapReduceIndex[providedExtensions.size()];
+    for (int i = 0; i < providedExtensions.size(); i++) {
+      ProvidedIndexExtension<Key, Value> extension = providedExtensions.get(i);
+      providedIndexes[i] = extension != null && Files.exists(extension.getIndexPath()) ? HashBasedMapReduceIndex.create(extension, originalExtension, contentHashIndex, i) : null;
+    }
+
+    return new MergedInvertedIndex<>(providedIndexes, contentHashIndex, baseIndex);
   }
 
-  public MergedInvertedIndex(@NotNull HashBasedMapReduceIndex<Key, Value> index,
+  public MergedInvertedIndex(@NotNull HashBasedMapReduceIndex<Key, Value>[] indexes,
                              @NotNull FileContentHashIndex hashIndex,
                              @NotNull UpdatableIndex<Key, Value, FileContent> baseIndex) {
-    myProvidedIndex = index;
+    myProvidedIndexes = indexes;
     myHashIndex = hashIndex;
     myBaseIndex = baseIndex;
   }
 
+
   @NotNull
-  public ProvidedIndexExtension<Key, Value> getProvidedExtension() {
-    return myProvidedIndex.getProvidedExtension();
+  public FileContentHashIndex getHashIndex() {
+    return myHashIndex;
+  }
+
+  @NotNull
+  public Stream<ProvidedIndexExtension<Key, Value>> getProvidedExtensions() {
+    return Stream.of(myProvidedIndexes).map(index -> index.getProvidedExtension());
   }
 
   @NotNull
   @Override
   public Computable<Boolean> update(int inputId, @Nullable FileContent content) {
     if (content != null) {
+      long hashId = FileContentHashIndexExtension.getHashId(content);
+      if (hashId != FileContentHashIndexExtension.NULL_HASH_ID) {
+        return () -> Boolean.TRUE;
+      }
       //TODO if content == null
       Computable<Boolean> update = myHashIndex.update(inputId, content);
       if (!((FileContentHashIndex.HashIndexUpdateComputable)update).isEmptyInput()) return update;
@@ -91,13 +108,28 @@ public class MergedInvertedIndex<Key, Value> implements UpdatableIndex<Key, Valu
   @NotNull
   @Override
   public ValueContainer<Value> getData(@NotNull Key key) throws StorageException {
-    return MergedValueContainer.merge(myBaseIndex.getData(key), myProvidedIndex.getData(key));
+    List<ValueContainer<Value>> data = new SmartList<>();
+    data.add(myBaseIndex.getData(key));
+    for (HashBasedMapReduceIndex<Key, Value> index : myProvidedIndexes) {
+      if (index == null) continue;
+      data.add(index.getData(key));
+    }
+    return new MergedValueContainer<>(data);
   }
 
   @Override
   public boolean processAllKeys(@NotNull Processor<? super Key> processor, @NotNull GlobalSearchScope scope, @Nullable IdFilter idFilter)
     throws StorageException {
-    return myBaseIndex.processAllKeys(processor, scope, idFilter) && myProvidedIndex.processAllKeys(processor, scope, idFilter);
+    if (!myBaseIndex.processAllKeys(processor, scope, idFilter)) {
+      return false;
+    }
+    for (HashBasedMapReduceIndex<Key, Value> index : myProvidedIndexes) {
+      if (index == null) continue;
+      if (!index.processAllKeys(processor, scope, idFilter)) {
+        return false;
+      }
+    }
+    return true;
   }
 
   @NotNull
@@ -123,9 +155,9 @@ public class MergedInvertedIndex<Key, Value> implements UpdatableIndex<Key, Valu
   public Map<Key, Value> getIndexedFileData(int fileId) throws StorageException {
     Map<Key, Value> data = myBaseIndex.getIndexedFileData(fileId);
     if (!data.isEmpty()) return data;
-    int hashId = myHashIndex.getHashId(fileId);
-    if (hashId == 0) return Collections.emptyMap();
-    return myProvidedIndex.getIndexedFileData(hashId);
+    Long hashId = myHashIndex.getHashId(fileId);
+    if (hashId == null || hashId == FileContentHashIndexExtension.NULL_HASH_ID) return Collections.emptyMap();
+    return myProvidedIndexes[FileContentHashIndexExtension.getIndexId(hashId)].getIndexedFileData(FileContentHashIndexExtension.getInternalHashId(hashId));
   }
 
   @Override

@@ -2,11 +2,13 @@
 package com.intellij.util.indexing.hash;
 
 import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileVisitor;
 import com.intellij.openapi.vfs.newvfs.persistent.ContentHashesUtil;
+import com.intellij.psi.SingleRootFileViewProvider;
 import com.intellij.util.indexing.*;
 import com.intellij.util.indexing.impl.InputData;
 import com.intellij.util.indexing.impl.MapIndexStorage;
@@ -18,35 +20,33 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.atomic.LongAdder;
 
 public class HashBasedIndexGenerator<K, V> {
-  @NotNull private final File myOut;
-  @NotNull private final File myHashOut;
-  @NotNull private final FakeIndexExtension<K, V> myExtension;
-  @NotNull private final FileBasedIndex.InputFilter myInputFilter;
+  @NotNull
+  private final File myOut;
+  @NotNull
+  private final FakeIndexExtension<K, V> myExtension;
+  @NotNull
+  private final FileBasedIndex.InputFilter myInputFilter;
 
-  protected ContentHashesUtil.HashEnumerator myHashEnumerator;
   private InvertedIndex<K, V, FileContent> myIndex;
 
   public HashBasedIndexGenerator(@NotNull FileBasedIndexExtension<K, V> indexExtension, @NotNull File out) {
     this(indexExtension.getKeyDescriptor(),
          indexExtension.getValueExternalizer(),
          indexExtension,
-         out,
-         out);
+         out
+    );
   }
 
   public HashBasedIndexGenerator(@NotNull KeyDescriptor<K> keyDescriptor,
                                  @NotNull DataExternalizer<V> valueExternalizer,
                                  @NotNull FileBasedIndexExtension<K, V> originalExtension,
-                                 @NotNull File out,
-                                 @NotNull File hashOut) {
+                                 @NotNull File out) {
     myExtension = new FakeIndexExtension<>(keyDescriptor, valueExternalizer, originalExtension);
     myOut = out;
-    myHashOut = hashOut;
 
     FileBasedIndex.InputFilter filter = originalExtension.getInputFilter();
 
@@ -65,8 +65,8 @@ public class HashBasedIndexGenerator<K, V> {
   }
 
   public void openIndex() throws IOException {
-    myHashEnumerator = getHashEnumerator();
     String indexName = myExtension.getName().getName();
+    boolean singleEntry = myExtension.myOriginalExtension instanceof SingleEntryFileBasedIndexExtension;
     myIndex = new MapReduceIndex<K, V, FileContent>(myExtension, new MapIndexStorage<K, V>(new File(new File(myOut, StringUtil.toLowerCase(indexName)), indexName).toPath(),
                                                                                            myExtension.getKeyDescriptor(),
                                                                                            myExtension.getValueExternalizer(),
@@ -77,6 +77,16 @@ public class HashBasedIndexGenerator<K, V> {
         //ignore
       }
     }, null, null) {
+      @NotNull
+      @Override
+      protected Map<K, V> mapByIndexer(int inputId, @NotNull FileContent content) {
+        Map<K, V> data = super.mapByIndexer(inputId, content);
+        if (singleEntry && !data.isEmpty()) {
+          data = Collections.singletonMap((K)(Integer)inputId, data.values().iterator().next());
+        }
+        return data;
+      }
+
       @Override
       protected void updateForwardIndex(int inputId, @NotNull InputData<K, V> data) throws IOException {
         super.updateForwardIndex(inputId, data);
@@ -95,14 +105,9 @@ public class HashBasedIndexGenerator<K, V> {
 
       @Override
       protected void requestRebuild(@NotNull Throwable e) {
-        throw new RuntimeException(e);
+        throw new RuntimeException("error while processing " + indexName, e);
       }
     };
-  }
-
-  @NotNull
-  protected ContentHashesUtil.HashEnumerator getHashEnumerator() throws IOException {
-    return new ContentHashesUtil.HashEnumerator(new File(myHashOut, "hashes").toPath());
   }
 
   protected void visitInputData(int hashId, @NotNull InputData<K, V> data) throws StorageException {
@@ -111,24 +116,42 @@ public class HashBasedIndexGenerator<K, V> {
 
   public void closeIndex() throws IOException {
     if (myIndex != null) myIndex.dispose();
-    if (myHashEnumerator != null) myHashEnumerator.close();
   }
 
+  public static void generate(@NotNull Collection<VirtualFile> roots,
+                              @NotNull Collection<HashBasedIndexGenerator<?, ?>> generators,
+                              @NotNull Project project,
+                              @NotNull File hashOut) {
 
-  public final void generate(@NotNull Collection<VirtualFile> roots) {
+    LongAdder l = new LongAdder();
     try {
-      openIndex();
+      ContentHashesUtil.HashEnumerator hashEnumerator = new ContentHashesUtil.HashEnumerator(new File(hashOut, "hashes").toPath());
+
+      for (HashBasedIndexGenerator<?, ?> generator : generators) {
+        generator.openIndex();
+      }
 
       for (VirtualFile root : roots) {
         VfsUtilCore.visitChildrenRecursively(root, new VirtualFileVisitor<Boolean>() {
           @Override
           public boolean visitFile(@NotNull VirtualFile file) {
-            if (!file.isDirectory() && myInputFilter.acceptInput(file)) {
-              indexFile(file);
+
+            if (!file.isDirectory() && !SingleRootFileViewProvider.isTooLargeForIntelligence(file)) {
+              for (HashBasedIndexGenerator<?, ?> generator : generators) {
+                if (generator.myInputFilter.acceptInput(file)) {
+                  l.increment();
+                  generator.indexFile(file, project, hashEnumerator);
+                }
+              }
             }
+
             return true;
           }
         });
+      }
+
+      synchronized (hashEnumerator) {
+        hashEnumerator.close();
       }
     }
     catch (IOException e) {
@@ -136,19 +159,29 @@ public class HashBasedIndexGenerator<K, V> {
     }
     finally {
       try {
-        closeIndex();
+        for (HashBasedIndexGenerator<?, ?> generator : generators) {
+          generator.closeIndex();
+        }
       }
       catch (IOException e) {
         throw new RuntimeException(e);
       }
     }
+
+    System.out.println("Indexed " + l.sum() + " files to " + hashOut.getPath());
   }
 
-  protected void indexFile(@NotNull VirtualFile f) {
+  protected void indexFile(@NotNull VirtualFile f,
+                           @NotNull Project project,
+                           @NotNull ContentHashesUtil.HashEnumerator hashEnumerator) {
     try {
       FileContentImpl fc = new FileContentImpl(f, f.contentsToByteArray());
-      IndexedHashesSupport.initIndexedHash(fc);
-      int hashId = myHashEnumerator.enumerate(fc.getHash(false));
+      byte[] hash = IndexedHashesSupport.getOrInitIndexedHash(fc, false);
+      int hashId;
+      synchronized (hashEnumerator) {
+        hashId = Math.abs(hashEnumerator.enumerate(hash));
+      }
+      fc.putUserData(IndexingDataKeys.PROJECT, project);
       if (!myIndex.update(hashId, fc).compute()) {
         throw new RuntimeException();
       }

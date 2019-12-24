@@ -2,6 +2,7 @@
 package com.intellij.index;
 
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.ShutDownTracker;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.stubs.StubUpdatingIndex;
 import com.intellij.psi.stubs.provided.StubProvidedIndexExtension;
@@ -9,44 +10,73 @@ import com.intellij.util.indexing.FileBasedIndexExtension;
 import com.intellij.util.indexing.ID;
 import com.intellij.util.indexing.provided.ProvidedIndexExtension;
 import com.intellij.util.indexing.provided.ProvidedIndexExtensionLocator;
+import com.intellij.util.indexing.zipFs.UncompressedZipFileSystem;
+import com.intellij.util.indexing.zipFs.UncompressedZipFileSystemProvider;
 import com.intellij.util.io.DataExternalizer;
 import com.intellij.util.io.KeyDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Comparator;
+import java.util.stream.Stream;
 
 public class BasicProvidedExtensionLocator implements ProvidedIndexExtensionLocator {
-  private static final String PREBUILT_INDEX_PATH_PROP = "prebuilt.hash.index.dir";
+  private static final String PREBUILT_INDEX_ZIP_PROP = "prebuilt.hash.index.zip";
   private static final Logger LOG = Logger.getInstance(BasicProvidedExtensionLocator.class);
 
-  @Nullable
-  @Override
-  public <K, V> ProvidedIndexExtension<K, V> findProvidedIndexExtension(@NotNull FileBasedIndexExtension<K, V> originalExtension) {
-    Path root = getPrebuiltIndexPath();
-    if (root == null || !Files.exists(root.resolve( StringUtil.toLowerCase(originalExtension.getName().getName())))) return null;
+  private static UncompressedZipFileSystem ourFs;
 
-    return originalExtension.getName().equals(StubUpdatingIndex.INDEX_ID)
-           ? (ProvidedIndexExtension<K, V>)new StubProvidedIndexExtension(root)
-           : new ProvidedIndexExtensionImpl<>(root, originalExtension);
+  @NotNull
+  @Override
+  public <K, V> Stream<ProvidedIndexExtension<K, V>> findProvidedIndexExtension(@NotNull FileBasedIndexExtension<K, V> originalExtension) {
+    if (!originalExtension.dependsOnFileContent()) return Stream.empty();
+    Path root = getPrebuiltIndexPath();
+    if (root == null || !Files.exists(root)) return Stream.empty();
+
+    try {
+      // TODO properly close it
+      UncompressedZipFileSystem fs = getFs(root);
+
+      Path fsRoot = fs.getPath("/").getRoot();
+      return Files
+              .list(fsRoot)
+              .sorted(Comparator.comparing(p -> p.getFileName().toString()))
+              .map(p -> p.resolve(StringUtil.toLowerCase(originalExtension.getName().getName())))
+              .map(p -> {
+                return originalExtension.getName().equals(StubUpdatingIndex.INDEX_ID)
+                        ? (ProvidedIndexExtension<K, V>)new StubProvidedIndexExtension(p)
+                        : new ProvidedIndexExtensionImpl<>(p, originalExtension);
+              });
+    } catch (IOException e) {
+      LOG.error(e);
+      return Stream.empty();
+    }
+  }
+
+  private synchronized static UncompressedZipFileSystem getFs(@NotNull Path root) throws IOException {
+    if (ourFs == null) {
+      ourFs = new UncompressedZipFileSystem(root, new UncompressedZipFileSystemProvider());
+      ShutDownTracker.getInstance().registerShutdownTask(() -> {
+        try {
+          ourFs.close();
+        }
+        catch (IOException e) {
+          LOG.error(e);
+        }
+      });
+    }
+    return ourFs;
   }
 
   @Nullable
   private static Path getPrebuiltIndexPath() {
-    String path = System.getProperty(PREBUILT_INDEX_PATH_PROP);
+    String path = System.getProperty(PREBUILT_INDEX_ZIP_PROP);
     if (path == null) return null;
-    Path file;
-    try {
-      file = Paths.get(new URI(path));
-    }
-    catch (URISyntaxException e) {
-      LOG.error(e);
-      return null;
-    }
+    Path file = Paths.get(path);
     return Files.exists(file) ? file : null;
   }
 
