@@ -39,7 +39,7 @@ private class RenameAnonymousParametersLowering(val context: JvmBackendContext) 
 
     override fun lower(irFile: IrFile) = irFile.transformChildrenVoid()
 
-    override fun visitValueParameter(declaration: IrValueParameter) =
+    override fun visitValueParameterNew(declaration: IrValueParameter) =
         declaration.computeNewParameterName()?.let { name ->
             val descriptor = if (declaration.descriptor is ReceiverParameterDescriptor) {
                 WrappedReceiverParameterDescriptor(declaration.descriptor.annotations)
@@ -63,7 +63,7 @@ private class RenameAnonymousParametersLowering(val context: JvmBackendContext) 
                 annotations += declaration.annotations
                 oldParameterToNew[declaration] = this
             }
-        } ?: super.visitValueParameter(declaration)
+        } ?: super.visitValueParameterNew(declaration)
 
     override fun visitGetValue(expression: IrGetValue): IrExpression {
         val oldParameter = expression.symbol.owner

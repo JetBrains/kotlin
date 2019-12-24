@@ -68,6 +68,20 @@ abstract class IrElementTransformerVoidWithContext : IrElementTransformerVoid() 
         return result
     }
 
+    final override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer): IrStatement {
+        scopeStack.push(createScope(declaration))
+        val result = visitAnonymousInitializerNew(declaration)
+        scopeStack.pop()
+        return result
+    }
+
+    final override fun visitValueParameter(declaration: IrValueParameter): IrStatement {
+        scopeStack.push(createScope(declaration))
+        val result = visitValueParameterNew(declaration)
+        scopeStack.pop()
+        return result
+    }
+
     final override fun visitScript(declaration: IrScript): IrStatement {
         scopeStack.push(createScope(declaration))
         val result = visitScriptNew(declaration)
@@ -80,6 +94,8 @@ abstract class IrElementTransformerVoidWithContext : IrElementTransformerVoid() 
     protected val currentClass get() = scopeStack.lastOrNull { it.scope.scopeOwnerSymbol is IrClassSymbol }
     protected val currentFunction get() = scopeStack.lastOrNull { it.scope.scopeOwnerSymbol is IrFunctionSymbol }
     protected val currentProperty get() = scopeStack.lastOrNull { it.scope.scopeOwnerSymbol is IrPropertySymbol }
+    protected val currentAnonymousInitializer get() = scopeStack.lastOrNull { it.scope.scopeOwnerSymbol is IrAnonymousInitializer }
+    protected val currentValueParameter get() = scopeStack.lastOrNull { it.scope.scopeOwnerSymbol is IrValueParameter }
     protected val currentScope get() = scopeStack.peek()
     protected val parentScope get() = if (scopeStack.size < 2) null else scopeStack[scopeStack.size - 2]
     protected val allScopes get() = scopeStack
@@ -107,6 +123,14 @@ abstract class IrElementTransformerVoidWithContext : IrElementTransformerVoid() 
 
     open fun visitFieldNew(declaration: IrField): IrStatement {
         return super.visitField(declaration)
+    }
+
+    open fun visitAnonymousInitializerNew(declaration: IrAnonymousInitializer): IrStatement {
+        return super.visitAnonymousInitializer(declaration)
+    }
+
+    open fun visitValueParameterNew(declaration: IrValueParameter): IrStatement {
+        return super.visitValueParameter(declaration)
     }
 
     open fun visitScriptNew(declaration: IrScript): IrStatement {
@@ -152,10 +176,24 @@ abstract class IrElementVisitorVoidWithContext : IrElementVisitorVoid {
         scopeStack.pop()
     }
 
+    final override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer) {
+        scopeStack.push(createScope(declaration))
+        visitAnonymousInitializerNew(declaration)
+        scopeStack.pop()
+    }
+
+    final override fun visitValueParameter(declaration: IrValueParameter) {
+        scopeStack.push(createScope(declaration))
+        visitValueParameterNew(declaration)
+        scopeStack.pop()
+    }
+
     protected val currentFile get() = scopeStack.lastOrNull { it.scope.scopeOwnerSymbol is IrFileSymbol }
     protected val currentClass get() = scopeStack.lastOrNull { it.scope.scopeOwnerSymbol is IrClassSymbol }
     protected val currentFunction get() = scopeStack.lastOrNull { it.scope.scopeOwnerSymbol is IrFunctionSymbol }
     protected val currentProperty get() = scopeStack.lastOrNull { it.scope.scopeOwnerSymbol is IrPropertySymbol }
+    protected val currentAnonymousInitializer get() = scopeStack.lastOrNull { it.scope.scopeOwnerSymbol is IrAnonymousInitializer }
+    protected val currentValueParameter get() = scopeStack.lastOrNull { it.scope.scopeOwnerSymbol is IrValueParameter }
     protected val currentScope get() = scopeStack.peek()
     protected val parentScope get() = if (scopeStack.size < 2) null else scopeStack[scopeStack.size - 2]
     protected val allScopes get() = scopeStack
@@ -182,5 +220,13 @@ abstract class IrElementVisitorVoidWithContext : IrElementVisitorVoid {
 
     open fun visitFieldNew(declaration: IrField) {
         super.visitField(declaration)
+    }
+
+    open fun visitAnonymousInitializerNew(declaration: IrAnonymousInitializer) {
+        super.visitAnonymousInitializer(declaration)
+    }
+
+    open fun visitValueParameterNew(declaration: IrValueParameter) {
+        super.visitValueParameter(declaration)
     }
 }
