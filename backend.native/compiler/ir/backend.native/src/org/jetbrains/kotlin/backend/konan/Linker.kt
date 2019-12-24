@@ -90,10 +90,15 @@ internal class Linker(val context: Context) {
         val executable: String
 
         if (context.config.produce != CompilerOutputKind.FRAMEWORK) {
-            if (context.config.produce == CompilerOutputKind.DYNAMIC_CACHE && target.family.isAppleFamily)
-                additionalLinkerArgs = listOf("-install_name", context.config.outputFiles.mainFile)
-            else
-                additionalLinkerArgs = emptyList()
+            additionalLinkerArgs = if (target.family.isAppleFamily) {
+                when (context.config.produce) {
+                    CompilerOutputKind.DYNAMIC_CACHE ->
+                        listOf("-install_name", context.config.outputFiles.mainFile)
+                    else -> listOf("-dead_strip")
+                }
+            } else {
+                emptyList()
+            }
             executable = context.config.outputFiles.mainFileMangled
         } else {
             val framework = File(context.config.outputFile)
@@ -105,7 +110,7 @@ internal class Linker(val context: Context) {
                 Family.OSX -> "Versions/A/$dylibName"
                 else -> error(target)
             }
-            additionalLinkerArgs = listOf("-install_name", "@rpath/${framework.name}/$dylibRelativePath")
+            additionalLinkerArgs = listOf("-dead_strip", "-install_name", "@rpath/${framework.name}/$dylibRelativePath")
             val dylibPath = framework.child(dylibRelativePath)
             dylibPath.parentFile.mkdirs()
             executable = dylibPath.absolutePath
