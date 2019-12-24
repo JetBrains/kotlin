@@ -486,12 +486,20 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
     }
 
     fun allocArrayOnStack(arrayTypeName: String, count: LLVMValueRef): LLVMValueRef {
-        val arraySlot = alloca(localArrayType(arrayTypeName, extractConstUnsignedInt(count).toInt()))
+        val constCount = extractConstUnsignedInt(count).toInt()
+        val arrayType = localArrayType(arrayTypeName, constCount)
+        val arraySlot = alloca(arrayType)
         // Set array size in ArrayHeader.
         val arrayHeaderSlot = structGep(arraySlot, 0, "arrayHeader")
         setTypeInfoForLocalObject(arrayHeaderSlot)
         val sizeField = structGep(arrayHeaderSlot, 1, "count_")
         store(count, sizeField)
+        call(context.llvm.memsetFunction,
+                listOf(bitcast(kInt8Ptr, structGep(arraySlot, 1, "arrayBody")),
+                        Int8(0).llvm,
+                        Int32(constCount * LLVMSizeOfTypeInBits(codegen.llvmTargetData,
+                                arrayToElementType[arrayTypeName]).toInt() / 8).llvm,
+                        Int1(0).llvm))
         return bitcast(kObjHeaderPtr, arrayHeaderSlot)
     }
 
