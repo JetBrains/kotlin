@@ -109,7 +109,7 @@ class InvokeReceiverCandidateCollector(
                 invokeCallInfo.typeProvider
             )
 
-            invokeConsumer.addConsumer(
+            invokeConsumer.addConsumerAndProcessAccumulatedData(
                 createSimpleFunctionConsumer(
                     session, OperatorNameConventions.INVOKE,
                     boundInvokeCallInfo, towerResolver.components, towerResolver.collector
