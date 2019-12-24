@@ -9,14 +9,10 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Task
 import org.gradle.api.plugins.BasePluginConvention
 import org.gradle.api.tasks.Copy
-import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
-import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.dsl.*
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
-import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.BrowserDistribution
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
@@ -24,10 +20,7 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Devtool
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
 import org.jetbrains.kotlin.gradle.tasks.registerTask
-import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import java.io.File
 import javax.inject.Inject
-import org.jetbrains.kotlin.gradle.tasks.KotlinJsDce as KotlinJsDceTask
 
 open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
     KotlinJsIrSubTarget(target, "browser"),
@@ -35,7 +28,6 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
 
     private val commonWebpackConfigurations: MutableList<KotlinWebpack.() -> Unit> = mutableListOf()
     private val commonRunConfigurations: MutableList<KotlinWebpack.() -> Unit> = mutableListOf()
-    private val dceConfigurations: MutableList<KotlinJsDce.() -> Unit> = mutableListOf()
     private val distribution: Distribution = BrowserDistribution()
 
     private lateinit var buildVariants: NamedDomainObjectContainer<BuildVariant>
@@ -62,21 +54,13 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
         commonWebpackConfigurations.add(body)
     }
 
-    @ExperimentalDceDsl
-    override fun dceTask(body: KotlinJsDce.() -> Unit) {
-        dceConfigurations.add(body)
-    }
-
     override fun configureMain(compilation: KotlinJsCompilation) {
-        val dceTaskProvider = configureDce(compilation)
-
-        configureRun(compilation, dceTaskProvider)
-        configureBuild(compilation, dceTaskProvider)
+        configureRun(compilation)
+        configureBuild(compilation)
     }
 
     private fun configureRun(
-        compilation: KotlinJsCompilation,
-        dceTaskProvider: TaskProvider<KotlinJsDceTask>
+        compilation: KotlinJsCompilation
     ) {
 
         val project = compilation.target.project
@@ -94,6 +78,7 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
             ) {
                 it.dependsOn(
                     nodeJs.npmInstallTask,
+                    compileKotlinTask,
                     target.project.tasks.getByName(compilation.processResourcesTaskName)
                 )
 
@@ -110,21 +95,6 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
 
                 it.outputs.upToDateWhen { false }
 
-                when (kind) {
-                    BuildVariantKind.PRODUCTION -> {
-                        // Breaking of Task Configuration Avoidance is not so critical
-                        // because this task is dependent on DCE task
-                        it.entry = dceTaskProvider.get()
-                            .destinationDir
-                            .resolve(compileKotlinTask.outputFile.name)
-                        it.resolveFromModulesFirst = true
-                        it.dependsOn(dceTaskProvider)
-                    }
-                    BuildVariantKind.DEVELOPMENT -> {
-                        it.dependsOn(compileKotlinTask)
-                    }
-                }
-
                 commonRunConfigurations.forEach { configure ->
                     it.configure()
                 }
@@ -140,8 +110,7 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
     }
 
     private fun configureBuild(
-        compilation: KotlinJsCompilation,
-        dceTaskProvider: TaskProvider<KotlinJsDceTask>
+        compilation: KotlinJsCompilation
     ) {
         val project = compilation.target.project
         val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
@@ -176,6 +145,7 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
             ) {
                 it.dependsOn(
                     nodeJs.npmInstallTask,
+                    compileKotlinTask,
                     target.project.tasks.getByName(compilation.processResourcesTaskName),
                     distributionTask
                 )
@@ -185,21 +155,6 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                 it.compilation = compilation
                 it.description = "build webpack ${kind.name.toLowerCase()} bundle"
                 it.destinationDirectory = distribution.directory
-
-                when (kind) {
-                    BuildVariantKind.PRODUCTION -> {
-                        // Breaking of Task Configuration Avoidance is not so critical
-                        // because this task is dependent on DCE task
-                        it.entry = dceTaskProvider.get()
-                            .destinationDir
-                            .resolve(compileKotlinTask.outputFile.name)
-                        it.resolveFromModulesFirst = true
-                        it.dependsOn(dceTaskProvider)
-                    }
-                    BuildVariantKind.DEVELOPMENT -> {
-                        it.dependsOn(compileKotlinTask)
-                    }
-                }
 
                 commonWebpackConfigurations.forEach { configure ->
                     it.configure()
@@ -212,35 +167,6 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                     it.dependsOn(webpackTask)
                 }
             }
-        }
-    }
-
-    private fun configureDce(compilation: KotlinJsCompilation): TaskProvider<KotlinJsDceTask> {
-        val project = compilation.target.project
-
-        val dceTaskName = lowerCamelCaseName(
-            DCE_TASK_PREFIX,
-            compilation.target.disambiguationClassifier,
-            compilation.name.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
-            DCE_TASK_SUFFIX
-        )
-
-        val kotlinTask = compilation.compileKotlinTask
-
-        return project.registerTask(dceTaskName) {
-            dceConfigurations.forEach { configure ->
-                it.configure()
-            }
-
-            it.dependsOn(kotlinTask)
-
-            it.kotlinFilesOnly = true
-
-            it.classpath = project.configurations.getByName(compilation.runtimeDependencyConfigurationName)
-            it.destinationDir = it.dceOptions.outputDirectory?.let { File(it) }
-                ?: compilation.npmProject.dir.resolve(DCE_DIR)
-
-            it.source(kotlinTask.outputFile)
         }
     }
 
@@ -278,11 +204,6 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
     }
 
     companion object {
-        const val DCE_TASK_PREFIX = "processDce"
-        const val DCE_TASK_SUFFIX = "kotlinJs"
-
-        const val DCE_DIR = "kotlin-dce"
-
         const val PRODUCTION = "production"
         const val DEVELOPMENT = "development"
 
