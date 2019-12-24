@@ -25,18 +25,27 @@ buildscript {
 }
 
 def buildProperties = BuildPropertiesKt.getKotlinBuildPropertiesForSettings(settings)
+def projectVersions = file("../gradle/versions.properties").text
 
 BuildCacheKt.setupBuildCache(settings)
 
 include "prepare-deps"
 
 if (buildProperties.includeCidrPlugins) {
-    logger.info("Including CIDR plugins in buildSrc/settings.gradle")
+    logger.info("Including CIDR modules in buildSrc/settings.gradle")
     include ":prepare-deps:kotlin-native-platform-deps"
     project(":prepare-deps:kotlin-native-platform-deps").projectDir =
             file("${buildProperties.propertiesProvider.rootProjectDir}/kotlin-ultimate/buildSrc/prepare-deps/kotlin-native-platform-deps")
+    if (projectVersions.contains("versions.androidStudioRelease")) {
+        logger.info("Including Mobile MPP modules in buildSrc/settings.gradle")
+        include ":prepare-deps:cocoa-common-binaries"
+        project(":prepare-deps:cocoa-common-binaries").projectDir =
+                file("${buildProperties.propertiesProvider.rootProjectDir}/kotlin-ultimate/buildSrc/prepare-deps/cocoa-common-binaries")
+    } else {
+        logger.info("NOT including Mobile MPP modules in buildSrc/settings.gradle")
+    }
 } else {
-    logger.info("NOT including CIDR plugins in buildSrc/settings.gradle")
+    logger.info("NOT including CIDR modules in buildSrc/settings.gradle")
 }
 
 if (buildProperties.includeUltimate) {

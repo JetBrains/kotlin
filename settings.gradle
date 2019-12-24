@@ -36,6 +36,7 @@ plugins {
 }
 
 def buildProperties = BuildPropertiesKt.getKotlinBuildPropertiesForSettings(settings)
+def projectVersions = file("./gradle/versions.properties").text
 
 gradleEnterprise {
     buildScan {
@@ -284,20 +285,26 @@ include ":kotlin-build-common",
         ":kotlin-serialization:plugin-marker"
 
 if (buildProperties.includeCidrPlugins) {
-    logger.info("Including CIDR plugins in settings.gradle")
+    logger.info("Including CIDR modules in settings.gradle")
     include ":kotlin-ultimate:ide:cidr-gradle-tooling",
             ":kotlin-ultimate:ide:common-native",
             ":kotlin-ultimate:ide:common-cidr-native",
             ":kotlin-ultimate:ide:common-noncidr-native",
             ":kotlin-ultimate:ide:clion-native",
             ":kotlin-ultimate:ide:appcode-native",
-            ":kotlin-ultimate:ide:android-studio-native",
             ":kotlin-ultimate:prepare:cidr-plugin",
             ":kotlin-ultimate:prepare:clion-plugin",
-            ":kotlin-ultimate:prepare:appcode-plugin",
-            ":kotlin-ultimate:prepare:mobile-mpp-plugin"
+            ":kotlin-ultimate:prepare:appcode-plugin"
+
+    if (projectVersions.contains("versions.androidStudioRelease")) {
+        logger.info("Including Mobile MPP modules in settings.gradle")
+        include ":kotlin-ultimate:ide:android-studio-native",
+                ":kotlin-ultimate:prepare:mobile-mpp-plugin"
+    } else {
+        logger.info("NOT including Mobile MPP modules in settings.gradle")
+    }
 } else {
-    logger.info("NOT including CIDR plugins in settings.gradle")
+    logger.info("NOT including CIDR modules in settings.gradle")
 }
 
 if (buildProperties.includeUltimate) {
