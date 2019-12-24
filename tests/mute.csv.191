@@ -52,3 +52,4 @@ org.jetbrains.kotlin.checkers.JavaAgainstKotlinSourceCheckerWithoutUltraLightTes
 org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInTempDirTest.testKotlincExistsNoSettingsLatestRuntimeNoVersionAutoAdvance, FLAKY
 org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInTempDirTest.testNoKotlincExistsNoSettingsRuntime10, FLAKY
 org.jetbrains.kotlin.idea.maven.MavenMigrateTest.testMigrateApiAndLanguageVersions, FLAKY on windows
+org.jetbrains.kotlin.idea.spring.tests.references.SpringReferenceNavigationTestGenerated.testPackageReferenceInComponentScan, Always red because of test data
