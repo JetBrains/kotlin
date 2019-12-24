@@ -38,6 +38,7 @@ import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
@@ -54,6 +55,8 @@ import com.intellij.util.ObjectUtils;
 import com.intellij.util.concurrency.AppExecutorUtil;
 import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.indexing.DumbModeAccessType;
+import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.update.MergingUpdateQueue;
 import com.intellij.util.ui.update.Update;
@@ -186,7 +189,7 @@ public class CompletionProgressIndicator extends ProgressIndicatorBase implement
     return myHostOffsets;
   }
 
-  void duringCompletion(CompletionInitializationContext initContext, CompletionParameters parameters) {
+  private void duringCompletion(CompletionInitializationContext initContext, CompletionParameters parameters) {
     PsiUtilCore.ensureValid(parameters.getPosition());
     if (isAutopopupCompletion() && shouldPreselectFirstSuggestion(parameters)) {
       myLookup.setLookupFocusDegree(CodeInsightSettings.getInstance().isSelectAutopopupSuggestionsByChars()
@@ -218,10 +221,13 @@ public class CompletionProgressIndicator extends ProgressIndicatorBase implement
       }
     }
 
-    for (CompletionContributor contributor : CompletionContributor.forLanguageHonorDumbness(initContext.getPositionLanguage(), initContext.getProject())) {
-      ProgressManager.checkCanceled();
-      contributor.duringCompletion(initContext);
-    }
+    FileBasedIndex.getInstance().ignoreDumbMode(() -> {
+      for (CompletionContributor contributor :
+        CompletionContributor.forLanguageHonorDumbness(initContext.getPositionLanguage(), initContext.getProject())) {
+        ProgressManager.checkCanceled();
+        contributor.duringCompletion(initContext);
+      }
+    }, DumbModeAccessType.RELIABLE_DATA_ONLY);
     if (document instanceof DocumentWindow) {
       myHostOffsets = new OffsetsInFile(initContext.getFile(), initContext.getOffsetMap()).toTopLevelFile();
     }
@@ -440,7 +446,12 @@ public class CompletionProgressIndicator extends ProgressIndicatorBase implement
   }
 
   private void addItemToLookup(CompletionResult item) {
-    if (!myLookup.addItem(item.getLookupElement(), item.getPrefixMatcher())) {
+    Ref<Boolean> stopRef = new Ref<>(Boolean.FALSE);
+    FileBasedIndex.getInstance().ignoreDumbMode(() -> {
+      stopRef.set(!myLookup.addItem(item.getLookupElement(), item.getPrefixMatcher()));
+    }, DumbModeAccessType.RELIABLE_DATA_ONLY);
+
+    if (stopRef.get()) {
       return;
     }
 
@@ -832,10 +843,12 @@ public class CompletionProgressIndicator extends ProgressIndicatorBase implement
   }
 
   private void calculateItems(CompletionInitializationContext initContext, WeighingDelegate weigher, CompletionParameters parameters) {
-    duringCompletion(initContext, parameters);
-    ProgressManager.checkCanceled();
+    FileBasedIndex.getInstance().ignoreDumbMode(() -> {
+      duringCompletion(initContext, parameters);
+      ProgressManager.checkCanceled();
 
-    CompletionService.getCompletionService().performCompletion(parameters, weigher);
+      CompletionService.getCompletionService().performCompletion(parameters, weigher);
+    }, DumbModeAccessType.RELIABLE_DATA_ONLY);
     ProgressManager.checkCanceled();
 
     weigher.waitFor();

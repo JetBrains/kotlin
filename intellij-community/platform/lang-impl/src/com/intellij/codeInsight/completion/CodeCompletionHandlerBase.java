@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.codeInsight.completion;
 
@@ -51,6 +51,8 @@ import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.stubs.StubTextInconsistencyException;
 import com.intellij.psi.util.PsiUtilBase;
 import com.intellij.util.concurrency.AppExecutorUtil;
+import com.intellij.util.indexing.DumbModeAccessType;
+import com.intellij.util.indexing.FileBasedIndex;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -392,12 +394,20 @@ public class CodeCompletionHandlerBase {
       return AutoCompletionDecision.insertItem(item);
     }
 
-    AutoCompletionContext context = new AutoCompletionContext(parameters, items.toArray(LookupElement.EMPTY_ARRAY), indicator.getOffsetMap(), indicator.getLookup());
-    for (final CompletionContributor contributor : CompletionContributor.forParameters(parameters)) {
-      final AutoCompletionDecision decision = contributor.handleAutoCompletionPossibility(context);
-      if (decision != null) {
-        return decision;
+    AutoCompletionContext context =
+      new AutoCompletionContext(parameters, items.toArray(LookupElement.EMPTY_ARRAY), indicator.getOffsetMap(), indicator.getLookup());
+    AutoCompletionDecision resultingDecision =  FileBasedIndex.getInstance().ignoreDumbMode(DumbModeAccessType.RELIABLE_DATA_ONLY, () -> {
+      for (final CompletionContributor contributor : CompletionContributor.forParameters(parameters)) {
+        AutoCompletionDecision decision = contributor.handleAutoCompletionPossibility(context);
+        if (decision != null) {
+          return decision;
+        }
       }
+      return null;
+    });
+
+    if (resultingDecision != null) {
+      return resultingDecision;
     }
 
     return AutoCompletionDecision.SHOW_LOOKUP;
@@ -675,7 +685,9 @@ public class CodeCompletionHandlerBase {
         if (item.requiresCommittedDocuments()) {
           PsiDocumentManager.getInstance(project).commitAllDocuments();
         }
-        item.handleInsert(context);
+        FileBasedIndex.getInstance().ignoreDumbMode(() -> {
+          item.handleInsert(context);
+        }, DumbModeAccessType.RELIABLE_DATA_ONLY);
         PostprocessReformattingAspect.getInstance(project).doPostponedFormatting();
       }
       finally {

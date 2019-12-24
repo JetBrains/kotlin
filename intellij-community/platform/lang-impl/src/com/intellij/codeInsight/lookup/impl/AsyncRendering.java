@@ -10,6 +10,8 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Ref;
 import com.intellij.util.SingleAlarm;
 import com.intellij.util.concurrency.SequentialTaskExecutor;
+import com.intellij.util.indexing.DumbModeAccessType;
+import com.intellij.util.indexing.FileBasedIndex;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.concurrency.CancellablePromise;
@@ -68,7 +70,9 @@ public class AsyncRendering {
   @SuppressWarnings({"rawtypes", "unchecked"})
   private void renderInBackground(LookupElement element, LookupElementRenderer renderer, Ref<CancellablePromise<?>> promiseRef) {
     LookupElementPresentation presentation = new LookupElementPresentation();
-    renderer.renderElement(element, presentation);
+    FileBasedIndex.getInstance().ignoreDumbMode(() -> {
+      renderer.renderElement(element, presentation);
+    }, DumbModeAccessType.RELIABLE_DATA_ONLY);
 
     rememberPresentation(element, presentation);
     scheduleLookupUpdate(element, presentation);

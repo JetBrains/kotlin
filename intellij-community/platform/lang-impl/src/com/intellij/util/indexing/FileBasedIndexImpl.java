@@ -617,8 +617,8 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
   @ApiStatus.Internal
   @ApiStatus.Experimental
   @Override
-  public void ignoreDumbMode(@NotNull Runnable command,
-                             @NotNull DumbModeAccessType dumbModeAccessType) {
+  public <T, E extends Throwable> T ignoreDumbMode(@NotNull DumbModeAccessType dumbModeAccessType,
+                                                   @NotNull ThrowableComputable<T, E> computable) throws E {
     assert ApplicationManager.getApplication().isReadAccessAllowed();
     if (FileBasedIndex.isIndexAccessDuringDumbModeEnabled()) {
       boolean setAccessType = true;
@@ -633,13 +633,13 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
       }
       if (setAccessType) ourDumbModeAccessType.set(dumbModeAccessType);
       try {
-        command.run();
+        return computable.compute();
       }
       finally {
         if (setAccessType) ourDumbModeAccessType.set(null);
       }
     } else {
-      command.run();
+      return computable.compute();
     }
   }
 
