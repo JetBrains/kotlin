@@ -1,7 +1,7 @@
 // FILE: test/CallableDescriptor.java
 
 // IGNORE_BACKEND: JVM_IR
-// ^ TODO decide if we should generate nullability assertions on arguments of 'contains' and other funs with special bridges
+// See KT-35656, here JMV_IR correctly generates a nullability assertion for an argument of 'Iterable<T>.contains(T)'.
 
 package test;
 
