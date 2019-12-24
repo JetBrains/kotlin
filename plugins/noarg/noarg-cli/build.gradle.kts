@@ -15,15 +15,7 @@ dependencies {
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(intellijDep()) { includeJars("asm-all", rootProject = rootProject) }
     runtime(kotlinStdlib())
-    testRuntimeOnly(intellijDep()) {
-        includeJars("guava", rootProject = rootProject)
-    }
-    testRuntimeOnly(project(":kotlin-compiler"))
 
-    Platform[192].orHigher {
-        testRuntimeOnly(intellijDep()) { includeJars("platform-concurrency") }
-    }
-    
     testCompile(project(":compiler:backend"))
     testCompile(project(":compiler:cli"))
     testCompile(projectTests(":compiler:tests-common"))

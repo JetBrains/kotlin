@@ -13,11 +13,6 @@ dependencies {
 
     runtime(kotlinStdlib())
 
-    testRuntimeOnly(intellijDep()) {
-        includeJars("guava", rootProject = rootProject)
-    }
-
-    testRuntimeOnly(project(":kotlin-compiler"))
     Platform[192].orHigher {
         testRuntimeOnly(intellijDep()) { includeJars("platform-concurrency") }
     }
