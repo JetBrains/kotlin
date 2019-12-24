@@ -120,7 +120,6 @@ task prepareBuiltinsSources(type: Copy) {
         include "Ranges.kt"
         include "internal/InternalAnnotations.kt"
         include "internal/progressionUtil.kt"
-        include "reflect/**/*.kt"
         include "Unit.kt"
     }
     into builtinsSrcDir
