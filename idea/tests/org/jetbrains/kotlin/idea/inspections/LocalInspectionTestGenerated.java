@@ -8046,6 +8046,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/inspectionsLocal/redundantVisibilityModifier"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
         }
 
+        @TestMetadata("internalInPrivateClass.kt")
+        public void testInternalInPrivateClass() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantVisibilityModifier/internalInPrivateClass.kt");
+        }
+
         @TestMetadata("overridePropertySetter.kt")
         public void testOverridePropertySetter() throws Exception {
             runTest("idea/testData/inspectionsLocal/redundantVisibilityModifier/overridePropertySetter.kt");
