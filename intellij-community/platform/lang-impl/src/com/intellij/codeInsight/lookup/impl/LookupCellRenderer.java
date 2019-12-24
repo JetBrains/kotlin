@@ -3,6 +3,7 @@
 package com.intellij.codeInsight.lookup.impl;
 
 import com.intellij.codeInsight.lookup.*;
+import com.intellij.ide.ui.UISettings;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
@@ -509,6 +510,7 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
   private static class MySimpleColoredComponent extends SimpleColoredComponent {
     private MySimpleColoredComponent() {
       setFocusBorderAroundIcon(true);
+      UISettings.setupEditorAntialiasing(this);
     }
 
     @Override
