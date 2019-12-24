@@ -46,11 +46,3 @@ class IrEnumEntryImpl(
         correspondingClass = correspondingClass?.transform(transformer, data) as? IrClass
     }
 }
-
-fun IrEnumEntryImpl(
-    startOffset: Int,
-    endOffset: Int,
-    origin: IrDeclarationOrigin,
-    symbol: IrEnumEntrySymbol
-) =
-    IrEnumEntryImpl(startOffset, endOffset, origin, symbol, symbol.descriptor.name)

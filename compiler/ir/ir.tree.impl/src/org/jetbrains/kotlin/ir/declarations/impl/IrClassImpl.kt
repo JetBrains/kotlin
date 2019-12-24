@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.ir.util.transform
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.utils.SmartList
 
 class IrClassImpl(
@@ -71,23 +70,3 @@ class IrClassImpl(
         declarations.transform { it.transform(transformer, data) }
     }
 }
-
-fun IrClassImpl(
-    startOffset: Int,
-    endOffset: Int,
-    origin: IrDeclarationOrigin,
-    symbol: IrClassSymbol,
-    modality: Modality = symbol.descriptor.modality
-) =
-    IrClassImpl(
-        startOffset, endOffset, origin, symbol,
-        symbol.descriptor.name, symbol.descriptor.kind,
-        symbol.descriptor.visibility,
-        modality = modality,
-        isCompanion = symbol.descriptor.isCompanionObject,
-        isInner = symbol.descriptor.isInner,
-        isData = symbol.descriptor.isData,
-        isExternal = symbol.descriptor.isEffectivelyExternal(),
-        isInline = symbol.descriptor.isInline,
-        isExpect = symbol.descriptor.isExpect
-    )

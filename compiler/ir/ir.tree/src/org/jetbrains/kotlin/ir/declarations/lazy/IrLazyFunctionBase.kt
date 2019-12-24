@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.factories.IrDeclarationFactory
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.TypeTranslator
@@ -28,9 +29,10 @@ abstract class IrLazyFunctionBase(
     override val isExternal: Boolean,
     override val isExpect: Boolean,
     stubGenerator: DeclarationStubGenerator,
-    typeTranslator: TypeTranslator
+    typeTranslator: TypeTranslator,
+    irDeclarationFactory: IrDeclarationFactory
 ) :
-    IrLazyDeclarationBase(startOffset, endOffset, origin, stubGenerator, typeTranslator),
+    IrLazyDeclarationBase(startOffset, endOffset, origin, stubGenerator, typeTranslator, irDeclarationFactory),
     IrFunction {
 
     val initialSignatureFunction: IrFunction? by lazyVar {

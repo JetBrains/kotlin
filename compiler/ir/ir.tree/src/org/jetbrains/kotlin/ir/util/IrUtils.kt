@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
@@ -417,17 +416,19 @@ fun IrValueParameter.hasDefaultValue(): Boolean = DFS.ifAny(
     { current -> current.defaultValue != null }
 )
 
+@Deprecated("TODO", level = DeprecationLevel.ERROR)
 fun IrValueParameter.copy(newDescriptor: ParameterDescriptor): IrValueParameter {
-    assert(this.descriptor.type == newDescriptor.type)
-
-    return IrValueParameterImpl(
-        startOffset,
-        endOffset,
-        IrDeclarationOrigin.DEFINED,
-        newDescriptor,
-        type,
-        varargElementType
-    )
+    TODO()
+//    assert(this.descriptor.type == newDescriptor.type)
+//
+//    return IrValueParameterImpl(
+//        startOffset,
+//        endOffset,
+//        IrDeclarationOrigin.DEFINED,
+//        newDescriptor,
+//        type,
+//        varargElementType
+//    )
 }
 
 // In presence of `IrBlock`s, return the expression that actually serves as the value (the last one).

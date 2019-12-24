@@ -6,17 +6,14 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class IrValueParameterImpl(
     startOffset: Int,
@@ -55,32 +52,3 @@ class IrValueParameterImpl(
         defaultValue = defaultValue?.transform(transformer, data)
     }
 }
-
-fun IrValueParameterImpl(
-    startOffset: Int,
-    endOffset: Int,
-    origin: IrDeclarationOrigin,
-    symbol: IrValueParameterSymbol,
-    type: IrType,
-    varargElementType: IrType?
-) =
-    IrValueParameterImpl(
-        startOffset, endOffset, origin,
-        symbol,
-        symbol.descriptor.name,
-        symbol.descriptor.safeAs<ValueParameterDescriptor>()?.index ?: -1,
-        type,
-        varargElementType,
-        symbol.descriptor.safeAs<ValueParameterDescriptor>()?.isCrossinline ?: false,
-        symbol.descriptor.safeAs<ValueParameterDescriptor>()?.isNoinline ?: false
-    )
-
-fun IrValueParameterImpl(
-    startOffset: Int,
-    endOffset: Int,
-    origin: IrDeclarationOrigin,
-    descriptor: ParameterDescriptor,
-    type: IrType,
-    varargElementType: IrType?
-) =
-    IrValueParameterImpl(startOffset, endOffset, origin, IrValueParameterSymbolImpl(descriptor), type, varargElementType)

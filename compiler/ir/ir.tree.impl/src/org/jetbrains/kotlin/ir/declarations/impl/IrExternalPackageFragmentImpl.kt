@@ -42,6 +42,3 @@ class IrExternalPackageFragmentImpl(
         }
     }
 }
-
-fun IrExternalPackageFragmentImpl(symbol: IrExternalPackageFragmentSymbol) =
-    IrExternalPackageFragmentImpl(symbol, symbol.descriptor.fqName)

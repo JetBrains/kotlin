@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
+import org.jetbrains.kotlin.ir.factories.IrDeclarationFactory
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
@@ -28,9 +29,10 @@ class IrLazyTypeParameter(
     override val isReified: Boolean,
     override val variance: Variance,
     stubGenerator: DeclarationStubGenerator,
-    typeTranslator: TypeTranslator
+    typeTranslator: TypeTranslator,
+    irDeclarationFactory: IrDeclarationFactory
 ) :
-    IrLazyDeclarationBase(startOffset, endOffset, origin, stubGenerator, typeTranslator),
+    IrLazyDeclarationBase(startOffset, endOffset, origin, stubGenerator, typeTranslator, irDeclarationFactory),
     IrTypeParameter {
 
     constructor(
@@ -39,7 +41,8 @@ class IrLazyTypeParameter(
         origin: IrDeclarationOrigin,
         symbol: IrTypeParameterSymbol,
         stubGenerator: DeclarationStubGenerator,
-        TypeTranslator: TypeTranslator
+        TypeTranslator: TypeTranslator,
+        irDeclarationFactory: IrDeclarationFactory
     ) :
             this(
                 startOffset, endOffset, origin, symbol,
@@ -47,7 +50,8 @@ class IrLazyTypeParameter(
                 symbol.descriptor.index,
                 symbol.descriptor.isReified,
                 symbol.descriptor.variance,
-                stubGenerator, TypeTranslator
+                stubGenerator, TypeTranslator,
+                irDeclarationFactory
             )
 
     override val descriptor: TypeParameterDescriptor get() = symbol.descriptor

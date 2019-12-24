@@ -8,7 +8,11 @@ package org.jetbrains.kotlin.ir.declarations.lazy
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
+import org.jetbrains.kotlin.ir.factories.IrDeclarationFactory
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
@@ -34,9 +38,11 @@ class IrLazyFunction(
     override val isFakeOverride: Boolean,
     override val isOperator: Boolean,
     stubGenerator: DeclarationStubGenerator,
-    typeTranslator: TypeTranslator
+    typeTranslator: TypeTranslator,
+    irDeclarationFactory: IrDeclarationFactory
 ) :
-    IrLazyFunctionBase(startOffset, endOffset, origin, name, visibility, isInline, isExternal, isExpect, stubGenerator, typeTranslator),
+    IrLazyFunctionBase(startOffset, endOffset, origin, name, visibility, isInline, isExternal, isExpect,
+                       stubGenerator, typeTranslator, irDeclarationFactory),
     IrSimpleFunction {
 
     constructor(
@@ -45,7 +51,8 @@ class IrLazyFunction(
         origin: IrDeclarationOrigin,
         symbol: IrSimpleFunctionSymbol,
         stubGenerator: DeclarationStubGenerator,
-        TypeTranslator: TypeTranslator
+        TypeTranslator: TypeTranslator,
+        irDeclarationFactory: IrDeclarationFactory
     ) : this(
         startOffset, endOffset, origin, symbol,
         symbol.descriptor.name,
@@ -59,7 +66,8 @@ class IrLazyFunction(
         isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
         isOperator = symbol.descriptor.isOperator,
         stubGenerator = stubGenerator,
-        typeTranslator = TypeTranslator
+        typeTranslator = TypeTranslator,
+        irDeclarationFactory = irDeclarationFactory
     )
 
     override val descriptor: FunctionDescriptor = symbol.descriptor

@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.builders
@@ -22,10 +11,11 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrVariable
-import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptor
 import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.factories.IrDeclarationFactory
+import org.jetbrains.kotlin.ir.factories.createVariable
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
@@ -34,7 +24,7 @@ import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 
-class Scope(val scopeOwnerSymbol: IrSymbol) {
+class Scope(val scopeOwnerSymbol: IrSymbol, private val irDeclarationFactory: IrDeclarationFactory) {
     val scopeOwner: DeclarationDescriptor get() = scopeOwnerSymbol.descriptor
 
     fun getLocalDeclarationParent(): IrDeclarationParent {
@@ -48,7 +38,10 @@ class Scope(val scopeOwnerSymbol: IrSymbol) {
     }
 
     @Deprecated("Creates unbound symbol")
-    constructor(descriptor: DeclarationDescriptor) : this(createSymbolForScopeOwner(descriptor))
+    constructor(descriptor: DeclarationDescriptor, irDeclarationFactory: IrDeclarationFactory) : this(
+        createSymbolForScopeOwner(descriptor),
+        irDeclarationFactory
+    )
 
     private var lastTemporaryIndex: Int = 0
     private fun nextTemporaryIndex(): Int = lastTemporaryIndex++
@@ -75,7 +68,7 @@ class Scope(val scopeOwnerSymbol: IrSymbol) {
         endOffset: Int = UNDEFINED_OFFSET
     ): IrVariable {
         val originalKotlinType = type ?: irType.toKotlinType()
-        return IrVariableImpl(
+        return irDeclarationFactory.createVariable(
             startOffset, endOffset, origin,
             createDescriptorForTemporaryVariable(
                 originalKotlinType,
@@ -112,7 +105,7 @@ class Scope(val scopeOwnerSymbol: IrSymbol) {
         origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
         descriptor: VariableDescriptor
     ): IrVariable {
-        return IrVariableImpl(
+        return irDeclarationFactory.createVariable(
             irExpression.startOffset, irExpression.endOffset, origin,
             IrVariableSymbolImpl(descriptor),
             Name.identifier(getNameForTemporary(nameHint)),

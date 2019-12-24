@@ -119,5 +119,10 @@ internal class DeepCopyIrTreeWithSymbolsForInliner(
 
     private val symbolRemapper = SymbolRemapperImpl(DescriptorsToIrRemapper)
     private val copier =
-        DeepCopyIrTreeWithSymbols(symbolRemapper, InlinerTypeRemapper(symbolRemapper, typeArguments), InlinerSymbolRenamer())
+        DeepCopyIrTreeWithSymbols(
+            context.irDeclarationFactory,
+            symbolRemapper,
+            InlinerTypeRemapper(symbolRemapper, typeArguments),
+            InlinerSymbolRenamer()
+        )
 }

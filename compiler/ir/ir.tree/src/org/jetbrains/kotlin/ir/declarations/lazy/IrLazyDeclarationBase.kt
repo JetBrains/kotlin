@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,8 +9,9 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrDeclarationBase
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.factories.IrDeclarationFactory
+import org.jetbrains.kotlin.ir.factories.createValueParameter
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -21,13 +22,14 @@ abstract class IrLazyDeclarationBase(
     endOffset: Int,
     origin: IrDeclarationOrigin,
     private val stubGenerator: DeclarationStubGenerator,
-    protected val typeTranslator: TypeTranslator
+    protected val typeTranslator: TypeTranslator,
+    protected val irDeclarationFactory: IrDeclarationFactory
 ) : IrDeclarationBase(startOffset, endOffset, origin) {
 
     protected fun KotlinType.toIrType() = typeTranslator.translateType(this)
 
     protected fun ReceiverParameterDescriptor.generateReceiverParameterStub(): IrValueParameter =
-        IrValueParameterImpl(
+        irDeclarationFactory.createValueParameter(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, this,
             type.toIrType(), null
         )
@@ -53,7 +55,7 @@ abstract class IrLazyDeclarationBase(
         descriptor.annotations.mapNotNull(typeTranslator.constantValueGenerator::generateAnnotationConstructorCall).toMutableList()
     }
 
-    override var metadata: Nothing?
+    override var metadata: MetadataSource?
         get() = null
         set(_) = error("We should never need to store metadata of external declarations.")
 

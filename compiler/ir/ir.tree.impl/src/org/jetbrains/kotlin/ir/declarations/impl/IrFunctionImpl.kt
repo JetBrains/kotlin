@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
@@ -53,40 +52,3 @@ class IrFunctionImpl(
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitSimpleFunction(this, data)
 }
-
-fun IrFunctionImpl(
-    startOffset: Int,
-    endOffset: Int,
-    origin: IrDeclarationOrigin,
-    symbol: IrSimpleFunctionSymbol,
-    returnType: IrType,
-    visibility: Visibility = symbol.descriptor.visibility,
-    modality: Modality = symbol.descriptor.modality
-) =
-    IrFunctionImpl(
-        startOffset, endOffset, origin, symbol,
-        symbol.descriptor.name,
-        visibility,
-        modality,
-        returnType,
-        isInline = symbol.descriptor.isInline,
-        isExternal = symbol.descriptor.isExternal,
-        isTailrec = symbol.descriptor.isTailrec,
-        isSuspend = symbol.descriptor.isSuspend,
-        isExpect = symbol.descriptor.isExpect,
-        isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
-        isOperator = symbol.descriptor.isOperator
-    )
-
-// Used by kotlin-native in InteropLowering.kt and IrUtils2.kt
-fun IrFunctionImpl(
-    startOffset: Int,
-    endOffset: Int,
-    origin: IrDeclarationOrigin,
-    descriptor: FunctionDescriptor,
-    returnType: IrType
-): IrFunctionImpl =
-    IrFunctionImpl(
-        startOffset, endOffset, origin,
-        IrSimpleFunctionSymbolImpl(descriptor), returnType
-    )

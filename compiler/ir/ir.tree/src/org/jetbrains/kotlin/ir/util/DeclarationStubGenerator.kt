@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.util
@@ -20,17 +9,16 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.declarations.lazy.*
 import org.jetbrains.kotlin.ir.descriptors.WrappedDeclarationDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedPropertyDescriptor
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
+import org.jetbrains.kotlin.ir.factories.IrDeclarationFactory
+import org.jetbrains.kotlin.ir.factories.createValueParameter
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
-import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
@@ -42,7 +30,8 @@ class DeclarationStubGenerator(
     moduleDescriptor: ModuleDescriptor,
     val symbolTable: SymbolTable,
     languageVersionSettings: LanguageVersionSettings,
-    val extensions: StubGeneratorExtensions = StubGeneratorExtensions.EMPTY
+    val extensions: StubGeneratorExtensions = StubGeneratorExtensions.EMPTY,
+    private val irDeclarationFactory: IrDeclarationFactory
 ) : IrProvider {
     private val lazyTable = symbolTable.lazyWrapper
 
@@ -145,7 +134,7 @@ class DeclarationStubGenerator(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor.original,
             isDelegated = @Suppress("DEPRECATION") descriptor.isDelegated
         ) {
-            IrLazyProperty(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, it, this, typeTranslator, bindingContext)
+            IrLazyProperty(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, it, this, typeTranslator, irDeclarationFactory, bindingContext)
         }
     }
 
@@ -161,7 +150,7 @@ class DeclarationStubGenerator(
             else computeOrigin(descriptor)
 
         return symbolTable.declareField(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor.original, descriptor.type.toIrType()) {
-            IrLazyField(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, it, this, typeTranslator)
+            IrLazyField(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, it, this, typeTranslator, irDeclarationFactory)
         }
     }
 
@@ -191,7 +180,7 @@ class DeclarationStubGenerator(
             origin,
             descriptor.original
         ) {
-            IrLazyFunction(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, it, this, typeTranslator)
+            IrLazyFunction(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, it, this, typeTranslator, irDeclarationFactory)
         }
     }
 
@@ -205,14 +194,14 @@ class DeclarationStubGenerator(
         return symbolTable.declareConstructor(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor.original
         ) {
-            IrLazyConstructor(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, it, this, typeTranslator)
+            IrLazyConstructor(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, it, this, typeTranslator, irDeclarationFactory)
         }
     }
 
     private fun KotlinType.toIrType() = typeTranslator.translateType(this)
 
     internal fun generateValueParameterStub(descriptor: ValueParameterDescriptor): IrValueParameter {
-        return IrValueParameterImpl(
+        return irDeclarationFactory.createValueParameter(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET, computeOrigin(descriptor),
             descriptor, descriptor.type.toIrType(), descriptor.varargElementType?.toIrType()
         ).also { irValueParameter ->
@@ -235,7 +224,7 @@ class DeclarationStubGenerator(
         }
         val origin = computeOrigin(descriptor)
         return symbolTable.declareClass(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor) {
-            IrLazyClass(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, it, this, typeTranslator)
+            IrLazyClass(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, it, this, typeTranslator, irDeclarationFactory)
         }
     }
 
@@ -246,7 +235,7 @@ class DeclarationStubGenerator(
         }
         val origin = computeOrigin(descriptor)
         return symbolTable.declareEnumEntry(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor) {
-            IrLazyEnumEntryImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, it, this, typeTranslator)
+            IrLazyEnumEntryImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, it, this, typeTranslator, irDeclarationFactory)
         }
     }
 
@@ -257,7 +246,7 @@ class DeclarationStubGenerator(
         }
         val origin = computeOrigin(descriptor)
         return symbolTable.declareGlobalTypeParameter(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor) {
-            IrLazyTypeParameter(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, it, this, typeTranslator)
+            IrLazyTypeParameter(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, it, this, typeTranslator, irDeclarationFactory)
         }
     }
 
@@ -268,7 +257,7 @@ class DeclarationStubGenerator(
         }
         val origin = computeOrigin(descriptor)
         return symbolTable.declareScopedTypeParameter(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor) {
-            IrLazyTypeParameter(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, it, this, typeTranslator)
+            IrLazyTypeParameter(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, it, this, typeTranslator, irDeclarationFactory)
         }
     }
 
@@ -282,7 +271,7 @@ class DeclarationStubGenerator(
             IrLazyTypeAlias(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin,
                 it, it.descriptor.name, it.descriptor.visibility, it.descriptor.isActual,
-                this, typeTranslator
+                this, typeTranslator, irDeclarationFactory
             )
         }
     }

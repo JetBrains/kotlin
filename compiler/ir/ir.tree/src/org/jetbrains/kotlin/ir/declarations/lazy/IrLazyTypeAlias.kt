@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrTypeAlias
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
+import org.jetbrains.kotlin.ir.factories.IrDeclarationFactory
 import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
@@ -28,9 +29,10 @@ class IrLazyTypeAlias(
     override val visibility: Visibility,
     override val isActual: Boolean,
     stubGenerator: DeclarationStubGenerator,
-    typeTranslator: TypeTranslator
+    typeTranslator: TypeTranslator,
+    irDeclarationFactory: IrDeclarationFactory
 ) :
-    IrLazyDeclarationBase(startOffset, endOffset, origin, stubGenerator, typeTranslator),
+    IrLazyDeclarationBase(startOffset, endOffset, origin, stubGenerator, typeTranslator, irDeclarationFactory),
     IrTypeAlias {
 
     init {

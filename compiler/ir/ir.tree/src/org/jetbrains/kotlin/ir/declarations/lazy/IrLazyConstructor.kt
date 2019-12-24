@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
+import org.jetbrains.kotlin.ir.factories.IrDeclarationFactory
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.TypeTranslator
@@ -30,12 +31,13 @@ class IrLazyConstructor(
     override val isPrimary: Boolean,
     isExpect: Boolean,
     stubGenerator: DeclarationStubGenerator,
-    typeTranslator: TypeTranslator
+    typeTranslator: TypeTranslator,
+    irDeclarationFactory: IrDeclarationFactory
 ) :
     IrLazyFunctionBase(
         startOffset, endOffset, origin, name,
         visibility, isInline, isExternal, isExpect,
-        stubGenerator, typeTranslator
+        stubGenerator, typeTranslator, irDeclarationFactory
     ),
     IrConstructor {
 
@@ -45,7 +47,8 @@ class IrLazyConstructor(
         origin: IrDeclarationOrigin,
         symbol: IrConstructorSymbol,
         stubGenerator: DeclarationStubGenerator,
-        TypeTranslator: TypeTranslator
+        TypeTranslator: TypeTranslator,
+        irDeclarationFactory: IrDeclarationFactory
     ) : this(
         startOffset, endOffset, origin, symbol,
         symbol.descriptor.name,
@@ -55,7 +58,8 @@ class IrLazyConstructor(
         isPrimary = symbol.descriptor.isPrimary,
         isExpect = symbol.descriptor.isExpect,
         stubGenerator = stubGenerator,
-        typeTranslator = TypeTranslator
+        typeTranslator = TypeTranslator,
+        irDeclarationFactory = irDeclarationFactory
     )
 
     override val typeParameters: MutableList<IrTypeParameter> by lazy {

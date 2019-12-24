@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.util
@@ -20,9 +9,11 @@ import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.factories.IrDeclarationFactory
+import org.jetbrains.kotlin.ir.factories.createLocalDelegatedProperty
+import org.jetbrains.kotlin.ir.factories.createModuleFragment
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrScriptSymbolImpl
@@ -33,11 +24,14 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import java.util.*
 
-inline fun <reified T : IrElement> T.deepCopyWithSymbols(initialParent: IrDeclarationParent? = null): T {
+inline fun <reified T : IrElement> T.deepCopyWithSymbols(
+    initialParent: IrDeclarationParent? = null,
+    irDeclarationFactory: IrDeclarationFactory = IrDeclarationFactory.DEFAULT
+): T {
     val symbolRemapper = DeepCopySymbolRemapper()
     acceptVoid(symbolRemapper)
     val typeRemapper = DeepCopyTypeRemapper(symbolRemapper)
-    return transform(DeepCopyIrTreeWithSymbols(symbolRemapper, typeRemapper), null).patchDeclarationParents(initialParent) as T
+    return transform(DeepCopyIrTreeWithSymbols(irDeclarationFactory, symbolRemapper, typeRemapper), null).patchDeclarationParents(initialParent) as T
 }
 
 interface SymbolRenamer {
@@ -56,6 +50,7 @@ interface SymbolRenamer {
 }
 
 open class DeepCopyIrTreeWithSymbols(
+    private val irDeclarationFactory: IrDeclarationFactory,
     private val symbolRemapper: SymbolRemapper,
     private val typeRemapper: TypeRemapper,
     private val symbolRenamer: SymbolRenamer = SymbolRenamer.DEFAULT
@@ -89,14 +84,14 @@ open class DeepCopyIrTreeWithSymbols(
         throw IllegalArgumentException("Unsupported element type: $element")
 
     override fun visitModuleFragment(declaration: IrModuleFragment): IrModuleFragment =
-        IrModuleFragmentImpl(
+        irDeclarationFactory.createModuleFragment(
             declaration.descriptor,
             declaration.irBuiltins,
             declaration.files.transform()
         )
 
     override fun visitExternalPackageFragment(declaration: IrExternalPackageFragment, data: Nothing?): IrExternalPackageFragment =
-        IrExternalPackageFragmentImpl(
+        irDeclarationFactory.createExternalPackageFragment(
             symbolRemapper.getDeclaredExternalPackageFragment(declaration.symbol),
             symbolRenamer.getExternalPackageFragmentName(declaration.symbol)
         ).apply {
@@ -104,7 +99,7 @@ open class DeepCopyIrTreeWithSymbols(
         }
 
     override fun visitFile(declaration: IrFile): IrFile =
-        IrFileImpl(
+        irDeclarationFactory.createFile(
             declaration.fileEntry,
             symbolRemapper.getDeclaredFile(declaration.symbol),
             symbolRenamer.getFileName(declaration.symbol)
@@ -117,7 +112,7 @@ open class DeepCopyIrTreeWithSymbols(
         throw IllegalArgumentException("Unsupported declaration type: $declaration")
 
     override fun visitScript(declaration: IrScript): IrStatement {
-        return IrScriptImpl(
+        return irDeclarationFactory.createScript(
             //TODO: something may go wrong, because expected using symbolRemapper
             IrScriptSymbolImpl(declaration.descriptor as ScriptDescriptor),
             declaration.name
@@ -129,7 +124,7 @@ open class DeepCopyIrTreeWithSymbols(
     }
 
     override fun visitClass(declaration: IrClass): IrClass =
-        IrClassImpl(
+        irDeclarationFactory.createClass(
             declaration.startOffset, declaration.endOffset,
             mapDeclarationOrigin(declaration.origin),
             symbolRemapper.getDeclaredClass(declaration.symbol),
@@ -154,7 +149,7 @@ open class DeepCopyIrTreeWithSymbols(
         }.copyAttributes(declaration)
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction): IrSimpleFunction =
-        IrFunctionImpl(
+        irDeclarationFactory.createSimpleFunction(
             declaration.startOffset, declaration.endOffset,
             mapDeclarationOrigin(declaration.origin),
             symbolRemapper.getDeclaredFunction(declaration.symbol),
@@ -177,7 +172,7 @@ open class DeepCopyIrTreeWithSymbols(
         }
 
     override fun visitConstructor(declaration: IrConstructor): IrConstructor =
-        IrConstructorImpl(
+        irDeclarationFactory.createConstructor(
             declaration.startOffset, declaration.endOffset,
             mapDeclarationOrigin(declaration.origin),
             symbolRemapper.getDeclaredConstructor(declaration.symbol),
@@ -210,7 +205,7 @@ open class DeepCopyIrTreeWithSymbols(
     }
 
     override fun visitProperty(declaration: IrProperty): IrProperty =
-        IrPropertyImpl(
+        irDeclarationFactory.createProperty(
             declaration.startOffset, declaration.endOffset,
             mapDeclarationOrigin(declaration.origin),
             symbolRemapper.getDeclaredProperty(declaration.symbol),
@@ -234,7 +229,7 @@ open class DeepCopyIrTreeWithSymbols(
         }
 
     override fun visitField(declaration: IrField): IrField =
-        IrFieldImpl(
+        irDeclarationFactory.createField(
             declaration.startOffset, declaration.endOffset,
             mapDeclarationOrigin(declaration.origin),
             symbolRemapper.getDeclaredField(declaration.symbol),
@@ -254,7 +249,7 @@ open class DeepCopyIrTreeWithSymbols(
         }
 
     override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty): IrLocalDelegatedProperty =
-        IrLocalDelegatedPropertyImpl(
+        irDeclarationFactory.createLocalDelegatedProperty(
             declaration.startOffset, declaration.endOffset,
             mapDeclarationOrigin(declaration.origin),
             symbolRemapper.getDeclaredLocalDelegatedProperty(declaration.symbol),
@@ -267,7 +262,7 @@ open class DeepCopyIrTreeWithSymbols(
         }
 
     override fun visitEnumEntry(declaration: IrEnumEntry): IrEnumEntry =
-        IrEnumEntryImpl(
+        irDeclarationFactory.createEnumEntry(
             declaration.startOffset, declaration.endOffset,
             mapDeclarationOrigin(declaration.origin),
             symbolRemapper.getDeclaredEnumEntry(declaration.symbol),
@@ -279,7 +274,7 @@ open class DeepCopyIrTreeWithSymbols(
         }
 
     override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer): IrAnonymousInitializer =
-        IrAnonymousInitializerImpl(
+        irDeclarationFactory.createAnonymousInitializer(
             declaration.startOffset, declaration.endOffset,
             mapDeclarationOrigin(declaration.origin),
             IrAnonymousInitializerSymbolImpl(declaration.descriptor)
@@ -288,7 +283,7 @@ open class DeepCopyIrTreeWithSymbols(
         }
 
     override fun visitVariable(declaration: IrVariable): IrVariable =
-        IrVariableImpl(
+        irDeclarationFactory.createVariable(
             declaration.startOffset, declaration.endOffset,
             mapDeclarationOrigin(declaration.origin),
             symbolRemapper.getDeclaredVariable(declaration.symbol),
@@ -309,7 +304,7 @@ open class DeepCopyIrTreeWithSymbols(
         }
 
     private fun copyTypeParameter(declaration: IrTypeParameter) =
-        IrTypeParameterImpl(
+        irDeclarationFactory.createTypeParameter(
             declaration.startOffset, declaration.endOffset,
             mapDeclarationOrigin(declaration.origin),
             symbolRemapper.getDeclaredTypeParameter(declaration.symbol),
@@ -336,7 +331,7 @@ open class DeepCopyIrTreeWithSymbols(
     }
 
     override fun visitValueParameter(declaration: IrValueParameter): IrValueParameter =
-        IrValueParameterImpl(
+        irDeclarationFactory.createValueParameter(
             declaration.startOffset, declaration.endOffset,
             mapDeclarationOrigin(declaration.origin),
             symbolRemapper.getDeclaredValueParameter(declaration.symbol),
@@ -352,7 +347,7 @@ open class DeepCopyIrTreeWithSymbols(
         }
 
     override fun visitTypeAlias(declaration: IrTypeAlias): IrTypeAlias =
-        IrTypeAliasImpl(
+        irDeclarationFactory.createTypeAlias(
             declaration.startOffset, declaration.endOffset,
             symbolRemapper.getDeclaredTypeAlias(declaration.symbol),
             symbolRenamer.getTypeAliasName(declaration.symbol),
@@ -766,7 +761,7 @@ open class DeepCopyIrTreeWithSymbols(
         ).copyAttributes(expression)
 
     override fun visitErrorDeclaration(declaration: IrErrorDeclaration): IrErrorDeclaration =
-        IrErrorDeclarationImpl(declaration.startOffset, declaration.endOffset, declaration.descriptor)
+        irDeclarationFactory.createErrorDeclaration(declaration.startOffset, declaration.endOffset, declaration.descriptor)
 
     override fun visitErrorExpression(expression: IrErrorExpression): IrErrorExpression =
         IrErrorExpressionImpl(

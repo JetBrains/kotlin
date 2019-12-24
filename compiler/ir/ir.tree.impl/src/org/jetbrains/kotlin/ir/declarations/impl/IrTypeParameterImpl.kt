@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -52,37 +51,3 @@ class IrTypeParameterImpl(
         // no children
     }
 }
-
-fun IrTypeParameterImpl(
-    startOffset: Int,
-    endOffset: Int,
-    origin: IrDeclarationOrigin,
-    symbol: IrTypeParameterSymbol
-) =
-    IrTypeParameterImpl(
-        startOffset, endOffset, origin, symbol,
-        symbol.descriptor.name,
-        symbol.descriptor.index,
-        symbol.descriptor.isReified,
-        symbol.descriptor.variance
-    )
-
-fun IrTypeParameterImpl(
-    startOffset: Int,
-    endOffset: Int,
-    origin: IrDeclarationOrigin,
-    symbol: IrTypeParameterSymbol,
-    name: Name,
-    index: Int,
-    variance: Variance
-) =
-    IrTypeParameterImpl(startOffset, endOffset, origin, symbol, name, index, symbol.descriptor.isReified, variance)
-
-@Deprecated("Use constructor which takes symbol instead of descriptor", level = DeprecationLevel.ERROR)
-fun IrTypeParameterImpl(
-    startOffset: Int,
-    endOffset: Int,
-    origin: IrDeclarationOrigin,
-    descriptor: TypeParameterDescriptor
-) =
-    IrTypeParameterImpl(startOffset, endOffset, origin, IrTypeParameterSymbolImpl(descriptor))

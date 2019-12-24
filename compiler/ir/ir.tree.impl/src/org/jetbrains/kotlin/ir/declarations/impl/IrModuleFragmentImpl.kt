@@ -35,8 +35,3 @@ class IrModuleFragmentImpl(
         }
     }
 }
-
-fun IrModuleFragmentImpl(descriptor: ModuleDescriptor, irBuiltins: IrBuiltIns, files: List<IrFile>) =
-    IrModuleFragmentImpl(descriptor, irBuiltins).apply {
-        this.files.addAll(files)
-    }

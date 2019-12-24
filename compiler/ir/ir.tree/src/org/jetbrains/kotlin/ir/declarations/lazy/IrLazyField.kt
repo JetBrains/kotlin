@@ -10,10 +10,10 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
+import org.jetbrains.kotlin.ir.factories.IrDeclarationFactory
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -36,8 +36,9 @@ class IrLazyField(
     override val isStatic: Boolean,
     override val isFakeOverride: Boolean,
     stubGenerator: DeclarationStubGenerator,
-    typeTranslator: TypeTranslator
-) : IrLazyDeclarationBase(startOffset, endOffset, origin, stubGenerator, typeTranslator),
+    typeTranslator: TypeTranslator,
+    irDeclarationFactory: IrDeclarationFactory
+) : IrLazyDeclarationBase(startOffset, endOffset, origin, stubGenerator, typeTranslator, irDeclarationFactory),
     IrField {
 
     constructor(
@@ -46,7 +47,8 @@ class IrLazyField(
         origin: IrDeclarationOrigin,
         symbol: IrFieldSymbol,
         stubGenerator: DeclarationStubGenerator,
-        typeTranslator: TypeTranslator
+        typeTranslator: TypeTranslator,
+        irDeclarationFactory: IrDeclarationFactory
     ) : this(
         startOffset, endOffset, origin, symbol,
         symbol.descriptor.name,
@@ -56,7 +58,8 @@ class IrLazyField(
         isStatic = symbol.descriptor.dispatchReceiverParameter == null,
         isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
         stubGenerator = stubGenerator,
-        typeTranslator = typeTranslator
+        typeTranslator = typeTranslator,
+        irDeclarationFactory = irDeclarationFactory
     )
 
     init {

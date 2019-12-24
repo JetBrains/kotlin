@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -49,39 +48,3 @@ class IrVariableImpl(
         initializer = initializer?.transform(transformer, data)
     }
 }
-
-fun IrVariableImpl(
-    startOffset: Int,
-    endOffset: Int,
-    origin: IrDeclarationOrigin,
-    symbol: IrVariableSymbol,
-    type: IrType
-) =
-    IrVariableImpl(
-        startOffset, endOffset, origin, symbol,
-        symbol.descriptor.name, type,
-        isVar = symbol.descriptor.isVar,
-        isConst = symbol.descriptor.isConst,
-        isLateinit = symbol.descriptor.isLateInit
-    )
-
-fun IrVariableImpl(
-    startOffset: Int,
-    endOffset: Int,
-    origin: IrDeclarationOrigin,
-    descriptor: VariableDescriptor,
-    type: IrType
-) =
-    IrVariableImpl(startOffset, endOffset, origin, IrVariableSymbolImpl(descriptor), type)
-
-fun IrVariableImpl(
-    startOffset: Int,
-    endOffset: Int,
-    origin: IrDeclarationOrigin,
-    descriptor: VariableDescriptor,
-    type: IrType,
-    initializer: IrExpression?
-) =
-    IrVariableImpl(startOffset, endOffset, origin, descriptor, type).apply {
-        this.initializer = initializer
-    }

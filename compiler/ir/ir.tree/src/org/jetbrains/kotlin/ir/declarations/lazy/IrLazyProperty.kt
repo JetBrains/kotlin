@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.factories.IrDeclarationFactory
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.TypeTranslator
@@ -39,9 +40,10 @@ class IrLazyProperty(
     override val isFakeOverride: Boolean,
     stubGenerator: DeclarationStubGenerator,
     typeTranslator: TypeTranslator,
+    irDeclarationFactory: IrDeclarationFactory,
     bindingContext: BindingContext? = null
 ) :
-    IrLazyDeclarationBase(startOffset, endOffset, origin, stubGenerator, typeTranslator),
+    IrLazyDeclarationBase(startOffset, endOffset, origin, stubGenerator, typeTranslator, irDeclarationFactory),
     IrProperty {
 
     constructor(
@@ -51,6 +53,7 @@ class IrLazyProperty(
         symbol: IrPropertySymbol,
         stubGenerator: DeclarationStubGenerator,
         typeTranslator: TypeTranslator,
+        irDeclarationFactory: IrDeclarationFactory,
         bindingContext: BindingContext?
     ) : this(
         startOffset, endOffset, origin,
@@ -65,6 +68,7 @@ class IrLazyProperty(
         isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
         stubGenerator = stubGenerator,
         typeTranslator = typeTranslator,
+        irDeclarationFactory = irDeclarationFactory,
         bindingContext = bindingContext
     )
 

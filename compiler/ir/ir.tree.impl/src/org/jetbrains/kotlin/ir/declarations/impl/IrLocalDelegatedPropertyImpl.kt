@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrLocalDelegatedProperty
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrLocalDelegatedPropertySymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -57,65 +56,3 @@ class IrLocalDelegatedPropertyImpl(
         setter = setter?.transform(transformer, data) as? IrFunction
     }
 }
-
-fun IrLocalDelegatedPropertyImpl(
-    startOffset: Int,
-    endOffset: Int,
-    origin: IrDeclarationOrigin,
-    symbol: IrLocalDelegatedPropertySymbol,
-    type: IrType
-) =
-    IrLocalDelegatedPropertyImpl(
-        startOffset, endOffset, origin, symbol,
-        symbol.descriptor.name,
-        type,
-        symbol.descriptor.isVar
-    )
-
-@Deprecated("Creates unbound symbol", level = DeprecationLevel.ERROR)
-fun IrLocalDelegatedPropertyImpl(
-    startOffset: Int,
-    endOffset: Int,
-    origin: IrDeclarationOrigin,
-    descriptor: VariableDescriptorWithAccessors,
-    name: Name,
-    type: IrType,
-    isVar: Boolean
-) =
-    IrLocalDelegatedPropertyImpl(
-        startOffset, endOffset, origin,
-        IrLocalDelegatedPropertySymbolImpl(descriptor),
-        name, type, isVar
-    )
-
-@Deprecated("Creates unbound symbol", level = DeprecationLevel.ERROR)
-fun IrLocalDelegatedPropertyImpl(
-    startOffset: Int,
-    endOffset: Int,
-    origin: IrDeclarationOrigin,
-    descriptor: VariableDescriptorWithAccessors,
-    type: IrType
-) =
-    IrLocalDelegatedPropertyImpl(
-        startOffset, endOffset, origin,
-        IrLocalDelegatedPropertySymbolImpl(descriptor),
-        descriptor.name, type, descriptor.isVar
-    )
-
-@Suppress("DEPRECATION_ERROR")
-@Deprecated("Creates unbound symbol", level = DeprecationLevel.ERROR)
-fun IrLocalDelegatedPropertyImpl(
-    startOffset: Int,
-    endOffset: Int,
-    origin: IrDeclarationOrigin,
-    descriptor: VariableDescriptorWithAccessors,
-    type: IrType,
-    delegate: IrVariable,
-    getter: IrFunction,
-    setter: IrFunction?
-): IrLocalDelegatedPropertyImpl =
-    IrLocalDelegatedPropertyImpl(startOffset, endOffset, origin, descriptor, type).apply {
-        this.delegate = delegate
-        this.getter = getter
-        this.setter = setter
-    }

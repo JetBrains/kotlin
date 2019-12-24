@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 @file:Suppress("DEPRECATION")
@@ -21,11 +10,11 @@ package org.jetbrains.kotlin.ir.util
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazySymbolTable
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
+import org.jetbrains.kotlin.ir.factories.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
@@ -89,7 +78,10 @@ interface ReferenceSymbolTable {
     fun computeUniqId(declaration: IrDeclaration)
 }
 
-open class SymbolTable(val mangler: KotlinMangler? = null) : ReferenceSymbolTable {
+open class SymbolTable(
+    private val irDeclarationFactory: IrDeclarationFactory,
+    private val mangler: KotlinMangler? = null
+) : ReferenceSymbolTable {
 
     @Suppress("LeakingThis")
     val lazyWrapper = IrLazySymbolTable(this)
@@ -312,7 +304,7 @@ open class SymbolTable(val mangler: KotlinMangler? = null) : ReferenceSymbolTabl
         return externalPackageFragmentTable.declare(
             descriptor,
             { IrExternalPackageFragmentSymbolImpl(descriptor) },
-            { IrExternalPackageFragmentImpl(it) }
+            { irDeclarationFactory.createExternalPackageFragment(it) }
         )
     }
 
@@ -322,7 +314,7 @@ open class SymbolTable(val mangler: KotlinMangler? = null) : ReferenceSymbolTabl
         origin: IrDeclarationOrigin,
         descriptor: ClassDescriptor
     ): IrAnonymousInitializer =
-        IrAnonymousInitializerImpl(
+        irDeclarationFactory.createAnonymousInitializer(
             startOffset, endOffset, origin,
             IrAnonymousInitializerSymbolImpl(descriptor)
         )
@@ -332,7 +324,7 @@ open class SymbolTable(val mangler: KotlinMangler? = null) : ReferenceSymbolTabl
     fun declareScript(
         descriptor: ScriptDescriptor,
         scriptFactory: (IrScriptSymbol) -> IrScript = { symbol: IrScriptSymbol ->
-            IrScriptImpl(symbol, descriptor.name)
+            irDeclarationFactory.createScript(symbol, descriptor.name)
         }
     ): IrScript {
         return scriptSymbolTable.declare(
@@ -346,7 +338,8 @@ open class SymbolTable(val mangler: KotlinMangler? = null) : ReferenceSymbolTabl
         startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassDescriptor,
         modality: Modality = descriptor.modality,
         classFactory: (IrClassSymbol) -> IrClass = {
-            IrClassImpl(startOffset, endOffset, origin, it, modality).apply { metadata = MetadataSource.Class(it.descriptor) }
+            irDeclarationFactory.createClass(startOffset, endOffset, origin, it, modality)
+                .apply { metadata = MetadataSource.Class(it.descriptor) }
         }
     ): IrClass {
         return classSymbolTable.declare(
@@ -370,7 +363,7 @@ open class SymbolTable(val mangler: KotlinMangler? = null) : ReferenceSymbolTabl
         origin: IrDeclarationOrigin,
         descriptor: ClassConstructorDescriptor,
         constructorFactory: (IrConstructorSymbol) -> IrConstructor = {
-            IrConstructorImpl(startOffset, endOffset, origin, it, IrUninitializedType).apply {
+            irDeclarationFactory.createConstructor(startOffset, endOffset, origin, it, IrUninitializedType).apply {
                 metadata = MetadataSource.Function(it.descriptor)
             }
         }
@@ -391,7 +384,7 @@ open class SymbolTable(val mangler: KotlinMangler? = null) : ReferenceSymbolTabl
 
     fun declareEnumEntry(
         startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassDescriptor,
-        factory: (IrEnumEntrySymbol) -> IrEnumEntry = { IrEnumEntryImpl(startOffset, endOffset, origin, it) }
+        factory: (IrEnumEntrySymbol) -> IrEnumEntry = { irDeclarationFactory.createEnumEntry(startOffset, endOffset, origin, it) }
     ): IrEnumEntry =
         enumEntrySymbolTable.declare(
             descriptor,
@@ -415,7 +408,7 @@ open class SymbolTable(val mangler: KotlinMangler? = null) : ReferenceSymbolTabl
         type: IrType,
         visibility: Visibility? = null,
         fieldFactory: (IrFieldSymbol) -> IrField = {
-            IrFieldImpl(startOffset, endOffset, origin, it, type, visibility ?: it.descriptor.visibility).apply {
+            irDeclarationFactory.createField(startOffset, endOffset, origin, it, type, visibility ?: it.descriptor.visibility).apply {
                 metadata = MetadataSource.Property(it.descriptor)
             }
         }
@@ -459,7 +452,7 @@ open class SymbolTable(val mangler: KotlinMangler? = null) : ReferenceSymbolTabl
         descriptor: PropertyDescriptor,
         @Suppress("DEPRECATION") isDelegated: Boolean = descriptor.isDelegated,
         propertyFactory: (IrPropertySymbol) -> IrProperty = { symbol ->
-            IrPropertyImpl(startOffset, endOffset, origin, symbol, isDelegated = isDelegated).apply {
+            irDeclarationFactory.createProperty(startOffset, endOffset, origin, symbol, isDelegated = isDelegated).apply {
                 metadata = MetadataSource.Property(symbol.descriptor)
             }
         }
@@ -495,7 +488,7 @@ open class SymbolTable(val mangler: KotlinMangler? = null) : ReferenceSymbolTabl
         origin: IrDeclarationOrigin,
         descriptor: FunctionDescriptor,
         functionFactory: (IrSimpleFunctionSymbol) -> IrSimpleFunction = {
-            IrFunctionImpl(startOffset, endOffset, origin, it, IrUninitializedType).apply {
+            irDeclarationFactory.createSimpleFunction(startOffset, endOffset, origin, it, IrUninitializedType).apply {
                 metadata = MetadataSource.Function(it.descriptor)
             }
         }
@@ -523,7 +516,7 @@ open class SymbolTable(val mangler: KotlinMangler? = null) : ReferenceSymbolTabl
         endOffset: Int,
         origin: IrDeclarationOrigin,
         descriptor: TypeParameterDescriptor,
-        typeParameterFactory: (IrTypeParameterSymbol) -> IrTypeParameter = { IrTypeParameterImpl(startOffset, endOffset, origin, it) }
+        typeParameterFactory: (IrTypeParameterSymbol) -> IrTypeParameter = { irDeclarationFactory.createTypeParameter(startOffset, endOffset, origin, it) }
     ): IrTypeParameter =
         globalTypeParameterSymbolTable.declare(
             descriptor,
@@ -536,7 +529,7 @@ open class SymbolTable(val mangler: KotlinMangler? = null) : ReferenceSymbolTabl
         endOffset: Int,
         origin: IrDeclarationOrigin,
         descriptor: TypeParameterDescriptor,
-        typeParameterFactory: (IrTypeParameterSymbol) -> IrTypeParameter = { IrTypeParameterImpl(startOffset, endOffset, origin, it) }
+        typeParameterFactory: (IrTypeParameterSymbol) -> IrTypeParameter = { irDeclarationFactory.createTypeParameter(startOffset, endOffset, origin, it) }
     ): IrTypeParameter =
         scopedTypeParameterSymbolTable.declare(
             descriptor,
@@ -555,7 +548,7 @@ open class SymbolTable(val mangler: KotlinMangler? = null) : ReferenceSymbolTabl
         type: IrType,
         varargElementType: IrType? = null,
         valueParameterFactory: (IrValueParameterSymbol) -> IrValueParameter = {
-            IrValueParameterImpl(startOffset, endOffset, origin, it, type, varargElementType)
+            irDeclarationFactory.createValueParameter(startOffset, endOffset, origin, it, type, varargElementType)
         }
     ): IrValueParameter =
         valueParameterSymbolTable.declareLocal(
@@ -590,7 +583,7 @@ open class SymbolTable(val mangler: KotlinMangler? = null) : ReferenceSymbolTabl
         descriptor: VariableDescriptor,
         type: IrType,
         variableFactory: (IrVariableSymbol) -> IrVariable = {
-            IrVariableImpl(startOffset, endOffset, origin, it, type)
+            irDeclarationFactory.createVariable(startOffset, endOffset, origin, it, type)
         }
 
     ): IrVariable =
@@ -625,7 +618,7 @@ open class SymbolTable(val mangler: KotlinMangler? = null) : ReferenceSymbolTabl
         localDelegatedPropertySymbolTable.declareLocal(
             descriptor,
             { IrLocalDelegatedPropertySymbolImpl(descriptor) },
-            { IrLocalDelegatedPropertyImpl(startOffset, endOffset, origin, it, type) }
+            { irDeclarationFactory.createLocalDelegatedProperty(startOffset, endOffset, origin, it, type) }
         )
 
     fun referenceLocalDelegatedProperty(descriptor: VariableDescriptorWithAccessors) =
