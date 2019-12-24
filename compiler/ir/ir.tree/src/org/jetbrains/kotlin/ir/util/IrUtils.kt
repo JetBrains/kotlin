@@ -609,6 +609,15 @@ val IrDeclaration.fileOrNull: IrFile?
 val IrDeclaration.file: IrFile
     get() = fileOrNull ?: TODO("Unknown file")
 
+val IrDeclaration.parentClassOrNull: IrClass?
+    get() = parent.let {
+        when (it) {
+            is IrClass -> it
+            is IrDeclaration -> it.parentClassOrNull
+            else -> null
+        }
+    }
+
 val IrFunction.allTypeParameters: List<IrTypeParameter>
     get() = if (this is IrConstructor)
         parentAsClass.typeParameters + typeParameters
