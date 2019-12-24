@@ -496,7 +496,7 @@ class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
 
         closureFunction.valueParameters += unboundParamDeclarations
 
-        val callTarget = context.ir.defaultParameterDeclarationsCache[declaration] ?: declaration
+        val callTarget = context.mapping.defaultArgumentsDispatchFunction[declaration] ?: declaration
 
         val target = callTarget.symbol
 

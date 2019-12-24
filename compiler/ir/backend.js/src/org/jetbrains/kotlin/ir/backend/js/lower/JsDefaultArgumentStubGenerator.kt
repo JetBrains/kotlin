@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 
-class JsDefaultArgumentStubGenerator(override val context: JsIrBackendContext) : DefaultArgumentStubGenerator(context, true, true) {
+class JsDefaultArgumentStubGenerator(override val context: JsIrBackendContext) : DefaultArgumentStubGenerator(context, true, true, false) {
 
     override fun needSpecialDispatch(irFunction: IrSimpleFunction) = irFunction.isOverridableOrOverrides
 
@@ -71,7 +71,7 @@ class JsDefaultCallbackGenerator(val context: JsIrBackendContext): BodyLoweringP
 
     private fun buildBoundSuperCall(irCall: IrCall): IrExpression {
 
-        val originalFunction = context.ir.defaultParameterDeclarationsCache.entries.first { it.value == irCall.symbol.owner }.key
+        val originalFunction = context.mapping.defaultArgumentsOriginalFunction[irCall.symbol.owner]!!
 
         val reference = irCall.run {
             IrFunctionReferenceImpl(

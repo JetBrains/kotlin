@@ -36,22 +36,26 @@ import org.jetbrains.kotlin.name.Name
 open class DefaultArgumentStubGenerator(
     open val context: CommonBackendContext,
     private val skipInlineMethods: Boolean = true,
-    private val skipExternalMethods: Boolean = false
-) : DeclarationContainerLoweringPass {
+    private val skipExternalMethods: Boolean = false,
+    private val forceSetOverrideSymbols: Boolean = true
+) : DeclarationTransformer {
 
-    override fun lower(irDeclarationContainer: IrDeclarationContainer) {
-        irDeclarationContainer.transformDeclarationsFlat { memberDeclaration ->
-            if (memberDeclaration is IrFunction)
-                lower(memberDeclaration)
-            else
-                null
-        }
+    override fun lower(irFile: IrFile) {
+        runPostfix(true).toFileLoweringPass().lower(irFile)
     }
 
-    private fun lower(irFunction: IrFunction): List<IrFunction> {
+    override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
+        if (declaration is IrFunction) {
+            return lower(declaration)
+        }
+
+        return null
+    }
+
+    private fun lower(irFunction: IrFunction): List<IrFunction>? {
         val visibility = defaultArgumentStubVisibility(irFunction)
-        val newIrFunction = irFunction.generateDefaultsFunction(context, skipInlineMethods, skipExternalMethods, visibility)
-            ?: return listOf(irFunction)
+        val newIrFunction = irFunction.generateDefaultsFunction(context, skipInlineMethods, skipExternalMethods, forceSetOverrideSymbols, visibility)
+            ?: return null
         if (newIrFunction.origin == IrDeclarationOrigin.FAKE_OVERRIDE) {
             return listOf(irFunction, newIrFunction)
         }
@@ -59,80 +63,77 @@ open class DefaultArgumentStubGenerator(
         log { "$irFunction -> $newIrFunction" }
         val builder = context.createIrBuilder(newIrFunction.symbol)
 
-        newIrFunction.body = builder.irBlockBody(newIrFunction) {
-            val params = mutableListOf<IrValueDeclaration>()
-            val variables = mutableMapOf<IrValueDeclaration, IrValueDeclaration>()
+        newIrFunction.body = IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
+            statements += builder.irBlockBody(newIrFunction) {
+                val params = mutableListOf<IrValueDeclaration>()
+                val variables = mutableMapOf<IrValueDeclaration, IrValueDeclaration>()
 
-            irFunction.dispatchReceiverParameter?.let {
-                variables[it] = newIrFunction.dispatchReceiverParameter!!
-            }
-
-            irFunction.extensionReceiverParameter?.let {
-                variables[it] = newIrFunction.extensionReceiverParameter!!
-            }
-
-            // In order to deal with forward references in default value lambdas,
-            // accesses to the parameter before it has been determined if there is
-            // a default value or not is redirected to the actual parameter of the
-            // $default function. This is to ensure that examples such as:
-            //
-            // fun f(f1: () -> String = { f2() },
-            //       f2: () -> String = { "OK" }) = f1()
-            //
-            // works correctly so that `f() { "OK" }` returns "OK" and
-            // `f()` throws a NullPointerException.
-            irFunction.valueParameters.associateWithTo(variables) {
-                newIrFunction.valueParameters[it.index]
-            }
-
-            var sourceParameterIndex = -1
-            for (valueParameter in irFunction.valueParameters) {
-                if (!valueParameter.isMovedReceiver()) {
-                    ++sourceParameterIndex
+                irFunction.dispatchReceiverParameter?.let {
+                    variables[it] = newIrFunction.dispatchReceiverParameter!!
                 }
-                val parameter = newIrFunction.valueParameters[valueParameter.index]
-                val remapped = if (valueParameter.defaultValue != null) {
-                    val mask = irGet(newIrFunction.valueParameters[irFunction.valueParameters.size + valueParameter.index / 32])
-                    val bit = irInt(1 shl (sourceParameterIndex % 32))
-                    val defaultFlag = irCallOp(this@DefaultArgumentStubGenerator.context.ir.symbols.intAnd, context.irBuiltIns.intType, mask, bit)
 
-                    val expressionBody = valueParameter.defaultValue!!
-                    expressionBody.patchDeclarationParents(newIrFunction)
-                    expressionBody.transformChildrenVoid(object : IrElementTransformerVoid() {
-                        override fun visitGetValue(expression: IrGetValue): IrExpression {
-                            log { "GetValue: ${expression.symbol.owner}" }
-                            val valueSymbol = variables[expression.symbol.owner] ?: return expression
-                            return irGet(valueSymbol)
-                        }
-                    })
-
-                    selectArgumentOrDefault(defaultFlag, parameter, expressionBody.expression)
-                } else {
-                    parameter
+                irFunction.extensionReceiverParameter?.let {
+                    variables[it] = newIrFunction.extensionReceiverParameter!!
                 }
-                params.add(remapped)
-                variables[valueParameter] = remapped
-            }
 
-            when (irFunction) {
-                is IrConstructor -> +irDelegatingConstructorCall(irFunction).apply {
-                    passTypeArgumentsFrom(newIrFunction.parentAsClass)
-                    // This is for Kotlin/Native, which differs from the other backends in that constructors
-                    // apparently do have dispatch receivers (though *probably* not type arguments, but copy
-                    // those as well just in case):
-                    passTypeArgumentsFrom(newIrFunction, offset = newIrFunction.parentAsClass.typeParameters.size)
-                    dispatchReceiver = newIrFunction.dispatchReceiverParameter?.let { irGet(it) }
-                    params.forEachIndexed { i, variable -> putValueArgument(i, irGet(variable)) }
+                // In order to deal with forward references in default value lambdas,
+                // accesses to the parameter before it has been determined if there is
+                // a default value or not is redirected to the actual parameter of the
+                // $default function. This is to ensure that examples such as:
+                //
+                // fun f(f1: () -> String = { f2() },
+                //       f2: () -> String = { "OK" }) = f1()
+                //
+                // works correctly so that `f() { "OK" }` returns "OK" and
+                // `f()` throws a NullPointerException.
+                irFunction.valueParameters.associateWithTo(variables) {
+                    newIrFunction.valueParameters[it.index]
                 }
-                is IrSimpleFunction -> +irReturn(dispatchToImplementation(irFunction, newIrFunction, params))
-                else -> error("Unknown function declaration")
-            }
-        }
-        // Remove default argument initializers.
-        irFunction.valueParameters.forEach {
-            if (it.defaultValue != null) {
-                it.defaultValue = IrExpressionBodyImpl(IrErrorExpressionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, it.type, "Default Stub"))
-            }
+
+                var sourceParameterIndex = -1
+                for (valueParameter in irFunction.valueParameters) {
+                    if (!valueParameter.isMovedReceiver()) {
+                        ++sourceParameterIndex
+                    }
+                    val parameter = newIrFunction.valueParameters[valueParameter.index]
+                    val remapped = if (valueParameter.defaultValue != null) {
+                        val mask = irGet(newIrFunction.valueParameters[irFunction.valueParameters.size + valueParameter.index / 32])
+                        val bit = irInt(1 shl (sourceParameterIndex % 32))
+                        val defaultFlag =
+                            irCallOp(this@DefaultArgumentStubGenerator.context.ir.symbols.intAnd, context.irBuiltIns.intType, mask, bit)
+
+                        val expressionBody = valueParameter.defaultValue!!
+                        expressionBody.patchDeclarationParents(newIrFunction)
+                        expressionBody.transformChildrenVoid(object : IrElementTransformerVoid() {
+                            override fun visitGetValue(expression: IrGetValue): IrExpression {
+                                log { "GetValue: ${expression.symbol.owner}" }
+                                val valueSymbol = variables[expression.symbol.owner] ?: return expression
+                                return irGet(valueSymbol)
+                            }
+                        })
+
+                        selectArgumentOrDefault(defaultFlag, parameter, expressionBody.expression)
+                    } else {
+                        parameter
+                    }
+                    params.add(remapped)
+                    variables[valueParameter] = remapped
+                }
+
+                when (irFunction) {
+                    is IrConstructor -> +irDelegatingConstructorCall(irFunction).apply {
+                        passTypeArgumentsFrom(newIrFunction.parentAsClass)
+                        // This is for Kotlin/Native, which differs from the other backends in that constructors
+                        // apparently do have dispatch receivers (though *probably* not type arguments, but copy
+                        // those as well just in case):
+                        passTypeArgumentsFrom(newIrFunction, offset = newIrFunction.parentAsClass.typeParameters.size)
+                        dispatchReceiver = newIrFunction.dispatchReceiverParameter?.let { irGet(it) }
+                        params.forEachIndexed { i, variable -> putValueArgument(i, irGet(variable)) }
+                    }
+                    is IrSimpleFunction -> +irReturn(dispatchToImplementation(irFunction, newIrFunction, params))
+                    else -> error("Unknown function declaration")
+                }
+            }.statements
         }
         return listOf(irFunction, newIrFunction)
     }
@@ -195,17 +196,39 @@ open class DefaultArgumentStubGenerator(
     private fun log(msg: () -> String) = context.log { "DEFAULT-REPLACER: ${msg()}" }
 }
 
+private fun IrFunction.findBaseFunctionWithDefaultArguments(skipInlineMethods: Boolean, skipExternalMethods: Boolean): IrFunction? {
+
+    val visited = mutableSetOf<IrFunction>()
+
+    fun IrFunction.dfsImpl(): IrFunction? {
+        visited += this
+
+        if (isInline && skipInlineMethods) return null
+        if (skipExternalMethods && isExternalOrInheritedFromExternal()) return null
+
+        if (this is IrSimpleFunction) {
+            overriddenSymbols.forEach {
+                val base = it.owner
+                if (base !in visited) base.dfsImpl()?.let { return it }
+            }
+        }
+
+        if (valueParameters.any { it.defaultValue != null }) return this
+
+        return null
+    }
+
+    return dfsImpl()
+}
+
 val DEFAULT_DISPATCH_CALL = object : IrStatementOriginImpl("DEFAULT_DISPATCH_CALL") {}
 
 open class DefaultParameterInjector(
     open val context: CommonBackendContext,
     private val skipInline: Boolean = true,
-    private val skipExternalMethods: Boolean = false
-) : IrElementTransformerVoid(), BodyLoweringPass, FileLoweringPass {
-
-    override fun lower(irFile: IrFile) {
-        irFile.transformChildrenVoid(this)
-    }
+    private val skipExternalMethods: Boolean = false,
+    private val forceSetOverrideSymbols: Boolean = true
+) : IrElementTransformerVoid(), BodyLoweringPass {
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         irBody.transformChildrenVoid(this)
@@ -279,12 +302,15 @@ open class DefaultParameterInjector(
         val endOffset = expression.endOffset
         val declaration = expression.symbol.owner
         val visibility = defaultArgumentStubVisibility(declaration)
-        val stubOverride = declaration.generateDefaultsFunction(context, skipInline, skipExternalMethods, visibility) ?: return null
-        // We *have* to resolve the fake override here since on the JVM, a default stub for a function implemented
+
+        // We *have* to find the actual function here since on the JVM, a default stub for a function implemented
         // in an interface does not leave an abstract method after being moved to DefaultImpls (see InterfaceLowering).
         // Calling the fake override on an implementation of that interface would then result in a call to a method
         // that does not actually exist as DefaultImpls is not part of the inheritance hierarchy.
-        val stubFunction = if (stubOverride is IrSimpleFunction) stubOverride.resolveFakeOverride()!! else stubOverride
+        val stubFunction = declaration.findBaseFunctionWithDefaultArguments(skipInline, skipExternalMethods)
+            ?.generateDefaultsFunction(context, skipInline, skipExternalMethods, forceSetOverrideSymbols, visibility)
+            ?: return null
+
         log { "$declaration -> $stubFunction" }
 
         val realArgumentsNumber = declaration.valueParameters.size
@@ -335,11 +361,44 @@ open class DefaultParameterInjector(
     private fun log(msg: () -> String) = context.log { "DEFAULT-INJECTOR: ${msg()}" }
 }
 
-class DefaultParameterCleaner constructor(val context: CommonBackendContext) : FunctionLoweringPass {
-    override fun lower(irFunction: IrFunction) {
-        if (!context.scriptMode) {
-            irFunction.valueParameters.forEach { it.defaultValue = null }
+// Remove default argument initializers.
+class DefaultParameterCleaner(
+    val context: CommonBackendContext,
+    val replaceDefaultValuesWithStubs: Boolean = false
+) : DeclarationTransformer {
+    override fun lower(irFile: IrFile) {
+        runPostfix(true).toFileLoweringPass().lower(irFile)
+    }
+
+    override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
+        if (declaration is IrValueParameter && !context.scriptMode && declaration.defaultValue != null) {
+            if (replaceDefaultValuesWithStubs) {
+                if (context.mapping.defaultArgumentsOriginalFunction[declaration.parent as IrFunction] == null) {
+                    declaration.defaultValue =
+                        IrExpressionBodyImpl(IrErrorExpressionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, declaration.type, "Default Stub"))
+                }
+            } else {
+                declaration.defaultValue = null
+            }
         }
+        return null
+    }
+}
+
+// Sets overriden symbols. Should be used in case `forceSetOverrideSymbols = false`
+class DefaultParameterPatchOverridenSymbolsLowering(
+    val context: CommonBackendContext
+) : DeclarationTransformer {
+    override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
+        if (declaration is IrSimpleFunction) {
+            (context.mapping.defaultArgumentsOriginalFunction[declaration] as? IrSimpleFunction)?.run {
+                declaration.overriddenSymbols += overriddenSymbols.mapNotNull {
+                    (context.mapping.defaultArgumentsDispatchFunction[it.owner] as? IrSimpleFunction)?.symbol
+                }
+            }
+        }
+
+        return null
     }
 }
 
@@ -347,27 +406,32 @@ private fun IrFunction.generateDefaultsFunction(
     context: CommonBackendContext,
     skipInlineMethods: Boolean,
     skipExternalMethods: Boolean,
+    forceSetOverrideSymbols: Boolean,
     visibility: Visibility
 ): IrFunction? {
     if (skipInlineMethods && isInline) return null
     if (skipExternalMethods && isExternalOrInheritedFromExternal()) return null
-    context.ir.defaultParameterDeclarationsCache[this]?.let { return it }
+    if (context.mapping.defaultArgumentsOriginalFunction[this] != null) return null
+    context.mapping.defaultArgumentsDispatchFunction[this]?.let { return it }
     if (this is IrSimpleFunction) {
         // If this is an override of a function with default arguments, produce a fake override of a default stub.
-        val overriddenStubs = overriddenSymbols.mapNotNull {
-            it.owner.generateDefaultsFunction(
-                context,
-                skipInlineMethods,
-                skipExternalMethods,
-                visibility
-            )?.symbol as IrSimpleFunctionSymbol?
-        }
-        if (overriddenStubs.isNotEmpty()) {
+        if (overriddenSymbols.any { it.owner.findBaseFunctionWithDefaultArguments(skipInlineMethods, skipExternalMethods) != null })
             return generateDefaultsFunctionImpl(context, IrDeclarationOrigin.FAKE_OVERRIDE, visibility).also {
-                (it as IrSimpleFunction).overriddenSymbols += overriddenStubs
-                context.ir.defaultParameterDeclarationsCache[this] = it
+                context.mapping.defaultArgumentsDispatchFunction[this] = it
+                context.mapping.defaultArgumentsOriginalFunction[it] = this
+
+                if (forceSetOverrideSymbols) {
+                    (it as IrSimpleFunction).overriddenSymbols += overriddenSymbols.mapNotNull {
+                        it.owner.generateDefaultsFunction(
+                            context,
+                            skipInlineMethods,
+                            skipExternalMethods,
+                            forceSetOverrideSymbols,
+                            visibility
+                        )?.symbol as IrSimpleFunctionSymbol?
+                    }
+                }
             }
-        }
     }
     // Note: this is intentionally done *after* checking for overrides. While normally `override fun`s
     // have no default parameters, there is an exception in case of interface delegation:
@@ -381,7 +445,8 @@ private fun IrFunction.generateDefaultsFunction(
     // binaries, it's way too late to fix it. Hence the workaround.
     if (valueParameters.any { it.defaultValue != null }) {
         return generateDefaultsFunctionImpl(context, IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER, visibility).also {
-            context.ir.defaultParameterDeclarationsCache[this] = it
+            context.mapping.defaultArgumentsDispatchFunction[this] = it
+            context.mapping.defaultArgumentsOriginalFunction[it] = this
         }
     }
     return null
