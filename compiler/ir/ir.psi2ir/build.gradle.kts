@@ -8,6 +8,7 @@ dependencies {
     compile(project(":compiler:frontend"))
     compile(project(":compiler:backend-common"))
     compile(project(":compiler:ir.tree"))
+    implementation(project(":compiler:ir.tree.impl"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 }
 

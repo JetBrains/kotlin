@@ -1,26 +1,17 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.psi2ir.generators
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrErrorDeclarationImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrTypeAliasImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
+import org.jetbrains.kotlin.ir.factories.createTypeAlias
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.withScope
 import org.jetbrains.kotlin.psi.*
@@ -51,7 +42,7 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
             is KtScript ->
                 ScriptGenerator(this).generateScriptDeclaration(ktDeclaration)
             else ->
-                IrErrorDeclarationImpl(
+                context.irDeclarationFactory.createErrorDeclaration(
                     ktDeclaration.startOffsetSkippingComments, ktDeclaration.endOffset,
                     getOrFail(BindingContext.DECLARATION_TO_DESCRIPTOR, ktDeclaration)
                 )
@@ -82,7 +73,7 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
     private fun generateTypeAliasDeclaration(ktTypeAlias: KtTypeAlias): IrTypeAlias {
         val typeAliasDescriptor = getOrFail(BindingContext.TYPE_ALIAS, ktTypeAlias)
         val irTypeAlias = context.symbolTable.declareTypeAlias(typeAliasDescriptor) { symbol ->
-            IrTypeAliasImpl.fromSymbolDescriptor(
+            context.irDeclarationFactory.createTypeAlias(
                 ktTypeAlias.startOffsetSkippingComments, ktTypeAlias.endOffset,
                 symbol,
                 typeAliasDescriptor.expandedType.toIrType(),
