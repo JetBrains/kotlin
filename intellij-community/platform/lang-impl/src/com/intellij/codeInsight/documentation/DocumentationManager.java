@@ -838,7 +838,8 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
         .withDocumentsCommitted(myProject)
         .coalesceBy(myUpdateDocAlarm)
         .finishOnUiThread(modality, Runnable::run)
-        .submit(AppExecutorUtil.getAppExecutorService());
+        .submit(AppExecutorUtil.getAppExecutorService())
+        .onError(e -> GuiUtils.invokeLaterIfNeeded(() -> callback.setDone(), modality));
     }, 10);
     return callback;
   }
