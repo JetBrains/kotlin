@@ -8,6 +8,8 @@ import com.intellij.application.options.codeStyle.CodeStyleSchemesModelListener;
 import com.intellij.application.options.codeStyle.CodeStyleSchemesPanel;
 import com.intellij.application.options.codeStyle.group.CodeStyleGroupProvider;
 import com.intellij.application.options.codeStyle.group.CodeStyleGroupProviderFactory;
+import com.intellij.openapi.extensions.BaseExtensionPointName;
+import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
@@ -20,13 +22,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class CodeStyleSchemesConfigurable extends SearchableConfigurable.Parent.Abstract
-  implements Configurable.NoMargin, Configurable.NoScroll, Configurable.VariableProjectAppLevel {
+  implements Configurable.NoMargin, Configurable.NoScroll, Configurable.VariableProjectAppLevel, Configurable.WithEpDependencies {
 
   private CodeStyleSchemesPanel myRootSchemesPanel;
   private @NotNull final CodeStyleSchemesModel myModel;
@@ -279,6 +278,14 @@ public class CodeStyleSchemesConfigurable extends SearchableConfigurable.Parent.
   @Nullable
   public SearchableConfigurable findSubConfigurable(@NotNull final String name) {
     return findSubConfigurable(this, name);
+  }
+
+  @NotNull
+  @Override
+  public Collection<BaseExtensionPointName<?>> getDependencies() {
+    return Arrays.asList(new ExtensionPointName<?>[] {
+      LanguageCodeStyleSettingsProvider.EP_NAME
+    });
   }
 
   private static SearchableConfigurable findSubConfigurable(SearchableConfigurable.Parent topConfigurable, @NotNull final String name) {
