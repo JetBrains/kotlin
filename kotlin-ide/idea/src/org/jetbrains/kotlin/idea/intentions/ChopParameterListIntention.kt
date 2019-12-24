@@ -8,31 +8,33 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.application.options.CodeStyle
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings
 import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.inspections.findExistingEditor
 import org.jetbrains.kotlin.idea.formatter.kotlinCommonSettings
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.allChildren
-import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
-import org.jetbrains.kotlin.psi.psiUtil.siblings
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.psiUtil.*
 
 abstract class AbstractChopListIntention<TList : KtElement, TElement : KtElement>(
     listClass: Class<TList>,
     private val elementClass: Class<TElement>,
     textGetter: () -> String
-) : SelfTargetingOffsetIndependentIntention<TList>(listClass, textGetter) {
+) : SelfTargetingIntention<TList>(listClass, textGetter) {
+    override fun allowCaretInsideElement(element: PsiElement) =
+        element !is KtValueArgument && super.allowCaretInsideElement(element)
 
     open fun leftParOnNewLine(commonCodeStyleSettings: CommonCodeStyleSettings): Boolean = false
 
     open fun rightParOnNewLine(commonCodeStyleSettings: CommonCodeStyleSettings): Boolean = false
 
-    override fun isApplicableTo(element: TList): Boolean {
+    override fun isApplicableTo(element: TList, caretOffset: Int): Boolean {
         val elements = element.elements()
         if (elements.size <= 1) return false
+        if (!isApplicableCaretOffset(caretOffset, element)) return false
         if (elements.dropLast(1).all { hasLineBreakAfter(it) }) return false
         return true
     }
@@ -82,6 +84,12 @@ abstract class AbstractChopListIntention<TList : KtElement, TElement : KtElement
             it as TElement
         }
         .toList()
+
+    protected fun isApplicableCaretOffset(caretOffset: Int, element: TList): Boolean {
+        val elementBeforeCaret = element.containingFile.findElementAt(caretOffset - 1) ?: return true
+        if (elementBeforeCaret.node.elementType != KtTokens.RPAR) return true
+        return elementBeforeCaret.parent == element
+    }
 }
 
 class ChopParameterListIntention : AbstractChopListIntention<KtParameterList, KtParameter>(
@@ -89,9 +97,9 @@ class ChopParameterListIntention : AbstractChopListIntention<KtParameterList, Kt
     KtParameter::class.java,
     KotlinBundle.lazyMessage("put.parameters.on.separate.lines")
 ) {
-    override fun isApplicableTo(element: KtParameterList): Boolean {
+    override fun isApplicableTo(element: KtParameterList, caretOffset: Int): Boolean {
         if (element.parent is KtFunctionLiteral) return false
-        return super.isApplicableTo(element)
+        return super.isApplicableTo(element, caretOffset)
     }
 
     override fun leftParOnNewLine(commonCodeStyleSettings: CommonCodeStyleSettings): Boolean {
