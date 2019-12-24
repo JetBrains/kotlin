@@ -68,8 +68,7 @@ class IrSourceCompilerForInline(
                 root.classCodegen.type.internalName,
                 root.signature.asmMethod.name,
                 root.signature.asmMethod.descriptor,
-                //compilationContextFunctionDescriptor.isInlineOrInsideInline()
-                false,
+                compilationContextFunctionDescriptor.isInlineOrInsideInline(),
                 compilationContextFunctionDescriptor.isSuspend,
                 findElement()?.let { CodegenUtil.getLineNumberForElement(it, false) } ?: 0
             )

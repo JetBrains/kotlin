@@ -437,6 +437,6 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
     }
 }
 
-private fun DeclarationDescriptor.isInlineOrInsideInline(): Boolean =
+fun DeclarationDescriptor.isInlineOrInsideInline(): Boolean =
     if (this is FunctionDescriptor && isInline) true
     else containingDeclaration?.isInlineOrInsideInline() == true
