@@ -684,6 +684,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
                 runTest("compiler/fir/resolve/testData/resolve/expresssions/invoke/inBrackets.kt");
             }
 
+            @TestMetadata("incorrectInvokeReceiver.kt")
+            public void testIncorrectInvokeReceiver() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/expresssions/invoke/incorrectInvokeReceiver.kt");
+            }
+
             @TestMetadata("propertyFromParameter.kt")
             public void testPropertyFromParameter() throws Exception {
                 runTest("compiler/fir/resolve/testData/resolve/expresssions/invoke/propertyFromParameter.kt");
