@@ -178,7 +178,7 @@ class ConstraintInjector(
             val typeVariable = c.allTypeVariables[typeVariableConstructor]
                 ?: error("Should by type variableConstructor: $typeVariableConstructor. ${c.allTypeVariables.values}")
 
-            addNewIncorporatedConstraint(typeVariable, type, ConstraintContext(kind, emptySet()))
+            addNewIncorporatedConstraint(typeVariable, type, ConstraintContext(kind, emptySet(), isNullabilityConstraint = false))
         }
 
         // from ConstraintIncorporator.Context
@@ -193,7 +193,7 @@ class ConstraintInjector(
             type: KotlinTypeMarker,
             constraintContext: ConstraintContext
         ) {
-            val (kind, derivedFrom, inputTypePosition) = constraintContext
+            val (kind, derivedFrom, inputTypePosition, isNullabilityConstraint) = constraintContext
 
             var targetType = type
             if (targetType.isUninferredParameter()) {
@@ -230,7 +230,12 @@ class ConstraintInjector(
                 }
             }
 
-            possibleNewConstraints.add(typeVariable to Constraint(kind, targetType, position, derivedFrom = derivedFrom))
+            val newConstraint = Constraint(
+                kind, targetType, position,
+                derivedFrom = derivedFrom,
+                isNullabilityConstraint = isNullabilityConstraint
+            )
+            possibleNewConstraints.add(typeVariable to newConstraint)
             inputTypePosition?.let { preservedInputTypePositions.add(it) }
         }
 
@@ -263,5 +268,6 @@ class ConstraintInjector(
 data class ConstraintContext(
     val kind: ConstraintKind,
     val derivedFrom: Set<TypeVariableMarker>,
-    val inputTypePosition: ConstraintPosition? = null
+    val inputTypePosition: ConstraintPosition? = null,
+    val isNullabilityConstraint: Boolean
 )

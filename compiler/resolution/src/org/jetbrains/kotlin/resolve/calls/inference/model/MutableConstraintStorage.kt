@@ -68,7 +68,8 @@ class MutableVariableWithConstraints(
                 constraint.type,
                 constraint.position,
                 constraint.typeHashCode,
-                derivedFrom = constraint.derivedFrom
+                derivedFrom = constraint.derivedFrom,
+                isNullabilityConstraint = false
             )
         else
             constraint

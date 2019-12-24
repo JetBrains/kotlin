@@ -36,7 +36,6 @@ fun testOK(first: First, bound: Bound, second: Second) {
     strictSelect(OutB(first), OutB(bound))
     strictSelect(In(first), In(bound))
     strictSelect(InB(first), InB(bound))
-    strictSelect(InB(first), InB(second)) // different behaviour in contravariant position
 
     val out: Out<Bound> = strictSelect(Out(first), Out(second))
     val outb: OutB<Bound> = strictSelect(OutB(first), OutB(second))
@@ -49,6 +48,7 @@ fun testFail(first: First, bound: Bound, second: Second) {
     strictSelect(Inv(first), Inv(bound))
     strictSelect(Out(first), Out(second))
     strictSelect(In(first), In(second))
+    strictSelect(InB(first), InB(second))
     strictSelect(Out(Inv(first)), Out(Inv(second)))
     strictSelect(In(Inv(first)), In(Inv(second)))
 }

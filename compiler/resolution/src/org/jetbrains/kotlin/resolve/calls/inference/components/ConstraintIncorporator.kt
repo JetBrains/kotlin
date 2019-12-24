@@ -175,7 +175,10 @@ class ConstraintIncorporator(
         val inputTypePosition = if (baseConstraint.position.from is OnlyInputTypeConstraintPosition)
             baseConstraint.position else null
 
-        addNewIncorporatedConstraint(targetVariable, newConstraint, ConstraintContext(kind, derivedFrom, inputTypePosition))
+        val isNullabilityConstraint = isUsefulForNullabilityConstraint && newConstraint.isNullableNothing()
+        val constraintContext = ConstraintContext(kind, derivedFrom, inputTypePosition, isNullabilityConstraint)
+
+        addNewIncorporatedConstraint(targetVariable, newConstraint, constraintContext)
     }
 
     fun Context.containsConstrainingTypeWithoutProjection(
