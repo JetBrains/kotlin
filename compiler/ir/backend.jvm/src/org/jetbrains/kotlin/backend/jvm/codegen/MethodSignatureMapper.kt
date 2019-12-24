@@ -208,6 +208,13 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
             }
         }
 
+        if (function.isSuspend && function.origin != JvmLoweredDeclarationOrigin.SUSPEND_FUNCTION_VIEW &&
+            function.origin != JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE_VIEW &&
+            (function.parent as? IrClass)?.origin != JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
+        ) {
+            return mapSignature(function.suspendFunctionView(context, false), skipGenericSignature)
+        }
+
         val sw = if (skipGenericSignature) JvmSignatureWriter() else BothSignatureWriter(BothSignatureWriter.Mode.METHOD)
 
         typeMapper.writeFormalTypeParameters(function.typeParameters, sw)
