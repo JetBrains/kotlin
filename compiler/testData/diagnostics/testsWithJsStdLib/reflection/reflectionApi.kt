@@ -27,22 +27,22 @@ fun testSomeValidCases(p0: KProperty0<Int>, pm0: KMutableProperty0<String>, f: K
 fun <T : Any> kclass(k: KClass<*>, kt: KClass<T>) {
     k.simpleName
     k.<!UNSUPPORTED!>qualifiedName<!>
-    k.<!UNSUPPORTED!>members<!>
-    k.<!UNSUPPORTED!>constructors<!>
-    k.<!UNSUPPORTED!>nestedClasses<!>
-    k.<!UNSUPPORTED!>objectInstance<!>
-    k.<!UNSUPPORTED!>typeParameters<!>
-    k.<!UNSUPPORTED!>supertypes<!>
-    k.<!UNSUPPORTED!>visibility<!>
-    k.<!UNSUPPORTED!>isFinal<!>
-    k.<!UNSUPPORTED!>isOpen<!>
-    k.<!UNSUPPORTED!>isAbstract<!>
-    k.<!UNSUPPORTED!>isSealed<!>
-    k.<!UNSUPPORTED!>isData<!>
-    k.<!UNSUPPORTED!>isInner<!>
-    k.<!UNSUPPORTED!>isCompanion<!>
+    k.<!UNRESOLVED_REFERENCE!>members<!>
+    k.<!UNRESOLVED_REFERENCE!>constructors<!>
+    k.<!UNRESOLVED_REFERENCE!>nestedClasses<!>
+    k.<!UNRESOLVED_REFERENCE!>objectInstance<!>
+    k.<!UNRESOLVED_REFERENCE!>typeParameters<!>
+    k.<!UNRESOLVED_REFERENCE!>supertypes<!>
+    k.<!UNRESOLVED_REFERENCE!>visibility<!>
+    k.<!UNRESOLVED_REFERENCE!>isFinal<!>
+    k.<!UNRESOLVED_REFERENCE!>isOpen<!>
+    k.<!UNRESOLVED_REFERENCE!>isAbstract<!>
+    k.<!UNRESOLVED_REFERENCE!>isSealed<!>
+    k.<!UNRESOLVED_REFERENCE!>isData<!>
+    k.<!UNRESOLVED_REFERENCE!>isInner<!>
+    k.<!UNRESOLVED_REFERENCE!>isCompanion<!>
 
-    k.<!UNSUPPORTED!>annotations<!>
+    k.<!UNRESOLVED_REFERENCE!>annotations<!>
 
     k == kt
     k.hashCode()
