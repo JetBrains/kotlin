@@ -1,21 +1,15 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.webcore.packaging;
 
-import com.google.common.collect.ImmutableMap;
 import com.intellij.internal.statistic.eventLog.FeatureUsageData;
 import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger;
+import com.intellij.internal.statistic.utils.PluginInfo;
+import com.intellij.internal.statistic.utils.PluginInfoDetectorKt;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Map;
-
 public class PackageManagementUsageCollector {
-
-  private static final Map<String, String> CLASS_TO_NAME = ImmutableMap.of(
-    "com.intellij.javascript.nodejs.settings.NodePackageManagementService", "Node.js",
-    "com.jetbrains.python.packaging.ui.PyPackageManagementService", "Python"
-  );
 
   private PackageManagementUsageCollector() {}
 
@@ -45,6 +39,8 @@ public class PackageManagementUsageCollector {
 
   @Nullable
   private static String toKnownServiceName(@Nullable PackageManagementService service) {
-    return service != null ? CLASS_TO_NAME.get(service.getClass().getName()) : null;
+    if (service == null) return null;
+    PluginInfo info = PluginInfoDetectorKt.getPluginInfo(service.getClass());
+    return info.isSafeToReport() ? service.getID() : null;
   }
 }
