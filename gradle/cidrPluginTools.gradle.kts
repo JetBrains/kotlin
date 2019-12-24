@@ -108,8 +108,13 @@ fun ideaPluginJarDep(project: Project): Any = with(project) {
             include("lib/kotlin-plugin.jar")
         }
     } else {
+        val intellijUltimateEnabled: Boolean? by rootProject.extra
+
         // depend on the artifact to be build
-        dependencies.project(":prepare:idea-plugin", configuration = "runtimeJar")
+        if (intellijUltimateEnabled == true)
+            dependencies.project(":kotlin-ultimate:ultimate", configuration = "runtimeJar")
+        else
+            dependencies.project(":prepare:idea-plugin", configuration = "runtimeJar")
     }
 }
 
@@ -143,10 +148,19 @@ fun packageCidrPlugin(
             val ideaPluginForCidrDir: File by rootProject.extra
             ideaPluginForCidrDir
         } else {
-            dependsOn(":ideaPlugin")
-            // use IDEA plugin dir from Big Kotlin
-            val ideaPluginDir: File by rootProject.extra
-            ideaPluginDir
+            val intellijUltimateEnabled: Boolean? by rootProject.extra
+
+            if (intellijUltimateEnabled == true) {
+                dependsOn(":kotlin-ultimate:ultimate:ideaUltimatePlugin")
+                // use IDEA Ultimate plugin dir from Big Kotlin
+                val ideaUltimatePluginDir: File by rootProject.extra
+                ideaUltimatePluginDir
+            } else {
+                dependsOn(":ideaPlugin")
+                // use IDEA plugin dir from Big Kotlin
+                val ideaPluginDir: File by rootProject.extra
+                ideaPluginDir
+            }
         }
 
         from(ideaPluginDir) {
