@@ -10,9 +10,10 @@ import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.components.StoragePathMacros.CACHE_FILE
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.externalSystem.autoimport.AutoImportProjectTracker.ModificationType.EXTERNAL
-import com.intellij.openapi.externalSystem.autoimport.AutoImportProjectTracker.ModificationType.INTERNAL
 import com.intellij.openapi.externalSystem.autoimport.ExternalSystemRefreshStatus.SUCCESS
+import com.intellij.openapi.externalSystem.autoimport.ProjectStatus.ModificationType
+import com.intellij.openapi.externalSystem.autoimport.ProjectStatus.ModificationType.EXTERNAL
+import com.intellij.openapi.externalSystem.autoimport.ProjectStatus.ModificationType.INTERNAL
 import com.intellij.openapi.observable.operations.AnonymousParallelOperationTrace
 import com.intellij.openapi.observable.operations.CompoundParallelOperationTrace
 import com.intellij.openapi.observable.properties.AtomicBooleanProperty
@@ -24,6 +25,7 @@ import com.intellij.util.ui.update.MergingUpdateQueue
 import com.intellij.util.ui.update.Update
 import org.jetbrains.annotations.TestOnly
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.streams.asStream
 
 @State(name = "ExternalSystemProjectTracker", storages = [Storage(CACHE_FILE)])
 class AutoImportProjectTracker(private val project: Project) : ExternalSystemProjectTracker, PersistentStateComponent<AutoImportProjectTracker.State> {
@@ -125,14 +127,12 @@ class AutoImportProjectTracker(private val project: Project) : ExternalSystemPro
   }
 
   private fun getModificationType(): ModificationType? {
-    val owners = projectDataMap.values
+    return projectDataMap.values
+      .asSequence()
       .mapNotNull { it.getModificationType() }
-      .toSet()
-    return when {
-      INTERNAL in owners -> INTERNAL
-      EXTERNAL in owners -> EXTERNAL
-      else -> null
-    }
+      .asStream()
+      .reduce(ModificationType::merge)
+      .orElse(null)
   }
 
   override fun register(projectAware: ExternalSystemProjectAware) {
@@ -250,8 +250,6 @@ class AutoImportProjectTracker(private val project: Project) : ExternalSystemPro
       var settingsTracker: ProjectSettingsTracker.State? = null
     )
   }
-
-  enum class ModificationType { EXTERNAL, INTERNAL }
 
   companion object {
     @TestOnly

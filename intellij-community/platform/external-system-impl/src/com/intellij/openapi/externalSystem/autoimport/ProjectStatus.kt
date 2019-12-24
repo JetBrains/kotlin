@@ -3,6 +3,7 @@ package com.intellij.openapi.externalSystem.autoimport
 
 
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.externalSystem.autoimport.ProjectStatus.ModificationType.INTERNAL
 import com.intellij.openapi.externalSystem.autoimport.ProjectStatus.ProjectEvent.*
 import com.intellij.openapi.externalSystem.autoimport.ProjectStatus.ProjectState.*
 import java.util.concurrent.atomic.AtomicReference
@@ -20,12 +21,18 @@ class ProjectStatus(private val debugName: String? = null) {
     is Synchronized, is Reverted -> true
   }
 
-  fun markDirty(stamp: Long): ProjectState {
-    return update(Invalidate(stamp))
+  fun getModificationType() = when (val state = state.get()) {
+    is Dirty -> state.type
+    is Modified -> state.type
+    is Synchronized, is Reverted -> null
   }
 
-  fun markModified(stamp: Long): ProjectState {
-    return update(Modify(stamp))
+  fun markDirty(stamp: Long, type: ModificationType = INTERNAL): ProjectState {
+    return update(Invalidate(stamp, type))
+  }
+
+  fun markModified(stamp: Long, type: ModificationType = INTERNAL): ProjectState {
+    return update(Modify(stamp, type))
   }
 
   fun markReverted(stamp: Long): ProjectState {
@@ -48,26 +55,26 @@ class ProjectStatus(private val debugName: String? = null) {
       when (currentState) {
         is Synchronized -> when (event) {
           is Synchronize -> event.withFuture(currentState, ::Synchronized)
-          is Invalidate -> event.ifFuture(currentState, ::Dirty)
-          is Modify -> event.ifFuture(currentState, ::Modified)
+          is Invalidate -> event.ifFuture(currentState) { Dirty(it, event.type) }
+          is Modify -> event.ifFuture(currentState) { Modified(it, event.type) }
           is Revert -> event.ifFuture(currentState, ::Reverted)
         }
         is Dirty -> when (event) {
           is Synchronize -> event.ifFuture(currentState, ::Synchronized)
-          is Invalidate -> event.withFuture(currentState, ::Dirty)
-          is Modify -> event.withFuture(currentState, ::Dirty)
-          is Revert -> event.withFuture(currentState, ::Dirty)
+          is Invalidate -> event.withFuture(currentState) { Dirty(it, currentState.type.merge(event.type)) }
+          is Modify -> event.withFuture(currentState) { Dirty(it, currentState.type.merge(event.type)) }
+          is Revert -> event.withFuture(currentState) { Dirty(it, currentState.type) }
         }
         is Modified -> when (event) {
           is Synchronize -> event.ifFuture(currentState, ::Synchronized)
-          is Invalidate -> event.withFuture(currentState, ::Dirty)
-          is Modify -> event.withFuture(currentState, ::Modified)
+          is Invalidate -> event.withFuture(currentState) { Dirty(it, currentState.type.merge(event.type)) }
+          is Modify -> event.withFuture(currentState) { Modified(it, currentState.type.merge(event.type)) }
           is Revert -> event.ifFuture(currentState, ::Reverted)
         }
         is Reverted -> when (event) {
           is Synchronize -> event.ifFuture(currentState, ::Synchronized)
-          is Invalidate -> event.withFuture(currentState, ::Dirty)
-          is Modify -> event.ifFuture(currentState, ::Modified)
+          is Invalidate -> event.withFuture(currentState) { Dirty(it, event.type) }
+          is Modify -> event.ifFuture(currentState) { Modified(it, event.type) }
           is Revert -> event.withFuture(currentState, ::Reverted)
         }
       }
@@ -90,12 +97,23 @@ class ProjectStatus(private val debugName: String? = null) {
     return if (stamp > state.stamp) action(stamp) else state
   }
 
+  enum class ModificationType {
+    EXTERNAL, INTERNAL;
+
+    fun merge(other: ModificationType): ModificationType {
+      return when (this) {
+        INTERNAL -> INTERNAL
+        EXTERNAL -> other
+      }
+    }
+  }
+
   sealed class ProjectEvent(val stamp: Long) {
     class Synchronize(stamp: Long) : ProjectEvent(stamp)
 
-    class Invalidate(stamp: Long) : ProjectEvent(stamp)
+    class Invalidate(stamp: Long, val type: ModificationType) : ProjectEvent(stamp)
 
-    class Modify(stamp: Long) : ProjectEvent(stamp)
+    class Modify(stamp: Long, val type: ModificationType) : ProjectEvent(stamp)
 
     class Revert(stamp: Long) : ProjectEvent(stamp)
   }
@@ -103,9 +121,9 @@ class ProjectStatus(private val debugName: String? = null) {
   sealed class ProjectState(val stamp: Long) {
     class Synchronized(stamp: Long) : ProjectState(stamp)
 
-    class Dirty(stamp: Long) : ProjectState(stamp)
+    class Dirty(stamp: Long, val type: ModificationType) : ProjectState(stamp)
 
-    class Modified(stamp: Long) : ProjectState(stamp)
+    class Modified(stamp: Long, val type: ModificationType) : ProjectState(stamp)
 
     class Reverted(stamp: Long) : ProjectState(stamp)
   }

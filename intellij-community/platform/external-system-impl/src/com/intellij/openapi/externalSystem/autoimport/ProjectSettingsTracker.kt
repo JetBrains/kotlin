@@ -8,10 +8,10 @@ import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.event.DocumentEvent
 import com.intellij.openapi.editor.event.DocumentListener
-import com.intellij.openapi.externalSystem.autoimport.AutoImportProjectTracker.ModificationType
-import com.intellij.openapi.externalSystem.autoimport.AutoImportProjectTracker.ModificationType.EXTERNAL
-import com.intellij.openapi.externalSystem.autoimport.AutoImportProjectTracker.ModificationType.INTERNAL
 import com.intellij.openapi.externalSystem.autoimport.NonBlockingReadActionBuilder.Companion.nonBlockingReadAction
+import com.intellij.openapi.externalSystem.autoimport.ProjectStatus.ModificationType
+import com.intellij.openapi.externalSystem.autoimport.ProjectStatus.ModificationType.EXTERNAL
+import com.intellij.openapi.externalSystem.autoimport.ProjectStatus.ModificationType.INTERNAL
 import com.intellij.openapi.externalSystem.util.calculateCrc
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.observable.operations.AnonymousParallelOperationTrace
@@ -39,10 +39,7 @@ class ProjectSettingsTracker(
 
   private val LOG = Logger.getInstance("#com.intellij.openapi.externalSystem.autoimport")
 
-  private val status = ProjectStatus(
-    debugName = "Settings ${projectAware.projectId.readableName}")
-
-  private val modificationType = AtomicReference<ModificationType?>(null)
+  private val status = ProjectStatus(debugName = "Settings ${projectAware.projectId.readableName}")
 
   private val settingsFilesCRC = AtomicReference(emptyMap<String, Long>())
 
@@ -65,7 +62,7 @@ class ProjectSettingsTracker(
 
   fun isUpToDate() = status.isUpToDate()
 
-  fun getModificationType() = modificationType.get()
+  fun getModificationType() = status.getModificationType()
 
   private fun hasChanges(newSettingsFilesCRC: Map<String, Long>): Boolean {
     val oldSettingsFilesCRC = settingsFilesCRC.get()
@@ -83,7 +80,6 @@ class ProjectSettingsTracker(
     submitSettingsFilesRefresh {
       submitSettingsFilesCRCCalculation { newSettingsFilesCRC ->
         settingsFilesCRC.set(newSettingsFilesCRC)
-        modificationType.set(null)
         status.markSynchronized(currentTime())
         applyChangesOperation.finishTask()
       }
@@ -100,7 +96,6 @@ class ProjectSettingsTracker(
       submitSettingsFilesCRCCalculation { newSettingsFilesCRC ->
         settingsFilesCRC.updateAndGet { newSettingsFilesCRC + it }
         if (!hasChanges(newSettingsFilesCRC)) {
-          modificationType.set(null)
           status.markSynchronized(currentTime())
         }
         applyChangesOperation.finishTask()
@@ -111,7 +106,6 @@ class ProjectSettingsTracker(
   fun refreshChanges() {
     submitSettingsFilesRefresh {
       submitSettingsFilesCRCCalculation { newSettingsFilesCRC ->
-        modificationType.set(null)
         when (hasChanges(newSettingsFilesCRC)) {
           true -> status.markDirty(currentTime())
           else -> status.markReverted(currentTime())
@@ -124,7 +118,6 @@ class ProjectSettingsTracker(
   fun getState() = State(status.isDirty(), settingsFilesCRC.get().toMap())
 
   fun loadState(state: State) {
-    modificationType.set(null)
     if (state.isDirty) status.markDirty(currentTime())
     settingsFilesCRC.set(state.settingsFiles.toMap())
   }
@@ -262,11 +255,9 @@ class ProjectSettingsTracker(
       hasRelevantChanges = true
       logModificationAsDebug(path, modificationStamp, type)
       if (applyChangesOperation.isOperationCompleted()) {
-        modificationType.updateAndGet { if (it == INTERNAL) INTERNAL else type }
-        status.markModified(currentTime())
+        status.markModified(currentTime(), type)
       }
       else {
-        modificationType.set(null)
         status.markDirty(currentTime())
       }
     }
@@ -280,7 +271,6 @@ class ProjectSettingsTracker(
       if (hasRelevantChanges) {
         submitSettingsFilesCRCCalculation { newSettingsFilesCRC ->
           if (!hasChanges(newSettingsFilesCRC)) {
-            modificationType.set(null)
             status.markReverted(currentTime())
           }
           projectTracker.scheduleChangeProcessing()
