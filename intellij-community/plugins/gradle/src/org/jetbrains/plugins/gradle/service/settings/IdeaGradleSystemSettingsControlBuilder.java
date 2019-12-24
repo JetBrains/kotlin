@@ -79,6 +79,9 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
   private boolean dropVmOptions;
 
   @Nullable
+  private JBCheckBox myOfflineModeCheckBox;
+
+  @Nullable
   private JBCheckBox myGenerateImlFilesCheckBox;
   private JBLabel myGenerateImlFilesHint;
   private boolean dropStoreExternallyCheckBox;
@@ -106,6 +109,8 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
       constraints.insets.top = 0;
       canvas.add(myGenerateImlFilesHint, constraints);
     }
+
+    addOfflineWorkControl(canvas, indentLevel);
   }
 
   @Override
@@ -134,6 +139,10 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
     if (myGenerateImlFilesCheckBox != null) {
       myGenerateImlFilesCheckBox.setSelected(!myInitialSettings.getStoreProjectFilesExternally());
     }
+
+    if (myOfflineModeCheckBox != null) {
+      myOfflineModeCheckBox.setSelected(myInitialSettings.isOfflineWork());
+    }
   }
 
   @Override
@@ -153,6 +162,10 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
       return true;
     }
 
+    if (myOfflineModeCheckBox != null && myOfflineModeCheckBox.isSelected() != myInitialSettings.isOfflineWork()) {
+      return true;
+    }
+
     return false;
   }
 
@@ -166,6 +179,9 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
     }
     if (myGenerateImlFilesCheckBox != null) {
       settings.setStoreProjectFilesExternally(!myGenerateImlFilesCheckBox.isSelected());
+    }
+    if (myOfflineModeCheckBox != null) {
+      settings.setOfflineWork(myOfflineModeCheckBox.isSelected());
     }
   }
 
@@ -280,6 +296,21 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
         }
       });
     }
+  }
+
+  private void addOfflineWorkControl(@NotNull PaintAwarePanel canvas, int indentLevel) {
+    myOfflineModeCheckBox = new JBCheckBox(GradleBundle.message("gradle.settings.text.offline.mode"));
+    canvas.add(myOfflineModeCheckBox, ExternalSystemUiUtil.getFillLineConstraints(indentLevel));
+
+    JBLabel offlineModeHint = new JBLabel(
+      XmlStringUtil.wrapInHtml(GradleBundle.message("gradle.settings.text.offline.mode.hint")),
+      UIUtil.ComponentStyle.SMALL);
+    offlineModeHint.setForeground(UIUtil.getLabelFontColor(UIUtil.FontColor.BRIGHTER));
+
+    GridBag constraints = ExternalSystemUiUtil.getFillLineConstraints(indentLevel);
+    constraints.insets.left += UIUtil.getCheckBoxTextHorizontalOffset(myOfflineModeCheckBox);
+    constraints.insets.top = 0;
+    canvas.add(offlineModeHint, constraints);
   }
 
   @Nullable

@@ -29,6 +29,9 @@ import java.util.TreeSet;
 @State(name = "GradleSettings", storages = @Storage("gradle.xml"))
 public class GradleSettings extends AbstractExternalSystemSettings<GradleSettings, GradleProjectSettings, GradleSettingsListener>
   implements PersistentStateComponent<GradleSettings.MyState> {
+
+  private boolean isOfflineMode = false;
+
   public GradleSettings(@NotNull Project project) {
     super(GradleSettingsListener.TOPIC, project);
   }
@@ -57,12 +60,17 @@ public class GradleSettings extends AbstractExternalSystemSettings<GradleSetting
   public GradleSettings.MyState getState() {
     MyState state = new MyState();
     fillState(state);
+
+    state.setOfflineMode(isOfflineWork());
+
     return state;
   }
 
   @Override
   public void loadState(@NotNull MyState state) {
     super.loadState(state);
+
+    setOfflineWork(state.isOfflineMode());
 
     if (ApplicationManager.getApplication().isUnitTestMode()) {
       return;
@@ -119,11 +127,11 @@ public class GradleSettings extends AbstractExternalSystemSettings<GradleSetting
   }
 
   public boolean isOfflineWork() {
-    return GradleSystemSettings.getInstance().isOfflineWork();
+    return isOfflineMode;
   }
 
-  public void setOfflineWork(boolean isOfflineWork) {
-    GradleSystemSettings.getInstance().setOfflineWork(isOfflineWork);
+  public void setOfflineWork(boolean isOfflineMode) {
+    this.isOfflineMode = isOfflineMode;
   }
 
   public boolean getStoreProjectFilesExternally() {
@@ -157,6 +165,7 @@ public class GradleSettings extends AbstractExternalSystemSettings<GradleSetting
 
   public static class MyState implements State<GradleProjectSettings> {
     private final Set<GradleProjectSettings> myProjectSettings = new TreeSet<>();
+    private boolean isOfflineMode = false;
 
     @Override
     @XCollection(elementTypes = {GradleProjectSettings.class})
@@ -169,6 +178,14 @@ public class GradleSettings extends AbstractExternalSystemSettings<GradleSetting
       if (settings != null) {
         myProjectSettings.addAll(settings);
       }
+    }
+
+    public boolean isOfflineMode() {
+      return isOfflineMode;
+    }
+
+    public void setOfflineMode(boolean isOfflineMode) {
+      this.isOfflineMode = isOfflineMode;
     }
   }
 }

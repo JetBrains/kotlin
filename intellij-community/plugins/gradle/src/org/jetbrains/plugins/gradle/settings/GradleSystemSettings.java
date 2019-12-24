@@ -5,6 +5,8 @@ import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
+import com.intellij.util.xmlb.annotations.Transient;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,7 +18,6 @@ public class GradleSystemSettings implements PersistentStateComponent<GradleSyst
 
   @Nullable private String myServiceDirectoryPath;
   @Nullable private String myGradleVmOptions;
-  private boolean myIsOfflineWork;
 
   @NotNull
   public static GradleSystemSettings getInstance() {
@@ -29,7 +30,6 @@ public class GradleSystemSettings implements PersistentStateComponent<GradleSyst
     MyState state = new MyState();
     state.serviceDirectoryPath = myServiceDirectoryPath;
     state.gradleVmOptions = myGradleVmOptions;
-    state.offlineWork = myIsOfflineWork;
     return state;
   }
 
@@ -37,7 +37,6 @@ public class GradleSystemSettings implements PersistentStateComponent<GradleSyst
   public void loadState(@NotNull MyState state) {
     myServiceDirectoryPath = state.serviceDirectoryPath;
     myGradleVmOptions = state.gradleVmOptions;
-    myIsOfflineWork = state.offlineWork;
   }
 
   @Nullable
@@ -58,17 +57,35 @@ public class GradleSystemSettings implements PersistentStateComponent<GradleSyst
     myGradleVmOptions = gradleVmOptions;
   }
 
+  /**
+   * @see GradleSettings#isOfflineWork
+   * @deprecated this settings parameter must be a project level
+   */
+  @Deprecated
+  @ApiStatus.ScheduledForRemoval(inVersion = "2021.1")
   public boolean isOfflineWork() {
-    return myIsOfflineWork;
+    return false;
   }
 
+  /**
+   * @see GradleSettings#setOfflineWork
+   * @deprecated this settings parameter must be a project level
+   */
+  @Deprecated
+  @ApiStatus.ScheduledForRemoval(inVersion = "2021.1")
   public void setOfflineWork(boolean isOfflineWork) {
-    myIsOfflineWork = isOfflineWork;
   }
 
   public static class MyState {
     public String serviceDirectoryPath;
     public String gradleVmOptions;
+
+    /**
+     * @deprecated this settings parameter must be a project level
+     */
+    @Transient
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2021.1")
     public boolean offlineWork;
   }
 }

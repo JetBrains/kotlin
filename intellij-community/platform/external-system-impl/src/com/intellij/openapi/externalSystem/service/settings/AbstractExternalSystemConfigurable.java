@@ -11,10 +11,7 @@ import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
-import com.intellij.ui.IdeBorderFactory;
-import com.intellij.ui.OnePixelSplitter;
-import com.intellij.ui.SideBorder;
-import com.intellij.ui.TitledSeparator;
+import com.intellij.ui.*;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.scale.JBUIScale;
@@ -84,6 +81,11 @@ public abstract class AbstractExternalSystemConfigurable<
       SystemSettings settings = getSettings();
       prepareSystemSettings(settings);
       prepareProjectSettings(settings);
+
+      JComponent component = ScrollPaneFactory.createScrollPane(myComponent, true);
+      component.setSize(myComponent.getPreferredSize());
+      myComponent.setPreferredSize(myComponent.getMinimumSize());
+      return component;
     }
     return myComponent;
   }

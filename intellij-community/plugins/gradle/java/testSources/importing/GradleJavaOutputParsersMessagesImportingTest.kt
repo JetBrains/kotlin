@@ -2,6 +2,7 @@
 package org.jetbrains.plugins.gradle.importing
 
 import org.gradle.util.GradleVersion
+import org.jetbrains.plugins.gradle.settings.GradleSettings
 import org.jetbrains.plugins.gradle.settings.GradleSystemSettings
 import org.junit.Test
 
@@ -161,7 +162,7 @@ class GradleJavaOutputParsersMessagesImportingTest : GradleOutputParsersMessages
                                   "\n")
 
     // check unresolved dependency for offline mode
-    GradleSystemSettings.getInstance().isOfflineWork = true
+    GradleSettings.getInstance(myProject).isOfflineWork = true
     buildScript.withMavenCentral(isGradleNewerOrSameThen("6.0"))
     buildScript.addDependency("testCompile 'junit:junit:99.99'")
     createProjectConfig(buildScript.generate())
@@ -206,7 +207,7 @@ class GradleJavaOutputParsersMessagesImportingTest : GradleOutputParsersMessages
                                   "\n")
 
     // check unresolved dependency for disabled offline mode
-    GradleSystemSettings.getInstance().isOfflineWork = false
+    GradleSettings.getInstance(myProject).isOfflineWork = false
     compileModules("project.test")
     assertBuildViewTreeEquals(commonTreePart +
                               if (usePerTaskError)

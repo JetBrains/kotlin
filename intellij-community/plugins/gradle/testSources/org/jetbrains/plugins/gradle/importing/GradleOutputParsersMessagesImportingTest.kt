@@ -5,7 +5,7 @@ import com.intellij.openapi.externalSystem.importing.ImportSpec
 import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder
 import com.intellij.openapi.util.io.FileUtil
 import org.gradle.util.GradleVersion
-import org.jetbrains.plugins.gradle.settings.GradleSystemSettings
+import org.jetbrains.plugins.gradle.settings.GradleSettings
 import org.junit.Test
 
 @Suppress("GrUnresolvedAccess")
@@ -139,7 +139,7 @@ open class GradleOutputParsersMessagesImportingTest : BuildViewMessagesImporting
                              " finished")
 
     // check unresolved dependency for offline mode
-    GradleSystemSettings.getInstance().isOfflineWork = true
+    GradleSettings.getInstance(myProject).isOfflineWork = true
     buildScript.addDependency("testCompile 'junit:junit:99.99'")
     importProject(buildScript.generate())
     assertSyncViewTreeEquals("-\n" +
@@ -153,7 +153,7 @@ open class GradleOutputParsersMessagesImportingTest : BuildViewMessagesImporting
                                "\n")
 
     // check unresolved dependency for offline mode when merged project used
-    GradleSystemSettings.getInstance().isOfflineWork = true
+    GradleSettings.getInstance(myProject).isOfflineWork = true
     currentExternalProjectSettings.isResolveModulePerSourceSet = false
     importProject(buildScript.generate())
     assertSyncViewTreeEquals("-\n" +
@@ -168,7 +168,7 @@ open class GradleOutputParsersMessagesImportingTest : BuildViewMessagesImporting
 
     currentExternalProjectSettings.isResolveModulePerSourceSet = true
     // check unresolved dependency for disabled offline mode
-    GradleSystemSettings.getInstance().isOfflineWork = false
+    GradleSettings.getInstance(myProject).isOfflineWork = false
     importProject(buildScript.generate())
     assertSyncViewTreeEquals("-\n" +
                              " -finished\n" +
@@ -218,7 +218,7 @@ open class GradleOutputParsersMessagesImportingTest : BuildViewMessagesImporting
                              " finished")
 
     // check unresolved dependency for offline mode
-    GradleSystemSettings.getInstance().isOfflineWork = true
+    GradleSettings.getInstance(myProject).isOfflineWork = true
     buildScript.addBuildScriptDependency("classpath 'junit:junit:99.99'")
     importProject(buildScript.generate())
     assertSyncViewTreeEquals("-\n" +
@@ -242,7 +242,7 @@ open class GradleOutputParsersMessagesImportingTest : BuildViewMessagesImporting
     assertSyncViewRerunActions() // quick fix above uses Sync view 'rerun' action to restart import with changes offline mode
 
     // check unresolved dependency for disabled offline mode
-    GradleSystemSettings.getInstance().isOfflineWork = false
+    GradleSettings.getInstance(myProject).isOfflineWork = false
     importProject(buildScript.generate())
     assertSyncViewTreeEquals("-\n" +
                              " -failed\n" +
