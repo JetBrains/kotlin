@@ -36,7 +36,6 @@ fun testOK(first: First, bound: Bound, second: Second) {
     strictSelect(OutB(first), OutB(bound))
     strictSelect(In(first), In(bound))
     strictSelect(InB(first), InB(bound))
-    <!OI;TYPE_INFERENCE_ONLY_INPUT_TYPES!>strictSelect<!>(InB(first), InB(second)) // different behaviour in contravariant position
 
     val out: Out<Bound> = strictSelect(Out(first), Out(second))
     val outb: OutB<Bound> = strictSelect(OutB(first), OutB(second))
@@ -49,6 +48,7 @@ fun testFail(first: First, bound: Bound, second: Second) {
     <!TYPE_INFERENCE_ONLY_INPUT_TYPES!>strictSelect<!>(Inv(first), Inv(bound))
     <!TYPE_INFERENCE_ONLY_INPUT_TYPES!>strictSelect<!>(Out(first), Out(second))
     <!TYPE_INFERENCE_ONLY_INPUT_TYPES!>strictSelect<!>(In(first), In(second))
+    <!TYPE_INFERENCE_ONLY_INPUT_TYPES!>strictSelect<!>(InB(first), InB(second))
     <!TYPE_INFERENCE_ONLY_INPUT_TYPES!>strictSelect<!>(Out(Inv(first)), Out(Inv(second)))
     <!TYPE_INFERENCE_ONLY_INPUT_TYPES!>strictSelect<!>(In(Inv(first)), In(Inv(second)))
 }

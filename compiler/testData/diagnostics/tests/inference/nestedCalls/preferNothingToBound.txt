@@ -1,0 +1,4 @@
+package
+
+public val v: kotlin.Nothing?
+public fun </*0*/ K> id(/*0*/ arg: K): K

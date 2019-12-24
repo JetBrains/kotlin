@@ -80,23 +80,27 @@ class ResultTypeResolver(
     }
 
     private fun Context.isSuitableType(resultType: KotlinTypeMarker, variableWithConstraints: VariableWithConstraints): Boolean {
-        for (constraint in variableWithConstraints.constraints) {
-            if (!isProperType(constraint.type)) continue
+        val filteredConstraints = variableWithConstraints.constraints.filter { isProperType(it.type) }
+        for (constraint in filteredConstraints) {
             if (!checkConstraint(this, constraint.type, constraint.kind, resultType)) return false
         }
-        if (
-            !trivialConstraintTypeInferenceOracle.isSuitableResultedType(resultType)
-            && isNothingNotSuitableFor(variableWithConstraints.typeVariable)
-        ) return false
+        if (!trivialConstraintTypeInferenceOracle.isSuitableResultedType(resultType)) {
+            if (nothingIsForbiddenFor(variableWithConstraints.typeVariable)) return false
+            if (resultType.isNullableType() && checkSingleLowerNullabilityConstraint(filteredConstraints)) return false
+        }
 
         return true
     }
 
-    private fun isNothingNotSuitableFor(variable: TypeVariableMarker): Boolean {
+    private fun nothingIsForbiddenFor(variable: TypeVariableMarker): Boolean {
         val parameterName = variable.safeAs<TypeVariableFromCallableDescriptor>()?.originalTypeParameter?.name ?: return false
         val isSpecialFunctionParameter = statelessCallbacks?.isSpecialFunctionTypeParameterName(parameterName) ?: false
-        val isBangBangParameter = isSpecialFunctionParameter && statelessCallbacks?.isExclExclTypeParameterName(parameterName) ?: false
-        return isSpecialFunctionParameter && !isBangBangParameter
+        val isFromExclExcl = isSpecialFunctionParameter && statelessCallbacks?.isExclExclTypeParameterName(parameterName) ?: false
+        return isSpecialFunctionParameter && !isFromExclExcl
+    }
+
+    private fun checkSingleLowerNullabilityConstraint(constraints: List<Constraint>): Boolean {
+        return constraints.singleOrNull { it.kind.isLower() }?.isNullabilityConstraint ?: false
     }
 
     private fun Context.findSubType(variableWithConstraints: VariableWithConstraints): KotlinTypeMarker? {

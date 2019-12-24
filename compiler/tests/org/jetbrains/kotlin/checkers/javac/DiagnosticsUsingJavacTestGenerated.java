@@ -10606,6 +10606,16 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 public void testNontrivialCallExpression() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/nestedCalls/nontrivialCallExpression.kt");
                 }
+
+                @TestMetadata("preferArgumentToNullability.kt")
+                public void testPreferArgumentToNullability() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/nestedCalls/preferArgumentToNullability.kt");
+                }
+
+                @TestMetadata("preferNothingToBound.kt")
+                public void testPreferNothingToBound() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/nestedCalls/preferNothingToBound.kt");
+                }
             }
 
             @TestMetadata("compiler/testData/diagnostics/tests/inference/nothingType")
