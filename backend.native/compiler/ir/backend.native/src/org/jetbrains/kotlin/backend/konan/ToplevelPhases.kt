@@ -137,6 +137,7 @@ internal val buildCExportsPhase = konanUnitPhase(
 internal val psiToIrPhase = konanUnitPhase(
         op = {
             // Translate AST to high level IR.
+            val mppKlibs = config.configuration.get(CommonConfigurationKeys.KLIB_MPP)?:false
 
             val symbolTable = symbolTable!!
 
@@ -210,7 +211,16 @@ internal val psiToIrPhase = konanUnitPhase(
             stubGenerator.setIrProviders(irProviders)
 
             expectDescriptorToSymbol = mutableMapOf<DeclarationDescriptor, IrSymbol>()
-            val module = translator.generateModuleFragment(generatorContext, environment.getSourceFiles(), irProviders, expectDescriptorToSymbol)
+            val module = translator.generateModuleFragment(
+                generatorContext,
+                environment.getSourceFiles(),
+                irProviders,
+                // TODO: This is a hack to allow platform libs to build in reasonable time.
+                // referenceExpectsForUsedActuals() appears to be quadratic in time because of
+                // how ExpectedActualResolver is implemented.
+                // Need to fix ExpectActualResolver to either cache expects or somehow reduce the member scope searches.
+                if (mppKlibs) expectDescriptorToSymbol else null
+            )
 
             deserializer.finalizeExpectActualLinker()
 
