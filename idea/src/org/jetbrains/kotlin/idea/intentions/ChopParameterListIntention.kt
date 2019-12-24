@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.codeStyle.CodeStyleManager
 import org.jetbrains.kotlin.idea.KotlinBundle
@@ -22,6 +23,9 @@ abstract class AbstractChopListIntention<TList : KtElement, TElement : KtElement
     private val elementClass: Class<TElement>,
     textGetter: () -> String
 ) : SelfTargetingOffsetIndependentIntention<TList>(listClass, textGetter) {
+    override fun allowCaretInsideElement(element: PsiElement) =
+        element !is KtValueArgumentList && super.allowCaretInsideElement(element)
+
     override fun isApplicableTo(element: TList): Boolean {
         val elements = element.elements()
         if (elements.size <= 1) return false

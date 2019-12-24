@@ -3718,6 +3718,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/intentions/chop/argumentList"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
             }
 
+            @TestMetadata("onNestedArgumentList.kt")
+            public void testOnNestedArgumentList() throws Exception {
+                runTest("idea/testData/intentions/chop/argumentList/onNestedArgumentList.kt");
+            }
+
             @TestMetadata("threeArgs.kt")
             public void testThreeArgs() throws Exception {
                 runTest("idea/testData/intentions/chop/argumentList/threeArgs.kt");
@@ -10420,6 +10425,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("noLineBreak.kt")
         public void testNoLineBreak() throws Exception {
             runTest("idea/testData/intentions/joinArgumentList/noLineBreak.kt");
+        }
+
+        @TestMetadata("onNestedArgumentList.kt")
+        public void testOnNestedArgumentList() throws Exception {
+            runTest("idea/testData/intentions/joinArgumentList/onNestedArgumentList.kt");
         }
 
         @TestMetadata("oneArg.kt")
