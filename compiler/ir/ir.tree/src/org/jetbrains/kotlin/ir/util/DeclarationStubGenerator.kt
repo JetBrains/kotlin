@@ -30,8 +30,8 @@ class DeclarationStubGenerator(
     moduleDescriptor: ModuleDescriptor,
     val symbolTable: SymbolTable,
     languageVersionSettings: LanguageVersionSettings,
-    val extensions: StubGeneratorExtensions = StubGeneratorExtensions.EMPTY,
-    private val irDeclarationFactory: IrDeclarationFactory
+    private val irDeclarationFactory: IrDeclarationFactory,
+    val extensions: StubGeneratorExtensions = StubGeneratorExtensions.EMPTY
 ) : IrProvider {
     private val lazyTable = symbolTable.lazyWrapper
 

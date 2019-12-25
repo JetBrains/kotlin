@@ -204,6 +204,10 @@ interface IrDeclarationFactory {
         val DEFAULT: IrDeclarationFactory
             get() = factory ?: error("No registered default IrDeclarationFactory")
 
+        @Deprecated("For temparary use")
+        val TMP: IrDeclarationFactory
+            get() = DEFAULT
+
         @Deprecated("Use it carefully!")
         fun registerDefaultIrDeclarationFactory(newFactory: IrDeclarationFactory) {
             factory?.let { error("${it::class.simpleName} is already registered as default IrDeclarationFactory") }
