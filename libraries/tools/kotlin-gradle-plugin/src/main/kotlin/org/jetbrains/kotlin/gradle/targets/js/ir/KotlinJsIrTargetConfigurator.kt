@@ -62,4 +62,9 @@ open class KotlinJsIrTargetConfigurator(kotlinPluginVersion: String) :
             }
         }
     }
+
+    override fun defineConfigurationsForTarget(target: KotlinJsIrTarget) {
+        super.defineConfigurationsForTarget(target)
+        implementationToApiElements(target)
+    }
 }

@@ -206,6 +206,19 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
         }
     }
 
+    @Deprecated("Remove when IR compiler to klib will not need transitive implementation dependencies")
+    protected fun implementationToApiElements(target: KotlinTargetType) {
+        val configurations = target.project.configurations
+
+        // The configuration and the main compilation are created by the base class.
+        val mainCompilation = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
+        configurations.getByName(target.apiElementsConfigurationName).apply {
+            //  K/N and K/JS IR compiler doesn't divide libraries into implementation and api ones. So we need to add implementation
+            // dependencies into the outgoing configuration.
+            extendsFrom(configurations.getByName(mainCompilation.implementationConfigurationName))
+        }
+    }
+
     override fun configureBuild(target: KotlinTargetType) {
         val project = target.project
 

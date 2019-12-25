@@ -324,15 +324,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget>(
 
     override fun defineConfigurationsForTarget(target: T) {
         super.defineConfigurationsForTarget(target)
-        val configurations = target.project.configurations
-
-        // The configuration and the main compilation are created by the base class.
-        val mainCompilation = target.compilations.getByName(MAIN_COMPILATION_NAME)
-        configurations.getByName(target.apiElementsConfigurationName).apply {
-            //  K/N compiler doesn't divide libraries into implementation and api ones. So we need to add implementation
-            // dependencies into the outgoing configuration.
-            extendsFrom(configurations.getByName(mainCompilation.implementationConfigurationName))
-        }
+        implementationToApiElements(target)
     }
 
     private fun warnAboutIncorrectDependencies(target: KotlinNativeTarget) = target.project.whenEvaluated {
