@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  * Replace branches that are comparisons with compile-time known enum entries
  * with comparisons of ordinals.
  */
-open class EnumWhenLowering(protected val context: CommonBackendContext) : IrElementTransformerVoidWithContext(), FileLoweringPass {
+open class EnumWhenLowering(context: CommonBackendContext) : IrElementTransformerVoidWithContext(context), FileLoweringPass {
     private val subjectWithOrdinalStack = mutableListOf<Pair<IrVariable, Lazy<IrVariable>>>()
 
     protected open fun mapConstEnumEntry(entry: IrEnumEntry): Int =

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.lower
 
-import org.jetbrains.kotlin.backend.common.BackendContext
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.ScopeWithIr
@@ -18,11 +18,11 @@ import org.jetbrains.kotlin.ir.declarations.IrScript
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 
 //This lower takes part of old LocalDeclarationLowering job to pop up local classes from functions
-open class LocalClassPopupLowering(val context: BackendContext) : FileLoweringPass {
+open class LocalClassPopupLowering(val context: CommonBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         val extractedLocalClasses = arrayListOf<Pair<IrClass, IrDeclarationContainer>>()
 
-        irFile.transform(object : IrElementTransformerVoidWithContext() {
+        irFile.transform(object : IrElementTransformerVoidWithContext(context) {
 
             override fun visitClassNew(declaration: IrClass): IrStatement {
                 val newDeclaration = super.visitClassNew(declaration)

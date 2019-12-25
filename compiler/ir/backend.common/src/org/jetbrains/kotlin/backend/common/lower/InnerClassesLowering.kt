@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.util.transformDeclarationsFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
-class InnerClassesLowering(val context: BackendContext) : ClassLoweringPass {
+class InnerClassesLowering(val context: CommonBackendContext) : ClassLoweringPass {
     private val IrValueSymbol.classForImplicitThis: IrClass?
         // TODO: is this the correct way to get the class?
         get() =
@@ -69,7 +69,7 @@ class InnerClassesLowering(val context: BackendContext) : ClassLoweringPass {
         irClass.transformDeclarationsFlat { irMember -> (irMember as? IrConstructor)?.let { listOf(lowerConstructor(it)) } }
         irClass.transformChildrenVoid(VariableRemapper(oldConstructorParameterToNew))
 
-        irClass.transformChildrenVoid(object : IrElementTransformerVoidWithContext() {
+        irClass.transformChildrenVoid(object : IrElementTransformerVoidWithContext(context) {
             override fun visitClassNew(declaration: IrClass): IrStatement =
                 declaration
 

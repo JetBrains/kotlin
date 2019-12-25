@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-class FunctionInlining(val context: CommonBackendContext) : IrElementTransformerVoidWithContext() {
+class FunctionInlining(context: CommonBackendContext) : IrElementTransformerVoidWithContext(context) {
 
     fun inline(irModule: IrModuleFragment) = irModule.accept(this, data = null)
 

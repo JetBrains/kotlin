@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,8 +10,9 @@ import org.jetbrains.kotlin.backend.common.ir.returnType
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedVariableDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
@@ -25,7 +26,9 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 
-class FinallyBlocksLowering(val context: CommonBackendContext, private val throwableType: IrType): FileLoweringPass, IrElementTransformerVoidWithContext() {
+class FinallyBlocksLowering(
+    context: CommonBackendContext, private val throwableType: IrType
+): FileLoweringPass, IrElementTransformerVoidWithContext(context) {
 
     private interface HighLevelJump {
         fun toIr(context: CommonBackendContext, startOffset: Int, endOffset: Int, value: IrExpression): IrExpression
@@ -211,7 +214,7 @@ class FinallyBlocksLowering(val context: CommonBackendContext, private val throw
         irBuilder.run {
             val transformedFinallyExpression = finallyExpression.transform(transformer, null)
             val parameter = WrappedVariableDescriptor()
-            val catchParameter = IrVariableImpl(
+            val catchParameter = this@FinallyBlocksLowering.context.irDeclarationFactory.createVariable(
                 startOffset, endOffset, IrDeclarationOrigin.CATCH_PARAMETER, IrVariableSymbolImpl(parameter),
                 Name.identifier("t"), throwableType, isVar = false, isConst = false, isLateinit = false
             ).also { parameter.bind(it) }

@@ -113,9 +113,9 @@ class ForLoopsLowering(val context: CommonBackendContext) : FileLoweringPass {
 }
 
 private class RangeLoopTransformer(
-    val context: CommonBackendContext,
+    context: CommonBackendContext,
     val oldLoopToNewLoop: MutableMap<IrLoop, IrLoop>
-) : IrElementTransformerVoidWithContext() {
+) : IrElementTransformerVoidWithContext(context) {
 
     private val symbols = context.ir.symbols
     private val headerInfoBuilder = DefaultHeaderInfoBuilder(context, this::getScopeOwnerSymbol)

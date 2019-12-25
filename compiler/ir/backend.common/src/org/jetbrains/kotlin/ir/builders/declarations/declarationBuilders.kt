@@ -5,12 +5,10 @@
 
 package org.jetbrains.kotlin.ir.builders.declarations
 
-import org.jetbrains.kotlin.backend.common.descriptors.*
+import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
@@ -22,7 +20,7 @@ import org.jetbrains.kotlin.types.Variance
 
 fun IrClassBuilder.buildClass(): IrClass {
     val wrappedDescriptor = WrappedClassDescriptor()
-    return IrClassImpl(
+    return irDeclarationFactory.createClass(
         startOffset, endOffset, origin,
         IrClassSymbolImpl(wrappedDescriptor),
         name, kind, visibility, modality,
@@ -41,7 +39,7 @@ inline fun buildClass(builder: IrClassBuilder.() -> Unit) =
 
 fun IrFieldBuilder.buildField(): IrField {
     val wrappedDescriptor = WrappedFieldDescriptor()
-    return IrFieldImpl(
+    return irDeclarationFactory.createField(
         startOffset, endOffset, origin,
         IrFieldSymbolImpl(wrappedDescriptor),
         name, type, visibility, isFinal, isExternal, isStatic,
@@ -72,7 +70,7 @@ fun IrClass.addField(fieldName: String, fieldType: IrType, fieldVisibility: Visi
 
 fun IrPropertyBuilder.buildProperty(): IrProperty {
     val wrappedDescriptor = WrappedPropertyDescriptor()
-    return IrPropertyImpl(
+    return irDeclarationFactory.createProperty(
         startOffset, endOffset, origin,
         IrPropertySymbolImpl(wrappedDescriptor),
         name, visibility, modality,
@@ -83,7 +81,7 @@ fun IrPropertyBuilder.buildProperty(): IrProperty {
     }
 }
 
-inline fun buildProperty(builder: IrPropertyBuilder.() -> Unit) =
+inline fun buildProperty(builder: IrPropertyBuilder.() -> Unit): IrProperty =
     IrPropertyBuilder().run {
         builder()
         buildProperty()
@@ -115,7 +113,7 @@ inline fun IrProperty.addSetter(builder: IrFunctionBuilder.() -> Unit = {}): IrS
         }
     }
 
-fun IrFunctionBuilder.buildFun(originalDescriptor: FunctionDescriptor? = null): IrFunctionImpl {
+fun IrFunctionBuilder.buildFun(originalDescriptor: FunctionDescriptor? = null): IrSimpleFunction {
     val wrappedDescriptor = when(originalDescriptor) {
         is DescriptorWithContainerSource -> WrappedFunctionDescriptorWithContainerSource(originalDescriptor.containerSource)
         is PropertyGetterDescriptor -> WrappedPropertyGetterDescriptor(originalDescriptor.annotations, originalDescriptor.source)
@@ -123,7 +121,7 @@ fun IrFunctionBuilder.buildFun(originalDescriptor: FunctionDescriptor? = null): 
         null -> WrappedSimpleFunctionDescriptor()
         else -> WrappedSimpleFunctionDescriptor(originalDescriptor)
     }
-    return IrFunctionImpl(
+    return irDeclarationFactory.createSimpleFunction(
         startOffset, endOffset, origin,
         IrSimpleFunctionSymbolImpl(wrappedDescriptor),
         name, visibility, modality, returnType,
@@ -135,9 +133,9 @@ fun IrFunctionBuilder.buildFun(originalDescriptor: FunctionDescriptor? = null): 
     }
 }
 
-fun IrFunctionBuilder.buildConstructor(): IrConstructorImpl {
+fun IrFunctionBuilder.buildConstructor(): IrConstructor {
     val wrappedDescriptor = WrappedClassConstructorDescriptor()
-    return IrConstructorImpl(
+    return irDeclarationFactory.createConstructor(
         startOffset, endOffset, origin,
         IrConstructorSymbolImpl(wrappedDescriptor),
         Name.special("<init>"),
@@ -153,19 +151,19 @@ fun IrFunctionBuilder.buildConstructor(): IrConstructorImpl {
  * potentially external function (e.g. in an IrCall) we have to ensure that we keep
  * information from the original descriptor so as not to break inlining.
  */
-inline fun buildFunWithDescriptorForInlining(originalDescriptor: FunctionDescriptor, builder: IrFunctionBuilder.() -> Unit): IrFunctionImpl =
+inline fun buildFunWithDescriptorForInlining(originalDescriptor: FunctionDescriptor, builder: IrFunctionBuilder.() -> Unit): IrSimpleFunction =
     IrFunctionBuilder().run {
         builder()
         buildFun(originalDescriptor)
     }
 
-inline fun buildFun(builder: IrFunctionBuilder.() -> Unit): IrFunctionImpl =
+inline fun buildFun(builder: IrFunctionBuilder.() -> Unit): IrSimpleFunction =
     IrFunctionBuilder().run {
         builder()
         buildFun()
     }
 
-inline fun IrDeclarationContainer.addFunction(builder: IrFunctionBuilder.() -> Unit): IrFunctionImpl =
+inline fun IrDeclarationContainer.addFunction(builder: IrFunctionBuilder.() -> Unit): IrSimpleFunction =
     buildFun(builder).also { function ->
         declarations.add(function)
         function.parent = this@addFunction
@@ -191,13 +189,13 @@ fun IrDeclarationContainer.addFunction(
         }
     }
 
-inline fun buildConstructor(builder: IrFunctionBuilder.() -> Unit): IrConstructorImpl =
+inline fun buildConstructor(builder: IrFunctionBuilder.() -> Unit): IrConstructor =
     IrFunctionBuilder().run {
         builder()
         buildConstructor()
     }
 
-inline fun IrClass.addConstructor(builder: IrFunctionBuilder.() -> Unit = {}): IrConstructorImpl =
+inline fun IrClass.addConstructor(builder: IrFunctionBuilder.() -> Unit = {}): IrConstructor =
     buildConstructor {
         builder()
         returnType = defaultType
@@ -208,7 +206,7 @@ inline fun IrClass.addConstructor(builder: IrFunctionBuilder.() -> Unit = {}): I
 
 fun IrValueParameterBuilder.build(): IrValueParameter {
     val wrappedDescriptor = WrappedValueParameterDescriptor()
-    return IrValueParameterImpl(
+    return irDeclarationFactory.createValueParameter(
         startOffset, endOffset, origin,
         IrValueParameterSymbolImpl(wrappedDescriptor),
         name, index, type, varargElementType, isCrossInline, isNoinline
@@ -272,7 +270,7 @@ fun IrSimpleFunction.addExtensionReceiver(type: IrType, origin: IrDeclarationOri
 
 fun IrTypeParameterBuilder.build(): IrTypeParameter {
     val wrappedDescriptor = WrappedTypeParameterDescriptor()
-    return IrTypeParameterImpl(
+    return irDeclarationFactory.createTypeParameter(
         startOffset, endOffset, origin,
         IrTypeParameterSymbolImpl(wrappedDescriptor),
         name, index, isReified, variance

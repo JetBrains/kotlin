@@ -13,10 +13,6 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.descriptors.WrappedClassConstructorDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedClassDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedFieldDescriptor
@@ -281,7 +277,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
         private val unboundFunctionParameters = boundFunctionParameters?.let { functionParameters - it }
 
         private val coroutineClass: IrClass = WrappedClassDescriptor().let { d ->
-            IrClassImpl(
+            context.irDeclarationFactory.createClass(
                 startOffset, endOffset,
                 DECLARATION_ORIGIN_COROUTINE_IMPL,
                 IrClassSymbolImpl(d),
@@ -385,7 +381,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
         }
 
         fun buildConstructor(): IrConstructor = WrappedClassConstructorDescriptor().let { d ->
-            IrConstructorImpl(
+            context.irDeclarationFactory.createConstructor(
                 startOffset, endOffset,
                 DECLARATION_ORIGIN_COROUTINE_IMPL,
                 IrConstructorSymbolImpl(d),
@@ -431,7 +427,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
         }
 
         private fun buildFactoryConstructor(boundParams: List<IrValueParameter>) = WrappedClassConstructorDescriptor().let { d ->
-            IrConstructorImpl(
+            context.irDeclarationFactory.createConstructor(
                 startOffset, endOffset,
                 DECLARATION_ORIGIN_COROUTINE_IMPL,
                 IrConstructorSymbolImpl(d),
@@ -477,7 +473,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
             superFunctionSymbol: IrSimpleFunctionSymbol?,
             coroutineConstructor: IrConstructor
         ) = WrappedSimpleFunctionDescriptor().let { d ->
-            IrFunctionImpl(
+            context.irDeclarationFactory.createSimpleFunction(
                 startOffset, endOffset,
                 DECLARATION_ORIGIN_COROUTINE_IMPL,
                 IrSimpleFunctionSymbolImpl(d),
@@ -545,7 +541,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
             createFunction: IrFunction,
             stateMachineFunction: IrFunction
         ) = WrappedSimpleFunctionDescriptor().let { d ->
-            IrFunctionImpl(
+            context.irDeclarationFactory.createSimpleFunction(
                 startOffset, endOffset,
                 DECLARATION_ORIGIN_COROUTINE_IMPL,
                 IrSimpleFunctionSymbolImpl(d),
@@ -605,7 +601,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
             coroutineClass: IrClass
         ): IrSimpleFunction {
             val function = WrappedSimpleFunctionDescriptor().let { d ->
-                IrFunctionImpl(
+                context.irDeclarationFactory.createSimpleFunction(
                     startOffset, endOffset,
                     DECLARATION_ORIGIN_COROUTINE_IMPL,
                     IrSimpleFunctionSymbolImpl(d),
@@ -676,7 +672,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
     fun IrClass.addField(name: Name, type: IrType, isMutable: Boolean): IrField {
         val descriptor = WrappedFieldDescriptor()
         val symbol = IrFieldSymbolImpl(descriptor)
-        return IrFieldImpl(
+        return context.irDeclarationFactory.createField(
             startOffset,
             endOffset,
             DECLARATION_ORIGIN_COROUTINE_IMPL,

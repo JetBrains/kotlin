@@ -154,7 +154,10 @@ internal class UntilHandler(private val context: CommonBackendContext, private v
                         // Condition is needed and untilArg is non-const.
                         // Build the additional "not empty" condition: `untilArg != MIN_VALUE`.
                         // Make sure to copy untilArgExpression as it is also used in `last`.
-                        irNotEquals(untilArgExpression.deepCopyWithSymbols(), minValueIrConst)
+                        irNotEquals(
+                            untilArgExpression.deepCopyWithSymbols(irDeclarationFactory = this@UntilHandler.context.irDeclarationFactory),
+                            minValueIrConst
+                        )
                     it == minValueAsLong ->
                         // Hardcode "false" as additional condition so that the progression is considered empty.
                         // The entire lowered loop becomes a candidate for dead code elimination, depending on backend.

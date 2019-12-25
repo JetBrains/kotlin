@@ -22,7 +22,7 @@ interface BackendContext {
     val irBuiltIns: IrBuiltIns
     val irDeclarationFactory: IrDeclarationFactory
     val sharedVariablesManager: SharedVariablesManager
-    val declarationFactory: DeclarationFactory
+    val declarationFactory: DeclarationFactory ///
     val internalPackageFqn: FqName
     val transformedFunction: MutableMap<IrFunctionSymbol, IrSimpleFunctionSymbol>
     val lateinitNullableFields: MutableMap<IrField, IrField>

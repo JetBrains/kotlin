@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
@@ -79,10 +78,10 @@ class PropertiesLowering(
         else
             null
 
-    private fun createSyntheticMethodForAnnotations(declaration: IrProperty, origin: IrDeclarationOrigin, name: String): IrFunctionImpl {
+    private fun createSyntheticMethodForAnnotations(declaration: IrProperty, origin: IrDeclarationOrigin, name: String): IrFunction {
         val descriptor = WrappedSimpleFunctionDescriptor(declaration.descriptor.annotations)
         val symbol = IrSimpleFunctionSymbolImpl(descriptor)
-        return IrFunctionImpl(
+        return context.irDeclarationFactory.createSimpleFunction(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, symbol, Name.identifier(name),
             declaration.visibility, Modality.OPEN, context.irBuiltIns.unitType,
             isInline = false, isExternal = false, isTailrec = false, isSuspend = false, isExpect = false, isFakeOverride = false,

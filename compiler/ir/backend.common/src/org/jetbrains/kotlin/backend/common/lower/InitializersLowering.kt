@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -26,7 +26,7 @@ open class InitializersLowering(context: CommonBackendContext) : InitializersLow
         val instanceInitializerStatements = extractInitializers(irClass) {
             (it is IrField && !it.isStatic) || (it is IrAnonymousInitializer && !it.isStatic)
         }
-        irClass.transformChildrenVoid(object : IrElementTransformerVoidWithContext() {
+        irClass.transformChildrenVoid(object : IrElementTransformerVoidWithContext(context) {
             // Only transform constructors of current class.
             override fun visitClassNew(declaration: IrClass) = declaration
 

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.lower
 
-import org.jetbrains.kotlin.backend.common.BackendContext
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementVisitorVoidWithContext
 import org.jetbrains.kotlin.backend.common.ScopeWithIr
@@ -20,10 +20,6 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.descriptors.WrappedClassConstructorDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedFieldDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
@@ -78,7 +74,7 @@ object BOUND_VALUE_PARAMETER : IrDeclarationOriginImpl("BOUND_VALUE_PARAMETER")
 object BOUND_RECEIVER_PARAMETER : IrDeclarationOriginImpl("BOUND_RECEIVER_PARAMETER")
 
 class LocalDeclarationsLowering(
-    val context: BackendContext,
+    val context: CommonBackendContext,
     val localNameProvider: LocalNameProvider = LocalNameProvider.DEFAULT,
     val visibilityPolicy: VisibilityPolicy = VisibilityPolicy.DEFAULT
 ) :
@@ -517,7 +513,7 @@ class LocalDeclarationsLowering(
             // TODO: consider using fields to access the closure of enclosing class.
             val capturedValues = localFunctionContext.closure.capturedValues
 
-            val newDeclaration = IrFunctionImpl(
+            val newDeclaration = context.irDeclarationFactory.createSimpleFunction(
                 oldDeclaration.startOffset,
                 oldDeclaration.endOffset,
                 oldDeclaration.origin,
@@ -565,7 +561,7 @@ class LocalDeclarationsLowering(
             capturedValues.mapIndexedTo(this) { i, capturedValue ->
                 val parameterDescriptor = WrappedValueParameterDescriptor()
                 val p = capturedValue.owner
-                IrValueParameterImpl(
+                context.irDeclarationFactory.createValueParameter(
                     p.startOffset,
                     p.endOffset,
                     if (p.descriptor is ReceiverParameterDescriptor && newDeclaration is IrConstructor)
@@ -621,7 +617,7 @@ class LocalDeclarationsLowering(
             val loweredConstructorVisibility =
                 visibilityPolicy.forConstructor(oldDeclaration, constructorContext.inInlineFunctionScope)
 
-            val newDeclaration = IrConstructorImpl(
+            val newDeclaration = context.irDeclarationFactory.createConstructor(
                 oldDeclaration.startOffset, oldDeclaration.endOffset, oldDeclaration.origin,
                 newSymbol, oldDeclaration.name, loweredConstructorVisibility, oldDeclaration.returnType,
                 isInline = oldDeclaration.isInline,
@@ -663,7 +659,7 @@ class LocalDeclarationsLowering(
         ): IrField {
             val descriptor = WrappedFieldDescriptor()
             val symbol = IrFieldSymbolImpl(descriptor)
-            return IrFieldImpl(
+            return context.irDeclarationFactory.createField(
                 startOffset,
                 endOffset,
                 if (isCrossinline) DECLARATION_ORIGIN_FIELD_FOR_CROSSINLINE_CAPTURED_VALUE else DECLARATION_ORIGIN_FIELD_FOR_CAPTURED_VALUE,
@@ -746,14 +742,14 @@ class LocalDeclarationsLowering(
                 var counter: Int = 0
             }
 
-            irFile.acceptVoid(object : IrElementVisitorVoidWithContext() {
+            irFile.acceptVoid(object : IrElementVisitorVoidWithContext(context) {
 
                 override fun visitElement(element: IrElement) {
                     element.acceptChildrenVoid(this)
                 }
 
                 override fun createScope(declaration: IrSymbolOwner): ScopeWithIr {
-                    return ScopeWithCounter(Scope(declaration.symbol), declaration)
+                    return ScopeWithCounter(Scope(declaration.symbol, context.irDeclarationFactory), declaration)
                 }
 
                 override fun visitSimpleFunction(declaration: IrSimpleFunction) {

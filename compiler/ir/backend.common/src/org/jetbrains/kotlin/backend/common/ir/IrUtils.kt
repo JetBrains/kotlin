@@ -18,13 +18,11 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrTypeParameterImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.factories.IrDeclarationFactory
+import org.jetbrains.kotlin.ir.factories.createValueParameter
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
@@ -59,9 +57,10 @@ fun IrClass.addSimpleDelegatingConstructor(
     superConstructor: IrConstructor,
     irBuiltIns: IrBuiltIns,
     isPrimary: Boolean = false,
-    origin: IrDeclarationOrigin? = null
+    origin: IrDeclarationOrigin? = null,
+    irDeclarationFactory: IrDeclarationFactory = IrDeclarationFactory.DEFAULT
 ) = WrappedClassConstructorDescriptor().let { descriptor ->
-    IrConstructorImpl(
+    irDeclarationFactory.createConstructor(
         startOffset, endOffset,
         origin ?: this.origin,
         IrConstructorSymbolImpl(descriptor),
@@ -143,7 +142,8 @@ fun IrValueParameter.copyTo(
     varargElementType: IrType? = this.varargElementType, // TODO: remapTypeParameters here as well
     defaultValue: IrExpressionBody? = this.defaultValue,
     isCrossinline: Boolean = this.isCrossinline,
-    isNoinline: Boolean = this.isNoinline
+    isNoinline: Boolean = this.isNoinline,
+    irDeclarationFactory: IrDeclarationFactory = IrDeclarationFactory.DEFAULT
 ): IrValueParameter {
     val descriptor = if (index < 0) {
         WrappedReceiverParameterDescriptor(this.descriptor.annotations, this.descriptor.source)
@@ -153,7 +153,7 @@ fun IrValueParameter.copyTo(
     val symbol = IrValueParameterSymbolImpl(descriptor)
     val defaultValueCopy = defaultValue?.deepCopyWithVariables()
     defaultValueCopy?.patchDeclarationParents(irFunction)
-    return IrValueParameterImpl(
+    return irDeclarationFactory.createValueParameter(
         startOffset, endOffset, origin, symbol,
         name, index, type, varargElementType, isCrossinline, isNoinline
     ).also {
@@ -167,22 +167,25 @@ fun IrValueParameter.copyTo(
 fun IrTypeParameter.copyToWithoutSuperTypes(
     target: IrTypeParametersContainer,
     shift: Int = 0,
-    origin: IrDeclarationOrigin = this.origin
+    origin: IrDeclarationOrigin = this.origin,
+    irDeclarationFactory: IrDeclarationFactory = IrDeclarationFactory.DEFAULT
 ): IrTypeParameter {
     val descriptor = WrappedTypeParameterDescriptor(symbol.descriptor.annotations, symbol.descriptor.source)
     val symbol = IrTypeParameterSymbolImpl(descriptor)
-    return IrTypeParameterImpl(startOffset, endOffset, origin, symbol, name, shift + index, isReified, variance).also { copied ->
-        descriptor.bind(copied)
-        copied.parent = target
-    }
+    return irDeclarationFactory.createTypeParameter(startOffset, endOffset, origin, symbol, name, shift + index, isReified, variance)
+        .also { copied ->
+            descriptor.bind(copied)
+            copied.parent = target
+        }
 }
 
-fun IrFunction.copyValueParametersFrom(from: IrFunction) {
+fun IrFunction.copyValueParametersFrom(from: IrFunction, irDeclarationFactory: IrDeclarationFactory = IrDeclarationFactory.DEFAULT) {
     // TODO: should dispatch receiver be copied?
     dispatchReceiverParameter = from.dispatchReceiverParameter?.let {
-        IrValueParameterImpl(it.startOffset, it.endOffset, it.origin, it.descriptor, it.type, it.varargElementType).also {
-            it.parent = this
-        }
+        irDeclarationFactory.createValueParameter(it.startOffset, it.endOffset, it.origin, it.descriptor, it.type, it.varargElementType)
+            .also {
+                it.parent = this
+            }
     }
     extensionReceiverParameter = from.extensionReceiverParameter?.copyTo(this)
 
@@ -362,9 +365,9 @@ fun Scope.createTemporaryVariableWithWrappedDescriptor(
     ).apply { descriptor.bind(this) }
 }
 
-fun IrClass.createImplicitParameterDeclarationWithWrappedDescriptor() {
+fun IrClass.createImplicitParameterDeclarationWithWrappedDescriptor(irDeclarationFactory: IrDeclarationFactory = IrDeclarationFactory.DEFAULT) {
     val thisReceiverDescriptor = WrappedReceiverParameterDescriptor()
-    thisReceiver = IrValueParameterImpl(
+    thisReceiver = irDeclarationFactory.createValueParameter(
         startOffset, endOffset,
         IrDeclarationOrigin.INSTANCE_RECEIVER,
         IrValueParameterSymbolImpl(thisReceiverDescriptor),
@@ -398,11 +401,11 @@ fun IrClass.simpleFunctions() = declarations.flatMap {
     }
 }
 
-fun IrClass.createParameterDeclarations() {
+fun IrClass.createParameterDeclarations(irDeclarationFactory: IrDeclarationFactory = IrDeclarationFactory.DEFAULT) {
     assert (thisReceiver == null)
 
     thisReceiver = WrappedReceiverParameterDescriptor().let {
-        IrValueParameterImpl(
+        irDeclarationFactory.createValueParameter(
             startOffset, endOffset,
             IrDeclarationOrigin.INSTANCE_RECEIVER,
             IrValueParameterSymbolImpl(it),
@@ -419,10 +422,10 @@ fun IrClass.createParameterDeclarations() {
     }
 }
 
-fun IrFunction.createDispatchReceiverParameter(origin: IrDeclarationOrigin? = null) {
+fun IrFunction.createDispatchReceiverParameter(origin: IrDeclarationOrigin? = null, irDeclarationFactory: IrDeclarationFactory = IrDeclarationFactory.DEFAULT) {
     assert(dispatchReceiverParameter == null)
 
-    dispatchReceiverParameter = IrValueParameterImpl(
+    dispatchReceiverParameter = irDeclarationFactory.createValueParameter(
         startOffset, endOffset,
         origin ?: parentAsClass.origin,
         IrValueParameterSymbolImpl(parentAsClass.thisReceiver!!.descriptor),
@@ -446,7 +449,7 @@ val IrFunction.allParameters: List<IrValueParameter>
         explicitParameters
     }
 
-fun IrClass.addFakeOverrides() {
+fun IrClass.addFakeOverrides(irDeclarationFactory: IrDeclarationFactory = IrDeclarationFactory.DEFAULT) {
     fun IrDeclaration.toList() = when (this) {
         is IrSimpleFunction -> listOf(this)
         is IrProperty -> listOfNotNull(getter, setter)
@@ -474,7 +477,7 @@ fun IrClass.addFakeOverrides() {
     fun createFakeOverride(overriddenFunctions: List<IrSimpleFunction>) =
         overriddenFunctions.first().let { irFunction ->
             val descriptor = WrappedSimpleFunctionDescriptor()
-            IrFunctionImpl(
+            irDeclarationFactory.createSimpleFunction(
                 UNDEFINED_OFFSET,
                 UNDEFINED_OFFSET,
                 IrDeclarationOrigin.FAKE_OVERRIDE,
@@ -514,12 +517,13 @@ fun createStaticFunctionWithReceivers(
     dispatchReceiverType: IrType? = oldFunction.dispatchReceiverParameter?.type,
     origin: IrDeclarationOrigin = oldFunction.origin,
     modality: Modality = Modality.FINAL,
-    copyMetadata: Boolean = true
+    copyMetadata: Boolean = true,
+    irDeclarationFactory: IrDeclarationFactory = IrDeclarationFactory.DEFAULT
 ): IrSimpleFunction {
     val descriptor = (oldFunction.descriptor as? DescriptorWithContainerSource)?.let {
         WrappedFunctionDescriptorWithContainerSource(it.containerSource)
     } ?: WrappedSimpleFunctionDescriptor(Annotations.EMPTY, oldFunction.descriptor.source)
-    return IrFunctionImpl(
+    return irDeclarationFactory.createSimpleFunction(
         oldFunction.startOffset, oldFunction.endOffset,
         origin,
         IrSimpleFunctionSymbolImpl(descriptor),
@@ -582,7 +586,7 @@ fun copyBodyWithParametersMapping(
                 // Remap return targets to the static method so they do not appear to be
                 // non-local returns.
                 override fun visitReturn(expression: IrReturn): IrExpression {
-                    expression.transformChildrenVoid(this);
+                    expression.transformChildrenVoid(this)
                     return if (expression.returnTargetSymbol == oldFunction.symbol) {
                         IrReturnImpl(
                             expression.startOffset,
