@@ -5,4 +5,4 @@
 
 package kotlin.reflect
 
-interface KFunction<out R> : KCallable<R>
+public actual interface KFunction<out R> : KCallable<R>, Function<R>

@@ -24,13 +24,13 @@ public actual interface KClass<T : Any> : KDeclarationContainer, KAnnotatedEleme
      * The fully qualified dot-separated name of the class,
      * or `null` if the class is local or it is an anonymous object literal.
      */
-    public val qualifiedName: String?
+    public actual val qualifiedName: String?
 
     /**
      * Returns `true` if [value] is an instance of this class on a given platform.
      */
     @SinceKotlin("1.1")
-    public fun isInstance(value: Any?): Boolean
+    public actual fun isInstance(value: Any?): Boolean
 
     /**
      * Returns `true` if this [KClass] instance represents the same Kotlin class as the class represented by [other].
