@@ -39,7 +39,6 @@ public abstract class AbstractMemberSelectionTable<T extends PsiElement, M exten
   protected static final int DISPLAY_NAME_COLUMN = 1;
   protected static final int ABSTRACT_COLUMN = 2;
   protected static final Icon EMPTY_OVERRIDE_ICON = EmptyIcon.create(AllIcons.General.OverridingMethod);
-  protected static final String DISPLAY_NAME_COLUMN_HEADER = RefactoringBundle.message("member.column");
   protected static final int OVERRIDE_ICON_POSITION = 2;
   protected static final int VISIBILITY_ICON_POSITION = 1;
   protected static final int MEMBER_ICON_POSITION = 0;
@@ -287,7 +286,7 @@ public abstract class AbstractMemberSelectionTable<T extends PsiElement, M exten
         case ABSTRACT_COLUMN:
           return myTable.myAbstractColumnHeader;
         case DISPLAY_NAME_COLUMN:
-          return DISPLAY_NAME_COLUMN_HEADER;
+          return getDISPLAY_NAME_COLUMN_HEADER();
         default:
           throw new RuntimeException("Incorrect column index");
       }
@@ -424,5 +423,9 @@ public abstract class AbstractMemberSelectionTable<T extends PsiElement, M exten
       }
       return component;
     }
+  }
+
+  protected static String getDISPLAY_NAME_COLUMN_HEADER() {
+    return RefactoringBundle.message("member.column");
   }
 }
