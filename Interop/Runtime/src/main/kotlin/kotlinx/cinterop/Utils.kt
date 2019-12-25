@@ -307,7 +307,7 @@ public fun <T : CVariable> CValues<T>.getBytes(): ByteArray = memScoped {
 }
 
 /**
- * Calls the [block] with temporary copy if this value as receiver.
+ * Calls the [block] with temporary copy of this value as receiver.
  */
 public inline fun <reified T : CStructVar, R> CValue<T>.useContents(block: T.() -> R): R = memScoped {
     this@useContents.placeTo(memScope).pointed.block()
