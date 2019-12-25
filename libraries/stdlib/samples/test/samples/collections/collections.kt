@@ -333,6 +333,28 @@ class Collections {
             set += listOf(4, 5)
             assertPrints(set, "[1, 2, 4, 5]")
         }
+
+        @Sample
+        fun emptyLinkedHashSet() {
+            val set: LinkedHashSet<Int> = linkedSetOf<Int>()
+
+            set.add(1)
+            set.add(3)
+            set.add(2)
+
+            assertPrints(set, "[1, 3, 2]")
+        }
+
+        @Sample
+        fun linkedHashSet() {
+            val set: LinkedHashSet<Int> = linkedSetOf(1, 3, 2)
+
+            assertPrints(set, "[1, 3, 2]")
+
+            set.remove(3)
+            set += listOf(5, 4)
+            assertPrints(set, "[1, 2, 5, 4]")
+        }
     }
 
     class Transformations {

@@ -73,7 +73,10 @@ public inline fun <T> hashSetOf(): HashSet<T> = HashSet()
 /** Returns a new [HashSet] with the given elements. */
 public fun <T> hashSetOf(vararg elements: T): HashSet<T> = elements.toCollection(HashSet(mapCapacity(elements.size)))
 
-/** Returns an empty new [LinkedHashSet]. */
+/**
+ * Returns an empty new [LinkedHashSet].
+ * @sample samples.collections.Collections.Sets.emptyLinkedHashSet
+ */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public inline fun <T> linkedSetOf(): LinkedHashSet<T> = LinkedHashSet()
@@ -81,6 +84,7 @@ public inline fun <T> linkedSetOf(): LinkedHashSet<T> = LinkedHashSet()
 /**
  * Returns a new [LinkedHashSet] with the given elements.
  * Elements of the set are iterated in the order they were specified.
+ * @sample samples.collections.Collections.Sets.linkedHashSet
  */
 public fun <T> linkedSetOf(vararg elements: T): LinkedHashSet<T> = elements.toCollection(LinkedHashSet(mapCapacity(elements.size)))
 
