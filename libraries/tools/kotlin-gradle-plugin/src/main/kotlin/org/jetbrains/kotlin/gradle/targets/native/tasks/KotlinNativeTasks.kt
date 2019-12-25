@@ -794,8 +794,11 @@ class CacheBuilder(val project: Project, val binary: NativeBinary) {
             ensureCompilerProvidedLibPrecached(platformLibName, platformLibs, visitedLibs)
     }
 
+    private val KonanTarget.cacheWorks
+        get() = this == KonanTarget.IOS_X64 || this == KonanTarget.MACOS_X64
+
     fun buildCompilerArgs(): List<String> = mutableListOf<String>().apply {
-        if (konanCacheKind != NativeCacheKind.NONE && !optimized && compilation.konanTarget.family.isAppleFamily) {
+        if (konanCacheKind != NativeCacheKind.NONE && !optimized && compilation.konanTarget.cacheWorks) {
             rootCacheDirectory.mkdirs()
             ensureCompilerProvidedLibsPrecached()
             add("-Xcache-directory=${rootCacheDirectory.absolutePath}")
