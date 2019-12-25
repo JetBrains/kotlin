@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,8 +12,6 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
@@ -190,7 +188,7 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : FileLoweringPass
             val descriptor = WrappedSimpleFunctionDescriptor()
             val symbol = IrSimpleFunctionSymbolImpl(descriptor)
             val staticFunction = function.run {
-                IrFunctionImpl(
+                context.irDeclarationFactory.createSimpleFunction(
                     startOffset, endOffset, origin,
                     symbol, name, visibility, modality,
                     returnType,
@@ -209,7 +207,7 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : FileLoweringPass
             staticFunction.extensionReceiverParameter = function.extensionReceiverParameter?.copyTo(staticFunction)
             val thisDesc = WrappedValueParameterDescriptor()
             val thisSymbol = IrValueParameterSymbolImpl(thisDesc)
-            staticFunction.valueParameters += IrValueParameterImpl(
+            staticFunction.valueParameters += context.irDeclarationFactory.createValueParameter(
                 UNDEFINED_OFFSET,
                 UNDEFINED_OFFSET,
                 STATIC_THIS_PARAMETER,

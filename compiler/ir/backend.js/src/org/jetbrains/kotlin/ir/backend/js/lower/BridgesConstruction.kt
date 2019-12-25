@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.ir.backend.js.utils.functionSignature
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsName
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.factories.createValueParameter
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.*
@@ -132,7 +132,9 @@ class BridgesConstruction(val context: CommonBackendContext) : ClassLoweringPass
             copyTypeParametersFrom(bridge)
             // TODO: should dispatch receiver be copied?
             dispatchReceiverParameter = bridge.dispatchReceiverParameter?.run {
-                IrValueParameterImpl(startOffset, endOffset, origin, descriptor, type, varargElementType).also { it.parent = this@apply }
+                context.irDeclarationFactory
+                    .createValueParameter(startOffset, endOffset, origin, descriptor, type, varargElementType)
+                    .also { it.parent = this@apply }
             }
             extensionReceiverParameter = bridge.extensionReceiverParameter?.copyTo(this)
             valueParameters += bridge.valueParameters.map { p -> p.copyTo(this) }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,8 +15,6 @@ import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.backend.js.utils.asString
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrTypeParameterImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.descriptors.WrappedTypeParameterDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
@@ -429,7 +427,7 @@ class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
 
         for ((i, p) in boundValueParameters.withIndex()) {
             val descriptor = WrappedValueParameterDescriptor()
-            factoryDeclaration.valueParameters += IrValueParameterImpl(
+            factoryDeclaration.valueParameters += context.irDeclarationFactory.createValueParameter(
                 p.startOffset,
                 p.endOffset,
                 p.origin,
@@ -451,7 +449,7 @@ class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
 
         for (t in typeParameters) {
             val descriptor = WrappedTypeParameterDescriptor()
-            factoryDeclaration.typeParameters += IrTypeParameterImpl(
+            factoryDeclaration.typeParameters += context.irDeclarationFactory.createTypeParameter(
                 t.startOffset,
                 t.endOffset,
                 t.origin,

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,15 +13,12 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrSetVariable
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.factories.IrDeclarationFactory
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
@@ -32,7 +29,11 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.name.Name
 
-class JsSharedVariablesManager(val builtIns: IrBuiltIns, val implicitDeclarationsFile: IrPackageFragment) : SharedVariablesManager {
+class JsSharedVariablesManager(
+    val builtIns: IrBuiltIns,
+    private val irDeclarationFactory: IrDeclarationFactory,
+    val implicitDeclarationsFile: IrPackageFragment
+) : SharedVariablesManager {
 
     override fun declareSharedVariable(originalDeclaration: IrVariable): IrVariable {
         val valueType = originalDeclaration.type
@@ -51,7 +52,7 @@ class JsSharedVariablesManager(val builtIns: IrBuiltIns, val implicitDeclaration
                 }
 
         val descriptor = WrappedVariableDescriptor()
-        return IrVariableImpl(
+        return irDeclarationFactory.createVariable(
             originalDeclaration.startOffset,
             originalDeclaration.endOffset,
             originalDeclaration.origin,
@@ -123,7 +124,7 @@ class JsSharedVariablesManager(val builtIns: IrBuiltIns, val implicitDeclaration
 
     private fun createClosureBoxClassDeclaration(): IrClass {
         val descriptor = WrappedClassDescriptor()
-        val declaration = IrClassImpl(
+        val declaration = irDeclarationFactory.createClass(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET, JsLoweredDeclarationOrigin.JS_CLOSURE_BOX_CLASS_DECLARATION, IrClassSymbolImpl(descriptor),
             Name.identifier(boxTypeName), ClassKind.CLASS, Visibilities.PUBLIC, Modality.FINAL,
             isCompanion = false, isInner = false, isData = false, isExternal = false, isInline = false, isExpect = false
@@ -146,7 +147,7 @@ class JsSharedVariablesManager(val builtIns: IrBuiltIns, val implicitDeclaration
         val descriptor = WrappedFieldDescriptor()
         val symbol = IrFieldSymbolImpl(descriptor)
         val fieldName = Name.identifier("v")
-        return IrFieldImpl(
+        return irDeclarationFactory.createField(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
             DeclarationFactory.FIELD_FOR_OUTER_THIS,
@@ -169,7 +170,7 @@ class JsSharedVariablesManager(val builtIns: IrBuiltIns, val implicitDeclaration
         val descriptor = WrappedClassConstructorDescriptor()
         val symbol = IrConstructorSymbolImpl(descriptor)
 
-        val declaration = IrConstructorImpl(
+        val declaration = irDeclarationFactory.createConstructor(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET, JsLoweredDeclarationOrigin.JS_CLOSURE_BOX_CLASS_DECLARATION, symbol,
             Name.special("<init>"), Visibilities.PUBLIC, closureBoxClassDeclaration.defaultType,
             isInline = false, isExternal = false, isPrimary = true, isExpect = false

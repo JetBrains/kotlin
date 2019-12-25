@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,8 +11,6 @@ import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsModule
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsQualifier
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.symbols.IrExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.util.UniqId
@@ -82,7 +80,7 @@ private class DescriptorlessIrFileSymbol : IrFileSymbol {
 
 fun moveBodilessDeclarationsToSeparatePlace(context: JsIrBackendContext, module: IrModuleFragment) {
 
-    val bodilessBuiltInsPackageFragment = IrExternalPackageFragmentImpl(
+    val bodilessBuiltInsPackageFragment = context.irDeclarationFactory.createExternalPackageFragment(
         DescriptorlessExternalPackageFragmentSymbol(),
         FqName("kotlin")
     )
@@ -108,9 +106,11 @@ fun moveBodilessDeclarationsToSeparatePlace(context: JsIrBackendContext, module:
     fun lowerFile(irFile: IrFile): IrFile? {
         val externalPackageFragment by lazy {
             context.externalPackageFragment.getOrPut(irFile.symbol) {
-                IrFileImpl(fileEntry = irFile.fileEntry, fqName = irFile.fqName, symbol = DescriptorlessIrFileSymbol()).also {
-                    it.annotations += irFile.annotations
-                }
+                context.irDeclarationFactory
+                    .createFile(fileEntry = irFile.fileEntry, fqName = irFile.fqName, symbol = DescriptorlessIrFileSymbol())
+                    .also {
+                        it.annotations += irFile.annotations
+                    }
             }
         }
 

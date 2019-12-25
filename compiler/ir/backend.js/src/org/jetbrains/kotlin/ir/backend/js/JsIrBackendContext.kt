@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -27,8 +27,9 @@ import org.jetbrains.kotlin.ir.backend.js.lower.CallableReferenceKey
 import org.jetbrains.kotlin.ir.backend.js.lower.ConstructorPair
 import org.jetbrains.kotlin.ir.backend.js.utils.OperatorNames
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.factories.IrDeclarationFactory
+import org.jetbrains.kotlin.ir.factories.createFile
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrDynamicTypeImpl
@@ -43,6 +44,7 @@ class JsIrBackendContext(
     val module: ModuleDescriptor,
     override val irBuiltIns: IrBuiltIns,
     val symbolTable: SymbolTable,
+    override val irDeclarationFactory: IrDeclarationFactory,
     irModuleFragment: IrModuleFragment,
     val additionalExportedDeclarations: Set<FqName>,
     override val configuration: CompilerConfiguration, // TODO: remove configuration from backend context
@@ -68,7 +70,7 @@ class JsIrBackendContext(
 
     val internalPackageFragmentDescriptor = EmptyPackageFragmentDescriptor(builtIns.builtInsModule, FqName("kotlin.js.internal"))
     val implicitDeclarationFile by lazy {
-        IrFileImpl(object : SourceManager.FileEntry {
+        irDeclarationFactory.createFile(object : SourceManager.FileEntry {
             override val name = "<implicitDeclarations>"
             override val maxOffset = UNDEFINED_OFFSET
 
@@ -101,8 +103,8 @@ class JsIrBackendContext(
             implicitDeclarationFile.declarations += this
         }
 
-    override val sharedVariablesManager = JsSharedVariablesManager(irBuiltIns, implicitDeclarationFile)
-    override val declarationFactory = JsDeclarationFactory()
+    override val sharedVariablesManager = JsSharedVariablesManager(irBuiltIns, irDeclarationFactory, implicitDeclarationFile)
+    override val declarationFactory = JsDeclarationFactory(irDeclarationFactory)
 
     companion object {
         val KOTLIN_PACKAGE_FQN = FqName.fromSegments(listOf("kotlin"))

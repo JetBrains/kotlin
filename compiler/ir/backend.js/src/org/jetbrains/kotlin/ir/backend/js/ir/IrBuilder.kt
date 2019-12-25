@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,10 +11,10 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.factories.IrDeclarationFactory
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
 object JsIrBuilder {
+    /// HACK
+    private val irDeclarationFactory = IrDeclarationFactory.DEFAULT
 
     object SYNTHESIZED_STATEMENT : IrStatementOriginImpl("SYNTHESIZED_STATEMENT")
     object SYNTHESIZED_DECLARATION : IrDeclarationOriginImpl("SYNTHESIZED_DECLARATION")
@@ -50,7 +52,7 @@ object JsIrBuilder {
 
     fun buildValueParameter(name: Name, index: Int, type: IrType, origin: IrDeclarationOrigin = SYNTHESIZED_DECLARATION): IrValueParameter {
         val descriptor = WrappedValueParameterDescriptor()
-        return IrValueParameterImpl(
+        return irDeclarationFactory.createValueParameter(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
             origin,
@@ -68,7 +70,7 @@ object JsIrBuilder {
 
     fun buildTypeParameter(name: Name, index: Int, isReified: Boolean, variance: Variance = Variance.INVARIANT): IrTypeParameter {
         val descriptor = WrappedTypeParameterDescriptor()
-        return IrTypeParameterImpl(
+        return irDeclarationFactory.createTypeParameter(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
             SYNTHESIZED_DECLARATION,
@@ -123,7 +125,7 @@ object JsIrBuilder {
         origin: IrDeclarationOrigin = SYNTHESIZED_DECLARATION
     ): IrSimpleFunction {
         val descriptor = WrappedSimpleFunctionDescriptor()
-        return IrFunctionImpl(
+        return irDeclarationFactory.createSimpleFunction(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
             origin,
@@ -146,9 +148,9 @@ object JsIrBuilder {
     }
 
     fun buildAnonymousInitializer() =
-        IrAnonymousInitializerImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, SYNTHESIZED_DECLARATION, IrAnonymousInitializerSymbolImpl(
-            WrappedClassDescriptor()
-        ))
+        irDeclarationFactory.createAnonymousInitializer(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET, SYNTHESIZED_DECLARATION, IrAnonymousInitializerSymbolImpl(WrappedClassDescriptor())
+        )
 
     fun buildGetObjectValue(type: IrType, classSymbol: IrClassSymbol) =
         IrGetObjectValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, classSymbol)
@@ -201,7 +203,7 @@ object JsIrBuilder {
         initializer: IrExpression? = null
     ): IrVariable {
         val descriptor = WrappedVariableDescriptor()
-        return IrVariableImpl(
+        return irDeclarationFactory.createVariable(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
             SYNTHESIZED_DECLARATION,

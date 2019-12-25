@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,10 +15,9 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
 import org.jetbrains.kotlin.ir.descriptors.WrappedClassConstructorDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedFieldDescriptor
+import org.jetbrains.kotlin.ir.factories.IrDeclarationFactory
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
@@ -27,7 +26,7 @@ import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.name.Name
 import java.util.*
 
-class JsDeclarationFactory : DeclarationFactory {
+class JsDeclarationFactory(private val irDeclarationFactory: IrDeclarationFactory) : DeclarationFactory {
     private val singletonFieldDescriptors = HashMap<IrClass, IrField>()
     private val outerThisFieldSymbols = HashMap<IrClass, IrField>()
     private val innerClassConstructors = HashMap<IrConstructor, IrConstructor>()
@@ -54,7 +53,7 @@ class JsDeclarationFactory : DeclarationFactory {
         val descriptor = WrappedFieldDescriptor()
         val symbol = IrFieldSymbolImpl(descriptor)
 
-        return IrFieldImpl(
+        return irDeclarationFactory.createField(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
             origin,
@@ -89,7 +88,7 @@ class JsDeclarationFactory : DeclarationFactory {
         val descriptor = WrappedClassConstructorDescriptor(oldConstructor.descriptor.annotations, oldConstructor.descriptor.source)
         val symbol = IrConstructorSymbolImpl(descriptor)
 
-        val newConstructor = IrConstructorImpl(
+        val newConstructor = irDeclarationFactory.createConstructor(
             oldConstructor.startOffset,
             oldConstructor.endOffset,
             oldConstructor.origin,

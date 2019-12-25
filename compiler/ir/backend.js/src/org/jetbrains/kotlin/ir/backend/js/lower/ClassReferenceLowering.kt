@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.ir.util.isFunction
 import org.jetbrains.kotlin.ir.util.isThrowable
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.Variance
 
 class ClassReferenceLowering(val context: JsIrBackendContext) : FileLoweringPass {
     private val intrinsics = context.intrinsics
@@ -224,7 +224,7 @@ class ClassReferenceLowering(val context: JsIrBackendContext) : FileLoweringPass
     }
 
     override fun lower(irFile: IrFile) {
-        irFile.transformChildrenVoid(object : IrElementTransformerVoidWithContext() {
+        irFile.transformChildrenVoid(object : IrElementTransformerVoidWithContext(context) {
             override fun visitGetClass(expression: IrGetClass) =
                 callGetKClassFromExpression(
                     returnType = expression.type,

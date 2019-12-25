@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,8 +21,6 @@ import org.jetbrains.kotlin.ir.backend.js.utils.toJsArrayLiteral
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
 import org.jetbrains.kotlin.ir.descriptors.WrappedClassConstructorDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedFieldDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
@@ -67,7 +65,7 @@ class EnumUsageLowering(val context: JsIrBackendContext) : FileLoweringPass {
         val descriptor = WrappedFieldDescriptor()
         val symbol = IrFieldSymbolImpl(descriptor)
         return entry.run {
-            IrFieldImpl(
+            context.irDeclarationFactory.createField(
                 startOffset, endOffset, origin, symbol, name, irClass.defaultType, Visibilities.PUBLIC,
                 isFinal = false, isExternal = true, isStatic = true,
                 isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE
@@ -189,7 +187,7 @@ class EnumClassConstructorTransformer(val context: CommonBackendContext, private
         val loweredConstructorDescriptor = WrappedClassConstructorDescriptor()
         val loweredConstructorSymbol = IrConstructorSymbolImpl(loweredConstructorDescriptor)
 
-        return IrConstructorImpl(
+        return context.irDeclarationFactory.createConstructor(
             enumConstructor.startOffset,
             enumConstructor.endOffset,
             enumConstructor.origin,
