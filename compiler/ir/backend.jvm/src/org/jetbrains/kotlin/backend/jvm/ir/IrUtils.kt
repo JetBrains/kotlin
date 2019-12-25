@@ -126,7 +126,7 @@ class JvmIrBuilder(
     endOffset: Int = UNDEFINED_OFFSET
 ) : IrBuilderWithScope(
     IrLoweringContext(backendContext),
-    Scope(symbol),
+    Scope(symbol, backendContext.irDeclarationFactory),
     startOffset,
     endOffset
 ) {

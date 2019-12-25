@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
+import org.jetbrains.kotlin.ir.factories.IrDeclarationFactory
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.SymbolTable
@@ -48,6 +49,7 @@ class JvmBackendContext(
     irModuleFragment: IrModuleFragment,
     private val symbolTable: SymbolTable,
     val phaseConfig: PhaseConfig,
+    override val irDeclarationFactory: IrDeclarationFactory,
     // If the JVM fqname of a class differs from what is implied by its parent, e.g. if it's a file class
     // annotated with @JvmPackageName, the correct name is recorded here.
     internal val classNameOverride: MutableMap<IrClass, JvmClassName>
@@ -61,8 +63,8 @@ class JvmBackendContext(
     val typeMapper = IrTypeMapper(this)
     val methodSignatureMapper = MethodSignatureMapper(this)
 
-    override val declarationFactory: JvmDeclarationFactory = JvmDeclarationFactory(methodSignatureMapper)
-    override val sharedVariablesManager = JvmSharedVariablesManager(state.module, builtIns, irBuiltIns)
+    override val declarationFactory: JvmDeclarationFactory = JvmDeclarationFactory(methodSignatureMapper, irDeclarationFactory)
+    override val sharedVariablesManager = JvmSharedVariablesManager(state.module, builtIns, irBuiltIns, irDeclarationFactory)
 
     override val ir = JvmIr(irModuleFragment, this.symbolTable)
 

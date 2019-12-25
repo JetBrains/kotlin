@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.backend.jvm.ir.replaceThisByStaticReference
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.builders.declarations.addField
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrAnonymousInitializerImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
@@ -94,7 +93,7 @@ private class MoveOrCopyCompanionObjectFieldsLowering(val context: JvmBackendCon
         with(oldInitializer) {
             val oldParent = parentAsClass
             val newSymbol = IrAnonymousInitializerSymbolImpl(newParent.symbol)
-            IrAnonymousInitializerImpl(startOffset, endOffset, origin, newSymbol, isStatic = true).apply {
+            context.irDeclarationFactory.createAnonymousInitializer(startOffset, endOffset, origin, newSymbol, isStatic = true).apply {
                 parent = newParent
                 body = this@with.body
                     .replaceThisByStaticReference(context.declarationFactory, oldParent, oldParent.thisReceiver!!)

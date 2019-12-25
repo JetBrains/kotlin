@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -20,11 +20,11 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.setSourceRange
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.descriptors.WrappedClassConstructorDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedClassDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
+import org.jetbrains.kotlin.ir.factories.IrDeclarationFactory
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
@@ -34,7 +34,8 @@ import org.jetbrains.kotlin.name.Name
 import java.util.*
 
 class JvmDeclarationFactory(
-    private val methodSignatureMapper: MethodSignatureMapper
+    private val methodSignatureMapper: MethodSignatureMapper,
+    private val irDeclarationFactory: IrDeclarationFactory
 ) : DeclarationFactory {
     private val singletonFieldDeclarations = HashMap<IrSymbolOwner, IrField>()
     private val interfaceCompanionFieldDeclarations = HashMap<IrSymbolOwner, IrField>()
@@ -84,7 +85,7 @@ class JvmDeclarationFactory(
 
     private fun createInnerClassConstructorWithOuterThisParameter(oldConstructor: IrConstructor): IrConstructor {
         val newDescriptor = WrappedClassConstructorDescriptor(oldConstructor.descriptor.annotations)
-        return IrConstructorImpl(
+        return irDeclarationFactory.createConstructor(
             oldConstructor.startOffset,
             oldConstructor.endOffset,
             oldConstructor.origin,
@@ -105,7 +106,7 @@ class JvmDeclarationFactory(
 
             val outerThisType = oldConstructor.parentAsClass.parentAsClass.defaultType
             val outerThisDescriptor = WrappedValueParameterDescriptor()
-            val outerThisValueParameter = IrValueParameterImpl(
+            val outerThisValueParameter = irDeclarationFactory.createValueParameter(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, JvmLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS,
                 IrValueParameterSymbolImpl(outerThisDescriptor),
                 Name.identifier(AsmUtil.CAPTURED_THIS_FIELD),
@@ -181,7 +182,7 @@ class JvmDeclarationFactory(
                 initializer = oldField.initializer
                     ?.replaceThisByStaticReference(this@JvmDeclarationFactory, oldParent, oldParent.thisReceiver!!)
                     ?.patchDeclarationParents(this) as IrExpressionBody?
-                (this as IrFieldImpl).metadata = oldField.metadata
+                this.metadata = oldField.metadata
             }
         }
     }
@@ -218,7 +219,7 @@ class JvmDeclarationFactory(
     fun getDefaultImplsClass(interfaceClass: IrClass): IrClass =
         defaultImplsClasses.getOrPut(interfaceClass) {
             val descriptor = WrappedClassDescriptor()
-            IrClassImpl(
+            irDeclarationFactory.createClass(
                 interfaceClass.startOffset, interfaceClass.endOffset,
                 JvmLoweredDeclarationOrigin.DEFAULT_IMPLS,
                 IrClassSymbolImpl(descriptor),
@@ -245,7 +246,7 @@ class JvmDeclarationFactory(
             val irClass = fakeOverride.parentAsClass
             val descriptor = DescriptorsToIrRemapper.remapDeclaredSimpleFunction(fakeOverride.descriptor)
             with(fakeOverride) {
-                IrFunctionImpl(
+                irDeclarationFactory.createSimpleFunction(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET, JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE,
                     IrSimpleFunctionSymbolImpl(descriptor),
                     name, visibility, modality, returnType,
@@ -267,7 +268,7 @@ class JvmDeclarationFactory(
                         // If both setter and getter are present, original property will be duplicated.
                         val newPropertyDescriptor = DescriptorsToIrRemapper.remapDeclaredProperty(fakeOverrideProperty.descriptor)
                         correspondingPropertySymbol = with(fakeOverrideProperty) {
-                            IrPropertyImpl(
+                            irDeclarationFactory.createProperty(
                                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                                 IrDeclarationOrigin.DEFINED, IrPropertySymbolImpl(newPropertyDescriptor),
                                 name, visibility, modality, isVar, isConst, isLateinit, isDelegated,

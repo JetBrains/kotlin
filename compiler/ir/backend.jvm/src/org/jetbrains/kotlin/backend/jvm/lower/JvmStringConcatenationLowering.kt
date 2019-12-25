@@ -45,7 +45,9 @@ internal val jvmStringConcatenationLowering = makeIrFilePhase(
  * is that this pass also handles JVM specific optimizations, such as calling stringPlus
  * for two arguments, and properly handles inline classes.
  */
-private class JvmStringConcatenationLowering(val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {
+private class JvmStringConcatenationLowering(
+    override val context: JvmBackendContext
+) : FileLoweringPass, IrElementTransformerVoidWithContext(context) {
     override fun lower(irFile: IrFile) = irFile.transformChildrenVoid()
 
     private val stringBuilder = context.ir.symbols.stringBuilder.owner

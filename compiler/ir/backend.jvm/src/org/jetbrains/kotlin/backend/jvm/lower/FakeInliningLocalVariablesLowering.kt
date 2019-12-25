@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -32,7 +32,7 @@ internal val fakeInliningLocalVariablesLowering = makeIrFilePhase(
     description = "Add fake locals to identify the range of inlined functions and lambdas"
 )
 
-internal class FakeInliningLocalVariablesLowering(val context: JvmBackendContext) : IrInlineReferenceLocator(context), FileLoweringPass {
+internal class FakeInliningLocalVariablesLowering(context: JvmBackendContext) : IrInlineReferenceLocator(context), FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.acceptVoid(this)
     }

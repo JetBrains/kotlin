@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
@@ -38,7 +37,9 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElementTransformerVoidWithContext(), FileLoweringPass {
+internal class SyntheticAccessorLowering(
+    override val context: JvmBackendContext
+) : IrElementTransformerVoidWithContext(context), FileLoweringPass {
     private val pendingTransformations = mutableListOf<Function0<Unit>>()
     private val inlineLambdaToCallSite = mutableMapOf<IrFunction, IrDeclaration?>()
 
@@ -133,7 +134,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
             // attaching the metadata directly to the bridge. We also have to move all annotations
             // to the bridge method. Parameter annotations are already moved by the copyTo method.
             accessor.metadata = declaration.metadata
-            declaration.safeAs<IrConstructorImpl>()?.metadata = null
+            declaration.safeAs<IrConstructor>()?.metadata = null
             accessor.annotations += declaration.annotations
             declaration.annotations.clear()
             declaration.valueParameters.forEach { it.annotations.clear() }
@@ -148,7 +149,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
             classes.lastOrNull { parent is IrClass && it.isSubclassOf(parent) } ?: classes.last()
         } else parent
 
-    private fun IrConstructor.makeConstructorAccessor(): IrConstructorImpl {
+    private fun IrConstructor.makeConstructorAccessor(): IrConstructor {
         val source = this
 
         return buildConstructor {

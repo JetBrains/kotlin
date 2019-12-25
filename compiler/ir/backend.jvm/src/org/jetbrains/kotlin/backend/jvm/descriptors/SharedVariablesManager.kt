@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,14 +17,13 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrTypeParameterImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.descriptors.WrappedTypeParameterDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedVariableDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.factories.IrDeclarationFactory
+import org.jetbrains.kotlin.ir.factories.createExternalPackageFragment
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
@@ -45,9 +44,10 @@ private val SHARED_VARIABLE_CONSTRUCTOR_CALL_ORIGIN = object : IrStatementOrigin
 class JvmSharedVariablesManager(
     module: ModuleDescriptor,
     val builtIns: KotlinBuiltIns,
-    val irBuiltIns: IrBuiltIns
+    val irBuiltIns: IrBuiltIns,
+    val irDeclarationFactory: IrDeclarationFactory
 ) : SharedVariablesManager {
-    private val jvmInternalPackage = IrExternalPackageFragmentImpl(
+    private val jvmInternalPackage = irDeclarationFactory.createExternalPackageFragment(
         IrExternalPackageFragmentSymbolImpl(
             EmptyPackageFragmentDescriptor(module, FqName("kotlin.jvm.internal"))
         )
@@ -119,7 +119,7 @@ class JvmSharedVariablesManager(
         }.apply {
             val irClass = this
             typeParameters.add(
-                IrTypeParameterImpl(
+                irDeclarationFactory.createTypeParameter(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                     SHARED_VARIABLE_ORIGIN,
                     IrTypeParameterSymbolImpl(WrappedTypeParameterDescriptor()),
@@ -182,7 +182,7 @@ class JvmSharedVariablesManager(
             }
         }
 
-        return IrVariableImpl(
+        return irDeclarationFactory.createVariable(
             originalDeclaration.startOffset, originalDeclaration.endOffset, originalDeclaration.origin,
             IrVariableSymbolImpl(WrappedVariableDescriptor()),
             originalDeclaration.name,

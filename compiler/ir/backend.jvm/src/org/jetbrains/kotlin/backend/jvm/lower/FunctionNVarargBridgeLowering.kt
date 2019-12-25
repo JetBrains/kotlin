@@ -41,8 +41,8 @@ internal val functionNVarargBridgePhase = makeIrFilePhase(
 // inherit from the generic FunctionN class which has a vararg invoke method. This phase
 // adds a bridge method for such large arity functions, which checks the number of arguments
 // dynamically.
-private class FunctionNVarargBridgeLowering(val context: JvmBackendContext) :
-    FileLoweringPass, IrElementTransformerVoidWithContext() {
+private class FunctionNVarargBridgeLowering(override val context: JvmBackendContext) :
+    FileLoweringPass, IrElementTransformerVoidWithContext(context) {
     override fun lower(irFile: IrFile) = irFile.transformChildrenVoid(this)
 
     // Change calls to big arity invoke functions to vararg calls.

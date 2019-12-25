@@ -21,8 +21,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrEnumEntryImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.descriptors.WrappedEnumEntryDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -31,6 +29,7 @@ import org.jetbrains.kotlin.ir.expressions.IrVararg
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetEnumValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
+import org.jetbrains.kotlin.ir.factories.createExternalPackageFragment
 import org.jetbrains.kotlin.ir.symbols.impl.IrEnumEntrySymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
@@ -54,7 +53,7 @@ private class AdditionalClassAnnotationLowering(private val context: JvmBackendC
 
     // TODO: import IR structures from the library?
 
-    private val annotationPackage: IrPackageFragment = IrExternalPackageFragmentImpl(
+    private val annotationPackage: IrPackageFragment = context.irDeclarationFactory.createExternalPackageFragment(
         IrExternalPackageFragmentSymbolImpl(
             EmptyPackageFragmentDescriptor(
                 context.ir.irModule.descriptor,
@@ -87,7 +86,7 @@ private class AdditionalClassAnnotationLowering(private val context: JvmBackendC
         returnType = annotationClass.defaultType
     }
 
-    private fun buildEnumEntry(enumClass: IrClass, entryName: String): IrEnumEntry = IrEnumEntryImpl(
+    private fun buildEnumEntry(enumClass: IrClass, entryName: String): IrEnumEntry = context.irDeclarationFactory.createEnumEntry(
         UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB,
         IrEnumEntrySymbolImpl(WrappedEnumEntryDescriptor()),
         Name.identifier(entryName)

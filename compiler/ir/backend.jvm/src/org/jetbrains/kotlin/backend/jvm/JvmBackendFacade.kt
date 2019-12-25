@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.jvm.serialization.JvmMangler
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.factories.IrDeclarationFactory
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.psi.KtFile
@@ -22,10 +23,18 @@ import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 
 object JvmBackendFacade {
-    fun doGenerateFiles(files: Collection<KtFile>, state: GenerationState, phaseConfig: PhaseConfig) {
+    fun doGenerateFiles(
+        files: Collection<KtFile>,
+        state: GenerationState,
+        phaseConfig: PhaseConfig,
+        irDeclarationFactory: IrDeclarationFactory
+    ) {
         val extensions = JvmGeneratorExtensions()
         val psi2ir = Psi2IrTranslator(state.languageVersionSettings, mangler = JvmMangler)
-        val psi2irContext = psi2ir.createGeneratorContext(state.module, state.bindingContext, extensions = extensions)
+        val psi2irContext = psi2ir.createGeneratorContext(
+            state.module, state.bindingContext,
+            extensions = extensions, irDeclarationFactory = irDeclarationFactory
+        )
 
         for (extension in IrGenerationExtension.getInstances(state.project)) {
             psi2ir.addPostprocessingStep { module ->
@@ -49,7 +58,8 @@ object JvmBackendFacade {
         )
         val irModuleFragment = psi2ir.generateModuleFragment(psi2irContext, files, irProviders = irProviders, expectDescriptorToSymbol = null)
         doGenerateFilesInternal(
-            state, irModuleFragment, psi2irContext.symbolTable, psi2irContext.sourceManager, phaseConfig, irProviders, extensions
+            state, irModuleFragment, psi2irContext.symbolTable, psi2irContext.sourceManager,
+            phaseConfig, irDeclarationFactory, irProviders, extensions
         )
     }
 
@@ -59,11 +69,13 @@ object JvmBackendFacade {
         symbolTable: SymbolTable,
         sourceManager: PsiSourceManager,
         phaseConfig: PhaseConfig,
+        irDeclarationFactory: IrDeclarationFactory,
         irProviders: List<IrProvider>,
         extensions: JvmGeneratorExtensions
     ) {
         val context = JvmBackendContext(
-            state, sourceManager, irModuleFragment.irBuiltins, irModuleFragment, symbolTable, phaseConfig, extensions.classNameOverride
+            state, sourceManager, irModuleFragment.irBuiltins, irModuleFragment,
+            symbolTable, phaseConfig, irDeclarationFactory, extensions.classNameOverride
         )
         /* JvmBackendContext creates new unbound symbols, have to resolve them. */
         ExternalDependenciesGenerator(symbolTable, irProviders).generateUnboundSymbolsAsDependencies()

@@ -1,20 +1,18 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
+import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.descriptors.WrappedClassConstructorDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.expressions.impl.*
@@ -120,7 +118,7 @@ private class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : C
         val res = when (oldFunction) {
             is IrConstructor -> {
                 val descriptor = WrappedClassConstructorDescriptor(oldFunction.descriptor.annotations)
-                IrConstructorImpl(
+                context.irDeclarationFactory.createConstructor(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                     JvmLoweredDeclarationOrigin.JVM_OVERLOADS_WRAPPER,
                     IrConstructorSymbolImpl(descriptor),
@@ -137,7 +135,7 @@ private class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : C
             }
             is IrSimpleFunction -> {
                 val descriptor = WrappedSimpleFunctionDescriptor(oldFunction.descriptor.annotations)
-                IrFunctionImpl(
+                context.irDeclarationFactory.createSimpleFunction(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                     JvmLoweredDeclarationOrigin.JVM_OVERLOADS_WRAPPER,
                     IrSimpleFunctionSymbolImpl(descriptor),

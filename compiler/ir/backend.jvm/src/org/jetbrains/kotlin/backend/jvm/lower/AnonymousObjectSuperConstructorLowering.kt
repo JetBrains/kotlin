@@ -54,7 +54,7 @@ internal val anonymousObjectSuperConstructorPhase = makeIrFilePhase(
 // attempts to read them from fields, causing a bytecode validation error.
 //
 // (TODO fix the inliner instead. Then keep this code for one more version for backwards compatibility.)
-private class AnonymousObjectSuperConstructorLowering(val context: JvmBackendContext) : IrElementTransformerVoidWithContext(),
+private class AnonymousObjectSuperConstructorLowering(context: JvmBackendContext) : IrElementTransformerVoidWithContext(context),
     FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid()

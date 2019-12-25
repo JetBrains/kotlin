@@ -47,7 +47,7 @@ internal val singleAbstractMethodPhase = makeIrFilePhase(
     description = "Replace SAM conversions with instances of interface-implementing classes"
 )
 
-class SingleAbstractMethodLowering(val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {
+class SingleAbstractMethodLowering(context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext(context) {
     // SAM wrappers are cached, either in the file class (if it exists), or in a top-level enclosing class.
     // In the latter case, the names of SAM wrappers depend on the order of classes in the file. For example:
     //

@@ -165,7 +165,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
         }
         var localPropertiesInClass = 0
 
-        irClass.transformChildrenVoid(object : IrElementTransformerVoidWithContext() {
+        irClass.transformChildrenVoid(object : IrElementTransformerVoidWithContext(context) {
             override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty): IrStatement {
                 localPropertyIndices[declaration.getter.symbol] = localPropertiesInClass++
                 return super.visitLocalDelegatedProperty(declaration)

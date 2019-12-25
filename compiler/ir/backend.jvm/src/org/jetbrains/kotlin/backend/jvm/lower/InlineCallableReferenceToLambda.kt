@@ -44,8 +44,8 @@ internal val inlineCallableReferenceToLambdaPhase = makeIrFilePhase(
 //
 //      foo(::smth) -> foo { a -> smth(a) }
 //
-internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendContext) : FileLoweringPass,
-    IrElementTransformerVoidWithContext() {
+internal class InlineCallableReferenceToLambdaPhase(override val context: JvmBackendContext) : FileLoweringPass,
+    IrElementTransformerVoidWithContext(context) {
 
     private var inlinableReferences = mutableSetOf<IrCallableReference>()
 

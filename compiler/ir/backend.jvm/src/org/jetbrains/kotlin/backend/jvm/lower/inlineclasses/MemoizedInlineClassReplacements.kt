@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildFunWithDescriptorForInlining
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
@@ -189,7 +188,7 @@ class MemoizedInlineClassReplacements {
         return IrReplacementFunction(replacement, parameterMap)
     }
 
-    private fun buildReplacement(function: IrFunction, body: IrFunctionImpl.() -> Unit) =
+    private fun buildReplacement(function: IrFunction, body: IrSimpleFunction.() -> Unit) =
         buildFunWithDescriptorForInlining(function.descriptor) {
             updateFrom(function)
             if (function.origin == IrDeclarationOrigin.GENERATED_INLINE_CLASS_MEMBER) {

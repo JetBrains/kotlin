@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
-internal open class IrInlineReferenceLocator(private val context: JvmBackendContext) : IrElementVisitorVoidWithContext() {
+internal open class IrInlineReferenceLocator(override val context: JvmBackendContext) : IrElementVisitorVoidWithContext(context) {
     val inlineReferences = mutableSetOf<IrCallableReference>()
 
     // For crossinline lambdas, the call site is null as it's probably in a separate class somewhere.

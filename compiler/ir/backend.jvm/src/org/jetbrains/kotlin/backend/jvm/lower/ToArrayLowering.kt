@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -21,9 +20,6 @@ import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrTypeParameterImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedTypeParameterDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedValueParameterDescriptor
@@ -35,9 +31,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isClass
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.utils.DFS
 
 internal val toArrayPhase = makeIrFilePhase(
@@ -60,7 +54,7 @@ private class ToArrayLowering(private val context: JvmBackendContext) : ClassLow
         if (genericToArray == null) {
             if (isDirectCollectionSubClass) {
                 val typeParameterDescriptor = WrappedTypeParameterDescriptor()
-                val typeParameter = IrTypeParameterImpl(
+                val typeParameter = context.irDeclarationFactory.createTypeParameter(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                     JvmLoweredDeclarationOrigin.TO_ARRAY,
                     IrTypeParameterSymbolImpl(typeParameterDescriptor),
@@ -75,7 +69,7 @@ private class ToArrayLowering(private val context: JvmBackendContext) : ClassLow
 
                 val substitutedArrayType = irBuiltIns.arrayClass.typeWith(typeParameter.defaultType)
                 val functionDescriptor = WrappedSimpleFunctionDescriptor()
-                val irFunction = IrFunctionImpl(
+                val irFunction = context.irDeclarationFactory.createSimpleFunction(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                     JvmLoweredDeclarationOrigin.TO_ARRAY,
                     IrSimpleFunctionSymbolImpl(functionDescriptor),
@@ -98,7 +92,7 @@ private class ToArrayLowering(private val context: JvmBackendContext) : ClassLow
                 irFunction.typeParameters.add(typeParameter)
 
                 val dispatchReceiverParameterDescriptor = WrappedValueParameterDescriptor()
-                irFunction.dispatchReceiverParameter = IrValueParameterImpl(
+                irFunction.dispatchReceiverParameter = context.irDeclarationFactory.createValueParameter(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                     JvmLoweredDeclarationOrigin.TO_ARRAY,
                     IrValueParameterSymbolImpl(dispatchReceiverParameterDescriptor),
@@ -113,7 +107,7 @@ private class ToArrayLowering(private val context: JvmBackendContext) : ClassLow
                 }
                 val valueParameterDescriptor = WrappedValueParameterDescriptor()
                 irFunction.valueParameters.add(
-                    IrValueParameterImpl(
+                    context.irDeclarationFactory.createValueParameter(
                         UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                         JvmLoweredDeclarationOrigin.TO_ARRAY,
                         IrValueParameterSymbolImpl(valueParameterDescriptor),
@@ -143,13 +137,13 @@ private class ToArrayLowering(private val context: JvmBackendContext) : ClassLow
                 irClass.declarations.add(irFunction)
             }
         } else {
-            (genericToArray as IrFunctionImpl).visibility = Visibilities.PUBLIC
+            genericToArray.visibility = Visibilities.PUBLIC
         }
 
         if (nonGenericToArray == null) {
             if (isDirectCollectionSubClass) {
                 val functionDescriptor = WrappedSimpleFunctionDescriptor()
-                val irFunction = IrFunctionImpl(
+                val irFunction = context.irDeclarationFactory.createSimpleFunction(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                     JvmLoweredDeclarationOrigin.TO_ARRAY,
                     IrSimpleFunctionSymbolImpl(functionDescriptor),
@@ -169,7 +163,7 @@ private class ToArrayLowering(private val context: JvmBackendContext) : ClassLow
             irFunction.parent = irClass
 
                 val dispatchReceiverParameterDescriptor = WrappedValueParameterDescriptor()
-                irFunction.dispatchReceiverParameter = IrValueParameterImpl(
+                irFunction.dispatchReceiverParameter = context.irDeclarationFactory.createValueParameter(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                     JvmLoweredDeclarationOrigin.TO_ARRAY,
                     IrValueParameterSymbolImpl(dispatchReceiverParameterDescriptor),
@@ -196,7 +190,7 @@ private class ToArrayLowering(private val context: JvmBackendContext) : ClassLow
                 irClass.declarations.add(irFunction)
             }
         } else {
-            (nonGenericToArray as IrFunctionImpl).visibility = Visibilities.PUBLIC
+            nonGenericToArray.visibility = Visibilities.PUBLIC
         }
     }
 }

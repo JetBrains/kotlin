@@ -14,13 +14,13 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
 import org.jetbrains.kotlin.ir.descriptors.WrappedFieldDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetField
 import org.jetbrains.kotlin.ir.expressions.IrSetField
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
+import org.jetbrains.kotlin.ir.factories.IrDeclarationFactory
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.util.hasAnnotation
@@ -72,7 +72,7 @@ private class RenameFieldsLowering(val context: CommonBackendContext) : FileLowe
             }
         }
 
-        val renamer = FieldRenamer(newNames)
+        val renamer = FieldRenamer(newNames, context.irDeclarationFactory)
         irFile.transform(renamer, null)
 
         irFile.transform(FieldAccessTransformer(renamer.newSymbols), null)
@@ -94,7 +94,10 @@ private class FieldNameCollector : IrElementVisitorVoid {
     }
 }
 
-private class FieldRenamer(private val newNames: Map<IrField, Name>) : IrElementTransformerVoid() {
+private class FieldRenamer(
+    private val newNames: Map<IrField, Name>,
+    private val irDeclarationFactory: IrDeclarationFactory
+) : IrElementTransformerVoid() {
     val newSymbols = mutableMapOf<IrField, IrFieldSymbol>()
 
     override fun visitField(declaration: IrField): IrStatement {
@@ -102,7 +105,7 @@ private class FieldRenamer(private val newNames: Map<IrField, Name>) : IrElement
 
         val descriptor = WrappedFieldDescriptor()
         val symbol = IrFieldSymbolImpl(descriptor)
-        return IrFieldImpl(
+        return irDeclarationFactory.createField(
             declaration.startOffset, declaration.endOffset, declaration.origin, symbol, newName,
             declaration.type, declaration.visibility, declaration.isFinal, declaration.isExternal, declaration.isStatic,
             isFakeOverride = declaration.origin == IrDeclarationOrigin.FAKE_OVERRIDE

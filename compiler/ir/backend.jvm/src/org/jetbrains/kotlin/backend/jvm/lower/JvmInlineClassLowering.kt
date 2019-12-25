@@ -52,7 +52,9 @@ val jvmInlineClassPhase = makeIrFilePhase(
  * We do not unfold inline class types here. Instead, the type mapper will lower inline class
  * types to the types of their underlying field.
  */
-private class JvmInlineClassLowering(private val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {
+private class JvmInlineClassLowering(
+    override val context: JvmBackendContext
+) : FileLoweringPass, IrElementTransformerVoidWithContext(context) {
     private val valueMap = mutableMapOf<IrValueSymbol, IrValueDeclaration>()
 
     override fun lower(irFile: IrFile) {

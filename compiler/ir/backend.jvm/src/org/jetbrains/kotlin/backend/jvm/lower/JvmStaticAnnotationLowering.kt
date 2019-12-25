@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.descriptors.WrappedFunctionDescriptorWithContainerSource
 import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrBody
@@ -99,7 +98,7 @@ private class CompanionObjectJvmStaticLowering(val context: JvmBackendContext) :
         val origin =
             if (isSynthetic) JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER_SYNTHETIC else JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER
         val descriptor = WrappedSimpleFunctionDescriptor(target.descriptor.annotations)
-        return IrFunctionImpl(
+        return context.irDeclarationFactory.createSimpleFunction(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET,
             origin,
             IrSimpleFunctionSymbolImpl(descriptor),
@@ -229,7 +228,7 @@ private class MakeCallsStatic(
         val newDescriptor = (descriptor as? DescriptorWithContainerSource)?.let {
             WrappedFunctionDescriptorWithContainerSource(it.containerSource)
         } ?: WrappedSimpleFunctionDescriptor(descriptor)
-        return IrFunctionImpl(
+        return context.irDeclarationFactory.createSimpleFunction(
             startOffset, endOffset, origin,
             IrSimpleFunctionSymbolImpl(newDescriptor),
             name,

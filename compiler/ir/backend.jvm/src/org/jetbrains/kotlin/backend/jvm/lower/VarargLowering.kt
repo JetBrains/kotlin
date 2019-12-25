@@ -33,7 +33,7 @@ val varargPhase = makeIrFilePhase(
     prerequisite = setOf(polymorphicSignaturePhase)
 )
 
-private class VarargLowering(val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {
+private class VarargLowering(override val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext(context) {
     override fun lower(irFile: IrFile) = irFile.transformChildrenVoid()
 
     // Ignore annotations

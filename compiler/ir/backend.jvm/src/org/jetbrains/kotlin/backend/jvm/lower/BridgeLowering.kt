@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -24,8 +24,6 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.descriptors.WrappedReceiverParameterDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedValueParameterDescriptor
@@ -209,7 +207,7 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
 
     private fun IrSimpleFunction.copyRenamingTo(newName: Name): IrSimpleFunction =
         WrappedSimpleFunctionDescriptor(descriptor.annotations).let { newDescriptor ->
-            IrFunctionImpl(
+            context.irDeclarationFactory.createSimpleFunction(
                 startOffset, endOffset, origin,
                 IrSimpleFunctionSymbolImpl(newDescriptor),
                 newName,
@@ -238,7 +236,7 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
 
         val visibility = if (signatureFunction.visibility === Visibilities.INTERNAL) Visibilities.PUBLIC else signatureFunction.visibility
         val descriptor = WrappedSimpleFunctionDescriptor()
-        return IrFunctionImpl(
+        return context.irDeclarationFactory.createSimpleFunction(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET,
             origin,
             IrSimpleFunctionSymbolImpl(descriptor),
@@ -389,7 +387,7 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
         else
             WrappedSimpleFunctionDescriptor(descriptor.annotations).let { wrappedDescriptor ->
                 val newOrigin = if (origin == IrDeclarationOrigin.FAKE_OVERRIDE) IrDeclarationOrigin.DEFINED else origin
-                IrFunctionImpl(
+                context.irDeclarationFactory.createSimpleFunction(
                     startOffset, endOffset, newOrigin,
                     IrSimpleFunctionSymbolImpl(wrappedDescriptor),
                     Name.identifier(getJvmName()),
@@ -416,7 +414,7 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
         } else {
             WrappedValueParameterDescriptor(this.descriptor.annotations)
         }
-        return IrValueParameterImpl(
+        return context.irDeclarationFactory.createValueParameter(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET,
             IrDeclarationOrigin.BRIDGE,
             IrValueParameterSymbolImpl(descriptor),

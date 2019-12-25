@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
@@ -46,7 +45,9 @@ internal val callableReferencePhase = makeIrFilePhase(
 
 
 // Originally copied from K/Native
-internal class CallableReferenceLowering(private val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {
+internal class CallableReferenceLowering(
+    override val context: JvmBackendContext
+) : FileLoweringPass, IrElementTransformerVoidWithContext(context) {
     // This pass ignores suspend function references and function references used in inline arguments to inline functions.
     private val ignoredFunctionReferences = mutableSetOf<IrCallableReference>()
 
@@ -146,7 +147,7 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
             createImplicitParameterDeclarationWithWrappedDescriptor()
             copyAttributes(irFunctionReference)
             if (isLambda) {
-                (this as IrClassImpl).metadata = irFunctionReference.symbol.owner.metadata
+                this.metadata = irFunctionReference.symbol.owner.metadata
             }
         }
 

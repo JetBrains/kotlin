@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.jvm.lower
@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
@@ -104,7 +103,7 @@ private class CollectionStubMethodLowering(val context: JvmBackendContext) : Cla
     private fun IrValueParameter.copyWithSubstitution(target: IrSimpleFunction, substitutionMap: Map<IrTypeParameterSymbol, IrType>)
             : IrValueParameter {
         val descriptor = WrappedValueParameterDescriptor(this.descriptor.annotations)
-        return IrValueParameterImpl(
+        return context.irDeclarationFactory.createValueParameter(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET,
             IrDeclarationOrigin.IR_BUILTINS_STUB,
             IrValueParameterSymbolImpl(descriptor),

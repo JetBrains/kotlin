@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -18,9 +18,6 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.descriptors.WrappedClassConstructorDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedFieldDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedValueParameterDescriptor
@@ -59,7 +56,7 @@ private class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringP
     private inner class EnumClassTransformer(val irClass: IrClass) {
         private val enumEntryOrdinals = TObjectIntHashMap<IrEnumEntry>()
         private val enumEntryClassToEntry = HashMap<IrClass, IrEnumEntry>()
-        private val loweredEnumConstructors = HashMap<IrConstructorSymbol, IrConstructorImpl>()
+        private val loweredEnumConstructors = HashMap<IrConstructorSymbol, IrConstructor>()
         private val loweredEnumConstructorParameters = HashMap<IrValueParameterSymbol, IrValueParameter>()
         private val enumEntriesByField = HashMap<IrField, IrEnumEntry>()
         private val enumEntryFields = ArrayList<IrField>()
@@ -133,7 +130,7 @@ private class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringP
             enumClass: IrClass
         ): IrConstructor {
             val descriptor = WrappedClassConstructorDescriptor(enumConstructor.descriptor.annotations, enumConstructor.descriptor.source)
-            return IrConstructorImpl(
+            return context.irDeclarationFactory.createConstructor(
                 enumConstructor.startOffset, enumConstructor.endOffset,
                 enumConstructor.origin,
                 IrConstructorSymbolImpl(descriptor),
@@ -168,7 +165,7 @@ private class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringP
 
         private fun makeNameValueParameter(constructor: IrConstructor): IrValueParameter {
             val descriptor = WrappedValueParameterDescriptor()
-            return IrValueParameterImpl(
+            return context.irDeclarationFactory.createValueParameter(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                 JvmLoweredDeclarationOrigin.ENUM_CONSTRUCTOR_SYNTHETIC_PARAMETER,
                 IrValueParameterSymbolImpl(descriptor),
@@ -186,7 +183,7 @@ private class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringP
 
         private fun makeOrdinalValueParameter(constructor: IrConstructor): IrValueParameter {
             val descriptor = WrappedValueParameterDescriptor()
-            return IrValueParameterImpl(
+            return context.irDeclarationFactory.createValueParameter(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                 JvmLoweredDeclarationOrigin.ENUM_CONSTRUCTOR_SYNTHETIC_PARAMETER,
                 IrValueParameterSymbolImpl(descriptor),
@@ -251,14 +248,14 @@ private class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringP
                 }
 
 
-        private fun createSyntheticValuesFieldDeclaration(): IrFieldImpl {
+        private fun createSyntheticValuesFieldDeclaration(): IrField {
             val valuesArrayType = context.irBuiltIns.arrayClass.typeWith(irClass.defaultType)
 
             val irValuesInitializer = createSyntheticValuesFieldInitializerExpression()
 
             val descriptor = WrappedFieldDescriptor()
             // TODO: mark ACC_SYNTHETIC
-            return IrFieldImpl(
+            return context.irDeclarationFactory.createField(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.FIELD_FOR_ENUM_VALUES,
                 IrFieldSymbolImpl(descriptor),
                 Name.identifier("\$VALUES"),
