@@ -5,10 +5,10 @@ FILE: K1.kt
         }
 
         public final fun bar(): R|kotlin/Unit| {
-            this@R|/KFirst|.R|/KFirst.foo|()
-            this@R|/J1|.R|/J1.baz|()
-            this@R|/SuperClass|.R|/SuperClass.superClass|()
-            this@R|/SuperI|.R|/SuperI.superI|()
+            this@R|/K2|.R|/KFirst.foo|()
+            this@R|/K2|.R|/J1.baz|()
+            this@R|/K2|.R|/SuperClass.superClass|()
+            this@R|/K2|.R|/SuperI.superI|()
         }
 
     }

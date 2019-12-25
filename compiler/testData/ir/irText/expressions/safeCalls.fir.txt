@@ -46,7 +46,7 @@ FILE fqName:<root> fileName:/safeCalls.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun extLength (): kotlin.Int declared in <root>.IHost'
           CALL 'public open fun <get-length> (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=null
-            $this: GET_VAR '<this>: kotlin.String declared in kotlin.String' type=kotlin.String origin=null
+            $this: GET_VAR '<this>: kotlin.String declared in <root>.IHost.extLength' type=kotlin.String origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
@@ -92,7 +92,7 @@ FILE fqName:<root> fileName:/safeCalls.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test5 (s: kotlin.String?): kotlin.Int? declared in <root>'
         CALL 'public open fun extLength (): kotlin.Int declared in <root>.IHost' type=kotlin.Int? origin=null
-          $this: GET_VAR '<this>: <root>.IHost declared in <root>.IHost' type=<root>.IHost origin=null
+          $this: GET_VAR '<this>: <root>.IHost declared in <root>.test5' type=<root>.IHost origin=null
   FUN name:foo visibility:public modality:FINAL <> ($receiver:kotlin.Int) returnType:kotlin.Int
     $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int
     BLOCK_BODY

@@ -45,7 +45,7 @@ FILE fqName:<root> fileName:/genericPropertyReferenceType.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-y> (): T of <uninitialized parent> declared in <root>'
           CALL 'public final fun <get-x> (): T of <uninitialized parent> declared in <root>.C' type=T of <uninitialized parent> origin=null
-            $this: GET_VAR '<this>: <root>.C declared in <root>.C' type=<root>.C<*> origin=null
+            $this: ERROR_CALL 'Unresolved reference: this@R|/y|' type=<root>.C<T of <uninitialized parent>>
     FUN name:<set-y> visibility:public modality:FINAL <> (v:T of <uninitialized parent>) returnType:kotlin.Unit
       correspondingProperty: PROPERTY name:y visibility:public modality:FINAL [var]
       VALUE_PARAMETER name:v index:0 type:T of <uninitialized parent>

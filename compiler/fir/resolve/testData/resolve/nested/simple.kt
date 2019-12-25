@@ -22,7 +22,7 @@ class Owner {
         }
 
         fun err() {
-            <!UNRESOLVED_REFERENCE!>foo<!>()
+            foo()
             this.<!UNRESOLVED_REFERENCE!>foo<!>()
         }
     }

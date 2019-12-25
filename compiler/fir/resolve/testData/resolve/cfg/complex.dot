@@ -206,7 +206,7 @@ digraph complex_kt {
             subgraph cluster_19 {
               color=blue
               79 [label="Enter block"];
-              80 [label="Function call: this@R|/AutoCloseable|.R|/AutoCloseable.close|()"];
+              80 [label="Function call: this@R|/closeFinally|.R|/AutoCloseable.close|()"];
               81 [label="Exit block"];
             }
             82 [label="Try main block exit"];
@@ -233,7 +233,7 @@ digraph complex_kt {
       subgraph cluster_22 {
         color=blue
         94 [label="Enter block"];
-        95 [label="Function call: this@R|/AutoCloseable|.R|/AutoCloseable.close|()"];
+        95 [label="Function call: this@R|/closeFinally|.R|/AutoCloseable.close|()"];
         96 [label="Exit block"];
       }
       97 [label="Exit when branch result"];
@@ -250,11 +250,11 @@ digraph complex_kt {
     ==(this@R|/closeFinally|, Null(null)) ->  {
     }
     ==(R|<local>/cause|, Null(null)) ->  {
-        this@R|/AutoCloseable|.R|/AutoCloseable.close|()
+        this@R|/closeFinally|.R|/AutoCloseable.close|()
     }
     else ->  {
         try {
-            this@R|/AutoCloseable|.R|/AutoCloseable.close|()
+            this@R|/closeFinally|.R|/AutoCloseable.close|()
         }
         catch (closeException: R|kotlin/Throwable|) {
             R|<local>/cause|.R|kotlin/addSuppressed|(R|<local>/closeException|)

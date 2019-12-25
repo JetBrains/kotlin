@@ -10,7 +10,7 @@ FILE: localFunctionsHiding.kt
         }
 
         local final fun R|A|.transform(): R|kotlin/Int| {
-            ^transform this@R|/A|.R|/A.x|.<Inapplicable(WRONG_RECEIVER): [<local>/transform]>#()
+            ^transform this@R|<local>/transform|.R|/A.x|.<Inapplicable(WRONG_RECEIVER): [<local>/transform]>#()
         }
 
         lval y: R|kotlin/Int| = Int(1)
@@ -22,7 +22,7 @@ FILE: localFunctionsHiding.kt
         }
 
         local final fun R|A|.transformX(): R|kotlin/Int| {
-            ^transformX this@R|/A|.R|/A.x|.R|<local>/transform|()
+            ^transformX this@R|<local>/transformX|.R|/A.x|.R|<local>/transform|()
         }
 
         lval y: R|kotlin/Int| = Int(1)

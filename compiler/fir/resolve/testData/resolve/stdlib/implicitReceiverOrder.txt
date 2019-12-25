@@ -30,16 +30,16 @@ FILE: implicitReceiverOrder.kt
     public final fun test(a: R|A|, b: R|B|): R|kotlin/Unit| {
         R|kotlin/with|<R|B|, R|kotlin/Int|>(R|<local>/b|, <L> = with@fun R|B|.<anonymous>(): R|kotlin/Int| <kind=EXACTLY_ONCE>  {
             R|kotlin/with|<R|A|, R|kotlin/Int|>(R|<local>/a|, <L> = with@fun R|A|.<anonymous>(): R|kotlin/Int| <kind=EXACTLY_ONCE>  {
-                this@R|/A|.R|/A.foo|()
-                (this@R|/B|, this@R|special/anonymous|).R|/B.bar|()
+                this@R|special/anonymous|.R|/A.foo|()
+                this@R|special/anonymous|.R|/B.bar|()
             }
             )
         }
         )
         R|kotlin/with|<R|A|, R|kotlin/Int|>(R|<local>/a|, <L> = with@fun R|A|.<anonymous>(): R|kotlin/Int| <kind=EXACTLY_ONCE>  {
             R|kotlin/with|<R|B|, R|kotlin/Int|>(R|<local>/b|, <L> = with@fun R|B|.<anonymous>(): R|kotlin/Int| <kind=EXACTLY_ONCE>  {
-                this@R|/B|.R|/B.foo|()
-                (this@R|/A|, this@R|special/anonymous|).R|/A.bar|()
+                this@R|special/anonymous|.R|/B.foo|()
+                this@R|special/anonymous|.R|/A.bar|()
             }
             )
         }

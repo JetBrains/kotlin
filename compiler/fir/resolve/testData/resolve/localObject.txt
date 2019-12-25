@@ -45,7 +45,7 @@ FILE: localObject.kt
 
                 }
 
-                this@R|/TestProperty|.F|/TestProperty.x| = R|<local>/value|
+                F|/TestProperty.x| = R|<local>/value|
             }
 
         public final val y: R|kotlin/Int|

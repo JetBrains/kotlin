@@ -187,7 +187,7 @@ FILE fqName:<root> fileName:/floatingPointEquals.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test1fr (x: kotlin.Float): kotlin.Boolean declared in <root>'
         CALL 'public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any' type=kotlin.Boolean origin=null
-          $this: GET_VAR '<this>: kotlin.Any declared in kotlin.Any' type=kotlin.Any origin=null
+          $this: GET_VAR '<this>: kotlin.Float declared in <root>.test1fr' type=kotlin.Float origin=null
           other: GET_VAR 'x: kotlin.Float declared in <root>.test1fr' type=kotlin.Float origin=null
   FUN name:test2fr visibility:public modality:FINAL <> ($receiver:kotlin.Float, x:kotlin.Float?) returnType:kotlin.Boolean
     $receiver: VALUE_PARAMETER name:<this> type:kotlin.Float
@@ -195,7 +195,7 @@ FILE fqName:<root> fileName:/floatingPointEquals.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test2fr (x: kotlin.Float?): kotlin.Boolean declared in <root>'
         CALL 'public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any' type=kotlin.Boolean origin=null
-          $this: GET_VAR '<this>: kotlin.Any declared in kotlin.Any' type=kotlin.Any origin=null
+          $this: GET_VAR '<this>: kotlin.Float declared in <root>.test2fr' type=kotlin.Float origin=null
           other: GET_VAR 'x: kotlin.Float? declared in <root>.test2fr' type=kotlin.Float? origin=null
   FUN name:test3fr visibility:public modality:FINAL <> ($receiver:kotlin.Float, x:kotlin.Any) returnType:kotlin.Boolean
     $receiver: VALUE_PARAMETER name:<this> type:kotlin.Float
@@ -203,7 +203,7 @@ FILE fqName:<root> fileName:/floatingPointEquals.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test3fr (x: kotlin.Any): kotlin.Boolean declared in <root>'
         CALL 'public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any' type=kotlin.Boolean origin=null
-          $this: GET_VAR '<this>: kotlin.Any declared in kotlin.Any' type=kotlin.Any origin=null
+          $this: GET_VAR '<this>: kotlin.Float declared in <root>.test3fr' type=kotlin.Float origin=null
           other: GET_VAR 'x: kotlin.Any declared in <root>.test3fr' type=kotlin.Any origin=null
   FUN name:test4fr visibility:public modality:FINAL <> ($receiver:kotlin.Float, x:kotlin.Number) returnType:kotlin.Boolean
     $receiver: VALUE_PARAMETER name:<this> type:kotlin.Float
@@ -211,7 +211,7 @@ FILE fqName:<root> fileName:/floatingPointEquals.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test4fr (x: kotlin.Number): kotlin.Boolean declared in <root>'
         CALL 'public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any' type=kotlin.Boolean origin=null
-          $this: GET_VAR '<this>: kotlin.Any declared in kotlin.Any' type=kotlin.Any origin=null
+          $this: GET_VAR '<this>: kotlin.Float declared in <root>.test4fr' type=kotlin.Float origin=null
           other: GET_VAR 'x: kotlin.Number declared in <root>.test4fr' type=kotlin.Number origin=null
   FUN name:test5fr visibility:public modality:FINAL <> ($receiver:kotlin.Float, x:kotlin.Any) returnType:kotlin.Boolean
     $receiver: VALUE_PARAMETER name:<this> type:kotlin.Float
@@ -223,7 +223,7 @@ FILE fqName:<root> fileName:/floatingPointEquals.kt
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
               GET_VAR 'x: kotlin.Any declared in <root>.test5fr' type=kotlin.Any origin=null
             then: CALL 'public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any' type=kotlin.Boolean origin=null
-              $this: GET_VAR '<this>: kotlin.Any declared in kotlin.Any' type=kotlin.Any origin=null
+              $this: GET_VAR '<this>: kotlin.Float declared in <root>.test5fr' type=kotlin.Float origin=null
               other: GET_VAR 'x: kotlin.Any declared in <root>.test5fr' type=kotlin.Float origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
@@ -238,7 +238,7 @@ FILE fqName:<root> fileName:/floatingPointEquals.kt
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
               GET_VAR 'x: kotlin.Any declared in <root>.test6fr' type=kotlin.Any origin=null
             then: CALL 'public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any' type=kotlin.Boolean origin=null
-              $this: GET_VAR '<this>: kotlin.Any declared in kotlin.Any' type=kotlin.Any origin=null
+              $this: GET_VAR '<this>: kotlin.Float declared in <root>.test6fr' type=kotlin.Float origin=null
               other: GET_VAR 'x: kotlin.Any declared in <root>.test6fr' type=kotlin.Double origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true

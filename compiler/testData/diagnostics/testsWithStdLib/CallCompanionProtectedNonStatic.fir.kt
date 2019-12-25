@@ -5,7 +5,7 @@ open class VeryBase {
 open class Base {
     protected fun foo() { 
         bar() // Ok
-        <!UNRESOLVED_REFERENCE!>baz<!>() // Ok
+        <!INAPPLICABLE_CANDIDATE!>baz<!>() // Ok
     }
 
     inner class Inner {
@@ -13,7 +13,7 @@ open class Base {
             foo() // Ok
             bar() // Ok
             gav() // Ok
-            <!UNRESOLVED_REFERENCE!>baz<!>() // Ok
+            <!INAPPLICABLE_CANDIDATE!>baz<!>() // Ok
         }
     }
 
@@ -22,7 +22,7 @@ open class Base {
             foo() // Ok
             bar() // Ok
             gav() // Ok
-            <!UNRESOLVED_REFERENCE!>baz<!>() // Ok
+            <!INAPPLICABLE_CANDIDATE!>baz<!>() // Ok
         }
     }
     
@@ -48,7 +48,7 @@ class Derived : Base() {
         foo() // Ok
         <!INAPPLICABLE_CANDIDATE!>gav<!>() // Ok
         <!INAPPLICABLE_CANDIDATE!>bar<!>()
-        <!UNRESOLVED_REFERENCE!>baz<!>()
+        <!INAPPLICABLE_CANDIDATE!>baz<!>()
         prop = 0
     }
 
@@ -57,7 +57,7 @@ class Derived : Base() {
             foo() // Ok
             <!INAPPLICABLE_CANDIDATE!>gav<!>() // Ok
             <!INAPPLICABLE_CANDIDATE!>bar<!>()
-            <!UNRESOLVED_REFERENCE!>baz<!>()
+            <!INAPPLICABLE_CANDIDATE!>baz<!>()
             prop = 0
         }
     }
@@ -66,7 +66,7 @@ class Derived : Base() {
         fun test2() {
             <!INAPPLICABLE_CANDIDATE!>gav<!>() // Ok
             <!INAPPLICABLE_CANDIDATE!>bar<!>()
-            <!UNRESOLVED_REFERENCE!>baz<!>()
+            <!INAPPLICABLE_CANDIDATE!>baz<!>()
             prop = 0
         }
     }

@@ -11,8 +11,8 @@ FILE: first.kt
 
         public final fun baz(): R|kotlin/Unit| {
             this@R|/Private|.R|/Private.bar|()
-            R|/Private.Nested.Nested|()
-            this@R|/Private.Companion|.R|/Private.Companion.fromCompanion|()
+            this@R|/Private|.R|/Private.Nested.Nested|()
+            R|/Private.Companion.fromCompanion|()
             Q|Private.NotCompanion|.<Inapplicable(HIDDEN): [/Private.NotCompanion.foo]>#()
         }
 
@@ -23,7 +23,7 @@ FILE: first.kt
 
             public final fun foo(): R|kotlin/Unit| {
                 this@R|/Private|.R|/Private.bar|()
-                this@R|/Private.Companion|.R|/Private.Companion.fromCompanion|()
+                R|/Private.Companion.fromCompanion|()
                 Q|Private.NotCompanion|.<Inapplicable(HIDDEN): [/Private.NotCompanion.foo]>#()
             }
 
@@ -35,7 +35,7 @@ FILE: first.kt
             }
 
             public final fun foo(): R|kotlin/Unit| {
-                this@R|/Private.Companion|.R|/Private.Companion.fromCompanion|()
+                R|/Private.Companion.fromCompanion|()
                 Q|Private.NotCompanion|.<Inapplicable(HIDDEN): [/Private.NotCompanion.foo]>#()
             }
 
@@ -72,7 +72,7 @@ FILE: first.kt
 
             public final fun baz(): R|kotlin/Unit| {
                 R|/Local.bar|()
-                R|/Local.Inner.Inner|()
+                this@R|/Local|.R|/Local.Inner.Inner|()
             }
 
             local final inner class Inner : R|kotlin/Any| {

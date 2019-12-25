@@ -16,8 +16,8 @@ FILE: K2.kt
         }
 
         public final fun bar(): R|kotlin/Unit| {
-            this@R|/KFirst|.R|FakeOverride</KFirst.foo: R|kotlin/Int|>|(Int(1))
-            this@R|/J1|.R|/J1.baz|()
+            this@R|/K2|.R|FakeOverride</KFirst.foo: R|kotlin/Int|>|(Int(1))
+            this@R|/K2|.R|/J1.baz|()
         }
 
     }

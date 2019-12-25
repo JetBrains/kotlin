@@ -77,7 +77,7 @@ digraph implicitReceivers_kt {
         26 [label="Enter block"];
         27 [label="Access variable this@R|/test_1|"];
         28 [label="Function call: this@R|/test_1|.R|/A.foo|()"];
-        29 [label="Function call: this@R|/A|.R|/A.foo|()"];
+        29 [label="Function call: this@R|/test_1|.R|/A.foo|()"];
         30 [label="Exit block"];
       }
       31 [label="Exit when branch result"];
@@ -140,7 +140,7 @@ digraph implicitReceivers_kt {
         46 [label="Enter block"];
         47 [label="Access variable this@R|/test_2|"];
         48 [label="Function call: this@R|/test_2|.R|/A.foo|()"];
-        49 [label="Function call: this@R|/A|.R|/A.foo|()"];
+        49 [label="Function call: this@R|/test_2|.R|/A.foo|()"];
         50 [label="Exit block"];
       }
       51 [label="Exit when branch result"];
@@ -208,29 +208,29 @@ digraph implicitReceivers_kt {
           72 [label="Type operator: this@wb as A"];
           73 [label="Access variable this@R|special/anonymous|"];
           74 [label="Function call: this@R|special/anonymous|.R|/A.foo|()"];
-          75 [label="Function call: this@R|/A|.R|/A.foo|()"];
+          75 [label="Function call: this@R|special/anonymous|.R|/A.foo|()"];
           76 [label="Exit function anonymousFunction"];
         }
         77 [label="Function call: R|kotlin/with|<R|kotlin/Any|, R|kotlin/Unit|>(R|<local>/c|, <L> = wc@fun R|kotlin/Any|.<anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
     (this@R|special/anonymous| as R|A|)
     this@R|special/anonymous|.R|/A.foo|()
-    this@R|/A|.R|/A.foo|()
+    this@R|special/anonymous|.R|/A.foo|()
 }
 )"];
         78 [label="Access variable this@R|special/anonymous|"];
         79 [label="Function call: this@R|special/anonymous|.R|/A.foo|()"];
-        80 [label="Function call: this@R|/A|.R|/A.foo|()"];
+        80 [label="Function call: this@R|special/anonymous|.R|/A.foo|()"];
         81 [label="Exit function anonymousFunction"];
       }
       82 [label="Function call: R|kotlin/with|<R|kotlin/Any|, R|kotlin/Unit|>(R|<local>/b|, <L> = wb@fun R|kotlin/Any|.<anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
     R|kotlin/with|<R|kotlin/Any|, R|kotlin/Unit|>(R|<local>/c|, <L> = wc@fun R|kotlin/Any|.<anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
         (this@R|special/anonymous| as R|A|)
         this@R|special/anonymous|.R|/A.foo|()
-        this@R|/A|.R|/A.foo|()
+        this@R|special/anonymous|.R|/A.foo|()
     }
     )
     this@R|special/anonymous|.R|/A.foo|()
-    this@R|/A|.R|/A.foo|()
+    this@R|special/anonymous|.R|/A.foo|()
 }
 )"];
       83 [label="Exit function anonymousFunction"];
@@ -240,11 +240,11 @@ digraph implicitReceivers_kt {
         R|kotlin/with|<R|kotlin/Any|, R|kotlin/Unit|>(R|<local>/c|, <L> = wc@fun R|kotlin/Any|.<anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
             (this@R|special/anonymous| as R|A|)
             this@R|special/anonymous|.R|/A.foo|()
-            this@R|/A|.R|/A.foo|()
+            this@R|special/anonymous|.R|/A.foo|()
         }
         )
         this@R|special/anonymous|.R|/A.foo|()
-        this@R|/A|.R|/A.foo|()
+        this@R|special/anonymous|.R|/A.foo|()
     }
     )
 }
@@ -317,10 +317,10 @@ digraph implicitReceivers_kt {
             104 [label="Enter block"];
             105 [label="Access variable this@R|/test_4|"];
             106 [label="Function call: this@R|/test_4|.R|/A.foo|()"];
-            107 [label="Function call: this@R|/A|.R|/A.foo|()"];
+            107 [label="Function call: this@R|/test_4|.R|/A.foo|()"];
             108 [label="Access variable this@R|/test_4|"];
             109 [label="Function call: this@R|/test_4|.R|/B.bar|()"];
-            110 [label="Function call: this@R|/B|.R|/B.bar|()"];
+            110 [label="Function call: this@R|/test_4|.R|/B.bar|()"];
             111 [label="Exit block"];
           }
           112 [label="Exit when branch result"];
@@ -333,7 +333,7 @@ digraph implicitReceivers_kt {
             117 [label="Function call: <Unresolved name: bar>#()"];
             118 [label="Access variable this@R|/test_4|"];
             119 [label="Function call: this@R|/test_4|.R|/A.foo|()"];
-            120 [label="Function call: this@R|/A|.R|/A.foo|()"];
+            120 [label="Function call: this@R|/test_4|.R|/A.foo|()"];
             121 [label="Exit block"];
           }
           122 [label="Exit when branch result"];
@@ -477,10 +477,10 @@ digraph implicitReceivers_kt {
     }
     172 [label="Jump: ^test_5 when () {
     (this@R|/test_5| is R|kotlin/collections/List<*>|) ->  {
-        this@R|kotlin/collections/List|.R|kotlin/collections/List.size|
+        this@R|/test_5|.R|kotlin/collections/List.size|
     }
     (this@R|/test_5| is R|kotlin/String|) ->  {
-        this@R|kotlin/String|.R|kotlin/String.length|
+        this@R|/test_5|.R|kotlin/String.length|
     }
     else ->  {
         Int(0)

@@ -24,11 +24,11 @@ FILE: complex.kt
             ==(this@R|/closeFinally|, Null(null)) ->  {
             }
             ==(R|<local>/cause|, Null(null)) ->  {
-                this@R|/AutoCloseable|.R|/AutoCloseable.close|()
+                this@R|/closeFinally|.R|/AutoCloseable.close|()
             }
             else ->  {
                 try {
-                    this@R|/AutoCloseable|.R|/AutoCloseable.close|()
+                    this@R|/closeFinally|.R|/AutoCloseable.close|()
                 }
                 catch (closeException: R|kotlin/Throwable|) {
                     R|<local>/cause|.R|kotlin/addSuppressed|(R|<local>/closeException|)

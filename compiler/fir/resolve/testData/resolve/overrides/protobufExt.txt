@@ -18,7 +18,7 @@ FILE: protobufExt.kt
 
     }
     public final fun <M : R|Message<M>|, T> R|Message<M>|.extF(e: R|Ext<M, T>|): R|T| {
-        ^extF this@R|/Message|.R|FakeOverride</Message.ext: R|T|>|<R|T|>(R|<local>/e|)
+        ^extF this@R|/extF|.R|FakeOverride</Message.ext: R|T|>|<R|T|>(R|<local>/e|)
     }
     public final fun foo(m: R|MyMessage|, e: R|MyExt|): R|kotlin/Unit| {
         R|<local>/m|.R|FakeOverride</Message.ext: R|T|>|<R|kotlin/String|>(R|<local>/e|)

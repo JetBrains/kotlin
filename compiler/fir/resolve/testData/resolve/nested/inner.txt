@@ -10,7 +10,7 @@ FILE: inner.kt
         }
 
         public final fun bar(): R|kotlin/Unit| {
-            lval i: R|Owner.Inner| = R|/Owner.Inner.Inner|()
+            lval i: R|Owner.Inner| = this@R|/Owner|.R|/Owner.Inner.Inner|()
             R|<local>/i|.R|/Owner.Inner.baz|()
         }
 

@@ -10,5 +10,5 @@ FILE: a.kt
     }
 FILE: b.kt
     public final fun bar(): R|kotlin/Unit| {
-        this@R|a/A|.R|a/A.foo|()
+        R|a/A.foo|()
     }

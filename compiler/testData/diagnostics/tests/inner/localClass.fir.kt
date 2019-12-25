@@ -3,10 +3,10 @@ class Outer {
         if (outerState > 0) return outerState
         
         class Local {
-            val localState = <!UNRESOLVED_REFERENCE!>outerState<!>
+            val localState = outerState
             
             inner class LocalInner {
-                val o = <!UNRESOLVED_REFERENCE!>outerState<!>
+                val o = outerState
                 val l = localState
             }
         }

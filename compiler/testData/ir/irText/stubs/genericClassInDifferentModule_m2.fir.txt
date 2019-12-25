@@ -16,7 +16,7 @@ FILE fqName:<root> fileName:/genericClassInDifferentModule_m2.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun foo <Y> (y: Y of <root>.Derived1.foo): T of <root>.Derived1 declared in <root>.Derived1'
           CALL 'public final fun <get-x> (): T of <root>.Derived1 declared in <root>.Base' type=T of <root>.Derived1 origin=null
-            $this: GET_VAR '<this>: <root>.Base declared in <root>.Base' type=<root>.Base<*> origin=null
+            $this: GET_VAR '<this>: <root>.Derived1 declared in <root>.Derived1' type=<root>.Derived1<T of <root>.Derived1> origin=null
     PROPERTY name:bar visibility:public modality:FINAL [var]
       FIELD PROPERTY_BACKING_FIELD name:bar type:T of <root>.Derived1 visibility:private
         EXPRESSION_BODY

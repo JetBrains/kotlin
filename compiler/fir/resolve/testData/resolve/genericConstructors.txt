@@ -30,7 +30,7 @@ FILE: genericConstructors.kt
         }
 
         public final fun bar(): R|kotlin/Unit| {
-            this@R|/B|.R|FakeOverride</B.a: R|A<kotlin/String>|>|.R|FakeOverride</A.foo: R|kotlin/Unit|>|(String())
+            this@R|/C|.R|FakeOverride</B.a: R|A<kotlin/String>|>|.R|FakeOverride</A.foo: R|kotlin/Unit|>|(String())
         }
 
     }

@@ -151,7 +151,7 @@ FILE fqName:<root> fileName:/floatingPointCompareTo.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test1fr (x: kotlin.Float): kotlin.Int declared in <root>'
         CALL 'public open fun compareTo (other: kotlin.Float): kotlin.Int [operator] declared in kotlin.Float' type=kotlin.Int origin=null
-          $this: GET_VAR '<this>: kotlin.Float declared in kotlin.Float' type=kotlin.Float origin=null
+          $this: GET_VAR '<this>: kotlin.Float declared in <root>.test1fr' type=kotlin.Float origin=null
           other: GET_VAR 'x: kotlin.Float declared in <root>.test1fr' type=kotlin.Float origin=null
   FUN name:test2fr visibility:public modality:FINAL <> ($receiver:kotlin.Float, x:kotlin.Any) returnType:kotlin.Boolean
     $receiver: VALUE_PARAMETER name:<this> type:kotlin.Float
@@ -164,7 +164,7 @@ FILE fqName:<root> fileName:/floatingPointCompareTo.kt
               GET_VAR 'x: kotlin.Any declared in <root>.test2fr' type=kotlin.Any origin=null
             then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
               arg0: CALL 'public open fun compareTo (other: kotlin.Float): kotlin.Int [operator] declared in kotlin.Float' type=kotlin.Int origin=null
-                $this: GET_VAR '<this>: kotlin.Float declared in kotlin.Float' type=kotlin.Float origin=null
+                $this: GET_VAR '<this>: kotlin.Float declared in <root>.test2fr' type=kotlin.Float origin=null
                 other: GET_VAR 'x: kotlin.Any declared in <root>.test2fr' type=kotlin.Float origin=null
               arg1: CONST Int type=kotlin.Int value=0
           BRANCH
@@ -181,7 +181,7 @@ FILE fqName:<root> fileName:/floatingPointCompareTo.kt
               GET_VAR 'x: kotlin.Any declared in <root>.test3fr' type=kotlin.Any origin=null
             then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
               arg0: CALL 'public final fun compareTo (other: kotlin.Double): kotlin.Int [operator] declared in kotlin.Float' type=kotlin.Int origin=null
-                $this: GET_VAR '<this>: kotlin.Float declared in kotlin.Float' type=kotlin.Float origin=null
+                $this: GET_VAR '<this>: kotlin.Float declared in <root>.test3fr' type=kotlin.Float origin=null
                 other: GET_VAR 'x: kotlin.Any declared in <root>.test3fr' type=kotlin.Double origin=null
               arg1: CONST Int type=kotlin.Int value=0
           BRANCH

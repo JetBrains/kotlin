@@ -25,8 +25,8 @@ FILE: K2.kt
         }
 
         public final fun main(): R|kotlin/Unit| {
-            this@R|/KotlinOuter|.R|/KotlinOuter.bar|()
-            this@R|/J1|.R|/J1.baz|()
+            this@R|/K2|.R|/KotlinOuter.bar|()
+            this@R|/K2|.R|/J1.baz|()
         }
 
         public final inner class K3 : R|J1.J2| {
@@ -35,10 +35,10 @@ FILE: K2.kt
             }
 
             public final fun main(): R|kotlin/Unit| {
-                this@R|/KotlinOuter.KotlinInner|.R|/KotlinOuter.KotlinInner.foo|()
-                this@R|/J1.J2|.R|/J1.J2.bazbaz|()
-                this@R|/KotlinOuter|.R|/KotlinOuter.bar|()
-                this@R|/J1|.R|/J1.baz|()
+                this@R|/K2.K3|.R|/KotlinOuter.KotlinInner.foo|()
+                this@R|/K2.K3|.R|/J1.J2.bazbaz|()
+                this@R|/K2|.R|/KotlinOuter.bar|()
+                this@R|/K2|.R|/J1.baz|()
             }
 
         }

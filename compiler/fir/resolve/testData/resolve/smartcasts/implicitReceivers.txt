@@ -23,7 +23,7 @@ FILE: implicitReceivers.kt
         when () {
             (this@R|/test_1| is R|A|) ->  {
                 this@R|/test_1|.R|/A.foo|()
-                this@R|/A|.R|/A.foo|()
+                this@R|/test_1|.R|/A.foo|()
             }
             else ->  {
                 this@R|/test_1|.<Unresolved name: foo>#()
@@ -42,7 +42,7 @@ FILE: implicitReceivers.kt
             }
             else ->  {
                 this@R|/test_2|.R|/A.foo|()
-                this@R|/A|.R|/A.foo|()
+                this@R|/test_2|.R|/A.foo|()
             }
         }
 
@@ -55,11 +55,11 @@ FILE: implicitReceivers.kt
                 R|kotlin/with|<R|kotlin/Any|, R|kotlin/Unit|>(R|<local>/c|, <L> = wc@fun R|kotlin/Any|.<anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
                     (this@R|special/anonymous| as R|A|)
                     this@R|special/anonymous|.R|/A.foo|()
-                    this@R|/A|.R|/A.foo|()
+                    this@R|special/anonymous|.R|/A.foo|()
                 }
                 )
                 this@R|special/anonymous|.R|/A.foo|()
-                this@R|/A|.R|/A.foo|()
+                this@R|special/anonymous|.R|/A.foo|()
             }
             )
         }
@@ -79,13 +79,13 @@ FILE: implicitReceivers.kt
                         this@R|/test_4|.<Unresolved name: bar>#()
                         <Unresolved name: bar>#()
                         this@R|/test_4|.R|/A.foo|()
-                        this@R|/A|.R|/A.foo|()
+                        this@R|/test_4|.R|/A.foo|()
                     }
                     else ->  {
                         this@R|/test_4|.R|/A.foo|()
-                        this@R|/A|.R|/A.foo|()
+                        this@R|/test_4|.R|/A.foo|()
                         this@R|/test_4|.R|/B.bar|()
-                        this@R|/B|.R|/B.bar|()
+                        this@R|/test_4|.R|/B.bar|()
                     }
                 }
 
@@ -100,10 +100,10 @@ FILE: implicitReceivers.kt
     public final fun R|kotlin/Any|.test_5(): R|kotlin/Int| {
         ^test_5 when () {
             (this@R|/test_5| is R|kotlin/collections/List<*>|) ->  {
-                this@R|kotlin/collections/List|.R|kotlin/collections/List.size|
+                this@R|/test_5|.R|kotlin/collections/List.size|
             }
             (this@R|/test_5| is R|kotlin/String|) ->  {
-                this@R|kotlin/String|.R|kotlin/String.length|
+                this@R|/test_5|.R|kotlin/String.length|
             }
             else ->  {
                 Int(0)
@@ -113,7 +113,7 @@ FILE: implicitReceivers.kt
     }
     public final fun R|kotlin/Any|.test_6(): R|kotlin/Unit| {
         (this@R|/test_6| as R|kotlin/collections/List<*>|)
-        this@R|kotlin/collections/List|.R|kotlin/collections/List.size|
+        this@R|/test_6|.R|kotlin/collections/List.size|
         (this@R|/test_6| as R|kotlin/String|)
-        this@R|kotlin/String|.R|kotlin/String.length|
+        this@R|/test_6|.R|kotlin/String.length|
     }

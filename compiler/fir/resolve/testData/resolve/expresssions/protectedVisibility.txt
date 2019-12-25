@@ -9,7 +9,7 @@ FILE: protectedVisibility.kt
 
         public final fun baz(): R|kotlin/Unit| {
             this@R|/Protected|.R|/Protected.bar|()
-            R|/Protected.Nested.Nested|().R|/Protected.Nested.foo|()
+            this@R|/Protected|.R|/Protected.Nested.Nested|().R|/Protected.Nested.foo|()
         }
 
         public final inner class Inner : R|kotlin/Any| {
@@ -57,10 +57,10 @@ FILE: protectedVisibility.kt
         }
 
         public final fun foo(): R|kotlin/Unit| {
-            this@R|/Protected|.R|/Protected.bar|()
-            R|/Protected.Nested.Nested|().R|/Protected.Nested.foo|()
-            R|/Protected.Nested.Nested|().<Inapplicable(HIDDEN): [/Protected.Nested.bar]>#()
-            this@R|/Protected.Companion|.R|/Protected.Companion.fromCompanion|()
+            this@R|/Derived|.R|/Protected.bar|()
+            this@R|/Derived|.R|/Protected.Nested.Nested|().R|/Protected.Nested.foo|()
+            this@R|/Derived|.R|/Protected.Nested.Nested|().<Inapplicable(HIDDEN): [/Protected.Nested.bar]>#()
+            R|/Protected.Companion.fromCompanion|()
             <Inapplicable(HIDDEN): [/Protected.Companion.protectedFromCompanion]>#()
         }
 
@@ -70,7 +70,7 @@ FILE: protectedVisibility.kt
             }
 
             public final fun use(): R|kotlin/Unit| {
-                this@R|/Protected.Nested|.R|/Protected.Nested.bar|()
+                this@R|/Derived.NestedDerived|.R|/Protected.Nested.bar|()
             }
 
         }

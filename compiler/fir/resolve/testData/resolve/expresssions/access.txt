@@ -25,7 +25,7 @@ FILE: access.kt
             public get(): R|kotlin/String|
 
         public final fun R|Foo|.abc(): R|kotlin/Int| {
-            ^abc this@R|/Foo|.R|/Foo.x|
+            ^abc this@R|/Bar.abc|.R|/Foo.x|
         }
 
         public final fun bar(): R|Bar| {
@@ -37,7 +37,7 @@ FILE: access.kt
         }
 
         public final fun R|Foo|.check(): <ERROR TYPE REF: Inapplicable(INAPPLICABLE): [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]> {
-            ^check this@R|/Foo|.R|/Foo.abc|().<Inapplicable(INAPPLICABLE): [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]>#(this@R|/Bar|.R|/Bar.bar|())
+            ^check this@R|/Bar.check|.R|/Foo.abc|().<Inapplicable(INAPPLICABLE): [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]>#(this@R|/Bar|.R|/Bar.bar|())
         }
 
         public final fun R|Foo|.check2(): R|kotlin/String| {
@@ -46,7 +46,7 @@ FILE: access.kt
 
     }
     public final fun R|Foo|.ext(): R|kotlin/Int| {
-        ^ext this@R|/Foo|.R|/Foo.x|
+        ^ext this@R|/ext|.R|/Foo.x|
     }
     public final fun bar(): R|kotlin/Unit| {
     }

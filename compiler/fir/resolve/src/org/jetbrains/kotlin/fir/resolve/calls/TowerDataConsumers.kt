@@ -65,7 +65,7 @@ class QualifiedReceiverTowerDataConsumer<T : AbstractFirBasedSymbol<*>>(
     private inner class TowerLevelProcessorImpl(val group: Int) : TowerScopeLevel.TowerScopeLevelProcessor<T> {
         override fun consumeCandidate(
             symbol: T,
-            dispatchReceiverValue: ClassDispatchReceiverValue?,
+            dispatchReceiverValue: ReceiverValue?,
             implicitExtensionReceiverValue: ImplicitReceiverValue<*>?,
             builtInExtensionFunctionReceiverValue: ReceiverValue?
         ): ProcessorAction {
@@ -198,7 +198,7 @@ class ExplicitReceiverTowerDataConsumer<T : AbstractFirBasedSymbol<*>>(
     private inner class EmptyKindTowerProcessor(val group: Int) : TowerScopeLevel.TowerScopeLevelProcessor<T> {
         override fun consumeCandidate(
             symbol: T,
-            dispatchReceiverValue: ClassDispatchReceiverValue?,
+            dispatchReceiverValue: ReceiverValue?,
             implicitExtensionReceiverValue: ImplicitReceiverValue<*>?,
             builtInExtensionFunctionReceiverValue: ReceiverValue?
         ): ProcessorAction {
@@ -219,7 +219,7 @@ class ExplicitReceiverTowerDataConsumer<T : AbstractFirBasedSymbol<*>>(
     private inner class TowerLevelKindTowerProcessor(val group: Int) : TowerScopeLevel.TowerScopeLevelProcessor<T> {
         override fun consumeCandidate(
             symbol: T,
-            dispatchReceiverValue: ClassDispatchReceiverValue?,
+            dispatchReceiverValue: ReceiverValue?,
             implicitExtensionReceiverValue: ImplicitReceiverValue<*>?,
             builtInExtensionFunctionReceiverValue: ReceiverValue?
         ): ProcessorAction {
@@ -291,7 +291,7 @@ class NoExplicitReceiverTowerDataConsumer<T : AbstractFirBasedSymbol<*>>(
     private inner class TowerLevelProcessorImpl(val group: Int) : TowerScopeLevel.TowerScopeLevelProcessor<T> {
         override fun consumeCandidate(
             symbol: T,
-            dispatchReceiverValue: ClassDispatchReceiverValue?,
+            dispatchReceiverValue: ReceiverValue?,
             implicitExtensionReceiverValue: ImplicitReceiverValue<*>?,
             builtInExtensionFunctionReceiverValue: ReceiverValue?
         ): ProcessorAction {

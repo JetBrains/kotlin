@@ -5,7 +5,7 @@ FILE: test.kt
         }
 
         public final override fun getLookupString(): R|kotlin/String| {
-            ^getLookupString this@R|/Decorator|.R|/Decorator.delegate|.R|/LookupElement.lookupString|
+            ^getLookupString this@R|/MyDecorator|.R|/Decorator.delegate|.R|/LookupElement.lookupString|
         }
 
     }

@@ -59,7 +59,7 @@ digraph implicitReceiverAsWhenSubject_kt {
         this@R|/test_1|.R|kotlin/collections/List.size|
     }
     ($subj$ is R|kotlin/String|) ->  {
-        this@R|kotlin/String|.R|kotlin/String.length|
+        this@R|/test_1|.R|kotlin/String.length|
     }
     else ->  {
         Int(0)
@@ -165,7 +165,7 @@ digraph implicitReceiverAsWhenSubject_kt {
     }
     ($subj$ is R|kotlin/String|) ->  {
         R|<local>/x|.R|kotlin/String.length|
-        this@R|kotlin/String|.R|kotlin/String.length|
+        this@R|/test_2|.R|kotlin/String.length|
     }
     else ->  {
         Int(0)

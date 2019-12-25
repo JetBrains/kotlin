@@ -484,7 +484,7 @@ FILE fqName:<root> fileName:/enum.kt
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:z type:kotlin.Int visibility:private [final]' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.TestEnum4.TEST2 declared in <root>.TestEnum4.TEST2' type=<root>.TestEnum4.TEST2 origin=null
             value: CALL 'public final fun <get-x> (): kotlin.Int declared in <root>.TestEnum4' type=kotlin.Int origin=null
-              $this: GET_VAR '<this>: <root>.TestEnum4 declared in <root>.TestEnum4' type=<root>.TestEnum4 origin=null
+              $this: GET_VAR '<this>: <root>.TestEnum4.TEST2 declared in <root>.TestEnum4.TEST2' type=<root>.TestEnum4.TEST2 origin=null
       FUN name:foo visibility:public modality:FINAL <> ($this:<root>.TestEnum4.TEST2) returnType:kotlin.Unit
         $this: VALUE_PARAMETER name:<this> type:<root>.TestEnum4.TEST2
         BLOCK_BODY

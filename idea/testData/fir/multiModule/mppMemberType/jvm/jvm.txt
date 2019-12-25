@@ -18,8 +18,8 @@ FILE: jvm.kt
         }
 
         public final fun useMember(): R|kotlin/Unit| {
-            this@R|/MyList|.R|/MyList.get|(Int(1))
-            this@R|/MyList|.R|/MyList.set|(Int(2), Int(3))
+            this@R|/DerivedList|.R|/MyList.get|(Int(1))
+            this@R|/DerivedList|.R|/MyList.set|(Int(2), Int(3))
         }
 
     }
@@ -33,8 +33,8 @@ FILE: jvm.kt
         }
 
         public final fun use(): R|kotlin/Unit| {
-            this@R|/Wrapper|.R|/Wrapper.list|.R|/MyList.get|(Int(1))
-            this@R|/Wrapper|.R|/Wrapper.list|.R|/MyList.set|(Int(2), Int(3))
+            this@R|/DerivedWrapper|.R|/Wrapper.list|.R|/MyList.get|(Int(1))
+            this@R|/DerivedWrapper|.R|/Wrapper.list|.R|/MyList.set|(Int(2), Int(3))
         }
 
     }

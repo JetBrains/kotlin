@@ -7,7 +7,7 @@ public class Z {
 
         class Local {
             public inline fun a() {
-                <!UNRESOLVED_REFERENCE!>privateProperty<!>
+                privateProperty
             }
         }
 

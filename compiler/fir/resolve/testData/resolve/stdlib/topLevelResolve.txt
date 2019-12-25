@@ -45,7 +45,7 @@ FILE: topLevelResolve.kt
     }
     public final fun testWith(): R|kotlin/Unit| {
         lval length: R|kotlin/Int| = R|kotlin/with|<R|kotlin/String|, R|kotlin/Int|>(String(), <L> = with@fun R|kotlin/String|.<anonymous>(): R|kotlin/Int| <kind=EXACTLY_ONCE>  {
-            this@R|kotlin/String|.R|kotlin/String.length|
+            this@R|special/anonymous|.R|kotlin/String.length|
         }
         )
         lval indices: R|kotlin/ranges/IntRange| = R|kotlin/with|<R|kotlin/String|, R|kotlin/ranges/IntRange|>(String(), <L> = with@fun R|kotlin/String|.<anonymous>(): R|kotlin/ranges/IntRange| <kind=EXACTLY_ONCE>  {

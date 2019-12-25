@@ -4,6 +4,6 @@ class A() {
     val x = 1
 
     companion object {
-        val y = <!UNRESOLVED_REFERENCE!>x<!>
+        val y = x
     }
 }

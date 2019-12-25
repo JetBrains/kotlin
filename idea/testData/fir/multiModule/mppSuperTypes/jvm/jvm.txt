@@ -28,9 +28,9 @@ FILE: jvm.kt
         }
 
         public final fun test(): R|kotlin/Unit| {
-            this@R|/A|.R|/A.foo|()
-            this@R|/X|.R|/X.bar|()
-            this@R|/Y|.R|/Y.baz|()
+            this@R|/C|.R|/A.foo|()
+            this@R|/C|.R|/X.bar|()
+            this@R|/C|.R|/Y.baz|()
         }
 
     }
@@ -40,9 +40,9 @@ FILE: jvm.kt
         }
 
         public final fun test(): R|kotlin/Unit| {
-            this@R|/A|.R|/A.foo|()
-            this@R|/X|.R|/X.bar|()
-            this@R|/Y|.R|/Y.baz|()
+            this@R|/D|.R|/A.foo|()
+            this@R|/D|.R|/X.bar|()
+            this@R|/D|.R|/Y.baz|()
         }
 
     }

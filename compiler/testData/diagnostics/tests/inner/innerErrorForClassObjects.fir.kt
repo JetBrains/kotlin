@@ -12,8 +12,8 @@ class Test {
         fun more(): InnerClass {
             val b = InnerClass()
 
-            val testVal = <!UNRESOLVED_REFERENCE!>inClass<!>
-            <!UNRESOLVED_REFERENCE!>foo<!>()
+            val testVal = inClass
+            foo()
 
             return b
         }
