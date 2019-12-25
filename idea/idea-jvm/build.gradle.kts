@@ -9,6 +9,7 @@ dependencies {
     compile(project(":compiler:light-classes"))
     compile(project(":compiler:frontend.java"))
     compile(project(":compiler:backend.jvm"))
+    implementation(project(":compiler:ir.tree.impl"))
     compileOnly(intellijDep())
     compileOnly(commonDep("com.google.code.findbugs", "jsr305"))
 

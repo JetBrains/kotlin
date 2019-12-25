@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.util.InfinitePeriodicalTask
 import org.jetbrains.kotlin.idea.util.LongRunningReadTask
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
+import org.jetbrains.kotlin.ir.factories.DefaultIrDeclarationFactory
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.jvm.isJvm
@@ -321,7 +322,7 @@ class KotlinBytecodeToolWindow(private val myProject: Project, private val toolW
                 .generateDeclaredClassFilter(generateClassFilter)
                 .codegenFactory(
                     if (configuration.getBoolean(JVMConfigurationKeys.IR))
-                        JvmIrCodegenFactory(PhaseConfig(jvmPhases))
+                        JvmIrCodegenFactory(PhaseConfig(jvmPhases), DefaultIrDeclarationFactory.createAndRegister())
                     else
                         DefaultCodegenFactory
                 )
