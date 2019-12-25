@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.ir.factories.DefaultIrDeclarationFactory
+import org.jetbrains.kotlin.ir.factories.IrDeclarationFactory
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.psi.KtFile
@@ -69,7 +71,8 @@ fun buildKLib(
     sources: List<String>,
     outputPath: String,
     allDependencies: KotlinLibraryResolveResult,
-    commonSources: List<String>
+    commonSources: List<String>,
+    irDeclarationFactory: IrDeclarationFactory
 ) {
     generateKLib(
         project = environment.project,
@@ -84,7 +87,8 @@ fun buildKLib(
         allDependencies = allDependencies,
         friendDependencies = emptyList(),
         outputKlibPath = outputPath,
-        nopack = true
+        nopack = true,
+        irDeclarationFactory = irDeclarationFactory
     )
 }
 
@@ -99,6 +103,7 @@ private fun listOfKtFilesFrom(paths: List<String>): List<String> {
     }.distinct()
 }
 
+// TODO extract this logic and remove dependency on :compiler:ir.tree.impl
 fun main(args: Array<String>) {
     val inputFiles = mutableListOf<String>()
     var outputPath: String? = null
@@ -131,7 +136,15 @@ fun main(args: Array<String>) {
         dependencies, messageCollectorLogger(MessageCollector.NONE)
     )
 
-    buildKLib(moduleName, listOfKtFilesFrom(inputFiles), outputPath, resolvedLibraries, listOfKtFilesFrom(commonSources))
+
+    buildKLib(
+        moduleName,
+        listOfKtFilesFrom(inputFiles),
+        outputPath,
+        resolvedLibraries,
+        listOfKtFilesFrom(commonSources),
+        DefaultIrDeclarationFactory.createAndRegister()
+    )
 }
 
 // Copied here from `K2JsIrCompiler` instead of reusing in order to avoid circular dependencies between Gradle tasks

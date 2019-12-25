@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsMangler
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata.KlibMetadataIncrementalSerializer
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.factories.DefaultIrDeclarationFactory
 import org.jetbrains.kotlin.ir.factories.IrDeclarationFactory
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.ExpectDeclarationRemover
@@ -96,7 +97,8 @@ fun generateKLib(
     allDependencies: KotlinLibraryResolveResult,
     friendDependencies: List<KotlinLibrary>,
     outputKlibPath: String,
-    nopack: Boolean
+    nopack: Boolean,
+    irDeclarationFactory: IrDeclarationFactory
 ) {
     val incrementalDataProvider = configuration.get(JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER)
 
@@ -129,7 +131,7 @@ fun generateKLib(
 
     val depsDescriptors = ModulesStructure(project, files, configuration, allDependencies, friendDependencies)
 
-    val psi2IrContext = runAnalysisAndPreparePsi2Ir(depsDescriptors)
+    val psi2IrContext = runAnalysisAndPreparePsi2Ir(depsDescriptors, irDeclarationFactory)
 
     val expectDescriptorToSymbol = mutableMapOf<DeclarationDescriptor, IrSymbol>()
 
@@ -183,7 +185,7 @@ fun loadIr(
 ): IrModuleInfo {
     val depsDescriptors = ModulesStructure(project, files, configuration, allDependencies, friendDependencies)
 
-    val psi2IrContext = runAnalysisAndPreparePsi2Ir(depsDescriptors)
+    val psi2IrContext = runAnalysisAndPreparePsi2Ir(depsDescriptors, irDeclarationFactory)
 
     val irBuiltIns = psi2IrContext.irBuiltIns
     val symbolTable = psi2IrContext.symbolTable
@@ -202,11 +204,8 @@ fun loadIr(
     return IrModuleInfo(moduleFragment, deserializedModuleFragments, irBuiltIns, symbolTable, deserializer)
 }
 
-private fun runAnalysisAndPreparePsi2Ir(depsDescriptors: ModulesStructure): GeneratorContext {
+private fun runAnalysisAndPreparePsi2Ir(depsDescriptors: ModulesStructure, irDeclarationFactory: IrDeclarationFactory): GeneratorContext {
     val analysisResult = depsDescriptors.runAnalysis()
-
-    ///
-    val irDeclarationFactory = IrDeclarationFactory.DEFAULT
 
     return GeneratorContext(
         Psi2IrConfiguration(),
