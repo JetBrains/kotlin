@@ -5,6 +5,7 @@
 
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("CollectionsKt")
+@file:UseExperimental(kotlin.experimental.ExperimentalTypeInference::class)
 
 package kotlin.collections
 
@@ -152,6 +153,34 @@ public inline fun <T> MutableList(size: Int, init: (index: Int) -> T): MutableLi
     repeat(size) { index -> list.add(init(index)) }
     return list
 }
+
+/**
+ * Build a new read-only [List] with the [elements][E] from the [builderAction].
+ *
+ * @sample samples.collections.Builders.Lists.buildListSample
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun <E> buildList(@BuilderInference builderAction: MutableList<E>.() -> Unit): List<E> {
+    contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
+    return ArrayList<E>().apply(builderAction)
+}
+
+/**
+ * Build a new read-only [List] with the given [expectedSize] and [elements][E] from the [builderAction].
+ *
+ * @sample samples.collections.Builders.Lists.buildListSample
+ * @throws IllegalArgumentException if the given [expectedSize] is negative.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun <E> buildList(expectedSize: Int, @BuilderInference builderAction: MutableList<E>.() -> Unit): List<E> {
+    contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
+    return ArrayList<E>(expectedSize).apply(builderAction)
+}
+
 
 /**
  * Returns an [IntRange] of the valid indices for this collection.

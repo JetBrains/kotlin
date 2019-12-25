@@ -5,6 +5,7 @@
 
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("MapsKt")
+@file:UseExperimental(kotlin.experimental.ExperimentalTypeInference::class)
 
 package kotlin.collections
 
@@ -123,22 +124,38 @@ public inline fun <K, V> linkedMapOf(): LinkedHashMap<K, V> = LinkedHashMap<K, V
 public fun <K, V> linkedMapOf(vararg pairs: Pair<K, V>): LinkedHashMap<K, V> = pairs.toMap(LinkedHashMap(mapCapacity(pairs.size)))
 
 /**
- * Calculate the initial capacity of a map, based on Guava's com.google.common.collect.Maps approach. This is equivalent
- * to the Collection constructor for HashSet, (c.size()/.75f) + 1, but provides further optimisations for very small or
- * very large sizes, allows support non-collection classes, and provides consistency for all map based class construction.
+ * Build a new read-only [Map] with the [key][K]-[value][V] pairs from the [builderAction] while preserving the insertion order.
+ *
+ * @sample samples.collections.Builders.Maps.buildMapSample
  */
-@PublishedApi
-internal fun mapCapacity(expectedSize: Int): Int {
-    if (expectedSize < 3) {
-        return expectedSize + 1
-    }
-    if (expectedSize < INT_MAX_POWER_OF_TWO) {
-        return expectedSize + expectedSize / 3
-    }
-    return Int.MAX_VALUE // any large value
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun <K, V> buildMap(@BuilderInference builderAction: MutableMap<K, V>.() -> Unit): Map<K, V> {
+    contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
+    return LinkedHashMap<K, V>().apply(builderAction)
 }
 
-private const val INT_MAX_POWER_OF_TWO: Int = Int.MAX_VALUE / 2 + 1
+/**
+ * Build a new read-only [Map] with the given [expectedSize] and [key][K]-[value][V] pairs from the [builderAction] while preserving
+ * the insertion order.
+ *
+ * @sample samples.collections.Builders.Maps.buildMapSample
+ * @throws IllegalArgumentException if the given [expectedSize] is negative.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun <K, V> buildMap(expectedSize: Int, @BuilderInference builderAction: MutableMap<K, V>.() -> Unit): Map<K, V> {
+    contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
+    return LinkedHashMap<K, V>(mapCapacity(expectedSize)).apply(builderAction)
+}
+
+/**
+ * Calculate the initial capacity of a map.
+ */
+@PublishedApi
+internal expect fun mapCapacity(expectedSize: Int): Int
 
 /** Returns `true` if this map is not empty. */
 @kotlin.internal.InlineOnly
