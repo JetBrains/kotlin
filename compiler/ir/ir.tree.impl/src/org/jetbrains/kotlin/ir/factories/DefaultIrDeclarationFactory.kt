@@ -209,4 +209,9 @@ class DefaultIrDeclarationFactory : IrDeclarationFactory {
     override fun createErrorDeclaration(startOffset: Int, endOffset: Int, descriptor: DeclarationDescriptor): IrErrorDeclaration = 
         IrErrorDeclarationImpl(startOffset, endOffset, descriptor)
 
+    companion object {
+        fun createAndRegister(): DefaultIrDeclarationFactory = DefaultIrDeclarationFactory().also {
+            IrDeclarationFactory.registerDefaultIrDeclarationFactory(it)
+        }
+    }
 }
