@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.library.uniqueName
 // TODO: revise the naming scheme to ensure it produces unique names.
 // TODO: do not serialize descriptors of non-exported declarations.
 
-object KonanMangler : KotlinManglerImpl() {
+abstract class AbstractKonanMangler : KotlinManglerImpl() {
 
     override val IrType.isInlined
         get() = this.isInlinedNative()
@@ -62,18 +62,19 @@ object KonanMangler : KotlinManglerImpl() {
         return false
     }
 
-    override val IrFunction.argsPart get() = this.valueParameters.map {
+    override fun IrFunction.valueParamsPart(typeParameterNamer: (IrTypeParameter) -> String): String {
+        return this.valueParameters.map {
 
-        // TODO: there are clashes originating from ObjectiveC interop.
-        // kotlinx.cinterop.ObjCClassOf<T>.create(format: kotlin.String): T defined in platform.Foundation in file Foundation.kt
-        // and
-        // kotlinx.cinterop.ObjCClassOf<T>.create(string: kotlin.String): T defined in platform.Foundation in file Foundation.kt
+            // TODO: there are clashes originating from ObjectiveC interop.
+            // kotlinx.cinterop.ObjCClassOf<T>.create(format: kotlin.String): T defined in platform.Foundation in file Foundation.kt
+            // and
+            // kotlinx.cinterop.ObjCClassOf<T>.create(string: kotlin.String): T defined in platform.Foundation in file Foundation.kt
 
-        val argName =
-                if (this.hasObjCMethodAnnotation || this.hasObjCFactoryAnnotation || this.isObjCClassMethod()) "${it.name}:" else ""
-        "$argName${typeToHashString(it.type)}${if (it.isVararg) "_VarArg" else ""}"
-    }.joinToString(";")
-
+            val argName =
+                    if (this.hasObjCMethodAnnotation || this.hasObjCFactoryAnnotation || this.isObjCClassMethod()) "${it.name}:" else ""
+            "$argName${typeToHashString(it.type, typeParameterNamer)}${if (it.isVararg) "_VarArg" else ""}"
+        }.joinToString(";")
+    }
 
     override val IrFunction.platformSpecificFunctionName: String?
         get() {
@@ -123,6 +124,13 @@ object KonanMangler : KotlinManglerImpl() {
         }
 }
 
+object KonanMangler : AbstractKonanMangler()
+
+object KonanManglerForBE : AbstractKonanMangler() {
+    override fun mangleTypeParameter(typeParameter: IrTypeParameter, typeParameterNamer: (IrTypeParameter) -> String): String =
+            typeParameter.name.asString()
+}
+
 internal val IrClass.writableTypeInfoSymbolName: String
     get() {
         assert (this.isExported())
@@ -138,15 +146,15 @@ internal val IrClass.objectInstanceGetterSymbolName: String
         return "kobjget:$fqNameForIrSerialization"
     }
 
-val IrFunction.functionName get() = with(KonanMangler) { functionName }
+val IrFunction.functionName get() = with(KonanManglerForBE) { functionName }
 
-val IrFunction.symbolName get() = with(KonanMangler) { symbolName }
+val IrFunction.symbolName get() = with(KonanManglerForBE) { symbolName }
 
-val IrField.symbolName get() = with(KonanMangler) { symbolName }
+val IrField.symbolName get() = with(KonanManglerForBE) { symbolName }
 
-val IrClass.typeInfoSymbolName get() = with(KonanMangler) { typeInfoSymbolName }
+val IrClass.typeInfoSymbolName get() = with(KonanManglerForBE) { typeInfoSymbolName }
 
-fun IrDeclaration.isExported() = with(KonanMangler) { isExported() }
+fun IrDeclaration.isExported() = with(KonanManglerForBE) { isExported() }
 
 // TODO: bring here dependencies of this method?
 internal fun RuntimeAware.getLlvmFunctionType(function: IrFunction): LLVMTypeRef {

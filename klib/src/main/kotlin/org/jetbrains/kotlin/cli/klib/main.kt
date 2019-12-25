@@ -17,7 +17,9 @@ import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.PlatformManager
 import org.jetbrains.kotlin.konan.util.DependencyProcessor
 import org.jetbrains.kotlin.library.unpackZippedKonanLibraryTo
-import org.jetbrains.kotlin.konan.utils.KonanFactories.DefaultDeserializedDescriptorFactory
+import org.jetbrains.kotlin.konan.util.KlibMetadataFactories
+import org.jetbrains.kotlin.konan.utils.createKonanBuiltIns
+import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDeserializer
 import org.jetbrains.kotlin.util.Logger
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.konan.library.KonanLibrary
@@ -26,6 +28,8 @@ import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import java.lang.System.out
 import kotlin.system.exitProcess
+
+object KlibFactories : KlibMetadataFactories(::createKonanBuiltIns, DynamicTypeDeserializer)
 
 fun printUsage() {
     println("Usage: klib <command> <library> <options>")
@@ -159,7 +163,7 @@ class Library(val name: String, val requestedRepository: String?, val target: St
         val storageManager = LockBasedStorageManager("klib")
         val library = libraryInRepoOrCurrentDir(repository, name)
         val versionSpec = LanguageVersionSettingsImpl(currentLanguageVersion, currentApiVersion)
-        val module = DefaultDeserializedDescriptorFactory.createDescriptorAndNewBuiltIns(library, versionSpec, storageManager, null)
+        val module = KlibFactories.DefaultDeserializedDescriptorFactory.createDescriptorAndNewBuiltIns(library, versionSpec, storageManager, null)
 
         val defaultModules = mutableListOf<ModuleDescriptorImpl>()
         if (!module.isKonanStdlib()) {
@@ -170,7 +174,7 @@ class Library(val name: String, val requestedRepository: String?, val target: St
                     logger = KlibToolLogger)
             resolver.defaultLinks(false, true, true)
                     .mapTo(defaultModules) {
-                        DefaultDeserializedDescriptorFactory.createDescriptor(
+                        KlibFactories.DefaultDeserializedDescriptorFactory.createDescriptor(
                                 it, versionSpec, storageManager, module.builtIns, null)
                     }
         }

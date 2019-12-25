@@ -31,12 +31,12 @@ import org.jetbrains.kotlin.ir.util.UniqId
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 class KonanIrLinker(
-        currentModule: ModuleDescriptor,
-        logger: LoggingContext,
-        builtIns: IrBuiltIns,
-        symbolTable: SymbolTable,
-        forwardModuleDescriptor: ModuleDescriptor?,
-        exportedDependencies: List<ModuleDescriptor>
+    currentModule: ModuleDescriptor,
+    logger: LoggingContext,
+    builtIns: IrBuiltIns,
+    symbolTable: SymbolTable,
+    forwardModuleDescriptor: ModuleDescriptor?,
+    exportedDependencies: List<ModuleDescriptor>
 ) : KotlinIrLinker(logger, builtIns, symbolTable, exportedDependencies, forwardModuleDescriptor, KonanMangler),
     DescriptorUniqIdAware by DeserializedDescriptorUniqIdAware {
 

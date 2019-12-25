@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.llvm.coverage.CoverageManager
 import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedTypeParameterDescriptor
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.konan.library.KonanLibraryLayout
@@ -57,7 +58,7 @@ import org.jetbrains.kotlin.library.SerializedIrModule
  * Offset for synthetic elements created by lowerings and not attributable to other places in the source code.
  */
 
-internal class SpecialDeclarationsFactory(val context: Context) : KotlinMangler by KonanMangler {
+internal class SpecialDeclarationsFactory(val context: Context) : KotlinMangler by KonanManglerForBE {
     private val enumSpecialDeclarationsFactory by lazy { EnumSpecialDeclarationsFactory(context) }
     private val outerThisFields = mutableMapOf<ClassDescriptor, IrField>()
     private val bridgesDescriptors = mutableMapOf<Pair<IrSimpleFunction, BridgeDirections>, IrSimpleFunction>()
@@ -205,6 +206,8 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     lateinit var objCExport: ObjCExport
 
     lateinit var cAdapterGenerator: CAdapterGenerator
+
+    lateinit var expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>
 
     override val builtIns: KonanBuiltIns by lazy(PUBLICATION) {
         moduleDescriptor.builtIns as KonanBuiltIns

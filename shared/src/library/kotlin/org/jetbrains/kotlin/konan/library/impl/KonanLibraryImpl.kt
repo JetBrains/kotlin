@@ -36,9 +36,14 @@ open class TargetedLibraryImpl(
 
     override val targetList by lazy {
         access.inPlace { it: TargetedKotlinLibraryLayout ->
-            it.targetsDir.listFiles.map {
-                it.name
-            }
+            if (!it.targetsDir.exists)
+                // TODO: We have a choice: either assume it is the CURRENT TARGET
+                //  or a list of ALL KNOWN targets.
+                access.target ?. let { listOf(it.visibleName) } ?: emptyList()
+            else
+                it.targetsDir.listFiles.map {
+                    it.name
+                }
         }
     }
 

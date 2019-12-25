@@ -46,20 +46,20 @@ actual class StringBuilder private constructor (
     actual override fun subSequence(startIndex: Int, endIndex: Int): CharSequence = substring(startIndex, endIndex)
 
     // Of Appenable.
-    actual override fun append(c: Char) : StringBuilder {
+    actual override fun append(value: Char) : StringBuilder {
         ensureExtraCapacity(1)
-        array[_length++] = c
+        array[_length++] = value
         return this
     }
 
-    actual override fun append(csq: CharSequence?): StringBuilder {
+    actual override fun append(value: CharSequence?): StringBuilder {
         // Kotlin/JVM processes null as if the argument was "null" char sequence.
-        val toAppend = csq ?: "null"
+        val toAppend = value ?: "null"
         return append(toAppend, 0, toAppend.length)
     }
 
     @UseExperimental(ExperimentalStdlibApi::class)
-    actual override fun append(csq: CharSequence?, start: Int, end: Int): StringBuilder = this.appendRange(csq, start, end)
+    actual override fun append(value: CharSequence?, startIndex: Int, endIndex: Int): StringBuilder = this.appendRange(value, startIndex, endIndex)
 
     /**
      * Reverses the contents of this string builder and returns this instance.
