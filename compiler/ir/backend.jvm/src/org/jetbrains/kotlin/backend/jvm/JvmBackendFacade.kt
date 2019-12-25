@@ -46,7 +46,8 @@ object JvmBackendFacade {
                         psi2irContext.languageVersionSettings,
                         psi2irContext.symbolTable,
                         psi2irContext.typeTranslator,
-                        psi2irContext.irBuiltIns
+                        psi2irContext.irBuiltIns,
+                        psi2irContext.irDeclarationFactory
                     )
                 )
             }
