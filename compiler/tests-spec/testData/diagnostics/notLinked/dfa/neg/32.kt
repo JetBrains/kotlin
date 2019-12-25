@@ -21,8 +21,8 @@ fun stringArg(number: String) {}
  */
 fun case_1(x: Int?) {
     if (x == null) {
-        stringArg(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!><!ALWAYS_NULL!>x<!>!!<!>)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int? & kotlin.Nothing")!>x<!>
+        <!UNREACHABLE_CODE!>stringArg(<!><!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!><!ALWAYS_NULL!>x<!>!!<!><!UNREACHABLE_CODE!>)<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int? & kotlin.Nothing"), UNREACHABLE_CODE!>x<!>
     }
 }
 
@@ -33,8 +33,8 @@ fun case_1(x: Int?) {
  */
 fun case_2(x: Int?, y: Nothing?) {
     if (x == <!DEBUG_INFO_CONSTANT!>y<!>) {
-        stringArg(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!><!ALWAYS_NULL!>x<!>!!<!>)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int? & kotlin.Nothing")!>x<!>
+        <!UNREACHABLE_CODE!>stringArg(<!><!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!><!ALWAYS_NULL!>x<!>!!<!><!UNREACHABLE_CODE!>)<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int? & kotlin.Nothing"), UNREACHABLE_CODE!>x<!>
     }
 }
 

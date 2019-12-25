@@ -43,7 +43,7 @@ fun case_2(a: Any?) {
  */
 fun case_3(x: Int?) {
     while (true) {
-        x ?: return ?: <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?"), DEBUG_INFO_SMARTCAST!>x<!>
+        x ?: return <!USELESS_ELVIS!>?: <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?"), DEBUG_INFO_SMARTCAST!>x<!><!>
     }
 
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?"), UNREACHABLE_CODE!>x<!>
