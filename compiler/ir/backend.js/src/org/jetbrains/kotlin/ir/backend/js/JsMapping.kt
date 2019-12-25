@@ -19,4 +19,12 @@ class JsMapping : DefaultMapping() {
     val objectToInstanceField = newMapping<IrClass, IrField>()
     val classToSyntheticPrimaryConstructor = newMapping<IrClass, IrConstructor>()
     val privateMemberToCorrespondingStatic = newMapping<IrFunction, IrSimpleFunction>()
+
+    val enumEntryToGetInstanceFun = newMapping<IrEnumEntry, IrSimpleFunction>()
+    val enumEntryToInstanceField = newMapping<IrEnumEntry, IrField>()
+    val enumConstructorToNewConstructor = newMapping<IrConstructor, IrConstructor>()
+    val enumClassToCorrespondingEnumEntry = newMapping<IrClass, IrEnumEntry>()
+    val enumConstructorOldToNewValueParameters = newMapping<IrValueDeclaration, IrValueParameter>()
+    val enumEntryToCorrespondingField = newMapping<IrEnumEntry, IrField>()
+    val enumClassToInitEntryInstancesFun = newMapping<IrClass, IrSimpleFunction>()
 }
