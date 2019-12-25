@@ -14,6 +14,7 @@ dependencies {
     compile(project(":compiler:backend"))
     compile(project(":compiler:ir.backend.common"))
     compile(project(":compiler:ir.serialization.js"))
+    implementation(project(":compiler:ir.tree.impl"))
     compile(project(":compiler:backend.js"))
     compile(project(":js:js.translator"))
     compile(project(":js:js.serializer"))
