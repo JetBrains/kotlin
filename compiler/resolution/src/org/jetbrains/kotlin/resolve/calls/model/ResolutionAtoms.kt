@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableForLambdaReturnType
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
@@ -246,4 +247,12 @@ class PartialCallContainer(val result: PartialCallResolutionResult?) {
     companion object {
         val empty = PartialCallContainer(null)
     }
+}
+
+/*
+ * Used only for delegated properties with one good candidate and one for bad
+ * e.g. in case `var x by lazy { "" }
+ */
+class StubResolvedAtom(val typeVariable: TypeConstructor) : ResolvedAtom() {
+    override val atom: ResolutionAtom? get() = null
 }

@@ -217,6 +217,13 @@ class KotlinConstraintSystemCompleter(
                 typeConstructor.takeIf { c.notFixedTypeVariables.containsKey(typeConstructor) }
             }
 
+            /*
+             * Hack for completing error candidates in delegate resolve
+             */
+            if (this is StubResolvedAtom && typeVariable in c.notFixedTypeVariables) {
+                to += typeVariable
+            }
+
             if (analyzed) {
                 subResolvedAtoms?.forEach { it.process(to) }
             }
