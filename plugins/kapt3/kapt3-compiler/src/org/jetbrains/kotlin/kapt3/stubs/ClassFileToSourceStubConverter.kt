@@ -25,6 +25,7 @@ import com.sun.tools.javac.tree.TreeMaker
 import com.sun.tools.javac.tree.TreeScanner
 import kotlinx.kapt.KaptIgnored
 import org.jetbrains.kotlin.base.kapt3.KaptFlag
+import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.coroutines.CONTINUATION_PARAMETER_NAME
 import org.jetbrains.kotlin.codegen.needsExperimentalCoroutinesWrapper
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -47,9 +48,7 @@ import org.jetbrains.kotlin.kapt3.stubs.ErrorTypeCorrector.TypeKind.METHOD_PARAM
 import org.jetbrains.kotlin.kapt3.stubs.ErrorTypeCorrector.TypeKind.RETURN_TYPE
 import org.jetbrains.kotlin.kapt3.util.*
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
@@ -667,7 +666,10 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
             val trace = DelegatingBindingTrace(kaptContext.bindingContext, "Kapt")
             val const = evaluator.evaluateExpression(propertyInitializer, trace, propertyType)
             if (const != null && !const.isError && const.canBeUsedInAnnotations && !const.usesNonConstValAsConstant) {
-                return convertConstantValueArguments(const.getValue(propertyType), listOf(propertyInitializer))
+                val asmValue = mapConstantValueToAsmRepresentation(const.toConstantValue(propertyType))
+                if (asmValue !== UnknownConstantValue) {
+                    return convertConstantValueArguments(asmValue, listOf(propertyInitializer))
+                }
             }
         }
 
@@ -677,6 +679,64 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         }
 
         return null
+    }
+
+    private object UnknownConstantValue
+
+    private fun mapConstantValueToAsmRepresentation(value: ConstantValue<*>): Any? {
+        return when (value) {
+            is ByteValue -> value.value
+            is CharValue -> value.value
+            is IntValue -> value.value
+            is LongValue -> value.value
+            is ShortValue -> value.value
+            is UByteValue -> value.value
+            is UShortValue -> value.value
+            is UIntValue -> value.value
+            is ULongValue -> value.value
+            is AnnotationValue -> {
+                val annotationDescriptor = value.value
+                val annotationNode = AnnotationNode(typeMapper.mapType(annotationDescriptor.type).descriptor)
+                val values = ArrayList<Any?>(annotationDescriptor.allValueArguments.size * 2)
+                for ((name, arg) in annotationDescriptor.allValueArguments) {
+                    val mapped = mapConstantValueToAsmRepresentation(arg)
+                    if (mapped === UnknownConstantValue) {
+                        return UnknownConstantValue
+                    }
+
+                    values += name.asString()
+                    values += mapped
+                }
+                annotationNode.values = values
+                return annotationNode
+            }
+            is ArrayValue -> {
+                val children = value.value
+                val result = ArrayList<Any?>(children.size)
+                for (child in children) {
+                    val mapped = mapConstantValueToAsmRepresentation(child)
+                    if (mapped === UnknownConstantValue) {
+                        return UnknownConstantValue
+                    }
+                    result += mapped
+                }
+                return result
+            }
+            is BooleanValue -> value.value
+            is DoubleValue -> value.value
+            is EnumValue -> {
+                val (classId, name) = value.value
+                val enumType = AsmUtil.asmTypeByClassId(classId)
+                return arrayOf(enumType.descriptor, name.asString())
+            }
+            is FloatValue -> value.value
+            is StringValue -> value.value
+            is NullValue -> null
+            else -> {
+                // KClassValue is intentionally omitted as incompatible with Java
+                UnknownConstantValue
+            }
+        }
     }
 
     private fun convertMethod(
@@ -1195,21 +1255,6 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
                 }
 
                 treeMaker.Select(treeMaker.Type(enumType), treeMaker.name(valueName))
-            }
-            is Pair<*, *> -> {
-                assert(value.first is ClassId)
-                assert(value.second is Name)
-                val valueName = with((value.second as Name).identifier) {
-                    if (isValidIdentifier(this)) {
-                        this
-                    } else {
-                        kaptContext.compiler.log.report(kaptContext.kaptError("'$this' is an invalid Java enum value name"))
-                        "InvalidFieldName"
-                    }
-                }
-                val asSingleFqName = (value.first as ClassId).asSingleFqName()
-
-                treeMaker.Select(treeMaker.FqName(asSingleFqName), treeMaker.name(value.second.toString()))
             }
             is List<*> -> treeMaker.NewArray(null, JavacList.nil(), mapJList(value) { convertLiteralExpression(it) })
 
