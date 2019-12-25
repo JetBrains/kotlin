@@ -13,7 +13,6 @@ import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.event.*;
 import com.intellij.openapi.editor.ex.EditorEx;
-import com.intellij.openapi.editor.impl.softwrap.mapping.SoftWrapApplianceManager;
 import com.intellij.openapi.editor.markup.RangeHighlighter;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.project.Project;
@@ -932,8 +931,6 @@ public class EditorModel {
                + " 'editor' is not instance of EditorEx. Can't set proper context menu group id.");
     }
 
-    // restrict using old soft-wrapping logic for this editor, because it (old logic) can cause unlimited loading of file into document
-    editor.putUserData(SoftWrapApplianceManager.IGNORE_OLD_SOFT_WRAP_LOGIC_REGISTRY_OPTION, new Object());
     // don't show PositionPanel for this editor, because it still can't work properly with the editor
     editor.putUserData(PositionPanel.DISABLE_FOR_EDITOR, new Object());
 
