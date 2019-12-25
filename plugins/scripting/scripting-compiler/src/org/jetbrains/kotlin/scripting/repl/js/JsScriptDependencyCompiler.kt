@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsMangler
 import org.jetbrains.kotlin.ir.backend.js.utils.NameTables
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.factories.IrDeclarationFactory
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.name.Name
@@ -31,6 +32,8 @@ class JsScriptDependencyCompiler(
     private val nameTables: NameTables,
     private val symbolTable: SymbolTable
 ) {
+    private val irDeclarationFactory = IrDeclarationFactory.TMP
+
     fun compile(dependencies: List<ModuleDescriptor>): String {
         val builtIns: KotlinBuiltIns = dependencies.single { it.allDependencyModules.isEmpty() }.builtIns
         val languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT
@@ -45,8 +48,8 @@ class JsScriptDependencyCompiler(
             it.constantValueGenerator = ConstantValueGenerator(moduleDescriptor, symbolTable)
         }
 
-        val irBuiltIns = IrBuiltIns(builtIns, typeTranslator, symbolTable)
-        val jsLinker = JsIrLinker(moduleDescriptor, JsMangler, emptyLoggingContext, irBuiltIns, symbolTable)
+        val irBuiltIns = IrBuiltIns(builtIns, typeTranslator, irDeclarationFactory, symbolTable)
+        val jsLinker = JsIrLinker(moduleDescriptor, JsMangler, emptyLoggingContext, irBuiltIns, symbolTable, irDeclarationFactory)
 
         val moduleFragment = IrModuleFragmentImpl(moduleDescriptor, irBuiltIns)
         val irDependencies = dependencies.map { jsLinker.deserializeFullModule(it) }
@@ -59,6 +62,7 @@ class JsScriptDependencyCompiler(
             moduleDescriptor,
             irBuiltIns,
             symbolTable,
+            irDeclarationFactory,
             moduleFragment,
             emptySet(),
             configuration,

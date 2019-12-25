@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.cli.common.repl.ReplCompileResult
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.backend.js.utils.NameTables
+import org.jetbrains.kotlin.ir.factories.IrDeclarationFactory
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptCompilerProxy
 import org.jetbrains.kotlin.scripting.repl.js.JsCompiledScript
@@ -20,7 +21,7 @@ import kotlin.script.experimental.api.*
 
 class JsScriptCompilerWithDependenciesProxy(private val environment: KotlinCoreEnvironment) : ScriptCompilerProxy {
     private val nameTables = NameTables(emptyList())
-    private val symbolTable = SymbolTable()
+    private val symbolTable = SymbolTable(IrDeclarationFactory.TMP)
     private val dependencies: List<ModuleDescriptor> = readLibrariesFromConfiguration(environment.configuration)
     private val compiler = JsCoreScriptingCompiler(environment, nameTables, symbolTable, dependencies)
     private var scriptDependencyCompiler: JsScriptDependencyCompiler? =

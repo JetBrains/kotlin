@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.backend.js.generateJsCode
 import org.jetbrains.kotlin.ir.backend.js.generateModuleFragment
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsMangler
 import org.jetbrains.kotlin.ir.backend.js.utils.NameTables
+import org.jetbrains.kotlin.ir.factories.DefaultIrDeclarationFactory
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.generateTypicalIrProviderList
@@ -60,8 +61,9 @@ class JsCoreScriptingCompiler(
         val module = analysisResult.moduleDescriptor
         val bindingContext = analysisResult.bindingContext
 
+        val irDeclarationFactory = DefaultIrDeclarationFactory.createAndRegister()
         val psi2ir = Psi2IrTranslator(environment.configuration.languageVersionSettings, mangler = JsMangler)
-        val psi2irContext = psi2ir.createGeneratorContext(module, bindingContext, symbolTable)
+        val psi2irContext = psi2ir.createGeneratorContext(module, bindingContext, irDeclarationFactory, symbolTable)
 
         val irModuleFragment = psi2irContext.generateModuleFragment(listOf(snippetKtFile))
 
@@ -69,6 +71,7 @@ class JsCoreScriptingCompiler(
             irModuleFragment.descriptor,
             psi2irContext.irBuiltIns,
             psi2irContext.symbolTable,
+            irDeclarationFactory,
             irModuleFragment,
             emptySet(),
             environment.configuration,
