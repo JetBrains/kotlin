@@ -383,6 +383,7 @@ class PSICallResolver(
         // todo may be for invoke for case variable + invoke we should create separate dynamicScope(by newCall for invoke)
         override val dynamicScope: MemberScope =
             dynamicCallableDescriptors.createDynamicDescriptorScope(context.call, context.scope.ownerDescriptor)
+
         // same for location
         override val location: LookupLocation = context.call.createLookupLocation()
 
@@ -690,44 +691,9 @@ class PSICallResolver(
             .expandContextForCatchClause(ktExpression)
 
         if (ktExpression is KtCallableReferenceExpression) {
-            checkNoSpread(outerCallContext, valueArgument)
-
-            val expressionTypingContext = ExpressionTypingContext.newContext(context)
-            val lhsResult = if (ktExpression.isEmptyLHS) null else doubleColonExpressionResolver.resolveDoubleColonLHS(
-                ktExpression,
-                expressionTypingContext
-            )
-            val newDataFlowInfo = (lhsResult as? DoubleColonLHS.Expression)?.dataFlowInfo ?: startDataFlowInfo
-            val name = ktExpression.callableReference.getReferencedNameAsName()
-
-            val lhsNewResult = when (lhsResult) {
-                null -> LHSResult.Empty
-                is DoubleColonLHS.Expression -> {
-                    if (lhsResult.isObjectQualifier) {
-                        val classifier = lhsResult.type.constructor.declarationDescriptor
-                        val calleeExpression = ktExpression.receiverExpression?.getCalleeExpressionIfAny()
-                        if (calleeExpression is KtSimpleNameExpression && classifier is ClassDescriptor) {
-                            LHSResult.Object(ClassQualifier(calleeExpression, classifier))
-                        } else {
-                            LHSResult.Error
-                        }
-                    } else {
-                        val fakeArgument = FakeValueArgumentForLeftCallableReference(ktExpression)
-
-                        val kotlinCallArgument = createSimplePSICallArgument(context, fakeArgument, lhsResult.typeInfo)
-                        kotlinCallArgument?.let { LHSResult.Expression(it as SimpleKotlinCallArgument) } ?: LHSResult.Error
-                    }
-                }
-                is DoubleColonLHS.Type -> {
-                    val qualifiedExpression = ktExpression.receiverExpression!!.let { it.referenceExpression() ?: it }
-                    val qualifier = expressionTypingContext.trace.get(BindingContext.QUALIFIER, qualifiedExpression)
-                    LHSResult.Type(qualifier, lhsResult.type.unwrap())
-                }
-            }
-
-            return CallableReferenceKotlinCallArgumentImpl(
-                ASTScopeTower(context), valueArgument, startDataFlowInfo, newDataFlowInfo,
-                ktExpression, argumentName, lhsNewResult, name
+            return createCallableReferenceKotlinCallArgument(
+                context, ktExpression, startDataFlowInfo, valueArgument, argumentName,
+                outerCallContext
             )
         }
 
@@ -735,6 +701,56 @@ class PSICallResolver(
         val typeInfo = expressionTypingServices.getTypeInfo(argumentExpression, context)
         return createSimplePSICallArgument(context, valueArgument, typeInfo) ?: createParseErrorElement()
     }
+
+    private fun createCallableReferenceKotlinCallArgument(
+        context: BasicCallResolutionContext,
+        ktExpression: KtCallableReferenceExpression,
+        startDataFlowInfo: DataFlowInfo,
+        valueArgument: ValueArgument,
+        argumentName: Name?,
+        outerCallContext: BasicCallResolutionContext
+    ): CallableReferenceKotlinCallArgumentImpl {
+        checkNoSpread(outerCallContext, valueArgument)
+
+        val expressionTypingContext = ExpressionTypingContext.newContext(context)
+        val lhsResult = if (ktExpression.isEmptyLHS) null else doubleColonExpressionResolver.resolveDoubleColonLHS(
+            ktExpression,
+            expressionTypingContext
+        )
+        val newDataFlowInfo = (lhsResult as? DoubleColonLHS.Expression)?.dataFlowInfo ?: startDataFlowInfo
+        val name = ktExpression.callableReference.getReferencedNameAsName()
+
+        val lhsNewResult = when (lhsResult) {
+            null -> LHSResult.Empty
+            is DoubleColonLHS.Expression -> {
+                if (lhsResult.isObjectQualifier) {
+                    val classifier = lhsResult.type.constructor.declarationDescriptor
+                    val calleeExpression = ktExpression.receiverExpression?.getCalleeExpressionIfAny()
+                    if (calleeExpression is KtSimpleNameExpression && classifier is ClassDescriptor) {
+                        LHSResult.Object(ClassQualifier(calleeExpression, classifier))
+                    } else {
+                        LHSResult.Error
+                    }
+                } else {
+                    val fakeArgument = FakeValueArgumentForLeftCallableReference(ktExpression)
+
+                    val kotlinCallArgument = createSimplePSICallArgument(context, fakeArgument, lhsResult.typeInfo)
+                    kotlinCallArgument?.let { LHSResult.Expression(it as SimpleKotlinCallArgument) } ?: LHSResult.Error
+                }
+            }
+            is DoubleColonLHS.Type -> {
+                val qualifiedExpression = ktExpression.receiverExpression!!.let { it.referenceExpression() ?: it }
+                val qualifier = expressionTypingContext.trace.get(BindingContext.QUALIFIER, qualifiedExpression)
+                LHSResult.Type(qualifier, lhsResult.type.unwrap())
+            }
+        }
+
+        return CallableReferenceKotlinCallArgumentImpl(
+            ASTScopeTower(context), valueArgument, startDataFlowInfo, newDataFlowInfo,
+            ktExpression, argumentName, lhsNewResult, name
+        )
+    }
+
 
     private fun BasicCallResolutionContext.expandContextForCatchClause(ktExpression: Any): BasicCallResolutionContext {
         if (ktExpression !is KtExpression) return this
