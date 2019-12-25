@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.factories.DefaultIrDeclarationFactory
+import org.jetbrains.kotlin.ir.factories.IrDeclarationFactory
 import org.jetbrains.kotlin.js.config.EcmaVersion
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
@@ -175,6 +176,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             it.libraryFile.absolutePath in friendAbsolutePaths
         }
 
+        val irDeclarationFactory = DefaultIrDeclarationFactory.createAndRegister()
+
         if (arguments.irProduceKlibDir || arguments.irProduceKlibFile) {
             val outputKlibPath =
                 if (arguments.irProduceKlibDir)
@@ -190,10 +193,13 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     allDependencies = resolvedLibraries,
                     friendDependencies = friendDependencies,
                     outputKlibPath = outputKlibPath,
-                    nopack = arguments.irProduceKlibDir
+                    nopack = arguments.irProduceKlibDir,
+                    irDeclarationFactory = irDeclarationFactory
                 )
             } catch (e: JsIrCompilationError) {
                 return COMPILATION_ERROR
+            } finally {
+                IrDeclarationFactory.resetDefaultIrDeclarationFactory()
             }
         }
 
@@ -206,7 +212,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     sourcesFiles,
                     config.configuration,
                     phaseConfig,
-                    irDeclarationFactory = DefaultIrDeclarationFactory.createAndRegister(),
+                    irDeclarationFactory = irDeclarationFactory,
                     allDependencies = resolvedLibraries,
                     friendDependencies = friendDependencies,
                     mainArguments = mainCallArguments,
@@ -215,6 +221,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 )
             } catch (e: JsIrCompilationError) {
                 return COMPILATION_ERROR
+            } finally {
+                IrDeclarationFactory.resetDefaultIrDeclarationFactory()
             }
 
             val jsCode = if (arguments.irDce) compiledModule.dceJsCode!! else compiledModule.jsCode!!
