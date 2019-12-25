@@ -173,7 +173,7 @@ class MemoizedInlineClassReplacements {
         val parameterMap = mutableMapOf<IrValueParameterSymbol, IrValueParameter>()
         val replacement = buildReplacement(function) {
             // Generate metadata for the replacement function instead of the original.
-            if (function is IrFunctionBase) {
+            if (function is IrFunctionBase<*>) {
                 metadata = function.metadata
                 function.metadata = null
             }

@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.ir.declarations.lazy
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
@@ -19,10 +19,10 @@ import org.jetbrains.kotlin.types.KotlinType
 abstract class IrLazyDeclarationBase(
     startOffset: Int,
     endOffset: Int,
-    origin: IrDeclarationOrigin,
+    override var origin: IrDeclarationOrigin,
     private val stubGenerator: DeclarationStubGenerator,
     protected val typeTranslator: TypeTranslator
-) : IrDeclarationBase(startOffset, endOffset, origin) {
+) : IrElementBase(startOffset, endOffset), IrDeclaration {
 
     protected fun KotlinType.toIrType() = typeTranslator.translateType(this)
 

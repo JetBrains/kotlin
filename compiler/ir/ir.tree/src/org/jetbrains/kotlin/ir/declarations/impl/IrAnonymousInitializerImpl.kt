@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.ir.declarations.impl
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrAnonymousInitializer
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.impl.carriers.AnonymousInitializerCarrier
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.symbols.IrAnonymousInitializerSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
@@ -30,8 +31,9 @@ class IrAnonymousInitializerImpl(
     origin: IrDeclarationOrigin,
     override val symbol: IrAnonymousInitializerSymbol,
     override val isStatic: Boolean = false
-) : IrDeclarationBase(startOffset, endOffset, origin),
-    IrAnonymousInitializer {
+) : IrDeclarationBase<AnonymousInitializerCarrier>(startOffset, endOffset, origin),
+    IrAnonymousInitializer,
+    AnonymousInitializerCarrier {
 
     init {
         symbol.bind(this)
@@ -39,7 +41,18 @@ class IrAnonymousInitializerImpl(
 
     override val descriptor: ClassDescriptor get() = symbol.descriptor
 
-    override lateinit var body: IrBlockBody
+    override var bodyField: IrBlockBody? = null
+
+    override var body: IrBlockBody
+        get() = getCarrier().bodyField!!
+        set(v) {
+            if (getCarrier().bodyField !== v) {
+                if (v is IrBodyBase<*>) {
+                    v.container = this
+                }
+                setCarrier().bodyField = v
+            }
+        }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitAnonymousInitializer(this, data)

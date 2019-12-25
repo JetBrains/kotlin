@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.declarations.impl.IrBodyBase
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -25,20 +25,20 @@ import java.util.*
 
 class IrBlockBodyImpl(
     startOffset: Int,
-    endOffset: Int
+    endOffset: Int,
+    initializer: (IrBlockBodyImpl.() -> Unit)? = null
 ) :
-    IrElementBase(startOffset, endOffset),
+    IrBodyBase<IrBlockBodyImpl>(startOffset, endOffset, initializer),
     IrBlockBody {
 
     constructor(startOffset: Int, endOffset: Int, statements: List<IrStatement>) : this(startOffset, endOffset) {
-        this.statements.addAll(statements)
+        statementsField.addAll(statements)
     }
 
-    constructor(startOffset: Int, endOffset: Int, fn: IrBlockBodyImpl.() -> Unit) : this(startOffset, endOffset) {
-        this.fn()
-    }
+    private var statementsField: MutableList<IrStatement> = ArrayList()
 
-    override val statements: MutableList<IrStatement> = ArrayList()
+    override val statements: MutableList<IrStatement>
+        get() = checkEnabled { statementsField }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitBlockBody(this, data)

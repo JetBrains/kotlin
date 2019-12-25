@@ -18,10 +18,8 @@ package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.ir.declarations.MetadataSource
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.carriers.FieldCarrier
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
@@ -45,8 +43,9 @@ class IrFieldImpl(
     override val isExternal: Boolean,
     override val isStatic: Boolean,
     override val isFakeOverride: Boolean
-) : IrDeclarationBase(startOffset, endOffset, origin),
-    IrField {
+) : IrDeclarationBase<FieldCarrier>(startOffset, endOffset, origin),
+    IrField,
+    FieldCarrier {
 
     constructor(
         startOffset: Int,
@@ -80,13 +79,48 @@ class IrFieldImpl(
 
     override val descriptor: PropertyDescriptor = symbol.descriptor
 
-    override var initializer: IrExpressionBody? = null
+    override var initializerField: IrExpressionBody? = null
 
-    override var correspondingPropertySymbol: IrPropertySymbol? = null
+    override var initializer: IrExpressionBody?
+        get() = getCarrier().initializerField
+        set(v) {
+            if (initializer !== v) {
+                if (v is IrBodyBase<*>) {
+                    v.container = this
+                }
+                setCarrier().initializerField = v
+            }
+        }
 
-    override var overriddenSymbols: List<IrFieldSymbol> = emptyList()
+    override var correspondingPropertySymbolField: IrPropertySymbol? = null
 
-    override var metadata: MetadataSource.Property? = null
+    override var correspondingPropertySymbol: IrPropertySymbol?
+        get() = getCarrier().correspondingPropertySymbolField
+        set(v) {
+            if (correspondingPropertySymbol !== v) {
+                setCarrier().correspondingPropertySymbolField = v
+            }
+        }
+
+    override var overridenSymbolsField: List<IrFieldSymbol> = emptyList()
+
+    override var overriddenSymbols: List<IrFieldSymbol>
+        get() = getCarrier().overridenSymbolsField
+        set(v) {
+            if (overriddenSymbols !== v) {
+                setCarrier().overridenSymbolsField = v
+            }
+        }
+
+    override var metadataField: MetadataSource.Property? = null
+
+    override var metadata: MetadataSource.Property?
+        get() = getCarrier().metadataField
+        set(v) {
+            if (metadata !== v) {
+                setCarrier().metadataField = v
+            }
+        }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitField(this, data)

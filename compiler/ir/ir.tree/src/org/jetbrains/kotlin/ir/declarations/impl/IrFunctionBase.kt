@@ -18,44 +18,120 @@ package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.carriers.FunctionBaseCarrier
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.ir.util.mapOptimized
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 
-abstract class IrFunctionBase(
+abstract class IrFunctionBase<T : FunctionBaseCarrier<T>>(
     startOffset: Int,
     endOffset: Int,
     origin: IrDeclarationOrigin,
     override val name: Name,
-    override var visibility: Visibility,
+    visibility: Visibility,
     override val isInline: Boolean,
     override val isExternal: Boolean,
     override val isExpect: Boolean,
     returnType: IrType
 ) :
-    IrDeclarationBase(startOffset, endOffset, origin),
-    IrFunction {
+    IrDeclarationBase<T>(startOffset, endOffset, origin),
+    IrFunction,
+    FunctionBaseCarrier<T> {
 
+    override var returnTypeFieldField: IrType = returnType
+
+    private var returnTypeField: IrType
+        get() = getCarrier().returnTypeFieldField
+        set(v) {
+            if (returnTypeField !== v) {
+                setCarrier().returnTypeFieldField = v
+            }
+        }
     @Suppress("DEPRECATION")
-    final override var returnType: IrType = returnType
-        get() = if (field === org.jetbrains.kotlin.ir.types.impl.IrUninitializedType) {
-            error("Return type is not initialized")
-        } else {
-            field
+    final override var returnType: IrType
+        get() = returnTypeField.let {
+            if (it !== IrUninitializedType) it else error("Return type is not initialized")
+        }
+        set(c) {
+            returnTypeField = c
         }
 
-    override var typeParameters: List<IrTypeParameter> = emptyList()
+    override var typeParametersField: List<IrTypeParameter> = emptyList()
 
-    override var dispatchReceiverParameter: IrValueParameter? = null
-    override var extensionReceiverParameter: IrValueParameter? = null
-    override var valueParameters: List<IrValueParameter> = emptyList()
+    override var typeParameters: List<IrTypeParameter>
+        get() = getCarrier().typeParametersField
+        set(v) {
+            if (typeParameters !== v) {
+                setCarrier().typeParametersField = v
+            }
+        }
 
-    final override var body: IrBody? = null
+    override var dispatchReceiverParameterField: IrValueParameter? = null
 
-    override var metadata: MetadataSource? = null
+    override var dispatchReceiverParameter: IrValueParameter?
+        get() = getCarrier().dispatchReceiverParameterField
+        set(v) {
+            if (dispatchReceiverParameter !== v) {
+                setCarrier().dispatchReceiverParameterField = v
+            }
+        }
+
+    override var extensionReceiverParameterField: IrValueParameter? = null
+
+    override var extensionReceiverParameter: IrValueParameter?
+        get() = getCarrier().extensionReceiverParameterField
+        set(v) {
+            if (extensionReceiverParameter !== v) {
+                setCarrier().extensionReceiverParameterField = v
+            }
+        }
+
+    override var valueParametersField: List<IrValueParameter> = emptyList()
+
+    override var valueParameters: List<IrValueParameter>
+        get() = getCarrier().valueParametersField
+        set(v) {
+            if (valueParameters !== v) {
+                setCarrier().valueParametersField = v
+            }
+        }
+
+    override var bodyField: IrBody? = null
+
+    final override var body: IrBody?
+        get() = getCarrier().bodyField
+        set(v) {
+            if (body !== v) {
+                if (v is IrBodyBase<*>) {
+                    v.container = this
+                }
+                setCarrier().bodyField = v
+            }
+        }
+
+    override var metadataField: MetadataSource? = null
+
+    override var metadata: MetadataSource?
+        get() = getCarrier().metadataField
+        set(v) {
+            if (metadata !== v) {
+                setCarrier().metadataField = v
+            }
+        }
+
+    override var visibilityField: Visibility = visibility
+
+    override var visibility: Visibility
+        get() = getCarrier().visibilityField
+        set(v) {
+            if (visibility !== v) {
+                setCarrier().visibilityField = v
+            }
+        }
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         typeParameters.forEach { it.accept(visitor, data) }
