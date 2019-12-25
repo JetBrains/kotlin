@@ -3,6 +3,6 @@ import kotlin.reflect.*
 fun foo() {
     String::class.primaryConstructor
     Void::class
-    ::foo.isExternal
+    ::foo.name
     listOf(42)
 }
