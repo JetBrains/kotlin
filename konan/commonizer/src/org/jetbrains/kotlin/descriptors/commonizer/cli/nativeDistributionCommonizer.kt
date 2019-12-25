@@ -28,10 +28,13 @@ fun main(args: Array<String>) {
 
     val destination = parsedArgs["-output"]?.firstOrNull()?.let(::File) ?: printUsageAndExit("output not specified")
 
+    val withStats = parsedArgs["-stats"]?.firstOrNull()?.toLowerCase() in setOf("1", "on", "yes", "true")
+
     NativeDistributionCommonizer(
         repository = repository,
         targets = targets,
         destination = destination,
+        withStats = withStats,
         handleError = ::printErrorAndExit,
         log = ::println
     ).run()

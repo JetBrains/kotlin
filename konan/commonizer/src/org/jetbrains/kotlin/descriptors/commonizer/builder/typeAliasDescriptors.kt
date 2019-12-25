@@ -27,6 +27,9 @@ internal fun CirTypeAliasNode.buildDescriptors(
     }
 
     commonClass?.buildDescriptor(components, output, indexOfCommon, containingDeclarations, fqName, isExpect = true)
+
+    // log stats
+    components.statsCollector?.logStats(output.toList())
 }
 
 private fun CirTypeAlias.buildDescriptor(

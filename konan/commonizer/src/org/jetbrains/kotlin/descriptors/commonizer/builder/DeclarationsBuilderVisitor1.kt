@@ -52,8 +52,7 @@ internal class DeclarationsBuilderVisitor1(
 
     override fun visitModuleNode(node: CirModuleNode, data: List<DeclarationDescriptor?>): List<ModuleDescriptorImpl?> {
         // build module descriptors:
-        val moduleDescriptorsGroup =
-            CommonizedGroup<ModuleDescriptorImpl>(node.dimension)
+        val moduleDescriptorsGroup = CommonizedGroup<ModuleDescriptorImpl>(node.dimension)
         node.buildDescriptors(components, moduleDescriptorsGroup)
         val moduleDescriptors = moduleDescriptorsGroup.toList()
 
@@ -76,8 +75,7 @@ internal class DeclarationsBuilderVisitor1(
         val containingDeclarations = data.asListContaining<ModuleDescriptorImpl>()
 
         // build package fragments:
-        val packageFragmentsGroup =
-            CommonizedGroup<CommonizedPackageFragmentDescriptor>(node.dimension)
+        val packageFragmentsGroup = CommonizedGroup<CommonizedPackageFragmentDescriptor>(node.dimension)
         node.buildDescriptors(components, packageFragmentsGroup, containingDeclarations)
         val packageFragments = packageFragmentsGroup.toList()
 
@@ -105,10 +103,7 @@ internal class DeclarationsBuilderVisitor1(
         error("This method should not be called in ${this::class.java}")
 
     override fun visitClassNode(node: CirClassNode, data: List<DeclarationDescriptor?>): List<DeclarationDescriptor?> {
-        val classesGroup =
-            CommonizedGroup<ClassifierDescriptorWithTypeParameters>(
-                node.dimension
-            )
+        val classesGroup = CommonizedGroup<ClassifierDescriptorWithTypeParameters>(node.dimension)
         node.buildDescriptors(components, classesGroup, data)
         val classes = classesGroup.toList().asListContaining<CommonizedClassDescriptor>()
 
@@ -130,10 +125,7 @@ internal class DeclarationsBuilderVisitor1(
         error("This method should not be called in ${this::class.java}")
 
     override fun visitTypeAliasNode(node: CirTypeAliasNode, data: List<DeclarationDescriptor?>): List<DeclarationDescriptor?> {
-        val typeAliasesGroup =
-            CommonizedGroup<ClassifierDescriptorWithTypeParameters>(
-                node.dimension
-            )
+        val typeAliasesGroup = CommonizedGroup<ClassifierDescriptorWithTypeParameters>(node.dimension)
         node.buildDescriptors(components, typeAliasesGroup, data)
         val typeAliases = typeAliasesGroup.toList()
 

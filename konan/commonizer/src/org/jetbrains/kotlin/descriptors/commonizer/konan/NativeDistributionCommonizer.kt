@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.Target
 import org.jetbrains.kotlin.descriptors.commonizer.konan.NativeModuleForCommonization.DeserializedModule
 import org.jetbrains.kotlin.descriptors.commonizer.konan.NativeModuleForCommonization.SyntheticModule
 import org.jetbrains.kotlin.descriptors.commonizer.utils.EmptyDescriptorTable
+import org.jetbrains.kotlin.descriptors.commonizer.utils.ResettableClockMark
 import org.jetbrains.kotlin.descriptors.commonizer.utils.createKotlinNativeForwardDeclarationsModule
 import org.jetbrains.kotlin.konan.library.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -27,13 +28,13 @@ import org.jetbrains.kotlin.serialization.konan.impl.KlibResolvedModuleDescripto
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import java.io.File
 import kotlin.time.ExperimentalTime
-import kotlin.time.MonoClock
 import org.jetbrains.kotlin.konan.file.File as KFile
 
 class NativeDistributionCommonizer(
     private val repository: File,
     private val targets: List<KonanTarget>,
     private val destination: File,
+    private val withStats: Boolean,
     private val handleError: (String) -> Nothing,
     private val log: (String) -> Unit
 ) {
@@ -41,23 +42,21 @@ class NativeDistributionCommonizer(
     fun run() {
         checkPreconditions()
 
-        val startMark = MonoClock.markNow()
-        val modulesByTargets = loadModules(repository, targets)
-        val loadDuration = startMark.elapsedNow()
+        with(ResettableClockMark()) {
+            // 1. load modules
+            val modulesByTargets = loadModules()
+            log("Loaded lazy (uninitialized) libraries in ${elapsedSinceLast()}")
 
-        log("Loaded lazy (uninitialized) libraries in $loadDuration")
+            // 2. run commonization
+            val result = commonize(modulesByTargets)
+            log("Commonization performed in ${elapsedSinceLast()}")
 
-        val result = commonize(modulesByTargets)
-        val commonizationDuration = startMark.elapsedNow() - loadDuration
+            // 3. write new libraries
+            saveModules(modulesByTargets, result)
+            log("Written libraries in ${elapsedSinceLast()}")
 
-        log("Commonization performed in $commonizationDuration")
-
-        saveModules(modulesByTargets, destination, result)
-        val totalDuration = startMark.elapsedNow()
-        val writeDuration = totalDuration - commonizationDuration - loadDuration
-
-        log("Written libraries in $writeDuration")
-        log("TOTAL: $totalDuration")
+            log("TOTAL: ${elapsedSinceStart()}")
+        }
 
         log("Done.")
         log("")
@@ -79,7 +78,7 @@ class NativeDistributionCommonizer(
         }
     }
 
-    private fun loadModules(repository: File, targets: List<KonanTarget>): Map<InputTarget, List<NativeModuleForCommonization>> {
+    private fun loadModules(): Map<InputTarget, List<NativeModuleForCommonization>> {
         val stdlibPath = repository.resolve(konanCommonLibraryPath(KONAN_STDLIB_NAME))
         val stdlib = loadLibrary(stdlibPath)
 
@@ -162,22 +161,24 @@ class NativeDistributionCommonizer(
     }
 
     private fun commonize(modulesByTargets: Map<InputTarget, List<NativeModuleForCommonization>>): CommonizationPerformed {
-        val parameters = CommonizationParameters().apply {
-            modulesByTargets.forEach { (target, modules) ->
-                addTarget(target, modules.map { it.module })
+        val statsCollector = if (withStats) NativeStatsCollector(targets, destination) else null
+        statsCollector.use {
+            val parameters = CommonizationParameters(statsCollector).apply {
+                modulesByTargets.forEach { (target, modules) ->
+                    addTarget(target, modules.map { it.module })
+                }
             }
-        }
 
-        val result = runCommonization(parameters)
-        return when (result) {
-            is NothingToCommonize -> handleError("too few targets specified: ${modulesByTargets.keys}")
-            is CommonizationPerformed -> result
+            val result = runCommonization(parameters)
+            return when (result) {
+                is NothingToCommonize -> handleError("too few targets specified: ${modulesByTargets.keys}")
+                is CommonizationPerformed -> result
+            }
         }
     }
 
     private fun saveModules(
         originalModulesByTargets: Map<InputTarget, List<NativeModuleForCommonization>>,
-        destination: File,
         result: CommonizationPerformed
     ) {
         // optimization: stdlib effectively remains the same across all Kotlin/Native targets,
@@ -205,8 +206,6 @@ class NativeDistributionCommonizer(
             skipExpects = false
         )
 
-        val stdlibName = Name.special("<$KONAN_STDLIB_NAME>")
-
         fun serializeTarget(target: Target) {
             val libsDestination: File
             val newModulesManifestData: Map<Name, NativeSensitiveManifestData>
@@ -226,7 +225,9 @@ class NativeDistributionCommonizer(
 
             for (newModule in newModules) {
                 val libraryName = newModule.name
-                if (libraryName == stdlibName || libraryName == KlibResolvedModuleDescriptorsFactoryImpl.FORWARD_DECLARATIONS_MODULE_NAME) continue
+
+                if (!shouldBeSerialized(libraryName))
+                    continue
 
                 val metadata = serializer.serializeModule(newModule)
                 val manifestData = newModulesManifestData.getValue(newModule.name)
@@ -249,5 +250,12 @@ class NativeDistributionCommonizer(
         library.addMetadata(metadata)
         manifestData.applyTo(library.base as BaseWriterImpl)
         library.commit()
+    }
+
+    private companion object {
+        val stdlibName = Name.special("<$KONAN_STDLIB_NAME>")
+
+        fun shouldBeSerialized(libraryName: Name) =
+            libraryName != stdlibName && libraryName != KlibResolvedModuleDescriptorsFactoryImpl.FORWARD_DECLARATIONS_MODULE_NAME
     }
 }

@@ -20,6 +20,9 @@ internal fun CirModuleNode.buildDescriptors(
     }
 
     common()?.buildDescriptor(components, output, indexOfCommon)
+
+    // log stats
+    components.statsCollector?.logStats(output.toList())
 }
 
 private fun CirModule.buildDescriptor(

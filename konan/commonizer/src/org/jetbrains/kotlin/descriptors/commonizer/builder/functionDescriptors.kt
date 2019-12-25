@@ -28,6 +28,9 @@ internal fun CirFunctionNode.buildDescriptors(
     }
 
     commonFunction?.buildDescriptor(components, output, indexOfCommon, containingDeclarations, isExpect = markAsExpectAndActual)
+
+    // log stats
+    components.statsCollector?.logStats(output.toList())
 }
 
 private fun CirFunction.buildDescriptor(
