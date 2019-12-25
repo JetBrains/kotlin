@@ -22,7 +22,10 @@ import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.plugins.MavenPluginConvention
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.api.tasks.*
+import org.gradle.api.tasks.CompileClasspathNormalizer
+import org.gradle.api.tasks.SourceSet
+import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.tasks.Upload
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.jvm.tasks.Jar
@@ -308,12 +311,78 @@ internal class Kotlin2JsSourceSetProcessor(
 
     private fun registerCleanSourceMapTask() {
         val taskName = kotlinCompilation.composeName("clean", "sourceMap")
-        registerTask(project, taskName, Delete::class.java) {
+        project.createOrRegisterTask(taskName, {
             it.onlyIf { kotlinTask.get().kotlinOptions.sourceMap }
             it.delete(object : Closure<String>(this) {
                 override fun call(): String? = (kotlinTask.get().property("outputFile") as File).canonicalPath + ".map"
             })
+        })
+        project.tasks.findByName("clean")?.dependsOn(taskName)
+    }
+}
+
+internal class KotlinJsIrSourceSetProcessor(
+    project: Project,
+    tasksProvider: KotlinTasksProvider,
+    kotlinCompilation: AbstractKotlinCompilation<*>,
+    private val kotlinPluginVersion: String
+) : KotlinSourceSetProcessor<Kotlin2JsCompile>(
+    project, tasksProvider, taskDescription = "Compiles the Kotlin sources in $kotlinCompilation to JavaScript.",
+    kotlinCompilation = kotlinCompilation
+) {
+    override fun doRegisterTask(
+        project: Project,
+        taskName: String,
+        configureAction: (Kotlin2JsCompile) -> (Unit)
+    ): TaskProvider<out Kotlin2JsCompile> =
+        tasksProvider.registerKotlinJSTask(project, taskName, kotlinCompilation, configureAction)
+
+    override fun doTargetSpecificProcessing() {
+        project.tasks.named(kotlinCompilation.compileAllTaskName).configure {
+            it.dependsOn(kotlinTask)
         }
+
+        registerCleanSourceMapTask()
+
+        if (kotlinCompilation is KotlinWithJavaCompilation<*>) {
+            kotlinCompilation.javaSourceSet.clearJavaSrcDirs()
+        }
+
+        // outputFile can be set later during the configuration phase, get it only after the phase:
+        project.runOnceAfterEvaluated("Kotlin2JsSourceSetProcessor.doTargetSpecificProcessing", kotlinTask) {
+            val kotlinTaskInstance = kotlinTask.get()
+            kotlinTaskInstance.kotlinOptions.outputFile = kotlinTaskInstance.outputFile.absolutePath
+            val outputDir = kotlinTaskInstance.outputFile.parentFile
+
+            val subpluginEnvironment: SubpluginEnvironment = SubpluginEnvironment.loadSubplugins(project, kotlinPluginVersion)
+            val appliedPlugins = subpluginEnvironment.addSubpluginOptions(
+                project, kotlinTaskInstance, null, null, null, kotlinCompilation
+            )
+
+            if (outputDir.isParentOf(project.rootDir))
+                throw InvalidUserDataException(
+                    "The output directory '$outputDir' (defined by outputFile of $kotlinTaskInstance) contains or " +
+                            "matches the project root directory '${project.rootDir}'.\n" +
+                            "Gradle will not be able to build the project because of the root directory lock.\n" +
+                            "To fix this, consider using the default outputFile location instead of providing it explicitly."
+                )
+
+            kotlinTaskInstance.destinationDir = outputDir
+
+            appliedPlugins
+                .flatMap { it.getSubpluginKotlinTasks(project, kotlinTaskInstance) }
+                .forEach { task -> kotlinCompilation.allKotlinSourceSets.forEach { sourceSet -> task.source(sourceSet.kotlin) } }
+        }
+    }
+
+    private fun registerCleanSourceMapTask() {
+        val taskName = kotlinCompilation.composeName("clean", "sourceMap")
+        project.createOrRegisterTask(taskName, {
+            it.onlyIf { kotlinTask.get().kotlinOptions.sourceMap }
+            it.delete(object : Closure<String>(this) {
+                override fun call(): String? = (kotlinTask.get().property("outputFile") as File).canonicalPath + ".map"
+            })
+        })
         project.tasks.findByName("clean")?.dependsOn(taskName)
     }
 }
@@ -446,12 +515,12 @@ internal abstract class AbstractKotlinPlugin(
                 return
             }
             val inspectTask =
-                registerTask(project, "inspectClassesForKotlinIC", InspectClassesForMultiModuleIC::class.java) {
+                project.createOrRegisterTask("inspectClassesForKotlinIC", {
                     it.sourceSetName = SourceSet.MAIN_SOURCE_SET_NAME
                     it.archivePath.set(project.provider { jarTask.archivePathCompatible.canonicalPath })
                     it.archiveName.set(project.provider { jarTask.archiveNameCompatible })
                     it.dependsOn(classesTask)
-                }
+                })
             jarTask.dependsOn(inspectTask)
         }
 
@@ -1029,7 +1098,7 @@ internal fun configureJavaTask(kotlinTask: KotlinCompile, javaTask: AbstractComp
      * so it's only safe to modify javaTask.classpath right before its usage
      */
     // todo: remove?
-    javaTask.appendClasspathDynamically(kotlinTask.destinationDir!!)
+    javaTask.appendClasspathDynamically(kotlinTask.destinationDir)
 }
 
 private fun ifKaptEnabled(project: Project, block: () -> Unit) {

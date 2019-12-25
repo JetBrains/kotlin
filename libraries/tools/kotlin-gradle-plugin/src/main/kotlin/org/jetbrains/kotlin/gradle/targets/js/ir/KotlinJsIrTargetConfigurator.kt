@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
-import org.jetbrains.kotlin.gradle.plugin.Kotlin2JsSourceSetProcessor
+import org.jetbrains.kotlin.gradle.plugin.KotlinJsIrSourceSetProcessor
 import org.jetbrains.kotlin.gradle.plugin.KotlinOnlyTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetProcessor
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTestsConfigurator
@@ -46,7 +46,7 @@ open class KotlinJsIrTargetConfigurator(kotlinPluginVersion: String) :
 
     override fun buildCompilationProcessor(compilation: KotlinJsCompilation): KotlinSourceSetProcessor<*> {
         val tasksProvider = KotlinTasksProvider(compilation.target.targetName)
-        return Kotlin2JsSourceSetProcessor(compilation.target.project, tasksProvider, compilation, kotlinPluginVersion)
+        return KotlinJsIrSourceSetProcessor(compilation.target.project, tasksProvider, compilation, kotlinPluginVersion)
     }
 
     override fun configureCompilations(target: KotlinJsIrTarget) {
