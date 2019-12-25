@@ -238,7 +238,8 @@ fun GeneratorContext.generateModuleFragmentWithPlugins(
                     languageVersionSettings,
                     symbolTable,
                     typeTranslator,
-                    irBuiltIns
+                    irBuiltIns,
+                    IrDeclarationFactory.TMP
                 )
             )
         }
