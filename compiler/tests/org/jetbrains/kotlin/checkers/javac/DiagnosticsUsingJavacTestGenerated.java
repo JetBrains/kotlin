@@ -9730,6 +9730,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/inference/completeInferenceIfManyFailed.kt");
             }
 
+            @TestMetadata("completionOfMultipleLambdas.kt")
+            public void testCompletionOfMultipleLambdas() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/completionOfMultipleLambdas.kt");
+            }
+
             @TestMetadata("conflictingSubstitutions.kt")
             public void testConflictingSubstitutions() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/conflictingSubstitutions.kt");
