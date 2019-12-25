@@ -2296,6 +2296,11 @@ public class FirOldFrontendDiagnosticsTestWithStdlibGenerated extends AbstractFi
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/reflection"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
         }
 
+        @TestMetadata("noReflectionInClassPath.kt")
+        public void testNoReflectionInClassPath() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/reflection/noReflectionInClassPath.kt");
+        }
+
         @TestMetadata("typeOfWithNonReifiedParameter.kt")
         public void testTypeOfWithNonReifiedParameter() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/reflection/typeOfWithNonReifiedParameter.kt");
@@ -2357,11 +2362,6 @@ public class FirOldFrontendDiagnosticsTestWithStdlibGenerated extends AbstractFi
         @TestMetadata("kt34391.kt")
         public void testKt34391() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/regression/kt34391.kt");
-        }
-
-        @TestMetadata("kt9345.kt")
-        public void testKt9345() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithStdLib/regression/kt9345.kt");
         }
 
         @TestMetadata("kt9820_javaFunctionTypeInheritor.kt")

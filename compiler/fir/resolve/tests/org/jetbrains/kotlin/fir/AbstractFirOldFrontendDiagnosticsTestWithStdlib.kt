@@ -9,6 +9,6 @@ import org.jetbrains.kotlin.test.ConfigurationKind
 
 abstract class AbstractFirOldFrontendDiagnosticsTestWithStdlib : AbstractFirOldFrontendDiagnosticsTest() {
     override fun getConfigurationKind(): ConfigurationKind {
-        return ConfigurationKind.ALL
+        return ConfigurationKind.NO_KOTLIN_REFLECT
     }
 }

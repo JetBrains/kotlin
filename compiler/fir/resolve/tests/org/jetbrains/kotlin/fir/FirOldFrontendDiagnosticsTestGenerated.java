@@ -17273,24 +17273,6 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
         }
     }
 
-    @TestMetadata("compiler/testData/diagnostics/tests/reflection")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class Reflection extends AbstractFirOldFrontendDiagnosticsTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInReflection() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/reflection"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
-        }
-
-        @TestMetadata("noReflectionInClassPath.kt")
-        public void testNoReflectionInClassPath() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/reflection/noReflectionInClassPath.kt");
-        }
-    }
-
     @TestMetadata("compiler/testData/diagnostics/tests/regressions")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
