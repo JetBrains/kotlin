@@ -35,7 +35,7 @@ open class KotlinJsIrTargetPreset(
         KotlinJsCompilationFactory(project, forTarget)
 
     companion object {
-        const val PRESET_NAME = "js"
+        const val PRESET_NAME = "jsIr"
     }
 }
 
