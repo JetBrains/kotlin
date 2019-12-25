@@ -115,8 +115,7 @@ val repoDir = File(customDepsRepoDir, customDepsOrg)
 
 dependencies {
     if (androidStudioRelease != null) {
-        val extension = if (androidStudioOs == "linux" &&
-            (androidStudioRelease.startsWith("3.5") || androidStudioRelease.startsWith("3.6")))
+        val extension = if (androidStudioOs == "linux")
             "tar.gz"
         else
             "zip"
