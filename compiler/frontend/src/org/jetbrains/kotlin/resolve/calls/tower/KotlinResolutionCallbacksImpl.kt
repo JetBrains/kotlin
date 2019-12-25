@@ -58,24 +58,24 @@ data class LambdaContextInfo(
 
 class KotlinResolutionCallbacksImpl(
     val trace: BindingTrace,
-    val expressionTypingServices: ExpressionTypingServices,
-    val typeApproximator: TypeApproximator,
-    val argumentTypeResolver: ArgumentTypeResolver,
-    val languageVersionSettings: LanguageVersionSettings,
-    val kotlinToResolvedCallTransformer: KotlinToResolvedCallTransformer,
-    val dataFlowValueFactory: DataFlowValueFactory,
+    private val expressionTypingServices: ExpressionTypingServices,
+    private val typeApproximator: TypeApproximator,
+    private val argumentTypeResolver: ArgumentTypeResolver,
+    private val languageVersionSettings: LanguageVersionSettings,
+    private val kotlinToResolvedCallTransformer: KotlinToResolvedCallTransformer,
+    private val dataFlowValueFactory: DataFlowValueFactory,
     override val inferenceSession: InferenceSession,
-    val constantExpressionEvaluator: ConstantExpressionEvaluator,
-    val typeResolver: TypeResolver,
-    val psiCallResolver: PSICallResolver,
-    val postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
-    val kotlinConstraintSystemCompleter: KotlinConstraintSystemCompleter,
-    val callComponents: KotlinCallComponents,
-    val doubleColonExpressionResolver: DoubleColonExpressionResolver,
-    val deprecationResolver: DeprecationResolver,
-    val moduleDescriptor: ModuleDescriptor,
-    val topLevelCallContext: BasicCallResolutionContext?,
-    val missingSupertypesResolver: MissingSupertypesResolver
+    private val constantExpressionEvaluator: ConstantExpressionEvaluator,
+    private val typeResolver: TypeResolver,
+    private val psiCallResolver: PSICallResolver,
+    private val postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
+    private val kotlinConstraintSystemCompleter: KotlinConstraintSystemCompleter,
+    private val callComponents: KotlinCallComponents,
+    private val doubleColonExpressionResolver: DoubleColonExpressionResolver,
+    private val deprecationResolver: DeprecationResolver,
+    private val moduleDescriptor: ModuleDescriptor,
+    private val topLevelCallContext: BasicCallResolutionContext?,
+    private val missingSupertypesResolver: MissingSupertypesResolver
 ) : KotlinResolutionCallbacks {
     class LambdaInfo(val expectedType: UnwrappedType, val contextDependency: ContextDependency) {
         val returnStatements = ArrayList<Pair<KtReturnExpression, LambdaContextInfo?>>()
