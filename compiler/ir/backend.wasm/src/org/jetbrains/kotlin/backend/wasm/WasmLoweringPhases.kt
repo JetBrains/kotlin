@@ -228,6 +228,13 @@ private val primaryConstructorLoweringPhase = makeWasmModulePhase(
     description = "Creates primary constructor if it doesn't exist"
 )
 
+private val delegateToPrimaryConstructorLoweringPhase = makeWasmModulePhase(
+    ::DelegateToSyntheticPrimaryConstructor,
+    name = "DelegateToSyntheticPrimaryConstructor",
+    description = "Delegates to synthetic primary constructor",
+    prerequisite = setOf(primaryConstructorLoweringPhase)
+)
+
 private val initializersLoweringPhase = makeWasmModulePhase(
     ::InitializersLowering,
     name = "InitializersLowering",
@@ -372,6 +379,7 @@ val wasmPhases = namedIrModulePhase<WasmBackendContext>(
             innerClassConstructorCallsLoweringPhase then
             propertiesLoweringPhase then
             primaryConstructorLoweringPhase then
+            delegateToPrimaryConstructorLoweringPhase then
             initializersLoweringPhase then
             initializersCleanupLoweringPhase then
             // Common prefix ends

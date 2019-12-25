@@ -311,6 +311,13 @@ private val primaryConstructorLoweringPhase = makeJsModulePhase(
     prerequisite = setOf(enumClassConstructorLoweringPhase)
 )
 
+private val delegateToPrimaryConstructorLoweringPhase = makeJsModulePhase(
+    ::DelegateToSyntheticPrimaryConstructor,
+    name = "DelegateToSyntheticPrimaryConstructor",
+    description = "Delegates to synthetic primary constructor",
+    prerequisite = setOf(primaryConstructorLoweringPhase)
+)
+
 private val annotationConstructorLowering = makeJsModulePhase(
     ::AnnotationConstructorLowering,
     name = "AnnotationConstructorLowering",
@@ -465,6 +472,7 @@ val jsPhases = namedIrModulePhase(
             innerClassConstructorCallsLoweringPhase then
             propertiesLoweringPhase then
             primaryConstructorLoweringPhase then
+            delegateToPrimaryConstructorLoweringPhase then
             annotationConstructorLowering then
             initializersLoweringPhase then
             initializersCleanupLoweringPhase then

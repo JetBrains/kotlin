@@ -17,4 +17,5 @@ class JsMapping : DefaultMapping() {
     val secondaryConstructorToFactory = newMapping<IrConstructor, IrSimpleFunction>()
     val objectToGetInstanceFunction = newMapping<IrClass, IrSimpleFunction>()
     val objectToInstanceField = newMapping<IrClass, IrField>()
+    val classToSyntheticPrimaryConstructor = newMapping<IrClass, IrConstructor>()
 }
