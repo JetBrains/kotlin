@@ -10023,6 +10023,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
             runTest("compiler/testData/diagnostics/tests/inference/starApproximationFlexible.kt");
         }
 
+        @TestMetadata("tooEagerSmartcast.kt")
+        public void testTooEagerSmartcast() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/inference/tooEagerSmartcast.kt");
+        }
+
         @TestMetadata("tryNumberLowerBoundsBeforeUpperBounds.kt")
         public void testTryNumberLowerBoundsBeforeUpperBounds() throws Exception {
             runTest("compiler/testData/diagnostics/tests/inference/tryNumberLowerBoundsBeforeUpperBounds.kt");

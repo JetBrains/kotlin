@@ -269,8 +269,6 @@ object AbstractTypeChecker {
             1 -> return isSubtypeForSameConstructor(supertypesWithSameConstructor.first().asArgumentList(), superType)
 
             else -> { // at least 2 supertypes with same constructors. Such case is rare
-                if (supertypesWithSameConstructor.any { isSubtypeForSameConstructor(it.asArgumentList(), superType) }) return true
-
                 val newArguments = ArgumentList(superConstructor.parametersCount())
                 for (index in 0 until superConstructor.parametersCount()) {
                     val allProjections = supertypesWithSameConstructor.map {
@@ -283,7 +281,9 @@ object AbstractTypeChecker {
                     newArguments.add(intersection)
                 }
 
-                return isSubtypeForSameConstructor(newArguments, superType)
+                if (isSubtypeForSameConstructor(newArguments, superType)) return true
+
+                return supertypesWithSameConstructor.any { isSubtypeForSameConstructor(it.asArgumentList(), superType) }
             }
         }
     }
