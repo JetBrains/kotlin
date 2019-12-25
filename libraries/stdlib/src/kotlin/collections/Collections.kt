@@ -214,6 +214,16 @@ public inline fun <T> List<T>?.orEmpty(): List<T> = this ?: emptyList()
 public inline fun <C, R> C.ifEmpty(defaultValue: () -> R): R where C : Collection<*>, C : R =
     if (isEmpty()) defaultValue() else this
 
+/**
+ * Remove all null elements from this collection.
+ *
+ * @sample samples.collections.Collections.Collections.collectionRemoveNull
+ */
+@ExperimentalStdlibApi
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+public inline fun <E : Any, T : MutableCollection<E?>, R : MutableCollection<E>> T.removeNull(): R =
+    @Suppress("UNCHECKED_CAST") (apply { removeAll { it == null } } as R)
 
 /**
  * Checks if all elements in the specified collection are contained in this collection.
@@ -402,4 +412,3 @@ internal fun throwIndexOverflow() { throw ArithmeticException("Index overflow ha
 @PublishedApi
 @SinceKotlin("1.3")
 internal fun throwCountOverflow() { throw ArithmeticException("Count overflow has happened.") }
-

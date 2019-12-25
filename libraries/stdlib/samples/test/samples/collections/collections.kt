@@ -79,6 +79,15 @@ class Collections {
         }
 
         @Sample
+        fun collectionRemoveNull() {
+            val list: MutableList<Char?> = mutableListOf('a', null, 'b', null)
+            val sameList: MutableList<Char> = list.removeNull()
+
+            assertTrue(list == sameList)
+            assertPrints(list, "[a, b]")
+        }
+
+        @Sample
         fun collectionContainsAll() {
             val collection = mutableListOf('a', 'b')
             val test = listOf('a', 'b', 'c')
