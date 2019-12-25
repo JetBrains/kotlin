@@ -130,13 +130,13 @@ fun parse(project: Project, libraries: List<PLibrary>, context: ParserContext): 
  */
 private val CONFIGURATION_MAPPING = mapOf(
     listOf("runtimeClasspath") to Scope.RUNTIME,
-    listOf("compileClasspath") to Scope.PROVIDED,
+    listOf("compileClasspath", "compileOnly") to Scope.PROVIDED,
     listOf("embedded") to Scope.COMPILE
 )
 
 private val TEST_CONFIGURATION_MAPPING = mapOf(
     listOf("runtimeClasspath", "testRuntimeClasspath") to Scope.RUNTIME,
-    listOf("compileClasspath", "testCompileClasspath") to Scope.PROVIDED,
+    listOf("compileClasspath", "testCompileClasspath", "compileOnly", "testCompileOnly") to Scope.PROVIDED,
     listOf("jpsTest") to Scope.TEST
 )
 
