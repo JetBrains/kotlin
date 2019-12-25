@@ -60,6 +60,11 @@ abstract class BasicIrBoxTest(
         super.doTest(filePath, expectedResult, mainCallParameters, coroutinesPackage)
     }
 
+    override fun tearDown() {
+        IrDeclarationFactory.resetDefaultIrDeclarationFactory()
+        super.tearDown()
+    }
+
     override val testChecker get() = if (runTestInNashorn) NashornIrJsTestChecker() else V8IrJsTestChecker
 
     @Suppress("ConstantConditionIf")
@@ -97,6 +102,8 @@ abstract class BasicIrBoxTest(
             if (!isMainModule) it.replace("_v5.js", "/") else it
         }
 
+        val irDeclarationFactory = DefaultIrDeclarationFactory.createAndRegister()
+
         if (isMainModule) {
             val debugMode = getBoolean("kotlin.js.debugMode")
 
@@ -115,24 +122,25 @@ abstract class BasicIrBoxTest(
                 PhaseConfig(jsPhases)
             }
 
-            val irDeclarationFactory = DefaultIrDeclarationFactory()
-            IrDeclarationFactory.registerDefaultIrDeclarationFactory(irDeclarationFactory)
+            val compiledModule = try {
+                compile(
+                    project = config.project,
+                    files = filesToCompile,
+                    configuration = config.configuration,
+                    phaseConfig = phaseConfig,
+                    irDeclarationFactory = irDeclarationFactory,
+                    allDependencies = resolvedLibraries,
+                    friendDependencies = emptyList(),
+                    mainArguments = mainCallParameters.run { if (shouldBeGenerated()) arguments() else null },
+                    exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, testFunction))),
+                    generateFullJs = true,
+                    generateDceJs = runIrDce
+                )
+            } finally {
+                IrDeclarationFactory.resetDefaultIrDeclarationFactory()
+            }
 
-            val compiledModule = compile(
-                project = config.project,
-                files = filesToCompile,
-                configuration = config.configuration,
-                phaseConfig = phaseConfig,
-                irDeclarationFactory = irDeclarationFactory,
-                allDependencies = resolvedLibraries,
-                friendDependencies = emptyList(),
-                mainArguments = mainCallParameters.run { if (shouldBeGenerated()) arguments() else null },
-                exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, testFunction))),
-                generateFullJs = true,
-                generateDceJs = runIrDce
-            )
-
-            val wrappedCode = wrapWithModuleEmulationMarkers(compiledModule.jsCode!!, moduleId = config.moduleId, moduleKind = config.moduleKind)
+        val wrappedCode = wrapWithModuleEmulationMarkers(compiledModule.jsCode!!, moduleId = config.moduleId, moduleKind = config.moduleKind)
             outputFile.write(wrappedCode)
 
             compiledModule.dceJsCode?.let { dceJsCode ->
@@ -146,15 +154,20 @@ abstract class BasicIrBoxTest(
             }
 
         } else {
-            generateKLib(
-                project = config.project,
-                files = filesToCompile,
-                configuration = config.configuration,
-                allDependencies = resolvedLibraries,
-                friendDependencies = emptyList(),
-                outputKlibPath = actualOutputFile,
-                nopack = true
-            )
+            try {
+                generateKLib(
+                    project = config.project,
+                    files = filesToCompile,
+                    configuration = config.configuration,
+                    allDependencies = resolvedLibraries,
+                    friendDependencies = emptyList(),
+                    outputKlibPath = actualOutputFile,
+                    nopack = true,
+                    irDeclarationFactory = irDeclarationFactory
+                )
+            } finally {
+                IrDeclarationFactory.resetDefaultIrDeclarationFactory()
+            }
 
             compilationCache[outputFile.name.replace(".js", ".meta.js")] = actualOutputFile
         }
