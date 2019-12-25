@@ -31,7 +31,7 @@ import org.gradle.tooling.model.DomainObjectSet;
 import org.gradle.tooling.model.idea.IdeaModule;
 import org.gradle.util.GradleVersion;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.plugins.gradle.model.ClassSetProjectImportExtraModelProvider;
+import org.jetbrains.plugins.gradle.model.ClassSetProjectImportModelProvider;
 import org.jetbrains.plugins.gradle.model.ExternalProject;
 import org.jetbrains.plugins.gradle.model.ProjectImportAction;
 import org.jetbrains.plugins.gradle.service.execution.GradleExecutionHelper;
@@ -141,7 +141,7 @@ public abstract class AbstractModelBuilderTest {
 
         try {
             ProjectImportAction projectImportAction = new ProjectImportAction(false);
-            projectImportAction.addProjectImportExtraModelProvider(new ClassSetProjectImportExtraModelProvider(getModels()));
+            projectImportAction.addProjectImportModelProvider(new ClassSetProjectImportModelProvider(getModels()));
             BuildActionExecuter<ProjectImportAction.AllModels> buildActionExecutor = connection.action(projectImportAction);
             File initScript = GradleExecutionHelper.generateInitScript(false, getToolingExtensionClasses());
             assertNotNull(initScript);
@@ -196,7 +196,7 @@ public abstract class AbstractModelBuilderTest {
         Map<String, T> map = ContainerUtil.map2Map(ideaModules, new Function<IdeaModule, Pair<String, T>>() {
             @Override
             public Pair<String, T> fun(IdeaModule module) {
-                T value = allModels.getExtraProject(module, aClass);
+                T value = allModels.getModel(module, aClass);
                 String key = value != null ? module.getGradleProject().getPath() : filterKey;
                 return Pair.create(key, value);
             }
