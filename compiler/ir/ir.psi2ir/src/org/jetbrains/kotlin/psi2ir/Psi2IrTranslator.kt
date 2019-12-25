@@ -81,8 +81,6 @@ class Psi2IrTranslator(
         moduleGenerator.generateUnboundSymbolsAsDependencies(irProviders)
         irModule.computeUniqIdForDeclarations(context.symbolTable)
 
-        moduleGenerator.generateUnboundSymbolsAsDependencies(irProviders)
-
         return irModule
     }
 
