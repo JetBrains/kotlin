@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.ir.backend.js.lower.inline.CopyInlineFunctionBodyLow
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.RemoveInlineFunctionsWithReifiedTypeParametersLowering
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 
 private fun DeclarationContainerLoweringPass.runOnFilesPostfix(files: Iterable<IrFile>) = files.forEach { runOnFilePostfix(it) }
 
@@ -283,6 +282,12 @@ private val suspendFunctionsLoweringPhase = makeJsModulePhase(
     description = "Transform suspend functions into CoroutineImpl instance and build state machine"
 )
 
+private val suspendLambdasRemovalLoweringPhase = makeJsModulePhase(
+    { RemoveSuspendLambdas() },
+    name = "RemoveSuspendLambdas",
+    description = "Remove suspend lambdas"
+)
+
 private val privateMembersLoweringPhase = makeJsModulePhase(
     ::PrivateMembersLowering,
     name = "PrivateMembersLowering",
@@ -534,6 +539,7 @@ val jsPhases = namedIrModulePhase(
             enumUsageLoweringPhase then
             enumEntryRemovalLoweringPhase then
             suspendFunctionsLoweringPhase then
+            suspendLambdasRemovalLoweringPhase then
             returnableBlockLoweringPhase then
             forLoopsLoweringPhase then
             primitiveCompanionLoweringPhase then
