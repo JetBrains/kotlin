@@ -126,9 +126,84 @@ import java.lang.System;
 public final class HavingState {
     @org.jetbrains.annotations.NotNull()
     private final State state = State.START;
+    @org.jetbrains.annotations.NotNull()
+    private final State[] stateArray = {State.START};
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String[] stringArray = {"foo"};
+    @org.jetbrains.annotations.NotNull()
+    private final java.util.List<java.lang.String> stringList = null;
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.Integer[] intArray = {1};
+    @org.jetbrains.annotations.NotNull()
+    private final java.util.List<java.lang.Integer> intList = null;
+    private final int uint = 1;
+    @org.jetbrains.annotations.NotNull()
+    private final kotlin.UInt[] uintArray = {1};
+    @org.jetbrains.annotations.NotNull()
+    private final java.util.List<kotlin.UInt> uintList = null;
+    @org.jetbrains.annotations.NotNull()
+    private final kotlin.reflect.KClass<State> clazz = null;
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.Class<State> javaClass = null;
+    @org.jetbrains.annotations.NotNull()
+    private final kotlin.reflect.KClass<? extends java.lang.Object> anonymous = null;
 
     @org.jetbrains.annotations.NotNull()
     public final State getState() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final State[] getStateArray() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String[] getStringArray() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.List<java.lang.String> getStringList() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.Integer[] getIntArray() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.List<java.lang.Integer> getIntList() {
+        return null;
+    }
+
+    public final int getUint() {
+        return 0;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.UInt[] getUintArray() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.List<kotlin.UInt> getUintList() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.reflect.KClass<State> getClazz() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.Class<State> getJavaClass() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.reflect.KClass<? extends java.lang.Object> getAnonymous() {
         return null;
     }
 
