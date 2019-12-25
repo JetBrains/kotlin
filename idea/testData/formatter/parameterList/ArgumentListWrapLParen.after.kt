@@ -4,8 +4,10 @@
 fun foo() {
     foo(bar, baz)
 
-    foo(object : Quux {
-        override fun foo() {
-        }
-    })
+    foo(
+            object : Quux {
+                override fun foo() {
+                }
+            },
+    )
 }

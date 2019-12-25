@@ -190,32 +190,34 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
                 )
             }
 
-            inPosition(parent = VALUE_ARGUMENT_LIST, left = LPAR).customRule { parent, _, _ ->
-                if (kotlinCommonSettings.CALL_PARAMETERS_LPAREN_ON_NEXT_LINE && needWrapArgumentList(parent.requireNode().psi)) {
-                    Spacing.createDependentLFSpacing(
-                        0, 0,
-                        excludeLambdasAndObjects(parent),
-                        commonCodeStyleSettings.KEEP_LINE_BREAKS,
-                        commonCodeStyleSettings.KEEP_BLANK_LINES_IN_CODE
-                    )
-                } else {
-                    createSpacing(0)
-                }
-            }
-
-            inPosition(parent = VALUE_ARGUMENT_LIST, right = RPAR).customRule { parent, left, _ ->
-                when {
-                    kotlinCommonSettings.CALL_PARAMETERS_RPAREN_ON_NEXT_LINE ->
+            if (!kotlinCustomSettings.ALLOW_TRAILING_COMMA) {
+                inPosition(parent = VALUE_ARGUMENT_LIST, left = LPAR).customRule { parent, _, _ ->
+                    if (kotlinCommonSettings.CALL_PARAMETERS_LPAREN_ON_NEXT_LINE && needWrapArgumentList(parent.requireNode().psi)) {
                         Spacing.createDependentLFSpacing(
                             0, 0,
                             excludeLambdasAndObjects(parent),
                             commonCodeStyleSettings.KEEP_LINE_BREAKS,
                             commonCodeStyleSettings.KEEP_BLANK_LINES_IN_CODE
                         )
-                    left.requireNode().elementType == COMMA -> // incomplete call being edited
-                        createSpacing(1)
-                    else ->
+                    } else {
                         createSpacing(0)
+                    }
+                }
+
+                inPosition(parent = VALUE_ARGUMENT_LIST, right = RPAR).customRule { parent, left, _ ->
+                    when {
+                        kotlinCommonSettings.CALL_PARAMETERS_RPAREN_ON_NEXT_LINE ->
+                            Spacing.createDependentLFSpacing(
+                                0, 0,
+                                excludeLambdasAndObjects(parent),
+                                commonCodeStyleSettings.KEEP_LINE_BREAKS,
+                                commonCodeStyleSettings.KEEP_BLANK_LINES_IN_CODE
+                            )
+                        left.requireNode().elementType == COMMA -> // incomplete call being edited
+                            createSpacing(1)
+                        else ->
+                            createSpacing(0)
+                    }
                 }
             }
 

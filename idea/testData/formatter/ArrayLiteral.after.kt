@@ -3,5 +3,5 @@
             AppModule::class,
             DataModule::class,
             DomainModule::class
-        ]
+        ],
 )

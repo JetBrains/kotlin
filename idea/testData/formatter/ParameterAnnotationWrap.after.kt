@@ -1,4 +1,5 @@
-fun foo(@Deprecated("x")
+fun foo(
+        @Deprecated("x")
         x: Int,
         @Deprecated("y")
         @Deprecated("z")

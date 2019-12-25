@@ -4,7 +4,7 @@ fun foo() {
                 ?: DescriptorUtils.getParentOfType(
                     referencedDescriptor,
                     TypeAliasConstructorDescriptor::class.java,
-                    false
+                    false,
                 )?.typeAliasDescriptor
                 ?: DescriptorUtils.getParentOfType(referencedDescriptor, FunctionDescriptor::class.java, false)
                 ?: return emptyList()

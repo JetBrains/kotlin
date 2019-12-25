@@ -12,12 +12,16 @@ fun test() {
 
 fun test1() {
     val abc = ArrayList<Int>()
-        .map({
-            it * 2
-        })
-        .filter({
-            it > 4
-        })
+        .map(
+                {
+                    it * 2
+                },
+        )
+        .filter(
+                {
+                    it > 4
+                },
+        )
 }
 
 fun test2() {
@@ -35,7 +39,7 @@ fun test3() {
 
 fun test4() {
     val abc = ArrayList<Int>().mapTo(
-            LinkedHashSet()
+            LinkedHashSet(),
     ) {
         it * 2
     }

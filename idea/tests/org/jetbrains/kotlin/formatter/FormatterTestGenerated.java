@@ -1164,6 +1164,39 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma"), Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), null, true);
             }
 
+            @TestMetadata("idea/testData/formatter/trailingComma/valueArguments")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class ValueArguments extends AbstractFormatterTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInValueArguments() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma/valueArguments"), Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), null, true);
+                }
+
+                @TestMetadata("ArgumentListChopAsNeeded.after.kt")
+                public void testArgumentListChopAsNeeded() throws Exception {
+                    runTest("idea/testData/formatter/trailingComma/valueArguments/ArgumentListChopAsNeeded.after.kt");
+                }
+
+                @TestMetadata("ArgumentListDoNotWrap.after.kt")
+                public void testArgumentListDoNotWrap() throws Exception {
+                    runTest("idea/testData/formatter/trailingComma/valueArguments/ArgumentListDoNotWrap.after.kt");
+                }
+
+                @TestMetadata("ArgumentListWrapAlways.after.kt")
+                public void testArgumentListWrapAlways() throws Exception {
+                    runTest("idea/testData/formatter/trailingComma/valueArguments/ArgumentListWrapAlways.after.kt");
+                }
+
+                @TestMetadata("ArgumentListWrapAsNeeded.after.kt")
+                public void testArgumentListWrapAsNeeded() throws Exception {
+                    runTest("idea/testData/formatter/trailingComma/valueArguments/ArgumentListWrapAsNeeded.after.kt");
+                }
+            }
+
             @TestMetadata("idea/testData/formatter/trailingComma/valueParameters")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
@@ -1176,24 +1209,24 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma/valueParameters"), Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), null, true);
                 }
 
-                @TestMetadata("Function.after.kt")
-                public void testFunction() throws Exception {
-                    runTest("idea/testData/formatter/trailingComma/valueParameters/Function.after.kt");
+                @TestMetadata("ParameterListChopAsNeeded.after.kt")
+                public void testParameterListChopAsNeeded() throws Exception {
+                    runTest("idea/testData/formatter/trailingComma/valueParameters/ParameterListChopAsNeeded.after.kt");
                 }
 
-                @TestMetadata("OptionalTypes.after.kt")
-                public void testOptionalTypes() throws Exception {
-                    runTest("idea/testData/formatter/trailingComma/valueParameters/OptionalTypes.after.kt");
+                @TestMetadata("ParameterListDoNotWrap.after.kt")
+                public void testParameterListDoNotWrap() throws Exception {
+                    runTest("idea/testData/formatter/trailingComma/valueParameters/ParameterListDoNotWrap.after.kt");
                 }
 
-                @TestMetadata("PrimaryConstructor.after.kt")
-                public void testPrimaryConstructor() throws Exception {
-                    runTest("idea/testData/formatter/trailingComma/valueParameters/PrimaryConstructor.after.kt");
+                @TestMetadata("ParameterListWrapAlways.after.kt")
+                public void testParameterListWrapAlways() throws Exception {
+                    runTest("idea/testData/formatter/trailingComma/valueParameters/ParameterListWrapAlways.after.kt");
                 }
 
-                @TestMetadata("SecondConstructor.after.kt")
-                public void testSecondConstructor() throws Exception {
-                    runTest("idea/testData/formatter/trailingComma/valueParameters/SecondConstructor.after.kt");
+                @TestMetadata("ParameterListWrapAsNeeded.after.kt")
+                public void testParameterListWrapAsNeeded() throws Exception {
+                    runTest("idea/testData/formatter/trailingComma/valueParameters/ParameterListWrapAsNeeded.after.kt");
                 }
             }
         }
@@ -1575,6 +1608,39 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma"), Pattern.compile("^([^\\.]+)\\.after\\.inv\\.kt.*$"), null, true);
             }
 
+            @TestMetadata("idea/testData/formatter/trailingComma/valueArguments")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class ValueArguments extends AbstractFormatterTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTestInverted, this, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInValueArguments() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma/valueArguments"), Pattern.compile("^([^\\.]+)\\.after\\.inv\\.kt.*$"), null, true);
+                }
+
+                @TestMetadata("ArgumentListChopAsNeeded.after.inv.kt")
+                public void testArgumentListChopAsNeeded() throws Exception {
+                    runTest("idea/testData/formatter/trailingComma/valueArguments/ArgumentListChopAsNeeded.after.inv.kt");
+                }
+
+                @TestMetadata("ArgumentListDoNotWrap.after.inv.kt")
+                public void testArgumentListDoNotWrap() throws Exception {
+                    runTest("idea/testData/formatter/trailingComma/valueArguments/ArgumentListDoNotWrap.after.inv.kt");
+                }
+
+                @TestMetadata("ArgumentListWrapAlways.after.inv.kt")
+                public void testArgumentListWrapAlways() throws Exception {
+                    runTest("idea/testData/formatter/trailingComma/valueArguments/ArgumentListWrapAlways.after.inv.kt");
+                }
+
+                @TestMetadata("ArgumentListWrapAsNeeded.after.inv.kt")
+                public void testArgumentListWrapAsNeeded() throws Exception {
+                    runTest("idea/testData/formatter/trailingComma/valueArguments/ArgumentListWrapAsNeeded.after.inv.kt");
+                }
+            }
+
             @TestMetadata("idea/testData/formatter/trailingComma/valueParameters")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
@@ -1587,24 +1653,24 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma/valueParameters"), Pattern.compile("^([^\\.]+)\\.after\\.inv\\.kt.*$"), null, true);
                 }
 
-                @TestMetadata("Function.after.inv.kt")
-                public void testFunction() throws Exception {
-                    runTest("idea/testData/formatter/trailingComma/valueParameters/Function.after.inv.kt");
+                @TestMetadata("ParameterListChopAsNeeded.after.inv.kt")
+                public void testParameterListChopAsNeeded() throws Exception {
+                    runTest("idea/testData/formatter/trailingComma/valueParameters/ParameterListChopAsNeeded.after.inv.kt");
                 }
 
-                @TestMetadata("OptionalTypes.after.inv.kt")
-                public void testOptionalTypes() throws Exception {
-                    runTest("idea/testData/formatter/trailingComma/valueParameters/OptionalTypes.after.inv.kt");
+                @TestMetadata("ParameterListDoNotWrap.after.inv.kt")
+                public void testParameterListDoNotWrap() throws Exception {
+                    runTest("idea/testData/formatter/trailingComma/valueParameters/ParameterListDoNotWrap.after.inv.kt");
                 }
 
-                @TestMetadata("PrimaryConstructor.after.inv.kt")
-                public void testPrimaryConstructor() throws Exception {
-                    runTest("idea/testData/formatter/trailingComma/valueParameters/PrimaryConstructor.after.inv.kt");
+                @TestMetadata("ParameterListWrapAlways.after.inv.kt")
+                public void testParameterListWrapAlways() throws Exception {
+                    runTest("idea/testData/formatter/trailingComma/valueParameters/ParameterListWrapAlways.after.inv.kt");
                 }
 
-                @TestMetadata("SecondConstructor.after.inv.kt")
-                public void testSecondConstructor() throws Exception {
-                    runTest("idea/testData/formatter/trailingComma/valueParameters/SecondConstructor.after.inv.kt");
+                @TestMetadata("ParameterListWrapAsNeeded.after.inv.kt")
+                public void testParameterListWrapAsNeeded() throws Exception {
+                    runTest("idea/testData/formatter/trailingComma/valueParameters/ParameterListWrapAsNeeded.after.inv.kt");
                 }
             }
         }

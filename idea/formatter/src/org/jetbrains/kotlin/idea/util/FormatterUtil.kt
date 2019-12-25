@@ -37,3 +37,5 @@ fun PsiElement.getLineCount(): Int {
 
     return StringUtil.getLineBreakCount(text ?: "") + 1
 }
+
+fun PsiElement.isMultiline() = getLineCount() > 1

@@ -10,16 +10,17 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.impl.source.codeStyle.PostFormatProcessor
 import com.intellij.psi.impl.source.codeStyle.PostFormatProcessorHelper
-import org.jetbrains.kotlin.idea.util.getLineCount
+import org.jetbrains.kotlin.idea.util.isMultiline
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtParameterList
-import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
+import org.jetbrains.kotlin.psi.psiUtil.getPrevSiblingIgnoringWhitespace
 import org.jetbrains.kotlin.psi.psiUtil.getPrevSiblingIgnoringWhitespaceAndComments
+import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class TrailingCommaPostFormatProcessor : PostFormatProcessor {
@@ -37,6 +38,10 @@ private class TrailingCommaVisitor(val settings: CodeStyleSettings) : KtTreeVisi
         super.visitParameterList(list)
     }
 
+    override fun visitValueArgumentList(list: KtValueArgumentList) = processCommaOwnerIfInRange(list) {
+        super.visitValueArgumentList(list)
+    }
+
     private fun processCommaOwnerIfInRange(element: KtElement, preHook: () -> Unit = {}) {
         if (myPostProcessor.isElementPartlyInRange(element)) {
             preHook()
@@ -46,13 +51,47 @@ private class TrailingCommaVisitor(val settings: CodeStyleSettings) : KtTreeVisi
 
     private fun processCommaOwner(parent: KtElement) {
         val previous = parent.lastChild?.getPrevSiblingIgnoringWhitespaceAndComments() ?: return
-        if (previous.safeAs<ASTNode>()?.elementType !== KtTokens.COMMA &&
-            settings.kotlinCustomSettings.ALLOW_TRAILING_COMMA &&
-            parent.getLineCount() > 1
-        ) {
-            val oldLength = parent.textLength
-            parent.addAfter(KtPsiFactory(parent).createComma(), previous)
-            myPostProcessor.updateResultRange(oldLength, parent.textLength)
+        val elementType = previous.safeAs<ASTNode>()?.elementType
+        if (elementType === KtTokens.COMMA || settings.kotlinCustomSettings.ALLOW_TRAILING_COMMA && parent.isMultiline()) {
+            // add a missing comma
+            if (elementType !== KtTokens.COMMA) {
+                changePsi(parent) { element, factory ->
+                    element.addAfter(factory.createComma(), previous)
+                }
+            }
+
+            correctCommaPosition(parent)
+        }
+    }
+
+    private fun changePsi(element: KtElement, update: (KtElement, KtPsiFactory) -> Unit) {
+        val oldLength = element.textLength
+        update(element, KtPsiFactory(element))
+        val result = CodeStyleManager.getInstance(element.project).reformat(element)
+        myPostProcessor.updateResultRange(oldLength, result.textLength)
+    }
+
+    private fun correctCommaPosition(parent: KtElement) {
+        val lPar = parent.children.firstOrNull() ?: return
+        val rPar = parent.children.lastOrNull() ?: return
+        val invalidElements = lPar.siblings(withItself = false).takeWhile { it != rPar }.mapNotNull {
+            if (it !is ASTNode || it.elementType != KtTokens.COMMA) return@mapNotNull null
+
+            val prevWithComment = it.getPrevSiblingIgnoringWhitespace(false)
+            val prevWithoutComment = it.getPrevSiblingIgnoringWhitespaceAndComments(false)
+            if (prevWithoutComment?.equals(prevWithComment) == false) {
+                it.createSmartPointer() to prevWithoutComment.createSmartPointer()
+            } else
+                null
+        }.toList()
+
+        if (invalidElements.isNotEmpty()) {
+            changePsi(parent) { element, factory ->
+                for ((pointToComma, pointToElement) in invalidElements) {
+                    element.addAfter(factory.createComma(), pointToElement.element)
+                    pointToComma.element?.delete()
+                }
+            }
         }
     }
 

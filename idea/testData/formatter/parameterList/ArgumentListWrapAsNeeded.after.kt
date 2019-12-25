@@ -10,12 +10,15 @@ fun foo() {
     testtest(foofoo)
 
     testtesttesttest(
-            foofoofoofoofoofoofoofoofoofoofoofoo)
+            foofoofoofoofoofoofoofoofoofoofoofoo,
+    )
 
     testtest(foobar, barfoo)
 
-    testtesttesttest(foofoo,
-                     barbar,
-                     foobar,
-                     barfoo)
+    testtesttesttest(
+            foofoo,
+            barbar,
+            foobar,
+            barfoo,
+    )
 }

@@ -37,13 +37,17 @@ val s2 = Shadow { // wdwd
     val a = 42
 }
 
-val s3 = Shadow(fun() {  // wdwd
-    val a = 42
-})
+val s3 = Shadow(
+        fun() {  // wdwd
+            val a = 42
+        },
+)
 
-val s4 = Shadow(fun() { /* s */
-    val a = 42
-})
+val s4 = Shadow(
+        fun() { /* s */
+            val a = 42
+        },
+)
 
 val s5 = Shadow { ->
     // wdwd
@@ -55,15 +59,19 @@ val s6 = Shadow {
     val a = 42
 }
 
-val s7 = Shadow(fun() {
-    // wdwd
-    val a = 42
-})
+val s7 = Shadow(
+        fun() {
+            // wdwd
+            val a = 42
+        },
+)
 
-val s8 = Shadow(fun() {
-    // wdwd
-    val a = 42
-})
+val s8 = Shadow(
+        fun() {
+            // wdwd
+            val a = 42
+        },
+)
 
 val s9 = Shadow { ->   /* s */
     val a = 42

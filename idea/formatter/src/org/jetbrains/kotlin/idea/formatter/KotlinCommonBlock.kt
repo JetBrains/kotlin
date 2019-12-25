@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.formatter
 import com.intellij.formatting.*
 import com.intellij.lang.ASTNode
 import com.intellij.openapi.util.TextRange
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.TokenType
@@ -19,7 +20,7 @@ import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.formatter.NodeIndentStrategy.Companion.strategy
-import org.jetbrains.kotlin.idea.util.getLineCount
+import org.jetbrains.kotlin.idea.util.isMultiline
 import org.jetbrains.kotlin.idea.util.requireNode
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.kdoc.parser.KDocElementTypes
@@ -585,29 +586,37 @@ abstract class KotlinCommonBlock(
         when {
             elementType === VALUE_ARGUMENT_LIST -> {
                 val wrapSetting = commonSettings.CALL_PARAMETERS_WRAP
-                if ((wrapSetting == CommonCodeStyleSettings.WRAP_AS_NEEDED || wrapSetting == CommonCodeStyleSettings.WRAP_ON_EVERY_ITEM) &&
+                if (!node.withTrailingComma && (wrapSetting == CommonCodeStyleSettings.WRAP_AS_NEEDED || wrapSetting == CommonCodeStyleSettings.WRAP_ON_EVERY_ITEM) &&
                     !needWrapArgumentList(nodePsi)
                 ) {
                     return ::noWrapping
                 }
-                return getWrappingStrategyForItemList(wrapSetting, VALUE_ARGUMENT)
+                return getWrappingStrategyForItemList(
+                    wrapSetting,
+                    VALUE_ARGUMENT,
+                    node.withTrailingComma,
+                    additionalWrap = trailingCommaWrappingStrategy(
+                        LPAR,
+                        RPAR,
+                        thisOrPrevIsMultiLineElement(VALUE_ARGUMENT, COMMA, LPAR, RPAR)
+                    )
+                )
             }
 
             elementType === VALUE_PARAMETER_LIST -> {
                 if (parentElementType === FUN ||
                     parentElementType === PRIMARY_CONSTRUCTOR ||
                     parentElementType === SECONDARY_CONSTRUCTOR
-                ) {
-                    val wrap = Wrap.createWrap(commonSettings.METHOD_PARAMETERS_WRAP, false)
-                    val withTrailingComma = node.withTrailingComma
-                    return { childElement ->
-                        val childElementType = childElement.elementType
-                        if (withTrailingComma && (childElementType === RPAR || getPrevWithoutWhitespaceAndComments(childElement)?.elementType === LPAR))
-                            Wrap.createWrap(WrapType.ALWAYS, true)
-                        else
-                            wrap.takeIf { childElementType === VALUE_PARAMETER }
-                    }
-                }
+                ) return getWrappingStrategyForItemList(
+                    commonSettings.METHOD_PARAMETERS_WRAP,
+                    VALUE_PARAMETER,
+                    node.withTrailingComma,
+                    additionalWrap = trailingCommaWrappingStrategy(
+                        LPAR,
+                        RPAR,
+                        thisOrPrevIsMultiLineElement(VALUE_PARAMETER, COMMA, LPAR, RPAR)
+                    )
+                )
             }
 
             elementType === SUPER_TYPE_LIST -> {
@@ -710,9 +719,74 @@ abstract class KotlinCommonBlock(
     private val ASTNode.withTrailingComma: Boolean
         get() = when {
             lastChildNode?.let { getPrevWithoutWhitespaceAndComments(it) }?.elementType === COMMA -> true
-            settings.kotlinCustomSettings.ALLOW_TRAILING_COMMA -> psi?.getLineCount()?.let { it > 1 } == true
+            settings.kotlinCustomSettings.ALLOW_TRAILING_COMMA -> psi?.let(PsiElement::isMultiline) == true
             else -> false
         }
+
+    private fun ASTNode.getSiblingNodeInSequence(
+        forward: Boolean,
+        withBreakElement: Boolean,
+        breakType: IElementType,
+        barrier: IElementType
+    ): ASTNode? {
+        var sibling: ASTNode? = null
+        for (element in siblings(forward).filter { it.elementType != WHITE_SPACE }.takeWhile { it.elementType != barrier }) {
+            if (withBreakElement) {
+                sibling = element
+                if (element.elementType == breakType) break
+            } else {
+                if (element.elementType == breakType) break
+                sibling = element
+            }
+        }
+
+        return sibling
+    }
+
+    private fun thisOrPrevIsMultiLineElement(
+        type: IElementType,
+        delimiterType: IElementType,
+        leftBarrier: IElementType,
+        rightBarrier: IElementType
+    ) = fun(childElement: ASTNode): Boolean {
+        if (childElement.elementType != type) return false
+        val psi = childElement.psi ?: return false
+        if (psi.isMultiline()) return true
+
+        val startOffset = childElement.getSiblingNodeInSequence(
+            forward = false,
+            withBreakElement = true,
+            breakType = type,
+            barrier = leftBarrier
+        )?.startOffset ?: psi.startOffset
+
+        val endOffset = childElement.getSiblingNodeInSequence(
+            forward = true,
+            withBreakElement = false,
+            breakType = delimiterType,
+            barrier = rightBarrier
+        )?.psi?.endOffset ?: psi.endOffset
+
+        val treeParent = childElement.treeParent
+        val textRange = TextRange.create(startOffset, endOffset).shiftLeft(treeParent.startOffset)
+        return StringUtil.containsLineBreak(textRange.subSequence(treeParent.text))
+    }
+
+    private fun trailingCommaWrappingStrategy(
+        leftAnchor: IElementType,
+        rightAnchor: IElementType,
+        additionalCheck: (ASTNode) -> Boolean
+    ): WrappingStrategy = { childElement ->
+        val childElementType = childElement.elementType
+        if (childElement.treeParent.withTrailingComma && (childElementType === rightAnchor ||
+                    getPrevWithoutWhitespaceAndComments(childElement)?.elementType === leftAnchor ||
+                    additionalCheck(childElement)
+                    )
+        )
+            Wrap.createWrap(WrapType.ALWAYS, true)
+        else
+            null
+    }
 }
 
 private fun ASTNode.isFirstParameter(): Boolean = treePrev?.elementType == LPAR
@@ -1028,9 +1102,16 @@ private fun getPrevWithoutWhitespaceAndComments(pNode: ASTNode): ASTNode? {
     }
 }
 
-private fun getWrappingStrategyForItemList(wrapType: Int, itemType: IElementType, wrapFirstElement: Boolean = false): WrappingStrategy {
+private fun getWrappingStrategyForItemList(
+    wrapType: Int,
+    itemType: IElementType,
+    wrapFirstElement: Boolean = false,
+    additionalWrap: WrappingStrategy? = null
+): WrappingStrategy {
     val itemWrap = Wrap.createWrap(wrapType, wrapFirstElement)
-    return { childElement -> if (childElement.elementType === itemType) itemWrap else null }
+    return { childElement ->
+        additionalWrap?.invoke(childElement) ?: if (childElement.elementType === itemType) itemWrap else null
+    }
 }
 
 private fun getWrappingStrategyForItemList(wrapType: Int, itemTypes: TokenSet, wrapFirstElement: Boolean = false): WrappingStrategy {
