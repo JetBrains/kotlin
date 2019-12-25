@@ -105,7 +105,7 @@ class BasicCompletionSession(
         if (OPERATOR_NAME.isApplicable())
             return OPERATOR_NAME
 
-        if (NamedArgumentCompletion.isOnlyNamedArgumentExpected(nameExpression)) {
+        if (NamedArgumentCompletion.isOnlyNamedArgumentExpected(nameExpression, resolutionFacade)) {
             return NAMED_ARGUMENTS_ONLY
         }
 

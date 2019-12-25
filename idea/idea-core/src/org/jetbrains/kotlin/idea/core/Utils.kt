@@ -62,6 +62,10 @@ fun Call.mapArgumentsToParameters(targetDescriptor: CallableDescriptor): Map<Val
                 val parameter = parametersByName[argumentName]
                 if (parameter != null) {
                     map[argument] = parameter
+                    if (parameter.index == positionalArgumentIndex) {
+                        positionalArgumentIndex++
+                        continue
+                    }
                 }
                 positionalArgumentIndex = null
             } else {
