@@ -992,7 +992,7 @@ open class IrFileSerializer(
     }
 
     private fun serializeIrDeclarationBase(declaration: IrDeclaration): ProtoDeclarationBase {
-        expectActualTable.findExpectsForActuals(declaration)
+        if (!skipExpects) expectActualTable.findExpectsForActuals(declaration)
         return ProtoDeclarationBase.newBuilder()
             .setSymbol(serializeIrSymbol((declaration as IrSymbolOwner).symbol))
             .setCoordinates(serializeCoordinates(declaration.startOffset, declaration.endOffset))
