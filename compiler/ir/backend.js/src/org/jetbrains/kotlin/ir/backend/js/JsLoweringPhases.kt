@@ -247,6 +247,12 @@ private val privateMembersLoweringPhase = makeJsModulePhase(
     description = "Extract private members from classes"
 )
 
+private val privateMemberUsagesLoweringPhase = makeJsModulePhase(
+    ::PrivateMemberBodiesLowering,
+    name = "PrivateMemberUsagesLowering",
+    description = "Rewrite the private member usages"
+)
+
 private val callableReferenceLoweringPhase = makeJsModulePhase(
     ::CallableReferenceLowering,
     name = "CallableReferenceLowering",
@@ -486,6 +492,7 @@ val jsPhases = namedIrModulePhase(
             propertyAccessorInlinerLoweringPhase then
             foldConstantLoweringPhase then
             privateMembersLoweringPhase then
+            privateMemberUsagesLoweringPhase then
             callableReferenceLoweringPhase then
             defaultArgumentStubGeneratorPhase then
             defaultArgumentPatchOverridesPhase then

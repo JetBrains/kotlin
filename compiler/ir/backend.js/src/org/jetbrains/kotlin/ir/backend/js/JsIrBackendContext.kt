@@ -50,8 +50,6 @@ class JsIrBackendContext(
     override val lateinitNullableFields
         get() = error("Use Mapping.lateInitFieldToNullableField instead")
 
-    val memberMap = mutableMapOf<IrSimpleFunctionSymbol, IrSimpleFunction>()
-
     override val builtIns = module.builtIns
 
     override var inVerbosePhase: Boolean = false

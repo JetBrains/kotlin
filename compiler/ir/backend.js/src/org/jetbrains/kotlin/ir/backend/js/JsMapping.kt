@@ -18,4 +18,5 @@ class JsMapping : DefaultMapping() {
     val objectToGetInstanceFunction = newMapping<IrClass, IrSimpleFunction>()
     val objectToInstanceField = newMapping<IrClass, IrField>()
     val classToSyntheticPrimaryConstructor = newMapping<IrClass, IrConstructor>()
+    val privateMemberToCorrespondingStatic = newMapping<IrFunction, IrSimpleFunction>()
 }
