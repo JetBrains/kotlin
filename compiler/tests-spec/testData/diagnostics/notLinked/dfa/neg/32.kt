@@ -17,24 +17,24 @@ fun stringArg(number: String) {}
 /*
  * TESTCASE NUMBER: 1
  * UNEXPECTED BEHAVIOUR
- * ISSUES: KT-27464
+ * ISSUES: KT-27464, KT-35668
  */
 fun case_1(x: Int?) {
     if (x == null) {
-        <!UNREACHABLE_CODE!>stringArg(<!><!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!><!ALWAYS_NULL!>x<!>!!<!><!UNREACHABLE_CODE!>)<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int? & kotlin.Nothing"), UNREACHABLE_CODE!>x<!>
+        stringArg(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!><!ALWAYS_NULL!>x<!>!!<!>)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int? & kotlin.Nothing")!>x<!>
     }
 }
 
 /*
  * TESTCASE NUMBER: 2
  * UNEXPECTED BEHAVIOUR
- * ISSUES: KT-27464
+ * ISSUES: KT-27464, KT-35668
  */
 fun case_2(x: Int?, y: Nothing?) {
     if (x == <!DEBUG_INFO_CONSTANT!>y<!>) {
-        <!UNREACHABLE_CODE!>stringArg(<!><!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!><!ALWAYS_NULL!>x<!>!!<!><!UNREACHABLE_CODE!>)<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int? & kotlin.Nothing"), UNREACHABLE_CODE!>x<!>
+        stringArg(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!><!ALWAYS_NULL!>x<!>!!<!>)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int? & kotlin.Nothing")!>x<!>
     }
 }
 

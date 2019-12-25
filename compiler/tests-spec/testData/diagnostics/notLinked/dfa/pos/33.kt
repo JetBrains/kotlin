@@ -81,7 +81,11 @@ fun case_5() {
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Double"), DEBUG_INFO_SMARTCAST!>x<!>.minus(10.0)
 }
 
-// TESTCASE NUMBER: 6
+/*
+ * TESTCASE NUMBER: 6
+ * UNEXPECTED BEHAVIOUR
+ * ISSUES: KT-35668
+ */
 fun case_6() {
     val x: Any?
 
@@ -91,6 +95,6 @@ fun case_6() {
         null!!
     }
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any? & kotlin.Double")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Double"), DEBUG_INFO_SMARTCAST!>x<!>.minus(10.0)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?"), UNINITIALIZED_VARIABLE!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>.<!DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>minus<!>(10.0)
 }

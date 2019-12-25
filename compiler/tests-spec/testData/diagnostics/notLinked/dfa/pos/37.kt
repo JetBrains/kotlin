@@ -39,11 +39,11 @@ fun case_2(a: Any?) {
 /*
  * TESTCASE NUMBER: 3
  * UNEXPECTED BEHAVIOUR
- * ISSUES: KT-30756
+ * ISSUES: KT-30756, KT-35668
  */
 fun case_3(x: Int?) {
     while (true) {
-        x ?: return <!USELESS_ELVIS!>?: <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?"), DEBUG_INFO_SMARTCAST!>x<!><!>
+        x ?: return ?: <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?"), DEBUG_INFO_SMARTCAST!>x<!>
     }
 
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?"), UNREACHABLE_CODE!>x<!>
