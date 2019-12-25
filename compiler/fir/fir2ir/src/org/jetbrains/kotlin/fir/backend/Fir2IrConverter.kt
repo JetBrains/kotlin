@@ -12,8 +12,9 @@ import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.factories.IrDeclarationFactory
+import org.jetbrains.kotlin.ir.factories.createModuleFragment
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.PsiSourceManager
@@ -24,17 +25,19 @@ object Fir2IrConverter {
         session: FirSession,
         firFiles: List<FirFile>,
         languageVersionSettings: LanguageVersionSettings,
+        irDeclarationFactory: IrDeclarationFactory,
         fakeOverrideMode: FakeOverrideMode = FakeOverrideMode.NORMAL
     ): Fir2IrResult {
         val moduleDescriptor = FirModuleDescriptor(session)
-        val symbolTable = SymbolTable()
+        val symbolTable = SymbolTable(irDeclarationFactory)
         val constantValueGenerator = ConstantValueGenerator(moduleDescriptor, symbolTable)
         val typeTranslator = TypeTranslator(symbolTable, languageVersionSettings, moduleDescriptor.builtIns)
         constantValueGenerator.typeTranslator = typeTranslator
         typeTranslator.constantValueGenerator = constantValueGenerator
-        val builtIns = IrBuiltIns(moduleDescriptor.builtIns, typeTranslator, symbolTable)
+        val builtIns = IrBuiltIns(moduleDescriptor.builtIns, typeTranslator, irDeclarationFactory, symbolTable)
         val sourceManager = PsiSourceManager()
-        val fir2irTransformer = Fir2IrVisitor(session, moduleDescriptor, symbolTable, sourceManager, builtIns, fakeOverrideMode)
+        val fir2irTransformer =
+            Fir2IrVisitor(session, moduleDescriptor, symbolTable, irDeclarationFactory, sourceManager, builtIns, fakeOverrideMode)
         val irFiles = mutableListOf<IrFile>()
         for (firFile in firFiles) {
             val irFile = firFile.accept(fir2irTransformer, null) as IrFile
@@ -43,7 +46,7 @@ object Fir2IrConverter {
             irFiles += irFile
         }
 
-        val irModuleFragment = IrModuleFragmentImpl(moduleDescriptor, builtIns, irFiles)
+        val irModuleFragment = irDeclarationFactory.createModuleFragment(moduleDescriptor, builtIns, irFiles)
         generateUnboundSymbolsAsDependencies(irModuleFragment, symbolTable, builtIns)
         return Fir2IrResult(irModuleFragment, symbolTable, sourceManager)
     }

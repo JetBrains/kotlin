@@ -24,9 +24,9 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.factories.IrDeclarationFactory
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 class Fir2IrDeclarationStorage(
     private val session: FirSession,
     private val irSymbolTable: SymbolTable,
+    private val irDeclarationFactory: IrDeclarationFactory,
     private val moduleDescriptor: FirModuleDescriptor
 ) {
     private val firSymbolProvider = session.firSymbolProvider
@@ -105,7 +106,7 @@ class Fir2IrDeclarationStorage(
         thisReceiver = irSymbolTable.declareValueParameter(
             startOffset, endOffset, thisOrigin, WrappedReceiverParameterDescriptor(), thisType
         ) { symbol ->
-            IrValueParameterImpl(
+            irDeclarationFactory.createValueParameter(
                 startOffset, endOffset, thisOrigin, symbol,
                 Name.special("<this>"), -1, thisType,
                 varargElementType = null, isCrossinline = false, isNoinline = false
@@ -137,7 +138,7 @@ class Fir2IrDeclarationStorage(
             val modality = regularClass?.modality ?: Modality.FINAL
             return klass.convertWithOffsets { startOffset, endOffset ->
                 irSymbolTable.declareClass(startOffset, endOffset, origin, descriptor, modality) { symbol ->
-                    IrClassImpl(
+                    irDeclarationFactory.createClass(
                         startOffset,
                         endOffset,
                         origin,
@@ -194,7 +195,7 @@ class Fir2IrDeclarationStorage(
         val modality = Modality.FINAL
         return anonymousObject.convertWithOffsets { startOffset, endOffset ->
             irSymbolTable.declareClass(startOffset, endOffset, origin, descriptor, modality) { symbol ->
-                IrClassImpl(
+                irDeclarationFactory.createClass(
                     startOffset, endOffset, origin, symbol,
                     Name.special("<no name provided>"), anonymousObject.classKind,
                     Visibilities.LOCAL, modality,
@@ -214,7 +215,7 @@ class Fir2IrDeclarationStorage(
             val irTypeParameter =
                 convertWithOffsets { startOffset, endOffset ->
                     irSymbolTable.declareGlobalTypeParameter(startOffset, endOffset, origin, descriptor) { symbol ->
-                        IrTypeParameterImpl(
+                        irDeclarationFactory.createTypeParameter(
                             startOffset, endOffset, origin, symbol,
                             name, index,
                             isReified,
@@ -271,7 +272,7 @@ class Fir2IrDeclarationStorage(
         valueParameters += irSymbolTable.declareValueParameter(
             startOffset, endOffset, origin, WrappedValueParameterDescriptor(), type
         ) { symbol ->
-            IrValueParameterImpl(
+            irDeclarationFactory.createValueParameter(
                 startOffset, endOffset, IrDeclarationOrigin.DEFINED, symbol,
                 Name.special("<set-?>"), 0, type,
                 varargElementType = null,
@@ -306,7 +307,7 @@ class Fir2IrDeclarationStorage(
                             startOffset, endOffset, thisOrigin,
                             receiverDescriptor, type
                         ) { symbol ->
-                            IrValueParameterImpl(
+                            irDeclarationFactory.createValueParameter(
                                 startOffset, endOffset, thisOrigin, symbol,
                                 Name.special("<this>"), -1, type,
                                 varargElementType = null, isCrossinline = false, isNoinline = false
@@ -324,7 +325,7 @@ class Fir2IrDeclarationStorage(
                     startOffset, endOffset, thisOrigin, WrappedReceiverParameterDescriptor(),
                     thisType
                 ) { symbol ->
-                    IrValueParameterImpl(
+                    irDeclarationFactory.createValueParameter(
                         startOffset, endOffset, thisOrigin, symbol,
                         Name.special("<this>"), -1, thisType,
                         varargElementType = null, isCrossinline = false, isNoinline = false
@@ -371,7 +372,7 @@ class Fir2IrDeclarationStorage(
             return function.convertWithOffsets { startOffset, endOffset ->
                 enterScope(descriptor)
                 val result = irSymbolTable.declareSimpleFunction(startOffset, endOffset, origin, descriptor) { symbol ->
-                    IrFunctionImpl(
+                    irDeclarationFactory.createSimpleFunction(
                         startOffset, endOffset, origin, symbol,
                         function.name, function.visibility, function.modality!!,
                         function.returnTypeRef.toIrType(session, this),
@@ -413,7 +414,7 @@ class Fir2IrDeclarationStorage(
         val origin = if (isLambda) IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA else IrDeclarationOrigin.DEFINED
         return function.convertWithOffsets { startOffset, endOffset ->
             irSymbolTable.declareSimpleFunction(startOffset, endOffset, origin, descriptor) { symbol ->
-                IrFunctionImpl(
+                irDeclarationFactory.createSimpleFunction(
                     startOffset, endOffset, origin, symbol,
                     if (isLambda) Name.special("<anonymous>") else Name.special("<no name provided>"),
                     Visibilities.LOCAL, Modality.FINAL,
@@ -450,7 +451,7 @@ class Fir2IrDeclarationStorage(
         }
         val created = constructor.convertWithOffsets { startOffset, endOffset ->
             irSymbolTable.declareConstructor(startOffset, endOffset, origin, descriptor) { symbol ->
-                IrConstructorImpl(
+                irDeclarationFactory.createConstructor(
                     startOffset, endOffset, origin, symbol,
                     constructor.name, visibility,
                     constructor.returnTypeRef.toIrType(session, this),
@@ -480,7 +481,7 @@ class Fir2IrDeclarationStorage(
             origin, descriptor
         ) { symbol ->
             val accessorReturnType = if (isSetter) unitType else propertyType
-            IrFunctionImpl(
+            irDeclarationFactory.createSimpleFunction(
                 startOffset, endOffset, origin, symbol,
                 Name.special("<$prefix-${correspondingProperty.name}>"),
                 propertyAccessor?.visibility ?: correspondingProperty.visibility,
@@ -517,7 +518,7 @@ class Fir2IrDeclarationStorage(
                     startOffset, endOffset,
                     origin, descriptor, property.delegate != null
                 ) { symbol ->
-                    IrPropertyImpl(
+                    irDeclarationFactory.createProperty(
                         startOffset, endOffset, origin, symbol,
                         property.name, property.visibility, property.modality!!,
                         isVar = property.isVar,
@@ -569,7 +570,7 @@ class Fir2IrDeclarationStorage(
                     startOffset, endOffset,
                     origin, descriptor, type
                 ) { symbol ->
-                    IrFieldImpl(
+                    irDeclarationFactory.createField(
                         startOffset, endOffset, origin, symbol,
                         field.name, type, field.visibility,
                         isFinal = field.modality == Modality.FINAL,
@@ -592,7 +593,7 @@ class Fir2IrDeclarationStorage(
             irSymbolTable.declareValueParameter(
                 startOffset, endOffset, origin, descriptor, type
             ) { symbol ->
-                IrValueParameterImpl(
+                irDeclarationFactory.createValueParameter(
                     startOffset, endOffset, origin, symbol,
                     valueParameter.name, index, type,
                     null, valueParameter.isCrossinline, valueParameter.isNoinline
@@ -620,7 +621,7 @@ class Fir2IrDeclarationStorage(
     ): IrVariable {
         val descriptor = WrappedVariableDescriptor()
         return irSymbolTable.declareVariable(startOffset, endOffset, origin, descriptor, type) { symbol ->
-            IrVariableImpl(
+            irDeclarationFactory.createVariable(
                 startOffset, endOffset, origin, symbol, name, type,
                 isVar, isConst, isLateinit
             ).apply {

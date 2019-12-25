@@ -36,13 +36,12 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.factories.IrDeclarationFactory
+import org.jetbrains.kotlin.ir.factories.createFile
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
@@ -61,6 +60,7 @@ class Fir2IrVisitor(
     private val session: FirSession,
     private val moduleDescriptor: FirModuleDescriptor,
     private val symbolTable: SymbolTable,
+    private val irDeclarationFactory: IrDeclarationFactory,
     private val sourceManager: PsiSourceManager,
     override val irBuiltIns: IrBuiltIns,
     private val fakeOverrideMode: FakeOverrideMode
@@ -75,7 +75,7 @@ class Fir2IrVisitor(
 
     private val typeContext = session.typeContext
 
-    private val declarationStorage = Fir2IrDeclarationStorage(session, symbolTable, moduleDescriptor)
+    private val declarationStorage = Fir2IrDeclarationStorage(session, symbolTable, irDeclarationFactory, moduleDescriptor)
 
     private val nothingType = session.builtinTypes.nothingType.toIrType(session, declarationStorage)
 
@@ -143,7 +143,7 @@ class Fir2IrVisitor(
     }
 
     override fun visitFile(file: FirFile, data: Any?): IrFile {
-        return IrFileImpl(
+        return irDeclarationFactory.createFile(
             sourceManager.getOrCreateFileEntry(file.psi as KtFile),
             moduleDescriptor.findPackageFragmentForFile(file)
         ).withParent {
@@ -313,7 +313,7 @@ class Fir2IrVisitor(
             startOffset, endOffset, thisOrigin, WrappedValueParameterDescriptor(),
             thisType
         ) { symbol ->
-            IrValueParameterImpl(
+            irDeclarationFactory.createValueParameter(
                 startOffset, endOffset, thisOrigin, symbol,
                 Name.special("<this>"), -1, thisType,
                 varargElementType = null, isCrossinline = false, isNoinline = false
@@ -507,7 +507,7 @@ class Fir2IrVisitor(
         return symbolTable.declareField(
             startOffset, endOffset, origin, descriptor, inferredType
         ) { symbol ->
-            IrFieldImpl(
+            irDeclarationFactory.createField(
                 startOffset, endOffset, origin, symbol,
                 name, inferredType,
                 visibility, isFinal = isFinal, isExternal = false,
