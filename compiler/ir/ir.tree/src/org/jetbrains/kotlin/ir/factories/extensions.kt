@@ -85,7 +85,7 @@ fun IrDeclarationFactory.createClass(
     endOffset: Int,
     origin: IrDeclarationOrigin,
     symbol: IrClassSymbol,
-    modality: Modality // = symbol.descriptor.modality
+    modality: Modality = symbol.descriptor.modality
 ): IrClass =
     createClass(
         startOffset, endOffset, origin, symbol,
