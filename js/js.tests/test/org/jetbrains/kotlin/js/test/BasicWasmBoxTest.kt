@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.loadKlib
+import org.jetbrains.kotlin.ir.factories.DefaultIrDeclarationFactory
+import org.jetbrains.kotlin.ir.factories.IrDeclarationFactory
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.facade.TranslationUnit
 import org.jetbrains.kotlin.js.test.engines.SpiderMonkeyEngine
@@ -109,11 +111,15 @@ abstract class BasicWasmBoxTest(
             PhaseConfig(wasmPhases)
         }
 
+        val irDeclarationFactory = DefaultIrDeclarationFactory()
+        IrDeclarationFactory.registerDefaultIrDeclarationFactory(irDeclarationFactory)
+
         val compilerResult = compileWasm(
             project = config.project,
             files = filesToCompile,
             configuration = config.configuration,
             phaseConfig = phaseConfig,
+            irDeclarationFactory = irDeclarationFactory,
             // TODO: Bypass the resolver fow wasm.
             allDependencies = KotlinLibraryResolverResultImpl(listOf(KotlinResolvedLibraryImpl(wasmRuntimeKlib))),
             friendDependencies = emptyList(),

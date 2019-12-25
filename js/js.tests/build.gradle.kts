@@ -44,6 +44,7 @@ dependencies {
     testCompile(commonDep("junit:junit"))
     testCompile(projectTests(":kotlin-build-common"))
     testCompile(projectTests(":generators:test-generator"))
+    testImplementation(project(":compiler:ir.tree.impl"))
 
     testCompile(intellijCoreDep()) { includeJars("intellij-core") }
     testCompile(project(":compiler:frontend"))
