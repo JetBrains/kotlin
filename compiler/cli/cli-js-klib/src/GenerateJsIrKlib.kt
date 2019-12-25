@@ -103,7 +103,6 @@ private fun listOfKtFilesFrom(paths: List<String>): List<String> {
     }.distinct()
 }
 
-// TODO extract this logic and remove dependency on :compiler:ir.tree.impl
 fun main(args: Array<String>) {
     val inputFiles = mutableListOf<String>()
     var outputPath: String? = null
