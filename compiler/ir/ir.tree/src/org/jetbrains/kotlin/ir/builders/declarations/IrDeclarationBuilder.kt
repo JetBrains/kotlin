@@ -11,9 +11,11 @@ import org.jetbrains.kotlin.ir.builders.IrElementBuilder
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithVisibility
+import org.jetbrains.kotlin.ir.factories.IrDeclarationFactory
 import org.jetbrains.kotlin.name.Name
 
-abstract class IrDeclarationBuilder : IrElementBuilder() {
+abstract class IrDeclarationBuilder() : IrElementBuilder() {
+    val irDeclarationFactory: IrDeclarationFactory get() = IrDeclarationFactory.DEFAULT
 
     var origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED
     var visibility: Visibility = Visibilities.PUBLIC

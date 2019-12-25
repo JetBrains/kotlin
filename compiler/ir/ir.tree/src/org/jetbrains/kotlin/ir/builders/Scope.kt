@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 
-class Scope(val scopeOwnerSymbol: IrSymbol, private val irDeclarationFactory: IrDeclarationFactory) {
+class Scope(val scopeOwnerSymbol: IrSymbol, val irDeclarationFactory: IrDeclarationFactory) {
     val scopeOwner: DeclarationDescriptor get() = scopeOwnerSymbol.descriptor
 
     fun getLocalDeclarationParent(): IrDeclarationParent {
