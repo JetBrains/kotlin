@@ -11,11 +11,10 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrPropertyImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrTypeParameterImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.factories.createTypeParameter
+import org.jetbrains.kotlin.ir.factories.createValueParameter
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrPropertySymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
@@ -223,7 +222,7 @@ interface IrBuilderExtension {
         propertyDescriptor: PropertyDescriptor,
         propertyParent: IrClass
     ): IrProperty {
-        val irProperty = IrPropertyImpl(
+        val irProperty = compilerContext.irDeclarationFactory.createProperty(
             propertyParent.startOffset, propertyParent.endOffset,
             SERIALIZABLE_PLUGIN_ORIGIN, IrPropertySymbolImpl(propertyDescriptor),
             isDelegated = false
@@ -344,7 +343,7 @@ interface IrBuilderExtension {
         overwriteValueParameters: Boolean = false,
         copyTypeParameters: Boolean = true
     ) {
-        fun ParameterDescriptor.irValueParameter() = IrValueParameterImpl(
+        fun ParameterDescriptor.irValueParameter() = compilerContext.irDeclarationFactory.createValueParameter(
             this@createParameterDeclarations.startOffset, this@createParameterDeclarations.endOffset,
             SERIALIZABLE_PLUGIN_ORIGIN,
             this,
@@ -369,7 +368,7 @@ interface IrBuilderExtension {
 
     fun IrFunction.copyTypeParamsFromDescriptor() {
         descriptor.typeParameters.mapTo(typeParameters) {
-            IrTypeParameterImpl(
+            compilerContext.irDeclarationFactory.createTypeParameter(
                 startOffset, endOffset,
                 SERIALIZABLE_PLUGIN_ORIGIN,
                 IrTypeParameterSymbolImpl(it)
