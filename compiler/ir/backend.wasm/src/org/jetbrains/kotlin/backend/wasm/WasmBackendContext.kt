@@ -16,12 +16,13 @@ import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.JsSharedVariablesManager
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.factories.IrDeclarationFactory
+import org.jetbrains.kotlin.ir.factories.createExternalPackageFragment
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.UniqId
@@ -31,6 +32,7 @@ class WasmBackendContext(
     val module: ModuleDescriptor,
     override val irBuiltIns: IrBuiltIns,
     symbolTable: SymbolTable,
+    override val irDeclarationFactory: IrDeclarationFactory,
     irModuleFragment: IrModuleFragment,
     val additionalExportedDeclarations: Set<FqName>,
     override val configuration: CompilerConfiguration
@@ -43,24 +45,24 @@ class WasmBackendContext(
 
     // Place to store declarations excluded from code generation
     val excludedDeclarations: IrPackageFragment by lazy {
-        IrExternalPackageFragmentImpl(
+        irDeclarationFactory.createExternalPackageFragment(
             DescriptorlessExternalPackageFragmentSymbol(),
             FqName("kotlin")
         )
     }
 
-    override val declarationFactory = JsDeclarationFactory()
+    override val declarationFactory = JsDeclarationFactory(irDeclarationFactory)
 
     val objectToGetInstanceFunction = mutableMapOf<IrClassSymbol, IrSimpleFunction>()
     override val internalPackageFqn = FqName("kotlin.wasm")
 
-    private val internalPackageFragment = IrExternalPackageFragmentImpl(
+    private val internalPackageFragment = irDeclarationFactory.createExternalPackageFragment(
         IrExternalPackageFragmentSymbolImpl(
             EmptyPackageFragmentDescriptor(builtIns.builtInsModule, FqName("kotlin.wasm.internal"))
         )
     )
 
-    override val sharedVariablesManager = JsSharedVariablesManager(irBuiltIns, internalPackageFragment)
+    override val sharedVariablesManager = JsSharedVariablesManager(irBuiltIns, irDeclarationFactory, internalPackageFragment)
 
     val wasmSymbols: WasmSymbols = WasmSymbols(this@WasmBackendContext, symbolTable)
     override val ir = object : Ir<WasmBackendContext>(this, irModuleFragment) {

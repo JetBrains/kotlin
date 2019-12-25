@@ -36,7 +36,7 @@ fun compileWasm(
         loadIr(project, files, configuration, irDeclarationFactory, allDependencies, friendDependencies)
 
     val moduleDescriptor = moduleFragment.descriptor
-    val context = WasmBackendContext(moduleDescriptor, irBuiltIns, symbolTable, moduleFragment, exportedDeclarations, configuration)
+    val context = WasmBackendContext(moduleDescriptor, irBuiltIns, symbolTable, irDeclarationFactory, moduleFragment, exportedDeclarations, configuration)
 
     // Load declarations referenced during `context` initialization
     dependencyModules.forEach {
