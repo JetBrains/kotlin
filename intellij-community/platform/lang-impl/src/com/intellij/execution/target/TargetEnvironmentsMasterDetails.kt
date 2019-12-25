@@ -22,7 +22,7 @@ class TargetEnvironmentsMasterDetails @JvmOverloads constructor(private val proj
     // note that `MasterDetailsComponent` does not work without `initTree()`
     initTree()
     myTree.emptyText.text = "No targets added"
-    myTree.emptyText.appendSecondaryText("Add new target", SimpleTextAttributes.LINK_ATTRIBUTES) { e ->
+    myTree.emptyText.appendSecondaryText("Add new target", SimpleTextAttributes.LINK_ATTRIBUTES) { _ ->
       val popup = ActionManager.getInstance().createActionPopupMenu("TargetEnvironmentsConfigurable.EmptyListText", CreateNewTargetGroup())
       val size = myTree.emptyText.preferredSize
       val textY = myTree.height / if (myTree.emptyText.isShowAboveCenter) 3 else 2

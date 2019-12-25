@@ -86,7 +86,7 @@ internal class TargetEnvironmentDetailsConfigurable(private val project: Project
       }
     }
 
-    return DropDownLink<Item>(Item(null), LanguageRuntimeType.allTypes().map { Item(it) }, {
+    return DropDownLink<Item>(Item(null), LanguageRuntimeType.EXTENSION_NAME.extensionList.map { Item(it) }, {
       val newRuntime = it.type?.createDefaultConfig() ?: return@DropDownLink
       config.runtimes.addConfig(newRuntime)
       forceRefreshUI()
