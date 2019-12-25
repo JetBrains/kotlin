@@ -43,7 +43,7 @@ class Psi2IrTranslator(
         val context = createGeneratorContext(
             moduleDescriptor, bindingContext,
             extensions = generatorExtensions,
-            irDeclarationFactory = DefaultIrDeclarationFactory()
+            irDeclarationFactory = DefaultIrDeclarationFactory() ///
         )
         val irProviders = generateTypicalIrProviderList(
             moduleDescriptor, context.irBuiltIns, context.symbolTable, extensions = generatorExtensions
