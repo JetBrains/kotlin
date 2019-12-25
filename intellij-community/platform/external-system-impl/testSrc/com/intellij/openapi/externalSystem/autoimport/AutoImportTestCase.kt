@@ -30,20 +30,32 @@ abstract class AutoImportTestCase : ExternalSystemTestCase() {
   private val notificationAware get() = ProjectNotificationAware.getInstance(myProject)
   private val projectTracker get() = AutoImportProjectTracker.getInstance(myProject).also { it.enableAutoImportInTests() }
 
-  private fun doRecursive(relativePath: String, stepInto: VirtualFile.(String) -> VirtualFile) = runWriteAction {
-    var file = myProjectRoot!!
-    for (part in relativePath.split("/")) {
-      file = file.stepInto(part)
-    }
-    file
+  private fun ensureExistsParentDirectory(relativePath: String): VirtualFile {
+    return relativePath.split("/").dropLast(1)
+      .fold(myProjectRoot!!) { file, name -> file.findOrCreateChildDirectory(name) }
   }
 
-  protected fun createVirtualFile(relativePath: String) =
-    doRecursive(relativePath) { createChildData(null, it) }
+  private fun VirtualFile.findOrCreateChildDirectory(name: String): VirtualFile {
+    val file = findChild(name) ?: createChildDirectory(null, name)
+    if (!file.isDirectory) throw IOException(VfsBundle.message("new.directory.failed.error", name))
+    return file
+  }
 
-  private fun findOrCreateVirtualFile(relativePath: String) =
-    doRecursive(relativePath) { findOrCreateChildData(null, it) }
+  private fun VirtualFile.findOrCreateChildFile(name: String): VirtualFile {
+    val file = findChild(name) ?: createChildData(null, name)
+    if (file.isDirectory) throw IOException(VfsBundle.message("new.file.failed.error", name))
+    return file
+  }
 
+  protected fun createVirtualFile(relativePath: String) = runWriteAction {
+    val directory = ensureExistsParentDirectory(relativePath)
+    directory.createChildData(null, relativePath.split("/").last())
+  }
+
+  protected fun findOrCreateVirtualFile(relativePath: String) = runWriteAction {
+    val directory = ensureExistsParentDirectory(relativePath)
+    directory.findOrCreateChildFile(relativePath.split("/").last())
+  }
 
   protected fun createIoFile(relativePath: String): VirtualFile {
     val file = File(projectPath, relativePath)
