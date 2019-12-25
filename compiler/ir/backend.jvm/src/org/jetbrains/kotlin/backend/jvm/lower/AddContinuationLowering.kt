@@ -64,7 +64,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
         for (lambda in suspendLambdas) {
             (lambda.function.parent as IrDeclarationContainer).declarations.remove(lambda.function)
         }
-        irFile.transformChildrenVoid(object : IrElementTransformerVoidWithContext() {
+        irFile.transformChildrenVoid(object : IrElementTransformerVoidWithContext(context) {
             override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
                 if (!expression.isSuspend)
                     return expression
