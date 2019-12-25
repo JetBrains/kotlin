@@ -55,7 +55,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                 is IrField -> {
                 }
                 else -> {
-                    error("Unexpected declaration in class: $declaration")
+                    error("Unexpected declaration in class: ${declaration.descriptor}")
                 }
             }
         }
