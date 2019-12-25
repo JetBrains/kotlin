@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 
 open class ScopeWithIr(val scope: Scope, val irElement: IrElement)
 
-abstract class IrElementTransformerVoidWithContext(protected val context: CommonBackendContext) : IrElementTransformerVoid() {
+abstract class IrElementTransformerVoidWithContext(open protected val context: CommonBackendContext) : IrElementTransformerVoid() {
 
     private val scopeStack = mutableListOf<ScopeWithIr>()
 
@@ -103,7 +103,7 @@ abstract class IrElementTransformerVoidWithContext(protected val context: Common
     }
 }
 
-abstract class IrElementVisitorVoidWithContext(protected val context: CommonBackendContext) : IrElementVisitorVoid {
+abstract class IrElementVisitorVoidWithContext(open protected val context: CommonBackendContext) : IrElementVisitorVoid {
 
     private val scopeStack = mutableListOf<ScopeWithIr>()
 
