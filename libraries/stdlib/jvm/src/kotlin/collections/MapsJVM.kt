@@ -95,3 +95,21 @@ internal actual inline fun <K, V> Map<K, V>.toSingletonMapOrSelf(): Map<K, V> = 
 internal actual fun <K, V> Map<out K, V>.toSingletonMap(): Map<K, V> =
     with(entries.iterator().next()) { java.util.Collections.singletonMap(key, value) }
 
+/**
+ * Calculate the initial capacity of a map, based on Guava's
+ * [com.google.common.collect.Maps.capacity](https://github.com/google/guava/blob/master/guava/src/com/google/common/collect/Maps.java)
+ * approach. This is similar to [java.util.HashMap.putMapEntries] (JDK8+) but provides further optimizations for small or large sizes.
+ */
+@PublishedApi
+internal actual fun mapCapacity(expectedSize: Int): Int = when {
+    // We are not coercing the value to a valid one and not throwing an exception. It is up to the receiving class to
+    // properly handle negative values. Note that all built-in classes do exactly that and will throw.
+    expectedSize < 0 -> expectedSize
+    expectedSize < MIN_CAPACITY -> expectedSize + 1
+    expectedSize < MAX_CAPACITY -> ((expectedSize / 0.75F) + 1.0F).toInt()
+    else -> MAX_CAPACITY
+}
+
+// java.util.HashMap.MAX_CAPACITY
+private const val MAX_CAPACITY = 1 shl 30
+private const val MIN_CAPACITY = 3

@@ -182,3 +182,10 @@ internal actual fun checkCountOverflow(count: Int): Int {
     return count
 }
 
+
+/**
+ * JS map and set implementations do not make use of capacities or load factors.
+ */
+@PublishedApi
+@kotlin.internal.InlineOnly
+internal actual inline fun mapCapacity(expectedSize: Int) = expectedSize

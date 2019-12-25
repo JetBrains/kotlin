@@ -5,9 +5,11 @@
 
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("SetsKt")
+@file:UseExperimental(kotlin.experimental.ExperimentalTypeInference::class)
 
 package kotlin.collections
 
+import kotlin.contracts.*
 
 internal object EmptySet : Set<Nothing>, Serializable {
     private const val serialVersionUID: Long = 3406603774387020532
@@ -87,6 +89,35 @@ public inline fun <T> linkedSetOf(): LinkedHashSet<T> = LinkedHashSet()
  * @sample samples.collections.Collections.Sets.linkedHashSet
  */
 public fun <T> linkedSetOf(vararg elements: T): LinkedHashSet<T> = elements.toCollection(LinkedHashSet(mapCapacity(elements.size)))
+
+/**
+ * Build a new read-only [Set] with the [elements][E] from the [builderAction] while preserving the insertion order.
+ *
+ * @sample samples.collections.Builders.Sets.buildSetSample
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun <E> buildSet(@BuilderInference builderAction: MutableSet<E>.() -> Unit): Set<E> {
+    contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
+    return LinkedHashSet<E>().apply(builderAction)
+}
+
+/**
+ * Build a new read-only [Set] with the given [expectedSize] and [elements][E] from the [builderAction] while preserving the insertion
+ * order.
+ *
+ * @sample samples.collections.Builders.Sets.buildSetSample
+ * @throws IllegalArgumentException if the given [expectedSize] is negative.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun <E> buildSet(expectedSize: Int, @BuilderInference builderAction: MutableSet<E>.() -> Unit): Set<E> {
+    contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
+    return LinkedHashSet<E>(mapCapacity(expectedSize)).apply(builderAction)
+}
+
 
 /** Returns this Set if it's not `null` and the empty set otherwise. */
 @kotlin.internal.InlineOnly
