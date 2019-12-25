@@ -47,7 +47,9 @@ class JsIrBackendContext(
     override val configuration: CompilerConfiguration, // TODO: remove configuration from backend context
     override val scriptMode: Boolean = false
 ) : JsCommonBackendContext {
-    override val transformedFunction = mutableMapOf<IrFunctionSymbol, IrSimpleFunctionSymbol>()
+    override val transformedFunction
+        get() = error("Use Mapping.inlineClassMemberToStatic instead")
+
     override val lateinitNullableFields = mutableMapOf<IrField, IrField>()
 
     val memberMap = mutableMapOf<IrSimpleFunctionSymbol, IrSimpleFunction>()

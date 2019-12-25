@@ -5,14 +5,14 @@
 
 package org.jetbrains.kotlin.backend.common
 
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KProperty
 
 interface Mapping {
     val defaultArgumentsDispatchFunction: Delegate<IrFunction, IrFunction>
     val defaultArgumentsOriginalFunction: Delegate<IrFunction, IrFunction>
+    val inlineClassMemberToStatic: Delegate<IrFunction, IrSimpleFunction>
 
     abstract class Delegate<K : IrDeclaration, V> {
         abstract operator fun get(key: K): V?
@@ -31,6 +31,7 @@ open class DefaultMapping : Mapping {
 
     override val defaultArgumentsDispatchFunction: Mapping.Delegate<IrFunction, IrFunction> = newMapping()
     override val defaultArgumentsOriginalFunction: Mapping.Delegate<IrFunction, IrFunction> = newMapping()
+    override val inlineClassMemberToStatic: Mapping.Delegate<IrFunction, IrSimpleFunction> = newMapping()
 
     protected fun <K : IrDeclaration, V> newMapping() = object : Mapping.Delegate<K, V>() {
         private val map: MutableMap<K, V> = mutableMapOf()

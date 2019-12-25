@@ -229,15 +229,16 @@ private val bridgesConstructionPhase = makeWasmModulePhase(
     description = "Generate bridges"
 )
 
-private val inlineClassLoweringPhase = makeCustomWasmModulePhase(
-    { context, module ->
-        InlineClassLowering(context).run {
-            inlineClassDeclarationLowering.runOnFilesPostfix(module)
-            inlineClassUsageLowering.lower(module)
-        }
-    },
-    name = "InlineClassLowering",
-    description = "Handle inline classes"
+private val inlineClassDeclarationLoweringPhase = makeWasmModulePhase(
+    { InlineClassLowering(it).inlineClassDeclarationLowering },
+    name = "InlineClassDeclarationLowering",
+    description = "Handle inline class declarations"
+)
+
+private val inlineClassUsageLoweringPhase = makeWasmModulePhase(
+    { InlineClassLowering(it).inlineClassUsageLowering },
+    name = "InlineClassUsageLowering",
+    description = "Handle inline class usages"
 )
 
 //private val autoboxingTransformerPhase = makeJsModulePhase(
@@ -384,7 +385,8 @@ val wasmPhases = namedIrModulePhase<WasmBackendContext>(
 //            TODO: Reimplement
 //            classReferenceLoweringPhase then
 
-            inlineClassLoweringPhase then
+            inlineClassDeclarationLoweringPhase then
+            inlineClassUsageLoweringPhase then
 
 //            TODO: Commonize box/unbox intrinsics
 //            autoboxingTransformerPhase then
