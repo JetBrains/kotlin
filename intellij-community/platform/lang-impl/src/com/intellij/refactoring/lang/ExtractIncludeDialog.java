@@ -31,8 +31,6 @@ import java.io.File;
  * @author ven
  */
 public class ExtractIncludeDialog extends DialogWrapper {
-  private static final String REFACTORING_NAME = RefactoringBundle.message("extractIncludeFile.name");
-
   private final PsiDirectory myCurrentDirectory;
   protected final String myExtension;
 
@@ -44,7 +42,7 @@ public class ExtractIncludeDialog extends DialogWrapper {
     super(true);
     myCurrentDirectory = currentDirectory;
     myExtension = extension;
-    setTitle(REFACTORING_NAME);
+    setTitle(getREFACTORING_NAME());
     init();
   }
 
@@ -148,7 +146,7 @@ public class ExtractIncludeDialog extends DialogWrapper {
           myTargetDirectory = webPath == null ? null : targetDirectory;
         }
         catch (IncorrectOperationException e) {
-          CommonRefactoringUtil.showErrorMessage(REFACTORING_NAME, e.getMessage(), null, project);
+          CommonRefactoringUtil.showErrorMessage(getREFACTORING_NAME(), e.getMessage(), null, project);
         }
       };
       ApplicationManager.getApplication().runWriteAction(action);
@@ -165,5 +163,9 @@ public class ExtractIncludeDialog extends DialogWrapper {
   protected void hideTargetDirectory() {
     myTargetDirectoryField.setVisible(false);
     myTargetDirLabel.setVisible(false);
+  }
+
+  private static String getREFACTORING_NAME() {
+    return RefactoringBundle.message("extractIncludeFile.name");
   }
 }

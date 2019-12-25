@@ -42,9 +42,6 @@ public class ConfigurationSettingsEditor extends CompositeSettingsEditor<RunnerA
   private final RunConfiguration myConfiguration;
   private final SettingsEditor<RunConfiguration> myConfigurationEditor;
   private SettingsEditorGroup<RunnerAndConfigurationSettings> myCompound;
-
-  private static final String RUNNERS_TAB_NAME = ExecutionBundle.message("run.configuration.startup.connection.rab.title");
-
   private GroupSettingsBuilder<RunnerAndConfigurationSettings> myGroupSettingsBuilder;
 
   @Override
@@ -84,7 +81,7 @@ public class ConfigurationSettingsEditor extends CompositeSettingsEditor<RunnerA
       }
 
       if (myRunnerEditors.size() > 0) {
-        myCompound.addEditor(RUNNERS_TAB_NAME,
+        myCompound.addEditor(getRUNNERS_TAB_NAME(),
                              new CompositeSettingsEditor<RunnerAndConfigurationSettings>(getFactory()) {
                                @Override
                                public CompositeSettingsBuilder<RunnerAndConfigurationSettings> getBuilder() {
@@ -166,7 +163,7 @@ public class ConfigurationSettingsEditor extends CompositeSettingsEditor<RunnerA
   }
 
   public <T extends SettingsEditor> T selectExecutorAndGetEditor(final ProgramRunner runner, Class<T> editorClass) {
-    myGroupSettingsBuilder.selectEditor(RUNNERS_TAB_NAME);
+    myGroupSettingsBuilder.selectEditor(getRUNNERS_TAB_NAME());
     Executor executor = ContainerUtil.find(myRunnersComponent.getExecutors(),
                                            executor1 -> runner.equals(ProgramRunner.getRunner(executor1.getId(), myConfiguration)));
     if (executor == null) {
@@ -330,5 +327,9 @@ public class ConfigurationSettingsEditor extends CompositeSettingsEditor<RunnerA
     public void disposeEditor() {
       Disposer.dispose(myConfigEditor);
     }
+  }
+
+  private static String getRUNNERS_TAB_NAME() {
+    return ExecutionBundle.message("run.configuration.startup.connection.rab.title");
   }
 }

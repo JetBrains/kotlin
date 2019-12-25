@@ -33,7 +33,6 @@ public class FindSettingsImpl extends FindSettings implements PersistentStateCom
   @NonNls private static final String FIND_ORIGIN_ENTIRE_SCOPE = "entire_scope";
   @NonNls private static final String FIND_SCOPE_GLOBAL = "global";
   @NonNls private static final String FIND_SCOPE_SELECTED = "selected";
-  private static final String DEFAULT_SEARCH_SCOPE = FindBundle.message("find.scope.all.project.classes");
 
   public FindSettingsImpl() {
     Set<String> extensions = JBIterable.from(IdeLanguageCustomization.getInstance().getPrimaryIdeLanguages())
@@ -89,7 +88,7 @@ public class FindSettingsImpl extends FindSettings implements PersistentStateCom
   @SuppressWarnings("WeakerAccess") public boolean WITH_SUBDIRECTORIES = true;
   @SuppressWarnings("WeakerAccess") public boolean SHOW_RESULTS_IN_SEPARATE_VIEW;
 
-  @SuppressWarnings("WeakerAccess") public String SEARCH_SCOPE = DEFAULT_SEARCH_SCOPE;
+  @SuppressWarnings("WeakerAccess") public String SEARCH_SCOPE = getDEFAULT_SEARCH_SCOPE();
   @SuppressWarnings("WeakerAccess") public String FILE_MASK;
 
   @Property(surroundWithTag = false)
@@ -378,5 +377,9 @@ public class FindSettingsImpl extends FindSettings implements PersistentStateCom
     public static FindRecents getInstance() {
       return ServiceManager.getService(FindRecents.class);
     }
+  }
+
+  private static String getDEFAULT_SEARCH_SCOPE() {
+    return FindBundle.message("find.scope.all.project.classes");
   }
 }

@@ -25,7 +25,6 @@ import java.util.List;
 
 public class InlineRefactoringActionHandler implements RefactoringActionHandler {
   private static final Logger LOG = Logger.getInstance(InlineRefactoringActionHandler.class);
-  private static final String REFACTORING_NAME = RefactoringBundle.message("inline.title");
 
   @Override
   public void invoke(@NotNull Project project, @NotNull PsiElement[] elements, DataContext dataContext) {
@@ -63,7 +62,7 @@ public class InlineRefactoringActionHandler implements RefactoringActionHandler 
       if (invokeInliner(editor, element)) return;
 
       String message = RefactoringBundle.getCannotRefactorMessage(RefactoringBundle.message("error.wrong.caret.position.method.or.local.name"));
-      CommonRefactoringUtil.showErrorHint(project, editor, message, REFACTORING_NAME, null);
+      CommonRefactoringUtil.showErrorHint(project, editor, message, getREFACTORING_NAME(), null);
     }
   }
 
@@ -75,5 +74,9 @@ public class InlineRefactoringActionHandler implements RefactoringActionHandler 
       }
     }
     return false;
+  }
+
+  private static String getREFACTORING_NAME() {
+    return RefactoringBundle.message("inline.title");
   }
 }

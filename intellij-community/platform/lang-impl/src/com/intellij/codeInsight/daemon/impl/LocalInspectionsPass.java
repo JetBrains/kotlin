@@ -66,7 +66,6 @@ public class LocalInspectionsPass extends ProgressableTextEditorHighlightingPass
   private final TextRange myPriorityRange;
   private final boolean myIgnoreSuppressed;
   private final ConcurrentMap<PsiFile, List<InspectionResult>> result = ContainerUtil.newConcurrentMap();
-  private static final String PRESENTABLE_NAME = DaemonBundle.message("pass.inspection");
   private volatile List<HighlightInfo> myInfos = Collections.emptyList();
   private final String myShortcutText;
   private final SeverityRegistrar mySeverityRegistrar;
@@ -81,7 +80,7 @@ public class LocalInspectionsPass extends ProgressableTextEditorHighlightingPass
                               @NotNull TextRange priorityRange,
                               boolean ignoreSuppressed,
                               @NotNull HighlightInfoProcessor highlightInfoProcessor, boolean inspectInjectedPsi) {
-    super(file.getProject(), document, PRESENTABLE_NAME, file, null, new TextRange(startOffset, endOffset), true, highlightInfoProcessor);
+    super(file.getProject(), document, getPRESENTABLE_NAME(), file, null, new TextRange(startOffset, endOffset), true, highlightInfoProcessor);
     assert file.isPhysical() : "can't inspect non-physical file: " + file + "; " + file.getVirtualFile();
     myPriorityRange = priorityRange;
     myIgnoreSuppressed = ignoreSuppressed;
@@ -829,5 +828,9 @@ public class LocalInspectionsPass extends ProgressableTextEditorHighlightingPass
     InspectionHighlightInfoType(@NotNull HighlightInfoType level, @NotNull PsiElement element) {
       super(level.getSeverity(element), level.getAttributesKey());
     }
+  }
+
+  private static String getPRESENTABLE_NAME() {
+    return DaemonBundle.message("pass.inspection");
   }
 }

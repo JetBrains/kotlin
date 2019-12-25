@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class VcsScopeItem implements ModelScopeItem {
-  private static final String ALL = AnalysisScopeBundle.message("scope.option.uncommitted.files.all.changelists.choice");
   private final ChangeListManager myChangeListManager;
   private final DefaultComboBoxModel<String> myModel;
   private final Project myProject;
@@ -39,7 +38,7 @@ public class VcsScopeItem implements ModelScopeItem {
     assert !myChangeListManager.getAffectedFiles().isEmpty();
 
     myModel = new DefaultComboBoxModel<>();
-    myModel.addElement(ALL);
+    myModel.addElement(getALL());
     final List<? extends ChangeList> changeLists = myChangeListManager.getChangeListsCopy();
     for (ChangeList changeList : changeLists) {
       myModel.addElement(changeList.getName());
@@ -53,7 +52,7 @@ public class VcsScopeItem implements ModelScopeItem {
       return null;
 
     List<VirtualFile> files;
-    if (selectedItem == ALL) {
+    if (selectedItem == getALL()) {
       files = myChangeListManager.getAffectedFiles();
     }
     else {
@@ -69,5 +68,9 @@ public class VcsScopeItem implements ModelScopeItem {
 
   public DefaultComboBoxModel<String> getChangeListsModel() {
     return myModel;
+  }
+
+  private static String getALL() {
+    return AnalysisScopeBundle.message("scope.option.uncommitted.files.all.changelists.choice");
   }
 }

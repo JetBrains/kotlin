@@ -32,9 +32,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 abstract class CodeStyleSchemesActions extends AbstractSchemeActions<CodeStyleScheme> {
-
-  private static final String SHARED_IMPORT_SOURCE = ApplicationBundle.message("import.scheme.shared");
-
   CodeStyleSchemesActions(@NotNull AbstractSchemesPanel<CodeStyleScheme, ?> schemesPanel) {
     super(schemesPanel);
   }
@@ -84,7 +81,7 @@ abstract class CodeStyleSchemesActions extends AbstractSchemeActions<CodeStyleSc
   }
   
   private void chooseAndImport(@NotNull CodeStyleScheme currentScheme, @NotNull String importerName) {
-    if (importerName.equals(SHARED_IMPORT_SOURCE)) {
+    if (importerName.equals(getSHARED_IMPORT_SOURCE())) {
       new SchemesToImportPopup<CodeStyleScheme>(getSchemesPanel()) {
         @Override
         protected void onSchemeSelected(CodeStyleScheme scheme) {
@@ -182,4 +179,7 @@ abstract class CodeStyleSchemesActions extends AbstractSchemeActions<CodeStyleSc
     return (CodeStyleSchemesModel)super.getModel();
   }
 
+  private static String getSHARED_IMPORT_SOURCE() {
+    return ApplicationBundle.message("import.scheme.shared");
+  }
 }

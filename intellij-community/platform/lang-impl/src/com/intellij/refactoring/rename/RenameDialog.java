@@ -46,8 +46,6 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 
 public class RenameDialog extends RefactoringDialog {
-  private static final String REFACTORING_NAME = RefactoringBundle.message("rename.title");
-
   private SuggestedNameInfo mySuggestedNameInfo;
   private JLabel myNameLabel;
   private NameSuggestionsField myNameSuggestionsField;
@@ -72,7 +70,7 @@ public class RenameDialog extends RefactoringDialog {
     myPsiElement = psiElement;
     myNameSuggestionContext = nameSuggestionContext;
     myEditor = editor;
-    setTitle(REFACTORING_NAME);
+    setTitle(getREFACTORING_NAME());
 
     createNewNameComponent();
     init();
@@ -364,5 +362,9 @@ public class RenameDialog extends RefactoringDialog {
 
   public JCheckBox getCbSearchInComments() {
     return myCbSearchInComments;
+  }
+
+  private static String getREFACTORING_NAME() {
+    return RefactoringBundle.message("rename.title");
   }
 }
