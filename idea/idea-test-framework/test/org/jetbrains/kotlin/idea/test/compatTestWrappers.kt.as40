@@ -14,26 +14,24 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.intellij.testFramework.LightIdeaTestCase
-import com.intellij.testFramework.LightPlatformCodeInsightTestCase
-import com.intellij.testFramework.LightPlatformTestCase
 
 // BUNCH: as36, 191
 @Suppress("DEPRECATION")
 @Deprecated("Use KotlinLightCodeInsightFixtureTestCase instead")
 abstract class KotlinLightCodeInsightTestCase : com.intellij.testFramework.LightCodeInsightTestCase() {
-    protected inline val project_: Project get() = LightPlatformTestCase.getProject()
-    protected inline val module_: Module get() = LightPlatformTestCase.getModule()
-    protected inline val editor_: Editor get() = LightPlatformCodeInsightTestCase.getEditor()
-    protected inline val file_: PsiFile get() = LightPlatformCodeInsightTestCase.getFile()
-    protected inline val currentEditorDataContext_: DataContext get() = LightPlatformCodeInsightTestCase.getCurrentEditorDataContext()
+    protected inline val project_: Project get() = project
+    protected inline val module_: Module get() = module
+    protected inline val editor_: Editor get() = editor
+    protected inline val file_: PsiFile get() = file
+    protected inline val currentEditorDataContext_: DataContext get() = currentEditorDataContext
 
     protected fun configureFromFileText_(fileName: String, fileText: String): Document {
-        return LightPlatformCodeInsightTestCase.configureFromFileText(fileName, fileText, false)
+        return configureFromFileText(fileName, fileText, false)
     }
 }
 
 // BUNCH: as36, 191
 abstract class KotlinLightIdeaTestCase : LightIdeaTestCase() {
-    protected inline val project_: Project get() = LightPlatformTestCase.getProject()
-    protected inline val module_: Module get() = LightPlatformTestCase.getModule()
+    protected inline val project_: Project get() = project
+    protected inline val module_: Module get() = module
 }
