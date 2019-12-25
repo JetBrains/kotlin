@@ -332,14 +332,14 @@ private val builtInsLoweringPhase = makeWasmModulePhase(
     description = "Lower IR buildins"
 )
 
-private val objectDeclarationLoweringPhase = makeCustomWasmModulePhase(
-    { context, module -> ObjectUsageLowering(context, context.objectToGetInstanceFunction).lower(module) },
+private val objectDeclarationLoweringPhase = makeWasmModulePhase(
+    ::ObjectUsageLowering,
     name = "ObjectDeclarationLowering",
     description = "Create lazy object instance generator functions"
 )
 
-private val objectUsageLoweringPhase = makeCustomWasmModulePhase(
-    { context, module -> ObjectUsageLowering(context, context.objectToGetInstanceFunction).lower(module) },
+private val objectUsageLoweringPhase = makeWasmModulePhase(
+    ::ObjectUsageLowering,
     name = "ObjectUsageLowering",
     description = "Transform IrGetObjectValue into instance generator call"
 )
