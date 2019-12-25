@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.factories.IrDeclarationFactory
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
@@ -128,7 +129,8 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.Visibility as Pro
 abstract class IrFileDeserializer(
     val logger: LoggingContext,
     val builtIns: IrBuiltIns,
-    val symbolTable: SymbolTable
+    val symbolTable: SymbolTable,
+    private val irDeclarationFactory: IrDeclarationFactory
 ) {
 
     abstract fun deserializeIrSymbol(index: Int): IrSymbol
@@ -919,10 +921,10 @@ abstract class IrFileDeserializer(
             val descriptor = (symbol as IrTypeParameterSymbol).descriptor
             if (descriptor is DeserializedTypeParameterDescriptor && descriptor.containingDeclaration is PropertyDescriptor && symbol.isBound) {
                 // TODO: Get rid of once new properties are implemented
-                IrTypeParameterImpl(startOffset, endOffset, origin, IrTypeParameterSymbolImpl(descriptor), name, proto.index, proto.isReified, variance)
+                irDeclarationFactory.createTypeParameter(startOffset, endOffset, origin, IrTypeParameterSymbolImpl(descriptor), name, proto.index, proto.isReified, variance)
             } else {
                 symbolTable.declareGlobalTypeParameter(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irrelevantOrigin, descriptor) {
-                    IrTypeParameterImpl(startOffset, endOffset, origin, it, name, proto.index, proto.isReified, variance)
+                    irDeclarationFactory.createTypeParameter(startOffset, endOffset, origin, it, name, proto.index, proto.isReified, variance)
                 }
             }.apply {
                 proto.superTypeList.mapTo(superTypes) { deserializeIrType(it) }
@@ -942,7 +944,7 @@ abstract class IrFileDeserializer(
 
     private fun deserializeIrValueParameter(proto: ProtoValueParameter) =
         withDeserializedIrDeclarationBase(proto.base) { symbol, startOffset, endOffset, origin ->
-            IrValueParameterImpl(
+            irDeclarationFactory.createValueParameter(
                 startOffset, endOffset, origin,
                 symbol as IrValueParameterSymbol,
                 deserializeName(proto.name),
@@ -968,7 +970,7 @@ abstract class IrFileDeserializer(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, irrelevantOrigin,
                 (symbol as IrClassSymbol).descriptor, modality
             ) {
-                IrClassImpl(
+                irDeclarationFactory.createClass(
                     startOffset, endOffset, origin,
                     it,
                     deserializeName(proto.name),
@@ -998,7 +1000,7 @@ abstract class IrFileDeserializer(
     private fun deserializeIrTypeAlias(proto: ProtoTypeAlias) =
         withDeserializedIrDeclarationBase(proto.base) { symbol, startOffset, endOffset, origin ->
             symbolTable.declareTypeAlias((symbol as IrTypeAliasSymbol).descriptor) {
-                IrTypeAliasImpl(
+                irDeclarationFactory.createTypeAlias(
                     startOffset, endOffset,
                     it,
                     deserializeName(proto.name),
@@ -1041,7 +1043,7 @@ abstract class IrFileDeserializer(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, irrelevantOrigin,
                 symbol.descriptor
             ) {
-                IrFunctionImpl(
+                irDeclarationFactory.createSimpleFunction(
                     startOffset, endOffset, origin,
                     it,
                     deserializeName(proto.base.name),
@@ -1065,7 +1067,7 @@ abstract class IrFileDeserializer(
 
     private fun deserializeIrVariable(proto: ProtoVariable) =
         withDeserializedIrDeclarationBase(proto.base) { symbol, startOffset, endOffset, origin ->
-            IrVariableImpl(
+            irDeclarationFactory.createVariable(
                 startOffset, endOffset, origin,
                 symbol as IrVariableSymbol,
                 deserializeName(proto.name),
@@ -1089,7 +1091,7 @@ abstract class IrFileDeserializer(
                 irrelevantOrigin,
                 (symbol as IrEnumEntrySymbol).descriptor
             ) {
-                IrEnumEntryImpl(startOffset, endOffset, origin, it, deserializeName(proto.name))
+                irDeclarationFactory.createEnumEntry(startOffset, endOffset, origin, it, deserializeName(proto.name))
             }.apply {
                 if (proto.hasCorrespondingClass())
                     correspondingClass = deserializeIrClass(proto.correspondingClass)
@@ -1102,7 +1104,7 @@ abstract class IrFileDeserializer(
 
     private fun deserializeIrAnonymousInit(proto: ProtoAnonymousInit) =
         withDeserializedIrDeclarationBase(proto.base) { symbol, startOffset, endOffset, origin ->
-            IrAnonymousInitializerImpl(startOffset, endOffset, origin, symbol as IrAnonymousInitializerSymbol).apply {
+            irDeclarationFactory.createAnonymousInitializer(startOffset, endOffset, origin, symbol as IrAnonymousInitializerSymbol).apply {
 //                body = deserializeBlockBody(proto.body.blockBody, startOffset, endOffset)
                 body = deserializeStatementBody(proto.body) as IrBlockBody
 
@@ -1129,7 +1131,7 @@ abstract class IrFileDeserializer(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, irrelevantOrigin,
                 (symbol as IrConstructorSymbol).descriptor
             ) {
-                IrConstructorImpl(
+                irDeclarationFactory.createConstructor(
                     startOffset, endOffset, origin,
                     it,
                     deserializeName(proto.base.name),
@@ -1154,7 +1156,7 @@ abstract class IrFileDeserializer(
                 (symbol as IrFieldSymbol).descriptor,
                 type
             ) {
-                IrFieldImpl(
+                irDeclarationFactory.createField(
                     startOffset, endOffset, origin,
                     it,
                     deserializeName(proto.name),
@@ -1182,7 +1184,7 @@ abstract class IrFileDeserializer(
 
     private fun deserializeIrLocalDelegatedProperty(proto: ProtoLocalDelegatedProperty) =
         withDeserializedIrDeclarationBase(proto.base) { symbol, startOffset, endOffset, origin ->
-            IrLocalDelegatedPropertyImpl(
+            irDeclarationFactory.createLocalDelegatedProperty(
                 startOffset, endOffset, origin,
                 symbol as IrLocalDelegatedPropertySymbol,
                 deserializeName(proto.name),
@@ -1204,7 +1206,7 @@ abstract class IrFileDeserializer(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, irrelevantOrigin,
                 (symbol as IrPropertySymbol).descriptor, proto.isDelegated
             ) {
-                IrPropertyImpl(
+                irDeclarationFactory.createProperty(
                     startOffset, endOffset, origin,
                     it,
                     deserializeName(proto.name),

@@ -11,14 +11,15 @@ import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrLoopBase
+import org.jetbrains.kotlin.ir.factories.IrDeclarationFactory
+import org.jetbrains.kotlin.ir.factories.createFile
+import org.jetbrains.kotlin.ir.factories.createClass
+import org.jetbrains.kotlin.ir.factories.createModuleFragment
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
@@ -44,6 +45,7 @@ abstract class KotlinIrLinker(
     val logger: LoggingContext,
     val builtIns: IrBuiltIns,
     val symbolTable: SymbolTable,
+    private val irDeclarationFactory: IrDeclarationFactory,
     private val exportedDependencies: List<ModuleDescriptor>,
     private val forwardModuleDescriptor: ModuleDescriptor?,
     mangler: KotlinMangler
@@ -144,7 +146,7 @@ abstract class KotlinIrLinker(
             private val actuals: List<ProtoActual>,
             private val fileIndex: Int,
             onlyHeaders: Boolean
-        ) : IrFileDeserializer(logger, builtIns, symbolTable) {
+        ) : IrFileDeserializer(logger, builtIns, symbolTable, irDeclarationFactory) {
 
             private var fileLoops = mutableMapOf<Int, IrLoopBase>()
 
@@ -441,7 +443,7 @@ abstract class KotlinIrLinker(
             val packageFragmentDescriptor = EmptyPackageFragmentDescriptor(moduleDescriptor, fqName)
 
             val symbol = IrFileSymbolImpl(packageFragmentDescriptor)
-            val file = IrFileImpl(fileEntry, symbol, fqName)
+            val file = irDeclarationFactory.createFile(fileEntry, symbol, fqName)
 
             fileDeserializer.file = file
             fileToDeserializerMap[file] = fileDeserializer
@@ -474,7 +476,7 @@ abstract class KotlinIrLinker(
                 files.add(deserializeIrFile(ProtoFile.parseFrom(readFile(moduleDescriptor, i), newInstance()), i))
             }
 
-            return IrModuleFragmentImpl(moduleDescriptor, builtIns, files)
+            return irDeclarationFactory.createModuleFragment(moduleDescriptor, builtIns, files)
         }
 
         fun deserializeAllModuleReachableTopLevels() {
@@ -604,7 +606,7 @@ abstract class KotlinIrLinker(
 
         packageFragments.forEach { packageFragment ->
             val symbol = IrFileSymbolImpl(packageFragment)
-            val file = IrFileImpl(NaiveSourceBasedFileEntryImpl("forward declarations pseudo-file"), symbol)
+            val file = irDeclarationFactory.createFile(NaiveSourceBasedFileEntryImpl("forward declarations pseudo-file"), symbol)
             val symbols = forwardDeclarations
                 .filter { !it.isBound }
                 .filter { it.descriptor.findPackage() == packageFragment }
@@ -615,7 +617,7 @@ abstract class KotlinIrLinker(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET, irrelevantOrigin,
                     classDescriptor,
                     classDescriptor.modality
-                ) { symbol: IrClassSymbol -> IrClassImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irrelevantOrigin, symbol) }
+                ) { symbol: IrClassSymbol -> irDeclarationFactory.createClass(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irrelevantOrigin, symbol) }
                     .also {
                         it.parent = file
                     }
