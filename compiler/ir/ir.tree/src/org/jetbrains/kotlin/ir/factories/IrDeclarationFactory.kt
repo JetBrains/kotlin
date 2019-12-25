@@ -214,5 +214,9 @@ interface IrDeclarationFactory {
 
             factory = newFactory
         }
+
+        fun resetDefaultIrDeclarationFactory() {
+            factory = null
+        }
     }
 }
