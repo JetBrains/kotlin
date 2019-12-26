@@ -67,7 +67,6 @@ dependencies {
 
     Platform[192].orHigher {
         testCompile(intellijDep()) { includeJars("platform-util-ui", "platform-concurrency", "platform-objectSerializer") }
-        testCompile(intellijDep("java"))
     }
 
     Platform[193].orHigher {
