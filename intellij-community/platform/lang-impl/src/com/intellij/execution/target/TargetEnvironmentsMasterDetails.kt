@@ -94,7 +94,7 @@ class TargetEnvironmentsMasterDetails @JvmOverloads constructor(private val proj
       .filterNotNull()
       .toList()
 
-  private inner class CreateNewTargetAction(private val type: RemoteTargetType<*>)
+  private inner class CreateNewTargetAction(private val type: TargetEnvironmentType<*>)
     : DumbAwareAction(type.displayName, null, type.icon) {
 
     override fun actionPerformed(e: AnActionEvent) {
@@ -116,7 +116,7 @@ class TargetEnvironmentsMasterDetails @JvmOverloads constructor(private val proj
     }
 
     override fun getChildren(e: AnActionEvent?): Array<AnAction> {
-      return RemoteTargetType.EXTENSION_NAME.extensionList
+      return TargetEnvironmentType.EXTENSION_NAME.extensionList
         .map { CreateNewTargetAction(it) }
         .toArray(AnAction.EMPTY_ARRAY)
     }

@@ -14,6 +14,6 @@ class ManageTargetEnvironmentsAction : DumbAwareAction("Manage Targets...") {
   override fun update(e: AnActionEvent) {
     super.update(e)
     e.presentation.isEnabledAndVisible = Experiments.getInstance().isFeatureEnabled("runtime.environments") &&
-                                         RemoteTargetType.EXTENSION_NAME.extensionList.isNotEmpty()
+                                         TargetEnvironmentType.EXTENSION_NAME.extensionList.isNotEmpty()
   }
 }

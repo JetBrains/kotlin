@@ -40,7 +40,7 @@ public class RunOnTargetComboBox extends ComboBox<RunOnTargetComboBox.Item> {
     model.addElement(null);
 
     Collection<Type<?>> types = new ArrayList<>();
-    for (RemoteTargetType<?> type : RemoteTargetType.EXTENSION_NAME.getExtensionList()) {
+    for (TargetEnvironmentType<?> type : TargetEnvironmentType.EXTENSION_NAME.getExtensionList()) {
       if (type.providesNewWizard(myProject, myDefaultRuntimeType)) {
         types.add(new Type<>(type));
       }
@@ -126,9 +126,9 @@ public class RunOnTargetComboBox extends ComboBox<RunOnTargetComboBox.Item> {
 
   private static class Type<T extends TargetEnvironmentConfiguration> extends Item {
     @NotNull
-    private final RemoteTargetType<T> type;
+    private final TargetEnvironmentType<T> type;
 
-    private Type(@NotNull RemoteTargetType<T> type) {
+    private Type(@NotNull TargetEnvironmentType<T> type) {
       super(type.getDisplayName(), type.getIcon());
       this.type = type;
     }
