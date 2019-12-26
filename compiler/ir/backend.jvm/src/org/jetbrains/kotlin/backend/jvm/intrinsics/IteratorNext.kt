@@ -33,7 +33,7 @@ object IteratorNext : IntrinsicMethod() {
 
     override fun toCallable(expression: IrFunctionAccessExpression, signature: JvmMethodSignature, context: JvmBackendContext): IrIntrinsicFunction {
         // If the array element type is unboxed primitive, do not unbox. Otherwise AsmUtil.unbox throws exception
-        val type = if (expression.type.isPrimitiveType()) signature.returnType else AsmUtil.unboxType(signature.returnType)
+        val type = if (AsmUtil.isBoxedPrimitiveType(signature.returnType)) AsmUtil.unboxType(signature.returnType) else signature.returnType
         val newSignature = signature.newReturnType(type)
         return IrIntrinsicFunction.create(expression, newSignature, context, AsmTypes.OBJECT_TYPE) {
             val primitiveClassName = getKotlinPrimitiveClassName(type)
