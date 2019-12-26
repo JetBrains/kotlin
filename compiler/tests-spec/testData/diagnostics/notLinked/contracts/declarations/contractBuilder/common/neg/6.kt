@@ -1,3 +1,4 @@
+// !LANGUAGE: +AllowContractsForNonOverridableMembers +AllowReifiedGenericsInContracts
 // !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -UNREACHABLE_CODE -UNUSED_EXPRESSION
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 
@@ -19,16 +20,16 @@ object case_1 {
     private const val value_3 = false
 
     fun case_1_1(): Boolean? {
-        <!CONTRACT_NOT_ALLOWED!>contract<!> { returnsNotNull() implies (value_1) }
+        contract { returnsNotNull() implies (<!ERROR_IN_CONTRACT_DESCRIPTION!>value_1<!>) }
         return if (value_1) true else null
     }
     fun case_1_2(): Boolean? {
-        <!CONTRACT_NOT_ALLOWED!>contract<!> { returns(null) implies (value_2) }
+        contract { returns(null) implies (<!ERROR_IN_CONTRACT_DESCRIPTION!>value_2<!>) }
         return if (value_2) null else true
     }
 
     fun case_1_3(): Boolean {
-        <!CONTRACT_NOT_ALLOWED!>contract<!> { returns(true) implies (value_3) }
+        contract { returns(true) implies (<!ERROR_IN_CONTRACT_DESCRIPTION!>value_3<!>) }
         return value_3
     }
 }
@@ -50,22 +51,22 @@ class case_2(value_5: Boolean, val value_1: Boolean) {
     }
 
     fun case_2_2(): Boolean? {
-        <!CONTRACT_NOT_ALLOWED!>contract<!> { returns(null) implies (value_1) }
+        contract { returns(null) implies (<!ERROR_IN_CONTRACT_DESCRIPTION!>value_1<!>) }
         return if (value_1) null else true
     }
 
     fun case_2_3(): Boolean {
-        <!CONTRACT_NOT_ALLOWED!>contract<!> { returns(true) implies (value_2) }
+        contract { returns(true) implies (<!ERROR_IN_CONTRACT_DESCRIPTION!>value_2<!>) }
         return value_2
     }
 
     fun case_2_4(): Boolean {
-        <!CONTRACT_NOT_ALLOWED!>contract<!> { returns(false) implies (value_3) }
+        contract { returns(false) implies (<!ERROR_IN_CONTRACT_DESCRIPTION!>value_3<!>) }
         return !(value_3)
     }
 
     inline fun <reified K : Number> K.case_2_5(): Boolean? {
-        <!CONTRACT_NOT_ALLOWED!>contract<!> { returnsNotNull() implies (<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>value_4<!>) }
+        contract { returnsNotNull() implies (<!ERROR_IN_CONTRACT_DESCRIPTION, NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>value_4<!>) }
         return if (<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>value_4<!>) true else null
     }
 }
