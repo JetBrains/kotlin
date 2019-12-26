@@ -125,7 +125,8 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
     myHighlightSettingsPanel.add(myErrorHighlightingPanel.getPanel(), BorderLayout.CENTER);
 
     myRichCopyColorSchemeComboBox.setRenderer(SimpleListCellRenderer.create("", value ->
-      RichCopySettings.ACTIVE_GLOBAL_SCHEME_MARKER.equals(value) ? ACTIVE_COLOR_SCHEME : value));
+      RichCopySettings.ACTIVE_GLOBAL_SCHEME_MARKER.equals(value) ? ACTIVE_COLOR_SCHEME :
+      EditorColorsScheme.DEFAULT_SCHEME_NAME.equals(value) ? EditorColorsScheme.DEFAULT_SCHEME_ALIAS : value));
 
     initCaretStopComboBox(myWordBoundaryCaretStopComboBox, EditorCaretStopPolicyItem.WordBoundary.values());
     initCaretStopComboBox(myLineBoundaryCaretStopComboBox, EditorCaretStopPolicyItem.LineBoundary.values());
@@ -214,7 +215,7 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
     EditorColorsScheme[] schemes = EditorColorsManager.getInstance().getAllSchemes();
     myRichCopyColorSchemeComboBox.addItem(RichCopySettings.ACTIVE_GLOBAL_SCHEME_MARKER);
     for (EditorColorsScheme scheme : schemes) {
-      myRichCopyColorSchemeComboBox.addItem(SchemeManager.getDisplayName(scheme));
+      myRichCopyColorSchemeComboBox.addItem(SchemeManager.getBaseName(scheme));
     }
     String toSelect = settings.getSchemeName();
     if (!StringUtil.isEmpty(toSelect)) {
