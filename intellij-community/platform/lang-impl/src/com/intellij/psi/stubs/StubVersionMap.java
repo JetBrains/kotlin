@@ -163,7 +163,7 @@ class StubVersionMap {
     }
   }
 
-  private static Object getVersionOwner(FileType fileType) {
+  static Object getVersionOwner(FileType fileType) {
     Object owner = null;
     if (fileType instanceof LanguageFileType) {
       Language l = ((LanguageFileType)fileType).getLanguage();

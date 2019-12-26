@@ -8,6 +8,7 @@ import com.intellij.lang.ParserDefinition;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
@@ -68,16 +69,8 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
       }
 
       final IFileElementType elementType = parserDefinition.getFileNodeType();
-      if (elementType instanceof IStubFileElementType) {
-        if (((IStubFileElementType)elementType).shouldBuildStubFor(file)) {
-          return true;
-        }
-        FileBasedIndex fileBasedIndex = FileBasedIndex.getInstance();
-        if (file instanceof NewVirtualFile &&
-            fileBasedIndex instanceof FileBasedIndexImpl &&
-            ((FileBasedIndexImpl)fileBasedIndex).getIndex(INDEX_ID).isIndexedStateForFile(((NewVirtualFile)file).getId(), new IndexedFileImpl(file, fileType, project))) {
-          return true;
-        }
+      if (elementType instanceof IStubFileElementType && ((IStubFileElementType)elementType).shouldBuildStubFor(file)) {
+        return true;
       }
     }
     final BinaryFileStubBuilder builder = BinaryFileStubBuilders.INSTANCE.forFileType(fileType);
@@ -297,11 +290,8 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
 
       if (InvertedIndex.ARE_COMPOSITE_INDEXERS_ENABLED) {
         // load stub serializers before usage
-        for (Language language : Language.getRegisteredLanguages()) {
-          ParserDefinition definition = LanguageParserDefinitions.INSTANCE.forLanguage(language);
-          if (definition != null) {
-            definition.getFileNodeType();
-          }
+        for (FileType fileType : FileTypeRegistry.getInstance().getRegisteredFileTypes()) {
+          StubVersionMap.getVersionOwner(fileType);
         }
       }
 
