@@ -690,7 +690,26 @@ class PSICallResolver(
             .expandContextForCatchClause(ktExpression)
 
         if (ktExpression is KtCallableReferenceExpression) {
-            checkNoSpread(outerCallContext, valueArgument)
+            return createCallableReferenceKotlinCallArgument(
+                context, ktExpression, startDataFlowInfo, valueArgument, argumentName,
+                outerCallContext
+            )
+        }
+
+        // argumentExpression instead of ktExpression is hack -- type info should be stored also for parenthesized expression
+        val typeInfo = expressionTypingServices.getTypeInfo(argumentExpression, context)
+        return createSimplePSICallArgument(context, valueArgument, typeInfo) ?: createParseErrorElement()
+    }
+
+    fun createCallableReferenceKotlinCallArgument(
+        context: BasicCallResolutionContext,
+        ktExpression: KtCallableReferenceExpression,
+        startDataFlowInfo: DataFlowInfo,
+        valueArgument: ValueArgument,
+        argumentName: Name?,
+        outerCallContext: BasicCallResolutionContext
+    ): CallableReferenceKotlinCallArgumentImpl {
+        checkNoSpread(outerCallContext, valueArgument)
 
             val expressionTypingContext = ExpressionTypingContext.newContext(context)
             val lhsResult = if (ktExpression.isEmptyLHS) null else doubleColonExpressionResolver.resolveDoubleColonLHS(

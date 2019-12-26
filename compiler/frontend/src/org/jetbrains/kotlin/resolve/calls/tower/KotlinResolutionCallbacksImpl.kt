@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.psi.KtReturnExpression
@@ -114,6 +115,16 @@ class KotlinResolutionCallbacksImpl(
             )?.let {
                 it.setResultDataFlowInfoIfRelevant(typeInfo.dataFlowInfo)
                 return it
+            }
+
+            val deparenthesizedExpression = KtPsiUtil.deparenthesize(ktExpression) ?: ktExpression
+            if (deparenthesizedExpression is KtCallableReferenceExpression) {
+                return psiCallResolver.createCallableReferenceKotlinCallArgument(
+                    newContext, deparenthesizedExpression, DataFlowInfo.EMPTY,
+                    CallMaker.makeExternalValueArgument(deparenthesizedExpression),
+                    argumentName = null,
+                    outerCallContext
+                )
             }
 
             return createSimplePSICallArgument(
