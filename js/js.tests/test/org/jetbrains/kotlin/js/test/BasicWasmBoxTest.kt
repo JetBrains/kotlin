@@ -48,6 +48,11 @@ abstract class BasicWasmBoxTest(
 
     private val spiderMonkey by lazy { SpiderMonkeyEngine() }
 
+    override fun tearDown() {
+        IrDeclarationFactory.resetDefaultIrDeclarationFactory()
+        super.tearDown()
+    }
+
     fun doTest(filePath: String) {
         val file = File(filePath)
         val outputDir = getOutputDir(file)
@@ -111,15 +116,12 @@ abstract class BasicWasmBoxTest(
             PhaseConfig(wasmPhases)
         }
 
-        val irDeclarationFactory = DefaultIrDeclarationFactory()
-        IrDeclarationFactory.registerDefaultIrDeclarationFactory(irDeclarationFactory)
-
         val compilerResult = compileWasm(
             project = config.project,
             files = filesToCompile,
             configuration = config.configuration,
             phaseConfig = phaseConfig,
-            irDeclarationFactory = irDeclarationFactory,
+            irDeclarationFactory = DefaultIrDeclarationFactory.createAndRegister(),
             // TODO: Bypass the resolver fow wasm.
             allDependencies = KotlinLibraryResolverResultImpl(listOf(KotlinResolvedLibraryImpl(wasmRuntimeKlib))),
             friendDependencies = emptyList(),
