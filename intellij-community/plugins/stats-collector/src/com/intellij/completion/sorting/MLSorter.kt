@@ -124,11 +124,8 @@ class MLSorter : CompletionFinalSorter() {
       val (relevance, additional) = RelevanceUtil.asRelevanceMaps(relevanceObjects.getOrDefault(element, emptyList()))
       SessionFactorsUtils.saveElementFactorsTo(additional, lookupStorage, element)
       calculateAdditionalFeaturesTo(additional, element, prefixLength, position, items.size, parameters)
-      val score = when {
-        rankingModel != null -> tracker.measure {
-          calculateElementScore(rankingModel, element, position, features.withElementFeatures(relevance, additional), prefixLength)
-        }
-        else -> null
+      val score = tracker.measure {
+        calculateElementScore(rankingModel, element, position, features.withElementFeatures(relevance, additional), prefixLength)
       }
       element2score[element] = score
 
@@ -204,12 +201,12 @@ class MLSorter : CompletionFinalSorter() {
   /**
    * Null means we encountered unknown features and are unable to score
    */
-  private fun calculateElementScore(ranker: RankingModelWrapper,
+  private fun calculateElementScore(ranker: RankingModelWrapper?,
                                     element: LookupElement,
                                     position: Int,
                                     features: RankingFeatures,
                                     prefixLength: Int): Double? {
-    val mlRank: Double? = if (ranker.canScore(features)) ranker.score(features) else null
+    val mlRank: Double? = if (ranker != null && ranker.canScore(features)) ranker.score(features) else null
     val info = ItemRankInfo(position, mlRank, prefixLength)
     cachedScore[element] = info
 
