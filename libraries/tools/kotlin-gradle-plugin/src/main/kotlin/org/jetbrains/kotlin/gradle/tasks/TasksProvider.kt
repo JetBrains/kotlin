@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.applyLanguageSettingsToKotlinO
  * Registers the task with [name] and [type] and initialization script [body]
  */
 @JvmName("registerTaskOld")
-@Deprecated("please use Project.createOrRegisterTask", ReplaceWith("project.registerTask(name, type, emptyList(), body)"))
+@Deprecated("please use Project.registerTask", ReplaceWith("project.registerTask(name, type, emptyList(), body)"))
 internal fun <T : Task> registerTask(project: Project, name: String, type: Class<T>, body: (T) -> (Unit)): TaskProvider<T> =
     project.registerTask(name, type, emptyList(), body)
 
