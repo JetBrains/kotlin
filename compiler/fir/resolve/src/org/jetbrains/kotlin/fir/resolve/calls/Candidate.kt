@@ -45,6 +45,13 @@ class CallInfo(
     val typeProvider: (FirExpression) -> FirTypeRef?
 ) {
     val argumentCount get() = arguments.size
+
+    fun withReceiverAsArgument(receiverExpression: FirExpression): CallInfo =
+        CallInfo(
+            callKind, explicitReceiver,
+            listOf(receiverExpression) + arguments,
+            isSafeCall, typeArguments, session, containingFile, implicitReceiverStack, expectedType, outerCSBuilder, lhs, typeProvider
+        )
 }
 
 enum class CandidateApplicability {

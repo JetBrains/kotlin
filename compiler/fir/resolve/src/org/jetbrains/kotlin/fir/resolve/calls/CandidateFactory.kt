@@ -30,15 +30,18 @@ class CandidateFactory(
 
     fun createCandidate(
         symbol: AbstractFirBasedSymbol<*>,
-        dispatchReceiverValue: ClassDispatchReceiverValue?,
-        implicitExtensionReceiverValue: ImplicitReceiverValue<*>?,
-        explicitReceiverKind: ExplicitReceiverKind
+        explicitReceiverKind: ExplicitReceiverKind,
+        dispatchReceiverValue: ClassDispatchReceiverValue? = null,
+        implicitExtensionReceiverValue: ImplicitReceiverValue<*>? = null,
+        builtInExtensionFunctionReceiverValue: ReceiverValue? = null
     ): Candidate {
-        val candidate = Candidate(
+        return Candidate(
             symbol, dispatchReceiverValue, implicitExtensionReceiverValue,
-            explicitReceiverKind, bodyResolveComponents, baseSystem, callInfo
+            explicitReceiverKind, bodyResolveComponents, baseSystem,
+            builtInExtensionFunctionReceiverValue?.receiverExpression?.let {
+                callInfo.withReceiverAsArgument(it)
+            } ?: callInfo
         )
-        return candidate
     }
 }
 

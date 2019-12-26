@@ -24,10 +24,10 @@ fun test(a: A, b: B) {
     }
 
     with(b) {
-        a.<!INAPPLICABLE_CANDIDATE!>foo<!>()
-        a.(<!INAPPLICABLE_CANDIDATE!>foo<!>)()
+        a.foo()
+        a.(foo)()
 
-        <!INAPPLICABLE_CANDIDATE!>(a.foo)()<!>
+        (a.foo)()
 
         (a.foo)(this)
         a.foo(this)
@@ -35,8 +35,8 @@ fun test(a: A, b: B) {
 
     with(a) {
         with(b) {
-            <!INAPPLICABLE_CANDIDATE!>foo<!>()
-            (<!INAPPLICABLE_CANDIDATE!>foo<!>)()
+            foo()
+            (foo)()
         }
     }
 }

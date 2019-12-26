@@ -35,37 +35,37 @@ fun test() {
     foo {
         bar {
             baz {
-                <!INAPPLICABLE_CANDIDATE!>y<!>()
+                y()
 
                 <!UNRESOLVED_REFERENCE!>x<!>()
 
                 with(D()) {
-                    <!INAPPLICABLE_CANDIDATE!>x<!>()
+                    x()
                 }
 
                 foo1 {
-                    <!INAPPLICABLE_CANDIDATE!>x<!>()
-                    <!INAPPLICABLE_CANDIDATE!>y<!>()
+                    x()
+                    y()
 
                     with(A()) {
-                        <!INAPPLICABLE_CANDIDATE!>x<!>()
-                        <!INAPPLICABLE_CANDIDATE!>y<!>()
+                        x()
+                        y()
                     }
 
                     with(D()) {
-                        <!INAPPLICABLE_CANDIDATE!>x<!>()
+                        x()
                     }
                     A().<!UNRESOLVED_REFERENCE!>x<!>()
                 }
 
                 foo2 {
-                    <!INAPPLICABLE_CANDIDATE!>x<!>()
-                    <!INAPPLICABLE_CANDIDATE!>y<!>()
+                    x()
+                    y()
                 }
 
                 foo3 {
-                    <!INAPPLICABLE_CANDIDATE!>x<!>()
-                    <!INAPPLICABLE_CANDIDATE!>y<!>()
+                    x()
+                    y()
                 }
             }
         }
@@ -75,8 +75,8 @@ fun test() {
         foo {
             baz {
                 bar {
-                    <!INAPPLICABLE_CANDIDATE!>x<!>()
-                    <!INAPPLICABLE_CANDIDATE!>y<!>()
+                    x()
+                    y()
                 }
             }
         }
@@ -86,8 +86,8 @@ fun test() {
         foo {
             baz {
                 bar {
-                    <!INAPPLICABLE_CANDIDATE!>x<!>()
-                    <!INAPPLICABLE_CANDIDATE!>y<!>()
+                    x()
+                    y()
                 }
             }
         }
@@ -97,8 +97,8 @@ fun test() {
         foo {
             baz {
                 bar {
-                    <!INAPPLICABLE_CANDIDATE!>x<!>()
-                    <!INAPPLICABLE_CANDIDATE!>y<!>()
+                    x()
+                    y()
                 }
             }
         }

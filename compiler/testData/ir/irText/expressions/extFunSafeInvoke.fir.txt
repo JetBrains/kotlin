@@ -6,5 +6,6 @@ FILE fqName:<root> fileName:/extFunSafeInvoke.kt
       RETURN type=kotlin.Nothing from='public final fun test (receiver: kotlin.Any?, fn: kotlin.Function3<kotlin.Any, kotlin.Int, kotlin.String, kotlin.Unit>): kotlin.Unit? declared in <root>'
         CALL 'public abstract fun invoke (p1: kotlin.Any, p2: kotlin.Int, p3: kotlin.String): kotlin.Unit [operator] declared in kotlin.Function3' type=kotlin.Unit? origin=null
           $this: GET_VAR 'fn: kotlin.Function3<kotlin.Any, kotlin.Int, kotlin.String, kotlin.Unit> declared in <root>.test' type=kotlin.Function3<kotlin.Any, kotlin.Int, kotlin.String, kotlin.Unit> origin=null
-          p1: CONST Int type=kotlin.Int value=42
-          p2: CONST String type=kotlin.String value="Hello"
+          p1: GET_VAR 'receiver: kotlin.Any? declared in <root>.test' type=kotlin.Any? origin=null
+          p2: CONST Int type=kotlin.Int value=42
+          p3: CONST String type=kotlin.String value="Hello"

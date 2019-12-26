@@ -308,12 +308,7 @@ class FirCallResolver(
         val className = symbol.classId.shortClassName
         scope.processFunctionsByName(className) {
             if (it is FirConstructorSymbol) {
-                candidates += candidateFactory.createCandidate(
-                    it,
-                    dispatchReceiverValue = null,
-                    implicitExtensionReceiverValue = null,
-                    ExplicitReceiverKind.NO_EXPLICIT_RECEIVER
-                )
+                candidates += candidateFactory.createCandidate(it, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER)
             }
             ProcessorAction.NEXT
         }

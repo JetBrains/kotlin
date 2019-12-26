@@ -4,12 +4,14 @@ fun test(a: A, block: A.() -> Int) {
     a.block()
 }
 
-fun A.otherTest(block: A.() -> Int) {
+interface B
+
+fun B.otherTest(block: B.() -> Int) {
     block()
 }
 
-class B {
-    fun anotherTest(block: B.() -> Int) {
+class C {
+    fun anotherTest(block: C.() -> Int) {
         block()
     }
 }

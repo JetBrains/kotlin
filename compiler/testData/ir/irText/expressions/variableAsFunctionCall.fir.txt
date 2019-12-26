@@ -19,6 +19,7 @@ FILE fqName:<root> fileName:/variableAsFunctionCall.kt
       RETURN type=kotlin.Nothing from='public final fun test2 (f: kotlin.Function1<kotlin.String, kotlin.Unit>): kotlin.Unit declared in <root>'
         CALL 'public abstract fun invoke (p1: kotlin.String): kotlin.Unit [operator] declared in kotlin.Function1' type=kotlin.Unit origin=null
           $this: GET_VAR 'f: kotlin.Function1<kotlin.String, kotlin.Unit> declared in <root>.test2' type=kotlin.Function1<kotlin.String, kotlin.Unit> origin=null
+          p1: CONST String type=kotlin.String value="hello"
   FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test3 (): kotlin.String declared in <root>'

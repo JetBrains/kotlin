@@ -66,17 +66,13 @@ class QualifiedReceiverTowerDataConsumer<T : AbstractFirBasedSymbol<*>>(
         override fun consumeCandidate(
             symbol: T,
             dispatchReceiverValue: ClassDispatchReceiverValue?,
-            implicitExtensionReceiverValue: ImplicitReceiverValue<*>?
+            implicitExtensionReceiverValue: ImplicitReceiverValue<*>?,
+            builtInExtensionFunctionReceiverValue: ReceiverValue?
         ): ProcessorAction {
             assert(dispatchReceiverValue == null)
             resultCollector.consumeCandidate(
                 group,
-                candidateFactory.createCandidate(
-                    symbol,
-                    dispatchReceiverValue = null,
-                    implicitExtensionReceiverValue = null,
-                    explicitReceiverKind = ExplicitReceiverKind.NO_EXPLICIT_RECEIVER
-                )
+                candidateFactory.createCandidate(symbol, explicitReceiverKind = ExplicitReceiverKind.NO_EXPLICIT_RECEIVER)
             )
             return ProcessorAction.NEXT
         }
@@ -203,15 +199,17 @@ class ExplicitReceiverTowerDataConsumer<T : AbstractFirBasedSymbol<*>>(
         override fun consumeCandidate(
             symbol: T,
             dispatchReceiverValue: ClassDispatchReceiverValue?,
-            implicitExtensionReceiverValue: ImplicitReceiverValue<*>?
+            implicitExtensionReceiverValue: ImplicitReceiverValue<*>?,
+            builtInExtensionFunctionReceiverValue: ReceiverValue?
         ): ProcessorAction {
             resultCollector.consumeCandidate(
                 group,
                 candidateFactory.createCandidate(
                     symbol,
+                    ExplicitReceiverKind.DISPATCH_RECEIVER,
                     dispatchReceiverValue,
                     implicitExtensionReceiverValue,
-                    ExplicitReceiverKind.DISPATCH_RECEIVER
+                    builtInExtensionFunctionReceiverValue
                 )
             )
             return ProcessorAction.NEXT
@@ -222,7 +220,8 @@ class ExplicitReceiverTowerDataConsumer<T : AbstractFirBasedSymbol<*>>(
         override fun consumeCandidate(
             symbol: T,
             dispatchReceiverValue: ClassDispatchReceiverValue?,
-            implicitExtensionReceiverValue: ImplicitReceiverValue<*>?
+            implicitExtensionReceiverValue: ImplicitReceiverValue<*>?,
+            builtInExtensionFunctionReceiverValue: ReceiverValue?
         ): ProcessorAction {
             if (symbol is FirNamedFunctionSymbol && symbol.callableId.packageName.startsWith(defaultPackage)) {
                 val explicitReceiverType = explicitReceiver.type
@@ -247,9 +246,10 @@ class ExplicitReceiverTowerDataConsumer<T : AbstractFirBasedSymbol<*>>(
             }
             val candidate = candidateFactory.createCandidate(
                 symbol,
+                ExplicitReceiverKind.EXTENSION_RECEIVER,
                 dispatchReceiverValue,
                 implicitExtensionReceiverValue,
-                ExplicitReceiverKind.EXTENSION_RECEIVER
+                builtInExtensionFunctionReceiverValue
             )
 
             resultCollector.consumeCandidate(
@@ -292,15 +292,17 @@ class NoExplicitReceiverTowerDataConsumer<T : AbstractFirBasedSymbol<*>>(
         override fun consumeCandidate(
             symbol: T,
             dispatchReceiverValue: ClassDispatchReceiverValue?,
-            implicitExtensionReceiverValue: ImplicitReceiverValue<*>?
+            implicitExtensionReceiverValue: ImplicitReceiverValue<*>?,
+            builtInExtensionFunctionReceiverValue: ReceiverValue?
         ): ProcessorAction {
             resultCollector.consumeCandidate(
                 group,
                 candidateFactory.createCandidate(
                     symbol,
+                    ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
                     dispatchReceiverValue,
                     implicitExtensionReceiverValue,
-                    ExplicitReceiverKind.NO_EXPLICIT_RECEIVER
+                    builtInExtensionFunctionReceiverValue
                 )
             )
             return ProcessorAction.NEXT
