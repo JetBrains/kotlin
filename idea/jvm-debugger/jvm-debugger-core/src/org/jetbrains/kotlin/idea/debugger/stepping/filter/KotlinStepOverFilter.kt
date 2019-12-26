@@ -61,7 +61,7 @@ data class LocationToken(val lineNumber: Int, val inlineVariables: List<String>)
     }
 }
 
-class KotlinStepOverInlineFilter(
+class KotlinStepOverFilter(
     val project: Project,
     private val tokensToSkip: Set<LocationToken>,
     private val callerInfo: StepOverCallerInfo

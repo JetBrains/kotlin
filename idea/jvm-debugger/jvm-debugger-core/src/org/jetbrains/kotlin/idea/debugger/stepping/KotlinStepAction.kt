@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.idea.debugger.stepping
 import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.engine.SuspendContextImpl
 import com.intellij.xdebugger.impl.XSourcePositionImpl
-import org.jetbrains.kotlin.idea.debugger.stepping.filter.KotlinStepOverInlineFilter
+import org.jetbrains.kotlin.idea.debugger.stepping.filter.KotlinStepOverFilter
 import org.jetbrains.kotlin.idea.debugger.stepping.filter.LocationToken
 import org.jetbrains.kotlin.idea.debugger.stepping.filter.StepOverCallerInfo
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -36,7 +36,7 @@ sealed class KotlinStepAction {
 
     class StepOverInlined(private val tokensToSkip: Set<LocationToken>, private val callerInfo: StepOverCallerInfo) : KotlinStepAction() {
         override fun apply(debugProcess: DebugProcessImpl, suspendContext: SuspendContextImpl, ignoreBreakpoints: Boolean) {
-            val filter = KotlinStepOverInlineFilter(debugProcess.project, tokensToSkip, callerInfo)
+            val filter = KotlinStepOverFilter(debugProcess.project, tokensToSkip, callerInfo)
             return KotlinStepActionFactory(debugProcess).createKotlinStepOverInlineAction(filter).contextAction(suspendContext)
         }
     }
