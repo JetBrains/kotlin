@@ -20,4 +20,6 @@ org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Java.S
 org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Java.SyntheticExtensions.testSmartCast2, KT-32919
 org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Java.SyntheticExtensions.testSyntheticExtensions1, KT-32919
 org.jetbrains.kotlin.idea.completion.test.weighers.BasicCompletionWeigherTestGenerated.testPreferFromJdk, Class from JDK is not prioritized
+org.jetbrains.kotlin.idea.debugger.test.KotlinSteppingTestGenerated.StepOver.testSoSuspendableCallInFunFromOtherStepping, Super FLAKY on Android Studio (can be reproduced locally)
+org.jetbrains.kotlin.idea.debugger.test.KotlinSteppingTestGenerated.StepOverForce.testSofSuspendableCallInFun, Super FLAKY on Android Studio (can be reproduced locally)
 org.jetbrains.kotlin.idea.quickfix.QuickFixMultiFileTestGenerated.AutoImports.testAmbiguousNamePreferFromJdk, Class from JDK is not prioritized
