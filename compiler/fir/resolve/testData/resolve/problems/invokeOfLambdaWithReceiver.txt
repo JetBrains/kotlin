@@ -2,7 +2,7 @@ FILE: invokeOfLambdaWithReceiver.kt
     public abstract interface A : R|kotlin/Any| {
     }
     public final fun test(a: R|A|, block: R|A.() -> kotlin/Int|): R|kotlin/Unit| {
-        R|<local>/a|.R|<local>/block|.R|FakeOverride<kotlin/Function1.invoke: R|kotlin/Int|>|(R|<local>/a|)
+        R|<local>/block|.R|FakeOverride<kotlin/Function1.invoke: R|kotlin/Int|>|(R|<local>/a|)
     }
     public abstract interface B : R|kotlin/Any| {
     }

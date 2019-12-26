@@ -5,11 +5,14 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
+import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirQualifiedAccessExpressionImpl
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.transformQualifiedAccessUsingSmartcastInfo
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.types.isExtensionFunctionType
+import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 open class CandidateCollector(
@@ -80,16 +83,21 @@ class InvokeReceiverCandidateCollector(
         val applicability = super.consumeCandidate(group, candidate)
 
         if (applicability >= CandidateApplicability.SYNTHETIC_RESOLVED) {
-
             val session = components.session
+            val symbol = candidate.symbol as FirCallableSymbol<*>
+            val extensionReceiverExpression = candidate.extensionReceiverExpression()
+            val useExtensionReceiverAsArgument =
+                symbol.fir.receiverTypeRef == null &&
+                        candidate.explicitReceiverKind == ExplicitReceiverKind.EXTENSION_RECEIVER &&
+                        symbol.fir.returnTypeRef.isExtensionFunctionType()
             val explicitReceiver = FirQualifiedAccessExpressionImpl(null).apply {
                 calleeReference = FirNamedReferenceWithCandidate(
                     null,
-                    (candidate.symbol as FirCallableSymbol<*>).callableId.callableName,
+                    symbol.callableId.callableName,
                     candidate
                 )
                 dispatchReceiver = candidate.dispatchReceiverExpression()
-                extensionReceiver = candidate.extensionReceiverExpression()
+                extensionReceiver = extensionReceiverExpression.takeIf { !useExtensionReceiverAsArgument } ?: FirNoReceiverExpression
                 typeRef = towerResolver.typeCalculator.tryCalculateReturnType(candidate.symbol.firUnsafe())
             }.let {
                 components.transformQualifiedAccessUsingSmartcastInfo(it)
@@ -107,7 +115,10 @@ class InvokeReceiverCandidateCollector(
                 invokeCallInfo.outerCSBuilder,
                 invokeCallInfo.lhs,
                 invokeCallInfo.typeProvider
-            )
+            ).let {
+                if (useExtensionReceiverAsArgument) it.withReceiverAsArgument(extensionReceiverExpression)
+                else it
+            }
 
             invokeConsumer.addConsumerAndProcessAccumulatedData(
                 createSimpleFunctionConsumer(
