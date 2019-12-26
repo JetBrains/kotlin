@@ -81,7 +81,7 @@ class KotlinGradleNativeMultiplatformModuleBuilder : KotlinGradleAbstractMultipl
                     binaries {
                         executable {
                             // Change to specify fully qualified name of your application's entry point:
-                           entryPoint = 'sample.main'
+                            entryPoint = 'sample.main'
                             // Specify command-line arguments, if necessary:
                             runTask?.args('')
                         }
