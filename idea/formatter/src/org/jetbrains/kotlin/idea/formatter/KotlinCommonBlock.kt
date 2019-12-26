@@ -595,11 +595,7 @@ abstract class KotlinCommonBlock(
                     wrapSetting,
                     VALUE_ARGUMENT,
                     node.withTrailingComma,
-                    additionalWrap = trailingCommaWrappingStrategy(
-                        LPAR,
-                        RPAR,
-                        thisOrPrevIsMultiLineElement(VALUE_ARGUMENT, COMMA, LPAR, RPAR)
-                    )
+                    additionalWrap = trailingCommaWrappingStrategyWithMultiLineCheck(LPAR, RPAR)
                 )
             }
 
@@ -611,12 +607,12 @@ abstract class KotlinCommonBlock(
                     commonSettings.METHOD_PARAMETERS_WRAP,
                     VALUE_PARAMETER,
                     node.withTrailingComma,
-                    additionalWrap = trailingCommaWrappingStrategy(
-                        LPAR,
-                        RPAR,
-                        thisOrPrevIsMultiLineElement(VALUE_PARAMETER, COMMA, LPAR, RPAR)
-                    )
+                    additionalWrap = trailingCommaWrappingStrategyWithMultiLineCheck(LPAR, RPAR)
                 )
+            }
+
+            elementType === INDICES -> return { childElement ->
+                trailingCommaWrappingStrategyWithMultiLineCheck(LBRACKET, RBRACKET)(childElement)
             }
 
             elementType === SUPER_TYPE_LIST -> {
@@ -624,8 +620,7 @@ abstract class KotlinCommonBlock(
                 return { childElement -> if (childElement.psi is KtSuperTypeListEntry) wrap else null }
             }
 
-            elementType === CLASS_BODY ->
-                return getWrappingStrategyForItemList(commonSettings.ENUM_CONSTANTS_WRAP, ENUM_ENTRY)
+            elementType === CLASS_BODY -> return getWrappingStrategyForItemList(commonSettings.ENUM_CONSTANTS_WRAP, ENUM_ENTRY)
 
             elementType === MODIFIER_LIST -> {
                 when (val parent = node.treeParent.psi) {
@@ -723,19 +718,19 @@ abstract class KotlinCommonBlock(
             else -> false
         }
 
-    private fun ASTNode.getSiblingNodeInSequence(
+    private fun ASTNode.notDelimiterSiblingNodeInSequence(
         forward: Boolean,
-        withBreakElement: Boolean,
-        breakType: IElementType,
+        delimiterType: IElementType,
         barrier: IElementType
     ): ASTNode? {
         var sibling: ASTNode? = null
         for (element in siblings(forward).filter { it.elementType != WHITE_SPACE }.takeWhile { it.elementType != barrier }) {
-            if (withBreakElement) {
+            val elementType = element.elementType
+            if (!forward) {
                 sibling = element
-                if (element.elementType == breakType) break
+                if (elementType != delimiterType && elementType !in COMMENTS) break
             } else {
-                if (element.elementType == breakType) break
+                if (elementType !in COMMENTS) break
                 sibling = element
             }
         }
@@ -744,33 +739,32 @@ abstract class KotlinCommonBlock(
     }
 
     private fun thisOrPrevIsMultiLineElement(
-        type: IElementType,
         delimiterType: IElementType,
         leftBarrier: IElementType,
         rightBarrier: IElementType
     ) = fun(childElement: ASTNode): Boolean {
-        if (childElement.elementType != type) return false
+        when (childElement.elementType) {
+            leftBarrier,
+            rightBarrier,
+            delimiterType,
+            in WHITE_SPACE_OR_COMMENT_BIT_SET
+            -> return false
+        }
+
         val psi = childElement.psi ?: return false
         if (psi.isMultiline()) return true
 
-        val startOffset = childElement.getSiblingNodeInSequence(
-            forward = false,
-            withBreakElement = true,
-            breakType = type,
-            barrier = leftBarrier
-        )?.startOffset ?: psi.startOffset
-
-        val endOffset = childElement.getSiblingNodeInSequence(
-            forward = true,
-            withBreakElement = false,
-            breakType = delimiterType,
-            barrier = rightBarrier
-        )?.psi?.endOffset ?: psi.endOffset
-
+        val startOffset = childElement.notDelimiterSiblingNodeInSequence(false, delimiterType, leftBarrier)?.startOffset ?: psi.startOffset
+        val endOffset = childElement.notDelimiterSiblingNodeInSequence(true, delimiterType, rightBarrier)?.psi?.endOffset ?: psi.endOffset
         val treeParent = childElement.treeParent
         val textRange = TextRange.create(startOffset, endOffset).shiftLeft(treeParent.startOffset)
         return StringUtil.containsLineBreak(textRange.subSequence(treeParent.text))
     }
+
+    private fun trailingCommaWrappingStrategyWithMultiLineCheck(
+        leftAnchor: IElementType,
+        rightAnchor: IElementType
+    ) = trailingCommaWrappingStrategy(leftAnchor, rightAnchor, thisOrPrevIsMultiLineElement(COMMA, leftAnchor, rightAnchor))
 
     private fun trailingCommaWrappingStrategy(
         leftAnchor: IElementType,

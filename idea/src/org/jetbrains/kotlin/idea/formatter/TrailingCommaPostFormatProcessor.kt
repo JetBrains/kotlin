@@ -42,6 +42,10 @@ private class TrailingCommaVisitor(val settings: CodeStyleSettings) : KtTreeVisi
         super.visitValueArgumentList(list)
     }
 
+    override fun visitArrayAccessExpression(expression: KtArrayAccessExpression) = processCommaOwnerIfInRange(expression.indicesNode) {
+        super.visitArrayAccessExpression(expression)
+    }
+
     private fun processCommaOwnerIfInRange(element: KtElement, preHook: () -> Unit = {}) {
         if (myPostProcessor.isElementPartlyInRange(element)) {
             preHook()
