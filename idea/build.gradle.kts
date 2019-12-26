@@ -189,6 +189,9 @@ dependencies {
         testRuntime(intellijPluginDep("git4idea"))
         testRuntime(intellijPluginDep("google-cloud-tools-core-as"))
         testRuntime(intellijPluginDep("google-login-as"))
+    }
+
+    if (Ide.AS36()) {
         testRuntime(intellijPluginDep("android-wizardTemplate-plugin"))
     }
 
