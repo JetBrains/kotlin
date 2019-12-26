@@ -134,8 +134,10 @@ internal object LocalEscapeAnalysis {
                     }
                 }
                 is DataFlowIR.Node.ArrayRead -> {
-                    // If element of array escapes then array also should escape.
-                    connectObjects(node, node.array.node)
+                    // If element of array(return value) points to array(this value) and escapes then array also should escape.
+                    if (((node.callee.pointsTo?.elementAtOrNull(node.callee.parameters.size) ?: 0) and (1 shl 0)) != 0) {
+                        connectObjects(node, node.array.node)
+                    }
                 }
             }
         }
