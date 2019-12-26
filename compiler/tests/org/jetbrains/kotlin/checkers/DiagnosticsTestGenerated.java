@@ -17965,6 +17965,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/regressions/SpecififcityByReceiver.kt");
             }
 
+            @TestMetadata("testNestedSpecialCalls.kt")
+            public void testTestNestedSpecialCalls() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/regressions/testNestedSpecialCalls.kt");
+            }
+
             @TestMetadata("TypeMismatchOnUnaryOperations.kt")
             public void testTypeMismatchOnUnaryOperations() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/regressions/TypeMismatchOnUnaryOperations.kt");

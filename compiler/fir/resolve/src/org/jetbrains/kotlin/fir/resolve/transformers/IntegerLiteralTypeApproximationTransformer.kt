@@ -90,8 +90,8 @@ class IntegerLiteralTypeApproximationTransformer(
         val expectedType: ConeKotlinType? = when {
             !leftIsIlt && !rightIsIlt -> return operatorCall.compose()
             leftIsIlt && rightIsIlt -> null
-            leftIsIlt -> rightArgument.typeRef.coneTypeUnsafe()
-            rightIsIlt -> leftArgument.typeRef.coneTypeUnsafe()
+            leftIsIlt -> rightArgument.typeRef.coneTypeUnsafe<ConeKotlinType>()
+            rightIsIlt -> leftArgument.typeRef.coneTypeUnsafe<ConeKotlinType>()
             else -> throw IllegalStateException()
         }
 

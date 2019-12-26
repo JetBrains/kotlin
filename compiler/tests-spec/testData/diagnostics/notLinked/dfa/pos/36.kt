@@ -142,7 +142,7 @@ fun case_10(x: Any?, z: Any, b: Boolean?) {
         null -> throw Exception()
     }
     z === y || if (b == true) return else if (<!IMPLICIT_BOXING_IN_IDENTITY_EQUALS!>b === false<!>) null!! else throw Exception()
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>x<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>.equals(10)
 }
