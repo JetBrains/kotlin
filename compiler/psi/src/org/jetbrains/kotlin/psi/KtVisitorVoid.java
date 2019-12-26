@@ -757,6 +757,12 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
     }
 
     @Override
+    public final Void visitCollectionLiteralExpression(@NotNull KtCollectionLiteralExpression expression, Void data) {
+        visitCollectionLiteralExpression(expression);
+        return null;
+    }
+
+    @Override
     public final Void visitTryExpression(@NotNull KtTryExpression expression, Void data) {
         visitTryExpression(expression);
         return null;
