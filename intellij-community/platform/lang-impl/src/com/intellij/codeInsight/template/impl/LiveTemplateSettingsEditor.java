@@ -67,10 +67,6 @@ public class LiveTemplateSettingsEditor extends JPanel {
 
   private JButton myEditVariablesButton;
 
-  private static final String SPACE = CodeInsightBundle.message("template.shortcut.space");
-  private static final String TAB = CodeInsightBundle.message("template.shortcut.tab");
-  private static final String ENTER = CodeInsightBundle.message("template.shortcut.enter");
-  private static final String NONE = CodeInsightBundle.message("template.shortcut.none");
   private final Map<TemplateOptionalProcessor, Boolean> myOptions;
   private final TemplateContext myContext;
   private JBPopup myContextPopup;
@@ -222,7 +218,7 @@ public class LiveTemplateSettingsEditor extends JPanel {
 
     gbConstraints.gridx = 1;
     gbConstraints.insets = JBUI.insetsLeft(4);
-    myExpandByCombo = new ComboBox<>(new String[]{myDefaultShortcutItem, SPACE, TAB, ENTER, NONE});
+    myExpandByCombo = new ComboBox<>(new String[]{myDefaultShortcutItem, getSPACE(), getTAB(), getENTER(), getNONE()});
     myExpandByCombo.addItemListener(new ItemListener() {
       @Override
       public void itemStateChanged(@NotNull ItemEvent e) {
@@ -230,13 +226,13 @@ public class LiveTemplateSettingsEditor extends JPanel {
         if(myDefaultShortcutItem.equals(selectedItem)) {
           myTemplate.setShortcutChar(TemplateSettings.DEFAULT_CHAR);
         }
-        else if(TAB.equals(selectedItem)) {
+        else if(getTAB().equals(selectedItem)) {
           myTemplate.setShortcutChar(TemplateSettings.TAB_CHAR);
         }
-        else if(ENTER.equals(selectedItem)) {
+        else if(getENTER().equals(selectedItem)) {
           myTemplate.setShortcutChar(TemplateSettings.ENTER_CHAR);
         }
-        else if (SPACE.equals(selectedItem)) {
+        else if (getSPACE().equals(selectedItem)) {
           myTemplate.setShortcutChar(TemplateSettings.SPACE_CHAR);
         }
         else {
@@ -488,16 +484,16 @@ public class LiveTemplateSettingsEditor extends JPanel {
       myExpandByCombo.setSelectedItem(myDefaultShortcutItem);
     }
     else if(myTemplate.getShortcutChar() == TemplateSettings.TAB_CHAR) {
-      myExpandByCombo.setSelectedItem(TAB);
+      myExpandByCombo.setSelectedItem(getTAB());
     }
     else if(myTemplate.getShortcutChar() == TemplateSettings.ENTER_CHAR) {
-      myExpandByCombo.setSelectedItem(ENTER);
+      myExpandByCombo.setSelectedItem(getENTER());
     }
     else if (myTemplate.getShortcutChar() == TemplateSettings.SPACE_CHAR) {
-      myExpandByCombo.setSelectedItem(SPACE);
+      myExpandByCombo.setSelectedItem(getSPACE());
     }
     else {
-      myExpandByCombo.setSelectedItem(NONE);
+      myExpandByCombo.setSelectedItem(getNONE());
     }
 
     CommandProcessor.getInstance().executeCommand(
@@ -590,6 +586,22 @@ public class LiveTemplateSettingsEditor extends JPanel {
     Map<String,Variable> map = TemplateImplUtil.parseVariables(myTemplateEditor.getDocument().getCharsSequence());
     map.keySet().removeAll(TemplateImpl.INTERNAL_VARS_SET);
     return map;
+  }
+
+  private static String getSPACE() {
+    return CodeInsightBundle.message("template.shortcut.space");
+  }
+
+  private static String getTAB() {
+    return CodeInsightBundle.message("template.shortcut.tab");
+  }
+
+  private static String getENTER() {
+    return CodeInsightBundle.message("template.shortcut.enter");
+  }
+
+  private static String getNONE() {
+    return CodeInsightBundle.message("template.shortcut.none");
   }
 }
 

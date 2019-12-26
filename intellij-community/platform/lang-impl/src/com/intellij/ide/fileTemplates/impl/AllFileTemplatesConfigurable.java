@@ -49,11 +49,6 @@ public final class AllFileTemplatesConfigurable implements SearchableConfigurabl
                                                      Configurable.VariableProjectAppLevel {
   private static final Logger LOG = Logger.getInstance(AllFileTemplatesConfigurable.class);
 
-  private static final String TEMPLATES_TITLE = IdeBundle.message("tab.filetemplates.templates");
-  private static final String INCLUDES_TITLE = IdeBundle.message("tab.filetemplates.includes");
-  private static final String CODE_TITLE = IdeBundle.message("tab.filetemplates.code");
-  private static final String OTHER_TITLE = IdeBundle.message("tab.filetemplates.j2ee");
-
   final static class Provider extends ConfigurableProvider {
     private final Project myProject;
 
@@ -186,19 +181,19 @@ public final class AllFileTemplatesConfigurable implements SearchableConfigurabl
   public JComponent createComponent() {
     myUIDisposable = Disposer.newDisposable();
 
-    myTemplatesList = new FileTemplateTabAsList(TEMPLATES_TITLE) {
+    myTemplatesList = new FileTemplateTabAsList(getTEMPLATES_TITLE()) {
       @Override
       public void onTemplateSelected() {
         onListSelectionChanged();
       }
     };
-    myIncludesList = new FileTemplateTabAsList(INCLUDES_TITLE) {
+    myIncludesList = new FileTemplateTabAsList(getINCLUDES_TITLE()) {
       @Override
       public void onTemplateSelected() {
         onListSelectionChanged();
       }
     };
-    myCodeTemplatesList = new FileTemplateTabAsList(CODE_TITLE) {
+    myCodeTemplatesList = new FileTemplateTabAsList(getCODE_TITLE()) {
       @Override
       public void onTemplateSelected() {
         onListSelectionChanged();
@@ -210,7 +205,7 @@ public final class AllFileTemplatesConfigurable implements SearchableConfigurabl
 
     final List<FileTemplateGroupDescriptorFactory> factories = FileTemplateGroupDescriptorFactory.EXTENSION_POINT_NAME.getExtensionList();
     if (!factories.isEmpty()) {
-      myOtherTemplatesList = new FileTemplateTabAsTree(OTHER_TITLE) {
+      myOtherTemplatesList = new FileTemplateTabAsTree(getOTHER_TITLE()) {
         @Override
         public void onTemplateSelected() {
           onListSelectionChanged();
@@ -444,16 +439,16 @@ public final class AllFileTemplatesConfigurable implements SearchableConfigurabl
     if (templateName == null) {
       return false;
     }
-    if (Comparing.strEqual(templateTabTitle, TEMPLATES_TITLE)) {
+    if (Comparing.strEqual(templateTabTitle, getTEMPLATES_TITLE())) {
       return isInternalTemplateName(templateName);
     }
-    if (Comparing.strEqual(templateTabTitle, CODE_TITLE)) {
+    if (Comparing.strEqual(templateTabTitle, getCODE_TITLE())) {
       return true;
     }
-    if (Comparing.strEqual(templateTabTitle, OTHER_TITLE)) {
+    if (Comparing.strEqual(templateTabTitle, getOTHER_TITLE())) {
       return true;
     }
-    if (Comparing.strEqual(templateTabTitle, INCLUDES_TITLE)) {
+    if (Comparing.strEqual(templateTabTitle, getINCLUDES_TITLE())) {
       return Comparing.strEqual(templateName, FileTemplateManager.FILE_HEADER_TEMPLATE_NAME);
     }
     return false;
@@ -592,7 +587,7 @@ public final class AllFileTemplatesConfigurable implements SearchableConfigurabl
   public void disposeUIResources() {
     if (myCurrentTab != null) {
       final PropertiesComponent propertiesComponent = PropertiesComponent.getInstance();
-      propertiesComponent.setValue(CURRENT_TAB, myCurrentTab.getTitle(), TEMPLATES_TITLE);
+      propertiesComponent.setValue(CURRENT_TAB, myCurrentTab.getTitle(), getTEMPLATES_TITLE());
       final FileTemplate template = myCurrentTab.getSelectedTemplate();
       if (template != null) {
         propertiesComponent.setValue(SELECTED_TEMPLATE, template.getName());
@@ -787,5 +782,21 @@ public final class AllFileTemplatesConfigurable implements SearchableConfigurabl
     public void removeScheme(@NotNull FileTemplatesScheme scheme) {
       throw new UnsupportedOperationException();
     }
+  }
+
+  private static String getTEMPLATES_TITLE() {
+    return IdeBundle.message("tab.filetemplates.templates");
+  }
+
+  private static String getINCLUDES_TITLE() {
+    return IdeBundle.message("tab.filetemplates.includes");
+  }
+
+  private static String getCODE_TITLE() {
+    return IdeBundle.message("tab.filetemplates.code");
+  }
+
+  private static String getOTHER_TITLE() {
+    return IdeBundle.message("tab.filetemplates.j2ee");
   }
 }

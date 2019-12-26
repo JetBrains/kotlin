@@ -58,10 +58,6 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
   public static final String ID = "preferences.editor";
 
   private JPanel    myBehaviourPanel;
-  private static final String STRIP_CHANGED = ApplicationBundle.message("combobox.strip.modified.lines");
-
-  private static final String STRIP_ALL  = ApplicationBundle.message("combobox.strip.all");
-  private static final String STRIP_NONE = ApplicationBundle.message("combobox.strip.none");
   private JComboBox<String> myStripTrailingSpacesCombo;
 
 
@@ -94,7 +90,6 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
   private JComboBox<EditorCaretStopPolicyItem.LineBoundary> myLineBoundaryCaretStopComboBox;
   private JPanel myCheckBoxPanel;
 
-  private static final String ACTIVE_COLOR_SCHEME = ApplicationBundle.message("combobox.richcopy.color.scheme.active");
   private static final UINumericRange RECENT_FILES_RANGE = new UINumericRange(50, 1, 500);
   private static final UINumericRange RECENT_LOCATIONS_RANGE = new UINumericRange(10, 1, 100);
 
@@ -104,14 +99,14 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
   public EditorOptionsPanel() {
     mySoftWrapFileMasks.getEmptyText().setText(ApplicationBundle.message("soft.wraps.file.masks.empty.text"));
 
-    myStripTrailingSpacesCombo.addItem(STRIP_CHANGED);
-    myStripTrailingSpacesCombo.addItem(STRIP_ALL);
-    myStripTrailingSpacesCombo.addItem(STRIP_NONE);
+    myStripTrailingSpacesCombo.addItem(getSTRIP_CHANGED());
+    myStripTrailingSpacesCombo.addItem(getSTRIP_ALL());
+    myStripTrailingSpacesCombo.addItem(getSTRIP_NONE());
 
     myStripTrailingSpacesCombo.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        myCbKeepTrailingSpacesOnCaretLine.setEnabled(!STRIP_NONE.equals(myStripTrailingSpacesCombo.getSelectedItem()));
+        myCbKeepTrailingSpacesOnCaretLine.setEnabled(!getSTRIP_NONE().equals(myStripTrailingSpacesCombo.getSelectedItem()));
       }
     });
 
@@ -125,7 +120,7 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
     myHighlightSettingsPanel.add(myErrorHighlightingPanel.getPanel(), BorderLayout.CENTER);
 
     myRichCopyColorSchemeComboBox.setRenderer(SimpleListCellRenderer.create("", value ->
-      RichCopySettings.ACTIVE_GLOBAL_SCHEME_MARKER.equals(value) ? ACTIVE_COLOR_SCHEME :
+      RichCopySettings.ACTIVE_GLOBAL_SCHEME_MARKER.equals(value) ? getACTIVE_COLOR_SCHEME() :
       EditorColorsScheme.DEFAULT_SCHEME_NAME.equals(value) ? EditorColorsScheme.DEFAULT_SCHEME_ALIAS : value));
 
     initCaretStopComboBox(myWordBoundaryCaretStopComboBox, EditorCaretStopPolicyItem.WordBoundary.values());
@@ -179,13 +174,13 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
 
     String stripTrailingSpaces = editorSettings.getStripTrailingSpaces();
     if(EditorSettingsExternalizable.STRIP_TRAILING_SPACES_NONE.equals(stripTrailingSpaces)) {
-      myStripTrailingSpacesCombo.setSelectedItem(STRIP_NONE);
+      myStripTrailingSpacesCombo.setSelectedItem(getSTRIP_NONE());
     }
     else if (EditorSettingsExternalizable.STRIP_TRAILING_SPACES_CHANGED.equals(stripTrailingSpaces)) {
-      myStripTrailingSpacesCombo.setSelectedItem(STRIP_CHANGED);
+      myStripTrailingSpacesCombo.setSelectedItem(getSTRIP_CHANGED());
     }
     else if (EditorSettingsExternalizable.STRIP_TRAILING_SPACES_WHOLE.equals(stripTrailingSpaces)) {
-      myStripTrailingSpacesCombo.setSelectedItem(STRIP_ALL);
+      myStripTrailingSpacesCombo.setSelectedItem(getSTRIP_ALL());
     }
     myCbKeepTrailingSpacesOnCaretLine.setSelected(editorSettings.isKeepTrailingSpacesOnCaretLine());
 
@@ -250,10 +245,10 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
 
     // Strip trailing spaces on save
 
-    if(STRIP_NONE.equals(myStripTrailingSpacesCombo.getSelectedItem())) {
+    if(getSTRIP_NONE().equals(myStripTrailingSpacesCombo.getSelectedItem())) {
       editorSettings.setStripTrailingSpaces(EditorSettingsExternalizable.STRIP_TRAILING_SPACES_NONE);
     }
-    else if(STRIP_CHANGED.equals(myStripTrailingSpacesCombo.getSelectedItem())){
+    else if(getSTRIP_CHANGED().equals(myStripTrailingSpacesCombo.getSelectedItem())){
       editorSettings.setStripTrailingSpaces(EditorSettingsExternalizable.STRIP_TRAILING_SPACES_CHANGED);
     }
     else {
@@ -456,10 +451,10 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
   @EditorSettingsExternalizable.StripTrailingSpaces
   private String getStripTrailingSpacesValue() {
     Object selectedItem = myStripTrailingSpacesCombo.getSelectedItem();
-    if(STRIP_NONE.equals(selectedItem)) {
+    if(getSTRIP_NONE().equals(selectedItem)) {
       return EditorSettingsExternalizable.STRIP_TRAILING_SPACES_NONE;
     }
-    if(STRIP_CHANGED.equals(selectedItem)){
+    if(getSTRIP_CHANGED().equals(selectedItem)){
       return EditorSettingsExternalizable.STRIP_TRAILING_SPACES_CHANGED;
     }
     return EditorSettingsExternalizable.STRIP_TRAILING_SPACES_WHOLE;
@@ -516,5 +511,21 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
   @Override
   public JComponent createComponent() {
     return myBehaviourPanel;
+  }
+
+  private static String getSTRIP_CHANGED() {
+    return ApplicationBundle.message("combobox.strip.modified.lines");
+  }
+
+  private static String getSTRIP_ALL() {
+    return ApplicationBundle.message("combobox.strip.all");
+  }
+
+  private static String getSTRIP_NONE() {
+    return ApplicationBundle.message("combobox.strip.none");
+  }
+
+  private static String getACTIVE_COLOR_SCHEME() {
+    return ApplicationBundle.message("combobox.richcopy.color.scheme.active");
   }
 }

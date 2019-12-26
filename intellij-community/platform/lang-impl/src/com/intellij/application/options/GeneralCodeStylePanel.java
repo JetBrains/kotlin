@@ -64,11 +64,6 @@ import java.util.regex.PatternSyntaxException;
 public class GeneralCodeStylePanel extends CodeStyleAbstractPanel {
   @SuppressWarnings("UnusedDeclaration")
   private static final Logger LOG = Logger.getInstance(GeneralCodeStylePanel.class);
-
-  private static final String SYSTEM_DEPENDANT_STRING = ApplicationBundle.message("combobox.crlf.system.dependent");
-  private static final String UNIX_STRING = ApplicationBundle.message("combobox.crlf.unix");
-  private static final String WINDOWS_STRING = ApplicationBundle.message("combobox.crlf.windows");
-  private static final String MACINTOSH_STRING = ApplicationBundle.message("combobox.crlf.mac");
   private final List<GeneralCodeStyleOptionsProvider> myAdditionalOptions;
 
   private IntegerField myRightMarginField;
@@ -100,13 +95,13 @@ public class GeneralCodeStylePanel extends CodeStyleAbstractPanel {
     super(settings);
 
     //noinspection unchecked
-    myLineSeparatorCombo.addItem(SYSTEM_DEPENDANT_STRING);
+    myLineSeparatorCombo.addItem(getSYSTEM_DEPENDANT_STRING());
     //noinspection unchecked
-    myLineSeparatorCombo.addItem(UNIX_STRING);
+    myLineSeparatorCombo.addItem(getUNIX_STRING());
     //noinspection unchecked
-    myLineSeparatorCombo.addItem(WINDOWS_STRING);
+    myLineSeparatorCombo.addItem(getWINDOWS_STRING());
     //noinspection unchecked
-    myLineSeparatorCombo.addItem(MACINTOSH_STRING);
+    myLineSeparatorCombo.addItem(getMACINTOSH_STRING());
     addPanelToWatch(myPanel);
 
     myRightMarginField.setDefaultValue(settings.getDefaultRightMargin());
@@ -226,13 +221,13 @@ public class GeneralCodeStylePanel extends CodeStyleAbstractPanel {
 
   @Nullable
   private String getSelectedLineSeparator() {
-    if (UNIX_STRING.equals(myLineSeparatorCombo.getSelectedItem())) {
+    if (getUNIX_STRING().equals(myLineSeparatorCombo.getSelectedItem())) {
       return "\n";
     }
-    if (MACINTOSH_STRING.equals(myLineSeparatorCombo.getSelectedItem())) {
+    if (getMACINTOSH_STRING().equals(myLineSeparatorCombo.getSelectedItem())) {
       return "\r";
     }
-    if (WINDOWS_STRING.equals(myLineSeparatorCombo.getSelectedItem())) {
+    if (getWINDOWS_STRING().equals(myLineSeparatorCombo.getSelectedItem())) {
       return "\r\n";
     }
     return null;
@@ -286,16 +281,16 @@ public class GeneralCodeStylePanel extends CodeStyleAbstractPanel {
 
     String lineSeparator = settings.LINE_SEPARATOR;
     if ("\n".equals(lineSeparator)) {
-      myLineSeparatorCombo.setSelectedItem(UNIX_STRING);
+      myLineSeparatorCombo.setSelectedItem(getUNIX_STRING());
     }
     else if ("\r\n".equals(lineSeparator)) {
-      myLineSeparatorCombo.setSelectedItem(WINDOWS_STRING);
+      myLineSeparatorCombo.setSelectedItem(getWINDOWS_STRING());
     }
     else if ("\r".equals(lineSeparator)) {
-      myLineSeparatorCombo.setSelectedItem(MACINTOSH_STRING);
+      myLineSeparatorCombo.setSelectedItem(getMACINTOSH_STRING());
     }
     else {
-      myLineSeparatorCombo.setSelectedItem(SYSTEM_DEPENDANT_STRING);
+      myLineSeparatorCombo.setSelectedItem(getSYSTEM_DEPENDANT_STRING());
     }
 
     myRightMarginField.setValue(settings.getDefaultRightMargin());
@@ -360,5 +355,21 @@ public class GeneralCodeStylePanel extends CodeStyleAbstractPanel {
       option.disposeUIResources();
     }
     super.dispose();
+  }
+
+  private static String getSYSTEM_DEPENDANT_STRING() {
+    return ApplicationBundle.message("combobox.crlf.system.dependent");
+  }
+
+  private static String getUNIX_STRING() {
+    return ApplicationBundle.message("combobox.crlf.unix");
+  }
+
+  private static String getWINDOWS_STRING() {
+    return ApplicationBundle.message("combobox.crlf.windows");
+  }
+
+  private static String getMACINTOSH_STRING() {
+    return ApplicationBundle.message("combobox.crlf.mac");
   }
 }

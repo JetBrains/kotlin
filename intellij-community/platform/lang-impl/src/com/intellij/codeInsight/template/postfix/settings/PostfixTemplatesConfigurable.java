@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.template.postfix.settings;
 
-import com.intellij.application.options.editor.AutoImportOptionsProviderEP;
 import com.intellij.application.options.editor.EditorOptionsProvider;
 import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.template.impl.LiveTemplateCompletionContributor;
@@ -60,10 +59,6 @@ public class PostfixTemplatesConfigurable implements SearchableConfigurable, Edi
   private JPanel myDescriptionPanel;
   private final Alarm myUpdateDescriptionPanelAlarm = new Alarm();
 
-  private static final String SPACE = CodeInsightBundle.message("template.shortcut.space");
-  private static final String TAB = CodeInsightBundle.message("template.shortcut.tab");
-  private static final String ENTER = CodeInsightBundle.message("template.shortcut.enter");
-
   public PostfixTemplatesConfigurable() {
     myTemplatesSettings = PostfixTemplatesSettings.getInstance();
 
@@ -73,9 +68,9 @@ public class PostfixTemplatesConfigurable implements SearchableConfigurable, Edi
         updateComponents();
       }
     });
-    myShortcutComboBox.addItem(TAB);
-    myShortcutComboBox.addItem(SPACE);
-    myShortcutComboBox.addItem(ENTER);
+    myShortcutComboBox.addItem(getTAB());
+    myShortcutComboBox.addItem(getSPACE());
+    myShortcutComboBox.addItem(getENTER());
     myDescriptionPanel.setLayout(new BorderLayout());
   }
 
@@ -269,10 +264,10 @@ public class PostfixTemplatesConfigurable implements SearchableConfigurable, Edi
   }
 
   private static char stringToShortcut(@Nullable String string) {
-    if (SPACE.equals(string)) {
+    if (getSPACE().equals(string)) {
       return TemplateSettings.SPACE_CHAR;
     }
-    else if (ENTER.equals(string)) {
+    else if (getENTER().equals(string)) {
       return TemplateSettings.ENTER_CHAR;
     }
     return TemplateSettings.TAB_CHAR;
@@ -280,11 +275,23 @@ public class PostfixTemplatesConfigurable implements SearchableConfigurable, Edi
 
   private static String shortcutToString(char shortcut) {
     if (shortcut == TemplateSettings.SPACE_CHAR) {
-      return SPACE;
+      return getSPACE();
     }
     if (shortcut == TemplateSettings.ENTER_CHAR) {
-      return ENTER;
+      return getENTER();
     }
-    return TAB;
+    return getTAB();
+  }
+
+  private static String getSPACE() {
+    return CodeInsightBundle.message("template.shortcut.space");
+  }
+
+  private static String getTAB() {
+    return CodeInsightBundle.message("template.shortcut.tab");
+  }
+
+  private static String getENTER() {
+    return CodeInsightBundle.message("template.shortcut.enter");
   }
 }

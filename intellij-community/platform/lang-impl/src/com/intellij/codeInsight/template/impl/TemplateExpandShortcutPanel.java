@@ -32,11 +32,6 @@ public class TemplateExpandShortcutPanel extends JPanel {
   private final JComboBox<String> myExpandByCombo;
   private final HyperlinkLabel myOpenKeymapLabel;
 
-  private static final String SPACE = CodeInsightBundle.message("template.shortcut.space");
-  private static final String TAB = CodeInsightBundle.message("template.shortcut.tab");
-  private static final String ENTER = CodeInsightBundle.message("template.shortcut.enter");
-  private static final String CUSTOM = CodeInsightBundle.message("template.shortcut.custom");
-
   public TemplateExpandShortcutPanel(@NotNull String label) {
     super(new GridBagLayout());
     GridBagConstraints gbConstraints = new GridBagConstraints();
@@ -62,14 +57,14 @@ public class TemplateExpandShortcutPanel extends JPanel {
     myExpandByCombo.addItemListener(new ItemListener() {
       @Override
       public void itemStateChanged(ItemEvent e) {
-        myOpenKeymapLabel.setVisible(myExpandByCombo.getSelectedItem() == CUSTOM);
+        myOpenKeymapLabel.setVisible(myExpandByCombo.getSelectedItem() == getCUSTOM());
       }
     });
-    for (String s : ContainerUtil.ar(SPACE, TAB, ENTER, CUSTOM)) {
+    for (String s : ContainerUtil.ar(getSPACE(), getTAB(), getENTER(), getCUSTOM())) {
       myExpandByCombo.addItem(s);
     }
     myExpandByCombo.setRenderer(SimpleListCellRenderer.create("", value -> {
-      if (value == CUSTOM) {
+      if (value == getCUSTOM()) {
         Shortcut[] shortcuts = getCurrentCustomShortcuts();
         String shortcutText = shortcuts.length == 0 ? "" : KeymapUtil.getShortcutsText(shortcuts);
         return StringUtil.isEmpty(shortcutText) ? ApplicationBundle.message("custom.option") : "Custom (" + shortcutText + ")";
@@ -125,17 +120,17 @@ public class TemplateExpandShortcutPanel extends JPanel {
   }
 
   public void setSelectedChar(char ch) {
-    myExpandByCombo.setSelectedItem(ch == TemplateSettings.CUSTOM_CHAR ? CUSTOM :
-                                    ch == TemplateSettings.TAB_CHAR ? TAB :
-                                    ch == TemplateSettings.ENTER_CHAR ? ENTER :
-                                    SPACE);
+    myExpandByCombo.setSelectedItem(ch == TemplateSettings.CUSTOM_CHAR ? getCUSTOM() :
+                                    ch == TemplateSettings.TAB_CHAR ? getTAB() :
+                                    ch == TemplateSettings.ENTER_CHAR ? getENTER() :
+                                    getSPACE());
   }
 
   public char getSelectedChar() {
     Object selectedItem = myExpandByCombo.getSelectedItem();
-    if (TAB.equals(selectedItem)) return TemplateSettings.TAB_CHAR;
-    if (ENTER.equals(selectedItem)) return TemplateSettings.ENTER_CHAR;
-    if (SPACE.equals(selectedItem)) {
+    if (getTAB().equals(selectedItem)) return TemplateSettings.TAB_CHAR;
+    if (getENTER().equals(selectedItem)) return TemplateSettings.ENTER_CHAR;
+    if (getSPACE().equals(selectedItem)) {
       return TemplateSettings.SPACE_CHAR;
     }
     else {
@@ -145,8 +140,24 @@ public class TemplateExpandShortcutPanel extends JPanel {
 
   private void resizeComboToFitCustomShortcut() {
     myExpandByCombo.setPrototypeDisplayValue(null);
-    myExpandByCombo.setPrototypeDisplayValue(CUSTOM);
+    myExpandByCombo.setPrototypeDisplayValue(getCUSTOM());
     myExpandByCombo.revalidate();
     myExpandByCombo.repaint();
+  }
+
+  private static String getSPACE() {
+    return CodeInsightBundle.message("template.shortcut.space");
+  }
+
+  private static String getTAB() {
+    return CodeInsightBundle.message("template.shortcut.tab");
+  }
+
+  private static String getENTER() {
+    return CodeInsightBundle.message("template.shortcut.enter");
+  }
+
+  private static String getCUSTOM() {
+    return CodeInsightBundle.message("template.shortcut.custom");
   }
 }

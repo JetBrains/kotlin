@@ -20,10 +20,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class ScopeChooserUtils {
-
-  private static final String CURRENT_FILE_SCOPE_NAME = IdeBundle.message("scope.current.file");
-  private static final String OPEN_FILES_SCOPE_NAME = IdeBundle.message("scope.open.files");
-
   private ScopeChooserUtils() {
   }
 
@@ -42,14 +38,14 @@ public class ScopeChooserUtils {
 
     if (scopeName == null) return GlobalSearchScope.EMPTY_SCOPE;
 
-    if (OPEN_FILES_SCOPE_NAME.equals(scopeName)) {
+    if (getOPEN_FILES_SCOPE_NAME().equals(scopeName)) {
       return intersectWithContentScope(project, GlobalSearchScopes.openFilesScope(project));
     }
 
-    if (CURRENT_FILE_SCOPE_NAME.equals(scopeName)) {
+    if (getCURRENT_FILE_SCOPE_NAME().equals(scopeName)) {
       VirtualFile[] array = FileEditorManager.getInstance(project).getSelectedFiles();
       List<VirtualFile> files = ContainerUtil.createMaybeSingletonList(ArrayUtil.getFirstElement(array));
-      GlobalSearchScope scope = GlobalSearchScope.filesScope(project, files, CURRENT_FILE_SCOPE_NAME);
+      GlobalSearchScope scope = GlobalSearchScope.filesScope(project, files, getCURRENT_FILE_SCOPE_NAME());
       return intersectWithContentScope(project, scope);
     }
 
@@ -90,5 +86,13 @@ public class ScopeChooserUtils {
   @NotNull
   private static GlobalSearchScope intersectWithContentScope(@NotNull Project project, @NotNull GlobalSearchScope scope) {
     return scope.intersectWith(ProjectScope.getContentScope(project));
+  }
+
+  private static String getCURRENT_FILE_SCOPE_NAME() {
+    return IdeBundle.message("scope.current.file");
+  }
+
+  private static String getOPEN_FILES_SCOPE_NAME() {
+    return IdeBundle.message("scope.open.files");
   }
 }
