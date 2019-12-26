@@ -1385,6 +1385,11 @@ public class FirOldFrontendDiagnosticsTestWithStdlibGenerated extends AbstractFi
                 runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/smartcasts/receiver.kt");
             }
 
+            @TestMetadata("reifiedGeneric.kt")
+            public void testReifiedGeneric() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/smartcasts/reifiedGeneric.kt");
+            }
+
             @TestMetadata("safecallAndReturnsNull.kt")
             public void testSafecallAndReturnsNull() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/smartcasts/safecallAndReturnsNull.kt");

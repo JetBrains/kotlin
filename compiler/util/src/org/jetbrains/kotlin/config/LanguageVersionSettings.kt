@@ -122,6 +122,7 @@ enum class LanguageFeature(
     AllowResultInReturnType(KOTLIN_1_4),
     PreferJavaFieldOverload(KOTLIN_1_4),
     AllowContractsForNonOverridableMembers(KOTLIN_1_4),
+    AllowReifiedGenericsInContracts(KOTLIN_1_4),
 
     ProperVisibilityForCompanionObjectInstanceField(sinceVersion = null, kind = BUG_FIX),
     // Temporarily disabled, see KT-27084/KT-22379

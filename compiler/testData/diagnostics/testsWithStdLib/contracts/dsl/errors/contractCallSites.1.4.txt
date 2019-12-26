@@ -21,9 +21,15 @@ public open class Class {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public final inline fun inlineMember(/*0*/ x: kotlin.Boolean): kotlin.Unit
+        Returns(WILDCARD) -> x
+
     public final fun member(/*0*/ x: kotlin.Boolean): kotlin.Unit
+        Returns(WILDCARD) -> x
+
     public open fun openMemeber(/*0*/ x: kotlin.Boolean): kotlin.Unit
     public final suspend fun suspendMember(/*0*/ x: kotlin.Boolean): kotlin.Unit
+        Returns(WILDCARD) -> x
+
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 

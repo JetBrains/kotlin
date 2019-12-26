@@ -1,4 +1,4 @@
-// !LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect +AllowContractsForNonOverridableMembers
+// !LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect +AllowContractsForNonOverridableMembers +AllowReifiedGenericsInContracts
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 // !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
 

@@ -20,10 +20,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.description.ContractProviderKey
-import org.jetbrains.kotlin.contracts.model.Computation
-import org.jetbrains.kotlin.contracts.model.ConditionalEffect
-import org.jetbrains.kotlin.contracts.model.ESEffect
-import org.jetbrains.kotlin.contracts.model.Functor
+import org.jetbrains.kotlin.contracts.model.*
 import org.jetbrains.kotlin.contracts.model.functors.*
 import org.jetbrains.kotlin.contracts.model.structure.*
 import org.jetbrains.kotlin.contracts.model.visitors.Reducer
@@ -71,12 +68,13 @@ class EffectsExtractingVisitor(
         if (resolvedCall.isCallWithUnsupportedReceiver()) return UNKNOWN_COMPUTATION
 
         val arguments = resolvedCall.getCallArgumentsAsComputations() ?: return UNKNOWN_COMPUTATION
+        val typeSubstitution = resolvedCall.getTypeSubstitution()
 
         val descriptor = resolvedCall.resultingDescriptor
         return when {
             descriptor.isEqualsDescriptor() -> CallComputation(
                 ESBooleanType,
-                EqualsFunctor(false).invokeWithArguments(arguments, reducer)
+                EqualsFunctor(false).invokeWithArguments(arguments, typeSubstitution, reducer)
             )
             descriptor is ValueDescriptor -> ESVariableWithDataFlowValue(
                 descriptor,
@@ -86,7 +84,7 @@ class EffectsExtractingVisitor(
                 val esType = descriptor.returnType?.toESType()
                 CallComputation(
                     esType,
-                    descriptor.getFunctor()?.invokeWithArguments(arguments, reducer) ?: emptyList()
+                    descriptor.getFunctor()?.invokeWithArguments(arguments, typeSubstitution, reducer) ?: emptyList()
                 )
             }
             else -> UNKNOWN_COMPUTATION
@@ -123,7 +121,7 @@ class EffectsExtractingVisitor(
         val arg = extractOrGetCached(expression.leftHandSide)
         return CallComputation(
             ESBooleanType,
-            IsFunctor(rightType, expression.isNegated).invokeWithArguments(listOf(arg), reducer)
+            IsFunctor(rightType, expression.isNegated).invokeWithArguments(listOf(arg), emptyMap(), reducer)
         )
     }
 
@@ -148,10 +146,10 @@ class EffectsExtractingVisitor(
         val args = listOf(left, right)
 
         return when (expression.operationToken) {
-            KtTokens.EXCLEQ -> CallComputation(ESBooleanType, EqualsFunctor(true).invokeWithArguments(args, reducer))
-            KtTokens.EQEQ -> CallComputation(ESBooleanType, EqualsFunctor(false).invokeWithArguments(args, reducer))
-            KtTokens.ANDAND -> CallComputation(ESBooleanType, AndFunctor().invokeWithArguments(args, reducer))
-            KtTokens.OROR -> CallComputation(ESBooleanType, OrFunctor().invokeWithArguments(args, reducer))
+            KtTokens.EXCLEQ -> CallComputation(ESBooleanType, EqualsFunctor(true).invokeWithArguments(args, emptyMap(), reducer))
+            KtTokens.EQEQ -> CallComputation(ESBooleanType, EqualsFunctor(false).invokeWithArguments(args, emptyMap(), reducer))
+            KtTokens.ANDAND -> CallComputation(ESBooleanType, AndFunctor().invokeWithArguments(args, emptyMap(), reducer))
+            KtTokens.OROR -> CallComputation(ESBooleanType, OrFunctor().invokeWithArguments(args, emptyMap(), reducer))
             else -> UNKNOWN_COMPUTATION
         }
     }
@@ -213,6 +211,14 @@ class EffectsExtractingVisitor(
         passedValueArguments.mapTo(arguments) { it.toComputation() ?: return null }
 
         return arguments
+    }
+
+    private fun ResolvedCall<*>.getTypeSubstitution(): ESTypeSubstitution {
+        val result = mutableMapOf<ESKotlinType, ESKotlinType>()
+        for ((typeParameter, typeArgument) in typeArguments) {
+            result[ESKotlinType(typeParameter.defaultType)] = ESKotlinType(typeArgument)
+        }
+        return result
     }
 
     private fun ResolvedValueArgument.toComputation(): Computation? {

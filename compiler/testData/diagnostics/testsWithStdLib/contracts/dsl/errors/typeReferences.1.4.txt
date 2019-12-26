@@ -6,6 +6,8 @@ public fun referToAliasedSimpleType(/*0*/ x: kotlin.Any?): kotlin.Unit
     Returns(WILDCARD) -> x is Int
 
 public inline fun </*0*/ reified T> referToReifiedGeneric(/*0*/ x: kotlin.Any?): kotlin.Unit
+    Returns(WILDCARD) -> x is T
+
 public fun referToSubstituted(/*0*/ x: kotlin.Any?): kotlin.Unit
 public fun referToSubstitutedWithStar(/*0*/ x: kotlin.Any?): kotlin.Unit
     Returns(WILDCARD) -> x is Generic<*>

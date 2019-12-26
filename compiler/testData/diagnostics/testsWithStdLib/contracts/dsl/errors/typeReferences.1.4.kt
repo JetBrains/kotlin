@@ -1,4 +1,4 @@
-// !LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect +AllowContractsForNonOverridableMembers
+// !LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect +AllowContractsForNonOverridableMembers +AllowReifiedGenericsInContracts
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 // !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
 
@@ -6,7 +6,7 @@ import kotlin.contracts.*
 
 inline fun <reified T> referToReifiedGeneric(x: Any?) {
     contract {
-        returns() implies (x is <!ERROR_IN_CONTRACT_DESCRIPTION("references to type parameters are forbidden in contracts")!>T<!>)
+        returns() implies (x is T)
     }
 }
 
