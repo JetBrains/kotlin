@@ -1,16 +1,9 @@
 Test key, Issue, State (optional: MUTE or FAIL)
-org.jetbrains.kotlin.checkers.JavaAgainstKotlinBinariesCheckerTestGenerated.testClassObjects, ERROR: Access to tree elements not allowed.
-org.jetbrains.kotlin.checkers.JavaAgainstKotlinBinariesCheckerTestGenerated.testUsingKotlinPackageDeclarations, ERROR: Access to tree elements not allowed.
 org.jetbrains.kotlin.checkers.JavaAgainstKotlinSourceCheckerTestGenerated.JavaAgainstKotlin.testExtendingMutableInterfaces, KT-34105
 org.jetbrains.kotlin.checkers.JavaAgainstKotlinSourceCheckerTestGenerated.JavaAgainstKotlin.testExtendingReadOnlyInterfaces, KT-34105
 org.jetbrains.kotlin.checkers.JavaAgainstKotlinSourceCheckerWithoutUltraLightTestGenerated.JavaAgainstKotlin.testExtendingMutableInterfaces, KT-34105
 org.jetbrains.kotlin.checkers.JavaAgainstKotlinSourceCheckerWithoutUltraLightTestGenerated.JavaAgainstKotlin.testUsingMutableInterfaces, FLAKY
 org.jetbrains.kotlin.checkers.JavaAgainstKotlinSourceCheckerWithoutUltraLightTestGenerated.JavaAgainstKotlin.testUsingReadOnlyInterfaces, FLAKY
-org.jetbrains.kotlin.gradle.GradleMultiplatformWizardTest.testMobile, KT-35368
-org.jetbrains.kotlin.gradle.GradleMultiplatformWizardTest.testMobileShared, KT-35368
-org.jetbrains.kotlin.gradle.GradleMultiplatformWizardTest.testNative, KT-35368
-org.jetbrains.kotlin.gradle.GradleMultiplatformWizardTest.testShared, KT-35368
-org.jetbrains.kotlin.gradle.GradleMultiplatformWizardTest.testSharedWithQualifiedName, KT-35368
 org.jetbrains.kotlin.gradle.GradleMultiplatformWizardTest.testWeb, KT-35095
 org.jetbrains.kotlin.gradle.NewMultiplatformProjectImportingTest.testSingleAndroidTarget[1: Gradle-4.9, KotlinGradlePlugin-latest stable], Stable on windows
 org.jetbrains.kotlin.gradle.NewMultiplatformProjectImportingTest.testSingleAndroidTarget[3: Gradle-5.6.4, KotlinGradlePlugin-latest stable], Stable on windows
@@ -24,18 +17,6 @@ org.jetbrains.kotlin.idea.codeInsight.gradle.GradleConfiguratorTest.testConfigur
 org.jetbrains.kotlin.idea.codeInsight.gradle.GradleConfiguratorTest.testConfigureGradleKtsKotlinDevVersion[1: with Gradle-5.6.4], absent test data
 org.jetbrains.kotlin.idea.codeInsight.gradle.GradleConfiguratorTest.testConfigureKotlinDevVersion[1: with Gradle-5.6.4], absent test data
 org.jetbrains.kotlin.idea.codeInsight.gradle.GradleConfiguratorTest.testConfigureKotlinWithPluginsBlock[1: with Gradle-5.6.4], absent test data
-org.jetbrains.kotlin.idea.codeInsight.gradle.GradleFacetImportTest.testAndroidGradleJsDetection, NPE during import
-org.jetbrains.kotlin.idea.codeInsight.gradle.GradleFacetImportTest.testKotlinAndroidPluginDetection, NPE during import
-org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Common.StaticMembers.testJavaStaticMethodsFromImports, KT-32919
-org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Java.BoldOrGrayed.testNonPredictableSmartCast1, KT-32919
-org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Java.BoldOrGrayed.testNonPredictableSmartCast2, KT-32919
-org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Java.BoldOrGrayed.testSyntheticJavaProperties1, KT-32919
-org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Java.BoldOrGrayed.testSyntheticJavaProperties2, KT-32919
-org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Java.SyntheticExtensions.testNullableReceiver, KT-32919
-org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Java.SyntheticExtensions.testSafeCall, KT-32919
-org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Java.SyntheticExtensions.testSmartCast, KT-32919
-org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Java.SyntheticExtensions.testSmartCast2, KT-32919
-org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Java.SyntheticExtensions.testSyntheticExtensions1, KT-32919
 org.jetbrains.kotlin.idea.completion.test.JvmSmartCompletionTestGenerated.testFilterTo, KT-32919 Broken in 71cb65c064c7 or 2d5a05466dfa
 org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInTempDirTest.testKotlincExistsNoSettingsLatestRuntimeNoVersionAutoAdvance, FLAKY
 org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInTempDirTest.testNoKotlincExistsNoSettingsRuntime10, FLAKY
