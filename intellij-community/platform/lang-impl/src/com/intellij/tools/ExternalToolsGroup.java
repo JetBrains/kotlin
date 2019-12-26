@@ -22,9 +22,8 @@ import java.util.List;
  * @author traff
  */
 public class ExternalToolsGroup extends BaseExternalToolsGroup<Tool> {
-  @Override
-  protected List<ToolsGroup<Tool>> getToolsGroups() {
-    return ToolManager.getInstance().getGroups();
+  public ExternalToolsGroup() {
+    super(ToolManager.getInstance().getGroups());
   }
 
   @Override

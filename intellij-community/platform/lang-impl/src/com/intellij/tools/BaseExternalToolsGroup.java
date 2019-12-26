@@ -14,17 +14,7 @@ import java.util.List;
  * @author Eugene Belyaev
  */
 public abstract class BaseExternalToolsGroup<T extends Tool> extends SimpleActionGroup implements DumbAware {
-  @Override
-  public void update(@NotNull AnActionEvent event) {
-    Presentation presentation = event.getPresentation();
-    removeAll();
-    Project project = event.getData(CommonDataKeys.PROJECT);
-    if (project == null) {
-      presentation.setEnabledAndVisible(false);
-      return;
-    }
-    presentation.setEnabled(true);
-    List<ToolsGroup<T>> groups = getToolsGroups();
+  protected BaseExternalToolsGroup(List<ToolsGroup<T>> groups) {
     for (ToolsGroup group : groups) {
       String groupName = group.getName();
       if (!StringUtil.isEmptyOrSpaces(groupName)) {
@@ -34,16 +24,26 @@ public abstract class BaseExternalToolsGroup<T extends Tool> extends SimpleActio
         fillGroup(groupName, subgroup);
         if (subgroup.getChildrenCount() > 0) {
           add(subgroup);
+          ActionManager.getInstance().registerAction(groupName, subgroup);
         }
       }
       else {
         fillGroup(null, this);
       }
     }
-    presentation.setVisible(getChildrenCount() > 0);
   }
 
-  protected abstract List<ToolsGroup<T>> getToolsGroups();
+  @Override
+  public void update(@NotNull AnActionEvent event) {
+    Presentation presentation = event.getPresentation();
+    presentation.setEnabled(true);
+    Project project = event.getData(CommonDataKeys.PROJECT);
+    if (project == null) {
+      presentation.setEnabledAndVisible(false);
+      return;
+    }
+    presentation.setVisible(getChildrenCount() > 0);
+  }
 
   private void fillGroup(@Nullable String groupName, SimpleActionGroup group) {
     List<T> tools = getToolsByGroupName(groupName);
@@ -57,17 +57,17 @@ public abstract class BaseExternalToolsGroup<T extends Tool> extends SimpleActio
     }
   }
 
-  protected abstract List<T> getToolsByGroupName(String groupName);
-
   private void addToolToGroup(T tool, SimpleActionGroup group) {
     String id = tool.getActionId();
     AnAction action = ActionManager.getInstance().getAction(id);
     if (action == null) {
       action = createToolAction(tool);
+      ActionManager.getInstance().registerAction(id, action);
     }
-
     group.add(action);
   }
+
+  protected abstract List<T> getToolsByGroupName(String groupName);
 
   protected abstract ToolAction createToolAction(T tool);
 }
