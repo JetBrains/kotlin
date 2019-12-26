@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.scripting.repl.js.test
 
 import org.jetbrains.kotlin.ir.backend.js.utils.NameTables
+import org.jetbrains.kotlin.ir.factories.IrDeclarationFactory
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.js.engine.ScriptEngineNashorn
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplCodeAnalyzer
@@ -21,7 +22,7 @@ class JsReplTestAgainstBinaries : AbstractJsReplTest() {
 
     init {
         val nameTable = NameTables(emptyList())
-        val compiler = JsScriptDependencyCompiler(environment.configuration, nameTable, SymbolTable())
+        val compiler = JsScriptDependencyCompiler(environment.configuration, nameTable, SymbolTable(IrDeclarationFactory.TMP))
         val runtimeBinary = compiler.compile(dependencies)
 
         dependencyLoader.saveScriptDependencyBinary(runtimeBinary)
@@ -30,7 +31,7 @@ class JsReplTestAgainstBinaries : AbstractJsReplTest() {
 
     override fun createCompilationState(): JsReplCompilationState {
         val replState = ReplCodeAnalyzer.ResettableAnalyzerState()
-        return JsReplCompilationState(ReentrantReadWriteLock(), dependencyLoader.loadNames(), dependencies, replState, SymbolTable())
+        return JsReplCompilationState(ReentrantReadWriteLock(), dependencyLoader.loadNames(), dependencies, replState, SymbolTable(IrDeclarationFactory.TMP))
     }
 
     override fun createEvaluationState(): JsEvaluationState {
