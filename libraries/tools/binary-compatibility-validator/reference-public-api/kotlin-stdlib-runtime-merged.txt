@@ -1432,6 +1432,15 @@ public final class kotlin/collections/ArraysKt {
 	public static final fun reduceIndexed ([Ljava/lang/Object;Lkotlin/jvm/functions/Function3;)Ljava/lang/Object;
 	public static final fun reduceIndexed ([SLkotlin/jvm/functions/Function3;)S
 	public static final fun reduceIndexed ([ZLkotlin/jvm/functions/Function3;)Z
+	public static final fun reduceOrNull ([BLkotlin/jvm/functions/Function2;)Ljava/lang/Byte;
+	public static final fun reduceOrNull ([CLkotlin/jvm/functions/Function2;)Ljava/lang/Character;
+	public static final fun reduceOrNull ([DLkotlin/jvm/functions/Function2;)Ljava/lang/Double;
+	public static final fun reduceOrNull ([FLkotlin/jvm/functions/Function2;)Ljava/lang/Float;
+	public static final fun reduceOrNull ([ILkotlin/jvm/functions/Function2;)Ljava/lang/Integer;
+	public static final fun reduceOrNull ([JLkotlin/jvm/functions/Function2;)Ljava/lang/Long;
+	public static final fun reduceOrNull ([Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
+	public static final fun reduceOrNull ([SLkotlin/jvm/functions/Function2;)Ljava/lang/Short;
+	public static final fun reduceOrNull ([ZLkotlin/jvm/functions/Function2;)Ljava/lang/Boolean;
 	public static final fun reduceRight ([BLkotlin/jvm/functions/Function2;)B
 	public static final fun reduceRight ([CLkotlin/jvm/functions/Function2;)C
 	public static final fun reduceRight ([DLkotlin/jvm/functions/Function2;)D
@@ -1450,6 +1459,15 @@ public final class kotlin/collections/ArraysKt {
 	public static final fun reduceRightIndexed ([Ljava/lang/Object;Lkotlin/jvm/functions/Function3;)Ljava/lang/Object;
 	public static final fun reduceRightIndexed ([SLkotlin/jvm/functions/Function3;)S
 	public static final fun reduceRightIndexed ([ZLkotlin/jvm/functions/Function3;)Z
+	public static final fun reduceRightOrNull ([BLkotlin/jvm/functions/Function2;)Ljava/lang/Byte;
+	public static final fun reduceRightOrNull ([CLkotlin/jvm/functions/Function2;)Ljava/lang/Character;
+	public static final fun reduceRightOrNull ([DLkotlin/jvm/functions/Function2;)Ljava/lang/Double;
+	public static final fun reduceRightOrNull ([FLkotlin/jvm/functions/Function2;)Ljava/lang/Float;
+	public static final fun reduceRightOrNull ([ILkotlin/jvm/functions/Function2;)Ljava/lang/Integer;
+	public static final fun reduceRightOrNull ([JLkotlin/jvm/functions/Function2;)Ljava/lang/Long;
+	public static final fun reduceRightOrNull ([Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
+	public static final fun reduceRightOrNull ([SLkotlin/jvm/functions/Function2;)Ljava/lang/Short;
+	public static final fun reduceRightOrNull ([ZLkotlin/jvm/functions/Function2;)Ljava/lang/Boolean;
 	public static final fun requireNoNulls ([Ljava/lang/Object;)[Ljava/lang/Object;
 	public static final fun reverse ([B)V
 	public static final fun reverse ([C)V
@@ -2047,8 +2065,10 @@ public final class kotlin/collections/CollectionsKt {
 	public static final fun random (Ljava/util/Collection;Lkotlin/random/Random;)Ljava/lang/Object;
 	public static final fun reduce (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
 	public static final fun reduceIndexed (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function3;)Ljava/lang/Object;
+	public static final fun reduceOrNull (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
 	public static final fun reduceRight (Ljava/util/List;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
 	public static final fun reduceRightIndexed (Ljava/util/List;Lkotlin/jvm/functions/Function3;)Ljava/lang/Object;
+	public static final fun reduceRightOrNull (Ljava/util/List;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
 	public static final fun removeAll (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Z
 	public static final fun removeAll (Ljava/util/Collection;Ljava/lang/Iterable;)Z
 	public static final fun removeAll (Ljava/util/Collection;Lkotlin/sequences/Sequence;)Z
@@ -4663,6 +4683,7 @@ public final class kotlin/sequences/SequencesKt {
 	public static final fun plus (Lkotlin/sequences/Sequence;[Ljava/lang/Object;)Lkotlin/sequences/Sequence;
 	public static final fun reduce (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
 	public static final fun reduceIndexed (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function3;)Ljava/lang/Object;
+	public static final fun reduceOrNull (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
 	public static final fun requireNoNulls (Lkotlin/sequences/Sequence;)Lkotlin/sequences/Sequence;
 	public static final fun sequence (Lkotlin/jvm/functions/Function2;)Lkotlin/sequences/Sequence;
 	public static final fun sequenceOf ([Ljava/lang/Object;)Lkotlin/sequences/Sequence;
@@ -5055,8 +5076,10 @@ public final class kotlin/text/StringsKt {
 	public static final fun random (Ljava/lang/CharSequence;Lkotlin/random/Random;)C
 	public static final fun reduce (Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function2;)C
 	public static final fun reduceIndexed (Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function3;)C
+	public static final fun reduceOrNull (Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function2;)Ljava/lang/Character;
 	public static final fun reduceRight (Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function2;)C
 	public static final fun reduceRightIndexed (Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function3;)C
+	public static final fun reduceRightOrNull (Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function2;)Ljava/lang/Character;
 	public static final fun regionMatches (Ljava/lang/CharSequence;ILjava/lang/CharSequence;IIZ)Z
 	public static final fun regionMatches (Ljava/lang/String;ILjava/lang/String;IIZ)Z
 	public static synthetic fun regionMatches$default (Ljava/lang/CharSequence;ILjava/lang/CharSequence;IIZILjava/lang/Object;)Z
