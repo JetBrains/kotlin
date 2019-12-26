@@ -76,6 +76,9 @@ dependencies {
 
     if (Ide.AS36.orHigher()) {
         testRuntime(intellijPluginDep("android-layoutlib"))
+    }
+
+    if (Ide.AS36()) {
         testRuntime(intellijPluginDep("android-wizardTemplate-plugin"))
     }
 }
