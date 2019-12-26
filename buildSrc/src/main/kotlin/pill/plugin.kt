@@ -251,18 +251,12 @@ class JpsCompatiblePlugin : Plugin<Project> {
                     options = if (value == null) optionsWithoutNewValue else (optionsWithoutNewValue + listOf("-D$name=$value"))
                 }
 
-                val robolectricClasspath = project.rootProject
-                    .project(":plugins:android-extensions-compiler")
-                    .configurations.getByName("robolectricClasspath")
-                    .files.joinToString(File.pathSeparator)
-
                 if (options.none { it == "-ea" }) {
                     options += "-ea"
                 }
 
                 addOrReplaceOptionValue("idea.home.path", platformDirProjectRelative)
                 addOrReplaceOptionValue("ideaSdk.androidPlugin.path", platformDirProjectRelative + "/plugins/android/lib")
-                addOrReplaceOptionValue("robolectric.classpath", robolectricClasspath)
                 addOrReplaceOptionValue("use.jps", "true")
                 addOrReplaceOptionValue("kotlinVersion", project.rootProject.extra["kotlinVersion"].toString())
 
