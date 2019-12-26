@@ -140,7 +140,10 @@ internal fun mapCapacity(expectedSize: Int): Int {
 
 private const val INT_MAX_POWER_OF_TWO: Int = Int.MAX_VALUE / 2 + 1
 
-/** Returns `true` if this map is not empty. */
+/** Returns `true` if this map is not empty.
+ *
+ * @sample samples.collections.Maps.Usage.mapIsNotEmpty
+ */
 @kotlin.internal.InlineOnly
 public inline fun <K, V> Map<out K, V>.isNotEmpty(): Boolean = !isEmpty()
 
@@ -181,6 +184,8 @@ public inline fun <M, R> M.ifEmpty(defaultValue: () -> R): R where M : Map<*, *>
  * Checks if the map contains the given key.
  *
  * This method allows to use the `x in map` syntax for checking whether an object is contained in the map.
+ *
+ * @sample samples.collections.Maps.Usage.mapContains
  */
 @kotlin.internal.InlineOnly
 public inline operator fun <@kotlin.internal.OnlyInputTypes K, V> Map<out K, V>.contains(key: K): Boolean = containsKey(key)

@@ -169,6 +169,31 @@ class Maps {
 
             // map.containsValue("string") // cannot call extension when the argument type and the map value type are unrelated at all
         }
+
+        @Sample
+        fun mapIsNotEmpty() {
+            fun totalValue(valueMap: Map<String, Int>): String =
+                if (valueMap.isNotEmpty())
+                    "Value: [%s]".format(valueMap.map { entry -> entry.value }.sum())
+                else "No values."
+
+            val emptyMap: Map<String, Int> = mapOf()
+            assertPrints(totalValue(emptyMap), "No values.")
+
+            val map: Map<String, Int> = mapOf("x" to 1, "y" to 2)
+            assertPrints(totalValue(map), "Value: [3]")
+        }
+
+        @Sample
+        fun mapContains() {
+            val map: Map<String, Int> = mapOf("x" to 1)
+
+            assertTrue(map.contains("x"))
+            assertTrue("x" in map)
+
+            assertFalse(map.contains("y"))
+            assertFalse("y" in map)
+        }
     }
 
     class Filtering {
