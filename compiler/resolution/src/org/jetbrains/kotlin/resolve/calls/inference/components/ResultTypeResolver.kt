@@ -30,8 +30,7 @@ import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
 
 class ResultTypeResolver(
     val typeApproximator: AbstractTypeApproximator,
-    val trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle,
-    private val statelessCallbacks: KotlinResolutionStatelessCallbacks? // TODO injection in FIR
+    val trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle
 ) {
     interface Context : TypeSystemInferenceExtensionContext {
         fun isProperType(type: KotlinTypeMarker): Boolean
@@ -85,18 +84,10 @@ class ResultTypeResolver(
             if (!checkConstraint(this, constraint.type, constraint.kind, resultType)) return false
         }
         if (!trivialConstraintTypeInferenceOracle.isSuitableResultedType(resultType)) {
-            if (nothingIsForbiddenFor(variableWithConstraints.typeVariable)) return false
             if (resultType.isNullableType() && checkSingleLowerNullabilityConstraint(filteredConstraints)) return false
         }
 
         return true
-    }
-
-    private fun nothingIsForbiddenFor(variable: TypeVariableMarker): Boolean {
-        val parameterName = variable.safeAs<TypeVariableFromCallableDescriptor>()?.originalTypeParameter?.name ?: return false
-        val isSpecialFunctionParameter = statelessCallbacks?.isSpecialFunctionTypeParameterName(parameterName) ?: false
-        val isFromExclExcl = isSpecialFunctionParameter && statelessCallbacks?.isExclExclTypeParameterName(parameterName) ?: false
-        return isSpecialFunctionParameter && !isFromExclExcl
     }
 
     private fun checkSingleLowerNullabilityConstraint(constraints: List<Constraint>): Boolean {

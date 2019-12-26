@@ -97,12 +97,4 @@ class KotlinResolutionStatelessCallbacksImpl(
         else
             ConstraintSystemBuilderImpl.forSpecificity()
     }
-
-    override fun isSpecialFunctionTypeParameterName(name: Name): Boolean {
-        return ControlStructureTypingUtils.ResolveConstruct.values().any { it.specialTypeParameterName == name }
-    }
-
-    override fun isExclExclTypeParameterName(name: Name): Boolean {
-        return name == ControlStructureTypingUtils.ResolveConstruct.EXCL_EXCL.specialTypeParameterName
-    }
 }

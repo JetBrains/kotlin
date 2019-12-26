@@ -1,4 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
+// !WITH_NEW_INFERENCE
 
 inline fun <reified T> parse(json: String): T? = TODO()
 

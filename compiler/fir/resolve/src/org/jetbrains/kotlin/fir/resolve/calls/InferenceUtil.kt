@@ -54,7 +54,7 @@ class InferenceComponents(
     val trivialConstraintTypeInferenceOracle = TrivialConstraintTypeInferenceOracle.create(ctx)
     private val incorporator = ConstraintIncorporator(approximator, trivialConstraintTypeInferenceOracle)
     private val injector = ConstraintInjector(incorporator, approximator, KotlinTypeRefiner.Default)
-    val resultTypeResolver = ResultTypeResolver(approximator, trivialConstraintTypeInferenceOracle, null)
+    val resultTypeResolver = ResultTypeResolver(approximator, trivialConstraintTypeInferenceOracle)
 
     fun createConstraintSystem(): NewConstraintSystemImpl {
         return NewConstraintSystemImpl(injector, ctx)

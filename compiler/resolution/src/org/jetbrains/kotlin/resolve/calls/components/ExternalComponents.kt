@@ -40,10 +40,6 @@ interface KotlinResolutionStatelessCallbacks {
     fun createConstraintSystemForOverloadResolution(
         constraintInjector: ConstraintInjector, builtIns: KotlinBuiltIns
     ): SimpleConstraintSystem
-
-    fun isSpecialFunctionTypeParameterName(name: Name): Boolean
-
-    fun isExclExclTypeParameterName(name: Name): Boolean
 }
 
 // This components hold state (trace). Work with this carefully.

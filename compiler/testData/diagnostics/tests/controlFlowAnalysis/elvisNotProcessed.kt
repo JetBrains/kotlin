@@ -15,7 +15,7 @@ val ww = if (true) {
     <!OI;TYPE_MISMATCH!>{ true }<!> <!USELESS_ELVIS!>?: null!!<!>
 }
 else if (true) {
-    <!OI;TYPE_MISMATCH!>{ true }<!> <!USELESS_ELVIS!>?: null!!<!>
+    <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, TYPE_MISMATCH!>{ <!NI;CONSTANT_EXPECTED_TYPE_MISMATCH!>true<!> }<!> <!USELESS_ELVIS!>?: null!!<!>
 }
 else {
     null!!
