@@ -61,13 +61,13 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
         commonWebpackConfigurations.add(body)
     }
 
-    override fun configureMain(compilation: KotlinJsCompilation) {
+    override fun configureMain(compilation: KotlinJsIrCompilation) {
         configureRun(compilation)
         configureBuild(compilation)
     }
 
     private fun configureRun(
-        compilation: KotlinJsCompilation
+        compilation: KotlinJsIrCompilation
     ) {
 
         val project = compilation.target.project
@@ -117,7 +117,7 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
     }
 
     private fun configureBuild(
-        compilation: KotlinJsCompilation
+        compilation: KotlinJsIrCompilation
     ) {
         val project = compilation.target.project
         val nodeJs = NodeJsRootPlugin.apply(project.rootProject)

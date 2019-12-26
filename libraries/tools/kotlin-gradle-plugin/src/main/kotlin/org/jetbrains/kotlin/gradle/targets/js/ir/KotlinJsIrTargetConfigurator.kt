@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
+import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsIrSourceSetProcessor
 import org.jetbrains.kotlin.gradle.plugin.KotlinOnlyTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetProcessor
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTestsConfigurator
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsIrReportAggregatingTestRun
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
@@ -54,13 +54,24 @@ open class KotlinJsIrTargetConfigurator(kotlinPluginVersion: String) :
 
         target.compilations.all {
             it.compileKotlinTask.kotlinOptions {
-                moduleKind = "umd"
-                sourceMap = true
-                sourceMapEmbedSources = null
+                configureOptions(DISABLE_PRE_IR)
+            }
 
-                freeCompilerArgs += listOf(DISABLE_PRE_IR)
+            it.productionCompileTask.kotlinOptions {
+                configureOptions(ENABLE_DCE, GENERATE_D_TS)
+            }
+
+            it.developmentCompileTask.kotlinOptions {
+                configureOptions(GENERATE_D_TS)
             }
         }
+    }
+
+    private fun KotlinJsOptions.configureOptions(vararg additionalCompilerArgs: String) {
+        moduleKind = "umd"
+        sourceMap = true
+
+        freeCompilerArgs += additionalCompilerArgs.toList()
     }
 
     override fun defineConfigurationsForTarget(target: KotlinJsIrTarget) {

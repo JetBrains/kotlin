@@ -34,7 +34,7 @@ open class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
         it.useMocha { }
     }
 
-    override fun configureMain(compilation: KotlinJsCompilation) {
+    override fun configureMain(compilation: KotlinJsIrCompilation) {
         configureRun(compilation)
     }
 
