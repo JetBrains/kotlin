@@ -58,14 +58,13 @@ abstract class KotlinJsIrSubTarget(
     }
 
     override fun produceJs() {
-        produceByFlags(PRODUCE_UNZIPPED_KLIB, PRODUCE_JS)
+        produceByFlags(PRODUCE_UNZIPPED_KLIB)
 
         configureMain()
     }
 
     private fun produceByFlags(vararg flags: String) {
         configure()
-
 
         target.compilations
             .matching { it.name == KotlinCompilation.TEST_COMPILATION_NAME }

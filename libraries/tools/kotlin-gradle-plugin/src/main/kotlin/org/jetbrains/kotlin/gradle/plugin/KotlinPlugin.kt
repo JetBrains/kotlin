@@ -86,7 +86,7 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
 
     protected val sourceSetName: String = kotlinCompilation.compilationName
 
-    override val kotlinTask: TaskProvider<out T> = registerKotlinCompileTask()
+    override val kotlinTask: TaskProvider<out T> = registerKotlinCompileTask(kotlinCompilation.compileKotlinTaskName)
 
     protected val javaSourceSet: SourceSet?
         get() =
@@ -97,7 +97,18 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
                     else null
                 }
 
-    private fun registerKotlinCompileTask(): TaskProvider<out T> {
+    private val defaultKotlinDestinationDir: File
+        get() {
+            val kotlinExt = project.kotlinExtension
+            val targetSubDirectory =
+                if (kotlinExt is KotlinSingleJavaTargetExtension)
+                    "" // In single-target projects, don't add the target name part to this path
+                else
+                    kotlinCompilation.target.disambiguationClassifier?.let { "$it/" }.orEmpty()
+            return File(project.buildDir, "classes/kotlin/$targetSubDirectory${kotlinCompilation.compilationName}")
+        }
+
+    protected fun registerKotlinCompileTask(): TaskProvider<out T> {
         val name = kotlinCompilation.compileKotlinTaskName
         logger.kotlinDebug("Creating kotlin compile task $name")
 
@@ -347,18 +358,18 @@ internal class KotlinJsIrSourceSetProcessor(
         listOf(
             compilation.productionCompileTaskName,
             compilation.developmentCompileTaskName
-        ).forEach { taskName ->
-            doRegisterTask(
-                project,
+        ).map { taskName ->
+            registerKotlinCompileTask(
                 taskName
-            ) {
-                it.description = taskDescription
-                it.mapClasspath { kotlinCompilation.compileDependencyFiles }
+            )
+        }.forEach { task ->
+            task.configure {
+                it.dependsOn(kotlinTask)
             }
         }
 
         // outputFile can be set later during the configuration phase, get it only after the phase:
-        project.runOnceAfterEvaluated("Kotlin2JsSourceSetProcessor.doTargetSpecificProcessing", kotlinTask) {
+        project.runOnceAfterEvaluated("KotlinJsIrSourceSetProcessor.doTargetSpecificProcessing", kotlinTask) {
             val kotlinTaskInstance = kotlinTask.get()
             kotlinTaskInstance.kotlinOptions.outputFile = kotlinTaskInstance.outputFile.absolutePath
             val outputDir = kotlinTaskInstance.outputFile.parentFile

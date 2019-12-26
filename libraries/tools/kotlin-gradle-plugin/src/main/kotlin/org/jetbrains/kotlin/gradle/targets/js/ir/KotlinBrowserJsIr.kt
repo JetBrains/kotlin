@@ -151,7 +151,6 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                 disambiguateCamelCased(
                     buildVariant.name,
                     WEBPACK_TASK_NAME
-
                 )
             ) {
                 it.dependsOn(
