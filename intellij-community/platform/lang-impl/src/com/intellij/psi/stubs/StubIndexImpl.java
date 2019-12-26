@@ -508,11 +508,11 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
     final UpdatableIndex<Key, Void, FileContent> index = getIndex(indexKey);   // wait for initialization to finish
     if (index == null) return IdIterator.EMPTY;
 
+    fileBasedIndex.ensureUpToDate(stubUpdatingIndexId, project, scope);
+
     if (idFilter == null) {
       idFilter = ((FileBasedIndexImpl)FileBasedIndex.getInstance()).projectIndexableFiles(project);
     }
-
-    fileBasedIndex.ensureUpToDate(stubUpdatingIndexId, project, scope);
 
     UpdatableIndex<Integer, SerializedStubTree, FileContent> stubUpdatingIndex = fileBasedIndex.getIndex(stubUpdatingIndexId);
 
