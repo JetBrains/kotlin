@@ -114,5 +114,10 @@ class CacheSupport(
                         "that is already cached in '${cache.path}'")
             }
         }
+
+        if ((librariesToCache.isNotEmpty() || cachedLibraries.hasDynamicCaches || cachedLibraries.hasStaticCaches)
+                && configuration.getBoolean(KonanConfigKeys.OPTIMIZATION)) {
+            configuration.reportCompilationError("Cache cannot be used in optimized compilation")
+        }
     }
 }
