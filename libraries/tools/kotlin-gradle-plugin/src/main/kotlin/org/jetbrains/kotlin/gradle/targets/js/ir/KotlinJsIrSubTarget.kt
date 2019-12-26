@@ -54,11 +54,11 @@ abstract class KotlinJsIrSubTarget(
     }
 
     override fun produceKotlinLibrary() {
-        produceByFlags(PRODUCE_KLIB_DIR)
+        produceByFlags(PRODUCE_UNZIPPED_KLIB)
     }
 
     override fun produceJs() {
-        produceByFlags(PRODUCE_KLIB_DIR, PRODUCE_JS)
+        produceByFlags(PRODUCE_UNZIPPED_KLIB, PRODUCE_JS)
 
         configureMain()
     }
@@ -71,7 +71,7 @@ abstract class KotlinJsIrSubTarget(
             .matching { it.name == KotlinCompilation.TEST_COMPILATION_NAME }
             .all {
                 it.kotlinOptions {
-                    freeCompilerArgs += listOf(PRODUCE_KLIB_DIR, PRODUCE_JS)
+                    freeCompilerArgs += listOf(PRODUCE_UNZIPPED_KLIB, PRODUCE_JS)
                 }
             }
 
@@ -167,10 +167,6 @@ abstract class KotlinJsIrSubTarget(
     protected abstract fun configureMain(compilation: KotlinJsCompilation)
 
     companion object {
-        const val PRODUCE_JS = "-Xir-produce-js"
-        const val PRODUCE_KLIB_FILE = "-Xir-produce-klib-file"
-        const val PRODUCE_KLIB_DIR = "-Xir-produce-klib-dir"
-
         const val RUN_TASK_NAME = "run"
     }
 }

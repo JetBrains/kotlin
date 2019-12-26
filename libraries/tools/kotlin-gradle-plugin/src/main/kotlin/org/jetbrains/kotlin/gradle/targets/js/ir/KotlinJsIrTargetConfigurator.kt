@@ -58,7 +58,7 @@ open class KotlinJsIrTargetConfigurator(kotlinPluginVersion: String) :
                 sourceMap = true
                 sourceMapEmbedSources = null
 
-                freeCompilerArgs += listOf("-Xir-only")
+                freeCompilerArgs += listOf(DISABLE_PRE_IR)
             }
         }
     }
