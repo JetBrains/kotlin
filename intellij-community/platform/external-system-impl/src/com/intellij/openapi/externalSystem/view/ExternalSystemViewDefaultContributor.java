@@ -14,6 +14,7 @@ import com.intellij.openapi.externalSystem.service.project.IdeModelsProviderImpl
 import com.intellij.openapi.externalSystem.settings.AbstractExternalSystemSettings;
 import com.intellij.openapi.externalSystem.settings.ExternalProjectSettings;
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
+import com.intellij.openapi.externalSystem.util.ExternalSystemBundle;
 import com.intellij.openapi.externalSystem.util.Order;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.OrderEntry;
@@ -26,6 +27,7 @@ import com.intellij.util.ObjectUtils;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -308,8 +310,19 @@ public class ExternalSystemViewDefaultContributor extends ExternalSystemViewCont
       super.update(presentation);
       boolean isProjectDependency = myDependencyNode instanceof ProjectDependencyNode || myReferencedNode instanceof ProjectDependencyNode;
       presentation.setIcon(isProjectDependency ? getUiAware().getProjectIcon() : AllIcons.Nodes.PpLib);
-      String tooltip = "Dependencies omitted (listed previously). <br/>" +
-                       "Press Enter or left mouse button double click to navigate to dependencies.";
+      String tooltip;
+      if (myReferencedNode != null) {
+        tooltip = ExternalSystemBundle.message("external.system.view.nodes.dependency_reference_node_tooltip");
+      }
+      else {
+        if (myDependencyNode instanceof FileCollectionDependencyNode) {
+          String path = ((FileCollectionDependencyNode)myDependencyNode).getPath();
+          tooltip = StringUtil.join(path.split(File.pathSeparator), s -> StringEscapeUtils.escapeHtml(s) + "<br/>" , "");
+        }
+        else {
+          tooltip = null;
+        }
+      }
       setNameAndTooltip(getName(), tooltip, (String)null);
     }
 

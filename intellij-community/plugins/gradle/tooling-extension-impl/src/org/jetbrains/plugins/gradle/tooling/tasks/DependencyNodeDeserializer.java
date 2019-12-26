@@ -20,6 +20,9 @@ public class DependencyNodeDeserializer implements JsonDeserializer<DependencyNo
     else if (jsonObject.get("module") != null) {
       return context.deserialize(json, ArtifactDependencyNodeImpl.class);
     }
+    else if (jsonObject.get("path") != null) {
+      return context.deserialize(json, FileCollectionDependencyNodeImpl.class);
+    }
     else if (jsonObject.size() == 1 && jsonObject.get("id") != null) {
       return context.deserialize(json, ReferenceNode.class);
     }
