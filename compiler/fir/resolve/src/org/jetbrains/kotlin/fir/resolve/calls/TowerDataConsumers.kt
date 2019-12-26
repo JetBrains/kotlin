@@ -173,7 +173,7 @@ class ExplicitReceiverTowerDataConsumer<T : AbstractFirBasedSymbol<*>>(
                 MemberScopeTowerLevel(
                     session, resultCollector.components, explicitReceiver,
                     implicitExtensionReceiver = (towerScopeLevel as? TowerScopeLevel.OnlyImplicitReceiver)?.implicitReceiverValue,
-                    invokeOnly = towerScopeLevel is TowerScopeLevel.OnlyImplicitReceiver,
+                    implicitExtensionInvokeMode = towerScopeLevel is TowerScopeLevel.OnlyImplicitReceiver,
                     scopeSession = candidateFactory.bodyResolveComponents.scopeSession
                 ).processElementsByName(
                     token,

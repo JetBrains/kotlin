@@ -26,7 +26,7 @@ fun <T> fooT2() : (t : T) -> T {
 fun main(args : Array<String>) {
     args.foo()()
     <!INAPPLICABLE_CANDIDATE!>args.foo1()()<!>
-    <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>a<!>.foo1()()
+    <!INAPPLICABLE_CANDIDATE!><!UNRESOLVED_REFERENCE!>a<!>.foo1()()<!>
     <!UNRESOLVED_REFERENCE!>a<!>.foo1()(<!UNRESOLVED_REFERENCE!>a<!>)
 
     args.foo1()(1)

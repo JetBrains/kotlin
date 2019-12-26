@@ -10,9 +10,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirImportImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedImportImpl
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
-import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
@@ -49,7 +47,7 @@ interface TowerScopeLevel {
             symbol: T,
             dispatchReceiverValue: ClassDispatchReceiverValue?,
             implicitExtensionReceiverValue: ImplicitReceiverValue<*>?,
-            builtInExtensionFunctionReceiverValue: ReceiverValue?
+            builtInExtensionFunctionReceiverValue: ReceiverValue? = null
         ): ProcessorAction
     }
 
@@ -97,28 +95,28 @@ class MemberScopeTowerLevel(
     val bodyResolveComponents: BodyResolveComponents,
     val dispatchReceiver: ReceiverValue,
     val implicitExtensionReceiver: ImplicitReceiverValue<*>? = null,
-    val invokeOnly: Boolean = false,
+    val implicitExtensionInvokeMode: Boolean = false,
     val scopeSession: ScopeSession
 ) : SessionBasedTowerLevel(session) {
     private fun <T : AbstractFirBasedSymbol<*>> processMembers(
         output: TowerScopeLevel.TowerScopeLevelProcessor<T>,
         explicitExtensionReceiver: ExpressionReceiverValue?,
-        isInvoke: Boolean,
         processScopeMembers: FirScope.(processor: (T) -> ProcessorAction) -> ProcessorAction
     ): ProcessorAction {
         if (implicitExtensionReceiver != null && explicitExtensionReceiver != null) return ProcessorAction.NEXT
         val extensionReceiver = implicitExtensionReceiver ?: explicitExtensionReceiver
         val scope = dispatchReceiver.scope(session, scopeSession) ?: return ProcessorAction.NEXT
         if (scope.processScopeMembers { candidate ->
-                if (candidate is FirCallableSymbol<*> && (invokeOnly || candidate.hasConsistentExtensionReceiver(extensionReceiver))) {
+                if (candidate is FirCallableSymbol<*> &&
+                    (implicitExtensionInvokeMode || candidate.hasConsistentExtensionReceiver(extensionReceiver))
+                ) {
                     // NB: we do not check dispatchReceiverValue != null here,
                     // because of objects & constructors (see comments in dispatchReceiverValue() implementation)
                     val dispatchReceiverValue = candidate.dispatchReceiverValue()
-                    if (invokeOnly) {
+                    if (implicitExtensionInvokeMode) {
                         if (output.consumeCandidate(
                                 candidate, dispatchReceiverValue,
-                                implicitExtensionReceiverValue = implicitExtensionReceiver,
-                                builtInExtensionFunctionReceiverValue = null
+                                implicitExtensionReceiverValue = implicitExtensionReceiver
                             ).stop()
                         ) {
                             ProcessorAction.STOP
@@ -130,27 +128,7 @@ class MemberScopeTowerLevel(
                             )
                         }
                     } else {
-                        val builtInFunctionReceiverExpression =
-                            if (!isInvoke || dispatchReceiver !is ExpressionReceiverValue) null
-                            else (dispatchReceiver.explicitReceiverExpression as? FirQualifiedAccess)?.extensionReceiver
-                        if (dispatchReceiver !is ExpressionReceiverValue ||
-                            builtInFunctionReceiverExpression == null ||
-                            builtInFunctionReceiverExpression is FirNoReceiverExpression
-                        ) {
-                            output.consumeCandidate(candidate, dispatchReceiverValue, implicitExtensionReceiver, null)
-                        } else {
-                            if (output.consumeCandidate(candidate, dispatchReceiverValue, implicitExtensionReceiver, null).stop()) {
-                                ProcessorAction.STOP
-                            } else {
-                                output.consumeCandidate(
-                                    candidate, dispatchReceiverValue,
-                                    implicitExtensionReceiverValue = null,
-                                    builtInExtensionFunctionReceiverValue = ExpressionReceiverValue(
-                                        builtInFunctionReceiverExpression, dispatchReceiver.typeProvider
-                                    )
-                                )
-                            }
-                        }
+                        output.consumeCandidate(candidate, dispatchReceiverValue, implicitExtensionReceiver, null)
                     }
                 } else if (candidate is FirClassLikeSymbol<*>) {
                     output.consumeCandidate(candidate, null, implicitExtensionReceiver, null)
@@ -172,18 +150,18 @@ class MemberScopeTowerLevel(
         processor: TowerScopeLevel.TowerScopeLevelProcessor<T>
     ): ProcessorAction {
         val isInvoke = name == OperatorNameConventions.INVOKE && token == TowerScopeLevel.Token.Functions
-        if (invokeOnly && !isInvoke) {
+        if (implicitExtensionInvokeMode && !isInvoke) {
             return ProcessorAction.NEXT
         }
         val explicitExtensionReceiver = if (dispatchReceiver == explicitReceiver) null else explicitReceiver
         return when (token) {
-            TowerScopeLevel.Token.Properties -> processMembers(processor, explicitExtensionReceiver, isInvoke) { symbol ->
+            TowerScopeLevel.Token.Properties -> processMembers(processor, explicitExtensionReceiver) { symbol ->
                 this.processPropertiesByName(name, symbol.cast())
             }
-            TowerScopeLevel.Token.Functions -> processMembers(processor, explicitExtensionReceiver, isInvoke) { symbol ->
+            TowerScopeLevel.Token.Functions -> processMembers(processor, explicitExtensionReceiver) { symbol ->
                 this.processFunctionsAndConstructorsByName(name, session, bodyResolveComponents, symbol.cast())
             }
-            TowerScopeLevel.Token.Objects -> processMembers(processor, explicitExtensionReceiver, isInvoke) { symbol ->
+            TowerScopeLevel.Token.Objects -> processMembers(processor, explicitExtensionReceiver) { symbol ->
                 this.processClassifiersByName(name, symbol.cast())
             }
         }
@@ -232,8 +210,7 @@ class ScopeTowerLevel(
                     }
                     processor.consumeCandidate(
                         candidate as T, dispatchReceiverValue = dispatchReceiverValue,
-                        implicitExtensionReceiverValue = implicitExtensionReceiver,
-                        builtInExtensionFunctionReceiverValue = null
+                        implicitExtensionReceiverValue = implicitExtensionReceiver
                     )
                 } else {
                     ProcessorAction.NEXT
@@ -247,8 +224,7 @@ class ScopeTowerLevel(
                 if (candidate.hasConsistentReceivers(extensionReceiver)) {
                     processor.consumeCandidate(
                         candidate as T, dispatchReceiverValue = candidate.dispatchReceiverValue(),
-                        implicitExtensionReceiverValue = implicitExtensionReceiver,
-                        builtInExtensionFunctionReceiverValue = null
+                        implicitExtensionReceiverValue = implicitExtensionReceiver
                     )
                 } else {
                     ProcessorAction.NEXT
@@ -257,8 +233,7 @@ class ScopeTowerLevel(
             TowerScopeLevel.Token.Objects -> scope.processClassifiersByName(name) {
                 processor.consumeCandidate(
                     it as T, dispatchReceiverValue = null,
-                    implicitExtensionReceiverValue = null,
-                    builtInExtensionFunctionReceiverValue = null
+                    implicitExtensionReceiverValue = null
                 )
             }
         }

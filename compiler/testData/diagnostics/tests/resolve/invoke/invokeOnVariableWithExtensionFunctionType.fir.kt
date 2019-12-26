@@ -59,7 +59,7 @@ fun test(a: A, b: B) {
 
         b.(foo)()
 
-        (b.foo)()
+        <!INAPPLICABLE_CANDIDATE!>(b.foo)()<!>
 
         foo(b)
         (foo)(b)
