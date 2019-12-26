@@ -1,3 +1,6 @@
 Test key, Issue, State (optional: MUTE or FAIL)
 org.jetbrains.kotlin.idea.caches.resolve.MultiModuleHighlightingTest.testLazyResolvers
 org.jetbrains.kotlin.idea.caches.resolve.MultiModuleHighlightingTest.testRecomputeResolversOnChange
+org.jetbrains.kotlin.j2k.JavaToKotlinConverterSingleFileTestGenerated.ToKotlinClasses.testIterableAndIterator
+org.jetbrains.kotlin.j2k.JavaToKotlinConverterSingleFileTestGenerated.ToKotlinClasses.testIterableAndIterator2
+org.jetbrains.kotlin.j2k.JavaToKotlinConverterSingleFileTestGenerated.ToKotlinClasses.testIterableAndIterator3
