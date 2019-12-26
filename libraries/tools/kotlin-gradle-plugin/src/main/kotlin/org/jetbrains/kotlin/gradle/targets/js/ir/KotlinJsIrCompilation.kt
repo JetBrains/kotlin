@@ -5,17 +5,35 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
+import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
 class KotlinJsIrCompilation(
     target: KotlinTarget,
     name: String
 ) : KotlinJsCompilation(target, name) {
-    val productionCompilation: Kotlin2JsCompile =
-        (target.project.tasks.getByName(compileKotlinTaskName) as Kotlin2JsCompile)
+    val productionCompileTaskName: String = lowerCamelCaseName(
+        "compile",
+        "production",
+        compilationName.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
+        "Kotlin",
+        target.targetName
+    )
 
-    val developmentCompilation: Kotlin2JsCompile =
-        (target.project.tasks.getByName(compileKotlinTaskName) as Kotlin2JsCompile)
+    val productionCompileTask: Kotlin2JsCompile =
+        (target.project.tasks.getByName(productionCompileTaskName) as Kotlin2JsCompile)
+
+    val developmentCompileTaskName: String = lowerCamelCaseName(
+        "compile",
+        "development",
+        compilationName.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
+        "Kotlin",
+        target.targetName
+    )
+
+    val developmentCompileTask: Kotlin2JsCompile =
+        (target.project.tasks.getByName(developmentCompileTaskName) as Kotlin2JsCompile)
 }
