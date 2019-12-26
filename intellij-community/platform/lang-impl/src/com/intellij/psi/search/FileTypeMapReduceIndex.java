@@ -29,7 +29,7 @@ class FileTypeMapReduceIndex extends VfsAwareMapReduceIndex<FileType, Void, File
         Map<FileType, Void> inputData = ((MapInputDataDiffBuilder<FileType, Void>) getKeysDiffBuilder(fileId)). getMap();
         FileType indexedFileType = ContainerUtil.getFirstItem(inputData.keySet());
         // can be null if file type name is outdated
-        return Comparing.equal(indexedFileType, file.getFileType());
+        return FileTypeKeyDescriptor.INSTANCE.isEqual(indexedFileType, file.getFileType());
       } catch (IOException e) {
         LOG.error(e);
       }

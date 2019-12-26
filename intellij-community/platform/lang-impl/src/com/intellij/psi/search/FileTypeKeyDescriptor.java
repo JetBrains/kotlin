@@ -18,6 +18,7 @@ import java.io.IOException;
 
 class FileTypeKeyDescriptor implements KeyDescriptor<FileType> {
     private static final FileType OUT_DATED_FILE_TYPE = new OutDatedFileType();
+    static final FileTypeKeyDescriptor INSTANCE = new FileTypeKeyDescriptor();
 
     @Override
     public int getHashCode(FileType value) {
@@ -26,8 +27,8 @@ class FileTypeKeyDescriptor implements KeyDescriptor<FileType> {
 
     @Override
     public boolean isEqual(FileType val1, FileType val2) {
-        if (val1 instanceof SubstitutedFileType) val1 = ((SubstitutedFileType)val1).getOriginalFileType();
-        if (val2 instanceof SubstitutedFileType) val2 = ((SubstitutedFileType)val2).getOriginalFileType();
+        if (val1 instanceof SubstitutedFileType) val1 = ((SubstitutedFileType)val1).getFileType();
+        if (val2 instanceof SubstitutedFileType) val2 = ((SubstitutedFileType)val2).getFileType();
         return Comparing.equal(val1, val2);
     }
 
