@@ -9,8 +9,8 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Task
 import org.gradle.api.plugins.BasePluginConvention
 import org.gradle.api.tasks.Copy
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.dsl.*
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.BrowserDistribution
@@ -85,7 +85,11 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
             ) {
                 it.dependsOn(
                     nodeJs.npmInstallTask,
-                    compileKotlinTask,
+                    getByKind(
+                        kind,
+                        compilation.productionCompileTask,
+                        compilation.developmentCompileTask
+                    ),
                     target.project.tasks.getByName(compilation.processResourcesTaskName)
                 )
 
@@ -152,7 +156,11 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
             ) {
                 it.dependsOn(
                     nodeJs.npmInstallTask,
-                    compileKotlinTask,
+                    getByKind(
+                        kind,
+                        compilation.productionCompileTask,
+                        compilation.developmentCompileTask
+                    ),
                     target.project.tasks.getByName(compilation.processResourcesTaskName),
                     distributionTask
                 )
