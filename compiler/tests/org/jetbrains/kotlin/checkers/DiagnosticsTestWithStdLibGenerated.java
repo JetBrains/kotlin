@@ -1175,6 +1175,11 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
                     KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                 }
 
+                @TestMetadata("accessToOuterThis.kt")
+                public void testAccessToOuterThis() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/accessToOuterThis.kt");
+                }
+
                 public void testAllFilesPresentInErrors() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                 }
