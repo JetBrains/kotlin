@@ -1,4 +1,6 @@
 // !LANGUAGE: -ThrowNpeOnExplicitEqualsForBoxedNull
+// IGNORE_BACKEND: JVM_IR
+// ^ ThrowNpeOnExplicitEqualsForBoxedNull is introduced in 1.2.
 // FILE: JavaClass.java
 
 public class JavaClass {
