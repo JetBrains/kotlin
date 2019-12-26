@@ -327,12 +327,7 @@ public class ExpressionTypingServices {
                 expectedType = context.expectedType;
             }
 
-            ContextDependency dependency = context.contextDependency;
-            if (getLanguageVersionSettings().supportsFeature(LanguageFeature.NewInference)) {
-                dependency = ContextDependency.INDEPENDENT;
-            }
-
-            return blockLevelVisitor.getTypeInfo(statementExpression, context.replaceExpectedType(expectedType).replaceContextDependency(dependency), true);
+            return blockLevelVisitor.getTypeInfo(statementExpression, context.replaceExpectedType(expectedType), true);
         }
         if (context.languageVersionSettings.supportsFeature(LanguageFeature.NewInference) &&
             statementExpression instanceof KtLambdaExpression) {
