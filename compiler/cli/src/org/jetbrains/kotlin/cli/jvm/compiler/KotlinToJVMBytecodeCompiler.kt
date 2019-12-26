@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveTransformer
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.ir.factories.DefaultIrDeclarationFactory
+import org.jetbrains.kotlin.ir.factories.IrDeclarationFactory
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
 import org.jetbrains.kotlin.modules.Module
@@ -595,6 +596,20 @@ object KotlinToJVMBytecodeCompiler {
         }
 
     private fun generate(
+        environment: KotlinCoreEnvironment,
+        configuration: CompilerConfiguration,
+        result: AnalysisResult,
+        sourceFiles: List<KtFile>,
+        module: Module?
+    ): GenerationState {
+        try {
+            return generate0(environment, configuration, result, sourceFiles, module)
+        } finally {
+            IrDeclarationFactory.resetDefaultIrDeclarationFactory()
+        }
+    }
+
+    private fun generate0(
         environment: KotlinCoreEnvironment,
         configuration: CompilerConfiguration,
         result: AnalysisResult,
