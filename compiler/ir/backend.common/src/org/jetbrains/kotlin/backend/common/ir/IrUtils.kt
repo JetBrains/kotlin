@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.common.ir
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.DumpIrTreeWithDescriptorsVisitor
 import org.jetbrains.kotlin.backend.common.deepCopyWithVariables
-import org.jetbrains.kotlin.backend.common.descriptors.*
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -166,12 +165,12 @@ fun IrValueParameter.copyTo(
 
 fun IrTypeParameter.copyToWithoutSuperTypes(
     target: IrTypeParametersContainer,
-    shift: Int = 0,
+    index: Int = this.index,
     origin: IrDeclarationOrigin = this.origin
 ): IrTypeParameter {
     val descriptor = WrappedTypeParameterDescriptor(symbol.descriptor.annotations, symbol.descriptor.source)
     val symbol = IrTypeParameterSymbolImpl(descriptor)
-    return IrTypeParameterImpl(startOffset, endOffset, origin, symbol, name, shift + index, isReified, variance).also { copied ->
+    return IrTypeParameterImpl(startOffset, endOffset, origin, symbol, name, index, isReified, variance).also { copied ->
         descriptor.bind(copied)
         copied.parent = target
     }
@@ -199,17 +198,18 @@ fun IrFunction.copyParameterDeclarationsFrom(from: IrFunction) {
 fun IrTypeParametersContainer.copyTypeParameters(
     srcTypeParameters: List<IrTypeParameter>,
     origin: IrDeclarationOrigin? = null
-) {
+): List<IrTypeParameter> {
     val shift = typeParameters.size
     // Any type parameter can figure in a boundary type for any other parameter.
     // Therefore, we first copy the parameters themselves, then set up their supertypes.
-    srcTypeParameters.forEachIndexed { i, sourceParameter ->
-        assert(sourceParameter.index == i)
-        typeParameters.add(sourceParameter.copyToWithoutSuperTypes(this, shift = shift, origin = origin ?: sourceParameter.origin))
+    val newTypeParameters = srcTypeParameters.mapIndexed { i, sourceParameter ->
+        sourceParameter.copyToWithoutSuperTypes(this, index = i + shift, origin = origin ?: sourceParameter.origin)
     }
-    srcTypeParameters.zip(typeParameters.drop(shift)).forEach { (srcParameter, dstParameter) ->
+    typeParameters.addAll(newTypeParameters)
+    srcTypeParameters.zip(newTypeParameters).forEach { (srcParameter, dstParameter) ->
         dstParameter.copySuperTypesFrom(srcParameter)
     }
+    return newTypeParameters
 }
 
 fun IrTypeParametersContainer.copyTypeParametersFrom(

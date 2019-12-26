@@ -498,7 +498,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 coroutineClass.declarations += this
 
                 irFunction.typeParameters.mapTo(typeParameters) { parameter ->
-                    parameter.copyToWithoutSuperTypes(this, 0, DECLARATION_ORIGIN_COROUTINE_IMPL)
+                    parameter.copyToWithoutSuperTypes(this, origin = DECLARATION_ORIGIN_COROUTINE_IMPL)
                         .apply { superTypes += parameter.superTypes }
                 }
 
@@ -566,7 +566,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 coroutineClass.declarations += this
 
                 irFunction.typeParameters.mapTo(typeParameters) { parameter ->
-                    parameter.copyToWithoutSuperTypes(this, 0, DECLARATION_ORIGIN_COROUTINE_IMPL)
+                    parameter.copyToWithoutSuperTypes(this, origin = DECLARATION_ORIGIN_COROUTINE_IMPL)
                         .apply { superTypes += parameter.superTypes }
                 }
 
@@ -626,7 +626,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                     coroutineClass.declarations += this
 
                     stateMachineFunction.typeParameters.mapTo(typeParameters) { parameter ->
-                        parameter.copyToWithoutSuperTypes(this, 0, DECLARATION_ORIGIN_COROUTINE_IMPL)
+                        parameter.copyToWithoutSuperTypes(this, origin = DECLARATION_ORIGIN_COROUTINE_IMPL)
                             .apply { superTypes += parameter.superTypes }
                     }
 
