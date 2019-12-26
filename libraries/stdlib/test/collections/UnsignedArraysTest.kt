@@ -519,6 +519,16 @@ class UnsignedArraysTest {
     }
 
     @Test
+    fun reduceOrNull() {
+        expect(0u) { ubyteArrayOf(3, 2, 1).reduceOrNull { acc, e -> (acc - e).toUByte() } }
+        expect(0u) { ushortArrayOf(3, 2, 1).reduceOrNull { acc, e -> (acc - e).toUShort() } }
+        expect((-4).toUInt()) { uintArrayOf(1, 2, 3).reduceOrNull { acc, e -> acc - e } }
+        expect((-4).toULong()) { ulongArrayOf(1, 2, 3).reduceOrNull { acc, e -> acc - e } }
+
+        assertNull(uintArrayOf().reduceOrNull { acc, e -> acc + e })
+    }
+
+    @Test
     fun reduceIndexed() {
         expect(1u) { ubyteArrayOf(3, 2, 1).reduceIndexed { index, acc, e -> if (index != 2) (e - acc).toUByte() else e } }
         expect(1u) { ushortArrayOf(3, 2, 1).reduceIndexed { index, acc, e -> if (index != 2) (e - acc).toUShort() else e } }
@@ -532,6 +542,16 @@ class UnsignedArraysTest {
 
     @Test
     fun reduceRight() {
+        expect(2u) { ubyteArrayOf(1, 2, 3).reduceRightOrNull { e, acc -> (e - acc).toUByte() } }
+        expect(2u) { ushortArrayOf(1, 2, 3).reduceRightOrNull { e, acc -> (e - acc).toUShort() } }
+        expect(2u) { uintArrayOf(1, 2, 3).reduceRightOrNull { e, acc -> e - acc } }
+        expect(2uL) { ulongArrayOf(1, 2, 3).reduceRightOrNull { e, acc -> e - acc } }
+
+        assertNull(uintArrayOf().reduceRightOrNull { e, acc -> e + acc })
+    }
+
+    @Test
+    fun reduceRightOrNull() {
         expect(2u) { ubyteArrayOf(1, 2, 3).reduceRight { e, acc -> (e - acc).toUByte() } }
         expect(2u) { ushortArrayOf(1, 2, 3).reduceRight { e, acc -> (e - acc).toUShort() } }
         expect(2u) { uintArrayOf(1, 2, 3).reduceRight { e, acc -> e - acc } }
