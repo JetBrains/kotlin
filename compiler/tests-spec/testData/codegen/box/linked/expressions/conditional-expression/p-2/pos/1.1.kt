@@ -6,10 +6,32 @@
  * SPEC VERSION: 0.1-218
  * PLACE: expressions, conditional-expression -> paragraph 2 -> sentence 1
  * NUMBER: 1
- * DESCRIPTION:
+ * DESCRIPTION: branchless conditional expression, despite being of almost no practical use, is valid in Kotlin
  */
 
 fun box(): String {
     if (true) else;
+    if (true) else; ;
+    if (true) else ;
+    if (true)
+    else;
+
+    if (true) else
+    ;
+    val x = {
+        if (true) else;
+    }
+
+    if (false) else;
+    if (false) else; ;
+    if (false) else ;
+    if (false)
+    else;
+
+    if (false) else
+    ;
+    val x1 = {
+        if (false) else;
+    }
     return "OK"
 }

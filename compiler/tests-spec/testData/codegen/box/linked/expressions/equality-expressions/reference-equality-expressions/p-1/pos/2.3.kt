@@ -5,7 +5,6 @@
  *
  * SPEC VERSION: 0.1-213
  * PLACE: expressions, equality-expressions, reference-equality-expressions -> paragraph 1 -> sentence 2
- * RELEVANT PLACES:  expressions, built-in-types-and-their-semantics, kotlin.unit -> paragraph 1 -> sentence 1
  * NUMBER: 3
  * DESCRIPTION: check if two values are non-equal (!==) by reference
  */

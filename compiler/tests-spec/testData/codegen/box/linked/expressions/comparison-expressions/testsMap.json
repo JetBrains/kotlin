@@ -1,15 +1,5 @@
 {
   "1": {
-    "neg": {
-      "2": [
-        {
-          "specVersion": "0.1-218",
-          "casesNumber": 0,
-          "description": "expressions, comparison-expressions -\u003e paragraph 1 -\u003e sentence 2",
-          "unexpectedBehaviour": false
-        }
-      ]
-    },
     "pos": {
       "2": [
         {

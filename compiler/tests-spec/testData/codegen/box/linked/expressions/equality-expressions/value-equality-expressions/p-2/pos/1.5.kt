@@ -6,18 +6,18 @@
  * SPEC VERSION: 0.1-218
  * PLACE: expressions, equality-expressions, value-equality-expressions -> paragraph 2 -> sentence 1
  * RELEVANT PLACES: expressions, equality-expressions, value-equality-expressions -> paragraph 3 -> sentence 1
- * NUMBER: 1
+ * NUMBER: 5
  * DESCRIPTION: check value-equality-expression
  */
 
 
 //A == B is exactly the same as (A as? Any)?.equals(B) ?: (B === null) where equals is the method of kotlin.Any;
 fun box(): String {
-    val x = A(false)
-    val y = A(false)
+    val x: A = A(false)
+    val y: Any = ""
 
     if ((x == y) == checkEqualls(x, y)) {
-        if (x.isEqualsCalled && !y.isEqualsCalled)
+        if (x.isEqualsCalled)
             return "OK"
     }
     return "NOK"

@@ -1,17 +1,63 @@
 {
   "2": {
-    "neg": {
-      "1": [
+    "pos": {
+      "2": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "check value-equality-expression",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "check value-equality-expression",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "check value-equality-expression",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "check value-equality-expression",
+          "unexpectedBehaviour": false
+        },
         {
           "specVersion": "0.1-218",
           "casesNumber": 0,
           "description": "check value-equality-expression",
           "unexpectedBehaviour": false
         }
-      ]
-    },
-    "pos": {
+      ],
       "1": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "check value-equality-expression",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "check value-equality-expression",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "check value-equality-expression",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "check value-equality-expression",
+          "unexpectedBehaviour": false
+        },
         {
           "specVersion": "0.1-218",
           "casesNumber": 0,
@@ -24,6 +70,34 @@
   "3": {
     "pos": {
       "1": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "check value-equality-expression",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/value-equality-expressions/p-2/pos/1.2.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "check value-equality-expression",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/value-equality-expressions/p-2/pos/1.3.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "check value-equality-expression",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/value-equality-expressions/p-2/pos/1.4.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "check value-equality-expression",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/value-equality-expressions/p-2/pos/1.5.kt",
+          "unexpectedBehaviour": false
+        },
         {
           "specVersion": "0.1-218",
           "casesNumber": 0,

@@ -1,1 +1,0 @@
-java.lang.IllegalStateException: OPERATOR_MODIFIER_REQUIRED: 'operator' modifier is required on 'compareTo' in 'A' (24,17) in /2.1.kt

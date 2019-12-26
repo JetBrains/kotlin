@@ -13,20 +13,27 @@
 
 
 fun box(): String {
-    val x : Boolean? = null ?: getNull() ?: A().b ?: getTrue() ?: false
+    val x: Boolean? = null ?: getNull(null) ?: A().b ?: getTrue() ?: false
+    val s = null == getNull(null) ?: !getNullableTrue()!! || getFalse() ?: false
+
+    val k = ((getNull(null)?: getNull(null) ) ?: getNull(true)) ?: getFalse()
     try {
-        val y = null ?: throw  ExcA()
+        val y = null ?: throw ExcA()
     } catch (e: ExcA) {
 
-        if (x == true) return "OK"
+        if ((x == true && !s && k!!)) return "OK"
     }
 
     return "NOK"
 }
 fun getTrue() = true
 
-fun getNull(): Boolean? = null
+fun getNull(b: Boolean?): Boolean? = b
 
 class A(val b: Boolean? = null)
 
 class ExcA() : Exception()
+
+fun getFalse(): Boolean? { return false }
+
+fun getNullableTrue(): Boolean? { return true }

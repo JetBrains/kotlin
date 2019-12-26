@@ -1,7 +1,49 @@
 {
+  "6": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-220",
+          "casesNumber": 0,
+          "description": "The type of the condition expression must be a subtype of kotlin.Boolean, otherwise it is an error",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-220",
+          "casesNumber": 0,
+          "description": "The type of the condition expression must be a subtype of kotlin.Boolean, otherwise it is an error",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  },
   "1": {
     "pos": {
       "2": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "if-expression: check the correct branch is evaluating",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "if-expression: check the correct branch is evaluating",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "if-expression: check the correct branch is evaluating",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "if-expression: check the correct branch is evaluating",
+          "unexpectedBehaviour": false
+        },
         {
           "specVersion": "0.1-218",
           "casesNumber": 0,
@@ -48,7 +90,7 @@
         {
           "specVersion": "0.1-218",
           "casesNumber": 0,
-          "description": "",
+          "description": "branchless conditional expression, despite being of almost no practical use, is valid in Kotlin",
           "unexpectedBehaviour": false
         }
       ]

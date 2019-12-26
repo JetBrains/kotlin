@@ -52,7 +52,22 @@
   },
   "3": {
     "pos": {
+      "3": [
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 0,
+          "description": "check if two values are equal (\u003d\u003d\u003d) by reference",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/reference-equality-expressions/p-1/pos/2.2.kt",
+          "unexpectedBehaviour": false
+        }
+      ],
       "2": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "Any instance of the null reference null is equal by reference to any other instance of the null reference;",
+          "unexpectedBehaviour": false
+        },
         {
           "specVersion": "0.1-218",
           "casesNumber": 0,

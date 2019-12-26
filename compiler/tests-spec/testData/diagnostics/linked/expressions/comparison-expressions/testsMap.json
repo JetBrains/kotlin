@@ -1,4 +1,16 @@
 {
+  "1": {
+    "neg": {
+      "2": [
+        {
+          "specVersion": "0.1-220",
+          "casesNumber": 1,
+          "description": "\u003c, \u003e, \u003c\u003d and \u003e\u003d  operators are overloadable",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  },
   "4": {
     "neg": {
       "1": [
