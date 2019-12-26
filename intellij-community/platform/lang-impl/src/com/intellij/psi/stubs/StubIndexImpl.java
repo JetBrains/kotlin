@@ -450,6 +450,13 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
     FileBasedIndex.getInstance().scheduleRebuild(StubUpdatingIndex.INDEX_ID, e);
   }
 
+  @Override
+  void ensureLoaded() {
+    ProgressManager.getInstance().executeNonCancelableSection(() -> {
+      getAsyncState();
+    });
+  }
+
   private static void requestRebuild() {
     FileBasedIndex.getInstance().requestRebuild(StubUpdatingIndex.INDEX_ID);
   }
