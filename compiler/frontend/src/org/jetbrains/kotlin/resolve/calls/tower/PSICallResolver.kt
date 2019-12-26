@@ -702,7 +702,7 @@ class PSICallResolver(
         return createSimplePSICallArgument(context, valueArgument, typeInfo) ?: createParseErrorElement()
     }
 
-    private fun createCallableReferenceKotlinCallArgument(
+    fun createCallableReferenceKotlinCallArgument(
         context: BasicCallResolutionContext,
         ktExpression: KtCallableReferenceExpression,
         startDataFlowInfo: DataFlowInfo,

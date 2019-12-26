@@ -1851,9 +1851,19 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/callableReference/kt32256.kt");
             }
 
+            @TestMetadata("kt32267.kt")
+            public void testKt32267() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/callableReference/kt32267.kt");
+            }
+
             @TestMetadata("kt7430_wrongClassOnLHS.kt")
             public void testKt7430_wrongClassOnLHS() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/callableReference/kt7430_wrongClassOnLHS.kt");
+            }
+
+            @TestMetadata("lambdaResult.kt")
+            public void testLambdaResult() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/callableReference/lambdaResult.kt");
             }
 
             @TestMetadata("memberExtensionsImportedFromObjectsUnsupported.kt")
@@ -10223,6 +10233,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 @TestMetadata("coercionToUnitForLastLambdaInLambda.kt")
                 public void testCoercionToUnitForLastLambdaInLambda() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/coercionToUnit/coercionToUnitForLastLambdaInLambda.kt");
+                }
+
+                @TestMetadata("coercionToUnitReference.kt")
+                public void testCoercionToUnitReference() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/coercionToUnit/coercionToUnitReference.kt");
                 }
 
                 @TestMetadata("coercionWithExpectedType.kt")

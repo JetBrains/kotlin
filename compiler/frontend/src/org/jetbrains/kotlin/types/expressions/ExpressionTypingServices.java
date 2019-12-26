@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.types.expressions;
 
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -317,10 +316,24 @@ public class ExpressionTypingServices {
             @NotNull CoercionStrategy coercionStrategyForLastExpression,
             @NotNull ExpressionTypingInternals blockLevelVisitor
     ) {
+        boolean isUnitExpectedType = context.expectedType != NO_EXPECTED_TYPE &&
+                                     (
+                                             context.expectedType == UNIT_EXPECTED_TYPE ||
+                                             //the first check is necessary to avoid invocation 'isUnit(UNIT_EXPECTED_TYPE)'
+                                             (
+                                                     coercionStrategyForLastExpression == COERCION_TO_UNIT &&
+                                                     KotlinBuiltIns.isUnit(context.expectedType)
+                                             )
+                                     );
+
+        if (!isUnitExpectedType && statementExpression instanceof KtCallableReferenceExpression) {
+            KotlinTypeInfo typeInfo = createDontCareTypeInfoForNILambda(statementExpression, context);
+            if (typeInfo != null) return typeInfo;
+        }
+
         if (context.expectedType != NO_EXPECTED_TYPE) {
             KotlinType expectedType;
-            if (context.expectedType == UNIT_EXPECTED_TYPE ||//the first check is necessary to avoid invocation 'isUnit(UNIT_EXPECTED_TYPE)'
-                (coercionStrategyForLastExpression == COERCION_TO_UNIT && KotlinBuiltIns.isUnit(context.expectedType))) {
+            if (isUnitExpectedType) {
                 expectedType = UNIT_EXPECTED_TYPE;
             }
             else {
@@ -329,20 +342,12 @@ public class ExpressionTypingServices {
 
             return blockLevelVisitor.getTypeInfo(statementExpression, context.replaceExpectedType(expectedType), true);
         }
-        if (context.languageVersionSettings.supportsFeature(LanguageFeature.NewInference) &&
-            statementExpression instanceof KtLambdaExpression) {
-            PsiElement parent = PsiUtilsKt.getNonStrictParentOfType(statementExpression, KtFunctionLiteral.class);
-            if (parent != null) {
-                KtFunctionLiteral functionLiteral = (KtFunctionLiteral) parent;
-                KotlinResolutionCallbacksImpl.LambdaInfo info =
-                        context.trace.getBindingContext().get(BindingContext.NEW_INFERENCE_LAMBDA_INFO, functionLiteral);
-                if (info != null) {
-                    info.getLastExpressionInfo().setLexicalScope(context.scope);
-                    info.getLastExpressionInfo().setTrace(context.trace);
-                    return new KotlinTypeInfo(DONT_CARE, context.dataFlowInfo);
-                }
-            }
+
+        if (statementExpression instanceof KtLambdaExpression) {
+            KotlinTypeInfo typeInfo = createDontCareTypeInfoForNILambda(statementExpression, context);
+            if (typeInfo != null) return typeInfo;
         }
+
         KotlinTypeInfo result = blockLevelVisitor.getTypeInfo(statementExpression, context, true);
         if (coercionStrategyForLastExpression == COERCION_TO_UNIT) {
             boolean mightBeUnit = false;
@@ -367,6 +372,25 @@ public class ExpressionTypingServices {
             }
         }
         return result;
+    }
+
+    @Nullable
+    private static KotlinTypeInfo createDontCareTypeInfoForNILambda(
+            @NotNull KtExpression statementExpression,
+            @NotNull ExpressionTypingContext context
+    ) {
+        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.NewInference)) return null;
+        KtFunctionLiteral functionLiteral = PsiUtilsKt.getNonStrictParentOfType(statementExpression, KtFunctionLiteral.class);
+        if (functionLiteral != null) {
+            KotlinResolutionCallbacksImpl.LambdaInfo info =
+                    context.trace.getBindingContext().get(BindingContext.NEW_INFERENCE_LAMBDA_INFO, functionLiteral);
+            if (info != null) {
+                info.getLastExpressionInfo().setLexicalScope(context.scope);
+                info.getLastExpressionInfo().setTrace(context.trace);
+                return new KotlinTypeInfo(DONT_CARE, context.dataFlowInfo);
+            }
+        }
+        return null;
     }
 
     private static class EffectsFilteringTrace extends AbstractFilteringTrace {
