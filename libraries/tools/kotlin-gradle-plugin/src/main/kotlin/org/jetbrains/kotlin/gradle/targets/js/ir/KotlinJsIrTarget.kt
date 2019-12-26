@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import javax.inject.Inject
 
 open class KotlinJsIrTarget @Inject constructor(project: Project, platformType: KotlinPlatformType) :
-    KotlinOnlyTarget<KotlinJsCompilation>(project, platformType),
+    KotlinOnlyTarget<KotlinJsIrCompilation>(project, platformType),
     KotlinTargetWithTests<JsIrAggregatingExecutionSource, KotlinJsIrReportAggregatingTestRun>,
     KotlinJsIrTargetDsl {
     override lateinit var testRuns: NamedDomainObjectContainer<KotlinJsIrReportAggregatingTestRun>

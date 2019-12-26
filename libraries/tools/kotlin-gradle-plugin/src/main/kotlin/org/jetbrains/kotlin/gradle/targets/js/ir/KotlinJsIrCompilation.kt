@@ -23,8 +23,8 @@ class KotlinJsIrCompilation(
         target.targetName
     )
 
-    val productionCompileTask: Kotlin2JsCompile =
-        (target.project.tasks.getByName(productionCompileTaskName) as Kotlin2JsCompile)
+    val productionCompileTask: Kotlin2JsCompile
+        get() = (target.project.tasks.getByName(productionCompileTaskName) as Kotlin2JsCompile)
 
     val developmentCompileTaskName: String = lowerCamelCaseName(
         "compile",
@@ -34,6 +34,6 @@ class KotlinJsIrCompilation(
         target.targetName
     )
 
-    val developmentCompileTask: Kotlin2JsCompile =
-        (target.project.tasks.getByName(developmentCompileTaskName) as Kotlin2JsCompile)
+    val developmentCompileTask: Kotlin2JsCompile
+        get() = (target.project.tasks.getByName(developmentCompileTaskName) as Kotlin2JsCompile)
 }

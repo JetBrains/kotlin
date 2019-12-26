@@ -6,8 +6,9 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.plugin.KotlinOnlyTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCompilationFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilationFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTargetPreset
@@ -15,7 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTargetPreset
 open class KotlinJsIrTargetPreset(
     project: Project,
     kotlinPluginVersion: String
-) : KotlinOnlyTargetPreset<KotlinJsIrTarget, KotlinJsCompilation>(
+) : KotlinOnlyTargetPreset<KotlinJsIrTarget, KotlinJsIrCompilation>(
     project,
     kotlinPluginVersion
 ) {
@@ -26,12 +27,15 @@ open class KotlinJsIrTargetPreset(
         return project.objects.newInstance(KotlinJsIrTarget::class.java, project, platformType)
     }
 
-    override fun createKotlinTargetConfigurator() = KotlinJsIrTargetConfigurator(kotlinPluginVersion)
+    override fun createKotlinTargetConfigurator(): KotlinOnlyTargetConfigurator<KotlinJsIrCompilation, KotlinJsIrTarget> =
+        KotlinJsIrTargetConfigurator(kotlinPluginVersion)
 
     override fun getName(): String = PRESET_NAME
 
-    override fun createCompilationFactory(forTarget: KotlinOnlyTarget<KotlinJsCompilation>) =
-        KotlinJsCompilationFactory(project, forTarget)
+    override fun createCompilationFactory(
+        forTarget: KotlinOnlyTarget<KotlinJsIrCompilation>
+    ): KotlinCompilationFactory<KotlinJsIrCompilation> =
+        KotlinJsIrCompilationFactory(project, forTarget)
 
     companion object {
         const val PRESET_NAME = "jsIr"
@@ -45,7 +49,8 @@ class KotlinJsIrSingleTargetPreset(
     KotlinJsIrTargetPreset(project, kotlinPluginVersion) {
 
     // In a Kotlin/JS single-platform project, we don't need any disambiguation suffixes or prefixes in the names:
-    override fun provideTargetDisambiguationClassifier(target: KotlinOnlyTarget<KotlinJsCompilation>): String? = null
+    override fun provideTargetDisambiguationClassifier(target: KotlinOnlyTarget<KotlinJsIrCompilation>): String? = null
 
-    override fun createKotlinTargetConfigurator() = KotlinJsIrTargetConfigurator(kotlinPluginVersion)
+    override fun createKotlinTargetConfigurator(): KotlinOnlyTargetConfigurator<KotlinJsIrCompilation, KotlinJsIrTarget> =
+        KotlinJsIrTargetConfigurator(kotlinPluginVersion)
 }

@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.testing.testTaskName
 
 open class KotlinJsIrTargetConfigurator(kotlinPluginVersion: String) :
-    KotlinOnlyTargetConfigurator<KotlinJsCompilation, KotlinJsIrTarget>(true, true, kotlinPluginVersion),
+    KotlinOnlyTargetConfigurator<KotlinJsIrCompilation, KotlinJsIrTarget>(true, true, kotlinPluginVersion),
     KotlinTargetWithTestsConfigurator<KotlinJsIrReportAggregatingTestRun, KotlinJsIrTarget> {
 
     override val testRunClass: Class<KotlinJsIrReportAggregatingTestRun> get() = KotlinJsIrReportAggregatingTestRun::class.java
@@ -44,7 +44,7 @@ open class KotlinJsIrTargetConfigurator(kotlinPluginVersion: String) :
         return result
     }
 
-    override fun buildCompilationProcessor(compilation: KotlinJsCompilation): KotlinSourceSetProcessor<*> {
+    override fun buildCompilationProcessor(compilation: KotlinJsIrCompilation): KotlinSourceSetProcessor<*> {
         val tasksProvider = KotlinTasksProvider(compilation.target.targetName)
         return KotlinJsIrSourceSetProcessor(compilation.target.project, tasksProvider, compilation, kotlinPluginVersion)
     }
