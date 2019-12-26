@@ -7,6 +7,7 @@
 // Note: This fails on JVM (non-IR) with "Fail: should throw on get() in loop header". The not-null assertion is not generated when
 // assigning to the loop variable. The root cause seems to be that the loop variable is a KtParameter and
 // CodegenAnnotatingVisitor/RuntimeAssertionsOnDeclarationBodyChecker do not analyze the need for not-null assertions on KtParameters.
+// See KT-35698.
 
 // FILE: box.kt
 import kotlin.test.*
