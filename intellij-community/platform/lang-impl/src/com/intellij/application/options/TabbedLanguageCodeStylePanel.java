@@ -14,6 +14,8 @@ import com.intellij.openapi.application.ApplicationBundle;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.highlighter.EditorHighlighter;
 import com.intellij.openapi.editor.highlighter.EditorHighlighterFactory;
+import com.intellij.openapi.extensions.ExtensionPointListener;
+import com.intellij.openapi.extensions.PluginDescriptor;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypes;
 import com.intellij.openapi.options.Configurable;
@@ -63,6 +65,34 @@ public abstract class TabbedLanguageCodeStylePanel extends CodeStyleAbstractPane
   protected TabbedLanguageCodeStylePanel(@Nullable Language language, CodeStyleSettings currentSettings, CodeStyleSettings settings) {
     super(language, currentSettings, settings);
     myPredefinedCodeStyles = getPredefinedStyles();
+    CodeStyleSettingsProvider.EXTENSION_POINT_NAME.addExtensionPointListener(
+      new ExtensionPointListener<CodeStyleSettingsProvider>() {
+        @Override
+        public void extensionAdded(@NotNull CodeStyleSettingsProvider extension,
+                                   @NotNull PluginDescriptor pluginDescriptor) {
+          if (!extension.hasSettingsPage() && getDefaultLanguage() == extension.getLanguage()) {
+            createTab(extension);
+          }
+        }
+
+        @Override
+        public void extensionRemoved(@NotNull CodeStyleSettingsProvider extension,
+                                     @NotNull PluginDescriptor pluginDescriptor) {
+          if (!extension.hasSettingsPage() && getDefaultLanguage() == extension.getLanguage()) {
+            final String tabTitle = extension.getConfigurableDisplayName();
+            for (int i = 0; i < myTabbedPane.getTabCount(); i ++) {
+              if (myTabbedPane.getTitleAt(i).equals(tabTitle)) {
+                myTabbedPane.removeTabAt(i);
+                myTabs.stream().filter(
+                  panel -> panel.getTabTitle().equals(tabTitle)
+                ).findFirst().ifPresent(panel -> myTabs.remove(panel));
+                return;
+              }
+            }
+          }
+        }
+      }, this
+    );
   }
 
   /**

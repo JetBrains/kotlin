@@ -284,7 +284,8 @@ public class CodeStyleSchemesConfigurable extends SearchableConfigurable.Parent.
   @Override
   public Collection<BaseExtensionPointName<?>> getDependencies() {
     return Arrays.asList(new ExtensionPointName<?>[] {
-      LanguageCodeStyleSettingsProvider.EP_NAME
+      LanguageCodeStyleSettingsProvider.EP_NAME,
+      CodeStyleSettingsProvider.EXTENSION_POINT_NAME
     });
   }
 

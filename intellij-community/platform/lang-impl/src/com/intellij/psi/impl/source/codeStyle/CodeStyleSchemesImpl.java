@@ -77,6 +77,23 @@ public abstract class CodeStyleSchemesImpl extends CodeStyleSchemes {
         }
       }, ApplicationManager.getApplication()
     );
+    CodeStyleSettingsProvider.EXTENSION_POINT_NAME.addExtensionPointListener(
+      new ExtensionPointListener<CodeStyleSettingsProvider>() {
+        @Override
+        public void extensionAdded(@NotNull CodeStyleSettingsProvider extension, @NotNull PluginDescriptor pluginDescriptor) {
+          //noinspection deprecation
+          ObjectUtils.consumeIfNotNull(CodeStyleSettingsManager.getInstance(),
+                                       instance -> instance.registerCustomSettings(getAllSettings(), extension));
+        }
+
+        @Override
+        public void extensionRemoved(@NotNull CodeStyleSettingsProvider extension, @NotNull PluginDescriptor pluginDescriptor) {
+          //noinspection deprecation
+          ObjectUtils.consumeIfNotNull(CodeStyleSettingsManager.getInstance(),
+                                       instance -> instance.unregisterCustomSettings(getAllSettings(), extension));
+        }
+      }, ApplicationManager.getApplication()
+    );
   }
 
   private List<CodeStyleSettings> getAllSettings() {
