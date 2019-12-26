@@ -231,6 +231,7 @@ class JpsCompatiblePlugin : Plugin<Project> {
         val platformDirProjectRelative = "\$PROJECT_DIR\$/" + platformDir.toRelativeString(projectDir)
 
         val runManagerComponent = rootElement.getOrCreateChild("component", "name" to "RunManager")
+
         val junitConfiguration = runManagerComponent.getOrCreateChild(
             "configuration",
             "default" to "true",
@@ -238,7 +239,14 @@ class JpsCompatiblePlugin : Plugin<Project> {
             "factoryName" to "JUnit"
         )
 
-        junitConfiguration.apply {
+        val kotlinJunitConfiguration = runManagerComponent.getOrCreateChild(
+            "configuration",
+            "default" to "true",
+            "type" to "KotlinJUnit",
+            "factoryName" to "Kotlin JUnit"
+        )
+
+        fun Element.applyJUnitTemplate() {
             getOrCreateChild("option", "name" to "WORKING_DIRECTORY").setAttribute("value", "file://\$PROJECT_DIR\$")
             getOrCreateChild("option", "name" to "VM_PARAMETERS").also { vmParams ->
                 var options = vmParams.getAttributeValue("value", "")
@@ -274,6 +282,9 @@ class JpsCompatiblePlugin : Plugin<Project> {
                 vmParams.setAttribute("value", options.joinToString(" "))
             }
         }
+
+        junitConfiguration.applyJUnitTemplate()
+        kotlinJunitConfiguration.applyJUnitTemplate()
 
         val output = XMLOutputter().also {
             it.format = Format.getPrettyFormat().apply {
