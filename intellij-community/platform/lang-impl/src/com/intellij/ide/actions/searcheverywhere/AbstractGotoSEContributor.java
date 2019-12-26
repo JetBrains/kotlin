@@ -226,10 +226,7 @@ public abstract class AbstractGotoSEContributor implements WeightedSearchEverywh
     if (myProject == null) return; //nowhere to search
     if (!isEmptyPatternSupported() && pattern.isEmpty()) return;
 
-    if (!ApplicationManager.getApplication().isUnitTestMode()) {
-      ProgressIndicatorUtils.yieldToPendingWriteActions();
-    }
-    ProgressIndicatorUtils.runInReadActionWithWriteActionPriority(() -> {
+    Runnable fetchRunnable = () -> {
       if (!isDumbAware() && DumbService.isDumb(myProject)) return;
 
       FilteringGotoByModel<?> model = createModel(myProject);
@@ -246,25 +243,36 @@ public abstract class AbstractGotoSEContributor implements WeightedSearchEverywh
         boolean everywhere = scope == null ? myEverywhere : scope.isSearchInLibraries();
         if (scope != null && provider instanceof ChooseByNameInScopeItemProvider) {
           FindSymbolParameters parameters = FindSymbolParameters.wrap(pattern, scope);
-          ((ChooseByNameInScopeItemProvider) provider).filterElementsWithWeights(popup, parameters, progressIndicator,
-                        item -> processElement(progressIndicator, consumer, model, item.getItem(), item.getWeight())
+          ((ChooseByNameInScopeItemProvider)provider).filterElementsWithWeights(popup, parameters, progressIndicator,
+                                                                                item -> processElement(progressIndicator, consumer, model,
+                                                                                                       item.getItem(), item.getWeight())
           );
         }
         else if (provider instanceof ChooseByNameWeightedItemProvider) {
-          ((ChooseByNameWeightedItemProvider) provider).filterElementsWithWeights(popup, pattern, everywhere, progressIndicator,
-                        item -> processElement(progressIndicator, consumer, model, item.getItem(), item.getWeight())
+          ((ChooseByNameWeightedItemProvider)provider).filterElementsWithWeights(popup, pattern, everywhere, progressIndicator,
+                                                                                 item -> processElement(progressIndicator, consumer, model,
+                                                                                                        item.getItem(), item.getWeight())
           );
         }
         else {
           provider.filterElements(popup, pattern, everywhere, progressIndicator,
-                        element -> processElement(progressIndicator, consumer, model, element, getElementPriority(element, pattern))
+                                  element -> processElement(progressIndicator, consumer, model, element,
+                                                            getElementPriority(element, pattern))
           );
         }
       }
       finally {
         Disposer.dispose(popup);
       }
-    }, progressIndicator);
+    };
+
+    if (ApplicationManager.getApplication().isUnitTestMode()) {
+      fetchRunnable.run();
+    }
+    else {
+      ProgressIndicatorUtils.yieldToPendingWriteActions();
+      ProgressIndicatorUtils.runInReadActionWithWriteActionPriority(fetchRunnable, progressIndicator);
+    }
   }
 
   private boolean processElement(@NotNull ProgressIndicator progressIndicator,
