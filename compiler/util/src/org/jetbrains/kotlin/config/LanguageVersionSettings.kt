@@ -121,6 +121,7 @@ enum class LanguageFeature(
     AllowNullOperatorsForResult(KOTLIN_1_4),
     AllowResultInReturnType(KOTLIN_1_4),
     PreferJavaFieldOverload(KOTLIN_1_4),
+    AllowContractsForNonOverridableMembers(KOTLIN_1_4),
 
     ProperVisibilityForCompanionObjectInstanceField(sinceVersion = null, kind = BUG_FIX),
     // Temporarily disabled, see KT-27084/KT-22379

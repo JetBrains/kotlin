@@ -1188,9 +1188,14 @@ public class FirOldFrontendDiagnosticsTestWithStdlibGenerated extends AbstractFi
                     runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/callInContractDescription.kt");
                 }
 
-                @TestMetadata("contractCallSites.kt")
-                public void testContractCallSites() throws Exception {
-                    runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/contractCallSites.kt");
+                @TestMetadata("contractCallSites.1.3.kt")
+                public void testContractCallSites_1_3() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/contractCallSites.1.3.kt");
+                }
+
+                @TestMetadata("contractCallSites.1.4.kt")
+                public void testContractCallSites_1_4() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/contractCallSites.1.4.kt");
                 }
 
                 @TestMetadata("emptyContract.kt")
@@ -1233,14 +1238,24 @@ public class FirOldFrontendDiagnosticsTestWithStdlibGenerated extends AbstractFi
                     runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/recursiveContractCustomContractFunction.kt");
                 }
 
-                @TestMetadata("referenceToProperty.kt")
-                public void testReferenceToProperty() throws Exception {
-                    runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/referenceToProperty.kt");
+                @TestMetadata("referenceToProperty.1.3.kt")
+                public void testReferenceToProperty_1_3() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/referenceToProperty.1.3.kt");
                 }
 
-                @TestMetadata("typeReferences.kt")
-                public void testTypeReferences() throws Exception {
-                    runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/typeReferences.kt");
+                @TestMetadata("referenceToProperty.1.4.kt")
+                public void testReferenceToProperty_1_4() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/referenceToProperty.1.4.kt");
+                }
+
+                @TestMetadata("typeReferences.1.3.kt")
+                public void testTypeReferences_1_3() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/typeReferences.1.3.kt");
+                }
+
+                @TestMetadata("typeReferences.1.4.kt")
+                public void testTypeReferences_1_4() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/typeReferences.1.4.kt");
                 }
 
                 @TestMetadata("unlabeledReceiver.kt")
@@ -1318,6 +1333,11 @@ public class FirOldFrontendDiagnosticsTestWithStdlibGenerated extends AbstractFi
             @TestMetadata("compositions.kt")
             public void testCompositions() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/smartcasts/compositions.kt");
+            }
+
+            @TestMetadata("contractsOnMembers.kt")
+            public void testContractsOnMembers() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/smartcasts/contractsOnMembers.kt");
             }
 
             @TestMetadata("deeplyNested.kt")

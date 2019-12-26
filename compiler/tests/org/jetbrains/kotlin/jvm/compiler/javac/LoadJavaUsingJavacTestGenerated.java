@@ -4650,6 +4650,11 @@ public class LoadJavaUsingJavacTestGenerated extends AbstractLoadJavaUsingJavacT
                 runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/contracts/callsEffect.kt");
             }
 
+            @TestMetadata("contractsOnMembers.kt")
+            public void testContractsOnMembers() throws Exception {
+                runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/contracts/contractsOnMembers.kt");
+            }
+
             @TestMetadata("deeplyNestedExpression.kt")
             public void testDeeplyNestedExpression() throws Exception {
                 runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/contracts/deeplyNestedExpression.kt");

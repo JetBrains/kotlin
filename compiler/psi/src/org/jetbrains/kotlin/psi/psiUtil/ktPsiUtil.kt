@@ -296,9 +296,9 @@ inline fun <reified T : KtElement, R> flatMapDescendantsOfTypeVisitor(
 
 // ----------- Contracts -------------------------------------------------------------------------------------------------------------------
 
-fun KtNamedFunction.isContractPresentPsiCheck(): Boolean {
+fun KtNamedFunction.isContractPresentPsiCheck(isAllowedOnMembers: Boolean): Boolean {
     val contractAllowedHere =
-        isTopLevel &&
+        (isAllowedOnMembers || isTopLevel) &&
                 hasBlockBody() &&
                 !hasModifier(KtTokens.OPERATOR_KEYWORD)
     if (!contractAllowedHere) return false
