@@ -20,7 +20,6 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.Sdk
-import com.intellij.openapi.projectRoots.SimpleJavaSdkType
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
@@ -126,10 +125,7 @@ internal class GradleOpenProjectProvider : AbstractOpenProjectProvider() {
     val javaHome = EnvironmentUtil.getEnvironmentMap()["JAVA_HOME"] ?: return null
     val jdk = GradleJdk.valueOf(javaHome) ?: return null
     if (!jdk.isSupported(gradleVersion)) return null
-    val simpleJavaSdkType = SimpleJavaSdkType.getInstance()
-    val sdkName = simpleJavaSdkType.suggestSdkName(null, javaHome)
-    simpleJavaSdkType.createJdk(sdkName, javaHome)
-    return ExternalSystemJdkUtil.USE_JAVA_HOME
+    return ExternalSystemJdkUtil.addJdk(javaHome).name
   }
 
   private fun SettingsContext.getProjectJdkReference(): String? {

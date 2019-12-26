@@ -3,8 +3,10 @@
 
 package com.intellij.openapi.externalSystem.service.ui
 
+import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkException
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtil
-import com.intellij.openapi.externalSystem.service.execution.InvalidSdkException
+import com.intellij.openapi.projectRoots.Sdk
+import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
 import com.intellij.openapi.roots.ui.configuration.SdkComboBox
 import com.intellij.openapi.roots.ui.configuration.SdkListItem
 
@@ -27,12 +29,22 @@ fun SdkComboBox.setSelectedJdkReference(jdkReference: String?) {
 
 private fun SdkComboBox.resolveSdkItem(selectedJdkReference: String): SdkListItem {
   try {
-    val selectedJdk = ExternalSystemJdkUtil.resolveJdkName(model.sdksModel.projectSdk, selectedJdkReference)
-    val selectedSdkItem = selectedJdk?.let { model.listModel.findSdkItem(selectedJdk) }
-    if (selectedSdkItem == null) return showInvalidSdkItem(selectedJdkReference)
-    return selectedSdkItem
+    val selectedJdk = ExternalSystemJdkUtil.resolveJdkName(null, selectedJdkReference)
+    if (selectedJdk == null) return showInvalidSdkItem(selectedJdkReference)
+    return findSdkItem(selectedJdk) ?: addAndGetSdkItem(selectedJdk)
   }
-  catch (ex: InvalidSdkException) {
+  catch (ex: ExternalSystemJdkException) {
     return showInvalidSdkItem(selectedJdkReference)
   }
+}
+
+private fun SdkComboBox.addAndGetSdkItem(sdk: Sdk): SdkListItem {
+  SdkConfigurationUtil.addSdk(sdk)
+  model.sdksModel.addSdk(sdk)
+  reloadModel()
+  return findSdkItem(sdk) ?: showInvalidSdkItem(sdk.name)
+}
+
+private fun SdkComboBox.findSdkItem(sdk: Sdk): SdkListItem? {
+  return model.listModel.findSdkItem(sdk)
 }

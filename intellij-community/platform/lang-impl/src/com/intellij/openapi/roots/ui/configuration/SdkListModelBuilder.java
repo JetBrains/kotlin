@@ -166,7 +166,7 @@ public final class SdkListModelBuilder {
   }
 
   @NotNull
-  public SdkListItem showInvalidSdkItem(String name) {
+  public SdkListItem showInvalidSdkItem(@NotNull String name) {
     InvalidSdkItem invalidItem = new InvalidSdkItem(name);
     if (Objects.equals(myInvalidItem, invalidItem)) return myInvalidItem;
     myInvalidItem = invalidItem;

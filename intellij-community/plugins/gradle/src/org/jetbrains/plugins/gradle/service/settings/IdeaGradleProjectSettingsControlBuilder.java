@@ -609,9 +609,13 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
       return true;
     }
 
-    if (myGradleJdkComboBox != null &&
-        !StringUtil.equals(getSelectedJdkReference(myGradleJdkComboBox), myInitialSettings.getGradleJvm())) {
-      return true;
+    if (myGradleJdkComboBox != null) {
+      if (!StringUtil.equals(getSelectedJdkReference(myGradleJdkComboBox), myInitialSettings.getGradleJvm())) {
+        return true;
+      }
+      if (myGradleJdkComboBox.getModel().getSdksModel().isModified()) {
+        return true;
+      }
     }
 
     if (myGradleHomePathField == null) return false;

@@ -37,7 +37,7 @@ public abstract class SdkComboBoxBase<T> extends ComboBox<T> {
   }
 
   @NotNull
-  public SdkListItem showInvalidSdkItem(String name) {
+  public SdkListItem showInvalidSdkItem(@NotNull String name) {
     return myModel.showInvalidSdkItem(name);
   }
 

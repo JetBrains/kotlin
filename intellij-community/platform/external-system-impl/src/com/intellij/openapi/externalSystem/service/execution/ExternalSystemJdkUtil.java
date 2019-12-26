@@ -82,10 +82,7 @@ public class ExternalSystemJdkUtil {
     String javaHome = EnvironmentUtil.getEnvironmentMap().get("JAVA_HOME");
     if (StringUtil.isEmptyOrSpaces(javaHome)) throw new UndefinedJavaHomeException();
     if (!isValidJdk(javaHome)) throw new InvalidJavaHomeException(javaHome);
-
-    SimpleJavaSdkType sdkType = SimpleJavaSdkType.getInstance();
-    String sdkName = sdkType.suggestSdkName(null, javaHome);
-    return sdkType.createJdk(sdkName, javaHome);
+    return ExternalSystemJdkProvider.getInstance().createJdk(null, javaHome);
   }
 
   @Nullable
@@ -172,8 +169,7 @@ public class ExternalSystemJdkUtil {
   @Contract("null -> false")
   public static boolean isValidJdk(@Nullable Sdk jdk) {
     if (jdk == null) return false;
-    SdkType javaSdkType = getJavaSdkType();
-    if (!javaSdkType.equals(jdk.getSdkType())) return false;
+    if (!(jdk.getSdkType() instanceof JavaSdkType)) return false;
     if (SdkDownloadTracker.getInstance().isDownloading(jdk)) return true;
     return isValidJdk(jdk.getHomePath());
   }
