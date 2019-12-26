@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 fun bar(x: Int): Int = x + 1
 
 fun foo() {
@@ -11,7 +10,7 @@ fun foo() {
         bar(<!DEBUG_INFO_SMARTCAST!>x<!>)
         for (q in a) {
             bar(<!DEBUG_INFO_SMARTCAST!>x<!>)
-            if (<!SENSELESS_COMPARISON!>x == null<!>) <!NI;UNREACHABLE_CODE!>bar(<!><!DEBUG_INFO_SMARTCAST!>x<!><!NI;UNREACHABLE_CODE!>)<!>
+            if (<!SENSELESS_COMPARISON!>x == null<!>) bar(<!DEBUG_INFO_SMARTCAST!>x<!>)
         }
     }
 
