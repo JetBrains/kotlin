@@ -1182,6 +1182,24 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
                 }
             }
 
+            @TestMetadata("idea/testData/formatter/trailingComma/typeParameters")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class TypeParameters extends AbstractFormatterTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInTypeParameters() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma/typeParameters"), Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), null, true);
+                }
+
+                @TestMetadata("TypeParameterList.after.kt")
+                public void testTypeParameterList() throws Exception {
+                    runTest("idea/testData/formatter/trailingComma/typeParameters/TypeParameterList.after.kt");
+                }
+            }
+
             @TestMetadata("idea/testData/formatter/trailingComma/valueArguments")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
@@ -1641,6 +1659,24 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
                 @TestMetadata("IndicesAccess.after.inv.kt")
                 public void testIndicesAccess() throws Exception {
                     runTest("idea/testData/formatter/trailingComma/indices/IndicesAccess.after.inv.kt");
+                }
+            }
+
+            @TestMetadata("idea/testData/formatter/trailingComma/typeParameters")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class TypeParameters extends AbstractFormatterTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTestInverted, this, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInTypeParameters() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma/typeParameters"), Pattern.compile("^([^\\.]+)\\.after\\.inv\\.kt.*$"), null, true);
+                }
+
+                @TestMetadata("TypeParameterList.after.inv.kt")
+                public void testTypeParameterList() throws Exception {
+                    runTest("idea/testData/formatter/trailingComma/typeParameters/TypeParameterList.after.inv.kt");
                 }
             }
 

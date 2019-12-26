@@ -615,6 +615,10 @@ abstract class KotlinCommonBlock(
                 trailingCommaWrappingStrategyWithMultiLineCheck(LBRACKET, RBRACKET)(childElement)
             }
 
+            elementType === TYPE_PARAMETER_LIST -> return { childElement ->
+                trailingCommaWrappingStrategyWithMultiLineCheck(LT, GT)(childElement)
+            }
+
             elementType === SUPER_TYPE_LIST -> {
                 val wrap = Wrap.createWrap(commonSettings.EXTENDS_LIST_WRAP, false)
                 return { childElement -> if (childElement.psi is KtSuperTypeListEntry) wrap else null }
