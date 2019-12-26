@@ -1164,6 +1164,24 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma"), Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), null, true);
             }
 
+            @TestMetadata("idea/testData/formatter/trailingComma/collectionLiteralExpression")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class CollectionLiteralExpression extends AbstractFormatterTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInCollectionLiteralExpression() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma/collectionLiteralExpression"), Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), null, true);
+                }
+
+                @TestMetadata("CollectionLiteralInAnnotation.after.kt")
+                public void testCollectionLiteralInAnnotation() throws Exception {
+                    runTest("idea/testData/formatter/trailingComma/collectionLiteralExpression/CollectionLiteralInAnnotation.after.kt");
+                }
+            }
+
             @TestMetadata("idea/testData/formatter/trailingComma/indices")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
@@ -1660,6 +1678,24 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
 
             public void testAllFilesPresentInTrailingComma() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma"), Pattern.compile("^([^\\.]+)\\.after\\.inv\\.kt.*$"), null, true);
+            }
+
+            @TestMetadata("idea/testData/formatter/trailingComma/collectionLiteralExpression")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class CollectionLiteralExpression extends AbstractFormatterTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTestInverted, this, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInCollectionLiteralExpression() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma/collectionLiteralExpression"), Pattern.compile("^([^\\.]+)\\.after\\.inv\\.kt.*$"), null, true);
+                }
+
+                @TestMetadata("CollectionLiteralInAnnotation.after.inv.kt")
+                public void testCollectionLiteralInAnnotation() throws Exception {
+                    runTest("idea/testData/formatter/trailingComma/collectionLiteralExpression/CollectionLiteralInAnnotation.after.inv.kt");
+                }
             }
 
             @TestMetadata("idea/testData/formatter/trailingComma/indices")

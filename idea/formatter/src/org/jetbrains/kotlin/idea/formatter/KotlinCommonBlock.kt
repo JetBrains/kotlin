@@ -611,17 +611,13 @@ abstract class KotlinCommonBlock(
                 )
             }
 
-            elementType === INDICES -> return { childElement ->
-                trailingCommaWrappingStrategyWithMultiLineCheck(LBRACKET, RBRACKET)(childElement)
-            }
+            elementType === INDICES -> return defaultTrailingCommaWrappingStrategy(LBRACKET, RBRACKET)
 
-            elementType === TYPE_PARAMETER_LIST -> return { childElement ->
-                trailingCommaWrappingStrategyWithMultiLineCheck(LT, GT)(childElement)
-            }
+            elementType === TYPE_PARAMETER_LIST -> return defaultTrailingCommaWrappingStrategy(LT, GT)
 
-            elementType === TYPE_ARGUMENT_LIST -> return { childElement ->
-                trailingCommaWrappingStrategyWithMultiLineCheck(LT, GT)(childElement)
-            }
+            elementType === TYPE_ARGUMENT_LIST -> return defaultTrailingCommaWrappingStrategy(LT, GT)
+
+            elementType === COLLECTION_LITERAL_EXPRESSION -> return defaultTrailingCommaWrappingStrategy(LBRACKET, RBRACKET)
 
             elementType === SUPER_TYPE_LIST -> {
                 val wrap = Wrap.createWrap(commonSettings.EXTENDS_LIST_WRAP, false)
@@ -718,6 +714,9 @@ abstract class KotlinCommonBlock(
 
         return ::noWrapping
     }
+
+    private fun defaultTrailingCommaWrappingStrategy(leftAnchor: IElementType, rightAnchor: IElementType): WrappingStrategy =
+        fun(childElement: ASTNode): Wrap? = trailingCommaWrappingStrategyWithMultiLineCheck(leftAnchor, rightAnchor)(childElement)
 
     private val ASTNode.withTrailingComma: Boolean
         get() = when {
