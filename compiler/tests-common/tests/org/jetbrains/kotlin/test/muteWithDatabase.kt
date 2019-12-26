@@ -132,7 +132,8 @@ private class ParseError(message: String, override val cause: Throwable? = null)
 private val mutedSet by lazy {
     loadMutedSet(
         listOf(
-            File("tests/mute.csv")
+            File("tests/mute-common.csv"),
+            File("tests/mute-platform.csv")
         )
     )
 }
