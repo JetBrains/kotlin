@@ -34,10 +34,6 @@ import java.util.List;
 public class RunAnythingUtil {
   public static final Logger LOG = Logger.getInstance(RunAnythingUtil.class);
   public static final String SHIFT_SHORTCUT_TEXT = KeymapUtil.getShortcutText(KeyboardShortcut.fromString(("SHIFT")));
-  public static final String AD_DEBUG_TEXT = IdeBundle.message("run.anything.ad.run.with.debug", SHIFT_SHORTCUT_TEXT);
-  public static final String AD_DELETE_COMMAND_TEXT = IdeBundle.message("run.anything.ad.command.delete", KeymapUtil.getShortcutText(KeyboardShortcut.fromString("shift BACK_SPACE")));
-  public static final String AD_CONTEXT_TEXT =
-    IdeBundle.message("run.anything.ad.run.in.context", KeymapUtil.getShortcutText(KeyboardShortcut.fromString("pressed ALT")));
   private static final Key<Collection<Pair<String, String>>> RUN_ANYTHING_WRAPPED_COMMANDS = Key.create("RUN_ANYTHING_WRAPPED_COMMANDS");
 
   static Font getTitleFont() {
@@ -117,5 +113,17 @@ public class RunAnythingUtil {
   public static RunAnythingSearchListModel getSearchingModel(@NotNull JBList list) {
     ListModel model = list.getModel();
     return model instanceof RunAnythingSearchListModel ? (RunAnythingSearchListModel)model : null;
+  }
+
+  public static String getAD_DEBUG_TEXT() {
+    return IdeBundle.message("run.anything.ad.run.with.debug", SHIFT_SHORTCUT_TEXT);
+  }
+
+  public static String getAD_DELETE_COMMAND_TEXT() {
+    return IdeBundle.message("run.anything.ad.command.delete", KeymapUtil.getShortcutText(KeyboardShortcut.fromString("shift BACK_SPACE")));
+  }
+
+  public static String getAD_CONTEXT_TEXT() {
+    return IdeBundle.message("run.anything.ad.run.in.context", KeymapUtil.getShortcutText(KeyboardShortcut.fromString("pressed ALT")));
   }
 }

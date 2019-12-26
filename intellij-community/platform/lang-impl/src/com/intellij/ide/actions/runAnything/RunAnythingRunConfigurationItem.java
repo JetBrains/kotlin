@@ -10,7 +10,6 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 public class RunAnythingRunConfigurationItem extends RunAnythingItemBase {
-  public static final String RUN_CONFIGURATION_AD_TEXT = RunAnythingUtil.AD_CONTEXT_TEXT + ", " + RunAnythingUtil.AD_DEBUG_TEXT;
   private final ChooseRunConfigurationPopup.ItemWrapper myWrapper;
 
   public RunAnythingRunConfigurationItem(@NotNull ChooseRunConfigurationPopup.ItemWrapper wrapper, @Nullable Icon icon) {

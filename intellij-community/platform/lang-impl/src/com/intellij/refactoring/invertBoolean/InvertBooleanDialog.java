@@ -35,7 +35,7 @@ public class InvertBooleanDialog extends RefactoringDialog {
                                                      typeString,
                                                      DescriptiveNameUtil.getDescriptiveName(myElement)));
 
-    setTitle(InvertBooleanHandler.REFACTORING_NAME);
+    setTitle(InvertBooleanHandler.getREFACTORING_NAME());
     init();
   }
 
@@ -48,7 +48,7 @@ public class InvertBooleanDialog extends RefactoringDialog {
   protected void doAction() {
     final String name = myNameField.getText().trim();
     if (!LanguageNamesValidation.isIdentifier(myElement.getLanguage(), name, myProject)) {
-      CommonRefactoringUtil.showErrorMessage(InvertBooleanHandler.REFACTORING_NAME,
+      CommonRefactoringUtil.showErrorMessage(InvertBooleanHandler.getREFACTORING_NAME(),
                                              RefactoringBundle.message("please.enter.a.valid.name.for.inverted.element",
                                                                        UsageViewUtil.getType(myElement)),
                                              getHelpId(), myProject);

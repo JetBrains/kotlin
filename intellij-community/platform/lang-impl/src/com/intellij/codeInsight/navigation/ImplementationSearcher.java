@@ -32,8 +32,6 @@ import com.intellij.util.Query;
 import org.jetbrains.annotations.Nullable;
 
 public class ImplementationSearcher {
-  public static final String SEARCHING_FOR_IMPLEMENTATIONS = CodeInsightBundle.message("searching.for.implementations");
-
   @Nullable
   PsiElement[] searchImplementations(Editor editor, PsiElement element, int offset) {
     TargetElementUtil targetElementUtil = TargetElementUtil.getInstance();
@@ -63,7 +61,7 @@ public class ImplementationSearcher {
     Ref<PsiElement[]> result = Ref.create();
     if (!ProgressManager.getInstance().runProcessWithProgressSynchronously(
       () -> result.set(search(element, editor).toArray(PsiElement.EMPTY_ARRAY)),
-      SEARCHING_FOR_IMPLEMENTATIONS, true, element.getProject())) {
+      getSEARCHING_FOR_IMPLEMENTATIONS(), true, element.getProject())) {
       return null;
     }
     return result.get();
@@ -103,7 +101,7 @@ public class ImplementationSearcher {
             }
           });
         }
-      }, SEARCHING_FOR_IMPLEMENTATIONS, true, element.getProject())) {
+      }, getSEARCHING_FOR_IMPLEMENTATIONS(), true, element.getProject())) {
         return null;
       }
       PsiElement foundElement = collectProcessor.getFoundElement();
@@ -134,5 +132,9 @@ public class ImplementationSearcher {
     }
 
     protected abstract void processElement(PsiElement element);
+  }
+
+  public static String getSEARCHING_FOR_IMPLEMENTATIONS() {
+    return CodeInsightBundle.message("searching.for.implementations");
   }
 }

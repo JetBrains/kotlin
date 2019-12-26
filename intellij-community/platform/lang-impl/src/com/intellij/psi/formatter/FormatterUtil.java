@@ -27,7 +27,7 @@ public class FormatterUtil {
 
   public static final String REFORMAT_BEFORE_COMMIT_COMMAND_NAME = CodeInsightBundle.message("process.reformat.code.before.commit");
   public static final Collection<String> FORMATTER_ACTION_NAMES = Collections.unmodifiableCollection(ContainerUtil.newHashSet(
-    ReformatCodeProcessor.COMMAND_NAME, REFORMAT_BEFORE_COMMIT_COMMAND_NAME
+    ReformatCodeProcessor.getCOMMAND_NAME(), REFORMAT_BEFORE_COMMIT_COMMAND_NAME
   ));
 
   private FormatterUtil() {

@@ -34,7 +34,6 @@ import javax.swing.*;
 
 public class DisableInspectionToolAction extends IntentionAndQuickFixAction implements Iconable {
   private final String myToolId;
-  public static final String NAME = InspectionsBundle.message("disable.inspection.action.name");
 
   public DisableInspectionToolAction(LocalInspectionTool tool) {
     myToolId = tool.getShortName();
@@ -47,13 +46,13 @@ public class DisableInspectionToolAction extends IntentionAndQuickFixAction impl
   @NotNull
   @Override
   public String getName() {
-    return NAME;
+    return getNAME();
   }
 
   @Override
   @NotNull
   public String getFamilyName() {
-    return NAME;
+    return getNAME();
   }
 
   @Override
@@ -77,5 +76,9 @@ public class DisableInspectionToolAction extends IntentionAndQuickFixAction impl
   @Override
   public Icon getIcon(int flags) {
     return AllIcons.Actions.Cancel;
+  }
+
+  public static String getNAME() {
+    return InspectionsBundle.message("disable.inspection.action.name");
   }
 }

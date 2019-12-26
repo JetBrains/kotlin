@@ -280,7 +280,7 @@ public abstract class InspectionRVContentProvider {
                                                    model,
                                                    currentParent,
                                                    showStructure
-                                                   || HighlightInfoType.UNUSED_SYMBOL_DISPLAY_NAME.equals(toolWrapper.getDisplayName())
+                                                   || HighlightInfoType.getUNUSED_SYMBOL_DISPLAY_NAME().equals(toolWrapper.getDisplayName())
                                                    || presentation.isDummy());
         appendDescriptor(context, toolWrapper, container, node);
       }

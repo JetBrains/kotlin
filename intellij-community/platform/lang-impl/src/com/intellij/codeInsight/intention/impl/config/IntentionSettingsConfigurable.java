@@ -14,7 +14,6 @@ import javax.swing.*;
 public class IntentionSettingsConfigurable implements SearchableConfigurable, MasterDetails, IntentionsConfigurable {
   private IntentionSettingsPanel myPanel;
   @NonNls public static final String HELP_ID = "preferences.intentionPowerPack";
-  public static final String DISPLAY_NAME = CodeInsightBundle.message("intention.settings");
 
   @Override
   public JComponent createComponent() {
@@ -62,7 +61,7 @@ public class IntentionSettingsConfigurable implements SearchableConfigurable, Ma
 
   @Override
   public String getDisplayName() {
-    return DISPLAY_NAME;
+    return getDISPLAY_NAME();
   }
 
   @Override
@@ -102,5 +101,9 @@ public class IntentionSettingsConfigurable implements SearchableConfigurable, Ma
   @Override
   public void selectIntention(@NotNull String familyName) {
     myPanel.selectIntention(familyName);
+  }
+
+  public static String getDISPLAY_NAME() {
+    return CodeInsightBundle.message("intention.settings");
   }
 }

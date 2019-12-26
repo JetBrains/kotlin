@@ -12,11 +12,10 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 public final class ChangeListScope extends FilteredNamedScope implements WeighedItem {
-  public static final String NAME = IdeBundle.message("scope.modified.files");
   private static final Icon ICON = new OffsetIcon(AllIcons.Scope.ChangedFiles);
 
   public ChangeListScope(@NotNull ChangeListManager manager) {
-    super(NAME, AllIcons.Scope.ChangedFilesAll, 0, manager::isFileAffected);
+    super(getNAME(), AllIcons.Scope.ChangedFilesAll, 0, manager::isFileAffected);
   }
 
   public ChangeListScope(@NotNull ChangeListManager manager, @NotNull String name) {
@@ -48,5 +47,9 @@ public final class ChangeListScope extends FilteredNamedScope implements Weighed
   @Override
   public int getWeight() {
     return AllIcons.Scope.ChangedFilesAll == getIcon() ? 0 : 1;
+  }
+
+  public static String getNAME() {
+    return IdeBundle.message("scope.modified.files");
   }
 }

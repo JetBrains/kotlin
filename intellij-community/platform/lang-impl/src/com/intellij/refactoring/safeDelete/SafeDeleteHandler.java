@@ -29,15 +29,14 @@ import java.util.*;
  * @author dsl
  */
 public class SafeDeleteHandler implements RefactoringActionHandler {
-  public static final String REFACTORING_NAME = RefactoringBundle.message("safe.delete.title");
-
   @Override
   public void invoke(@NotNull Project project, Editor editor, PsiFile file, DataContext dataContext) {
     PsiElement element = CommonDataKeys.PSI_ELEMENT.getData(dataContext);
     editor.getScrollingModel().scrollToCaret(ScrollType.MAKE_VISIBLE);
     if (element == null || !SafeDeleteProcessor.validElement(element)) {
-      String message = RefactoringBundle.getCannotRefactorMessage(RefactoringBundle.message("is.not.supported.in.the.current.context", REFACTORING_NAME));
-      CommonRefactoringUtil.showErrorHint(project, editor, message, REFACTORING_NAME, "refactoring.safeDelete");
+      String message = RefactoringBundle.getCannotRefactorMessage(RefactoringBundle.message("is.not.supported.in.the.current.context",
+                                                                                            getREFACTORING_NAME()));
+      CommonRefactoringUtil.showErrorHint(project, editor, message, getREFACTORING_NAME(), "refactoring.safeDelete");
       return;
     }
     invoke(project, new PsiElement[]{element}, dataContext);
@@ -130,5 +129,9 @@ public class SafeDeleteHandler implements RefactoringActionHandler {
       SafeDeleteDialog dialog = new SafeDeleteDialog(project, elementsToDelete, callback);
       dialog.show();
     }
+  }
+
+  public static String getREFACTORING_NAME() {
+    return RefactoringBundle.message("safe.delete.title");
   }
 }

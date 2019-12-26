@@ -13,7 +13,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.arrangement.Rearranger;
 import com.intellij.psi.codeStyle.arrangement.engine.ArrangementEngine;
 import com.intellij.util.SmartList;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.diff.FilesTooBigForDiffException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,27 +23,26 @@ import java.util.concurrent.FutureTask;
 public class RearrangeCodeProcessor extends AbstractLayoutCodeProcessor {
 
   public static final String COMMAND_NAME = "Rearrange code";
-  public static final String PROGRESS_TEXT = CodeInsightBundle.message("process.rearrange.code");
 
   private static final Logger LOG = Logger.getInstance(RearrangeCodeProcessor.class);
   private SelectionModel mySelectionModel;
 
   public RearrangeCodeProcessor(@NotNull AbstractLayoutCodeProcessor previousProcessor) {
-    super(previousProcessor, COMMAND_NAME, PROGRESS_TEXT);
+    super(previousProcessor, COMMAND_NAME, getPROGRESS_TEXT());
   }
 
   public RearrangeCodeProcessor(@NotNull AbstractLayoutCodeProcessor previousProcessor, @NotNull SelectionModel selectionModel) {
-    super(previousProcessor, COMMAND_NAME, PROGRESS_TEXT);
+    super(previousProcessor, COMMAND_NAME, getPROGRESS_TEXT());
     mySelectionModel = selectionModel;
   }
 
   public RearrangeCodeProcessor(@NotNull PsiFile file, @NotNull SelectionModel selectionModel) {
-    super(file.getProject(), file, PROGRESS_TEXT, COMMAND_NAME, false);
+    super(file.getProject(), file, getPROGRESS_TEXT(), COMMAND_NAME, false);
     mySelectionModel = selectionModel;
   }
 
   public RearrangeCodeProcessor(@NotNull PsiFile file) {
-    super(file.getProject(), file, PROGRESS_TEXT, COMMAND_NAME, false);
+    super(file.getProject(), file, getPROGRESS_TEXT(), COMMAND_NAME, false);
   }
 
   @SuppressWarnings("unused") // Required for compatibility with external plugins.
@@ -60,7 +58,7 @@ public class RearrangeCodeProcessor extends AbstractLayoutCodeProcessor {
                                 @NotNull String commandName,
                                 @Nullable Runnable postRunnable,
                                 boolean processChangedTextOnly) {
-    super(project, files, PROGRESS_TEXT, commandName, postRunnable, processChangedTextOnly);
+    super(project, files, getPROGRESS_TEXT(), commandName, postRunnable, processChangedTextOnly);
   }
 
   @NotNull
@@ -114,5 +112,9 @@ public class RearrangeCodeProcessor extends AbstractLayoutCodeProcessor {
     }
 
     return new SmartList<>(file.getTextRange());
+  }
+
+  public static String getPROGRESS_TEXT() {
+    return CodeInsightBundle.message("process.rearrange.code");
   }
 }

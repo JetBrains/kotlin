@@ -22,10 +22,12 @@ import com.intellij.refactoring.RefactoringBundle;
 import org.jetbrains.annotations.NotNull;
 
 public class IntroduceFunctionalVariableAction extends IntroduceActionBase {
-  public static final String REFACTORING_NAME = RefactoringBundle.message("introduce.functional.variable.title");
-
   @Override
   protected RefactoringActionHandler getRefactoringHandler(@NotNull RefactoringSupportProvider provider) {
     return provider.getIntroduceFunctionalVariableHandler();
+  }
+
+  public static String getREFACTORING_NAME() {
+    return RefactoringBundle.message("introduce.functional.variable.title");
   }
 }

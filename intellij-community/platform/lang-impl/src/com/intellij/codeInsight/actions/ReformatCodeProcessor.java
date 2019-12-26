@@ -26,54 +26,51 @@ import java.util.Collection;
 import java.util.concurrent.FutureTask;
 
 public class ReformatCodeProcessor extends AbstractLayoutCodeProcessor {
-  
-  public static final String COMMAND_NAME = CodeInsightBundle.message("process.reformat.code");
-
   private static final Logger LOG = Logger.getInstance(ReformatCodeProcessor.class);
 
   private final Collection<TextRange> myRanges = new ArrayList<>();
   private SelectionModel mySelectionModel;
 
   public ReformatCodeProcessor(Project project, boolean processChangedTextOnly) {
-    super(project, COMMAND_NAME, getPROGRESS_TEXT(), processChangedTextOnly);
+    super(project, getCOMMAND_NAME(), getPROGRESS_TEXT(), processChangedTextOnly);
   }
 
   public ReformatCodeProcessor(@NotNull PsiFile file, @NotNull SelectionModel selectionModel) {
-    super(file.getProject(), file, getPROGRESS_TEXT(), COMMAND_NAME, false);
+    super(file.getProject(), file, getPROGRESS_TEXT(), getCOMMAND_NAME(), false);
     mySelectionModel = selectionModel;
   }
 
   public ReformatCodeProcessor(AbstractLayoutCodeProcessor processor, @NotNull SelectionModel selectionModel) {
-    super(processor, COMMAND_NAME, getPROGRESS_TEXT());
+    super(processor, getCOMMAND_NAME(), getPROGRESS_TEXT());
     mySelectionModel = selectionModel;
   }
 
   public ReformatCodeProcessor(AbstractLayoutCodeProcessor processor, boolean processChangedTextOnly) {
-    super(processor, COMMAND_NAME, getPROGRESS_TEXT());
+    super(processor, getCOMMAND_NAME(), getPROGRESS_TEXT());
     setProcessChangedTextOnly(processChangedTextOnly);
   }
 
   public ReformatCodeProcessor(Project project, Module module, boolean processChangedTextOnly) {
-    super(project, module, COMMAND_NAME, getPROGRESS_TEXT(), processChangedTextOnly);
+    super(project, module, getCOMMAND_NAME(), getPROGRESS_TEXT(), processChangedTextOnly);
   }
 
   public ReformatCodeProcessor(Project project, PsiDirectory directory, boolean includeSubdirs, boolean processChangedTextOnly) {
-    super(project, directory, includeSubdirs, getPROGRESS_TEXT(), COMMAND_NAME, processChangedTextOnly);
+    super(project, directory, includeSubdirs, getPROGRESS_TEXT(), getCOMMAND_NAME(), processChangedTextOnly);
   }
 
   public ReformatCodeProcessor(Project project, PsiFile file, @Nullable TextRange range, boolean processChangedTextOnly) {
-    super(project, file, getPROGRESS_TEXT(), COMMAND_NAME, processChangedTextOnly);
+    super(project, file, getPROGRESS_TEXT(), getCOMMAND_NAME(), processChangedTextOnly);
     if (range != null) {
       myRanges.add(range);
     }
   }
 
   public ReformatCodeProcessor(@NotNull PsiFile file, boolean processChangedTextOnly) {
-    super(file.getProject(), file, getPROGRESS_TEXT(), COMMAND_NAME, processChangedTextOnly);
+    super(file.getProject(), file, getPROGRESS_TEXT(), getCOMMAND_NAME(), processChangedTextOnly);
   }
 
   public ReformatCodeProcessor(Project project, PsiFile[] files, @Nullable Runnable postRunnable, boolean processChangedTextOnly) {
-    this(project, files, COMMAND_NAME, postRunnable, processChangedTextOnly);
+    this(project, files, getCOMMAND_NAME(), postRunnable, processChangedTextOnly);
   }
 
   public ReformatCodeProcessor(Project project,
@@ -176,5 +173,9 @@ public class ReformatCodeProcessor extends AbstractLayoutCodeProcessor {
 
   private static String getPROGRESS_TEXT() {
     return CodeInsightBundle.message("reformat.progress.common.text");
+  }
+
+  public static String getCOMMAND_NAME() {
+    return CodeInsightBundle.message("process.reformat.code");
   }
 }

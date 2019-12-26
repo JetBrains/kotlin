@@ -194,7 +194,8 @@ public final class IntentionManagerSettings implements PersistentStateComponent<
         descriptionText = HTML_PATTERN.matcher(descriptionText).replaceAll(" ");
         Set<String> words = registrar.getProcessedWordsWithoutStemming(descriptionText);
         words.addAll(registrar.getProcessedWords(metaData.getFamily()));
-        registrar.addOptions(words, metaData.getFamily(), metaData.getFamily(), IntentionSettingsConfigurable.HELP_ID, IntentionSettingsConfigurable.DISPLAY_NAME);
+        registrar.addOptions(words, metaData.getFamily(), metaData.getFamily(), IntentionSettingsConfigurable.HELP_ID,
+                             IntentionSettingsConfigurable.getDISPLAY_NAME());
       }
       catch (IOException e) {
         LOG.error(e);

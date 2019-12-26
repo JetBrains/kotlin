@@ -182,7 +182,7 @@ public class GotoImplementationHandler extends GotoTargetHandler {
     // due to javac bug: java.lang.ClassFormatError: Illegal field name "com.intellij.codeInsight.navigation.GotoImplementationHandler$this" in class com/intellij/codeInsight/navigation/GotoImplementationHandler$ImplementationsUpdaterTask
     @SuppressWarnings("Convert2Lambda")
     ImplementationsUpdaterTask(@NotNull GotoData gotoData, @NotNull Editor editor, int offset, final PsiReference reference) {
-      super(gotoData.source.getProject(), ImplementationSearcher.SEARCHING_FOR_IMPLEMENTATIONS,
+      super(gotoData.source.getProject(), ImplementationSearcher.getSEARCHING_FOR_IMPLEMENTATIONS(),
             createComparatorWrapper(Comparator.comparing(new Function<PsiElement, Comparable>() {
                 @Override
                 public Comparable apply(PsiElement e1) {

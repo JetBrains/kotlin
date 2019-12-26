@@ -21,12 +21,10 @@ import com.intellij.openapi.application.ApplicationBundle;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 
 public class OtherFileTypesCodeStyleConfigurable extends CodeStyleAbstractConfigurable {
-  public static final String DISPLAY_NAME = ApplicationBundle.message("code.style.other.file.types");
-
   private final OtherFileTypesCodeStyleOptionsForm myOptionsForm;
 
   public OtherFileTypesCodeStyleConfigurable(CodeStyleSettings currSettings, CodeStyleSettings modelSettings) {
-    super(currSettings, modelSettings, DISPLAY_NAME);
+    super(currSettings, modelSettings, getDISPLAY_NAME());
     myOptionsForm = new OtherFileTypesCodeStyleOptionsForm(modelSettings);
   }
 
@@ -39,4 +37,8 @@ public class OtherFileTypesCodeStyleConfigurable extends CodeStyleAbstractConfig
   public String getHelpTopic() {
         return "settings.editor.codeStyle.other";
       }
+
+  public static String getDISPLAY_NAME() {
+    return ApplicationBundle.message("code.style.other.file.types");
+  }
 }
