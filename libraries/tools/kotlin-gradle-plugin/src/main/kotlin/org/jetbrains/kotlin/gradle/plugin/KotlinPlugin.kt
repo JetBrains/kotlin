@@ -344,10 +344,6 @@ internal class KotlinJsIrSourceSetProcessor(
 
         registerCleanSourceMapTask()
 
-        if (kotlinCompilation is KotlinWithJavaCompilation<*>) {
-            kotlinCompilation.javaSourceSet.clearJavaSrcDirs()
-        }
-
         // outputFile can be set later during the configuration phase, get it only after the phase:
         project.runOnceAfterEvaluated("Kotlin2JsSourceSetProcessor.doTargetSpecificProcessing", kotlinTask) {
             val kotlinTaskInstance = kotlinTask.get()
@@ -377,12 +373,12 @@ internal class KotlinJsIrSourceSetProcessor(
 
     private fun registerCleanSourceMapTask() {
         val taskName = kotlinCompilation.composeName("clean", "sourceMap")
-        project.createOrRegisterTask(taskName, {
+        project.createOrRegisterTask(taskName) {
             it.onlyIf { kotlinTask.get().kotlinOptions.sourceMap }
             it.delete(object : Closure<String>(this) {
                 override fun call(): String? = (kotlinTask.get().property("outputFile") as File).canonicalPath + ".map"
             })
-        })
+        }
         project.tasks.findByName("clean")?.dependsOn(taskName)
     }
 }

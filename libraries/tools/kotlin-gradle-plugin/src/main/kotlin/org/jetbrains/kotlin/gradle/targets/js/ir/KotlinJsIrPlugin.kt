@@ -11,7 +11,6 @@ import org.gradle.api.plugins.JavaBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsIrProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.configureDefaultVersionsResolutionStrategy
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsIrSingleTargetPreset
 import org.jetbrains.kotlin.gradle.utils.checkGradleCompatibility
 
 open class KotlinJsIrPlugin(
