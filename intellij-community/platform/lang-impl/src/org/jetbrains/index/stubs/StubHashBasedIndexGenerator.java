@@ -17,35 +17,44 @@ import com.intellij.util.indexing.impl.UpdateData;
 import com.intellij.util.io.EnumeratorIntegerDescriptor;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class StubHashBasedIndexGenerator extends HashBasedIndexGenerator<Integer, SerializedStubTree> {
-  private final Map<StubIndexKey, HashBasedIndexGenerator> myStubIndexesGeneratorMap = new HashMap<>();
-  private final Set<StubIndexKey> myUsedKeys = new HashSet<>();
 
-  public StubHashBasedIndexGenerator(@NotNull File out) {
-    super(EnumeratorIntegerDescriptor.INSTANCE, new SerializedStubTreeDataExternalizer(
-            true,
-            null,
-            StubForwardIndexExternalizer.FileLocalStubForwardIndexExternalizer.INSTANCE), getExtension(), out);
+  private final Map<StubIndexKey<?, ?>, HashBasedIndexGenerator<?, ?>> myStubIndexesGeneratorMap = new HashMap<>();
+
+  private final Path myStubIndicesRoot;
+
+  public StubHashBasedIndexGenerator(@NotNull Path outRoot) {
+    super(
+      EnumeratorIntegerDescriptor.INSTANCE,
+      new SerializedStubTreeDataExternalizer(true, null, StubForwardIndexExternalizer.FileLocalStubForwardIndexExternalizer.INSTANCE),
+      new StubUpdatingIndex(StubForwardIndexExternalizer.FileLocalStubForwardIndexExternalizer.INSTANCE),
+      outRoot
+    );
+
+    myStubIndicesRoot = outRoot.resolve(StringUtil.toLowerCase(StubUpdatingIndex.INDEX_ID.getName()));
+
     for (StubIndexExtension<?, ?> stubIndexExtension : StubIndexExtension.EP_NAME.getExtensionList()) {
-      FileBasedIndexExtension<?, Void> ex = StubIndexImpl
-              .wrapStubIndexExtension(stubIndexExtension);
-      myStubIndexesGeneratorMap.put(stubIndexExtension.getKey(), new HashBasedIndexGenerator(ex.getKeyDescriptor(),
-              ex.getValueExternalizer(),
-              ex,
-              new File(out, getStubsDir())
-      ) {
-
-      });
+      FileBasedIndexExtension<?, Void> extension = StubIndexImpl.wrapStubIndexExtension(stubIndexExtension);
+      HashBasedIndexGenerator<?, Void> hashBasedIndexGenerator = createGenerator(extension);
+      myStubIndexesGeneratorMap.put(stubIndexExtension.getKey(), hashBasedIndexGenerator);
     }
   }
 
   @NotNull
-  private static String getStubsDir() {
-    return StringUtil.toLowerCase(StubUpdatingIndex.INDEX_ID.getName());
+  private <K, V> HashBasedIndexGenerator<K, V> createGenerator(FileBasedIndexExtension<K, V> extension) {
+    return new HashBasedIndexGenerator<>(extension.getKeyDescriptor(), extension.getValueExternalizer(), extension, myStubIndicesRoot);
+  }
+
+  @NotNull
+  public List<HashBasedIndexGenerator<?, ?>> getStubGenerators() {
+    return new ArrayList<>(myStubIndexesGeneratorMap.values());
   }
 
   @Override
@@ -57,17 +66,23 @@ public class StubHashBasedIndexGenerator extends HashBasedIndexGenerator<Integer
     for (Map.Entry<StubIndexKey, Map<Object, StubIdList>> entry : map.entrySet()) {
       StubIndexKey key = entry.getKey();
       Map<Object, StubIdList> value = entry.getValue();
-      myUsedKeys.add(key);
       MapReduceIndex index = (MapReduceIndex)myStubIndexesGeneratorMap.get(key).getIndex();
       Map<Object, Object> reducedValue = Maps.asMap(value.keySet(), k -> null);
-      index.updateWithMap(new UpdateData(hashId, reducedValue, () -> new EmptyInputDataDiffBuilder(hashId), index.getExtension().getName(), null));
+      UpdateData<?, ?> updateData = new UpdateData(
+        hashId,
+        reducedValue,
+        () -> new EmptyInputDataDiffBuilder(hashId),
+        index.getExtension().getName(),
+        null
+      );
+      index.updateWithMap(updateData);
     }
   }
 
   @Override
   public void openIndex() throws IOException {
     super.openIndex();
-    for (HashBasedIndexGenerator generator : myStubIndexesGeneratorMap.values()) {
+    for (HashBasedIndexGenerator<?, ?> generator : myStubIndexesGeneratorMap.values()) {
       generator.openIndex();
     }
   }
@@ -75,15 +90,11 @@ public class StubHashBasedIndexGenerator extends HashBasedIndexGenerator<Integer
   @Override
   public void closeIndex() throws IOException {
     super.closeIndex();
-    for (Map.Entry<StubIndexKey, HashBasedIndexGenerator> entry : myStubIndexesGeneratorMap.entrySet()) {
-      HashBasedIndexGenerator generator = entry.getValue();
-      generator.closeIndex();
+    for (Map.Entry<StubIndexKey<?, ?>, HashBasedIndexGenerator<?, ?>> entry : myStubIndexesGeneratorMap.entrySet()) {
+      entry.getValue().closeIndex();
     }
     ((SerializationManagerEx)SerializationManager.getInstance()).flushNameStorage();
-    FileUtil.copyDir(PathManager.getIndexRoot(), new File(getOut(), getStubsDir()), f -> f.getName().startsWith("rep.names"));
-  }
 
-  private static StubUpdatingIndex getExtension() {
-    return (new StubUpdatingIndex(StubForwardIndexExternalizer.FileLocalStubForwardIndexExternalizer.INSTANCE));
+    FileUtil.copyDir(PathManager.getIndexRoot(), myStubIndicesRoot.toFile(), f -> f.getName().startsWith("rep.names"));
   }
 }
