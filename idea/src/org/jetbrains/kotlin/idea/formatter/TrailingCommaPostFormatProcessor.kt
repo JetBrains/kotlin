@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.psi.psiUtil.getPrevSiblingIgnoringWhitespace
 import org.jetbrains.kotlin.psi.psiUtil.getPrevSiblingIgnoringWhitespaceAndComments
 import org.jetbrains.kotlin.psi.psiUtil.siblings
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class TrailingCommaPostFormatProcessor : PostFormatProcessor {
@@ -59,10 +60,18 @@ private class TrailingCommaVisitor(val settings: CodeStyleSettings) : KtTreeVisi
         super.visitCollectionLiteralExpression(expression)
     }
 
-    private fun processCommaOwnerIfInRange(element: KtElement, preHook: () -> Unit = {}) {
+    override fun visitWhenEntry(jetWhenEntry: KtWhenEntry) = processCommaOwnerIfInRange(jetWhenEntry) {
+        super.visitWhenEntry(jetWhenEntry)
+    }
+
+    private fun processCommaOwnerIfInRange(element: KtElement, preHook: () -> Unit = {}) = processIfInRange(element) {
+        preHook()
+        processCommaOwner(element)
+    }
+
+    private fun processIfInRange(element: KtElement, block: () -> Unit = {}) {
         if (myPostProcessor.isElementPartlyInRange(element)) {
-            preHook()
-            processCommaOwner(element)
+            block()
         }
     }
 
@@ -82,8 +91,9 @@ private class TrailingCommaVisitor(val settings: CodeStyleSettings) : KtTreeVisi
     }
 
     private val KtElement.needComma: Boolean
-        get() = when (val parent = parent) {
-            is KtFunctionLiteral -> parent.needTrailingComma(settings)
+        get() = when {
+            this is KtWhenEntry -> needTrailingComma(settings)
+            parent is KtFunctionLiteral -> parent.cast<KtFunctionLiteral>().needTrailingComma(settings)
             else -> settings.kotlinCustomSettings.ALLOW_TRAILING_COMMA && isMultiline()
         }
 
@@ -138,12 +148,18 @@ private class TrailingCommaVisitor(val settings: CodeStyleSettings) : KtTreeVisi
 
 private val PsiElement.lastCommaOwnerOrComma: PsiElement?
     get() {
-        val lastChild = lastChild ?: return null
+        val lastChild = lastSignificantChild ?: return null
         val withSelf = when (lastChild.safeAs<ASTNode>()?.elementType) {
             KtTokens.COMMA -> return lastChild
-            KtTokens.RBRACKET, KtTokens.RPAR, KtTokens.RBRACE, KtTokens.GT -> false
+            KtTokens.RBRACKET, KtTokens.RPAR, KtTokens.RBRACE, KtTokens.GT, KtTokens.ARROW -> false
             else -> true
         }
 
         return lastChild.getPrevSiblingIgnoringWhitespaceAndComments(withSelf)
+    }
+
+private val PsiElement.lastSignificantChild: PsiElement?
+    get() = when (this) {
+        is KtWhenEntry -> arrow
+        else -> lastChild
     }

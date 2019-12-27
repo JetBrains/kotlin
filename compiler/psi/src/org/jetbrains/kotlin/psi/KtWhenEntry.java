@@ -53,6 +53,11 @@ public class KtWhenEntry extends KtElementImpl {
     }
 
     public PsiElement getTrailingComma() {
-        return KtPsiUtilKt.getTrailingCommaByClosingElement(findChildByType(KtTokens.ARROW));
+        return KtPsiUtilKt.getTrailingCommaByClosingElement(getArrow());
+    }
+
+    @Nullable
+    public PsiElement getArrow() {
+        return findChildByType(KtTokens.ARROW);
     }
 }

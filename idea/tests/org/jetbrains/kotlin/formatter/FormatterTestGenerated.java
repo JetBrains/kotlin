@@ -1319,6 +1319,24 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
                     runTest("idea/testData/formatter/trailingComma/valueParameters/ParameterListWrapAsNeeded.after.kt");
                 }
             }
+
+            @TestMetadata("idea/testData/formatter/trailingComma/whenEntry")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class WhenEntry extends AbstractFormatterTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInWhenEntry() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma/whenEntry"), Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), null, true);
+                }
+
+                @TestMetadata("WhenEntry.after.kt")
+                public void testWhenEntry() throws Exception {
+                    runTest("idea/testData/formatter/trailingComma/whenEntry/WhenEntry.after.kt");
+                }
+            }
         }
     }
 
@@ -1851,6 +1869,24 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
                 @TestMetadata("ParameterListWrapAsNeeded.after.inv.kt")
                 public void testParameterListWrapAsNeeded() throws Exception {
                     runTest("idea/testData/formatter/trailingComma/valueParameters/ParameterListWrapAsNeeded.after.inv.kt");
+                }
+            }
+
+            @TestMetadata("idea/testData/formatter/trailingComma/whenEntry")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class WhenEntry extends AbstractFormatterTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTestInverted, this, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInWhenEntry() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma/whenEntry"), Pattern.compile("^([^\\.]+)\\.after\\.inv\\.kt.*$"), null, true);
+                }
+
+                @TestMetadata("WhenEntry.after.inv.kt")
+                public void testWhenEntry() throws Exception {
+                    runTest("idea/testData/formatter/trailingComma/whenEntry/WhenEntry.after.inv.kt");
                 }
             }
         }

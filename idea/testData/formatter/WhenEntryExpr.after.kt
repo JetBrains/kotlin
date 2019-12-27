@@ -39,16 +39,16 @@ fun some(x: Any) {
     }
     when (x) {
         is
-        Int
+        Int,
         -> {
             0
         }
-        3
+        3,
         -> {
             2
         }
         in
-        0..3
+        0..3,
         -> {
             2
         }

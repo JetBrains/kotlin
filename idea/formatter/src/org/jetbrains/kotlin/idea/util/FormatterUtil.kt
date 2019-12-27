@@ -14,8 +14,11 @@ import com.intellij.psi.codeStyle.CodeStyleSettings
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.formatter.kotlinCustomSettings
 import org.jetbrains.kotlin.psi.KtFunctionLiteral
+import org.jetbrains.kotlin.psi.KtWhenEntry
+import org.jetbrains.kotlin.psi.KtWhenExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 /*
  * ASTBlock.node is nullable, this extension was introduced to minimize changes
@@ -49,6 +52,15 @@ fun KtFunctionLiteral.needTrailingComma(settings: CodeStyleSettings): Boolean = 
         settings.kotlinCustomSettings.ALLOW_TRAILING_COMMA &&
         run(fun(): Boolean {
             val startOffset = valueParameterList?.startOffset ?: return false
+            val endOffset = arrow?.endOffset ?: return false
+            return containsLineBreakInThis(startOffset, endOffset)
+        })
+
+fun KtWhenEntry.needTrailingComma(settings: CodeStyleSettings): Boolean = trailingComma != null ||
+        !isElse &&
+        settings.kotlinCustomSettings.ALLOW_TRAILING_COMMA &&
+        parent.safeAs<KtWhenExpression>()?.leftParenthesis != null &&
+        run(fun(): Boolean {
             val endOffset = arrow?.endOffset ?: return false
             return containsLineBreakInThis(startOffset, endOffset)
         })

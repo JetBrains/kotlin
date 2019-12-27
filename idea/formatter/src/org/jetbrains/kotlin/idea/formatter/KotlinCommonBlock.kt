@@ -304,7 +304,7 @@ abstract class KotlinCommonBlock(
         // do not indent child after heading comments inside declaration
         if (childParent != null && childParent.psi is KtDeclaration) {
             val prev = getPrevWithoutWhitespace(child)
-            if (prev != null && COMMENTS.contains(prev.elementType) && getPrevWithoutWhitespaceAndComments(prev) == null) {
+            if (prev != null && COMMENTS.contains(prev.elementType) && getSiblingWithoutWhitespaceAndComments(prev) == null) {
                 return Indent.getNoneIndent()
             }
         }
@@ -613,7 +613,7 @@ abstract class KotlinCommonBlock(
                         if (nodePsi.parent?.safeAs<KtFunctionLiteral>()?.needTrailingComma(settings) == true) {
                             val check = thisOrPrevIsMultiLineElement(COMMA, LBRACE /* not necessary */, ARROW /* not necessary */)
                             return { childElement ->
-                                createWrapAlwaysIf(getPrevWithoutWhitespaceAndComments(childElement) == null || check(childElement))
+                                createWrapAlwaysIf(getSiblingWithoutWhitespaceAndComments(childElement) == null || check(childElement))
                             }
                         }
                     }
@@ -621,11 +621,23 @@ abstract class KotlinCommonBlock(
             }
 
             elementType === FUNCTION_LITERAL -> {
-                val withTrailingComma = nodePsi.cast<KtFunctionLiteral>().needTrailingComma(settings)
-                return { childElement ->
-                    createWrapAlwaysIf(
-                        withTrailingComma && (childElement.elementType === ARROW || getPrevWithoutWhitespaceAndComments(childElement)?.elementType === LBRACE)
-                    )
+                if (nodePsi.cast<KtFunctionLiteral>().needTrailingComma(settings))
+                    return { childElement ->
+                        createWrapAlwaysIf(childElement.elementType === ARROW || getSiblingWithoutWhitespaceAndComments(childElement)?.elementType === LBRACE)
+                    }
+            }
+
+            elementType === WHEN_ENTRY -> {
+                // with argument
+                if (nodePsi.cast<KtWhenEntry>().needTrailingComma(settings)) {
+                    val check = thisOrPrevIsMultiLineElement(COMMA, LBRACE /* not necessary */, ARROW /* not necessary */)
+                    return { childElement ->
+                        createWrapAlwaysIf(
+                            childElement.elementType === ARROW ||
+                                    getSiblingWithoutWhitespaceAndComments(childElement, true) != null &&
+                                    check(childElement)
+                        )
+                    }
                 }
             }
 
@@ -686,7 +698,7 @@ abstract class KotlinCommonBlock(
                     getWrapAfterAnnotation(childElement, commonSettings.METHOD_ANNOTATION_WRAP)?.let {
                         return@wrap it
                     }
-                    if (getPrevWithoutWhitespaceAndComments(childElement)?.elementType == EQ) {
+                    if (getSiblingWithoutWhitespaceAndComments(childElement)?.elementType == EQ) {
                         return@wrap Wrap.createWrap(settings.kotlinCustomSettings.WRAP_EXPRESSION_BODY_FUNCTIONS, true)
                     }
                     null
@@ -698,7 +710,7 @@ abstract class KotlinCommonBlock(
                     getWrapAfterAnnotation(childElement, wrapSetting)?.let {
                         return@wrap it
                     }
-                    if (getPrevWithoutWhitespaceAndComments(childElement)?.elementType == EQ) {
+                    if (getSiblingWithoutWhitespaceAndComments(childElement)?.elementType == EQ) {
                         return@wrap Wrap.createWrap(settings.kotlinCommonSettings.ASSIGNMENT_WRAP, true)
                     }
                     null
@@ -707,7 +719,7 @@ abstract class KotlinCommonBlock(
             nodePsi is KtBinaryExpression -> {
                 if (nodePsi.operationToken == EQ) {
                     return { childElement ->
-                        if (getPrevWithoutWhitespaceAndComments(childElement)?.elementType == OPERATION_REFERENCE) {
+                        if (getSiblingWithoutWhitespaceAndComments(childElement)?.elementType == OPERATION_REFERENCE) {
                             Wrap.createWrap(settings.kotlinCommonSettings.ASSIGNMENT_WRAP, true)
                         } else {
                             null
@@ -737,7 +749,7 @@ abstract class KotlinCommonBlock(
 
     private val ASTNode.withTrailingComma: Boolean
         get() = when {
-            lastChildNode?.let { getPrevWithoutWhitespaceAndComments(it) }?.elementType === COMMA -> true
+            lastChildNode?.let { getSiblingWithoutWhitespaceAndComments(it) }?.elementType === COMMA -> true
             settings.kotlinCustomSettings.ALLOW_TRAILING_COMMA -> psi?.let(PsiElement::isMultiline) == true
             else -> false
         }
@@ -796,7 +808,7 @@ abstract class KotlinCommonBlock(
         val childElementType = childElement.elementType
         createWrapAlwaysIf(
             childElement.treeParent.withTrailingComma && (childElementType === rightAnchor ||
-                    getPrevWithoutWhitespaceAndComments(childElement)?.elementType === leftAnchor ||
+                    getSiblingWithoutWhitespaceAndComments(childElement)?.elementType === leftAnchor ||
                     additionalCheck(childElement)
                     )
         )
@@ -1110,8 +1122,8 @@ private fun getPrevWithoutWhitespace(pNode: ASTNode): ASTNode? {
     return pNode.siblings(forward = false).firstOrNull { it.elementType != TokenType.WHITE_SPACE }
 }
 
-private fun getPrevWithoutWhitespaceAndComments(pNode: ASTNode): ASTNode? {
-    return pNode.siblings(forward = false).firstOrNull {
+private fun getSiblingWithoutWhitespaceAndComments(pNode: ASTNode, forward: Boolean = false): ASTNode? {
+    return pNode.siblings(forward = forward).firstOrNull {
         it.elementType != TokenType.WHITE_SPACE && it.elementType !in COMMENTS
     }
 }
