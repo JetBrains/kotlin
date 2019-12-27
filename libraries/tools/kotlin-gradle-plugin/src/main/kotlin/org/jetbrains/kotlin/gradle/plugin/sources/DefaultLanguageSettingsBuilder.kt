@@ -103,7 +103,7 @@ internal fun applyLanguageSettingsToKotlinTask(
     }
 
     languageSettingsBuilder.experimentalAnnotationsInUse.forEach { annotationName ->
-        freeCompilerArgs += "-Xuse-experimental=$annotationName"
+        freeCompilerArgs += "-Xopt-in=$annotationName"
     }
 }
 
