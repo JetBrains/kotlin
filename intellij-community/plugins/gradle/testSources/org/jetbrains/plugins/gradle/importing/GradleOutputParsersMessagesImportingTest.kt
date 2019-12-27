@@ -127,6 +127,11 @@ open class GradleOutputParsersMessagesImportingTest : BuildViewMessagesImporting
                              "  Could not resolve junit:junit:4.12")
     assertSyncViewSelectedNode("Could not resolve junit:junit:4.12",
                                "Cannot resolve external dependency junit:junit:4.12 because no repositories are defined.\n" +
+                               when {
+                                 isNewDependencyResolutionApplicable -> "Required by:\n" +
+                                                                        "    project :\n"
+                                 else -> ""
+                               } +
                                "\n" +
                                "Possible solution:\n" +
                                " - Declare repository providing the artifact, see the documentation at https://docs.gradle.org/current/userguide/declaring_repositories.html\n" +
@@ -146,7 +151,10 @@ open class GradleOutputParsersMessagesImportingTest : BuildViewMessagesImporting
                              " -finished\n" +
                              "  Could not resolve junit:junit:99.99")
     assertSyncViewSelectedNode("Could not resolve junit:junit:99.99",
-                               "Could not resolve junit:junit:99.99.\n" +
+                               when {
+                                 isNewDependencyResolutionApplicable -> "No cached version of junit:junit:99.99 available for offline mode.\n"
+                                 else -> "Could not resolve junit:junit:99.99.\n"
+                               } +
                                "\n" +
                                "Possible solution:\n" +
                                " - Disable offline mode and reimport the project\n" +
@@ -178,6 +186,11 @@ open class GradleOutputParsersMessagesImportingTest : BuildViewMessagesImporting
                                "Searched in the following locations:\n" +
                                "  $itemLinePrefix https://repo.labs.intellij.net/repo1/junit/junit/99.99/junit-99.99.pom\n" +
                                "  $itemLinePrefix https://repo.labs.intellij.net/repo1/junit/junit/99.99/junit-99.99.jar\n" +
+                               when {
+                                 isNewDependencyResolutionApplicable -> "Required by:\n" +
+                                                                        "    project :\n"
+                                 else -> ""
+                               } +
                                "\n" +
                                "Possible solution:\n" +
                                " - Declare repository providing the artifact, see the documentation at https://docs.gradle.org/current/userguide/declaring_repositories.html\n" +

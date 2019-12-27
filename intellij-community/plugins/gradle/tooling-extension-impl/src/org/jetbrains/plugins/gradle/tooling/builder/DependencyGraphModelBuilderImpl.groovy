@@ -7,18 +7,16 @@ import com.intellij.openapi.externalSystem.model.project.dependencies.ProjectDep
 import com.intellij.openapi.externalSystem.model.project.dependencies.ProjectDependenciesImpl
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
-import org.gradle.util.GradleVersion
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.plugins.gradle.tooling.ErrorMessageBuilder
 import org.jetbrains.plugins.gradle.tooling.ModelBuilderService
 import org.jetbrains.plugins.gradle.tooling.tasks.DependenciesReport
 import org.jetbrains.plugins.gradle.tooling.util.JavaPluginUtil
 
+import static org.jetbrains.plugins.gradle.tooling.util.resolve.DependencyResolverImpl.isNewDependencyResolutionApplicable
+
 @CompileStatic
 class DependencyGraphModelBuilderImpl implements ModelBuilderService {
-  def compileClasspathConfigurationAvailable = GradleVersion.current().baseVersion >= GradleVersion.version("2.12")
-  def runtimeClasspathConfigurationAvailable = GradleVersion.current().baseVersion >= GradleVersion.version("3.4")
-
   @Override
   boolean canBuild(String modelName) {
     return ProjectDependencies.name == modelName
@@ -27,20 +25,18 @@ class DependencyGraphModelBuilderImpl implements ModelBuilderService {
   @Override
   Object buildAll(String modelName, Project project) {
     def resolveSourceSetDependencies = System.properties.'idea.resolveSourceSetDependencies' as boolean
-    if (!resolveSourceSetDependencies) return null
+    if (!resolveSourceSetDependencies || !isIsNewDependencyResolutionApplicable()) return null
 
     def sourceSetContainer = JavaPluginUtil.getSourceSetContainer(project)
     if (sourceSetContainer == null) return null
 
     ProjectDependenciesImpl dependencies = new ProjectDependenciesImpl()
     for (sourceSet in sourceSetContainer) {
-      def compileConfigurationName =
-        compileClasspathConfigurationAvailable ? sourceSet.compileClasspathConfigurationName : sourceSet.compileConfigurationName
+      def compileConfigurationName = sourceSet.compileClasspathConfigurationName
       def compileConfiguration = project.configurations.findByName(compileConfigurationName)
       if (compileConfiguration == null) continue
 
-      def runtimeConfigurationName =
-        runtimeClasspathConfigurationAvailable ? sourceSet.runtimeClasspathConfigurationName : sourceSet.runtimeConfigurationName
+      def runtimeConfigurationName = sourceSet.runtimeClasspathConfigurationName
       def runtimeConfiguration = project.configurations.findByName(runtimeConfigurationName)
       if (runtimeConfiguration == null) continue
 

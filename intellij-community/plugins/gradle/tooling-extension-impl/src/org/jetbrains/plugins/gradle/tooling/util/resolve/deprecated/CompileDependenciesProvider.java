@@ -1,5 +1,5 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.jetbrains.plugins.gradle.tooling.util.resolve;
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+package org.jetbrains.plugins.gradle.tooling.util.resolve.deprecated;
 
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
@@ -7,6 +7,7 @@ import org.gradle.api.specs.Specs;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.util.GUtil;
 import org.jetbrains.plugins.gradle.model.ExternalDependency;
+import org.jetbrains.plugins.gradle.tooling.util.DependencyResolver;
 
 import java.io.File;
 import java.util.Collection;
@@ -15,7 +16,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class CompileDependenciesProvider {
-  public static final String SCOPE = "COMPILE";
+  public static final String SCOPE = DependencyResolver.COMPILE_SCOPE;
 
   private final SourceSet mySourceSet;
   private final Project myProject;
@@ -68,7 +69,7 @@ public class CompileDependenciesProvider {
     return myFiles;
   }
 
-  public CompileDependenciesProvider resolve(DependencyResolverImpl resolver) {
+  public CompileDependenciesProvider resolve(DeprecatedDependencyResolver resolver) {
     // resolve compile dependencies
     boolean isMainSourceSet = mySourceSet.getName().equals(SourceSet.MAIN_SOURCE_SET_NAME);
     String deprecatedCompileConfigurationName = isMainSourceSet ? "compile" : GUtil.toCamelCase(mySourceSet.getName()) + "Compile";
@@ -80,7 +81,7 @@ public class CompileDependenciesProvider {
     Configuration compileConfiguration = myCompileClasspathConfiguration != null ? myCompileClasspathConfiguration
                                                                                  : myCompileConfiguration;
     myCompileOnlyConfiguration =
-      DependencyResolverImpl.isJavaLibraryPluginSupported
+      DeprecatedDependencyResolver.isJavaLibraryPluginSupported
       ? myProject.getConfigurations().findByName(mySourceSet.getCompileOnlyConfigurationName()) : null;
 
     ExternalDepsResolutionResult externalDepsResolutionResult = resolver.resolveDependencies(compileConfiguration, SCOPE);

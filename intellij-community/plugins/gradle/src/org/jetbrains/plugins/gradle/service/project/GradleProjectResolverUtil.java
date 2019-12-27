@@ -522,9 +522,9 @@ public class GradleProjectResolverUtil {
                                           @NotNull DataNode<? extends ExternalEntityData> ownerDataNode,
                                           @NotNull Collection<ExternalDependency> dependencies,
                                           @Nullable DataNode<ProjectData> ideProject) throws IllegalStateException {
-
+    int classpathOrderShift = 0;
     Map<ExternalDependencyId, ExternalDependency> dependencyMap = new LinkedHashMap<>();
-    for (ExternalDependency dependency: dependencies) {
+    for (ExternalDependency dependency : dependencies) {
       final ExternalDependency dep = dependencyMap.get(dependency.getId());
       if (dep instanceof AbstractExternalDependency) {
         dep.getDependencies().addAll(ContainerUtil.subtract(dependency.getDependencies(), dep.getDependencies()));
@@ -535,6 +535,7 @@ public class GradleProjectResolverUtil {
     }
 
     for (ExternalDependency dependency: dependencyMap.values()) {
+      Collection<ExternalDependency> transitiveDependencies = dependency.getDependencies();
       final ExternalDependency mergedDependency = ContainerUtil.getOrElse(mergedDependencyMap, dependency.getId(), dependency);
       DependencyScope dependencyScope = getDependencyScope(mergedDependency.getScope());
 
@@ -543,7 +544,7 @@ public class GradleProjectResolverUtil {
         ownerModule = (ModuleData)ownerDataNode.getData();
       }
       else if (ownerDataNode.getData() instanceof DependencyData) {
-        ownerModule = ((DependencyData)ownerDataNode.getData()).getOwnerModule();
+        ownerModule = ((DependencyData<?>)ownerDataNode.getData()).getOwnerModule();
       }
 
       assert ownerModule != null;
@@ -606,7 +607,7 @@ public class GradleProjectResolverUtil {
           final LibraryData library = new LibraryData(GradleConstants.SYSTEM_ID, "");
           LibraryDependencyData libraryDependencyData = new LibraryDependencyData(ownerModule, library, level);
           libraryDependencyData.setScope(dependencyScope);
-          libraryDependencyData.setOrder(mergedDependency.getClasspathOrder());
+          libraryDependencyData.setOrder(mergedDependency.getClasspathOrder() + classpathOrderShift);
           libraryDependencyData.setExported(mergedDependency.getExported());
 
           if (!projectDependency.getProjectDependencyArtifacts().isEmpty()) {
@@ -620,13 +621,17 @@ public class GradleProjectResolverUtil {
           }
         }
         else {
-          for (ProjectDependencyInfo projectDependencyInfo: projectDependencyInfos) {
+          int i = 0;
+          for (ProjectDependencyInfo projectDependencyInfo : projectDependencyInfos) {
+            if (i++ > 0 && transitiveDependencies.isEmpty()) {
+              classpathOrderShift++;
+            }
             ModuleDependencyData moduleDependencyData = new ModuleDependencyData(ownerModule, projectDependencyInfo.myModuleData);
             moduleDependencyData.setScope(dependencyScope);
             if (projectDependencyInfo.mySourceSet != null && isTestSourceSet(projectDependencyInfo.mySourceSet)) {
               moduleDependencyData.setProductionOnTestDependency(true);
             }
-            moduleDependencyData.setOrder(mergedDependency.getClasspathOrder());
+            moduleDependencyData.setOrder(mergedDependency.getClasspathOrder() + classpathOrderShift);
             moduleDependencyData.setExported(mergedDependency.getExported());
             moduleDependencyData.setModuleDependencyArtifacts(ContainerUtil.map(projectDependencyInfo.dependencyArtifacts, File::getPath));
             depOwnerDataNode = ownerDataNode.createChild(ProjectKeys.MODULE_DEPENDENCY, moduleDependencyData);
@@ -663,7 +668,7 @@ public class GradleProjectResolverUtil {
 
         LibraryDependencyData libraryDependencyData = new LibraryDependencyData(ownerModule, library, level);
         libraryDependencyData.setScope(dependencyScope);
-        libraryDependencyData.setOrder(mergedDependency.getClasspathOrder());
+        libraryDependencyData.setOrder(mergedDependency.getClasspathOrder() + classpathOrderShift);
         libraryDependencyData.setExported(mergedDependency.getExported());
         depOwnerDataNode = ownerDataNode.createChild(ProjectKeys.LIBRARY_DEPENDENCY, libraryDependencyData);
       }
@@ -676,7 +681,7 @@ public class GradleProjectResolverUtil {
         library.setVersion(mergedDependency.getId().getVersion());
         LibraryDependencyData libraryDependencyData = new LibraryDependencyData(ownerModule, library, level);
         libraryDependencyData.setScope(dependencyScope);
-        libraryDependencyData.setOrder(mergedDependency.getClasspathOrder());
+        libraryDependencyData.setOrder(mergedDependency.getClasspathOrder() + classpathOrderShift);
         libraryDependencyData.setExported(mergedDependency.getExported());
 
         for (File file: ((ExternalMultiLibraryDependency)mergedDependency).getFiles()) {
@@ -697,7 +702,7 @@ public class GradleProjectResolverUtil {
         final LibraryData library = new LibraryData(GradleConstants.SYSTEM_ID, libraryName);
         LibraryDependencyData libraryDependencyData = new LibraryDependencyData(ownerModule, library, level);
         libraryDependencyData.setScope(dependencyScope);
-        libraryDependencyData.setOrder(mergedDependency.getClasspathOrder());
+        libraryDependencyData.setOrder(mergedDependency.getClasspathOrder() + classpathOrderShift);
         libraryDependencyData.setExported(mergedDependency.getExported());
 
         for (File file: ((FileCollectionDependency)mergedDependency).getFiles()) {
@@ -721,11 +726,12 @@ public class GradleProjectResolverUtil {
         LibraryLevel level = linkProjectLibrary(resolverCtx, ideProject, library) ? LibraryLevel.PROJECT : LibraryLevel.MODULE;
         LibraryDependencyData libraryDependencyData = new LibraryDependencyData(ownerModule, library, level);
         libraryDependencyData.setScope(dependencyScope);
+        libraryDependencyData.setOrder(mergedDependency.getClasspathOrder() + classpathOrderShift);
         ownerDataNode.createChild(ProjectKeys.LIBRARY_DEPENDENCY, libraryDependencyData);
       }
 
-      if (depOwnerDataNode != null) {
-        doBuildDependencies(resolverCtx, sourceSetMap, artifactsMap, mergedDependencyMap, depOwnerDataNode, dependency.getDependencies(),
+      if (depOwnerDataNode != null && !transitiveDependencies.isEmpty()) {
+        doBuildDependencies(resolverCtx, sourceSetMap, artifactsMap, mergedDependencyMap, depOwnerDataNode, transitiveDependencies,
                             ideProject);
       }
     }

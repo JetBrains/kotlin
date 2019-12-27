@@ -347,6 +347,10 @@ public abstract class GradleImportingTestCase extends ExternalSystemImportingTes
     return getCurrentGradleBaseVersion().compareTo(GradleVersion.version(ver)) > 0;
   }
 
+  protected boolean isNewDependencyResolutionApplicable() {
+    return isGradleNewerOrSameThen("4.5") && getCurrentExternalProjectSettings().isResolveModulePerSourceSet();
+  }
+
   protected String getExtraPropertiesExtensionFqn() {
     return isGradleOlderThen("5.2") ? "org.gradle.api.internal.plugins.DefaultExtraPropertiesExtension"
                                     : "org.gradle.internal.extensibility.DefaultExtraPropertiesExtension";

@@ -10,7 +10,6 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.ContentFilterable
-import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileCopyDetails
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.tasks.SourceSet
@@ -424,7 +423,7 @@ class ExternalProjectBuilderImpl extends AbstractModelBuilderService {
       }
 
       if (resolveSourceSetDependencies) {
-        def dependencies = new DependencyResolverImpl(project, isPreview, downloadJavadoc, downloadSources, sourceSetFinder).
+        def dependencies = new DependencyResolverImpl(project, downloadJavadoc, downloadSources, sourceSetFinder).
           resolveDependencies(sourceSet)
         externalSourceSet.dependencies.addAll(dependencies)
       }
@@ -500,15 +499,6 @@ class ExternalProjectBuilderImpl extends AbstractModelBuilderService {
     cleanupSharedSourceFolders(result)
 
     result
-  }
-
-  private static boolean isEmpty(FileCollection collection) {
-    try {
-      return collection.isEmpty()
-    }
-    catch (Throwable ignored) {
-    }
-    return true
   }
 
   private static void cleanupSharedSourceFolders(Map<String, ExternalSourceSet> map) {

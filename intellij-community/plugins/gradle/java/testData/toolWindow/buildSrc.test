@@ -19,27 +19,22 @@ View root() {
       }
     }
     buildSrc() {
-      Source Sets() {
-        main() {
-          Dependencies() {
-            gradle-api-5.0.jar()
-            gradle-api-5.0.jar()
-            gradle-installation-beacon-5.0.jar()
-            groovy-all-1.0-2.5.4.jar()
-            groovy-all-1.0-2.5.4.jar()
-            gradle-installation-beacon-5.0.jar()
-          }
+      Dependencies() {
+        compileClasspath() {
+          Gradle API files()
+          groovy-all-1.0-2.5.4.jar()
         }
-        test() {
-          Dependencies() {
-            buildSrc:main()
-            gradle-api-5.0.jar()
-            gradle-installation-beacon-5.0.jar()
-            groovy-all-1.0-2.5.4.jar()
-            gradle-api-5.0.jar()
-            groovy-all-1.0-2.5.4.jar()
-            gradle-installation-beacon-5.0.jar()
-          }
+        runtimeClasspath() {
+          Gradle API files()
+          groovy-all-1.0-2.5.4.jar()
+        }
+        testCompileClasspath() {
+          Gradle API files()
+          groovy-all-1.0-2.5.4.jar()
+        }
+        testRuntimeClasspath() {
+          Gradle API files()
+          groovy-all-1.0-2.5.4.jar()
         }
       }
     }

@@ -70,7 +70,7 @@ class EarModelBuilderImpl extends AbstractModelBuilderService {
     def deployConfiguration = project.configurations.findByName(EarPlugin.DEPLOY_CONFIGURATION_NAME)
     def earlibConfiguration = project.configurations.findByName(EarPlugin.EARLIB_CONFIGURATION_NAME)
 
-    DependencyResolver dependencyResolver = new DependencyResolverImpl(project, false, false, false, mySourceSetFinder)
+    DependencyResolver dependencyResolver = new DependencyResolverImpl(project, false, false, mySourceSetFinder)
 
     def deployDependencies = dependencyResolver.resolveDependencies(deployConfiguration)
     def earlibDependencies = dependencyResolver.resolveDependencies(earlibConfiguration)

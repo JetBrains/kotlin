@@ -85,8 +85,10 @@ public interface ExternalDependency extends Serializable {
    * Useful if multiple candidates were found during dependency resolution.
    *
    * @return the reason for selecting the dependency
+   * @deprecated org.gradle.api.artifacts.result.ComponentSelectionReason#getDescription() was deprecated
    */
   @Nullable
+  @Deprecated
   String getSelectionReason();
 
   /**

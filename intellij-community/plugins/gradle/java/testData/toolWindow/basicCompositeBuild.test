@@ -21,20 +21,6 @@ View root() {
       }
     }
     my-app() {
-      Source Sets() {
-        main() {
-          Dependencies() {
-            number-utils:main()
-            string-utils:main()
-          }
-        }
-        test() {
-          Dependencies() {
-            number-utils:main()
-            string-utils:main()
-          }
-        }
-      }
       Tasks() {
         build() {
           :assemble()
@@ -74,6 +60,32 @@ View root() {
         verification() {
           :check()
           :test()
+        }
+      }
+      Dependencies() {
+        compileClasspath() {
+          project number-utils()
+          project string-utils() {
+            org.apache.commons:commons-lang3:3.4()
+          }
+        }
+        runtimeClasspath() {
+          project number-utils()
+          project string-utils() {
+            org.apache.commons:commons-lang3:3.4()
+          }
+        }
+        testCompileClasspath() {
+          project number-utils()
+          project string-utils() {
+            org.apache.commons:commons-lang3:3.4()
+          }
+        }
+        testRuntimeClasspath() {
+          project number-utils()
+          project string-utils() {
+            org.apache.commons:commons-lang3:3.4()
+          }
         }
       }
     }
@@ -120,14 +132,6 @@ View root() {
         }
       }
       number-utils() {
-        Source Sets() {
-          main()
-          test() {
-            Dependencies() {
-              number-utils:main()
-            }
-          }
-        }
         Tasks() {
           build() {
             :number-utils:assemble()
@@ -167,19 +171,6 @@ View root() {
         }
       }
       string-utils() {
-        Source Sets() {
-          main() {
-            Dependencies() {
-              org.apache.commons:commons-lang3:3.4()
-            }
-          }
-          test() {
-            Dependencies() {
-              string-utils:main()
-              org.apache.commons:commons-lang3:3.4()
-            }
-          }
-        }
         Tasks() {
           build() {
             :string-utils:assemble()
@@ -215,6 +206,20 @@ View root() {
           verification() {
             :string-utils:check()
             :string-utils:test()
+          }
+        }
+        Dependencies() {
+          compileClasspath() {
+            org.apache.commons:commons-lang3:3.4()
+          }
+          runtimeClasspath() {
+            org.apache.commons:commons-lang3:3.4()
+          }
+          testCompileClasspath() {
+            org.apache.commons:commons-lang3:3.4()
+          }
+          testRuntimeClasspath() {
+            org.apache.commons:commons-lang3:3.4()
           }
         }
       }

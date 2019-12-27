@@ -1,5 +1,5 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.jetbrains.plugins.gradle.tooling.util.resolve;
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+package org.jetbrains.plugins.gradle.tooling.util.resolve.deprecated;
 
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.*;
@@ -25,7 +25,7 @@ import org.jetbrains.plugins.gradle.tooling.util.SourceSetCachedFinder;
 import java.io.File;
 import java.util.*;
 
-import static org.jetbrains.plugins.gradle.tooling.util.resolve.DependencyResolverImpl.is31OrBetter;
+import static org.jetbrains.plugins.gradle.tooling.util.resolve.deprecated.DeprecatedDependencyResolver.is31OrBetter;
 
 class ArtifactQueryResolver {
   private final Configuration myConfiguration;
@@ -82,7 +82,7 @@ class ArtifactQueryResolver {
       buildAuxiliaryArtifactsMap(jvmLibrary, resolvedArtifacts);
 
     final Multimap<ModuleComponentIdentifier, ProjectDependency> configurationProjectDependencies =
-      DependencyResolverImpl.collectProjectDeps(myConfiguration);
+      DeprecatedDependencyResolver.collectProjectDeps(myConfiguration);
 
     if(!myConfiguration.getResolvedConfiguration().hasError()) {
       extDependencies.addAll(buildFileCollectionDeps(resolvedArtifacts, configurationProjectDependencies.values()));
@@ -118,8 +118,8 @@ class ArtifactQueryResolver {
     List<ComponentIdentifier> components = new ArrayList<ComponentIdentifier>();
     for (ResolvedArtifact artifact : resolvedArtifacts) {
       final ModuleVersionIdentifier moduleVersionId = artifact.getModuleVersion().getId();
-      if (!DependencyResolverImpl.isProjectDependencyArtifact(artifact)) {
-        components.add(DependencyResolverImpl.toComponentIdentifier(moduleVersionId));
+      if (!DeprecatedDependencyResolver.isProjectDependencyArtifact(artifact)) {
+        components.add(DeprecatedDependencyResolver.toComponentIdentifier(moduleVersionId));
       }
     }
 
@@ -152,7 +152,7 @@ class ArtifactQueryResolver {
 
     if (!fileDeps.isEmpty()) {
       for (ProjectDependency dep : projectDepsToFilter) {
-        Configuration targetConfiguration = DependencyResolverImpl.getTargetConfiguration(dep);
+        Configuration targetConfiguration = DeprecatedDependencyResolver.getTargetConfiguration(dep);
         if (targetConfiguration == null) continue;
         Set<File> depFiles = targetConfiguration.getAllArtifacts().getFiles().getFiles();
 

@@ -41,11 +41,14 @@ public class GradleDependenciesImportingTest extends GradleImportingTestCase {
 
   @Override
   protected void importProject(@NonNls @Language("Groovy") String config) throws IOException {
-    config += "\nallprojects {\n" +
-              "  if(convention.findPlugin(JavaPluginConvention)) {\n" +
-              "    sourceSets.each { SourceSet sourceSet ->\n" +
-              "      tasks.create(name: 'print'+ sourceSet.name.capitalize() +'CompileDependencies') {\n" +
-              "        doLast { println sourceSet.compileClasspath.files.collect {it.name}.join(' ') }\n" +
+    config += "\n" +
+              "allprojects {\n" +
+              "  afterEvaluate {\n" +
+              "    if(convention.findPlugin(JavaPluginConvention)) {\n" +
+              "      sourceSets.each { SourceSet sourceSet ->\n" +
+              "        tasks.create(name: 'print'+ sourceSet.name.capitalize() +'CompileDependencies') {\n" +
+              "          doLast { println sourceSet.compileClasspath.files.collect {it.name}.join(' ') }\n" +
+              "        }\n" +
               "      }\n" +
               "    }\n" +
               "  }\n" +
@@ -607,7 +610,8 @@ public class GradleDependenciesImportingTest extends GradleImportingTestCase {
     assertModuleLibDep("project.projectA.main", depName, classesPath);
     assertModuleLibDepScope("project.projectA.main", depName, DependencyScope.RUNTIME);
     assertModuleLibDep("project.projectB.main", depName, classesPath);
-    assertModuleLibDepScope("project.projectB.main", depName, DependencyScope.COMPILE);
+    assertModuleLibDepScope("project.projectB.main", depName,
+                            isNewDependencyResolutionApplicable() ? DependencyScope.RUNTIME : DependencyScope.COMPILE);
     assertModuleLibDep("project.projectC.main", depName, classesPath);
     assertModuleLibDepScope("project.projectC.main", depName, DependencyScope.RUNTIME);
   }
@@ -659,14 +663,16 @@ public class GradleDependenciesImportingTest extends GradleImportingTestCase {
     assertModuleLibDepScope("project.projectA.main", depNameA, DependencyScope.RUNTIME);
 
     assertModuleLibDep("project.projectB.main", depNameA, classesPathA);
-    assertModuleLibDepScope("project.projectB.main", depNameA, DependencyScope.COMPILE);
+    assertModuleLibDepScope("project.projectB.main", depNameA,
+                            isNewDependencyResolutionApplicable() ? DependencyScope.RUNTIME : DependencyScope.COMPILE);
     assertModuleLibDep("project.projectB.main", depNameB, classesPathB);
     assertModuleLibDepScope("project.projectB.main", depNameB, DependencyScope.RUNTIME);
 
     assertModuleLibDep("project.projectC.main", depNameA, classesPathA);
     assertModuleLibDepScope("project.projectC.main", depNameA, DependencyScope.RUNTIME);
     assertModuleLibDep("project.projectC.main", depNameB, classesPathB);
-    assertModuleLibDepScope("project.projectC.main", depNameB, DependencyScope.COMPILE);
+    assertModuleLibDepScope("project.projectC.main", depNameB,
+                            isNewDependencyResolutionApplicable() ? DependencyScope.RUNTIME : DependencyScope.COMPILE);
   }
 
   @Test
@@ -760,8 +766,10 @@ public class GradleDependenciesImportingTest extends GradleImportingTestCase {
 
     assertModuleModuleDepScope("project.project-tests.main", "project.project1.main", DependencyScope.COMPILE);
     assertModuleModuleDepScope("project.project-tests.main", "project.project2.main", DependencyScope.RUNTIME);
-    assertModuleLibDepScope("project.project-tests.main", "Gradle: org.apache.geronimo.specs:geronimo-jms_1.1_spec:1.0", DependencyScope.COMPILE);
-    assertModuleLibDepScope("project.project-tests.main", "Gradle: org.apache.geronimo.specs:geronimo-jms_1.1_spec:1.1.1", DependencyScope.RUNTIME);
+    assertModuleLibDepScope("project.project-tests.main", "Gradle: org.apache.geronimo.specs:geronimo-jms_1.1_spec:1.0",
+                            isNewDependencyResolutionApplicable() ? DependencyScope.PROVIDED : DependencyScope.COMPILE);
+    assertModuleLibDepScope("project.project-tests.main", "Gradle: org.apache.geronimo.specs:geronimo-jms_1.1_spec:1.1.1",
+                            DependencyScope.RUNTIME);
 
     createProjectSubDirs("project1", "project2", "project-tests");
     assertCompileClasspathOrdering("project.project-tests.main");

@@ -28,17 +28,19 @@ import org.jetbrains.annotations.NotNull
 import org.jetbrains.plugins.gradle.tooling.ModelBuilderContext
 import org.jetbrains.plugins.gradle.tooling.internal.ExtraModelBuilder
 
+import static java.util.Collections.unmodifiableMap
 import static org.jetbrains.plugins.gradle.tooling.ModelBuilderContext.DataProvider
+import static org.jetbrains.plugins.gradle.tooling.util.resolve.DependencyResolverImpl.isIsNewDependencyResolutionApplicable
 
 /**
  * @author Vladislav.Soroka
  */
 @CompileStatic
 class SourceSetCachedFinder {
-  private static final DataProvider<Map<String, SourceSet>> ARTIFACTS_PROVIDER = new DataProvider<Map<String, SourceSet>>() {
+  private static final DataProvider<ArtifactsMap> ARTIFACTS_PROVIDER = new DataProvider<ArtifactsMap>() {
     @NotNull
     @Override
-    Map<String, SourceSet> create(@NotNull Gradle gradle) {
+    ArtifactsMap create(@NotNull Gradle gradle) {
       return createArtifactsMap(gradle)
     }
   }
@@ -50,7 +52,7 @@ class SourceSetCachedFinder {
     }
   }
 
-  private Map<String, SourceSet> myArtifactsMap
+  private ArtifactsMap myArtifactsMap
   private Map<String, Set<File>> mySourcesMap
 
   @Deprecated
@@ -70,7 +72,7 @@ class SourceSetCachedFinder {
           return
         }
       }
-      myArtifactsMap = Collections.unmodifiableMap(createArtifactsMap(project.gradle))
+      myArtifactsMap = createArtifactsMap(project.gradle)
       mySourcesMap = [:]
       extraProperties.set(key, this)
     }
@@ -88,7 +90,7 @@ class SourceSetCachedFinder {
   Set<File> findSourcesByArtifact(String path) {
     def sources = mySourcesMap[path]
     if (sources == null) {
-      def sourceSet = myArtifactsMap[path]
+      def sourceSet = myArtifactsMap.myArtifactsMap[path]
       if (sourceSet != null) {
         sources = sourceSet.getAllJava().getSrcDirs()
         mySourcesMap[path] = sources
@@ -98,13 +100,19 @@ class SourceSetCachedFinder {
   }
 
   SourceSet findByArtifact(String artifactPath) {
-    myArtifactsMap[artifactPath]
+    myArtifactsMap.myArtifactsMap[artifactPath]
   }
 
-  private static HashMap<String, SourceSet> createArtifactsMap(@NotNull Gradle gradle) {
+  String findArtifactBySourceSetOutputDir(String outputPath) {
+    myArtifactsMap.mySourceSetOutputDirsToArtifactsMap[outputPath]
+  }
+
+  private static ArtifactsMap createArtifactsMap(@NotNull Gradle gradle) {
     def artifactsMap = new HashMap<String, SourceSet>()
+    def sourceSetOutputDirsToArtifactsMap = new HashMap<String, String>()
     def projects = new ArrayList<Project>(gradle.rootProject.allprojects)
-    def isCompositeBuildsSupported = GradleVersion.current() >= GradleVersion.version("3.1")
+    def isCompositeBuildsSupported = isIsNewDependencyResolutionApplicable() ||
+                                     GradleVersion.current().baseVersion >= GradleVersion.version("3.1")
     if (isCompositeBuildsSupported) {
       projects = exposeIncludedBuilds(gradle, projects)
     }
@@ -119,11 +127,17 @@ class SourceSetCachedFinder {
           def archivePath = jarTask?.getArchivePath()
           if (archivePath) {
             artifactsMap[archivePath.path] = sourceSet
+            if (isIsNewDependencyResolutionApplicable()) {
+              for (File file : sourceSet.output.classesDirs.files) {
+                sourceSetOutputDirsToArtifactsMap[file.path] = archivePath.path
+              }
+              sourceSetOutputDirsToArtifactsMap[sourceSet.output.resourcesDir.path] = archivePath.path
+            }
           }
         }
       }
     }
-    return artifactsMap
+    return new ArtifactsMap(unmodifiableMap(artifactsMap), unmodifiableMap(sourceSetOutputDirsToArtifactsMap))
   }
 
   private static List<Project> exposeIncludedBuilds(Gradle gradle, List<Project> projects) {
@@ -134,6 +148,16 @@ class SourceSetCachedFinder {
       }
     }
     return projects
+  }
+
+  private static class ArtifactsMap {
+    private final Map<String, SourceSet> myArtifactsMap
+    private final Map<String, String> mySourceSetOutputDirsToArtifactsMap
+
+    ArtifactsMap(Map<String, SourceSet> artifactsMap, Map<String, String> sourceSetOutputDirsToArtifactsMap) {
+      myArtifactsMap = artifactsMap
+      mySourceSetOutputDirsToArtifactsMap = sourceSetOutputDirsToArtifactsMap
+    }
   }
 }
 

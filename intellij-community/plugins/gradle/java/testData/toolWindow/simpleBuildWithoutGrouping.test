@@ -20,7 +20,7 @@ View root() {
         }
       }
     }
-    :child1() {
+    child1() {
       Tasks() {
         help() {
           buildEnvironment()
@@ -36,7 +36,7 @@ View root() {
         }
       }
     }
-    :child2() {
+    child2() {
       Tasks() {
         help() {
           buildEnvironment()

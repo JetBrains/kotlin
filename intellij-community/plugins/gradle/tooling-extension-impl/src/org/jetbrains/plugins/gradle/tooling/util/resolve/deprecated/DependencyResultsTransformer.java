@@ -1,5 +1,5 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.jetbrains.plugins.gradle.tooling.util.resolve;
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+package org.jetbrains.plugins.gradle.tooling.util.resolve.deprecated;
 
 import groovy.lang.MetaMethod;
 import groovy.lang.MetaProperty;
@@ -28,7 +28,7 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.util.*;
 
-import static org.jetbrains.plugins.gradle.tooling.util.resolve.DependencyResolverImpl.*;
+import static org.jetbrains.plugins.gradle.tooling.util.resolve.deprecated.DeprecatedDependencyResolver.*;
 
 public class DependencyResultsTransformer {
 
@@ -258,7 +258,7 @@ public class DependencyResultsTransformer {
               files.add(resolvedArtifact.getFile());
             }
             dDep.setProjectDependencyArtifacts(files);
-            setProjectDependencyArtifactsSources(dDep, files, mySourceSetFinder);
+            dDep.setProjectDependencyArtifactsSources(findArtifactSources(files, mySourceSetFinder));
             resolvedDepsFiles.addAll(dDep.getProjectDependencyArtifacts());
           }
           else {
@@ -397,8 +397,7 @@ public class DependencyResultsTransformer {
     dependency.setConfigurationName(it.getName());
     Set<File> artifactsFiles = new LinkedHashSet<File>(it.getAllArtifacts().getFiles().getFiles());
     dependency.setProjectDependencyArtifacts(artifactsFiles);
-    setProjectDependencyArtifactsSources(dependency, artifactsFiles, mySourceSetFinder);
-
+    dependency.setProjectDependencyArtifactsSources(findArtifactSources(artifactsFiles, mySourceSetFinder));
 
     if (it.getArtifacts().size() == 1) {
       PublishArtifact publishArtifact = it.getAllArtifacts().iterator().next();
@@ -426,18 +425,5 @@ public class DependencyResultsTransformer {
       }
     }
     return null;
-  }
-
-  private static void setProjectDependencyArtifactsSources(DefaultExternalProjectDependency projectDependency,
-                                                           Collection<File> artifactFiles,
-                                                           SourceSetCachedFinder sourceSetFinder) {
-    List<File> artifactSources = new ArrayList<File>();
-    for (File artifactFile : artifactFiles) {
-      Set<File> sources = sourceSetFinder.findSourcesByArtifact(artifactFile.getPath());
-      if (sources != null) {
-        artifactSources.addAll(sources);
-      }
-    }
-    projectDependency.setProjectDependencyArtifactsSources(artifactSources);
   }
 }

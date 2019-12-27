@@ -6,12 +6,12 @@ import org.jetbrains.plugins.gradle.model.AbstractExternalDependency
 import org.jetbrains.plugins.gradle.model.DefaultExternalLibraryDependency
 import org.jetbrains.plugins.gradle.model.DefaultExternalProjectDependency
 import org.jetbrains.plugins.gradle.model.ExternalDependency
-import org.jetbrains.plugins.gradle.tooling.util.resolve.DependencyResolverImpl.removeDuplicates
+import org.jetbrains.plugins.gradle.tooling.util.resolve.deprecated.DeprecatedDependencyResolver.removeDuplicates
 import org.jetbrains.plugins.gradle.tooling.util.resolve.Scope.*
 import org.junit.Test
 import java.io.File
 
-class DependencyResolverImplTest {
+class DeprecatedDependencyResolverTest {
 
   @Test
   fun testRemoveDuplicatesNoDuplicates() {

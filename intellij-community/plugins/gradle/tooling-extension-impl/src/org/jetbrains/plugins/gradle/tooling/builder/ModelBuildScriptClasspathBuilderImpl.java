@@ -85,7 +85,7 @@ public class ModelBuildScriptClasspathBuilderImpl extends AbstractModelBuilderSe
     Configuration classpathConfiguration = project.getBuildscript().getConfigurations().findByName(CLASSPATH_CONFIGURATION_NAME);
     if (classpathConfiguration == null) return null;
 
-    Collection<ExternalDependency> dependencies = new DependencyResolverImpl(project, false, downloadJavadoc, downloadSources, mySourceSetFinder).resolveDependencies(classpathConfiguration);
+    Collection<ExternalDependency> dependencies = new DependencyResolverImpl(project, downloadJavadoc, downloadSources, mySourceSetFinder).resolveDependencies(classpathConfiguration);
 
     for (ExternalDependency dependency : new DependencyTraverser(dependencies)) {
       if (dependency instanceof ExternalProjectDependency) {

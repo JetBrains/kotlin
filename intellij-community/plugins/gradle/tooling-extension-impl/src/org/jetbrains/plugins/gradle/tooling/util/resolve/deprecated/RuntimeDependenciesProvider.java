@@ -1,17 +1,19 @@
-package org.jetbrains.plugins.gradle.tooling.util.resolve;
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+package org.jetbrains.plugins.gradle.tooling.util.resolve.deprecated;
 
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.specs.Specs;
 import org.gradle.api.tasks.SourceSet;
 import org.jetbrains.plugins.gradle.model.ExternalDependency;
+import org.jetbrains.plugins.gradle.tooling.util.DependencyResolver;
 
 import java.io.File;
 import java.util.Collection;
 import java.util.Set;
 
 public class RuntimeDependenciesProvider {
-  public static final String SCOPE = "RUNTIME";
+  public static final String SCOPE = DependencyResolver.RUNTIME_SCOPE;
 
   private final SourceSet mySourceSet;
   private final Project myProject;
@@ -45,7 +47,7 @@ public class RuntimeDependenciesProvider {
     return myFiles;
   }
 
-  public RuntimeDependenciesProvider resolve(DependencyResolverImpl resolver) {
+  public RuntimeDependenciesProvider resolve(DeprecatedDependencyResolver resolver) {
     String runtimeConfigurationName = mySourceSet.getRuntimeConfigurationName();
     Configuration runtimeClasspathConfiguration = myProject.getConfigurations().findByName(runtimeConfigurationName + "Classpath");
     Configuration originRuntimeConfiguration = myProject.getConfigurations().findByName(runtimeConfigurationName);
