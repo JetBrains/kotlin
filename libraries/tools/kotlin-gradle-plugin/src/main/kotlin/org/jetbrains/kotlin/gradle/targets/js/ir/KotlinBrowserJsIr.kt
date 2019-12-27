@@ -94,6 +94,11 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
 
                 it.bin = "webpack-dev-server/bin/webpack-dev-server.js"
                 it.compilation = compilation
+                it.entry = getByKind(
+                    kind,
+                    compilation.productionLinkTask.outputFile,
+                    compilation.developmentLinkTask.outputFile
+                )
                 it.description = "start ${kind.name.toLowerCase()} webpack dev server"
 
                 it.devServer = KotlinWebpackConfig.DevServer(
@@ -162,6 +167,11 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                 it.configureOptimization(kind)
 
                 it.compilation = compilation
+                it.entry = getByKind(
+                    kind,
+                    compilation.productionLinkTask.outputFile,
+                    compilation.developmentLinkTask.outputFile
+                )
                 it.description = "build webpack ${kind.name.toLowerCase()} bundle"
                 it.destinationDirectory = distribution.directory
 

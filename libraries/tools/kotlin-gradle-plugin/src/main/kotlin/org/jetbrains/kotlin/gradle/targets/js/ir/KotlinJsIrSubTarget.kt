@@ -49,7 +49,12 @@ abstract class KotlinJsIrSubTarget(
 
         target.compilations.all {
             val npmProject = it.npmProject
-            it.compileKotlinTask.kotlinOptions.outputFile = npmProject.dir.resolve(npmProject.main).canonicalPath
+            listOf(
+                it.productionLinkTask,
+                it.developmentLinkTask
+            ).forEach { task ->
+                task.kotlinOptions.outputFile = npmProject.dir.resolve(npmProject.main).canonicalPath
+            }
         }
     }
 
