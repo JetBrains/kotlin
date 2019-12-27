@@ -67,8 +67,8 @@ public class CopyReferenceAction extends DumbAwareAction {
       e.getPresentation().setVisible(true);
     }
     e.getPresentation().setText(
-      paths ? plural ? "Cop&y Relative Paths" : "Cop&y Relative Path"
-            : plural ? "Cop&y References" : "Cop&y Reference");
+      paths ? plural ? IdeBundle.message("copy.relative.paths") : IdeBundle.message("copy.relative.path")
+            : plural ? IdeBundle.message("copy.references") : IdeBundle.message("copy.reference"));
 
     if (paths) {
       e.getPresentation().setEnabledAndVisible(false);
