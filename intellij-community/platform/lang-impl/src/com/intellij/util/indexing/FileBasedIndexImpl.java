@@ -2484,9 +2484,9 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
 
     private void initAssociatedDataForExtensions() {
       Activity activity = StartUpMeasurer.startActivity("file index extensions iteration");
-      Iterator<FileBasedIndexExtension> extensions =
+      Iterator<FileBasedIndexExtension<?, ?>> extensions =
         IndexInfrastructure.hasIndices() ?
-        ((ExtensionPointImpl<FileBasedIndexExtension>)FileBasedIndexExtension.EXTENSION_POINT_NAME.getPoint(null)).iterator() :
+        ((ExtensionPointImpl<FileBasedIndexExtension<?, ?>>)FileBasedIndexExtension.EXTENSION_POINT_NAME.getPoint(null)).iterator() :
         Collections.emptyIterator();
 
       // todo: init contentless indices first ?
