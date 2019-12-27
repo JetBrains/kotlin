@@ -31,6 +31,8 @@ abstract class KlibClassExtensionVisitor : KmClassExtensionVisitor {
 
     abstract fun visitFile(file: KlibSourceFile)
 
+    abstract fun visitEnumEntry(entry: KlibEnumEntry)
+
     override val type: KmExtensionType
         get() = TYPE
 

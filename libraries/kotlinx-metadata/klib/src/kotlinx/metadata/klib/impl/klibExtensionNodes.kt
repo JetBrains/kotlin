@@ -68,6 +68,7 @@ internal class KlibFunctionExtension : KlibFunctionExtensionVisitor(), KmFunctio
 internal class KlibClassExtension : KlibClassExtensionVisitor(), KmClassExtension {
 
     val annotations: MutableList<KmAnnotation> = mutableListOf()
+    val enumEntries: MutableList<KlibEnumEntry> = mutableListOf()
     var uniqId: UniqId? = null
     var file: KlibSourceFile? = null
 
@@ -83,9 +84,14 @@ internal class KlibClassExtension : KlibClassExtensionVisitor(), KmClassExtensio
         this.file = file
     }
 
+    override fun visitEnumEntry(entry: KlibEnumEntry) {
+        enumEntries += entry
+    }
+
     override fun accept(visitor: KmClassExtensionVisitor) {
         require(visitor is KlibClassExtensionVisitor)
         annotations.forEach(visitor::visitAnnotation)
+        enumEntries.forEach(visitor::visitEnumEntry)
         uniqId?.let(visitor::visitUniqId)
         file?.let(visitor::visitFile)
     }
