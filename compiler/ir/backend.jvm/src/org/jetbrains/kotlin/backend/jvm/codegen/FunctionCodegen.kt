@@ -134,12 +134,14 @@ open class FunctionCodegen(
             // This is just a template for inliner
             origin != JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE &&
             // Continuations are generated for suspendImpls
-            parentAsClass.functions.none { it.name.asString() == name.asString() + SUSPEND_IMPL_NAME_SUFFIX } &&
+            parentAsClass.functions.none {
+                it.name.asString() == name.asString() + SUSPEND_IMPL_NAME_SUFFIX &&
+                        it.attributeOwnerId == (this as? IrAttributeContainer)?.attributeOwnerId
+            } &&
             // $$forInline functions never have a continuation
             origin != JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE
 
-    private fun continuationClass(): IrClass =
-        irFunction.body!!.statements.firstIsInstance() ?: error("No continuation class generated for ${irFunction.name}")
+    private fun continuationClass() = irFunction.body!!.statements.firstIsInstance<IrClass>()
 
     private fun IrFunction.getVisibilityForDefaultArgumentStub(): Int =
         when (visibility) {
