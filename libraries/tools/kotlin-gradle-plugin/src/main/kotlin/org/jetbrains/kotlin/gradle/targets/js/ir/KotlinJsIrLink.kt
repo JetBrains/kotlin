@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrType.DEVELOPMENT
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrType.PRODUCTION
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
-import javax.inject.Inject
 
 open class KotlinJsIrLink : Kotlin2JsCompile() {
     @Input
@@ -39,10 +38,7 @@ open class KotlinJsIrLink : Kotlin2JsCompile() {
     }
 
     private fun KotlinJsOptions.configureOptions(vararg additionalCompilerArgs: String) {
-        moduleKind = "umd"
-        sourceMap = true
-
-        freeCompilerArgs += additionalCompilerArgs.toList()
+        freeCompilerArgs += additionalCompilerArgs.toList() + PRODUCE_JS
     }
 }
 
