@@ -28,11 +28,11 @@ class MakeModuleExperimentalFix(
     private val module: Module,
     private val annotationFqName: FqName
 ) : KotlinQuickFixAction<KtFile>(file) {
-    override fun getText(): String = "Add '-Xuse-experimental=$annotationFqName' to module ${module.name} compiler arguments"
+    override fun getText(): String = "Add '-Xopt-in=$annotationFqName' to module ${module.name} compiler arguments"
 
-    override fun getFamilyName(): String = "Make module experimental"
+    override fun getFamilyName(): String = "Add an opt-in requirement marker compiler argument"
 
-    private val compilerArgument = "-Xuse-experimental=$annotationFqName"
+    private val compilerArgument = "-Xopt-in=$annotationFqName"
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val modelsProvider = IdeModifiableModelsProviderImpl(project)
@@ -60,7 +60,7 @@ class MakeModuleExperimentalFix(
             compilerArgument !in compilerSettings.additionalArgumentsAsList
         } else {
             compilerSettings.additionalArgumentsAsList.none {
-                it.startsWith("-Xuse-experimental=") || it.startsWith("-Xexperimental=")
+                it.startsWith("-Xopt-in=") || it.startsWith("-Xuse-experimental=") || it.startsWith("-Xexperimental=")
             }
         }
     }

@@ -234,7 +234,7 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
         val lib = MockLibraryUtil.compileJvmLibraryToJar(
             testDataPath + "${getTestName(true)}/lib", "lib",
             extraOptions = listOf(
-                "-Xuse-experimental=kotlin.Experimental",
+                "-Xopt-in=kotlin.RequiresOptIn",
                 "-Xexperimental=lib.ExperimentalAPI"
             )
         )
@@ -247,7 +247,7 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
         val lib = MockLibraryUtil.compileJsLibraryToJar(
             testDataPath + "${getTestName(true)}/lib", "lib", false,
             extraOptions = listOf(
-                "-Xuse-experimental=kotlin.Experimental",
+                "-Xopt-in=kotlin.RequiresOptIn",
                 "-Xexperimental=lib.ExperimentalAPI"
             )
         )

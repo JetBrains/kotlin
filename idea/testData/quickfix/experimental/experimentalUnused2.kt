@@ -1,10 +1,10 @@
 // "Safe delete 'Marker'" "false"
-// COMPILER_ARGUMENTS: -Xuse-experimental=kotlin.Experimental -Xexperimental=test.Marker
+// COMPILER_ARGUMENTS: -Xopt-in=kotlin.RequiresOptIn -Xexperimental=test.Marker
 // WITH_RUNTIME
 // ACTION: Rename file to Marker.kt
 // TOOL: org.jetbrains.kotlin.idea.inspections.UnusedSymbolInspection
 
 package test
 
-@Experimental
+@RequiresOptIn
 annotation class <caret>Marker

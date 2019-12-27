@@ -1,6 +1,6 @@
 package lib
 
-@Experimental
+@RequiresOptIn
 annotation class ExperimentalAPI
 
 class Foo

@@ -1,13 +1,13 @@
 // "Add '@MyExperimentalAPI' annotation to containing class 'Derived'" "false"
-// COMPILER_ARGUMENTS: -Xuse-experimental=kotlin.Experimental
+// COMPILER_ARGUMENTS: -Xopt-in=kotlin.RequiresOptIn
 // WITH_RUNTIME
 // ACTION: Add '@MyExperimentalAPI' annotation to 'foo'
 // ACTION: Add '@OptIn(MyExperimentalAPI::class)' annotation to 'foo'
 // ACTION: Add '@OptIn(MyExperimentalAPI::class)' annotation to containing class 'Derived'
-// ACTION: Add '-Xuse-experimental=MyExperimentalAPI' to module light_idea_test_case compiler arguments
+// ACTION: Add '-Xopt-in=MyExperimentalAPI' to module light_idea_test_case compiler arguments
 // ERROR: This declaration overrides experimental member of supertype 'Base' and must be annotated with '@MyExperimentalAPI'
 
-@Experimental
+@RequiresOptIn
 @Target(AnnotationTarget.FUNCTION)
 annotation class MyExperimentalAPI
 
