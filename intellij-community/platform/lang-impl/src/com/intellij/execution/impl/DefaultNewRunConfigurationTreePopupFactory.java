@@ -6,15 +6,15 @@ import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.ide.util.treeView.NodeDescriptor;
 import com.intellij.openapi.project.Project;
-import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import javax.swing.*;
+import java.util.*;
 
 public class DefaultNewRunConfigurationTreePopupFactory extends NewRunConfigurationTreePopupFactory {
   private NodeDescriptor<?> root;
+  private List<GroupDescriptor> myGroups;
   private NodeDescriptor<?> other;
   private List<ConfigurationType> myTypesToShow;
   private List<ConfigurationType> myOtherTypes;
@@ -30,6 +30,7 @@ public class DefaultNewRunConfigurationTreePopupFactory extends NewRunConfigurat
     myOtherTypes = new ArrayList<>(ConfigurationType.CONFIGURATION_TYPE_EP.getExtensionList());
     Collections.sort(myOtherTypes, (o1, o2) -> RunConfigurationListManagerHelperKt.compareTypesForUi(o1, o2));
     myOtherTypes.removeAll(myTypesToShow);
+    myGroups = createGroups(project, myTypesToShow);
   }
 
   @NotNull
@@ -38,11 +39,49 @@ public class DefaultNewRunConfigurationTreePopupFactory extends NewRunConfigurat
     return root;
   }
 
+  protected List<GroupDescriptor> createGroups(@NotNull Project project, @NotNull List<ConfigurationType> fullList) {
+    return Arrays.asList(
+      //it's just an example, 'how-to'
+      //new GroupDescriptor(project, getRootElement(), AllIcons.FileTypes.Java, "Java", getTypes(fullList, "Application", "JarApplication")),
+      //new GroupDescriptor(project, getRootElement(), AllIcons.RunConfigurations.TestPassed, "Tests", getTypes(fullList, "JUnit", "TestNG"))
+    );
+  }
+
+  @SuppressWarnings("unused")
+  protected static List<ConfigurationType> getTypes(List<ConfigurationType> fullList, String... ids) {
+    List<String> idsList = Arrays.asList(ids);
+    List<ConfigurationType> result = new ArrayList<>();
+    for (Iterator<ConfigurationType> iterator = fullList.iterator(); iterator.hasNext(); ) {
+      ConfigurationType type = iterator.next();
+      if (idsList.contains(type.getId())) {
+        result.add(type);
+        //Note, here we remove an element from full 'plain' list as we put the element into some group
+        iterator.remove();
+      }
+    }
+    return result;
+  }
+
   @Override
   public NodeDescriptor<?>[] createChildElements(@NotNull Project project, @NotNull NodeDescriptor nodeDescriptor) {
     Object nodeDescriptorElement = nodeDescriptor.getElement();
     if (root.equals(nodeDescriptor)) {
-      return ArrayUtil.append(convertToDescriptors(project, nodeDescriptor, myTypesToShow.toArray()), other);
+      ArrayList<NodeDescriptor> list = new ArrayList<>();
+      for (GroupDescriptor group : myGroups) {
+        if (!group.myTypes.isEmpty()) {
+          list.add(group);
+        }
+      }
+      list.addAll(Arrays.asList(convertToDescriptors(project, nodeDescriptor, myTypesToShow.toArray())));
+      list.add(other);
+      return list.toArray(NodeDescriptor.EMPTY_ARRAY);
+    }
+    else if (nodeDescriptor instanceof GroupDescriptor) {
+      ArrayList<NodeDescriptor> list = new ArrayList<>();
+      for (ConfigurationType type : ((GroupDescriptor)nodeDescriptor).myTypes) {
+        list.add(createDescriptor(project, type, nodeDescriptor));
+      }
+      return list.toArray(NodeDescriptor.EMPTY_ARRAY);
     }
     else if (other.equals(nodeDescriptor)) {
       return convertToDescriptors(project, nodeDescriptor, myOtherTypes.toArray());
@@ -54,5 +93,36 @@ public class DefaultNewRunConfigurationTreePopupFactory extends NewRunConfigurat
       }
     }
     return NodeDescriptor.EMPTY_ARRAY;
+  }
+
+
+  protected  class GroupDescriptor extends NodeDescriptor<String> {
+    private final List<ConfigurationType> myTypes;
+
+    private GroupDescriptor(@NotNull Project project,
+                            @NotNull NodeDescriptor parent,
+                            @Nullable Icon icon,
+                            @NotNull String name,
+                            List<ConfigurationType> types) {
+      super(project, parent);
+      myTypes = types;
+      myClosedIcon = icon;
+      myName = name;
+    }
+
+    @Override
+    public boolean update() {
+      return false;
+    }
+
+    @Override
+    public String getElement() {
+      return myName;
+    }
+
+    @Override
+    public int getWeight() {
+      return DEFAULT_WEIGHT - 1;
+    }
   }
 }
