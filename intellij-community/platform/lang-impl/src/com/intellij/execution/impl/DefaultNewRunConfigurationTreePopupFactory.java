@@ -96,10 +96,10 @@ public class DefaultNewRunConfigurationTreePopupFactory extends NewRunConfigurat
   }
 
 
-  protected  class GroupDescriptor extends NodeDescriptor<String> {
+  protected static class GroupDescriptor extends NodeDescriptor<String> {
     private final List<ConfigurationType> myTypes;
 
-    private GroupDescriptor(@NotNull Project project,
+    protected GroupDescriptor(@NotNull Project project,
                             @NotNull NodeDescriptor parent,
                             @Nullable Icon icon,
                             @NotNull String name,
