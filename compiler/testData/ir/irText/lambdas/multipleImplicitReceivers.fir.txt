@@ -106,4 +106,4 @@ FILE fqName:<root> fileName:/multipleImplicitReceivers.kt
                           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Int
                             BLOCK_BODY
                               CALL 'public open fun invoke (): kotlin.Int [operator] declared in <root>.IInvoke' type=kotlin.Int origin=null
-                                $this: GET_VAR '<this>: <root>.IInvoke declared in <root>.IInvoke' type=<root>.IInvoke origin=null
+                                $this: ERROR_CALL 'Unresolved reference: this@R|special/anonymous|' type=<root>.IInvoke

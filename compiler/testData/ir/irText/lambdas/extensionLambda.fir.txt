@@ -10,4 +10,4 @@ FILE fqName:<root> fileName:/extensionLambda.kt
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Int
               BLOCK_BODY
                 CALL 'public open fun <get-length> (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=null
-                  $this: GET_VAR '<this>: kotlin.String declared in kotlin.String' type=kotlin.String origin=null
+                  $this: ERROR_CALL 'Unresolved reference: this@R|special/anonymous|' type=kotlin.String

@@ -407,7 +407,11 @@ class Fir2IrDeclarationStorage(
         return created
     }
 
-    fun getIrLocalFunction(function: FirAnonymousFunction): IrSimpleFunction {
+    fun getIrLocalFunction(
+        function: FirAnonymousFunction,
+        irParent: IrDeclarationParent? = null,
+        shouldLeaveScope: Boolean = false
+    ): IrSimpleFunction {
         val descriptor = WrappedSimpleFunctionDescriptor()
         val isLambda = function.psi is KtFunctionLiteral
         val origin = if (isLambda) IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA else IrDeclarationOrigin.DEFINED
@@ -426,7 +430,7 @@ class Fir2IrDeclarationStorage(
                     isOperator = false
                 )
             }.bindAndDeclareParameters(
-                function, descriptor, irParent = null, isStatic = false, shouldLeaveScope = false
+                function, descriptor, irParent = irParent, isStatic = false, shouldLeaveScope = shouldLeaveScope
             )
         }
     }
@@ -674,13 +678,19 @@ class Fir2IrDeclarationStorage(
                 }
                 irSymbolTable.referenceSimpleFunction(irDeclaration.descriptor)
             }
+            is FirAnonymousFunction -> {
+                val irDeclaration = getIrLocalFunction(firDeclaration, irParent, shouldLeaveScope = true).apply {
+                    setAndModifyParent(irParent)
+                }
+                irSymbolTable.referenceSimpleFunction(irDeclaration.descriptor)
+            }
             is FirConstructor -> {
                 val irDeclaration = getIrConstructor(firDeclaration, irParent, shouldLeaveScope = true).apply {
                     setAndModifyParent(irParent)
                 }
                 irSymbolTable.referenceConstructor(irDeclaration.descriptor)
             }
-            else -> throw AssertionError("Should not be here")
+            else -> throw AssertionError("Should not be here: ${firDeclaration::class.java}: ${firDeclaration.render()}")
         }
     }
 
