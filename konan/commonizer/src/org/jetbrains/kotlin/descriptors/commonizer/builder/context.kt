@@ -30,23 +30,13 @@ class DeclarationsBuilderCache(dimension: Int) {
         check(dimension > 0)
     }
 
-    private val modules =
-        CommonizedGroup<List<ModuleDescriptorImpl>>(dimension)
-    private val packageFragments =
-        CommonizedGroupMap<Pair<Name, FqName>, CommonizedPackageFragmentDescriptor>(
-            dimension
-        )
-    private val classes =
-        CommonizedGroupMap<FqName, CommonizedClassDescriptor>(dimension)
-    private val typeAliases =
-        CommonizedGroupMap<FqName, CommonizedTypeAliasDescriptor>(
-            dimension
-        )
+    private val modules = CommonizedGroup<List<ModuleDescriptorImpl>>(dimension)
+    private val packageFragments = CommonizedGroupMap<Pair<Name, FqName>, CommonizedPackageFragmentDescriptor>(dimension)
+    private val classes = CommonizedGroupMap<FqName, CommonizedClassDescriptor>(dimension)
+    private val typeAliases = CommonizedGroupMap<FqName, CommonizedTypeAliasDescriptor>(dimension)
 
-    private val forwardDeclarationsModules =
-        CommonizedGroup<ModuleDescriptorImpl>(dimension)
-    private val allModulesWithDependencies =
-        CommonizedGroup<List<ModuleDescriptor>>(dimension)
+    private val forwardDeclarationsModules = CommonizedGroup<ModuleDescriptorImpl>(dimension)
+    private val allModulesWithDependencies = CommonizedGroup<List<ModuleDescriptor>>(dimension)
 
     fun getCachedPackageFragments(moduleName: Name, packageFqName: FqName): List<CommonizedPackageFragmentDescriptor?> =
         packageFragments.getOrFail(moduleName to packageFqName)

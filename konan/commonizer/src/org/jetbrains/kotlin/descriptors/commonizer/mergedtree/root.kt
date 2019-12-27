@@ -19,8 +19,7 @@ internal fun mergeRoots(
 ): CirRootNode {
     val node = buildRootNode(storageManager, modulesByTargets.map { it.first })
 
-    val modulesMap =
-        CommonizedGroupMap<Name, ModuleDescriptor>(modulesByTargets.size)
+    val modulesMap = CommonizedGroupMap<Name, ModuleDescriptor>(modulesByTargets.size)
 
     modulesByTargets.forEachIndexed { index, (_, modules) ->
         for (module in modules) {

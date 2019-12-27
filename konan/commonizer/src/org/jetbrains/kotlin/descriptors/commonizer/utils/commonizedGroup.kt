@@ -41,11 +41,8 @@ internal class CommonizedGroup<T : Any>(
 internal class CommonizedGroupMap<K, V : Any>(val size: Int) : Iterable<Map.Entry<K, CommonizedGroup<V>>> {
     private val wrapped: MutableMap<K, CommonizedGroup<V>> = HashMap()
 
-    operator fun get(key: K): CommonizedGroup<V> = wrapped.getOrPut(key) {
-        CommonizedGroup(
-            size
-        )
-    }
+    operator fun get(key: K): CommonizedGroup<V> = wrapped.getOrPut(key) { CommonizedGroup(size) }
+
     fun getOrNull(key: K): CommonizedGroup<V>? = wrapped[key]
 
     override fun iterator(): Iterator<Map.Entry<K, CommonizedGroup<V>>> = wrapped.iterator()

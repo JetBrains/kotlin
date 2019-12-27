@@ -24,8 +24,7 @@ internal fun mergeModules(
 ): CirModuleNode {
     val node = buildModuleNode(storageManager, modules)
 
-    val packageMemberScopesMap =
-        CommonizedGroupMap<FqName, MemberScope>(modules.size)
+    val packageMemberScopesMap = CommonizedGroupMap<FqName, MemberScope>(modules.size)
 
     modules.forEachIndexed { index, module ->
         module?.collectNonEmptyPackageMemberScopes { packageFqName, memberScope ->

@@ -89,8 +89,7 @@ internal class CommonizationVisitor(
             }
 
             // find out common (and commonized) supertypes
-            val supertypesMap =
-                CommonizedGroupMap<String, CirType>(node.target.size)
+            val supertypesMap = CommonizedGroupMap<String, CirType>(node.target.size)
             node.target.forEachIndexed { index, clazz ->
                 for (supertype in clazz!!.supertypes) {
                     supertypesMap[supertype.fqNameWithTypeParameters][index] = supertype

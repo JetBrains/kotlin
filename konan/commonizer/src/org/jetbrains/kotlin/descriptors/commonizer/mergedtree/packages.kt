@@ -27,19 +27,10 @@ internal fun mergePackages(
 ): CirPackageNode {
     val node = buildPackageNode(storageManager, moduleName, packageFqName, packageMemberScopes)
 
-    val propertiesMap =
-        CommonizedGroupMap<PropertyApproximationKey, PropertyDescriptor>(
-            packageMemberScopes.size
-        )
-    val functionsMap =
-        CommonizedGroupMap<FunctionApproximationKey, SimpleFunctionDescriptor>(
-            packageMemberScopes.size
-        )
-    val classesMap =
-        CommonizedGroupMap<Name, ClassDescriptor>(packageMemberScopes.size)
-    val typeAliasesMap = CommonizedGroupMap<Name, TypeAliasDescriptor>(
-        packageMemberScopes.size
-    )
+    val propertiesMap = CommonizedGroupMap<PropertyApproximationKey, PropertyDescriptor>(packageMemberScopes.size)
+    val functionsMap = CommonizedGroupMap<FunctionApproximationKey, SimpleFunctionDescriptor>(packageMemberScopes.size)
+    val classesMap = CommonizedGroupMap<Name, ClassDescriptor>(packageMemberScopes.size)
+    val typeAliasesMap = CommonizedGroupMap<Name, TypeAliasDescriptor>(packageMemberScopes.size)
 
     packageMemberScopes.forEachIndexed { index, memberScope ->
         memberScope?.collectMembers(

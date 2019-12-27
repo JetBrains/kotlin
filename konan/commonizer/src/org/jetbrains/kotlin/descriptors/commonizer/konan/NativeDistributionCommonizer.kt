@@ -154,7 +154,7 @@ class NativeDistributionCommonizer(
                 """
                 library has incompatible metadata version ${metadataVersion ?: "\"unknown\""}: $location,
                 please make sure that all libraries passed to commonizer compatible metadata version ${KlibMetadataVersion.INSTANCE}
-            """.trimIndent()
+                """.trimIndent()
             )
 
         return library

@@ -23,20 +23,10 @@ internal fun mergeClasses(
 ): CirClassNode {
     val node = buildClassNode(storageManager, cacheRW, containingDeclarationCommon, classes)
 
-    val constructorsMap =
-        CommonizedGroupMap<ConstructorApproximationKey, ClassConstructorDescriptor>(
-            classes.size
-        )
-    val propertiesMap =
-        CommonizedGroupMap<PropertyApproximationKey, PropertyDescriptor>(
-            classes.size
-        )
-    val functionsMap =
-        CommonizedGroupMap<FunctionApproximationKey, SimpleFunctionDescriptor>(
-            classes.size
-        )
-    val classesMap =
-        CommonizedGroupMap<Name, ClassDescriptor>(classes.size)
+    val constructorsMap = CommonizedGroupMap<ConstructorApproximationKey, ClassConstructorDescriptor>(classes.size)
+    val propertiesMap = CommonizedGroupMap<PropertyApproximationKey, PropertyDescriptor>(classes.size)
+    val functionsMap = CommonizedGroupMap<FunctionApproximationKey, SimpleFunctionDescriptor>(classes.size)
+    val classesMap = CommonizedGroupMap<Name, ClassDescriptor>(classes.size)
 
     classes.forEachIndexed { index, clazz ->
         clazz?.constructors?.forEach { constructorsMap[ConstructorApproximationKey(it)][index] = it }
