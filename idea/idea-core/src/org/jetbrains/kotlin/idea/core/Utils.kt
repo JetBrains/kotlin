@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
 import org.jetbrains.kotlin.resolve.calls.CallResolver
+import org.jetbrains.kotlin.resolve.calls.components.isVararg
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
@@ -39,12 +40,15 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import java.util.*
 
+/**
+ * See `ArgumentsToParametersMapper` class in the compiler.
+ */
 fun Call.mapArgumentsToParameters(targetDescriptor: CallableDescriptor): Map<ValueArgument, ValueParameterDescriptor> {
     val parameters = targetDescriptor.valueParameters
     if (parameters.isEmpty()) return emptyMap()
 
     val map = HashMap<ValueArgument, ValueParameterDescriptor>()
-    val parametersByName = parameters.associateBy { it.name }
+    val parametersByName = if (targetDescriptor.hasStableParameterNames()) parameters.associateBy { it.name } else emptyMap()
 
     var positionalArgumentIndex: Int? = 0
 
@@ -55,11 +59,9 @@ fun Call.mapArgumentsToParameters(targetDescriptor: CallableDescriptor): Map<Val
             val argumentName = argument.getArgumentName()?.asName
 
             if (argumentName != null) {
-                if (targetDescriptor.hasStableParameterNames()) {
-                    val parameter = parametersByName[argumentName]
-                    if (parameter != null) {
-                        map[argument] = parameter
-                    }
+                val parameter = parametersByName[argumentName]
+                if (parameter != null) {
+                    map[argument] = parameter
                 }
                 positionalArgumentIndex = null
             } else {
@@ -67,7 +69,7 @@ fun Call.mapArgumentsToParameters(targetDescriptor: CallableDescriptor): Map<Val
                     val parameter = parameters[positionalArgumentIndex]
                     map[argument] = parameter
 
-                    if (parameter.varargElementType == null) {
+                    if (!parameter.isVararg) {
                         positionalArgumentIndex++
                     }
                 }
