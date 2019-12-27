@@ -69,6 +69,7 @@ FILE fqName:<root> fileName:/memberExtension.kt
           RETURN type=kotlin.Nothing from='public final fun <get-plusK> (): kotlin.String declared in <root>.Host'
             CALL 'public final fun getValue (receiver: kotlin.String, p: kotlin.Any): kotlin.String [operator] declared in <root>.Host.StringDelegate' type=kotlin.String origin=null
               $this: GET_FIELD 'FIELD DELEGATE name:plusK$delegate type:<root>.Host.StringDelegate visibility:private [final]' type=<root>.Host.StringDelegate origin=GET_PROPERTY
+                receiver: GET_OBJECT 'CLASS OBJECT name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.Host
               receiver: ERROR_CALL 'Unresolved reference: this@R|/Host.plusK|' type=kotlin.String
               p: PROPERTY_REFERENCE 'public final plusK: kotlin.String [delegated,val]' field='FIELD DELEGATE name:plusK$delegate type:<root>.Host.StringDelegate visibility:private [final]' getter='public final fun <get-plusK> (): kotlin.String declared in <root>.Host' setter=null type=kotlin.reflect.KProperty<*> origin=null
     PROPERTY name:ok visibility:public modality:FINAL [val]

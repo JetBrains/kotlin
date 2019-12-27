@@ -793,11 +793,11 @@ class Fir2IrVisitor(
         }
     }
 
-    private fun FirQualifiedAccess.findIrDispatchReceiver(): IrExpression = findIrReceiver(isDispatch = true)
+    private fun FirQualifiedAccess.findIrDispatchReceiver(): IrExpression? = findIrReceiver(isDispatch = true)
 
-    private fun FirQualifiedAccess.findIrExtensionReceiver(): IrExpression = findIrReceiver(isDispatch = false)
+    private fun FirQualifiedAccess.findIrExtensionReceiver(): IrExpression? = findIrReceiver(isDispatch = false)
 
-    private fun FirQualifiedAccess.findIrReceiver(isDispatch: Boolean): IrExpression {
+    private fun FirQualifiedAccess.findIrReceiver(isDispatch: Boolean): IrExpression? {
         val firReceiver = if (isDispatch) dispatchReceiver else extensionReceiver
         return firReceiver.takeIf { it !is FirNoReceiverExpression }?.toIrExpression()
             ?: explicitReceiver?.toIrExpression() // NB: this applies to the situation when call is unresolved
@@ -813,12 +813,14 @@ class Fir2IrVisitor(
                     val irClass = declarationStorage.getIrClass(firClass, setParent = false)
                     IrGetObjectValueImpl(startOffset, endOffset, irClass.defaultType, irClass.symbol)
                 }
-            } ?: run {
-                val name = if (isDispatch) "Dispatch" else "Extension"
-                throw AssertionError(
-                    "$name receiver expected: ${render()} to ${calleeReference.render()}"
-                )
             }
+        // TODO: uncomment after fixing KT-35730
+//            ?: run {
+//                val name = if (isDispatch) "Dispatch" else "Extension"
+//                throw AssertionError(
+//                    "$name receiver expected: ${render()} to ${calleeReference.render()}"
+//                )
+//            }
     }
 
     private fun IrExpression.applyReceivers(qualifiedAccess: FirQualifiedAccess): IrExpression {
@@ -835,8 +837,7 @@ class Fir2IrVisitor(
             is IrFieldExpressionBase -> {
                 val ownerField = symbol.owner
                 if (!ownerField.isStatic) {
-                    receiver = qualifiedAccess.dispatchReceiver.takeIf { it !is FirNoReceiverExpression }?.toIrExpression()
-                        ?: qualifiedAccess.explicitReceiver?.toIrExpression()
+                    receiver = qualifiedAccess.findIrDispatchReceiver()
                 }
                 this
             }
