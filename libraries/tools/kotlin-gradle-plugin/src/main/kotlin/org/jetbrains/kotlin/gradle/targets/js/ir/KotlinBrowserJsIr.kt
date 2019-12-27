@@ -9,7 +9,6 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Task
 import org.gradle.api.plugins.BasePluginConvention
 import org.gradle.api.tasks.Copy
-import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.targets.js.dsl.*
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
@@ -73,8 +72,6 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
         val project = compilation.target.project
         val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
 
-        val compileKotlinTask = compilation.compileKotlinTask
-
         buildVariants.all { buildVariant ->
             val kind = buildVariant.kind
             val runTask = project.registerTask<KotlinWebpack>(
@@ -87,8 +84,8 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                     nodeJs.npmInstallTask,
                     getByKind(
                         kind,
-                        compilation.productionCompileTask,
-                        compilation.developmentCompileTask
+                        compilation.productionLinkTask,
+                        compilation.developmentLinkTask
                     ),
                     target.project.tasks.getByName(compilation.processResourcesTaskName)
                 )
@@ -126,8 +123,6 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
         val project = compilation.target.project
         val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
 
-        val compileKotlinTask = compilation.compileKotlinTask
-
         val basePluginConvention = project.convention.plugins["base"] as BasePluginConvention?
 
         val baseDist = project.buildDir.resolve(basePluginConvention!!.distsDirName)
@@ -157,8 +152,8 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                     nodeJs.npmInstallTask,
                     getByKind(
                         kind,
-                        compilation.productionCompileTask,
-                        compilation.developmentCompileTask
+                        compilation.productionLinkTask,
+                        compilation.developmentLinkTask
                     ),
                     target.project.tasks.getByName(compilation.processResourcesTaskName),
                     distributionTask

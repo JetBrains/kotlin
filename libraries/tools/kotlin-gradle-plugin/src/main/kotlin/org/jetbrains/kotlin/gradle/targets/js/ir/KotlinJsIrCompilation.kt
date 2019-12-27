@@ -5,35 +5,46 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
+import org.gradle.api.file.SourceDirectorySet
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
-import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrType.DEVELOPMENT
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrType.PRODUCTION
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
 class KotlinJsIrCompilation(
     target: KotlinTarget,
     name: String
 ) : KotlinJsCompilation(target, name) {
-    val productionCompileTaskName: String = lowerCamelCaseName(
-        "compile",
-        "production",
-        compilationName.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
-        "Kotlin",
-        target.targetName
-    )
+    val productionLinkTaskName: String = linkTaskName(PRODUCTION)
 
-    val productionCompileTask: Kotlin2JsCompile
-        get() = (target.project.tasks.getByName(productionCompileTaskName) as Kotlin2JsCompile)
+    val productionLinkTask: KotlinJsIrLink
+        get() = (target.project.tasks.getByName(productionLinkTaskName) as KotlinJsIrLink)
 
-    val developmentCompileTaskName: String = lowerCamelCaseName(
-        "compile",
-        "development",
-        compilationName.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
-        "Kotlin",
-        target.targetName
-    )
+    val developmentLinkTaskName: String = linkTaskName(DEVELOPMENT)
 
-    val developmentCompileTask: Kotlin2JsCompile
-        get() = (target.project.tasks.getByName(developmentCompileTaskName) as Kotlin2JsCompile)
+    val developmentLinkTask: KotlinJsIrLink
+        get() = (target.project.tasks.getByName(developmentLinkTaskName) as KotlinJsIrLink)
+
+    private fun linkTaskName(type: KotlinJsIrType): String =
+        lowerCamelCaseName(
+            "compile",
+            type.name.toLowerCase(),
+            compilationName.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
+            "Kotlin",
+            target.targetName
+        )
+
+    internal val allSources: MutableSet<SourceDirectorySet> = mutableSetOf()
+
+    override fun addSourcesToCompileTask(sourceSet: KotlinSourceSet, addAsCommonSources: Lazy<Boolean>) {
+        super.addSourcesToCompileTask(sourceSet, addAsCommonSources)
+        allSources.add(sourceSet.kotlin)
+
+        listOf(productionLinkTask, developmentLinkTask).forEach {
+            it.sourceFilesExtensions(sourceSet.customSourceFilesExtensions)
+        }
+    }
 }

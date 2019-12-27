@@ -54,24 +54,20 @@ open class KotlinJsIrTargetConfigurator(kotlinPluginVersion: String) :
 
         target.compilations.all {
             it.compileKotlinTask.kotlinOptions {
-                configureOptions(DISABLE_PRE_IR)
+                configureOptions()
+
+                freeCompilerArgs += DISABLE_PRE_IR
             }
 
-            it.productionCompileTask.kotlinOptions {
-                configureOptions(ENABLE_DCE, GENERATE_D_TS)
-            }
+            it.productionLinkTask.configure()
 
-            it.developmentCompileTask.kotlinOptions {
-                configureOptions(GENERATE_D_TS)
-            }
+            it.developmentLinkTask.configure()
         }
     }
 
-    private fun KotlinJsOptions.configureOptions(vararg additionalCompilerArgs: String) {
+    private fun KotlinJsOptions.configureOptions() {
         moduleKind = "umd"
         sourceMap = true
-
-        freeCompilerArgs += additionalCompilerArgs.toList()
     }
 
     override fun defineConfigurationsForTarget(target: KotlinJsIrTarget) {
