@@ -88,7 +88,7 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
 
     protected val sourceSetName: String = kotlinCompilation.compilationName
 
-    override val kotlinTask: TaskProvider<out T> = registerKotlinCompileTask(kotlinCompilation.compileKotlinTaskName)
+    override val kotlinTask: TaskProvider<out T> = prepareKotlinCompileTask(kotlinCompilation.compileKotlinTaskName)
 
     protected val javaSourceSet: SourceSet?
         get() =
@@ -110,6 +110,11 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
             return File(project.buildDir, "classes/kotlin/$targetSubDirectory${kotlinCompilation.compilationName}")
         }
 
+    private fun prepareKotlinCompileTask(name: String): TaskProvider<out T> =
+        registerKotlinCompileTask(name).also { task ->
+            kotlinCompilation.output.addClassesDir { project.files(task.map { it.destinationDir }) }
+        }
+
     protected fun registerKotlinCompileTask(): TaskProvider<out T> {
         val name = kotlinCompilation.compileKotlinTaskName
         logger.kotlinDebug("Creating kotlin compile task $name")
@@ -118,14 +123,10 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
             destinationDir.set(project.provider { defaultKotlinDestinationDir })
         }
 
-        val result = doRegisterTask(project, name) {
+        return doRegisterTask(project, name) {
             it.description = taskDescription
             it.mapClasspath { kotlinCompilation.compileDependencyFiles }
         }
-
-        kotlinCompilation.output.addClassesDir { project.files(result.map { it.destinationDir }) }
-
-        return result
     }
 
     override fun run() {
@@ -398,12 +399,12 @@ internal class KotlinJsIrSourceSetProcessor(
         listOf(
             compilation.productionLinkTaskName,
             compilation.developmentLinkTaskName
-        ).map { taskName ->
+        ).onEach { taskName ->
             registerKotlinCompileTask(
                 taskName
             )
-        }.forEach { task ->
-            task.configure {
+        }.forEach { taskName ->
+            project.tasks.named(taskName) {
                 it.dependsOn(kotlinTask)
             }
         }
