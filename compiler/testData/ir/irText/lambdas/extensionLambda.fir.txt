@@ -11,4 +11,4 @@ FILE fqName:<root> fileName:/extensionLambda.kt
               $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
               BLOCK_BODY
                 CALL 'public open fun <get-length> (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=null
-                  $this: GET_VAR '<this>: kotlin.String declared in <no parent>.<anonymous>' type=kotlin.String origin=null
+                  $this: GET_VAR '<this>: kotlin.String declared in special.<anonymous>' type=kotlin.String origin=null

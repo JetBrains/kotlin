@@ -237,8 +237,8 @@ class Fir2IrDeclarationStorage(
         }
     }
 
-    internal fun findIrParent(callableMemberDeclaration: FirCallableMemberDeclaration<*>): IrDeclarationParent? {
-        val firBasedSymbol = callableMemberDeclaration.symbol
+    internal fun findIrParent(callableDeclaration: FirCallableDeclaration<*>): IrDeclarationParent? {
+        val firBasedSymbol = callableDeclaration.symbol
         val callableId = firBasedSymbol.callableId
         val parentClassId = callableId.classId
         return if (parentClassId != null) {
@@ -675,7 +675,7 @@ class Fir2IrDeclarationStorage(
 
     fun getIrFunctionSymbol(firFunctionSymbol: FirFunctionSymbol<*>): IrFunctionSymbol {
         val firDeclaration = firFunctionSymbol.fir
-        val irParent = (firDeclaration as? FirCallableMemberDeclaration<*>)?.let { findIrParent(it) }
+        val irParent = (firDeclaration as? FirCallableDeclaration<*>)?.let { findIrParent(it) }
         return when (firDeclaration) {
             is FirSimpleFunction -> {
                 val irDeclaration = getIrFunction(firDeclaration, irParent, shouldLeaveScope = true).apply {
