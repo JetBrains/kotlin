@@ -18,17 +18,10 @@ import com.intellij.openapi.editor.ex.util.EditorUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.pom.Navigatable;
-import com.intellij.pom.PomDeclarationSearcher;
-import com.intellij.pom.PomTarget;
-import com.intellij.pom.PsiDeclaredTarget;
-import com.intellij.pom.references.PomService;
 import com.intellij.psi.*;
 import com.intellij.psi.search.PsiSearchHelper;
 import com.intellij.psi.search.SearchScope;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.util.BitUtil;
-import com.intellij.util.Consumer;
 import com.intellij.util.ThreeState;
 import com.intellij.util.indexing.DumbModeAccessType;
 import com.intellij.util.indexing.FileBasedIndex;
@@ -166,7 +159,7 @@ public class TargetElementUtil  {
   @Nullable
   public PsiElement findTargetElement(@NotNull Editor editor, int flags, int offset) {
     PsiElement result = doFindTargetElement(editor, flags, offset);
-    TargetElementEvaluatorEx2 evaluator = result != null ? getElementEvaluatorsEx2(result.getLanguage()) : null;
+    TargetElementEvaluatorEx2 evaluator = result != null ? TargetElementUtilBase.getElementEvaluatorsEx2(result.getLanguage()) : null;
     if (evaluator != null) {
       result = evaluator.adjustTargetElement(editor, offset, flags, result);
     }
@@ -229,7 +222,7 @@ public class TargetElementUtil  {
   private boolean isAcceptableReferencedElement(@Nullable PsiElement element, @Nullable PsiElement referenceOrReferencedElement) {
     if (referenceOrReferencedElement == null || !referenceOrReferencedElement.isValid()) return false;
 
-    TargetElementEvaluatorEx2 evaluator = element != null ? getElementEvaluatorsEx2(element.getLanguage()) : null;
+    TargetElementEvaluatorEx2 evaluator = element != null ? TargetElementUtilBase.getElementEvaluatorsEx2(element.getLanguage()) : null;
     if (evaluator != null) {
       ThreeState answer = evaluator.isAcceptableReferencedElement(element, referenceOrReferencedElement);
       if (answer == ThreeState.YES) return true;
@@ -242,7 +235,7 @@ public class TargetElementUtil  {
   @Nullable
   public PsiElement adjustElement(final Editor editor, final int flags, @Nullable PsiElement element, @Nullable PsiElement contextElement) {
     PsiElement langElement = element == null ? contextElement : element;
-    TargetElementEvaluatorEx2 evaluator = langElement != null ? getElementEvaluatorsEx2(langElement.getLanguage()) : null;
+    TargetElementEvaluatorEx2 evaluator = langElement != null ? TargetElementUtilBase.getElementEvaluatorsEx2(langElement.getLanguage()) : null;
     if (evaluator != null) {
       element = evaluator.adjustElement(editor, flags, element, contextElement);
     }
@@ -252,70 +245,19 @@ public class TargetElementUtil  {
   @Nullable
   public PsiElement adjustReference(@NotNull PsiReference ref) {
     PsiElement element = ref.getElement();
-    TargetElementEvaluatorEx2 evaluator = getElementEvaluatorsEx2(element.getLanguage());
+    TargetElementEvaluatorEx2 evaluator = TargetElementUtilBase.getElementEvaluatorsEx2(element.getLanguage());
     return evaluator != null ? evaluator.adjustReference(ref) : null;
   }
 
   @Nullable
   public PsiElement getNamedElement(@Nullable final PsiElement element, final int offsetInElement) {
-    if (element == null) return null;
-
-    PsiUtilCore.ensureValid(element);
-
-    final List<PomTarget> targets = new ArrayList<>();
-    final Consumer<PomTarget> consumer = target -> {
-      if (target instanceof PsiDeclaredTarget) {
-        final PsiDeclaredTarget declaredTarget = (PsiDeclaredTarget)target;
-        final PsiElement navigationElement = declaredTarget.getNavigationElement();
-        final TextRange range = declaredTarget.getNameIdentifierRange();
-        if (range != null && !range.shiftRight(navigationElement.getTextRange().getStartOffset())
-          .contains(element.getTextRange().getStartOffset() + offsetInElement)) {
-          return;
-        }
-      }
-      targets.add(target);
-    };
-
-    PsiElement parent = element;
-
-    int offset = offsetInElement;
-    while (parent != null && !(parent instanceof PsiFileSystemItem)) {
-      for (PomDeclarationSearcher searcher : PomDeclarationSearcher.EP_NAME.getExtensions()) {
-        searcher.findDeclarationsAt(parent, offset, consumer);
-        if (!targets.isEmpty()) {
-          final PomTarget target = targets.get(0);
-          return target == null ? null : PomService.convertToPsi(element.getProject(), target);
-        }
-      }
-      offset += parent.getStartOffsetInParent();
-      parent = parent.getParent();
-    }
-
-    return getNamedElement(element);
+    return TargetElementUtilBase.getNamedElement(element, offsetInElement);
   }
 
   @Internal
   @Nullable
   public static PsiElement getNamedElement(@Nullable final PsiElement element) {
-    if (element == null) return null;
-
-    TargetElementEvaluatorEx2 evaluator = getElementEvaluatorsEx2(element.getLanguage());
-    if (evaluator != null) {
-      PsiElement result = evaluator.getNamedElement(element);
-      if (result != null) return result;
-    }
-
-    PsiElement parent;
-    if ((parent = PsiTreeUtil.getParentOfType(element, PsiNamedElement.class, false)) != null) {
-      // A bit hacky: depends on the named element's text offset being overridden correctly
-      if (!(parent instanceof PsiFile) && parent.getTextOffset() == element.getTextRange().getStartOffset()) {
-        if (evaluator == null || evaluator.isAcceptableNamedParent(parent)) {
-          return parent;
-        }
-      }
-    }
-
-    return null;
+    return TargetElementUtilBase.getNamedElement(element);
   }
 
   @Nullable
@@ -323,7 +265,7 @@ public class TargetElementUtil  {
     PsiElement result = doGetReferenceOrReferencedElement(editor, flags, offset);
     PsiElement languageElement = file.findElementAt(offset);
     Language language = languageElement != null ? languageElement.getLanguage() : file.getLanguage();
-    TargetElementEvaluatorEx2 evaluator = getElementEvaluatorsEx2(language);
+    TargetElementEvaluatorEx2 evaluator = TargetElementUtilBase.getElementEvaluatorsEx2(language);
     if (evaluator != null) {
       result = evaluator.adjustReferenceOrReferencedElement(file, editor, offset, flags, result);
     }
@@ -357,7 +299,7 @@ public class TargetElementUtil  {
   @NotNull
   public Collection<PsiElement> getTargetCandidates(@NotNull PsiReference reference) {
     PsiElement refElement = reference.getElement();
-    TargetElementEvaluatorEx2 evaluator = getElementEvaluatorsEx2(refElement.getLanguage());
+    TargetElementEvaluatorEx2 evaluator = TargetElementUtilBase.getElementEvaluatorsEx2(refElement.getLanguage());
     if (evaluator != null) {
       Collection<PsiElement> candidates = evaluator.getTargetCandidates(reference);
       if (candidates != null) return candidates;
@@ -390,7 +332,7 @@ public class TargetElementUtil  {
   }
 
   public PsiElement getGotoDeclarationTarget(final PsiElement element, final PsiElement navElement) {
-    TargetElementEvaluatorEx2 evaluator = element != null ? getElementEvaluatorsEx2(element.getLanguage()) : null;
+    TargetElementEvaluatorEx2 evaluator = element != null ? TargetElementUtilBase.getElementEvaluatorsEx2(element.getLanguage()) : null;
     if (evaluator != null) {
       PsiElement result = evaluator.getGotoDeclarationTarget(element, navElement);
       if (result != null) return result;
@@ -404,23 +346,17 @@ public class TargetElementUtil  {
   }
 
   public boolean acceptImplementationForReference(@Nullable PsiReference reference, @Nullable PsiElement element) {
-    TargetElementEvaluatorEx2 evaluator = element != null ? getElementEvaluatorsEx2(ReadAction.compute(element::getLanguage)) : null;
+    TargetElementEvaluatorEx2 evaluator = element != null ? TargetElementUtilBase.getElementEvaluatorsEx2(ReadAction.compute(element::getLanguage)) : null;
     return evaluator == null || evaluator.acceptImplementationForReference(reference, element);
   }
 
   @NotNull
   public SearchScope getSearchScope(Editor editor, @NotNull PsiElement element) {
-    TargetElementEvaluatorEx2 evaluator = getElementEvaluatorsEx2(element.getLanguage());
+    TargetElementEvaluatorEx2 evaluator = TargetElementUtilBase.getElementEvaluatorsEx2(element.getLanguage());
     SearchScope result = evaluator != null ? evaluator.getSearchScope(editor, element) : null;
     if (result != null) return result;
 
     PsiFile file = element.getContainingFile();
     return PsiSearchHelper.getInstance(element.getProject()).getUseScope(file != null ? file : element);
-  }
-
-  @Nullable
-  private static TargetElementEvaluatorEx2 getElementEvaluatorsEx2(@NotNull Language language) {
-    TargetElementEvaluator result = TargetElementUtilBase.TARGET_ELEMENT_EVALUATOR.forLanguage(language);
-    return result instanceof TargetElementEvaluatorEx2 ? (TargetElementEvaluatorEx2)result : null;
   }
 }
