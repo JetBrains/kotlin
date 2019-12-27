@@ -571,9 +571,6 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                         copyAttributes(function)
                     }
                     registerNewFunction(newFunction)
-                    if (function.isInline) {
-                        context.originalToForInline[function] = newFunction
-                    }
                 }
 
                 val newFunction = if (function.isOverridable) {
