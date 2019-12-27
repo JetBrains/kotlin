@@ -198,28 +198,6 @@ class IrInterpreter(irModule: IrModuleFragment) {
         return code
     }
 
-    // TODO extract in Wrapper
-    private fun calculateIntrinsic(irFunction: IrFunction, data: Frame): Code {
-        val annotation = irFunction.getAnnotation(evaluateIntrinsicAnnotation)
-        val argsValues = data.getAll()
-            .map { it.state }
-            .map { it as? Primitive<*> ?: throw IllegalArgumentException("Builtin functions accept only const args") }
-            .map { it.value }
-
-        val textClass = Class.forName((annotation.getValueArgument(0) as IrConst<*>).value.toString())
-        val returnClass = irFunction.returnType.getFqName()!!.let { getPrimitiveClass(it) ?: Class.forName(it) }
-        val extensionClass = irFunction.extensionReceiverParameter?.type?.getFqName()?.let { getPrimitiveClass(it) ?: Class.forName(it) }
-        val argsClasses = irFunction.valueParameters.map {
-            it.descriptor.fqNameSafe.asString().let { getPrimitiveClass(it) ?: Class.forName(it) }
-        }
-
-        val methodSignature = MethodType.methodType(returnClass, listOfNotNull(extensionClass) + argsClasses)
-        val method = MethodHandles.lookup().findStatic(textClass, irFunction.name.asString(), methodSignature)
-        val result = method.invokeWithArguments(argsValues)
-        data.pushReturnValue(result.toState(result.getType(irFunction.returnType)))
-        return Code.NEXT
-    }
-
     private fun interpretValueParameters(parametersContainer: IrMemberAccessExpression, data: Frame): Code {
         for (i in (parametersContainer.valueArgumentsCount - 1) downTo 0) {
             val code = parametersContainer.getValueArgument(i)?.interpret(data) ?: Code.NEXT
@@ -255,7 +233,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
                 (extensionReceiver is Wrapper && rawDispatchReceiver == null)
         val code = when {
             isWrapper -> ((dispatchReceiver ?: extensionReceiver) as Wrapper).invoke(irFunction as IrFunctionImpl, newFrame)
-            irFunction.hasAnnotation(evaluateIntrinsicAnnotation) -> calculateIntrinsic(irFunction, newFrame)
+            irFunction.hasAnnotation(evaluateIntrinsicAnnotation) -> Wrapper.invokeStatic(irFunction as IrFunctionImpl, newFrame)
             irFunction.isAbstract() -> calculateAbstract(irFunction, newFrame) //abstract check must be before fake overridden check
             irFunction.isFakeOverridden() -> calculateOverridden(irFunction as IrFunctionImpl, newFrame)
             irFunction.body == null -> calculateBuiltIns(irFunction, newFrame)
@@ -268,7 +246,6 @@ class IrInterpreter(irModule: IrModuleFragment) {
     private fun interpretConstructor(constructorCall: IrFunctionAccessExpression, data: Frame): Code {
         interpretValueParameters(constructorCall, data).also { if (it != Code.NEXT) return it }
         val valueParameters = constructorCall.symbol.descriptor.valueParameters.map { Variable(it, data.popReturnValue()) }.toMutableList()
-
         val newFrame = InterpreterFrame(valueParameters)
         val state = Complex(constructorCall.symbol.owner.parent as IrClass, mutableListOf())
         newFrame.addVar(Variable(constructorCall.getThisAsReceiver(), state)) //used to set up fields in body

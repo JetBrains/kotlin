@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.common.interpreter.stack
 
 import org.jetbrains.kotlin.backend.common.interpreter.*
 import org.jetbrains.kotlin.backend.common.interpreter.builtins.CompileTimeFunction
+import org.jetbrains.kotlin.backend.common.interpreter.builtins.evaluateIntrinsicAnnotation
 import org.jetbrains.kotlin.backend.common.interpreter.builtins.unaryFunctions
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -15,15 +16,12 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
+import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.isNullable
-import org.jetbrains.kotlin.ir.types.isPrimitiveType
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.isTypeParameter
 import org.jetbrains.kotlin.name.FqNameUnsafe
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import java.lang.invoke.MethodHandles
 import java.lang.invoke.MethodType
 
@@ -69,6 +67,26 @@ open class Primitive<T>(var value: T, val type: IrType) : State {
         return declarations.filterIsInstance<IrFunction>()
             .filter { it.descriptor.name == descriptor.name }
             .firstOrNull { it.descriptor.valueParameters.map { it.type } == descriptor.valueParameters.map { it.type } }
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Primitive<*>
+
+        if (value != other.value) return false
+        if (type != other.type) return false
+        if (fields != other.fields) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = value?.hashCode() ?: 0
+        result = 31 * result + type.hashCode()
+        result = 31 * result + fields.hashCode()
+        return result
     }
 
     override fun toString(): String {
@@ -121,63 +139,118 @@ class Wrapper(private val type: IrClass, private val wrapperValue: Any) : Comple
         ?: Class.forName(typeFqName.toString())
 
     fun invoke(irFunction: IrFunctionImpl, data: Frame): Code {
-        val methodName = irFunction.name.toString()
+        val methodName = (irFunction.correspondingPropertySymbol?.owner?.name ?: irFunction.name).toString()
 
-        val returnClass = irFunction.returnType.getCorrespondingClass(irFunction.isReturnTypePrimitiveAsObject())
-        val argsClasses = irFunction.valueParameters.map { it.type.getCorrespondingClass(irFunction.isValueParameterPrimitiveAsObject(it.index)) }
-        val argsValues = data.getAll().map { (it.state as? Wrapper)?.wrapperValue ?: (it.state as? Primitive<*>)?.value }
-
-        val methodType = MethodType.methodType(returnClass, argsClasses)
+        val methodType = irFunction.getMethodType()
         val method = MethodHandles.lookup().findVirtual(receiverClass, methodName, methodType)
 
-        val result = method.invokeWithArguments(argsValues)
+        val result = method.invokeWithArguments(irFunction.getArgs(data))
         data.pushReturnValue(result.toState(irFunction.returnType))
 
         return Code.NEXT
     }
 
-    private fun IrType.getCorrespondingClass(asObject: Boolean): Class<out Any> {
-        val fqName = this.getFqName()
-        return when {
-            this.isPrimitiveType() -> getPrimitiveClass(fqName!!, asObject)
-            this.isTypeParameter() -> Any::class.java
-            else -> JavaToKotlinClassMap.mapKotlinToJava(FqNameUnsafe(fqName!!))?.let { Class.forName(it.asSingleFqName().toString()) }
-        } ?: Class.forName(fqName)
-    }
+    companion object {
+        fun invokeStatic(irFunction: IrFunctionImpl, data: Frame): Code {
+            val annotation = irFunction.getAnnotation(evaluateIntrinsicAnnotation)
+            val jvmFileName = Class.forName((annotation.getValueArgument(0) as IrConst<*>).value.toString())
 
-    private fun IrFunctionImpl.getOriginalOverriddenSymbols(): MutableList<IrSimpleFunctionSymbol> {
-        val overriddenSymbols = mutableListOf<IrSimpleFunctionSymbol>()
-        val pool = this.overriddenSymbols.toMutableList()
-        val iterator = pool.listIterator()
-        for (symbol in iterator) {
-            if (symbol.owner.overriddenSymbols.isEmpty()) {
-                overriddenSymbols += symbol
-                iterator.remove()
-            } else {
-                symbol.owner.overriddenSymbols.forEach { iterator.add(it) }
-            }
+            val methodType = irFunction.getMethodType(withExtensionReceiver = true)
+            val method = MethodHandles.lookup().findStatic(jvmFileName, irFunction.name.asString(), methodType)
+
+            val result = method.invokeWithArguments(irFunction.getArgs(data))
+            data.pushReturnValue(result.toState(irFunction.returnType))
+
+            return Code.NEXT
         }
 
-        if (overriddenSymbols.isEmpty()) overriddenSymbols.add(this.symbol)
-        return overriddenSymbols
-    }
+        private fun IrFunctionImpl.getMethodType(withExtensionReceiver: Boolean = false): MethodType {
+            val returnClass = this.returnType.getClass(this.isReturnTypePrimitiveAsObject())
+            val argsClasses = this.valueParameters.map { it.type.getClass(this.isValueParameterPrimitiveAsObject(it.index)) }
 
-    private fun IrFunctionImpl.isReturnTypePrimitiveAsObject(): Boolean {
-        for (symbol in getOriginalOverriddenSymbols()) {
-            if (!symbol.owner.returnType.isTypeParameter() && !symbol.owner.returnType.isNullable()) {
-                return false
+            val extensionClass = when {
+                withExtensionReceiver -> this.extensionReceiverParameter?.type?.getClass(this.isExtensionReceiverPrimitiveAsObject())
+                else -> null
             }
-        }
-        return true
-    }
 
-    private fun IrFunctionImpl.isValueParameterPrimitiveAsObject(index: Int): Boolean {
-        for (symbol in getOriginalOverriddenSymbols()) {
-            if (!symbol.owner.valueParameters[index].type.isTypeParameter() && !symbol.owner.valueParameters[index].type.isNullable()) {
-                return false
-            }
+            return MethodType.methodType(returnClass, listOfNotNull(extensionClass) + argsClasses)
         }
-        return true
+
+        private fun IrFunctionImpl.getArgs(data: Frame): List<Any?> {
+            val argsValues = data.getAll().map { (it.state as? Wrapper)?.wrapperValue ?: (it.state as? Any) }.toMutableList()
+
+            if (this.extensionReceiverParameter?.type.isPrimitiveState()) {
+                val varargState = data.getVariableState(this.symbol.getExtensionReceiver()!!)
+                argsValues[0] = (varargState as Primitive<*>).value
+            }
+
+            for ((index, valueParameter) in this.valueParameters.withIndex().reversed()) {
+                if (valueParameter.type.isPrimitiveState()) {
+                    argsValues[argsValues.size - 1 - index] = (argsValues[argsValues.size - 1 - index] as Primitive<*>).value
+                }
+            }
+
+            // TODO if vararg isn't last parameter
+            // must convert vararg array into separated elements for correct invoke
+            if (this.valueParameters.lastOrNull()?.varargElementType != null) {
+                argsValues.removeAt(argsValues.size - 1)
+                val varargState = data.getVariableState(this.valueParameters.last().descriptor)
+                val varargValue = (varargState as? Wrapper)?.wrapperValue ?: (varargState as Primitive<*>).value
+                argsValues.addAll(varargValue as Array<out Any?>)
+            }
+
+            return argsValues
+        }
+
+        private fun IrType.getClass(asObject: Boolean): Class<out Any> {
+            val fqName = this.getFqName()
+            return when {
+                this.isPrimitiveType() -> getPrimitiveClass(fqName!!, asObject)
+                this.isArray() -> if (asObject) Array<Any?>::class.javaObjectType else Array<Any?>::class.java
+                //TODO primitive array
+                this.isTypeParameter() -> Any::class.java
+                else -> JavaToKotlinClassMap.mapKotlinToJava(FqNameUnsafe(fqName!!))?.let { Class.forName(it.asSingleFqName().toString()) }
+            } ?: Class.forName(fqName)
+        }
+
+        private fun IrFunctionImpl.getOriginalOverriddenSymbols(): MutableList<IrSimpleFunctionSymbol> {
+            val overriddenSymbols = mutableListOf<IrSimpleFunctionSymbol>()
+            val pool = this.overriddenSymbols.toMutableList()
+            val iterator = pool.listIterator()
+            for (symbol in iterator) {
+                if (symbol.owner.overriddenSymbols.isEmpty()) {
+                    overriddenSymbols += symbol
+                    iterator.remove()
+                } else {
+                    symbol.owner.overriddenSymbols.forEach { iterator.add(it) }
+                }
+            }
+
+            if (overriddenSymbols.isEmpty()) overriddenSymbols.add(this.symbol)
+            return overriddenSymbols
+        }
+
+        private fun IrFunctionImpl.isExtensionReceiverPrimitiveAsObject(): Boolean {
+            return this.extensionReceiverParameter?.type?.isPrimitiveType() == false
+        }
+
+        private fun IrFunctionImpl.isReturnTypePrimitiveAsObject(): Boolean {
+            for (symbol in getOriginalOverriddenSymbols()) {
+                if (!symbol.owner.returnType.isTypeParameter() && !symbol.owner.returnType.isNullable()) {
+                    return false
+                }
+            }
+            return true
+        }
+
+        private fun IrFunctionImpl.isValueParameterPrimitiveAsObject(index: Int): Boolean {
+            for (symbol in getOriginalOverriddenSymbols()) {
+                if (!symbol.owner.valueParameters[index].type.isTypeParameter() && !symbol.owner.valueParameters[index].type.isNullable()) {
+                    return false
+                }
+            }
+            return true
+        }
     }
 
     override fun copy(): State {

@@ -18,8 +18,11 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.isArray
+import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.isFakeOverride
+import org.jetbrains.kotlin.ir.util.isPrimitiveArray
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
@@ -151,4 +154,8 @@ fun getPrimitiveClass(fqName: String, asObject: Boolean = false): Class<*>? {
 
 fun IrType.getFqName(): String? {
     return this.classOrNull?.owner?.fqNameForIrSerialization?.asString()
+}
+
+fun IrType?.isPrimitiveState(): Boolean {
+    return this?.isPrimitiveType() == true || this?.isArray() == true || this?.isPrimitiveArray() == true
 }
