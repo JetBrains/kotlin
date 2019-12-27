@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.scripting.gradle
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.components.service
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptChangeListener
@@ -179,6 +180,46 @@ class GradleScriptInputsWatcherTest : AbstractScriptConfigurationLoadingTest() {
         changeSettingsKtsOutsideSections()
 
         assertConfigurationUpToDate(testFiles.settings)
+        assertConfigurationUpdateWasDone(testFiles.buildKts)
+    }
+
+    fun testConfigurationUpdateAfterProjectClosing() {
+        assertAndLoadInitialConfiguration(testFiles.buildKts)
+        assertAndLoadInitialConfiguration(testFiles.settings)
+
+        changeSettingsKtsOutsideSections()
+
+        project.service<GradleScriptInputsWatcher>().clearAndRefillState()
+
+        assertConfigurationUpToDate(testFiles.settings)
+        assertConfigurationUpdateWasDone(testFiles.buildKts)
+    }
+
+    fun testConfigurationUpdateAfterProjectClosing2() {
+        assertAndLoadInitialConfiguration(testFiles.buildKts)
+        assertAndLoadInitialConfiguration(testFiles.settings)
+
+        changeSettingsKtsOutsideSections()
+
+        val ts = System.currentTimeMillis()
+        project.service<GradleScriptInputsWatcher>().fileChanged(testFiles.buildKts.virtualFile, ts)
+        project.service<GradleScriptInputsWatcher>().fileChanged(testFiles.settings.virtualFile, ts)
+
+        assertConfigurationUpdateWasDone(testFiles.settings)
+        assertConfigurationUpdateWasDone(testFiles.buildKts)
+    }
+
+    fun testConfigurationUpdateAfterProjectClosing3() {
+        assertAndLoadInitialConfiguration(testFiles.buildKts)
+        assertAndLoadInitialConfiguration(testFiles.settings)
+
+        val ts = System.currentTimeMillis()
+        project.service<GradleScriptInputsWatcher>().fileChanged(testFiles.buildKts.virtualFile, ts)
+        project.service<GradleScriptInputsWatcher>().fileChanged(testFiles.settings.virtualFile, ts)
+
+        changePropertiesFile()
+
+        assertConfigurationUpdateWasDone(testFiles.settings)
         assertConfigurationUpdateWasDone(testFiles.buildKts)
     }
 

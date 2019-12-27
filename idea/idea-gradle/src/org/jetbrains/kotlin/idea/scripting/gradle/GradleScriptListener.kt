@@ -36,7 +36,7 @@ open class GradleScriptListener(project: Project) : ScriptChangeListener(project
             // *.gradle.kts file was changed
             updater.ensureUpToDatedConfigurationSuggested(file)
         }
-        project.service<GradleScriptInputsWatcher>().addToStorage(vFile)
+        project.service<GradleScriptInputsWatcher>().fileChanged(vFile, vFile.timeStamp)
     }
 
     override fun isApplicable(vFile: VirtualFile): Boolean {
