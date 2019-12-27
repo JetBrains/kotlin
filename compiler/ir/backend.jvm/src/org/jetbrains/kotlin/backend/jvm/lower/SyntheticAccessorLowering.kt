@@ -459,6 +459,9 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
     private fun IrFunction.accessorName(superQualifier: IrClassSymbol?): Name {
         val jvmName = context.methodSignatureMapper.mapFunctionName(this)
         val suffix = when {
+            // Accessors for top level functions never need a suffix.
+            isTopLevel -> ""
+
             // The only function accessors placed on interfaces are for private functions and JvmDefault implementations.
             // The two cannot clash.
             parentAsClass.isJvmInterface && Visibilities.isPrivate(visibility) -> ""

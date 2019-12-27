@@ -13125,6 +13125,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             runTest("compiler/testData/codegen/box/intrinsics/longRangeWithExplicitDot.kt");
         }
 
+        @TestMetadata("monitorEnterMonitorExit.kt")
+        public void testMonitorEnterMonitorExit() throws Exception {
+            runTest("compiler/testData/codegen/box/intrinsics/monitorEnterMonitorExit.kt");
+        }
+
         @TestMetadata("nonShortCircuitAnd.kt")
         public void testNonShortCircuitAnd() throws Exception {
             runTest("compiler/testData/codegen/box/intrinsics/nonShortCircuitAnd.kt");
