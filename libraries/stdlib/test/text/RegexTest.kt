@@ -32,7 +32,7 @@ class RegexTest {
         assertTrue(p in input)
 
         val first = p.find(input)
-        assertTrue(first != null); first!!
+        assertNotNull(first)
         assertEquals("123", first.value)
 
         val second1 = first.next()!!
