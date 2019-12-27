@@ -134,18 +134,6 @@ public class MergedInvertedIndex<Key, Value> implements UpdatableIndex<Key, Valu
 
   @NotNull
   @Override
-  public Lock getReadLock() {
-    return myBaseIndex.getReadLock();
-  }
-
-  @NotNull
-  @Override
-  public Lock getWriteLock() {
-    return myBaseIndex.getWriteLock();
-  }
-
-  @NotNull
-  @Override
   public ReadWriteLock getLock() {
     return myBaseIndex.getLock();
   }
