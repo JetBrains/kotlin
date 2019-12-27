@@ -521,20 +521,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
         catch (TestsCompiletimeError e) {
             if (reportProblems) {
                 e.getOriginal().printStackTrace();
-                System.err.println("Generating instructions as text...");
-                try {
-                    if (classFileFactory == null) {
-                        System.err.println("Cannot generate text: exception was thrown during generation");
-                    }
-                    else {
-                        System.err.println(classFileFactory.createText());
-                    }
-                }
-                catch (Throwable e1) {
-                    System.err.println("Exception thrown while trying to generate text, the actual exception follows:");
-                    e1.printStackTrace();
-                    System.err.println("-----------------------------------------------------------------------------");
-                }
+                generateInstructionsAsText();
                 System.err.println("See exceptions above");
             }
             else {
@@ -543,9 +530,29 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
             throw e;
         }
         catch (Throwable e) {
+            if (reportProblems) {
+                generateInstructionsAsText();
+            }
             throw new TestsCompilerError(e);
         }
         return classFileFactory;
+    }
+
+    private void generateInstructionsAsText() {
+        System.err.println("Generating instructions as text...");
+        try {
+            if (classFileFactory == null) {
+                System.err.println("Cannot generate text: exception was thrown during generation");
+            }
+            else {
+                System.err.println(classFileFactory.createText());
+            }
+        }
+        catch (Throwable e1) {
+            System.err.println("Exception thrown while trying to generate text, the actual exception follows:");
+            e1.printStackTrace();
+            System.err.println("-----------------------------------------------------------------------------");
+        }
     }
 
     protected boolean verifyWithDex() {
