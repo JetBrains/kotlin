@@ -21,8 +21,9 @@ FILE fqName:<root> fileName:/initValInLambda.kt
           <R>: kotlin.Nothing
           $receiver: CONST Int type=kotlin.Int value=1
           block: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Nothing> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($this:<root>.TestInitValInLambdaCalledOnce) returnType:kotlin.Nothing
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($this:<root>.TestInitValInLambdaCalledOnce, $receiver:kotlin.Int) returnType:kotlin.Nothing
               $this: VALUE_PARAMETER name:<this> type:<root>.TestInitValInLambdaCalledOnce
+              $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int
               BLOCK_BODY
                 SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Unit origin=null
                   receiver: GET_VAR '<this>: <root>.TestInitValInLambdaCalledOnce declared in <root>.TestInitValInLambdaCalledOnce' type=<root>.TestInitValInLambdaCalledOnce origin=null

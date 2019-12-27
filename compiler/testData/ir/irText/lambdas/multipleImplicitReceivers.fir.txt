@@ -89,21 +89,24 @@ FILE fqName:<root> fileName:/multipleImplicitReceivers.kt
         <R>: kotlin.Int
         receiver: GET_OBJECT 'CLASS OBJECT name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.A
         block: FUN_EXPR type=kotlin.Function1<<root>.A, kotlin.Int> origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Int
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.A) returnType:kotlin.Int
+            $receiver: VALUE_PARAMETER name:<this> type:<root>.A
             BLOCK_BODY
               CALL 'public final fun with <T, R> (receiver: T of kotlin.with, block: kotlin.Function1<T of kotlin.with, R of kotlin.with>): R of kotlin.with [inline] declared in kotlin' type=kotlin.Int origin=null
                 <T>: <root>.IFoo
                 <R>: kotlin.Int
                 receiver: GET_VAR 'fooImpl: <root>.IFoo declared in <root>.test' type=<root>.IFoo origin=null
                 block: FUN_EXPR type=kotlin.Function1<<root>.IFoo, kotlin.Int> origin=LAMBDA
-                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Int
+                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.IFoo) returnType:kotlin.Int
+                    $receiver: VALUE_PARAMETER name:<this> type:<root>.IFoo
                     BLOCK_BODY
                       CALL 'public final fun with <T, R> (receiver: T of kotlin.with, block: kotlin.Function1<T of kotlin.with, R of kotlin.with>): R of kotlin.with [inline] declared in kotlin' type=kotlin.Int origin=null
                         <T>: <root>.IInvoke
                         <R>: kotlin.Int
                         receiver: GET_VAR 'invokeImpl: <root>.IInvoke declared in <root>.test' type=<root>.IInvoke origin=null
                         block: FUN_EXPR type=kotlin.Function1<<root>.IInvoke, kotlin.Int> origin=LAMBDA
-                          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Int
+                          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.IInvoke) returnType:kotlin.Int
+                            $receiver: VALUE_PARAMETER name:<this> type:<root>.IInvoke
                             BLOCK_BODY
                               CALL 'public open fun invoke (): kotlin.Int [operator] declared in <root>.IInvoke' type=kotlin.Int origin=null
-                                $this: ERROR_CALL 'Unresolved reference: this@R|special/anonymous|' type=<root>.IInvoke
+                                $this: GET_VAR '<this>: <root>.IInvoke declared in <no parent>.<anonymous>' type=<root>.IInvoke origin=null

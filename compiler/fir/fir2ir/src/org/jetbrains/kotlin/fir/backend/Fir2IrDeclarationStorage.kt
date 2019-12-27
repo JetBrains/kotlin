@@ -297,23 +297,23 @@ class Fir2IrDeclarationStorage(
                 for ((index, typeParameter) in function.typeParameters.withIndex()) {
                     typeParameters += getIrTypeParameter(typeParameter, index).apply { this.parent = parent }
                 }
-                val receiverTypeRef = function.receiverTypeRef
-                if (receiverTypeRef != null) {
-                    extensionReceiverParameter = receiverTypeRef.convertWithOffsets { startOffset, endOffset ->
-                        val type = receiverTypeRef.toIrType(session, this@Fir2IrDeclarationStorage)
-                        val receiverDescriptor = WrappedReceiverParameterDescriptor()
-                        irSymbolTable.declareValueParameter(
-                            startOffset, endOffset, thisOrigin,
-                            receiverDescriptor, type
-                        ) { symbol ->
-                            IrValueParameterImpl(
-                                startOffset, endOffset, thisOrigin, symbol,
-                                Name.special("<this>"), -1, type,
-                                varargElementType = null, isCrossinline = false, isNoinline = false
-                            ).apply {
-                                this.parent = parent
-                                receiverDescriptor.bind(this)
-                            }
+            }
+            val receiverTypeRef = function?.receiverTypeRef
+            if (receiverTypeRef != null) {
+                extensionReceiverParameter = receiverTypeRef.convertWithOffsets { startOffset, endOffset ->
+                    val type = receiverTypeRef.toIrType(session, this@Fir2IrDeclarationStorage)
+                    val receiverDescriptor = WrappedReceiverParameterDescriptor()
+                    irSymbolTable.declareValueParameter(
+                        startOffset, endOffset, thisOrigin,
+                        receiverDescriptor, type
+                    ) { symbol ->
+                        IrValueParameterImpl(
+                            startOffset, endOffset, thisOrigin, symbol,
+                            Name.special("<this>"), -1, type,
+                            varargElementType = null, isCrossinline = false, isNoinline = false
+                        ).apply {
+                            this.parent = parent
+                            receiverDescriptor.bind(this)
                         }
                     }
                 }
