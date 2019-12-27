@@ -9,7 +9,6 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.projectRoots.*
 import com.intellij.openapi.projectRoots.impl.ProjectJdkImpl
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
-import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel
 import com.intellij.util.Consumer
 import org.jdom.Element
 import org.jetbrains.kotlin.idea.KotlinIcons
@@ -28,13 +27,19 @@ class KotlinSdkType : SdkType("KotlinSDK") {
 
         @JvmOverloads
         fun setUpIfNeeded(checkIfNeeded: () -> Boolean = { true }) {
-            with(ProjectSdksModel()) {
-                reset(null)
-                if (sdks.any { it.sdkType is KotlinSdkType }) return
-                if (!checkIfNeeded()) return //do not create Kotlin SDK
-                addSdk(INSTANCE, defaultHomePath, null)
-                ApplicationManager.getApplication().invokeAndWait {
-                    runWriteAction { apply(null, true) }
+            val projectSdks: Array<Sdk> = ProjectJdkTable.getInstance().allJdks
+            if (projectSdks.any { it.sdkType is KotlinSdkType }) return
+            if (!checkIfNeeded()) return // do not create Kotlin SDK
+
+            val newSdkName = SdkConfigurationUtil.createUniqueSdkName(INSTANCE, defaultHomePath, projectSdks.toList())
+            val newJdk = ProjectJdkImpl(newSdkName, INSTANCE)
+            newJdk.homePath = defaultHomePath
+            INSTANCE.setupSdkPaths(newJdk)
+
+            ApplicationManager.getApplication().invokeAndWait {
+                runWriteAction {
+                    if (ProjectJdkTable.getInstance().allJdks.any { it.sdkType is KotlinSdkType }) return@runWriteAction
+                    ProjectJdkTable.getInstance().addJdk(newJdk)
                 }
             }
         }
