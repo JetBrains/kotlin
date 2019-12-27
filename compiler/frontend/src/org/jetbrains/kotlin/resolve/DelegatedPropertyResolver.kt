@@ -632,16 +632,18 @@ class DelegatedPropertyResolver(
             result?.let { recordResolvedDelegateOrReportError(it.overloadResolutionResults, isGet) }
         }
 
-        val resolvedDelegateType = extractResolvedDelegateType(delegateExpression, trace)
+        val resolvedDelegateType = extractResolvedDelegateType(delegateExpression, trace, delegateType)
         trace.recordType(delegateExpression, resolvedDelegateType)
         trace.commit()
         return resolvedDelegateType.unwrap()
     }
 
-    private fun extractResolvedDelegateType(delegateExpression: KtExpression, trace: BindingTrace): KotlinType {
+    private fun extractResolvedDelegateType(delegateExpression: KtExpression, trace: BindingTrace, delegateType: KotlinType): KotlinType {
         val call = delegateExpression.getCall(trace.bindingContext)
         val pretendReturnType = call.getResolvedCall(trace.bindingContext)?.resultingDescriptor?.returnType
-        return pretendReturnType?.takeUnless { !it.isProperType() } ?: ErrorUtils.createErrorType("Type for ${delegateExpression.text}")
+        return pretendReturnType?.takeIf { it.isProperType() }
+            ?: delegateType.takeIf { it.isProperType() }
+            ?: ErrorUtils.createErrorType("Type for ${delegateExpression.text}")
     }
 
     private fun KotlinType.isProperType(): Boolean {

@@ -7361,6 +7361,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/delegatedProperty/insideInlinedObjectMultiModule.kt");
         }
 
+        @TestMetadata("kt35707.kt")
+        public void testKt35707() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/kt35707.kt");
+        }
+
         @TestMetadata("kt4138.kt")
         public void testKt4138() throws Exception {
             runTest("compiler/testData/codegen/box/delegatedProperty/kt4138.kt");
