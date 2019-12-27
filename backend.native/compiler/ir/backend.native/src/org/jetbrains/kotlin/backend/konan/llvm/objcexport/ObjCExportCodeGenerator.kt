@@ -573,9 +573,16 @@ private fun ObjCExportCodeGenerator.emitBoxConverter(
     setObjCExportTypeInfo(boxClass, constPointer(converter))
 }
 
+private const val maxConvertorsInCache = 33
+
 private fun ObjCExportBlockCodeGenerator.emitFunctionConverters() {
     require(context.producedLlvmModuleContainsStdlib)
-    context.ir.symbols.functionIrClassFactory.builtFunctionNClasses.forEach { functionClass ->
+    var count = context.ir.symbols.functionIrClassFactory.builtFunctionNClasses.size
+    // TODO: ugly hack to avoid huge unneeded adaptors linked into every binary, needs rework.
+    if (context.config.produce.isCache) {
+        count = count.coerceAtMost(maxConvertorsInCache)
+    }
+    context.ir.symbols.functionIrClassFactory.builtFunctionNClasses.take(count).forEach { functionClass ->
         val converter = kotlinFunctionToBlockConverter(BlockPointerBridge(functionClass.arity, returnsVoid = false))
 
         val writableTypeInfoValue = buildWritableTypeInfoValue(converter = constPointer(converter))
@@ -591,7 +598,7 @@ private fun ObjCExportBlockCodeGenerator.emitBlockToKotlinFunctionConverters() {
     var count = ((functionClassesByArity.keys.max() ?: -1) + 1)
     // TODO: ugly hack to avoid huge unneeded adaptors linked into every binary, needs rework.
     if (context.config.produce.isCache) {
-        count = count.coerceAtMost(33)
+        count = count.coerceAtMost(maxConvertorsInCache)
     }
     val converters = (0 until count).map { arity ->
         val functionClass = functionClassesByArity[arity]
