@@ -1,4 +1,4 @@
-// !LANGUAGE: -UseGetterNameForPropertyAnnotationsMethodOnJvm
+// !LANGUAGE: +UseGetterNameForPropertyAnnotationsMethodOnJvm
 
 @Target(AnnotationTarget.PROPERTY)
 annotation class AnnProperty

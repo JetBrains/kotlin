@@ -1199,6 +1199,11 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/property/syntheticAnnotationsMethod"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
             }
 
+            @TestMetadata("doNotUseGetterName.kt")
+            public void testDoNotUseGetterName() throws Exception {
+                runTest("compiler/testData/writeFlags/property/syntheticAnnotationsMethod/doNotUseGetterName.kt");
+            }
+
             @TestMetadata("privateProperty.kt")
             public void testPrivateProperty() throws Exception {
                 runTest("compiler/testData/writeFlags/property/syntheticAnnotationsMethod/privateProperty.kt");

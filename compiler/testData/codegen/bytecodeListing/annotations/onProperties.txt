@@ -7,15 +7,15 @@ public final class A {
     private field y: int
     static method <clinit>(): void
     public method <init>(@AnnParam p0: int, @AnnParam p1: int): void
+    public synthetic deprecated static @AnnProp @AnnProp2 method getP$annotations(): void
     public final @AnnGetter method getP(): int
+    public synthetic deprecated static @AnnProp @AnnProp2 @AnnDelegate method getS$annotations(): void
     public final @org.jetbrains.annotations.NotNull method getS(): java.lang.String
+    public synthetic deprecated static @AnnProp2 method getX$annotations(): void
     public final method getX(): int
     public final @AnnGetter method getY(): int
-    public synthetic deprecated static @AnnProp @AnnProp2 method p$annotations(): void
-    public synthetic deprecated static @AnnProp @AnnProp2 @AnnDelegate method s$annotations(): void
     public final @AnnSetter method setP(@AnnParam p0: int): void
     public final @AnnSetter method setY(p0: int): void
-    public synthetic deprecated static @AnnProp2 method x$annotations(): void
 }
 
 @java.lang.annotation.Retention

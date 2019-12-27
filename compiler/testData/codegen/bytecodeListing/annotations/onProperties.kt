@@ -1,4 +1,4 @@
-// !LANGUAGE: -UseGetterNameForPropertyAnnotationsMethodOnJvm
+// !LANGUAGE: +UseGetterNameForPropertyAnnotationsMethodOnJvm
 
 import kotlin.reflect.KProperty
 
