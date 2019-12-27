@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.idea.decompiler.stubBuilder
 
 import com.intellij.psi.stubs.PsiFileStub
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import com.intellij.util.indexing.FileContentImpl
 import org.jetbrains.kotlin.idea.decompiler.builtIns.KotlinBuiltInDecompiler
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Assert
 import java.io.File
 
-abstract class AbstractBuiltInDecompilerTest : LightCodeInsightFixtureTestCase() {
+abstract class AbstractBuiltInDecompilerTest : KotlinLightCodeInsightFixtureTestCase() {
     protected fun doTest(packageFqName: String): String {
         val stubTreeFromDecompiler = configureAndBuildFileStub(packageFqName)
         val stubTreeFromDecompiledText = KtFileStubBuilder().buildStubTree(myFixture.file)
