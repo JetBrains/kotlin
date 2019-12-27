@@ -21,7 +21,7 @@ class Command2 : Command {
 class Configuration {
     val commands = Commands()
     inline fun commands(configure: Commands.() -> Unit) {
-        commands.<!UNRESOLVED_REFERENCE!>configure<!>()
+        commands.configure()
     }
     class Commands {
         operator fun <TCommand : Command> CommandFactory<TCommand>.invoke(
