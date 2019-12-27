@@ -233,26 +233,9 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
 
       try {
         removeTransientDataForInMemoryKeys(inputId, keyValueMap);
-
         InputDataDiffBuilder<Key, Value> builder = getKeysDiffBuilder(inputId);
-        if (builder instanceof CollectionInputDataDiffBuilder<?, ?>) {
-          Collection<Key> keyCollectionFromDisk = ((CollectionInputDataDiffBuilder<Key, Value>)builder).getSeq();
-          if (keyCollectionFromDisk != null) {
-            removeTransientDataForKeys(inputId, keyCollectionFromDisk);
-          }
-        } else {
-          Set<Key> diskKeySet = new THashSet<>();
-
-          builder.differentiate(
-            Collections.emptyMap(),
-            (key, value, inputId1) -> {
-            },
-            (key, value, inputId1) -> {},
-            (key, inputId1) -> diskKeySet.add(key)
-          );
-          removeTransientDataForKeys(inputId, diskKeySet);
-        }
-      } catch (Throwable throwable) {
+        removeTransientDataForKeys(inputId, getKeys(builder));
+      } catch (StorageException | IOException throwable) {
         throw new RuntimeException(throwable);
       }
     } finally {
@@ -466,5 +449,23 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
         }
       });
     }
+  }
+
+  private static <Key> Collection<Key> getKeys(InputDataDiffBuilder<Key, ?> builder) throws StorageException {
+    if (builder instanceof CollectionInputDataDiffBuilder<?, ?>) {
+      return ((CollectionInputDataDiffBuilder<Key, ?>)builder).getSeq();
+    }
+    else if (builder instanceof MapInputDataDiffBuilder<?, ?>) {
+      return ((MapInputDataDiffBuilder<Key, ?>)builder).getMap().keySet();
+    }
+
+    Set<Key> keys = new THashSet<>();
+    builder.differentiate(
+      Collections.emptyMap(),
+      (key, value, inputId) -> { },
+      (key, value, inputId) -> {},
+      (key, inputId) -> keys.add(key)
+    );
+    return keys;
   }
 }
