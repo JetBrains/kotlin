@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.formatter
 import com.intellij.formatting.*
 import com.intellij.lang.ASTNode
 import com.intellij.openapi.util.TextRange
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.TokenType
@@ -20,13 +19,16 @@ import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.formatter.NodeIndentStrategy.Companion.strategy
+import org.jetbrains.kotlin.idea.util.containsLineBreakInThis
 import org.jetbrains.kotlin.idea.util.isMultiline
+import org.jetbrains.kotlin.idea.util.needTrailingComma
 import org.jetbrains.kotlin.idea.util.requireNode
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.kdoc.parser.KDocElementTypes
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 private val QUALIFIED_OPERATION = TokenSet.create(DOT, SAFE_ACCESS)
@@ -600,15 +602,31 @@ abstract class KotlinCommonBlock(
             }
 
             elementType === VALUE_PARAMETER_LIST -> {
-                if (parentElementType === FUN ||
-                    parentElementType === PRIMARY_CONSTRUCTOR ||
-                    parentElementType === SECONDARY_CONSTRUCTOR
-                ) return getWrappingStrategyForItemList(
-                    commonSettings.METHOD_PARAMETERS_WRAP,
-                    VALUE_PARAMETER,
-                    node.withTrailingComma,
-                    additionalWrap = trailingCommaWrappingStrategyWithMultiLineCheck(LPAR, RPAR)
-                )
+                when (parentElementType) {
+                    FUN, PRIMARY_CONSTRUCTOR, SECONDARY_CONSTRUCTOR -> return getWrappingStrategyForItemList(
+                        commonSettings.METHOD_PARAMETERS_WRAP,
+                        VALUE_PARAMETER,
+                        node.withTrailingComma,
+                        additionalWrap = trailingCommaWrappingStrategyWithMultiLineCheck(LPAR, RPAR)
+                    )
+                    FUNCTION_LITERAL -> {
+                        if (nodePsi.parent?.safeAs<KtFunctionLiteral>()?.needTrailingComma(settings) == true) {
+                            val check = thisOrPrevIsMultiLineElement(COMMA, LBRACE /* not necessary */, ARROW /* not necessary */)
+                            return { childElement ->
+                                createWrapAlwaysIf(getPrevWithoutWhitespaceAndComments(childElement) == null || check(childElement))
+                            }
+                        }
+                    }
+                }
+            }
+
+            elementType === FUNCTION_LITERAL -> {
+                val withTrailingComma = nodePsi.cast<KtFunctionLiteral>().needTrailingComma(settings)
+                return { childElement ->
+                    createWrapAlwaysIf(
+                        withTrailingComma && (childElement.elementType === ARROW || getPrevWithoutWhitespaceAndComments(childElement)?.elementType === LBRACE)
+                    )
+                }
             }
 
             elementType === INDICES -> return defaultTrailingCommaWrappingStrategy(LBRACKET, RBRACKET)
@@ -676,8 +694,7 @@ abstract class KotlinCommonBlock(
 
             nodePsi is KtProperty ->
                 return wrap@{ childElement ->
-                    val wrapSetting =
-                        if (nodePsi.isLocal) commonSettings.VARIABLE_ANNOTATION_WRAP else commonSettings.FIELD_ANNOTATION_WRAP
+                    val wrapSetting = if (nodePsi.isLocal) commonSettings.VARIABLE_ANNOTATION_WRAP else commonSettings.FIELD_ANNOTATION_WRAP
                     getWrapAfterAnnotation(childElement, wrapSetting)?.let {
                         return@wrap it
                     }
@@ -763,9 +780,7 @@ abstract class KotlinCommonBlock(
 
         val startOffset = childElement.notDelimiterSiblingNodeInSequence(false, delimiterType, leftBarrier)?.startOffset ?: psi.startOffset
         val endOffset = childElement.notDelimiterSiblingNodeInSequence(true, delimiterType, rightBarrier)?.psi?.endOffset ?: psi.endOffset
-        val treeParent = childElement.treeParent
-        val textRange = TextRange.create(startOffset, endOffset).shiftLeft(treeParent.startOffset)
-        return StringUtil.containsLineBreak(textRange.subSequence(treeParent.text))
+        return psi.parent.containsLineBreakInThis(startOffset, endOffset)
     }
 
     private fun trailingCommaWrappingStrategyWithMultiLineCheck(
@@ -779,14 +794,12 @@ abstract class KotlinCommonBlock(
         additionalCheck: (ASTNode) -> Boolean
     ): WrappingStrategy = { childElement ->
         val childElementType = childElement.elementType
-        if (childElement.treeParent.withTrailingComma && (childElementType === rightAnchor ||
+        createWrapAlwaysIf(
+            childElement.treeParent.withTrailingComma && (childElementType === rightAnchor ||
                     getPrevWithoutWhitespaceAndComments(childElement)?.elementType === leftAnchor ||
                     additionalCheck(childElement)
                     )
         )
-            Wrap.createWrap(WrapType.ALWAYS, true)
-        else
-            null
     }
 }
 
@@ -1139,3 +1152,5 @@ private fun extractIndent(node: ASTNode): String {
         return ""
     return prevNode.text.substringAfterLast("\n", prevNode.text)
 }
+
+private fun createWrapAlwaysIf(option: Boolean): Wrap? = if (option) Wrap.createWrap(WrapType.ALWAYS, true) else null

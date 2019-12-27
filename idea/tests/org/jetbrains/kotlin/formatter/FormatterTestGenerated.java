@@ -1200,6 +1200,24 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
                 }
             }
 
+            @TestMetadata("idea/testData/formatter/trailingComma/lambdaParameters")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class LambdaParameters extends AbstractFormatterTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInLambdaParameters() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma/lambdaParameters"), Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), null, true);
+                }
+
+                @TestMetadata("LambdaParameterList.after.kt")
+                public void testLambdaParameterList() throws Exception {
+                    runTest("idea/testData/formatter/trailingComma/lambdaParameters/LambdaParameterList.after.kt");
+                }
+            }
+
             @TestMetadata("idea/testData/formatter/trailingComma/typeArguments")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
@@ -1713,6 +1731,24 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
                 @TestMetadata("IndicesAccess.after.inv.kt")
                 public void testIndicesAccess() throws Exception {
                     runTest("idea/testData/formatter/trailingComma/indices/IndicesAccess.after.inv.kt");
+                }
+            }
+
+            @TestMetadata("idea/testData/formatter/trailingComma/lambdaParameters")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class LambdaParameters extends AbstractFormatterTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTestInverted, this, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInLambdaParameters() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma/lambdaParameters"), Pattern.compile("^([^\\.]+)\\.after\\.inv\\.kt.*$"), null, true);
+                }
+
+                @TestMetadata("LambdaParameterList.after.inv.kt")
+                public void testLambdaParameterList() throws Exception {
+                    runTest("idea/testData/formatter/trailingComma/lambdaParameters/LambdaParameterList.after.inv.kt");
                 }
             }
 

@@ -234,8 +234,8 @@ class H<
 
 class J<
         x : String, y : String,
-        z : String /*
-     */,
+        z : String, /*
+     */
         >
 
 class K<

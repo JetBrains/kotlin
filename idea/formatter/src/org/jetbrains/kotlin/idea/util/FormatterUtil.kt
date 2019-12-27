@@ -10,7 +10,12 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
+import com.intellij.psi.codeStyle.CodeStyleSettings
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
+import org.jetbrains.kotlin.idea.formatter.kotlinCustomSettings
+import org.jetbrains.kotlin.psi.KtFunctionLiteral
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 /*
  * ASTBlock.node is nullable, this extension was introduced to minimize changes
@@ -39,3 +44,16 @@ fun PsiElement.getLineCount(): Int {
 }
 
 fun PsiElement.isMultiline() = getLineCount() > 1
+
+fun KtFunctionLiteral.needTrailingComma(settings: CodeStyleSettings): Boolean = valueParameterList?.trailingComma != null ||
+        settings.kotlinCustomSettings.ALLOW_TRAILING_COMMA &&
+        run(fun(): Boolean {
+            val startOffset = valueParameterList?.startOffset ?: return false
+            val endOffset = arrow?.endOffset ?: return false
+            return containsLineBreakInThis(startOffset, endOffset)
+        })
+
+fun PsiElement.containsLineBreakInThis(globalStartOffset: Int, globalEndOffset: Int): Boolean {
+    val textRange = TextRange.create(globalStartOffset, globalEndOffset).shiftLeft(startOffset)
+    return StringUtil.containsLineBreak(textRange.subSequence(text))
+}
