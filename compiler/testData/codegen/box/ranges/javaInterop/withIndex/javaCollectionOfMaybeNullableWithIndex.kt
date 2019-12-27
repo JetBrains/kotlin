@@ -23,7 +23,7 @@ import java.util.*;
 
 public class J {
     public static List<Integer> listOfMaybeNullable() {
-        List<Integer> list = new ArrayList<>();
+        List<Integer> list = new ArrayList<Integer>();
         list.add(42);
         list.add(null);
         return list;

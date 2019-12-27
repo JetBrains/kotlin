@@ -3,6 +3,7 @@
 // IGNORE_BACKEND_FIR: JVM_IR
 // IGNORE_BACKEND: JVM
 // WITH_RUNTIME
+// JVM_TARGET: 1.8
 
 // Note: This fails on JVM (non-IR) with "Fail: should throw on get() in loop header". The not-null assertion is not generated when
 // assigning to the loop variable. The root cause seems to be that the loop variable is a KtParameter and

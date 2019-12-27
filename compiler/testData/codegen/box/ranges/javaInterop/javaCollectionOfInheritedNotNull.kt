@@ -26,7 +26,7 @@ public class JImpl implements J {
     // Type argument (Int) gets @EnhancedNullability because it is not nullable in overridden Kotlin function.
     @Override
     public List<Integer> listOfNotNull() {
-        List<Integer> list = new ArrayList<>();
+        List<Integer> list = new ArrayList<Integer>();
         list.add(42);
         list.add(-42);
         return list;

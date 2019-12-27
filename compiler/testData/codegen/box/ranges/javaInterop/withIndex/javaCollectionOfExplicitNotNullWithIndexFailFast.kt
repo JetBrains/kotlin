@@ -3,6 +3,7 @@
 // IGNORE_BACKEND: JVM
 // IGNORE_BACKEND_FIR: JVM_IR
 // WITH_RUNTIME
+// JVM_TARGET: 1.8
 
 // Note: This fails on JVM (non-IR) with "Fail: should throw on get()". The not-null assertion is not generated when assigning to the
 // variables in the destructuring declaration. The root cause seems to be that

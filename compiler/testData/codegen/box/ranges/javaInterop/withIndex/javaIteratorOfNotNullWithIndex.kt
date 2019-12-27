@@ -2,6 +2,7 @@
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND_FIR: JVM_IR
 // WITH_RUNTIME
+// JVM_TARGET: 1.8
 
 // FILE: box.kt
 import kotlin.test.*
