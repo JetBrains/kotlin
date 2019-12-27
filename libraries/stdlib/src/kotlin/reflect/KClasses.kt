@@ -23,9 +23,12 @@ import kotlin.internal.LowPriorityInOverloadResolution
 @ExperimentalStdlibApi
 @LowPriorityInOverloadResolution
 fun <T : Any> KClass<T>.cast(value: Any?): T {
-    if (!isInstance(value)) throw ClassCastException("Value cannot be cast to $qualifiedName")
+    if (!isInstance(value)) throw ClassCastException("Value cannot be cast to $qualifiedOrSimpleName")
     return value as T
 }
+
+// TODO: replace with qualifiedName when it is fully supported in K/JS
+internal expect val KClass<*>.qualifiedOrSimpleName: String?
 
 /**
  * Casts the given [value] to the class represented by this [KClass] object.
