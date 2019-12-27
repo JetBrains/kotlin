@@ -7,19 +7,13 @@ import com.intellij.find.findUsages.FindUsagesHandler;
 import com.intellij.find.findUsages.FindUsagesManager;
 import com.intellij.find.findUsages.FindUsagesUtil;
 import com.intellij.find.impl.FindManagerImpl;
-import com.intellij.lang.ASTNode;
-import com.intellij.lang.LanguageParserDefinitions;
-import com.intellij.lang.ParserDefinition;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiPolyVariantReference;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.impl.search.PsiSearchHelperImpl;
-import com.intellij.psi.search.*;
+import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.SearchScope;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.usageView.UsageInfoFactory;
 import com.intellij.util.PairProcessor;
-import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -43,26 +37,7 @@ public class TextOccurrencesUtil {
                                         @NotNull GlobalSearchScope searchScope,
                                         @NotNull Collection<? super UsageInfo> results,
                                         @NotNull UsageInfoFactory factory) {
-    PsiSearchHelperImpl.processTextOccurrences(element, stringToSearch, searchScope, factory, t -> {
-      results.add(t);
-      return true;
-    });
-  }
-
-  private static boolean processStringLiteralsContainingIdentifier(@NotNull String identifier,
-                                                                   @NotNull SearchScope searchScope,
-                                                                   PsiSearchHelper helper,
-                                                                   final Processor<? super PsiElement> processor) {
-    TextOccurenceProcessor occurenceProcessor = (element, offsetInElement) -> {
-      final ParserDefinition definition = LanguageParserDefinitions.INSTANCE.forLanguage(element.getLanguage());
-      final ASTNode node = element.getNode();
-      if (definition != null && node != null && definition.getStringLiteralElements().contains(node.getElementType())) {
-        return processor.process(element);
-      }
-      return true;
-    };
-
-    return helper.processElementsWithWord(occurenceProcessor, searchScope, identifier, UsageSearchContext.IN_STRINGS, true);
+    TextOccurrencesUtilBase.addTextOccurrences(element, stringToSearch, searchScope, results, factory);
   }
 
     /** @deprecated Use {@link TextOccurrencesUtil#processUsagesInStringsAndComments(
@@ -81,12 +56,7 @@ public class TextOccurrencesUtil {
                                                           @NotNull String stringToSearch,
                                                           boolean ignoreReferences,
                                                           @NotNull PairProcessor<? super PsiElement, ? super TextRange> processor) {
-    PsiSearchHelper helper = PsiSearchHelper.getInstance(element.getProject());
-    SearchScope scope = helper.getUseScope(element);
-    scope = scope.intersectWith(searchScope);
-    Processor<PsiElement> commentOrLiteralProcessor = literal -> processTextIn(literal, stringToSearch, ignoreReferences, processor);
-    return processStringLiteralsContainingIdentifier(stringToSearch, scope, helper, commentOrLiteralProcessor) &&
-           helper.processCommentsContainingIdentifier(stringToSearch, scope, commentOrLiteralProcessor);
+    return TextOccurrencesUtilBase.processUsagesInStringsAndComments(element, searchScope, stringToSearch, ignoreReferences, processor);
   }
 
   /** @deprecated Use {@link TextOccurrencesUtil#addUsagesInStringsAndComments(
@@ -104,53 +74,7 @@ public class TextOccurrencesUtil {
                                                    @NotNull String stringToSearch,
                                                    @NotNull Collection<? super UsageInfo> results,
                                                    @NotNull UsageInfoFactory factory) {
-    Object lock = new Object();
-    processUsagesInStringsAndComments(element, searchScope, stringToSearch, false, (commentOrLiteral, textRange) -> {
-      UsageInfo usageInfo = factory.createUsageInfo(commentOrLiteral, textRange.getStartOffset(), textRange.getEndOffset());
-      if (usageInfo != null) {
-        synchronized (lock) {
-          results.add(usageInfo);
-        }
-      }
-      return true;
-    });
-  }
-
-  private static boolean processTextIn(PsiElement scope,
-                                       String stringToSearch,
-                                       boolean ignoreReferences,
-                                       PairProcessor<? super PsiElement, ? super TextRange> processor) {
-    String text = scope.getText();
-    for (int offset = 0; offset < text.length(); offset++) {
-      offset = text.indexOf(stringToSearch, offset);
-      if (offset < 0) break;
-      final PsiReference referenceAt = scope.findReferenceAt(offset);
-      if (!ignoreReferences && referenceAt != null
-          && (referenceAt.resolve() != null || referenceAt instanceof PsiPolyVariantReference
-                                               && ((PsiPolyVariantReference)referenceAt).multiResolve(true).length > 0)) continue;
-
-      if (offset > 0) {
-        char c = text.charAt(offset - 1);
-        if (Character.isJavaIdentifierPart(c) && c != '$') {
-          if (offset < 2 || text.charAt(offset - 2) != '\\') continue;  //escape sequence
-        }
-      }
-
-      if (offset + stringToSearch.length() < text.length()) {
-        char c = text.charAt(offset + stringToSearch.length());
-        if (Character.isJavaIdentifierPart(c) && c != '$') {
-          continue;
-        }
-      }
-
-      TextRange textRange = new TextRange(offset, offset + stringToSearch.length());
-      if (!processor.process(scope, textRange)) {
-        return false;
-      }
-
-      offset += stringToSearch.length();
-    }
-    return true;
+    TextOccurrencesUtilBase.addUsagesInStringsAndComments(element, searchScope, stringToSearch, results, factory);
   }
 
   public static boolean isSearchTextOccurrencesEnabled(@NotNull PsiElement element) {

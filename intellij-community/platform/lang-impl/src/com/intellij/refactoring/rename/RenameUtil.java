@@ -32,7 +32,7 @@ import com.intellij.refactoring.listeners.UndoRefactoringElementListener;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.refactoring.util.NonCodeSearchDescriptionLocation;
 import com.intellij.refactoring.util.NonCodeUsageInfo;
-import com.intellij.refactoring.util.TextOccurrencesUtil;
+import com.intellij.refactoring.util.TextOccurrencesUtilBase;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.usageView.UsageInfoFactory;
 import com.intellij.util.IncorrectOperationException;
@@ -92,7 +92,7 @@ public class RenameUtil {
       if (stringToSearch.length() > 0) {
         final String stringToReplace = getStringToReplace(element, newName, false, processor);
         UsageInfoFactory factory = new NonCodeUsageInfoFactory(searchForInComments, stringToReplace);
-        TextOccurrencesUtil.addUsagesInStringsAndComments(searchForInComments, searchScope, stringToSearch, result, factory);
+        TextOccurrencesUtilBase.addUsagesInStringsAndComments(searchForInComments, searchScope, stringToSearch, result, factory);
       }
     }
 
@@ -126,7 +126,7 @@ public class RenameUtil {
       }
     };
     if (searchScope instanceof GlobalSearchScope) {
-      TextOccurrencesUtil.addTextOccurrences(element, stringToSearch, (GlobalSearchScope)searchScope, result, factory);
+      TextOccurrencesUtilBase.addTextOccurrences(element, stringToSearch, (GlobalSearchScope)searchScope, result, factory);
     }
   }
 
