@@ -75,7 +75,15 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         val property = (function as? IrSimpleFunction)?.correspondingPropertySymbol?.owner
         if (property != null && function.name.isSpecial) {
             val propertyName = property.name.asString()
-            if (property.parent.let { it is IrClass && it.isAnnotationClass }) return propertyName
+            val propertyParent = property.parentAsClass
+            if (propertyParent.isAnnotationClass)
+                return propertyName
+
+            // The enum property getters <get-name> and <get-ordinal> have special names which also
+            // apply to their fake overrides. Unfortunately, getJvmMethodNameIfSpecial does not handle
+            // fake overrides, so we need a special case here.
+            if ((propertyParent.isEnumClass || propertyParent.isEnumEntry) && (propertyName == "name" || propertyName == "ordinal"))
+                return propertyName
 
             val accessorName = if (function.isPropertyGetter) JvmAbi.getterName(propertyName) else JvmAbi.setterName(propertyName)
             return mangleMemberNameIfRequired(accessorName, function)
