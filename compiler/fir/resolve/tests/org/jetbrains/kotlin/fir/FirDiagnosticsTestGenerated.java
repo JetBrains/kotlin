@@ -539,6 +539,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/nestedVisibility.kt");
         }
 
+        @TestMetadata("objectOverrideCallViaImport.kt")
+        public void testObjectOverrideCallViaImport() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/objectOverrideCallViaImport.kt");
+        }
+
         @TestMetadata("objectVsProperty.kt")
         public void testObjectVsProperty() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/objectVsProperty.kt");
