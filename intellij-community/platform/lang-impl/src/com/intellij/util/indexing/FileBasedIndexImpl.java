@@ -185,82 +185,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
       }
     });
 
-    connection.subscribe(FileTypeManager.TOPIC, new FileTypeListener() {
-      @Nullable private Map<FileType, Set<String>> myTypeToExtensionMap;
-
-      @Override
-      public void beforeFileTypesChanged(@NotNull final FileTypeEvent event) {
-        cleanupProcessedFlag();
-        myTypeToExtensionMap = new THashMap<>();
-        FileTypeManager fileTypeManager = FileTypeManager.getInstance();
-        for (FileType type : fileTypeManager.getRegisteredFileTypes()) {
-          myTypeToExtensionMap.put(type, getExtensions(type, fileTypeManager));
-        }
-      }
-
-      @Override
-      public void fileTypesChanged(@NotNull final FileTypeEvent event) {
-        final Map<FileType, Set<String>> oldTypeToExtensionsMap = myTypeToExtensionMap;
-        myTypeToExtensionMap = null;
-
-        // file type added
-        if (event.getAddedFileType() != null) {
-          rebuildAllIndices("The following file type was added: " + event.getAddedFileType());
-          return;
-        }
-
-        if (oldTypeToExtensionsMap == null) {
-          return;
-        }
-
-        final Map<FileType, Set<String>> newTypeToExtensionsMap = new THashMap<>();
-        FileTypeManager fileTypeManager = FileTypeManager.getInstance();
-        for (FileType type : fileTypeManager.getRegisteredFileTypes()) {
-          newTypeToExtensionsMap.put(type, getExtensions(type, fileTypeManager));
-        }
-        // file type changes and removals
-        if (!newTypeToExtensionsMap.keySet().containsAll(oldTypeToExtensionsMap.keySet())) {
-          Set<FileType> removedFileTypes = new HashSet<>(oldTypeToExtensionsMap.keySet());
-          removedFileTypes.removeAll(newTypeToExtensionsMap.keySet());
-          rebuildAllIndices("The following file types were removed/are no longer associated: " + removedFileTypes);
-          return;
-        }
-        for (Map.Entry<FileType, Set<String>> entry : oldTypeToExtensionsMap.entrySet()) {
-          FileType fileType = entry.getKey();
-          Set<String> strings = entry.getValue();
-          if (!newTypeToExtensionsMap.get(fileType).containsAll(strings)) {
-            Set<String> removedExtensions = new HashSet<>(strings);
-            removedExtensions.removeAll(newTypeToExtensionsMap.get(fileType));
-            rebuildAllIndices(fileType.getName() + " is no longer associated with extension(s) " + String.join(",", removedExtensions));
-            return;
-          }
-        }
-      }
-
-      @NotNull
-      private Set<String> getExtensions(@NotNull FileType type, @NotNull FileTypeManager fileTypeManager) {
-        final Set<String> set = new THashSet<>();
-        for (FileNameMatcher matcher : fileTypeManager.getAssociations(type)) {
-          set.add(matcher.getPresentableString());
-        }
-        return set;
-      }
-
-      private void rebuildAllIndices(@NotNull String reason) {
-        doClearIndices(id -> {
-          if (!InvertedIndex.ARE_COMPOSITE_INDEXERS_ENABLED) return true;
-
-          if (id.equals(FileTypeIndex.NAME)) return false;
-
-          if (getState().getIndex(id).getExtension().getIndexer() instanceof CompositeDataIndexer) {
-            return false;
-          }
-
-          return true;
-        });
-        scheduleIndexRebuild("File type change" + ", " + reason);
-      }
-    });
+    connection.subscribe(FileTypeManager.TOPIC, new FileBasedIndexFileTypeListener());
 
     connection.subscribe(AppTopics.FILE_DOCUMENT_SYNC, new FileDocumentManagerListener() {
       @Override
@@ -291,6 +216,21 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
     myConnection = connection;
 
     initComponent();
+  }
+
+  void rebuildAllIndices(@NotNull String reason) {
+    doClearIndices(id -> {
+      if (!InvertedIndex.ARE_COMPOSITE_INDEXERS_ENABLED) return true;
+
+      if (id.equals(FileTypeIndex.NAME)) return false;
+
+      if (getState().getIndex(id).getExtension().getIndexer() instanceof CompositeDataIndexer) {
+        return false;
+      }
+
+      return true;
+    });
+    scheduleIndexRebuild("File type change" + ", " + reason);
   }
 
   @VisibleForTesting
@@ -2437,7 +2377,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
     return PsiDocumentManager.getInstance(project).getCachedPsiFile(doc);
   }
 
-  private static void cleanupProcessedFlag() {
+  static void cleanupProcessedFlag() {
     final VirtualFile[] roots = ManagingFS.getInstance().getRoots();
     for (VirtualFile root : roots) {
       cleanProcessedFlag(root);
