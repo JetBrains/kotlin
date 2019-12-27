@@ -29,7 +29,7 @@ fun case_1(x: Any) {
 fun case_2(x: Any?) {
     if (x is String?) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!><!DEBUG_INFO_SMARTCAST!>x<!>!!<!>.length
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.String?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any? & kotlin.String")!>x<!>
     }
 }
 
@@ -51,6 +51,6 @@ fun case_3(x: Any) {
 fun case_4(x: Any?) {
     if (x is Map.Entry<*, *>?) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.Map.Entry<*, *>")!><!DEBUG_INFO_SMARTCAST!>x<!>!!<!>.value
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.collections.Map.Entry<*, *>?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any? & kotlin.collections.Map.Entry<*, *>")!>x<!>
     }
 }
