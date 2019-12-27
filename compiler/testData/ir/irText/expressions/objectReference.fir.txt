@@ -49,10 +49,9 @@ FILE fqName:<root> fileName:/objectReference.kt
       ANONYMOUS_INITIALIZER isStatic=false
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:counter type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
-            receiver: GET_VAR '<this>: <root>.Z declared in <root>.Z' type=<root>.Z origin=null
             value: CONST Int type=kotlin.Int value=1
           CALL 'public final fun foo (): kotlin.Unit declared in <root>.Z' type=kotlin.Unit origin=null
-            $this: GET_VAR '<this>: <root>.Z declared in <root>.Z' type=<root>.Z origin=null
+            $this: GET_OBJECT 'CLASS OBJECT name:Z modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.Z
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:counter type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
             receiver: GET_OBJECT 'CLASS OBJECT name:Z modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.Z
             value: CONST Int type=kotlin.Int value=1
@@ -62,10 +61,9 @@ FILE fqName:<root> fileName:/objectReference.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Z.Nested
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:counter type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
-            receiver: GET_VAR '<this>: <root>.Z declared in <root>.Z' type=<root>.Z origin=null
             value: CONST Int type=kotlin.Int value=1
           CALL 'public final fun foo (): kotlin.Unit declared in <root>.Z' type=kotlin.Unit origin=null
-            $this: GET_VAR '<this>: <root>.Z declared in <root>.Z' type=<root>.Z origin=null
+            $this: GET_OBJECT 'CLASS OBJECT name:Z modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.Z
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:counter type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
             receiver: GET_OBJECT 'CLASS OBJECT name:Z modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.Z
             value: CONST Int type=kotlin.Int value=1
@@ -168,10 +166,10 @@ FILE fqName:<root> fileName:/objectReference.kt
     $receiver: VALUE_PARAMETER name:<this> type:<root>.Z
     BLOCK_BODY
       SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:counter type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
-        receiver: GET_VAR '<this>: <root>.Z declared in <root>.Z' type=<root>.Z origin=null
+        receiver: GET_VAR '<this>: <root>.Z declared in <root>.test' type=<root>.Z origin=null
         value: CONST Int type=kotlin.Int value=1
       CALL 'public final fun foo (): kotlin.Unit declared in <root>.Z' type=kotlin.Unit origin=null
-        $this: GET_VAR '<this>: <root>.Z declared in <root>.Z' type=<root>.Z origin=null
+        $this: GET_VAR '<this>: <root>.Z declared in <root>.test' type=<root>.Z origin=null
       SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:counter type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
         receiver: GET_OBJECT 'CLASS OBJECT name:Z modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.Z
         value: CONST Int type=kotlin.Int value=1
