@@ -703,7 +703,7 @@ class Fir2IrVisitor(
                     startOffset, endOffset, type, symbol,
                     origin = calleeReference.statementOrigin()
                 )
-                else -> IrErrorCallExpressionImpl(startOffset, endOffset, type, "Unresolved reference: ${calleeReference.render()}")
+                else -> generateErrorCallExpression(startOffset, endOffset, calleeReference, type)
             }
         }
     }
@@ -899,9 +899,14 @@ class Fir2IrVisitor(
         }
     }
 
-    private fun generateErrorCallExpression(startOffset: Int, endOffset: Int, calleeReference: FirReference): IrErrorCallExpression {
+    private fun generateErrorCallExpression(
+        startOffset: Int,
+        endOffset: Int,
+        calleeReference: FirReference,
+        type: IrType? = null
+    ): IrErrorCallExpression {
         return IrErrorCallExpressionImpl(
-            startOffset, endOffset, IrErrorTypeImpl(null, emptyList(), Variance.INVARIANT),
+            startOffset, endOffset, type ?: createErrorType(),
             "Unresolved reference: ${calleeReference.render()}"
         )
     }
