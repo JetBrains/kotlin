@@ -462,7 +462,7 @@ class G(
 class G(
         val x: String,
         val y: String
-        = "" /* */, /* */
+        = "", /* */ /* */
         val z: String,
 )
 
@@ -475,8 +475,8 @@ class H(
 
 class J(
         val x: String, val y: String,
-        val z: String /*
-     */,
+        val z: String, /*
+     */
 )
 
 class K(
@@ -485,7 +485,7 @@ class K(
 )
 
 class L(
-        val x: String, val y: String, val z: String,
+        val x: String, val y: String, val z: String, // adwd
 )
 
 // SET_TRUE: ALLOW_TRAILING_COMMA

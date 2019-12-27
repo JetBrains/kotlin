@@ -454,7 +454,7 @@ class K(
     ,   )
 
 class L(
-    val x: String, val y: String, val z: String
+    val x: String, val y: String, val z: String // adwd
 )
 
 // SET_TRUE: ALLOW_TRAILING_COMMA

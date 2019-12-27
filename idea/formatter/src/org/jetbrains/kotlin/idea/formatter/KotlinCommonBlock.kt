@@ -609,6 +609,7 @@ abstract class KotlinCommonBlock(
                         node.withTrailingComma,
                         additionalWrap = trailingCommaWrappingStrategyWithMultiLineCheck(LPAR, RPAR)
                     )
+                    FUNCTION_TYPE -> return defaultTrailingCommaWrappingStrategy(LPAR, RPAR)
                     FUNCTION_LITERAL -> {
                         if (nodePsi.parent?.safeAs<KtFunctionLiteral>()?.needTrailingComma(settings) == true) {
                             val check = thisOrPrevIsMultiLineElement(COMMA, LBRACE /* not necessary */, ARROW /* not necessary */)

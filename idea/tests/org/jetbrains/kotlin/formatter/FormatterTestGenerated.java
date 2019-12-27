@@ -1299,6 +1299,11 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma/valueParameters"), Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), null, true);
                 }
 
+                @TestMetadata("LambdaValueParameters.after.kt")
+                public void testLambdaValueParameters() throws Exception {
+                    runTest("idea/testData/formatter/trailingComma/valueParameters/LambdaValueParameters.after.kt");
+                }
+
                 @TestMetadata("ParameterListChopAsNeeded.after.kt")
                 public void testParameterListChopAsNeeded() throws Exception {
                     runTest("idea/testData/formatter/trailingComma/valueParameters/ParameterListChopAsNeeded.after.kt");
@@ -1849,6 +1854,11 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
 
                 public void testAllFilesPresentInValueParameters() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma/valueParameters"), Pattern.compile("^([^\\.]+)\\.after\\.inv\\.kt.*$"), null, true);
+                }
+
+                @TestMetadata("LambdaValueParameters.after.inv.kt")
+                public void testLambdaValueParameters() throws Exception {
+                    runTest("idea/testData/formatter/trailingComma/valueParameters/LambdaValueParameters.after.inv.kt");
                 }
 
                 @TestMetadata("ParameterListChopAsNeeded.after.inv.kt")

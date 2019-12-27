@@ -247,4 +247,43 @@ class L<
         x : String, y : String, z : String,
         >
 
+class C<
+        x : Int, // adad
+        >
+
+class G<
+        x : String, y : String, /* */
+        z : String, // adad
+        >
+
+class G<
+        x : String,
+        y : String,
+        /* */ /* */
+        z : String, /**/
+        >()
+
+class H<
+        x : String, /*
+    */
+        y : String,
+        z : String, /*
+    */
+        >
+
+class J<
+        x : String, y : String,
+        z : String, /*
+     */ /**/
+        >
+
+class K<
+        x : String, y : String,
+        z : String, // aw
+        >
+
+class L<
+        x : String, y : String, z : String, //awd
+        >
+
 // SET_TRUE: ALLOW_TRAILING_COMMA
