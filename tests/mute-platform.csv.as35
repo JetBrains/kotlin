@@ -6,6 +6,7 @@ org.jetbrains.kotlin.idea.completion.test.weighers.BasicCompletionWeigherTestGen
 org.jetbrains.kotlin.idea.debugger.test.KotlinSteppingTestGenerated.StepOver.testSoSuspendableCallInFunFromOtherStepping, Super FLAKY on Android Studio (can be reproduced locally)
 org.jetbrains.kotlin.idea.debugger.test.KotlinSteppingTestGenerated.StepOverForce.testSofSuspendableCallInFun, Super FLAKY on Android Studio (can be reproduced locally)
 org.jetbrains.kotlin.idea.quickfix.QuickFixMultiFileTestGenerated.AutoImports.testAmbiguousNamePreferFromJdk, Class from JDK is not prioritized
+org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.CreateFromUsage.CreateClass.CallExpression.testCallInWhenEntry, KT-35728
 org.jetbrains.kotlin.j2k.JavaToKotlinConverterSingleFileTestGenerated.ToKotlinClasses.testIterableAndIterator
 org.jetbrains.kotlin.j2k.JavaToKotlinConverterSingleFileTestGenerated.ToKotlinClasses.testIterableAndIterator2
 org.jetbrains.kotlin.j2k.JavaToKotlinConverterSingleFileTestGenerated.ToKotlinClasses.testIterableAndIterator3
