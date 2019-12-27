@@ -15,8 +15,8 @@ import kotlin.annotation.AnnotationTarget.*
  * with the future versions of the standard library.
  *
  * Any usage of a declaration annotated with `@ExperimentalTime` must be accepted either by
- * annotating that usage with the [UseExperimental] annotation, e.g. `@UseExperimental(ExperimentalTime::class)`,
- * or by using the compiler argument `-Xuse-experimental=kotlin.time.ExperimentalTime`.
+ * annotating that usage with the [OptIn] annotation, e.g. `@OptIn(ExperimentalTime::class)`,
+ * or by using the compiler argument `-Xopt-in=kotlin.time.ExperimentalTime`.
  */
 @Experimental(level = Experimental.Level.ERROR)
 @RequiresOptIn(level = RequiresOptIn.Level.ERROR)

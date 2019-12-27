@@ -13,8 +13,8 @@ import kotlin.internal.RequireKotlinVersionKind
  * The experimental multiplatform support API marker.
  *
  * Any usage of a declaration annotated with `@ExperimentalMultiplatform` must be accepted either by
- * annotating that usage with the [UseExperimental] annotation, e.g. `@UseExperimental(ExperimentalMultiplatform::class)`,
- * or by using the compiler argument `-Xuse-experimental=kotlin.ExperimentalMultiplatform`.
+ * annotating that usage with the [OptIn] annotation, e.g. `@OptIn(ExperimentalMultiplatform::class)`,
+ * or by using the compiler argument `-Xopt-in=kotlin.ExperimentalMultiplatform`.
  */
 @Experimental
 @RequiresOptIn
