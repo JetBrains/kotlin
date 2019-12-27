@@ -100,6 +100,21 @@ internal open class KotlinTasksProvider(val targetName: String) {
         return result
     }
 
+    fun <T : Kotlin2JsCompile> registerKotlinJsIrTask(
+        project: Project,
+        name: String,
+        taskClass: Class<out T>,
+        compilation: AbstractKotlinCompilation<*>,
+        configureAction: (T) -> Unit
+    ): TaskProvider<out T> {
+        val properties = PropertiesProvider(project)
+        val result = project.registerTask(name, taskClass) {
+            configureAction(it)
+        }
+        configure(result, project, properties, compilation)
+        return result
+    }
+
     fun registerKotlinCommonTask(
         project: Project,
         name: String,

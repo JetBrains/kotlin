@@ -37,6 +37,8 @@ import org.jetbrains.kotlin.gradle.model.builder.KotlinModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrType
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -343,8 +345,46 @@ internal class KotlinJsIrSourceSetProcessor(
         project: Project,
         taskName: String,
         configureAction: (Kotlin2JsCompile) -> (Unit)
-    ): TaskProvider<out Kotlin2JsCompile> =
-        tasksProvider.registerKotlinJSTask(project, taskName, kotlinCompilation, configureAction)
+    ): TaskProvider<out Kotlin2JsCompile> {
+        val compilation = kotlinCompilation as KotlinJsIrCompilation
+
+        if (taskName == compilation.productionLinkTaskName) {
+            return registerJsLink(
+                project,
+                taskName,
+                KotlinJsIrType.PRODUCTION,
+                configureAction
+            )
+        }
+
+        if (taskName == compilation.developmentLinkTaskName) {
+            return registerJsLink(
+                project,
+                taskName,
+                KotlinJsIrType.DEVELOPMENT,
+                configureAction
+            )
+        }
+
+        return tasksProvider.registerKotlinJSTask(project, taskName, kotlinCompilation, configureAction)
+    }
+
+    private fun registerJsLink(
+        project: Project,
+        taskName: String,
+        type: KotlinJsIrType,
+        configureAction: (Kotlin2JsCompile) -> Unit
+    ): TaskProvider<out KotlinJsIrLink> {
+        return tasksProvider.registerKotlinJsIrTask(
+            project,
+            taskName,
+            KotlinJsIrLink::class.java,
+            kotlinCompilation
+        ) { task ->
+            task.type = type
+            configureAction(task)
+        }
+    }
 
     override fun doTargetSpecificProcessing() {
         project.tasks.named(kotlinCompilation.compileAllTaskName).configure {
