@@ -44,7 +44,7 @@ fun buildLibrary(
     included: List<String>,
     linkDependencies: List<KonanLibrary>,
     metadata: SerializedMetadata,
-    ir: SerializedIrModule,
+    ir: SerializedIrModule?,
     versions: KotlinLibraryVersioning,
     target: KonanTarget,
     output: String,
@@ -57,7 +57,9 @@ fun buildLibrary(
     val library = KonanLibraryWriterImpl(File(output), moduleName, versions, target, nopack)
 
     library.addMetadata(metadata)
-    library.addIr(ir)
+    if (ir != null) {
+        library.addIr(ir)
+    }
 
     natives.forEach {
         library.addNativeBitcode(it)

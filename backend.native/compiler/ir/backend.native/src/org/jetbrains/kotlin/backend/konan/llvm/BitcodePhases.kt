@@ -6,6 +6,10 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.*
+import org.jetbrains.kotlin.backend.common.phaser.CompilerPhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
+import org.jetbrains.kotlin.backend.common.phaser.PhaserState
+import org.jetbrains.kotlin.backend.common.phaser.namedUnitPhase
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.GlobalHierarchyAnalysis
 import org.jetbrains.kotlin.backend.konan.optimizations.*
@@ -44,10 +48,14 @@ internal val createLLVMDeclarationsPhase = makeKonanModuleOpPhase(
         }
 )
 
-internal val disposeLLVMPhase = makeKonanModuleOpPhase(
+internal val disposeLLVMPhase = namedUnitPhase(
         name = "DisposeLLVM",
         description = "Dispose LLVM",
-        op = { context, _ -> context.disposeLlvm() }
+        lower = object : CompilerPhase<Context, Unit, Unit> {
+            override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<Unit>, context: Context, input: Unit) {
+                context.disposeLlvm()
+            }
+        }
 )
 
 internal val RTTIPhase = makeKonanModuleOpPhase(
@@ -265,10 +273,14 @@ internal val bitcodeOptimizationPhase = makeKonanModuleOpPhase(
         op = { context, _ -> runLlvmOptimizationPipeline(context) }
 )
 
-internal val produceOutputPhase = makeKonanModuleOpPhase(
+internal val produceOutputPhase = namedUnitPhase(
         name = "ProduceOutput",
         description = "Produce output",
-        op = { context, _ -> produceOutput(context) }
+        lower = object : CompilerPhase<Context, Unit, Unit> {
+            override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<Unit>, context: Context, input: Unit) {
+                produceOutput(context)
+            }
+        }
 )
 
 internal val verifyBitcodePhase = makeKonanModuleOpPhase(

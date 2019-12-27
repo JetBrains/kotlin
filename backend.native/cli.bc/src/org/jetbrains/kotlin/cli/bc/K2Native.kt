@@ -140,6 +140,8 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 val outputKind = CompilerOutputKind.valueOf(
                     (arguments.produce ?: "program").toUpperCase())
                 put(PRODUCE, outputKind)
+                put(METADATA_KLIB, arguments.metadataKlib)
+
                 arguments.libraryVersion ?. let { put(LIBRARY_VERSION, it) }
 
                 arguments.mainPackage ?.let{ put(ENTRY, it) }
