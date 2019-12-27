@@ -5,6 +5,7 @@ import com.intellij.execution.ExecutionBundle;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.RunConfiguration;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.options.ex.SingleConfigurableEditor;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
@@ -21,13 +22,15 @@ public class EditConfigurationsDialog extends SingleConfigurableEditor implement
   }
 
   public EditConfigurationsDialog(@NotNull Project project, @Nullable ConfigurationFactory factory) {
-    super(project, RunConfigurableKt.createRunConfigurationConfigurable(project).selectConfigurableOnShow(factory == null), "#com.intellij.execution.impl.EditConfigurationsDialog", IdeModalityType.IDE);
+    super(project, RunConfigurableKt.createRunConfigurationConfigurable(project), "#com.intellij.execution.impl.EditConfigurationsDialog", IdeModalityType.IDE);
 
     ((RunConfigurable)getConfigurable()).setRunDialog(this);
     setTitle(ExecutionBundle.message("run.debug.dialog.title"));
     setHorizontalStretch(1.3F);
     if (factory != null) {
       addRunConfiguration(factory);
+    } else {
+      ((RunConfigurable)getConfigurable()).selectConfigurableOnShow(ModalityState.stateForComponent(getWindow()));
     }
   }
 

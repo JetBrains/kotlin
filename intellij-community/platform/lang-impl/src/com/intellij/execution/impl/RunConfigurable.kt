@@ -12,6 +12,7 @@ import com.intellij.ide.dnd.TransferableList
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.ConfigurationException
@@ -261,12 +262,8 @@ open class RunConfigurable @JvmOverloads constructor(protected val project: Proj
   protected open fun addRunConfigurationsToModel(model: DefaultMutableTreeNode) {
   }
 
-  fun selectConfigurableOnShow(option: Boolean): RunConfigurable {
-    if (!option) {
-      return this
-    }
-
-    SwingUtilities.invokeLater {
+  fun selectConfigurableOnShow(modality: ModalityState) {
+    ApplicationManager.getApplication().invokeLater({
       if (isDisposed) {
         return@invokeLater
       }
@@ -282,8 +279,7 @@ open class RunConfigurable @JvmOverloads constructor(protected val project: Proj
         selectedConfigurable = null
       }
       drawPressAddButtonMessage(null)
-    }
-    return this
+    }, modality)
   }
 
   private fun selectConfiguration(configuration: RunConfiguration): Boolean {
