@@ -15104,6 +15104,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                     runTest("compiler/testData/codegen/box/jvm8/defaults/compatibility/defaultArgsViaAnonymousObject.kt");
                 }
 
+                @TestMetadata("inheritedFunctionWithDefaultParameters.kt")
+                public void testInheritedFunctionWithDefaultParameters() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/compatibility/inheritedFunctionWithDefaultParameters.kt");
+                }
+
                 @TestMetadata("inheritedJvmDefault.kt")
                 public void testInheritedJvmDefault() throws Exception {
                     runTest("compiler/testData/codegen/box/jvm8/defaults/compatibility/inheritedJvmDefault.kt");

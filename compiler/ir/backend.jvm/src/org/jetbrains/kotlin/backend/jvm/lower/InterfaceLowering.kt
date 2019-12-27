@@ -71,12 +71,13 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
                     continue@loop
 
                 /**
-                 * 2) They inherit a default implementation from an interface this interface
-                 *    extends: create a bridge from companion to companion, unless
-                 *    - the implementation is private or belongs to java.lang.Object
-                 *    - we're in JVM Compatibility Default mode, in which case we go via
+                 * 2) They inherit a default implementation from an interface this interface extends:
+                 *    create a bridge from DefaultImpls of derived to DefaultImpls of base, unless
+                 *    - the implementation is private, or belongs to java.lang.Object,
+                 *      or is a stub for function with default parameters ($default)
+                 *    - we're in -Xjvm-default=compatibility mode, in which case we go via
                  *      accessors on the parent class rather than the DefaultImpls
-                 *    - we're in JVM Default mode, and we have that default implementation,
+                 *    - we're in -Xjvm-default=enable mode, and we have that default implementation,
                  *      in which case we simply leave it.
                  *
                  *    ```
@@ -95,17 +96,19 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
                     val implementation = function.resolveFakeOverride()!!
 
                     when {
-                        Visibilities.isPrivate(implementation.visibility) || implementation.isMethodOfAny() ->
+                        Visibilities.isPrivate(implementation.visibility) ||
+                                implementation.isMethodOfAny() ||
+                                implementation.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER ->
                             continue@loop
-                        context.state.jvmDefaultMode.isCompatibility -> {
-                            val defaultImpl = createDefaultImpl(function)
-                            defaultImpl.bridgeViaAccessorTo(function)
-                        }
                         !implementation.hasJvmDefault() -> {
                             val defaultImpl = createDefaultImpl(function)
                             context.declarationFactory.getDefaultImplsFunction(implementation).also {
                                 defaultImpl.bridgeToStatic(it)
                             }
+                        }
+                        context.state.jvmDefaultMode.isCompatibility -> {
+                            val defaultImpl = createDefaultImpl(function)
+                            defaultImpl.bridgeViaAccessorTo(function)
                         }
                         // else -> Do nothing.
                     }

@@ -1515,6 +1515,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
+        @TestMetadata("inheritedInterfaceFunction.kt")
+        public void testInheritedInterfaceFunction() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/defaultArguments/inheritedInterfaceFunction.kt");
+        }
+
         @TestMetadata("kt11962.kt")
         public void testKt11962() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/defaultArguments/kt11962.kt");
