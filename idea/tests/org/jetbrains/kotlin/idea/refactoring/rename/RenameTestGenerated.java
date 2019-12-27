@@ -698,6 +698,11 @@ public class RenameTestGenerated extends AbstractRenameTest {
         runTest("idea/testData/refactoring/rename/renameKotlinBaseMethod/kotlinBaseFunction.test");
     }
 
+    @TestMetadata("renameKotlinBaseMethodWithBinaryBase/kotlinBaseFunction.test")
+    public void testRenameKotlinBaseMethodWithBinaryBase_KotlinBaseFunction() throws Exception {
+        runTest("idea/testData/refactoring/rename/renameKotlinBaseMethodWithBinaryBase/kotlinBaseFunction.test");
+    }
+
     @TestMetadata("renameKotlinClass/javaWrapperForKotlinClass.test")
     public void testRenameKotlinClass_JavaWrapperForKotlinClass() throws Exception {
         runTest("idea/testData/refactoring/rename/renameKotlinClass/javaWrapperForKotlinClass.test");

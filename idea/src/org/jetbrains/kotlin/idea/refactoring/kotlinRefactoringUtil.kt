@@ -41,10 +41,10 @@ import com.intellij.refactoring.BaseRefactoringProcessor.ConflictsInTestsExcepti
 import com.intellij.refactoring.changeSignature.ChangeSignatureUtil
 import com.intellij.refactoring.listeners.RefactoringEventData
 import com.intellij.refactoring.listeners.RefactoringEventListener
+import com.intellij.refactoring.rename.PsiElementRenameHandler
 import com.intellij.refactoring.ui.ConflictsDialog
 import com.intellij.refactoring.util.ConflictsUtil
 import com.intellij.refactoring.util.RefactoringUIUtil
-import com.intellij.refactoring.rename.PsiElementRenameHandler
 import com.intellij.ui.components.JBList
 import com.intellij.usageView.UsageViewTypeLocation
 import com.intellij.util.VisibilityUtil
