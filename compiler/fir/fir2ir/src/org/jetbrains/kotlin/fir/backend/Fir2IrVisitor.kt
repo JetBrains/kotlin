@@ -309,8 +309,9 @@ class Fir2IrVisitor(
     private fun IrFunction.addDispatchReceiverParameter(containingClass: IrClass) {
         val thisOrigin = IrDeclarationOrigin.DEFINED
         val thisType = containingClass.thisReceiver!!.type
+        val descriptor = WrappedValueParameterDescriptor()
         dispatchReceiverParameter = symbolTable.declareValueParameter(
-            startOffset, endOffset, thisOrigin, WrappedValueParameterDescriptor(),
+            startOffset, endOffset, thisOrigin, descriptor,
             thisType
         ) { symbol ->
             IrValueParameterImpl(
@@ -318,7 +319,7 @@ class Fir2IrVisitor(
                 Name.special("<this>"), -1, thisType,
                 varargElementType = null, isCrossinline = false, isNoinline = false
             ).setParentByParentStack()
-        }
+        }.also { descriptor.bind(it) }
     }
 
     private fun <T : IrFunction> T.setFunctionContent(
