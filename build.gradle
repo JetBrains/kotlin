@@ -263,7 +263,6 @@ task distSources {
 }
 
 task detectJarCollision(type: CollisionDetector) {
-    ignoredFiles.addAll(["META-INF/MANIFEST.MF", "META-INF/services/**"])
     configurations = [project.configurations.distPack]
     resolvingRules["META-INF/kotlin-util-klib.kotlin_module"] = "kotlin-compiler"
     resolvingRules["META-INF/kotlin-util-io.kotlin_module"] = "kotlin-compiler"
