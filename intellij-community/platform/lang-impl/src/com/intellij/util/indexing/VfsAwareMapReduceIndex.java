@@ -92,7 +92,8 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
         ((SnapshotSingleValueIndexStorage<Key, Value, Input>)backendStorage).init(snapshotInputMappings, ((IntForwardIndex)forwardIndexMap));
       }
     }
-    if (myIndexer instanceof CompositeDataIndexer && InvertedIndex.ARE_COMPOSITE_INDEXERS_ENABLED) {
+    //TODO make it works with snapshot mappings enabled
+    if (myIndexer instanceof CompositeDataIndexer && InvertedIndex.ARE_COMPOSITE_INDEXERS_ENABLED && snapshotInputMappings == null) {
       try {
         //noinspection unchecked,rawtypes,ConstantConditions
         mySubIndexerRetriever = new PersistentSubIndexerRetriever((ID)myIndexId,
