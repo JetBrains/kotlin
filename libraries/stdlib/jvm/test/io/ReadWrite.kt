@@ -12,7 +12,7 @@ import java.io.StringReader
 import java.net.URL
 import java.util.ArrayList
 
-fun sample(): Reader = StringReader("Hello\nWorld");
+private fun sample(): Reader = StringReader("Hello\nWorld");
 
 class ReadWriteTest {
     @Test fun testAppendText() {
@@ -122,34 +122,6 @@ class ReadWriteTest {
         assertEquals(2, c)
 
         file.deleteOnExit()
-    }
-
-
-
-    @Test fun testUse() {
-        val list = ArrayList<String>()
-        val reader = sample().buffered()
-
-        reader.use {
-            while (true) {
-                val line = it.readLine()
-                if (line != null)
-                    list.add(line)
-                else
-                    break
-            }
-        }
-
-        assertEquals(arrayListOf("Hello", "World"), list)
-    }
-
-    @Test fun testPlatformNullUse() {
-        fun <T> platformNull() = @Suppress("UNCHECKED_CAST") java.util.Collections.singleton(null as T).first()
-        val resource = platformNull<java.io.Closeable>()
-        val result = resource.use {
-            "ok"
-        }
-        assertEquals("ok", result)
     }
 
     @Test fun testURL() {
