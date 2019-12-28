@@ -35,6 +35,7 @@ org.jetbrains.kotlin.idea.maven.MavenMigrateTest.testMigrateApiAndLanguageVersio
 org.jetbrains.kotlin.idea.maven.configuration.MavenConfigureProjectByChangingFileTestGenerated.Jvm.testWithJava9ModuleInfo, Probably test data should be updated
 org.jetbrains.kotlin.idea.quickfix.DeprecatedSymbolUsageFixSpecialTest.testDefaultParameterValuesFromLibrary, Always red because of additional import
 org.jetbrains.kotlin.idea.quickfix.QuickFixMultiModuleTestGenerated.CreateActual.testWithTestDummy, Very FLAKY on teamcity
+org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.CreateFromUsage.CreateClass.CallExpression.testCallInWhenEntry, KT-35728
 org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.Libraries.testJunit, ERROR: Couldn't find the following libraries
 org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.Libraries.testTestNG, ERROR: Couldn't find the following libraries
 org.jetbrains.kotlin.idea.refactoring.move.MultiModuleMoveTestGenerated.testMoveFromJsModuleToJvmModule_MoveFromJsModuleToJvmModule, KT-34106
