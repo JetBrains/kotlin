@@ -9,7 +9,6 @@ import com.intellij.history.LocalHistory;
 import com.intellij.ide.AppLifecycleListener;
 import com.intellij.ide.plugins.DynamicPluginListener;
 import com.intellij.ide.startup.ServiceNotReadyException;
-import com.intellij.lang.ASTNode;
 import com.intellij.notification.NotificationDisplayType;
 import com.intellij.notification.NotificationGroup;
 import com.intellij.notification.NotificationType;
@@ -58,7 +57,6 @@ import com.intellij.psi.impl.PsiManagerImpl;
 import com.intellij.psi.impl.PsiTreeChangeEventImpl;
 import com.intellij.psi.impl.cache.impl.id.PlatformIdTableBuilding;
 import com.intellij.psi.impl.source.PsiFileImpl;
-import com.intellij.psi.search.EverythingGlobalScope;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.SerializationManagerEx;
@@ -70,7 +68,6 @@ import com.intellij.util.containers.IntObjectMap;
 import com.intellij.util.gist.GistManager;
 import com.intellij.util.indexing.hash.FileContentHashIndex;
 import com.intellij.util.indexing.hash.FileContentHashIndexExtension;
-import com.intellij.util.indexing.impl.InvertedIndexValueIterator;
 import com.intellij.util.indexing.provided.ProvidedIndexExtension;
 import com.intellij.util.indexing.provided.ProvidedIndexExtensionLocator;
 import com.intellij.util.indexing.snapshot.IndexedHashesSupport;
@@ -84,7 +81,6 @@ import com.intellij.util.ui.UIUtil;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import gnu.trove.TIntArrayList;
-import gnu.trove.TIntHashSet;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -111,7 +107,7 @@ import static com.intellij.serviceContainer.PlatformComponentManagerImplKt.handl
 /**
  * @author Eugene Zhuravlev
  */
-public final class FileBasedIndexImpl extends FileBasedIndex {
+public final class FileBasedIndexImpl extends FileBasedIndexEx {
   private static final ThreadLocal<VirtualFile> ourIndexedFile = new ThreadLocal<>();
   private static final ThreadLocal<VirtualFile> ourFileToBeIndexed = new ThreadLocal<>();
   private static final ThreadLocal<DumbModeAccessType> ourDumbModeAccessType = new ThreadLocal<>();
@@ -148,7 +144,6 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
   private final AtomicInteger myFilesModCount = new AtomicInteger();
   private final AtomicInteger myUpdatingFiles = new AtomicInteger();
   private final Set<Project> myProjectsBeingUpdated = ContainerUtil.newConcurrentSet();
-  private final IndexAccessValidator myAccessValidator = new IndexAccessValidator();
 
   private IndexConfiguration getState() {
     return myRegisteredIndexes.getConfigurationState();
@@ -308,6 +303,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
     myRegisteredIndexes.initializeIndexes(new FileIndexDataInitialization());
   }
 
+  @Override
   void waitUntilIndicesAreInitialized() {
     if (myRegisteredIndexes == null) {
       // interrupt all calculation while plugin reload
@@ -616,60 +612,6 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
     SharedIndicesData.flushData();
   }
 
-  @Override
-  @NotNull
-  public <K> Collection<K> getAllKeys(@NotNull final ID<K, ?> indexId, @NotNull Project project) {
-    Set<K> allKeys = new THashSet<>();
-    processAllKeys(indexId, Processors.cancelableCollectProcessor(allKeys), project);
-    return allKeys;
-  }
-
-  @Override
-  public <K> boolean processAllKeys(@NotNull final ID<K, ?> indexId, @NotNull Processor<? super K> processor, @Nullable Project project) {
-    return processAllKeys(indexId, processor, project == null ? new EverythingGlobalScope() : GlobalSearchScope.allScope(project), null);
-  }
-
-  @Override
-  public <K> boolean processAllKeys(@NotNull ID<K, ?> indexId, @NotNull Processor<? super K> processor, @NotNull GlobalSearchScope scope, @Nullable IdFilter idFilter) {
-    try {
-      waitUntilIndicesAreInitialized();
-      final UpdatableIndex<K, ?, FileContent> index = getIndex(indexId);
-      if (index == null) {
-        return true;
-      }
-      ensureUpToDate(indexId, scope.getProject(), scope);
-      return index.processAllKeys(processor, scope, idFilter);
-    }
-    catch (StorageException e) {
-      scheduleRebuild(indexId, e);
-    }
-    catch (RuntimeException e) {
-      final Throwable cause = e.getCause();
-      if (cause instanceof StorageException || cause instanceof IOException) {
-        scheduleRebuild(indexId, cause);
-      }
-      else {
-        throw e;
-      }
-    }
-
-    return false;
-  }
-
-  @NotNull
-  @Override
-  public <K, V> Map<K, V> getFileData(@NotNull ID<K, V> id, @NotNull VirtualFile virtualFile, @NotNull Project project) {
-    if (!(virtualFile instanceof VirtualFileWithId)) return Collections.emptyMap();
-    int fileId = getFileId(virtualFile);
-
-    // TODO revise behaviour later
-    if (getAccessibleFileIdFilter(project).test(fileId)) {
-      Map<K, V> map = processExceptions(id, virtualFile, GlobalSearchScope.fileScope(project, virtualFile), index -> index.getIndexedFileData(fileId));
-      return ContainerUtil.notNullize(map);
-    }
-    return Collections.emptyMap();
-  }
-
   private static final ThreadLocal<Integer> myUpToDateCheckState = new ThreadLocal<>();
 
   public static <T,E extends Throwable> T disableUpToDateCheckIn(@NotNull ThrowableComputable<T, E> runnable) throws E {
@@ -704,23 +646,36 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
     return value == null || value.intValue() == 0;
   }
 
-
   private final ThreadLocal<Boolean> myReentrancyGuard = ThreadLocal.withInitial(() -> Boolean.FALSE);
 
-  /**
-   * DO NOT CALL DIRECTLY IN CLIENT CODE
-   * The method is internal to indexing engine end is called internally. The method is public due to implementation details
-   */
+  @ApiStatus.Internal
+  @ApiStatus.Experimental
   @Override
-  public <K> void ensureUpToDate(@NotNull final ID<K, ?> indexId, @Nullable Project project, @Nullable GlobalSearchScope filter) {
-    waitUntilIndicesAreInitialized();
-    ensureUpToDate(indexId, project, filter, null);
+  public void ignoreDumbMode(@NotNull Runnable runnable,
+                             @NotNull Project project,
+                             @NotNull DumbModeAccessType dumbModeAccessType) {
+    assert ApplicationManager.getApplication().isReadAccessAllowed();
+    if (DumbService.isDumb(project) && FileBasedIndex.isIndexAccessDuringDumbModeEnabled()) {
+      if (ourDumbModeAccessType.get() != null) {
+        throw new AssertionError("reentrant dumb mode ignorance");
+      }
+      ourDumbModeAccessType.set(dumbModeAccessType);
+      try {
+        runnable.run();
+      }
+      finally {
+        ourDumbModeAccessType.set(null);
+      }
+    } else {
+      runnable.run();
+    }
   }
 
+  @Override
   <K> void ensureUpToDate(@NotNull final ID<K, ?> indexId,
-                                    @Nullable Project project,
-                                    @Nullable GlobalSearchScope filter,
-                                    @Nullable VirtualFile restrictedFile) {
+                          @Nullable Project project,
+                          @Nullable GlobalSearchScope filter,
+                          @Nullable VirtualFile restrictedFile) {
     ProgressManager.checkCanceled();
     getChangedFilesCollector().ensureUpToDate();
     ApplicationManager.getApplication().assertReadAccessAllowed();
@@ -781,186 +736,6 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
     throw IndexNotReadyException.create(project == null ? null : DumbServiceImpl.getInstance(project).getDumbModeStartTrace());
   }
 
-  @Override
-  @NotNull
-  public <K, V> List<V> getValues(@NotNull final ID<K, V> indexId, @NotNull K dataKey, @NotNull final GlobalSearchScope filter) {
-    VirtualFile restrictToFile = null;
-
-    if (filter instanceof Iterable) {
-      // optimisation: in case of one-file-scope we can do better.
-      // check if the scope knows how to extract some files off itself
-      //noinspection unchecked
-      Iterator<VirtualFile> virtualFileIterator = ((Iterable<VirtualFile>)filter).iterator();
-      if (virtualFileIterator.hasNext()) {
-        VirtualFile restrictToFileCandidate = virtualFileIterator.next();
-        if (!virtualFileIterator.hasNext()) {
-          restrictToFile = restrictToFileCandidate;
-        }
-      }
-    }
-
-    final List<V> values = new SmartList<>();
-    ValueProcessor<V> processor = (file, value) -> {
-      values.add(value);
-      return true;
-    };
-    if (restrictToFile != null) {
-      processValuesInOneFile(indexId, dataKey, restrictToFile, processor, filter);
-    }
-    else {
-      processValuesInScope(indexId, dataKey, true, filter, null, processor);
-    }
-    return values;
-  }
-
-  @Override
-  @NotNull
-  public <K, V> Collection<VirtualFile> getContainingFiles(@NotNull final ID<K, V> indexId,
-                                                           @NotNull K dataKey,
-                                                           @NotNull final GlobalSearchScope filter) {
-    final Set<VirtualFile> files = new THashSet<>();
-    processValuesInScope(indexId, dataKey, false, filter, null, (file, value) -> {
-      files.add(file);
-      return true;
-    });
-    return files;
-  }
-
-
-  @Override
-  public <K, V> boolean processValues(@NotNull final ID<K, V> indexId, @NotNull final K dataKey, @Nullable final VirtualFile inFile,
-                                      @NotNull ValueProcessor<? super V> processor, @NotNull final GlobalSearchScope filter) {
-    return processValues(indexId, dataKey, inFile, processor, filter, null);
-  }
-
-  @Override
-  public <K, V> boolean processValues(@NotNull ID<K, V> indexId,
-                                      @NotNull K dataKey,
-                                      @Nullable VirtualFile inFile,
-                                      @NotNull ValueProcessor<? super V> processor,
-                                      @NotNull GlobalSearchScope filter,
-                                      @Nullable IdFilter idFilter) {
-    return inFile != null
-           ? processValuesInOneFile(indexId, dataKey, inFile, processor, filter)
-           : processValuesInScope(indexId, dataKey, false, filter, idFilter, processor);
-  }
-
-  @Override
-  public <K, V> long getIndexModificationStamp(@NotNull ID<K, V> indexId, @NotNull Project project) {
-    UpdatableIndex<K, V, FileContent> index = getState().getIndex(indexId);
-    ensureUpToDate(indexId, project, GlobalSearchScope.allScope(project));
-    return index.getModificationStamp();
-  }
-
-  @Nullable
-  private <K, V, R> R processExceptions(@NotNull final ID<K, V> indexId,
-                                        @Nullable final VirtualFile restrictToFile,
-                                        @NotNull final GlobalSearchScope filter,
-                                        @NotNull ThrowableConvertor<? super UpdatableIndex<K, V, FileContent>, ? extends R, ? extends StorageException> computable) {
-    try {
-      waitUntilIndicesAreInitialized();
-      final UpdatableIndex<K, V, FileContent> index = getIndex(indexId);
-      if (index == null) {
-        return null;
-      }
-      final Project project = filter.getProject();
-      //assert project != null : "GlobalSearchScope#getProject() should be not-null for all index queries";
-      ensureUpToDate(indexId, project, filter, restrictToFile);
-
-      return myAccessValidator.validate(indexId, ()->ConcurrencyUtil.withLock(index.getReadLock(), ()->computable.convert(index)));
-    }
-    catch (StorageException e) {
-      scheduleRebuild(indexId, e);
-    }
-    catch (RuntimeException e) {
-      final Throwable cause = getCauseToRebuildIndex(e);
-      if (cause != null) {
-        scheduleRebuild(indexId, cause);
-      }
-      else {
-        throw e;
-      }
-    }
-    return null;
-  }
-
-  private <K, V> boolean processValuesInOneFile(@NotNull ID<K, V> indexId,
-                                                @NotNull K dataKey,
-                                                @NotNull VirtualFile restrictToFile,
-                                                @NotNull ValueProcessor<? super V> processor, @NotNull GlobalSearchScope scope) {
-    if (!(restrictToFile instanceof VirtualFileWithId)) return true;
-
-    int restrictedFileId = getFileId(restrictToFile);
-
-    if (!getAccessibleFileIdFilter(scope.getProject()).test(restrictedFileId)) return true;
-
-    return processValueIterator(indexId, dataKey, restrictToFile, scope, valueIt -> {
-      while (valueIt.hasNext()) {
-        V value = valueIt.next();
-        if (valueIt.getValueAssociationPredicate().contains(restrictedFileId) && !processor.process(restrictToFile, value)) {
-          return false;
-        }
-        ProgressManager.checkCanceled();
-      }
-      return true;
-    });
-  }
-
-  private <K, V> boolean processValuesInScope(@NotNull ID<K, V> indexId,
-                                              @NotNull K dataKey,
-                                              boolean ensureValueProcessedOnce,
-                                              @NotNull GlobalSearchScope scope,
-                                              @Nullable IdFilter idFilter,
-                                              @NotNull ValueProcessor<? super V> processor) {
-    PersistentFS fs = (PersistentFS)ManagingFS.getInstance();
-    IdFilter filter = idFilter != null ? idFilter : projectIndexableFiles(scope.getProject());
-    IntPredicate accessibleFileFilter = getAccessibleFileIdFilter(scope.getProject());
-
-    return processValueIterator(indexId, dataKey, null, scope, valueIt -> {
-      while (valueIt.hasNext()) {
-        final V value = valueIt.next();
-        for (final ValueContainer.IntIterator inputIdsIterator = valueIt.getInputIdsIterator(); inputIdsIterator.hasNext(); ) {
-          final int id = inputIdsIterator.next();
-          if (!accessibleFileFilter.test(id) || (filter != null && !filter.containsFileId(id))) continue;
-          VirtualFile file = IndexInfrastructure.findFileByIdIfCached(fs, id);
-          if (file != null && scope.accept(file)) {
-            if (!processor.process(file, value)) {
-              return false;
-            }
-            if (ensureValueProcessedOnce) {
-              ProgressManager.checkCanceled();
-              break; // continue with the next value
-            }
-          }
-
-          ProgressManager.checkCanceled();
-        }
-      }
-      return true;
-    });
-  }
-
-  private <K, V> boolean processValueIterator(@NotNull ID<K, V> indexId,
-                                              @NotNull K dataKey,
-                                              @Nullable VirtualFile restrictToFile,
-                                              @NotNull GlobalSearchScope scope,
-                                              @NotNull Processor<? super InvertedIndexValueIterator<V>> valueProcessor) {
-    final Boolean result = processExceptions(indexId, restrictToFile, scope,
-                                             index -> valueProcessor.process((InvertedIndexValueIterator<V>)index.getData(dataKey).getValueIterator()));
-    return result == null || result.booleanValue();
-  }
-
-  @Override
-  public <K, V> boolean processFilesContainingAllKeys(@NotNull final ID<K, V> indexId,
-                                                      @NotNull final Collection<? extends K> dataKeys,
-                                                      @NotNull final GlobalSearchScope filter,
-                                                      @Nullable Condition<? super V> valueChecker,
-                                                      @NotNull final Processor<? super VirtualFile> processor) {
-    ProjectIndexableFilesFilter filesSet = projectIndexableFiles(filter.getProject());
-    final TIntHashSet set = collectFileIdsContainingAllKeys(indexId, dataKeys, filter, valueChecker, filesSet);
-    return set != null && processVirtualFiles(set, filter, processor);
-  }
-
   private static final Key<SoftReference<ProjectIndexableFilesFilter>> ourProjectFilesSetKey = Key.create("projectFiles");
 
   @TestOnly
@@ -981,44 +756,6 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
     return myChangedFilesCollector.getValue();
   }
 
-  public static final class ProjectIndexableFilesFilter extends IdFilter {
-    private static final int SHIFT = 6;
-    private static final int MASK = (1 << SHIFT) - 1;
-    private final long[] myBitMask;
-    private final int myModificationCount;
-    private final int myMinId;
-    private final int myMaxId;
-
-    private ProjectIndexableFilesFilter(@NotNull TIntArrayList set, int modificationCount) {
-      myModificationCount = modificationCount;
-      final int[] minMax = new int[2];
-      if (!set.isEmpty()) {
-        minMax[0] = minMax[1] = set.get(0);
-      }
-      set.forEach(value -> {
-        minMax[0] = Math.min(minMax[0], value);
-        minMax[1] = Math.max(minMax[1], value);
-        return true;
-      });
-      myMaxId = minMax[1];
-      myMinId = minMax[0];
-      myBitMask = new long[((myMaxId - myMinId) >> SHIFT) + 1];
-      set.forEach(value -> {
-        value -= myMinId;
-        myBitMask[value >> SHIFT] |= (1L << (value & MASK));
-        return true;
-      });
-    }
-
-    @Override
-    public boolean containsFileId(int id) {
-      if (id < myMinId) return false;
-      if (id > myMaxId) return false;
-      id -= myMinId;
-      return (myBitMask[id >> SHIFT] & (1L << (id & MASK))) != 0;
-    }
-  }
-
   void filesUpdateStarted(Project project) {
     getChangedFilesCollector().ensureUpToDate();
     myProjectsBeingUpdated.add(project);
@@ -1032,6 +769,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
 
   private final Lock myCalcIndexableFilesLock = new ReentrantLock();
 
+  @Override
   @Nullable
   public ProjectIndexableFilesFilter projectIndexableFiles(@Nullable Project project) {
     if (project == null || project.isDefault() || myUpdatingFiles.get() > 0) return null;
@@ -1040,13 +778,13 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
     SoftReference<ProjectIndexableFilesFilter> reference = project.getUserData(ourProjectFilesSetKey);
     ProjectIndexableFilesFilter data = com.intellij.reference.SoftReference.dereference(reference);
     int currentFileModCount = myFilesModCount.get();
-    if (data != null && data.myModificationCount == currentFileModCount) return data;
+    if (data != null && data.getModificationCount() == currentFileModCount) return data;
 
     if (myCalcIndexableFilesLock.tryLock()) { // make best effort for calculating filter
       try {
         reference = project.getUserData(ourProjectFilesSetKey);
         data = com.intellij.reference.SoftReference.dereference(reference);
-        if (data != null && data.myModificationCount == currentFileModCount) {
+        if (data != null && data.getModificationCount() == currentFileModCount) {
           return data;
         }
 
@@ -1075,39 +813,6 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
   }
 
   @Nullable
-  private <K, V> TIntHashSet collectFileIdsContainingAllKeys(@NotNull final ID<K, V> indexId,
-                                                             @NotNull final Collection<? extends K> dataKeys,
-                                                             @NotNull final GlobalSearchScope filter,
-                                                             @Nullable final Condition<? super V> valueChecker,
-                                                             @Nullable final ProjectIndexableFilesFilter projectFilesFilter) {
-    IntPredicate accessibleFileFilter = getAccessibleFileIdFilter(filter.getProject());
-    ThrowableConvertor<UpdatableIndex<K, V, FileContent>, TIntHashSet, StorageException> convertor =
-      index -> InvertedIndexUtil.collectInputIdsContainingAllKeys(index, dataKeys, __ -> {
-                                                                    ProgressManager.checkCanceled();
-                                                                    return true;
-                                                                  }, valueChecker,
-                                                projectFilesFilter == null ? accessibleFileFilter::test : id -> {
-                                                  return projectFilesFilter.containsFileId(id) && accessibleFileFilter.test(id);
-                                                });
-
-    return processExceptions(indexId, null, filter, convertor);
-  }
-
-  private static boolean processVirtualFiles(@NotNull TIntHashSet ids,
-                                             @NotNull final GlobalSearchScope filter,
-                                             @NotNull final Processor<? super VirtualFile> processor) {
-    final PersistentFS fs = (PersistentFS)ManagingFS.getInstance();
-    return ids.forEach(id -> {
-      ProgressManager.checkCanceled();
-      VirtualFile file = IndexInfrastructure.findFileByIdIfCached(fs, id);
-      if (file != null && filter.accept(file)) {
-        return processor.process(file);
-      }
-      return true;
-    });
-  }
-
-  @Nullable
   public static Throwable getCauseToRebuildIndex(@NotNull RuntimeException e) {
     if (ApplicationManager.getApplication().isUnitTestMode()) {
       // avoid rebuilding index in tests since we do it synchronously in requestRebuild and we can have readAction at hand
@@ -1119,42 +824,6 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
     if (cause instanceof StorageException || cause instanceof IOException ||
         cause instanceof IllegalArgumentException) return cause;
     return null;
-  }
-
-  @Override
-  public <K, V> boolean getFilesWithKey(@NotNull final ID<K, V> indexId,
-                                        @NotNull final Set<? extends K> dataKeys,
-                                        @NotNull Processor<? super VirtualFile> processor,
-                                        @NotNull GlobalSearchScope filter) {
-    return processFilesContainingAllKeys(indexId, dataKeys, filter, null, processor);
-  }
-
-  @ApiStatus.Internal
-  @ApiStatus.Experimental
-  @Override
-  public void ignoreDumbMode(@NotNull Runnable runnable,
-                             @NotNull Project project,
-                             @NotNull DumbModeAccessType dumbModeAccessType) {
-    assert ApplicationManager.getApplication().isReadAccessAllowed();
-    if (DumbService.isDumb(project) && FileBasedIndex.isIndexAccessDuringDumbModeEnabled()) {
-      if (ourDumbModeAccessType.get() != null) {
-        throw new AssertionError("reentrant dumb mode ignorance");
-      }
-      ourDumbModeAccessType.set(dumbModeAccessType);
-      try {
-        runnable.run();
-      }
-      finally {
-        ourDumbModeAccessType.set(null);
-      }
-    } else {
-      runnable.run();
-    }
-  }
-
-  @Override
-  public <K> void scheduleRebuild(@NotNull final ID<K, ?> indexId, @NotNull final Throwable e) {
-    requestRebuild(indexId, e);
   }
 
   private static void scheduleIndexRebuild(String reason) {
@@ -1440,6 +1109,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
     LOG.error("Unexpected async indices initialization problem");
   }
 
+  @Override
   public <K, V> UpdatableIndex<K, V, FileContent> getIndex(ID<K, V> indexId) {
     return getState().getIndex(indexId);
   }
@@ -2312,23 +1982,6 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
     }
   }
 
-  @Override
-  public void iterateIndexableFilesConcurrently(@NotNull ContentIterator processor, @NotNull Project project, @NotNull ProgressIndicator indicator) {
-    PushedFilePropertiesUpdaterImpl.invokeConcurrentlyIfPossible(collectScanRootRunnables(processor, project, indicator));
-  }
-
-  @Override
-  public void iterateIndexableFiles(@NotNull final ContentIterator processor, @NotNull final Project project, final ProgressIndicator indicator) {
-    for(Runnable r: collectScanRootRunnables(processor, project, indicator)) r.run();
-  }
-
-  @NotNull
-  private static List<Runnable> collectScanRootRunnables(@NotNull final ContentIterator processor,
-                                                         @NotNull final Project project,
-                                                         final ProgressIndicator indicator) {
-    FileBasedIndexScanRunnableCollector collector = FileBasedIndexScanRunnableCollector.getInstance(project);
-    return collector.collectScanRootRunnables(processor, indicator);
-  }
 
   private class FileIndexDataInitialization extends IndexInfrastructure.DataInitialization<IndexConfiguration> {
     private final IndexConfiguration state = new IndexConfiguration();
@@ -2502,6 +2155,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
     }
   }
 
+  @Override
   @ApiStatus.Internal
   @NotNull
   public IntPredicate getAccessibleFileIdFilter(@Nullable Project project) {
