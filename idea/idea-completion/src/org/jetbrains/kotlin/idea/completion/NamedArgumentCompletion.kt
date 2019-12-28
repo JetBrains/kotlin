@@ -34,17 +34,11 @@ import java.util.*
 object NamedArgumentCompletion {
     fun isOnlyNamedArgumentExpected(nameExpression: KtSimpleNameExpression, resolutionFacade: ResolutionFacade): Boolean {
         val thisArgument = nameExpression.parent as? KtValueArgument ?: return false
+
         if (thisArgument.isNamed()) return false
+        val resolvedCall = thisArgument.getStrictParentOfType<KtCallElement>()?.resolveToCall(resolutionFacade) ?: return false
 
-        val callElement = thisArgument.getStrictParentOfType<KtCallElement>() ?: return false
-        val argumentsBeforeThis = callElement.valueArguments.takeWhile { it != thisArgument }
-
-        if (!nameExpression.languageVersionSettings.supportsFeature(LanguageFeature.MixedNamedArgumentsInTheirOwnPosition)) {
-            return argumentsBeforeThis.any { it.isNamed() }
-        }
-
-        val resolvedCall = callElement.resolveToCall(resolutionFacade) ?: return false
-        return argumentsBeforeThis.any { it.isNamed() && !it.placedOnItsOwnPositionInCall(resolvedCall) }
+        return !thisArgument.canBeUsedWithoutNameInCall(resolvedCall)
     }
 
     fun complete(collector: LookupElementsCollector, expectedInfos: Collection<ExpectedInfo>, callType: CallType<*>) {
@@ -84,6 +78,18 @@ object NamedArgumentCompletion {
 }
 
 /**
+ * Checks whether argument in the [resolvedCall] can be used without its name (as positional argument).
+ */
+fun KtValueArgument.canBeUsedWithoutNameInCall(resolvedCall: ResolvedCall<out CallableDescriptor>): Boolean {
+    val argumentsBeforeThis = resolvedCall.call.valueArguments.takeWhile { it != this }
+    return if (languageVersionSettings.supportsFeature(LanguageFeature.MixedNamedArgumentsInTheirOwnPosition)) {
+        argumentsBeforeThis.none { it.isNamed() && !it.placedOnItsOwnPositionInCall(resolvedCall) }
+    } else {
+        argumentsBeforeThis.none { it.isNamed() }
+    }
+}
+
+/**
  * Checks whether argument in the [resolvedCall] is on the same position as it listed in the callable definition.
  *
  * It is always true for the positional arguments, but may be untrue for the named arguments.
@@ -99,6 +105,6 @@ object NamedArgumentCompletion {
  * )
  * ```
  */
-private fun ValueArgument.placedOnItsOwnPositionInCall(resolvedCall: ResolvedCall<out CallableDescriptor>): Boolean {
+fun ValueArgument.placedOnItsOwnPositionInCall(resolvedCall: ResolvedCall<out CallableDescriptor>): Boolean {
     return resolvedCall.getParameterForArgument(this)?.index == resolvedCall.call.valueArguments.indexOf(this)
 }
