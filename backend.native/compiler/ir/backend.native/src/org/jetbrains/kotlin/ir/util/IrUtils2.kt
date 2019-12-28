@@ -395,8 +395,6 @@ fun IrValueParameter.copy(newDescriptor: ParameterDescriptor): IrValueParameter 
     )
 }
 
-val IrTypeArgument.typeOrNull: IrType? get() = (this as? IrTypeProjection)?.type
-
 val IrType.isSimpleTypeWithQuestionMark: Boolean
     get() = this is IrSimpleType && this.hasQuestionMark
 
