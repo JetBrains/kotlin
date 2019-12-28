@@ -2,7 +2,7 @@ import com.moowork.gradle.node.npm.NpmTask
 import com.moowork.gradle.node.task.NodeTask
 
 plugins {
-    kotlin("jvm")
+    base
     id("com.github.node-gradle.node")
 }
 
@@ -29,7 +29,7 @@ dependencies {
     fullJsIrCli(project(":js:js.translator"))
     fullJsIrCli(project(":js:js.serializer"))
     fullJsIrCli(project(":js:js.dce"))
-    fullJsIrCli(kotlin("reflect"))
+    fullJsIrCli(project(":kotlin-reflect"))
     fullJsIrCli(intellijCoreDep()) { includeJars("intellij-core") }
     fullJsIrCli(intellijDep()) {
         includeJars("picocontainer", "trove4j", "guava", "jdom", "asm-all", rootProject = rootProject)
@@ -337,9 +337,8 @@ val runMocha by task<NodeTask> {
 }
 
 tasks {
-    test {
-        dependsOn(runMocha)
-    }
+    val test by registering { dependsOn(runMocha) }
+    val check by existing { dependsOn(test) }
 
     // dummy task to make coreLibsInstall aggregate task not fail
     val install by registering
