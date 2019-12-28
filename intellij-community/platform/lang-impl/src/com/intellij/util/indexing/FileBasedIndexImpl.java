@@ -1297,57 +1297,6 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
     return !myTransactionMap.isEmpty();
   }
 
-  private interface DocumentContent {
-    @NotNull
-    CharSequence getText();
-
-    long getModificationStamp();
-  }
-
-  private static class AuthenticContent implements DocumentContent {
-    private final Document myDocument;
-
-    private AuthenticContent(final Document document) {
-      myDocument = document;
-    }
-
-    @NotNull
-    @Override
-    public CharSequence getText() {
-      return myDocument.getImmutableCharSequence();
-    }
-
-    @Override
-    public long getModificationStamp() {
-      return myDocument.getModificationStamp();
-    }
-  }
-
-  private static class PsiContent implements DocumentContent {
-    private final Document myDocument;
-    private final PsiFile myFile;
-
-    private PsiContent(final Document document, final PsiFile file) {
-      myDocument = document;
-      myFile = file;
-    }
-
-    @NotNull
-    @Override
-    public CharSequence getText() {
-      if (myFile.getViewProvider().getModificationStamp() != myDocument.getModificationStamp()) {
-        final ASTNode node = myFile.getNode();
-        assert node != null;
-        return node.getChars();
-      }
-      return myDocument.getImmutableCharSequence();
-    }
-
-    @Override
-    public long getModificationStamp() {
-      return myFile.getViewProvider().getModificationStamp();
-    }
-  }
 
   private static final Key<WeakReference<FileContentImpl>> ourFileContentKey = Key.create("unsaved.document.index.content");
 
