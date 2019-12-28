@@ -340,4 +340,7 @@ tasks {
     test {
         dependsOn(runMocha)
     }
+
+    // dummy task to make coreLibsInstall aggregate task not fail
+    val install by registering
 }
