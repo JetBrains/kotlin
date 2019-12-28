@@ -9,6 +9,7 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.impl.cache.impl.id.IdIndex
 import com.intellij.psi.impl.cache.impl.id.IdIndexEntry
+import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.UsageSearchContext
 import com.intellij.util.indexing.FileBasedIndex
 import com.intellij.util.indexing.FileBasedIndexImpl
@@ -27,13 +28,16 @@ class TextReferencesFeature : ElementFeatureProvider {
     val index = FileBasedIndex.getInstance() as FileBasedIndexImpl
     val filter = index.projectIndexableFiles(project) ?: return mutableMapOf()
     val referencingFiles = AtomicInteger(0)
-    index.processAllValues(IdIndex.NAME, IdIndexEntry(element.lookupString, true), project) { fileId, value ->
-      if (value and UsageSearchContext.IN_CODE.toInt() != 0 && filter.containsFileId (fileId)) {
-        referencingFiles.incrementAndGet()
+    index.ensureUpToDate(IdIndex.NAME, project, GlobalSearchScope.allScope(project))
+    index
+      .getIndex(IdIndex.NAME)
+      .getData(IdIndexEntry(element.lookupString, true))
+      .forEach { fileId, value ->
+        if (value and UsageSearchContext.IN_CODE.toInt() != 0 && filter.containsFileId(fileId)) {
+          referencingFiles.incrementAndGet()
+        }
+        true
       }
-      true
-    }
-
     return mutableMapOf("file_count" to MLFeatureValue.float(referencingFiles.get()))
   }
 }

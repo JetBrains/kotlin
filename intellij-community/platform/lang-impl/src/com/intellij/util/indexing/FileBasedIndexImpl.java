@@ -852,42 +852,6 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
     return index.getModificationStamp();
   }
 
-  @FunctionalInterface
-  public interface IdValueProcessor<V> {
-    /**
-     * @param fileId the id of the file that the value came from
-     * @param value a value to process
-     * @return false if no further processing is needed, true otherwise
-     */
-    boolean process(int fileId, V value);
-  }
-
-  /**
-   * Process values for a given index key together with their containing file ids. Note that project is supplied
-   * only to ensure that all the indices in that project are up to date; there's no guarantee that the processed file ids belong
-   * to this project.
-   */
-  public <K, V> boolean processAllValues(@NotNull ID<K, V> indexId,
-                                         @NotNull K key,
-                                         @NotNull Project project,
-                                         @NotNull IdValueProcessor<? super V> processor) {
-    IntPredicate accessibleFileFilter = getAccessibleFileIdFilter(project);
-
-    return processValueIterator(indexId, key, null, GlobalSearchScope.allScope(project), valueIt -> {
-      while (valueIt.hasNext()) {
-        V value = valueIt.next();
-        for (ValueContainer.IntIterator inputIdsIterator = valueIt.getInputIdsIterator(); inputIdsIterator.hasNext(); ) {
-          int id = inputIdsIterator.next();
-          if (accessibleFileFilter.test(id) && !processor.process(id, value)) {
-            return false;
-          }
-          ProgressManager.checkCanceled();
-        }
-      }
-      return true;
-    });
-  }
-
   @Nullable
   private <K, V, R> R processExceptions(@NotNull final ID<K, V> indexId,
                                         @Nullable final VirtualFile restrictToFile,
