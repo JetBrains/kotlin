@@ -92,7 +92,7 @@ public class IndexedHashesSupport {
   }
 
   private static byte[] calculateFileContentHash(byte[] bytes) {
-    return FSRecords.calculateContentHash(ContentHashesUtil.HASHER_CACHE.getValue(), bytes, 0, bytes.length);
+    return ContentHashesUtil.calculateContentHash(bytes, 0, bytes.length);
   }
 
   @Nullable
