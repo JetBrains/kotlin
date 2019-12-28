@@ -2,6 +2,7 @@
 package com.intellij.util.indexing;
 
 import com.intellij.openapi.fileTypes.*;
+import com.intellij.util.containers.ContainerUtil;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
@@ -56,12 +57,16 @@ class FileBasedIndexFileTypeListener implements FileTypeListener {
     }
     for (Map.Entry<FileType, Set<String>> entry : oldTypeToExtensionsMap.entrySet()) {
       FileType fileType = entry.getKey();
-      Set<String> strings = entry.getValue();
-      if (!newTypeToExtensionsMap.get(fileType).containsAll(strings)) {
-        Set<String> removedExtensions = new HashSet<>(strings);
-        removedExtensions.removeAll(newTypeToExtensionsMap.get(fileType));
-        fileBasedIndex
-          .rebuildAllIndices(fileType.getName() + " is no longer associated with extension(s) " + String.join(",", removedExtensions));
+      Set<String> oldMatchers = entry.getValue();
+      Set<String> newMatchers = newTypeToExtensionsMap.get(fileType);
+      if (!newMatchers.equals(oldMatchers)) {
+        Set<String> removed = complement(oldMatchers, newMatchers);
+        Set<String> added = complement(newMatchers, oldMatchers);
+        fileBasedIndex.rebuildAllIndices(fileType.getName()
+                                         + " is no longer associated with matchers "
+                                         + String.join(",", removed)
+                                         + ", added matchers "
+                                         + String.join(",", added));
         return;
       }
     }
@@ -74,5 +79,11 @@ class FileBasedIndexFileTypeListener implements FileTypeListener {
       .stream()
       .map(FileNameMatcher::getPresentableString)
       .collect(Collectors.toCollection(THashSet::new));
+  }
+
+  private static Set<String> complement(Set<String> set, Set<String> toRemove) {
+    THashSet<String> result = new THashSet<>(set);
+    result.removeAll(toRemove);
+    return result;
   }
 }
