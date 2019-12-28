@@ -12662,6 +12662,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/removeArgumentName/arrayLiteralForVararg.kt");
         }
 
+        @TestMetadata("mixedNamedArgumentsInTheirOwnPosition.kt")
+        public void testMixedNamedArgumentsInTheirOwnPosition() throws Exception {
+            runTest("idea/testData/intentions/removeArgumentName/mixedNamedArgumentsInTheirOwnPosition.kt");
+        }
+
         @TestMetadata("namedArgumentBefore.kt")
         public void testNamedArgumentBefore() throws Exception {
             runTest("idea/testData/intentions/removeArgumentName/namedArgumentBefore.kt");

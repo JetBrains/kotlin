@@ -18,7 +18,9 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.calls.components.isVararg
@@ -30,7 +32,9 @@ class RemoveArgumentNameIntention : SelfTargetingRangeIntention<KtValueArgument>
 
         val argumentList = element.parent as? KtValueArgumentList ?: return null
         val arguments = argumentList.arguments
-        if (arguments.asSequence().takeWhile { it != element }.any { it.isNamed() }) return null
+        if (!element.languageVersionSettings.supportsFeature(LanguageFeature.MixedNamedArgumentsInTheirOwnPosition)
+            && arguments.asSequence().takeWhile { it != element }.any { it.isNamed() }
+        ) return null
 
         val callExpr = argumentList.parent as? KtCallElement ?: return null
         val argumentMatch = callExpr.resolveToArgumentMatch(element) ?: return null
