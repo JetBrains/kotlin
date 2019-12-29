@@ -29,7 +29,7 @@ public class OptimizeImportsProcessor extends AbstractLayoutCodeProcessor {
    * Use {code {@link #getCOMMAND_NAME()}} instead
    */
   @Deprecated
-  public static final String COMMAND_NAME = getCOMMAND_NAME();
+  public static final String COMMAND_NAME = "Optimize Imports";
 
   private final List<NotificationInfo> myOptimizerNotifications = new SmartList<>();
 

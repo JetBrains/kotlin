@@ -62,13 +62,13 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
    * Use {code {@link #getSCOPE_PROJECT()}} instead
    */
   @Deprecated
-  public static final String SCOPE_PROJECT = getSCOPE_PROJECT();
+  public static final String SCOPE_PROJECT = "Production";
 
   /**
    * Use {code {@link #getSCOPE_ALL()}} instead
    */
   @Deprecated
-  public static final String SCOPE_ALL = getSCOPE_ALL();
+  public static final String SCOPE_ALL = "All";
 
   public static final String HELP_ID = "reference.toolWindows.hierarchy";
 

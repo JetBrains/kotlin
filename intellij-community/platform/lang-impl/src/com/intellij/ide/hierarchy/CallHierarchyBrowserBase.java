@@ -31,13 +31,13 @@ public abstract class CallHierarchyBrowserBase extends HierarchyBrowserBaseEx {
    * Use {code {@link #getCALLEE_TYPE()}} instead
    */
   @Deprecated
-  public static final String CALLEE_TYPE = getCALLEE_TYPE();
+  public static final String CALLEE_TYPE = "Callees of {0}";
 
   /**
    * Use {code {@link #getCALLER_TYPE()}} instead
    */
   @Deprecated
-  public static final String CALLER_TYPE = getCALLER_TYPE();
+  public static final String CALLER_TYPE = "Callers of {0}";
 
   private static final String CALL_HIERARCHY_BROWSER_DATA_KEY = "com.intellij.ide.hierarchy.CallHierarchyBrowserBase";
 

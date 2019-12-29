@@ -34,7 +34,7 @@ public abstract class MethodHierarchyBrowserBase extends HierarchyBrowserBaseEx 
    * Use {code {@link #getMETHOD_TYPE()}} instead
    */
   @Deprecated
-  public static final String METHOD_TYPE = getMETHOD_TYPE();
+  public static final String METHOD_TYPE = "Method {0}";
 
   public static final DataKey<MethodHierarchyBrowserBase> DATA_KEY = DataKey.create("com.intellij.ide.hierarchy.MethodHierarchyBrowserBase");
 

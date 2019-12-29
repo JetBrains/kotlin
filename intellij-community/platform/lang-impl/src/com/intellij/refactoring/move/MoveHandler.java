@@ -29,7 +29,7 @@ public class MoveHandler implements RefactoringActionHandler {
    * Use {code {@link #getREFACTORING_NAME()}} instead
    */
   @Deprecated
-  public static final String REFACTORING_NAME = getREFACTORING_NAME();
+  public static final String REFACTORING_NAME = "Move";
 
   /**
    * called by an Action in AtomicAction when refactoring is invoked from Editor

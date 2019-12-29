@@ -57,7 +57,7 @@ public class CommonContentEntriesEditor extends ModuleElementsEditor {
    * Use {code {@link #getNAME()}} instead
    */
   @Deprecated
-  public static final String NAME = getNAME();
+  public static final String NAME = "Sources";
 
   protected ContentEntryTreeEditor myRootTreeEditor;
   private MyContentEntryEditorListener myContentEntryEditorListener;

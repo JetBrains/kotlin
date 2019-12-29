@@ -35,19 +35,19 @@ public abstract class TypeHierarchyBrowserBase extends HierarchyBrowserBaseEx {
    * Use {code {@link #getTYPE_HIERARCHY_TYPE()}} instead
    */
   @Deprecated
-  public static final String TYPE_HIERARCHY_TYPE = getTYPE_HIERARCHY_TYPE();
+  public static final String TYPE_HIERARCHY_TYPE = "Class {0}";
 
   /**
    * Use {code {@link #getSUBTYPES_HIERARCHY_TYPE()}} instead
    */
   @Deprecated
-  public static final String SUBTYPES_HIERARCHY_TYPE = getSUBTYPES_HIERARCHY_TYPE();
+  public static final String SUBTYPES_HIERARCHY_TYPE = "Subtypes of {0}";
 
   /**
    * Use {code {@link #getSUPERTYPES_HIERARCHY_TYPE()}} instead
    */
   @Deprecated
-  public static final String SUPERTYPES_HIERARCHY_TYPE = getSUPERTYPES_HIERARCHY_TYPE();
+  public static final String SUPERTYPES_HIERARCHY_TYPE = "Supertypes of {0}";
 
   private boolean myIsInterface;
 
