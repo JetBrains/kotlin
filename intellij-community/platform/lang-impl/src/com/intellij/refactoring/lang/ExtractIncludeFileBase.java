@@ -44,7 +44,6 @@ import java.util.List;
 
 public abstract class ExtractIncludeFileBase<T extends PsiElement> implements RefactoringActionHandler, TitledHandler {
   private static final Logger LOG = Logger.getInstance(ExtractIncludeFileBase.class);
-  private static final String REFACTORING_NAME = RefactoringBundle.message("extract.include.file.title");
   protected PsiFile myIncludingFile;
   public static final String HELP_ID = "refactoring.extractInclude";
 
@@ -292,6 +291,10 @@ public abstract class ExtractIncludeFileBase<T extends PsiElement> implements Re
   }
 
   protected String getRefactoringName() {
-    return REFACTORING_NAME;
+    return getREFACTORING_NAME();
+  }
+
+  static String getREFACTORING_NAME() {
+    return RefactoringBundle.message("extract.include.file.title");
   }
 }
