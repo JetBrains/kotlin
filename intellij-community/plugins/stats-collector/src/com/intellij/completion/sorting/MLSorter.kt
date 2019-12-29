@@ -30,7 +30,7 @@ class MLSorterFactory : CompletionFinalSorter.Factory {
 class MLSorter : CompletionFinalSorter() {
   private companion object {
     private val LOG = Logger.getInstance("#com.intellij.completion.sorting.MLSorter")
-    private const val REORDER_ONLY_TOP_K = 7
+    private const val REORDER_ONLY_TOP_K = 5
   }
 
   private val cachedScore: MutableMap<LookupElement, ItemRankInfo> = IdentityHashMap()
