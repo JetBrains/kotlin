@@ -136,13 +136,13 @@ public abstract class HierarchyTreeStructure extends AbstractTreeStructure {
 
   protected SearchScope getSearchScope(final String scopeType, final PsiElement thisClass) {
     SearchScope searchScope = GlobalSearchScope.allScope(myProject);
-    if (HierarchyBrowserBaseEx.SCOPE_CLASS.equals(scopeType)) {
+    if (HierarchyBrowserBaseEx.getSCOPE_CLASS().equals(scopeType)) {
       searchScope = new LocalSearchScope(thisClass);
     }
-    else if (HierarchyBrowserBaseEx.SCOPE_PROJECT.equals(scopeType)) {
+    else if (HierarchyBrowserBaseEx.getSCOPE_PROJECT().equals(scopeType)) {
       searchScope = GlobalSearchScopesCore.projectProductionScope(myProject);
     }
-    else if (HierarchyBrowserBaseEx.SCOPE_TEST.equals(scopeType)) {
+    else if (HierarchyBrowserBaseEx.getSCOPE_TEST().equals(scopeType)) {
       searchScope = GlobalSearchScopesCore.projectTestScope(myProject);
     } else {
       final NamedScope namedScope = NamedScopesHolder.getScope(myProject, scopeType);
@@ -154,18 +154,18 @@ public abstract class HierarchyTreeStructure extends AbstractTreeStructure {
   }
 
   protected boolean isInScope(final PsiElement baseClass, @NotNull PsiElement srcElement, final String scopeType) {
-    if (HierarchyBrowserBaseEx.SCOPE_CLASS.equals(scopeType)) {
+    if (HierarchyBrowserBaseEx.getSCOPE_CLASS().equals(scopeType)) {
       return PsiTreeUtil.isAncestor(baseClass, srcElement, true);
     }
-    if (HierarchyBrowserBaseEx.SCOPE_PROJECT.equals(scopeType)) {
+    if (HierarchyBrowserBaseEx.getSCOPE_PROJECT().equals(scopeType)) {
       final VirtualFile virtualFile = srcElement.getContainingFile().getVirtualFile();
       return virtualFile == null || !TestSourcesFilter.isTestSources(virtualFile, myProject);
     }
-    if (HierarchyBrowserBaseEx.SCOPE_TEST.equals(scopeType)) {
+    if (HierarchyBrowserBaseEx.getSCOPE_TEST().equals(scopeType)) {
       final VirtualFile virtualFile = srcElement.getContainingFile().getVirtualFile();
       return virtualFile == null || TestSourcesFilter.isTestSources(virtualFile, myProject);
     }
-    if (HierarchyBrowserBaseEx.SCOPE_ALL.equals(scopeType)) {
+    if (HierarchyBrowserBaseEx.getSCOPE_ALL().equals(scopeType)) {
       return true;
     }
     final NamedScope namedScope = NamedScopesHolder.getScope(myProject, scopeType);

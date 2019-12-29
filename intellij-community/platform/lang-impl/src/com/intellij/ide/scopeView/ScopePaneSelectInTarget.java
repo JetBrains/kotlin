@@ -28,7 +28,7 @@ public class ScopePaneSelectInTarget extends ProjectViewSelectInTarget {
   }
 
   public String toString() {
-    return SelectInManager.SCOPE;
+    return SelectInManager.getSCOPE();
   }
 
   @Override

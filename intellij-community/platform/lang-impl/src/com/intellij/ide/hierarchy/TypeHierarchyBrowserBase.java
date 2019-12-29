@@ -31,13 +31,23 @@ import javax.swing.*;
 import java.util.Map;
 
 public abstract class TypeHierarchyBrowserBase extends HierarchyBrowserBaseEx {
+  /**
+   * Use {code {@link #getTYPE_HIERARCHY_TYPE()}} instead
+   */
+  @Deprecated
+  public static final String TYPE_HIERARCHY_TYPE = getTYPE_HIERARCHY_TYPE();
 
-  @SuppressWarnings("UnresolvedPropertyKey")
-  public static final String TYPE_HIERARCHY_TYPE = IdeBundle.message("title.hierarchy.class");
-  @SuppressWarnings("UnresolvedPropertyKey")
-  public static final String SUBTYPES_HIERARCHY_TYPE = IdeBundle.message("title.hierarchy.subtypes");
-  @SuppressWarnings("UnresolvedPropertyKey")
-  public static final String SUPERTYPES_HIERARCHY_TYPE = IdeBundle.message("title.hierarchy.supertypes");
+  /**
+   * Use {code {@link #getSUBTYPES_HIERARCHY_TYPE()}} instead
+   */
+  @Deprecated
+  public static final String SUBTYPES_HIERARCHY_TYPE = getSUBTYPES_HIERARCHY_TYPE();
+
+  /**
+   * Use {code {@link #getSUPERTYPES_HIERARCHY_TYPE()}} instead
+   */
+  @Deprecated
+  public static final String SUPERTYPES_HIERARCHY_TYPE = getSUPERTYPES_HIERARCHY_TYPE();
 
   private boolean myIsInterface;
 
@@ -62,19 +72,19 @@ public abstract class TypeHierarchyBrowserBase extends HierarchyBrowserBaseEx {
     PopupHandler.installPopupHandler(tree1, group, ActionPlaces.TYPE_HIERARCHY_VIEW_POPUP, ActionManager.getInstance());
     baseOnThisTypeAction
       .registerCustomShortcutSet(ActionManager.getInstance().getAction(IdeActions.ACTION_TYPE_HIERARCHY).getShortcutSet(), tree1);
-    trees.put(TYPE_HIERARCHY_TYPE, tree1);
+    trees.put(getTYPE_HIERARCHY_TYPE(), tree1);
 
     final JTree tree2 = createTree(true);
     PopupHandler.installPopupHandler(tree2, group, ActionPlaces.TYPE_HIERARCHY_VIEW_POPUP, ActionManager.getInstance());
     baseOnThisTypeAction
       .registerCustomShortcutSet(ActionManager.getInstance().getAction(IdeActions.ACTION_TYPE_HIERARCHY).getShortcutSet(), tree2);
-    trees.put(SUPERTYPES_HIERARCHY_TYPE, tree2);
+    trees.put(getSUPERTYPES_HIERARCHY_TYPE(), tree2);
 
     final JTree tree3 = createTree(true);
     PopupHandler.installPopupHandler(tree3, group, ActionPlaces.TYPE_HIERARCHY_VIEW_POPUP, ActionManager.getInstance());
     baseOnThisTypeAction
       .registerCustomShortcutSet(ActionManager.getInstance().getAction(IdeActions.ACTION_TYPE_HIERARCHY).getShortcutSet(), tree3);
-    trees.put(SUBTYPES_HIERARCHY_TYPE, tree3);
+    trees.put(getSUBTYPES_HIERARCHY_TYPE(), tree3);
   }
 
   @NotNull
@@ -171,11 +181,25 @@ public abstract class TypeHierarchyBrowserBase extends HierarchyBrowserBaseEx {
 
     @Override
     protected String correctViewType(@NotNull HierarchyBrowserBaseEx browser, String viewType) {
-      if (((TypeHierarchyBrowserBase)browser).myIsInterface && TYPE_HIERARCHY_TYPE.equals(viewType)) {
-        return SUBTYPES_HIERARCHY_TYPE;
+      if (((TypeHierarchyBrowserBase)browser).myIsInterface && getTYPE_HIERARCHY_TYPE().equals(viewType)) {
+        return getSUBTYPES_HIERARCHY_TYPE();
       }
       return viewType;
     }
   }
 
+  @SuppressWarnings("UnresolvedPropertyKey")
+  public static String getTYPE_HIERARCHY_TYPE() {
+    return IdeBundle.message("title.hierarchy.class");
+  }
+
+  @SuppressWarnings("UnresolvedPropertyKey")
+  public static String getSUBTYPES_HIERARCHY_TYPE() {
+    return IdeBundle.message("title.hierarchy.subtypes");
+  }
+
+  @SuppressWarnings("UnresolvedPropertyKey")
+  public static String getSUPERTYPES_HIERARCHY_TYPE() {
+    return IdeBundle.message("title.hierarchy.supertypes");
+  }
 }

@@ -79,6 +79,6 @@ final class SelectInNavBarTarget extends SelectInTargetPsiWrapper implements Dum
   }
 
   public String toString() {
-    return SelectInManager.NAV_BAR;
+    return SelectInManager.getNAV_BAR();
   }
 }

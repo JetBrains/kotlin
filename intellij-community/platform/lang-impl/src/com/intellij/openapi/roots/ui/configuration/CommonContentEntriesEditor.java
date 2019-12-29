@@ -53,7 +53,11 @@ import java.util.Map;
  */
 public class CommonContentEntriesEditor extends ModuleElementsEditor {
   private static final Logger LOG = Logger.getInstance(CommonContentEntriesEditor.class);
-  public static final String NAME = ProjectBundle.message("module.paths.title");
+  /**
+   * Use {code {@link #getNAME()}} instead
+   */
+  @Deprecated
+  public static final String NAME = getNAME();
 
   protected ContentEntryTreeEditor myRootTreeEditor;
   private MyContentEntryEditorListener myContentEntryEditorListener;
@@ -117,7 +121,7 @@ public class CommonContentEntriesEditor extends ModuleElementsEditor {
 
   @Override
   public String getDisplayName() {
-    return NAME;
+    return getNAME();
   }
 
   protected final List<ModuleSourceRootEditHandler<?>> getEditHandlers() {
@@ -482,4 +486,7 @@ public class CommonContentEntriesEditor extends ModuleElementsEditor {
 
   }
 
+  public static String getNAME() {
+    return ProjectBundle.message("module.paths.title");
+  }
 }

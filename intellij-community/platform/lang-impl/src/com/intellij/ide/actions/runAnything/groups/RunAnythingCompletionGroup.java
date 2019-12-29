@@ -61,7 +61,7 @@ public class RunAnythingCompletionGroup<V, P extends RunAnythingProvider<V>> ext
       return null;
     }
 
-    if (RunAnythingGeneralGroup.TITLE.equals(title)) {
+    if (RunAnythingGeneralGroup.getTITLE().equals(title)) {
       return new RunAnythingGeneralGroup();
     }
 

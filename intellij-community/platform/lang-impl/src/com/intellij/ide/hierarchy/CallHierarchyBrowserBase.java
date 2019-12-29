@@ -27,10 +27,17 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 public abstract class CallHierarchyBrowserBase extends HierarchyBrowserBaseEx {
-  @SuppressWarnings("UnresolvedPropertyKey")
-  public static final String CALLEE_TYPE = IdeBundle.message("title.hierarchy.callees.of");
-  @SuppressWarnings("UnresolvedPropertyKey")
-  public static final String CALLER_TYPE = IdeBundle.message("title.hierarchy.callers.of");
+  /**
+   * Use {code {@link #getCALLEE_TYPE()}} instead
+   */
+  @Deprecated
+  public static final String CALLEE_TYPE = getCALLEE_TYPE();
+
+  /**
+   * Use {code {@link #getCALLER_TYPE()}} instead
+   */
+  @Deprecated
+  public static final String CALLER_TYPE = getCALLER_TYPE();
 
   private static final String CALL_HIERARCHY_BROWSER_DATA_KEY = "com.intellij.ide.hierarchy.CallHierarchyBrowserBase";
 
@@ -54,10 +61,10 @@ public abstract class CallHierarchyBrowserBase extends HierarchyBrowserBaseEx {
   protected void prependActions(@NotNull DefaultActionGroup actionGroup) {
     actionGroup.add(new ChangeViewTypeActionBase(IdeBundle.message("action.caller.methods.hierarchy"),
                                                  IdeBundle.message("action.caller.methods.hierarchy"),
-                                                 AllIcons.Hierarchy.Supertypes, CALLER_TYPE));
+                                                 AllIcons.Hierarchy.Supertypes, getCALLER_TYPE()));
     actionGroup.add(new ChangeViewTypeActionBase(IdeBundle.message("action.callee.methods.hierarchy"),
                                                  IdeBundle.message("action.callee.methods.hierarchy"),
-                                                 AllIcons.Hierarchy.Subtypes, CALLEE_TYPE));
+                                                 AllIcons.Hierarchy.Subtypes, getCALLEE_TYPE()));
     actionGroup.add(new AlphaSortAction());
     actionGroup.add(new ChangeScopeAction());
   }
@@ -112,5 +119,15 @@ public abstract class CallHierarchyBrowserBase extends HierarchyBrowserBaseEx {
     public BaseOnThisMethodAction() {
       super(IdeBundle.message("action.base.on.this.method"), CALL_HIERARCHY_BROWSER_DATA_KEY, LanguageCallHierarchy.INSTANCE);
     }
+  }
+
+  @SuppressWarnings("UnresolvedPropertyKey")
+  public static String getCALLEE_TYPE() {
+    return IdeBundle.message("title.hierarchy.callees.of");
+  }
+
+  @SuppressWarnings("UnresolvedPropertyKey")
+  public static String getCALLER_TYPE() {
+    return IdeBundle.message("title.hierarchy.callers.of");
   }
 }

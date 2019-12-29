@@ -58,10 +58,17 @@ import java.util.*;
 public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implements OccurenceNavigator {
   private static final Logger LOG = Logger.getInstance(HierarchyBrowserBaseEx.class);
 
-  public static final String SCOPE_PROJECT = IdeBundle.message("hierarchy.scope.project");
-  public static final String SCOPE_ALL = IdeBundle.message("hierarchy.scope.all");
-  public static final String SCOPE_TEST = IdeBundle.message("hierarchy.scope.test");
-  public static final String SCOPE_CLASS = IdeBundle.message("hierarchy.scope.this.class");
+  /**
+   * Use {code {@link #getSCOPE_PROJECT()}} instead
+   */
+  @Deprecated
+  public static final String SCOPE_PROJECT = getSCOPE_PROJECT();
+
+  /**
+   * Use {code {@link #getSCOPE_ALL()}} instead
+   */
+  @Deprecated
+  public static final String SCOPE_ALL = getSCOPE_ALL();
 
   public static final String HELP_ID = "reference.toolWindows.hierarchy";
 
@@ -117,7 +124,7 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
     for (Map.Entry<String, JTree> entry : type2treeMap.entrySet()) {
       JTree tree = entry.getValue();
       String type = entry.getKey();
-      String scope = state.SCOPE != null ? state.SCOPE : SCOPE_ALL;
+      String scope = state.SCOPE != null ? state.SCOPE : getSCOPE_ALL();
 
       OccurenceNavigatorSupport occurenceNavigatorSupport = new OccurenceNavigatorSupport(tree) {
         @Override
@@ -702,10 +709,10 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
   @NotNull
   private Collection<String> getValidScopeNames() {
     List<String> result = new ArrayList<>();
-    result.add(SCOPE_PROJECT);
-    result.add(SCOPE_TEST);
-    result.add(SCOPE_ALL);
-    result.add(SCOPE_CLASS);
+    result.add(getSCOPE_PROJECT());
+    result.add(getSCOPE_TEST());
+    result.add(getSCOPE_ALL());
+    result.add(getSCOPE_CLASS());
 
     final NamedScopesHolder[] holders = NamedScopesHolder.getAllNamedScopeHolders(myProject);
     for (NamedScopesHolder holder : holders) {
@@ -788,9 +795,25 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
       public void actionPerformed(@NotNull AnActionEvent e) {
         EditScopesDialog.showDialog(myProject, null);
         if (!getValidScopeNames().contains(getCurrentScopeType())) {
-          selectScope(SCOPE_ALL);
+          selectScope(getSCOPE_ALL());
         }
       }
     }
+  }
+
+  public static String getSCOPE_PROJECT() {
+    return IdeBundle.message("hierarchy.scope.project");
+  }
+
+  public static String getSCOPE_ALL() {
+    return IdeBundle.message("hierarchy.scope.all");
+  }
+
+  public static String getSCOPE_TEST() {
+    return IdeBundle.message("hierarchy.scope.test");
+  }
+
+  public static String getSCOPE_CLASS() {
+    return IdeBundle.message("hierarchy.scope.this.class");
   }
 }

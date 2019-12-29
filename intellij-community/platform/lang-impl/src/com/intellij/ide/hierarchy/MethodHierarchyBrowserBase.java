@@ -30,8 +30,11 @@ import javax.swing.*;
 import java.awt.*;
 
 public abstract class MethodHierarchyBrowserBase extends HierarchyBrowserBaseEx {
-  @SuppressWarnings("UnresolvedPropertyKey")
-  public static final String METHOD_TYPE = IdeBundle.message("title.hierarchy.method");
+  /**
+   * Use {code {@link #getMETHOD_TYPE()}} instead
+   */
+  @Deprecated
+  public static final String METHOD_TYPE = getMETHOD_TYPE();
 
   public static final DataKey<MethodHierarchyBrowserBase> DATA_KEY = DataKey.create("com.intellij.ide.hierarchy.MethodHierarchyBrowserBase");
 
@@ -127,5 +130,10 @@ public abstract class MethodHierarchyBrowserBase extends HierarchyBrowserBaseEx 
     public BaseOnThisMethodAction() {
       super(IdeBundle.message("action.base.on.this.method"), DATA_KEY.getName(), LanguageMethodHierarchy.INSTANCE);
     }
+  }
+
+  @SuppressWarnings("UnresolvedPropertyKey")
+  public static String getMETHOD_TYPE() {
+    return IdeBundle.message("title.hierarchy.method");
   }
 }

@@ -25,31 +25,36 @@ import static com.intellij.codeInsight.actions.OptimizeImportsProcessor.Notifica
 import static com.intellij.codeInsight.actions.OptimizeImportsProcessor.NotificationInfo.SOMETHING_CHANGED_WITHOUT_MESSAGE_NOTIFICATION;
 
 public class OptimizeImportsProcessor extends AbstractLayoutCodeProcessor {
-  public static final String COMMAND_NAME = CodeInsightBundle.message("process.optimize.imports");
+  /**
+   * Use {code {@link #getCOMMAND_NAME()}} instead
+   */
+  @Deprecated
+  public static final String COMMAND_NAME = getCOMMAND_NAME();
+
   private final List<NotificationInfo> myOptimizerNotifications = new SmartList<>();
 
   public OptimizeImportsProcessor(@NotNull Project project) {
-    super(project, COMMAND_NAME, getPROGRESS_TEXT(), false);
+    super(project, getCOMMAND_NAME(), getPROGRESS_TEXT(), false);
   }
 
   public OptimizeImportsProcessor(@NotNull Project project, Module module) {
-    super(project, module, COMMAND_NAME, getPROGRESS_TEXT(), false);
+    super(project, module, getCOMMAND_NAME(), getPROGRESS_TEXT(), false);
   }
 
   public OptimizeImportsProcessor(@NotNull Project project, PsiDirectory directory, boolean includeSubdirs) {
-    super(project, directory, includeSubdirs, getPROGRESS_TEXT(), COMMAND_NAME, false);
+    super(project, directory, includeSubdirs, getPROGRESS_TEXT(), getCOMMAND_NAME(), false);
   }
 
   public OptimizeImportsProcessor(@NotNull Project project, PsiDirectory directory, boolean includeSubdirs, boolean processOnlyVcsChangedFiles) {
-    super(project, directory, includeSubdirs, getPROGRESS_TEXT(), COMMAND_NAME, processOnlyVcsChangedFiles);
+    super(project, directory, includeSubdirs, getPROGRESS_TEXT(), getCOMMAND_NAME(), processOnlyVcsChangedFiles);
   }
 
   public OptimizeImportsProcessor(@NotNull Project project, PsiFile file) {
-    super(project, file, getPROGRESS_TEXT(), COMMAND_NAME, false);
+    super(project, file, getPROGRESS_TEXT(), getCOMMAND_NAME(), false);
   }
 
   public OptimizeImportsProcessor(@NotNull Project project, PsiFile[] files, Runnable postRunnable) {
-    this(project, files, COMMAND_NAME, postRunnable);
+    this(project, files, getCOMMAND_NAME(), postRunnable);
   }
 
   public OptimizeImportsProcessor(@NotNull Project project, PsiFile[] files, String commandName, Runnable postRunnable) {
@@ -57,7 +62,7 @@ public class OptimizeImportsProcessor extends AbstractLayoutCodeProcessor {
   }
 
   public OptimizeImportsProcessor(@NotNull AbstractLayoutCodeProcessor processor) {
-    super(processor, COMMAND_NAME, getPROGRESS_TEXT());
+    super(processor, getCOMMAND_NAME(), getPROGRESS_TEXT());
   }
 
   @Override
@@ -153,5 +158,9 @@ public class OptimizeImportsProcessor extends AbstractLayoutCodeProcessor {
 
   private static String getPROGRESS_TEXT() {
     return CodeInsightBundle.message("progress.text.optimizing.imports");
+  }
+
+  public static String getCOMMAND_NAME() {
+    return CodeInsightBundle.message("process.optimize.imports");
   }
 }

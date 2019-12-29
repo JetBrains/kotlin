@@ -36,7 +36,7 @@ public class MultipleRepositoryUrlsInspection extends GradleBaseInspection {
   @NotNull
   @Override
   public String getGroupDisplayName() {
-    return PROBABLE_BUGS;
+    return getPROBABLE_BUGS();
   }
 
 

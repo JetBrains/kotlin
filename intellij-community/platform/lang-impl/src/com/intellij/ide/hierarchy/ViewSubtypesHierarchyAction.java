@@ -30,6 +30,6 @@ public final class ViewSubtypesHierarchyAction extends ChangeViewTypeActionBase 
 
   @Override
   protected final String getTypeName() {
-    return TypeHierarchyBrowserBase.SUBTYPES_HIERARCHY_TYPE;
+    return TypeHierarchyBrowserBase.getSUBTYPES_HIERARCHY_TYPE();
   }
 }

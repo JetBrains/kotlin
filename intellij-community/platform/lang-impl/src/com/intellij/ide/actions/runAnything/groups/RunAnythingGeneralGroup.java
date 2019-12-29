@@ -11,12 +11,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class RunAnythingGeneralGroup extends RunAnythingGroupBase {
-  public static final String TITLE = IdeBundle.message("run.anything.general.group.title");
-
   @NotNull
   @Override
   public String getTitle() {
-    return TITLE;
+    return getTITLE();
   }
 
   @NotNull
@@ -25,7 +23,7 @@ public class RunAnythingGeneralGroup extends RunAnythingGroupBase {
     Collection<RunAnythingItem> collector = new ArrayList<>();
 
     for (RunAnythingProvider provider : RunAnythingProvider.EP_NAME.getExtensions()) {
-      if (TITLE.equals(provider.getCompletionGroupTitle())) {
+      if (getTITLE().equals(provider.getCompletionGroupTitle())) {
         Collection values = provider.getValues(dataContext, pattern);
         for (Object value : values) {
           //noinspection unchecked
@@ -40,5 +38,9 @@ public class RunAnythingGeneralGroup extends RunAnythingGroupBase {
   @Override
   protected int getMaxInitialItems() {
     return 15;
+  }
+
+  public static String getTITLE() {
+    return IdeBundle.message("run.anything.general.group.title");
   }
 }
