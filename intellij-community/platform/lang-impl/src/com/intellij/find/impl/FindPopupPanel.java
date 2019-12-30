@@ -1344,9 +1344,9 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
 
     if (model.isRegularExpressions()) {
       String toFind = model.getStringToFind();
+      Pattern pattern;
       try {
-        Pattern pattern =
-          Pattern.compile(toFind, model.isCaseSensitive() ? Pattern.MULTILINE : Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+        pattern = Pattern.compile(toFind, model.isCaseSensitive() ? Pattern.MULTILINE : Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
         if (pattern.matcher("").matches() && !toFind.endsWith("$") && !toFind.startsWith("^")) {
           return new ValidationInfo(FindBundle.message("find.empty.match.regular.expression.error"), mySearchComponent);
         }
@@ -1370,12 +1370,10 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
         }
 
         try {
-          String stringToReplace = getStringToReplace();
-          stringToReplace = stringToReplace.replaceAll("(\\\\U|\\\\L|\\\\u|\\\\l|\\\\E)", "\\\\$1");
-          Pattern.compile(stringToReplace);
+          RegExReplacementBuilder.validate(pattern, getStringToReplace());
         }
-        catch (PatternSyntaxException e) {
-          return new ValidationInfo(FindBundle.message("find.invalid.regular.expression.error", getStringToReplace(), e.getDescription()),
+        catch (IllegalArgumentException e) {
+          return new ValidationInfo(FindBundle.message("find.replace.invalid.replacement.string", e.getMessage()),
                                     myReplaceComponent);
         }
       }
