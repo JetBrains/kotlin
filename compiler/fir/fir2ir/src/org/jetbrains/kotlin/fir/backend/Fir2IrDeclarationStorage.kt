@@ -28,10 +28,12 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.impl.IrEnumConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFunctionLiteral
@@ -63,6 +65,8 @@ class Fir2IrDeclarationStorage(
     private val propertyCache = mutableMapOf<FirProperty, IrProperty>()
 
     private val fieldCache = mutableMapOf<FirField, IrField>()
+
+    private val enumEntryCache = mutableMapOf<FirEnumEntry, IrEnumEntry>()
 
     private val localStorage = Fir2IrLocalStorage()
 
@@ -212,7 +216,29 @@ class Fir2IrDeclarationStorage(
         }.declareSupertypesAndTypeParameters(anonymousObject)
     }
 
-    fun getIrTypeParameter(typeParameter: FirTypeParameter, index: Int = 0): IrTypeParameter {
+    private fun getIrEnumEntryClass(enumEntry: FirEnumEntry, anonymousObject: FirAnonymousObject, irParent: IrClass?): IrClass {
+        val descriptor = WrappedClassDescriptor()
+        val origin = IrDeclarationOrigin.DEFINED
+        val modality = Modality.FINAL
+        return anonymousObject.convertWithOffsets { startOffset, endOffset ->
+            irSymbolTable.declareClass(startOffset, endOffset, origin, descriptor, modality) { symbol ->
+                IrClassImpl(
+                    startOffset, endOffset, origin, symbol,
+                    enumEntry.name, anonymousObject.classKind,
+                    Visibilities.LOCAL, modality,
+                    isCompanion = false, isInner = false, isData = false, isExternal = false, isInline = false, isExpect = false
+                ).apply {
+                    descriptor.bind(this)
+                    declareThisReceiver()
+                    if (irParent != null) {
+                        this.parent = irParent
+                    }
+                }
+            }
+        }.declareSupertypesAndTypeParameters(anonymousObject)
+    }
+
+    private fun getIrTypeParameter(typeParameter: FirTypeParameter, index: Int = 0): IrTypeParameter {
         return typeParameterCache[typeParameter] ?: typeParameter.run {
             val descriptor = WrappedTypeParameterDescriptor()
             val origin = IrDeclarationOrigin.DEFINED
@@ -512,6 +538,43 @@ class Fir2IrDeclarationStorage(
         }
     }
 
+
+    fun getIrEnumEntry(
+        enumEntry: FirEnumEntry,
+        irParent: IrClass? = null,
+        origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED
+    ): IrEnumEntry {
+        return enumEntryCache.getOrPut(enumEntry) {
+            enumEntry.convertWithOffsets { startOffset, endOffset ->
+                val desc = WrappedEnumEntryDescriptor()
+                enterScope(desc)
+                val result = irSymbolTable.declareEnumEntry(startOffset, endOffset, origin, desc) { symbol ->
+                    IrEnumEntryImpl(
+                        startOffset, endOffset, origin, symbol, enumEntry.name
+                    ).apply {
+                        desc.bind(this)
+                        val irType = enumEntry.returnTypeRef.toIrType(session, this@Fir2IrDeclarationStorage)
+                        if (irParent != null) {
+                            this.parent = irParent
+                        }
+                        val initializer = enumEntry.initializer
+                        if (initializer != null) {
+                            initializer as FirAnonymousObject
+                            val klass = getIrEnumEntryClass(enumEntry, initializer, irParent)
+
+                            this.correspondingClass = klass
+                        } else if (irParent != null) {
+                            this.initializerExpression =
+                                IrEnumConstructorCallImpl(startOffset, endOffset, irType, irParent.constructors.first().symbol)
+                        }
+                    }
+                }
+                leaveScope(desc)
+                result
+            }
+        }
+    }
+
     fun getIrProperty(
         property: FirProperty,
         irParent: IrDeclarationParent? = null,
@@ -738,8 +801,12 @@ class Fir2IrDeclarationStorage(
         return irSymbolTable.referenceVariable(irDeclaration.descriptor)
     }
 
-    fun getIrValueSymbol(firVariableSymbol: FirVariableSymbol<*>): IrValueSymbol {
+    fun getIrValueSymbol(firVariableSymbol: FirVariableSymbol<*>): IrSymbol {
         return when (val firDeclaration = firVariableSymbol.fir) {
+            is FirEnumEntry -> {
+                val irEnumEntry = getIrEnumEntry(firDeclaration)
+                irSymbolTable.referenceEnumEntry(irEnumEntry.descriptor)
+            }
             is FirValueParameter -> {
                 val irDeclaration = localStorage.getParameter(firDeclaration)
                 // catch parameter is FirValueParameter in FIR but IrVariable in IR

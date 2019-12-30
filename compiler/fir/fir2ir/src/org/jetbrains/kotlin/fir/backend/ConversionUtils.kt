@@ -186,6 +186,6 @@ fun FirVariableSymbol<*>.toBackingFieldSymbol(declarationStorage: Fir2IrDeclarat
     return declarationStorage.getIrBackingFieldSymbol(this)
 }
 
-fun FirVariableSymbol<*>.toValueSymbol(declarationStorage: Fir2IrDeclarationStorage): IrValueSymbol {
+fun FirVariableSymbol<*>.toValueSymbol(declarationStorage: Fir2IrDeclarationStorage): IrSymbol {
     return declarationStorage.getIrValueSymbol(this)
 }

@@ -45,7 +45,6 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
@@ -54,7 +53,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 import org.jetbrains.kotlin.types.AbstractStrictEqualityTypeChecker
-import org.jetbrains.kotlin.types.Variance
 import java.util.*
 
 class Fir2IrVisitor(
@@ -166,6 +164,15 @@ class Fir2IrVisitor(
     private fun FirDeclaration.toIrDeclaration(): IrDeclaration? {
         if (this is FirTypeAlias) return null
         return accept(this@Fir2IrVisitor, null) as IrDeclaration
+    }
+
+    override fun visitEnumEntry(enumEntry: FirEnumEntry, data: Any?): IrElement {
+        val irEnumEntry = declarationStorage.getIrEnumEntry(enumEntry, irParent = parentStack.last() as IrClass)
+        irEnumEntry.correspondingClass?.withParent {
+            setClassContent(enumEntry.initializer as FirAnonymousObject)
+        }
+        //irEnumEntry.initializerExpression = IrEnumConstructorCallImpl()
+        return irEnumEntry.setParentByParentStack()
     }
 
     private fun FirTypeRef.collectCallableNamesFromThisAndSupertypes(result: MutableList<Name> = mutableListOf()): List<Name> {
@@ -486,7 +493,7 @@ class Fir2IrVisitor(
         }
     }
 
-    private fun visitLocalVariable(variable: FirProperty, data: Any?): IrElement {
+    private fun visitLocalVariable(variable: FirProperty): IrElement {
         assert(variable.isLocal)
         val irVariable = declarationStorage.createAndSaveIrVariable(variable)
         return irVariable.setParentByParentStack().apply {
@@ -584,7 +591,7 @@ class Fir2IrVisitor(
     }
 
     override fun visitProperty(property: FirProperty, data: Any?): IrElement {
-        if (property.isLocal) return visitLocalVariable(property, data)
+        if (property.isLocal) return visitLocalVariable(property)
         val irProperty = declarationStorage.getIrProperty(property, irParent = parentStack.last() as? IrClass)
         return irProperty.setParentByParentStack().withProperty { setPropertyContent(irProperty.descriptor, property) }
     }
@@ -706,6 +713,7 @@ class Fir2IrVisitor(
                     startOffset, endOffset, type, symbol,
                     origin = calleeReference.statementOrigin()
                 )
+                symbol is IrEnumEntrySymbol -> IrGetEnumValueImpl(startOffset, endOffset, type, symbol)
                 else -> generateErrorCallExpression(startOffset, endOffset, calleeReference, type)
             }
         }
@@ -733,7 +741,9 @@ class Fir2IrVisitor(
                     }
 
                 }
-                else -> IrErrorCallExpressionImpl(startOffset, endOffset, type ?: createErrorType(), "Unresolved reference: ${render()}")
+                else -> {
+                    IrErrorCallExpressionImpl(startOffset, endOffset, type ?: createErrorType(), "Unresolved reference: ${render()}")
+                }
             }
         }
     }
@@ -849,13 +859,13 @@ class Fir2IrVisitor(
     }
 
     override fun visitFunctionCall(functionCall: FirFunctionCall, data: Any?): IrElement {
-        val functionCall = if (functionCall.toResolvedCallableSymbol()?.fir is FirIntegerOperator) {
+        val convertibleCall = if (functionCall.toResolvedCallableSymbol()?.fir is FirIntegerOperator) {
             functionCall.copy().transformSingle(integerApproximator, null)
         } else {
             functionCall
         }
-        return functionCall.toIrExpression(functionCall.typeRef).applyCallArguments(functionCall).applyTypeArguments(functionCall)
-            .applyReceivers(functionCall)
+        return convertibleCall.toIrExpression(convertibleCall.typeRef)
+            .applyCallArguments(convertibleCall).applyTypeArguments(convertibleCall).applyReceivers(convertibleCall)
     }
 
     override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: Any?): IrElement {
@@ -955,6 +965,7 @@ class Fir2IrVisitor(
         return constExpression.convertWithOffsets { startOffset, endOffset ->
             @Suppress("UNCHECKED_CAST")
             val kind = constExpression.getIrConstKind() as IrConstKind<T>
+
             @Suppress("UNCHECKED_CAST")
             val value = (constExpression.value as? Long)?.let {
                 when (kind) {

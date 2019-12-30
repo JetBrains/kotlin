@@ -1,7 +1,7 @@
 FILE fqName:<root> fileName:/typeAliasesWithAnnotations.kt
   CLASS ANNOTATION_CLASS name:TestAnn modality:FINAL visibility:public superTypes:[kotlin.Annotation]
     annotations:
-      Target(allowedTargets = GET_OBJECT 'CLASS ENUM_ENTRY name:TYPEALIAS modality:FINAL visibility:unknown superTypes:[]' type=kotlin.annotation.AnnotationTarget)
+      Target(allowedTargets = GET_ENUM 'ENUM_ENTRY name:TYPEALIAS' type=kotlin.annotation.AnnotationTarget)
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestAnn
     CONSTRUCTOR visibility:public <> (x:kotlin.String) returnType:<root>.TestAnn [primary]
       VALUE_PARAMETER name:x index:0 type:kotlin.String
