@@ -1087,6 +1087,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             runTest("compiler/testData/ir/irText/expressions/multipleThisReferences.kt");
         }
 
+        @TestMetadata("nullCheckOnLambdaReturn.kt")
+        public void testNullCheckOnLambdaReturn() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/nullCheckOnLambdaReturn.kt");
+        }
+
         @TestMetadata("objectAsCallable.kt")
         public void testObjectAsCallable() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/objectAsCallable.kt");

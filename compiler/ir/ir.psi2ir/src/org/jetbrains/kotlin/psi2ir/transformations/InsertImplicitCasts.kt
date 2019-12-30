@@ -17,9 +17,12 @@
 package org.jetbrains.kotlin.psi2ir.transformations
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.isFunctionType
+import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -35,6 +38,7 @@ import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.util.coerceToUnitIfNeeded
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.psi2ir.containsNull
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
@@ -43,25 +47,38 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.*
 
 fun insertImplicitCasts(element: IrElement, context: GeneratorContext) {
-    element.transformChildren(
-        InsertImplicitCasts(
-            context.builtIns,
-            context.irBuiltIns,
-            context.typeTranslator,
-            context.callToSubstitutedDescriptorMap,
-            context.extensions
-        ),
-        null
-    )
+    InsertImplicitCasts(
+        context.builtIns,
+        context.irBuiltIns,
+        context.typeTranslator,
+        context.callToSubstitutedDescriptorMap,
+        context.extensions
+    ).run(element)
 }
 
-open class InsertImplicitCasts(
+internal class InsertImplicitCasts(
     private val builtIns: KotlinBuiltIns,
     private val irBuiltIns: IrBuiltIns,
     private val typeTranslator: TypeTranslator,
     private val callToSubstitutedDescriptorMap: Map<IrMemberAccessExpression, CallableDescriptor>,
     private val generatorExtensions: GeneratorExtensions
 ) : IrElementTransformerVoid() {
+
+    private val expectedFunctionExpressionReturnType = hashMapOf<FunctionDescriptor, IrType>()
+    private val returnExpressionsToBePostprocessed = arrayListOf<IrReturn>()
+
+    fun run(element: IrElement) {
+        element.transformChildrenVoid(this)
+        for (irReturn in returnExpressionsToBePostprocessed) {
+            postprocessReturnExpression(irReturn)
+        }
+    }
+
+    private fun postprocessReturnExpression(irReturn: IrReturn) {
+        val returnTarget = irReturn.returnTarget
+        val expectedReturnType = expectedFunctionExpressionReturnType[returnTarget] ?: return
+        irReturn.value = irReturn.value.cast(expectedReturnType)
+    }
 
     private fun KotlinType.toIrType() = typeTranslator.translateType(this)
 
@@ -139,6 +156,7 @@ open class InsertImplicitCasts(
             value = if (expression.returnTargetSymbol is IrConstructorSymbol) {
                 value.coerceToUnit()
             } else {
+                returnExpressionsToBePostprocessed.add(expression)
                 value.cast(expression.returnTarget.returnType)
             }
         }
@@ -256,9 +274,22 @@ open class InsertImplicitCasts(
     private fun IrExpression.cast(irType: IrType): IrExpression =
         cast(irType.originalKotlinType)
 
+    private fun KotlinType.getFunctionReturnTypeOrNull(): KotlinType? =
+        if (isFunctionType || isSuspendFunctionType)
+            arguments.last().type
+        else
+            null
+
     private fun IrExpression.cast(expectedType: KotlinType?): IrExpression {
         if (expectedType == null) return this
         if (expectedType.isError) return this
+
+        if (this is IrFunctionExpression) {
+            val expectedFunctionReturnType = expectedType.getFunctionReturnTypeOrNull()
+            if (expectedFunctionReturnType != null) {
+                expectedFunctionExpressionReturnType[function.descriptor] = expectedFunctionReturnType.toIrType()
+            }
+        }
 
         // TODO here we can have non-denotable KotlinTypes (both in 'this@cast.type' and 'expectedType').
 
@@ -317,12 +348,12 @@ open class InsertImplicitCasts(
         )
     }
 
-    protected open fun IrExpression.coerceToUnit(): IrExpression {
+    private fun IrExpression.coerceToUnit(): IrExpression {
         val valueType = getKotlinType(this)
         return coerceToUnitIfNeeded(valueType, irBuiltIns)
     }
 
-    protected fun getKotlinType(irExpression: IrExpression) =
+    private fun getKotlinType(irExpression: IrExpression) =
         irExpression.type.originalKotlinType!!
 
     private fun KotlinType.isBuiltInIntegerType(): Boolean =
@@ -335,4 +366,3 @@ open class InsertImplicitCasts(
                 KotlinBuiltIns.isUInt(this) ||
                 KotlinBuiltIns.isULong(this)
 }
-

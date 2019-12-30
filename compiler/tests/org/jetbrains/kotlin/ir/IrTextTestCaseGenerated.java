@@ -1086,6 +1086,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/expressions/multipleThisReferences.kt");
         }
 
+        @TestMetadata("nullCheckOnLambdaReturn.kt")
+        public void testNullCheckOnLambdaReturn() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/nullCheckOnLambdaReturn.kt");
+        }
+
         @TestMetadata("objectAsCallable.kt")
         public void testObjectAsCallable() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/objectAsCallable.kt");
