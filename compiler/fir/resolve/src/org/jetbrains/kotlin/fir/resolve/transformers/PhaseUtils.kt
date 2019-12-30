@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.fir.resolve.FirProvider
+import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
@@ -21,7 +21,12 @@ fun <D> AbstractFirBasedSymbol<D>.phasedFir(
     val availablePhase = result.resolvePhase
     if (availablePhase < requiredPhase) {
         // NB: we should use session from symbol here, not transformer session (important for IDE)
-        val provider = FirProvider.getInstance(fir.session)
+        val provider = fir.session.firProvider
+
+        require(provider.isPhasedFirAllowed) {
+            "Incorrect resolvePhase: actual: $availablePhase, expected: $requiredPhase\n For: ${fir.render()}"
+        }
+
         val containingFile = when (this) {
             is FirCallableSymbol<*> -> provider.getFirCallableContainerFile(this)
             is FirClassLikeSymbol<*> -> provider.getFirClassifierContainerFile(this)
