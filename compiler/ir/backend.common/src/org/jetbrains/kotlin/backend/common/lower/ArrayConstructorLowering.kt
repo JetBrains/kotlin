@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -84,7 +83,7 @@ class ArrayConstructorLowering(val context: CommonBackendContext) : IrElementTra
                 }
                 body = irBlock {
                     val tempIndex = irTemporary(irGet(index))
-                    val value = lambda?.inline(listOf(tempIndex)) ?: irCallOp(
+                    val value = lambda?.inline(parent, listOf(tempIndex)) ?: irCallOp(
                         invoke.symbol,
                         invoke.returnType,
                         irGet(invokableVar!!),
@@ -100,10 +99,6 @@ class ArrayConstructorLowering(val context: CommonBackendContext) : IrElementTra
                 }
             }
             +irGet(result)
-        }.also {
-            // Some parents of local declarations are not updated during ad-hoc inlining
-            // TODO: Remove when generic inliner is used
-            it.patchDeclarationParents(scope.getLocalDeclarationParent())
         }
     }
 }

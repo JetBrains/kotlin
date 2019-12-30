@@ -221,13 +221,6 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
         })
     }
 
-    private fun IrFunction.copyBodyFrom(oldFunction: IrFunction) {
-        val mapping: Map<IrValueParameter, IrValueParameter> =
-            (listOfNotNull(oldFunction.dispatchReceiverParameter, oldFunction.extensionReceiverParameter) + oldFunction.valueParameters)
-                .zip(listOfNotNull(dispatchReceiverParameter, extensionReceiverParameter) + valueParameters).toMap()
-        copyBodyWithParametersMapping(this, oldFunction, mapping)
-    }
-
     private fun IrDeclarationContainer.addFunctionOverride(
         function: IrSimpleFunction,
         modality: Modality = Modality.FINAL
@@ -517,7 +510,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
             origin = JvmLoweredDeclarationOrigin.SUSPEND_IMPL_STATIC_FUNCTION,
             copyMetadata = false
         )
-        copyBodyToStatic(irFunction, static)
+        static.body = irFunction.moveBodyTo(static)
         // Rewrite the body of the original suspend method to forward to the new static method.
         irFunction.body = context.createIrBuilder(irFunction.symbol).irBlockBody {
             +irReturn(irCall(static).also {
@@ -568,7 +561,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                         dispatchReceiverParameter = function.dispatchReceiverParameter?.copyTo(this)
                         extensionReceiverParameter = function.extensionReceiverParameter?.copyTo(this)
                         function.valueParameters.mapTo(valueParameters) { it.copyTo(this) }
-                        copyBodyFrom(function)
+                        body = function.copyBodyTo(this)
                         copyAttributes(function)
                     }
                     registerNewFunction(function.parentAsClass, newFunction)
