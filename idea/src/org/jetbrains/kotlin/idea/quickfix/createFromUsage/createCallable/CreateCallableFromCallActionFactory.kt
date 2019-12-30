@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
+import org.jetbrains.kotlin.idea.quickfix.quickfixUtil.getDataFlowAwareTypes
 import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.refactoring.getExtractionContainers
 import org.jetbrains.kotlin.idea.refactoring.isInterfaceClass
@@ -119,7 +120,11 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
             is ReceiverValue -> {
                 val originalType = receiver.type
                 val finalType = if (receiver is ExpressionReceiver) {
-                    getDataFlowAwareTypes(receiver.expression, context, originalType).firstOrNull() ?: originalType
+                    getDataFlowAwareTypes(
+                        receiver.expression,
+                        context,
+                        originalType
+                    ).firstOrNull() ?: originalType
                 } else originalType
                 TypeInfo(finalType, Variance.IN_VARIANCE)
             }

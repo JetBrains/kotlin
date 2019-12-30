@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.mapArgumentsToParameters
+import org.jetbrains.kotlin.idea.quickfix.quickfixUtil.getDataFlowAwareTypes
 import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeSignatureConfiguration
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinMethodDescriptor
@@ -102,8 +103,10 @@ abstract class ChangeFunctionSignatureFix(
                     val call = originalElement.getCall(bindingContext) ?: return null
                     val argumentToParameter = call.mapArgumentsToParameters(functionDescriptor)
                     val hasTypeMismatches = argumentToParameter.any { (argument, parameter) ->
-                        val argumentType = argument.getArgumentExpression()?.let { bindingContext.getType(it) }
-                        argumentType == null || !KotlinTypeChecker.DEFAULT.isSubtypeOf(argumentType, parameter.type)
+                        val argumentTypes = argument.getArgumentExpression()?.let { getDataFlowAwareTypes(it, bindingContext) }
+                        argumentTypes?.none { dataFlowAwareType ->
+                            KotlinTypeChecker.DEFAULT.isSubtypeOf(dataFlowAwareType, parameter.type)
+                        } ?: true
                     }
                     return AddFunctionParametersFix(originalElement, functionDescriptor, hasTypeMismatches)
                 }

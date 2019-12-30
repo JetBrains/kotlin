@@ -9,12 +9,9 @@ import com.intellij.refactoring.psi.SearchUtils
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.cfg.pseudocode.*
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.project.builtIns
-import org.jetbrains.kotlin.idea.project.languageVersionSettings
+import org.jetbrains.kotlin.idea.quickfix.quickfixUtil.getDataFlowAwareTypes
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
-import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
@@ -24,9 +21,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoAfter
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.constants.IntegerLiteralTypeConstructor
 import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
 import org.jetbrains.kotlin.resolve.scopes.HierarchicalScope
@@ -35,7 +30,6 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.supertypes
-import org.jetbrains.kotlin.utils.ifEmpty
 import java.util.*
 
 internal operator fun KotlinType.contains(inner: KotlinType): Boolean {
@@ -334,19 +328,4 @@ private fun TypePredicate.getRepresentativeTypes(): Set<KotlinType> {
         is AllTypes -> emptySet()
         else -> throw AssertionError("Invalid type predicate: $this")
     }
-}
-
-fun getDataFlowAwareTypes(
-    expression: KtExpression,
-    bindingContext: BindingContext = expression.analyze(),
-    originalType: KotlinType? = bindingContext.getType(expression)
-): Collection<KotlinType> {
-    if (originalType == null) return emptyList()
-    val dataFlowInfo = bindingContext.getDataFlowInfoAfter(expression)
-    val dataFlowValueFactory = expression.getResolutionFacade().frontendService<DataFlowValueFactory>()
-    val expressionType = bindingContext.getType(expression) ?: return listOf(originalType)
-    val dataFlowValue = dataFlowValueFactory.createDataFlowValue(
-        expression, expressionType, bindingContext, expression.getResolutionFacade().moduleDescriptor
-    )
-    return dataFlowInfo.getCollectedTypes(dataFlowValue, expression.languageVersionSettings).ifEmpty { listOf(originalType) }
 }
