@@ -439,6 +439,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/dispatchReceiver.kt");
         }
 
+        @TestMetadata("enumEntryUse.kt")
+        public void testEnumEntryUse() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/enumEntryUse.kt");
+        }
+
         @TestMetadata("enumValues.kt")
         public void testEnumValues() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/enumValues.kt");
