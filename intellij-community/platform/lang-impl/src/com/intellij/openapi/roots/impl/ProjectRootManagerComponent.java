@@ -343,7 +343,6 @@ public class ProjectRootManagerComponent extends ProjectRootManagerImpl implemen
   public void dispose() {
     myCollectWatchRootsFuture.cancel(false);
     myExecutor.shutdownNow();
-    assertListenersAreDisposed();
   }
 
   private class AppListener implements ApplicationListener {
