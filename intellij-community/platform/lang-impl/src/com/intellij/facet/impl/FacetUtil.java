@@ -9,7 +9,10 @@ import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.InvalidDataException;
+import com.intellij.openapi.util.JDOMExternalizable;
+import com.intellij.openapi.util.WriteExternalException;
 import org.jdom.Element;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.serialization.facet.JpsFacetSerializer;
@@ -80,5 +83,23 @@ public class FacetUtil {
       configuration.writeExternal(config);
       return config;
     }
+  }
+
+  @ApiStatus.Internal
+  @Nullable
+  public static Element saveFacetConfiguration(Facet<?> facet) {
+    final Element config;
+    try {
+      FacetConfiguration configuration = facet.getConfiguration();
+      config = saveFacetConfiguration(configuration);
+      if (facet instanceof JDOMExternalizable) {
+        //todo[nik] remove
+        ((JDOMExternalizable)facet).writeExternal(config);
+      }
+    }
+    catch (WriteExternalException e) {
+      return null;
+    }
+    return config;
   }
 }
