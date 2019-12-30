@@ -39,12 +39,12 @@ FILE: enumEntryUse.kt
     }
     public final fun useEnum(some: R|TestEnum|): R|kotlin/Unit| {
     }
-    public final fun useVararg(vararg some: R|kotlin/Array<kotlin/Array<kotlin/Array<kotlin/Array<kotlin/Array<kotlin/Array<TestEnum>>>>>>|): R|kotlin/Unit| {
+    public final fun useVararg(vararg some: R|kotlin/Array<TestEnum>|): R|kotlin/Unit| {
     }
     public final fun test(): R|kotlin/Unit| {
         R|/use|(Q|TestEnum|.R|/TestEnum.FIRST|)
         R|/useEnum|(Q|TestEnum|.R|/TestEnum.SECOND|)
         R|/useEnum|(Q|TestEnum|.R|/TestEnum.THIRD|)
-        <Inapplicable(INAPPLICABLE): [/useVararg]>#(Q|TestEnum|.R|/TestEnum.FIRST|, Q|TestEnum|.R|/TestEnum.SECOND|)
+        R|/useVararg|(Q|TestEnum|.R|/TestEnum.FIRST|, Q|TestEnum|.R|/TestEnum.SECOND|)
         <Inapplicable(INAPPLICABLE): [/useVararg]>#(Int(1), Int(2), Int(3), Int(4), Int(5))
     }

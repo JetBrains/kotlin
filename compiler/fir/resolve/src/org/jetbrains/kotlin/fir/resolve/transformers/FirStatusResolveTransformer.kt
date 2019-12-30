@@ -92,6 +92,10 @@ class FirStatusResolveTransformer : FirAbstractTreeTransformer<FirDeclarationSta
         return transformDeclaration(property, data)
     }
 
+    override fun transformEnumEntry(enumEntry: FirEnumEntry, data: FirDeclarationStatus?): CompositeTransformResult<FirDeclaration> {
+        return transformDeclaration(enumEntry, data)
+    }
+
     override fun transformValueParameter(
         valueParameter: FirValueParameter,
         data: FirDeclarationStatus?

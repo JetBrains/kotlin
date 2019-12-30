@@ -59,6 +59,9 @@ class FirTypeResolveTransformer : FirAbstractTreeTransformerWithSuperTypes(
         }
     }
 
+    override fun transformEnumEntry(enumEntry: FirEnumEntry, data: Nothing?): CompositeTransformResult<FirDeclaration> {
+        return transformDeclaration(enumEntry, data)
+    }
 
     override fun transformProperty(property: FirProperty, data: Nothing?): CompositeTransformResult<FirDeclaration> {
         return withScopeCleanup {
