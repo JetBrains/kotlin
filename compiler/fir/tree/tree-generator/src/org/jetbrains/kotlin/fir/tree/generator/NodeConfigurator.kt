@@ -343,6 +343,11 @@ object NodeConfigurator : AbstractFieldConfigurator() {
             needTransformOtherChildren()
         }
 
+        enumEntry.configure {
+            parentArg(variable, "F", enumEntry)
+            parentArg(callableMemberDeclaration, "F", enumEntry)
+        }
+
         field.configure {
             parentArg(variable, "F", field)
             parentArg(callableMemberDeclaration, "F", field)

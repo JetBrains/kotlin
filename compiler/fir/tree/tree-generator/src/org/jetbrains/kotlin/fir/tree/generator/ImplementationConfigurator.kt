@@ -273,6 +273,12 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             defaultNull("delegateFieldSymbol", "receiverTypeRef", "initializer", "delegate", "getter", "setter", withGetter = true)
         }
 
+        impl(enumEntry) {
+            defaultTrue("isVal", withGetter = true)
+            defaultFalse("isVar", withGetter = true)
+            defaultNull("delegateFieldSymbol", "receiverTypeRef", "delegate", "getter", "setter", withGetter = true)
+        }
+
         impl(namedArgumentExpression) {
             default("typeRef") {
                 delegate = "expression"
