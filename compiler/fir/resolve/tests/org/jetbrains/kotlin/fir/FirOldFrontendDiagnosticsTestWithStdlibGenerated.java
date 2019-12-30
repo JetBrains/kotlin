@@ -1993,6 +1993,11 @@ public class FirOldFrontendDiagnosticsTestWithStdlibGenerated extends AbstractFi
                 runTest("compiler/testData/diagnostics/testsWithStdLib/inference/annotationsForResolve/onlyInputTypesUpperBound.kt");
             }
 
+            @TestMetadata("onlyInputTypesWarning.kt")
+            public void testOnlyInputTypesWarning() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/inference/annotationsForResolve/onlyInputTypesWarning.kt");
+            }
+
             @TestMetadata("onlyInputTypesWithVarargs.kt")
             public void testOnlyInputTypesWithVarargs() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/inference/annotationsForResolve/onlyInputTypesWithVarargs.kt");

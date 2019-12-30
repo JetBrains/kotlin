@@ -67,7 +67,10 @@ class DiagnosticReporterByTrackingStrategy(
             OnlyInputTypesDiagnostic::class.java -> {
                 val typeVariable = (diagnostic as OnlyInputTypesDiagnostic).typeVariable as? TypeVariableFromCallableDescriptor ?: return
                 psiKotlinCall.psiCall.calleeExpression?.let {
-                    trace.report(TYPE_INFERENCE_ONLY_INPUT_TYPES.on(it, typeVariable.originalTypeParameter))
+                    val factory = if (context.languageVersionSettings.supportsFeature(LanguageFeature.NonStrictOnlyInputTypesChecks))
+                        TYPE_INFERENCE_ONLY_INPUT_TYPES_WARNING
+                    else TYPE_INFERENCE_ONLY_INPUT_TYPES
+                    trace.report(factory.on(it, typeVariable.originalTypeParameter))
                 }
             }
         }

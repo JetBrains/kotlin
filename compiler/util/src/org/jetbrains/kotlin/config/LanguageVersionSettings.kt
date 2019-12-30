@@ -147,6 +147,7 @@ enum class LanguageFeature(
     SamConversionPerArgument(sinceVersion = KOTLIN_1_3, defaultState = State.DISABLED),
     NewDataFlowForTryExpressions(sinceVersion = KOTLIN_1_3, defaultState = State.DISABLED),
     FunctionReferenceWithDefaultValueAsOtherType(sinceVersion = KOTLIN_1_3, defaultState = State.DISABLED),
+    NonStrictOnlyInputTypesChecks(KOTLIN_1_4),
     // ------
     // Next features can be enabled regardless of new inference
 
