@@ -209,7 +209,7 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.Test1
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun bar (): kotlin.Int declared in <root>.Test1'
-          CALL 'public abstract fun bar (): kotlin.Int declared in <root>.IBase' type=kotlin.Int origin=null
+          CALL 'public open fun bar (): kotlin.Int declared in <root>.BaseImpl' type=kotlin.Int origin=null
             $this: GET_FIELD 'FIELD DELEGATE name:Test1$IBase$delegate type:<root>.BaseImpl visibility:private [final]' type=<root>.BaseImpl origin=null
               receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.bar' type=<root>.Test1 origin=null
     FUN DELEGATED_MEMBER name:foo visibility:public modality:OPEN <> ($this:<root>.Test1, x:kotlin.Int, s:kotlin.String) returnType:kotlin.Unit
@@ -219,7 +219,7 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
       VALUE_PARAMETER name:x index:0 type:kotlin.Int
       VALUE_PARAMETER name:s index:1 type:kotlin.String
       BLOCK_BODY
-        CALL 'public abstract fun foo (x: kotlin.Int, s: kotlin.String): kotlin.Unit declared in <root>.IBase' type=kotlin.Unit origin=null
+        CALL 'public open fun foo (x: kotlin.Int, s: kotlin.String): kotlin.Unit declared in <root>.BaseImpl' type=kotlin.Unit origin=null
           $this: GET_FIELD 'FIELD DELEGATE name:Test1$IBase$delegate type:<root>.BaseImpl visibility:private [final]' type=<root>.BaseImpl origin=null
             receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.foo' type=<root>.Test1 origin=null
           x: GET_VAR 'x: kotlin.Int declared in <root>.Test1.foo' type=kotlin.Int origin=null
@@ -230,7 +230,7 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.Test1
       $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
       BLOCK_BODY
-        CALL 'public abstract fun qux (): kotlin.Unit declared in <root>.IBase' type=kotlin.Unit origin=null
+        CALL 'public open fun qux (): kotlin.Unit declared in <root>.BaseImpl' type=kotlin.Unit origin=null
           $this: GET_FIELD 'FIELD DELEGATE name:Test1$IBase$delegate type:<root>.BaseImpl visibility:private [final]' type=<root>.BaseImpl origin=null
             receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.qux' type=<root>.Test1 origin=null
           $receiver: GET_VAR '<this>: kotlin.String declared in <root>.Test1.qux' type=kotlin.String origin=null
@@ -262,7 +262,7 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.Test2
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun bar (): kotlin.Int declared in <root>.Test2'
-          CALL 'public abstract fun bar (): kotlin.Int declared in <root>.IBase' type=kotlin.Int origin=null
+          CALL 'public open fun bar (): kotlin.Int declared in <root>.BaseImpl' type=kotlin.Int origin=null
             $this: GET_FIELD 'FIELD DELEGATE name:Test2$IBase$delegate type:<root>.BaseImpl visibility:private [final]' type=<root>.BaseImpl origin=null
               receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.bar' type=<root>.Test2 origin=null
     FUN DELEGATED_MEMBER name:foo visibility:public modality:OPEN <> ($this:<root>.Test2, x:kotlin.Int, s:kotlin.String) returnType:kotlin.Unit
@@ -272,7 +272,7 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
       VALUE_PARAMETER name:x index:0 type:kotlin.Int
       VALUE_PARAMETER name:s index:1 type:kotlin.String
       BLOCK_BODY
-        CALL 'public abstract fun foo (x: kotlin.Int, s: kotlin.String): kotlin.Unit declared in <root>.IBase' type=kotlin.Unit origin=null
+        CALL 'public open fun foo (x: kotlin.Int, s: kotlin.String): kotlin.Unit declared in <root>.BaseImpl' type=kotlin.Unit origin=null
           $this: GET_FIELD 'FIELD DELEGATE name:Test2$IBase$delegate type:<root>.BaseImpl visibility:private [final]' type=<root>.BaseImpl origin=null
             receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.foo' type=<root>.Test2 origin=null
           x: GET_VAR 'x: kotlin.Int declared in <root>.Test2.foo' type=kotlin.Int origin=null
@@ -283,7 +283,7 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.Test2
       $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
       BLOCK_BODY
-        CALL 'public abstract fun qux (): kotlin.Unit declared in <root>.IBase' type=kotlin.Unit origin=null
+        CALL 'public open fun qux (): kotlin.Unit declared in <root>.BaseImpl' type=kotlin.Unit origin=null
           $this: GET_FIELD 'FIELD DELEGATE name:Test2$IBase$delegate type:<root>.BaseImpl visibility:private [final]' type=<root>.BaseImpl origin=null
             receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.qux' type=<root>.Test2 origin=null
           $receiver: GET_VAR '<this>: kotlin.String declared in <root>.Test2.qux' type=kotlin.String origin=null

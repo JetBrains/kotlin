@@ -125,6 +125,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/classes/enumWithSecondaryCtor.kt");
         }
 
+        @TestMetadata("implicitNotNullOnDelegatedImplementation.kt")
+        public void testImplicitNotNullOnDelegatedImplementation() throws Exception {
+            runTest("compiler/testData/ir/irText/classes/implicitNotNullOnDelegatedImplementation.kt");
+        }
+
         @TestMetadata("initBlock.kt")
         public void testInitBlock() throws Exception {
             runTest("compiler/testData/ir/irText/classes/initBlock.kt");
