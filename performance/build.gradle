@@ -150,7 +150,7 @@ task registerBuild(type: BuildRegister) {
         // Get bundle size.
         bundleSize = null
         if (project.findProperty('kotlin.bundleBuild') != null) {
-            def dist = findProperty('org.jetbrains.kotlin.native.home') ?: 'dist'
+            def dist = findProperty('kotlin.native.home') ?: 'dist'
             dist = (new File(dist)).isAbsolute() ? dist : "${project.getProjectDir()}/$dist"
             bundleSize = (new File(dist)).directorySize()
         }

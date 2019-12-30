@@ -10,7 +10,7 @@ plugins {
     id("compile-benchmarking")
 }
 
-val dist = file(findProperty("org.jetbrains.kotlin.native.home") ?: "dist")
+val dist = file(findProperty("kotlin.native.home") ?: "dist")
 val toolSuffix = if (System.getProperty("os.name").startsWith("Windows")) ".bat" else ""
 val binarySuffix = getNativeProgramExtension()
 val defaultCompilerOpts =  listOf("-g")
