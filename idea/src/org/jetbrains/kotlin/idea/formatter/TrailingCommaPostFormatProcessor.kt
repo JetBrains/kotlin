@@ -66,6 +66,11 @@ private class TrailingCommaVisitor(val settings: CodeStyleSettings) : KtTreeVisi
         super.visitWhenEntry(jetWhenEntry)
     }
 
+    override fun visitDestructuringDeclaration(destructuringDeclaration: KtDestructuringDeclaration) =
+        processCommaOwnerIfInRange(destructuringDeclaration) {
+            super.visitDestructuringDeclaration(destructuringDeclaration)
+        }
+
     private fun processCommaOwnerIfInRange(element: KtElement, preHook: () -> Unit = {}) = processIfInRange(element) {
         preHook()
         processCommaOwner(element)
@@ -97,6 +102,7 @@ private class TrailingCommaVisitor(val settings: CodeStyleSettings) : KtTreeVisi
         get() = when {
             this is KtWhenEntry -> needTrailingComma(settings)
             parent is KtFunctionLiteral -> parent.cast<KtFunctionLiteral>().needTrailingComma(settings)
+            this is KtDestructuringDeclaration -> needTrailingComma(settings)
             else -> settings.kotlinCustomSettings.ALLOW_TRAILING_COMMA && isMultiline()
         }
 
@@ -191,5 +197,6 @@ private val PsiElement.lastCommaOwnerOrComma: PsiElement?
 private val PsiElement.lastSignificantChild: PsiElement?
     get() = when (this) {
         is KtWhenEntry -> arrow
+        is KtDestructuringDeclaration -> rPar
         else -> lastChild
     }

@@ -10,6 +10,6 @@ fun test() {
             items,
             shippingMethods,
             addresses,
-            preferredAddressId
+            preferredAddressId,
     ) = argument
 }

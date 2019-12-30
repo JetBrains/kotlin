@@ -1182,6 +1182,29 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
                 }
             }
 
+            @TestMetadata("idea/testData/formatter/trailingComma/destructionDeclaration")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class DestructionDeclaration extends AbstractFormatterTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInDestructionDeclaration() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma/destructionDeclaration"), Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), null, true);
+                }
+
+                @TestMetadata("DestructionDeclarationsInLambda.after.kt")
+                public void testDestructionDeclarationsInLambda() throws Exception {
+                    runTest("idea/testData/formatter/trailingComma/destructionDeclaration/DestructionDeclarationsInLambda.after.kt");
+                }
+
+                @TestMetadata("MultiVariableDeclaration.after.kt")
+                public void testMultiVariableDeclaration() throws Exception {
+                    runTest("idea/testData/formatter/trailingComma/destructionDeclaration/MultiVariableDeclaration.after.kt");
+                }
+            }
+
             @TestMetadata("idea/testData/formatter/trailingComma/indices")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
@@ -1736,6 +1759,29 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
                 @TestMetadata("CollectionLiteralInAnnotation.after.inv.kt")
                 public void testCollectionLiteralInAnnotation() throws Exception {
                     runTest("idea/testData/formatter/trailingComma/collectionLiteralExpression/CollectionLiteralInAnnotation.after.inv.kt");
+                }
+            }
+
+            @TestMetadata("idea/testData/formatter/trailingComma/destructionDeclaration")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class DestructionDeclaration extends AbstractFormatterTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTestInverted, this, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInDestructionDeclaration() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma/destructionDeclaration"), Pattern.compile("^([^\\.]+)\\.after\\.inv\\.kt.*$"), null, true);
+                }
+
+                @TestMetadata("DestructionDeclarationsInLambda.after.inv.kt")
+                public void testDestructionDeclarationsInLambda() throws Exception {
+                    runTest("idea/testData/formatter/trailingComma/destructionDeclaration/DestructionDeclarationsInLambda.after.inv.kt");
+                }
+
+                @TestMetadata("MultiVariableDeclaration.after.inv.kt")
+                public void testMultiVariableDeclaration() throws Exception {
+                    runTest("idea/testData/formatter/trailingComma/destructionDeclaration/MultiVariableDeclaration.after.inv.kt");
                 }
             }
 

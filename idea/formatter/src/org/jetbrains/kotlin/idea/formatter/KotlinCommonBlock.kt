@@ -642,6 +642,23 @@ abstract class KotlinCommonBlock(
                 }
             }
 
+            elementType === DESTRUCTURING_DECLARATION -> {
+                nodePsi as KtDestructuringDeclaration
+                if (nodePsi.valOrVarKeyword == null) return defaultTrailingCommaWrappingStrategy(LPAR, RPAR)
+                else if (nodePsi.needTrailingComma(settings)) {
+                    val check = thisOrPrevIsMultiLineElement(COMMA, LPAR, RPAR)
+                    return block@{ childElement ->
+                        val childElementType = childElement.elementType
+                        if (childElementType === EQ) return@block null
+                        createWrapAlwaysIf(
+                            childElementType === RPAR ||
+                                    getSiblingWithoutWhitespaceAndComments(childElement)?.elementType === LPAR ||
+                                    getSiblingWithoutWhitespaceAndComments(childElement, true) != null && check(childElement)
+                        )
+                    }
+                }
+            }
+
             elementType === INDICES -> return defaultTrailingCommaWrappingStrategy(LBRACKET, RBRACKET)
 
             elementType === TYPE_PARAMETER_LIST -> return defaultTrailingCommaWrappingStrategy(LT, GT)
