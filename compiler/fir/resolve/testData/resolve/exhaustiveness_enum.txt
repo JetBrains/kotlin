@@ -4,32 +4,26 @@ FILE: exhaustiveness_enum.kt
             super<R|kotlin/Any|>()
         }
 
-        public final static val A: R|Enum| = object : R|Enum| {
+        public final static enum entry A: R|Enum| = object : R|Enum| {
             private constructor(): R|anonymous| {
                 super<R|Enum|>()
             }
 
         }
 
-
-
-        public final static val B: R|Enum| = object : R|Enum| {
+        public final static enum entry B: R|Enum| = object : R|Enum| {
             private constructor(): R|anonymous| {
                 super<R|Enum|>()
             }
 
         }
 
-
-
-        public final static val C: R|Enum| = object : R|Enum| {
+        public final static enum entry C: R|Enum| = object : R|Enum| {
             private constructor(): R|anonymous| {
                 super<R|Enum|>()
             }
 
         }
-
-
 
         public final static fun values(): R|kotlin/Array<Enum>| {
         }

@@ -365,21 +365,9 @@ public abstract interface Comparable<in T> : R|kotlin/Any| {
 public final enum class DeprecationLevel : R|kotlin/Enum<kotlin/DeprecationLevel>| {
     private constructor(): R|kotlin/DeprecationLevel|
 
-    public final static val WARNING: R|kotlin/DeprecationLevel| = object : R|kotlin/DeprecationLevel| {
-    }
-
-
-
-    public final static val ERROR: R|kotlin/DeprecationLevel| = object : R|kotlin/DeprecationLevel| {
-    }
-
-
-
-    public final static val HIDDEN: R|kotlin/DeprecationLevel| = object : R|kotlin/DeprecationLevel| {
-    }
-
-
-
+    public final static enum entry WARNING: R|kotlin/DeprecationLevel|
+    public final static enum entry ERROR: R|kotlin/DeprecationLevel|
+    public final static enum entry HIDDEN: R|kotlin/DeprecationLevel|
 }
 
 public final class Double : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Double>| {

@@ -140,9 +140,9 @@ abstract class AbstractAnnotationDeserializer(
                 val enumSymbol = enumLookupTag.toSymbol(this@AbstractAnnotationDeserializer.session)
                 val firClass = enumSymbol?.fir as? FirRegularClass
                 val enumEntries = firClass?.collectEnumEntries() ?: emptyList()
-                val enumEntrySymbol = enumEntries.find { it.callableId.callableName == entryName }
+                val enumEntrySymbol = enumEntries.find { it.name == entryName }
                 this.calleeReference = enumEntrySymbol?.let {
-                    FirResolvedNamedReferenceImpl(null, entryName, it)
+                    FirResolvedNamedReferenceImpl(null, entryName, it.symbol)
                 } ?: FirErrorNamedReferenceImpl(
                     null,
                     FirSimpleDiagnostic("Strange deserialized enum value: $classId.$entryName", DiagnosticKind.DeserializationError)

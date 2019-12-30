@@ -68,14 +68,7 @@ val FirClassSymbol<*>.superConeTypes
 
 val FirClass<*>.superConeTypes get() = superTypeRefs.mapNotNull { it.coneTypeSafe<ConeClassLikeType>() }
 
-fun FirRegularClass.collectEnumEntries(): Collection<FirPropertySymbol> {
+fun FirRegularClass.collectEnumEntries(): Collection<FirEnumEntry> {
     assert(classKind == ClassKind.ENUM_CLASS)
-    return declarations
-        .mapNotNull {
-            if (it !is FirProperty) return@mapNotNull null
-            val initializer = it.initializer
-            if (initializer == null || initializer !is FirAnonymousObject || initializer.classKind != ClassKind.ENUM_ENTRY)
-                return@mapNotNull null
-            return@mapNotNull it.symbol
-        }
+    return declarations.filterIsInstance<FirEnumEntry>()
 }

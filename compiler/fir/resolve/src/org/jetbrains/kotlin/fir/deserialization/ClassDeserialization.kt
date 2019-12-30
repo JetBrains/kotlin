@@ -18,10 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirSealedClassImpl
 import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
 import org.jetbrains.kotlin.fir.declarations.impl.*
 import org.jetbrains.kotlin.fir.symbols.CallableId
-import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
-import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -129,24 +126,13 @@ fun deserializeClassToSymbol(
                 val enumEntryName = nameResolver.getName(enumEntryProto.name)
 
                 val enumType = ConeClassLikeTypeImpl(symbol.toLookupTag(), emptyArray(), false)
-                val property = FirPropertyImpl(
+                val property = FirEnumEntryImpl(
                     null,
                     session,
                     FirResolvedTypeRefImpl(null, enumType),
-                    null,
                     enumEntryName,
-                    initializer = FirAnonymousObjectImpl(
-                        null,
-                        session,
-                        classKind = ClassKind.ENUM_ENTRY,
-                        symbol = FirAnonymousObjectSymbol()
-                    ).apply {
-                        superTypeRefs += FirResolvedTypeRefImpl(source = null, type = enumType)
-                    },
-                    delegate = null,
-                    isVar = false,
-                    symbol = FirPropertySymbol(CallableId(classId, enumEntryName)),
-                    isLocal = false,
+                    initializer = null,
+                    symbol = FirVariableSymbol(CallableId(classId, enumEntryName)),
                     status = FirDeclarationStatusImpl(Visibilities.PUBLIC, Modality.FINAL).apply {
                         isStatic = true
                     }

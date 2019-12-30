@@ -107,6 +107,10 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: KotlinSc
             override fun visitProperty(property: FirProperty) {
                 visitCallableDeclaration(property)
             }
+
+            override fun visitEnumEntry(enumEntry: FirEnumEntry) {
+                visitCallableDeclaration(enumEntry)
+            }
         })
     }
 

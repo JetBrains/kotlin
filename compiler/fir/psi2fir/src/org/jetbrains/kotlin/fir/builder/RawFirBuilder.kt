@@ -486,22 +486,18 @@ class RawFirBuilder(session: FirSession, val scopeProvider: FirScopeProvider, va
                 )
             }
 
-            return FirPropertyImpl(
+            return FirEnumEntryImpl(
                 source = toFirSourceElement(),
                 session,
                 delegatedEnumSelfTypeRef,
-                receiverTypeRef = null,
                 name = nameAsSafeName,
                 initializer = obj,
-                delegate = null,
-                isVar = false,
-                isLocal = false,
                 status = FirDeclarationStatusImpl(
                     Visibilities.PUBLIC, Modality.FINAL
                 ).apply {
                     isStatic = true
                 },
-                symbol = FirPropertySymbol(callableIdForName(nameAsSafeName))
+                symbol = FirVariableSymbol(callableIdForName(nameAsSafeName))
             )
         }
 

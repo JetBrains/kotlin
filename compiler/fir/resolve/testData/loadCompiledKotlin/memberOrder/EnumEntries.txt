@@ -1,45 +1,13 @@
 public final enum class E : R|kotlin/Enum<test/E>| {
     private constructor(): R|test/E|
 
-    public final static val ONE: R|test/E| = object : R|test/E| {
-    }
-
-
-
-    public final static val TWO: R|test/E| = object : R|test/E| {
-    }
-
-
-
-    public final static val THREE: R|test/E| = object : R|test/E| {
-    }
-
-
-
-    public final static val FOUR: R|test/E| = object : R|test/E| {
-    }
-
-
-
-    public final static val FIVE: R|test/E| = object : R|test/E| {
-    }
-
-
-
-    public final static val SIX: R|test/E| = object : R|test/E| {
-    }
-
-
-
-    public final static val SEVEN: R|test/E| = object : R|test/E| {
-    }
-
-
-
-    public final static val EIGHT: R|test/E| = object : R|test/E| {
-    }
-
-
-
+    public final static enum entry ONE: R|test/E|
+    public final static enum entry TWO: R|test/E|
+    public final static enum entry THREE: R|test/E|
+    public final static enum entry FOUR: R|test/E|
+    public final static enum entry FIVE: R|test/E|
+    public final static enum entry SIX: R|test/E|
+    public final static enum entry SEVEN: R|test/E|
+    public final static enum entry EIGHT: R|test/E|
 }
 

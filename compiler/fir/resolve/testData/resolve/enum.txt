@@ -21,7 +21,7 @@ FILE: enum.kt
         public final val x: R|Some| = R|<local>/x|
             public get(): R|Some|
 
-        public final static val FIRST: R|SomeEnum| = object : R|SomeEnum| {
+        public final static enum entry FIRST: R|SomeEnum| = object : R|SomeEnum| {
             private constructor(): R|anonymous| {
                 super<R|SomeEnum|>(Q|O1|)
             }
@@ -32,9 +32,7 @@ FILE: enum.kt
 
         }
 
-
-
-        public final static val SECOND: R|SomeEnum| = object : R|SomeEnum| {
+        public final static enum entry SECOND: R|SomeEnum| = object : R|SomeEnum| {
             private constructor(): R|anonymous| {
                 super<R|SomeEnum|>(Q|O2|)
             }
@@ -44,8 +42,6 @@ FILE: enum.kt
             }
 
         }
-
-
 
         public abstract fun check(y: R|Some|): R|kotlin/Boolean|
 

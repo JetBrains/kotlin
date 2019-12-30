@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.ConeLookupTagBasedType
 import org.jetbrains.kotlin.fir.types.ConeNullability
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
@@ -74,7 +75,7 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
 
     private fun checkEnumExhaustiveness(whenExpression: FirWhenExpression, enum: FirRegularClass, nullable: Boolean): Boolean {
         val data = EnumExhaustivenessData(
-            enum.collectEnumEntries().toMutableSet(),
+            enum.collectEnumEntries().map { it.symbol }.toMutableSet(),
             !nullable
         )
         for (branch in whenExpression.branches) {
@@ -83,7 +84,7 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
         return data.containsNull && data.remainingEntries.isEmpty()
     }
 
-    private class EnumExhaustivenessData(val remainingEntries: MutableSet<FirPropertySymbol>, var containsNull: Boolean)
+    private class EnumExhaustivenessData(val remainingEntries: MutableSet<FirVariableSymbol<FirEnumEntry>>, var containsNull: Boolean)
 
     private object EnumExhaustivenessVisitor : FirVisitor<Unit, EnumExhaustivenessData>() {
         override fun visitElement(element: FirElement, data: EnumExhaustivenessData) {}
@@ -98,9 +99,9 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
                     }
                     is FirQualifiedAccessExpression -> {
                         val reference = argument.calleeReference as? FirResolvedNamedReference ?: return
-                        val symbol = reference.resolvedSymbol
-                        if (symbol is FirPropertySymbol)
-                            data.remainingEntries.remove(symbol)
+                        val symbol = (reference.resolvedSymbol.fir as? FirEnumEntry)?.symbol ?: return
+
+                        data.remainingEntries.remove(symbol)
                     }
                 }
             }

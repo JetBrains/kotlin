@@ -1,11 +1,7 @@
 public final enum class E : R|kotlin/Enum<test/E>| {
     private constructor(): R|test/E|
 
-    public final static val CAKE: R|test/E| = object : R|test/E| {
-    }
-
-
-
+    public final static enum entry CAKE: R|test/E|
 }
 
 public final annotation class EnumAnno : R|kotlin/Annotation| {

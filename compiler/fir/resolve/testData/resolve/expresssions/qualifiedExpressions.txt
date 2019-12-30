@@ -33,14 +33,12 @@ FILE: qualifiedExpressions.kt
             super<R|kotlin/Any|>()
         }
 
-        public final static val entry: R|a/b/E| = object : R|a/b/E| {
+        public final static enum entry entry: R|a/b/E| = object : R|a/b/E| {
             private constructor(): R|anonymous| {
                 super<R|a/b/E|>()
             }
 
         }
-
-
 
         public final static fun values(): R|kotlin/Array<a/b/E>| {
         }

@@ -515,7 +515,7 @@ class DeclarationsConverter(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseEnumEntry
      */
-    private fun convertEnumEntry(enumEntry: LighterASTNode, classWrapper: ClassWrapper): FirProperty {
+    private fun convertEnumEntry(enumEntry: LighterASTNode, classWrapper: ClassWrapper): FirEnumEntry {
         var modifiers = Modifier()
         lateinit var identifier: String
         var hasInitializerList = false
@@ -534,11 +534,10 @@ class DeclarationsConverter(
         }
 
         val enumEntryName = identifier.nameAsSafeName()
-        return FirPropertyImpl(
+        return FirEnumEntryImpl(
             null,
             session,
             classWrapper.delegatedSelfTypeRef,
-            receiverTypeRef = null,
             name = enumEntryName,
             initializer = FirAnonymousObjectImpl(
                 null,
@@ -566,10 +565,7 @@ class DeclarationsConverter(
                 convertPrimaryConstructor(null, enumClassWrapper)?.let { declarations += it.firConstructor }
                 classBodyNode?.also { declarations += convertClassBody(it, enumClassWrapper) }
             },
-            delegate = null,
-            isVar = false,
-            symbol = FirPropertySymbol(CallableId(context.currentClassId, enumEntryName)),
-            isLocal = false,
+            symbol = FirVariableSymbol(CallableId(context.currentClassId, enumEntryName)),
             status = FirDeclarationStatusImpl(Visibilities.PUBLIC, Modality.FINAL).apply {
                 isStatic = true
             }

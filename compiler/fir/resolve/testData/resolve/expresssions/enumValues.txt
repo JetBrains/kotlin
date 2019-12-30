@@ -4,32 +4,26 @@ FILE: enumValues.kt
             super<R|kotlin/Any|>()
         }
 
-        public final static val FIRST: R|MyEnum| = object : R|MyEnum| {
+        public final static enum entry FIRST: R|MyEnum| = object : R|MyEnum| {
             private constructor(): R|anonymous| {
                 super<R|MyEnum|>()
             }
 
         }
 
-
-
-        public final static val SECOND: R|MyEnum| = object : R|MyEnum| {
+        public final static enum entry SECOND: R|MyEnum| = object : R|MyEnum| {
             private constructor(): R|anonymous| {
                 super<R|MyEnum|>()
             }
 
         }
 
-
-
-        public final static val LAST: R|MyEnum| = object : R|MyEnum| {
+        public final static enum entry LAST: R|MyEnum| = object : R|MyEnum| {
             private constructor(): R|anonymous| {
                 super<R|MyEnum|>()
             }
 
         }
-
-
 
         public final fun bar(): R|kotlin/Int| {
             ^bar Int(42)

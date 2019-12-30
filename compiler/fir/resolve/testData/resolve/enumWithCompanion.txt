@@ -4,23 +4,19 @@ FILE: enumWithCompanion.kt
             super<R|kotlin/Any|>()
         }
 
-        public final static val A: R|EC| = object : R|EC| {
+        public final static enum entry A: R|EC| = object : R|EC| {
             private constructor(): R|anonymous| {
                 super<R|EC|>()
             }
 
         }
 
-
-
-        public final static val B: R|EC| = object : R|EC| {
+        public final static enum entry B: R|EC| = object : R|EC| {
             private constructor(): R|anonymous| {
                 super<R|EC|>()
             }
 
         }
-
-
 
         public final companion object Companion : R|kotlin/Any| {
             private constructor(): R|EC.Companion| {

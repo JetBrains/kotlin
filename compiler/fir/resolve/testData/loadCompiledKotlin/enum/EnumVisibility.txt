@@ -1,30 +1,18 @@
 internal final enum class In : R|kotlin/Enum<test/In>| {
     private constructor(): R|test/In|
 
-    public final static val A: R|test/In| = object : R|test/In| {
-    }
-
-
-
+    public final static enum entry A: R|test/In|
 }
 
 private final enum class Pr : R|kotlin/Enum<test/Pr>| {
     private constructor(): R|test/Pr|
 
-    public final static val A: R|test/Pr| = object : R|test/Pr| {
-    }
-
-
-
+    public final static enum entry A: R|test/Pr|
 }
 
 public final enum class Pu : R|kotlin/Enum<test/Pu>| {
     private constructor(): R|test/Pu|
 
-    public final static val A: R|test/Pu| = object : R|test/Pu| {
-    }
-
-
-
+    public final static enum entry A: R|test/Pu|
 }
 
