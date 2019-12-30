@@ -1,5 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 // !WITH_NEW_INFERENCE
+// !LANGUAGE: -NonStrictOnlyInputTypesChecks
 // ISSUE: KT-29307
 
 fun test_1(map: Map<String, String>) {
