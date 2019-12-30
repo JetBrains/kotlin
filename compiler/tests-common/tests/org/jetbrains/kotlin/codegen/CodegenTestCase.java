@@ -384,11 +384,6 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
     }
 
     @NotNull
-    protected GeneratedClassLoader generateAndCreateClassLoader() {
-        return generateAndCreateClassLoader(true);
-    }
-
-    @NotNull
     protected GeneratedClassLoader generateAndCreateClassLoader(boolean reportProblems) {
         if (initializedClassLoader != null) {
             fail("Double initialization of class loader in same test");

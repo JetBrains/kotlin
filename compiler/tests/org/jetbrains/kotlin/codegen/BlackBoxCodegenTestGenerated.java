@@ -181,6 +181,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/annotations/singleAssignmentToVarargInAnnotation.kt");
         }
 
+        @TestMetadata("syntheticMethodForProperty.kt")
+        public void testSyntheticMethodForProperty() throws Exception {
+            runTest("compiler/testData/codegen/box/annotations/syntheticMethodForProperty.kt");
+        }
+
         @TestMetadata("typeAnnotationOnJdk6.kt")
         public void testTypeAnnotationOnJdk6() throws Exception {
             runTest("compiler/testData/codegen/box/annotations/typeAnnotationOnJdk6.kt");
