@@ -59,9 +59,9 @@ import com.intellij.usageView.UsageViewBundle;
 import com.intellij.usages.*;
 import com.intellij.usages.impl.*;
 import com.intellij.usages.rules.UsageFilteringRuleProvider;
-import com.intellij.util.Alarm;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Processor;
+import com.intellij.util.concurrency.EdtScheduledExecutorService;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.AsyncProcessIcon;
 import com.intellij.util.ui.UIUtil;
@@ -74,6 +74,7 @@ import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.util.List;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ShowUsagesAction extends AnAction implements PopupAction {
@@ -186,6 +187,18 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
     showElementUsages(editor, popupPosition, handler, maxUsages, handler.getFindUsagesOptions(DataManager.getInstance().getDataContext()), 0);
   }
 
+  private static void rulesChanged(@NotNull UsageViewImpl usageView, @NotNull PingEDT pingEDT, JBPopup popup) {
+    // later to make sure UsageViewImpl.rulesChanged was invoked
+    ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().executeOnPooledThread(() -> {
+      if ((popup == null || !popup.isDisposed()) && !usageView.isDisposed()) {
+        usageView.waitForUpdateRequestsCompletion();
+        if ((popup == null || !popup.isDisposed()) && !usageView.isDisposed()) {
+          pingEDT.ping();
+        }
+      }
+    }));
+  }
+
   void showElementUsages(final Editor editor,
                          @NotNull final RelativePoint popupPosition,
                          @NotNull final FindUsagesHandler handler,
@@ -239,8 +252,11 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
       Disposer.register(popup, usageView);
 
       // show popup only if find usages takes more than 300ms, otherwise it would flicker needlessly
-      Alarm alarm = new Alarm(usageView);
-      alarm.addRequest(() -> showPopupIfNeedTo(popup, popupPosition), 300);
+      EdtScheduledExecutorService.getInstance().schedule(() -> {
+        if (!usageView.isDisposed()) {
+          showPopupIfNeedTo(popup, popupPosition);
+        }
+      }, 300, TimeUnit.MILLISECONDS);
     }
 
     final PingEDT pingEDT = new PingEDT("Rebuild popup in EDT", o -> popup != null && popup.isDisposed(), 100, () -> {
@@ -262,7 +278,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
     });
 
     final MessageBusConnection messageBusConnection = project.getMessageBus().connect(usageView);
-    messageBusConnection.subscribe(UsageFilteringRuleProvider.RULES_CHANGED, pingEDT::ping);
+    messageBusConnection.subscribe(UsageFilteringRuleProvider.RULES_CHANGED, ()->rulesChanged(usageView, pingEDT, popup));
 
     final UsageTarget[] myUsageTarget = {new PsiElement2UsageTargetAdapter(handler.getPsiElement())};
     Processor<Usage> collect = usage -> {
@@ -457,7 +473,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
                                    @NotNull final AsyncProcessIcon processIcon, int minWidth) {
     ApplicationManager.getApplication().assertIsDispatchThread();
 
-    PopupChooserBuilder builder = JBPopupFactory.getInstance().createPopupChooserBuilder(table);
+    PopupChooserBuilder<?> builder = JBPopupFactory.getInstance().createPopupChooserBuilder(table);
     final String title = presentation.getTabText();
     String fullTitle;
     if (title == null) {
@@ -686,7 +702,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
       String progressText = StringUtil.escapeXmlEntities(UsageViewManagerImpl.getProgressTitle(presentation));
       data.add(createStringNode(progressText));
     }
-    Collections.sort(data, Holder.USAGE_NODE_COMPARATOR);
+    data.sort(Holder.USAGE_NODE_COMPARATOR);
     return data;
   }
 
