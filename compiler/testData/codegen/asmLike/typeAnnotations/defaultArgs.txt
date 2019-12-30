@@ -1,0 +1,14 @@
+public final class foo/Kotlin : java/lang/Object {
+    public void <init>()
+
+    public final java.lang.Object foo(java.lang.String s, int x)
+      @Lfoo/TypeAnn;([name="1"]) : METHOD_FORMAL_PARAMETER 0, null
+      @Lfoo/TypeAnn;([name="2"]) : METHOD_FORMAL_PARAMETER 1, null
+      @Lfoo/TypeAnn;([name="return"]) : METHOD_RETURN, null
+
+    public static java.lang.Object foo$default(foo.Kotlin p0, java.lang.String p1, int p2, int p3, java.lang.Object p4)
+}
+
+public abstract interface foo/TypeAnn : java/lang/Object, java/lang/annotation/Annotation {
+    public abstract java.lang.String name()
+}

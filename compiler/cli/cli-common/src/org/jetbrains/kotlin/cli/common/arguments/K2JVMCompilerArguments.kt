@@ -289,6 +289,12 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     )
     var allowNoSourceFiles: Boolean by FreezableVar(false)
 
+    @Argument(
+        value = "-Xemit-jvm-type-annotations",
+        description = "Emit JVM type annotations in bytecode"
+    )
+    var emitJvmTypeAnnotations: Boolean by FreezableVar(false)
+
     override fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         val result = super.configureAnalysisFlags(collector)
         result[JvmAnalysisFlags.strictMetadataVersionSemantics] = strictMetadataVersionSemantics

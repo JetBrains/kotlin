@@ -111,4 +111,82 @@ public class AsmLikeInstructionListingTestGenerated extends AbstractAsmLikeInstr
             runTest("compiler/testData/codegen/asmLike/receiverMangling/simple.kt");
         }
     }
+
+    @TestMetadata("compiler/testData/codegen/asmLike/typeAnnotations")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class TypeAnnotations extends AbstractAsmLikeInstructionListingTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInTypeAnnotations() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/asmLike/typeAnnotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+        }
+
+        @TestMetadata("complex.kt")
+        public void testComplex() throws Exception {
+            runTest("compiler/testData/codegen/asmLike/typeAnnotations/complex.kt");
+        }
+
+        @TestMetadata("constructor.kt")
+        public void testConstructor() throws Exception {
+            runTest("compiler/testData/codegen/asmLike/typeAnnotations/constructor.kt");
+        }
+
+        @TestMetadata("defaultArgs.kt")
+        public void testDefaultArgs() throws Exception {
+            runTest("compiler/testData/codegen/asmLike/typeAnnotations/defaultArgs.kt");
+        }
+
+        @TestMetadata("enumClassConstructor.kt")
+        public void testEnumClassConstructor() throws Exception {
+            runTest("compiler/testData/codegen/asmLike/typeAnnotations/enumClassConstructor.kt");
+        }
+
+        @TestMetadata("extension.kt")
+        public void testExtension() throws Exception {
+            runTest("compiler/testData/codegen/asmLike/typeAnnotations/extension.kt");
+        }
+
+        @TestMetadata("implicit.kt")
+        public void testImplicit() throws Exception {
+            runTest("compiler/testData/codegen/asmLike/typeAnnotations/implicit.kt");
+        }
+
+        @TestMetadata("innerClassConstructor.kt")
+        public void testInnerClassConstructor() throws Exception {
+            runTest("compiler/testData/codegen/asmLike/typeAnnotations/innerClassConstructor.kt");
+        }
+
+        @TestMetadata("jvmOverload.kt")
+        public void testJvmOverload() throws Exception {
+            runTest("compiler/testData/codegen/asmLike/typeAnnotations/jvmOverload.kt");
+        }
+
+        @TestMetadata("jvmStatic.kt")
+        public void testJvmStatic() throws Exception {
+            runTest("compiler/testData/codegen/asmLike/typeAnnotations/jvmStatic.kt");
+        }
+
+        @TestMetadata("notYetSupported.kt")
+        public void testNotYetSupported() throws Exception {
+            runTest("compiler/testData/codegen/asmLike/typeAnnotations/notYetSupported.kt");
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            runTest("compiler/testData/codegen/asmLike/typeAnnotations/simple.kt");
+        }
+
+        @TestMetadata("simple2Params.kt")
+        public void testSimple2Params() throws Exception {
+            runTest("compiler/testData/codegen/asmLike/typeAnnotations/simple2Params.kt");
+        }
+
+        @TestMetadata("staticNested.kt")
+        public void testStaticNested() throws Exception {
+            runTest("compiler/testData/codegen/asmLike/typeAnnotations/staticNested.kt");
+        }
+    }
 }

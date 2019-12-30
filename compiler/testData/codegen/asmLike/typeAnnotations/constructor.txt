@@ -1,0 +1,28 @@
+final class foo/Kotlin$foo$1 : kotlin/jvm/internal/Lambda, kotlin/jvm/functions/Function0 {
+    public final static foo.Kotlin$foo$1 INSTANCE
+
+    static void <clinit>()
+
+    void <init>()
+
+    public java.lang.Object invoke()
+
+    public final foo.Kotlin invoke()
+}
+
+public final class foo/Kotlin : java/lang/Object {
+    public void <init>(java.lang.String s, java.lang.String p)
+      @Lfoo/TypeAnn;([name="1"]) : METHOD_FORMAL_PARAMETER 0, null
+      @Lfoo/TypeAnn;([name="123"]) : METHOD_FORMAL_PARAMETER 1, null
+
+    private void <init>(java.lang.String s)
+      @Lfoo/TypeAnn;([name="private"]) : METHOD_FORMAL_PARAMETER 0, null
+
+    public void <init>(java.lang.String s, kotlin.jvm.internal.DefaultConstructorMarker $constructor_marker)
+
+    public final void foo()
+}
+
+public abstract interface foo/TypeAnn : java/lang/Object, java/lang/annotation/Annotation {
+    public abstract java.lang.String name()
+}

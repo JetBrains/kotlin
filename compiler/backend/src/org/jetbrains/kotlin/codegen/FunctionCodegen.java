@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.codegen.state.TypeMapperUtilsKt;
 import org.jetbrains.kotlin.config.JvmDefaultMode;
 import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.annotations.Annotated;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature;
@@ -56,7 +55,10 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
-import org.jetbrains.org.objectweb.asm.*;
+import org.jetbrains.org.objectweb.asm.Label;
+import org.jetbrains.org.objectweb.asm.MethodVisitor;
+import org.jetbrains.org.objectweb.asm.Opcodes;
+import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor;
@@ -531,7 +533,7 @@ public class FunctionCodegen {
                 continue;
             }
 
-            Annotated annotated =
+            ParameterDescriptor annotated =
                     kind == JvmMethodParameterKind.VALUE
                     ? iterator.next()
                     : kind == JvmMethodParameterKind.RECEIVER
@@ -540,10 +542,15 @@ public class FunctionCodegen {
 
             if (annotated != null) {
                 //noinspection ConstantConditions
-                AnnotationCodegen.forParameter(i - syntheticParameterCount, mv, innerClassConsumer, state)
+                int parameterIndex = i - syntheticParameterCount;
+                AnnotationCodegen.forParameter(parameterIndex, mv, innerClassConsumer, state)
                         .genAnnotations(annotated, parameterSignature.getAsmType());
+
+                AnnotationCodegen.writeTypeAnnotations(mv, state, parameterIndex, annotated.getType(), innerClassConsumer);
             }
         }
+
+        AnnotationCodegen.writeTypeAnnotations(mv, state, -1, functionDescriptor.getReturnType(), innerClassConsumer);
     }
 
     @Nullable

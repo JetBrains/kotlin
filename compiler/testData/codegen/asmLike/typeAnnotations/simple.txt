@@ -1,0 +1,43 @@
+final class foo/Kotlin$fooArray2$1 : kotlin/jvm/internal/Lambda, kotlin/jvm/functions/Function0 {
+    final foo.Kotlin this$0
+
+    void <init>(foo.Kotlin p0)
+
+    public java.lang.Object invoke()
+
+    public final void invoke()
+}
+
+public final class foo/Kotlin : java/lang/Object {
+    public void <init>()
+
+    public final static void access$foo(foo.Kotlin $this, java.lang.String s)
+
+    private final void foo(java.lang.String s)
+      @Lfoo/TypeAnn;([name="1"]) : METHOD_FORMAL_PARAMETER 0, null
+      @Lfoo/TypeAnnBinary;([]) : METHOD_FORMAL_PARAMETER 0, null // invisible
+
+    public final java.lang.String foo2()
+      @Lfoo/TypeAnn;([name="2"]) : METHOD_RETURN, null
+      @Lfoo/TypeAnnBinary;([]) : METHOD_RETURN, null // invisible
+
+    public final void fooArray(java.lang.String[] s)
+      @Lfoo/TypeAnn;([name="3"]) : METHOD_FORMAL_PARAMETER 0, [
+      @Lfoo/TypeAnnBinary;([]) : METHOD_FORMAL_PARAMETER 0, [ // invisible
+
+    public final java.lang.String[] fooArray2()
+      @Lfoo/TypeAnn;([name="4"]) : METHOD_RETURN, [
+      @Lfoo/TypeAnnBinary;([]) : METHOD_RETURN, [ // invisible
+}
+
+public abstract interface foo/TypeAnn : java/lang/Object, java/lang/annotation/Annotation {
+    public abstract java.lang.String name()
+}
+
+public abstract interface foo/TypeAnnBinary : java/lang/Object, java/lang/annotation/Annotation {
+
+}
+
+public abstract interface foo/TypeAnnSource : java/lang/Object, java/lang/annotation/Annotation {
+
+}
