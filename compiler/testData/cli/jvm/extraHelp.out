@@ -18,6 +18,7 @@ where advanced options include:
                              'enable' since language version 1.3
   -Xdump-declarations-to=<path> Path to JSON file to dump Java to Kotlin declaration mappings
   -Xdisable-standard-script  Disable standard kotlin script support
+  -Xemit-jvm-type-annotations Emit JVM type annotations in bytecode
   -Xexpression               Evaluate the given string as a Kotlin script
   -Xfriend-paths=<path>      Paths to output directories for friend modules (whose internals should be visible)
   -Xmultifile-parts-inherit  Compile multifile classes as a hierarchy of parts and facade

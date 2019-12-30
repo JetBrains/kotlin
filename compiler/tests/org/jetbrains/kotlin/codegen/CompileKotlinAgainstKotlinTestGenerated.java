@@ -469,4 +469,27 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
             }
         }
     }
+
+    @TestMetadata("compiler/testData/compileKotlinAgainstKotlin/typeAnnotations")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class TypeAnnotations extends AbstractCompileKotlinAgainstKotlinTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInTypeAnnotations() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileKotlinAgainstKotlin/typeAnnotations"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("implicitReturn.kt")
+        public void testImplicitReturn() throws Exception {
+            runTest("compiler/testData/compileKotlinAgainstKotlin/typeAnnotations/implicitReturn.kt");
+        }
+
+        @TestMetadata("typeAnnotationTarget6.kt")
+        public void testTypeAnnotationTarget6() throws Exception {
+            runTest("compiler/testData/compileKotlinAgainstKotlin/typeAnnotations/typeAnnotationTarget6.kt");
+        }
+    }
 }

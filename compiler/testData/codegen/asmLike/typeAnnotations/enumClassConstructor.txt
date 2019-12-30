@@ -1,0 +1,26 @@
+final class foo/Kotlin$A : foo/Kotlin {
+    void <init>(java.lang.String $enum_name_or_ordinal$0, int $enum_name_or_ordinal$1)
+
+    public final void foo()
+}
+
+public class foo/Kotlin : java/lang/Enum {
+    private final static foo.Kotlin[] $VALUES
+
+    public final static foo.Kotlin A
+
+    static void <clinit>()
+
+    private void <init>(java.lang.String $enum_name_or_ordinal$0, int $enum_name_or_ordinal$1, java.lang.String s)
+      @Lfoo/TypeAnn;([]) : METHOD_FORMAL_PARAMETER 0, null
+
+    public void <init>(java.lang.String $enum_name_or_ordinal$0, int $enum_name_or_ordinal$1, java.lang.String s, kotlin.jvm.internal.DefaultConstructorMarker $constructor_marker)
+
+    public static foo.Kotlin valueOf(java.lang.String p0)
+
+    public static foo.Kotlin[] values()
+}
+
+public abstract interface foo/TypeAnn : java/lang/Object, java/lang/annotation/Annotation {
+
+}

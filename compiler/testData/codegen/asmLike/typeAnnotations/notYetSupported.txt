@@ -1,0 +1,55 @@
+public abstract interface foo/Ann : java/lang/Object, java/lang/annotation/Annotation {
+
+}
+
+public abstract interface foo/Ann2 : java/lang/Object, java/lang/annotation/Annotation {
+
+}
+
+public abstract interface foo/Ann3 : java/lang/Object, java/lang/annotation/Annotation {
+
+}
+
+public abstract interface foo/Ann4 : java/lang/Object, java/lang/annotation/Annotation {
+
+}
+
+public final class foo/Bar : java/lang/Object {
+    public void <init>()
+}
+
+public final class foo/Kotlin : java/lang/Object {
+    public void <init>()
+
+    public final void foo(foo.Outer$Inner s)
+
+    public final foo.Outer$Inner foo()
+
+    public final void fooArray(foo.Outer$Inner[] s)
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, null
+
+    public final foo.Outer$Inner[] fooArray()
+      @Lfoo/Ann;([]) : METHOD_RETURN, null
+
+    public final void fooArrayIn(java.lang.Object[] s)
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, null
+
+    public final foo.Outer$Inner[] fooArrayOut()
+      @Lfoo/Ann;([]) : METHOD_RETURN, null
+
+    public final void fooGenericIn(foo.Bar s)
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, null
+
+    public final void fooGenericOut(foo.Bar s)
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, null
+}
+
+public final class foo/Outer$Inner : java/lang/Object {
+    final foo.Outer this$0
+
+    public void <init>(foo.Outer $outer)
+}
+
+public final class foo/Outer : java/lang/Object {
+    public void <init>()
+}
