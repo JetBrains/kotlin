@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.ir.isSuspend
+import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
@@ -20,7 +21,6 @@ import org.jetbrains.kotlin.backend.jvm.ir.irArray
 import org.jetbrains.kotlin.backend.jvm.ir.isLambda
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -243,35 +242,7 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
                 param to param.copyTo(this, index = index)
             }
             valueParameters += valueParameterMap.values
-
-            val calleeBody = callee.body as IrBlockBody
-            body = context.createIrBuilder(symbol).irBlockBody(calleeBody.startOffset, calleeBody.endOffset) {
-                calleeBody.statements.forEach { statement ->
-                    +statement.transform(object : IrElementTransformerVoid() {
-                        override fun visitGetValue(expression: IrGetValue): IrExpression {
-                            val replacement = valueParameterMap[expression.symbol.owner]
-                                ?: return super.visitGetValue(expression)
-
-                            at(expression.startOffset, expression.endOffset)
-                            return irGet(replacement)
-                        }
-
-                        override fun visitReturn(expression: IrReturn): IrExpression =
-                            if (expression.returnTargetSymbol != callee.symbol) {
-                                super.visitReturn(expression)
-                            } else {
-                                at(expression.startOffset, expression.endOffset)
-                                irReturn(expression.value.transform(this, null))
-                            }
-
-                        override fun visitDeclaration(declaration: IrDeclaration): IrStatement {
-                            if (declaration.parent == callee)
-                                declaration.parent = this@createLambdaInvokeMethod
-                            return super.visitDeclaration(declaration)
-                        }
-                    }, null)
-                }
-            }
+            body = callee.moveBodyTo(this, valueParameterMap)
         }
 
         private fun IrSimpleFunction.createFunctionReferenceInvokeMethod(receiver: IrValueDeclaration?) {

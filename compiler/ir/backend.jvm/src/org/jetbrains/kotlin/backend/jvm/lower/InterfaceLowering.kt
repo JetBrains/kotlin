@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
-import org.jetbrains.kotlin.backend.common.ir.copyBodyToStatic
 import org.jetbrains.kotlin.backend.common.ir.isMethodOfAny
+import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
 import org.jetbrains.kotlin.backend.common.ir.passTypeArgumentsFrom
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
@@ -122,7 +122,7 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
                         || (function.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER && !function.hasJvmDefault())
                         || function.origin == JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_ANNOTATIONS -> {
                     val defaultImpl = createDefaultImpl(function)
-                    function.copyImplementationTo(defaultImpl)
+                    defaultImpl.body = function.moveBodyTo(defaultImpl)
                     removedFunctions[function.symbol] = defaultImpl.symbol
                 }
 
@@ -132,7 +132,7 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
                  */
                 !function.hasJvmDefault() -> {
                     val defaultImpl = createDefaultImpl(function)
-                    function.copyImplementationTo(defaultImpl)
+                    defaultImpl.body = function.moveBodyTo(defaultImpl)
                     function.body = null
                     //TODO reset modality to abstract
                 }
@@ -176,19 +176,16 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
         if (annotationsMethods.none()) return
 
         for (function in annotationsMethods) {
-            removedFunctions[function.symbol] = createDefaultImpl(function).symbol
+            val defaultImpl = createDefaultImpl(function)
+            defaultImpl.body = function.moveBodyTo(defaultImpl)
+            removedFunctions[function.symbol] = defaultImpl.symbol
         }
     }
 
     private fun createDefaultImpl(function: IrSimpleFunction): IrSimpleFunction =
         context.declarationFactory.getDefaultImplsFunction(function).also { newFunction ->
-            newFunction.body = function.body?.patchDeclarationParents(newFunction)
             newFunction.parentAsClass.declarations.add(newFunction)
         }
-
-    private fun IrSimpleFunction.copyImplementationTo(target: IrSimpleFunction) {
-        copyBodyToStatic(this, target)
-    }
 
     // Bridge from static to static method - simply fill the arguments to the parameters.
     // By nature of the generation of both source and target of bridge, they line up.

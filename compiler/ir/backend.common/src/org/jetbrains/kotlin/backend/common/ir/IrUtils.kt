@@ -598,46 +598,5 @@ fun createStaticFunctionWithReceivers(
     }
 }
 
-fun copyBodyToStatic(oldFunction: IrFunction, staticFunction: IrFunction) {
-    val mapping: Map<IrValueParameter, IrValueParameter> =
-        (listOfNotNull(oldFunction.dispatchReceiverParameter, oldFunction.extensionReceiverParameter) + oldFunction.valueParameters)
-            .zip(staticFunction.valueParameters).toMap()
-    copyBodyWithParametersMapping(staticFunction, oldFunction, mapping)
-}
-
-fun copyBodyWithParametersMapping(
-    newFunction: IrFunction,
-    oldFunction: IrFunction,
-    mapping: Map<IrValueParameter, IrValueParameter>
-) {
-    newFunction.body = oldFunction.body?.deepCopyWithSymbols(oldFunction)
-        ?.transform(
-            object : IrElementTransformerVoid() {
-                // Remap return targets to the static method so they do not appear to be
-                // non-local returns.
-                override fun visitReturn(expression: IrReturn): IrExpression {
-                    expression.transformChildrenVoid(this);
-                    return if (expression.returnTargetSymbol == oldFunction.symbol) {
-                        IrReturnImpl(
-                            expression.startOffset,
-                            expression.endOffset,
-                            expression.type,
-                            newFunction.symbol,
-                            expression.value
-                        )
-                    } else expression
-                }
-
-                // Remap argument values.
-                override fun visitGetValue(expression: IrGetValue): IrExpression =
-                    mapping[expression.symbol.owner]?.let {
-                        IrGetValueImpl(expression.startOffset, expression.endOffset, it.type, it.symbol, expression.origin)
-                    } ?: expression
-
-            }, null
-        )
-        ?.patchDeclarationParents(newFunction)
-}
-
 val IrSymbol.isSuspend: Boolean
     get() = this is IrSimpleFunctionSymbol && owner.isSuspend

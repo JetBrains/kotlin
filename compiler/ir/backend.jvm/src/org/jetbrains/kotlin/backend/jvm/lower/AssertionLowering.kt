@@ -67,10 +67,6 @@ private class AssertionLowering(private val context: JvmBackendContext) :
         // to be false, meaning that assertions are checked.
         info.assertionsDisabledField?.let {
             declaration.declarations.add(0, it)
-
-            // Some parents of local declarations are not updated during ad-hoc inlining
-            // TODO: Remove when generic inliner is used
-            declaration.patchDeclarationParents(declaration.parent)
         }
 
         return declaration
@@ -112,7 +108,7 @@ private class AssertionLowering(private val context: JvmBackendContext) :
                 putValueArgument(
                     0,
                     when {
-                        lambda != null -> lambda.inline()
+                        lambda != null -> lambda.inline(parent)
                         lambdaArgument != null -> {
                             val invoke =
                                 lambdaArgument.type.getClass()!!.functions.single { it.name == OperatorNameConventions.INVOKE }
