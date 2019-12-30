@@ -48,6 +48,7 @@ dependencies {
     runtime("com.android.tools.ddms:ddmlib:26.0.0") {
         exclude("com.google.guava", "guava")
     }
+    runtime("org.xerial:sqlite-jdbc:3.21.0.1") { isTransitive = false }
     runtime(project(":kotlin-ultimate:libraries:tools:apple-gradle-plugin-api")) { isTransitive = false }
     runtime("com.jetbrains.intellij.swift:swift:$clionVersion") { isTransitive = false }
     runtime(tc("Kotlin_KotlinNative_Master_KotlinNativeLinuxBundle:${kotlinNativeBackendVersion}:backend.native.jar"))

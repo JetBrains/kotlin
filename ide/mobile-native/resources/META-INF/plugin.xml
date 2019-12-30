@@ -65,6 +65,9 @@
 
     <!--<externalAnnotator implementationClass="com.jetbrains.swift.swiftpm.codeinsight.highlighting.CLionSwiftSourceKitAnnotator"
                        language="Swift"/>-->
+
+    <projectService serviceInterface="com.jetbrains.cidr.CocoaDocumentationManager"
+                    serviceImplementation="com.jetbrains.mobile.documentation.AppleDocumentationManager"/>
   </extensions>
 
   <extensions defaultExtensionNs="cidr.lang">

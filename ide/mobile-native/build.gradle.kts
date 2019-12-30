@@ -31,6 +31,7 @@ dependencies {
     compile("com.android.tools.ddms:ddmlib:26.0.0") {
         exclude("com.google.guava", "guava")
     }
+    compile("org.xerial:sqlite-jdbc:3.21.0.1") { isTransitive = false }
     compile(project(":kotlin-ultimate:libraries:tools:apple-gradle-plugin-api"))
     compile("com.jetbrains.intellij.swift:swift:$clionVersion") { isTransitive = false }
 
