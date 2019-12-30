@@ -479,48 +479,49 @@ class RawFirBuilder(session: FirSession, val scopeProvider: FirScopeProvider, va
         }
 
         private fun KtEnumEntry.toFirEnumEntry(delegatedEnumSelfTypeRef: FirResolvedTypeRef): FirDeclaration {
-            val obj = FirAnonymousObjectImpl(
-                source = toFirSourceElement(),
-                session,
-                ClassKind.ENUM_ENTRY,
-                scopeProvider,
-                FirAnonymousObjectSymbol()
-            )
-
-            val delegatedEntrySelfType = FirResolvedTypeRefImpl(
-                source = null,
-                type = ConeClassLikeTypeImpl(obj.symbol.toLookupTag(), emptyArray(), isNullable = false)
-            )
-
-            extractAnnotationsTo(obj)
-            obj.superTypeRefs += delegatedEnumSelfTypeRef
-            val superTypeCallEntry = superTypeListEntries.firstIsInstanceOrNull<KtSuperTypeCallEntry>()
-            val correctedEnumSelfTypeRef = FirResolvedTypeRefImpl(
-                source = superTypeCallEntry?.calleeExpression?.typeReference?.toFirSourceElement(),
-                type = delegatedEnumSelfTypeRef.type
-            )
-            obj.declarations += primaryConstructor.toFirConstructor(
-                superTypeCallEntry,
-                correctedEnumSelfTypeRef,
-                delegatedEntrySelfType,
-                owner = this
-            )
-
-            for (declaration in declarations) {
-                obj.declarations += declaration.toFirDeclaration(
-                    correctedEnumSelfTypeRef,
-                    delegatedSelfType = delegatedEntrySelfType,
-                    this,
-                    hasPrimaryConstructor = true
-                )
-            }
-
             return FirEnumEntryImpl(
                 source = toFirSourceElement(),
                 session,
                 delegatedEnumSelfTypeRef,
                 name = nameAsSafeName,
-                initializer = obj,
+                initializer = withChildClassName(nameAsSafeName) {
+                    val obj = FirAnonymousObjectImpl(
+                        source = toFirSourceElement(),
+                        session,
+                        ClassKind.ENUM_ENTRY,
+                        scopeProvider,
+                        FirAnonymousObjectSymbol()
+                    )
+
+                    val delegatedEntrySelfType = FirResolvedTypeRefImpl(
+                        source = null,
+                        type = ConeClassLikeTypeImpl(obj.symbol.toLookupTag(), emptyArray(), isNullable = false)
+                    )
+
+                    extractAnnotationsTo(obj)
+                    obj.superTypeRefs += delegatedEnumSelfTypeRef
+                    val superTypeCallEntry = superTypeListEntries.firstIsInstanceOrNull<KtSuperTypeCallEntry>()
+                    val correctedEnumSelfTypeRef = FirResolvedTypeRefImpl(
+                        source = superTypeCallEntry?.calleeExpression?.typeReference?.toFirSourceElement(),
+                        type = delegatedEnumSelfTypeRef.type
+                    )
+                    obj.declarations += primaryConstructor.toFirConstructor(
+                        superTypeCallEntry,
+                        correctedEnumSelfTypeRef,
+                        delegatedEntrySelfType,
+                        owner = this
+                    )
+
+                    for (declaration in declarations) {
+                        obj.declarations += declaration.toFirDeclaration(
+                            correctedEnumSelfTypeRef,
+                            delegatedSelfType = delegatedEntrySelfType,
+                            this,
+                            hasPrimaryConstructor = true
+                        )
+                    }
+                    obj
+                },
                 status = FirDeclarationStatusImpl(
                     Visibilities.PUBLIC, Modality.FINAL
                 ).apply {

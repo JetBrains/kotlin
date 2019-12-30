@@ -539,31 +539,33 @@ class DeclarationsConverter(
             session,
             classWrapper.delegatedSelfTypeRef,
             name = enumEntryName,
-            initializer = FirAnonymousObjectImpl(
-                null,
-                session,
-                ClassKind.ENUM_ENTRY,
-                scopeProvider,
-                FirAnonymousObjectSymbol()
-            ).apply {
-                annotations += modifiers.annotations
-                val enumClassWrapper = ClassWrapper(
-                    enumEntryName, modifiers, ClassKind.ENUM_ENTRY, hasPrimaryConstructor = true,
-                    hasSecondaryConstructor = classBodyNode.getChildNodesByType(SECONDARY_CONSTRUCTOR).isNotEmpty(),
-                    delegatedSelfTypeRef = FirResolvedTypeRefImpl(
-                        null,
-                        ConeClassLikeTypeImpl(
-                            symbol.toLookupTag(),
-                            emptyArray(),
-                            isNullable = false
-                        )
-                    ),
-                    delegatedSuperTypeRef = classWrapper.delegatedSelfTypeRef,
-                    superTypeCallEntry = enumSuperTypeCallEntry
-                )
-                superTypeRefs += enumClassWrapper.delegatedSuperTypeRef
-                convertPrimaryConstructor(null, enumClassWrapper)?.let { declarations += it.firConstructor }
-                classBodyNode?.also { declarations += convertClassBody(it, enumClassWrapper) }
+            initializer = withChildClassName(enumEntryName) {
+                FirAnonymousObjectImpl(
+                    null,
+                    session,
+                    ClassKind.ENUM_ENTRY,
+                    scopeProvider,
+                    FirAnonymousObjectSymbol()
+                ).apply {
+                    annotations += modifiers.annotations
+                    val enumClassWrapper = ClassWrapper(
+                        enumEntryName, modifiers, ClassKind.ENUM_ENTRY, hasPrimaryConstructor = true,
+                        hasSecondaryConstructor = classBodyNode.getChildNodesByType(SECONDARY_CONSTRUCTOR).isNotEmpty(),
+                        delegatedSelfTypeRef = FirResolvedTypeRefImpl(
+                            null,
+                            ConeClassLikeTypeImpl(
+                                symbol.toLookupTag(),
+                                emptyArray(),
+                                isNullable = false
+                            )
+                        ),
+                        delegatedSuperTypeRef = classWrapper.delegatedSelfTypeRef,
+                        superTypeCallEntry = enumSuperTypeCallEntry
+                    )
+                    superTypeRefs += enumClassWrapper.delegatedSuperTypeRef
+                    convertPrimaryConstructor(null, enumClassWrapper)?.let { declarations += it.firConstructor }
+                    classBodyNode?.also { declarations += convertClassBody(it, enumClassWrapper) }
+                }
             },
             symbol = FirVariableSymbol(CallableId(context.currentClassId, enumEntryName)),
             status = FirDeclarationStatusImpl(Visibilities.PUBLIC, Modality.FINAL).apply {
