@@ -15,6 +15,7 @@ import org.gradle.api.execution.TaskExecutionListener
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.report.*
 import org.jetbrains.report.json.*
 import java.nio.file.Paths
@@ -128,14 +129,19 @@ fun mergeReports(reports: List<File>): String {
     }
 }
 
-fun getCompileOnlyBenchmarksOpts(project: Project, defaultCompilerOpts: List<String>) =
-        (project.findProperty("nativeBuildType") as String?)?.let {
-            if (it.equals("RELEASE", true))
-                listOf("-opt")
-            else if (it.equals("DEBUG", true))
-                listOf("-g")
-            else listOf()
-        } ?: defaultCompilerOpts
+fun getCompileOnlyBenchmarksOpts(project: Project, defaultCompilerOpts: List<String>): List<String> {
+    val dist = project.file(project.findProperty("kotlin.native.home") ?: "dist")
+    val useCache = !project.hasProperty("disableCompilerCaches")
+    val cacheOption = "-Xcache-directory=$dist/klib/cache/${HostManager.host.name}-gSTATIC"
+            .takeIf { useCache && PlatformInfo.isMac() } // TODO: remove target condition when we have cache support for other targets.
+    return (project.findProperty("nativeBuildType") as String?)?.let {
+        if (it.equals("RELEASE", true))
+            listOf("-opt")
+        else if (it.equals("DEBUG", true))
+            listOfNotNull("-g", cacheOption)
+        else listOf()
+    } ?: defaultCompilerOpts + listOfNotNull(cacheOption?.takeIf { !defaultCompilerOpts.contains("-opt") })
+}
 
 // Find file with set name in directory.
 fun findFile(fileName: String, directory: String): String? =
