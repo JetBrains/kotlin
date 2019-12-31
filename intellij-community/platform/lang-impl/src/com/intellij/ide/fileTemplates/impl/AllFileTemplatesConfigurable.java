@@ -205,7 +205,7 @@ public final class AllFileTemplatesConfigurable implements SearchableConfigurabl
 
     final List<FileTemplateGroupDescriptorFactory> factories = FileTemplateGroupDescriptorFactory.EXTENSION_POINT_NAME.getExtensionList();
     if (!factories.isEmpty()) {
-      myOtherTemplatesList = new FileTemplateTabAsTree(getOTHER_TITLE()) {
+      myOtherTemplatesList = new FileTemplateTabAsTree(getOtherTitle()) {
         @Override
         public void onTemplateSelected() {
           onListSelectionChanged();
@@ -445,7 +445,7 @@ public final class AllFileTemplatesConfigurable implements SearchableConfigurabl
     if (Comparing.strEqual(templateTabTitle, getCodeTitle())) {
       return true;
     }
-    if (Comparing.strEqual(templateTabTitle, getOTHER_TITLE())) {
+    if (Comparing.strEqual(templateTabTitle, getOtherTitle())) {
       return true;
     }
     if (Comparing.strEqual(templateTabTitle, getIncludesTitle())) {
@@ -796,7 +796,7 @@ public final class AllFileTemplatesConfigurable implements SearchableConfigurabl
     return IdeBundle.message("tab.filetemplates.code");
   }
 
-  private static String getOTHER_TITLE() {
+  private static String getOtherTitle() {
     return IdeBundle.message("tab.filetemplates.j2ee");
   }
 }

@@ -32,7 +32,7 @@ public class FormatterUtil {
   public static final String REFORMAT_BEFORE_COMMIT_COMMAND_NAME = "Reformat Code Before Commit";
 
   public static final Collection<String> FORMATTER_ACTION_NAMES = Collections.unmodifiableCollection(ContainerUtil.newHashSet(
-    ReformatCodeProcessor.getCOMMAND_NAME(), getReformatBeforeCommitCommandName()
+    ReformatCodeProcessor.getCommandName(), getReformatBeforeCommitCommandName()
   ));
 
   private FormatterUtil() {

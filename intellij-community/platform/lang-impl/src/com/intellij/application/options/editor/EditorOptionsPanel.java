@@ -120,7 +120,7 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
     myHighlightSettingsPanel.add(myErrorHighlightingPanel.getPanel(), BorderLayout.CENTER);
 
     myRichCopyColorSchemeComboBox.setRenderer(SimpleListCellRenderer.create("", value ->
-      RichCopySettings.ACTIVE_GLOBAL_SCHEME_MARKER.equals(value) ? getACTIVE_COLOR_SCHEME() :
+      RichCopySettings.ACTIVE_GLOBAL_SCHEME_MARKER.equals(value) ? getActiveColorScheme() :
       EditorColorsScheme.DEFAULT_SCHEME_NAME.equals(value) ? EditorColorsScheme.DEFAULT_SCHEME_ALIAS : value));
 
     initCaretStopComboBox(myWordBoundaryCaretStopComboBox, EditorCaretStopPolicyItem.WordBoundary.values());
@@ -525,7 +525,7 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
     return ApplicationBundle.message("combobox.strip.none");
   }
 
-  private static String getACTIVE_COLOR_SCHEME() {
+  private static String getActiveColorScheme() {
     return ApplicationBundle.message("combobox.richcopy.color.scheme.active");
   }
 }

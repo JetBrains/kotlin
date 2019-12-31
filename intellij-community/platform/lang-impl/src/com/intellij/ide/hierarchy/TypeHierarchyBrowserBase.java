@@ -44,7 +44,7 @@ public abstract class TypeHierarchyBrowserBase extends HierarchyBrowserBaseEx {
   public static final String SUBTYPES_HIERARCHY_TYPE = "Subtypes of {0}";
 
   /**
-   * Use {code {@link #getSUPERTYPES_HIERARCHY_TYPE()}} instead
+   * Use {code {@link #getSupertypesHierarchyType()}} instead
    */
   @Deprecated
   public static final String SUPERTYPES_HIERARCHY_TYPE = "Supertypes of {0}";
@@ -78,7 +78,7 @@ public abstract class TypeHierarchyBrowserBase extends HierarchyBrowserBaseEx {
     PopupHandler.installPopupHandler(tree2, group, ActionPlaces.TYPE_HIERARCHY_VIEW_POPUP, ActionManager.getInstance());
     baseOnThisTypeAction
       .registerCustomShortcutSet(ActionManager.getInstance().getAction(IdeActions.ACTION_TYPE_HIERARCHY).getShortcutSet(), tree2);
-    trees.put(getSUPERTYPES_HIERARCHY_TYPE(), tree2);
+    trees.put(getSupertypesHierarchyType(), tree2);
 
     final JTree tree3 = createTree(true);
     PopupHandler.installPopupHandler(tree3, group, ActionPlaces.TYPE_HIERARCHY_VIEW_POPUP, ActionManager.getInstance());
@@ -199,7 +199,7 @@ public abstract class TypeHierarchyBrowserBase extends HierarchyBrowserBaseEx {
   }
 
   @SuppressWarnings("UnresolvedPropertyKey")
-  public static String getSUPERTYPES_HIERARCHY_TYPE() {
+  public static String getSupertypesHierarchyType() {
     return IdeBundle.message("title.hierarchy.supertypes");
   }
 }

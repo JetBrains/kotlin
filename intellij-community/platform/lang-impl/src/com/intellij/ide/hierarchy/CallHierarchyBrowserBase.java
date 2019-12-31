@@ -34,7 +34,7 @@ public abstract class CallHierarchyBrowserBase extends HierarchyBrowserBaseEx {
   public static final String CALLEE_TYPE = "Callees of {0}";
 
   /**
-   * Use {code {@link #getCALLER_TYPE()}} instead
+   * Use {code {@link #getCallerType()}} instead
    */
   @Deprecated
   public static final String CALLER_TYPE = "Callers of {0}";
@@ -61,7 +61,7 @@ public abstract class CallHierarchyBrowserBase extends HierarchyBrowserBaseEx {
   protected void prependActions(@NotNull DefaultActionGroup actionGroup) {
     actionGroup.add(new ChangeViewTypeActionBase(IdeBundle.message("action.caller.methods.hierarchy"),
                                                  IdeBundle.message("action.caller.methods.hierarchy"),
-                                                 AllIcons.Hierarchy.Supertypes, getCALLER_TYPE()));
+                                                 AllIcons.Hierarchy.Supertypes, getCallerType()));
     actionGroup.add(new ChangeViewTypeActionBase(IdeBundle.message("action.callee.methods.hierarchy"),
                                                  IdeBundle.message("action.callee.methods.hierarchy"),
                                                  AllIcons.Hierarchy.Subtypes, getCalleeType()));
@@ -127,7 +127,7 @@ public abstract class CallHierarchyBrowserBase extends HierarchyBrowserBaseEx {
   }
 
   @SuppressWarnings("UnresolvedPropertyKey")
-  public static String getCALLER_TYPE() {
+  public static String getCallerType() {
     return IdeBundle.message("title.hierarchy.callers.of");
   }
 }
