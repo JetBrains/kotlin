@@ -27,7 +27,7 @@ public class IntroduceFunctionalParameterAction extends IntroduceActionBase {
     return provider.getIntroduceFunctionalParameterHandler();
   }
 
-  public static String getREFACTORING_NAME() {
+  public static String getRefactoringName() {
     return RefactoringBundle.message("introduce.functional.parameter.title");
   }
 }

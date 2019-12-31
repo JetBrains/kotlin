@@ -28,7 +28,7 @@ import javax.swing.*;
 
 public abstract class CallHierarchyBrowserBase extends HierarchyBrowserBaseEx {
   /**
-   * Use {code {@link #getCALLEE_TYPE()}} instead
+   * Use {code {@link #getCalleeType()}} instead
    */
   @Deprecated
   public static final String CALLEE_TYPE = "Callees of {0}";
@@ -64,7 +64,7 @@ public abstract class CallHierarchyBrowserBase extends HierarchyBrowserBaseEx {
                                                  AllIcons.Hierarchy.Supertypes, getCALLER_TYPE()));
     actionGroup.add(new ChangeViewTypeActionBase(IdeBundle.message("action.callee.methods.hierarchy"),
                                                  IdeBundle.message("action.callee.methods.hierarchy"),
-                                                 AllIcons.Hierarchy.Subtypes, getCALLEE_TYPE()));
+                                                 AllIcons.Hierarchy.Subtypes, getCalleeType()));
     actionGroup.add(new AlphaSortAction());
     actionGroup.add(new ChangeScopeAction());
   }
@@ -122,7 +122,7 @@ public abstract class CallHierarchyBrowserBase extends HierarchyBrowserBaseEx {
   }
 
   @SuppressWarnings("UnresolvedPropertyKey")
-  public static String getCALLEE_TYPE() {
+  public static String getCalleeType() {
     return IdeBundle.message("title.hierarchy.callees.of");
   }
 

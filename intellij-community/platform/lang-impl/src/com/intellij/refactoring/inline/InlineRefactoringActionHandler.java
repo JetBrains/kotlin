@@ -62,7 +62,7 @@ public class InlineRefactoringActionHandler implements RefactoringActionHandler 
       if (invokeInliner(editor, element)) return;
 
       String message = RefactoringBundle.getCannotRefactorMessage(RefactoringBundle.message("error.wrong.caret.position.method.or.local.name"));
-      CommonRefactoringUtil.showErrorHint(project, editor, message, getREFACTORING_NAME(), null);
+      CommonRefactoringUtil.showErrorHint(project, editor, message, getRefactoringName(), null);
     }
   }
 
@@ -76,7 +76,7 @@ public class InlineRefactoringActionHandler implements RefactoringActionHandler 
     return false;
   }
 
-  private static String getREFACTORING_NAME() {
+  private static String getRefactoringName() {
     return RefactoringBundle.message("inline.title");
   }
 }

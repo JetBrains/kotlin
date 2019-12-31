@@ -34,23 +34,23 @@ public class OptimizeImportsProcessor extends AbstractLayoutCodeProcessor {
   private final List<NotificationInfo> myOptimizerNotifications = new SmartList<>();
 
   public OptimizeImportsProcessor(@NotNull Project project) {
-    super(project, getCOMMAND_NAME(), getPROGRESS_TEXT(), false);
+    super(project, getCOMMAND_NAME(), getProgressText(), false);
   }
 
   public OptimizeImportsProcessor(@NotNull Project project, Module module) {
-    super(project, module, getCOMMAND_NAME(), getPROGRESS_TEXT(), false);
+    super(project, module, getCOMMAND_NAME(), getProgressText(), false);
   }
 
   public OptimizeImportsProcessor(@NotNull Project project, PsiDirectory directory, boolean includeSubdirs) {
-    super(project, directory, includeSubdirs, getPROGRESS_TEXT(), getCOMMAND_NAME(), false);
+    super(project, directory, includeSubdirs, getProgressText(), getCOMMAND_NAME(), false);
   }
 
   public OptimizeImportsProcessor(@NotNull Project project, PsiDirectory directory, boolean includeSubdirs, boolean processOnlyVcsChangedFiles) {
-    super(project, directory, includeSubdirs, getPROGRESS_TEXT(), getCOMMAND_NAME(), processOnlyVcsChangedFiles);
+    super(project, directory, includeSubdirs, getProgressText(), getCOMMAND_NAME(), processOnlyVcsChangedFiles);
   }
 
   public OptimizeImportsProcessor(@NotNull Project project, PsiFile file) {
-    super(project, file, getPROGRESS_TEXT(), getCOMMAND_NAME(), false);
+    super(project, file, getProgressText(), getCOMMAND_NAME(), false);
   }
 
   public OptimizeImportsProcessor(@NotNull Project project, PsiFile[] files, Runnable postRunnable) {
@@ -58,11 +58,11 @@ public class OptimizeImportsProcessor extends AbstractLayoutCodeProcessor {
   }
 
   public OptimizeImportsProcessor(@NotNull Project project, PsiFile[] files, String commandName, Runnable postRunnable) {
-    super(project, files, getPROGRESS_TEXT(), commandName, postRunnable, false);
+    super(project, files, getProgressText(), commandName, postRunnable, false);
   }
 
   public OptimizeImportsProcessor(@NotNull AbstractLayoutCodeProcessor processor) {
-    super(processor, getCOMMAND_NAME(), getPROGRESS_TEXT());
+    super(processor, getCOMMAND_NAME(), getProgressText());
   }
 
   @Override
@@ -156,7 +156,7 @@ public class OptimizeImportsProcessor extends AbstractLayoutCodeProcessor {
     }
   }
 
-  private static String getPROGRESS_TEXT() {
+  private static String getProgressText() {
     return CodeInsightBundle.message("progress.text.optimizing.imports");
   }
 

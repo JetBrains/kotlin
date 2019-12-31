@@ -115,7 +115,7 @@ public class RunAnythingUtil {
     return model instanceof RunAnythingSearchListModel ? (RunAnythingSearchListModel)model : null;
   }
 
-  public static String getAD_DEBUG_TEXT() {
+  public static String getAdDebugText() {
     return IdeBundle.message("run.anything.ad.run.with.debug", SHIFT_SHORTCUT_TEXT);
   }
 

@@ -26,13 +26,13 @@ import java.util.Collections;
 public class FormatterUtil {
 
   /**
-   * Use {code {@link #getREFORMAT_BEFORE_COMMIT_COMMAND_NAME()}} instead
+   * Use {code {@link #getReformatBeforeCommitCommandName()}} instead
    */
   @Deprecated
   public static final String REFORMAT_BEFORE_COMMIT_COMMAND_NAME = "Reformat Code Before Commit";
 
   public static final Collection<String> FORMATTER_ACTION_NAMES = Collections.unmodifiableCollection(ContainerUtil.newHashSet(
-    ReformatCodeProcessor.getCOMMAND_NAME(), getREFORMAT_BEFORE_COMMIT_COMMAND_NAME()
+    ReformatCodeProcessor.getCOMMAND_NAME(), getReformatBeforeCommitCommandName()
   ));
 
   private FormatterUtil() {
@@ -501,7 +501,7 @@ public class FormatterUtil {
     return FORMATTER_ACTION_NAMES.contains(CommandProcessor.getInstance().getCurrentCommandName());
   }
 
-  public static String getREFORMAT_BEFORE_COMMIT_COMMAND_NAME() {
+  public static String getReformatBeforeCommitCommandName() {
     return CodeInsightBundle.message("process.reformat.code.before.commit");
   }
 }

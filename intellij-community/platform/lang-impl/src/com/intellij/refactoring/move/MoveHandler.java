@@ -26,7 +26,7 @@ import java.util.Set;
 
 public class MoveHandler implements RefactoringActionHandler {
   /**
-   * Use {code {@link #getREFACTORING_NAME()}} instead
+   * Use {code {@link #getRefactoringName()}} instead
    */
   @Deprecated
   public static final String REFACTORING_NAME = "Move";
@@ -57,7 +57,7 @@ public class MoveHandler implements RefactoringActionHandler {
     while (true) {
       if (element == null) {
         String message = RefactoringBundle.getCannotRefactorMessage(RefactoringBundle.message("the.caret.should.be.positioned.at.the.class.method.or.field.to.be.refactored"));
-        CommonRefactoringUtil.showErrorHint(project, editor, message, getREFACTORING_NAME(), null);
+        CommonRefactoringUtil.showErrorHint(project, editor, message, getRefactoringName(), null);
         return;
       }
 
@@ -238,7 +238,7 @@ public class MoveHandler implements RefactoringActionHandler {
     return false;
   }
 
-  public static String getREFACTORING_NAME() {
+  public static String getRefactoringName() {
     return RefactoringBundle.message("move.title");
   }
 }

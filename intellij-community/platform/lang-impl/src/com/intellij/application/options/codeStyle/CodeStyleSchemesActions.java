@@ -81,7 +81,7 @@ abstract class CodeStyleSchemesActions extends AbstractSchemeActions<CodeStyleSc
   }
   
   private void chooseAndImport(@NotNull CodeStyleScheme currentScheme, @NotNull String importerName) {
-    if (importerName.equals(getSHARED_IMPORT_SOURCE())) {
+    if (importerName.equals(getSharedImportSource())) {
       new SchemesToImportPopup<CodeStyleScheme>(getSchemesPanel()) {
         @Override
         protected void onSchemeSelected(CodeStyleScheme scheme) {
@@ -179,7 +179,7 @@ abstract class CodeStyleSchemesActions extends AbstractSchemeActions<CodeStyleSc
     return (CodeStyleSchemesModel)super.getModel();
   }
 
-  private static String getSHARED_IMPORT_SOURCE() {
+  private static String getSharedImportSource() {
     return ApplicationBundle.message("import.scheme.shared");
   }
 }

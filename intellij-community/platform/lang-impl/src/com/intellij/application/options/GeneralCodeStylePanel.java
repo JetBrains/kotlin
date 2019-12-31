@@ -95,7 +95,7 @@ public class GeneralCodeStylePanel extends CodeStyleAbstractPanel {
     super(settings);
 
     //noinspection unchecked
-    myLineSeparatorCombo.addItem(getSYSTEM_DEPENDANT_STRING());
+    myLineSeparatorCombo.addItem(getSystemDependantString());
     //noinspection unchecked
     myLineSeparatorCombo.addItem(getUNIX_STRING());
     //noinspection unchecked
@@ -290,7 +290,7 @@ public class GeneralCodeStylePanel extends CodeStyleAbstractPanel {
       myLineSeparatorCombo.setSelectedItem(getMACINTOSH_STRING());
     }
     else {
-      myLineSeparatorCombo.setSelectedItem(getSYSTEM_DEPENDANT_STRING());
+      myLineSeparatorCombo.setSelectedItem(getSystemDependantString());
     }
 
     myRightMarginField.setValue(settings.getDefaultRightMargin());
@@ -357,7 +357,7 @@ public class GeneralCodeStylePanel extends CodeStyleAbstractPanel {
     super.dispose();
   }
 
-  private static String getSYSTEM_DEPENDANT_STRING() {
+  private static String getSystemDependantString() {
     return ApplicationBundle.message("combobox.crlf.system.dependent");
   }
 

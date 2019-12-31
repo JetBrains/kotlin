@@ -286,7 +286,7 @@ public abstract class AbstractMemberSelectionTable<T extends PsiElement, M exten
         case ABSTRACT_COLUMN:
           return myTable.myAbstractColumnHeader;
         case DISPLAY_NAME_COLUMN:
-          return getDISPLAY_NAME_COLUMN_HEADER();
+          return getDisplayNameColumnHeader();
         default:
           throw new RuntimeException("Incorrect column index");
       }
@@ -425,7 +425,7 @@ public abstract class AbstractMemberSelectionTable<T extends PsiElement, M exten
     }
   }
 
-  protected static String getDISPLAY_NAME_COLUMN_HEADER() {
+  protected static String getDisplayNameColumnHeader() {
     return RefactoringBundle.message("member.column");
   }
 }

@@ -181,7 +181,7 @@ public final class AllFileTemplatesConfigurable implements SearchableConfigurabl
   public JComponent createComponent() {
     myUIDisposable = Disposer.newDisposable();
 
-    myTemplatesList = new FileTemplateTabAsList(getTEMPLATES_TITLE()) {
+    myTemplatesList = new FileTemplateTabAsList(getTemplatesTitle()) {
       @Override
       public void onTemplateSelected() {
         onListSelectionChanged();
@@ -439,7 +439,7 @@ public final class AllFileTemplatesConfigurable implements SearchableConfigurabl
     if (templateName == null) {
       return false;
     }
-    if (Comparing.strEqual(templateTabTitle, getTEMPLATES_TITLE())) {
+    if (Comparing.strEqual(templateTabTitle, getTemplatesTitle())) {
       return isInternalTemplateName(templateName);
     }
     if (Comparing.strEqual(templateTabTitle, getCODE_TITLE())) {
@@ -587,7 +587,7 @@ public final class AllFileTemplatesConfigurable implements SearchableConfigurabl
   public void disposeUIResources() {
     if (myCurrentTab != null) {
       final PropertiesComponent propertiesComponent = PropertiesComponent.getInstance();
-      propertiesComponent.setValue(CURRENT_TAB, myCurrentTab.getTitle(), getTEMPLATES_TITLE());
+      propertiesComponent.setValue(CURRENT_TAB, myCurrentTab.getTitle(), getTemplatesTitle());
       final FileTemplate template = myCurrentTab.getSelectedTemplate();
       if (template != null) {
         propertiesComponent.setValue(SELECTED_TEMPLATE, template.getName());
@@ -784,7 +784,7 @@ public final class AllFileTemplatesConfigurable implements SearchableConfigurabl
     }
   }
 
-  private static String getTEMPLATES_TITLE() {
+  private static String getTemplatesTitle() {
     return IdeBundle.message("tab.filetemplates.templates");
   }
 

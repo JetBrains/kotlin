@@ -42,10 +42,10 @@ public class ScopeChooserUtils {
       return intersectWithContentScope(project, GlobalSearchScopes.openFilesScope(project));
     }
 
-    if (getCURRENT_FILE_SCOPE_NAME().equals(scopeName)) {
+    if (getCurrentFileScopeName().equals(scopeName)) {
       VirtualFile[] array = FileEditorManager.getInstance(project).getSelectedFiles();
       List<VirtualFile> files = ContainerUtil.createMaybeSingletonList(ArrayUtil.getFirstElement(array));
-      GlobalSearchScope scope = GlobalSearchScope.filesScope(project, files, getCURRENT_FILE_SCOPE_NAME());
+      GlobalSearchScope scope = GlobalSearchScope.filesScope(project, files, getCurrentFileScopeName());
       return intersectWithContentScope(project, scope);
     }
 
@@ -88,7 +88,7 @@ public class ScopeChooserUtils {
     return scope.intersectWith(ProjectScope.getContentScope(project));
   }
 
-  private static String getCURRENT_FILE_SCOPE_NAME() {
+  private static String getCurrentFileScopeName() {
     return IdeBundle.message("scope.current.file");
   }
 

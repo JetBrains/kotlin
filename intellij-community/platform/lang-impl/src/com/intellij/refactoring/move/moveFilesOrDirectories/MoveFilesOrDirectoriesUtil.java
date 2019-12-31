@@ -163,7 +163,7 @@ public class MoveFilesOrDirectoriesUtil {
       catch (IncorrectOperationException e) {
         CommonRefactoringUtil.showErrorMessage(RefactoringBundle.message("error.title"), e.getMessage(), "refactoring.moveFile", project);
       }
-    }, MoveHandler.getREFACTORING_NAME(), null);
+    }, MoveHandler.getRefactoringName(), null);
   }
 
   @Nullable

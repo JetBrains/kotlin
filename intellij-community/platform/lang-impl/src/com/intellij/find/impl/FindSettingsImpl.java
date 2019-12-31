@@ -88,7 +88,7 @@ public class FindSettingsImpl extends FindSettings implements PersistentStateCom
   @SuppressWarnings("WeakerAccess") public boolean WITH_SUBDIRECTORIES = true;
   @SuppressWarnings("WeakerAccess") public boolean SHOW_RESULTS_IN_SEPARATE_VIEW;
 
-  @SuppressWarnings("WeakerAccess") public String SEARCH_SCOPE = getDEFAULT_SEARCH_SCOPE();
+  @SuppressWarnings("WeakerAccess") public String SEARCH_SCOPE = getDefaultSearchScope();
   @SuppressWarnings("WeakerAccess") public String FILE_MASK;
 
   @Property(surroundWithTag = false)
@@ -379,7 +379,7 @@ public class FindSettingsImpl extends FindSettings implements PersistentStateCom
     }
   }
 
-  private static String getDEFAULT_SEARCH_SCOPE() {
+  private static String getDefaultSearchScope() {
     return FindBundle.message("find.scope.all.project.classes");
   }
 }

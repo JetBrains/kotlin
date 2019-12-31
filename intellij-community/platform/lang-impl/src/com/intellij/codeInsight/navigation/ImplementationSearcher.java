@@ -61,7 +61,7 @@ public class ImplementationSearcher {
     Ref<PsiElement[]> result = Ref.create();
     if (!ProgressManager.getInstance().runProcessWithProgressSynchronously(
       () -> result.set(search(element, editor).toArray(PsiElement.EMPTY_ARRAY)),
-      getSEARCHING_FOR_IMPLEMENTATIONS(), true, element.getProject())) {
+      getSearchingForImplementations(), true, element.getProject())) {
       return null;
     }
     return result.get();
@@ -101,7 +101,7 @@ public class ImplementationSearcher {
             }
           });
         }
-      }, getSEARCHING_FOR_IMPLEMENTATIONS(), true, element.getProject())) {
+      }, getSearchingForImplementations(), true, element.getProject())) {
         return null;
       }
       PsiElement foundElement = collectProcessor.getFoundElement();
@@ -134,7 +134,7 @@ public class ImplementationSearcher {
     protected abstract void processElement(PsiElement element);
   }
 
-  public static String getSEARCHING_FOR_IMPLEMENTATIONS() {
+  public static String getSearchingForImplementations() {
     return CodeInsightBundle.message("searching.for.implementations");
   }
 }

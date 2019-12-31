@@ -31,7 +31,7 @@ import java.awt.*;
 
 public abstract class MethodHierarchyBrowserBase extends HierarchyBrowserBaseEx {
   /**
-   * Use {code {@link #getMETHOD_TYPE()}} instead
+   * Use {code {@link #getMethodType()}} instead
    */
   @Deprecated
   public static final String METHOD_TYPE = "Method {0}";
@@ -133,7 +133,7 @@ public abstract class MethodHierarchyBrowserBase extends HierarchyBrowserBaseEx 
   }
 
   @SuppressWarnings("UnresolvedPropertyKey")
-  public static String getMETHOD_TYPE() {
+  public static String getMethodType() {
     return IdeBundle.message("title.hierarchy.method");
   }
 }

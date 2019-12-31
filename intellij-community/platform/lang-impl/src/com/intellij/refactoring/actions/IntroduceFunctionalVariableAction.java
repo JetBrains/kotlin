@@ -27,7 +27,7 @@ public class IntroduceFunctionalVariableAction extends IntroduceActionBase {
     return provider.getIntroduceFunctionalVariableHandler();
   }
 
-  public static String getREFACTORING_NAME() {
+  public static String getRefactoringName() {
     return RefactoringBundle.message("introduce.functional.variable.title");
   }
 }

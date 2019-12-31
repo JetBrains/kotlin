@@ -28,21 +28,21 @@ public class RearrangeCodeProcessor extends AbstractLayoutCodeProcessor {
   private SelectionModel mySelectionModel;
 
   public RearrangeCodeProcessor(@NotNull AbstractLayoutCodeProcessor previousProcessor) {
-    super(previousProcessor, COMMAND_NAME, getPROGRESS_TEXT());
+    super(previousProcessor, COMMAND_NAME, getProgressText());
   }
 
   public RearrangeCodeProcessor(@NotNull AbstractLayoutCodeProcessor previousProcessor, @NotNull SelectionModel selectionModel) {
-    super(previousProcessor, COMMAND_NAME, getPROGRESS_TEXT());
+    super(previousProcessor, COMMAND_NAME, getProgressText());
     mySelectionModel = selectionModel;
   }
 
   public RearrangeCodeProcessor(@NotNull PsiFile file, @NotNull SelectionModel selectionModel) {
-    super(file.getProject(), file, getPROGRESS_TEXT(), COMMAND_NAME, false);
+    super(file.getProject(), file, getProgressText(), COMMAND_NAME, false);
     mySelectionModel = selectionModel;
   }
 
   public RearrangeCodeProcessor(@NotNull PsiFile file) {
-    super(file.getProject(), file, getPROGRESS_TEXT(), COMMAND_NAME, false);
+    super(file.getProject(), file, getProgressText(), COMMAND_NAME, false);
   }
 
   @SuppressWarnings("unused") // Required for compatibility with external plugins.
@@ -58,7 +58,7 @@ public class RearrangeCodeProcessor extends AbstractLayoutCodeProcessor {
                                 @NotNull String commandName,
                                 @Nullable Runnable postRunnable,
                                 boolean processChangedTextOnly) {
-    super(project, files, getPROGRESS_TEXT(), commandName, postRunnable, processChangedTextOnly);
+    super(project, files, getProgressText(), commandName, postRunnable, processChangedTextOnly);
   }
 
   @NotNull
@@ -114,7 +114,7 @@ public class RearrangeCodeProcessor extends AbstractLayoutCodeProcessor {
     return new SmartList<>(file.getTextRange());
   }
 
-  public static String getPROGRESS_TEXT() {
+  public static String getProgressText() {
     return CodeInsightBundle.message("process.rearrange.code");
   }
 }

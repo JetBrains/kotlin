@@ -273,7 +273,7 @@ public abstract class ShowRelatedElementsActionBase extends DumbAwareAction impl
     private ImplementationsUpdaterTask(ImplementationViewSession session,
                                        final String caption,
                                        ImplementationViewComponent component) {
-      super(session.getProject(), ImplementationSearcher.getSEARCHING_FOR_IMPLEMENTATIONS(), null);
+      super(session.getProject(), ImplementationSearcher.getSearchingForImplementations(), null);
       myCaption = caption;
       mySession = session;
       myComponent = component;

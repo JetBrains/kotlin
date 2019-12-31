@@ -30,13 +30,13 @@ class ScopeColorsPageFactory implements ColorAndFontPanelFactoryEx {
         return scopePanel;
       }
 
-    }, ColorAndFontOptions.getSCOPES_GROUP(), options, null, null);
+    }, ColorAndFontOptions.getScopesGroup(), options, null, null);
   }
 
   @NotNull
   @Override
   public String getPanelDisplayName() {
-    return ColorAndFontOptions.getSCOPES_GROUP();
+    return ColorAndFontOptions.getScopesGroup();
   }
 
   private static JPanel createChooseScopePanel() {

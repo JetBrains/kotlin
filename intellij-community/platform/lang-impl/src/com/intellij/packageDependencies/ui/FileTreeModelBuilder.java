@@ -145,7 +145,7 @@ public class FileTreeModelBuilder {
     final Runnable buildingRunnable = () -> {
       ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
       if (indicator != null) {
-        indicator.setText(getSCANNING_PACKAGES_MESSAGE());
+        indicator.setText(getScanningPackagesMessage());
         indicator.setIndeterminate(true);
       }
       countFiles(project);
@@ -195,7 +195,7 @@ public class FileTreeModelBuilder {
 
   private static void update(ProgressIndicator indicator, boolean indeterminate, double fraction) {
     if (indicator instanceof PanelProgressIndicator) {
-      ((PanelProgressIndicator)indicator).update(getSCANNING_PACKAGES_MESSAGE(), indeterminate, fraction);
+      ((PanelProgressIndicator)indicator).update(getScanningPackagesMessage(), indeterminate, fraction);
     } else {
       if (fraction != -1) {
         indicator.setFraction(fraction);
@@ -604,7 +604,7 @@ public class FileTreeModelBuilder {
     }
   }
 
-  public static String getSCANNING_PACKAGES_MESSAGE() {
+  public static String getScanningPackagesMessage() {
     return AnalysisScopeBundle.message("package.dependencies.build.progress.text");
   }
 }

@@ -99,7 +99,7 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
   public EditorOptionsPanel() {
     mySoftWrapFileMasks.getEmptyText().setText(ApplicationBundle.message("soft.wraps.file.masks.empty.text"));
 
-    myStripTrailingSpacesCombo.addItem(getSTRIP_CHANGED());
+    myStripTrailingSpacesCombo.addItem(getStripChanged());
     myStripTrailingSpacesCombo.addItem(getSTRIP_ALL());
     myStripTrailingSpacesCombo.addItem(getSTRIP_NONE());
 
@@ -177,7 +177,7 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
       myStripTrailingSpacesCombo.setSelectedItem(getSTRIP_NONE());
     }
     else if (EditorSettingsExternalizable.STRIP_TRAILING_SPACES_CHANGED.equals(stripTrailingSpaces)) {
-      myStripTrailingSpacesCombo.setSelectedItem(getSTRIP_CHANGED());
+      myStripTrailingSpacesCombo.setSelectedItem(getStripChanged());
     }
     else if (EditorSettingsExternalizable.STRIP_TRAILING_SPACES_WHOLE.equals(stripTrailingSpaces)) {
       myStripTrailingSpacesCombo.setSelectedItem(getSTRIP_ALL());
@@ -248,7 +248,7 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
     if(getSTRIP_NONE().equals(myStripTrailingSpacesCombo.getSelectedItem())) {
       editorSettings.setStripTrailingSpaces(EditorSettingsExternalizable.STRIP_TRAILING_SPACES_NONE);
     }
-    else if(getSTRIP_CHANGED().equals(myStripTrailingSpacesCombo.getSelectedItem())){
+    else if(getStripChanged().equals(myStripTrailingSpacesCombo.getSelectedItem())){
       editorSettings.setStripTrailingSpaces(EditorSettingsExternalizable.STRIP_TRAILING_SPACES_CHANGED);
     }
     else {
@@ -454,7 +454,7 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
     if(getSTRIP_NONE().equals(selectedItem)) {
       return EditorSettingsExternalizable.STRIP_TRAILING_SPACES_NONE;
     }
-    if(getSTRIP_CHANGED().equals(selectedItem)){
+    if(getStripChanged().equals(selectedItem)){
       return EditorSettingsExternalizable.STRIP_TRAILING_SPACES_CHANGED;
     }
     return EditorSettingsExternalizable.STRIP_TRAILING_SPACES_WHOLE;
@@ -513,7 +513,7 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
     return myBehaviourPanel;
   }
 
-  private static String getSTRIP_CHANGED() {
+  private static String getStripChanged() {
     return ApplicationBundle.message("combobox.strip.modified.lines");
   }
 

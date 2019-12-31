@@ -189,6 +189,6 @@ public class InvertBooleanProcessor extends BaseRefactoringProcessor {
   @NotNull
   @Override
   protected String getCommandName() {
-    return InvertBooleanHandler.getREFACTORING_NAME();
+    return InvertBooleanHandler.getRefactoringName();
   }
 }

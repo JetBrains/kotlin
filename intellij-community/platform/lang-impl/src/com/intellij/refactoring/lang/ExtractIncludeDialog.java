@@ -42,7 +42,7 @@ public class ExtractIncludeDialog extends DialogWrapper {
     super(true);
     myCurrentDirectory = currentDirectory;
     myExtension = extension;
-    setTitle(getREFACTORING_NAME());
+    setTitle(getRefactoringName());
     init();
   }
 
@@ -146,7 +146,7 @@ public class ExtractIncludeDialog extends DialogWrapper {
           myTargetDirectory = webPath == null ? null : targetDirectory;
         }
         catch (IncorrectOperationException e) {
-          CommonRefactoringUtil.showErrorMessage(getREFACTORING_NAME(), e.getMessage(), null, project);
+          CommonRefactoringUtil.showErrorMessage(getRefactoringName(), e.getMessage(), null, project);
         }
       };
       ApplicationManager.getApplication().runWriteAction(action);
@@ -165,7 +165,7 @@ public class ExtractIncludeDialog extends DialogWrapper {
     myTargetDirLabel.setVisible(false);
   }
 
-  private static String getREFACTORING_NAME() {
+  private static String getRefactoringName() {
     return RefactoringBundle.message("extractIncludeFile.name");
   }
 }
