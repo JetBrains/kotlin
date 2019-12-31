@@ -70,7 +70,7 @@ public class PostfixTemplatesConfigurable implements SearchableConfigurable, Edi
     });
     myShortcutComboBox.addItem(getTab());
     myShortcutComboBox.addItem(getSpace());
-    myShortcutComboBox.addItem(getENTER());
+    myShortcutComboBox.addItem(getEnter());
     myDescriptionPanel.setLayout(new BorderLayout());
   }
 
@@ -267,7 +267,7 @@ public class PostfixTemplatesConfigurable implements SearchableConfigurable, Edi
     if (getSpace().equals(string)) {
       return TemplateSettings.SPACE_CHAR;
     }
-    else if (getENTER().equals(string)) {
+    else if (getEnter().equals(string)) {
       return TemplateSettings.ENTER_CHAR;
     }
     return TemplateSettings.TAB_CHAR;
@@ -278,7 +278,7 @@ public class PostfixTemplatesConfigurable implements SearchableConfigurable, Edi
       return getSpace();
     }
     if (shortcut == TemplateSettings.ENTER_CHAR) {
-      return getENTER();
+      return getEnter();
     }
     return getTab();
   }
@@ -291,7 +291,7 @@ public class PostfixTemplatesConfigurable implements SearchableConfigurable, Edi
     return CodeInsightBundle.message("template.shortcut.tab");
   }
 
-  private static String getENTER() {
+  private static String getEnter() {
     return CodeInsightBundle.message("template.shortcut.enter");
   }
 }

@@ -237,7 +237,7 @@ public class ReplaceInProjectManager {
                          StringUtil.escapeXmlEntities(stringToReplace)))
                                                .yesText(FindBundle.message("find.replace.command"))
                                                .project(myProject)
-                                               .noText(Messages.getCANCEL_BUTTON()).show();
+                                               .noText(Messages.getCancelButton()).show();
   }
 
   private static Set<VirtualFile> getFiles(@NotNull ReplaceContext replaceContext, boolean selectedOnly) {

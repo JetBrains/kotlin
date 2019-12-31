@@ -51,7 +51,7 @@ class RunDashboardServiceViewDeleteProvider implements ServiceViewContributorDel
     else {
       message = "Remove " + targetTypes.size() + " configuration types from Services?";
     }
-    if (Messages.showYesNoDialog(project, message, "Remove", "Remove", Messages.getCANCEL_BUTTON(), Messages.getWarningIcon(), null)
+    if (Messages.showYesNoDialog(project, message, "Remove", "Remove", Messages.getCancelButton(), Messages.getWarningIcon(), null)
         != Messages.YES) {
       return;
     }
