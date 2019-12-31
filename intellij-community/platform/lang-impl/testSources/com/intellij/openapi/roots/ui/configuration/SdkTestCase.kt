@@ -1,0 +1,154 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+package com.intellij.openapi.roots.ui.configuration
+
+import com.intellij.openapi.application.invokeAndWaitIfNeeded
+import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.projectRoots.*
+import com.intellij.openapi.projectRoots.impl.MockSdk
+import com.intellij.openapi.roots.ProjectRootManager
+import com.intellij.openapi.roots.ui.configuration.projectRoot.SdkDownload
+import com.intellij.openapi.roots.ui.configuration.projectRoot.SdkDownloadTask
+import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.testFramework.LightPlatformTestCase
+import com.intellij.util.containers.MultiMap
+import org.jdom.Element
+import java.io.File
+import java.util.*
+import java.util.function.Consumer
+import javax.swing.JComponent
+import kotlin.collections.LinkedHashMap
+
+abstract class SdkTestCase : LightPlatformTestCase() {
+
+  override fun setUp() {
+    super.setUp()
+
+    TestSdkGenerator.reset()
+    SdkType.EP_NAME.getPoint(null)
+      .registerExtension(TestSdkType, project)
+    SdkDownload.EP_NAME.getPoint(null)
+      .registerExtension(TestSdkDownloader, project)
+  }
+
+  override fun tearDown() {
+    Disposer.disposeChildren(project)
+    closeAndDeleteProject()
+
+    super.tearDown()
+  }
+
+  fun createAndRegisterSdk(isProjectSdk: Boolean = false): Sdk {
+    val sdk = TestSdkGenerator.createNextSdk()
+    registerSdk(sdk)
+    if (isProjectSdk) {
+      setProjectSdk(sdk)
+    }
+    return sdk
+  }
+
+  private fun registerSdk(sdk: Sdk) {
+    invokeAndWaitIfNeeded {
+      runWriteAction {
+        val jdkTable = ProjectJdkTable.getInstance()
+        jdkTable.addJdk(sdk, project)
+      }
+    }
+  }
+
+  private fun setProjectSdk(sdk: Sdk) {
+    invokeAndWaitIfNeeded {
+      runWriteAction {
+        val rootManager = ProjectRootManager.getInstance(project)
+        rootManager.projectSdk = sdk
+      }
+    }
+  }
+
+  object TestSdkType : SdkType("test-type"), JavaSdkType {
+    override fun getPresentableName(): String = name
+    override fun isValidSdkHome(path: String?): Boolean = true
+    override fun suggestSdkName(currentSdkName: String?, sdkHome: String?): String = "sdk-name"
+    override fun suggestHomePath(): String? = null
+    override fun createAdditionalDataConfigurable(sdkModel: SdkModel, sdkModificator: SdkModificator): AdditionalDataConfigurable? = null
+    override fun saveAdditionalData(additionalData: SdkAdditionalData, additional: Element) {}
+    override fun getBinPath(sdk: Sdk): String = File(sdk.homePath, "bin").path
+    override fun getToolsPath(sdk: Sdk): String = File(sdk.homePath, "lib/tools.jar").path
+    override fun getVMExecutablePath(sdk: Sdk): String = File(sdk.homePath, "bin/java").path
+  }
+
+  open class TestSdk(name: String, homePath: String, versionString: String)
+    : MockSdk(name, homePath, versionString, MultiMap(), TestSdkType) {
+    override fun getHomePath(): String = super.getHomePath()!!
+  }
+
+  object TestSdkDownloader : SdkDownload {
+    override fun supportsDownload(sdkTypeId: SdkTypeId) = sdkTypeId == TestSdkType
+
+    override fun showDownloadUI(
+      sdkTypeId: SdkTypeId,
+      sdkModel: SdkModel,
+      parentComponent: JComponent,
+      selectedSdk: Sdk?,
+      sdkCreatedCallback: Consumer<SdkDownloadTask>
+    ) {
+      val sdk = TestSdkGenerator.createNextSdk()
+      sdkCreatedCallback.accept(object : SdkDownloadTask {
+        override fun doDownload(indicator: ProgressIndicator) {}
+        override fun getPlannedVersion() = sdk.versionString
+        override fun getSuggestedSdkName() = sdk.name
+        override fun getPlannedHomeDir() = sdk.homePath
+      })
+    }
+  }
+
+  object TestSdkGenerator {
+    private var createdSdkCounter = 0
+    private lateinit var createdSdks: MutableMap<String, TestSdk>
+
+    fun findTestSdk(sdk: Sdk): TestSdk? = createdSdks[sdk.name]
+
+    fun getCurrentSdk() = createdSdks.values.last()
+
+    fun createNextSdk(): TestSdk {
+      val name = "test-name (${createdSdkCounter++})"
+      val versionString = "11"
+      val homePath = FileUtil.getTempDirectory() + "/jdk-$name"
+      generateJdkStructure(homePath, versionString)
+      createdSdks[name] = TestSdk(name, homePath, versionString)
+      return getCurrentSdk()
+    }
+
+    private fun generateJdkStructure(homePath: String, versionString: String) {
+      createFile("$homePath/release")
+      createFile("$homePath/jre/lib/rt.jar")
+      createFile("$homePath/bin/javac")
+      createFile("$homePath/bin/java")
+      val properties = Properties()
+      properties.setProperty("JAVA_FULL_VERSION", versionString)
+      File("$homePath/release").outputStream().use {
+        properties.store(it, null)
+      }
+    }
+
+    private fun createFile(path: String) {
+      val file = File(path)
+      file.parentFile.mkdirs()
+      file.createNewFile()
+    }
+
+    fun reset() {
+      createdSdkCounter = 0
+      createdSdks = LinkedHashMap()
+    }
+  }
+
+  companion object {
+    fun assertSdk(expected: Sdk, actual: Sdk) {
+      assertEquals(expected.name, actual.name)
+      assertEquals(expected.sdkType, actual.sdkType)
+      assertEquals(expected, TestSdkGenerator.findTestSdk(actual))
+    }
+  }
+}

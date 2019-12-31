@@ -5,36 +5,38 @@ package com.intellij.openapi.externalSystem.service.ui
 
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkException
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtil
+import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtil.USE_PROJECT_JDK
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
 import com.intellij.openapi.roots.ui.configuration.SdkComboBox
 import com.intellij.openapi.roots.ui.configuration.SdkListItem
+import org.jetbrains.annotations.TestOnly
 
-fun SdkComboBox.getSelectedJdkReference(): String? {
-  return when (val it = selectedItem) {
-    is SdkListItem.ProjectSdkItem -> ExternalSystemJdkUtil.USE_PROJECT_JDK
-    is SdkListItem.SdkItem -> it.sdk.name
-    is SdkListItem.InvalidSdkItem -> it.sdkName
+fun SdkComboBox.getSelectedJdkReference() = resolveJdkReference(selectedItem)
+
+private fun resolveJdkReference(item: SdkListItem?): String? {
+  return when (item) {
+    is SdkListItem.ProjectSdkItem -> USE_PROJECT_JDK
+    is SdkListItem.SdkItem -> item.sdk.name
+    is SdkListItem.InvalidSdkItem -> item.sdkName
     else -> null
   }
 }
 
 fun SdkComboBox.setSelectedJdkReference(jdkReference: String?) {
-  selectedItem = when (jdkReference) {
-    null -> showNoneSdkItem()
-    ExternalSystemJdkUtil.USE_PROJECT_JDK -> showProjectSdkItem()
-    else -> resolveSdkItem(jdkReference)
-  }
+  selectedItem = resolveSdkItem(jdkReference)
 }
 
-private fun SdkComboBox.resolveSdkItem(selectedJdkReference: String): SdkListItem {
+private fun SdkComboBox.resolveSdkItem(jdkReference: String?): SdkListItem {
+  if (jdkReference == null) return showNoneSdkItem()
+  if (jdkReference == USE_PROJECT_JDK) return showProjectSdkItem()
   try {
-    val selectedJdk = ExternalSystemJdkUtil.resolveJdkName(null, selectedJdkReference)
-    if (selectedJdk == null) return showInvalidSdkItem(selectedJdkReference)
+    val selectedJdk = ExternalSystemJdkUtil.resolveJdkName(null, jdkReference)
+    if (selectedJdk == null) return showInvalidSdkItem(jdkReference)
     return findSdkItem(selectedJdk) ?: addAndGetSdkItem(selectedJdk)
   }
   catch (ex: ExternalSystemJdkException) {
-    return showInvalidSdkItem(selectedJdkReference)
+    return showInvalidSdkItem(jdkReference)
   }
 }
 
@@ -48,3 +50,6 @@ private fun SdkComboBox.addAndGetSdkItem(sdk: Sdk): SdkListItem {
 private fun SdkComboBox.findSdkItem(sdk: Sdk): SdkListItem? {
   return model.listModel.findSdkItem(sdk)
 }
+
+@TestOnly
+fun resolveJdkReferenceInTests(item: SdkListItem?) = resolveJdkReference(item)

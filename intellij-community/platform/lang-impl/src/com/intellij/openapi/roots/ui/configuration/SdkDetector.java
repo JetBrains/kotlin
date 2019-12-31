@@ -2,6 +2,7 @@
 package com.intellij.openapi.roots.ui.configuration;
 
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
@@ -55,6 +56,17 @@ public class SdkDetector {
                                         @NotNull DetectedSdkListener listener) {
     ApplicationManager.getApplication().assertIsDispatchThread();
     if (!isDetectorEnabled()) {
+      return;
+    }
+
+    /*
+      TODO[jo] fix: deadlock in combobox tests on {@link SdkDetector#myPublicationLock}
+       detection must be called from edt {@link SdkDetector#getDetectedSdksWithUpdate}
+       detection is synchronous for unit tests {@link com.intellij.openapi.progress.impl.CoreProgressManager#run}
+     */
+    Application application = ApplicationManager.getApplication();
+    if (application.isUnitTestMode() || application.isHeadlessEnvironment()) {
+      LOG.warn("Sdks detection is skipped, because deadlock is coming for synchronous detection");
       return;
     }
 

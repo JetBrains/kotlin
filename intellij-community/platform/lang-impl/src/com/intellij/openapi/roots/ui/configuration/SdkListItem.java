@@ -121,19 +121,29 @@ public abstract class SdkListItem {
     }
   }
 
-  enum ActionRole {
+  public enum ActionRole {
     DOWNLOAD, ADD
   }
 
   public static final class ActionItem extends SdkListItem {
     @Nullable final GroupItem myGroup;
     @NotNull final ActionRole myRole;
-    @NotNull  final NewSdkAction myAction;
+    @NotNull final NewSdkAction myAction;
 
     ActionItem(@NotNull ActionRole role, @NotNull NewSdkAction action, @Nullable GroupItem group) {
       myRole = role;
       myAction = action;
       myGroup = group;
+    }
+
+    @NotNull
+    public ActionRole getRole() {
+      return myRole;
+    }
+
+    @NotNull
+    public NewSdkAction getAction() {
+      return myAction;
     }
 
     @NotNull
