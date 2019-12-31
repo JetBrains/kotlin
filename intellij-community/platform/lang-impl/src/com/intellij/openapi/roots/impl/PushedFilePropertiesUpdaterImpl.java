@@ -18,9 +18,7 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.util.ProgressWrapper;
 import com.intellij.openapi.project.*;
 import com.intellij.openapi.roots.*;
-import com.intellij.openapi.util.ClearableLazyValue;
-import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.EmptyRunnable;
+import com.intellij.openapi.util.*;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.events.*;
@@ -76,6 +74,7 @@ public final class PushedFilePropertiesUpdaterImpl extends PushedFilePropertiesU
         myFilePushers.drop();
       }
     }, project);
+    Disposer.register(project, myFilePushers::drop);
   }
 
   private void queueFullUpdate() {

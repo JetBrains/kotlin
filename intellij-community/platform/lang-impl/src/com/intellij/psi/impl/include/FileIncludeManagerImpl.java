@@ -3,6 +3,7 @@ package com.intellij.psi.impl.include;
 
 import com.intellij.openapi.fileTypes.FileTypes;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VfsUtilCore;
@@ -131,6 +132,7 @@ public final class FileIncludeManagerImpl extends FileIncludeManager {
       (p, d) -> { myProviderMap.remove(p.getId()); },
       project
     );
+    Disposer.register(project, myProviderMap::clear);
   }
 
   private void put(FileIncludeProvider provider) {
