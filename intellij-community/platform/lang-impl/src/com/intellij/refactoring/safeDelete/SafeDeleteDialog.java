@@ -45,7 +45,7 @@ public class SafeDeleteDialog extends DialogWrapper {
     myElements = elements;
     myCallback = callback;
     myDelegate = getDelegate();
-    setTitle(SafeDeleteHandler.getREFACTORING_NAME());
+    setTitle(SafeDeleteHandler.getRefactoringName());
     init();
   }
 

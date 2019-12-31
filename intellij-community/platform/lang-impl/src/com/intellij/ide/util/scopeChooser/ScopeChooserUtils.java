@@ -38,7 +38,7 @@ public class ScopeChooserUtils {
 
     if (scopeName == null) return GlobalSearchScope.EMPTY_SCOPE;
 
-    if (getOPEN_FILES_SCOPE_NAME().equals(scopeName)) {
+    if (getOpenFilesScopeName().equals(scopeName)) {
       return intersectWithContentScope(project, GlobalSearchScopes.openFilesScope(project));
     }
 
@@ -92,7 +92,7 @@ public class ScopeChooserUtils {
     return IdeBundle.message("scope.current.file");
   }
 
-  private static String getOPEN_FILES_SCOPE_NAME() {
+  private static String getOpenFilesScopeName() {
     return IdeBundle.message("scope.open.files");
   }
 }

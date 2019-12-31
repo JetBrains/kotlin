@@ -101,12 +101,12 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
 
     myStripTrailingSpacesCombo.addItem(getStripChanged());
     myStripTrailingSpacesCombo.addItem(getStripAll());
-    myStripTrailingSpacesCombo.addItem(getSTRIP_NONE());
+    myStripTrailingSpacesCombo.addItem(getStripNone());
 
     myStripTrailingSpacesCombo.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        myCbKeepTrailingSpacesOnCaretLine.setEnabled(!getSTRIP_NONE().equals(myStripTrailingSpacesCombo.getSelectedItem()));
+        myCbKeepTrailingSpacesOnCaretLine.setEnabled(!getStripNone().equals(myStripTrailingSpacesCombo.getSelectedItem()));
       }
     });
 
@@ -174,7 +174,7 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
 
     String stripTrailingSpaces = editorSettings.getStripTrailingSpaces();
     if(EditorSettingsExternalizable.STRIP_TRAILING_SPACES_NONE.equals(stripTrailingSpaces)) {
-      myStripTrailingSpacesCombo.setSelectedItem(getSTRIP_NONE());
+      myStripTrailingSpacesCombo.setSelectedItem(getStripNone());
     }
     else if (EditorSettingsExternalizable.STRIP_TRAILING_SPACES_CHANGED.equals(stripTrailingSpaces)) {
       myStripTrailingSpacesCombo.setSelectedItem(getStripChanged());
@@ -245,7 +245,7 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
 
     // Strip trailing spaces on save
 
-    if(getSTRIP_NONE().equals(myStripTrailingSpacesCombo.getSelectedItem())) {
+    if(getStripNone().equals(myStripTrailingSpacesCombo.getSelectedItem())) {
       editorSettings.setStripTrailingSpaces(EditorSettingsExternalizable.STRIP_TRAILING_SPACES_NONE);
     }
     else if(getStripChanged().equals(myStripTrailingSpacesCombo.getSelectedItem())){
@@ -451,7 +451,7 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
   @EditorSettingsExternalizable.StripTrailingSpaces
   private String getStripTrailingSpacesValue() {
     Object selectedItem = myStripTrailingSpacesCombo.getSelectedItem();
-    if(getSTRIP_NONE().equals(selectedItem)) {
+    if(getStripNone().equals(selectedItem)) {
       return EditorSettingsExternalizable.STRIP_TRAILING_SPACES_NONE;
     }
     if(getStripChanged().equals(selectedItem)){
@@ -521,7 +521,7 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
     return ApplicationBundle.message("combobox.strip.all");
   }
 
-  private static String getSTRIP_NONE() {
+  private static String getStripNone() {
     return ApplicationBundle.message("combobox.strip.none");
   }
 

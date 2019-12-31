@@ -35,8 +35,8 @@ public class SafeDeleteHandler implements RefactoringActionHandler {
     editor.getScrollingModel().scrollToCaret(ScrollType.MAKE_VISIBLE);
     if (element == null || !SafeDeleteProcessor.validElement(element)) {
       String message = RefactoringBundle.getCannotRefactorMessage(RefactoringBundle.message("is.not.supported.in.the.current.context",
-                                                                                            getREFACTORING_NAME()));
-      CommonRefactoringUtil.showErrorHint(project, editor, message, getREFACTORING_NAME(), "refactoring.safeDelete");
+                                                                                            getRefactoringName()));
+      CommonRefactoringUtil.showErrorHint(project, editor, message, getRefactoringName(), "refactoring.safeDelete");
       return;
     }
     invoke(project, new PsiElement[]{element}, dataContext);
@@ -131,7 +131,7 @@ public class SafeDeleteHandler implements RefactoringActionHandler {
     }
   }
 
-  public static String getREFACTORING_NAME() {
+  public static String getRefactoringName() {
     return RefactoringBundle.message("safe.delete.title");
   }
 }

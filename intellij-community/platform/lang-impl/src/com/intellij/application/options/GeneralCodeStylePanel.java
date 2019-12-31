@@ -99,7 +99,7 @@ public class GeneralCodeStylePanel extends CodeStyleAbstractPanel {
     //noinspection unchecked
     myLineSeparatorCombo.addItem(getUnixString());
     //noinspection unchecked
-    myLineSeparatorCombo.addItem(getWINDOWS_STRING());
+    myLineSeparatorCombo.addItem(getWindowsString());
     //noinspection unchecked
     myLineSeparatorCombo.addItem(getMACINTOSH_STRING());
     addPanelToWatch(myPanel);
@@ -227,7 +227,7 @@ public class GeneralCodeStylePanel extends CodeStyleAbstractPanel {
     if (getMACINTOSH_STRING().equals(myLineSeparatorCombo.getSelectedItem())) {
       return "\r";
     }
-    if (getWINDOWS_STRING().equals(myLineSeparatorCombo.getSelectedItem())) {
+    if (getWindowsString().equals(myLineSeparatorCombo.getSelectedItem())) {
       return "\r\n";
     }
     return null;
@@ -284,7 +284,7 @@ public class GeneralCodeStylePanel extends CodeStyleAbstractPanel {
       myLineSeparatorCombo.setSelectedItem(getUnixString());
     }
     else if ("\r\n".equals(lineSeparator)) {
-      myLineSeparatorCombo.setSelectedItem(getWINDOWS_STRING());
+      myLineSeparatorCombo.setSelectedItem(getWindowsString());
     }
     else if ("\r".equals(lineSeparator)) {
       myLineSeparatorCombo.setSelectedItem(getMACINTOSH_STRING());
@@ -365,7 +365,7 @@ public class GeneralCodeStylePanel extends CodeStyleAbstractPanel {
     return ApplicationBundle.message("combobox.crlf.unix");
   }
 
-  private static String getWINDOWS_STRING() {
+  private static String getWindowsString() {
     return ApplicationBundle.message("combobox.crlf.windows");
   }
 

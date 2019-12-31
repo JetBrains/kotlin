@@ -123,7 +123,7 @@ public class RunAnythingUtil {
     return IdeBundle.message("run.anything.ad.command.delete", KeymapUtil.getShortcutText(KeyboardShortcut.fromString("shift BACK_SPACE")));
   }
 
-  public static String getAD_CONTEXT_TEXT() {
+  public static String getAdContextText() {
     return IdeBundle.message("run.anything.ad.run.in.context", KeymapUtil.getShortcutText(KeyboardShortcut.fromString("pressed ALT")));
   }
 }

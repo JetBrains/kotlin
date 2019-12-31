@@ -47,7 +47,7 @@ public abstract class RunAnythingRunConfigurationProvider extends RunAnythingPro
   @Nullable
   @Override
   public String getAdText() {
-    return RunAnythingUtil.getAD_CONTEXT_TEXT() + ", " + RunAnythingUtil.getAdDebugText();
+    return RunAnythingUtil.getAdContextText() + ", " + RunAnythingUtil.getAdDebugText();
   }
 
   @NotNull

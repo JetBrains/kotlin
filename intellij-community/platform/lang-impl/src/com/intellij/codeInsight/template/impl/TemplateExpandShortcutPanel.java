@@ -60,7 +60,7 @@ public class TemplateExpandShortcutPanel extends JPanel {
         myOpenKeymapLabel.setVisible(myExpandByCombo.getSelectedItem() == getCUSTOM());
       }
     });
-    for (String s : ContainerUtil.ar(getSpace(), getTAB(), getENTER(), getCUSTOM())) {
+    for (String s : ContainerUtil.ar(getSpace(), getTab(), getENTER(), getCUSTOM())) {
       myExpandByCombo.addItem(s);
     }
     myExpandByCombo.setRenderer(SimpleListCellRenderer.create("", value -> {
@@ -121,14 +121,14 @@ public class TemplateExpandShortcutPanel extends JPanel {
 
   public void setSelectedChar(char ch) {
     myExpandByCombo.setSelectedItem(ch == TemplateSettings.CUSTOM_CHAR ? getCUSTOM() :
-                                    ch == TemplateSettings.TAB_CHAR ? getTAB() :
+                                    ch == TemplateSettings.TAB_CHAR ? getTab() :
                                     ch == TemplateSettings.ENTER_CHAR ? getENTER() :
                                     getSpace());
   }
 
   public char getSelectedChar() {
     Object selectedItem = myExpandByCombo.getSelectedItem();
-    if (getTAB().equals(selectedItem)) return TemplateSettings.TAB_CHAR;
+    if (getTab().equals(selectedItem)) return TemplateSettings.TAB_CHAR;
     if (getENTER().equals(selectedItem)) return TemplateSettings.ENTER_CHAR;
     if (getSpace().equals(selectedItem)) {
       return TemplateSettings.SPACE_CHAR;
@@ -149,7 +149,7 @@ public class TemplateExpandShortcutPanel extends JPanel {
     return CodeInsightBundle.message("template.shortcut.space");
   }
 
-  private static String getTAB() {
+  private static String getTab() {
     return CodeInsightBundle.message("template.shortcut.tab");
   }
 

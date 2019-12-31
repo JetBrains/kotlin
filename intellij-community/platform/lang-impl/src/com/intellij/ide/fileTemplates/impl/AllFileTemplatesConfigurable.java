@@ -193,7 +193,7 @@ public final class AllFileTemplatesConfigurable implements SearchableConfigurabl
         onListSelectionChanged();
       }
     };
-    myCodeTemplatesList = new FileTemplateTabAsList(getCODE_TITLE()) {
+    myCodeTemplatesList = new FileTemplateTabAsList(getCodeTitle()) {
       @Override
       public void onTemplateSelected() {
         onListSelectionChanged();
@@ -442,7 +442,7 @@ public final class AllFileTemplatesConfigurable implements SearchableConfigurabl
     if (Comparing.strEqual(templateTabTitle, getTemplatesTitle())) {
       return isInternalTemplateName(templateName);
     }
-    if (Comparing.strEqual(templateTabTitle, getCODE_TITLE())) {
+    if (Comparing.strEqual(templateTabTitle, getCodeTitle())) {
       return true;
     }
     if (Comparing.strEqual(templateTabTitle, getOTHER_TITLE())) {
@@ -792,7 +792,7 @@ public final class AllFileTemplatesConfigurable implements SearchableConfigurabl
     return IdeBundle.message("tab.filetemplates.includes");
   }
 
-  private static String getCODE_TITLE() {
+  private static String getCodeTitle() {
     return IdeBundle.message("tab.filetemplates.code");
   }
 
