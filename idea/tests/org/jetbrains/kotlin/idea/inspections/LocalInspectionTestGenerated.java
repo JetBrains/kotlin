@@ -6758,19 +6758,29 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/redundantCompanionReference/javaFakeGetter.kt");
         }
 
-        @TestMetadata("javaFakeSetter.kt")
-        public void testJavaFakeSetter() throws Exception {
-            runTest("idea/testData/inspectionsLocal/redundantCompanionReference/javaFakeSetter.kt");
-        }
-
         @TestMetadata("javaGetter.kt")
         public void testJavaGetter() throws Exception {
             runTest("idea/testData/inspectionsLocal/redundantCompanionReference/javaGetter.kt");
         }
 
+        @TestMetadata("javaGetter2.kt")
+        public void testJavaGetter2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantCompanionReference/javaGetter2.kt");
+        }
+
         @TestMetadata("javaSetter.kt")
         public void testJavaSetter() throws Exception {
             runTest("idea/testData/inspectionsLocal/redundantCompanionReference/javaSetter.kt");
+        }
+
+        @TestMetadata("javaSetterWithoutGetter.kt")
+        public void testJavaSetterWithoutGetter() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantCompanionReference/javaSetterWithoutGetter.kt");
+        }
+
+        @TestMetadata("kotlinGetter.kt")
+        public void testKotlinGetter() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantCompanionReference/kotlinGetter.kt");
         }
 
         @TestMetadata("methodArgument.kt")

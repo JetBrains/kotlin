@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperInterfaces
 import org.jetbrains.kotlin.resolve.scopes.utils.findFunction
 import org.jetbrains.kotlin.resolve.scopes.utils.findVariable
-import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 
 class RedundantCompanionReferenceInspection : AbstractKotlinInspection() {
@@ -72,15 +71,8 @@ class RedundantCompanionReferenceInspection : AbstractKotlinInspection() {
                     val type = selectorDescriptor.type
                     val javaGetter = containingClassDescriptor.findMemberFunction(
                         Name.identifier(JvmAbi.getterName(name.asString()))
-                    ) as? JavaMethodDescriptor
+                    )?.takeIf { f -> f is JavaMethodDescriptor || f.overriddenDescriptors.any { it is JavaMethodDescriptor } }
                     if (javaGetter?.valueParameters?.isEmpty() == true && javaGetter.returnType?.makeNotNullable() == type) return false
-
-                    val javaSetter = containingClassDescriptor.findMemberFunction(
-                        Name.identifier(JvmAbi.setterName(name.asString()))
-                    ) as? JavaMethodDescriptor
-                    if (javaSetter?.valueParameters?.singleOrNull()?.type?.makeNotNullable() == type
-                        && javaSetter.returnType?.makeNotNullable()?.isUnit() == true
-                    ) return false
 
                     val variable = reference.getResolutionScope().findVariable(name, NoLookupLocation.FROM_IDE)
                     if (variable != null && variable.isLocalOrExtension(containingClassDescriptor)) return false
