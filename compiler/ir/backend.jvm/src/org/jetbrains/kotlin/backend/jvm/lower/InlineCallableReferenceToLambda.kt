@@ -172,9 +172,9 @@ internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendConte
             +IrFunctionReferenceImpl(
                 expression.startOffset,
                 expression.endOffset,
-                referencedFunction.returnType,
+                function.returnType,
                 function.symbol,
-                referencedFunction.typeParameters.size,
+                function.typeParameters.size,
                 IrStatementOrigin.LAMBDA
             ).apply {
                 copyAttributes(expression)
