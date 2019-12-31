@@ -76,6 +76,7 @@ import java.util.function.Supplier;
 import static com.intellij.openapi.externalSystem.service.ui.ExternalSystemJdkComboBoxUtil.getSelectedJdkReference;
 import static com.intellij.openapi.externalSystem.service.ui.ExternalSystemJdkComboBoxUtil.setSelectedJdkReference;
 import static com.intellij.openapi.externalSystem.util.ExternalSystemUiUtil.INSETS;
+import static com.intellij.openapi.roots.ui.configuration.SdkComboBoxModel.createJdkComboBoxModel;
 import static com.intellij.openapi.roots.ui.configuration.SdkComboBoxModel.createSdkComboBoxModel;
 
 /**
@@ -727,11 +728,7 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
     if (myGradleJdkComboBox != null) {
       myGradleJdkComboBoxWrapper.remove(myGradleJdkComboBox);
     }
-    Predicate<SdkTypeId> sdkTypeFilter = it -> ExternalSystemJdkUtil.getJavaSdkType().equals(it);
-    Supplier<Boolean> allIsSimpleSdk = () -> Arrays.stream(SdkType.getAllTypes()).allMatch(it -> it instanceof SimpleJavaSdkType);
-    Predicate<SdkTypeId> sdkTypeCreationFilter = it -> !(it instanceof SimpleJavaSdkType) || allIsSimpleSdk.get();
-    Predicate<Sdk> sdkFilter = it -> ExternalSystemJdkUtil.isValidJdk(it);
-    myGradleJdkComboBox = new SdkComboBox(createSdkComboBoxModel(project, sdksModel, sdkTypeFilter, sdkTypeCreationFilter, sdkFilter));
+    myGradleJdkComboBox = new SdkComboBox(createJdkComboBoxModel(project, sdksModel));
     myGradleJdkComboBoxWrapper.add(myGradleJdkComboBox, BorderLayout.CENTER);
   }
 
