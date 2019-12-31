@@ -75,7 +75,7 @@ public abstract class RunAnythingCommandProvider extends RunAnythingProviderBase
   @Nullable
   @Override
   public String getAdText() {
-    return getAD_CONTEXT_TEXT() + ", " + getAdDebugText() + ", " + getAD_DELETE_COMMAND_TEXT();
+    return getAD_CONTEXT_TEXT() + ", " + getAdDebugText() + ", " + getAdDeleteCommandText();
   }
 
   @NotNull

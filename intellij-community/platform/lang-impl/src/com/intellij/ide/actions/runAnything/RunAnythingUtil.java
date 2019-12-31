@@ -119,7 +119,7 @@ public class RunAnythingUtil {
     return IdeBundle.message("run.anything.ad.run.with.debug", SHIFT_SHORTCUT_TEXT);
   }
 
-  public static String getAD_DELETE_COMMAND_TEXT() {
+  public static String getAdDeleteCommandText() {
     return IdeBundle.message("run.anything.ad.command.delete", KeymapUtil.getShortcutText(KeyboardShortcut.fromString("shift BACK_SPACE")));
   }
 

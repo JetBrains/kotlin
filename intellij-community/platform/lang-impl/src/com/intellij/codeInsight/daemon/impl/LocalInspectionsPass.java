@@ -80,7 +80,7 @@ public class LocalInspectionsPass extends ProgressableTextEditorHighlightingPass
                               @NotNull TextRange priorityRange,
                               boolean ignoreSuppressed,
                               @NotNull HighlightInfoProcessor highlightInfoProcessor, boolean inspectInjectedPsi) {
-    super(file.getProject(), document, getPRESENTABLE_NAME(), file, null, new TextRange(startOffset, endOffset), true, highlightInfoProcessor);
+    super(file.getProject(), document, getCollectingDataMessage(), file, null, new TextRange(startOffset, endOffset), true, highlightInfoProcessor);
     assert file.isPhysical() : "can't inspect non-physical file: " + file + "; " + file.getVirtualFile();
     myPriorityRange = priorityRange;
     myIgnoreSuppressed = ignoreSuppressed;
@@ -830,7 +830,7 @@ public class LocalInspectionsPass extends ProgressableTextEditorHighlightingPass
     }
   }
 
-  private static String getPRESENTABLE_NAME() {
+  private static String getCollectingDataMessage() {
     return DaemonBundle.message("pass.inspection");
   }
 }

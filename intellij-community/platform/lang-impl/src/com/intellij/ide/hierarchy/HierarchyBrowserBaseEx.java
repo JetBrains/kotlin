@@ -59,7 +59,7 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
   private static final Logger LOG = Logger.getInstance(HierarchyBrowserBaseEx.class);
 
   /**
-   * Use {code {@link #getSCOPE_PROJECT()}} instead
+   * Use {code {@link #getScopeProject()}} instead
    */
   @Deprecated
   public static final String SCOPE_PROJECT = "Production";
@@ -709,7 +709,7 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
   @NotNull
   private Collection<String> getValidScopeNames() {
     List<String> result = new ArrayList<>();
-    result.add(getSCOPE_PROJECT());
+    result.add(getScopeProject());
     result.add(getSCOPE_TEST());
     result.add(getSCOPE_ALL());
     result.add(getSCOPE_CLASS());
@@ -801,7 +801,7 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
     }
   }
 
-  public static String getSCOPE_PROJECT() {
+  public static String getScopeProject() {
     return IdeBundle.message("hierarchy.scope.project");
   }
 

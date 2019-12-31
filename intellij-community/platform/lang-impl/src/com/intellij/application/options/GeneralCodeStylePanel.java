@@ -97,7 +97,7 @@ public class GeneralCodeStylePanel extends CodeStyleAbstractPanel {
     //noinspection unchecked
     myLineSeparatorCombo.addItem(getSystemDependantString());
     //noinspection unchecked
-    myLineSeparatorCombo.addItem(getUNIX_STRING());
+    myLineSeparatorCombo.addItem(getUnixString());
     //noinspection unchecked
     myLineSeparatorCombo.addItem(getWINDOWS_STRING());
     //noinspection unchecked
@@ -221,7 +221,7 @@ public class GeneralCodeStylePanel extends CodeStyleAbstractPanel {
 
   @Nullable
   private String getSelectedLineSeparator() {
-    if (getUNIX_STRING().equals(myLineSeparatorCombo.getSelectedItem())) {
+    if (getUnixString().equals(myLineSeparatorCombo.getSelectedItem())) {
       return "\n";
     }
     if (getMACINTOSH_STRING().equals(myLineSeparatorCombo.getSelectedItem())) {
@@ -281,7 +281,7 @@ public class GeneralCodeStylePanel extends CodeStyleAbstractPanel {
 
     String lineSeparator = settings.LINE_SEPARATOR;
     if ("\n".equals(lineSeparator)) {
-      myLineSeparatorCombo.setSelectedItem(getUNIX_STRING());
+      myLineSeparatorCombo.setSelectedItem(getUnixString());
     }
     else if ("\r\n".equals(lineSeparator)) {
       myLineSeparatorCombo.setSelectedItem(getWINDOWS_STRING());
@@ -361,7 +361,7 @@ public class GeneralCodeStylePanel extends CodeStyleAbstractPanel {
     return ApplicationBundle.message("combobox.crlf.system.dependent");
   }
 
-  private static String getUNIX_STRING() {
+  private static String getUnixString() {
     return ApplicationBundle.message("combobox.crlf.unix");
   }
 

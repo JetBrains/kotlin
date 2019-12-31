@@ -139,7 +139,7 @@ public abstract class HierarchyTreeStructure extends AbstractTreeStructure {
     if (HierarchyBrowserBaseEx.getSCOPE_CLASS().equals(scopeType)) {
       searchScope = new LocalSearchScope(thisClass);
     }
-    else if (HierarchyBrowserBaseEx.getSCOPE_PROJECT().equals(scopeType)) {
+    else if (HierarchyBrowserBaseEx.getScopeProject().equals(scopeType)) {
       searchScope = GlobalSearchScopesCore.projectProductionScope(myProject);
     }
     else if (HierarchyBrowserBaseEx.getSCOPE_TEST().equals(scopeType)) {
@@ -157,7 +157,7 @@ public abstract class HierarchyTreeStructure extends AbstractTreeStructure {
     if (HierarchyBrowserBaseEx.getSCOPE_CLASS().equals(scopeType)) {
       return PsiTreeUtil.isAncestor(baseClass, srcElement, true);
     }
-    if (HierarchyBrowserBaseEx.getSCOPE_PROJECT().equals(scopeType)) {
+    if (HierarchyBrowserBaseEx.getScopeProject().equals(scopeType)) {
       final VirtualFile virtualFile = srcElement.getContainingFile().getVirtualFile();
       return virtualFile == null || !TestSourcesFilter.isTestSources(virtualFile, myProject);
     }

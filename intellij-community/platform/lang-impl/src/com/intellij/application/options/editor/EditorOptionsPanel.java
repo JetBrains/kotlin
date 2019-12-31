@@ -100,7 +100,7 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
     mySoftWrapFileMasks.getEmptyText().setText(ApplicationBundle.message("soft.wraps.file.masks.empty.text"));
 
     myStripTrailingSpacesCombo.addItem(getStripChanged());
-    myStripTrailingSpacesCombo.addItem(getSTRIP_ALL());
+    myStripTrailingSpacesCombo.addItem(getStripAll());
     myStripTrailingSpacesCombo.addItem(getSTRIP_NONE());
 
     myStripTrailingSpacesCombo.addActionListener(new ActionListener() {
@@ -180,7 +180,7 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
       myStripTrailingSpacesCombo.setSelectedItem(getStripChanged());
     }
     else if (EditorSettingsExternalizable.STRIP_TRAILING_SPACES_WHOLE.equals(stripTrailingSpaces)) {
-      myStripTrailingSpacesCombo.setSelectedItem(getSTRIP_ALL());
+      myStripTrailingSpacesCombo.setSelectedItem(getStripAll());
     }
     myCbKeepTrailingSpacesOnCaretLine.setSelected(editorSettings.isKeepTrailingSpacesOnCaretLine());
 
@@ -517,7 +517,7 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
     return ApplicationBundle.message("combobox.strip.modified.lines");
   }
 
-  private static String getSTRIP_ALL() {
+  private static String getStripAll() {
     return ApplicationBundle.message("combobox.strip.all");
   }
 

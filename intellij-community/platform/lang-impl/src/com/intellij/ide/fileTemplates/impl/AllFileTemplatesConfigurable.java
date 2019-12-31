@@ -187,7 +187,7 @@ public final class AllFileTemplatesConfigurable implements SearchableConfigurabl
         onListSelectionChanged();
       }
     };
-    myIncludesList = new FileTemplateTabAsList(getINCLUDES_TITLE()) {
+    myIncludesList = new FileTemplateTabAsList(getIncludesTitle()) {
       @Override
       public void onTemplateSelected() {
         onListSelectionChanged();
@@ -448,7 +448,7 @@ public final class AllFileTemplatesConfigurable implements SearchableConfigurabl
     if (Comparing.strEqual(templateTabTitle, getOTHER_TITLE())) {
       return true;
     }
-    if (Comparing.strEqual(templateTabTitle, getINCLUDES_TITLE())) {
+    if (Comparing.strEqual(templateTabTitle, getIncludesTitle())) {
       return Comparing.strEqual(templateName, FileTemplateManager.FILE_HEADER_TEMPLATE_NAME);
     }
     return false;
@@ -788,7 +788,7 @@ public final class AllFileTemplatesConfigurable implements SearchableConfigurabl
     return IdeBundle.message("tab.filetemplates.templates");
   }
 
-  private static String getINCLUDES_TITLE() {
+  private static String getIncludesTitle() {
     return IdeBundle.message("tab.filetemplates.includes");
   }
 

@@ -32,7 +32,7 @@ import java.util.Map;
 
 public abstract class TypeHierarchyBrowserBase extends HierarchyBrowserBaseEx {
   /**
-   * Use {code {@link #getTYPE_HIERARCHY_TYPE()}} instead
+   * Use {code {@link #getTypeHierarchyType()}} instead
    */
   @Deprecated
   public static final String TYPE_HIERARCHY_TYPE = "Class {0}";
@@ -72,7 +72,7 @@ public abstract class TypeHierarchyBrowserBase extends HierarchyBrowserBaseEx {
     PopupHandler.installPopupHandler(tree1, group, ActionPlaces.TYPE_HIERARCHY_VIEW_POPUP, ActionManager.getInstance());
     baseOnThisTypeAction
       .registerCustomShortcutSet(ActionManager.getInstance().getAction(IdeActions.ACTION_TYPE_HIERARCHY).getShortcutSet(), tree1);
-    trees.put(getTYPE_HIERARCHY_TYPE(), tree1);
+    trees.put(getTypeHierarchyType(), tree1);
 
     final JTree tree2 = createTree(true);
     PopupHandler.installPopupHandler(tree2, group, ActionPlaces.TYPE_HIERARCHY_VIEW_POPUP, ActionManager.getInstance());
@@ -181,7 +181,7 @@ public abstract class TypeHierarchyBrowserBase extends HierarchyBrowserBaseEx {
 
     @Override
     protected String correctViewType(@NotNull HierarchyBrowserBaseEx browser, String viewType) {
-      if (((TypeHierarchyBrowserBase)browser).myIsInterface && getTYPE_HIERARCHY_TYPE().equals(viewType)) {
+      if (((TypeHierarchyBrowserBase)browser).myIsInterface && getTypeHierarchyType().equals(viewType)) {
         return getSUBTYPES_HIERARCHY_TYPE();
       }
       return viewType;
@@ -189,7 +189,7 @@ public abstract class TypeHierarchyBrowserBase extends HierarchyBrowserBaseEx {
   }
 
   @SuppressWarnings("UnresolvedPropertyKey")
-  public static String getTYPE_HIERARCHY_TYPE() {
+  public static String getTypeHierarchyType() {
     return IdeBundle.message("title.hierarchy.class");
   }
 
