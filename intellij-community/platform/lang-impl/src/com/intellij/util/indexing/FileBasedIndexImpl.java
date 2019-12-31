@@ -22,7 +22,8 @@ import com.intellij.openapi.editor.impl.EditorHighlighterCache;
 import com.intellij.openapi.extensions.impl.ExtensionPointImpl;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileDocumentManagerListener;
-import com.intellij.openapi.fileTypes.*;
+import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.fileTypes.impl.FileTypeManagerImpl;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -56,7 +57,10 @@ import com.intellij.psi.impl.cache.impl.id.PlatformIdTableBuilding;
 import com.intellij.psi.impl.source.PsiFileImpl;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.SerializationManagerEx;
-import com.intellij.util.*;
+import com.intellij.util.ConcurrencyUtil;
+import com.intellij.util.Processor;
+import com.intellij.util.SmartFMap;
+import com.intellij.util.SystemProperties;
 import com.intellij.util.concurrency.BoundedTaskExecutor;
 import com.intellij.util.concurrency.SequentialTaskExecutor;
 import com.intellij.util.containers.ContainerUtil;
@@ -64,6 +68,7 @@ import com.intellij.util.containers.IntObjectMap;
 import com.intellij.util.gist.GistManager;
 import com.intellij.util.indexing.hash.FileContentHashIndex;
 import com.intellij.util.indexing.hash.FileContentHashIndexExtension;
+import com.intellij.util.indexing.hash.MergedInvertedIndex;
 import com.intellij.util.indexing.provided.ProvidedIndexExtension;
 import com.intellij.util.indexing.provided.ProvidedIndexExtensionLocator;
 import com.intellij.util.indexing.snapshot.IndexedHashesSupport;
@@ -382,7 +387,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
             Path[] paths = ContainerUtil.map2Array(providedExtensions, Path.class, ex -> ex.getIndexPath());
             FileContentHashIndex contentHashIndex = ((FileBasedIndexImpl)FileBasedIndex.getInstance()).getFileContentHashIndex(paths, state);
 
-            index = ProvidedIndexExtension.wrapWithProvidedIndex(providedExtensions, extension, index, contentHashIndex);
+            index = MergedInvertedIndex.wrapWithProvidedIndex(providedExtensions, extension, index, contentHashIndex);
           }
         }
 

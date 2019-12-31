@@ -203,7 +203,7 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
                   .map(ex -> ((StubProvidedIndexExtension)ex).findProvidedStubIndex(extension))
                   .collect(Collectors.toList());
           if (!providedIndexExtensions.isEmpty()) {
-            index = ProvidedIndexExtension.wrapWithProvidedIndex(providedIndexExtensions, wrappedExtension, index, ((MergedInvertedIndex<Integer, SerializedStubTree>)stubUpdatingIndex).getHashIndex());
+            index = MergedInvertedIndex.wrapWithProvidedIndex(providedIndexExtensions, wrappedExtension, index, ((MergedInvertedIndex<Integer, SerializedStubTree>)stubUpdatingIndex).getHashIndex());
           }
         }
 

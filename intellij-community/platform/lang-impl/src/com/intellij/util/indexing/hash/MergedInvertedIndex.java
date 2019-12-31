@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.util.indexing.hash;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Computable;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.Processor;
@@ -19,11 +20,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.stream.Stream;
 
 public class MergedInvertedIndex<Key, Value> implements UpdatableIndex<Key, Value, FileContent> {
+
+  private static final Logger LOG = Logger.getInstance(MergedInvertedIndex.class);
+
   @NotNull
   private final HashBasedMapReduceIndex<Key, Value>[] myProvidedIndexes;
   @NotNull
@@ -32,17 +35,22 @@ public class MergedInvertedIndex<Key, Value> implements UpdatableIndex<Key, Valu
   public final UpdatableIndex<Key, Value, FileContent> myBaseIndex;
 
   @NotNull
-  public static <Key, Value> MergedInvertedIndex<Key, Value> create(@NotNull List<ProvidedIndexExtension<Key, Value>> providedExtensions,
-                                                                    @NotNull FileBasedIndexExtension<Key, Value> originalExtension,
-                                                                    @NotNull UpdatableIndex<Key, Value, FileContent> baseIndex,
-                                                                    @NotNull FileContentHashIndex contentHashIndex) throws IOException {
-    HashBasedMapReduceIndex<Key, Value>[] providedIndexes = new HashBasedMapReduceIndex[providedExtensions.size()];
-    for (int i = 0; i < providedExtensions.size(); i++) {
-      ProvidedIndexExtension<Key, Value> extension = providedExtensions.get(i);
-      providedIndexes[i] = extension != null && Files.exists(extension.getIndexPath()) ? HashBasedMapReduceIndex.create(extension, originalExtension, contentHashIndex, i) : null;
+  public static <K, V> UpdatableIndex<K, V, FileContent> wrapWithProvidedIndex(@NotNull List<ProvidedIndexExtension<K, V>> providedIndexExtensions,
+                                                                               @NotNull FileBasedIndexExtension<K, V> originalExtension,
+                                                                               @NotNull UpdatableIndex<K, V, FileContent> baseIndex,
+                                                                               @NotNull FileContentHashIndex contentHashIndex) {
+    try {
+      HashBasedMapReduceIndex[] providedIndexes = new HashBasedMapReduceIndex[providedIndexExtensions.size()];
+      for (int i = 0; i < providedIndexExtensions.size(); i++) {
+        ProvidedIndexExtension<K, V> extension = providedIndexExtensions.get(i);
+        providedIndexes[i] = extension != null && Files.exists(extension.getIndexPath()) ? HashBasedMapReduceIndex.create(extension, originalExtension, contentHashIndex, i) : null;
+      }
+      return new MergedInvertedIndex<>(providedIndexes, contentHashIndex, baseIndex);
     }
-
-    return new MergedInvertedIndex<>(providedIndexes, contentHashIndex, baseIndex);
+    catch (IOException e) {
+      LOG.error(e);
+      return baseIndex;
+    }
   }
 
   public MergedInvertedIndex(@NotNull HashBasedMapReduceIndex<Key, Value>[] indexes,
