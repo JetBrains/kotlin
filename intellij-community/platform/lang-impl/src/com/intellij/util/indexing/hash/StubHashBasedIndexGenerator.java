@@ -1,5 +1,5 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.jetbrains.index.stubs;
+package com.intellij.util.indexing.hash;
 
 import com.google.common.collect.Maps;
 import com.intellij.openapi.application.PathManager;
@@ -9,7 +9,6 @@ import com.intellij.psi.stubs.*;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileBasedIndexExtension;
 import com.intellij.util.indexing.StorageException;
-import com.intellij.util.indexing.hash.HashBasedIndexGenerator;
 import com.intellij.util.indexing.impl.EmptyInputDataDiffBuilder;
 import com.intellij.util.indexing.impl.InputData;
 import com.intellij.util.indexing.impl.MapReduceIndex;
