@@ -1,0 +1,31 @@
+FILE fqName:<root> fileName:/genericSamProjectedOut.kt
+  FUN name:test visibility:public modality:FINAL <> (a:example.SomeJavaClass<out kotlin.String>) returnType:kotlin.Unit
+    VALUE_PARAMETER name:a index:0 type:example.SomeJavaClass<out kotlin.String>
+    BLOCK_BODY
+      CALL 'public open fun someFunction (hello: example.Hello<A of example.SomeJavaClass?>?): kotlin.Unit declared in example.SomeJavaClass' type=kotlin.Unit origin=null
+        $this: GET_VAR 'a: example.SomeJavaClass<out kotlin.String> declared in <root>.test' type=example.SomeJavaClass<out kotlin.String> origin=null
+        hello: TYPE_OP type=example.Hello<kotlin.Nothing>? origin=SAM_CONVERSION typeOperand=example.Hello<kotlin.Nothing>?
+          FUN_EXPR type=kotlin.Function1<kotlin.String?, kotlin.Unit> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.String?) returnType:kotlin.Unit
+              VALUE_PARAMETER name:it index:0 type:kotlin.String?
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.String?): kotlin.Unit declared in <root>.test'
+                  GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+      CALL 'public open fun plus (hello: example.Hello<A of example.SomeJavaClass?>?): kotlin.Unit [operator] declared in example.SomeJavaClass' type=kotlin.Unit origin=PLUS
+        $this: GET_VAR 'a: example.SomeJavaClass<out kotlin.String> declared in <root>.test' type=example.SomeJavaClass<out kotlin.String> origin=null
+        hello: TYPE_OP type=example.Hello<kotlin.Nothing>? origin=SAM_CONVERSION typeOperand=example.Hello<kotlin.Nothing>?
+          FUN_EXPR type=kotlin.Function1<kotlin.String?, kotlin.Unit> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.String?) returnType:kotlin.Unit
+              VALUE_PARAMETER name:it index:0 type:kotlin.String?
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.String?): kotlin.Unit declared in <root>.test'
+                  GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+      CALL 'public open fun get (hello: example.Hello<A of example.SomeJavaClass?>?): kotlin.Unit [operator] declared in example.SomeJavaClass' type=kotlin.Unit origin=GET_ARRAY_ELEMENT
+        $this: GET_VAR 'a: example.SomeJavaClass<out kotlin.String> declared in <root>.test' type=example.SomeJavaClass<out kotlin.String> origin=null
+        hello: TYPE_OP type=example.Hello<kotlin.Nothing>? origin=SAM_CONVERSION typeOperand=example.Hello<kotlin.Nothing>?
+          FUN_EXPR type=kotlin.Function1<kotlin.String?, kotlin.Unit> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.String?) returnType:kotlin.Unit
+              VALUE_PARAMETER name:it index:0 type:kotlin.String?
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.String?): kotlin.Unit declared in <root>.test'
+                  GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit

@@ -121,10 +121,22 @@ internal class InsertImplicitCasts(
             for (index in substitutedDescriptor.valueParameters.indices) {
                 val argument = getValueArgument(index) ?: continue
                 val parameterType = substitutedDescriptor.valueParameters[index].type
-                putValueArgument(index, argument.cast(parameterType))
+
+                // Hack to support SAM conversions on out-projected types.
+                // See SamType#createByValueParameter and genericSamProjectedOut.kt for more details.
+                val expectedType =
+                    if (argument.isSamConversion() && KotlinBuiltIns.isNothing(parameterType))
+                        substitutedDescriptor.original.valueParameters[index].type.replaceArgumentsWithNothing()
+                    else
+                        parameterType
+
+                putValueArgument(index, argument.cast(expectedType))
             }
         }
     }
+
+    private fun IrExpression.isSamConversion(): Boolean =
+        this is IrTypeOperatorCall && operator == IrTypeOperator.SAM_CONVERSION
 
     override fun visitBlockBody(body: IrBlockBody): IrBody =
         body.transformPostfix {

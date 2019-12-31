@@ -405,8 +405,10 @@ private fun StatementGenerator.pregenerateValueArguments(call: CallBuilder, reso
 }
 
 fun StatementGenerator.generateSamConversionForValueArgumentsIfRequired(call: CallBuilder, resolvedCall: ResolvedCall<*>) {
+    val samConversion = context.extensions.samConversion
+
     val originalDescriptor = resolvedCall.resultingDescriptor
-    val underlyingDescriptor = context.extensions.samConversion.getOriginalForSamAdapter(originalDescriptor) ?: originalDescriptor
+    val underlyingDescriptor = samConversion.getOriginalForSamAdapter(originalDescriptor) ?: originalDescriptor
 
     val originalValueParameters = originalDescriptor.valueParameters
     val underlyingValueParameters = underlyingDescriptor.valueParameters
@@ -432,34 +434,38 @@ fun StatementGenerator.generateSamConversionForValueArgumentsIfRequired(call: Ca
     val typeSubstitutor = TypeSubstitutor.create(substitutionContext)
 
     for (i in underlyingValueParameters.indices) {
-        val underlyingParameterType = underlyingValueParameters[i].type
+        val underlyingValueParameter = underlyingValueParameters[i]
+        val originalUnderlyingParameterType = underlyingValueParameter.original.type
 
         if (partialSamConversionIsSupported && resolvedCall is NewResolvedCallImpl<*>) {
             // TODO support SAM conversion of varargs
             val argument = resolvedCall.valueArguments[originalValueParameters[i]]?.arguments?.singleOrNull() ?: continue
-            if (resolvedCall.getExpectedTypeForSamConvertedArgument(argument) == null) continue
+            resolvedCall.getExpectedTypeForSamConvertedArgument(argument) ?: continue
         } else {
-            if (!context.extensions.samConversion.isSamType(underlyingParameterType)) continue
+            if (!context.extensions.samConversion.isSamType(originalUnderlyingParameterType)) continue
             if (!originalValueParameters[i].type.isFunctionTypeOrSubtype) continue
         }
 
+        val samKotlinType = samConversion.getSamTypeInfoForValueParameter(underlyingValueParameter) ?: continue
+
         val originalArgument = call.irValueArgumentsByIndex[i] ?: continue
 
-        val expectedArgumentType = typeSubstitutor.substitute(underlyingParameterType, Variance.INVARIANT)
+        val substitutedSamType = typeSubstitutor.substitute(samKotlinType, Variance.INVARIANT)
             ?: throw AssertionError(
                 "Failed to substitute value argument type in SAM conversion: " +
-                        "underlyingParameterType=$underlyingParameterType, " +
+                        "underlyingParameterType=$originalUnderlyingParameterType, " +
                         "substitutionContext=$substitutionContext"
             )
-        val targetType = expectedArgumentType.toIrType()
+
+        val irSamType = substitutedSamType.toIrType()
 
         call.irValueArgumentsByIndex[i] =
             IrTypeOperatorCallImpl(
                 originalArgument.startOffset, originalArgument.endOffset,
-                targetType,
+                irSamType,
                 IrTypeOperator.SAM_CONVERSION,
-                targetType,
-                castArgumentToFunctionalInterfaceForSamType(originalArgument, expectedArgumentType)
+                irSamType,
+                castArgumentToFunctionalInterfaceForSamType(originalArgument, substitutedSamType)
             )
     }
 }

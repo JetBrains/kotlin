@@ -1421,6 +1421,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/expressions/sam"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
+            @TestMetadata("genericSamProjectedOut.kt")
+            public void testGenericSamProjectedOut() throws Exception {
+                runTest("compiler/testData/ir/irText/expressions/sam/genericSamProjectedOut.kt");
+            }
+
             @TestMetadata("samByProjectedType.kt")
             public void testSamByProjectedType() throws Exception {
                 runTest("compiler/testData/ir/irText/expressions/sam/samByProjectedType.kt");

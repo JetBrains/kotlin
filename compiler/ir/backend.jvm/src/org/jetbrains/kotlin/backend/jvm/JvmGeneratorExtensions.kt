@@ -6,10 +6,8 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.ir.createParameterDeclarations
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.codegen.SamType
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.FilteredAnnotations
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -51,6 +49,11 @@ class JvmGeneratorExtensions(private val generateFacades: Boolean = true) : Gene
 
         override fun isSamType(type: KotlinType): Boolean =
             SingleAbstractMethodUtils.isSamType(type)
+
+        override fun getSamTypeInfoForValueParameter(valueParameter: ValueParameterDescriptor): KotlinType? {
+            val samType = SamType.createByValueParameter(valueParameter) ?: return null
+            return samType.type
+        }
 
         override fun getSubstitutedFunctionTypeForSamType(samType: KotlinType): KotlinType {
             val descriptor = samType.constructor.declarationDescriptor as? JavaClassDescriptor
