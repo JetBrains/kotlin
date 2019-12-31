@@ -139,9 +139,9 @@ public class HashBasedIndexGenerator<K, V> {
     myIndexedFilesNumber.incrementAndGet();
     try {
       FileContentImpl fc = new FileContentImpl(f, f.contentsToByteArray());
+      fc.putUserData(IndexingDataKeys.PROJECT, project);
       byte[] hash = IndexedHashesSupport.getOrInitIndexedHash(fc, false);
       int hashId = Math.abs(hashEnumerator.enumerate(hash));
-      fc.putUserData(IndexingDataKeys.PROJECT, project);
       if (!myIndex.update(hashId, fc).compute()) {
         throw new RuntimeException();
       }
