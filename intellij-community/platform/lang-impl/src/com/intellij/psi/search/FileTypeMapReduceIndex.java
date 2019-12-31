@@ -23,17 +23,14 @@ class FileTypeMapReduceIndex extends VfsAwareMapReduceIndex<FileType, Void, File
   @Override
   public boolean isIndexedStateForFile(int fileId, @NotNull IndexedFile file) {
     boolean isIndexed = super.isIndexedStateForFile(fileId, file);
-    if (!InvertedIndex.ARE_COMPOSITE_INDEXERS_ENABLED) return isIndexed;
-    if (isIndexed) {
-      try {
-        Map<FileType, Void> inputData = ((MapInputDataDiffBuilder<FileType, Void>) getKeysDiffBuilder(fileId)). getMap();
-        FileType indexedFileType = ContainerUtil.getFirstItem(inputData.keySet());
-        // can be null if file type name is outdated
-        return FileTypeKeyDescriptor.INSTANCE.isEqual(indexedFileType, file.getFileType());
-      } catch (IOException e) {
-        LOG.error(e);
-      }
+    if (!isIndexed) return false;
+    try {
+      Map<FileType, Void> inputData = ((MapInputDataDiffBuilder<FileType, Void>) getKeysDiffBuilder(fileId)). getMap();
+      FileType indexedFileType = ContainerUtil.getFirstItem(inputData.keySet());
+      return FileTypeKeyDescriptor.INSTANCE.isEqual(indexedFileType, file.getFileType());
+    } catch (IOException e) {
+      LOG.error(e);
+      return false;
     }
-    return isIndexed;
   }
 }

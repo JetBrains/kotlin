@@ -17,7 +17,6 @@ import java.io.DataOutput;
 import java.io.IOException;
 
 class FileTypeKeyDescriptor implements KeyDescriptor<FileType> {
-    private static final FileType OUT_DATED_FILE_TYPE = new OutDatedFileType();
     static final FileTypeKeyDescriptor INSTANCE = new FileTypeKeyDescriptor();
 
     @Override
@@ -29,6 +28,9 @@ class FileTypeKeyDescriptor implements KeyDescriptor<FileType> {
     public boolean isEqual(FileType val1, FileType val2) {
         if (val1 instanceof SubstitutedFileType) val1 = ((SubstitutedFileType)val1).getFileType();
         if (val2 instanceof SubstitutedFileType) val2 = ((SubstitutedFileType)val2).getFileType();
+        if (val1 instanceof OutDatedFileType || val2 instanceof OutDatedFileType) {
+            return Comparing.equal(val1.getName(), val2.getName());
+        }
         return Comparing.equal(val1, val2);
     }
 
@@ -41,14 +43,19 @@ class FileTypeKeyDescriptor implements KeyDescriptor<FileType> {
     public FileType read(@NotNull DataInput in) throws IOException {
         String read = EnumeratorStringDescriptor.INSTANCE.read(in);
         FileType fileType = FileTypeRegistry.getInstance().findFileTypeByName(read);
-        return fileType == null ? OUT_DATED_FILE_TYPE : fileType;
+        return fileType == null ? new OutDatedFileType(read) : fileType;
     }
 
     private static class OutDatedFileType implements FileType {
         @NotNull
+        private final String myName;
+
+        private OutDatedFileType(@NotNull String name) {myName = name;}
+
+        @NotNull
         @Override
         public String getName() {
-            throw new UnsupportedOperationException();
+            return myName;
         }
 
         @NotNull
