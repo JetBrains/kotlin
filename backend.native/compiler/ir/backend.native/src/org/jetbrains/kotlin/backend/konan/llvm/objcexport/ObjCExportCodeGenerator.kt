@@ -112,7 +112,7 @@ internal class ObjCExportCodeGenerator(
         val mapper: ObjCExportMapper
 ) : ObjCExportCodeGeneratorBase(codegen) {
 
-    val referencedSelectors = mutableMapOf<String, MethodBridge>()
+    val selectorsToDefine = mutableMapOf<String, MethodBridge>()
 
     val externalGlobalInitializers = mutableMapOf<LLVMValueRef, ConstValue>()
 
@@ -354,7 +354,7 @@ internal class ObjCExportCodeGenerator(
             unreachable()
         }
 
-        val methods = referencedSelectors.map { (selector, bridge) ->
+        val methods = selectorsToDefine.map { (selector, bridge) ->
             ObjCDataGenerator.Method(selector, getEncoding(bridge), constPointer(imp))
         }
 
@@ -878,7 +878,8 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
                 MethodBridgeReceiver.Instance -> kotlinReferenceToObjC(parameters[parameter]!!)
                 MethodBridgeSelector -> {
                     val selector = namer.getSelector(baseMethod)
-                    referencedSelectors.getOrPut(selector) { methodBridge }
+                    // Selector is referenced thus should be defined to avoid false positive non-public API rejection:
+                    selectorsToDefine[selector] = methodBridge
                     genSelector(selector)
                 }
 
@@ -1010,6 +1011,9 @@ private fun ObjCExportCodeGenerator.createMethodVirtualAdapter(
 
     val methodBridge = mapper.bridgeMethod(baseMethod.descriptor)
     val objCToKotlin = constPointer(generateObjCImp(baseMethod, methodBridge, isVirtual = true))
+
+    selectorsToDefine[selector] = methodBridge
+
     return ObjCToKotlinMethodAdapter(selector, getEncoding(methodBridge), objCToKotlin)
 }
 
@@ -1034,6 +1038,8 @@ private fun ObjCExportCodeGenerator.createMethodAdapter(
     val objCEncoding = getEncoding(methodBridge)
     val objCToKotlin = constPointer(generateObjCImp(request.implementation, methodBridge))
 
+    selectorsToDefine[selectorName] = methodBridge
+
     ObjCToKotlinMethodAdapter(selectorName, objCEncoding, objCToKotlin)
 }
 
@@ -1048,6 +1054,8 @@ private fun ObjCExportCodeGenerator.createArrayConstructorAdapter(
     val methodBridge = mapper.bridgeMethod(irConstructor.descriptor)
     val objCEncoding = getEncoding(methodBridge)
     val objCToKotlin = constPointer(generateObjCImpForArrayConstructor(irConstructor, methodBridge))
+
+    selectorsToDefine[selectorName] = methodBridge
 
     return ObjCToKotlinMethodAdapter(selectorName, objCEncoding, objCToKotlin)
 }
@@ -1309,6 +1317,8 @@ private inline fun ObjCExportCodeGenerator.generateObjCToKotlinSyntheticGetter(
     }
 
     LLVMSetLinkage(imp, LLVMLinkage.LLVMPrivateLinkage)
+
+    selectorsToDefine[selector] = methodBridge
 
     return ObjCToKotlinMethodAdapter(selector, encoding, constPointer(imp))
 }
