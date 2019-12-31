@@ -5,7 +5,6 @@ import com.intellij.lang.injection.ConcatenationAwareInjector;
 import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
 import com.intellij.openapi.components.Service;
-import com.intellij.openapi.extensions.ExtensionPointAdapter;
 import com.intellij.openapi.extensions.ProjectExtensionPointName;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
@@ -27,12 +26,7 @@ public final class ConcatenationInjectorManager extends SimpleModificationTracke
   public static final ProjectExtensionPointName<ConcatenationAwareInjector> EP_NAME = new ProjectExtensionPointName<>("com.intellij.concatenationAwareInjector");
 
   public ConcatenationInjectorManager(@NotNull Project project) {
-    EP_NAME.getPoint(project).addExtensionPointListener(new ExtensionPointAdapter<ConcatenationAwareInjector>() {
-      @Override
-      public void extensionListChanged() {
-        concatenationInjectorsChanged();
-      }
-    }, false, project);
+    EP_NAME.getPoint(project).addExtensionPointListener(this::concatenationInjectorsChanged, false, project);
     // clear caches even on non-physical changes
     PsiManagerEx.getInstanceEx(project).registerRunnableToRunOnAnyChange(this::incModificationCount);
   }

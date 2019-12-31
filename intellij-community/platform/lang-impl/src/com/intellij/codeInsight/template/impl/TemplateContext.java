@@ -3,9 +3,8 @@ package com.intellij.codeInsight.template.impl;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.intellij.codeInsight.template.TemplateContextType;
-import com.intellij.openapi.extensions.ExtensionPointAndAreaListener;
+import com.intellij.openapi.extensions.ExtensionPointAdapter;
 import com.intellij.openapi.extensions.ExtensionsArea;
-import com.intellij.openapi.extensions.PluginDescriptor;
 import com.intellij.openapi.util.ClearableLazyValue;
 import com.intellij.util.JdomKt;
 import com.intellij.util.containers.ContainerUtil;
@@ -36,19 +35,14 @@ public class TemplateContext {
     @Override
     protected Map<String, String> compute() {
       if (isListenerAdded.compareAndSet(false, true)) {
-        TemplateManagerImpl.TEMPLATE_CONTEXT_EP.getValue().addExtensionPointListener(new ExtensionPointAndAreaListener<TemplateContextType>() {
+        TemplateManagerImpl.TEMPLATE_CONTEXT_EP.getValue().addExtensionPointListener(new ExtensionPointAdapter<TemplateContextType>() {
           @Override
           public void areaReplaced(@NotNull ExtensionsArea oldArea) {
             drop();
           }
 
           @Override
-          public void extensionAdded(@NotNull TemplateContextType extension, @NotNull PluginDescriptor pluginDescriptor) {
-            drop();
-          }
-
-          @Override
-          public void extensionRemoved(@NotNull TemplateContextType extension, @NotNull PluginDescriptor pluginDescriptor) {
+          public void extensionListChanged() {
             drop();
           }
         }, false, null);

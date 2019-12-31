@@ -3,7 +3,10 @@ package com.intellij.openapi.roots.impl;
 
 import com.intellij.ProjectTopics;
 import com.intellij.diagnostic.PluginException;
-import com.intellij.openapi.application.*;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.extensions.ExtensionPointListener;
 import com.intellij.openapi.extensions.PluginDescriptor;
@@ -18,7 +21,10 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.util.ProgressWrapper;
 import com.intellij.openapi.project.*;
 import com.intellij.openapi.roots.*;
-import com.intellij.openapi.util.*;
+import com.intellij.openapi.util.ClearableLazyValue;
+import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.EmptyRunnable;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.events.*;
@@ -205,18 +211,9 @@ public final class PushedFilePropertiesUpdaterImpl extends PushedFilePropertiesU
         DumbService.getInstance(myProject).cancelTask(task);
       }
     });
-    FilePropertyPusher.EP_NAME.addExtensionPointListener(new ExtensionPointListener<FilePropertyPusher<?>>() {
-      @Override
-      public void extensionAdded(@NotNull FilePropertyPusher<?> pusher, @NotNull PluginDescriptor pluginDescriptor) {
-        DumbService.getInstance(myProject).cancelTask(task);
-        queueFullUpdate();
-      }
-
-      @Override
-      public void extensionRemoved(@NotNull FilePropertyPusher<?> pusher, @NotNull PluginDescriptor pluginDescriptor) {
-        DumbService.getInstance(myProject).cancelTask(task);
-        queueFullUpdate();
-      }
+    FilePropertyPusher.EP_NAME.addExtensionPointListener(() -> {
+      DumbService.getInstance(myProject).cancelTask(task);
+      queueFullUpdate();
     }, task);
     DumbService.getInstance(myProject).queueTask(task);
   }

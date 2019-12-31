@@ -14,8 +14,6 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.extensions.ExtensionPointAdapter;
-import com.intellij.openapi.extensions.KeyedFactoryEPBean;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorProvider;
@@ -44,7 +42,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.ui.components.JBPanelWithEmptyText;
 import com.intellij.ui.content.*;
 import com.intellij.util.BitUtil;
-import com.intellij.util.KeyedLazyInstance;
 import com.intellij.util.ui.TimerUtil;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.util.ui.update.MergingUpdateQueue;
@@ -157,19 +154,9 @@ public class StructureViewWrapperImpl implements StructureViewWrapper, Disposabl
     });
     Disposer.register(myToolWindow.getContentManager(), this);
 
-    PsiStructureViewFactory.EP_NAME.addExtensionPointListener(new ExtensionPointAdapter<KeyedLazyInstance<PsiStructureViewFactory>>() {
-      @Override
-      public void extensionListChanged() {
-        clearCaches();
-      }
-    }, this);
+    PsiStructureViewFactory.EP_NAME.addExtensionPointListener(this::clearCaches, this);
     
-    StructureViewBuilder.EP_NAME.addExtensionPointListener(new ExtensionPointAdapter<KeyedFactoryEPBean>() {
-      @Override
-      public void extensionListChanged() {
-        clearCaches();
-      }
-    }, this);
+    StructureViewBuilder.EP_NAME.addExtensionPointListener(this::clearCaches, this);
   }
 
   private void clearCaches() {

@@ -26,7 +26,10 @@ import com.intellij.lang.LanguageAnnotators;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.ex.AnActionListener;
-import com.intellij.openapi.application.*;
+import com.intellij.openapi.application.Application;
+import com.intellij.openapi.application.ApplicationListener;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.application.impl.LaterInvocator;
 import com.intellij.openapi.command.CommandEvent;
 import com.intellij.openapi.command.CommandListener;
@@ -42,7 +45,6 @@ import com.intellij.openapi.editor.impl.DocumentMarkupModel;
 import com.intellij.openapi.editor.impl.EditorMouseHoverPopupControl;
 import com.intellij.openapi.editor.markup.MarkupModel;
 import com.intellij.openapi.editor.markup.RangeHighlighter;
-import com.intellij.openapi.extensions.ExtensionPointAdapter;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -372,12 +374,7 @@ public final class DaemonListeners implements Disposable {
   }
 
   private <T, U extends KeyedLazyInstance<T>> void restartOnExtensionChange(ExtensionPointName<U> name, final String message) {
-    name.addExtensionPointListener(new ExtensionPointAdapter<U>() {
-      @Override
-      public void extensionListChanged() {
-        stopDaemonAndRestartAllFiles(message);
-      }
-    }, this);
+    name.addExtensionPointListener(() -> stopDaemonAndRestartAllFiles(message), this);
   }
 
   private boolean worthBothering(final Document document, Project project) {
