@@ -236,7 +236,9 @@ class EnableCustomHintsOption: IntentionAction, HighPriorityAction {
     val element = file.findElementAt(offset) ?: return null
     val provider = InlayParameterHintsExtension.forLanguage(file.language) ?: return null
 
-    val target = PsiTreeUtil.findFirstParent(element) { provider.hasDisabledOptionHintInfo(it) } ?: return null
+    val target = PsiTreeUtil.findFirstParent(element) { it is PsiFile
+                                                        || provider.hasDisabledOptionHintInfo(it) }
+    if (target == null || target is PsiFile) return null
     return provider.getHintInfo(target) as? HintInfo.OptionInfo
   }
 
@@ -318,9 +320,10 @@ private fun getHintInfoFromProvider(offset: Int, file: PsiFile, editor: Editor):
   val element = file.findElementAt(offset) ?: return null
   val provider = InlayParameterHintsExtension.forLanguage(file.language) ?: return null
 
-  val isHintOwnedByElement: (PsiElement) -> Boolean = { e -> provider.getHintInfo(e)?.isOwnedByPsiElement(e, editor) ?: false }
-  val method = PsiTreeUtil.findFirstParent(element, isHintOwnedByElement) ?: return null
-  
+  val method = PsiTreeUtil.findFirstParent(element) { it is PsiFile
+                                                      // hint owned by element
+                                                      || (provider.getHintInfo(it)?.isOwnedByPsiElement(it, editor) ?: false)}
+  if (method == null || method is PsiFile) return null
   return provider.getHintInfo(method)
 }
 
