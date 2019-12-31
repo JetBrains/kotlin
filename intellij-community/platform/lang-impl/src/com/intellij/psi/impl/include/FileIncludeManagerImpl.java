@@ -1,6 +1,8 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.psi.impl.include;
 
+import com.intellij.openapi.extensions.ExtensionPointListener;
+import com.intellij.openapi.extensions.PluginDescriptor;
 import com.intellij.openapi.fileTypes.FileTypes;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
@@ -123,21 +125,20 @@ public final class FileIncludeManagerImpl extends FileIncludeManager {
     myPsiManager = PsiManager.getInstance(project);
     myPsiFileFactory = PsiFileFactory.getInstance(myProject);
 
-    for (FileIncludeProvider provider : FileIncludeProvider.EP_NAME.getExtensionList()) {
-      put(provider);
-    }
+    FileIncludeProvider.EP_NAME.getPoint(null).addExtensionPointListener(new ExtensionPointListener<FileIncludeProvider>() {
+      @Override
+      public void extensionAdded(@NotNull FileIncludeProvider provider, @NotNull PluginDescriptor pluginDescriptor) {
+        FileIncludeProvider old = myProviderMap.put(provider.getId(), provider);
+        assert old == null;
+      }
 
-    FileIncludeProvider.EP_NAME.addExtensionPointListener(
-      (p, d) -> { put(p); },
-      (p, d) -> { myProviderMap.remove(p.getId()); },
-      project
-    );
+      @Override
+      public void extensionRemoved(@NotNull FileIncludeProvider provider, @NotNull PluginDescriptor pluginDescriptor) {
+        myProviderMap.remove(provider.getId());
+      }
+    }, true, project);
+
     Disposer.register(project, myProviderMap::clear);
-  }
-
-  private void put(FileIncludeProvider provider) {
-    FileIncludeProvider old = myProviderMap.put(provider.getId(), provider);
-    assert old == null;
   }
 
   @Override

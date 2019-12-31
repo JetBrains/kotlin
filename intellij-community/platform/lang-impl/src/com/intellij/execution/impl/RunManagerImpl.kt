@@ -15,7 +15,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.*
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.diagnostic.runAndLogException
-import com.intellij.openapi.extensions.ExtensionPointListChangeListener
+import com.intellij.openapi.extensions.ExtensionPointChangeListener
 import com.intellij.openapi.extensions.ExtensionPointListener
 import com.intellij.openapi.extensions.PluginDescriptor
 import com.intellij.openapi.extensions.ProjectExtensionPointName
@@ -201,7 +201,7 @@ open class RunManagerImpl @JvmOverloads constructor(val project: Project, shared
       })
     }
     BeforeRunTaskProvider.EXTENSION_POINT_NAME.getPoint(project).addExtensionPointListener(
-      ExtensionPointListChangeListener { stringIdToBeforeRunProvider.drop() },
+      ExtensionPointChangeListener { stringIdToBeforeRunProvider.drop() },
       true, project)
   }
 

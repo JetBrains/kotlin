@@ -19,6 +19,8 @@ import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.impl.ActionConfigurationCustomizer;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.extensions.ExtensionPointListener;
+import com.intellij.openapi.extensions.PluginDescriptor;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
@@ -49,12 +51,18 @@ public final class ExecutorRegistryImpl extends ExecutorRegistry {
   private final Map<String, AnAction> myContextActionIdToAction = new THashMap<>();
 
   public ExecutorRegistryImpl() {
-    //noinspection TestOnlyProblems
-    Executor.EXECUTOR_EXTENSION_NAME.addExtensionPointListener(
-      (e, pd) -> initExecutorActions(e, ActionManager.getInstance()),
-      (e, pd) -> deinitExecutor(e),
-      ApplicationManager.getApplication()
-    );
+    Executor.EXECUTOR_EXTENSION_NAME.addExtensionPointListener(new ExtensionPointListener<Executor>() {
+      @Override
+      public void extensionAdded(@NotNull Executor extension, @NotNull PluginDescriptor pluginDescriptor) {
+        //noinspection TestOnlyProblems
+        initExecutorActions(extension, ActionManager.getInstance());
+      }
+
+      @Override
+      public void extensionRemoved(@NotNull Executor extension, @NotNull PluginDescriptor pluginDescriptor) {
+        deinitExecutor(extension);
+      }
+    }, ApplicationManager.getApplication());
   }
 
   final static class ExecutorRegistryActionConfigurationTuner implements ActionConfigurationCustomizer {
