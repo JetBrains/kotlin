@@ -33,12 +33,12 @@ final class FavoritesViewSelectInTarget extends SelectInTargetPsiWrapper {
   }
 
   public String toString() {
-    return SelectInManager.getFAVORITES();
+    return SelectInManager.getFavorites();
   }
 
   @Override
   public String getToolWindowId() {
-    return SelectInManager.getFAVORITES();
+    return SelectInManager.getFavorites();
   }
 
   @Override
