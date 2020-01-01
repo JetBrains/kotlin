@@ -402,7 +402,7 @@ public class InstalledPackagesPanel extends JPanel {
 
   private void onUpdateFinished() {
     myPackagesTable.setPaintBusy(!myCurrentlyInstalling.isEmpty());
-    myPackagesTable.getEmptyText().setText(StatusText.getDEFAULT_EMPTY_TEXT());
+    myPackagesTable.getEmptyText().setText(StatusText.getDefaultEmptyText());
     updateUninstallUpgrade();
     // Action button presentations won't be updated if no events occur (e.g. mouse isn't moving, keys aren't being pressed).
     // In that case emulating activity will help:
