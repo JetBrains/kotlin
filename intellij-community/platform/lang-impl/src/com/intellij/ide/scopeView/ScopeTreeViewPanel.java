@@ -832,12 +832,12 @@ public class ScopeTreeViewPanel extends JPanel implements Disposable {
   private class MyProblemListener implements ProblemListener {
     @Override
     public void problemsAppeared(@NotNull VirtualFile file) {
-      addNode(file, ProblemsScope.getNAME());
+      addNode(file, ProblemsScope.getNameText());
     }
 
     @Override
     public void problemsDisappeared(@NotNull VirtualFile file) {
-      removeNode(file, ProblemsScope.getNAME());
+      removeNode(file, ProblemsScope.getNameText());
     }
   }
 

@@ -210,7 +210,7 @@ public class PlatformPackageUtil {
       );
 
       ProjectSettingsService
-        .getInstance(module.getProject()).showModuleConfigurationDialog(module.getName(), CommonContentEntriesEditor.getNAME());
+        .getInstance(module.getProject()).showModuleConfigurationDialog(module.getName(), CommonContentEntriesEditor.getName());
 
       sourceRoots = ModuleRootManager.getInstance(module).getSourceRoots();
       if (sourceRoots.length == 0) {

@@ -51,7 +51,7 @@ public final class ChangeListsScopesProvider extends CustomScopesProviderEx {
   public NamedScope getCustomScope(@NotNull String name) {
     if (myProject.isDefault()) return null;
     final ChangeListManager changeListManager = ChangeListManager.getInstance(myProject);
-    if (ChangeListScope.getNAME().equals(name)) {
+    if (ChangeListScope.getNameText().equals(name)) {
       return new ChangeListScope(changeListManager);
     }
     final LocalChangeList changeList = changeListManager.findChangeList(name);

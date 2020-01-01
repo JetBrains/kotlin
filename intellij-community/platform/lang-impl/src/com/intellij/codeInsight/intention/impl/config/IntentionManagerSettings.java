@@ -195,7 +195,7 @@ public final class IntentionManagerSettings implements PersistentStateComponent<
         Set<String> words = registrar.getProcessedWordsWithoutStemming(descriptionText);
         words.addAll(registrar.getProcessedWords(metaData.getFamily()));
         registrar.addOptions(words, metaData.getFamily(), metaData.getFamily(), IntentionSettingsConfigurable.HELP_ID,
-                             IntentionSettingsConfigurable.getDISPLAY_NAME());
+                             IntentionSettingsConfigurable.getDisplayNameText());
       }
       catch (IOException e) {
         LOG.error(e);

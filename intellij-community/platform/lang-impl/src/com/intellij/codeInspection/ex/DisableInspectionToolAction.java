@@ -46,13 +46,13 @@ public class DisableInspectionToolAction extends IntentionAndQuickFixAction impl
   @NotNull
   @Override
   public String getName() {
-    return getNAME();
+    return getNameText();
   }
 
   @Override
   @NotNull
   public String getFamilyName() {
-    return getNAME();
+    return getNameText();
   }
 
   @Override
@@ -78,7 +78,7 @@ public class DisableInspectionToolAction extends IntentionAndQuickFixAction impl
     return AllIcons.Actions.Cancel;
   }
 
-  public static String getNAME() {
+  public static String getNameText() {
     return InspectionsBundle.message("disable.inspection.action.name");
   }
 }

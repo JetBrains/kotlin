@@ -121,7 +121,7 @@ public class CommonContentEntriesEditor extends ModuleElementsEditor {
 
   @Override
   public String getDisplayName() {
-    return getNAME();
+    return getName();
   }
 
   protected final List<ModuleSourceRootEditHandler<?>> getEditHandlers() {
@@ -486,7 +486,7 @@ public class CommonContentEntriesEditor extends ModuleElementsEditor {
 
   }
 
-  public static String getNAME() {
+  public static String getName() {
     return ProjectBundle.message("module.paths.title");
   }
 }

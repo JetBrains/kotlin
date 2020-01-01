@@ -54,7 +54,7 @@ public abstract class KeyAwareInspectionViewAction extends InspectionViewActionB
 
   public static class DisableInspection extends KeyAwareInspectionViewAction {
     public DisableInspection() {
-      super(DisableInspectionToolAction.getNAME());
+      super(DisableInspectionToolAction.getNameText());
     }
 
     @Override

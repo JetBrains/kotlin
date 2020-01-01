@@ -61,7 +61,7 @@ public class IntentionSettingsConfigurable implements SearchableConfigurable, Ma
 
   @Override
   public String getDisplayName() {
-    return getDISPLAY_NAME();
+    return getDisplayNameText();
   }
 
   @Override
@@ -103,7 +103,7 @@ public class IntentionSettingsConfigurable implements SearchableConfigurable, Ma
     myPanel.selectIntention(familyName);
   }
 
-  public static String getDISPLAY_NAME() {
+  public static String getDisplayNameText() {
     return CodeInsightBundle.message("intention.settings");
   }
 }

@@ -24,7 +24,7 @@ public class OtherFileTypesCodeStyleConfigurable extends CodeStyleAbstractConfig
   private final OtherFileTypesCodeStyleOptionsForm myOptionsForm;
 
   public OtherFileTypesCodeStyleConfigurable(CodeStyleSettings currSettings, CodeStyleSettings modelSettings) {
-    super(currSettings, modelSettings, getDISPLAY_NAME());
+    super(currSettings, modelSettings, getDisplayNameText());
     myOptionsForm = new OtherFileTypesCodeStyleOptionsForm(modelSettings);
   }
 
@@ -38,7 +38,7 @@ public class OtherFileTypesCodeStyleConfigurable extends CodeStyleAbstractConfig
         return "settings.editor.codeStyle.other";
       }
 
-  public static String getDISPLAY_NAME() {
+  public static String getDisplayNameText() {
     return ApplicationBundle.message("code.style.other.file.types");
   }
 }

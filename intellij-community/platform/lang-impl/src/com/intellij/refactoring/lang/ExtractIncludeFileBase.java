@@ -291,10 +291,10 @@ public abstract class ExtractIncludeFileBase<T extends PsiElement> implements Re
   }
 
   protected String getRefactoringName() {
-    return getREFACTORING_NAME();
+    return getRefactoringNameText();
   }
 
-  static String getREFACTORING_NAME() {
+  static String getRefactoringNameText() {
     return RefactoringBundle.message("extract.include.file.title");
   }
 }

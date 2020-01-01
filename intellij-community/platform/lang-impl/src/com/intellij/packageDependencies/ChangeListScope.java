@@ -15,7 +15,7 @@ public final class ChangeListScope extends FilteredNamedScope implements Weighed
   private static final Icon ICON = new OffsetIcon(AllIcons.Scope.ChangedFiles);
 
   public ChangeListScope(@NotNull ChangeListManager manager) {
-    super(getNAME(), AllIcons.Scope.ChangedFilesAll, 0, manager::isFileAffected);
+    super(getNameText(), AllIcons.Scope.ChangedFilesAll, 0, manager::isFileAffected);
   }
 
   public ChangeListScope(@NotNull ChangeListManager manager, @NotNull String name) {
@@ -49,7 +49,7 @@ public final class ChangeListScope extends FilteredNamedScope implements Weighed
     return AllIcons.Scope.ChangedFilesAll == getIcon() ? 0 : 1;
   }
 
-  public static String getNAME() {
+  public static String getNameText() {
     return IdeBundle.message("scope.modified.files");
   }
 }
