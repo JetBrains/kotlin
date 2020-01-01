@@ -70,7 +70,7 @@ public class RenameDialog extends RefactoringDialog {
     myPsiElement = psiElement;
     myNameSuggestionContext = nameSuggestionContext;
     myEditor = editor;
-    setTitle(getREFACTORING_NAME());
+    setTitle(getRefactoringName());
 
     createNewNameComponent();
     init();
@@ -364,7 +364,7 @@ public class RenameDialog extends RefactoringDialog {
     return myCbSearchInComments;
   }
 
-  private static String getREFACTORING_NAME() {
+  private static String getRefactoringName() {
     return RefactoringBundle.message("rename.title");
   }
 }

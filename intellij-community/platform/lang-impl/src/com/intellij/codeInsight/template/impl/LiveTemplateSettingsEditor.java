@@ -218,7 +218,7 @@ public class LiveTemplateSettingsEditor extends JPanel {
 
     gbConstraints.gridx = 1;
     gbConstraints.insets = JBUI.insetsLeft(4);
-    myExpandByCombo = new ComboBox<>(new String[]{myDefaultShortcutItem, getSPACE(), getTAB(), getENTER(), getNONE()});
+    myExpandByCombo = new ComboBox<>(new String[]{myDefaultShortcutItem, getSpace(), getTab(), getEnter(), getNone()});
     myExpandByCombo.addItemListener(new ItemListener() {
       @Override
       public void itemStateChanged(@NotNull ItemEvent e) {
@@ -226,13 +226,13 @@ public class LiveTemplateSettingsEditor extends JPanel {
         if(myDefaultShortcutItem.equals(selectedItem)) {
           myTemplate.setShortcutChar(TemplateSettings.DEFAULT_CHAR);
         }
-        else if(getTAB().equals(selectedItem)) {
+        else if(getTab().equals(selectedItem)) {
           myTemplate.setShortcutChar(TemplateSettings.TAB_CHAR);
         }
-        else if(getENTER().equals(selectedItem)) {
+        else if(getEnter().equals(selectedItem)) {
           myTemplate.setShortcutChar(TemplateSettings.ENTER_CHAR);
         }
-        else if (getSPACE().equals(selectedItem)) {
+        else if (getSpace().equals(selectedItem)) {
           myTemplate.setShortcutChar(TemplateSettings.SPACE_CHAR);
         }
         else {
@@ -484,16 +484,16 @@ public class LiveTemplateSettingsEditor extends JPanel {
       myExpandByCombo.setSelectedItem(myDefaultShortcutItem);
     }
     else if(myTemplate.getShortcutChar() == TemplateSettings.TAB_CHAR) {
-      myExpandByCombo.setSelectedItem(getTAB());
+      myExpandByCombo.setSelectedItem(getTab());
     }
     else if(myTemplate.getShortcutChar() == TemplateSettings.ENTER_CHAR) {
-      myExpandByCombo.setSelectedItem(getENTER());
+      myExpandByCombo.setSelectedItem(getEnter());
     }
     else if (myTemplate.getShortcutChar() == TemplateSettings.SPACE_CHAR) {
-      myExpandByCombo.setSelectedItem(getSPACE());
+      myExpandByCombo.setSelectedItem(getSpace());
     }
     else {
-      myExpandByCombo.setSelectedItem(getNONE());
+      myExpandByCombo.setSelectedItem(getNone());
     }
 
     CommandProcessor.getInstance().executeCommand(
@@ -588,19 +588,19 @@ public class LiveTemplateSettingsEditor extends JPanel {
     return map;
   }
 
-  private static String getSPACE() {
+  private static String getSpace() {
     return CodeInsightBundle.message("template.shortcut.space");
   }
 
-  private static String getTAB() {
+  private static String getTab() {
     return CodeInsightBundle.message("template.shortcut.tab");
   }
 
-  private static String getENTER() {
+  private static String getEnter() {
     return CodeInsightBundle.message("template.shortcut.enter");
   }
 
-  private static String getNONE() {
+  private static String getNone() {
     return CodeInsightBundle.message("template.shortcut.none");
   }
 }

@@ -65,7 +65,7 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
   public static final String SCOPE_PROJECT = "Production";
 
   /**
-   * Use {code {@link #getSCOPE_ALL()}} instead
+   * Use {code {@link #getScopeAll()}} instead
    */
   @Deprecated
   public static final String SCOPE_ALL = "All";
@@ -124,7 +124,7 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
     for (Map.Entry<String, JTree> entry : type2treeMap.entrySet()) {
       JTree tree = entry.getValue();
       String type = entry.getKey();
-      String scope = state.SCOPE != null ? state.SCOPE : getSCOPE_ALL();
+      String scope = state.SCOPE != null ? state.SCOPE : getScopeAll();
 
       OccurenceNavigatorSupport occurenceNavigatorSupport = new OccurenceNavigatorSupport(tree) {
         @Override
@@ -710,9 +710,9 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
   private Collection<String> getValidScopeNames() {
     List<String> result = new ArrayList<>();
     result.add(getScopeProject());
-    result.add(getSCOPE_TEST());
-    result.add(getSCOPE_ALL());
-    result.add(getSCOPE_CLASS());
+    result.add(getScopeTest());
+    result.add(getScopeAll());
+    result.add(getScopeClass());
 
     final NamedScopesHolder[] holders = NamedScopesHolder.getAllNamedScopeHolders(myProject);
     for (NamedScopesHolder holder : holders) {
@@ -795,7 +795,7 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
       public void actionPerformed(@NotNull AnActionEvent e) {
         EditScopesDialog.showDialog(myProject, null);
         if (!getValidScopeNames().contains(getCurrentScopeType())) {
-          selectScope(getSCOPE_ALL());
+          selectScope(getScopeAll());
         }
       }
     }
@@ -805,15 +805,15 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
     return IdeBundle.message("hierarchy.scope.project");
   }
 
-  public static String getSCOPE_ALL() {
+  public static String getScopeAll() {
     return IdeBundle.message("hierarchy.scope.all");
   }
 
-  public static String getSCOPE_TEST() {
+  public static String getScopeTest() {
     return IdeBundle.message("hierarchy.scope.test");
   }
 
-  public static String getSCOPE_CLASS() {
+  public static String getScopeClass() {
     return IdeBundle.message("hierarchy.scope.this.class");
   }
 }
