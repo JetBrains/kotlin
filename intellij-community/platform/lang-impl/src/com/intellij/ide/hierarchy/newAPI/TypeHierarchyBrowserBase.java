@@ -1,11 +1,12 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
-package com.intellij.ide.hierarchy;
+package com.intellij.ide.hierarchy.newAPI;
 
 import com.intellij.history.LocalHistory;
 import com.intellij.history.LocalHistoryAction;
 import com.intellij.ide.DeleteProvider;
 import com.intellij.ide.IdeBundle;
+import com.intellij.ide.hierarchy.LanguageTypeHierarchy;
 import com.intellij.ide.util.DeleteHandler;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.Project;
@@ -35,11 +36,18 @@ public abstract class TypeHierarchyBrowserBase extends HierarchyBrowserBaseEx {
   @Deprecated
   public static final String SUPERTYPES_HIERARCHY_TYPE = "Supertypes of {0}";
 
+  @SuppressWarnings("UnresolvedPropertyKey") private static final HierarchyScopeType TYPE =
+    new HierarchyScopeType(() -> IdeBundle.message("title.hierarchy.class"));
+  @SuppressWarnings("UnresolvedPropertyKey") private static final HierarchyScopeType SUBTYPES =
+    new HierarchyScopeType(() -> IdeBundle.message("title.hierarchy.subtypes"));
+  @SuppressWarnings("UnresolvedPropertyKey") private static final HierarchyScopeType SUPERTYPES =
+    new HierarchyScopeType(() -> IdeBundle.message("title.hierarchy.supertypes"));
+
   private boolean myIsInterface;
 
   private final MyDeleteProvider myDeleteElementProvider = new MyDeleteProvider();
 
-  public static final DataKey<TypeHierarchyBrowserBase> DATA_KEY = DataKey.create("com.intellij.ide.hierarchy.TypeHierarchyBrowserBase");
+  public static final DataKey<TypeHierarchyBrowserBase> DATA_KEY = DataKey.create("com.intellij.ide.hierarchy.newAPI.TypeHierarchyBrowserBase");
 
   public TypeHierarchyBrowserBase(final Project project, final PsiElement element) {
     super(project, element);
@@ -47,12 +55,12 @@ public abstract class TypeHierarchyBrowserBase extends HierarchyBrowserBaseEx {
 
   protected abstract boolean isInterface(@NotNull PsiElement psiElement);
 
-  protected void createTreeAndSetupCommonActions(@NotNull Map<String, JTree> trees, @NotNull String typeHierarchyActionGroupName) {
+  protected void createTreeAndSetupCommonActions(@NotNull Map<HierarchyScopeType, JTree> trees, @NotNull String typeHierarchyActionGroupName) {
     ActionGroup group = (ActionGroup)ActionManager.getInstance().getAction(typeHierarchyActionGroupName);
     createTreeAndSetupCommonActions(trees, group);
   }
 
-  protected void createTreeAndSetupCommonActions(@NotNull Map<String, JTree> trees, @NotNull ActionGroup group) {
+  protected void createTreeAndSetupCommonActions(@NotNull Map<HierarchyScopeType, JTree> trees, @NotNull ActionGroup group) {
     final BaseOnThisTypeAction baseOnThisTypeAction = createBaseOnThisAction();
     final JTree tree1 = createTree(true);
     PopupHandler.installPopupHandler(tree1, group, ActionPlaces.TYPE_HIERARCHY_VIEW_POPUP, ActionManager.getInstance());
@@ -166,7 +174,7 @@ public abstract class TypeHierarchyBrowserBase extends HierarchyBrowserBaseEx {
     }
 
     @Override
-    protected String correctViewType(@NotNull HierarchyBrowserBaseEx browser, String viewType) {
+    protected HierarchyScopeType correctViewType(@NotNull HierarchyBrowserBaseEx browser, HierarchyScopeType viewType) {
       if (((TypeHierarchyBrowserBase)browser).myIsInterface && getTypeHierarchyType().equals(viewType)) {
         return getSubtypesHierarchyType();
       }
@@ -174,18 +182,15 @@ public abstract class TypeHierarchyBrowserBase extends HierarchyBrowserBaseEx {
     }
   }
 
-  @SuppressWarnings("UnresolvedPropertyKey")
-  public static String getTypeHierarchyType() {
-    return IdeBundle.message("title.hierarchy.class");
+  public static HierarchyScopeType getTypeHierarchyType() {
+    return TYPE;
   }
 
-  @SuppressWarnings("UnresolvedPropertyKey")
-  public static String getSubtypesHierarchyType() {
-    return IdeBundle.message("title.hierarchy.subtypes");
+  public static HierarchyScopeType getSubtypesHierarchyType() {
+     return SUBTYPES;
   }
 
-  @SuppressWarnings("UnresolvedPropertyKey")
-  public static String getSupertypesHierarchyType() {
-    return IdeBundle.message("title.hierarchy.supertypes");
+  public static HierarchyScopeType getSupertypesHierarchyType() {
+    return SUPERTYPES;
   }
 }

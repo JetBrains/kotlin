@@ -2,7 +2,7 @@
 package com.intellij.psi.search;
 
 import com.intellij.ide.IdeBundle;
-import com.intellij.ide.hierarchy.HierarchyBrowserBase;
+import com.intellij.ide.hierarchy.newAPI.HierarchyBrowserBase;
 import com.intellij.ide.scratch.ScratchesSearchScope;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
