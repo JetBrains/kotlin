@@ -12573,6 +12573,16 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/hiddenConstructor"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
             }
 
+            @TestMetadata("constructorReferencedFromOtherFile1.kt")
+            public void testConstructorReferencedFromOtherFile1() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/constructorReferencedFromOtherFile1.kt");
+            }
+
+            @TestMetadata("constructorReferencedFromOtherFile2.kt")
+            public void testConstructorReferencedFromOtherFile2() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/constructorReferencedFromOtherFile2.kt");
+            }
+
             @TestMetadata("constructorWithDefaultParameters.kt")
             public void testConstructorWithDefaultParameters() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/constructorWithDefaultParameters.kt");

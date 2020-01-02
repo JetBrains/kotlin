@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.jvm.JvmSymbols
 import org.jetbrains.kotlin.backend.jvm.codegen.isInlineOnly
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmDeclarationFactory
-import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.hasMangledParameters
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -140,10 +139,6 @@ fun IrType.getArrayElementType(irBuiltIns: IrBuiltIns): IrType =
 
 val IrStatementOrigin?.isLambda: Boolean
     get() = this == IrStatementOrigin.LAMBDA || this == IrStatementOrigin.ANONYMOUS_FUNCTION
-
-val IrConstructor.shouldBeHidden: Boolean
-    get() = !Visibilities.isPrivate(visibility) && !constructedClass.isInline && hasMangledParameters &&
-            origin != IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER
 
 // An IR builder with a reference to the JvmBackendContext
 class JvmIrBuilder(
